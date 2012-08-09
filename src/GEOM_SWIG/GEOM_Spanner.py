@@ -1,24 +1,26 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#  -*- coding: iso-8859-1 -*-
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+# Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+# CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 #  GEOM GEOM_SWIG : binding of C++ implementaion with Python
 #  File   : GEOM_Spanner.py
 #  Author : Julia DOROVSKIKH
@@ -103,7 +105,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
   else:
     print "Prism 1 is not a hexahedral solid"
 
-  Prism1_faces = geompy.SubShapeAllSorted(Prism1, geompy.ShapeType["FACE"])
+  Prism1_faces = geompy.SubShapeAllSortedCentres(Prism1, geompy.ShapeType["FACE"])
   ii = 1
   for aFace in  Prism1_faces:
     name = geompy.SubShapeName(aFace, Prism1)
@@ -381,7 +383,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
 
     # ---- add long edges of the top face in study
 
-    FaceTop_edges = geompy.SubShapeAllSorted(FaceTop, geompy.ShapeType["EDGE"])
+    FaceTop_edges = geompy.SubShapeAllSortedCentres(FaceTop, geompy.ShapeType["EDGE"])
     Edge1 = FaceTop_edges[0]
     Edge2 = FaceTop_edges[3]
     Id_Edge1 = geompy.addToStudyInFather(FaceTop, Edge1, "Edge 1")

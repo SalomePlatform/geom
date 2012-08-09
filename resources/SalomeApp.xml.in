@@ -1,0 +1,77 @@
+<!--
+  Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+
+  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+
+  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
+-->
+<document>
+  <section name="GEOM">
+    <!-- Major module parameters -->
+    <parameter name="name" value="Geometry"/>
+    <parameter name="icon" value="ModuleGeom.png"/>
+    <parameter name="documentation" value="geom_help"/>
+    <parameter name="version" value="@VERSION@"/>
+  </section>
+  <section name="geom_help" >
+    <parameter name="sub_menu"          value="%1 module"/>
+    <parameter name="User's Guide"      value="%GEOM_ROOT_DIR%/share/doc/salome/gui/GEOM/index.html"/>
+    <parameter name="Developer's Guide" value="%GEOM_ROOT_DIR%/share/doc/salome/tui/GEOM/index.html"/>
+  </section>
+  <section name="resources">
+    <!-- Module resources -->
+    <parameter name="GEOM" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
+  </section>
+  <section name="Geometry" >
+    <!-- Other module preferences -->
+    <parameter name="SettingsGeomStep"    value="10" />
+    <parameter name="display_mode"        value="0"  />
+    <parameter name="shading_color"       value="255, 255, 0" />
+    <parameter name="edges_in_shading_color" value="255, 255, 255" />
+    <parameter name="wireframe_color"     value="255, 255, 0" />
+    <parameter name="free_bound_color"    value="0, 255, 0" />
+    <parameter name="line_color"          value="255, 0, 0" />
+    <parameter name="point_color"         value="255, 255, 0" />
+    <parameter name="isos_color"          value="200, 200, 200" />
+    <parameter name="toplevel_color"      value="170, 85, 0" />
+    <parameter name="toplevel_dm"         value="0" />
+    <parameter name="type_of_marker"      value="1"  />
+    <parameter name="deflection_coeff"    value="0.001"  />
+    <parameter name="auto_create_base_objects" value="false"  />
+    <parameter name="base_vectors_length" value="1"  />
+    <parameter name="marker_scale"        value="1"  />
+    <parameter name="geom_preview"        value="false"  />
+    <parameter name="material"            value="Plastic" />
+    <parameter name="edge_width"          value="1" />
+    <parameter name="isolines_width"      value="1" />
+    <parameter name="preview_edge_width"  value="1" />
+    <parameter name="measures_line_width" value="1" />
+
+    <!-- Input field precisions -->
+    <parameter name="def_precision"       value="3"  />
+    <parameter name="length_precision"    value="6"  />
+    <parameter name="angle_precision"     value="3"  />
+    <parameter name="len_tol_precision"   value="-9"  />
+    <parameter name="ang_tol_precision"   value="-9"  />
+    <parameter name="weight_precision"    value="3"  />
+    <parameter name="density_precision"   value="3"  />
+    <parameter name="parametric_precision" value="6"  />
+    <parameter name="param_tol_precision" value="-9"  />
+  </section>
+</document>

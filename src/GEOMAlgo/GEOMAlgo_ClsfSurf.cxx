@@ -1,37 +1,41 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_ClsfSurf.cxx
-// Created:	Wed Nov 22 10:41:47 2006
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+
+// File:        GEOMAlgo_ClsfSurf.cxx
+// Created:     Wed Nov 22 10:41:47 2006
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
-#include <GEOMAlgo_ClsfSurf.ixx>
+#include <GEOMAlgo_ClsfSurf.hxx>
 #include <GeomAbs_SurfaceType.hxx>
 #include <GEOMAlgo_SurfaceTools.hxx>
 #include <GeomAdaptor_Curve.hxx>
 
+IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
+
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSurf::GEOMAlgo_ClsfSurf()
 :
@@ -40,14 +44,14 @@
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSurf::~GEOMAlgo_ClsfSurf()
 {
 }
 //=======================================================================
 //function : SetSurface
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSurf::SetSurface(const Handle(Geom_Surface)& aS)
 {
@@ -55,7 +59,7 @@
 }
 //=======================================================================
 //function : Surface
-//purpose  : 
+//purpose  :
 //=======================================================================
   const Handle(Geom_Surface)& GEOMAlgo_ClsfSurf::Surface() const
 {
@@ -63,7 +67,7 @@
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSurf::CheckData()
 {
@@ -78,15 +82,15 @@
   //
   myGAS.Load(myS);
   aType=myGAS.GetType();
-  if (!(aType==GeomAbs_Plane || 
-	aType==GeomAbs_Cylinder ||
-	aType==GeomAbs_Sphere)) {
+  if (!(aType==GeomAbs_Plane ||
+        aType==GeomAbs_Cylinder ||
+        aType==GeomAbs_Sphere)) {
     myErrorStatus=11; // unallowed surface type
   }
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSurf::Perform()
 {
@@ -101,7 +105,7 @@
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfSurf::CanBeON(const Handle(Geom_Curve)& aC) const
 {
@@ -120,7 +124,7 @@
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfSurf::CanBeON(const Handle(Geom_Surface)& aS1) const
 {

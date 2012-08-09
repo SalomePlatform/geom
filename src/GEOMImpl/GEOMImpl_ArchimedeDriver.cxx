@@ -1,29 +1,32 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include "GEOMImpl_ArchimedeDriver.hxx"
 #include "GEOMImpl_IArchimede.hxx"
 #include "GEOMImpl_Types.hxx"
 
 #include "Archimede_VolumeSection.hxx"
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <stdio.h>
 
@@ -41,7 +44,6 @@
 
 #include <StdFail_NotDone.hxx>
 
-using namespace std;
 
 //=======================================================================
 //function : GetID
@@ -128,7 +130,11 @@ Standard_Integer GEOMImpl_ArchimedeDriver::Execute(TFunction_Logbook& log) const
 
   Standard_Real u1,u2,v1,v2;
   SurfaceTrimmee->Bounds(u1,u2,v1,v2);
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  TopoDS_Face tirant = BRepBuilderAPI_MakeFace(SurfaceTrimmee, u1, u2, v1, v2, Precision::Confusion());
+#else
   TopoDS_Face tirant = BRepBuilderAPI_MakeFace(SurfaceTrimmee, u1, u2, v1, v2);
+#endif
 
   if (tirant.IsNull()) {
     StdFail_NotDone::Raise("Failed to build secant face");
@@ -159,10 +165,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_ArchimedeDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_ArchimedeDriver",
-			                                 sizeof(GEOMImpl_ArchimedeDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_ArchimedeDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }
@@ -182,7 +188,5 @@ const Handle(GEOMImpl_ArchimedeDriver) Handle(GEOMImpl_ArchimedeDriver)::DownCas
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }
-
-

@@ -1,30 +1,31 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_5.cxx
-// Created:	Mon Dec 15 11:28:33 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+
+// File:        NMTTools_PaveFiller_5.cxx
+// Created:     Mon Dec 15 11:28:33 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 
@@ -48,10 +49,10 @@
 #include <IntTools_ShrunkRange.hxx>
 #include <IntTools_Range.hxx>
 #include <IntTools_EdgeFace.hxx>
-#include <IntTools_PContext.hxx>
 #include <IntTools_SequenceOfCommonPrts.hxx>
 #include <IntTools_CommonPrt.hxx>
 #include <IntTools_Tools.hxx>
+#include <IntTools_Context.hxx>
 
 #include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
 #include <BooleanOperations_IndexedDataMapOfShapeInteger.hxx>
@@ -87,17 +88,17 @@
 
 static
   void VertexParameter(const IntTools_CommonPrt& aCPart,
-		       Standard_Real& aT);
+                       Standard_Real& aT);
 static
   Standard_Boolean IsOnPave(const Standard_Real& aTR,
-			    const IntTools_Range& aCPRange,
-			    const Standard_Real& aTolerance);
+                            const IntTools_Range& aCPRange,
+                            const Standard_Real& aTolerance);
 //
 //=======================================================================
 // function: PerformEF
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PerformEF() 
+  void NMTTools_PaveFiller::PerformEF()
 {
   Standard_Boolean bJustAdd;
   Standard_Integer n1, n2, anIndexIn, nE, nF, aNbEFs, aBlockLength;
@@ -131,10 +132,10 @@ static
     //
     anIndexIn = 0;
     //
-    nE=n1; 
+    nE=n1;
     nF=n2;
     if (myDS->GetShapeType(n2)==TopAbs_EDGE) {
-      nE=n2; 
+      nE=n2;
       nF=n1;
     }
     //
@@ -160,8 +161,8 @@ static
     //
     aTolF=BRep_Tool::Tolerance(aF);
     aTolE=BRep_Tool::Tolerance(aE);
-    
-    const Bnd_Box& aBBF=myDS->GetBoundingBox(nF); 
+
+    const Bnd_Box& aBBF=myDS->GetBoundingBox(nF);
     //
     // Process each PaveBlock on edge nE
     BOPTools_ListOfPaveBlock& aLPB=mySplitShapesPool(myDS->RefEdge(nE));
@@ -170,7 +171,7 @@ static
     for (; anIt.More(); anIt.Next()) {
       BOPTools_PaveBlock& aPB=anIt.Value();
       if (aCBAPIF.IsCommonBlock(aPB)) {
-	continue;
+        continue;
       }
       //
       const IntTools_ShrunkRange& aShrunkRange=aPB.ShrunkRange();
@@ -178,9 +179,9 @@ static
       const Bnd_Box& aBBE=aShrunkRange.BndBox();
       //
       if (aBBF.IsOut (aBBE)) {
-	continue;
+        continue;
       }
-      // 
+      //
       // EF
       IntTools_EdgeFace aEF;
       aEF.SetEdge (aE);
@@ -189,113 +190,113 @@ static
       aEF.SetTolF (aTolF);
       aEF.SetDiscretize (aDiscretize);
       aEF.SetDeflection (aDeflection);
-      // 
-      aEF.SetContext((IntTools_PContext)&myContext);
-      // 
+      //
+      aEF.SetContext(myContext);
+      //
       IntTools_Range anewSR = aSR;
-      // 
-      // Correction of the Shrunk Range 
+      //
+      // Correction of the Shrunk Range
       BOPTools_Tools::CorrectRange(aE, aF, aSR, anewSR);
       aEF.SetRange (anewSR);
       //
       aEF.Perform();
       //
       if (aEF.IsDone()) {
-	Standard_Boolean bCoinsideFlag;
-	Standard_Integer i, aNbCPrts;
-	TopAbs_ShapeEnum aType;
-	//
-	const IntTools_SequenceOfCommonPrts& aCPrts=aEF.CommonParts();
-	//
-	aNbCPrts=aCPrts.Length();
-	for (i=1; i<=aNbCPrts; ++i) {
-	  anIndexIn=0;
-	  //
-	  const IntTools_CommonPrt& aCPart=aCPrts(i);
-	  aType=aCPart.Type();
-	  //
-	  switch (aType) {
-	    //
-	    case TopAbs_VERTEX:  {
-	      Standard_Boolean bIsOnPave1, bIsOnPave2;
-	      Standard_Integer nVF;
-	      Standard_Real aT, aTolToDecide; 
-	      TopoDS_Vertex aNewVertex;
-	      //
-	      const IntTools_Range& aR=aCPart.Range1();
-	      //
-	      // New Vertex
-	      VertexParameter(aCPart, aT);
-	      BOPTools_Tools::MakeNewVertex(aE, aT, aF, aNewVertex);
-	      //
-	      //decide to add pave or not
-	      aTolToDecide=5.e-8;
-	      bIsOnPave1=IsOnPave(anewSR.First(), aR, aTolToDecide); 
-	      bIsOnPave2=IsOnPave(anewSR.Last() , aR, aTolToDecide); 
-	      //
-	      if (!bIsOnPave1 && !bIsOnPave2) {
-		nVF=CheckFacePaves(aNewVertex, nF);
-		if (!nVF) {
-		  // really new vertex
-		  // Add Interference to the Pool
-		  BOPTools_ESInterference anInterf (nE, nF, aCPart);
-		  anIndexIn=aEFs.Append(anInterf);
-		  anInterf.SetNewShape(0);
-		  //
-		  aMapVI.Add(aNewVertex, anIndexIn);
-		  aIMPBx.Add(aPB);
-		  //
-		  myIP->Add(nE, nF, Standard_True, NMTDS_TI_EF);
-		  //
-		}// if (!nVF)
-	      }// if (!bIsOnPave1 && !bIsOnPave2) 
-	      //
-	      //modified by NIZNHY-PKV Fri Apr 18 10:55:38 2008f
-	      else {
-		const BOPTools_Pave& aPave=(bIsOnPave1)? aPB.Pave1() : aPB.Pave2();
-		nVF=aPave.Index();
-		const TopoDS_Vertex& aVF=TopoDS::Vertex(myDS->Shape(nVF));
-		BOPTools_Tools::UpdateVertex (aVF, aNewVertex);
-	      }
-	      //modified by NIZNHY-PKV Fri Apr 18 10:55:40 2008t
-	      //
-	    }// case TopAbs_VERTEX:
-	      break;
-	    //
-	    case TopAbs_EDGE: {
-	      bCoinsideFlag=BOPTools_Tools::IsBlockInOnFace(aPB, aF, myContext);
-	      if (!bCoinsideFlag) {
-		break;
-	      }
-	      //
-	      // Fill aMapCB
-	      if (aMapCB.Contains(aPB)) {
-		TColStd_IndexedMapOfInteger& aMapF=aMapCB.ChangeFromKey(aPB);
-		aMapF.Add(nF);
-	      }
-	      else {
-		TColStd_IndexedMapOfInteger aMapF;
-		aMapF.Add(nF);
-		aMapCB.Add(aPB, aMapF);
-	      }
-	      //
-	      aIMPBx.Add(aPB);
-	      myIP->Add(nE, nF, Standard_True, NMTDS_TI_EF);
-	    }// case TopAbs_EDGE:
-	      break;
+        Standard_Boolean bCoinsideFlag;
+        Standard_Integer i, aNbCPrts;
+        TopAbs_ShapeEnum aType;
+        //
+        const IntTools_SequenceOfCommonPrts& aCPrts=aEF.CommonParts();
+        //
+        aNbCPrts=aCPrts.Length();
+        for (i=1; i<=aNbCPrts; ++i) {
+          anIndexIn=0;
+          //
+          const IntTools_CommonPrt& aCPart=aCPrts(i);
+          aType=aCPart.Type();
+          //
+          switch (aType) {
+            //
+            case TopAbs_VERTEX:  {
+              Standard_Boolean bIsOnPave1, bIsOnPave2;
+              Standard_Integer nVF;
+              Standard_Real aT, aTolToDecide;
+              TopoDS_Vertex aNewVertex;
+              //
+              const IntTools_Range& aR=aCPart.Range1();
+              //
+              // New Vertex
+              VertexParameter(aCPart, aT);
+              BOPTools_Tools::MakeNewVertex(aE, aT, aF, aNewVertex);
+              //
+              //decide to add pave or not
+              aTolToDecide=5.e-8;
+              bIsOnPave1=IsOnPave(anewSR.First(), aR, aTolToDecide);
+              bIsOnPave2=IsOnPave(anewSR.Last() , aR, aTolToDecide);
+              //
+              if (!bIsOnPave1 && !bIsOnPave2) {
+                nVF=CheckFacePaves(aNewVertex, nF);
+                if (!nVF) {
+                  // really new vertex
+                  // Add Interference to the Pool
+                  BOPTools_ESInterference anInterf (nE, nF, aCPart);
+                  anIndexIn=aEFs.Append(anInterf);
+                  anInterf.SetNewShape(0);
+                  //
+                  aMapVI.Add(aNewVertex, anIndexIn);
+                  aIMPBx.Add(aPB);
+                  //
+                  myIP->Add(nE, nF, Standard_True, NMTDS_TI_EF);
+                  //
+                }// if (!nVF)
+              }// if (!bIsOnPave1 && !bIsOnPave2)
+              //
+              //modified by NIZNHY-PKV Fri Apr 18 10:55:38 2008f
+              else {
+                const BOPTools_Pave& aPave=(bIsOnPave1)? aPB.Pave1() : aPB.Pave2();
+                nVF=aPave.Index();
+                const TopoDS_Vertex& aVF=TopoDS::Vertex(myDS->Shape(nVF));
+                BOPTools_Tools::UpdateVertex (aVF, aNewVertex);
+              }
+              //modified by NIZNHY-PKV Fri Apr 18 10:55:40 2008t
+              //
+            }// case TopAbs_VERTEX:
+              break;
+            //
+            case TopAbs_EDGE: {
+              bCoinsideFlag=BOPTools_Tools::IsBlockInOnFace(aPB, aF, myContext);
+              if (!bCoinsideFlag) {
+                break;
+              }
+              //
+              // Fill aMapCB
+              if (aMapCB.Contains(aPB)) {
+                TColStd_IndexedMapOfInteger& aMapF=aMapCB.ChangeFromKey(aPB);
+                aMapF.Add(nF);
+              }
+              else {
+                TColStd_IndexedMapOfInteger aMapF;
+                aMapF.Add(nF);
+                aMapCB.Add(aPB, aMapF);
+              }
+              //
+              aIMPBx.Add(aPB);
+              myIP->Add(nE, nF, Standard_True, NMTDS_TI_EF);
+            }// case TopAbs_EDGE:
+              break;
 
-	    default:
-	      break;
-	  } // switch (aType) 
-	} // for (i=1; i<=aNbCPrts; i++) 
+            default:
+              break;
+          } // switch (aType)
+        } // for (i=1; i<=aNbCPrts; i++)
       } //if (aEF.IsDone())
-    } // for (; anIt.More(); anIt.Next()) 
-  }// for (; myDSIt.More(); myDSIt.Next()) 
+    } // for (; anIt.More(); anIt.Next())
+  }// for (; myDSIt.More(); myDSIt.Next())
   //
   // Treat New vertices
   EFNewVertices(aMapVI);
   //
-  // Add draft Common Blocks of EF type 
+  // Add draft Common Blocks of EF type
   EFCommonBlocks(aMapCB);
   //
   // Collect all CB we suspected to split by new vertices
@@ -310,15 +311,15 @@ static
       nEx=aPBx.OriginalEdge();
       NMTTools_ListOfCommonBlock& aLCB=myCommonBlockPool(myDS->RefEdge(nEx));
       if (aLCB.Extent()) {
-	NMTTools_CommonBlockAPI aCBAPIx(aLCB);
-	if (aCBAPIx.IsCommonBlock(aPBx)) {
-	  NMTTools_CommonBlock& aCBx=aCBAPIx.CommonBlock(aPBx);
-	  const BOPTools_PaveBlock& aPB1=aCBx.PaveBlock1();
-	  if (!aMx.Contains(aPB1)){
-	    aMx.Add(aPB1);
-	    aLCBx.Append(aCBx);
-	  }
-	}
+        NMTTools_CommonBlockAPI aCBAPIx(aLCB);
+        if (aCBAPIx.IsCommonBlock(aPBx)) {
+          NMTTools_CommonBlock& aCBx=aCBAPIx.CommonBlock(aPBx);
+          const BOPTools_PaveBlock& aPB1=aCBx.PaveBlock1();
+          if (!aMx.Contains(aPB1)){
+            aMx.Add(aPB1);
+            aLCBx.Append(aCBx);
+          }
+        }
       }
     }
   }
@@ -332,7 +333,7 @@ static
 }
 //=======================================================================
 // function:EFCommonBlocks
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::EFCommonBlocks
     (const BOPTools_IDMapOfPaveBlockIMapOfInteger& aMapCB)
@@ -353,8 +354,8 @@ static
     if (aCBAPI.IsCommonBlock(aPB)) {
       NMTTools_CommonBlock& aCB=aCBAPI.CommonBlock(aPB);
       for (j=1; j<=aNbF; ++j) {
-	nF=aMapF(j);
-	aCB.AddFace(nF);
+        nF=aMapF(j);
+        aCB.AddFace(nF);
       }
     }
     else {
@@ -362,8 +363,8 @@ static
       //
       aCB.AddPaveBlock(aPB);
       for (j=1; j<=aNbF; ++j) {
-	nF=aMapF(j);
-	aCB.AddFace(nF);
+        nF=aMapF(j);
+        aCB.AddFace(nF);
       }
       aLCB.Append(aCB);
     }
@@ -371,10 +372,10 @@ static
 }
 //=======================================================================
 // function:EFNewVertices
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::EFNewVertices 
-    (const BooleanOperations_IndexedDataMapOfShapeInteger& aMapVI) 
+  void NMTTools_PaveFiller::EFNewVertices
+    (const BooleanOperations_IndexedDataMapOfShapeInteger& aMapVI)
 {
   Standard_Integer i, j, aNb, aNewShape, aFlag, iX, aNbVV, aNbSimple;
   Standard_Integer aWhat, aWith, nE, nF, nV, aNbIEF, aNbEdges, iTmp;
@@ -388,7 +389,7 @@ static
   TopTools_IndexedMapOfShape aMNVComplex, aMNVSimple;
   //
   aNb=aMapVI.Extent();
-  if (!aNb) { // no new vertices, no new problems 
+  if (!aNb) { // no new vertices, no new problems
     return;
   }
   //
@@ -408,7 +409,7 @@ static
     aBB.Add(aCompound, aV);
   }
   //
-  // 2. VV intersection between these vertices 
+  // 2. VV intersection between these vertices
   //       using the auxiliary Filler
   NMTTools_PaveFiller tPF;
   //
@@ -446,7 +447,7 @@ static
     EFNewVertices(aV, aMapVI);
   }
   //
-  // 3. Fill Maps : NewVertex-edges (aMNVE) 
+  // 3. Fill Maps : NewVertex-edges (aMNVE)
   //                NewVertex-interferences (aMNVIEE)
   aNb=aVVInterfs.Extent();
   for (i=1; i<=aNb; ++i) {
@@ -518,35 +519,35 @@ static
       BOPTools_ESInterference& aEF=aEFs(iX);
       aEF.SetNewShape(aNewShape);
     }
-    // 
-    // Update Paves on all edges 
+    //
+    // Update Paves on all edges
     const TColStd_IndexedMapOfInteger& aME=aMNVE(i);
     aNbEdges=aME.Extent();
     for (j=1; j<=aNbEdges; ++j) {
       nE=aME(j);
       const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));//mpv
       //
-      aFlag=myContext.ComputeVE (aNewVertex, aE, aT);
+      aFlag=myContext->ComputeVE (aNewVertex, aE, aT);
       //
       if (!aFlag) {
-	aPave.SetInterference(-1);
-	aPave.SetType (BooleanOperations_EdgeSurface);
-	aPave.SetIndex(aNewShape);
-	aPave.SetParam(aT);
-	//
-	BOPTools_PaveSet& aPaveSet=myPavePoolNew(myDS->RefEdge(nE));
-	aPaveSet.Append(aPave);
+        aPave.SetInterference(-1);
+        aPave.SetType (BooleanOperations_EdgeSurface);
+        aPave.SetIndex(aNewShape);
+        aPave.SetParam(aT);
+        //
+        BOPTools_PaveSet& aPaveSet=myPavePoolNew(myDS->RefEdge(nE));
+        aPaveSet.Append(aPave);
       }
     }
   }
 }
 //=======================================================================
 // function:EFNewVertices
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::EFNewVertices 
+  void NMTTools_PaveFiller::EFNewVertices
     (const TopoDS_Vertex& aNewVertex,
-     const BooleanOperations_IndexedDataMapOfShapeInteger& aMapVI) 
+     const BooleanOperations_IndexedDataMapOfShapeInteger& aMapVI)
 {
   Standard_Integer i, aNewShape, nE, nF;
   Standard_Real aT;
@@ -584,9 +585,9 @@ static
 }
 //=======================================================================
 // function: CheckFacePaves
-// purpose: 
+// purpose:
 //=======================================================================
-  Standard_Integer NMTTools_PaveFiller::CheckFacePaves 
+  Standard_Integer NMTTools_PaveFiller::CheckFacePaves
     (const TopoDS_Vertex& aNewVertex,
      const Standard_Integer nF)
 {
@@ -594,7 +595,7 @@ static
   BOPTools_ListIteratorOfListOfPave anIt;
   TColStd_IndexedMapOfInteger aMVF;
   //
-  iRet=0; 
+  iRet=0;
   //
   BooleanOperations_OnceExplorer aExp(*myDS);
   aExp.Init(nF, TopAbs_EDGE);
@@ -624,10 +625,10 @@ static
 //
 //=======================================================================
 // function: VertexParameter
-// purpose: 
+// purpose:
 //=======================================================================
 void VertexParameter(const IntTools_CommonPrt& aCPart,
-		     Standard_Real& aT)
+                     Standard_Real& aT)
 {
   const IntTools_Range& aR=aCPart.Range1();
   aT=0.5*(aR.First()+aR.Last());
@@ -638,11 +639,11 @@ void VertexParameter(const IntTools_CommonPrt& aCPart,
 }
 //=======================================================================
 // function: IsOnPave
-// purpose: 
+// purpose:
 //=======================================================================
 Standard_Boolean IsOnPave(const Standard_Real& aTR,
-			  const IntTools_Range& aCPRange,
-			  const Standard_Real& aTolerance)
+                          const IntTools_Range& aCPRange,
+                          const Standard_Real& aTolerance)
 {
   Standard_Boolean bIsOnPave;
   Standard_Real aT1, aT2, dT1, dT2;
@@ -654,7 +655,7 @@ Standard_Boolean IsOnPave(const Standard_Real& aTR,
     return bIsOnPave;
   }
   //
-  dT1=Abs(aTR-aT1);  
+  dT1=Abs(aTR-aT1);
   dT2=Abs(aTR-aT2);
   bIsOnPave=(dT1<=aTolerance || dT2<=aTolerance);
   return bIsOnPave;

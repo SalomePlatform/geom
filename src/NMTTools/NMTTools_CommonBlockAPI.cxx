@@ -1,30 +1,31 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_CommonBlockAPI.cxx
-// Created:	Mon Dec 15 11:38:04 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+
+// File:        NMTTools_CommonBlockAPI.cxx
+// Created:     Mon Dec 15 11:38:04 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
-#include <NMTTools_CommonBlockAPI.ixx>
+#include <NMTTools_CommonBlockAPI.hxx>
 
 #include <BOPTools_PaveBlock.hxx>
 #include <BOPTools_ListOfPaveBlock.hxx>
@@ -36,7 +37,7 @@
 
 //=======================================================================
 // function:  NMTTools_CommonBlockAPI::NMTTools_CommonBlockAPI
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlockAPI::NMTTools_CommonBlockAPI (const NMTTools_ListOfCommonBlock& aLCB)
 {
@@ -44,7 +45,7 @@
 }
 //=======================================================================
 // function:  List
-// purpose: 
+// purpose:
 //=======================================================================
   const NMTTools_ListOfCommonBlock& NMTTools_CommonBlockAPI::List () const
 {
@@ -75,8 +76,8 @@
       const BOPTools_PaveBlock& aPB=anItPB.Value();
       anECurrent=aPB.OriginalEdge();
       if (anECurrent==anE) {
-	pmyListOfPaveBlock->Append(aPB);
-	break;
+        pmyListOfPaveBlock->Append(aPB);
+        break;
       }
     }
   }
@@ -84,7 +85,7 @@
 }
 //=======================================================================
 // function:  IsCommonBlock
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_CommonBlockAPI::IsCommonBlock(const BOPTools_PaveBlock& aPB) const
 {
@@ -106,7 +107,7 @@
 
 //=======================================================================
 // function:  CommonBlock
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlock& NMTTools_CommonBlockAPI::CommonBlock(const BOPTools_PaveBlock& aPB)const
 {
@@ -119,14 +120,14 @@
   //
   anItCB.Initialize(*pLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     //
     const BOPTools_ListOfPaveBlock& aLPB=aCB.PaveBlocks();
     anItPB.Initialize(aLPB);
     for (; anItPB.More(); anItPB.Next()) {
       const BOPTools_PaveBlock& aPBx=anItPB.Value();
       if (aPBx.IsEqual(aPB)) {
-	return aCB;
+        return aCB;
       }
     }
   }

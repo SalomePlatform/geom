@@ -1,25 +1,28 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <GEOMImpl_I3DPrimOperations.hxx>
 
@@ -61,12 +64,13 @@
 #include <GEOMImpl_IPrism.hxx>
 #include <GEOMImpl_IPipe.hxx>
 #include <GEOMImpl_IRevolution.hxx>
-#include <GEOMImpl_IShapes.hxx>
 #include <GEOMImpl_IFilling.hxx>
 #include <GEOMImpl_IThruSections.hxx>
 #include <GEOMImpl_IPipeDiffSect.hxx>
 #include <GEOMImpl_IPipeShellSect.hxx>
 #include <GEOMImpl_IPipeBiNormal.hxx>
+
+#include <Precision.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -120,7 +124,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxDXDYDZ (double theDX, dou
 
   //Compute the box value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -177,7 +181,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxTwoPnt (Handle(GEOM_Objec
 
   //Compute the Box value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -228,7 +232,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double 
 
   //Compute the Face
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -256,7 +260,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double 
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceObjHW (Handle(GEOM_Object) theObj,
-							       double theH, double theW)
+                                                               double theH, double theW)
 {
   SetErrorCode(KO);
 
@@ -285,7 +289,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceObjHW (Handle(GEOM_Objec
 
   //Compute the Face
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -343,7 +347,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskPntVecR
 
   //Compute the Disk value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -371,8 +375,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskPntVecR
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskThreePnt (Handle(GEOM_Object) thePnt1,
-								  Handle(GEOM_Object) thePnt2,
-								  Handle(GEOM_Object) thePnt3)
+                                                                  Handle(GEOM_Object) thePnt2,
+                                                                  Handle(GEOM_Object) thePnt3)
 {
   SetErrorCode(KO);
 
@@ -403,7 +407,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskThreePnt (Handle(GEOM_Ob
 
   //Compute the Disk value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -453,7 +457,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskR (double theR, int theO
 
   //Compute the Disk
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -501,7 +505,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
 
   //Compute the Cylinder value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -562,7 +566,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
 
   //Compute the Cylinder value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -614,7 +618,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConeR1R2H (double theR1, dou
 
   //Compute the Cone value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -677,7 +681,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConePntVecR1R2H (Handle(GEOM
 
   //Compute the Cone value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -725,7 +729,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSphereR (double theR)
 
   //Compute the Sphere value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -780,7 +784,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSpherePntR (Handle(GEOM_Obje
 
   //Compute the Sphere value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -831,7 +835,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusRR
 
   //Compute the Torus value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -891,7 +895,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusPntVecRR
 
   //Compute the Torus value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -921,7 +925,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusPntVecRR
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Object) theBase,
                                                                Handle(GEOM_Object) theVec,
-                                                               double theH)
+                                                               double theH, double theScaleFactor)
 {
   SetErrorCode(KO);
 
@@ -948,10 +952,11 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
   aCI.SetBase(aRefBase);
   aCI.SetVector(aRefVec);
   aCI.SetH(theH);
+  aCI.SetScale(theScaleFactor);
 
   //Compute the Prism value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -967,8 +972,12 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrismVecH("
-    << theBase << ", " << theVec << ", " << theH << ")";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aPrism << " = geompy.MakePrismVecH(" << theBase << ", " << theVec << ", " << theH;
+  if (theScaleFactor > Precision::Confusion())
+    pd << ", " << theScaleFactor << ")";
+  else
+    pd << ")";
 
   SetErrorCode(OK);
   return aPrism;
@@ -980,8 +989,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH2Ways (Handle(GEOM_Object) theBase,
-								    Handle(GEOM_Object) theVec,
-								    double theH)
+                                                                    Handle(GEOM_Object) theVec,
+                                                                    double theH)
 {
   SetErrorCode(KO);
 
@@ -1011,7 +1020,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH2Ways (Handle(GEOM_
 
   //Compute the Prism value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1041,7 +1050,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH2Ways (Handle(GEOM_
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
        (Handle(GEOM_Object) theBase,
-        Handle(GEOM_Object) thePoint1, Handle(GEOM_Object) thePoint2)
+        Handle(GEOM_Object) thePoint1, Handle(GEOM_Object) thePoint2,
+        double theScaleFactor)
 {
   SetErrorCode(KO);
 
@@ -1069,10 +1079,11 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
   aCI.SetBase(aRefBase);
   aCI.SetFirstPoint(aRefPnt1);
   aCI.SetLastPoint(aRefPnt2);
+  aCI.SetScale(theScaleFactor);
 
   //Compute the Prism value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1088,8 +1099,12 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrism("
-    << theBase << ", " << thePoint1 << ", " << thePoint2 << ")";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aPrism << " = geompy.MakePrism(" << theBase << ", " << thePoint1 << ", " << thePoint2;
+  if (theScaleFactor > Precision::Confusion())
+    pd << ", " << theScaleFactor << ")";
+  else
+    pd << ")";
 
   SetErrorCode(OK);
   return aPrism;
@@ -1133,7 +1148,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt2Ways
 
   //Compute the Prism value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1162,7 +1177,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt2Ways
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ
-       (Handle(GEOM_Object) theBase, double theDX, double theDY, double theDZ)
+       (Handle(GEOM_Object) theBase, double theDX, double theDY, double theDZ,
+        double theScaleFactor)
 {
   SetErrorCode(KO);
 
@@ -1189,10 +1205,11 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ
   aCI.SetDX(theDX);
   aCI.SetDY(theDY);
   aCI.SetDZ(theDZ);
+  aCI.SetScale(theScaleFactor);
 
   //Compute the Prism value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1207,8 +1224,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrismDXDYDZ("
-    << theBase << ", " << theDX << ", " << theDY << ", " << theDZ << ")";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aPrism << " = geompy.MakePrismDXDYDZ("
+     << theBase << ", " << theDX << ", " << theDY << ", " << theDZ;
+  if (theScaleFactor > Precision::Confusion())
+    pd << ", " << theScaleFactor << ")";
+  else
+    pd << ")";
 
   SetErrorCode(OK);
   return aPrism;
@@ -1250,7 +1272,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ2Ways
 
   //Compute the Prism value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1267,6 +1289,88 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ2Ways
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakePrismDXDYDZ2Ways("
     << theBase << ", " << theDX << ", " << theDY << ", " << theDZ << ")";
+
+  SetErrorCode(OK);
+  return aPrism;
+}
+
+//=============================================================================
+/*!
+ *  MakeDraftPrism
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDraftPrism
+       (Handle(GEOM_Object) theInitShape ,Handle(GEOM_Object) theBase, double theHeight, double theAngle, bool theFuse)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull() || theInitShape.IsNull()) return NULL;
+
+  Handle(GEOM_Object) aPrism = NULL;
+  
+  if ( theFuse )
+  {
+    //Add a new Extruded Boss object  
+    aPrism = GetEngine()->AddObject(GetDocID(), GEOM_EXTRUDED_BOSS);
+  }
+  else
+  { 
+    //Add a new Extruded Cut object  
+    aPrism = GetEngine()->AddObject(GetDocID(), GEOM_EXTRUDED_CUT);
+  }
+  
+  //Add a new Prism function for the creation of a Draft Prism feature
+  Handle(GEOM_Function) aFunction = 
+    aPrism->AddFunction(GEOMImpl_PrismDriver::GetID(), DRAFT_PRISM_FEATURE);
+  if (aFunction.IsNull()) return NULL;
+  
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PrismDriver::GetID()) return NULL;
+  
+  GEOMImpl_IPrism aCI (aFunction);
+
+  Handle(GEOM_Function) aRefInit = theInitShape->GetLastFunction();
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+ 
+  if (aRefBase.IsNull() || aRefInit.IsNull()) return NULL;
+  
+  // Set parameters 
+  aCI.SetBase(aRefBase);
+  aCI.SetInitShape(aRefInit);
+  aCI.SetH(theHeight);
+  aCI.SetDraftAngle(theAngle);
+  if ( theFuse )
+    aCI.SetFuseFlag(1);
+  else
+    aCI.SetFuseFlag(0);
+  
+  //Compute the Draft Prism Feature value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Extrusion can not be created, check input data");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+  
+  //Make a Python command
+  if(theFuse)
+  {
+    GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakeExtrudedBoss("
+      << theInitShape << ", " << theBase << ", " << theHeight << ", " << theAngle << ")";
+  }
+  else
+  {   
+    GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakeExtrudedCut("
+      << theInitShape << ", " << theBase << ", " << theHeight << ", " << theAngle << ")";
+  }
 
   SetErrorCode(OK);
   return aPrism;
@@ -1307,7 +1411,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipe (Handle(GEOM_Object) th
 
   //Compute the Pipe value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1367,7 +1471,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
 
   //Compute the Revolution value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1383,7 +1487,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolution("
-    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
+    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / M_PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);
   return aRevolution;
@@ -1425,7 +1529,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
 
   //Compute the Revolution value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1441,63 +1545,10 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolution2Ways("
-    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
+    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / M_PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);
   return aRevolution;
-}
-
-//=============================================================================
-/*!
- *  MakeSolidShell
- */
-//=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSolidShell (Handle(GEOM_Object) theShell)
-{
-  SetErrorCode(KO);
-
-  if (theShell.IsNull()) return NULL;
-
-  //Add a new Solid object
-  Handle(GEOM_Object) aSolid = GetEngine()->AddObject(GetDocID(), GEOM_SOLID);
-
-  //Add a new Solid function for creation a solid from a shell
-  Handle(GEOM_Function) aFunction =
-    aSolid->AddFunction(GEOMImpl_ShapeDriver::GetID(), SOLID_SHELL);
-  if (aFunction.IsNull()) return NULL;
-
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) return NULL;
-
-  GEOMImpl_IShapes aCI (aFunction);
-
-  Handle(GEOM_Function) aRefShell = theShell->GetLastFunction();
-
-  if (aRefShell.IsNull()) return NULL;
-
-  aCI.SetBase(aRefShell);
-
-  //Compute the Solid value
-  try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
-    OCC_CATCH_SIGNALS;
-#endif
-    if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Solid driver failed");
-      return NULL;
-    }
-  }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
-    return NULL;
-  }
-
-  //Make a Python command
-  GEOM::TPythonDump(aFunction) << aSolid << " = geompy.MakeSolid(" << theShell << ")";
-
-  SetErrorCode(OK);
-  return aSolid;
 }
 
 //=============================================================================
@@ -1507,7 +1558,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSolidShell (Handle(GEOM_Obje
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
        (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg,
-        double theTol2D, double theTol3D, int theNbIter, bool isApprox)
+        double theTol2D, double theTol3D, int theNbIter,
+        int theMethod, bool isApprox)
 {
   SetErrorCode(KO);
 
@@ -1536,10 +1588,11 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   aFI.SetTol3D(theTol3D);
   aFI.SetNbIter(theNbIter);
   aFI.SetApprox(isApprox);
+  aFI.SetMethod(theMethod);
 
   //Compute the Solid value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1559,10 +1612,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
   pd << aFilling << " = geompy.MakeFilling("
-    << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
-      << theTol2D << ", " << theTol3D << ", " << theNbIter;
+     << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
+     << theTol2D << ", " << theTol3D << ", " << theNbIter  << ", ";
+  if( theMethod==1 ) pd << "GEOM.FOM_UseOri";
+  else if( theMethod==2 ) pd << "GEOM.FOM_AutoCorrect";
+  else pd << "GEOM.FOM_Default";
   if(isApprox)
-    pd << ", " << isApprox;
+    pd << ", " << isApprox ;
   pd << ")";
 
   SetErrorCode(OK);
@@ -1575,10 +1631,10 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
-						const Handle(TColStd_HSequenceOfTransient)& theSeqSections,
-						bool theModeSolid,
-						double thePreci,
-						bool theRuled)
+                                                const Handle(TColStd_HSequenceOfTransient)& theSeqSections,
+                                                bool theModeSolid,
+                                                double thePreci,
+                                                bool theRuled)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -1586,13 +1642,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
     return anObj;
 
   Standard_Integer nbObj = theSeqSections->Length();
-  if (!nbObj) 
+  if (!nbObj)
     return anObj;
 
   //Add a new ThruSections object
   Handle(GEOM_Object) aThruSect = GetEngine()->AddObject(GetDocID(), GEOM_THRUSECTIONS);
 
- 
+
   //Add a new ThruSections function
 
   int aTypeFunc = (theRuled ? THRUSECTIONS_RULED : THRUSECTIONS_SMOOTHED);
@@ -1613,7 +1669,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
     Handle(Standard_Transient) anItem = theSeqSections->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) aSectObj = Handle(GEOM_Object)::DownCast(anItem);
     if(!aSectObj.IsNull())
     {
@@ -1632,7 +1688,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
 
   //Compute the ThruSections value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1655,21 +1711,19 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
     Handle(Standard_Transient) anItem = theSeqSections->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) aSectObj = Handle(GEOM_Object)::DownCast(anItem);
     if(!aSectObj.IsNull()) {
       pyDump<< aSectObj;
       if(i < nbObj)
-	pyDump<<", ";
+        pyDump<<", ";
     }
   }
-  
+
   pyDump<< "],"<<theModeSolid << "," << thePreci <<","<< theRuled <<")";
 
   SetErrorCode(OK);
   return aThruSect;
-  
-   
 }
 
 
@@ -1679,11 +1733,11 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
-	        const Handle(TColStd_HSequenceOfTransient)& theBases,
-		const Handle(TColStd_HSequenceOfTransient)& theLocations,
-		const Handle(GEOM_Object)& thePath,
-		bool theWithContact,
-		bool theWithCorrections)
+                const Handle(TColStd_HSequenceOfTransient)& theBases,
+                const Handle(TColStd_HSequenceOfTransient)& theLocations,
+                const Handle(GEOM_Object)& thePath,
+                bool theWithContact,
+                bool theWithCorrections)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -1691,14 +1745,14 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
     return anObj;
 
   Standard_Integer nbBases = theBases->Length();
-  
+
   if (!nbBases)
     return anObj;
-  
+
   Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
   //Add a new Pipe object
   Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
- 
+
   //Add a new Pipe function
 
   Handle(GEOM_Function) aFunction =
@@ -1723,7 +1777,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
     Handle(Standard_Transient) anItem = theBases->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) aBase = Handle(GEOM_Object)::DownCast(anItem);
     if(aBase.IsNull())
       continue;
@@ -1734,14 +1788,14 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
     {
       Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
       if(anItemLoc.IsNull())
-	continue;
-    
+        continue;
+
       Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
       if(aLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
       if(aRefLoc.IsNull())
-	continue;
+        continue;
       aSeqLocs->Append(aRefLoc);
     }
     aSeqBases->Append(aRefBase);
@@ -1755,10 +1809,10 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
   aCI.SetPath(aRefPath);
   aCI.SetWithContactMode(theWithContact);
   aCI.SetWithCorrectionMode(theWithCorrections);
-  
+
   //Compute the Pipe value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1781,38 +1835,35 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
     Handle(Standard_Transient) anItem = theBases->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbBases)
-	pyDump<<", ";
+        pyDump<<", ";
     }
-    
   }
-  
+
   pyDump<< "], [";
-   
+
   for(i =1 ; i <= nbLocs; i++) {
 
     Handle(Standard_Transient) anItem = theLocations->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbLocs)
-	pyDump<<", ";
+        pyDump<<", ";
     }
-  }  
+  }
 
   pyDump<< "], "<<thePath<<","<<theWithContact << "," << theWithCorrections<<")";
 
   SetErrorCode(OK);
   return aPipeDS;
-  
-   
 }
 
 
@@ -1822,12 +1873,12 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
-	        const Handle(TColStd_HSequenceOfTransient)& theBases,
-	        const Handle(TColStd_HSequenceOfTransient)& theSubBases,
-		const Handle(TColStd_HSequenceOfTransient)& theLocations,
-		const Handle(GEOM_Object)& thePath,
-		bool theWithContact,
-		bool theWithCorrections)
+                const Handle(TColStd_HSequenceOfTransient)& theBases,
+                const Handle(TColStd_HSequenceOfTransient)& theSubBases,
+                const Handle(TColStd_HSequenceOfTransient)& theLocations,
+                const Handle(GEOM_Object)& thePath,
+                bool theWithContact,
+                bool theWithCorrections)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -1835,17 +1886,17 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
     return anObj;
 
   Standard_Integer nbBases = theBases->Length();
-  
+
   if (!nbBases)
     return anObj;
-  
+
   Standard_Integer nbSubBases =  (theSubBases.IsNull() ? 0 :theSubBases->Length());
 
   Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
 
   //Add a new Pipe object
   Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
- 
+
   //Add a new Pipe function
 
   Handle(GEOM_Function) aFunction =
@@ -1882,26 +1933,26 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
     if( nbSubBases >= nbBases ) {
       Handle(Standard_Transient) aSubItem = theSubBases->Value(i);
       if(aSubItem.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Object) aSubBase = Handle(GEOM_Object)::DownCast(aSubItem);
       if(aSubBase.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Function) aRefSubBase = aSubBase->GetLastFunction();
       if(aRefSubBase.IsNull())
-	continue;
+        continue;
       aSeqSubBases->Append(aRefSubBase);
     }
 
     if(nbLocs) {
       Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
       if(anItemLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
       if(aLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
       if(aRefLoc.IsNull())
-	continue;
+        continue;
       aSeqLocs->Append(aRefLoc);
     }
 
@@ -1917,10 +1968,10 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
   aCI.SetPath(aRefPath);
   aCI.SetWithContactMode(theWithContact);
   aCI.SetWithCorrectionMode(theWithCorrections);
-  
+
   //Compute the Pipe value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1943,48 +1994,46 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
     Handle(Standard_Transient) anItem = theBases->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbBases)
-	pyDump<<", ";
+        pyDump<<", ";
     }
-    
   }
-  
+
   pyDump<< "], [";
-   
+
   for(i =1 ; i <= nbSubBases; i++) {
 
     Handle(Standard_Transient) anItem = theSubBases->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbBases)
-	pyDump<<", ";
+        pyDump<<", ";
     }
-    
   }
-  
+
   pyDump<< "], [";
-   
+
   for(i =1 ; i <= nbLocs; i++) {
 
     Handle(Standard_Transient) anItem = theLocations->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbLocs)
-	pyDump<<", ";
+        pyDump<<", ";
     }
-  }  
+  }
 
   pyDump<< "], "<<thePath<<","<<theWithContact << "," << theWithCorrections<<")";
 
@@ -2000,8 +2049,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
-	        const Handle(TColStd_HSequenceOfTransient)& theBases,
-		const Handle(TColStd_HSequenceOfTransient)& theLocations)
+                const Handle(TColStd_HSequenceOfTransient)& theBases,
+                const Handle(TColStd_HSequenceOfTransient)& theLocations)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -2009,15 +2058,15 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
     return anObj;
 
   Standard_Integer nbBases = theBases->Length();
-  
+
   if (!nbBases)
     return anObj;
-  
+
   Standard_Integer nbLocs =  (theLocations.IsNull() ? 0 :theLocations->Length());
 
   //Add a new Pipe object
   Handle(GEOM_Object) aPipeDS = GetEngine()->AddObject(GetDocID(), GEOM_PIPE);
- 
+
   //Add a new Pipe function
 
   Handle(GEOM_Function) aFunction =
@@ -2048,13 +2097,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
     if(nbLocs) {
       Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
       if(anItemLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
       if(aLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
       if(aRefLoc.IsNull())
-	continue;
+        continue;
       aSeqLocs->Append(aRefLoc);
     }
 
@@ -2066,10 +2115,10 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
 
   aCI.SetBases(aSeqBases);
   aCI.SetLocations(aSeqLocs);
-  
+
   //Compute the Pipe value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -2092,31 +2141,30 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
     Handle(Standard_Transient) anItem = theBases->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbBases)
-	pyDump<<", ";
+        pyDump<<", ";
     }
-    
   }
-  
+
   pyDump<< "], [";
-   
+
   for(i =1 ; i <= nbLocs; i++) {
 
     Handle(Standard_Transient) anItem = theLocations->Value(i);
     if(anItem.IsNull())
       continue;
-    
+
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(anItem);
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbLocs)
-	pyDump<<", ";
+        pyDump<<", ";
     }
-  }  
+  }
 
   pyDump<< "])";
 
@@ -2132,8 +2180,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeBiNormalAlongVector (Handle(GEOM_Object) theBase,
-									     Handle(GEOM_Object) thePath,
-									     Handle(GEOM_Object) theVec)
+                                                                             Handle(GEOM_Object) thePath,
+                                                                             Handle(GEOM_Object) theVec)
 {
   SetErrorCode(KO);
 
@@ -2164,7 +2212,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeBiNormalAlongVector (Han
 
   //Compute the Pipe value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -2185,4 +2233,3 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeBiNormalAlongVector (Han
   SetErrorCode(OK);
   return aPipe;
 }
-

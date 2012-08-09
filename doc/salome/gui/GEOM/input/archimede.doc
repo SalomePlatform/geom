@@ -17,6 +17,7 @@ the shape, \em WaterDensity  is density of water, \em MeshingDeflection is a
 deflection of the mesh, using to compute the section.
 \n <b>Arguments:</b> Name + 1 shape  + 3 values (Weight, Water Density
 & Meshing Deflection).
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 \image html archimede.png
 

@@ -1,30 +1,31 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Algo.cxx
-// Created:	Sat Dec 04 12:39:47 2004
-// Author:	Peter KURNEV
-//		<peter@PREFEX>
+
+// File:        GEOMAlgo_PassKey.cxx
+// Created:
+// Author:      Peter KURNEV
+//              <peter@PREFEX>
 //
-#include <GEOMAlgo_PassKey.ixx>
+#include <GEOMAlgo_PassKey.hxx>
 
 #include <stdio.h>
 #include <string.h>
@@ -32,24 +33,24 @@
 #include <TColStd_ListOfInteger.hxx>
 
 #ifdef WNT
-#pragma warning( disable : 4101) 
+#pragma warning( disable : 4101)
 #endif
 
 static
   Standard_Integer NormalizedId(const Standard_Integer aId,
-				const Standard_Integer aDiv);
+                                const Standard_Integer aDiv);
 
 //=======================================================================
 //function :
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKey::GEOMAlgo_PassKey()
 {
- Clear(); 
+ Clear();
 }
 //=======================================================================
 //function :
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKey::GEOMAlgo_PassKey(const GEOMAlgo_PassKey& aOther)
 {
@@ -59,7 +60,7 @@ static
 }
 //=======================================================================
 //function :Assign
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKey& GEOMAlgo_PassKey::Assign(const GEOMAlgo_PassKey& aOther)
 {
@@ -70,14 +71,14 @@ static
 }
 //=======================================================================
 //function :~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKey::~GEOMAlgo_PassKey()
 {
 }
 //=======================================================================
 //function :Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::Clear()
 {
@@ -87,10 +88,10 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1)
-			       
+
 {
   Clear();
   myNbIds=1;
@@ -99,10 +100,10 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
-				const Standard_Integer aId2)
+                                const Standard_Integer aId2)
 {
   TColStd_ListOfInteger aLI;
   //
@@ -112,11 +113,11 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
-				const Standard_Integer aId2,
-				const Standard_Integer aId3)
+                                const Standard_Integer aId2,
+                                const Standard_Integer aId3)
 {
   TColStd_ListOfInteger aLI;
   //
@@ -127,13 +128,13 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
-				const Standard_Integer aId2,
-				const Standard_Integer aId3,
-				const Standard_Integer aId4)
-{ 
+                                const Standard_Integer aId2,
+                                const Standard_Integer aId3,
+                                const Standard_Integer aId4)
+{
   TColStd_ListOfInteger aLI;
   //
   aLI.Append(aId1);
@@ -144,7 +145,7 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const TColStd_ListOfInteger& aLI)
 {
@@ -166,7 +167,7 @@ static
 }
 //=======================================================================
 //function :NbIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKey::NbIds()const
 {
@@ -174,7 +175,7 @@ static
 }
 //=======================================================================
 //function :Id
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKey::Id(const Standard_Integer aIndex) const
 {
@@ -185,7 +186,7 @@ static
 }
 //=======================================================================
 //function :IsEqual
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_PassKey::IsEqual(const GEOMAlgo_PassKey& aOther) const
 {
@@ -207,7 +208,7 @@ static
 }
 //=======================================================================
 //function : HashCode
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKey::HashCode(const Standard_Integer aUpper) const
 {
@@ -215,17 +216,17 @@ static
 }
 //=======================================================================
 //function : Dump
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::Dump(const Standard_Integer )const
 {
 }
 //=======================================================================
 // function: NormalizedId
-// purpose : 
+// purpose :
 //=======================================================================
 Standard_Integer NormalizedId(const Standard_Integer aId,
-			      const Standard_Integer aDiv)
+                              const Standard_Integer aDiv)
 {
   Standard_Integer aMax, aTresh, aIdRet;
   //

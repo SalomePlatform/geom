@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_EllipseDriver.hxx>
@@ -79,7 +80,7 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aShapePnt = aRefPoint->GetValue();
       if (aShapePnt.ShapeType() != TopAbs_VERTEX) {
         Standard_ConstructionError::Raise
-          ("Circle creation aborted: invalid center argument, must be a point");
+          ("Ellipse creation aborted: invalid center argument, must be a point");
       }
       aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
     }
@@ -90,7 +91,7 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aShapeVec = aRefVector->GetValue();
       if (aShapeVec.ShapeType() != TopAbs_EDGE) {
         Standard_ConstructionError::Raise
-          ("Circle creation aborted: invalid vector argument, must be a vector or an edge");
+          ("Ellipse creation aborted: invalid normal vector argument, must be a vector or an edge");
       }
       TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
       TopoDS_Vertex V1, V2;
@@ -99,14 +100,51 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
         aV = gp_Vec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
         if (aV.Magnitude() < gp::Resolution()) {
           Standard_ConstructionError::Raise
-            ("Circle creation aborted: vector of zero length is given");
+            ("Ellipse creation aborted: normal vector of zero length is given");
         }
       }
     }
+
     // Axes
     gp_Ax2 anAxes (aP, aV);
+
+    // Main Axis vector
+    Handle(GEOM_Function) aRefVectorMaj = aCI.GetVectorMajor();
+    if (!aRefVectorMaj.IsNull()) {
+      TopoDS_Shape aShapeVec = aRefVectorMaj->GetValue();
+      if (aShapeVec.ShapeType() != TopAbs_EDGE) {
+        Standard_ConstructionError::Raise
+          ("Ellipse creation aborted: invalid major axis vector argument, must be a vector or an edge");
+      }
+      TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
+      TopoDS_Vertex V1, V2;
+      TopExp::Vertices(anE, V1, V2, Standard_True);
+      if (!V1.IsNull() && !V2.IsNull()) {
+        gp_Vec aVM (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+        if (aVM.Magnitude() < gp::Resolution()) {
+          Standard_ConstructionError::Raise
+            ("Ellipse creation aborted: major axis vector of zero length is given");
+        }
+        if (aV.IsParallel(aVM, Precision::Angular())) {
+          Standard_ConstructionError::Raise
+            ("Ellipse creation aborted: normal and major axis vectors are parallel");
+        }
+        // Axes defined with main axis vector
+        anAxes  = gp_Ax2 (aP, aV, aVM);
+      }
+    }
+    // Radiuses
+    double radiusMaj = aCI.GetRMajor();
+    double radiusMin = aCI.GetRMinor();
+    if ( radiusMaj < radiusMin )
+      Standard_ConstructionError::Raise
+        ("Ellipse creation aborted: a major radius is less that a minor one");
+    if ( radiusMin < 0.0 )
+      Standard_ConstructionError::Raise
+        ("Ellipse creation aborted: raduis must be positive");
+
     // Ellipse
-    gp_Elips anEll (anAxes, aCI.GetRMajor(), aCI.GetRMinor());
+    gp_Elips anEll (anAxes, radiusMaj, radiusMin);
     aShape = BRepBuilderAPI_MakeEdge(anEll).Edge();
   }
   else {
@@ -139,10 +177,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_EllipseDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_EllipseDriver",
-			                                 sizeof(GEOMImpl_EllipseDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_EllipseDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

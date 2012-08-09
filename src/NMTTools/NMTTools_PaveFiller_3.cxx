@@ -1,30 +1,31 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_3.cxx
-// Created:	Mon Dec  8 16:06:56 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+
+// File:        NMTTools_PaveFiller_3.cxx
+// Created:     Mon Dec  8 16:06:56 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -39,19 +40,18 @@
 #include <NMTDS_Iterator.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_InterfPool.hxx>
+#include <IntTools_Context.hxx>
 
 
-// Modified  Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
 static
   Standard_Boolean Contains(const TopoDS_Face& aF,
-			    const TopoDS_Vertex& aV);
-// Contribution of Samtech www.samcef.com END
+                            const TopoDS_Vertex& aV);
+
 //=======================================================================
 // function: PerformVF
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PerformVF() 
+  void NMTTools_PaveFiller::PerformVF()
 {
   myIsDone=Standard_False;
   //
@@ -63,7 +63,7 @@ static
   //
   BOPTools_CArray1OfVSInterference& aVSs=myIP->VSInterferences();
   //
-  // V/E Interferences 
+  // V/E Interferences
   myDSIt->Initialize(TopAbs_VERTEX, TopAbs_FACE);
   //
   // BlockLength correction
@@ -80,63 +80,63 @@ static
       aWhat=n1; // Vertex
       aWith=n2; // Face
       if (myDS->GetShapeType(n1)==TopAbs_FACE) {
-	aWhat=n2;
-	aWith=n1;
+        aWhat=n2;
+        aWith=n1;
       }
       //
       iSDV=FindSDVertex(aWhat);
-	//
+        //
       if(aJustAdd) {
-	//myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexSurface, anIndexIn);
-	continue;
+        //myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexSurface, anIndexIn);
+        continue;
       }
       //
       aV1=TopoDS::Vertex(myDS->Shape(aWhat));
       if (iSDV) {
-	aV1=TopoDS::Vertex(myDS->Shape(iSDV));
+        aV1=TopoDS::Vertex(myDS->Shape(iSDV));
       }
-	//
+        //
       aF2=TopoDS::Face(myDS->Shape(aWith));
       //
-      // Modified  Thu Sep 14 14:35:18 2006 
+      // Modified  Thu Sep 14 14:35:18 2006
       // Contribution of Samtech www.samcef.com BEGIN
       if (Contains(aF2, aV1)) {
-	continue;
+        continue;
       }
       // Contribution of Samtech www.samcef.com END
       //
-      aFlag=myContext.ComputeVS (aV1, aF2, aU, aV);
+      aFlag=myContext->ComputeVS (aV1, aF2, aU, aV);
       //
       if (!aFlag) {
-	//
-	// Add Interference to the Pool
-	BOPTools_VSInterference anInterf (aWhat, aWith, aU, aV);
-	anIndexIn=aVSs.Append(anInterf);
-	//
-	// SetState for Vertex in DS;
-	myDS->SetState (aWhat, BooleanOperations_ON);
-	// Insert Vertex in Interference Object
-	BOPTools_VSInterference& aVS=aVSs(anIndexIn);
-	aVS.SetNewShape(aWhat);
-	// qqf
-	{
-	  myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_VF);
-	}
-	// qqt
+        //
+        // Add Interference to the Pool
+        BOPTools_VSInterference anInterf (aWhat, aWith, aU, aV);
+        anIndexIn=aVSs.Append(anInterf);
+        //
+        // SetState for Vertex in DS;
+        myDS->SetState (aWhat, BooleanOperations_ON);
+        // Insert Vertex in Interference Object
+        BOPTools_VSInterference& aVS=aVSs(anIndexIn);
+        aVS.SetNewShape(aWhat);
+        // qqf
+        {
+          myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_VF);
+        }
+        // qqt
       }
       //myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexSurface, anIndexIn);
     }
   }
   myIsDone=Standard_True;
 }
-// Modified  Thu Sep 14 14:35:18 2006 
+// Modified  Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean Contains(const TopoDS_Face& aF,
-			  const TopoDS_Vertex& aV)
+                          const TopoDS_Vertex& aV)
 {
   Standard_Boolean bRet;
   TopExp_Explorer aExp;

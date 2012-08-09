@@ -1,39 +1,104 @@
 /*!
 
-\page create_sketcher_page Sketcher
+\page create_sketcher_page 2D Sketcher
 
-Sketcher allows to create curves of 2 types: line segment and arc.
-By default the start point of the curve is located at the point of
-origin of the reference coordinate system and the curve lies in the
-plane XOY.  The end of the curve is defined by
-means of "destination", which can be a destination point (for segment
-only) or destination direction coupled with length of a segment or
-angle and radius of an arc.
+The 2D Sketcher allows you to draw 2D shapes on a working plane. You
+can create sketches of two types:
 
-\n Sketcher is able to create planar curves only. Therefore, it is
-necessary to select a working plane before starting a sketch (by
-default, XOY plane is used). Sketcher creates curves lying in the
-current working plane (New Entity -> Basic -> Working Plane).
+<ul>
+<li> \b Profile made of connected curves of 2 types: <b>line segments</b> and \b arcs.
 
-\n This functionality is available from the main menu via <em>New
-Entity / Sketch</em>.
+\b or
 
-\n The Result of the operation will be a \b GEOM_Object.
+<li>  \b Rectangle
+</ul>
 
-\n <b>TUI Command:</b> <em>geompy.MakeSketcher(Command, WorkingPlane)</em>
-\n This algorithm creates a sketcher (wire or face), following the
-textual description, passed through the Command argument. The edges of
-the resulting wire or face will be arcs of circles and/or linear
-segments.
-\n \em Command is a string, defining the sketcher by the coordinates of
-points in the local working plane.
-\n <em>WorkingPlane</em> can be a plane or a planar face. The plane is
-defined by the XYZ coordinates of three non-coincident points. The
-planar face is an existing GEOM_Object.
+The \b Result is a \b Wire
+
+\n <b>Example:</b>
+
+\image html sketch_example.png
+
+To create a <b> 2D Sketch</b>:
+
+<ol>
+<li>In the main menu select <b>New Entity -> Basic -> 2D Sketch</b> or click on \image html sketch.png </li>
+
+<li> Select the \b plane or the <b>planar face</b> on which to create the sketch. 
+\note By default the sketch is created on the XOY plane of the global coordinate system.
+If Local Coordinate Systems have been created in the study they appear
+in the combobox and can be selected as a reference coordinate system.</li>
+
+<li> Choose a \b segment or an \b arc element to start a \b profile or choose \b rectangle to draw a rectangle.
+
+\n If you draw a \b profile:
+
+<li> Select a start point. By default the start point of the curve is located at the point of
+origin of the reference coordinate system.</li>
+
+<li> Create curve portions and click on \b Apply after each step.</li>
+
+<li> Select either \b Close or <b>Sketch Closure</b> if you want to close the profile before closing the window.</li>
+</ol>
+
+\n To create a \b Segment:
+
+<ol>
+<li> In the <b>Element Type</b> part of the dialog box select:
+
+\image html line_icon.png </li>
+
+<li> You can define the segment by either its <b>end point</b> or \b direction and \b length. The direction is defined relatively to the tangent at the last point of the sketch. It can be:
+  <ul>
+    <li> Tangent (colinear to the tangent at the last point)</li>
+    <li> Perpendicular</li>
+    <li> Defined by an angle</li>
+    <li> Defined by a vector (Vx, Vy)</li>
+  </ul>
+
+</li>
+
+</ol>
+  
+\n To create an \b Arc:
+
+<ol>
+<li> In the <b>Element Type</b> part of the dialog box select \image html arc_icon.png </li>
+
+<li> You can define the segment by either its <b>end point</b> or \b direction \b radius and \b angle. </li>
+
+<ul>
+  <li>In case of an end point the arc can be built in three different ways:</li>
+  <ul>
+    <li>From the end point only. The arc is \b tangential to the end of the sketch.</li>
+    <li>From the end point and a \b radius. (The radius must be greater than half of the distance between the last point and the end point of the arc).</li>
+    <li>From the \b center of the circle and the end point. The constraint on the center is first taken into account.
+    The destination point is only used to define the angle of the arc and won't lie on the arc in the general case.</li>
+  </ul>
+  
+  <li>The direction is defined relatively to the tangent at the last point of the sketch. It can be:</li>
+  
+  <ul>
+    <li>Tangent (colinear to the tangent at the last point)</li><
+    <li>Perpendicular</li>
+    <li>Defined by an angle</li>
+    <li>Defined by a vector (Vx, Vy)</li>
+  </ul>
+</ul>
+    
+</ol>
+
+\note For the first segment or arc of the sketch the reference direction is the X direction of the reference coordinate system.
+
+\n <b>Dialog Box:</b>
+
+\image html sketcher_dlg.png
 
 \n <b>Arguments:</b>
 <ol>
-<li>Element type (segment or arc).</li>
+<li>Coordinate system (Existing Local CS or Global CS can be selected)</li>
+<li>A plane or a planar face to define a new Local Coordinate System
+<li>Element type (segment, arc or rectangle).</li>
 <li>Destination type (point or direction).</li>
 <li>Destination point by means of:</li>
 <ul>
@@ -44,30 +109,58 @@ planar face is an existing GEOM_Object.
 <li>Destination direction by means of:</li>
 <ul>
 <li>angle between the new segment and the previous one;</li>
-<li>perpendicular to the previous segment (same as previous, but angle
+<li>perpendicular to the previous segment (same as previous, but the angle
 is predefined and is equal to 90 degrees);</li>
 <li>tangent to the previous segment;</li>
 <li>vector components DX, DY.</li>
 </ul>
-<li>Parameters of an element (for segment : length or target X or Y coordinate value, for arc : radius and angle).</li>
+<li>Parameters of an element (for segment : length or target X or Y coordinate value, for arc : radius, angle or center coordinates).</li>
 </ol>
 
 \b Buttons:
 
-<b>"Sketch Validation"</b> button applies the wire, only red part will be built by "Sketch Validation".
-\n <b>"Sketch Closure"</b> will close the Sketch by straight line from last red part and apply it.
+<b>"Restore"</b> button orientates the viewer correspondingly to the chosen working plane and fits the scene to show all its objects. 
+\n <b>"Close"</b> button applies the wire, only the red part will be built.
+\n <b>"Sketch Closure"</b> will close the Sketch by a straight line
+from the last red part and apply it.
+
+\n To draw a \b rectangle:
+
+<ol>
+<li> In the <b>Element Type</b> part of the dialog box select \image html rectangle_icon.png </li>
+
+<li> Draw a rectangle with the mouse directly in the view or fill in the coordinates of two opposite vertices of the rectangle.</li>
+<li> <b>Apply and Close</b> </li>
+</ol>
 
 \n <b>Dialog Box:</b>
 
-\image html neo-scetcher1.png
+\image html sketcher_dlg2.png
 
-\image html neo-scetcher2.png
+\n <b>Arguments:</b>
+<ol>
+<li>Coordinate system (Existing Local CS or Global CS can be selected)</li>
+<li>A plane or a planar face to define a new Local Coordinate System
+<li>Element type (segment, arc or rectangle).</li>
+<li>The X,Y coordinates of two opposite vertices of the rectangle</li>
+</ol>
 
-\n <b>Example:</b>
 
-\image html image204.jpg "Creation of a circle with sketcher"
+\n <b>TUI Command:</b> <em>geompy.MakeSketcherOnPlane(Command, WorkingPlane)</em>
+\n This algorithm creates a sketcher (wire or face), following the
+textual description, passed through the Command argument. The edges of
+the resulting wire or face will be arcs of circles and/or linear
+segments.
+\n \em Command is a string, defining the sketcher by the coordinates of
+points in the current LCS.
+\n <em>WorkingPlane</em> can be a Local CS, a plane, or a planar face.
+
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_sketcher_page "Sketcher".
+
+A wrapper also exists to help in the construction of a sketcher using simple commands.
+The description of this wrapper can be found in the <a class="el" target="_new" href="../../tui/GEOM/docutils/docapi.html#module-salome.geom.sketcher">
+dedicated page</a> of the <a class="el" target="_new" href="../../tui/GEOM/docutils/index.html">salome.geom python package</a>.
 
 */

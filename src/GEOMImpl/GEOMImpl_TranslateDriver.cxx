@@ -1,28 +1,30 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_ITranslate.hxx>
+#include <GEOMImpl_ITransformOperations.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
@@ -78,7 +80,7 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
 
   if (aFunction.IsNull()) return 0;
 
-  GEOMImpl_ITranslate TI(aFunction);
+  GEOMImpl_ITranslate TI (aFunction);
   gp_Trsf aTrsf;
   gp_Pnt aP1, aP2;
   Standard_Integer aType = aFunction->GetType();
@@ -196,6 +198,7 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
       B.Add(aCompound, anOriginal.Located(aLocRes));
     }
     aShape = aCompound;
+    //aShape = GEOMImpl_ITransformOperations::TranslateShape1D(anOriginal, &TI);
   }
   else if (aType == TRANSLATE_2D) {
     Standard_Integer nbtimes1 = TI.GetNbIter1(), nbtimes2 = TI.GetNbIter2();
@@ -241,7 +244,8 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
         B.Add(aCompound, anOriginal.Located(aLocRes));
       }
     }
-   aShape = aCompound;
+    aShape = aCompound;
+    //aShape = GEOMImpl_ITransformOperations::TranslateShape2D(anOriginal, &TI);
   }
   else return 0;
 
@@ -285,10 +289,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_TranslateDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_TranslateDriver",
-			                                 sizeof(GEOMImpl_TranslateDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_TranslateDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

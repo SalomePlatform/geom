@@ -17,6 +17,7 @@ YDY, YDZ is a a vector of OY direction of the LCS.
 \n Secondly, you can simply select any object in the object browser or
 3D viewer, in this case the coordinates of origin and axes direction
 of the LCS are calculated automatically basing on the selected object.
+\n <b>TUI command:</b> <em>geompy.MakeMarkerFromShape(theShape)</em>.
 \n <b>Arguments:</b> Name + reference object.
 
 \image html neo-localcs2.png
@@ -24,17 +25,21 @@ of the LCS are calculated automatically basing on the selected object.
 \n The last algorithm of LCS construction allows to define the
 coordinates of origin by a point and axes directions by a line or a
 vector.
-\n <b>Arguments:</b> Name + 1 point of origin + X axis direction, Y
-axis direction.
+\n <b>TUI command:</b> <em>geompy.MakeMarkerPntTwoVec(Center, VectorX, 
+VectorY)</em> where Center is the origin of the coordinate system,
+VectorX is the direction of OX axis and VectorY is the direction of OY axis.
+\n <b>Arguments:</b> Name + 1 point of origin + X axis direction, Y axis direction.
 
 \image html neo-localcs3.png
 
-Press «OK» or «Apply» button to create an LCS at the location with the
+Press \c OK or \c Apply button to create an LCS at the location with the
 specified coordinates. The new object is shown in the Object Browser
 and in 3D viewer.
 
 <b>Example:</b>
 
-\image html image145.jpg "Local Coordinate System"
+\image html image145.png "Local Coordinate System"
 
+<b>TUI Script</b> provides you with a useful example of
+\ref tui_creation_lcs "Local Coordinate System" creation.
 */

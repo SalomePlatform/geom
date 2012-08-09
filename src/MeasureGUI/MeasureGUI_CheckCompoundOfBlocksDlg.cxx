@@ -1,28 +1,30 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_CheckCompoundOfBlocksDlg.cxx
 // Author : Vladimir KLYACHIN, Open CASCADE S.A.S. (vladimir.klyachin@opencascade.com)
 //
+#include "MeasureGUI.h"
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h"
 #include "MeasureGUI_Widgets.h"
 
@@ -123,8 +125,8 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::Init()
   connect( myGrp->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( myGrp->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
-  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ), 
-	   this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+           this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_BLOCKS_COMPOUND") );
   buttonOk()->setEnabled( false );
@@ -175,11 +177,10 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
     return;
   }
 
-  Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if ( !testResult || aSelectedObject->_is_nil() ) {
+  if ( aSelectedObject->_is_nil() ) {
     myGrp->LineEdit1->setText( "" );
     processObject();
     return;
@@ -188,7 +189,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
   myObj = aSelectedObject;
   myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
   processObject();
-  displayPreview();
+  DISPLAY_PREVIEW_MACRO;
 }
 
 //=================================================================================
@@ -228,7 +229,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::ActivateThisDialog()
     connect( aSel, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
-  displayPreview();
+  DISPLAY_PREVIEW_MACRO
 }
 
 //=================================================================================
@@ -236,23 +237,25 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::ActivateThisDialog()
 // purpose  :
 //=================================================================================
 bool MeasureGUI_CheckCompoundOfBlocksDlg::getBCErrors( bool& theIsCompoundOfBlocks,
-						       GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
+                                                       GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
 {
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() );
     try {
       GEOM::GEOM_IBlocksOperations::BCErrors_var aErrs;
-      theIsCompoundOfBlocks =
-	GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->CheckCompoundOfBlocks( myObj, aErrs );
-      theErrors = aErrs;
+      theIsCompoundOfBlocks = anOper->CheckCompoundOfBlocks( myObj, aErrs );
+      if (anOper->IsDone() && aErrs->length() > 0)
+      //if (anOper->IsDone() && !aErrs._is_nil())
+        theErrors = aErrs;
     }
     catch ( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }
 
@@ -266,6 +269,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
   bool isCompoundOfBlocks;
   GEOM::GEOM_IBlocksOperations::BCErrors aErrs;
   if ( !getBCErrors( isCompoundOfBlocks, aErrs ) ) {
+    aMsg += tr( "GEOM_CHECK_BLOCKS_COMPOUND_FAILED" );
     myGrp->TextView1->setText( aMsg );
     myGrp->ListBox1->clear();
     myGrp->ListBox2->clear();
@@ -277,7 +281,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
     aMsg += tr( "GEOM_CHECK_BLOCKS_COMPOUND_HAS_NO_ERRORS" );
     buttonOk()->setEnabled( false );
     buttonApply()->setEnabled( false );
-  } 
+  }
   else {
     aMsg += tr( "GEOM_CHECK_BLOCKS_COMPOUND_HAS_ERRORS" );
     buttonOk()->setEnabled( true );
@@ -295,29 +299,29 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
     aErrStr = "";
     switch ( aErrs[i].error ) {
       case GEOM::GEOM_IBlocksOperations::NOT_BLOCK :
-	aErrStr = "Not a Block";
+        aErrStr = "Not a Block";
         break;
       case GEOM::GEOM_IBlocksOperations::EXTRA_EDGE :
-	aErrStr = "Extra Edge";
+        aErrStr = "Extra Edge";
         break;
       case GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION :
-	aErrStr = "Invalid Connection";
-	aErrStr += aConSfx;
-	aErrStr += QString::number( aConNum );
-	aConNum++;
+        aErrStr = "Invalid Connection";
+        aErrStr += aConSfx;
+        aErrStr += QString::number( aConNum );
+        aConNum++;
         break;
       case GEOM::GEOM_IBlocksOperations::NOT_CONNECTED :
-	aErrStr = "Not Connected";
+        aErrStr = "Not Connected";
         break;
       case GEOM::GEOM_IBlocksOperations::NOT_GLUED :
-	aErrStr = "Not Glued";
-	aErrStr += aGluedSfx;
-	aErrStr += QString::number( aGluedNum );
-	aGluedNum++;
+        aErrStr = "Not Glued";
+        aErrStr += aGluedSfx;
+        aErrStr += QString::number( aGluedNum );
+        aGluedNum++;
         break;
       default :
-	aErrStr = "";
-	break;
+        aErrStr = "";
+        break;
     }
     if ( !aErrStr.isEmpty() )
       aErrList.append( aErrStr );
@@ -355,24 +359,19 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
     myGrp->ListBox2->clear();
     return;
   }
-  
+
   GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aCurItem];
   GEOM::ListOfLong aObjLst = aErr.incriminated;
-  TopoDS_Shape aSelShape;
-  TopoDS_Shape aSubShape; 
-  TopTools_IndexedMapOfShape anIndices;
   QStringList aSubShapeList;
-  QString aSubShapeName( "" );
-  Standard_CString aTypeString;
+  TopoDS_Shape aSelShape;
   if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) ) {
-    TopExp::MapShapes( aSelShape, anIndices);
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes( aSelShape, anIndices );
     for ( int i = 0, n = aObjLst.length(); i < n; i++ ) {
-      aSubShapeName = "";
-      aSubShape = anIndices.FindKey(aObjLst[i]);
-      if ( GEOMBase::GetShapeTypeString( aSubShape, aTypeString ) )	
-	aSubShapeName = QString( aTypeString ) + QString( "_" ) + QString::number( aObjLst[i] );	
-      if ( !aSubShapeName.isEmpty() )
-      aSubShapeList.append( aSubShapeName );
+      TopoDS_Shape aSubShape = anIndices.FindKey( aObjLst[i] );
+      QString aType = GEOMBase::GetShapeTypeString( aSubShape );
+      if ( !aType.isEmpty() )
+	aSubShapeList.append( QString( "%1_%2" ).arg( aType ).arg( aObjLst[i] ) );
     }
   }
   myGrp->ListBox2->clear();
@@ -391,7 +390,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
     return;
   QList<int> aIds;
   for ( int i = 0, n = myGrp->ListBox2->count(); i < n; i++ ) {
-    if ( myGrp->ListBox2->item( i )->isSelected() ) 
+    if ( myGrp->ListBox2->item( i )->isSelected() )
       aIds.append( i );
   }
   if ( aIds.count() < 1 )
@@ -404,11 +403,11 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
     myGrp->ListBox2->clear();
     return;
   }
-  
+
   GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aErrCurItem];
   GEOM::ListOfLong aObjLst = aErr.incriminated;
   TopoDS_Shape aSelShape;
-  TopoDS_Shape aSubShape; 
+  TopoDS_Shape aSubShape;
   TopTools_IndexedMapOfShape anIndices;
   if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) ) {
     QString aMess;
@@ -420,13 +419,15 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
     QList<int>::iterator it;
     for ( it = aIds.begin(); it != aIds.end(); ++it ) {
       aSubShape = anIndices.FindKey(aObjLst[(*it)]);
+      SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+      int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
       try {
         getDisplayer()->SetColor( Quantity_NOC_RED );
-        getDisplayer()->SetWidth( 3 );
+        getDisplayer()->SetWidth( w );
         getDisplayer()->SetToActivate( false );
         aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs( aSubShape ) : 0;
         if ( aPrs )
-	  displayPreview( aPrs, true );
+          displayPreview( aPrs, true );
       }
       catch ( const SALOME::SALOME_Exception& e ) {
         SalomeApp_Tools::QtCatchCorbaException( e );
@@ -472,9 +473,8 @@ bool MeasureGUI_CheckCompoundOfBlocksDlg::isValid( QString& )
 //=================================================================================
 bool MeasureGUI_CheckCompoundOfBlocksDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
-  anObj = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->CheckAndImprove( myObj );
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->CheckAndImprove( myObj );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

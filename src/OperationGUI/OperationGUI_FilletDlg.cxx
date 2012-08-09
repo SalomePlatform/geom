@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_FilletDlg.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -110,13 +111,13 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg (GeometryGUI* theGeometryGUI, QWi
 
   // Set range of spinboxes
   double SpecificStep = 10.0;
-  initSpinBox(Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group2->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group2->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group3->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group3->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group2->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group2->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group3->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group3->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, "length_precision" );
 
   setHelpFileName("fillet_operation_page.html");
 
@@ -158,6 +159,8 @@ void OperationGUI_FilletDlg::Init()
 
   myFaces.Clear();
   myEdges.Clear();
+
+  showOnlyPreviewControl();
 
   // signals and slots connections
 
@@ -291,7 +294,7 @@ void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
     else
       myEditCurrentArgument->setText("");
 
-    displayPreview();
+    processPreview();
   }
 
   qApp->processEvents();
@@ -305,6 +308,7 @@ void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void OperationGUI_FilletDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -344,14 +348,13 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
   {
     myShape = GEOM::GEOM_Object::_nil();
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil()) {
+      if ( !anObj->_is_nil() ) {
         myShape = anObj;
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
-        displayPreview();
+        processPreview();
       }
     }
 
@@ -364,11 +367,10 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
     if (myEditCurrentArgument == Group2->LineEdit2) myEdges.Clear();
     else myFaces.Clear();
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil()) {
+      if ( !anObj->_is_nil() ) {
         TColStd_IndexedMapOfInteger anIndexes;
         aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
@@ -390,13 +392,13 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
           else
             myFaces = anIndexes;
 
-          displayPreview();
+          processPreview();
         }
       }
     }
   }
 
-  // clear selection
+  // clear selection of the faces or edges
   if (!(myEditCurrentArgument == Group2->LineEdit2 ||
         myEditCurrentArgument == Group3->LineEdit2)) {
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
@@ -420,6 +422,19 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
     break;
   default:
     break;
+  }
+
+  //rnv: To fix the bug IPAL22041 TC5.1.5: "Fillet Construcion" dialog loses current selection.
+  // Restore selection of the main shape, if need,
+  // because it was canceled.
+  aSelMgr->selectedObjects(aSelList);
+  if (aSelList.Extent() == 0 && !myShape->_is_nil()) {
+    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+    ObjectList list;
+	list.push_back(myShape);
+    selectObjects(list);
+    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+            this, SLOT(SelectionIntoArgument()));
   }
 }
 
@@ -464,7 +479,7 @@ void OperationGUI_FilletDlg::SetEditCurrentArgument()
   activateSelection();
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -495,7 +510,7 @@ void OperationGUI_FilletDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -516,7 +531,7 @@ void OperationGUI_FilletDlg::enterEvent (QEvent*)
 //=================================================================================
 void OperationGUI_FilletDlg::ValueChangedInSpinBox (double)
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -596,20 +611,20 @@ bool OperationGUI_FilletDlg::isValid (QString& msg)
       return !myShape->_is_nil() && ok;
     case 1:
       if (Group2->RadioButton1->isChecked())
-	ok = Group2->SpinBox_DX->isValid( msg, !IsPreview() );
+        ok = Group2->SpinBox_DX->isValid( msg, !IsPreview() );
       else
       {
-	ok = Group2->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-	ok = Group2->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+        ok = Group2->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+        ok = Group2->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myEdges.Extent() > 0 && ok;
     case 2:
       if (Group3->RadioButton1->isChecked())
-	ok = Group3->SpinBox_DX->isValid( msg, !IsPreview() );
+        ok = Group3->SpinBox_DX->isValid( msg, !IsPreview() );
       else
       {
-	ok = Group3->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-	ok = Group3->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+        ok = Group3->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+        ok = Group3->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myFaces.Extent() > 0 && ok;
     default: return false;
@@ -626,9 +641,11 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   int anId = getConstructorId();
+
+  GEOM::GEOM_ILocalOperations_var anOper = GEOM::GEOM_ILocalOperations::_narrow(getOperation());
+
   if (anId == 0) {
-    anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-      MakeFilletAll(myShape, getRadius());
+    anObj = anOper->MakeFilletAll(myShape, getRadius());
     if (!anObj->_is_nil())
       aParameters << Group1->SpinBox_DX->text();
   }
@@ -641,22 +658,20 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
 
     if (Group2->RadioButton1->isChecked())
     {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeFilletEdges(myShape, getRadius(), aList);
+      anObj = anOper->MakeFilletEdges(myShape, getRadius(), aList);
       if (!anObj->_is_nil())
-	aParameters << Group2->SpinBox_DX->text();
+        aParameters << Group2->SpinBox_DX->text();
     }
     else
     {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeFilletEdgesR1R2(myShape,
-                            Group2->SpinBox_DY->value(),
-                            Group2->SpinBox_DZ->value(),
-                            aList);
+      anObj = anOper->MakeFilletEdgesR1R2(myShape,
+                                          Group2->SpinBox_DY->value(),
+                                          Group2->SpinBox_DZ->value(),
+                                          aList);
       if (!anObj->_is_nil())
       {
-	aParameters << Group2->SpinBox_DY->text();
-	aParameters << Group2->SpinBox_DZ->text();
+        aParameters << Group2->SpinBox_DY->text();
+        aParameters << Group2->SpinBox_DZ->text();
       }
     }
   }
@@ -668,20 +683,18 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
       aList[ i - 1 ] = myFaces(i);
 
     if (Group3->RadioButton1->isChecked()) {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeFilletFaces(myShape, getRadius(), aList);
+      anObj = anOper->MakeFilletFaces(myShape, getRadius(), aList);
       if (!anObj->_is_nil())
-	aParameters << Group3->SpinBox_DX->text();
+        aParameters << Group3->SpinBox_DX->text();
     }
     else {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeFilletFacesR1R2(myShape,
-                            Group3->SpinBox_DY->value(),
-                            Group3->SpinBox_DZ->value(), aList);
+      anObj = anOper->MakeFilletFacesR1R2(myShape,
+                                          Group3->SpinBox_DY->value(),
+                                          Group3->SpinBox_DZ->value(), aList);
       if (!anObj->_is_nil())
       {
-	aParameters << Group3->SpinBox_DY->text();
-	aParameters << Group3->SpinBox_DZ->text();
+        aParameters << Group3->SpinBox_DY->text();
+        aParameters << Group3->SpinBox_DZ->text();
       }
     }
   }
@@ -689,7 +702,7 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
   if (!anObj->_is_nil())
   {
     if (!IsPreview())
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back(anObj._retn());
   }
 
@@ -739,5 +752,5 @@ void OperationGUI_FilletDlg::RadioButtonClicked()
   Group3->RadioButton1->blockSignals(false);
   Group3->RadioButton2->blockSignals(false);
 
-  displayPreview();
+  processPreview();
 }

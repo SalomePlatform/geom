@@ -1,27 +1,28 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  File   : GEOMImpl_PipeDriver.ixx
 //  Module : GEOMImpl
-//
+
 #ifndef _GEOMImpl_PipeDriver_HeaderFile
 #define _GEOMImpl_PipeDriver_HeaderFile
 
@@ -119,6 +120,10 @@ class Handle(GEOMImpl_PipeDriver) : public Handle(TFunction_Driver) {
 #include <Standard_CString.hxx>
 #endif
 
+#include <TopoDS_Wire.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopTools_HSequenceOfShape.hxx>
+
 class TColStd_SequenceOfExtendedString;
 
 
@@ -149,6 +154,13 @@ public:
   Standard_EXPORT static const Standard_GUID& GetID();
   Standard_EXPORT ~GEOMImpl_PipeDriver() {};
 
+  Standard_EXPORT static TopoDS_Shape CreatePipeWithDifferentSections
+                                     (const TopoDS_Wire& theWirePath,
+                                      const Handle(TopTools_HSequenceOfShape) theBases,
+                                      const Handle(TopTools_HSequenceOfShape) theLocs,
+                                      const Standard_Boolean theWithContact,
+                                      const Standard_Boolean theWithCorrect);
+
 
   // Type management
   //
@@ -157,7 +169,7 @@ public:
   { return STANDARD_TYPE(GEOMImpl_PipeDriver) ; }
   Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const
   { return (STANDARD_TYPE(GEOMImpl_PipeDriver) == AType ||
-	    TFunction_Driver::IsKind(AType)); } 
+            TFunction_Driver::IsKind(AType)); } 
 
 };
 

@@ -1,32 +1,34 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller.cxx
-// Created:	Fri Dec  5 14:58:54 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+
+// File:        NMTTools_PaveFiller.cxx
+// Created:     Fri Dec  5 14:58:54 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 //
 #include <BOPTColStd_Failure.hxx>
+#include <IntTools_Context.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTTools_DEProcessor.hxx>
 #include <NMTDS_Iterator.hxx>
@@ -34,7 +36,7 @@
 
 //=======================================================================
 // function: NMTTools_PaveFiller::NMTTools_PaveFiller
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_PaveFiller::NMTTools_PaveFiller()
 {
@@ -47,7 +49,7 @@
 }
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_PaveFiller::~NMTTools_PaveFiller()
 {
@@ -55,19 +57,19 @@
 }
 //=======================================================================
 // function: Clear
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::Clear()
 {
   if (myDSIt) {
     delete myDSIt;
-  } 
+  }
   if (myDS) {
     delete myDS;
   }
   myDSIt=NULL;
   myDS=NULL;
-  
+
   if (myIP) {
     delete myIP;
   }
@@ -75,7 +77,7 @@
 }
 //=======================================================================
 // function: SetCompositeShape
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::SetCompositeShape(const TopoDS_Shape& aS)
 {
@@ -83,7 +85,7 @@
 }
 //=======================================================================
 // function: CompositeShape
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Shape& NMTTools_PaveFiller::CompositeShape()const
 {
@@ -91,7 +93,7 @@
 }
 //=======================================================================
 // function:  DS
-// purpose: 
+// purpose:
 //=======================================================================
   NMTDS_PShapesDataStructure NMTTools_PaveFiller::DS()
 {
@@ -99,7 +101,7 @@
 }
 //=======================================================================
 // function: DSIt
-// purpose: 
+// purpose:
 //=======================================================================
   NMTDS_PIterator NMTTools_PaveFiller::DSIt()
 {
@@ -107,7 +109,7 @@
 }
 //=======================================================================
 // function:  IP
-// purpose: 
+// purpose:
 //=======================================================================
   NMTDS_PInterfPool NMTTools_PaveFiller::IP()
 {
@@ -115,7 +117,7 @@
 }
 //=======================================================================
 // function:IsDone
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_PaveFiller::IsDone() const
 {
@@ -123,23 +125,15 @@
 }
 //=======================================================================
 // function: Context
-// purpose: 
+// purpose:
 //=======================================================================
-  const IntTools_Context& NMTTools_PaveFiller::Context() const
-{
-  return myContext;
-}
-//=======================================================================
-// function: ChangeContext
-// purpose: 
-//=======================================================================
-  IntTools_Context& NMTTools_PaveFiller::ChangeContext() 
+  const Handle(IntTools_Context)& NMTTools_PaveFiller::Context() const
 {
   return myContext;
 }
 //=======================================================================
 // function: PavePool
-// purpose: 
+// purpose:
 //=======================================================================
   const BOPTools_PavePool& NMTTools_PaveFiller::PavePool() const
 {
@@ -147,15 +141,23 @@
 }
 //=======================================================================
 // function: ChangePavePool
-// purpose: 
+// purpose:
 //=======================================================================
   BOPTools_PavePool& NMTTools_PaveFiller::ChangePavePool()
 {
   return myPavePool;
 }
 //=======================================================================
+// function: ChangePavePoolNew
+// purpose:
+//=======================================================================
+  BOPTools_PavePool& NMTTools_PaveFiller::ChangePavePoolNew()
+{
+  return myPavePoolNew;
+}
+//=======================================================================
 // function:  CommonBlockPool
-// purpose: 
+// purpose:
 //=======================================================================
   const NMTTools_CommonBlockPool& NMTTools_PaveFiller::CommonBlockPool() const
 {
@@ -163,7 +165,7 @@
 }
 //=======================================================================
 // function:  ChangeCommonBlockPool
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlockPool& NMTTools_PaveFiller::ChangeCommonBlockPool()
 {
@@ -171,7 +173,7 @@
 }
 //=======================================================================
 // function:  SplitShapesPool
-// purpose: 
+// purpose:
 //=======================================================================
   const BOPTools_SplitShapesPool& NMTTools_PaveFiller::SplitShapesPool() const
 {
@@ -179,7 +181,7 @@
 }
 //=======================================================================
 // function:  ChangeSplitShapesPool
-// purpose: 
+// purpose:
 //=======================================================================
   BOPTools_SplitShapesPool& NMTTools_PaveFiller::ChangeSplitShapesPool()
 {
@@ -187,7 +189,7 @@
 }
 //=======================================================================
 // function: Init
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::Init()
 {
@@ -214,11 +216,14 @@
   //
   // 4
   myIP=new NMTDS_InterfPool;
+  //
+  // 5
+  myContext=new IntTools_Context;
 }
 
 //=======================================================================
 // function: Perform
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::Perform()
 {
@@ -227,17 +232,14 @@
   //----------------
   try {
     // 0.
-    // Modified Thu Sep 14 14:35:18 2006 
-    // Contribution of Samtech www.samcef.com BEGIN
     Init();
-    // Contribution of Samtech www.samcef.com END
     //1.VV
     //
     PerformVV();
     //
     // 2.VE
     myPavePool.Resize (myNbEdges);
-    
+
     PrepareEdges();
 
     PerformVE();
@@ -260,6 +262,10 @@
     myPavePoolNew.Destroy();
     myPavePoolNew.Resize (myNbEdges);
     //
+    //modified by NIZNHY-PKV Mon Dec 12 09:13:53 2011f
+    UpdateCommonBlocks(0);
+    //modified by NIZNHY-PKV Mon Dec 12 09:13:56 2011t
+    //
     // 5.EF
     PreparePaveBlocks(TopAbs_EDGE, TopAbs_FACE);
     PerformEF();
@@ -267,7 +273,7 @@
     RefinePavePool();
     //
     myPavePoolNew.Destroy();
-    
+
     MakeSplitEdges();
 
     UpdateCommonBlocks();
@@ -279,17 +285,17 @@
     //
     MakePCurves();
     //
-    // 7.Postprocessing 
+    // 7.Postprocessing
     UpdatePaveBlocks();
     //
     NMTTools_DEProcessor aDEP(*this);
     aDEP.Do();
     //
-    // Modified to treat Alone Vertices Thu Sep 14 14:35:18 2006 
-    // Contribution of Samtech www.samcef.com BEGIN
     MakeAloneVertices();
-    // Contribution of Samtech www.samcef.com END
     //
+    //modified by NIZNHY-PKV Mon Dec 12 09:14:23 2011f
+    myIP->Purge();
+    //modified by NIZNHY-PKV Mon Dec 12 09:14:27 2011t
     myIsDone=Standard_True;
   }
   catch (BOPTColStd_Failure& ) {

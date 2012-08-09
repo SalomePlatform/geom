@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOMImpl_IMeasureOperations_HXX_
 #define _GEOMImpl_IMeasureOperations_HXX_
 
@@ -33,6 +34,7 @@
 #include <TColStd_HSequenceOfReal.hxx>
 #include <gp_Ax3.hxx>
 #include <Geom_Surface.hxx>
+#include <Precision.hxx>
 
 class GEOM_Engine;
 class Handle(GEOM_Object);
@@ -78,7 +80,9 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
     SK_SEGMENT,      // segment
     SK_EDGE,         // other edge
     // VERTEX
-    SK_VERTEX
+    SK_VERTEX,
+    // ADVANCED shapes
+    SK_ADVANCED,     // all advanced shapes (temporary implementation)
   };
 
   Standard_EXPORT ShapeKind KindOfShape (Handle(GEOM_Object) theShape,
@@ -91,6 +95,9 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                     Standard_Real& Xx, Standard_Real& Xy, Standard_Real& Xz);
 
   Standard_EXPORT Handle(GEOM_Object) GetCentreOfMass (Handle(GEOM_Object) theShape);
+
+  Standard_EXPORT Handle(GEOM_Object) GetVertexByIndex (Handle(GEOM_Object) theShape,
+                                                        Standard_Integer theIndex);
 
   Standard_EXPORT Handle(GEOM_Object) GetNormal (Handle(GEOM_Object) theFace,
                                                  Handle(GEOM_Object) theOptionalPoint);
@@ -120,7 +127,16 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                    const Standard_Boolean   theIsCheckGeom,
                                    TCollection_AsciiString& theDump);
 
+  Standard_EXPORT bool CheckSelfIntersections (Handle(GEOM_Object) theShape,
+                                               Handle(TColStd_HSequenceOfInteger)& theIntersections);
+
+  Standard_EXPORT TCollection_AsciiString IsGoodForSolid (Handle(GEOM_Object) theShape);
+
   Standard_EXPORT TCollection_AsciiString WhatIs (Handle(GEOM_Object) theShape);
+
+  Standard_EXPORT std::vector<bool> AreCoordsInside (Handle(GEOM_Object) theShape,
+                                                     const std::vector<double>& coords,
+                                                     double tolerance = Precision::Confusion());
 
   Standard_EXPORT Standard_Real GetMinDistance (Handle(GEOM_Object) theShape1,
                                                 Handle(GEOM_Object) theShape2,
@@ -131,6 +147,8 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                          Standard_Real& theX, Standard_Real& theY, Standard_Real& theZ);
 
   Standard_EXPORT Standard_Real GetAngle (Handle(GEOM_Object) theLine1, Handle(GEOM_Object) theLine2);
+
+  Standard_EXPORT Standard_Real GetAngleBtwVectors (Handle(GEOM_Object) theVec1, Handle(GEOM_Object) theVec2);
 
 
   // Methods for recieving radiuses of curvature of curves and surfaces

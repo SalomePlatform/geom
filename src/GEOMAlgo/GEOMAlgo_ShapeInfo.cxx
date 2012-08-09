@@ -1,46 +1,42 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-#include <GEOMAlgo_ShapeInfo.ixx>
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
+#include <GEOMAlgo_ShapeInfo.hxx>
 
 static
   Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType);
 static
   void DumpKindOfShape(const GEOMAlgo_KindOfShape aKS);
 static
-  void DumpKindOfClosed(const GEOMAlgo_KindOfClosed aKC); 
+  void DumpKindOfClosed(const GEOMAlgo_KindOfClosed aKC);
 static
   void DumpKindOfBounds(const GEOMAlgo_KindOfBounds aKB);
 static
   void DumpKindOfName(const GEOMAlgo_KindOfName aKS);
 static
-  void DumpPosition(const gp_Ax3& aAx3); 
+  void DumpPosition(const gp_Ax3& aAx3);
 static
   void DumpLocation(const gp_Pnt& aP);
 static
   void DumpDirection(const gp_Dir& aD);
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ShapeInfo::GEOMAlgo_ShapeInfo()
 {
@@ -48,14 +44,14 @@ static
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_ShapeInfo::~GEOMAlgo_ShapeInfo()
 {
 }
 //=======================================================================
 //function : Reset
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::Reset()
 {
@@ -84,15 +80,15 @@ static
 }
 //=======================================================================
 //function : SetType
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetType(const TopAbs_ShapeEnum aType) 
+  void GEOMAlgo_ShapeInfo::SetType(const TopAbs_ShapeEnum aType)
 {
   myType=aType;
 }
 //=======================================================================
 //function : Type
-//purpose  : 
+//purpose  :
 //=======================================================================
   TopAbs_ShapeEnum GEOMAlgo_ShapeInfo::Type() const
 {
@@ -100,13 +96,13 @@ static
 }
 //=======================================================================
 //function : SetNbSubShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::SetNbSubShapes(const TopAbs_ShapeEnum aType,
-					  const Standard_Integer aNb) 
+                                          const Standard_Integer aNb)
 {
   Standard_Integer iN;
-  
+
   iN=TypeToInteger(aType);
   if (iN>=0 && iN<myNbTypes) {
     myNbSubShapes[iN]=aNb;
@@ -114,12 +110,12 @@ static
 }
 //=======================================================================
 //function : NbSubShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_ShapeInfo::NbSubShapes(const TopAbs_ShapeEnum aType) const
 {
   Standard_Integer iN;
-  
+
   iN=TypeToInteger(aType);
   if (iN>=0 && iN<myNbTypes) {
     return myNbSubShapes[iN];
@@ -128,15 +124,15 @@ static
 }
 //=======================================================================
 //function : SetKindOfShape
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetKindOfShape(const GEOMAlgo_KindOfShape aT) 
+  void GEOMAlgo_ShapeInfo::SetKindOfShape(const GEOMAlgo_KindOfShape aT)
 {
   myKindOfShape=aT;
 }
 //=======================================================================
 //function : KindOfShape
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_KindOfShape GEOMAlgo_ShapeInfo::KindOfShape() const
 {
@@ -144,15 +140,15 @@ static
 }
 //=======================================================================
 //function : SetKindOfName
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetKindOfName(const GEOMAlgo_KindOfName aT) 
+  void GEOMAlgo_ShapeInfo::SetKindOfName(const GEOMAlgo_KindOfName aT)
 {
   myKindOfName=aT;
 }
 //=======================================================================
 //function : KindOfName
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_KindOfName GEOMAlgo_ShapeInfo::KindOfName() const
 {
@@ -160,15 +156,15 @@ static
 }
 //=======================================================================
 //function : SetKindOfBounds
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetKindOfBounds(const GEOMAlgo_KindOfBounds aT) 
+  void GEOMAlgo_ShapeInfo::SetKindOfBounds(const GEOMAlgo_KindOfBounds aT)
 {
   myKindOfBounds=aT;
 }
 //=======================================================================
 //function : KindOfBounds
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_KindOfBounds GEOMAlgo_ShapeInfo::KindOfBounds() const
 {
@@ -176,15 +172,15 @@ static
 }
 //=======================================================================
 //function : SetKindOfClosed
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetKindOfClosed(const GEOMAlgo_KindOfClosed aT) 
+  void GEOMAlgo_ShapeInfo::SetKindOfClosed(const GEOMAlgo_KindOfClosed aT)
 {
   myKindOfClosed=aT;
 }
 //=======================================================================
 //function : KindOfClosed
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_KindOfClosed GEOMAlgo_ShapeInfo::KindOfClosed() const
 {
@@ -192,15 +188,15 @@ static
 }
 //=======================================================================
 //function : SetLocation
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetLocation(const gp_Pnt& aP) 
+  void GEOMAlgo_ShapeInfo::SetLocation(const gp_Pnt& aP)
 {
   myLocation=aP;
 }
 //=======================================================================
 //function : Location
-//purpose  : 
+//purpose  :
 //=======================================================================
   const gp_Pnt& GEOMAlgo_ShapeInfo::Location() const
 {
@@ -208,15 +204,15 @@ static
 }
 //=======================================================================
 //function : SetDirection
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetDirection(const gp_Dir& aD) 
+  void GEOMAlgo_ShapeInfo::SetDirection(const gp_Dir& aD)
 {
   myDirection=aD;
 }
 //=======================================================================
 //function : Direction
-//purpose  : 
+//purpose  :
 //=======================================================================
   const gp_Dir& GEOMAlgo_ShapeInfo::Direction() const
 {
@@ -224,24 +220,24 @@ static
 }
 //=======================================================================
 //function : SetPosition
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetPosition(const gp_Ax2& aAx2) 
+  void GEOMAlgo_ShapeInfo::SetPosition(const gp_Ax2& aAx2)
 {
   gp_Ax3 aAx3(aAx2);
   SetPosition(aAx3);
 }
 //=======================================================================
 //function : SetPosition
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetPosition(const gp_Ax3& aAx3) 
+  void GEOMAlgo_ShapeInfo::SetPosition(const gp_Ax3& aAx3)
 {
   myPosition=aAx3;
 }
 //=======================================================================
 //function : Position
-//purpose  : 
+//purpose  :
 //=======================================================================
   const gp_Ax3& GEOMAlgo_ShapeInfo::Position() const
 {
@@ -250,15 +246,15 @@ static
 
 //=======================================================================
 //function : SetPnt1
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetPnt1(const gp_Pnt& aP) 
+  void GEOMAlgo_ShapeInfo::SetPnt1(const gp_Pnt& aP)
 {
   myPnt1=aP;
 }
 //=======================================================================
 //function : Pnt1
-//purpose  : 
+//purpose  :
 //=======================================================================
   const gp_Pnt& GEOMAlgo_ShapeInfo::Pnt1() const
 {
@@ -266,15 +262,15 @@ static
 }
 //=======================================================================
 //function : SetPnt2
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetPnt2(const gp_Pnt& aP) 
+  void GEOMAlgo_ShapeInfo::SetPnt2(const gp_Pnt& aP)
 {
   myPnt2=aP;
 }
 //=======================================================================
 //function : Pnt2
-//purpose  : 
+//purpose  :
 //=======================================================================
   const gp_Pnt& GEOMAlgo_ShapeInfo::Pnt2() const
 {
@@ -282,15 +278,15 @@ static
 }
 //=======================================================================
 //function : SetRadius1
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetRadius1(const Standard_Real aR) 
+  void GEOMAlgo_ShapeInfo::SetRadius1(const Standard_Real aR)
 {
   myRadius1=aR;
 }
 //=======================================================================
 //function : Radius1
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Real GEOMAlgo_ShapeInfo::Radius1() const
 {
@@ -298,15 +294,15 @@ static
 }
 //=======================================================================
 //function : SetRadius2
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetRadius2(const Standard_Real aR) 
+  void GEOMAlgo_ShapeInfo::SetRadius2(const Standard_Real aR)
 {
   myRadius2=aR;
 }
 //=======================================================================
 //function : Radius2
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Real GEOMAlgo_ShapeInfo::Radius2() const
 {
@@ -314,15 +310,15 @@ static
 }
 //=======================================================================
 //function : SetLength
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetLength(const Standard_Real aL) 
+  void GEOMAlgo_ShapeInfo::SetLength(const Standard_Real aL)
 {
   myLength=aL;
 }
 //=======================================================================
 //function : Length
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Real GEOMAlgo_ShapeInfo::Length() const
 {
@@ -330,15 +326,15 @@ static
 }
 //=======================================================================
 //function : SetWidth
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetWidth(const Standard_Real aW) 
+  void GEOMAlgo_ShapeInfo::SetWidth(const Standard_Real aW)
 {
   myWidth=aW;
 }
 //=======================================================================
 //function : Width
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Real GEOMAlgo_ShapeInfo::Width() const
 {
@@ -346,15 +342,15 @@ static
 }
 //=======================================================================
 //function : SetHeight
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfo::SetHeight(const Standard_Real aH) 
+  void GEOMAlgo_ShapeInfo::SetHeight(const Standard_Real aH)
 {
   myHeight=aH;
 }
 //=======================================================================
 //function : Height
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Real GEOMAlgo_ShapeInfo::Height() const
 {
@@ -362,7 +358,7 @@ static
 }
 //=======================================================================
 //function : TypeToInteger
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 {
@@ -373,7 +369,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : Dump
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::Dump()const
 {
@@ -418,7 +414,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : DumpCompound
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::DumpCompound()const
 {
@@ -453,7 +449,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : DumpCompSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::DumpCompSolid()const
 {
@@ -485,7 +481,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 
 //=======================================================================
 //function : DumpSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::DumpSolid()const
 {
@@ -542,7 +538,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
   }
   else if (aKN==GEOMAlgo_KN_BOX) {
     DumpLocation (myLocation);
-    DumpPosition (myPosition); 
+    DumpPosition (myPosition);
     printf("  Length    : %.3lf\n", myLength);
     printf("  Width     : %.3lf\n", myWidth);
     printf("  Height    : %.3lf\n", myHeight);
@@ -551,7 +547,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 
 //=======================================================================
 //function : DumpFace
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::DumpFace()const
 {
@@ -599,8 +595,8 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
     printf("  Width     : %.3lf\n", myWidth);
   }
   else if (aKN==GEOMAlgo_KN_TRIANGLE ||
-	   aKN==GEOMAlgo_KN_QUADRANGLE||
-	   aKN==GEOMAlgo_KN_POLYGON) {
+           aKN==GEOMAlgo_KN_QUADRANGLE||
+           aKN==GEOMAlgo_KN_POLYGON) {
     DumpLocation (myLocation);
     DumpPosition (myPosition);
   }
@@ -636,13 +632,13 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
     printf("  Radius1   : %.3lf\n", myRadius1);
     printf("  Radius2   : %.3lf\n", myRadius2);
   }
-  
+
 
   printf("\n");
 }
 //=======================================================================
 //function : DumpShell
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::DumpShell()const
 {
@@ -663,7 +659,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : DumpWire
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::DumpWire()const
 {
@@ -683,7 +679,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : DumpEdge
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::DumpEdge()const
 {
@@ -720,7 +716,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
     printf("  Pnt1 : %.3lf %.3lf %.3lf\n", aX, aY, aZ);
     myPnt2.Coord(aX, aY, aZ);
     printf("  Pnt2 : %.3lf %.3lf %.3lf\n", aX, aY, aZ);
-    
+
   }
   else if (aKN==GEOMAlgo_KN_CIRCLE) {
     DumpLocation (myLocation);
@@ -756,7 +752,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : DumpVertex
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfo::DumpVertex()const
 {
@@ -765,7 +761,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : DumpLocation
-//purpose  : 
+//purpose  :
 //=======================================================================
   void DumpLocation(const gp_Pnt& aP)
 {
@@ -776,7 +772,7 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : DumpDirection
-//purpose  : 
+//purpose  :
 //=======================================================================
   void DumpDirection(const gp_Dir& aD)
 {
@@ -787,9 +783,9 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : DumpPosition
-//purpose  : 
+//purpose  :
 //=======================================================================
-void DumpPosition(const gp_Ax3& aAx3) 
+void DumpPosition(const gp_Ax3& aAx3)
 {
   const gp_Dir& aDZ=aAx3.Axis().Direction();
   const gp_Dir& aDX=aAx3.XDirection();
@@ -798,49 +794,49 @@ void DumpPosition(const gp_Ax3& aAx3)
   printf("  Axis: %.3lf %.3lf %.3lf \n", aDZ.X(), aDZ.Y(), aDZ.Z());
   printf("  X   : %.3lf %.3lf %.3lf \n", aDX.X(), aDX.Y(), aDX.Z());
   printf("  Y   : %.3lf %.3lf %.3lf \n", aDY.X(), aDY.Y(), aDY.Z());
-} 
+}
 //=======================================================================
 //function : DumpKindOfBounds
-//purpose  : 
+//purpose  :
 //=======================================================================
 void DumpKindOfBounds(const GEOMAlgo_KindOfBounds aKB)
 {
-  char *pStr[]={
-    "KB_UNKNOWN", 
-    "KB_TRIMMED", 
+  const char *pStr[]={
+    "KB_UNKNOWN",
+    "KB_TRIMMED",
     "KB_INFINITE"
   };
   int i;
   //
   i=(Standard_Integer)aKB;
   printf(" KindOfBounds: %s\n", pStr[i]);
-  
+
 }
 //=======================================================================
 //function : DumpKindOfClosed
-//purpose  : 
+//purpose  :
 //=======================================================================
 void DumpKindOfClosed(const GEOMAlgo_KindOfClosed aKC)
 {
-  char *pStr[]={
-    "KC_UNKNOWN", 
-    "KC_CLOSED", 
+  const char *pStr[]={
+    "KC_UNKNOWN",
+    "KC_CLOSED",
     "KC_NOTCLOSED"
   };
   int i;
   //
   i=(Standard_Integer)aKC;
   printf(" KindOfClosed: %s\n", pStr[i]);
-  
+
 }
 //=======================================================================
 //function : DumpKindOfShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 void DumpKindOfShape(const GEOMAlgo_KindOfShape aKS)
 {
-  char *pStr[]={
-    "KS_UNKNOWN", 
+  const char *pStr[]={
+    "KS_UNKNOWN",
     "KS_SPHERE",
     "KS_CYLINDER",
     "KS_BOX",
@@ -848,9 +844,10 @@ void DumpKindOfShape(const GEOMAlgo_KindOfShape aKS)
     "KS_CONE",
     "KS_ELLIPSE",
     "KS_PLANE",
-    "KS_CIRCLE", 
-    "KS_LINE", 
-    "KS_DEGENERATED" 
+    "KS_CIRCLE",
+    "KS_LINE",
+    "KS_DEGENERATED",
+    "KS_BSPLINE"
     };
   int i;
   //
@@ -859,12 +856,12 @@ void DumpKindOfShape(const GEOMAlgo_KindOfShape aKS)
 }
 //=======================================================================
 //function : DumpKindOfName
-//purpose  : 
+//purpose  :
 //=======================================================================
 void DumpKindOfName(const GEOMAlgo_KindOfName aKS)
 {
-  char *pStr[]={
-    "KN_UNKNOWN", 
+  const char *pStr[]={
+    "KN_UNKNOWN",
     "KN_SPHERE",
     "KN_CYLINDER",
     "KN_TORUS",
@@ -872,18 +869,18 @@ void DumpKindOfName(const GEOMAlgo_KindOfName aKS)
     "KN_ELLIPSE",
     "KN_CIRCLE",
     "KN_PLANE",
-    "KN_LINE", 
-    "KN_BOX", 
-    "KN_SEGMENT", 
-    "KN_ARCCIRCLE", 
-    "KN_POLYGON", 
+    "KN_LINE",
+    "KN_BOX",
+    "KN_SEGMENT",
+    "KN_ARCCIRCLE",
+    "KN_POLYGON",
     "KN_POLYHEDRON",
     "KN_DISKCIRCLE",
     "KN_DISKELLIPSE",
     "KN_RECTANGLE",
     "KN_TRIANGLE",
-    "KN_QUADRANGLE", 
-    "KN_ARCELLIPSE" 
+    "KN_QUADRANGLE",
+    "KN_ARCELLIPSE"
     };
   int i;
   //

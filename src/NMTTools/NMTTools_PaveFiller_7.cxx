@@ -1,30 +1,29 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_7.cxx
-// Created:	Thu Dec 18 15:14:55 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
-//
-#include <NMTTools_PaveFiller.ixx>
+
+// File:        NMTTools_PaveFiller_7.cxx
+// Author:      Peter KURNEV
+
+#include <NMTTools_PaveFiller.hxx>
 
 #include <Bnd_HArray1OfBox.hxx>
 #include <Bnd_BoundSortBox.hxx>
@@ -32,26 +31,27 @@
 #include <BRepBndLib.hxx>
 
 #include <TColStd_MapOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <TopTools_DataMapOfShapeListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+
+#include <GeomAPI_ProjectPointOnCurve.hxx>
 
 #include <TopAbs_Orientation.hxx>
 
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Edge.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Vertex.hxx>
 #include <TopoDS_Compound.hxx>
 
-#include <TopTools_DataMapIteratorOfDataMapOfIntegerShape.hxx>
-#include <TopTools_DataMapIteratorOfDataMapOfShapeInteger.hxx>
+#include <TopTools_DataMapOfIntegerShape.hxx>
 #include <TopTools_DataMapOfShapeInteger.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
 #include <TopTools_DataMapOfShapeListOfInteger.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfIntegerShape.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeInteger.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfInteger.hxx>
-#include <TopTools_DataMapOfIntegerShape.hxx>
 
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -62,6 +62,7 @@
 #include <IntTools_SequenceOfPntOn2Faces.hxx>
 #include <IntTools_PntOnFace.hxx>
 #include <IntTools_PntOn2Faces.hxx>
+#include <IntTools_Context.hxx>
 
 #include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
 
@@ -80,19 +81,16 @@
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_InterfPool.hxx>
 
+#include <NMTTools_ListOfCommonBlock.hxx>
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
-// Modified  Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
-static 
-  void FuseVertices(const TopoDS_Shape& aCompound,
-		    TopTools_DataMapOfShapeShape& aDMVV);
-// Contribution of Samtech www.samcef.com END
+#include <NMTTools_MapOfPaveBlock.hxx>
+
 
 //=======================================================================
 // function: MakeSplitEdges
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::MakeSplitEdges()
+void NMTTools_PaveFiller::MakeSplitEdges()
 {
   myIsDone=Standard_False;
   //
@@ -114,7 +112,7 @@ static
       continue;
     }
     //
-    anOri=aE.Orientation(); 
+    anOri=aE.Orientation();
     aE.Orientation(TopAbs_FORWARD);
     //
     // Making Split Edges
@@ -124,7 +122,7 @@ static
     BOPTools_ListIteratorOfListOfPaveBlock aPBIt(aSplitEdges);
     //
     aNbPaveBlocks=aSplitEdges.Extent();
-  
+
     for (; aPBIt.More(); aPBIt.Next()) {
       BOPTools_PaveBlock& aPB=aPBIt.Value();
       // aPave1
@@ -141,15 +139,15 @@ static
       aV2.Orientation(TopAbs_REVERSED);
       //xx
       if (aNbPaveBlocks==1) {
-	bIsNewVertex1=myDS->IsNewShape (nV1);
-	bIsNewVertex2=myDS->IsNewShape (nV2);
-	if (!bIsNewVertex1 && !bIsNewVertex2) {
-	  aPB.SetEdge(i);
-	  continue;
-	}
+        bIsNewVertex1=myDS->IsNewShape (nV1);
+        bIsNewVertex2=myDS->IsNewShape (nV2);
+        if (!bIsNewVertex1 && !bIsNewVertex2) {
+          aPB.SetEdge(i);
+          continue;
+        }
       }
       //xx
-      BOPTools_Tools::MakeSplitEdge(aE, aV1, t1, aV2, t2, aESplit);  
+      BOPTools_Tools::MakeSplitEdge(aE, aV1, t1, aV2, t2, aESplit);
       //
       // Add Split Part of the Original Edge to the DS
       BooleanOperations_AncestorsSeqAndSuccessorsSeq anASSeq;
@@ -161,8 +159,8 @@ static
       anASSeq.SetNewOrientation(aV2.Orientation());
       //
       if (anOri==TopAbs_INTERNAL) {
-	anASSeq.SetNewAncestor(i);
-	aESplit.Orientation(anOri);
+        anASSeq.SetNewAncestor(i);
+        aESplit.Orientation(anOri);
       }
       //
       myDS->InsertShapeAndAncestorsSuccessors(aESplit, anASSeq);
@@ -173,14 +171,193 @@ static
       aPB.SetEdge(aNewShapeIndex);
       //
     }
-  } 
+  }
   myIsDone=Standard_True;
 }
 //=======================================================================
 // function: UpdateCommonBlocks
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::UpdateCommonBlocks()
+void NMTTools_PaveFiller::UpdateCommonBlocks(const Standard_Integer)
+{
+  Standard_Integer nE, aNbS,  nEx, nEMax, j, aNbPoints, aNbLCB, nF;
+  Standard_Real aTolEx, aTolExMax, aTSRMax[2], aTx[2], aTmp;
+  TColStd_ListIteratorOfListOfInteger aItLI;
+  gp_Pnt aPMax[2];
+  TopoDS_Edge aEMax;
+  BOPTools_ListIteratorOfListOfPaveBlock aItLPB, aItLPBS;
+  NMTTools_ListIteratorOfListOfCommonBlock aItLCB;
+  NMTTools_MapOfPaveBlock aMPB;
+  //
+  myIsDone=Standard_False;
+  //
+  aNbS=myDS->NumberOfShapesOfTheObject();
+  for (nE=1; nE<=aNbS; ++nE) {
+    if (myDS->GetShapeType(nE)!=TopAbs_EDGE){
+      continue;
+    }
+    //
+    const TopoDS_Edge& aE=*((TopoDS_Edge*)&myDS->Shape(nE));
+    if (BRep_Tool::Degenerated(aE)){
+      continue;
+    }
+    //
+    NMTTools_ListOfCommonBlock& aLCB=myCommonBlockPool(myDS->RefEdge(nE));
+    //modified by NIZNHY-PKV Thu Jan 19 09:03:19 2012f
+    aNbLCB=aLCB.Extent();
+    if (!aNbLCB) {
+      continue;
+    }
+    // 0
+    NMTTools_ListOfCommonBlock aLCBx;
+    //
+    aItLCB.Initialize(aLCB);
+    for (; aItLCB.More(); aItLCB.Next()) {
+      NMTTools_CommonBlock aCBx;
+      //
+      NMTTools_CommonBlock& aCB=aItLCB.ChangeValue();
+      const BOPTools_ListOfPaveBlock &aLPB=aCB.PaveBlocks();
+      aItLPB.Initialize(aLPB);
+      for (; aItLPB.More(); aItLPB.Next()) {
+        const BOPTools_PaveBlock& aPBx=aItLPB.Value();
+        nEx=aPBx.OriginalEdge();
+        BOPTools_ListOfPaveBlock& aLPBS=mySplitShapesPool(myDS->RefEdge(nEx));
+        aItLPBS.Initialize(aLPBS);
+        for (; aItLPBS.More(); aItLPBS.Next()) {
+          const BOPTools_PaveBlock& aPBSx=aItLPBS.Value();
+          if (aPBSx.IsEqual(aPBx)) {
+            aCBx.AddPaveBlock(aPBSx);
+            break;
+          }
+        }// for (; aItLPBS.More(); aItLPBS.Next()) {
+      }// for (; aItLPB.More(); aItLPB.Next()) {
+      //
+      const TColStd_ListOfInteger& aLI=aCB.Faces();
+      aItLI.Initialize(aLI);
+      for (; aItLI.More(); aItLI.Next()) {
+        nF=aItLI.Value();
+        aCBx.AddFace(nF);
+      }
+      //
+      aLCBx.Append(aCBx);
+    }//for (; aItLCB.More(); aItLCB.Next()) {
+    //
+    aLCB.Clear();
+    //
+    aItLCB.Initialize(aLCBx);
+    for (; aItLCB.More(); aItLCB.Next()) {
+      NMTTools_CommonBlock& aCBx=aItLCB.ChangeValue();
+      aLCB.Append(aCBx);
+    }
+    //modified by NIZNHY-PKV Thu Jan 19 09:03:30 2012t
+    // 1
+    aItLCB.Initialize(aLCB);
+    for (; aItLCB.More(); aItLCB.Next()) {
+      NMTTools_CommonBlock& aCB=aItLCB.ChangeValue();
+      //
+      BOPTools_PaveBlock aPBMax;
+      aTolExMax=-1.;
+      const BOPTools_ListOfPaveBlock &aLPB=aCB.PaveBlocks();
+      aItLPB.Initialize(aLPB);
+      for (; aItLPB.More(); aItLPB.Next()) {
+        const BOPTools_PaveBlock& aPBx=aItLPB.Value();
+        nEx=aPBx.OriginalEdge();
+        const TopoDS_Edge& aEx=*((TopoDS_Edge*)&myDS->Shape(nEx));
+        aTolEx=BRep_Tool::Tolerance(aEx);
+        if (aTolEx>aTolExMax) {
+          aTolExMax=aTolEx;
+          aEMax=aEx;
+          aPBMax=aPBx;
+        }
+      }
+      //
+      // 2
+      if (aMPB.Contains(aPBMax)) {
+        continue;
+      }
+      aMPB.Add(aPBMax);
+      //
+      nEMax=aPBMax.OriginalEdge();
+      const IntTools_ShrunkRange& aISRMax=aPBMax.ShrunkRange();
+      const IntTools_Range& aSRMax=aISRMax.ShrunkRange();
+      const Bnd_Box& aBoxMax=aISRMax.BndBox();
+      aSRMax.Range(aTSRMax[0], aTSRMax[1]);
+      for (j=0; j<2; ++j) {
+        BOPTools_Tools::PointOnEdge(aEMax, aTSRMax[j], aPMax[j]);
+      }
+      //
+      // 3
+      aItLPB.Initialize(aLPB);
+      for (; aItLPB.More(); aItLPB.Next()) {
+        const BOPTools_PaveBlock& aPBx=aItLPB.Value();
+        nEx=aPBx.OriginalEdge();
+        if (nEx==nEMax) {
+          continue;
+        }
+        //
+        const TopoDS_Edge& aEx=*((TopoDS_Edge*)&myDS->Shape(nEx));
+        GeomAPI_ProjectPointOnCurve& aPPCx=myContext->ProjPC(aEx);
+        //
+        for (j=0; j<2; ++j) {
+          aPPCx.Perform(aPMax[j]);
+          aNbPoints=aPPCx.NbPoints();
+          if (!aNbPoints) {
+            break;
+          }
+          aTx[j]=aPPCx.LowerDistanceParameter();
+        }
+        if (!aNbPoints) {
+          // correction the range is impossible due to
+          // a projection problem
+          continue;
+        }
+        //
+        if (aTx[0]>aTx[1]){
+          aTmp=aTx[0];
+          aTx[0]=aTx[1];
+          aTx[1]=aTmp;
+        }
+        //
+        // 4 Correction
+        // 4.1 aPBx
+        {
+          const IntTools_ShrunkRange& aISRx=aPBx.ShrunkRange();
+          IntTools_Range *pSRx=(IntTools_Range *)(&aISRx.ShrunkRange());
+          Bnd_Box *pBoxx=(Bnd_Box *)(&aISRx.BndBox());
+          //
+          pSRx->SetFirst(aTx[0]);
+          pSRx->SetLast(aTx[1]);
+          *pBoxx=aBoxMax;
+        }
+        //
+        // 4.2 aPBSx
+        BOPTools_ListOfPaveBlock& aLPBSx=mySplitShapesPool(myDS->RefEdge(nEx));
+        aItLPBS.Initialize(aLPBSx);
+        for (; aItLPBS.More(); aItLPBS.Next()) {
+          const BOPTools_PaveBlock& aPBSx=aItLPBS.Value();
+          if (!aPBSx.IsEqual(aPBx)) {
+            continue;
+          }
+          //
+          const IntTools_ShrunkRange& aISRx=aPBSx.ShrunkRange();
+          IntTools_Range *pSRx=(IntTools_Range *)(&aISRx.ShrunkRange());
+          Bnd_Box *pBoxx=(Bnd_Box *)(&aISRx.BndBox());
+          //
+          pSRx->SetFirst(aTx[0]);
+          pSRx->SetLast(aTx[1]);
+          *pBoxx=aBoxMax;
+        }
+        //
+        //
+      }//for (; aItLPB.More(); aItLPB.Next()) {
+    }//for (; aItLCB.More(); aItLCB.Next()) {
+  }//for (nE=1; nE<=aNbS; ++nE) {
+}
+//=======================================================================
+// function: UpdateCommonBlocks
+// purpose:
+//=======================================================================
+void NMTTools_PaveFiller::UpdateCommonBlocks()
 {
   myIsDone=Standard_False;
   //
@@ -199,40 +376,38 @@ static
     }
     //
     NMTTools_ListOfCommonBlock& aLCB=myCommonBlockPool(myDS->RefEdge(nE));
-    BOPTools_ListOfPaveBlock& aLPB=mySplitShapesPool  (myDS->RefEdge(nE));
+    /*BOPTools_ListOfPaveBlock& aLPB=*/mySplitShapesPool  (myDS->RefEdge(nE));
     //
     aCBIt.Initialize(aLCB);
     for (; aCBIt.More(); aCBIt.Next()) {
-      NMTTools_CommonBlock& aCB=aCBIt.Value();
+      NMTTools_CommonBlock& aCB=aCBIt.ChangeValue();
       //
-      //modified by NIZNHY-PKV Wed Nov  8 15:59:46 2006f
       // Among all PBs of aCB the first PB will be one
-      // that have max tolerance value 
+      // that have max tolerance value
       {
-	Standard_Real aTolEx, aTolExMax;
-	BOPTools_ListOfPaveBlock *pLPB, aLPBx;
-	//
-	aTolExMax=-1.;
-	pLPB=(BOPTools_ListOfPaveBlock *)&aCB.PaveBlocks();
-	aPBIt.Initialize(*pLPB);
-	for (; aPBIt.More(); aPBIt.Next()) {
-	  const BOPTools_PaveBlock& aPBx=aPBIt.Value();
-	  nEx=aPBx.OriginalEdge();
-	  const TopoDS_Edge& aEx=TopoDS::Edge(myDS->Shape(nEx));
-	  aTolEx=BRep_Tool::Tolerance(aEx);
-	  if (aTolEx>aTolExMax) {
-	    aTolExMax=aTolEx;
-	    aLPBx.Prepend(aPBx);
-	  }
-	  else{
-	    aLPBx.Append(aPBx);
-	  }
-	}
-	//
-	pLPB->Clear();
-	*pLPB=aLPBx;
+        Standard_Real aTolEx, aTolExMax;
+        BOPTools_ListOfPaveBlock *pLPB, aLPBx;
+        //
+        aTolExMax=-1.;
+        pLPB=(BOPTools_ListOfPaveBlock *)&aCB.PaveBlocks();
+        aPBIt.Initialize(*pLPB);
+        for (; aPBIt.More(); aPBIt.Next()) {
+          const BOPTools_PaveBlock& aPBx=aPBIt.Value();
+          nEx=aPBx.OriginalEdge();
+          const TopoDS_Edge& aEx=TopoDS::Edge(myDS->Shape(nEx));
+          aTolEx=BRep_Tool::Tolerance(aEx);
+          if (aTolEx>aTolExMax) {
+            aTolExMax=aTolEx;
+            aLPBx.Prepend(aPBx);
+          }
+          else{
+            aLPBx.Append(aPBx);
+          }
+        }
+        //
+        pLPB->Clear();
+        *pLPB=aLPBx;
       }
-      //modified by NIZNHY-PKV Wed Nov  8 15:59:50 2006t
       //
       BOPTools_PaveBlock& aPB=aCB.PaveBlock1(nE);
       nSp=SplitIndex(aPB);
@@ -241,14 +416,14 @@ static
       const BOPTools_ListOfPaveBlock& aCBLPB=aCB.PaveBlocks();
       aPBIt.Initialize(aCBLPB);
       for (; aPBIt.More(); aPBIt.Next()) {
-	BOPTools_PaveBlock& aPBx=aPBIt.Value();
-	nEx=aPBx.OriginalEdge();
-	if (nEx==nE) {
-	  continue;
-	}
-	//
-	nSpx=SplitIndex(aPBx);
-	aPBx.SetEdge(nSpx);
+        BOPTools_PaveBlock& aPBx=aPBIt.Value();
+        nEx=aPBx.OriginalEdge();
+        if (nEx==nE) {
+          continue;
+        }
+        //
+        nSpx=SplitIndex(aPBx);
+        aPBx.SetEdge(nSpx);
       }
       //
     }
@@ -256,9 +431,10 @@ static
 }
 //=======================================================================
 // function: SplitIndex
-// purpose: 
+// purpose:
 //=======================================================================
-  Standard_Integer NMTTools_PaveFiller::SplitIndex(const BOPTools_PaveBlock& aPBx)const 
+Standard_Integer NMTTools_PaveFiller::SplitIndex
+  (const BOPTools_PaveBlock& aPBx) const
 {
   Standard_Integer anOriginalEdge, anEdgeIndex=0;
 
@@ -275,16 +451,16 @@ static
     }
   }
   return anEdgeIndex;
-} 
+}
+
 //=======================================================================
 // function: UpdatePaveBlocks
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::UpdatePaveBlocks()
+void NMTTools_PaveFiller::UpdatePaveBlocks()
 {
   myIsDone=Standard_False;
   //
-  
   Standard_Integer i, aNbFFs, nF1, nF2, aNbF, nF, iRankF, nE, nV1, nV2, aNbPB;
   Standard_Real aT1, aT2;
   TColStd_IndexedMapOfInteger aMF, aME;
@@ -314,20 +490,20 @@ static
       aE=TopoDS::Edge(aExp.Current());
       //
       if (BRep_Tool::Degenerated(aE)) {
-	continue;
+        continue;
       }
       //
       nE=myDS->ShapeIndex(aE, iRankF);
       //
       if (aME.Contains(nE)) {
-	continue;
+        continue;
       }
       aME.Add(nE);
       //
       BOPTools_ListOfPaveBlock& aLPB=mySplitShapesPool(myDS->RefEdge(nE));
       aNbPB=aLPB.Extent();
       if (aNbPB) {
-	continue;
+        continue;
       }
       TopExp::Vertices(aE, aV1, aV2);
       //
@@ -349,16 +525,13 @@ static
       aLPB.Append(aPB);
     }
   }
-} 
-// Modified 
-// to treat Alone Vertices between faces
-// Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
+}
+
 //=======================================================================
 // function: MakeAloneVertices
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::MakeAloneVertices()
+void NMTTools_PaveFiller::MakeAloneVertices()
 {
   Standard_Integer i, aNbFFs, nF1, nF2, j, aNbPnts, nFx, aNbV;
   Standard_Real aTolF1, aTolF2, aTolSum, aTolV;
@@ -416,7 +589,7 @@ static
   // 2. Try to fuse alone vertices themselves;
   FuseVertices(aCompound, aDMVV);
   //
-  // if some are fused, replace them by new ones 
+  // if some are fused, replace them by new ones
   aItDMVFF.Initialize(aDMVFF);
   for (;  aItDMVFF.More(); aItDMVFF.Next()) {
     const TopoDS_Shape& aVx=aItDMVFF.Key();
@@ -427,23 +600,23 @@ static
     }
     else {
       const TopoDS_Shape& aVy=aDMVV.Find(aVx);
-      
+
       if (aDMVFF1.IsBound(aVy)) {
-	TColStd_ListOfInteger& aLIy=aDMVFF1.ChangeFind(aVy);
-	aIt.Initialize(aLIx);
-	for(; aIt.More(); aIt.Next()) {
-	  nFx=aIt.Value();
-	  aLIy.Append(nFx);
-	}
+        TColStd_ListOfInteger& aLIy=aDMVFF1.ChangeFind(aVy);
+        aIt.Initialize(aLIx);
+        for(; aIt.More(); aIt.Next()) {
+          nFx=aIt.Value();
+          aLIy.Append(nFx);
+        }
       }
-      else { 
-	aDMVFF1.Bind(aVy, aLIx);
+      else {
+        aDMVFF1.Bind(aVy, aLIx);
       }
     }
   }
   aDMVFF.Clear();
   //
-  // refine lists of faces in aDMVFF1; 
+  // refine lists of faces in aDMVFF1;
   aItDMVFF.Initialize(aDMVFF1);
   for (;  aItDMVFF.More(); aItDMVFF.Next()) {
     TColStd_MapOfInteger aMIy;
@@ -455,7 +628,7 @@ static
     for(; aIt.More(); aIt.Next()) {
       nFx=aIt.Value();
       if (aMIy.Add(nFx)) {
-	aLIy.Append(nFx);
+        aLIy.Append(nFx);
       }
     }
     aLIx.Clear();
@@ -474,7 +647,7 @@ static
       continue;
     }
     //
-    nVSD=FindSDVertex(i); 
+    nVSD=FindSDVertex(i);
     nV=(nVSD) ? nVSD : i;
     const TopoDS_Shape& aVx=myDS->Shape(nV);
     if (!aDMVI.IsBound(aVx)) {
@@ -493,7 +666,7 @@ static
       aDMVI.Bind(aS, i);
     }
   }
-  // 
+  //
   // 4. Initialize BoundSortBox on aDMVI
   //
   Handle(Bnd_HArray1OfBox) aHAB;
@@ -517,7 +690,7 @@ static
   }
   aBSB.Initialize(aHAB);
   //
-  // 5. Compare 
+  // 5. Compare
   aItDMVFF.Initialize(aDMVFF1);
   for (;  aItDMVFF.More(); aItDMVFF.Next()) {
     Bnd_Box aBoxV;
@@ -540,16 +713,16 @@ static
       //
       aIt.Initialize(aLIFF);
       for (; aIt.More(); aIt.Next()) {
-	nFx=aIt.Value();
-	if (myAloneVertices.Contains(nFx)) {
-	  TColStd_IndexedMapOfInteger& aMVx=myAloneVertices.ChangeFromKey(nFx);
-	  aMVx.Add(nV);
-	}
-	else {
-	  TColStd_IndexedMapOfInteger aMVx;
-	  aMVx.Add(nV);
-	  myAloneVertices.Add(nFx, aMVx);
-	}
+        nFx=aIt.Value();
+        if (myAloneVertices.Contains(nFx)) {
+          TColStd_IndexedMapOfInteger& aMVx=myAloneVertices.ChangeFromKey(nFx);
+          aMVx.Add(nV);
+        }
+        else {
+          TColStd_IndexedMapOfInteger aMVx;
+          aMVx.Add(nV);
+          myAloneVertices.Add(nFx, aMVx);
+        }
       }
     }
   }
@@ -569,16 +742,16 @@ static
       const TColStd_IndexedMapOfInteger& aMAV=myAloneVertices(i);
       aNbAV=aMAV.Extent();
       for(j=1; j<=aNbAV; ++j) {
-	nV=aMAV(j);
-	if (aMAVF.Contains(nV)) {
-	  TColStd_IndexedMapOfInteger& aMF=aMAVF.ChangeFromKey(nV);
-	  aMF.Add(nF);
-	}
-	else{
-	  TColStd_IndexedMapOfInteger aMF;
-	  aMF.Add(nF);
-	  aMAVF.Add(nV, aMF);
-	}
+        nV=aMAV(j);
+        if (aMAVF.Contains(nV)) {
+          TColStd_IndexedMapOfInteger& aMF=aMAVF.ChangeFromKey(nV);
+          aMF.Add(nF);
+        }
+        else{
+          TColStd_IndexedMapOfInteger aMF;
+          aMF.Add(nF);
+          aMAVF.Add(nV, aMF);
+        }
       }
     }
     //
@@ -588,11 +761,11 @@ static
       const TColStd_IndexedMapOfInteger& aMF=aMAVF(i);
       aNbF=aMF.Extent();
       for(j=1; j<aNbF; ++j) {
-	nF1=aMF(j);
-	for(k=j+1; k<=aNbF; ++k) {
-	  nF2=aMF(k);
-	  myIP->Add(nF1, nF2, Standard_True, NMTDS_TI_FF);
-	}
+        nF1=aMF(j);
+        for(k=j+1; k<=aNbF; ++k) {
+          nF2=aMF(k);
+          myIP->Add(nF1, nF2, Standard_True, NMTDS_TI_FF);
+        }
       }
     }
   }
@@ -600,18 +773,20 @@ static
 }
 //=======================================================================
 // function: AloneVertices
-// purpose: 
+// purpose:
 //=======================================================================
-  const NMTTools_IndexedDataMapOfIndexedMapOfInteger& NMTTools_PaveFiller::AloneVertices()const
+const NMTTools_IndexedDataMapOfIndexedMapOfInteger&
+  NMTTools_PaveFiller::AloneVertices()const
 {
   return myAloneVertices;
 }
 //=======================================================================
 // function: FuseVertices
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::FuseVertices(const TopoDS_Shape& aCompound,
-					 TopTools_DataMapOfShapeShape& aDMVV)const
+void NMTTools_PaveFiller::FuseVertices
+  (const TopoDS_Shape& aCompound,
+   TopTools_DataMapOfShapeShape& aDMVV)const
 {
   Standard_Integer i, aNbVV, n1, n2, nX;
   NMTTools_PaveFiller tPF;
@@ -624,7 +799,7 @@ static
   //tPF.PerformNewVertices(); //qq
   //
   NMTDS_ShapesDataStructure& tDS=*(tPF.DS());
-  NMTDS_InterfPool& tInterfPool=*(tPF.IP()); 
+  NMTDS_InterfPool& tInterfPool=*(tPF.IP());
   BOPTools_CArray1OfVVInterference& aVVt=tInterfPool.VVInterferences();
   //
   aNbVV=aVVt.Extent();
@@ -641,4 +816,3 @@ static
     }
   }
 }
-// Contribution of Samtech www.samcef.com END

@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BlocksGUI_BlockDlg.cxx
 // Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
@@ -159,8 +160,12 @@ void BlocksGUI_BlockDlg::ConstructorsClicked (int constructorId)
   myConstructorId = constructorId;
 
   // init fields
-  myFace1 = myFace2 = GEOM::GEOM_Object::_nil();
-  myFace3 = myFace4 = myFace5 = myFace6 = myFace1;
+  myFace1.nullify();
+  myFace2.nullify();
+  myFace3.nullify();
+  myFace4.nullify();
+  myFace5.nullify();
+  myFace6.nullify();
 
   switch (constructorId) {
   case 0:
@@ -203,6 +208,7 @@ void BlocksGUI_BlockDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void BlocksGUI_BlockDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -227,108 +233,82 @@ bool BlocksGUI_BlockDlg::ClickOnApply()
 void BlocksGUI_BlockDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText("");
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  if (aSelList.Extent() != 1) {
-    if      (myEditCurrentArgument == Group2F->LineEdit1) myFace1 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == Group2F->LineEdit2) myFace2 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == Group6F->LineEdit1) myFace1 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == Group6F->LineEdit2) myFace2 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == Group6F->LineEdit3) myFace3 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == Group6F->LineEdit4) myFace4 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == Group6F->LineEdit5) myFace5 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == Group6F->LineEdit6) myFace6 = GEOM::GEOM_Object::_nil();
-    return;
-  }
-
-  // nbSel == 1
-  Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-
-  if (!testResult || CORBA::is_nil(aSelectedObject))
-    return;
-
-  QString aName = GEOMBase::GetName(aSelectedObject);
-
-  // Get Selected object if selected subshape
+  GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_FACE );
   TopoDS_Shape aShape;
-  if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
-  {
-    TColStd_IndexedMapOfInteger aMap;
-    aSelMgr->GetIndexes(aSelList.First(), aMap);
-    if (aMap.Extent() == 1) // Local Selection
-    {
-      int anIndex = aMap(1);
-      aName += QString(":face_%1").arg(anIndex);
-
-      //Find SubShape Object in Father
-      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-
-      if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
-        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-      }
-      else {
-        aSelectedObject = aFindedObject; // get Object from study
-      }
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
+    myEditCurrentArgument->setText( aName );
+    if ( myEditCurrentArgument == Group2F->LineEdit1 ) {
+      myFace1 = aSelectedObject;
+      if (!myFace2) Group2F->PushButton2->click();
     }
-    else // Global Selection
-    {
-      if (aShape.ShapeType() != TopAbs_FACE) {
-        aSelectedObject = GEOM::GEOM_Object::_nil();
-        aName = "";
-      }
+    else if ( myEditCurrentArgument == Group2F->LineEdit2 ) {
+      myFace2 = aSelectedObject;
+      if (!myFace1) Group2F->PushButton1->click();
+    }
+    else if ( myEditCurrentArgument == Group6F->LineEdit1 ) {
+      myFace1 = aSelectedObject;
+      if      (!myFace2) Group6F->PushButton2->click();
+      else if (!myFace3) Group6F->PushButton3->click();
+      else if (!myFace4) Group6F->PushButton4->click();
+      else if (!myFace5) Group6F->PushButton5->click();
+      else if (!myFace6) Group6F->PushButton6->click();
+    }
+    else if ( myEditCurrentArgument == Group6F->LineEdit2 ) {
+      myFace2 = aSelectedObject;
+      if      (!myFace3) Group6F->PushButton3->click();
+      else if (!myFace4) Group6F->PushButton4->click();
+      else if (!myFace5) Group6F->PushButton5->click();
+      else if (!myFace6) Group6F->PushButton6->click();
+      else if (!myFace1) Group6F->PushButton1->click();
+    }
+    else if ( myEditCurrentArgument == Group6F->LineEdit3 ) {
+      myFace3 = aSelectedObject;
+      if      (!myFace4) Group6F->PushButton4->click();
+      else if (!myFace5) Group6F->PushButton5->click();
+      else if (!myFace6) Group6F->PushButton6->click();
+      else if (!myFace1) Group6F->PushButton1->click();
+      else if (!myFace2) Group6F->PushButton2->click();
+    }
+    else if ( myEditCurrentArgument == Group6F->LineEdit4 ) {
+      myFace4 = aSelectedObject;
+      if      (!myFace5) Group6F->PushButton5->click();
+      else if (!myFace6) Group6F->PushButton6->click();
+      else if (!myFace1) Group6F->PushButton1->click();
+      else if (!myFace2) Group6F->PushButton2->click();
+      else if (!myFace3) Group6F->PushButton3->click();
+    }
+    else if ( myEditCurrentArgument == Group6F->LineEdit5 ) {
+      myFace5 = aSelectedObject;
+      if      (!myFace6) Group6F->PushButton6->click();
+      else if (!myFace1) Group6F->PushButton1->click();
+      else if (!myFace2) Group6F->PushButton2->click();
+      else if (!myFace3) Group6F->PushButton3->click();
+      else if (!myFace4) Group6F->PushButton4->click();
+    }
+    else if ( myEditCurrentArgument == Group6F->LineEdit6 ) {
+      myFace6 = aSelectedObject;
+      if      (!myFace1) Group6F->PushButton1->click();
+      else if (!myFace2) Group6F->PushButton2->click();
+      else if (!myFace3) Group6F->PushButton3->click();
+      else if (!myFace4) Group6F->PushButton4->click();
+      else if (!myFace5) Group6F->PushButton5->click();
     }
   }
-
-  myEditCurrentArgument->setText(aName);
-
-  if (myEditCurrentArgument == Group2F->LineEdit1) {
-    myFace1 = aSelectedObject;
-    if (!myFace1->_is_nil() && myFace2->_is_nil())
-      Group2F->PushButton2->click();
-  }
-  else if (myEditCurrentArgument == Group2F->LineEdit2) {
-    myFace2 = aSelectedObject;
-    if (!myFace2->_is_nil() && myFace1->_is_nil())
-      Group2F->PushButton1->click();
-  }
-  else if (myEditCurrentArgument == Group6F->LineEdit1) {
-    myFace1 = aSelectedObject;
-    if (!myFace1->_is_nil() && myFace2->_is_nil())
-      Group6F->PushButton2->click();
-  }
-  else if (myEditCurrentArgument == Group6F->LineEdit2) {
-    myFace2 = aSelectedObject;
-    if (!myFace2->_is_nil() && myFace3->_is_nil())
-      Group6F->PushButton3->click();
-  }
-  else if (myEditCurrentArgument == Group6F->LineEdit3) {
-    myFace3 = aSelectedObject;
-    if (!myFace3->_is_nil() && myFace4->_is_nil())
-      Group6F->PushButton4->click();
-  }
-  else if (myEditCurrentArgument == Group6F->LineEdit4) {
-    myFace4 = aSelectedObject;
-    if (!myFace4->_is_nil() && myFace5->_is_nil())
-      Group6F->PushButton5->click();
-  }
-  else if (myEditCurrentArgument == Group6F->LineEdit5) {
-    myFace5 = aSelectedObject;
-    if (!myFace5->_is_nil() && myFace6->_is_nil())
-      Group6F->PushButton6->click();
-  }
-  else if (myEditCurrentArgument == Group6F->LineEdit6) {
-    myFace6 = aSelectedObject;
-    if (!myFace6->_is_nil() && myFace1->_is_nil())
-      Group6F->PushButton1->click();
+  else {
+    if      (myEditCurrentArgument == Group2F->LineEdit1) myFace1.nullify();
+    else if (myEditCurrentArgument == Group2F->LineEdit2) myFace2.nullify();
+    else if (myEditCurrentArgument == Group6F->LineEdit1) myFace1.nullify();
+    else if (myEditCurrentArgument == Group6F->LineEdit2) myFace2.nullify();
+    else if (myEditCurrentArgument == Group6F->LineEdit3) myFace3.nullify();
+    else if (myEditCurrentArgument == Group6F->LineEdit4) myFace4.nullify();
+    else if (myEditCurrentArgument == Group6F->LineEdit5) myFace5.nullify();
+    else if (myEditCurrentArgument == Group6F->LineEdit6) myFace6.nullify();
+    myEditCurrentArgument->setText( "" );
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -423,7 +403,7 @@ void BlocksGUI_BlockDlg::ActivateThisDialog()
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -449,17 +429,15 @@ GEOM::GEOM_IOperations_ptr BlocksGUI_BlockDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BlocksGUI_BlockDlg::isValid (QString&)
+bool BlocksGUI_BlockDlg::isValid(QString&)
 {
   bool ok = false;
   switch (getConstructorId()) {
   case 0:
-    ok = !(myFace1->_is_nil() || myFace2->_is_nil());
+    ok = myFace1 && myFace2;
     break;
   case 1:
-    ok =  !(myFace1->_is_nil() || myFace2->_is_nil() ||
-            myFace3->_is_nil() || myFace4->_is_nil() ||
-            myFace5->_is_nil() || myFace6->_is_nil());
+    ok = myFace1 && myFace2 && myFace3 && myFace4 && myFace5 && myFace6;
     break;
   default:
     break;
@@ -477,20 +455,18 @@ bool BlocksGUI_BlockDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
-    if (!CORBA::is_nil(myFace1) && !CORBA::is_nil(myFace2)) {
-      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-        MakeHexa2Faces(myFace1, myFace2);
+    if ( myFace1 && myFace2 ) {
+      anObj = anOper->MakeHexa2Faces(myFace1.get(), myFace2.get());
       res = true;
     }
     break;
   case 1:
-    if (!CORBA::is_nil(myFace1) && !CORBA::is_nil(myFace2) &&
-        !CORBA::is_nil(myFace3) && !CORBA::is_nil(myFace4) &&
-        !CORBA::is_nil(myFace5) && !CORBA::is_nil(myFace6)) {
-      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-        MakeHexa(myFace1, myFace2, myFace3, myFace4, myFace5, myFace6);
+    if ( myFace1 && myFace2 && myFace3 && myFace4 && myFace5 && myFace6 ) {
+      anObj = anOper->MakeHexa(myFace1.get(), myFace2.get(), myFace3.get(), myFace4.get(), myFace5.get(), myFace6.get());
       res = true;
     }
     break;
@@ -508,21 +484,20 @@ bool BlocksGUI_BlockDlg::execute (ObjectList& objects)
 //=================================================================================
 void BlocksGUI_BlockDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
   switch (getConstructorId()) {
   case 0:
-    objMap[Group2F->LineEdit1->text()] = myFace1;
-    objMap[Group2F->LineEdit2->text()] = myFace2;
+    GEOMBase::PublishSubObject( myFace1.get() );
+    GEOMBase::PublishSubObject( myFace2.get() );
     break;
   case 1:
-    objMap[Group6F->LineEdit1->text()] = myFace1;
-    objMap[Group6F->LineEdit2->text()] = myFace2;
-    objMap[Group6F->LineEdit3->text()] = myFace3;
-    objMap[Group6F->LineEdit4->text()] = myFace4;
-    objMap[Group6F->LineEdit5->text()] = myFace5;
-    objMap[Group6F->LineEdit6->text()] = myFace6;
+    GEOMBase::PublishSubObject( myFace1.get() );
+    GEOMBase::PublishSubObject( myFace2.get() );
+    GEOMBase::PublishSubObject( myFace3.get() );
+    GEOMBase::PublishSubObject( myFace4.get() );
+    GEOMBase::PublishSubObject( myFace5.get() );
+    GEOMBase::PublishSubObject( myFace6.get() );
+    break;
+  default:
     break;
   }
-  addSubshapesToFather(objMap);
 }

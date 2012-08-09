@@ -20,7 +20,7 @@ Box = geompy.MakeBoxTwoPnt(p0, p200)
 group = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
 
 # add objects to the group
-SubFaceList = geompy.SubShapeAllSorted(Box, geompy.ShapeType["FACE"])
+SubFaceList = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["FACE"])
 for i in [0, 3, 5] :
     FaceID = geompy.GetSubShapeID(Box, SubFaceList[i])
     geompy.AddObject(group, FaceID)
@@ -60,7 +60,7 @@ Box = geompy.MakeBoxTwoPnt(p0, p200)
 group = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
 
 # add objects to the group
-SubFaceList = geompy.SubShapeAllSorted(Box, geompy.ShapeType["FACE"])
+SubFaceList = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["FACE"])
 for i in [0, 3, 5] :
     FaceID = geompy.GetSubShapeID(Box, SubFaceList[i])
     geompy.AddObject(group, FaceID)
@@ -89,7 +89,7 @@ Box = geompy.MakeBoxTwoPnt(p0, p200)
 group = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
 
 # add objects to the group
-SubFaceList = geompy.SubShapeAllSorted(Box, geompy.ShapeType["FACE"])
+SubFaceList = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["FACE"])
 for i in [0, 3, 5] :
     FaceID = geompy.GetSubShapeID(Box, SubFaceList[i])
     geompy.AddObject(group, FaceID)

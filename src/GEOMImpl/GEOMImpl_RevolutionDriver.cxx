@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_RevolutionDriver.hxx>
@@ -105,18 +106,18 @@ Standard_Integer GEOMImpl_RevolutionDriver::Execute(TFunction_Logbook& log) cons
       gp_Lin aL(BRep_Tool::Pnt(V1), gp_Dir(aV));
       Standard_Real d = aL.Distance(BRep_Tool::Pnt(TopoDS::Vertex(aShapeBase)));
       if (d < Precision::Confusion()) {
-	Standard_ConstructionError::Raise("Vertex to be rotated is too close to Revolution Axis");
+        Standard_ConstructionError::Raise("Vertex to be rotated is too close to Revolution Axis");
       }
     }
     double anAngle = aCI.GetAngle();
     gp_Ax1 anAxis (BRep_Tool::Pnt(V1), aV);
     if (aType == REVOLUTION_BASE_AXIS_ANGLE_2WAYS)
       {
-	gp_Trsf aTrsf;
-	aTrsf.SetRotation(anAxis, ( -anAngle ));
-	BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
-	aShapeBase = aTransformation.Shape();
-	anAngle = anAngle * 2;
+        gp_Trsf aTrsf;
+        aTrsf.SetRotation(anAxis, ( -anAngle ));
+        BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+        aShapeBase = aTransformation.Shape();
+        anAngle = anAngle * 2;
       }
     BRepPrimAPI_MakeRevol MR (aShapeBase, anAxis, anAngle, Standard_False);
     if (!MR.IsDone()) MR.Build();
@@ -153,10 +154,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_RevolutionDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_RevolutionDriver",
-			                                 sizeof(GEOMImpl_RevolutionDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_RevolutionDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

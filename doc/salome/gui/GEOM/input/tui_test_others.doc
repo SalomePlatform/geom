@@ -40,11 +40,8 @@
 \anchor swig_MakeChamfer
 \until id_MakeChamfer
 
-\anchor swig_NumberOfFaces
-\until Bad number of faces
-
-\anchor swig_NumberOfEdges
-\until Bad number of edges
+\anchor swig_NumberOf
+\until Bad number of shapes
 
 \anchor swig_MakeBlockExplode
 \until id_MakeBlockExplode
@@ -91,7 +88,7 @@
 \until "freeFacesWithoutExtra"
 
 \anchor swig_GetSharedShapes
-\until "sharedFace"
+\until "sharedEdge_"
 
 \anchor swig_CheckAndImprove
 \until "blocksComp"
@@ -102,11 +99,20 @@
 \anchor swig_GetPoint
 \until blocksComp (-50, -50, -50)
 
+\anchor swig_GetVertexNearPoint
+\until near (40,  40,  40)
+
+\anchor swig_GetEdge
+\until by two points
+
 \anchor swig_GetEdgeNearPoint
 \until edge near point
 
 \anchor swig_GetBlockByParts
 \until "b0 image"
+
+\anchor swig_GetShapesNearPoint
+\until faces near point
 
 \anchor swig_GetShapesOnPlane
 \until Face on Plane
@@ -124,6 +130,12 @@
 \until Edge out of Cylinder
 
 \anchor swig_GetShapesOnCylinderIDs
+\until Group of edges
+
+\anchor swig_GetShapesOnCylinderWithLocation
+\until Edge out of
+
+\anchor swig_GetShapesOnCylinderWithLocationIDs
 \until Group of edges
 
 \anchor swig_GetShapesOnSphere

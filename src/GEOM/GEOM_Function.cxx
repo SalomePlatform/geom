@@ -1,30 +1,33 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOM_Function.hxx>
 #include <GEOM_Object.hxx>
 #include <GEOM_Solver.hxx>
 #include <GEOM_ISubShape.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include "utilities.h"
 
@@ -42,6 +45,7 @@
 #include <TDataStd_UAttribute.hxx>
 #include <TDataStd_ChildNodeIterator.hxx>
 #include <TDataStd_ExtStringArray.hxx>
+#include <TDataStd_ExtStringList.hxx>
 #include <TDocStd_Owner.hxx>
 #include <TDocStd_Document.hxx>
 #include <TFunction_Function.hxx>
@@ -59,10 +63,21 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+// This modification was introduced in frame of Mantis issue 0021251.
+// This line allows to keep shape orientation together with the shape itself.
+// Otherwise orientation can be lost in some cases.
+#define KEEP_ORIENTATION_0021251
+
 #define ARGUMENT_LABEL 1
 #define RESULT_LABEL 2
 #define DESCRIPTION_LABEL 3
 #define HISTORY_LABEL 4
+#define SUBSHAPES_LABEL 5 // 0020756: GetGroups
+#define NAMING_LABEL 6 // 0020750: Naming during STEP import
+
+#ifdef KEEP_ORIENTATION_0021251
+#define ORIENTATION_LABEL 7 // 0021251: TNaming_NamedShape doesn't store orientation
+#endif
 
 #define ARGUMENTS _label.FindChild((ARGUMENT_LABEL))
 #define ARGUMENT(thePosition) _label.FindChild((ARGUMENT_LABEL)).FindChild((thePosition))
@@ -120,6 +135,23 @@ GEOM_Function::GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& the
 
   aNode = TDataStd_TreeNode::Set(theEntry, GetFunctionTreeID());
   aRoot->Append(aNode);
+}
+
+//================================================================================
+/*!
+ * \brief Retuns true if this function is the last one in the study
+ */
+//================================================================================
+
+bool GEOM_Function::IsLastFuntion()
+{
+  bool isLast = false;
+
+  Handle(TDataStd_TreeNode) aNode;
+  if (_label.FindAttribute(GetFunctionTreeID(), aNode))
+    isLast = !aNode->HasNext();
+
+  return isLast;
 }
 
 //=============================================================================
@@ -195,12 +227,12 @@ TopoDS_Shape GEOM_Function::GetValue()
 
     if (!isResult) {
       try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
         OCC_CATCH_SIGNALS;
 #endif
         GEOM_Solver aSolver(GEOM_Engine::GetEngine());
         if (!aSolver.ComputeFunction(this)) {
-          MESSAGE("GEOM_Object::GetValue Error : Can't build a sub shape");
+          MESSAGE("GEOM_Object::GetValue Error : Can't build a sub-shape");
           return aShape;
         }
       }
@@ -218,6 +250,15 @@ TopoDS_Shape GEOM_Function::GetValue()
 
   aShape = aNS->Get();
 
+#ifdef KEEP_ORIENTATION_0021251
+  // 0021251: TNaming_NamedShape doesn't store orientation
+  TDF_Label anOrientationLabel = _label.FindChild(ORIENTATION_LABEL);
+  Handle(TDataStd_Integer) anInteger;
+  if (anOrientationLabel.FindAttribute(TDataStd_Integer::GetID(), anInteger)) {
+    aShape.Orientation((TopAbs_Orientation)anInteger->Get());
+  }
+#endif
+
   _isDone = true;
   return aShape;
 }
@@ -231,9 +272,15 @@ void GEOM_Function::SetValue(TopoDS_Shape& theShape)
 {
   _isDone = false;
   TDF_Label aResultLabel = _label.FindChild(RESULT_LABEL);
-  TNaming_Builder aBuilder(aResultLabel);
+  TNaming_Builder aBuilder (aResultLabel);
 
   aBuilder.Generated(theShape);
+
+#ifdef KEEP_ORIENTATION_0021251
+  // 0021251: TNaming_NamedShape doesn't store orientation
+  TDF_Label anOrientationLabel = _label.FindChild(ORIENTATION_LABEL);
+  TDataStd_Integer::Set(anOrientationLabel, (int)theShape.Orientation());
+#endif
 
   // synchronisation between main shape and its sub-shapes
   TDF_Label aLabel = GetOwnerEntry();
@@ -470,8 +517,8 @@ TCollection_AsciiString GEOM_Function::GetString(int thePosition)
 void GEOM_Function::SetReference(int thePosition, Handle(GEOM_Function) theReference)
 {
   _isDone = false;
-  if(thePosition <= 0) return;
-  if(theReference.IsNull()) return;
+  if (thePosition <= 0) return;
+  if (theReference.IsNull()) return;
   TDF_Label anArgLabel = ARGUMENT(thePosition);
   TDF_Reference::Set(anArgLabel, theReference->GetEntry());
   TDataStd_UAttribute::Set(anArgLabel, GetDependencyID());
@@ -671,6 +718,85 @@ void GEOM_Function::GetDependency(TDF_LabelSequence& theSeq)
 
 //=============================================================================
 /*!
+ *  AddSubShapeReference
+ */
+//=============================================================================
+void GEOM_Function::AddSubShapeReference(Handle(GEOM_Function) theSubShape)
+{
+  _isDone = false;
+
+  TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
+
+  Handle(TDataStd_ExtStringList) aList;
+  if (!aSubShapesLabel.FindAttribute(TDataStd_ExtStringList::GetID(), aList)) {
+    aList = new TDataStd_ExtStringList;
+    aSubShapesLabel.AddAttribute(aList);
+  }
+
+  TCollection_AsciiString anEntry;
+  TDF_Tool::Entry(theSubShape->GetOwnerEntry(), anEntry);
+  aList->Append(anEntry);
+
+  _isDone = true;
+}
+
+//=============================================================================
+/*!
+ *  RemoveSubShapeReference
+ */
+//=============================================================================
+void GEOM_Function::RemoveSubShapeReference(Handle(GEOM_Function) theSubShape)
+{
+  _isDone = false;
+
+  TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
+
+  Handle(TDataStd_ExtStringList) aList;
+  if (aSubShapesLabel.FindAttribute(TDataStd_ExtStringList::GetID(), aList)) {
+    TCollection_AsciiString anEntry;
+    TDF_Tool::Entry(theSubShape->GetOwnerEntry(), anEntry);
+    aList->Remove(anEntry);
+  }
+
+  _isDone = true;
+}
+
+//=============================================================================
+/*!
+ *  HasSubShapeReferences
+ */
+//=============================================================================
+bool GEOM_Function::HasSubShapeReferences()
+{
+  _isDone = true;
+
+  TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
+  return aSubShapesLabel.IsAttribute(TDataStd_ExtStringList::GetID());
+}
+
+//=============================================================================
+/*!
+ *  GetSubShapeReferences
+ */
+//=============================================================================
+const TDataStd_ListOfExtendedString& GEOM_Function::GetSubShapeReferences()
+{
+  _isDone = false;
+
+  TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
+
+  Handle(TDataStd_ExtStringList) aList;
+  if (!aSubShapesLabel.FindAttribute(TDataStd_ExtStringList::GetID(), aList)) {
+    aList = new TDataStd_ExtStringList;
+    aSubShapesLabel.AddAttribute(aList);
+  }
+
+  _isDone = true;
+  return aList->List();
+}
+
+//=============================================================================
+/*!
  *  GetHistoryEntry
  */
 //=============================================================================
@@ -712,6 +838,16 @@ TDF_Label GEOM_Function::GetArgumentHistoryEntry (const TDF_Label&       theArgu
   return aHistoryCurLabel;
 }
 
+//=============================================================================
+/*!
+ *  GetNamingEntry
+ */
+//=============================================================================
+TDF_Label GEOM_Function::GetNamingEntry (const Standard_Boolean create)
+{
+  return _label.FindChild(NAMING_LABEL, create);
+}
+
 //=======================================================================
 //function :  GEOM_Function_Type_
 //purpose  :
@@ -720,17 +856,16 @@ Standard_EXPORT Handle_Standard_Type& GEOM_Function_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(MMgt_TShared);
+  if (aType1.IsNull()) aType1 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(Standard_Transient);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(Standard_Transient);
-
+  if (aType2.IsNull()) aType2 = STANDARD_TYPE(Standard_Transient);
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOM_Function",
-			                                 sizeof(GEOM_Function),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOM_Function),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }
@@ -750,5 +885,5 @@ const Handle(GEOM_Function) Handle(GEOM_Function)::DownCast(const Handle(Standar
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

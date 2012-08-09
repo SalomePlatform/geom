@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_Skeleton.cxx
 // Author : Damine COQUERET, Open CASCADE S.A.S.
@@ -49,7 +50,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI* GUI, QWidget* parent,
-					  bool modal, Qt::WindowFlags f )
+                                          bool modal, Qt::WindowFlags f )
   : QDialog( parent, f ),
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( GUI )
@@ -96,33 +97,33 @@ void MeasureGUI_Skeleton::Init()
   /* signals and slots connections */
   
   connect( buttonClose(), SIGNAL( clicked() ),
-	   this,          SLOT( ClickOnCancel() ) );
+           this,          SLOT( ClickOnCancel() ) );
 
   connect( buttonHelp(),  SIGNAL( clicked() ), 
-	   this,          SLOT( ClickOnHelp() ) );
+           this,          SLOT( ClickOnHelp() ) );
   
   if ( myGeomGUI ) {
     connect( myGeomGUI,   SIGNAL( SignalDeactivateActiveDialog() ),
-	     this,        SLOT  ( DeactivateActiveDialog() ) );
+             this,        SLOT  ( DeactivateActiveDialog() ) );
     
     connect( myGeomGUI,   SIGNAL( SignalCloseAllDialogs() ),
-	     this,        SLOT  ( ClickOnCancel() ) );
+             this,        SLOT  ( ClickOnCancel() ) );
   }
   
   if ( mySelEdit ) {
     connect( mySelEdit,   SIGNAL( returnPressed() ),
-	     this,        SLOT( LineEditReturnPressed() ) );
+             this,        SLOT( LineEditReturnPressed() ) );
   }
    
   if ( mySelBtn ) {
     connect( mySelBtn,    SIGNAL( clicked() ),
-	     this,        SLOT  ( SetEditCurrentArgument() ) );
+             this,        SLOT  ( SetEditCurrentArgument() ) );
   }
 
   LightApp_SelectionMgr* aSel = ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr();
   if ( aSel ) {
     connect( aSel, SIGNAL( currentSelectionChanged() ), 
-	     this, SLOT  ( SelectionIntoArgument() ) ) ;
+             this, SLOT  ( SelectionIntoArgument() ) ) ;
   }
 
   /* displays Dialog */
@@ -160,8 +161,8 @@ void MeasureGUI_Skeleton::ClickOnHelp()
     platform = "application";
 #endif
     SUIT_MessageBox::warning( this, tr( "WRN_WARNING" ),
-			      tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
-			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ) );
+                              tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+                              arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ) );
   }
 }
 
@@ -222,7 +223,7 @@ void MeasureGUI_Skeleton::ActivateThisDialog()
   LightApp_SelectionMgr* aSel = ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr();
   if ( aSel )
     connect( aSel, SIGNAL( currentSelectionChanged() ), 
-	     this, SLOT  ( SelectionIntoArgument() ) ) ;
+             this, SLOT  ( SelectionIntoArgument() ) ) ;
   
   redisplayPreview();
   activateSelection();
@@ -253,10 +254,7 @@ void MeasureGUI_Skeleton::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
 
   if (aSelList.Extent() > 0) {
-    Standard_Boolean testResult = Standard_False;
-    aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult)
-      aSelectedObject = GEOM::GEOM_Object::_nil();
+    aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
   }
 
   if (aSelectedObject->_is_nil()) {

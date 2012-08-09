@@ -1,24 +1,22 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMToolsGUI_DeleteDlg.cxx
 // Author : Dmitry Matveitchev, Open CASCADE S.A.S.
@@ -26,7 +24,7 @@
 #include "GEOMToolsGUI_DeleteDlg.h"
 
 #include <QLabel>
-#include <QPushButton>
+#include <QDialogButtonBox>
 #include <QTextBrowser>
 #include <QStringList>
 #include <QGridLayout>
@@ -73,10 +71,12 @@ static QStringList objectsToNames( const QMap<QString, QString>& objects )
 /*!
   \brief Constructor.
   \param parent parent widget
+  \param objects map of objects names/objects
+  \param deleteAll if True, delete all objects
 */
 GEOMToolsGUI_DeleteDlg::GEOMToolsGUI_DeleteDlg( QWidget* parent, 
-						const QMap<QString, QString>& objects, 
-						bool deleteAll )
+                                                const QMap<QString, QString>& objects, 
+                                                bool deleteAll )
 : QDialog( parent )
 {
   setModal( true );
@@ -110,21 +110,13 @@ GEOMToolsGUI_DeleteDlg::GEOMToolsGUI_DeleteDlg( QWidget* parent,
     lab->setText( tr( "GEOM_REALLY_DELETE_ALL" ) );
   }
 
-  QPushButton* buttonYes = new QPushButton( tr( "GEOM_BUT_YES" ), this );
-  QPushButton* buttonNo  = new QPushButton( tr( "GEOM_BUT_NO" ),  this );
-  QHBoxLayout* btnLayout = new QHBoxLayout;
-  btnLayout->setMargin( 0 );
-  btnLayout->setSpacing( 6 );
-  btnLayout->addWidget( buttonYes );
-  btnLayout->addSpacing( 10 );
-  btnLayout->addStretch();
-  btnLayout->addWidget( buttonNo );
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Yes
+                                 | QDialogButtonBox::No);
   int rc = topLayout->rowCount();
-  topLayout->addLayout( btnLayout, rc, 0, 1, 2 );
+  topLayout->addWidget( buttonBox, rc, 1, 1, 1 );
 
-  /* signals and slots connections */
-  connect( buttonYes, SIGNAL( clicked() ), this, SLOT( accept() ) );
-  connect( buttonNo,  SIGNAL( clicked() ), this, SLOT( reject() ) );
+  connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 GEOMToolsGUI_DeleteDlg::~GEOMToolsGUI_DeleteDlg()

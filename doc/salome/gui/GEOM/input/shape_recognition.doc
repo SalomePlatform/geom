@@ -1,0 +1,98 @@
+/*!
+
+\page shape_recognition_page Shape recognition from a picture
+
+\note  
+  <ol>
+  <li>This functionality is not fully operational yet. It is provided for testing purpose and because it might already be helpful in some situations. 
+  (Do not hesitate to make feedbacks on possible bugs ...) </li>
+  
+  <li>The functionality is only available if SALOME has been built with the optional prerequisite OpenCV. </li>
+  </ol>
+
+This tool allows you to automatically create geometrical shapes from
+pictures with help of shape recognition algorithms.
+<b>Contours</b> or <b>Corners</b> can be built.
+
+\b Example: 
+
+Detection of the cost line on a nautical chart
+
+\image html contour_detection_example2.png 
+
+\n
+
+To use the <b>Shape recogition</b> tool:
+
+<ol> 
+  <li>\ref import_picture_page "Import a picture" in the view</li>
+  
+  <li> Select <b>New Entity -> Shape Recognition</b> or click on \image html feature_detect.png </li>
+  
+</ol>
+  
+
+
+Then you can choose to create either <b>contours</b> or <b>corners</b> from this picture. 
+
+\n
+
+To create <b>Contours</b> :
+
+<ol>
+  <li> Select in the <b>Picture</b> field a previously imported picture.</li>
+  
+  <li> Click on \image html occ_view_camera_dump.png </li>
+  
+  <li>  Draw a rectangle in the zone whose contour is to be found. The
+  zone will be identified by the colors of this <b>Filtering Sample</b>.
+  
+  \b Example:
+  
+  In the picture shown above, the contours have been drawn basing on
+  the sample, containing white and violet color, thus all white and
+  violet areas in the picture are included in the outlined zone.
+  
+  \image html feature_detection_dlg3.png
+  
+
+  
+  <li> <b> Output type </b> 
+
+  <ul>
+
+  <li> \b Spline : The \b result will be a \b Compound of \b Edges. Each contour will be a single \b edge based on a B-Spline curve (it will be smooth).</li>
+
+  <li> \b Polyline : The \b result will be a \b Compound of \b Wires. Each contour will be a wire made of lines (i.e. a \b Polygon)</li>
+
+  </ul>
+  
+  In both cases each contour can then be retrieved by an explode operation with the appropriate subshape type.
+  
+  </li>
+  
+  \note It is better to use the \b Spline output type unless you want to find the frontier of a polygon (rectangle ...)
+
+</ol>
+
+
+\n
+
+To create <b>Corners</b> :
+
+<ol>
+  <li> In the <b>Picture</b> field select a previously imported picture.</li>
+  
+  <li> Apply </li>
+  
+  The \b Result will be a \b Compound of \b Vertices
+  
+  \image html feature_detection_dlg2.png 
+  
+  
+  
+</ol>
+  
+
+
+*/

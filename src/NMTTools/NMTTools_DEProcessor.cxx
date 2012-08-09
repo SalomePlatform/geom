@@ -1,30 +1,31 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_DEProcessor.cxx
-// Created:	Wed Sep 12 12:10:52 2001
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+
+// File:        NMTTools_DEProcessor.cxx
+// Created:     Wed Sep 12 12:10:52 2001
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
-#include <NMTTools_DEProcessor.ixx>
+#include <NMTTools_DEProcessor.hxx>
 
 #include <Precision.hxx>
 
@@ -90,8 +91,8 @@
 #include <NMTTools_PaveFiller.hxx>
 
 //=======================================================================
-// function: 
-// purpose: 
+// function:
+// purpose:
 //=======================================================================
   NMTTools_DEProcessor::NMTTools_DEProcessor(NMTTools_PaveFiller& aPaveFiller)
 :
@@ -102,7 +103,7 @@
 }
 //=======================================================================
 // function: IsDone
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_DEProcessor::IsDone() const
 {
@@ -110,7 +111,7 @@
 }
 //=======================================================================
 // function:  Do
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_DEProcessor::Do()
 {
@@ -130,7 +131,7 @@
 }
 //=======================================================================
 // function:  FindDegeneratedEdges
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_DEProcessor::FindDegeneratedEdges()
 {
@@ -150,38 +151,38 @@
     const TopoDS_Shape aS=myDS->Shape(i);
     if (aS.ShapeType()==TopAbs_EDGE) {
       const TopoDS_Edge& aE=TopoDS::Edge(aS);
-      
-      if (BRep_Tool::Degenerated(aE)) {
-	iRankE=myDS->Rank(i);
-	aV=TopExp::FirstVertex(aE);
-	nVx=myDS->ShapeIndex(aV, iRankE);
-	//
-	nV=nVx;
-	ip=myFiller->FindSDVertex(nV);
-	if (ip) {
-	  nV=ip;
-	}
-	//
-	TColStd_ListOfInteger aLFn;
-	const TopTools_ListOfShape& aLF=aMEF.FindFromKey(aE);
-	TopTools_ListIteratorOfListOfShape anIt(aLF);
-	for (; anIt.More(); anIt.Next()) {
-	  const TopoDS_Shape& aF=anIt.Value();
-	  nF=myDS->ShapeIndex(aF, iRankE);
-	  aLFn.Append(nF);
-	}
-	BOPTools_DEInfo aDEInfo;
-	aDEInfo.SetVertex(nV);
-	aDEInfo.SetFaces(aLFn);
 
-	myDEMap.Add (i, aDEInfo);
+      if (BRep_Tool::Degenerated(aE)) {
+        iRankE=myDS->Rank(i);
+        aV=TopExp::FirstVertex(aE);
+        nVx=myDS->ShapeIndex(aV, iRankE);
+        //
+        nV=nVx;
+        ip=myFiller->FindSDVertex(nV);
+        if (ip) {
+          nV=ip;
+        }
+        //
+        TColStd_ListOfInteger aLFn;
+        const TopTools_ListOfShape& aLF=aMEF.FindFromKey(aE);
+        TopTools_ListIteratorOfListOfShape anIt(aLF);
+        for (; anIt.More(); anIt.Next()) {
+          const TopoDS_Shape& aF=anIt.Value();
+          nF=myDS->ShapeIndex(aF, iRankE);
+          aLFn.Append(nF);
+        }
+        BOPTools_DEInfo aDEInfo;
+        aDEInfo.SetVertex(nV);
+        aDEInfo.SetFaces(aLFn);
+
+        myDEMap.Add (i, aDEInfo);
       }
     }
   }
 }
 //=======================================================================
 // function:  DoPaves
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_DEProcessor::DoPaves()
 {
@@ -201,18 +202,18 @@
     TColStd_ListIteratorOfListOfInteger anIt(nLF);
     for (; anIt.More(); anIt.Next()) {
       nFD=anIt.Value();
-      
+
       BOPTools_ListOfPaveBlock aLPB;
       FindPaveBlocks(nED, nVD, nFD, aLPB);
       //
       aNbLPB=aLPB.Extent();
       if (!aNbLPB) {
-	continue;
+        continue;
       }
       //
       FillPaveSet (nED, nVD, nFD, aLPB);
     }
-    // 
+    //
     // Fill aSplitEdges for the edge nED
     FillSplitEdgesPool(nED);
     //
@@ -223,12 +224,12 @@
 }
 //=======================================================================
 // function:  FindPaveBlocks
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_DEProcessor::FindPaveBlocks(const Standard_Integer ,
-					    const Standard_Integer nVD,
-					    const Standard_Integer nFD,
-					    BOPTools_ListOfPaveBlock& aLPBOut)
+                                            const Standard_Integer nVD,
+                                            const Standard_Integer nFD,
+                                            BOPTools_ListOfPaveBlock& aLPBOut)
 {
   BOPTools_ListIteratorOfListOfPaveBlock anIt;
   Standard_Integer i, aNb, nF2, nV;
@@ -244,7 +245,7 @@
       continue;
     }
     //
-    // Split Parts 
+    // Split Parts
     const BOPTools_ListOfPaveBlock& aLPBSplits=aFF.PaveBlocks();
     anIt.Initialize(aLPBSplits);
     for (; anIt.More(); anIt.Next()) {
@@ -253,20 +254,20 @@
       const BOPTools_Pave& aPave1=aPBSp.Pave1();
       nV=aPave1.Index();
       if (nV==nVD) {
-	aLPBOut.Append(aPBSp);
-	continue;
+        aLPBOut.Append(aPBSp);
+        continue;
       }
       //
       const BOPTools_Pave& aPave2=aPBSp.Pave2();
       nV=aPave2.Index();
       if (nV==nVD) {
-	aLPBOut.Append(aPBSp);
-	continue;
+        aLPBOut.Append(aPBSp);
+        continue;
       }
     }
     //
     // Section Parts
-    Standard_Integer j, aNbCurves;   
+    Standard_Integer j, aNbCurves;
     //
     BOPTools_SequenceOfCurves& aSC=aFF.Curves();
     aNbCurves=aSC.Length();
@@ -276,33 +277,33 @@
       //
       anIt.Initialize(aLPBSe);
       for (; anIt.More(); anIt.Next()) {
-	const BOPTools_PaveBlock& aPBSe=anIt.Value();
-	//
-	const BOPTools_Pave& aPv1=aPBSe.Pave1();
-	nV=aPv1.Index();
-	if (nV==nVD) {
-	  aLPBOut.Append(aPBSe);
-	  continue;
-	}
-	//
-	const BOPTools_Pave& aPv2=aPBSe.Pave2();
-	nV=aPv2.Index();
-	if (nV==nVD) {
-	  aLPBOut.Append(aPBSe);
-	  continue;
-	}
+        const BOPTools_PaveBlock& aPBSe=anIt.Value();
+        //
+        const BOPTools_Pave& aPv1=aPBSe.Pave1();
+        nV=aPv1.Index();
+        if (nV==nVD) {
+          aLPBOut.Append(aPBSe);
+          continue;
+        }
+        //
+        const BOPTools_Pave& aPv2=aPBSe.Pave2();
+        nV=aPv2.Index();
+        if (nV==nVD) {
+          aLPBOut.Append(aPBSe);
+          continue;
+        }
       }
     }
   }
 }
 //=======================================================================
 // function:  FillPaveSet
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_DEProcessor::FillPaveSet (const Standard_Integer nED,
-					  const Standard_Integer nVD,
-					  const Standard_Integer nFD,
-					  const BOPTools_ListOfPaveBlock& aLPB)
+                                          const Standard_Integer nVD,
+                                          const Standard_Integer nFD,
+                                          const BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Boolean bIsDone, bXDir, bRejectFlag;
   Standard_Integer nE, aNbPoints, j;
@@ -312,7 +313,7 @@
   //
   aDT=Precision::PConfusion();
   //
-  BOPTools_PaveSet& aPaveSet= 
+  BOPTools_PaveSet& aPaveSet=
     (myFiller->ChangePavePool()).ChangeValue(myDS->RefEdge(nED));
   //
   // Clear aPaveSet, aSplitEdges
@@ -340,13 +341,13 @@
   BOPTools_Pave aPave2 (nVD, aTD2, BooleanOperations_UnknownInterference);
   aPaveSet.Append(aPave2);
   //
-  // Fill other paves 
+  // Fill other paves
   BOPTools_ListIteratorOfListOfPaveBlock anIt(aLPB);
   for (; anIt.More(); anIt.Next()) {
     const BOPTools_PaveBlock& aPB=anIt.Value();
     nE=aPB.Edge();
     const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));
-    
+
     Handle(Geom2d_Curve) aC2D=BRep_Tool::CurveOnSurface(aE, aDF, aT1, aT2);
     //
     // Intersection
@@ -366,63 +367,63 @@
     bIsDone=aGInter.IsDone();
     if(bIsDone) {
       aNbPoints=aGInter.NbPoints();
-      if (aNbPoints) { 
-	for (j=1; j<=aNbPoints; ++j) {
-	  aP2D=aGInter.Point(j).Value();
-	  Handle(Geom2d_Line) aCLDE;
-	  //
-	  //modified by NIZNHY-PKV Thu Mar 20 17:37:32 2008f
-	  Handle(Geom2d_TrimmedCurve) aCLDET1=
-	    Handle(Geom2d_TrimmedCurve)::DownCast(aC2DDE1);
-	  if (aCLDET1.IsNull()) {
-	    aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
-	  }
-	  else {
-	    Handle(Geom2d_Curve) aBasisCurve=aCLDET1->BasisCurve();
-	    aCLDE=Handle(Geom2d_Line)::DownCast(aBasisCurve);
-	  }
-	  //aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
-	  //modified by NIZNHY-PKV Thu Mar 20 17:37:37 2008t
-	  
-	  if (aCLDE.IsNull()) {
-	    continue;
-	  }
+      if (aNbPoints) {
+        for (j=1; j<=aNbPoints; ++j) {
+          aP2D=aGInter.Point(j).Value();
+          Handle(Geom2d_Line) aCLDE;
+          //
+          //modified by NIZNHY-PKV Thu Mar 20 17:37:32 2008f
+          Handle(Geom2d_TrimmedCurve) aCLDET1=
+            Handle(Geom2d_TrimmedCurve)::DownCast(aC2DDE1);
+          if (aCLDET1.IsNull()) {
+            aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
+          }
+          else {
+            Handle(Geom2d_Curve) aBasisCurve=aCLDET1->BasisCurve();
+            aCLDE=Handle(Geom2d_Line)::DownCast(aBasisCurve);
+          }
+          //aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
+          //modified by NIZNHY-PKV Thu Mar 20 17:37:37 2008t
 
-	  aLDE=aCLDE->Lin2d();
-	  aX=ElCLib::Parameter(aLDE, aP2D);
-	  //
-	  if (fabs (aX-aTD1) < aDT || fabs (aX-aTD2) < aDT) {
-	    continue; 
-	  }
-	  if (aX < aTD1 || aX > aTD2) {
-	    continue; 
-	  }
-	  //
-	  bRejectFlag=Standard_False;
-	  const BOPTools_ListOfPave& aListOfPave=aPaveSet.Set();
-	  BOPTools_ListIteratorOfListOfPave aPaveIt(aListOfPave);
-	  for (; aPaveIt.More(); aPaveIt.Next()) {
-	    const BOPTools_Pave& aPavex=aPaveIt.Value();
-	    aXx=aPavex.Param();
-	    if (fabs (aX-aXx) < aDT) {
-	      bRejectFlag=Standard_True;
-	      break;
-	    }
-	  }
-	  if (bRejectFlag) {
-	    continue; 
-	  }
-	  //
-	  BOPTools_Pave aPave(nVD, aX, BooleanOperations_UnknownInterference);
-	  aPaveSet.Append(aPave);
-	}
+          if (aCLDE.IsNull()) {
+            continue;
+          }
+
+          aLDE=aCLDE->Lin2d();
+          aX=ElCLib::Parameter(aLDE, aP2D);
+          //
+          if (fabs (aX-aTD1) < aDT || fabs (aX-aTD2) < aDT) {
+            continue;
+          }
+          if (aX < aTD1 || aX > aTD2) {
+            continue;
+          }
+          //
+          bRejectFlag=Standard_False;
+          const BOPTools_ListOfPave& aListOfPave=aPaveSet.Set();
+          BOPTools_ListIteratorOfListOfPave aPaveIt(aListOfPave);
+          for (; aPaveIt.More(); aPaveIt.Next()) {
+            const BOPTools_Pave& aPavex=aPaveIt.Value();
+            aXx=aPavex.Param();
+            if (fabs (aX-aXx) < aDT) {
+              bRejectFlag=Standard_True;
+              break;
+            }
+          }
+          if (bRejectFlag) {
+            continue;
+          }
+          //
+          BOPTools_Pave aPave(nVD, aX, BooleanOperations_UnknownInterference);
+          aPaveSet.Append(aPave);
+        }
       }
     }
   }
 }
 //=======================================================================
 // function:  FillSplitEdgesPool
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_DEProcessor::FillSplitEdgesPool (const Standard_Integer nED)
 {
@@ -436,7 +437,7 @@
   const BOPTools_PavePool& aPavePool=myFiller->PavePool();
   BOPTools_PavePool* pPavePool=(BOPTools_PavePool*) &aPavePool;
   BOPTools_PaveSet& aPaveSet= pPavePool->ChangeValue(myDS->RefEdge(nED));
-  
+
   BOPTools_PaveBlockIterator aPBIt(nED, aPaveSet);
   for (; aPBIt.More(); aPBIt.Next()) {
     BOPTools_PaveBlock& aPB=aPBIt.Value();
@@ -445,50 +446,88 @@
 }
 //=======================================================================
 // function:  MakeSplitEdges
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_DEProcessor::MakeSplitEdges (const Standard_Integer nED,
-					     const Standard_Integer nFD)
+                                             const Standard_Integer nFD)
 {
   const BOPTools_SplitShapesPool& aSplitShapesPool=myFiller->SplitShapesPool();
   const BOPTools_ListOfPaveBlock& aSplitEdges=aSplitShapesPool(myDS->RefEdge(nED));
 
-  Standard_Integer nV1, nV2, aNewShapeIndex;
-  Standard_Real    t1, t2;
+  Standard_Integer nV1, nV2, aNbPB, aNewShapeIndex;
+  Standard_Real t1, t2;
   TopoDS_Edge aE, aESplit;
   TopoDS_Vertex aV1, aV2;
-
+  BOPTools_ListIteratorOfListOfPaveBlock aPBIt;
+  //
   const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));
   const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));
-
-  BOPTools_ListIteratorOfListOfPaveBlock aPBIt(aSplitEdges);
-
+  //
+  //modified by NIZNHY-PKV Wed Oct 20 13:20:37 2010f
+  aNbPB=aSplitEdges.Extent();
+  if (aNbPB==1) {
+    Standard_Real aT1, aT2, dT1, dT2, aDT;
+    Handle(Geom2d_Curve) aC2D;
+    //
+    BOPTools_PaveBlock& aPB=aSplitEdges.First();
+    //
+    const BOPTools_Pave& aPave1=aPB.Pave1();
+    t1=aPave1.Param();
+    const BOPTools_Pave& aPave2=aPB.Pave2();
+    t2=aPave2.Param();
+    ////
+    nV1=aPave1.Index();
+    aV1=*((TopoDS_Vertex*)&myDS->GetShape(nV1));
+    //
+    aV2=TopExp::FirstVertex(aDE);
+    if (aV2.IsSame(aV1)) {
+      aC2D=BRep_Tool::CurveOnSurface(aDE, aDF, aT1, aT2);
+      dT1=aT1-t1;
+      if (dT1<0.) {
+	dT1=-dT1;
+      }
+      //
+      dT2=aT2-t2;
+      if (dT2<0.) {
+	dT2=-dT2;
+      }
+      aDT=Precision::PConfusion();
+      if(dT1<aDT && dT2<aDT) {
+	BOPTools_ListOfPaveBlock* pLPB=(BOPTools_ListOfPaveBlock*)&aSplitEdges;
+	pLPB->Clear();
+	return;
+      }
+    }
+  }
+  //modified by NIZNHY-PKV Wed Oct 20 13:20:39 2010t
+  //
+  aPBIt.Initialize(aSplitEdges);
   for (; aPBIt.More(); aPBIt.Next()) {
     BOPTools_PaveBlock& aPB=aPBIt.Value();
-    
+
     const BOPTools_Pave& aPave1=aPB.Pave1();
     nV1=aPave1.Index();
     t1=aPave1.Param();
     aV1=TopoDS::Vertex(myDS->GetShape(nV1));
     aV1.Orientation(TopAbs_FORWARD);
-    
+
     const BOPTools_Pave& aPave2=aPB.Pave2();
     nV2=aPave2.Index();
     t2=aPave2.Param();
     aV2=TopoDS::Vertex(myDS->GetShape(nV2));
     aV2.Orientation(TopAbs_REVERSED);
-    
-    MakeSplitEdge(aDE, aDF, aV1, t1, aV2, t2, aESplit); 
+
+    MakeSplitEdge(aDE, aDF, aV1, t1, aV2, t2, aESplit);
     //
     // Add Split Part of the Original Edge to the DS
     BooleanOperations_AncestorsSeqAndSuccessorsSeq anASSeq;
-    
+
     anASSeq.SetNewSuccessor(nV1);
     anASSeq.SetNewOrientation(aV1.Orientation());
-    
+
     anASSeq.SetNewSuccessor(nV2);
     anASSeq.SetNewOrientation(aV2.Orientation());
-    
+
     myDS->InsertShapeAndAncestorsSuccessors(aESplit, anASSeq);
     aNewShapeIndex=myDS->NumberOfInsertedShapes();
     myDS->SetState(aNewShapeIndex, BooleanOperations_UNKNOWN);
@@ -500,15 +539,15 @@
 }
 //=======================================================================
 // function:  MakeSplitEdge
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_DEProcessor::MakeSplitEdge (const TopoDS_Edge&   aE,
-					    const TopoDS_Face&   aF,
-					    const TopoDS_Vertex& aV1,
-					    const Standard_Real  aP1,
-					    const TopoDS_Vertex& aV2,
-					    const Standard_Real  aP2,
-					    TopoDS_Edge& aNewEdge)
+                                            const TopoDS_Face&   aF,
+                                            const TopoDS_Vertex& aV1,
+                                            const Standard_Real  aP1,
+                                            const TopoDS_Vertex& aV2,
+                                            const Standard_Real  aP2,
+                                            TopoDS_Edge& aNewEdge)
 {
   Standard_Real aTol=1.e-7;
 

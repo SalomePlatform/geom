@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_WireDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -35,8 +36,12 @@
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <TColStd_MapOfInteger.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <Precision.hxx>
 
 //=================================================================================
 // class    : BuildGUI_WireDlg()
@@ -61,16 +66,29 @@ BuildGUI_WireDlg::BuildGUI_WireDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel( centralWidget() );
+  GroupType = new DlgRef_3Radio( centralWidget() );
+  GroupType->GroupBox1->setTitle( tr( "GEOM_OBJECT_TYPE" ) );
+  GroupType->RadioButton1->setText( tr( "GEOM_EDGE" ) );
+  GroupType->RadioButton2->setText( tr( "GEOM_WIRE" ) );
+  GroupType->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  GroupType->RadioButton3->close();
 
-  GroupPoints->GroupBox1->setTitle( tr( "GEOM_WIRE_CONNECT" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
-  GroupPoints->PushButton1->setIcon( image1 );
-  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupArgs = new DlgRef_1Sel1Spin( centralWidget() );
+  GroupArgs->GroupBox1->setTitle( tr( "GEOM_WIRE_CONNECT" ) );
+  GroupArgs->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
+  GroupArgs->PushButton1->setIcon( image1 );
+  GroupArgs->LineEdit1->setReadOnly( true );
+
+  GroupArgs->TextLabel2->setText( tr( "GEOM_TOLERANCE" ) );
+  double SpecificStep = 0.0001;
+  double prec = Precision::Confusion();
+  initSpinBox(GroupArgs->SpinBox_DX, prec, MAX_NUMBER, SpecificStep, "len_tol_precision" );
+  GroupArgs->SpinBox_DX->setValue(prec);
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( GroupPoints );
+  layout->addWidget( GroupType );
+  layout->addWidget( GroupArgs );
   /***************************************************************/
 
   setHelpFileName( "create_wire_page.html" );
@@ -97,24 +115,29 @@ BuildGUI_WireDlg::~BuildGUI_WireDlg()
 void BuildGUI_WireDlg::Init()
 {
   /* init variables */
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  GroupPoints->LineEdit1->setReadOnly( true );
+  myEditCurrentArgument = GroupArgs->LineEdit1;
+  GroupArgs->LineEdit1->setReadOnly( true );
+  GroupType->RadioButton1->setChecked(true);
   
-  myOkEdgesAndWires = false;
-  
-  TColStd_MapOfInteger aMap;
-  aMap.Add( GEOM_WIRE );
-  aMap.Add( GEOM_EDGE );
-  globalSelection( aMap );
+  myEdgesAndWires.clear();
+
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupArgs->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
+  connect( GroupType->RadioButton1, SIGNAL( clicked() ), this, SLOT( TypeButtonClicked() ) );
+  connect( GroupType->RadioButton2, SIGNAL( clicked() ), this, SLOT( TypeButtonClicked() ) );
+
+  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
+  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
   
   initName( tr( "GEOM_WIRE" ) );
+  SelectionIntoArgument();
 }
 
 
@@ -124,6 +147,7 @@ void BuildGUI_WireDlg::Init()
 //=================================================================================
 void BuildGUI_WireDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -139,9 +163,30 @@ bool BuildGUI_WireDlg::ClickOnApply()
     return false;
 
   initName();
+  TypeButtonClicked();
+  myEdgesAndWires.clear();
+  myEditCurrentArgument->setText( "" );
   return true;
 }
 
+//=================================================================================
+// function : TypeBittonClicked()
+// purpose  : Radio button management
+//=================================================================================
+void BuildGUI_WireDlg::TypeButtonClicked()
+{
+  if ( GroupType->RadioButton1->isChecked() ) {
+    globalSelection(); // close local contexts, if any
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    GroupArgs->TextLabel1->setText( tr( "GEOM_EDGE" ) );
+  }
+  else if ( GroupType->RadioButton2->isChecked() ) {
+    globalSelection(); // close local contexts, if any
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_WIRE );
+    GroupArgs->TextLabel1->setText( tr( "GEOM_WIRE" ) );
+  }
+  SelectionIntoArgument();
+}
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -150,26 +195,15 @@ bool BuildGUI_WireDlg::ClickOnApply()
 void BuildGUI_WireDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-  QString aString = ""; /* name of selection */
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  QList<TopAbs_ShapeEnum> types;
+  types << TopAbs_EDGE << TopAbs_WIRE;
+  myEdgesAndWires = getSelected( types, -1 );
 
-  myOkEdgesAndWires = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString);
-
-  if ( nbSel == 0 )
-    return;
-  if ( nbSel != 1 )
-    aString = tr( "%1_objects" ).arg( nbSel );
-
-  GEOMBase::ConvertListOfIOInListOfGO(aSelList,  myEdgesAndWires);
-  if ( !myEdgesAndWires.length() )
-    return;
-
-  myEditCurrentArgument->setText( aString );
-  myOkEdgesAndWires = true;
+  if ( !myEdgesAndWires.isEmpty() ) {
+    QString aName = myEdgesAndWires.count() > 1 ? QString( "%1_objects").arg( myEdgesAndWires.count() ) : GEOMBase::GetName( myEdgesAndWires[0].get() );
+    myEditCurrentArgument->setText( aName );
+  }
 }
 
 
@@ -180,14 +214,11 @@ void BuildGUI_WireDlg::SelectionIntoArgument()
 void BuildGUI_WireDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if ( send != GroupPoints->PushButton1 )
+  if ( send != GroupArgs->PushButton1 )
     return;
 
-  TColStd_MapOfInteger aMap;
-  aMap.Add( GEOM_WIRE );
-  aMap.Add( GEOM_EDGE );
-  globalSelection( aMap );
-  myEditCurrentArgument = GroupPoints->LineEdit1;
+  TypeButtonClicked();
+  myEditCurrentArgument = GroupArgs->LineEdit1;
 
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
@@ -202,13 +233,19 @@ void BuildGUI_WireDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  TColStd_MapOfInteger aMap;
-  aMap.Add( GEOM_WIRE );
-  aMap.Add( GEOM_EDGE );
-  globalSelection( aMap );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
+  TypeButtonClicked();
 }
 
+//=================================================================================
+// function : DeactivateActiveDialog()
+// purpose  : public slot to deactivate if active
+//=================================================================================
+void BuildGUI_WireDlg::DeactivateActiveDialog()
+{
+  GEOMBase_Skeleton::DeactivateActiveDialog();
+}
 
 //=================================================================================
 // function : enterEvent()
@@ -233,25 +270,38 @@ GEOM::GEOM_IOperations_ptr BuildGUI_WireDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BuildGUI_WireDlg::isValid( QString& )
+bool BuildGUI_WireDlg::isValid (QString& msg)
 {
-  return myOkEdgesAndWires;
+  return GroupArgs->SpinBox_DX->isValid(msg, !IsPreview()) && !myEdgesAndWires.isEmpty();
 }
 
 //=================================================================================
 // function : execute
 // purpose  :
 //=================================================================================
-bool BuildGUI_WireDlg::execute( ObjectList& objects )
+bool BuildGUI_WireDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj;
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
 
-  anObj = GEOM::GEOM_IShapesOperations::_narrow(
-    getOperation() )->MakeWire( myEdgesAndWires );
+  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+  objlist->length( myEdgesAndWires.count() );
+  for ( int i = 0; i < myEdgesAndWires.count(); i++ )
+    objlist[i] = myEdgesAndWires[i].copy();
 
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+  GEOM::GEOM_Object_var anObj = anOper->MakeWire(objlist.in(), GroupArgs->SpinBox_DX->value());
+
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
 
   return true;
 }
 
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BuildGUI_WireDlg::addSubshapesToStudy()
+{
+  for ( int i = 0; i < myEdgesAndWires.count(); i++ )
+    GEOMBase::PublishSubObject( myEdgesAndWires[i].get() );
+}

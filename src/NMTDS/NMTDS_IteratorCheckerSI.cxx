@@ -1,29 +1,26 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-// File:	NMTDS_IteratorChecker.cxx
-// Created:	Tue Feb  6 10:37:59 2007
-// Author:	Peter KURNEV
-//
-#include <NMTDS_IteratorCheckerSI.ixx>
+
+// File:        NMTDS_IteratorChecker.hxx
+// Author:      Peter KURNEV
+
+#include <NMTDS_IteratorCheckerSI.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 #include <gp_Pnt.hxx>
@@ -50,8 +47,8 @@
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_CArray1OfIndexRange.hxx>
 #include <NMTDS_IndexRange.hxx>
-#include <NMTDS_PassKeyBoolean.hxx>
-#include <NMTDS_MapOfPassKeyBoolean.hxx>
+#include <NMTDS_PairBoolean.hxx>
+#include <NMTDS_MapOfPairBoolean.hxx>
 #include <NMTDS_IndexedDataMapOfShapeBox.hxx>
 #include <NMTDS_Tools.hxx>
 
@@ -59,7 +56,7 @@
 //function : 
 //purpose  : 
 //=======================================================================
-  NMTDS_IteratorCheckerSI::NMTDS_IteratorCheckerSI()
+NMTDS_IteratorCheckerSI::NMTDS_IteratorCheckerSI()
 :
   NMTDS_Iterator()
 {
@@ -68,14 +65,14 @@
 //function : ~
 //purpose  : 
 //=======================================================================
-  NMTDS_IteratorCheckerSI::~NMTDS_IteratorCheckerSI()
+NMTDS_IteratorCheckerSI::~NMTDS_IteratorCheckerSI()
 {
 }
 //=======================================================================
 // function: Intersect
 // purpose: 
 //=======================================================================
-  void NMTDS_IteratorCheckerSI::Intersect()
+void NMTDS_IteratorCheckerSI::Intersect()
 {
   Standard_Boolean bFlag;
   Standard_Integer aNbS, i, aNbA, aNbB, iFlag;
@@ -86,10 +83,10 @@
   TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger aItVSD;
   TopTools_DataMapOfShapeInteger aMSI;
   TopAbs_ShapeEnum aTi, aTj;
-  NMTDS_PassKeyBoolean aPKXB; 
-  NMTDS_MapOfPassKeyBoolean aMPKXB;
+  NMTDS_PairBoolean aPKXB; 
+  NMTDS_MapOfPairBoolean aMPKXB;
   NMTDS_IndexedDataMapOfShapeBox aMSB;
-  NMTDS_MapOfPassKeyBoolean aMPA;//myPairsAvoid
+  NMTDS_MapOfPairBoolean aMPA;//myPairsAvoid
   //
   NMTDS_BoxBndTreeSelector aSelector;
   NMTDS_BoxBndTree aBBTree;
@@ -103,22 +100,22 @@
     aTi=aSi.ShapeType();
     if (NMTDS_Tools::HasBRep(aTi)) {
       if (aTi!=TopAbs_VERTEX) {
-	TColStd_IndexedMapOfInteger aMA;
-	//
-	myDS->GetAllSuccessors(i, aMA);
-	//
-	aNbA=aMA.Extent();
-	for (j=1; j<=aNbA; ++j) {
-	  iX=aMA(j);
-	  aPKXB.Clear();
-	  aPKXB.SetIds(i, iX);
-	  aMPA.Add(aPKXB);
-	}
+        TColStd_IndexedMapOfInteger aMA;
+        //
+        myDS->GetAllSuccessors(i, aMA);
+        //
+        aNbA=aMA.Extent();
+        for (j=1; j<=aNbA; ++j) {
+          iX=aMA(j);
+          aPKXB.Clear();
+          aPKXB.SetIds(i, iX);
+          aMPA.Add(aPKXB);
+        }
       }
       else {
-	aPKXB.Clear();
-	aPKXB.SetIds(i, i);
-	aMPA.Add(aPKXB);
+        aPKXB.Clear();
+        aPKXB.SetIds(i, i);
+        aMPA.Add(aPKXB);
       }
       //
       Bnd_Box aBoxEx;
@@ -170,27 +167,27 @@
       //
       aPKXB.SetIds(i, j);
       if (aMPA.Contains(aPKXB)) {
-	continue;
+        continue;
       }
       //
       if (aMPKXB.Add(aPKXB)) {
-	bFlag=Standard_False;// Bounding boxes are intersected
-	const Bnd_Box& aBoxi=myDS->GetBoundingBox(i);
-	const Bnd_Box& aBoxj=myDS->GetBoundingBox(j);
-	if (aBoxi.IsOut(aBoxj)) {
-	  bFlag=!bFlag; //Bounding boxes of Sub-shapes are intersected
-	}
-	const TopoDS_Shape& aSj=myDS->Shape(j);
-	aTj=aSj.ShapeType();
-	iX=NMTDS_Tools::TypeToInteger(aTi, aTj);
-	//bFlag=(iStatus==2);
-	aPKXB.SetFlag(bFlag);
-	myLists[iX].Append(aPKXB);
-	//
-	// VSD prepare
-	if (iX==5) { //VV
-	  aLV.Append(j);
-	}
+        bFlag=Standard_False;// Bounding boxes are intersected
+        const Bnd_Box& aBoxi=myDS->GetBoundingBox(i);
+        const Bnd_Box& aBoxj=myDS->GetBoundingBox(j);
+        if (aBoxi.IsOut(aBoxj)) {
+          bFlag=!bFlag; //Bounding boxes of Sub-shapes are intersected
+        }
+        const TopoDS_Shape& aSj=myDS->Shape(j);
+        aTj=aSj.ShapeType();
+        iX=NMTDS_Tools::TypeToInteger(aTi, aTj);
+        //bFlag=(iStatus==2);
+        aPKXB.SetFlag(bFlag);
+        myLists[iX].Append(aPKXB);
+        //
+        // VSD prepare
+        if (iX==5) { //VV
+          aLV.Append(j);
+        }
       }// if (aMPKXB.Add(aPKXB)) {
     }// for (; aIt.More(); aIt.Next()) {
     //
@@ -202,18 +199,18 @@
       const TopoDS_Vertex& aVi=TopoDS::Vertex(aSi);
       aIt.Initialize(aLV);
       for (; aIt.More(); aIt.Next()) {
-	j=aIt.Value();  
-	const TopoDS_Shape&  aSj=myDS->Shape(j);
-	const TopoDS_Vertex& aVj=TopoDS::Vertex(aSj);
-	iFlag=NMTDS_Tools::ComputeVV(aVi, aVj);
-	if (!iFlag) {
-	  aLV1.Append(j);
-	}
-	else {
-	  aPKXB.SetIds(i, j);
-	  aMPKXB.Remove(aPKXB);
-	}
-      }	
+        j=aIt.Value();  
+        const TopoDS_Shape&  aSj=myDS->Shape(j);
+        const TopoDS_Vertex& aVj=TopoDS::Vertex(aSj);
+        iFlag=NMTDS_Tools::ComputeVV(aVi, aVj);
+        if (!iFlag) {
+          aLV1.Append(j);
+        }
+        else {
+          aPKXB.SetIds(i, j);
+          aMPKXB.Remove(aPKXB);
+        }
+      } 
       aMVSD.Bind(i, aLV1);
     }
   }//for (i=1; i<=aNbS; ++i) {

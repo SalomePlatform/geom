@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : PrimitiveGUI_ConeDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -53,8 +54,7 @@
 //=================================================================================
 PrimitiveGUI_ConeDlg::PrimitiveGUI_ConeDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
                                             bool modal, Qt::WindowFlags fl)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
-    myInitial(true)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl)
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_CONE_PV")));
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_CONE_DXYZ")));
@@ -116,12 +116,12 @@ void PrimitiveGUI_ConeDlg::Init()
   double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints->SpinBox_DX, 0.0, COORD_MAX, step, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox_DY, 0.0, COORD_MAX, step, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox_DZ, 0.00001, COORD_MAX, step, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DX, 0.0, COORD_MAX, step, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY, 0.0, COORD_MAX, step, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DZ, 0.00001, COORD_MAX, step, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox_DX, 0.0, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPoints->SpinBox_DY, 0.0, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPoints->SpinBox_DZ, 0.00001, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupDimensions->SpinBox_DX, 0.0, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupDimensions->SpinBox_DY, 0.0, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupDimensions->SpinBox_DZ, 0.00001, COORD_MAX, step, "length_precision" );
 
   // init variables
   GroupPoints->LineEdit1->setReadOnly(true);
@@ -129,7 +129,8 @@ void PrimitiveGUI_ConeDlg::Init()
 
   GroupPoints->LineEdit1->setText("");
   GroupPoints->LineEdit2->setText("");
-  myPoint = myDir = GEOM::GEOM_Object::_nil();
+  myPoint.nullify();
+  myDir.nullify();
 
   double aRadius1(100.0), aRadius2(0.0), aHeight(300.0);
   GroupPoints->SpinBox_DX->setValue(aRadius1);
@@ -147,9 +148,6 @@ void PrimitiveGUI_ConeDlg::Init()
 
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX,     SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->SpinBox_DY,     SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
@@ -202,7 +200,7 @@ void PrimitiveGUI_ConeDlg::ConstructorsClicked (int constructorId)
       disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
       globalSelection(); // close local contexts, if any
 
-      displayPreview();
+      displayPreview(true);
       break;
     }
   }
@@ -210,15 +208,9 @@ void PrimitiveGUI_ConeDlg::ConstructorsClicked (int constructorId)
   qApp->processEvents();
   updateGeometry();
   resize(minimumSizeHint());
+  SelectionIntoArgument();
 
-  if (myInitial) {
-    // on dialog initialization we init the first field with a selected object (if any)
-    SelectionIntoArgument();
-    myInitial = false;
-  }
-  else {
-    displayPreview();
-  }
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -227,6 +219,7 @@ void PrimitiveGUI_ConeDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void PrimitiveGUI_ConeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -263,79 +256,40 @@ void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() != 1) {
-    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myDir   = GEOM::GEOM_Object::_nil();
+    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint.nullify();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myDir.nullify();
     return;
   }
 
-  // nbSel == 1
-  Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-
-  if (!testResult || CORBA::is_nil(aSelectedObject))
-    return;
-
-  QString aName = GEOMBase::GetName(aSelectedObject);
-
-  // Get Selected object if selected subshape
+  TopAbs_ShapeEnum aNeedType = myEditCurrentArgument == GroupPoints->LineEdit2 ? TopAbs_EDGE : TopAbs_VERTEX;
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
   TopoDS_Shape aShape;
-  if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
-  {
-    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-    if (myEditCurrentArgument == GroupPoints->LineEdit2)
-      aNeedType = TopAbs_EDGE;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
 
-    TColStd_IndexedMapOfInteger aMap;
-    aSelMgr->GetIndexes(aSelList.First(), aMap);
-    if (aMap.Extent() == 1) // Local Selection
-    {
-      int anIndex = aMap(1);
-      if (aNeedType == TopAbs_EDGE)
-        aName.append(":edge_" + QString::number(anIndex));
-      else
-        aName.append(":vertex_" + QString::number(anIndex));
-
-      //Find SubShape Object in Father
-      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-
-      if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
-        GEOM::GEOM_IShapesOperations_var aShapesOp =
-          getGeomEngine()->GetIShapesOperations(getStudyId());
-        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-      }
-      else {
-        aSelectedObject = aFindedObject; // get Object from study
-      }
+    myEditCurrentArgument->setText(aName);
+    
+    if (myEditCurrentArgument == GroupPoints->LineEdit1) {
+      myPoint = aSelectedObject;
+      if (myPoint && !myDir)
+        GroupPoints->PushButton2->click();
     }
-    else // Global Selection
-    {
-      if (aShape.ShapeType() != aNeedType) {
-        aSelectedObject = GEOM::GEOM_Object::_nil();
-        aName = "";
-      }
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+      myDir = aSelectedObject;
+      if (myDir && !myPoint)
+        GroupPoints->PushButton1->click();
+    }
+
+    if ((myPoint && !myDir) || (myDir && !myPoint)) {
+      // clear selection
+      disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+      myGeomGUI->getApp()->selectionMgr()->clearSelected();
+      connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+	      this, SLOT(SelectionIntoArgument()));
     }
   }
 
-  myEditCurrentArgument->setText(aName);
-
-  // clear selection
-  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this, SLOT(SelectionIntoArgument()));
-
-  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myPoint = aSelectedObject;
-    if (!myPoint->_is_nil() && myDir->_is_nil())
-      GroupPoints->PushButton2->click();
-  }
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-    myDir = aSelectedObject;
-    if (!myDir->_is_nil() && myPoint->_is_nil())
-      GroupPoints->PushButton1->click();
-  }
-
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -375,21 +329,7 @@ void PrimitiveGUI_ConeDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
-}
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void PrimitiveGUI_ConeDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == GroupPoints->LineEdit1 ||
-      send == GroupPoints->LineEdit2) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -401,7 +341,7 @@ void PrimitiveGUI_ConeDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -422,7 +362,7 @@ void PrimitiveGUI_ConeDlg::enterEvent (QEvent*)
 //=================================================================================
 void PrimitiveGUI_ConeDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -440,24 +380,22 @@ GEOM::GEOM_IOperations_ptr  PrimitiveGUI_ConeDlg::createOperation()
 //=================================================================================
 bool  PrimitiveGUI_ConeDlg::isValid (QString& msg)
 {
-  if (!getRadius1() && !getRadius2())
-    return false;
-
-  bool ok = true;
+  bool ok = false;
   if( getConstructorId() == 0 )
   {
-    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPoints->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+         GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) &&
+         GroupPoints->SpinBox_DZ->isValid( msg, !IsPreview() ) &&
+         myPoint && myDir;
   }
   else if( getConstructorId() == 1 )
   {
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+         GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) &&
+         GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() );
   }
-  ok = fabs( getHeight() ) > Precision::Confusion() && ok;
-  return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) && ok : ok;
+  ok = ( getRadius1() > 0 || getRadius2() > 0 ) && qAbs( getHeight() ) > Precision::Confusion() && ok;
+  return ok;
 }
 
 //=================================================================================
@@ -470,32 +408,32 @@ bool PrimitiveGUI_ConeDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
-    if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakeConePntVecR1R2H(myPoint, myDir, getRadius1(), getRadius2(), getHeight());
+    if ( myPoint && myDir ) {
+      anObj = anOper->MakeConePntVecR1R2H(myPoint.get(), myDir.get(), getRadius1(), getRadius2(), getHeight());
       if (!anObj->_is_nil() && !IsPreview())
       {
-	QStringList aParameters;
-	aParameters << GroupPoints->SpinBox_DX->text();
-	aParameters << GroupPoints->SpinBox_DY->text();
-	aParameters << GroupPoints->SpinBox_DZ->text();
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        QStringList aParameters;
+        aParameters << GroupPoints->SpinBox_DX->text();
+        aParameters << GroupPoints->SpinBox_DY->text();
+        aParameters << GroupPoints->SpinBox_DZ->text();
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       res = true;
     }
     break;
   case 1:
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakeConeR1R2H(getRadius1(), getRadius2(), getHeight());
+    anObj = anOper->MakeConeR1R2H(getRadius1(), getRadius2(), getHeight());
     if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
       aParameters << GroupDimensions->SpinBox_DX->text();
       aParameters << GroupDimensions->SpinBox_DY->text();
       aParameters << GroupDimensions->SpinBox_DZ->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;
@@ -555,15 +493,8 @@ double PrimitiveGUI_ConeDlg::getHeight() const
 //=================================================================================
 void PrimitiveGUI_ConeDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
-  switch (getConstructorId()) {
-  case 0:
-    objMap[GroupPoints->LineEdit1->text()] = myPoint;
-    objMap[GroupPoints->LineEdit2->text()] = myDir;
-    break;
-  case 1:
-    return;
+  if ( getConstructorId() == 0 ) {
+    GEOMBase::PublishSubObject( myPoint.get() );
+    GEOMBase::PublishSubObject( myDir.get() );
   }
-  addSubshapesToFather(objMap);
 }

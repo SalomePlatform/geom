@@ -13,7 +13,7 @@ be rotated, an \b Axis of rotation and an \b Angle of rotation.
 \n <b>Arguments:</b> Name + one or several objects + 1 vector for direction of rotation + 1
 angle.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation4.png
 
@@ -30,7 +30,7 @@ from the first point to the second and to the third.
 \n <b>TUI Command:</b> <em>geompy.MakeRotationThreePoints(Shape, CentralPoint, Point1, Point2)</em>
 \n <b>Arguments:</b> 1 shape + 3 points.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation4a.png
 

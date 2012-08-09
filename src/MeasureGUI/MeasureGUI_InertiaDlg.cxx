@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_InertiaDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -27,6 +28,7 @@
 #include "MeasureGUI_Widgets.h"
 
 #include <GEOMBase.h>
+#include <DlgRef.h>
 
 #include <gp_XYZ.hxx>
 
@@ -141,21 +143,21 @@ void MeasureGUI_InertiaDlg::processObject()
     myGrp->LineEdit43->setText( "" );
   }
   else {
-    myGrp->LineEdit11->setText( QString( "%1" ).arg( aMat( 1, 1 ), 12, 'e', 4 ) );
-    myGrp->LineEdit12->setText( QString( "%1" ).arg( aMat( 1, 2 ), 12, 'e', 4 ) );
-    myGrp->LineEdit13->setText( QString( "%1" ).arg( aMat( 1, 3 ), 12, 'e', 4 ) );
+    myGrp->LineEdit11->setText( DlgRef::PrintDoubleValue( aMat( 1, 1 ), -6 ) );
+    myGrp->LineEdit12->setText( DlgRef::PrintDoubleValue( aMat( 1, 2 ), -6 ) );
+    myGrp->LineEdit13->setText( DlgRef::PrintDoubleValue( aMat( 1, 3 ), -6 ) );
     
-    myGrp->LineEdit21->setText( QString( "%1" ).arg( aMat( 2, 1 ), 12, 'e', 4 ) );
-    myGrp->LineEdit22->setText( QString( "%1" ).arg( aMat( 2, 2 ), 12, 'e', 4 ) );
-    myGrp->LineEdit23->setText( QString( "%1" ).arg( aMat( 2, 3 ), 12, 'e', 4 ) );
+    myGrp->LineEdit21->setText( DlgRef::PrintDoubleValue( aMat( 2, 1 ), -6 ) );
+    myGrp->LineEdit22->setText( DlgRef::PrintDoubleValue( aMat( 2, 2 ), -6 ) );
+    myGrp->LineEdit23->setText( DlgRef::PrintDoubleValue( aMat( 2, 3 ), -6 ) );
     
-    myGrp->LineEdit31->setText( QString( "%1" ).arg( aMat( 3, 1 ), 12, 'e', 4 ) );
-    myGrp->LineEdit32->setText( QString( "%1" ).arg( aMat( 3, 2 ), 12, 'e', 4 ) );
-    myGrp->LineEdit33->setText( QString( "%1" ).arg( aMat( 3, 3 ), 12, 'e', 4 ) );
+    myGrp->LineEdit31->setText( DlgRef::PrintDoubleValue( aMat( 3, 1 ), -6 ) );
+    myGrp->LineEdit32->setText( DlgRef::PrintDoubleValue( aMat( 3, 2 ), -6 ) );
+    myGrp->LineEdit33->setText( DlgRef::PrintDoubleValue( aMat( 3, 3 ), -6 ) );
     
-    myGrp->LineEdit41->setText( QString( "%1" ).arg( anIXYZ.X(), 12, 'e', 4 ) );
-    myGrp->LineEdit42->setText( QString( "%1" ).arg( anIXYZ.Y(), 12, 'e', 4 ) );
-    myGrp->LineEdit43->setText( QString( "%1" ).arg( anIXYZ.Z(), 12, 'e', 4 ) );
+    myGrp->LineEdit41->setText( DlgRef::PrintDoubleValue( anIXYZ.X(), -6 ) );
+    myGrp->LineEdit42->setText( DlgRef::PrintDoubleValue( anIXYZ.Y(), -6 ) );
+    myGrp->LineEdit43->setText( DlgRef::PrintDoubleValue( anIXYZ.Z(), -6 ) );
   }
 }
 
@@ -169,13 +171,14 @@ bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
       double x, y, z;
-      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetInertia( myObj,
-        I( 1, 1 ), I( 1, 2 ), I( 1, 3 ),
-        I( 2, 1 ), I( 2, 2 ), I( 2, 3 ),
-        I( 3, 1 ), I( 3, 2 ), I( 3, 3 ),
-        x, y, z );
+      anOper->GetInertia( myObj,
+                          I( 1, 1 ), I( 1, 2 ), I( 1, 3 ),
+                          I( 2, 1 ), I( 2, 2 ), I( 2, 3 ),
+                          I( 3, 1 ), I( 3, 2 ), I( 3, 3 ),
+                          x, y, z );
 
         theIXYZ.SetCoord( x, y, z );
     }
@@ -184,6 +187,6 @@ bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }

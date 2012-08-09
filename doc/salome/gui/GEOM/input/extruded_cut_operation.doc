@@ -1,0 +1,52 @@
+/*!
+
+\page extruded_cut_operation_page Extruded cut
+
+The <b>Extruded cut</b> operation allows you to easily remove material from a \b solid by extruding a profile along the normal to its plane.
+
+\image html extruded_cut_example.png
+
+To produce the <b>extruded cut</b>:
+
+<ol>
+  <li> Draw the \b profile of the extrusion. It can be:
+  <ul>
+    <li> a <a href="create_sketcher_page.html">\b Sketch </a> drawn on a planar face of the object you want to cut.</li>
+    <li> any closed edge or wire of the desired shape (circle, ellipse ...).</li>
+  </ul>
+  </li>
+
+  <li> In the <b>Main Menu</b> select <b>Operations - > Extruded Cut</b> or click on
+
+  \image html extruded_cut.png
+
+  </li>
+
+  <li> Fill in the dialog box fields:
+
+  \image html extruded_cut_dlg.png 
+
+  </li> 
+</ol>
+
+The input arguments are:
+
+- The <b>initial shape</b> you want to cut. It must be a solid or a compound made of a single solid.
+
+- The \b profile. It must be a \b closed edge or wire and it must be \b planar.
+
+- The \b height of extrusion. It's calculated from the <b>base profile</b> along the normal to its plane.
+
+And optionnaly:
+
+- A <b>draft angle</b> in degrees. Activated by clicking on \image html draft.png
+
+The direction can be reversed by pushing the <b> Change direction </b> button: \image html change_direction.png
+
+
+This functionality is available via the textual interface with the command:
+
+\n <b>TUI Command:</b> <em>geompy.MakeExtrudedCut(InitShape, Profile, Height,Angle),</em>
+
+
+*/

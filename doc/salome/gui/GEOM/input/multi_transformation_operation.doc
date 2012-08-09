@@ -19,6 +19,7 @@ defines the second direction of transformation, \em NbTimes is a number of
 transformations.
 \n <b>Arguments:</b> Name + 1 hexahedral solid + 1 or 2 faces + 1
 integer (number of blocks).
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 \image html mtransf1.png
 
@@ -35,6 +36,8 @@ faces which define directions of the second transformation, \em NbTimesU
 and \em NbTimesV are numbers of transformations.
 \n <b>Arguments:</b> Name + 1 hexahedral solid + 2, 3 or 4 faces + 2
 integers (number of blocks).
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
+
 
 \image html mtransf2.png
 

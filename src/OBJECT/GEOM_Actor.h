@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  GEOM OBJECT : interactive object for Geometry entities visualization
 //  File   : GEOM_Actor.h
 //  Author : Christophe ATTANASIO
@@ -50,7 +51,6 @@ typedef GEOM_SmartPtr<GEOM_WireframeFace> PWFaceSource;
 class GEOM_ShadingFace;
 typedef GEOM_SmartPtr<GEOM_ShadingFace> PSFaceSource;
 
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 class vtkRenderer;
 
 class vtkAppendPolyData;
@@ -63,18 +63,16 @@ public:
   static GEOM_Actor* New();
 
   void SetShape(const TopoDS_Shape& theShape,
-                float theDeflection,
-                bool theIsRelative,
-                bool theIsVector = false);
+		float theDeflection,
+		bool theIsVector = false);
 
-  void SetDeflection(float theDeflection, bool theIsRelative);
+  void SetDeflection(float theDeflection);
   float GetDeflection() const{ return myDeflection;}
-  bool GetIsRelative() const{ return myIsRelative;}
 
   void AddToRender(vtkRenderer* theRenderer);
   void RemoveFromRender(vtkRenderer* theRenderer);
 
-  enum EDisplayMode{ eWireframe, eShading};
+  enum EDisplayMode{ eWireframe, eShading, eShadingWithEdges = eShading + 2 };
 
 /*   void SetDisplayMode(EDisplayMode theMode);  */
 /*   EDisplayMode GetDisplayMode() const { return myDisplayMode;}  */
@@ -87,6 +85,9 @@ public:
   void SetHighlightProperty(vtkProperty* Prop);
   void SetWireframeProperty(vtkProperty* Prop);
   void SetShadingProperty(vtkProperty* Prop);
+
+  vtkProperty* GetWireframeProperty();
+  vtkProperty* GetShadingProperty();
 
   void setDeflection(double adef);
   virtual void setDisplayMode(int thenewmode);
@@ -102,7 +103,7 @@ public:
   void ReleaseGraphicsResources(vtkWindow *);
   const TopoDS_Shape& getTopo();
   void setInputShape(const TopoDS_Shape& ashape, double adef1,
-		     int imode, bool isVector = false);
+                     int imode, bool isVector = false);
   double getDeflection();
   double isVector();
 
@@ -124,6 +125,10 @@ public:
   void SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
   void GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b);
 
+  // Material
+  void SetMaterial(std::vector<vtkProperty*> theProps);
+  vtkProperty* GetMaterial();
+
   virtual bool IsInfinitive();
 
   // overloaded functions
@@ -137,15 +142,15 @@ public:
   virtual
   bool
   PreHighlight(vtkInteractorStyle* theInteractorStyle,
-	       SVTK_SelectionEvent* theSelectionEvent,
-	       bool theIsHighlight);
+               SVTK_SelectionEvent* theSelectionEvent,
+               bool theIsHighlight);
 
   //! To process highlight (called from #SVTK_InteractorStyle)
   virtual
   bool
   Highlight(vtkInteractorStyle* theInteractorStyle,
-	    SVTK_SelectionEvent* theSelectionEvent,
-	    bool theIsHighlight);
+            SVTK_SelectionEvent* theSelectionEvent,
+            bool theIsHighlight);
 
   //! Visibility management
   virtual
@@ -162,15 +167,44 @@ public:
   virtual
   void
   GetNbIsos(int &theNbU,int &theNbV);
+  
+  virtual 
+  void SetIsosWidth(const int width);
+
+  int GetIsosWidth() const;
+
+  virtual void SetWidth(const int width);
+
+  int GetWidth() const;
+  
+  //! Vector mode management
+  virtual
+  void
+  SetVectorMode(const bool theMode);
+
+  virtual
+  bool
+  GetVectorMode();
+  
+  //! Edges in shading color management
+  void SetEdgesInShadingColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
+
+  void
+  StoreIsoNumbers();
+
+  void
+  RestoreIsoNumbers();
+  
+  void
+  ResetIsoNumbers();
 
 protected:
-  void SetShape(const TopoDS_Shape& theShape,
-                const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
-                bool theIsVector = false);
-
   void SetModified();
 
   void GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result);
+
+  void StoreBoundaryColors();
+  void RestoreBoundaryColors();
 
   GEOM_Actor();
   ~GEOM_Actor();
@@ -178,13 +212,14 @@ protected:
 private:
   TopoDS_Shape myShape;
   int myNbIsos[2];
+  bool isOnlyVertex;
 
   float myDeflection;
-  bool myIsRelative;
   bool myIsForced;
 
   //  EDisplayMode myDisplayMode;
   bool myIsSelected;
+  bool myVectorMode;
 
   PDeviceActor myVertexActor;
   PVertexSource myVertexSource;
@@ -210,12 +245,17 @@ private:
   vtkSmartPointer<vtkProperty>  myShadingFaceProp;
 
   PAppendFilter myAppendFilter;
-  PPolyDataMapper myPolyDataMapper;
+  PPolyGeomPainterDataMapper myPolyDataMapper;
 
   virtual void SetMapper(vtkMapper*);
 
   GEOM_Actor(const GEOM_Actor&);
   void operator=(const GEOM_Actor&);
+
+  vtkFloatingPointType myEdgesInWireframeColor[3];
+  vtkFloatingPointType myEdgesInShadingColor[3];
 };
 
 #endif //GEOM_ACTOR_H
+
+

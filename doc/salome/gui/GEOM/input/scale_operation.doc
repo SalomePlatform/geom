@@ -10,7 +10,7 @@ shape. For this, you need to define the \b Shape to be scaled, the
 <b>Central Point</b> of scale and the Scale Factor(s).
 \n The \b Result will be a \b GEOM_Object.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation10.png
 \n <b>TUI Command:</b> <em>geompy.MakeScaleTransform(Shape, CenterOfScale, Factor)</em>

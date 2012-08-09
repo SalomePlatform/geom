@@ -1,29 +1,30 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_BuilderSolid.cxx
-// Created:	
-// Author:	Peter KURNEV 
+
+// File:        GEOMAlgo_BuilderSolid.cxx
+// Created:
+// Author:      Peter KURNEV
 //
-#include <GEOMAlgo_BuilderSolid.ixx>
+#include <GEOMAlgo_BuilderSolid.hxx>
 
 #include <gp_Pnt2d.hxx>
 #include <gp_Pln.hxx>
@@ -82,63 +83,61 @@
 //
 static
   Standard_Boolean IsGrowthShell(const TopoDS_Shape& ,
-				 const TopTools_IndexedMapOfShape& );
+                                 const TopTools_IndexedMapOfShape& );
 static
   Standard_Boolean IsHole(const TopoDS_Shape& ,
-			  IntTools_PContext& );
+                          const Handle(IntTools_Context)& );
 static
   Standard_Boolean IsInside(const TopoDS_Shape& ,
-			    const TopoDS_Shape& ,
-			    IntTools_PContext& );
+                            const TopoDS_Shape& ,
+                            const Handle(IntTools_Context)& );
 static
   void MakeInternalShells(const TopTools_MapOfShape& ,
-			  TopTools_ListOfShape& );
+                          TopTools_ListOfShape& );
 
-//modified by NIZNHY-PKV Tue Aug  5 15:06:50 2008f
 static
-  Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell);
-//modified by NIZNHY-PKV Tue Aug  5 15:06:57 2008t
+  Standard_Boolean IsClosedShell(const TopoDS_Shell& );
+
+static
+  Standard_Boolean RefineShell(const TopoDS_Shell& ,
+			       TopoDS_Shell& );
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
-  GEOMAlgo_BuilderSolid::GEOMAlgo_BuilderSolid()
+GEOMAlgo_BuilderSolid::GEOMAlgo_BuilderSolid()
 :
   GEOMAlgo_BuilderArea()
 {
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
-  GEOMAlgo_BuilderSolid::~GEOMAlgo_BuilderSolid()
+GEOMAlgo_BuilderSolid::~GEOMAlgo_BuilderSolid()
 {
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderSolid::Perform()
+void GEOMAlgo_BuilderSolid::Perform()
 {
   myErrorStatus=0;
   //
+  // Initialize the context
+  GEOMAlgo_BuilderArea::Perform();
   //
   TopoDS_Compound aC;
   BRep_Builder aBB;
   TopTools_ListIteratorOfListOfShape aIt;
-  
+
   aBB.MakeCompound(aC);
   aIt.Initialize(myShapes);
   for(; aIt.More(); aIt.Next()) {
     const TopoDS_Shape& aF=aIt.Value();
     aBB.Add(aC, aF);
-  }
-  //
-  //
-  if (myContext==NULL) {
-    myErrorStatus=11;// Null Context
-    return;
   }
   //
   PerformShapesToAvoid();
@@ -154,16 +153,18 @@ static
   if (myErrorStatus) {
     return;
   }
-  PerformInternalShapes();
-  if (myErrorStatus) {
-    return;
+  if (myComputeInternalShapes) {
+    PerformInternalShapes();
+    if (myErrorStatus) {
+      return;
+    }
   }
 }
 //=======================================================================
 //function :PerformShapesToAvoid
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderSolid::PerformShapesToAvoid()
+void GEOMAlgo_BuilderSolid::PerformShapesToAvoid()
 {
   Standard_Boolean bFound;
   Standard_Integer i, iCnt, aNbE, aNbF;
@@ -184,89 +185,91 @@ static
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aF=aIt.Value();
       if (!myShapesToAvoid.Contains(aF)) {
-	TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, aMEF);
+        TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, aMEF);
       }
+      /*
       else {
 	int a=0;
       }
+      */
     }
     aNbE=aMEF.Extent();
     //
     // 2. myFacesToAvoid
     for (i=1; i<=aNbE; ++i) {
-      const TopoDS_Edge& aE=TopoDS::Edge(aMEF.FindKey(i));
+      const TopoDS_Edge& aE=*((TopoDS_Edge*)(&aMEF.FindKey(i)));
       if (BRep_Tool::Degenerated(aE)) {
-	continue;
+        continue;
       }
       //
       TopTools_ListOfShape& aLF=aMEF.ChangeFromKey(aE);
       //
       aNbF=aLF.Extent();
       if (!aNbF) {
-	continue;
+        continue;
       }
       //
       aOrE=aE.Orientation();
       //
-      const TopoDS_Face& aF1=TopoDS::Face(aLF.First());
+      const TopoDS_Face& aF1=*((TopoDS_Face*)(&aLF.First()));
       if (aNbF==1) {
-	if (aOrE==TopAbs_INTERNAL) {
-	  continue;
-	}
-	bFound=Standard_True;
-	myShapesToAvoid.Add(aF1);
+        if (aOrE==TopAbs_INTERNAL) {
+          continue;
+        }
+        bFound=Standard_True;
+        myShapesToAvoid.Add(aF1);
       }
       else if (aNbF==2) {
-	const TopoDS_Face& aF2=TopoDS::Face(aLF.Last());
-	if (aF2.IsSame(aF1)) {
-	  if (BRep_Tool::IsClosed(aE, aF1)) {
-	    continue;
-	  }
-	  //
-	  if (aOrE==TopAbs_INTERNAL) {
-	    continue;
-	  }
-	  //
-	  bFound=Standard_True;
-	  myShapesToAvoid.Add(aF1);
-	  myShapesToAvoid.Add(aF2);
-	}
+        const TopoDS_Face& aF2=*((TopoDS_Face*)(&aLF.Last()));
+        if (aF2.IsSame(aF1)) {
+          if (BRep_Tool::IsClosed(aE, aF1)) {
+            continue;
+          }
+          //
+          if (aOrE==TopAbs_INTERNAL) {
+            continue;
+          }
+          //
+          bFound=Standard_True;
+          myShapesToAvoid.Add(aF1);
+          myShapesToAvoid.Add(aF2);
+        }
       }
-      //DEB
+      /*//DEB
       else {
-	TopTools_ListIteratorOfListOfShape aItLF;
-	//
-	aItLF.Initialize (aLF);
-	for (; aItLF.More(); aItLF.Next()) {
-	  const TopoDS_Shape& aFx=aItLF.Value();
-	  int a=0;
-	}
+        TopTools_ListIteratorOfListOfShape aItLF;
+        //
+        aItLF.Initialize (aLF);
+        for (; aItLF.More(); aItLF.Next()) {
+          const TopoDS_Shape& aFx=aItLF.Value();
+          int a=0;
+        }
       }
-      //DEB
+      *///DEB
     }// for (i=1; i<=aNbE; ++i) {
     //
     if (!bFound) {
       break;
     }
     //
-  }//while (1) 
-}  
+  }//while (1)
+}
 //=======================================================================
 //function : PerformLoops
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderSolid::PerformLoops()
+void GEOMAlgo_BuilderSolid::PerformLoops()
 {
   myErrorStatus=0;
   //
   myLoops.Clear();
   //
-  Standard_Integer aNbLF, aNbOff, aNbFP, aNbFA;
+  Standard_Integer aNbLF, aNbOff, aNbFP;
   TopAbs_Orientation anOr;
   TopoDS_Edge aEL;
   BRep_Builder aBB;
   NMTTools_CoupleOfShape aCSOff;
-  TopTools_MapOfOrientedShape AddedFacesMap;//, aMFP;
+  TopTools_MapOfOrientedShape AddedFacesMap;
   TopTools_IndexedDataMapOfShapeListOfShape aEFMap, aMEFP;
   TopTools_ListIteratorOfListOfShape aItF, aIt;
   TopTools_MapIteratorOfMapOfOrientedShape aItM;
@@ -303,108 +306,104 @@ static
     // loop on faces added to Shell; add their neighbor faces to Shell and so on
     TopoDS_Iterator aItAddedF (aShell);
     for (; aItAddedF.More(); aItAddedF.Next()) {
-      const TopoDS_Face& aF = TopoDS::Face(aItAddedF.Value());
+      const TopoDS_Face& aF = *((TopoDS_Face*)(&aItAddedF.Value()));
       //
       // loop on edges of aF; find a good neighbor face of aF by aE
       TopExp_Explorer aEdgeExp(aF, TopAbs_EDGE);
       for (; aEdgeExp.More(); aEdgeExp.Next()) {
-        const TopoDS_Edge& aE = TopoDS::Edge(aEdgeExp.Current());
-	//
-	//1
-	if (aMEFP.Contains(aE)) {
-	  const TopTools_ListOfShape& aLFP=aMEFP.FindFromKey(aE);
-	  aNbFP=aLFP.Extent();
-	  if (aNbFP>1) { 
-	    continue;
-	  }
-	}
-	//2
-	anOr=aE.Orientation();
-	if (anOr==TopAbs_INTERNAL) {
-	  continue;
-	}
-	//3
-	if (BRep_Tool::Degenerated(aE)) {
-	  continue;
-	}
-	//
-	// candidate faces list
+        const TopoDS_Edge& aE=*((TopoDS_Edge*)(&aEdgeExp.Current()));
+        //
+        //1
+        if (aMEFP.Contains(aE)) {
+          const TopTools_ListOfShape& aLFP=aMEFP.FindFromKey(aE);
+          aNbFP=aLFP.Extent();
+          if (aNbFP>1) {
+            continue;
+          }
+        }
+        //2
+        anOr=aE.Orientation();
+        if (anOr==TopAbs_INTERNAL) {
+          continue;
+        }
+        //3
+        if (BRep_Tool::Degenerated(aE)) {
+          continue;
+        }
+        //
+        // candidate faces list
         const TopTools_ListOfShape& aLF=aEFMap.FindFromKey(aE);
-	aNbLF=aLF.Extent();
+        aNbLF=aLF.Extent();
         if (!aNbLF) {
           continue;
-	}
-	//
-	// try to select one of neighbors
-	// check if a face already added to Shell shares E
-	Standard_Boolean bFound;
-	TopTools_ListIteratorOfListOfShape aItLF;
-	NMTTools_ListOfCoupleOfShape aLCSOff;
-	//
-	aItLF.Initialize(aLF);
-	for (; aItLF.More(); aItLF.Next()) { 
-	  const TopoDS_Face& aFL=TopoDS::Face(aItLF.Value());
-	  if (myShapesToAvoid.Contains(aFL)) {
-	    continue;
-	  }
-	  if (aF.IsSame(aFL)) {
-	    continue;
-	  } 
-	  if (AddedFacesMap.Contains(aFL)){
-	    continue;
-	  }
-	  //
-	  bFound=GEOMAlgo_Tools3D::GetEdgeOff(aE, aFL, aEL);
-	  if (!bFound) {
-	    continue;
-	  }
-	  //
-	  aCSOff.SetShape1(aEL);
-	  aCSOff.SetShape2(aFL);
-	  aLCSOff.Append(aCSOff);
-	}//for (; aItLF.More(); aItLF.Next()) { 
-	//
-	aNbOff=aLCSOff.Extent();
-	if (!aNbOff){
-	  continue;
-	}
-	//
-	TopoDS_Face aSelF;
-	if (aNbOff==1) {
-	  aSelF=TopoDS::Face(aLCSOff.First().Shape2());
-	}
-	else if (aNbOff>1){
-	  GEOMAlgo_Tools3D::GetFaceOff(aE, aF, aLCSOff, aSelF);
-	}
-	//
-        if (!aSelF.IsNull() && AddedFacesMap.Add(aSelF)) { 
+        }
+        //
+        // try to select one of neighbors
+        // check if a face already added to Shell shares E
+        Standard_Boolean bFound;
+        TopTools_ListIteratorOfListOfShape aItLF;
+        NMTTools_ListOfCoupleOfShape aLCSOff;
+        //
+        aItLF.Initialize(aLF);
+        for (; aItLF.More(); aItLF.Next()) {
+          const TopoDS_Face& aFL=*((TopoDS_Face*)(&aItLF.Value()));
+          if (myShapesToAvoid.Contains(aFL)) {
+            continue;
+          }
+          if (aF.IsSame(aFL)) {
+            continue;
+          }
+          if (AddedFacesMap.Contains(aFL)){
+            continue;
+          }
+          //
+          bFound=GEOMAlgo_Tools3D::GetEdgeOff(aE, aFL, aEL);
+          if (!bFound) {
+            continue;
+          }
+          //
+          aCSOff.SetShape1(aEL);
+          aCSOff.SetShape2(aFL);
+          aLCSOff.Append(aCSOff);
+        }//for (; aItLF.More(); aItLF.Next()) {
+        //
+        aNbOff=aLCSOff.Extent();
+        if (!aNbOff){
+          continue;
+        }
+        //
+        TopoDS_Face aSelF;
+        if (aNbOff==1) {
+          aSelF=*((TopoDS_Face*)(&aLCSOff.First().Shape2()));
+        }
+        else if (aNbOff>1){
+          GEOMAlgo_Tools3D::GetFaceOff(aE, aF, aLCSOff, aSelF);
+        }
+        //
+        if (!aSelF.IsNull() && AddedFacesMap.Add(aSelF)) {
           aBB.Add(aShell, aSelF);
-	  TopExp::MapShapesAndAncestors(aSelF, TopAbs_EDGE, TopAbs_FACE, aMEFP);
-	}
-      } // for (; aEdgeExp.More(); aEdgeExp.Next()) { 
+          TopExp::MapShapesAndAncestors(aSelF, TopAbs_EDGE, TopAbs_FACE, aMEFP);
+        }
+      } // for (; aEdgeExp.More(); aEdgeExp.Next()) {
     } //for (; aItAddedF.More(); aItAddedF.Next()) {
-    //modified by NIZNHY-PKV Tue Aug  5 15:07:08 2008f
-    //myLoops.Append(aShell);
+    //
     if (IsClosedShell(aShell)) {
       myLoops.Append(aShell);
     }
-    /*
     else {
-      TopoDS_Iterator aItS;
-      aItS.Initialize(aShell);
-      for (; aItS.More(); aItS.Next()) {
-	const TopoDS_Shape& aFs=aItS.Value();
-	aMFP.Add(aFs);
+      Standard_Boolean bRefine;
+      TopoDS_Shell aShx;
+      //
+      bRefine=RefineShell(aShell, aShx);
+      if (bRefine) {
+	myLoops.Append(aShx);
       }
     }
-    */
-    //modified by NIZNHY-PKV Tue Aug  5 15:07:30 2008t
   } // for (; aItF.More(); aItF.Next()) {
-  //modified by NIZNHY-PKV Tue Aug  5 15:07:35 2008f
   //
   // Post Treatment
   TopTools_MapOfOrientedShape aMP;
-  // 
+  //
   // a. collect all edges that are in loops
   aIt.Initialize (myLoops);
   for (; aIt.More(); aIt.Next()) {
@@ -415,15 +414,15 @@ static
       aMP.Add(aF);
     }
   }
-  // 
-  // b. collect all edges that are to avoid
+  //
+  // b. collect all faces that are to avoid
   aItM.Initialize(myShapesToAvoid);
   for (; aItM.More(); aItM.Next()) {
     const TopoDS_Shape& aF=aItM.Key();
     aMP.Add(aF);
   }
   //
-  // c. add all edges that are not processed to myShapesToAvoid
+  // c. add all faces that are not processed to myShapesToAvoid
   aIt.Initialize (myShapes);
   for (; aIt.More(); aIt.Next()) {
     const TopoDS_Shape& aF=aIt.Value();
@@ -431,7 +430,6 @@ static
       myShapesToAvoid.Add(aF);
     }
   }
-  //modified by NIZNHY-PKV Tue Aug  5 15:07:44 2008t
   //=================================================
   //
   // 2.Internal Shells
@@ -441,56 +439,56 @@ static
   aEFMap.Clear();
   AddedFacesMap.Clear();
   //
-  aNbFA=myShapesToAvoid.Extent();
-  //
-  aItM.Initialize(myShapesToAvoid);
-  for (; aItM.More(); aItM.Next()) {
-    const TopoDS_Shape& aFF=aItM.Key();
-    TopExp::MapShapesAndAncestors(aFF, TopAbs_EDGE, TopAbs_FACE, aEFMap);
-  }
-  //
-  aItM.Initialize(myShapesToAvoid);
-  for (; aItM.More(); aItM.Next()) {
-    const TopoDS_Shape& aFF=aItM.Key();
-    if (!AddedFacesMap.Add(aFF)) {
-      continue;
+  if (myComputeInternalShapes) {
+    aItM.Initialize(myShapesToAvoid);
+    for (; aItM.More(); aItM.Next()) {
+      const TopoDS_Shape& aFF=aItM.Key();
+      TopExp::MapShapesAndAncestors(aFF, TopAbs_EDGE, TopAbs_FACE, aEFMap);
     }
     //
-    // make a new shell
-    TopoDS_Shell aShell;
-    aBB.MakeShell(aShell);
-    aBB.Add(aShell, aFF);
-    //
-    TopoDS_Iterator aItAddedF (aShell);
-    for (; aItAddedF.More(); aItAddedF.Next()) {
-      const TopoDS_Face& aF = TopoDS::Face(aItAddedF.Value());
-      //
-      TopExp_Explorer aEdgeExp(aF, TopAbs_EDGE);
-      for (; aEdgeExp.More(); aEdgeExp.Next()) {
-        const TopoDS_Edge& aE = TopoDS::Edge(aEdgeExp.Current());
-	const TopTools_ListOfShape& aLF=aEFMap.FindFromKey(aE);
-	aItF.Initialize(aLF);
-	for (; aItF.More(); aItF.Next()) { 
-	  const TopoDS_Face& aFL=TopoDS::Face(aItF.Value());
-	  if (AddedFacesMap.Add(aFL)){
-	    aBB.Add(aShell, aFL);
-	  }
-	}
+    aItM.Initialize(myShapesToAvoid);
+    for (; aItM.More(); aItM.Next()) {
+      const TopoDS_Shape& aFF=aItM.Key();
+      if (!AddedFacesMap.Add(aFF)) {
+        continue;
       }
+      //
+      // make a new shell
+      TopoDS_Shell aShell;
+      aBB.MakeShell(aShell);
+      aBB.Add(aShell, aFF);
+      //
+      TopoDS_Iterator aItAddedF (aShell);
+      for (; aItAddedF.More(); aItAddedF.Next()) {
+        const TopoDS_Face& aF = *((TopoDS_Face*)(&aItAddedF.Value()));
+        //
+        TopExp_Explorer aEdgeExp(aF, TopAbs_EDGE);
+        for (; aEdgeExp.More(); aEdgeExp.Next()) {
+          const TopoDS_Edge& aE = *((TopoDS_Edge*)(&aEdgeExp.Current()));
+          const TopTools_ListOfShape& aLF=aEFMap.FindFromKey(aE);
+          aItF.Initialize(aLF);
+          for (; aItF.More(); aItF.Next()) {
+            const TopoDS_Face& aFL=*((TopoDS_Face*)(&aItF.Value()));
+            if (AddedFacesMap.Add(aFL)){
+              aBB.Add(aShell, aFL);
+            }
+          }
+        }
+      }
+      myLoopsInternal.Append(aShell);
     }
-    myLoopsInternal.Append(aShell);
   }
 }
 //=======================================================================
 //function : PerformAreas
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderSolid::PerformAreas()
+void GEOMAlgo_BuilderSolid::PerformAreas()
 {
   myErrorStatus=0;
   //
   Standard_Boolean bIsGrowthShell, bIsHole;
-  TopTools_ListOfShape aNewSolids, aHoleShells; 
+  TopTools_ListOfShape aNewSolids, aHoleShells;
   TopoDS_Shape anInfinitePointShape;
   TopTools_DataMapOfShapeShape aInOutMap;
   TopTools_DataMapOfShapeListOfShape aMSH;
@@ -517,21 +515,19 @@ static
     }
     else{
       // check if a shell is a hole
-      //XX
       bIsHole=IsHole(aShell, myContext);
-      //bIsHole=GEOMAlgo_BuilderTools::IsHole(aShell);
-      //XX
+      //
       if (bIsHole) {
-	aHoleShells.Append(aShell);
-	TopExp::MapShapes(aShell, TopAbs_FACE, aMHF);
+        aHoleShells.Append(aShell);
+        TopExp::MapShapes(aShell, TopAbs_FACE, aMHF);
       }
       else {
-	// make a growth solid from a shell
-	TopoDS_Solid Solid;
-	aBB.MakeSolid(Solid);
-	aBB.Add (Solid, aShell);
-	//
-	aNewSolids.Append (Solid);
+        // make a growth solid from a shell
+        TopoDS_Solid Solid;
+        aBB.MakeSolid(Solid);
+        aBB.Add (Solid, aShell);
+        //
+        aNewSolids.Append (Solid);
       }
     }
   }
@@ -565,13 +561,13 @@ static
     if (aInOutMap.IsBound(aHole)){
       const TopoDS_Shape& aSolid=aInOutMap(aHole);
       if (aMSH.IsBound(aSolid)) {
-	TopTools_ListOfShape& aLH=aMSH.ChangeFind(aSolid);
-	aLH.Append(aHole);
+        TopTools_ListOfShape& aLH=aMSH.ChangeFind(aSolid);
+        aLH.Append(aHole);
       }
       else {
-	TopTools_ListOfShape aLH;
-	aLH.Append(aHole);
-	aMSH.Bind(aSolid, aLH);
+        TopTools_ListOfShape aLH;
+        aLH.Append(aHole);
+        aMSH.Bind(aSolid, aLH);
       }
       //aBB.Add (aSolid, aHole);
     }
@@ -580,7 +576,7 @@ static
   // 3. Add aHoles to Solids
   aItMSH.Initialize(aMSH);
   for (; aItMSH.More(); aItMSH.Next()) {
-    TopoDS_Solid aSolid=TopoDS::Solid(aItMSH.Key());
+    TopoDS_Solid aSolid=*((TopoDS_Solid*)(&aItMSH.Key()));
     //
     const TopTools_ListOfShape& aLH=aItMSH.Value();
     aShellIt.Initialize(aLH);
@@ -595,16 +591,16 @@ static
     //
   }
   //
-  // These aNewSolids are draft solids that 
+  // These aNewSolids are draft solids that
   // do not contain any internal shapes
   //
   myAreas.Append(aNewSolids);
 }
 //=======================================================================
 //function : PerformInternalShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderSolid::PerformInternalShapes()
+void GEOMAlgo_BuilderSolid::PerformInternalShapes()
 {
   myErrorStatus=0;
   //
@@ -612,11 +608,12 @@ static
   if (!aNbFI) {// nothing to do
     return;
   }
-  // 
+  //
+  Standard_Integer bFlag;
   BRep_Builder aBB;
   TopTools_ListIteratorOfListOfShape aShellIt, aSolidIt;
-  TopoDS_Iterator aIt; 
-  TopTools_MapOfShape aMF, aMFP;
+  TopoDS_Iterator aIt;
+  TopTools_MapOfShape aMF, aMFP, aMFS;
   TopTools_MapIteratorOfMapOfShape aItMF;
   TopTools_IndexedDataMapOfShapeListOfShape aMEF;
   TopTools_ListOfShape aLSI;
@@ -636,8 +633,18 @@ static
   // 2 Process solids
   aSolidIt.Initialize(myAreas);
   for ( ; aSolidIt.More(); aSolidIt.Next()) {
-    TopoDS_Solid& aSolid=TopoDS::Solid(aSolidIt.Value());
+    TopoDS_Solid& aSolid=*((TopoDS_Solid*)(&aSolidIt.Value()));
     //
+    //modified by NIZNHY-PKV Wed Mar 07 08:52:18 2012f
+    aMFS.Clear();
+    {
+      TopExp_Explorer aExp(aSolid, TopAbs_FACE);
+      while (aExp.More()) {
+	aMFS.Add(aExp.Current());
+	aExp.Next();
+      }
+    }
+    //modified by NIZNHY-PKV Wed Mar 07 08:52:20 2012t
     aMEF.Clear();
     TopExp::MapShapesAndAncestors(aSolid, TopAbs_EDGE, TopAbs_FACE, aMEF);
     //
@@ -645,10 +652,18 @@ static
     aMFP.Clear();
     aItMF.Initialize(aMF);
     for (; aItMF.More(); aItMF.Next()) {
-      const TopoDS_Face& aF=TopoDS::Face(aItMF.Key());
-      if (GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, *myContext)) {
-	aMFP.Add(aF);
+      const TopoDS_Face& aF=*((TopoDS_Face*)(&aItMF.Key()));
+      //modified by NIZNHY-PKV Wed Mar 07 08:54:56 2012f
+      if (!aMFS.Contains(aF)) {
+	bFlag=GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext);
+	if (bFlag) {
+	  aMFP.Add(aF);
+	}
       }
+      //if (GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext)) {
+      //  aMFP.Add(aF);
+      //}
+      //modified by NIZNHY-PKV Wed Mar 07 08:56:07 2012t
     }
     //
     // 2.2 Make Internal Shells
@@ -678,10 +693,10 @@ static
 
 //=======================================================================
 //function : MakeInternalShells
-//purpose  : 
+//purpose  :
 //=======================================================================
 void MakeInternalShells(const TopTools_MapOfShape& theMF,
-			TopTools_ListOfShape& theShells)
+                        TopTools_ListOfShape& theShells)
 {
   TopTools_MapIteratorOfMapOfShape aItM;
   TopTools_MapOfShape aAddedFacesMap;
@@ -704,7 +719,7 @@ void MakeInternalShells(const TopTools_MapOfShape& theMF,
     //
     // make a new shell
     TopoDS_Shell aShell;
-    aBB.MakeShell(aShell);    
+    aBB.MakeShell(aShell);
     aFF.Orientation(TopAbs_INTERNAL);
     aBB.Add(aShell, aFF);
     //
@@ -715,15 +730,15 @@ void MakeInternalShells(const TopTools_MapOfShape& theMF,
       TopExp_Explorer aEdgeExp(aF, TopAbs_EDGE);
       for (; aEdgeExp.More(); aEdgeExp.Next()) {
         const TopoDS_Shape& aE =aEdgeExp.Current();
-	const TopTools_ListOfShape& aLF=aMEF.FindFromKey(aE);
-	aItF.Initialize(aLF);
-	for (; aItF.More(); aItF.Next()) { 
-	  TopoDS_Shape aFL=aItF.Value();
-	  if (aAddedFacesMap.Add(aFL)){
-	    aFL.Orientation(TopAbs_INTERNAL);
-	    aBB.Add(aShell, aFL);
-	  }
-	}
+        const TopTools_ListOfShape& aLF=aMEF.FindFromKey(aE);
+        aItF.Initialize(aLF);
+        for (; aItF.More(); aItF.Next()) {
+          TopoDS_Shape aFL=aItF.Value();
+          if (aAddedFacesMap.Add(aFL)){
+            aFL.Orientation(TopAbs_INTERNAL);
+            aBB.Add(aShell, aFL);
+          }
+        }
       }
     }
     theShells.Append(aShell);
@@ -731,10 +746,10 @@ void MakeInternalShells(const TopTools_MapOfShape& theMF,
 }
 //=======================================================================
 //function : IsHole
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsHole(const TopoDS_Shape& theS2,
-			IntTools_PContext& theContext)
+                        const Handle(IntTools_Context)& theContext)
 {
   TopoDS_Solid *pS2=(TopoDS_Solid *)&theS2;
   BRepClass3d_SolidClassifier& aClsf=theContext->SolidClassifier(*pS2);
@@ -745,11 +760,11 @@ Standard_Boolean IsHole(const TopoDS_Shape& theS2,
 }
 //=======================================================================
 //function : IsInside
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsInside(const TopoDS_Shape& theS1,
-			  const TopoDS_Shape& theS2,
-			  IntTools_PContext& theContext)
+                          const TopoDS_Shape& theS2,
+                          const Handle(IntTools_Context)& theContext)
 {
   TopExp_Explorer aExp;
   TopAbs_State aState;
@@ -765,36 +780,35 @@ Standard_Boolean IsInside(const TopoDS_Shape& theS1,
   else {
     TopTools_IndexedMapOfShape aBounds;
     const TopoDS_Face& aF = TopoDS::Face(aExp.Current());
-    aState=GEOMAlgo_Tools3D::ComputeState(aF, *pS2, 1.e-14, aBounds, *theContext);
+    aState=GEOMAlgo_Tools3D::ComputeState(aF, *pS2, 1.e-14, aBounds, theContext);
   }
   return (aState==TopAbs_IN);
 }
 //=======================================================================
 //function : IsGrowthShell
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsGrowthShell(const TopoDS_Shape& theShell,
-			       const TopTools_IndexedMapOfShape& theMHF)
+                               const TopTools_IndexedMapOfShape& theMHF)
 {
   Standard_Boolean bRet;
   TopoDS_Iterator aIt;
-  // 
+  //
   bRet=Standard_False;
   if (theMHF.Extent()) {
     aIt.Initialize(theShell);
     for(; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aF=aIt.Value();
       if (theMHF.Contains(aF)) {
-	return !bRet;
+        return !bRet;
       }
     }
   }
   return bRet;
 }
-//modified by NIZNHY-PKV Tue Aug  5 15:07:50 2008f
 //=======================================================================
 //function : IsClosedShell
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell)
 {
@@ -803,27 +817,24 @@ Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell)
   TopoDS_Iterator aIt;
   TopExp_Explorer aExp;
   TopTools_MapOfShape aM;
-  // 
+  //
   bRet=Standard_False;
   aIt.Initialize(theShell);
   for(; aIt.More(); aIt.Next()) {
     const TopoDS_Face& aF=TopoDS::Face(aIt.Value());
     aExp.Init(aF, TopAbs_EDGE);
     for (; aExp.More(); aExp.Next()) {
-      const TopoDS_Edge& aE=TopoDS::Edge(aExp.Current());
+      const TopoDS_Edge& aE=*((TopoDS_Edge*)(&aExp.Current()));
       if (BRep_Tool::Degenerated(aE)) {
-	continue;
+        continue;
       }
-      /*
-      if (BRep_Tool::IsClosed(aE, aF)) {
-	continue;
-      }
-      */
+      //
       if (aE.Orientation()==TopAbs_INTERNAL) {
-	continue;
+        continue;
       }
+      //
       if (!aM.Add(aE)) {
-	aM.Remove(aE);
+        aM.Remove(aE);
       }
     }
   }
@@ -834,8 +845,87 @@ Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell)
   }
   return bRet;
 }
-//modified by NIZNHY-PKV Tue Aug  5 15:08:07 2008t
-//BRepTools::Write(aFF, "ff");
+//=======================================================================
+//function : RefineShell
+//purpose  :
+//=======================================================================
+Standard_Boolean RefineShell(const TopoDS_Shell& aShell,
+			     TopoDS_Shell& aShx)
+
+{
+  Standard_Boolean bRet;
+  Standard_Integer i, aNbE, aNbF;
+  TopAbs_Orientation aOrE;
+  TopTools_IndexedDataMapOfShapeListOfShape aMEF;
+  TopTools_MapOfOrientedShape aMFx;
+  //
+  bRet=Standard_False;
+  //
+  TopExp::MapShapesAndAncestors(aShell, TopAbs_EDGE, TopAbs_FACE, aMEF);
+  aNbE=aMEF.Extent();
+  for (i=1; i<=aNbE; ++i) {
+    const TopoDS_Edge &aE=*((TopoDS_Edge*)(&aMEF.FindKey(i)));
+    //
+    if (BRep_Tool::Degenerated(aE)) {
+      continue;
+    }
+    //
+    aOrE=aE.Orientation();
+    //
+    const TopTools_ListOfShape& aLF=aMEF(i);
+    aNbF=aLF.Extent();
+    if (!aNbF) {
+      continue;
+    }
+    //
+    const TopoDS_Face& aF1=*((TopoDS_Face*)(&aLF.First()));
+    if (aNbF==1) {
+      if (aOrE==TopAbs_INTERNAL) {
+	continue;
+      }
+      aMFx.Add(aF1);
+    }
+    //
+    else if (aNbF==2) {
+      const TopoDS_Face& aF2=*((TopoDS_Face*)(&aLF.Last()));
+      if (aF2.IsSame(aF1)) {
+	if (BRep_Tool::IsClosed(aE, aF1)) {
+	  continue;
+	}
+	if (aOrE==TopAbs_INTERNAL) {
+	  continue;
+	}
+	aMFx.Add(aF1);
+	aMFx.Add(aF2);
+      }
+    }
+  }
+  //
+  aNbF=aMFx.Extent();
+  if (!aNbF) {
+    return bRet;
+  }
+  //
+  BRep_Builder aBB;
+  TopoDS_Iterator aIt;
+  //
+  aNbF=0;
+  aBB.MakeShell(aShx);
+  aIt.Initialize(aShell);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aF=aIt.Value();
+    if (!aMFx.Contains(aF)) {
+      aBB.Add(aShx, aF);
+      ++aNbF;
+    }
+  }
+  //
+  if (aNbF) {
+    bRet=IsClosedShell(aShx);
+  }
+  //
+  return bRet;
+}
 //
 //  ErrorStatus :
 // 11 - Null Context

@@ -1,38 +1,37 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_ILocalOperations.hxx>
 
-#include <GEOM_Function.hxx>
-#include <GEOM_PythonDump.hxx>
-
 #include <GEOMImpl_Types.hxx>
 
 #include <GEOMImpl_FilletDriver.hxx>
+#include <GEOMImpl_Fillet1dDriver.hxx>
 #include <GEOMImpl_Fillet2dDriver.hxx>
 #include <GEOMImpl_ChamferDriver.hxx>
 
 #include <GEOMImpl_IFillet.hxx>
+#include <GEOMImpl_IFillet1d.hxx>
 #include <GEOMImpl_IFillet2d.hxx>
 #include <GEOMImpl_IChamfer.hxx>
 
@@ -41,6 +40,11 @@
 
 #include <GEOMImpl_Gen.hxx>
 #include <GEOMImpl_IShapesOperations.hxx>
+
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include "utilities.h"
 #include <OpUtil.hxx>
@@ -111,7 +115,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
 
   //Compute the Fillet value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -172,7 +176,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
 
   //Compute the Fillet value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -242,7 +246,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
 
   //Compute the Fillet value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -312,7 +316,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
 
   //Compute the Fillet value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -382,7 +386,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
 
   //Compute the Fillet value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -451,7 +455,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet2D
 
   //Compute the Fillet value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -479,6 +483,78 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet2D
 
   SetErrorCode(OK);
   return aFillet2D;
+}
+
+//=============================================================================
+/*!
+ *  MakeFillet1D
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet1D
+                      (Handle(GEOM_Object) theShape, double theR,
+                       std::list<int> theVertexes, bool doIgnoreSecantVertices)
+{
+  SetErrorCode(KO);
+
+  //Add a new Fillet object
+  Handle(GEOM_Object) aFillet1D = GetEngine()->AddObject(GetDocID(), GEOM_FILLET_1D);
+
+  //Add a new Fillet function
+  Handle(GEOM_Function) aFunction =
+    aFillet1D->AddFunction(GEOMImpl_Fillet1dDriver::GetID(), FILLET_1D_SHAPE_VERTEXES);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_Fillet1dDriver::GetID()) return NULL;
+
+  GEOMImpl_IFillet1d aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetR(theR);
+  aCI.SetFlag(doIgnoreSecantVertices);
+  int aLen = theVertexes.size();
+  aCI.SetLength(aLen);
+
+  int ind = 1;
+  std::list<int>::iterator it = theVertexes.begin();
+  for (; it != theVertexes.end(); it++, ind++) {
+    aCI.SetVertex(ind, (*it));
+  }
+
+  //Compute the Fillet value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("1D Fillet driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aFillet1D << " = geompy.MakeFillet1D(" << theShape
+    << ", " << theR << ", [";
+
+  it = theVertexes.begin();
+  if (it != theVertexes.end()) {
+    pd << (*it++);
+    while (it != theVertexes.end())
+      pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aFillet1D;
 }
 
 //=============================================================================
@@ -511,7 +587,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
 
   //Compute the Chamfer value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -568,7 +644,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
 
   //Compute the Chamfer value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -626,7 +702,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgeAD
 
   //Compute the Chamfer value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -689,7 +765,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
 
   //Compute the Chamfer value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -760,7 +836,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
 
   //Compute the Chamfer value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -811,7 +887,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
-	{ MESSAGE ( "Chamfer Driver is NULL!!!" ); return NULL; }
+        { MESSAGE ( "Chamfer Driver is NULL!!!" ); return NULL; }
 
   GEOMImpl_IChamfer aCI (aFunction);
 
@@ -832,7 +908,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
 
   //Compute the Chamfer value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -883,7 +959,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
-	{ MESSAGE("Chamfer Driver is NULL!!!"); return NULL;}
+        { MESSAGE("Chamfer Driver is NULL!!!"); return NULL;}
 
   GEOMImpl_IChamfer aCI (aFunction);
 
@@ -904,7 +980,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
 
   //Compute the Chamfer value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -968,7 +1044,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
 
   //Compute the Archimede value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {

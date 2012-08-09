@@ -1,30 +1,27 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-// File:	NMTDS_Tools.cxx
-// Created:	Tue Feb 20 14:57:28 2007
-// Author:	Peter KURNEV
-//		<pkv@irinox>
-//
-#include <NMTDS_Tools.ixx>
+
+// File:        NMTDS_Tools.cxx
+// Created:     Tue Feb 20 14:57:28 2007
+// Author:      Peter KURNEV
+
+#include <NMTDS_Tools.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <gp_Pnt.hxx>
 #include <BRep_Tool.hxx>
@@ -34,16 +31,16 @@
 #include <TopoDS_Iterator.hxx>
 #include <BRep_Builder.hxx>
 
-void CopySource(const TopoDS_Shape& aS, 
-		TopTools_IndexedDataMapOfShapeShape& aMapSS, 
-		TopoDS_Shape& aSC);
+void CopySource(const TopoDS_Shape& aS,
+                TopTools_IndexedDataMapOfShapeShape& aMapSS,
+                TopoDS_Shape& aSC);
 
 //=======================================================================
 //function : CopyShape
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void NMTDS_Tools::CopyShape(const TopoDS_Shape& aS, 
-			      TopoDS_Shape& aSC)
+  void NMTDS_Tools::CopyShape(const TopoDS_Shape& aS,
+                              TopoDS_Shape& aSC)
 {
   TopTools_IndexedDataMapOfShapeShape aMapSS;
   //
@@ -51,25 +48,26 @@ void CopySource(const TopoDS_Shape& aS,
 }
 //=======================================================================
 //function : CopyShape
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void NMTDS_Tools::CopyShape(const TopoDS_Shape& aS, 
-			      TopoDS_Shape& aSC,
-			      TopTools_IndexedDataMapOfShapeShape& aMapSS)
+  void NMTDS_Tools::CopyShape(const TopoDS_Shape& aS,
+                              TopoDS_Shape& aSC,
+                              TopTools_IndexedDataMapOfShapeShape& aMapSS)
 {
   CopySource(aS, aMapSS, aSC);
 }
 //=======================================================================
 //function : CopySource
-//purpose  : 
+//purpose  :
 //=======================================================================
-void CopySource(const TopoDS_Shape& aS, 
-		TopTools_IndexedDataMapOfShapeShape& aMapSS, 
-		TopoDS_Shape& aSC)
+void CopySource(const TopoDS_Shape& aS,
+                TopTools_IndexedDataMapOfShapeShape& aMapSS,
+                TopoDS_Shape& aSC)
 {
   Standard_Boolean bFree;
   TopAbs_ShapeEnum aT;
   TopoDS_Iterator aIt;
+  TopoDS_Shape aSF;
   BRep_Builder BB;
   //
   aT=aS.ShapeType();
@@ -86,13 +84,22 @@ void CopySource(const TopoDS_Shape& aS,
   //
   bFree=aSC.Free();
   aSC.Free(Standard_True);
-  aIt.Initialize(aS);
+  aSF=aS;
+  if (aT==TopAbs_EDGE){
+    TopAbs_Orientation aOr;
+    //
+    aOr=aS.Orientation();
+    if(aOr==TopAbs_INTERNAL) {
+      aSF.Orientation(TopAbs_FORWARD);
+    }
+  }
+  aIt.Initialize(aSF);
   for (; aIt.More();  aIt.Next()) {
     TopoDS_Shape aSCx;
     //
     const TopoDS_Shape& aSx=aIt.Value();
     //
-    CopySource (aSx, aMapSS, aSCx);  
+    CopySource (aSx, aMapSS, aSCx);
     //
     aSCx.Orientation(aSx.Orientation());
     BB.Add(aSC, aSCx);
@@ -101,10 +108,10 @@ void CopySource(const TopoDS_Shape& aS,
 }
 //=======================================================================
 // function: ComputeVV
-// purpose: 
+// purpose:
 //=======================================================================
-  Standard_Integer NMTDS_Tools::ComputeVV(const TopoDS_Vertex& aV1, 
-					  const TopoDS_Vertex& aV2)
+  Standard_Integer NMTDS_Tools::ComputeVV(const TopoDS_Vertex& aV1,
+                                          const TopoDS_Vertex& aV2)
 {
   Standard_Real aTolV1, aTolV2, aTolSum, aTolSum2, aD2;
   gp_Pnt aP1, aP2;
@@ -125,7 +132,7 @@ void CopySource(const TopoDS_Shape& aS,
 }
 //=======================================================================
 // function: HasBRep
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTDS_Tools::HasBRep(const TopAbs_ShapeEnum aTi)
 {
@@ -133,10 +140,10 @@ void CopySource(const TopoDS_Shape& aS,
 }
 //=======================================================================
 //function : TypeToInteger
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer NMTDS_Tools::TypeToInteger(const TopAbs_ShapeEnum aType1,
-					    const TopAbs_ShapeEnum aType2)
+                                            const TopAbs_ShapeEnum aType2)
 {
   Standard_Integer iRet, iT1, iT2, iX;
   //
@@ -170,5 +177,5 @@ void CopySource(const TopoDS_Shape& aS,
     default:
       break;
   }
-  return iRet; 
+  return iRet;
 }

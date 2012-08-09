@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BooleanGUI.cxx
 // Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
@@ -32,6 +33,7 @@
 #include "BlocksGUI_PropagateDlg.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
@@ -66,11 +68,11 @@ bool BlocksGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = 0;
 
   switch ( theCommandID ) {
-  case 9999:  aDlg = new BlocksGUI_BlockDlg    ( getGeometryGUI(), parent ); break;
-  case 9998:  aDlg = new BlocksGUI_TrsfDlg     ( getGeometryGUI(), parent ); break;
-  case 9997:  aDlg = new BlocksGUI_QuadFaceDlg ( getGeometryGUI(), parent ); break;
-  case 9995:  aDlg = new BlocksGUI_ExplodeDlg  ( getGeometryGUI(), parent ); break;
-  case 99991: aDlg = new BlocksGUI_PropagateDlg( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpHexaSolid:      aDlg = new BlocksGUI_BlockDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpMultiTransform: aDlg = new BlocksGUI_TrsfDlg     ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpQuadFace:       aDlg = new BlocksGUI_QuadFaceDlg ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpExplodeBlock:   aDlg = new BlocksGUI_ExplodeDlg  ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPropagate:      aDlg = new BlocksGUI_PropagateDlg( getGeometryGUI(), parent ); break;
   default:
     getGeometryGUI()->getApp()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
     break;

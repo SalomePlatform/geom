@@ -108,7 +108,7 @@
          </widget>
         </item>
         <item row="1" column="3" >
-         <widget class="QtxDoubleSpinBox" name="SpinBox5" />
+         <widget class="SalomeApp_DoubleSpinBox" name="SpinBox5" />
         </item>
         <item row="0" column="0" >
          <widget class="QLabel" name="TextLabel2" >
@@ -127,7 +127,7 @@
          </widget>
         </item>
         <item row="0" column="1" >
-         <widget class="QtxDoubleSpinBox" name="SpinBox1" />
+         <widget class="SalomeApp_DoubleSpinBox" name="SpinBox1" />
         </item>
         <item row="1" column="2" >
          <widget class="QLabel" name="TextLabel6" >
@@ -146,13 +146,13 @@
          </widget>
         </item>
         <item row="0" column="3" >
-         <widget class="QtxDoubleSpinBox" name="SpinBox2" />
+         <widget class="SalomeApp_DoubleSpinBox" name="SpinBox2" />
         </item>
         <item row="2" column="1" >
-         <widget class="QtxDoubleSpinBox" name="SpinBox3" />
+         <widget class="SalomeApp_DoubleSpinBox" name="SpinBox3" />
         </item>
         <item row="1" column="1" >
-         <widget class="QtxDoubleSpinBox" name="SpinBox4" />
+         <widget class="SalomeApp_DoubleSpinBox" name="SpinBox4" />
         </item>
         <item row="1" column="0" >
          <widget class="QLabel" name="TextLabel5" >
@@ -213,9 +213,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>QtxDoubleSpinBox</class>
+   <class>SalomeApp_DoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header location="global" >QtxDoubleSpinBox.h</header>
+   <header location="global" >SalomeApp_DoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

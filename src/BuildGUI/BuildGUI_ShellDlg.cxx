@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_ShellDlg.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -100,7 +101,7 @@ void BuildGUI_ShellDlg::Init()
   myEditCurrentArgument = GroupShell->LineEdit1;
   GroupShell->LineEdit1->setReadOnly( true );
   
-  myOkFacesAndShells = false;
+  myFacesAndShells.clear();
   
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_SHELL );
@@ -110,7 +111,6 @@ void BuildGUI_ShellDlg::Init()
   QList<int> aSubShapes;
   aSubShapes.append( GEOM_FACE );
   globalSelection( aMap, aSubShapes );
-  
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -119,9 +119,10 @@ void BuildGUI_ShellDlg::Init()
   connect( GroupShell->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_SHELL" ) );
+  SelectionIntoArgument();
 }
 
 
@@ -131,6 +132,7 @@ void BuildGUI_ShellDlg::Init()
 //=================================================================================
 void BuildGUI_ShellDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -157,25 +159,15 @@ bool BuildGUI_ShellDlg::ClickOnApply()
 void BuildGUI_ShellDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-  QString aString;
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  QList<TopAbs_ShapeEnum> types;
+  types << TopAbs_FACE << TopAbs_SHELL << TopAbs_COMPOUND;
+  myFacesAndShells = getSelected( types, -1 );
 
-  myOkFacesAndShells = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
-  if ( nbSel == 0 )
-    return;
-  if ( nbSel != 1 )
-    aString = QString( "%1_objects ").arg( nbSel );
-
-  GEOMBase::ConvertListOfIOInListOfGO(aSelList, myFacesAndShells, true);
-  if ( !myFacesAndShells.length() )
-    return;
-
-  myEditCurrentArgument->setText( aString );
-  myOkFacesAndShells = true;
+  if ( !myFacesAndShells.isEmpty() ) {
+    QString aName = myFacesAndShells.count() > 1 ? QString( "%1_objects").arg( myFacesAndShells.count() ) : GEOMBase::GetName( myFacesAndShells[0].get() );
+    myEditCurrentArgument->setText( aName );
+  }
 }
 
 
@@ -213,7 +205,7 @@ void BuildGUI_ShellDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_SHELL );
   aMap.Add( GEOM_FACE );
@@ -250,7 +242,7 @@ GEOM::GEOM_IOperations_ptr BuildGUI_ShellDlg::createOperation()
 //=================================================================================
 bool BuildGUI_ShellDlg::isValid( QString& )
 {
-  return myOkFacesAndShells;
+  return !myFacesAndShells.isEmpty();
 }
 
 //=================================================================================
@@ -259,10 +251,14 @@ bool BuildGUI_ShellDlg::isValid( QString& )
 //=================================================================================
 bool BuildGUI_ShellDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
 
-  anObj = GEOM::GEOM_IShapesOperations::_narrow(
-    getOperation() )->MakeShell( myFacesAndShells );
+  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+  objlist->length( myFacesAndShells.count() );
+  for ( int i = 0; i < myFacesAndShells.count(); i++ )
+    objlist[i] = myFacesAndShells[i].copy();
+
+  GEOM::GEOM_Object_var anObj = anOper->MakeShell( objlist.in() );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

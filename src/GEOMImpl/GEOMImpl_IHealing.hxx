@@ -1,46 +1,48 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-//NOTE: This is an intreface to a function for the Healing creation.
-//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
 #include "GEOM_Function.hxx"
 
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HArray1OfExtendedString.hxx>
-
-#define ARG_SHAPE_PROCESS_OPERATORS   1
-#define ARG_SHAPE_PROCESS_PARAMS      2
-#define ARG_SHAPE_PROCESS_VALUES      3
-#define ARG_ORIGINAL                  4
-#define ARG_LIST_ARGUMENTS            5
-#define ARG_IS_COMMON_VERTEX          6
-#define ARG_TOLERANCE                 7
-#define ARG_DEV_EDGE_VALUE            8
-#define ARG_IS_BY_PARAMETER           9
-#define ARG_SUBSHAPE_INDEX           10
-
+#include "TColStd_HSequenceOfTransient.hxx"
 
 class GEOMImpl_IHealing
 {
 public:
+
+  enum {
+    ARG_SHAPE_PROCESS_OPERATORS =  1,
+    ARG_SHAPE_PROCESS_PARAMS    =  2,
+    ARG_SHAPE_PROCESS_VALUES    =  3,
+    ARG_ORIGINAL                =  4,
+    ARG_LIST_ARGUMENTS          =  5,
+    ARG_IS_COMMON_VERTEX        =  6,
+    ARG_TOLERANCE               =  7,
+    ARG_DEV_EDGE_VALUE          =  8,
+    ARG_IS_BY_PARAMETER         =  9,
+    ARG_SUBSHAPE_INDEX          = 10,
+    ARG_LIST_SHAPES             = 11
+  };
+
   GEOMImpl_IHealing(Handle(GEOM_Function) theFunction): _func(theFunction) {}
 
   void SetOperators( const Handle(TColStd_HArray1OfExtendedString)& arr ) {  if ( !arr.IsNull() ) _func->SetStringArray(ARG_SHAPE_PROCESS_OPERATORS, arr); }
@@ -75,7 +77,12 @@ public:
 
   void SetIndex( Standard_Integer val ) { _func->SetInteger(ARG_SUBSHAPE_INDEX, val); }
   Standard_Integer GetIndex() { return _func->GetInteger(ARG_SUBSHAPE_INDEX); }
-            
+
+  void SetShapes(const Handle(TColStd_HSequenceOfTransient)& theShapes)
+  { _func->SetReferenceList(ARG_LIST_SHAPES, theShapes); }
+  Handle(TColStd_HSequenceOfTransient) GetShapes()
+  { return _func->GetReferenceList(ARG_LIST_SHAPES); }
+
 private:
-  Handle(GEOM_Function) _func;  
+  Handle(GEOM_Function) _func;
 };

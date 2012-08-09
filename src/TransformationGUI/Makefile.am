@@ -1,29 +1,26 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
-# GEOM TRANSFORMATIONGUI : 
+
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : TransformationGUI
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -36,6 +33,7 @@ salomeinclude_HEADERS =					\
 	TransformationGUI_MirrorDlg.h			\
 	TransformationGUI_ScaleDlg.h			\
 	TransformationGUI_OffsetDlg.h			\
+	TransformationGUI_ProjectionDlg.h		\
 	TransformationGUI_PositionDlg.h
 
 # Libraries targets
@@ -50,6 +48,7 @@ dist_libTransformationGUI_la_SOURCES =			\
 	TransformationGUI_MirrorDlg.h			\
 	TransformationGUI_ScaleDlg.h			\
 	TransformationGUI_OffsetDlg.h			\
+	TransformationGUI_ProjectionDlg.h		\
 	TransformationGUI_PositionDlg.h			\
 							\
 	TransformationGUI.cxx				\
@@ -60,6 +59,7 @@ dist_libTransformationGUI_la_SOURCES =			\
 	TransformationGUI_MirrorDlg.cxx			\
 	TransformationGUI_ScaleDlg.cxx			\
 	TransformationGUI_OffsetDlg.cxx			\
+	TransformationGUI_ProjectionDlg.cxx		\
 	TransformationGUI_PositionDlg.cxx
 
 MOC_FILES =						\
@@ -70,6 +70,7 @@ MOC_FILES =						\
 	TransformationGUI_MirrorDlg_moc.cxx		\
 	TransformationGUI_ScaleDlg_moc.cxx		\
 	TransformationGUI_OffsetDlg_moc.cxx		\
+	TransformationGUI_ProjectionDlg_moc.cxx		\
 	TransformationGUI_PositionDlg_moc.cxx
 
 nodist_libTransformationGUI_la_SOURCES =		\
@@ -95,9 +96,9 @@ libTransformationGUI_la_CPPFLAGS =		\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(srcdir)/../GEOMFiltersSelection	\
 	-I$(top_builddir)/src/DlgRef		\
-	-I$(top_builddir)/idl			\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libTransformationGUI_la_LDFLAGS  =				\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
-	../GEOMBase/libGEOMBase.la
+	../GEOMBase/libGEOMBase.la				\
+	$(CAS_LDPATH) -lTKShHealing

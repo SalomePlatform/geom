@@ -1,38 +1,33 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-#
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
 #  GEOM GEOM : implementaion of GEOM_Gen.idl
 #  File   : Makefile.in
 #  Author : Damien COQUERET (OCC)
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
-#  $Header: 
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Libraries targets
-
 lib_LTLIBRARIES = libGEOMimpl.la
 
-# header files 
+# header files
 salomeinclude_HEADERS =				\
 	GEOMImpl_Gen.hxx			\
 	GEOMImpl_IBasicOperations.hxx		\
@@ -47,8 +42,8 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_IInsertOperations.hxx		\
 	GEOMImpl_IMeasureOperations.hxx		\
 	GEOMImpl_IGroupOperations.hxx		\
+	GEOMImpl_IAdvancedOperations.hxx	\
 	GEOMImpl_IGlue.hxx			\
-	GEOMImpl_Gen.hxx			\
 	GEOMImpl_PointDriver.hxx		\
 	GEOMImpl_IPoint.hxx			\
 	GEOMImpl_IPolyline.hxx			\
@@ -56,6 +51,7 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_ISpline.hxx			\
 	GEOMImpl_IEllipse.hxx			\
 	GEOMImpl_IFillet.hxx			\
+	GEOMImpl_IFillet1d.hxx			\
 	GEOMImpl_IFillet2d.hxx			\
 	GEOMImpl_IChamfer.hxx			\
 	GEOMImpl_ICopy.hxx			\
@@ -104,6 +100,7 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_MarkerDriver.hxx		\
 	GEOMImpl_TranslateDriver.hxx		\
 	GEOMImpl_MirrorDriver.hxx		\
+	GEOMImpl_ProjectionDriver.hxx		\
 	GEOMImpl_OffsetDriver.hxx		\
 	GEOMImpl_ScaleDriver.hxx		\
 	GEOMImpl_PositionDriver.hxx		\
@@ -128,6 +125,8 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_SketcherDriver.hxx		\
 	GEOMImpl_3DSketcherDriver.hxx		\
 	GEOMImpl_FilletDriver.hxx		\
+	GEOMImpl_Fillet1d.hxx	          	\
+	GEOMImpl_Fillet1dDriver.hxx		\
 	GEOMImpl_Fillet2dDriver.hxx		\
 	GEOMImpl_ChamferDriver.hxx		\
 	GEOMImpl_BooleanDriver.hxx		\
@@ -140,9 +139,16 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_HealingDriver.hxx		\
 	GEOMImpl_FillingDriver.hxx		\
 	GEOMImpl_GlueDriver.hxx			\
-	GEOMImpl_CopyDriver.hxx			\
 	GEOMImpl_Types.hxx			\
 	GEOM_GEOMImpl.hxx
+
+ADVANCED_INCLUDES  =
+ADVANCED_INCLUDES += GEOMImpl_IPipeTShape.hxx GEOMImpl_PipeTShapeDriver.hxx
+ADVANCED_INCLUDES += GEOMImpl_IDividedDisk.hxx GEOMImpl_DividedDiskDriver.hxx
+##ADVANCED_INCLUDES += GEOMImpl_IDividedCylinder.hxx GEOMImpl_DividedCylinderDriver.hxx
+##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
+
+salomeinclude_HEADERS += $(ADVANCED_INCLUDES)
 
 dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_IBasicOperations.cxx		\
@@ -157,6 +163,7 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_IInsertOperations.cxx		\
 	GEOMImpl_IMeasureOperations.cxx		\
 	GEOMImpl_IGroupOperations.cxx		\
+	GEOMImpl_IAdvancedOperations.cxx	\
 	GEOMImpl_Gen.cxx			\
 	GEOMImpl_PointDriver.cxx		\
 	GEOMImpl_VectorDriver.cxx		\
@@ -165,6 +172,7 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_MarkerDriver.cxx		\
 	GEOMImpl_TranslateDriver.cxx		\
 	GEOMImpl_MirrorDriver.cxx		\
+	GEOMImpl_ProjectionDriver.cxx		\
 	GEOMImpl_OffsetDriver.cxx		\
 	GEOMImpl_ScaleDriver.cxx		\
 	GEOMImpl_PositionDriver.cxx		\
@@ -191,6 +199,8 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_SketcherDriver.cxx		\
 	GEOMImpl_3DSketcherDriver.cxx		\
 	GEOMImpl_FilletDriver.cxx		\
+	GEOMImpl_Fillet1d.cxx     		\
+	GEOMImpl_Fillet1dDriver.cxx		\
 	GEOMImpl_Fillet2dDriver.cxx		\
 	GEOMImpl_ChamferDriver.cxx		\
 	GEOMImpl_BooleanDriver.cxx		\
@@ -204,6 +214,14 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_FillingDriver.cxx		\
 	GEOMImpl_GlueDriver.cxx
 
+ADVANCED_SOURCES  =
+ADVANCED_SOURCES += GEOMImpl_PipeTShapeDriver.cxx
+ADVANCED_SOURCES += GEOMImpl_DividedDiskDriver.cxx
+##ADVANCED_SOURCES += GEOMImpl_DividedCylinderDriver.cxx
+##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
+
+dist_libGEOMimpl_la_SOURCES += $(ADVANCED_SOURCES)
+
 # additional information to compile and link file
 
 libGEOMimpl_la_CPPFLAGS =		\
@@ -212,14 +230,15 @@ libGEOMimpl_la_CPPFLAGS =		\
 	$(CAS_CPPFLAGS)			\
 	$(KERNEL_CXXFLAGS)		\
 	$(BOOST_CPPFLAGS)		\
+        $(PYTHON_INCLUDES)              \
 	-I$(srcdir)/../ShHealOper	\
+	-I$(srcdir)/../NMTDS		\
 	-I$(srcdir)/../NMTTools		\
 	-I$(srcdir)/../GEOM		\
 	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
-	-I$(top_builddir)/idl		\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libGEOMimpl_la_LDFLAGS  =			\
 	../GEOM/libGEOMbasic.la			\
@@ -227,9 +246,10 @@ libGEOMimpl_la_LDFLAGS  =			\
 	../ShHealOper/libShHealOper.la		\
 	../ARCHIMEDE/libGEOMArchimede.la	\
 	../SKETCHER/libGEOMSketcher.la		\
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
-	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset
+	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lTKFeat \
+        $(PYTHON_LIBS)
 
 # extra dist files
 EXTRA_DIST += GUID.txt

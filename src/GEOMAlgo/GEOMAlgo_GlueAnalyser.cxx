@@ -1,30 +1,30 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_GlueDetector.cxx
-// Created:	Wed Dec 15 11:08:09 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
-//
-#include <GEOMAlgo_GlueAnalyser.ixx>
+
+// File:        GEOMAlgo_GlueDetector.cxx
+// Created:     Wed Dec 15 11:08:09 2004
+// Author:      Peter KURNEV
+
+#include <GEOMAlgo_GlueAnalyser.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -46,6 +46,7 @@
 #include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
 #include <GEOMAlgo_Tools.hxx>
 #include <GEOMAlgo_CoupleOfShapes.hxx>
+#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
 
 #include <GEOMAlgo_Gluer.hxx>
 #include <Bnd_HArray1OfBox.hxx>
@@ -60,8 +61,8 @@
 #include <BRepBndLib.hxx>
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_GlueAnalyser::GEOMAlgo_GlueAnalyser()
 :
@@ -69,13 +70,13 @@
 {}
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_GlueAnalyser::~GEOMAlgo_GlueAnalyser()
 {}
 //=======================================================================
 //function : HasSolidsToGlue
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsToGlue()const
 {
@@ -83,7 +84,7 @@
 }
 //=======================================================================
 //function : HasSolidsAlone
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 {
@@ -91,7 +92,7 @@
 }
 //=======================================================================
 //function : SolidsToGlue
-//purpose  : 
+//purpose  :
 //=======================================================================
   const GEOMAlgo_ListOfCoupleOfShapes& GEOMAlgo_GlueAnalyser::SolidsToGlue()const
 {
@@ -99,7 +100,7 @@
 }
 //=======================================================================
 //function : SolidsAlone
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_GlueAnalyser::SolidsAlone()const
 {
@@ -107,7 +108,7 @@
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::Perform()
 {
@@ -121,6 +122,9 @@
   if (myErrorStatus) {
     return;
   }
+  //
+  // Initialize the context
+  GEOMAlgo_ShapeAlgo::Perform();
   //
   InnerTolerance();
   if (myErrorStatus) {
@@ -149,7 +153,7 @@
 }
 //=======================================================================
 //function : DetectVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectVertices()
 {
@@ -180,11 +184,11 @@
     const TopoDS_Shape& aV=aMV(i);
     Bnd_Box aBox;
     //
-    aBox.SetGap(myTol); 
+    aBox.SetGap(myTol);
     BRepBndLib::Add(aV, aBox);
     aHAB->SetValue(i, aBox);
     aMIS.Add(i, aV);
-    aMSB.Add(aV, aBox); 
+    aMSB.Add(aV, aBox);
   }
   //
   aBSB.Initialize(aHAB);
@@ -200,7 +204,7 @@
     const TColStd_ListOfInteger& aLI=aBSB.Compare(aBoxV);
     aNbVSD=aLI.Extent();
     if (!aNbVSD) {
-      myErrorStatus=3; // it must not be 
+      myErrorStatus=3; // it must not be
       return;
     }
     //
@@ -212,7 +216,7 @@
       aIndex=aIt.Value();
       const TopoDS_Shape& aVx=aMIS.FindFromKey(aIndex);
       if(!j) {
-	aVF=aVx;
+        aVF=aVx;
       }
       aLVSD.Append(aVx);
       aMVProcessed.Add(aVx);
@@ -229,14 +233,14 @@
     for (; aItS.More(); aItS.Next()) {
       const TopoDS_Shape& aVSD=aItS.Value();
       if (!myOrigins.IsBound(aVSD)) {
-	myOrigins.Bind(aVSD, aV);
+        myOrigins.Bind(aVSD, aV);
       }
     }
   }
 }
 //=======================================================================
 //function : DetectFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectFaces()
 {
@@ -244,7 +248,7 @@
 }
 //=======================================================================
 //function : DetectEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectEdges()
 {
@@ -252,7 +256,7 @@
 }
 //=======================================================================
 //function : DetectShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectShapes(const TopAbs_ShapeEnum aType)
 {
@@ -270,7 +274,7 @@
   aNbF=aMF.Extent();
   for (i=1; i<=aNbF; ++i) {
     const TopoDS_Shape& aS=aMF(i);
-    // 
+    //
     //aPKF.Clear();//qft
     if (aType==TopAbs_FACE) {
       const TopoDS_Face& aF=TopoDS::Face(aS);
@@ -323,14 +327,14 @@
     for (; aItS.More(); aItS.Next()) {
       const TopoDS_Shape& aFSD=aItS.Value();
       if (!myOrigins.IsBound(aFSD)) {
-	myOrigins.Bind(aFSD, aNewShape);
+        myOrigins.Bind(aFSD, aNewShape);
       }
     }
   }
 }
 //=======================================================================
 //function : DetectSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectSolids()
 {
@@ -370,13 +374,13 @@
     aFx[1]=aLF.Last();
     for (i=0; i<2; ++i) {
       if (!aMFS.Contains(aFx[i])) {
-	continue;// it must not be so
+        continue;// it must not be so
       }
       //
       const TopTools_ListOfShape& aLS=aMFS.FindFromKey(aFx[i]);
       aNbS=aLS.Extent();
       if (aNbS!=1) {
-	continue;
+        continue;
       }
       aSx[i]=aLS.First();
     }
@@ -403,7 +407,7 @@
   //
   mySolidsToGlue.Clear();
   mySolidsAlone.Clear();
-  
+
   //
   aNbC=aMPKLS.Extent();
   if (!aNbC) {

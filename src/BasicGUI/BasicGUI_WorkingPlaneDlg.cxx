@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_WorkingPlaneDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -59,7 +60,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_WorkingPlaneDlg::BasicGUI_WorkingPlaneDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-						    bool modal, Qt::WindowFlags fl )
+                                                    bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
@@ -174,7 +175,7 @@ void BasicGUI_WorkingPlaneDlg::Init()
   connect( myReverseCB, SIGNAL( clicked() ), this, SLOT( onReverse() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_WPLANE" ) );
 
@@ -263,6 +264,7 @@ void BasicGUI_WorkingPlaneDlg::GroupClicked( int groupId )
 //=================================================================================
 void BasicGUI_WorkingPlaneDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -322,7 +324,7 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
   if ( myEditCurrentArgument == Group1->LineEdit1 )
     myFace = aSelectedObject;
   else if ( myEditCurrentArgument == Group2->LineEdit1 ||
-	    myEditCurrentArgument == Group2->LineEdit2 ) {
+            myEditCurrentArgument == Group2->LineEdit2 ) {
     if ( aRes && !aSelectedObject->_is_nil() ) {
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
@@ -332,18 +334,18 @@ void BasicGUI_WorkingPlaneDlg::SelectionIntoArgument()
           int anIndex = aMap( 1 );
           aName = aName + ":edge_" + QString::number( anIndex );
 
-	  GEOM::GEOM_IShapesOperations_var aShapesOp =
-	    getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  if ( myEditCurrentArgument == Group2->LineEdit1 )
-	    myVectX = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-	  else
-	    myVectZ = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+          GEOM::GEOM_IShapesOperations_var aShapesOp =
+            getGeomEngine()->GetIShapesOperations( getStudyId() );
+          if ( myEditCurrentArgument == Group2->LineEdit1 )
+            myVectX = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+          else
+            myVectZ = aShapesOp->GetSubShape( aSelectedObject, anIndex );
         }
         else {
-	  if ( aShape.ShapeType() != TopAbs_EDGE ) {
-	    aSelectedObject = GEOM::GEOM_Object::_nil();
-	    aName = "";
-	  }
+          if ( aShape.ShapeType() != TopAbs_EDGE ) {
+            aSelectedObject = GEOM::GEOM_Object::_nil();
+            aName = "";
+          }
         }
         aSelMgr->clearSelected();
       }
@@ -401,7 +403,7 @@ void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
   send->setDown(true);
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -437,7 +439,7 @@ void BasicGUI_WorkingPlaneDlg::ActivateThisDialog( )
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication( ) ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -476,7 +478,7 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
   if ( id == 0 ) { // by planar face selection
     if ( CORBA::is_nil( myFace ) ) {
       if ( !showPreview )
-	showError( "Face has to be selected" );
+        showError( "Face has to be selected" );
       return false;
     }
 
@@ -498,14 +500,14 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
     }
     else {
       if ( !showPreview )
-	showError( "Wrong shape selected (has to be a planar face)" );
+        showError( "Wrong shape selected (has to be a planar face)" );
       return false;
     }
   }
   else if ( id == 1 ) { // by two vectors (Ox & Oz)
     if ( CORBA::is_nil( myVectX ) || CORBA::is_nil( myVectZ ) ) {
       if ( !showPreview )
-	showError( "Two vectors have to be selected" );
+        showError( "Two vectors have to be selected" );
       return false;
     }
 
@@ -514,9 +516,9 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
     gp_Vec aVX, aVZ;
 
     if ( !GEOMBase::GetShape( myVectX, aVectX, TopAbs_EDGE ) ||
-	 !GEOMBase::GetShape( myVectZ, aVectZ, TopAbs_EDGE ) ) {
+         !GEOMBase::GetShape( myVectZ, aVectZ, TopAbs_EDGE ) ) {
       if ( !showPreview )
-	showError( "Wrong shape selected (two vectors(edges) have to be selected)" );
+        showError( "Wrong shape selected (two vectors(edges) have to be selected)" );
       return false;
     }
 
@@ -525,12 +527,12 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
 
     if ( VX1.IsNull() || VX2.IsNull() ) {
       if ( !showPreview )
-	showError( "Bad OX vector" );
+        showError( "Bad OX vector" );
       return false;
     }
     if ( VZ1.IsNull() || VZ2.IsNull() ) {
       if ( !showPreview )
-	showError( "Bad OZ vector" );
+        showError( "Bad OZ vector" );
       return false;
     }
 
@@ -539,12 +541,12 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
 
     if ( aVX.Magnitude() < Precision::Confusion() ) {
       if ( !showPreview )
-	showError( "Bad OX vector" );
+        showError( "Bad OX vector" );
       return false;
     }
     if ( aVZ.Magnitude() < Precision::Confusion() ) {
       if ( !showPreview )
-	showError( "Bad OZ vector" );
+        showError( "Bad OZ vector" );
       return false;
     }
 
@@ -553,7 +555,7 @@ bool BasicGUI_WorkingPlaneDlg::updateWPlane( const bool showPreview )
 
     if ( aDirX.IsParallel( aDirZ, Precision::Angular() ) ) {
       if ( !showPreview )
-	showError( "Parallel vectors selected" );
+        showError( "Parallel vectors selected" );
       return false;
     }
 

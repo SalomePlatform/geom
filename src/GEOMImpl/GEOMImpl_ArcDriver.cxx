@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_ArcDriver.hxx>
@@ -129,24 +130,24 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
         GC_MakeArcOfCircle arc (aGeomCirc->Circ(), aP2, aP3, Standard_True);
         aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
       } else if ( aType == ELLIPSE_ARC_CENTER_TWO_PNT ) { // ELLIPSE_ARC_CENTER_TWO_PNT
-	if ( aP1.Distance(aP2) <= aP1.Distance(aP3) ) {
-	  // Standard_ConstructionError::Raise("Arc creation aborted: the distance from Center Point to Point 1 needs to be bigger than the distance from Center Point to Point 2");	  
-	  cout << "aP1.Distance(aP2) <= aP1.Distance(aP3)" << endl;
-	  gp_Pnt aTmpP = aP2;
-	  aP2 = aP3;
-	  aP3 = aTmpP;
-	}
+        if ( aP1.Distance(aP2) <= aP1.Distance(aP3) ) {
+          // Standard_ConstructionError::Raise("Arc creation aborted: the distance from Center Point to Point 1 needs to be bigger than the distance from Center Point to Point 2");      
+          cout << "aP1.Distance(aP2) <= aP1.Distance(aP3)" << endl;
+          gp_Pnt aTmpP = aP2;
+          aP2 = aP3;
+          aP3 = aTmpP;
+        }
 
-	GC_MakeEllipse ellipse (aP2, aP3, aP1);
-	Handle(Geom_Ellipse) aGeomEllipse = ellipse.Value();
+        GC_MakeEllipse ellipse (aP2, aP3, aP1);
+        Handle(Geom_Ellipse) aGeomEllipse = ellipse.Value();
 
-        gp_Vec aV1 (aP1, aP2);
-        gp_Vec aV2 (aP1, aP3);
-
-	double alpha = fabs(aV1.Angle(aV2));
-	
-	GC_MakeArcOfEllipse arc (aGeomEllipse->Elips(), aP2, aP3, Standard_True);
-	aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
+//         gp_Vec aV1 (aP1, aP2);
+//         gp_Vec aV2 (aP1, aP3);
+// 
+//         double alpha = fabs(aV1.Angle(aV2));
+        
+        GC_MakeArcOfEllipse arc (aGeomEllipse->Elips(), aP2, aP3, Standard_True);
+        aShape = BRepBuilderAPI_MakeEdge(arc).Edge();
       }
     }
   }
@@ -179,10 +180,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_ArcDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_ArcDriver",
-			                                 sizeof(GEOMImpl_ArcDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_ArcDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

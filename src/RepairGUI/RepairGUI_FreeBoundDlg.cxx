@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_FreeBoundDlg.cxx
 // Author : Sergey LITONIN, Open CASCADE S.A.S. (sergey.litonin@opencascade.com)
@@ -62,7 +63,7 @@
 // purpose  : Constructor
 //=================================================================================
 RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( GeometryGUI* theGUI, QWidget* theParent )
-  : QDialog( theParent, false ),
+  : QDialog( theParent, 0 ),
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( theParent ) ),
     myGeomGUI( theGUI )
 {
@@ -156,10 +157,10 @@ void RepairGUI_FreeBoundDlg::onHelp()
     platform = "application";
 #endif
     SUIT_MessageBox::warning( this, 
-			      tr( "WRN_WARNING" ), 
-			      tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", 
-								    platform ) ).arg( myHelpFileName ) );
+                              tr( "WRN_WARNING" ), 
+                              tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+                              arg( app->resourceMgr()->stringValue( "ExternalBrowser", 
+                                                                    platform ) ).arg( myHelpFileName ) );
   }
 }
 
@@ -185,7 +186,7 @@ void RepairGUI_FreeBoundDlg::onActivate()
   setEnabled( true );
   myGeomGUI->SetActiveDialogBox( this );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
+           SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
   activateSelection();
   onSelectionDone();
 }
@@ -203,15 +204,14 @@ void RepairGUI_FreeBoundDlg::onSelectionDone()
   if ( aSelList.Extent() != 1 )
     return;
 
-  Standard_Boolean isOk = Standard_False;
   GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), isOk );
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) )
+  if ( !GEOMBase::IsShape( anObj ) )
     return;
   else {
     myObj = anObj;
-    displayPreview( false, true, true, 3 );
+    displayPreview( true, false, true, true, 3 );
   }
 }
 
@@ -226,7 +226,7 @@ void RepairGUI_FreeBoundDlg::Init()
 
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
+           SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
 
   activateSelection();
   onSelectionDone();
@@ -293,8 +293,8 @@ bool RepairGUI_FreeBoundDlg::execute( ObjectList& objects )
 
   GEOM::ListOfGO_var aClosed, anOpen;
 
-  bool result = GEOM::GEOM_IHealingOperations::_narrow(
-    getOperation() )->GetFreeBoundary( myObj, aClosed, anOpen );
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
+  bool result = anOper->GetFreeBoundary( myObj, aClosed, anOpen );
 
   if ( result ) {
     myNbClosed = aClosed->length();

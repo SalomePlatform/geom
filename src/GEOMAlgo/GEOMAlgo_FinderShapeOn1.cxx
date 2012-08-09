@@ -1,32 +1,32 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_FinderShapeOn1.cxx
-// Created:	Fri Mar  4 10:31:06 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
-//
-#include <GEOMAlgo_FinderShapeOn1.ixx>
-#include <math.h>
 
+// File:        GEOMAlgo_FinderShapeOn1.cxx
+// Created:     Fri Mar  4 10:31:06 2005
+// Author:      Peter KURNEV
+
+#include <GEOMAlgo_FinderShapeOn1.hxx>
+
+#include <math.h>
 
 #include <Precision.hxx>
 #include <TColStd_Array1OfInteger.hxx>
@@ -80,7 +80,7 @@
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn1
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_FinderShapeOn1::GEOMAlgo_FinderShapeOn1()
 :
@@ -94,14 +94,14 @@ GEOMAlgo_FinderShapeOn1::GEOMAlgo_FinderShapeOn1()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_FinderShapeOn1::~GEOMAlgo_FinderShapeOn1()
 {
 }
 //=======================================================================
 //function : SetSurface
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::SetSurface(const Handle(Geom_Surface)& aS)
 {
@@ -109,7 +109,7 @@ void GEOMAlgo_FinderShapeOn1::SetSurface(const Handle(Geom_Surface)& aS)
 }
 //=======================================================================
 //function : Surface
-//purpose  : 
+//purpose  :
 //=======================================================================
 const Handle(Geom_Surface)& GEOMAlgo_FinderShapeOn1::Surface() const
 {
@@ -117,7 +117,7 @@ const Handle(Geom_Surface)& GEOMAlgo_FinderShapeOn1::Surface() const
 }
 //=======================================================================
 //function : SetShapeType
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::SetShapeType(const TopAbs_ShapeEnum aType)
 {
@@ -125,7 +125,7 @@ void GEOMAlgo_FinderShapeOn1::SetShapeType(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : ShapeType
-//purpose  : 
+//purpose  :
 //=======================================================================
 TopAbs_ShapeEnum GEOMAlgo_FinderShapeOn1::ShapeType()const
 {
@@ -133,7 +133,7 @@ TopAbs_ShapeEnum GEOMAlgo_FinderShapeOn1::ShapeType()const
 }
 //=======================================================================
 //function : SetState
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::SetState(const GEOMAlgo_State aState)
 {
@@ -141,7 +141,7 @@ void GEOMAlgo_FinderShapeOn1::SetState(const GEOMAlgo_State aState)
 }
 //=======================================================================
 //function : State
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_State GEOMAlgo_FinderShapeOn1::State() const
 {
@@ -149,7 +149,7 @@ GEOMAlgo_State GEOMAlgo_FinderShapeOn1::State() const
 }
 //=======================================================================
 //function : SetNbPntsMin
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::SetNbPntsMin(const Standard_Integer aNb)
 {
@@ -157,7 +157,7 @@ void GEOMAlgo_FinderShapeOn1::SetNbPntsMin(const Standard_Integer aNb)
 }
 //=======================================================================
 //function : NbPntsMin
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer GEOMAlgo_FinderShapeOn1::NbPntsMin()const
 {
@@ -165,7 +165,7 @@ Standard_Integer GEOMAlgo_FinderShapeOn1::NbPntsMin()const
 }
 //=======================================================================
 //function : SetNbPntsMax
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::SetNbPntsMax(const Standard_Integer aNb)
 {
@@ -173,7 +173,7 @@ void GEOMAlgo_FinderShapeOn1::SetNbPntsMax(const Standard_Integer aNb)
 }
 //=======================================================================
 //function : NbPntsMax
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer GEOMAlgo_FinderShapeOn1::NbPntsMax()const
 {
@@ -181,7 +181,7 @@ Standard_Integer GEOMAlgo_FinderShapeOn1::NbPntsMax()const
 }
 //=======================================================================
 // function: MSS
-// purpose: 
+// purpose:
 //=======================================================================
 const GEOMAlgo_IndexedDataMapOfShapeState& GEOMAlgo_FinderShapeOn1::MSS() const
 {
@@ -189,7 +189,7 @@ const GEOMAlgo_IndexedDataMapOfShapeState& GEOMAlgo_FinderShapeOn1::MSS() const
 }
 //=======================================================================
 // function: Shapes
-// purpose: 
+// purpose:
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_FinderShapeOn1::Shapes() const
 {
@@ -210,7 +210,7 @@ const TopTools_ListOfShape& GEOMAlgo_FinderShapeOn1::Shapes() const
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::Perform()
 {
@@ -223,6 +223,9 @@ void GEOMAlgo_FinderShapeOn1::Perform()
   if(myErrorStatus) {
     return;
   }
+  //
+  // Initialize the context
+  GEOMAlgo_ShapeAlgo::Perform();
   //
   // 1
   ProcessVertices();
@@ -252,12 +255,12 @@ void GEOMAlgo_FinderShapeOn1::Perform()
   }
   //
   // 4
-  ProcessSolids(); 
+  ProcessSolids();
   //
 }
 //=======================================================================
 //function : ProcessVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::ProcessVertices()
 {
@@ -280,7 +283,7 @@ void GEOMAlgo_FinderShapeOn1::ProcessVertices()
     //
     if (myShapeType==TopAbs_VERTEX){
       if (bIsConformState) {
-	myMSS.Add(aV, aSt);
+        myMSS.Add(aV, aSt);
       }
     }
     else if (bIsConformState || aSt==TopAbs_ON) {
@@ -290,7 +293,7 @@ void GEOMAlgo_FinderShapeOn1::ProcessVertices()
 }
 //=======================================================================
 //function : ProcessEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::ProcessEdges()
 {
@@ -320,11 +323,11 @@ void GEOMAlgo_FinderShapeOn1::ProcessEdges()
       //
       bIsConformState=myMSS.Contains(aV);
       if (!bIsConformState) {
-	break;// vertex has non-conformed state
+        break;// vertex has non-conformed state
       }
       else {
-	aSt=myMSS.FindFromKey(aV);
-	aSC.AppendState(aSt);
+        aSt=myMSS.FindFromKey(aV);
+        aSC.AppendState(aSt);
       }
     }
     //
@@ -333,13 +336,13 @@ void GEOMAlgo_FinderShapeOn1::ProcessEdges()
     }
     //
     if (BRep_Tool::Degenerated(aE)) {
-      myMSS.Add(aE, aSt); 
+      myMSS.Add(aE, aSt);
       continue;
     }
     //
     if (myState==GEOMAlgo_ST_ON && aType1==GeomAbs_Sphere) {
       Standard_Real aT1, aT2;
-      Handle(Geom_Curve) aC; 
+      Handle(Geom_Curve) aC;
       GeomAdaptor_Curve aGAC;
       GeomAbs_CurveType aType2;
       //
@@ -348,48 +351,48 @@ void GEOMAlgo_FinderShapeOn1::ProcessEdges()
       //
       aType2=aGAC.GetType();
       if (aType2==GeomAbs_Line) {
-	continue;
+        continue;
       }
     }
     //
     InnerPoints(aE, aLP);
     if (myErrorStatus) {
-      return;  
+      return;
     }
     //
     bIsConformState=Standard_True;
     aIt.Initialize(aLP);
     for (iCnt=0; aIt.More(); aIt.Next(), ++iCnt) {
       if (myNbPntsMax) {
-	if (iCnt > myNbPntsMax) {
-	  break;
-	}
+        if (iCnt > myNbPntsMax) {
+          break;
+        }
       }
       //
       const gp_Pnt& aP=aIt.Value();
       aSt = GetPointState( aP );
       bIsToBreak=aSC.AppendState(aSt);
       if (bIsToBreak) {
-	break;
+        break;
       }
     }
     //
-    aSt=aSC.State();    
+    aSt=aSC.State();
     //
     bIsConformState=GEOMAlgo_SurfaceTools::IsConformState(aSt, myState);
     if (myShapeType==TopAbs_EDGE) {
       if (bIsConformState) {
-	myMSS.Add(aE, aSt);
+        myMSS.Add(aE, aSt);
       }
     }
     else if (bIsConformState || aSt==TopAbs_ON) {
       myMSS.Add(aE, aSt);
     }
-  } //  for (i=1; i<=aNb; ++i) next edge 
+  } //  for (i=1; i<=aNb; ++i) next edge
 }
 //=======================================================================
 //function : ProcessFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::ProcessFaces()
 {
@@ -421,7 +424,7 @@ void GEOMAlgo_FinderShapeOn1::ProcessFaces()
       aGAS.Load(aS);
       aType2=aGAS.GetType();
       if (aType2!=aType1) {
-	continue;
+        continue;
       }
     }
     //
@@ -430,11 +433,11 @@ void GEOMAlgo_FinderShapeOn1::ProcessFaces()
       const TopoDS_Shape& aE=aExp.Current();
       bIsConformState=myMSS.Contains(aE);
       if (!bIsConformState) {
-	break;// edge has non-conformed state
+        break;// edge has non-conformed state
       }
       else {
-	aSt=myMSS.FindFromKey(aE);
-	aSC.AppendState(aSt);
+        aSt=myMSS.FindFromKey(aE);
+        aSC.AppendState(aSt);
       }
     }
     //
@@ -451,35 +454,35 @@ void GEOMAlgo_FinderShapeOn1::ProcessFaces()
     aIt.Initialize(aLP);
     for (iCnt=0; aIt.More(); aIt.Next(), ++iCnt) {
       if (myNbPntsMax) {
-	if (iCnt > myNbPntsMax) {
-	  break;
-	}
+        if (iCnt > myNbPntsMax) {
+          break;
+        }
       }
       //
       const gp_Pnt& aP=aIt.Value();
       aSt = GetPointState( aP );
       bIsToBreak=aSC.AppendState(aSt);
       if (bIsToBreak) {
-	break;
+        break;
       }
     }
     //
-    aSt=aSC.State();    
+    aSt=aSC.State();
     //
     bIsConformState=GEOMAlgo_SurfaceTools::IsConformState(aSt, myState);
     if (myShapeType==TopAbs_FACE) {
       if (bIsConformState) {
-	myMSS.Add(aF, aSt);
+        myMSS.Add(aF, aSt);
       }
     }
     else if (bIsConformState || aSt==TopAbs_ON) {
       myMSS.Add(aF, aSt);
     }
-  }//  for (i=1; i<=aNb; ++i) next face 
+  }//  for (i=1; i<=aNb; ++i) next face
 }
 //=======================================================================
 //function : ProcessSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::ProcessSolids()
 {
@@ -503,11 +506,11 @@ void GEOMAlgo_FinderShapeOn1::ProcessSolids()
       const TopoDS_Shape& aF=aMF(j);
       bIsConformState=myMSS.Contains(aF);
       if (!bIsConformState) {
-	break;// face has non-conformed state
+        break;// face has non-conformed state
       }
       else {
-	aSt=myMSS.FindFromKey(aF);
-	aSC.AppendState(aSt);
+        aSt=myMSS.FindFromKey(aF);
+        aSC.AppendState(aSt);
       }
     }
     //
@@ -515,7 +518,7 @@ void GEOMAlgo_FinderShapeOn1::ProcessSolids()
       continue; // face has non-conformed state,skip solid
     }
     //
-    aSt=aSC.State();    
+    aSt=aSC.State();
     //
     bIsConformState=GEOMAlgo_SurfaceTools::IsConformState(aSt, myState);
     if (bIsConformState) {
@@ -526,10 +529,10 @@ void GEOMAlgo_FinderShapeOn1::ProcessSolids()
 //
 //=======================================================================
 //function : InnerPoints
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
-					  GEOMAlgo_ListOfPnt& aLP)
+                                          GEOMAlgo_ListOfPnt& aLP)
 {
   myErrorStatus=0;
   //
@@ -568,11 +571,11 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
       //
       aPK.SetIds(n[k], n[k+1]);
       if (aMPKI.IsBound(aPK)) {
-	Standard_Integer& iCntX=aMPKI.ChangeFind(aPK);
-	++iCntX;
+        Standard_Integer& iCntX=aMPKI.ChangeFind(aPK);
+        ++iCntX;
       }
       else {
-	aMPKI.Bind(aPK, 1);
+        aMPKI.Bind(aPK, 1);
       }
     }
   }
@@ -584,24 +587,15 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
     iCnt=aIt.Value();
     if (iCnt==1) {
       const GEOMAlgo_PassKey& aPK=aIt.Key();
-      //qf
-      /*
-      aNbMax=aPK.NbMax();
-      pIds=(Standard_Integer*)aPK.Key();
-      for (k=1; k<3; ++k) {
-	aNx=*(pIds+aNbMax-k);
-	aMBN.Add(aNx);
-      }
-      */
+      //
       aNx=(Standard_Integer)aPK.Id(1);
       aMBN.Add(aNx);
       aNx=(Standard_Integer)aPK.Id(2);
       aMBN.Add(aNx);
-      //qt
     }
   }
   //
-  // inner nodes=all_nodes - boundary_nodes 
+  // inner nodes=all_nodes - boundary_nodes
   j1=aNodes.Lower();
   j2=aNodes.Upper();
   for (j=j1; j<=j2; ++j) {
@@ -613,7 +607,7 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
   //
   aNb=aLP.Extent();
   //
-  if (!aNb && myNbPntsMin) { 
+  if (!aNb && myNbPntsMin) {
     // try to fill it yourself
     Standard_Boolean bIsDone;
     Standard_Integer aN1, aN2;
@@ -629,59 +623,184 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
       aNbLinks=aMPKI.Extent();
       aIt.Initialize(aMPKI);
       for (; aIt.More(); aIt.Next()) {
-	iCnt=aIt.Value();
-	if (iCnt>1) {
-	  // take the first having occured inner link
-	  // and discretize it
-	  const GEOMAlgo_PassKey& aPK=aIt.Key();
-	  //qf
-	  /*
-	  aNbMax=aPK.NbMax();
-	  pIds=(Standard_Integer*)aPK.Key();
-	  aN1=*(pIds+aNbMax-1);
-	  aN2=*(pIds+aNbMax-2);
-	  */
-	  //
-	  aN1=(Standard_Integer)aPK.Id(1);
-	  aN2=(Standard_Integer)aPK.Id(2);
-	  //qt
-	  aP1=aNodes(aN1).Transformed(aTrsf);
-	  aP2=aNodes(aN2).Transformed(aTrsf);
-	  //
-	  if (aType==GeomAbs_Cylinder) {
-	    Standard_Real aTolSM;
-	    gp_Cylinder aCyl;
-	    //
-	    aTolSM=1.523e-6;//~1.-cos(0.1 deg)
-	    aCyl=aGAS.Cylinder();
-	    if (!GEOMAlgo_SurfaceTools::IsCoaxial(aP1, aP2, aCyl, aTolSM)) {
-	      continue;
-	    }
-	  }
-	  //
-	  BRepLib_MakeEdge aBME(aP1, aP2);
-	  bIsDone=aBME.IsDone();
-	  if (!bIsDone) {
-	    myErrorStatus=30; //can not obtain the line fron the link
-	    return;
-	  }
-	  //
-	  const TopoDS_Shape& aSx=aBME.Shape();
-	  const TopoDS_Edge& aE=TopoDS::Edge(aSx);
-	  //
-	  InnerPoints(aE, myNbPntsMin, aLP);
-	  break;
-	}// if (iCnt>1)
+        iCnt=aIt.Value();
+        if (iCnt>1) {
+          // take the first having occured inner link
+          // and discretize it
+          const GEOMAlgo_PassKey& aPK=aIt.Key();
+          //
+          aN1=(Standard_Integer)aPK.Id(1);
+          aN2=(Standard_Integer)aPK.Id(2);
+          //
+          aP1=aNodes(aN1).Transformed(aTrsf);
+          aP2=aNodes(aN2).Transformed(aTrsf);
+          //
+          if (aType==GeomAbs_Cylinder) {
+            Standard_Real aTolSM;
+            gp_Cylinder aCyl;
+            //
+            aTolSM=1.523e-6;//~1.-cos(0.1 deg)
+            aCyl=aGAS.Cylinder();
+            if (!GEOMAlgo_SurfaceTools::IsCoaxial(aP1, aP2, aCyl, aTolSM)) {
+              continue;
+            }
+          }
+          //
+          BRepLib_MakeEdge aBME(aP1, aP2);
+          bIsDone=aBME.IsDone();
+          if (!bIsDone) {
+            myErrorStatus=30; //can not obtain the line fron the link
+            return;
+          }
+          //
+          const TopoDS_Shape& aSx=aBME.Shape();
+          const TopoDS_Edge& aE=TopoDS::Edge(aSx);
+          //
+          InnerPoints(aE, myNbPntsMin, aLP);
+          break;
+        }// if (iCnt>1)
       }// for (; aIt.More(); aIt.Next())
-    }// if (aType==GeomAbs_Plane || aType==GeomAbs_Cylinder) 
-  }// if (!aNb && myNbPntsMin) { 
+    }// if (aType==GeomAbs_Plane || aType==GeomAbs_Cylinder)
+  }// if (!aNb && myNbPntsMin) {
 }
+//modified by NIZNHY-PKV Thu Jan 26 09:56:20 2012f
 //=======================================================================
 //function : InnerPoints
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
-					  GEOMAlgo_ListOfPnt& aLP)
+                                          GEOMAlgo_ListOfPnt& aLP)
+{
+  Standard_Integer aNbPntsMin;
+  //
+  myErrorStatus=0;
+  aNbPntsMin=21;
+  //
+  aLP.Clear();
+  InnerPoints(aE, aNbPntsMin, aLP);
+}
+//modified by NIZNHY-PKV Thu Jan 26 09:56:32 2012t
+//=======================================================================
+//function : InnerPoints
+//purpose  :
+//=======================================================================
+void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
+                                          const Standard_Integer aNbPntsMin,
+                                          GEOMAlgo_ListOfPnt& aLP)
+{
+  Standard_Boolean bInf1, bInf2;
+  Standard_Integer j, aNbT;
+  Standard_Real dT, aT, aT1, aT2;
+  gp_Pnt aP;
+  Handle(Geom_Curve) aC3D;
+  //
+  aC3D=BRep_Tool::Curve(aE, aT1, aT2);
+  if (aC3D.IsNull()) {
+    return;
+  }
+  //
+  bInf1=Precision::IsNegativeInfinite(aT1);
+  bInf2=Precision::IsPositiveInfinite(aT2);
+  if (bInf1 || bInf2) {
+    return;
+  }
+  //
+  //modified by NIZNHY-PKV Thu Jan 26 09:51:20 2012f
+  /*
+  aNbT=myNbPntsMin+1;
+  dT=(aT2-aT1)/aNbT;
+  for (j=1; j<=aNbPntsMin; ++j) {
+    aT=aT1+j*dT;
+    aC3D->D0(aT, aP);
+    aLP.Append(aP);
+  }
+  */
+  aNbT=aNbPntsMin+1;
+  dT=(aT2-aT1)/aNbT;
+  for (j=1; j<aNbT; ++j) {
+    aT=aT1+j*dT;
+    aC3D->D0(aT, aP);
+    aLP.Append(aP);
+  }
+  //modified by NIZNHY-PKV Thu Jan 26 09:51:24 2012t
+}
+
+//=======================================================================
+//function : CheckData
+//purpose  :
+//=======================================================================
+void GEOMAlgo_FinderShapeOn1::CheckData()
+{
+  myErrorStatus=0;
+  //
+  if(mySurface.IsNull()) {
+    myErrorStatus=10; // mySurface=NULL
+    return;
+  }
+  //
+  if (myShape.IsNull()) {
+    myErrorStatus=11; // myShape=NULL
+    return;
+  }
+  //
+  if (!(myShapeType==TopAbs_VERTEX ||
+        myShapeType==TopAbs_EDGE ||
+        myShapeType==TopAbs_FACE ||
+        myShapeType==TopAbs_SOLID)) {
+    myErrorStatus=12; // unallowed subshape type
+    return;
+  }
+  //
+  if (myState==GEOMAlgo_ST_UNKNOWN ||
+      myState==GEOMAlgo_ST_INOUT) {
+    myErrorStatus=13; // unallowed state type
+    return;
+  }
+  //
+  GeomAbs_SurfaceType aType;
+  //
+  myGAS.Load(mySurface);
+  aType=myGAS.GetType();
+  if (!(aType==GeomAbs_Plane ||
+        aType==GeomAbs_Cylinder ||
+        aType==GeomAbs_Sphere)) {
+    myErrorStatus=14; // unallowed surface type
+  }
+}
+
+//=======================================================================
+//function : GetPointState
+//purpose  :
+//=======================================================================
+
+TopAbs_State GEOMAlgo_FinderShapeOn1::GetPointState(const gp_Pnt& aP)
+{
+  TopAbs_State aSt;
+  GEOMAlgo_SurfaceTools::GetState(aP, myGAS, myTolerance, aSt);
+  return aSt;
+}
+
+
+//
+// myErrorStatus :
+//
+// 10 -mySurface=NULL
+// 11 -myShape=NULL
+// 12 -unallowed type of subshapes
+// 13 -unallowed state
+// 14 -unallowed surface type
+// 15 -unallowed surface type
+// 20- no triangulation found
+// 30- can not obtain the line from the link
+
+//modified by NIZNHY-PKV Thu Jan 26 10:01:14 2012f
+/*
+//=======================================================================
+//function : InnerPoints
+//purpose  :
+//=======================================================================
+void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
+                                          GEOMAlgo_ListOfPnt& aLP)
 {
   myErrorStatus=0;
   //
@@ -726,165 +845,11 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
   }
   //
   aNb=aLP.Extent();
-  if (!aNb && myNbPntsMin) { 
+  if (!aNb && myNbPntsMin) {
     // try to fill it yourself
     InnerPoints(aE, myNbPntsMin, aLP);
     aNb=aLP.Extent();
   }
 }
-//=======================================================================
-//function : InnerPoints
-//purpose  : 
-//=======================================================================
-void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
-					  const Standard_Integer aNbPntsMin,
-					  GEOMAlgo_ListOfPnt& aLP)
-{
-  // try to fill it yourself
-  Standard_Boolean bInf1, bInf2;
-  Standard_Integer j, aNbT;
-  Standard_Real dT, aT, aT1, aT2;
-  gp_Pnt aP;
-  Handle(Geom_Curve) aC3D;
-  //
-  aC3D=BRep_Tool::Curve(aE, aT1, aT2);
-  if (aC3D.IsNull()) {
-    return;
-  }
-  //
-  bInf1=Precision::IsNegativeInfinite(aT1);
-  bInf2=Precision::IsPositiveInfinite(aT2);
-  if (bInf1 || bInf2) {
-    return;
-  }
-  //
-  aNbT=myNbPntsMin+1;
-  dT=(aT2-aT1)/aNbT;
-  for (j=1; j<=aNbPntsMin; ++j) {
-    aT=aT1+j*dT;
-    aC3D->D0(aT, aP);
-    aLP.Append(aP);
-  }
-}
-
-//=======================================================================
-//function : CheckData
-//purpose  : 
-//=======================================================================
-void GEOMAlgo_FinderShapeOn1::CheckData()
-{
-  myErrorStatus=0;
-  //
-  if(mySurface.IsNull()) {
-    myErrorStatus=10; // mySurface=NULL
-    return;
-  }
-  //
-  if (myShape.IsNull()) {
-    myErrorStatus=11; // myShape=NULL
-    return;
-  }
-  //
-  if (!(myShapeType==TopAbs_VERTEX ||
-	myShapeType==TopAbs_EDGE ||
-	myShapeType==TopAbs_FACE ||
-	myShapeType==TopAbs_SOLID)) {
-    myErrorStatus=12; // unallowed subshape type
-    return;
-  }
-  //
-  if (myState==GEOMAlgo_ST_UNKNOWN || 
-      myState==GEOMAlgo_ST_INOUT) {
-    myErrorStatus=13; // unallowed state type
-    return;
-  }
-  //
-  GeomAbs_SurfaceType aType;
-  //
-  myGAS.Load(mySurface);
-  aType=myGAS.GetType();
-  if (!(aType==GeomAbs_Plane || 
-	aType==GeomAbs_Cylinder ||
-	aType==GeomAbs_Sphere)) {
-    myErrorStatus=14; // unallowed surface type
-  }
-}
-
-//=======================================================================
-//function : GetPointState
-//purpose  : 
-//=======================================================================
-
-TopAbs_State GEOMAlgo_FinderShapeOn1::GetPointState(const gp_Pnt& aP) 
-{
-  TopAbs_State aSt;
-  GEOMAlgo_SurfaceTools::GetState(aP, myGAS, myTolerance, aSt);
-  return aSt;
-}
-
-
-//
-// myErrorStatus :
-//
-// 10 -mySurface=NULL
-// 11 -myShape=NULL
-// 12 -unallowed type of subshapes 
-// 13 -unallowed state  
-// 14 -unallowed surface type
-// 15 -unallowed surface type
-// 20- no triangulation found
-// 30- can not obtain the line from the link
-
-
-/*
-// Chronometer
-#include <OSD_Chronometer.hxx>
-#include <Standard_Static.hxx>
-
-Standard_STATIC(OSD_Chronometer, x_S_Chrono);
-static void x_StartChrono();
-static void x_StopChrono(); 
-static Standard_Boolean x_IsToShow(); 
-//
-//=======================================================================
-//function : x_StartChrono
-//purpose  : 
-//=======================================================================
-void x_StartChrono() 
-{
-  if (x_IsToShow()){
-    x_S_Chrono().Reset();
-    x_S_Chrono().Start();
-  }
-}
-//=======================================================================
-//function : x_StopChrono
-//purpose  : 
-//=======================================================================
-void x_StopChrono() 
-{ 
-  if (x_IsToShow()){
-    Standard_Real Chrono;
-    x_S_Chrono().Stop();
-    x_S_Chrono().Show(Chrono);
-    printf(" Tps: %lf\n", Chrono);
-    //cout << "Tps: " << Chrono << endl;
-  }
-}
-//=======================================================================
-//function : x_IsToShow
-//purpose  : 
-//=======================================================================
-Standard_Boolean x_IsToShow() 
-{ 
-  Standard_Boolean bFlag=Standard_False;
-  //
-  char *xr=getenv ("STDCHRONO");
-  if (xr!=NULL){
-    if (!strcmp (xr, "yes")) {
-      bFlag=!bFlag;
-    }
-  }
-  return bFlag;
-}
 */
+//modified by NIZNHY-PKV Thu Jan 26 10:01:17 2012t

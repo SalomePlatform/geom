@@ -12,7 +12,9 @@ or two dimensions basing on the initial geometrical object.
 \n To produce a <b>Simple Multi Rotation</b> (in one dimension) you
 need to define a \b Shape to be rotated, an \b Axis of rotation and a
 <b>Number of Times</b> the shape must be rotated. <b>Rotation Angle</b> will
-be 2*PI/NbTimes
+be 2 * \a PI / \a NbTimes. Number of shapes in the resulting compound will be equal
+to \a NbTimes (if \a NbTimes = 1, the result will contain only the initial
+non-transformed shape).
 \n <b>TUI Command:</b> <em>geompy.MultiRotate1D(Shape, Axis, NbTimes)</em>
 \n <b>Arguments:</b> Name + 1 shape + 1 vector for direction + 1 value
 (repetition).
@@ -32,7 +34,10 @@ the same way, but the Axis is defined  by direction and point.
 \b Object around the given \b Axis on the given \b Angle a given
 <b>Number of Times</b> and multi-translates each rotation
 result. Translation direction passes through the center of gravity of
-the rotated shape and its projection on the rotation axis.
+the rotated shape and its projection on the rotation axis. Number of
+shapes in the resulting compound will be equal to \a NbTimes1 x \a NbTimes2 (if
+both \a NbTimes1 and \a NbTimes2 are equal to 1, the result will contain
+only the initial non-transformed shape).
 \b Reverse checkbox allows to set the direction of rotation.
 \n <b>TUI Command:</b> <em>geompy.MultiRotate2D(Shape, Axis, Angle, NbTimes1, Step, NbTimes2)</em>
 \n <b>Arguments:</b> Name + 1 shape + 1 vector for direction + 1 angle

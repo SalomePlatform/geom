@@ -1,0 +1,21 @@
+/*!
+
+\page bring_to_front_page Bring To Front
+
+\n This option is relevant for better viewing of complex 3D models. 
+It allows to bring to the viewer foreground the selected geometrical object.
+
+Let's take for example two coincident primitives: a box and a cylinder.
+
+In the first picture the box has been visually superimposed over the
+cylinder using <b>Bring to front</b> option.
+
+\image html front1.png
+
+In the second picture the box has been returned to its normal state
+using <b>Clear Top Level State</b> context menu command, however, the
+cylinder has been brought to front. 
+
+ \image html front2.png
+
+*/

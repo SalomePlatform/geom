@@ -1,28 +1,28 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GenerationGUI_FillingDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "GenerationGUI_FillingDlg.h"
 
 #include <DlgRef.h>
@@ -44,41 +44,42 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-GenerationGUI_FillingDlg::GenerationGUI_FillingDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-						    bool modal, Qt::WindowFlags fl )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
+GenerationGUI_FillingDlg::GenerationGUI_FillingDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
+                                                    bool modal, Qt::WindowFlags fl)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl)
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLING" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FILLING")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle( tr( "GEOM_FILLING_TITLE" ) );
+  setWindowTitle(tr("GEOM_FILLING_TITLE"));
 
   /***************************************************************/
-  mainFrame()->GroupConstructors->setTitle( tr ( "GEOM_FILLING" ) );
-  mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->GroupConstructors->setTitle(tr ("GEOM_FILLING"));
+  mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton2->close();
-  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel5Spin1Check( centralWidget() );
-  GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_FILLING_COMPOUND" ) );
-  GroupPoints->TextLabel2->setText( tr( "GEOM_FILLING_MIN_DEG" ) );
-  GroupPoints->TextLabel3->setText( tr( "GEOM_FILLING_TOL_2D" ) );
-  GroupPoints->TextLabel4->setText( tr( "GEOM_FILLING_NB_ITER" ) );
-  GroupPoints->TextLabel5->setText( tr( "GEOM_FILLING_MAX_DEG" ) );
-  GroupPoints->TextLabel6->setText( tr( "GEOM_FILLING_TOL_3D" ) );
-  GroupPoints->CheckBox1->setText( tr( "GEOM_FILLING_APPROX" ) );
-  GroupPoints->PushButton1->setIcon( image1 );
-  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints = new DlgRef_1Sel5Spin1Check(centralWidget());
+  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_FILLING_COMPOUND"));
+  GroupPoints->TextLabel2->setText(tr("GEOM_FILLING_MIN_DEG"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_FILLING_TOL_2D"));
+  GroupPoints->TextLabel4->setText(tr("GEOM_FILLING_NB_ITER"));
+  GroupPoints->TextLabel5->setText(tr("GEOM_FILLING_MAX_DEG"));
+  GroupPoints->TextLabel6->setText(tr("GEOM_FILLING_TOL_3D"));
+  GroupPoints->CheckBox1->setText(tr("GEOM_FILLING_APPROX"));
+  GroupPoints->TextLabel7->setText(tr("GEOM_FILLING_METHOD"));
+  GroupPoints->PushButton1->setIcon(image1);
+  GroupPoints->LineEdit1->setReadOnly(true);
 
-  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
-  layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( GroupPoints  );
+  QVBoxLayout* layout = new QVBoxLayout(centralWidget());
+  layout->setMargin(0); layout->setSpacing(6);
+  layout->addWidget(GroupPoints);
   /***************************************************************/
 
-  setHelpFileName( "create_filling_page.html" );
+  setHelpFileName("create_filling_page.html");
 
   /* Initialisations */
   Init();
@@ -101,69 +102,67 @@ void GenerationGUI_FillingDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->LineEdit1->setReadOnly(true);
 
-  myMinDeg = 2;
-  myMaxDeg = 5;
-  myTol3D = 0.0001;
-  myTol2D = 0.0001;
-  myNbIter = 0;
-  myIsApprox = false;
-  myOkCompound = false;
+  globalSelection(GEOM_COMPOUND);
 
-  globalSelection( GEOM_COMPOUND );
-
-  double SpecificStep1 = 1;
+  int SpecificStep1 = 1;
   double SpecificStep2 = 0.0001;
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox1, 2.0, MAX_NUMBER,  SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox2, 0.00001, 10000.0, SpecificStep2, 5 );
-  initSpinBox( GroupPoints->SpinBox3, 0.0, MAX_NUMBER,  SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox4, 1.0, MAX_NUMBER,  SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox5, 0.00001, 10000.0, SpecificStep2, 5 );
+  initSpinBox(GroupPoints->SpinBox1, 2, MAX_NUMBER,  SpecificStep1);
+  initSpinBox(GroupPoints->SpinBox2, 0.00001, 10000.0, SpecificStep2, "len_tol_precision");
+  initSpinBox(GroupPoints->SpinBox3, 0, MAX_NUMBER,  SpecificStep1);
+  initSpinBox(GroupPoints->SpinBox4, 1, MAX_NUMBER,  SpecificStep1);
+  initSpinBox(GroupPoints->SpinBox5, 0.00001, 10000.0, SpecificStep2, "len_tol_precision");
 
-  GroupPoints->SpinBox1->setValue( myMinDeg );
-  GroupPoints->SpinBox2->setValue( myTol2D );
-  GroupPoints->SpinBox3->setValue( myNbIter );
-  GroupPoints->SpinBox4->setValue( myMaxDeg );
-  GroupPoints->SpinBox5->setValue( myTol3D );
+  GroupPoints->SpinBox1->setValue(2);
+  GroupPoints->SpinBox2->setValue(0.0001);
+  GroupPoints->SpinBox3->setValue(0);
+  GroupPoints->SpinBox4->setValue(5);
+  GroupPoints->SpinBox5->setValue(0.0001);
+
+  GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_DEFAULT"));
+  GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_USEORI"));
+  GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_AUTO"));
+
+  showOnlyPreviewControl();
 
   /* signals and slots connections */
-  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect(GroupPoints->PushButton1, SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
 
-  connect( GroupPoints->SpinBox1, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( GroupPoints->SpinBox2, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( GroupPoints->SpinBox3, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( GroupPoints->SpinBox4, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( GroupPoints->SpinBox5, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect(GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(MethodChanged()));
 
-  connect( GroupPoints->CheckBox1, SIGNAL( stateChanged( int ) ), this, SLOT( ApproxChanged() ) );
+  connect(GroupPoints->SpinBox1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox3, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox4, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox5, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
+  connect(GroupPoints->CheckBox1, SIGNAL(stateChanged(int)),
+           this, SLOT(ApproxChanged()));
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  // san: Commented, as all spin boxes here either are integer or use specific non-default step value
+  //connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
-  initName( tr( "GEOM_FILLING" ) );
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+
+  initName(tr("GEOM_FILLING"));
+  resize(100,100);
 }
 
 //=================================================================================
 // function : SetDoubleSpinBoxStep()
 // purpose  : Double spin box management
 //=================================================================================
-void GenerationGUI_FillingDlg::SetDoubleSpinBoxStep( double step )
+void GenerationGUI_FillingDlg::SetDoubleSpinBoxStep(double step)
 {
-  GroupPoints->SpinBox1->setSingleStep(step);
   GroupPoints->SpinBox2->setSingleStep(step);
-  GroupPoints->SpinBox3->setSingleStep(step);
-  GroupPoints->SpinBox4->setSingleStep(step);
   GroupPoints->SpinBox5->setSingleStep(step);
 }
-
 
 //=================================================================================
 // function : ClickOnOk()
@@ -171,10 +170,10 @@ void GenerationGUI_FillingDlg::SetDoubleSpinBoxStep( double step )
 //=================================================================================
 void GenerationGUI_FillingDlg::ClickOnOk()
 {
-  if ( ClickOnApply() )
+  setIsApplyAndClose(true);
+  if (ClickOnApply())
     ClickOnCancel();
 }
-
 
 //=================================================================================
 // function : ClickOnApply()
@@ -182,13 +181,12 @@ void GenerationGUI_FillingDlg::ClickOnOk()
 //=================================================================================
 bool GenerationGUI_FillingDlg::ClickOnApply()
 {
-  if ( !onAccept() )
+  if (!onAccept())
     return false;
 
   initName();
   return true;
 }
-
 
 //=================================================================================
 // function : SelectionIntoArgument()
@@ -199,39 +197,20 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  if (aSelList.Extent() != 1) {
-    if (myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkCompound = false;
-    return;
-  }
-
-  // nbSel == 1
-  Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-
-  if (!testResult)
-    return;
-
   if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    TopoDS_Shape S;
-    myOkCompound = false;
-
-    if (GEOMBase::GetShape(aSelectedObject, S) && S.ShapeType() == TopAbs_COMPOUND) {
-      // myCompound should be a compound of edges
-      for (TopoDS_Iterator it (S); it.More(); it.Next())
-        if (it.Value().ShapeType() != TopAbs_EDGE)
-          return;
-      myCompound = aSelectedObject;
-      myOkCompound = true;
+    myCompound = getSelected(TopAbs_COMPOUND);
+    if (myCompound) {
+      if (myCompound->GetMaxShapeType() < GEOM::WIRE || myCompound->GetMinShapeType() > GEOM::EDGE) {
+        myCompound.nullify();
+      }
+      else {
+        QString aName = GEOMBase::GetName(myCompound.get());
+        myEditCurrentArgument->setText(aName);
+      }
     }
   }
 
-  myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -241,30 +220,15 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
 void GenerationGUI_FillingDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection( GEOM_ALLSHAPES );
+  globalSelection(GEOM_ALLSHAPES);
 
-  if ( send == GroupPoints->PushButton1 ) {
+  if (send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection( GEOM_COMPOUND );
+    globalSelection(GEOM_COMPOUND);
     this->SelectionIntoArgument();
   }
 }
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void GenerationGUI_FillingDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPoints->LineEdit1 ) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-}
-
 
 //=================================================================================
 // function : ActivateThisDialog()
@@ -273,44 +237,38 @@ void GenerationGUI_FillingDlg::LineEditReturnPressed()
 void GenerationGUI_FillingDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  globalSelection( GEOM_COMPOUND );
-  displayPreview();
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  globalSelection(GEOM_COMPOUND);
+  processPreview();
 }
-
 
 //=================================================================================
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void GenerationGUI_FillingDlg::enterEvent( QEvent* )
+void GenerationGUI_FillingDlg::enterEvent(QEvent*)
 {
-  if ( !mainFrame()->GroupConstructors->isEnabled() )
+  if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
 }
-
 
 //=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
+void GenerationGUI_FillingDlg::ValueChangedInSpinBox(double newValue)
 {
-  QObject* send = (QObject*)sender();
+  processPreview();
+}
 
-  if ( send == GroupPoints->SpinBox1 )
-    myMinDeg = int( newValue );
-  else if ( send == GroupPoints->SpinBox2 )
-    myTol2D = newValue;
-  else if ( send == GroupPoints->SpinBox3 )
-    myNbIter = int(newValue);
-  else if ( send == GroupPoints->SpinBox4 )
-    myMaxDeg = int(newValue);
-  else if ( send == GroupPoints->SpinBox5 )
-    myTol3D = newValue;
-
-  displayPreview();
+//=================================================================================
+// function : MethodChanged
+// purpose  :
+//=================================================================================
+void GenerationGUI_FillingDlg::MethodChanged()
+{
+  processPreview();
 }
 
 //=================================================================================
@@ -319,8 +277,30 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
 //=================================================================================
 void GenerationGUI_FillingDlg::ApproxChanged()
 {
-  myIsApprox = GroupPoints->CheckBox1->isChecked();
-  displayPreview();
+  if (GroupPoints->CheckBox1->isChecked()) {
+    // tol2d
+    GroupPoints->TextLabel3->setEnabled(false);
+    GroupPoints->SpinBox2->setEnabled(false);
+    // nbIter
+    GroupPoints->TextLabel4->setEnabled(false);
+    GroupPoints->SpinBox3->setEnabled(false);
+    // method
+    GroupPoints->TextLabel7->setEnabled(false);
+    GroupPoints->ComboBox1->setEnabled(false);
+  }
+  else {
+    // tol2d
+    GroupPoints->TextLabel3->setEnabled(true);
+    GroupPoints->SpinBox2->setEnabled(true);
+    // nbIter
+    GroupPoints->TextLabel4->setEnabled(true);
+    GroupPoints->SpinBox3->setEnabled(true);
+    // method
+    GroupPoints->TextLabel7->setEnabled(true);
+    GroupPoints->ComboBox1->setEnabled(true);
+  }
+
+  processPreview();
 }
 
 //=================================================================================
@@ -329,38 +309,54 @@ void GenerationGUI_FillingDlg::ApproxChanged()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr GenerationGUI_FillingDlg::createOperation()
 {
-  return getGeomEngine()->GetI3DPrimOperations( getStudyId() );
+  return getGeomEngine()->GetI3DPrimOperations(getStudyId());
 }
 
 //=================================================================================
 // function : isValid
 // purpose  :
 //=================================================================================
-bool GenerationGUI_FillingDlg::isValid( QString& msg )
+bool GenerationGUI_FillingDlg::isValid(QString& msg)
 {
-  bool ok = true;
-  ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox4->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox5->isValid( msg, !IsPreview() ) && ok;
-
-  return myOkCompound > 0 && ok;
+  bool ok = GroupPoints->SpinBox1->isValid(msg, !IsPreview()) &&
+            GroupPoints->SpinBox2->isValid(msg, !IsPreview()) &&
+            GroupPoints->SpinBox3->isValid(msg, !IsPreview()) &&
+            GroupPoints->SpinBox4->isValid(msg, !IsPreview()) &&
+            GroupPoints->SpinBox5->isValid(msg, !IsPreview()) &&
+            myCompound;
+  return ok;
 }
 
 //=================================================================================
 // function : execute
 // purpose  :
 //=================================================================================
-bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
+bool GenerationGUI_FillingDlg::execute(ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj;
+  GEOM::GEOM_I3DPrimOperations_var anOper =
+    GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
 
-  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation() )->MakeFilling(
-    myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D, myNbIter, myIsApprox );
-  if ( !anObj->_is_nil() )
+  GEOM::filling_oper_method aMethod;
+  switch (GroupPoints->ComboBox1->currentIndex())
   {
-    if ( !IsPreview() )
+    case 0:  aMethod = GEOM::FOM_Default; break;
+    case 1:  aMethod = GEOM::FOM_UseOri; break;
+    case 2:  aMethod = GEOM::FOM_AutoCorrect; break;
+    default: break;
+  }
+
+  GEOM::GEOM_Object_var anObj =
+    anOper->MakeFilling(myCompound.get(),
+                         GroupPoints->SpinBox1->value(),
+                         GroupPoints->SpinBox4->value(),
+                         GroupPoints->SpinBox2->value(),
+                         GroupPoints->SpinBox5->value(),
+                         GroupPoints->SpinBox3->value(),
+                         aMethod,
+                         GroupPoints->CheckBox1->isChecked());
+  if (!anObj->_is_nil())
+  {
+    if (!IsPreview())
     {
       QStringList aParameters;
       aParameters << GroupPoints->SpinBox1->text();
@@ -368,9 +364,9 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
       aParameters << GroupPoints->SpinBox3->text();
       aParameters << GroupPoints->SpinBox4->text();
       aParameters << GroupPoints->SpinBox5->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
-    objects.push_back( anObj._retn() );
+    objects.push_back(anObj._retn());
   }
 
   return true;

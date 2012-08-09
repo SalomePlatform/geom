@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef __GEOM_GEN_I_H__
 #define __GEOM_GEN_I_H__
 
@@ -49,6 +50,12 @@
 #include "GEOM_IInsertOperations_i.hh"
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
+#include "GEOM_IAdvancedOperations_i.hh"
+
+#include <TopTools_IndexedMapOfShape.hxx>
+
+#include <set>
+#include <string>
 
 //#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -67,10 +74,10 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   // constructor to be called for servant creation.
   GEOM_Gen_i();
   GEOM_Gen_i(CORBA::ORB_ptr orb,
-	     PortableServer::POA_ptr poa,
-	     PortableServer::ObjectId * contId,
-	     const char *instanceName,
-	     const char *interfaceName);
+             PortableServer::POA_ptr poa,
+             PortableServer::ObjectId * contId,
+             const char *instanceName,
+             const char *interfaceName);
 
   // destructor, doing nothing (for now)
   virtual ~GEOM_Gen_i();
@@ -84,74 +91,89 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   //-----------------------------------------------------------------------//
 
   SALOMEDS::TMPFile* Save(SALOMEDS::SComponent_ptr theComponent,
-			  const char* theURL,
-			  bool isMultiFile);
+                          const char* theURL,
+                          bool isMultiFile);
 
   SALOMEDS::TMPFile* SaveASCII(SALOMEDS::SComponent_ptr theComponent,
-			       const char* theURL,
-			       bool isMultiFile);
+                               const char* theURL,
+                               bool isMultiFile);
 
   CORBA::Boolean Load(SALOMEDS::SComponent_ptr theComponent,
-		      const SALOMEDS::TMPFile& theStream,
-		      const char* theURL,
-		      bool isMultiFile);
+                      const SALOMEDS::TMPFile& theStream,
+                      const char* theURL,
+                      bool isMultiFile);
 
   CORBA::Boolean LoadASCII(SALOMEDS::SComponent_ptr theComponent,
-			   const SALOMEDS::TMPFile& theStream,
-			   const char* theURL,
-			   bool isMultiFile);
+                           const SALOMEDS::TMPFile& theStream,
+                           const char* theURL,
+                           bool isMultiFile);
 
   void Close(SALOMEDS::SComponent_ptr theComponent);
   char* ComponentDataType();
 
 
   char* IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
-			       const char* IORString,
-			       CORBA::Boolean isMultiFile,
-			       CORBA::Boolean isASCII);
+                               const char* IORString,
+                               CORBA::Boolean isMultiFile,
+                               CORBA::Boolean isASCII);
   char* LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
-			       const char* aLocalPersistentID,
-			       CORBA::Boolean isMultiFile,
-			       CORBA::Boolean isASCII);
+                               const char* aLocalPersistentID,
+                               CORBA::Boolean isMultiFile,
+                               CORBA::Boolean isASCII);
 
   bool CanPublishInStudy(CORBA::Object_ptr theIOR);
   SALOMEDS::SObject_ptr PublishInStudy(SALOMEDS::Study_ptr theStudy,
-				       SALOMEDS::SObject_ptr theSObject,
-				       CORBA::Object_ptr theObject,
-				       const char* theName) throw (SALOME::SALOME_Exception) ;
+                                       SALOMEDS::SObject_ptr theSObject,
+                                       CORBA::Object_ptr theObject,
+                                       const char* theName) throw (SALOME::SALOME_Exception) ;
+
+  GEOM::ListOfGO* PublishNamedShapesInStudy(SALOMEDS::Study_ptr theStudy,
+                                            CORBA::Object_ptr theObject);
 
   CORBA::Boolean CanCopy(SALOMEDS::SObject_ptr theObject);
   SALOMEDS::TMPFile* CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::Long& theObjectID);
   CORBA::Boolean CanPaste(const char* theComponentName, CORBA::Long theObjectID);
   SALOMEDS::SObject_ptr PasteInto(const SALOMEDS::TMPFile& theStream,
-				  CORBA::Long theObjectID,
-				  SALOMEDS::SObject_ptr theObject);
+                                  CORBA::Long theObjectID,
+                                  SALOMEDS::SObject_ptr theObject);
 
   /*! \brief Adds theObject in the study with a name = theName, if
    *         theFather is not null the object is placed under theFather
    */
   SALOMEDS::SObject_ptr AddInStudy (SALOMEDS::Study_ptr theStudy,
-				    GEOM::GEOM_Object_ptr theObject,
-				    const char* theName,
-				    GEOM::GEOM_Object_ptr theFather);
+                                    GEOM::GEOM_Object_ptr theObject,
+                                    const char* theName,
+                                    GEOM::GEOM_Object_ptr theFather);
 
   /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
    *         To be used from python scripts out of geompy.addToStudy (non-default usage)
    */
-  CORBA::Boolean RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
-				    GEOM::GEOM_Object_ptr   theObject,
-				    const GEOM::ListOfGO&   theArgs,
-				    GEOM::find_shape_method theFindMethod,
-				    CORBA::Boolean          theInheritFirstArg);
+  GEOM::ListOfGO* RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
+                                     GEOM::GEOM_Object_ptr   theObject,
+                                     const GEOM::ListOfGO&   theArgs,
+                                     GEOM::find_shape_method theFindMethod,
+                                     CORBA::Boolean          theInheritFirstArg,
+                                     CORBA::Boolean          theAddPrefix);
+
+  /*! \brief Publish sub-shapes, standing for given in \a theArgs arguments and sub-shapes.
+   *         To be used from python scripts, generated by Dump Python.
+   */
+  GEOM::ListOfGO* RestoreGivenSubShapesO (SALOMEDS::Study_ptr     theStudy,
+                                          GEOM::GEOM_Object_ptr   theObject,
+                                          const GEOM::ListOfGO&   theArgs,
+                                          GEOM::find_shape_method theFindMethod,
+                                          CORBA::Boolean          theInheritFirstArg,
+                                          CORBA::Boolean          theAddPrefix);
 
   /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
    *         To be used from GUI and from geompy.addToStudy
    */
-  CORBA::Boolean RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
-				     SALOMEDS::SObject_ptr   theSObject,
-				     const GEOM::ListOfGO&   theArgs,
-				     GEOM::find_shape_method theFindMethod,
-				     CORBA::Boolean          theInheritFirstArg);
+  GEOM::ListOfGO* RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
+                                      SALOMEDS::SObject_ptr   theSObject,
+                                      const GEOM::ListOfGO&   theArgs,
+                                      GEOM::find_shape_method theFindMethod,
+                                      CORBA::Boolean          theInheritFirstArg,
+                                      CORBA::Boolean          theAddPrefix);
 
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
@@ -215,9 +237,13 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual GEOM::GEOM_IGroupOperations_ptr GetIGroupOperations (CORBA::Long theStudyID)
     throw (SALOME::SALOME_Exception);
 
-  //Adds a new sub shape
+  //Returns a pointer to AdvancedOperations interface
+  virtual GEOM::GEOM_IAdvancedOperations_ptr GetIAdvancedOperations (CORBA::Long theStudyID)
+    throw (SALOME::SALOME_Exception);
+
+  //Adds a new sub-shape
   virtual GEOM::GEOM_Object_ptr AddSubShape (GEOM::GEOM_Object_ptr theMainShape,
-					     const GEOM::ListOfLong& theIndices);
+                                             const GEOM::ListOfLong& theIndices);
 
   virtual void RemoveObject(GEOM::GEOM_Object_ptr theObject);
 
@@ -226,17 +252,18 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual GEOM::GEOM_Object_ptr GetIORFromString(const char* stringIOR);
 
   virtual Engines::TMPFile* DumpPython(CORBA::Object_ptr theStudy,
-				       CORBA::Boolean isPublished,
-				       CORBA::Boolean& isValidScript);
+                                       CORBA::Boolean isPublished,
+                                       CORBA::Boolean isMultiFile,
+                                       CORBA::Boolean& isValidScript);
 
   char* GetDumpName (const char* theStudyEntry);
 
   GEOM::string_array* GetAllDumpNames();
-  
+
   // Object information
   virtual bool hasObjectInfo();
   virtual char* getObjectInfo(CORBA::Long studyId, const char* entry);
-  
+
   //-----------------------------------------------------------------------//
   // Internal methods                                                      //
   //-----------------------------------------------------------------------//
@@ -244,18 +271,46 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual GEOM::GEOM_Object_ptr GetObject(CORBA::Long theStudyID, const char* theEntry);
 
  private:
-  GEOM::ListOfGO* RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     theStudy,
-					    SALOMEDS::SObject_ptr   theOldSO,
-					    SALOMEDS::SObject_ptr   theNewSO,
-					    GEOM::GEOM_Object_ptr   theNewO,
-					    GEOM::find_shape_method theFindMethod);
+  GEOM::ListOfGO* RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
+                                    GEOM::GEOM_Object_ptr   theObject,
+                                    SALOMEDS::SObject_ptr   theSObject,
+                                    const GEOM::ListOfGO&   theArgs,
+                                    GEOM::find_shape_method theFindMethod,
+                                    CORBA::Boolean          theInheritFirstArg,
+                                    CORBA::Boolean          theAddPrefix);
 
-  CORBA::Boolean RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
-				   GEOM::GEOM_Object_ptr   theObject,
-				   SALOMEDS::SObject_ptr   theSObject,
-				   const GEOM::ListOfGO&   theArgs,
-				   GEOM::find_shape_method theFindMethod,
-				   CORBA::Boolean          theInheritFirstArg);
+  GEOM::ListOfGO* RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     theStudy,
+                                            SALOMEDS::SObject_ptr   theOldSO,
+                                            SALOMEDS::SObject_ptr   theNewSO,
+                                            GEOM::GEOM_Object_ptr   theNewO,
+                                            GEOM::ListOfGO&         theOutArgs,
+                                            GEOM::find_shape_method theFindMethod,
+                                            CORBA::Boolean          theAddPrefix);
+
+  GEOM::ListOfGO* RestoreGivenSubShapes (SALOMEDS::Study_ptr     theStudy,
+                                         GEOM::GEOM_Object_ptr   theObject,
+                                         SALOMEDS::SObject_ptr   theSObject,
+                                         const GEOM::ListOfGO&   theArgs,
+                                         GEOM::find_shape_method theFindMethod,
+                                         CORBA::Boolean          theInheritFirstArg,
+                                         CORBA::Boolean          theAddPrefix);
+
+  GEOM::ListOfGO* RestoreGivenSubShapesOneLevel (SALOMEDS::Study_ptr     theStudy,
+                                                 SALOMEDS::SObject_ptr   theOldSO,
+                                                 SALOMEDS::SObject_ptr   theNewSO,
+                                                 GEOM::GEOM_Object_ptr   theNewO,
+                                                 std::set<std::string>   theArgs,
+                                                 GEOM::find_shape_method theFindMethod,
+                                                 CORBA::Boolean          theAddPrefix);
+
+  // auxilary for PublishNamedShapesInStudy
+  void CreateAndPublishGroup(SALOMEDS::Study_ptr theStudy,
+                             GEOM::GEOM_Object_var theMainShape,
+                             const TopTools_IndexedMapOfShape& anIndices,
+                             const TopTools_SequenceOfShape& SeqS,
+                             const TColStd_SequenceOfAsciiString& SeqN,
+                             const Standard_CString& GrName,
+                             GEOM::ListOfGO_var aResList);
 
  private:
 

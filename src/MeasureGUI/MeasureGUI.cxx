@@ -1,31 +1,33 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #include "MeasureGUI.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 #include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
 
@@ -40,6 +42,7 @@
 #include "MeasureGUI_WhatisDlg.h"        // Method WHATIS
 #include "MeasureGUI_CheckShapeDlg.h"    // Method CHECKSHAPE
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h" // Method CHECKCOMPOUND
+#include "MeasureGUI_CheckSelfIntersectionsDlg.h" // Method CHECK SELF INTERSCTIONS
 #include "MeasureGUI_PointDlg.h"         // Method POINTCOORDINATES
 
 #include <QApplication>
@@ -74,40 +77,43 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   QDialog* dlg = 0;
   switch ( theCommandID ) {
-  case 701:
+  case GEOMOp::OpProperties:
     dlg = new MeasureGUI_PropertiesDlg( getGeometryGUI(), parent );
     break; // LENGTH, AREA AND VOLUME
-  case 702:
+  case GEOMOp::OpCenterMass:
     dlg = new MeasureGUI_CenterMassDlg( getGeometryGUI(), parent );
-    break; // CENTER MASS
-  case 703:
+    break; // CENTER MASS7
+  case GEOMOp::OpInertia:
     dlg = new MeasureGUI_InertiaDlg( getGeometryGUI(), parent );
     break; // INERTIA
-  case 704 : 
+  case GEOMOp::OpNormale : 
     dlg = new MeasureGUI_NormaleDlg( getGeometryGUI(), parent );
     break; // NORMALE
-  case 7041:
+  case GEOMOp::OpBoundingBox:
     dlg = new MeasureGUI_BndBoxDlg( getGeometryGUI(), parent );
     break; // BOUNDING BOX
-  case 7042:
+  case GEOMOp::OpMinDistance:
     dlg = new MeasureGUI_DistanceDlg( getGeometryGUI(), parent );
     break; // MIN DISTANCE
-  case 7043: 
+  case GEOMOp::OpAngle: 
     dlg = new MeasureGUI_AngleDlg( getGeometryGUI(), parent );
     break; // ANGLE
-  case 705: 
+  case GEOMOp::OpTolerance: 
     dlg = new MeasureGUI_MaxToleranceDlg( getGeometryGUI(), parent );
     break; // MAXTOLERANCE
-  case 706:
+  case GEOMOp::OpWhatIs:
     dlg = new MeasureGUI_WhatisDlg( getGeometryGUI(), parent );
     break; // WHATIS
-  case 707:
+  case GEOMOp::OpCheckShape:
     dlg = new MeasureGUI_CheckShapeDlg( getGeometryGUI(), parent );
     break; // CHECKSHAPE
-  case 7072:
+  case GEOMOp::OpCheckCompound:
     dlg = new MeasureGUI_CheckCompoundOfBlocksDlg( getGeometryGUI(), parent );
     break; // CHECKCOMPOUND
-  case 708:
+  case GEOMOp::OpCheckSelfInters:
+    dlg = new MeasureGUI_CheckSelfIntersectionsDlg( getGeometryGUI(), parent );
+    break; // CHECK SELF INTERSCTIONS
+  case GEOMOp::OpPointCoordinates:
     dlg = new MeasureGUI_PointDlg( getGeometryGUI(), parent );
     break; // POINT COORDINATES
   default: 

@@ -1,32 +1,36 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : DisplayGUI.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
 #include "DisplayGUI.h"
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
+#include <GEOM_Constants.h>
 #include <GEOM_Displayer.h>
 #include <GEOM_AISShape.hxx>
+#include <GEOM_Actor.h>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewWindow.h>
@@ -52,6 +56,9 @@
 #include <SalomeApp_Study.h>
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
+
+#include <vtkActorCollection.h>
+#include <vtkRenderer.h>
 
 #include <QAction>
 
@@ -85,59 +92,58 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   SALOME_ListIO selected;
   Sel->selectedObjects( selected );
 
-  switch (theCommandID) {
-  case 211: // MENU VIEW - WIREFRAME/SHADING
-    {
-      InvertDisplayMode();
-      int newMode = GetDisplayMode();
-      getGeometryGUI()->action( 211 )->setText
-        ( newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
-      getGeometryGUI()->menuMgr()->update();
-      break;
-    }
-  case 212: // MENU VIEW - DISPLAY ALL
-    {
-      getGeometryGUI()->EmitSignalDeactivateDialog();
-      DisplayAll();
-      break;
-    }
-  case 213: // MENU VIEW - DISPLAY ONLY
-    {
-      getGeometryGUI()->EmitSignalDeactivateDialog();
-      DisplayOnly();
-      break;
-    }
-  case 214: // MENU VIEW - ERASE ALL
-    {
-      EraseAll();
-      break;
-    }
-  case 215: // MENU VIEW - ERASE
-    {
-      Erase();
-      break;
-    }
-  case 216: // MENU VIEW - DISPLAY
-    {
-      getGeometryGUI()->EmitSignalDeactivateDialog();
-      Display();
-      break;
-    }
-  case 80311: // POPUP VIEWER - WIREFRAME
-    {
-      ChangeDisplayMode( 0 );
-      break;
-    }
-  case 80312: // POPUP VIEWER - SHADING
-    {
-      ChangeDisplayMode( 1 );
-      break;
-    }
+  switch ( theCommandID ) {
+  case GEOMOp::OpDMWireframe:         // MENU VIEW - DISPLAY MODE - WIREFRAME
+    SetDisplayMode( 0 );
+    break;
+  case GEOMOp::OpDMShading:           // MENU VIEW - DISPLAY MODE - SHADING
+    SetDisplayMode( 1 );
+    break;
+  case GEOMOp::OpDMShadingWithEdges:  // MENU VIEW - DISPLAY MODE - SHADING WITH EDGES
+    SetDisplayMode( 2 );
+    break;
+  case GEOMOp::OpShowAll:        // MENU VIEW - SHOW ALL
+    getGeometryGUI()->EmitSignalDeactivateDialog();
+    DisplayAll();
+    break;
+  case GEOMOp::OpShowOnly:       // POPUP MENU - SHOW ONLY
+    getGeometryGUI()->EmitSignalDeactivateDialog();
+    DisplayOnly();
+    break;
+  case GEOMOp::OpHideAll:        // MENU VIEW - HIDE ALL
+    EraseAll();
+    break;
+  case GEOMOp::OpHide:           // POPUP MENU - HIDE
+    Erase();
+    break;
+  case GEOMOp::OpShow:           // POPUP MENU - SHOW
+    getGeometryGUI()->EmitSignalDeactivateDialog();
+    Display();
+    break;
+  case GEOMOp::OpSwitchVectors:  // MENU VIEW - DISPLAY MODE - SHOW EDGE DIRECTION
+    SetVectorMode(!GetVectorMode());
+    getGeometryGUI()->action( GEOMOp::OpSwitchVectors )->setText
+      ( GetVectorMode() ? tr("MEN_VECTOR_MODE_ON") : tr( "MEN_VECTOR_MODE_OFF" ) );
+    getGeometryGUI()->menuMgr()->update();
+    break;
+  case GEOMOp::OpWireframe:      // POPUP MENU - DISPLAY MODE - WIREFRAME
+    ChangeDisplayMode( 0 );
+    break;
+  case GEOMOp::OpShading:        // POPUP MENU - DISPLAY MODE - SHADING
+    ChangeDisplayMode( 1 );
+    break;
+  case GEOMOp::OpShadingWithEdges: // POPUP MENU - DISPLAY MODE - SHADING WITH EDGES
+    ChangeDisplayMode( 2 );
+    break;
+  case GEOMOp::OpTexture:        // POPUP MENU - DISPLAY MODE - TEXTURE
+    ChangeDisplayMode( 3 );
+    break;
+    case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
+    ChangeDisplayMode( 4 );
+    break;
   default:
-    {
-      app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-      break;
-    }
+    app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+    break;
   }
   Sel->setSelectedObjects( selected );
   return true;
@@ -194,8 +200,8 @@ void DisplayGUI::EraseAll()
       SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
       SUIT_ViewManager* vman = vw->getViewManager();
       if ( vman->getType() == OCCViewer_Viewer::Type() || 
-	   vman->getType() == SVTK_Viewer::Type() ) {
-	GEOM_Displayer( appStudy ).EraseAll();
+           vman->getType() == SVTK_Viewer::Type() ) {
+        GEOM_Displayer( appStudy ).EraseAll();
       }
     }
   }
@@ -240,25 +246,25 @@ void DisplayGUI::Display()
     if ( anIObject->hasEntry() ) {
       _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
       if ( SO && QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
-	_PTR(SComponent) SC ( SO->GetFatherComponent() );
-	// if component is selected
-	listIO.Clear();
-	_PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
-	anIter->InitEx( true );
-	while( anIter->More() ) {
-	  _PTR(SObject) valSO ( anIter->Value() );
-	  _PTR(SObject) refSO;
-	  if ( !valSO->ReferencedObject( refSO ) ) {
-	    listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
+        _PTR(SComponent) SC ( SO->GetFatherComponent() );
+        // if component is selected
+        listIO.Clear();
+        _PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
+        anIter->InitEx( true );
+        while( anIter->More() ) {
+          _PTR(SObject) valSO ( anIter->Value() );
+          _PTR(SObject) refSO;
+          if ( !valSO->ReferencedObject( refSO ) ) {
+            listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
                                                         SC->ComponentDataType().c_str(),
                                                         valSO->GetName().c_str()) );
-	  }
-	  anIter->Next();
-	}
-	break;
+          }
+          anIter->Next();
+        }
+        break;
       }
       else {
-	listIO.Append( anIObject );
+        listIO.Append( anIObject );
       }
     }
     else {
@@ -298,25 +304,25 @@ void DisplayGUI::Erase()
     if ( anIObject->hasEntry() ) {
       _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
       if ( SO && QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
-	_PTR(SComponent) SC ( SO->GetFatherComponent() );
-	// if component is selected
-	listIO.Clear();
-	_PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
-	anIter->InitEx( true );
-	while( anIter->More() ) {
-	  _PTR(SObject) valSO ( anIter->Value() );
-	  _PTR(SObject) refSO;
-	  if ( !valSO->ReferencedObject( refSO ) ) {
-	    listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
+        _PTR(SComponent) SC ( SO->GetFatherComponent() );
+        // if component is selected
+        listIO.Clear();
+        _PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
+        anIter->InitEx( true );
+        while( anIter->More() ) {
+          _PTR(SObject) valSO ( anIter->Value() );
+          _PTR(SObject) refSO;
+          if ( !valSO->ReferencedObject( refSO ) ) {
+            listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
                                                         SC->ComponentDataType().c_str(),
                                                         valSO->GetName().c_str()) );
-	  }
-	  anIter->Next();
-	}
-	break;
+          }
+          anIter->Next();
+        }
+        break;
       }
       else {
-	listIO.Append( anIObject );
+        listIO.Append( anIObject );
       }
     }
     else {
@@ -346,11 +352,87 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
   if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
     SVTK_View* aView = ((SVTK_ViewWindow*)viewWindow)->getView();
     aView->SetDisplayMode( mode );
+    GeometryGUI::Modified();
   } 
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
     Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-    AIS_DisplayMode newmode = (mode == 1 ? AIS_Shaded : AIS_WireFrame);
+
+    AIS_DisplayMode newmode;
+    switch (mode) {
+    case 0:
+      newmode = AIS_WireFrame;
+      break;
+    case 1:
+      newmode = AIS_Shaded;
+      break;
+    case 2:
+      newmode = AIS_DisplayMode( GEOM_AISShape::ShadingWithEdges );
+      break;
+    case 3:
+      newmode = AIS_DisplayMode( GEOM_AISShape::TexturedShape );
+      break;
+    default:
+      break;
+    }
+
+    AIS_ListOfInteractive List;
+    ic->DisplayedObjects( List );
+    AIS_ListOfInteractive List1;
+    ic->ObjectsInCollector( List1 );
+    List.Append( List1 );
+    
+    AIS_ListIteratorOfListOfInteractive ite( List );
+    while( ite.More() ) {
+      if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
+	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
+        if(aSh->isTopLevel()) {
+           aSh->setPrevDisplayMode(Standard_Integer( newmode ));
+        }
+        else {
+      	   ic->SetDisplayMode( aSh, Standard_Integer( newmode ),true );
+        }
+      }
+      ite.Next();
+    }
+      
+    ic->SetDisplayMode( newmode, Standard_False );
+
+    GeometryGUI::Modified();
+  }
+}
+
+//=====================================================================================
+// function : DisplayGUI::SetVectorsMode()
+// purpose  : Set vector mode for the viewer
+//=====================================================================================
+void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
+{
+  SUIT_OverrideCursor();
+
+  if ( !viewWindow ) 
+    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
+  if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
+    viewWindow->setProperty( "VectorsMode", mode );
+    SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
+    vtkActorCollection* allActors = vw->getRenderer()->GetActors();
+    allActors->InitTraversal();
+    while (vtkActor* actor = allActors->GetNextActor()) {
+      if (actor->GetVisibility()) { // only for visible actors
+        GEOM_Actor* aGeomActor = 0;
+        if ( actor->IsA( "GEOM_Actor" ) ) {
+          aGeomActor = GEOM_Actor::SafeDownCast( actor );
+          if ( aGeomActor )
+            aGeomActor->SetVectorMode( mode );
+        }
+      }
+    }
+    GeometryGUI::Modified();
+  }
+  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
+    viewWindow->setProperty( "VectorsMode", mode );
+    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
+    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
     AIS_ListOfInteractive List;
     ic->DisplayedObjects( List );
     AIS_ListOfInteractive List1;
@@ -360,46 +442,25 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
     AIS_ListIteratorOfListOfInteractive ite( List );
     while( ite.More() ) {
       if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
-	ic->SetDisplayMode( aSh, Standard_Integer( newmode ),true );
+        Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
+        aSh->SetDisplayVectors(mode);
+        ic->RecomputePrsOnly(ite.Value());
       }
       ite.Next();
     }
-
-    ic->SetDisplayMode( newmode, Standard_False );
+    GeometryGUI::Modified();
   }
 }
 
 //=====================================================================================
-// function : DisplayGUI::GetDisplayMode()
-// purpose  : Get display mode of the viewer (current viewer if <viewWindow> - 0 )
+// function : DisplayGUI::GetVectorMode()
+// purpose  : Get the "show edge direction" mode of the viewer
 //=====================================================================================
-int DisplayGUI::GetDisplayMode( SUIT_ViewWindow* viewWindow )
+int DisplayGUI::GetVectorMode( SUIT_ViewWindow* viewWindow )
 {
-  int dispMode = 0;
   if ( !viewWindow ) 
     viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
-  if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
-    SVTK_View* aView = ((SVTK_ViewWindow*)viewWindow)->getView();
-    dispMode = aView->GetDisplayMode();
-  } 
-  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
-    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
-    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-    AIS_DisplayMode mode = (AIS_DisplayMode)ic->DisplayMode();
-    dispMode = (mode == AIS_WireFrame ? 0 : 1 );
-  }
-  return dispMode;
-}
-
-//=====================================================================================
-// function : DisplayGUI::InvertDisplayMode()
-// purpose  : Invert display mode ( shadin <-> wireframe ) for the viewer 
-//            (current viewer if <viewWindow> = 0 )
-//=====================================================================================
-void DisplayGUI::InvertDisplayMode( SUIT_ViewWindow* viewWindow )
-{
-  SetDisplayMode( 1 - GetDisplayMode( viewWindow ) );
+  return viewWindow->property( "VectorsMode" ).toBool();
 }
 
 //=====================================================================================
@@ -418,6 +479,11 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
 
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  
+  if(!aStudy)
+    return;
+
   SUIT_OverrideCursor();
 
   SALOME_ListIO aList;
@@ -425,6 +491,8 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
     SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
     SVTK_View* aView = vw->getView();
+    int mgrId = viewWindow->getViewManager()->getGlobalId();
+    bool vectorMode = false;
 
     aSelMgr->selectedObjects( aList );
     SALOME_ListIteratorOfListIO It( aList );
@@ -434,13 +502,31 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
       SVTK_Prs* vtkPrs =
         stvkViewer ? dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( It.Value()->getEntry() ) ) : 0;
       if ( vtkPrs && !vtkPrs->IsNull() ) {
-	if ( mode == 0 )
-	  aView->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
+	if (mode == 0 )
+          aView->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
 	else if ( mode == 1 )
-	  aView->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
+          aView->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
+	else if ( mode == 2 )
+	  aView->ChangeRepresentationToSurfaceWithEdges( vtkPrs->GetObjects() );
+	else if ( mode == 4 ) {
+          vtkActorCollection* anActors = vtkPrs->GetObjects();
+          anActors->InitTraversal();
+          while (vtkActor* anAct = anActors->GetNextActor()) {
+            GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(anAct);
+            vectorMode = !aGeomActor->GetVectorMode();
+            aGeomActor->SetVectorMode(vectorMode);
+          }
+        }
+	if(mode == 0 || mode == 1 || mode == 2) {
+	  aStudy->setObjectProperty(mgrId,It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+	}
+	else if (mode == 4) {
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);	
+	}
       }
     }
     aView->Repaint();
+    GeometryGUI::Modified();
   }
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
@@ -448,22 +534,47 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
 
     aSelMgr->selectedObjects( aList );
     SALOME_ListIteratorOfListIO It( aList );
+    int mgrId = viewWindow->getViewManager()->getGlobalId();
+    bool vectorMode = 0;
 
     for( ;It.More(); It.Next() ) {
       SOCC_Viewer* soccViewer = (SOCC_Viewer*)(viewWindow->getViewManager()->getViewModel());
       SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( soccViewer->CreatePrs( It.Value()->getEntry() ) );
       if ( occPrs && !occPrs->IsNull() ) {
-	AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
-	AIS_ListIteratorOfListOfInteractive interIter( shapes );
-	for ( ; interIter.More(); interIter.Next() ) {
-	  if ( mode == 0 )
-	    ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
-	  else if ( mode == 1 )
-	    ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
+        AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
+        AIS_ListIteratorOfListOfInteractive interIter( shapes );
+        for ( ; interIter.More(); interIter.Next() ) {
+          Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
+          if ( !aSh.IsNull() ) {
+            if(!aSh->isTopLevel()) {
+	            if ( mode == 0 )
+                ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
+	            else if ( mode == 1 )
+                ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
+	            else if ( mode == 2 )
+	              ic->SetDisplayMode( interIter.Value(), GEOM_AISShape::ShadingWithEdges, false );
+	            else if ( mode == 3 )
+                ic->SetDisplayMode( interIter.Value(), AIS_ExactHLR, false );
+            } else {
+              aSh->setPrevDisplayMode(mode);
+            }
+	        if (mode == 4 ) {	    
+              vectorMode = !aSh->isShowVectors();      
+              aSh->SetDisplayVectors(vectorMode);
+              ic->RecomputePrsOnly(interIter.Value());
+            }
+          }
+        }
+	if(mode == 0 || mode == 1 || mode == 2 || mode == 3) {
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+	}
+	else if (mode == 4) {
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);
 	}
       }
     }
     ic->UpdateCurrentViewer();
+    GeometryGUI::Modified();
   }
 }
 

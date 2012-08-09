@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOM_I3DPrimOperations_i_HeaderFile
 #define _GEOM_I3DPrimOperations_i_HeaderFile
 
@@ -106,6 +107,11 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 					    GEOM::GEOM_Object_ptr theVec,
 					    CORBA::Double theH);
 
+  GEOM::GEOM_Object_ptr MakePrismVecHWithScaling (GEOM::GEOM_Object_ptr theBase,
+                                                  GEOM::GEOM_Object_ptr theVec,
+                                                  CORBA::Double theH,
+                                                  CORBA::Double theScaleFactor);
+
   GEOM::GEOM_Object_ptr MakePrismTwoPnt (GEOM::GEOM_Object_ptr theBase,
 					 GEOM::GEOM_Object_ptr thePoint1,
 					 GEOM::GEOM_Object_ptr thePoint2);
@@ -113,6 +119,11 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
   GEOM::GEOM_Object_ptr MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr theBase,
 					      GEOM::GEOM_Object_ptr thePoint1,
 					      GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr MakePrismTwoPntWithScaling (GEOM::GEOM_Object_ptr theBase,
+                                                    GEOM::GEOM_Object_ptr thePoint1,
+                                                    GEOM::GEOM_Object_ptr thePoint2,
+                                                    CORBA::Double         theScaleFactor);
 
   GEOM::GEOM_Object_ptr MakePrismDXDYDZ (GEOM::GEOM_Object_ptr theBase,
 				         CORBA::Double         theDX,
@@ -122,7 +133,18 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 				              CORBA::Double         theDX,
 				              CORBA::Double         theDY,
 				              CORBA::Double         theDZ);
-
+  GEOM::GEOM_Object_ptr MakePrismDXDYDZWithScaling (GEOM::GEOM_Object_ptr theBase,
+                                                    CORBA::Double         theDX,
+                                                    CORBA::Double         theDY,
+                                                    CORBA::Double         theDZ,
+                                                    CORBA::Double         theScaleFactor);
+  
+  GEOM::GEOM_Object_ptr MakeDraftPrism (GEOM::GEOM_Object_ptr theInitShape,
+                                        GEOM::GEOM_Object_ptr theBase,
+                                        CORBA::Double         theHeight,
+                                        CORBA::Double         theAngle,
+                                        CORBA::Boolean        theFuse);
+                            
   GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase,
 				  GEOM::GEOM_Object_ptr thePath);
 
@@ -134,7 +156,12 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 						      GEOM::GEOM_Object_ptr theAxis,
 						      CORBA::Double theAngle);
 
-  GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape, CORBA::Long theMinDeg, CORBA::Long theMaxDeg, CORBA::Double theTol2D, CORBA::Double theTol3D, CORBA::Long theNbIter, CORBA::Boolean theApprox);
+  GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape,
+                                    CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
+                                    CORBA::Double theTol2D, CORBA::Double theTol3D,
+                                    CORBA::Long theNbIter,
+                                    GEOM::filling_oper_method theMethod,
+                                    CORBA::Boolean theApprox);
 
   GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
 					 CORBA::Boolean theModeSolid,

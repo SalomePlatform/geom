@@ -1,29 +1,30 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_BuilderFace.cxx
-// Created:	
-// Author:	Peter KURNEV
+
+// File:        GEOMAlgo_BuilderFace.cxx
+// Created:
+// Author:      Peter KURNEV
 //
-#include <GEOMAlgo_BuilderFace.ixx>
+#include <GEOMAlgo_BuilderFace.hxx>
 
 #include <gp_Pnt2d.hxx>
 #include <gp_Pln.hxx>
@@ -83,19 +84,19 @@
 static
   Standard_Boolean IsGrowthWire(const TopoDS_Shape& ,
 
-				const TopTools_IndexedMapOfShape& );
+                                const TopTools_IndexedMapOfShape& );
 
-static 
+static
   Standard_Boolean IsInside(const TopoDS_Shape& ,
-			    const TopoDS_Shape& ,
-			    IntTools_PContext& );
+                            const TopoDS_Shape& ,
+                            const Handle(IntTools_Context)& );
 static
   void MakeInternalWires(const TopTools_MapOfShape& ,
-			 TopTools_ListOfShape& );
+                         TopTools_ListOfShape& );
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_BuilderFace::GEOMAlgo_BuilderFace()
 :
@@ -104,14 +105,14 @@ static
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_BuilderFace::~GEOMAlgo_BuilderFace()
 {
 }
 //=======================================================================
 //function : SetFace
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::SetFace(const TopoDS_Face& theFace)
 {
@@ -119,7 +120,7 @@ static
 }
 //=======================================================================
 //function : Face
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopoDS_Face& GEOMAlgo_BuilderFace::Face()const
 {
@@ -127,21 +128,18 @@ static
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::Perform()
 {
   myErrorStatus=0;
   //
-  if (myContext==NULL) {
-    myErrorStatus=11;// Null Context
-    return;
-  }
-  //
   if (myFace.IsNull()) {
     myErrorStatus=12;// Null face generix
     return;
   }
+  // Initialize the context
+  GEOMAlgo_BuilderArea::Perform();
   //
   PerformShapesToAvoid();
   if (myErrorStatus) {
@@ -165,7 +163,7 @@ static
 }
 //=======================================================================
 //function :PerformShapesToAvoid
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::PerformShapesToAvoid()
 {
@@ -187,11 +185,11 @@ static
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aE=aIt.Value();
       if (!myShapesToAvoid.Contains(aE)) {
-	TopExp::MapShapesAndAncestors(aE, TopAbs_VERTEX, TopAbs_EDGE, aMVE);
+        TopExp::MapShapesAndAncestors(aE, TopAbs_VERTEX, TopAbs_EDGE, aMVE);
       }
-      else {
-	int a=0;
-      }
+//       else {
+//         int a=0;
+//       }
     }
     aNbV=aMVE.Extent();
     //
@@ -202,33 +200,33 @@ static
       TopTools_ListOfShape& aLE=aMVE.ChangeFromKey(aV);
       aNbE=aLE.Extent();
       if (!aNbE) {
-	continue;
+        continue;
       }
       //
       const TopoDS_Edge& aE1=TopoDS::Edge(aLE.First());
       if (aNbE==1) {
-	if (BRep_Tool::Degenerated(aE1)) {
-	  continue;
-	}
-	if (aV.Orientation()==TopAbs_INTERNAL) {
-	  continue;
-	}
-	bFound=Standard_True;
-	myShapesToAvoid.Add(aE1);
+        if (BRep_Tool::Degenerated(aE1)) {
+          continue;
+        }
+        if (aV.Orientation()==TopAbs_INTERNAL) {
+          continue;
+        }
+        bFound=Standard_True;
+        myShapesToAvoid.Add(aE1);
       }
       else if (aNbE==2) {
-	const TopoDS_Edge& aE2=TopoDS::Edge(aLE.Last());
-	if (aE2.IsSame(aE1)) {
-	  TopoDS_Vertex aV1x, aV2x;
-	  //
-	  TopExp::Vertices(aE1, aV1x, aV2x);
-	  if (aV1x.IsSame(aV2x)) {
-	    continue;
-	  }
-	  bFound=Standard_True;
-	  myShapesToAvoid.Add(aE1);
-	  myShapesToAvoid.Add(aE2);
-	}
+        const TopoDS_Edge& aE2=TopoDS::Edge(aLE.Last());
+        if (aE2.IsSame(aE1)) {
+          TopoDS_Vertex aV1x, aV2x;
+          //
+          TopExp::Vertices(aE1, aV1x, aV2x);
+          if (aV1x.IsSame(aV2x)) {
+            continue;
+          }
+          bFound=Standard_True;
+          myShapesToAvoid.Add(aE1);
+          myShapesToAvoid.Add(aE2);
+        }
       }
     }// for (i=1; i<=aNbE; ++i) {
     //
@@ -236,12 +234,12 @@ static
       break;
     }
     //
-  }//while (1) 
+  }//while (1)
   //printf(" EdgesToAvoid=%d, iCnt=%d\n", EdgesToAvoid.Extent(), iCnt);
-}  
+}
 //=======================================================================
 //function : PerformLoops
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::PerformLoops()
 {
@@ -254,11 +252,11 @@ static
   TopTools_IndexedDataMapOfShapeListOfShape aVEMap;
   TopTools_MapOfOrientedShape aMAdded;
   TopoDS_Iterator aItW;
-  BRep_Builder aBB; 
+  BRep_Builder aBB;
   GEOMAlgo_WireEdgeSet aWES;
   GEOMAlgo_WESCorrector aWESCor;
   //
-  // 1. Usual Wires 
+  // 1. Usual Wires
   myLoops.Clear();
   aWES.SetFace(myFace);
   //
@@ -284,7 +282,7 @@ static
   //modified by NIZNHY-PKV Tue Aug  5 15:09:29 2008f
   // Post Treatment
   TopTools_MapOfOrientedShape aMEP;
-  // 
+  //
   // a. collect all edges that are in loops
   aIt.Initialize (myLoops);
   for (; aIt.More(); aIt.Next()) {
@@ -295,7 +293,7 @@ static
       aMEP.Add(aE);
     }
   }
-  // 
+  //
   // b. collect all edges that are to avoid
   aItM.Initialize(myShapesToAvoid);
   for (; aItM.More(); aItM.Next()) {
@@ -342,18 +340,18 @@ static
       //
       TopoDS_Iterator aItE(aE);
       for (; aItE.More()&&bFlag; aItE.Next()) {
-	const TopoDS_Vertex& aV = TopoDS::Vertex(aItE.Value());
-	const TopTools_ListOfShape& aLE=aVEMap.FindFromKey(aV);
-	aIt.Initialize(aLE);
-	for (; aIt.More()&&bFlag; aIt.Next()) { 
-	  const TopoDS_Shape& aEx=aIt.Value();
-	  if (aMAdded.Add(aEx)) {
-	    aBB.Add(aW, aEx);
-	    if(aMAdded.Extent()==aNbEA) {
-	      bFlag=!bFlag;
-	    }
-	  }
-	}//for (; aIt.More(); aIt.Next()) { 
+        const TopoDS_Vertex& aV = TopoDS::Vertex(aItE.Value());
+        const TopTools_ListOfShape& aLE=aVEMap.FindFromKey(aV);
+        aIt.Initialize(aLE);
+        for (; aIt.More()&&bFlag; aIt.Next()) {
+          const TopoDS_Shape& aEx=aIt.Value();
+          if (aMAdded.Add(aEx)) {
+            aBB.Add(aW, aEx);
+            if(aMAdded.Extent()==aNbEA) {
+              bFlag=!bFlag;
+            }
+          }
+        }//for (; aIt.More(); aIt.Next()) {
       }//for (; aItE.More(); aItE.Next()) {
     }//for (; aItW.More(); aItW.Next()) {
     myLoopsInternal.Append(aW);
@@ -361,7 +359,7 @@ static
 }
 //=======================================================================
 //function : PerformAreas
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::PerformAreas()
 {
@@ -369,7 +367,7 @@ static
   //
   Standard_Boolean bIsGrowth, bIsHole;
   Standard_Real aTol;
-  TopTools_ListOfShape aNewFaces, aHoleWires; 
+  TopTools_ListOfShape aNewFaces, aHoleWires;
   TopoDS_Shape anInfinitePointShape;
   TopTools_DataMapOfShapeShape aInOutMap;
   TopTools_DataMapOfShapeListOfShape aMSH;
@@ -400,22 +398,22 @@ static
       aNewFaces.Append (aFace);
     }
     else{
-      // check if a wire is a hole 
+      // check if a wire is a hole
       //XX
       //bIsHole=IsHole(aWire, myFace, myContext);
       bIsHole=GEOMAlgo_BuilderTools::IsHole(aWire, myFace);
       //XX
       if (bIsHole) {
-	aHoleWires.Append(aWire);
-	TopExp::MapShapes(aWire, TopAbs_EDGE, aMHE);
+        aHoleWires.Append(aWire);
+        TopExp::MapShapes(aWire, TopAbs_EDGE, aMHE);
       }
       else {
-	// make a growth face from a wire
-	TopoDS_Face aFace;
-	aBB.MakeFace(aFace, aS, aLoc, aTol);
-	aBB.Add (aFace, aWire);
-	//
-	aNewFaces.Append (aFace);
+        // make a growth face from a wire
+        TopoDS_Face aFace;
+        aBB.MakeFace(aFace, aS, aLoc, aTol);
+        aBB.Add (aFace, aWire);
+        //
+        aNewFaces.Append (aFace);
       }
     }
   }
@@ -449,13 +447,13 @@ static
     if (aInOutMap.IsBound(aHole)){
       const TopoDS_Shape& aF=aInOutMap(aHole);
       if (aMSH.IsBound(aF)) {
-	TopTools_ListOfShape& aLH=aMSH.ChangeFind(aF);
-	aLH.Append(aHole);
+        TopTools_ListOfShape& aLH=aMSH.ChangeFind(aF);
+        aLH.Append(aHole);
       }
       else {
-	TopTools_ListOfShape aLH;
-	aLH.Append(aHole);
-	aMSH.Bind(aF, aLH);
+        TopTools_ListOfShape aLH;
+        aLH.Append(aHole);
+        aMSH.Bind(aF, aLH);
       }
     }
   }// for (; aIt2.More(); aIt2.Next())
@@ -472,20 +470,20 @@ static
       aBB.Add (aF, aHole);
     }
     //
-    // update classifier 
+    // update classifier
     aTol=BRep_Tool::Tolerance(aF);
     IntTools_FClass2d& aClsf=myContext->FClass2d(aF);
     aClsf.Init(aF, aTol);
   }
   //
-  // These aNewFaces are draft faces that 
+  // These aNewFaces are draft faces that
   // do not contain any internal shapes
   //
   myAreas.Append(aNewFaces);
 }
 //=======================================================================
 //function : PerformInternalShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::PerformInternalShapes()
 {
@@ -495,11 +493,11 @@ static
   if (!aNbWI) {// nothing to do
     return;
   }
-  // 
+  //
   //Standard_Real aTol;
   BRep_Builder aBB;
   TopTools_ListIteratorOfListOfShape aIt1, aIt2;
-  TopoDS_Iterator aIt; 
+  TopoDS_Iterator aIt;
   TopTools_MapOfShape aME, aMEP;
   TopTools_MapIteratorOfMapOfShape aItME;
   TopTools_IndexedDataMapOfShapeListOfShape aMVE;
@@ -531,7 +529,7 @@ static
     for (; aItME.More(); aItME.Next()) {
       const TopoDS_Edge& aE=TopoDS::Edge(aItME.Key());
       if (IsInside(aE, aF, myContext)) {
-	aMEP.Add(aE);
+        aMEP.Add(aE);
       }
     }
     //
@@ -561,10 +559,10 @@ static
 }
 //=======================================================================
 //function : MakeInternalWires
-//purpose  : 
+//purpose  :
 //=======================================================================
 void MakeInternalWires(const TopTools_MapOfShape& theME,
-		       TopTools_ListOfShape& theWires)
+                       TopTools_ListOfShape& theWires)
 {
   TopTools_MapIteratorOfMapOfShape aItM;
   TopTools_MapOfShape aAddedMap;
@@ -587,7 +585,7 @@ void MakeInternalWires(const TopTools_MapOfShape& theME,
     //
     // make a new shell
     TopoDS_Wire aW;
-    aBB.MakeWire(aW);    
+    aBB.MakeWire(aW);
     aEE.Orientation(TopAbs_INTERNAL);
     aBB.Add(aW, aEE);
     //
@@ -598,15 +596,15 @@ void MakeInternalWires(const TopTools_MapOfShape& theME,
       TopExp_Explorer aExp(aE, TopAbs_VERTEX);
       for (; aExp.More(); aExp.Next()) {
         const TopoDS_Shape& aV =aExp.Current();
-	const TopTools_ListOfShape& aLE=aMVE.FindFromKey(aV);
-	aItE.Initialize(aLE);
-	for (; aItE.More(); aItE.Next()) { 
-	  TopoDS_Shape aEL=aItE.Value();
-	  if (aAddedMap.Add(aEL)){
-	    aEL.Orientation(TopAbs_INTERNAL);
-	    aBB.Add(aW, aEL);
-	  }
-	}
+        const TopTools_ListOfShape& aLE=aMVE.FindFromKey(aV);
+        aItE.Initialize(aLE);
+        for (; aItE.More(); aItE.Next()) {
+          TopoDS_Shape aEL=aItE.Value();
+          if (aAddedMap.Add(aEL)){
+            aEL.Orientation(TopAbs_INTERNAL);
+            aBB.Add(aW, aEL);
+          }
+        }
       }
     }
     theWires.Append(aW);
@@ -614,15 +612,15 @@ void MakeInternalWires(const TopTools_MapOfShape& theME,
 }
 //=======================================================================
 //function : IsInside
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsInside(const TopoDS_Shape& theHole,
-			  const TopoDS_Shape& theF2,
-			  IntTools_PContext& theContext)
+                          const TopoDS_Shape& theF2,
+                          const Handle(IntTools_Context)& theContext)
 {
   Standard_Boolean bRet;
   Standard_Real aT, aU, aV;
-  
+
   TopAbs_State aState;
   TopExp_Explorer aExp;
   TopTools_IndexedMapOfShape aME2;
@@ -655,21 +653,21 @@ Standard_Boolean IsInside(const TopoDS_Shape& theHole,
 
 //=======================================================================
 //function : IsGrowthWire
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsGrowthWire(const TopoDS_Shape& theWire,
-			      const TopTools_IndexedMapOfShape& theMHE)
+                              const TopTools_IndexedMapOfShape& theMHE)
 {
   Standard_Boolean bRet;
   TopoDS_Iterator aIt;
-  // 
+  //
   bRet=Standard_False;
   if (theMHE.Extent()) {
     aIt.Initialize(theWire);
     for(; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aE=aIt.Value();
       if (theMHE.Contains(aE)) {
-	return !bRet;
+        return !bRet;
       }
     }
   }
@@ -685,11 +683,11 @@ Standard_Boolean IsGrowthWire(const TopoDS_Shape& theWire,
 /*
 //=======================================================================
 //function : IsInside
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsInside(const TopoDS_Shape& theHole,
-			  const TopoDS_Shape& theF2,
-			  IntTools_PContext& theContext)
+                          const TopoDS_Shape& theF2,
+                          IntTools_PContext& theContext)
 {
   Standard_Real aT, aU, aV;
   TopExp_Explorer aExp;

@@ -1,18 +1,17 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
+// License as published by the Free Software Foundation; either
 // version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
@@ -70,24 +69,31 @@ Standard_Integer GEOMImpl_3DSketcherDriver::Execute(TFunction_Logbook& log) cons
   TopoDS_Shape aShape;
 
   Handle(TColStd_HArray1OfReal) aCoordsArray = aCI.GetCoordinates();
-
-  BRepBuilderAPI_MakePolygon aMakePoly;
   int anArrayLength = aCoordsArray->Length();
-  double x, y, z;
-  gp_Pnt aPnt;
-  for (int i = 0; i <=(anArrayLength - 3); i+=3) {
-    x = aCoordsArray->Value(i+1);
-    y = aCoordsArray->Value(i+2);
-    z = aCoordsArray->Value(i+3);
-    aPnt = gp_Pnt(x, y, z);
-    aMakePoly.Add(aPnt);
+
+  std::list<gp_Pnt> points;
+  
+  for (int i = 0; i <= (anArrayLength-3); i += 3) {
+    gp_Pnt aPnt = gp_Pnt(aCoordsArray->Value(i+1), aCoordsArray->Value(i+2), aCoordsArray->Value(i+3));
+    if (points.empty() || aPnt.Distance(points.back()) > gp::Resolution())
+      points.push_back(aPnt);
   }
-  if ( anArrayLength == 3) { // Only Start Point
-    BRepBuilderAPI_MakeVertex mkVertex (aPnt);
+
+  if ( points.size() == 1) { // Only Start Point
+    BRepBuilderAPI_MakeVertex mkVertex (points.back());
     aShape = mkVertex.Shape();
   }
-  else { // Make Wire
-    if (aCoordsArray->Value(1) == x && aCoordsArray->Value(2) == y && aCoordsArray->Value(3) == z)
+  else if ( points.size() > 1) { // Make Wire
+    BRepBuilderAPI_MakePolygon aMakePoly;
+    std::list<gp_Pnt>::iterator it;
+    for (it = points.begin(); it != points.end(); ++it) {
+      aMakePoly.Add(*it);
+    }
+
+    if (points.size() > 2 && 
+	points.back().X() == points.front().X() && 
+	points.back().Y() == points.front().Y() && 
+	points.back().Z() == points.front().Z())
       aMakePoly.Close();
     
     if (aMakePoly.IsDone())
@@ -119,10 +125,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_3DSketcherDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_3DSketcherDriver",
-			                                 sizeof(GEOMImpl_3DSketcherDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_3DSketcherDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

@@ -1,39 +1,50 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : GEOMToolsGUI_1.cxx
-// Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : GEOMToolsGUI_1.cxx
+//  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
+
 #include <PyConsole_Console.h>
 
 #include "GEOMToolsGUI.h"
 #include "GEOMToolsGUI_TransparencyDlg.h"
 #include "GEOMToolsGUI_NbIsosDlg.h"
+#include "GEOMToolsGUI_DeflectionDlg.h"
+#include "GEOMToolsGUI_MarkerDlg.h"
+#include "GEOMToolsGUI_PublishDlg.h"
+#include "GEOMToolsGUI_MaterialPropertiesDlg.h"
+#include "GEOMToolsGUI_LineWidthDlg.h"
+#include "Material_Model.h"
 
 #include <GeometryGUI.h>
+#include <GeometryGUI_Operations.h>
+#include <GEOM_Constants.h>
 #include <GEOM_Displayer.h>
 
 #include <GEOMBase.h>
 #include <GEOM_Actor.h>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
@@ -53,6 +64,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_OverrideCursor.h>
 #include <SUIT_MessageBox.h>
+#include <SUIT_Tools.h>
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
@@ -70,124 +82,66 @@
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
+#include <Graphic3d_AspectLine3d.hxx>
+#include <AIS_ListIteratorOfListOfInteractive.hxx>
+#include <AIS_ListOfInteractive.hxx>
+
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+#include <TColStd_HArray1OfByte.hxx>
+#else
+#include <Graphic3d_HArray1OfBytes.hxx>
+#endif
 
 // QT Includes
+#include <QAction>
 #include <QColorDialog>
+#include <QInputDialog>
+#include <QFileDialog>
 #include <QList>
+
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QSpinBox>
+#include <QPushButton>
+#include <QKeyEvent>
 
 // VTK includes
 #include <vtkRenderer.h>
 
-void GEOMToolsGUI::OnSettingsColor()
-{
-  SUIT_Session* sess = SUIT_Session::session();
-  SUIT_ResourceMgr* resMgr = sess->resourceMgr();
-  SUIT_Desktop* desk = sess->activeApplication()->desktop();
-
-  QColor anInitColor = resMgr->colorValue( "Geometry", "SettingsShadingColor", QColor( "yellow" ) );
-
-  QColor aDialogColor = QColorDialog::getColor(anInitColor, desk );
-  if( aDialogColor.isValid() )
-  {
-    QString type = desk->activeWindow()->getViewManager()->getType();
-    if( type != OCCViewer_Viewer::Type() && type != SVTK_Viewer::Type() )
-      MESSAGE("Settings Color is not supported for current Viewer");
-
-    resMgr->setValue( "Geometry", "SettingsShadingColor", aDialogColor );
-  }
-}
-
-void GEOMToolsGUI::OnRename()
-{
-  SALOME_ListIO selected;
-  SalomeApp_Application* app =
-    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( app ) {
-    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-    if ( aSelMgr && appStudy ) {
-      aSelMgr->selectedObjects( selected );
-      if ( !selected.IsEmpty() ) {
-	_PTR(Study) aStudy = appStudy->studyDS();
-
-	bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
-	if ( aLocked ) {
-	  SUIT_MessageBox::warning ( app->desktop(),
-				     QObject::tr("WRN_WARNING"),
-				     QObject::tr("WRN_STUDY_LOCKED") );
-	  return;
-	}
-
-        bool isAny = false; // is there any appropriate object selected
-	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-	  Handle(SALOME_InteractiveObject) IObject = It.Value();
-
-	  _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
-	  _PTR(GenericAttribute) anAttr;
-	  if ( obj ) {
-	    if ( obj->FindAttribute(anAttr, "AttributeName") ) {
-	      _PTR(AttributeName) aName (anAttr);
-
-              GEOM::GEOM_Object_var anObj =
-                GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
-              if (!CORBA::is_nil(anObj)) {
-                isAny = true;
-                QString newName = LightApp_NameDlg::getName( app->desktop(), aName->Value().c_str() );
-                if (!newName.isEmpty()) {
-                  aName->SetValue( newName.toLatin1().data() ); // rename the SObject
-                  IObject->setName( newName.toLatin1().data() );// rename the InteractiveObject
-                  anObj->SetName( newName.toLatin1().data() );  // Rename the corresponding GEOM_Object
-                  (dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
-                }
-              } // if ( anObj )
-	    } // if ( name attribute )
-	  } // if ( obj )
-	} // iterator
-
-        if (!isAny) {
-	  SUIT_MessageBox::warning( app->desktop(),
-				    QObject::tr("WRN_WARNING"),
-				    QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
-	  return;
-        }
-      }
-    }
-  }
-  
-  app->updateActions(); //SRN: To update a Save button in the toolbar
-}
-
 void GEOMToolsGUI::OnCheckGeometry()
 {
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >(SUIT_Session::session()->activeApplication());
   PyConsole_Console* pyConsole = app->pythonConsole();
 
-  if(pyConsole)
+  if (pyConsole)
     pyConsole->exec("from GEOM_usinggeom import *");
 }
 
 void GEOMToolsGUI::OnAutoColor()
 {
   SALOME_ListIO selected;
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if( !app )
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >(SUIT_Session::session()->activeApplication());
+  if (!app)
     return;
 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if( !aSelMgr || !appStudy )
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  if (!aSelMgr || !appStudy)
     return;
 
-  aSelMgr->selectedObjects( selected );
-  if( selected.IsEmpty() )
+  aSelMgr->selectedObjects(selected);
+  if (selected.IsEmpty())
     return;
 
   Handle(SALOME_InteractiveObject) anIObject = selected.First();
 
   _PTR(Study) aStudy = appStudy->studyDS();
-  _PTR(SObject) aMainSObject( aStudy->FindObjectID( anIObject->getEntry() ) );
+  _PTR(SObject) aMainSObject(aStudy->FindObjectID(anIObject->getEntry()));
   GEOM::GEOM_Object_var aMainObject = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aMainSObject));
-  if( CORBA::is_nil( aMainObject ) )
+  if (CORBA::is_nil(aMainObject))
     return;
 
   aMainObject->SetAutoColor( true );
@@ -224,11 +178,11 @@ void GEOMToolsGUI::OnAutoColor()
     {
       SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
       if ( !vtkVW )
-	return;
+        return;
       SVTK_View* aView = vtkVW->getView();
       SUIT_OverrideCursor();
       for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
-	aView->SetColor( It.Value(), c );
+        aView->SetColor( It.Value(), c );
     }
     else if ( isOCC )
     {
@@ -237,16 +191,16 @@ void GEOMToolsGUI::OnAutoColor()
 
       SOCC_Prs* anOCCPrs = dynamic_cast<SOCC_Prs*>( aPrs );
       if( !anOCCPrs )
-	continue;
+        continue;
 
       AIS_ListOfInteractive aList;
       anOCCPrs->GetObjects( aList );
       if( !aList.Extent() )
-	continue;
+        continue;
 
       Handle(AIS_InteractiveObject) io = aList.First();
       if( io.IsNull() )
-	continue;
+        continue;
 
       Quantity_Color aQuanColor( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
 
@@ -257,12 +211,29 @@ void GEOMToolsGUI::OnAutoColor()
       Standard_Real aCurScale;
       Aspect_TypeOfMarker aCurTypeOfMarker;
       aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
-      aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aQuanColor, aCurScale) );
+      if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
+        aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aQuanColor, aCurScale) );
+      }
+      else {
+        Standard_Integer aWidth, aHeight;
+        aCurPointAspect->GetTextureSize( aWidth, aHeight );
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+        Handle(TColStd_HArray1OfByte) aTexture = aCurPointAspect->GetTexture();
+#else
+        Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+#endif
+
+        aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aQuanColor, 1, aWidth, aHeight, aTexture ) );
+      }
       ic->SetLocalAttributes( io, aCurDrawer );
 
       io->SetColor( aQuanColor );
-      if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-	Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aQuanColor );
+      if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) ) {
+	Handle(GEOM_AISShape) aGAISShape = Handle(GEOM_AISShape)::DownCast( io );
+        aGAISShape->SetShadingColor( aQuanColor );
+	aGAISShape->storeBoundaryColors();
+      }
 
       io->Redisplay( Standard_True );
     }
@@ -309,75 +280,176 @@ void GEOMToolsGUI::OnColor()
     if ( aSelMgr ) {
       aSelMgr->selectedObjects( selected );
       if ( !selected.IsEmpty() ) {
-	SUIT_ViewWindow* window = app->desktop()->activeWindow();
-	bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-	bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
-	if ( isVTK ) {
-	  SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
-	  if ( !vtkVW )
-	    return;
-	  SVTK_View* aView = vtkVW->getView();
-	  QColor initcolor = aView->GetColor( selected.First()  );
-	  QColor c = QColorDialog::getColor( initcolor, app->desktop() );
-	  if ( c.isValid() ) {
-	    SUIT_OverrideCursor();
-	    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-	      aView->SetColor( It.Value(), c );
-	    }
-	  }
-	} // if ( isVTK )
-	else if ( isOCC ) {
-	  Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
-	  if ( !io.IsNull() ) {
-	    Quantity_Color aColor;
-	    io->Color( aColor );
-	    QColor initcolor( (int)( aColor.Red() * 255.0 ), (int)( aColor.Green() * 255.0 ), (int)( aColor.Blue() * 255.0 ) );
-	    QColor c =  QColorDialog::getColor( initcolor, app->desktop() );
-	    if ( c.isValid() ) {
-	      SUIT_OverrideCursor();
-	      aColor = Quantity_Color( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
-	      for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-		io = GEOMBase::GetAIS( It.Value(), true );
-		if ( !io.IsNull() ) {
-		  // Set color for a point
-		  OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
-		  Handle (AIS_InteractiveContext) ic = vm->getAISContext();
-		  Handle(AIS_Drawer) aCurDrawer = io->Attributes();
-		  Handle(Prs3d_PointAspect) aCurPointAspect =  aCurDrawer->PointAspect();
-		  Quantity_Color aCurColor;
-		  Standard_Real aCurScale;
-		  Aspect_TypeOfMarker aCurTypeOfMarker;
-		  aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
-		  aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aColor, aCurScale) );
-		  ic->SetLocalAttributes(io, aCurDrawer);
+        SUIT_ViewWindow* window = app->desktop()->activeWindow();
+        bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+        bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+        int mgrId = window->getViewManager()->getGlobalId();
+        if ( isVTK ) {
+          SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+          if ( !vtkVW )
+            return;
+          SVTK_View* aView = vtkVW->getView();
+          QColor initcolor = aView->GetColor( selected.First()  );
+          QColor c = QColorDialog::getColor( initcolor, app->desktop() );
+          if ( c.isValid() ) {
+            SUIT_OverrideCursor();
+            for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+              QString matProp;
+              matProp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, matProp).toString();
+              Material_Model material;
+              material.fromProperties( matProp );
+              if ( !material.isPhysical() ) {
+                aView->SetColor( It.Value(), c );
+                appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
+              }
+              // store color to GEOM_Object
+              _PTR(Study) aStudy = appStudy->studyDS();
+              _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
+              GEOM::GEOM_Object_var anObject =
+              GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
+              SALOMEDS::Color aSColor;
+              aSColor.R = (double)c.red() / 255.0;
+              aSColor.G = (double)c.green() / 255.0;
+              aSColor.B = (double)c.blue() / 255.0;
+              anObject->SetColor( aSColor );
+              anObject->SetAutoColor( false );		 
+            }
+            GeometryGUI::Modified();
+          }
+        } // if ( isVTK )
+        else if ( isOCC ) {
+	        Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
+          if ( !io.IsNull() ) {
+            Quantity_Color aColor;
+            io->Color( aColor ); 
+            QColor ic = QColor((int )( aColor.Red() * 255.0 ),
+			      (int)( aColor.Green() * 255.0 ),
+			      (int)( aColor.Blue() * 255.0 ));	    
+
+			      QVariant v = appStudy->getObjectProperty(mgrId,selected.First()->getEntry(), COLOR_PROP, ic);
+
+            QColor initcolor = v.value<QColor>();
+            QColor c =  QColorDialog::getColor( initcolor, app->desktop() );
+            if ( c.isValid() ) {
+              SUIT_OverrideCursor();
+              aColor = Quantity_Color( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
+              OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
+              Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+              for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+                QString matProp;
+                matProp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, matProp).toString();
+		Material_Model material;
+		material.fromProperties( matProp );
+                io = GEOMBase::GetAIS( It.Value(), true );
+                if ( !io.IsNull()  && !material.isPhysical() ) { // change color only for shapes with not physical type of material
+                  
+                  if ( io->IsKind( STANDARD_TYPE(AIS_Shape) ) ) {
+                    TopoDS_Shape theShape = Handle(AIS_Shape)::DownCast( io )->Shape();
+                    bool onlyVertex = (theShape.ShapeType() == TopAbs_VERTEX || GEOM_Displayer::isCompoundOfVertices( theShape ));
+                    if (onlyVertex) {
+                      // Set color for a point
+
+                      Handle(AIS_Drawer) aCurDrawer = io->Attributes();
+                      Handle(Prs3d_PointAspect) aCurPointAspect =  aCurDrawer->PointAspect();
+                      Quantity_Color aCurColor;
+                      Standard_Real aCurScale;
+                      Aspect_TypeOfMarker aCurTypeOfMarker;
+                      aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
+                      if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
+                        aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aCurTypeOfMarker, aColor, aCurScale));
+                      }
+                      else {
+                        Standard_Integer aWidth, aHeight;
+                        aCurPointAspect->GetTextureSize( aWidth, aHeight );
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+                        Handle(TColStd_HArray1OfByte) aTexture = aCurPointAspect->GetTexture();
+#else
+                        Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+#endif
+
+                        aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aColor, 1, aWidth, aHeight, aTexture));
+                      }
+                      ic->SetLocalAttributes(io, aCurDrawer, Standard_False);
+                    }
+                  }
+
+                  io->SetColor( aColor );
+                  if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) ) {
+                    Handle(GEOM_AISShape) aGAISShape = Handle(GEOM_AISShape)::DownCast( io );
+                    aGAISShape->SetShadingColor( aColor );
+                    aGAISShape->storeBoundaryColors();
+                  }
+
+                  appStudy->setObjectProperty(mgrId,It.Value()->getEntry(), COLOR_PROP, c);
 		  
-		  io->SetColor( aColor );
-		  if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-		    Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aColor );
+                  io->Redisplay( Standard_True );
 
-		  io->Redisplay( Standard_True );
+                  // store color to GEOM_Object
+                  _PTR(Study) aStudy = appStudy->studyDS();
+                  _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
+                  GEOM::GEOM_Object_var anObject =
+                    GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
 
-		  // store color to GEOM_Object
-		  _PTR(Study) aStudy = appStudy->studyDS();
-		  _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
-		  GEOM::GEOM_Object_var anObject =
-		    GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
 
-		  SALOMEDS::Color aSColor;
-		  aSColor.R = (double)c.red() / 255.0;
-		  aSColor.G = (double)c.green() / 255.0;
-		  aSColor.B = (double)c.blue() / 255.0;
-		  anObject->SetColor( aSColor );
-		  anObject->SetAutoColor( false );
-		}
-	      }
-	    } // if c.isValid()
-	  } // first IO is not null
-	} // if ( isOCC )
+                  SALOMEDS::Color aSColor;
+                  aSColor.R = (double)c.red() / 255.0;
+                  aSColor.G = (double)c.green() / 255.0;
+                  aSColor.B = (double)c.blue() / 255.0;
+                  anObject->SetColor( aSColor );
+                  anObject->SetAutoColor( false );		 
+                }
+              } // for
+              ic->UpdateCurrentViewer();
+              GeometryGUI::Modified();
+            } // if c.isValid()
+          } // first IO is not null
+        } // if ( isOCC )
       } // if ( selection not empty )
     }
   }
-  
+
+  app->updateActions(); //SRN: To update a Save button in the toolbar
+}
+
+void GEOMToolsGUI::OnTexture()
+{
+  SALOME_ListIO selected;
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( app && appStudy ) {
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if ( aSelMgr ) {
+      aSelMgr->selectedObjects( selected );
+      if ( !selected.IsEmpty() ) {
+        SUIT_ViewWindow* window = app->desktop()->activeWindow();
+        bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+        if ( isOCC ) {
+          QString aTexture = QFileDialog::getOpenFileName(window,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_TEXTURE_FILES"));
+          if( !aTexture.isEmpty() )
+          {
+            SUIT_OverrideCursor();
+            OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
+            Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+            Handle(AIS_InteractiveObject) io ;
+            for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+              io = GEOMBase::GetAIS( It.Value(), true );
+              if ( !io.IsNull() ) {
+                if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
+                  Handle(GEOM_AISShape)::DownCast( io )->SetTextureFileName(TCollection_AsciiString(aTexture.toStdString().c_str()));
+                io->Redisplay( Standard_True );
+              } // if ( !io.IsNull() )
+            } // for
+            ic->UpdateCurrentViewer();
+            GeometryGUI::Modified();
+            GeometryGUI* myGeomGUI = getGeometryGUI();
+            myGeomGUI->OnGUIEvent(GEOMOp::OpTexture);
+          } // if ( !selFile.isEmpty() )
+        } // if ( isOCC )
+      } // if ( selection not empty )
+    }
+  }
+
   app->updateActions(); //SRN: To update a Save button in the toolbar
 }
 
@@ -387,10 +459,93 @@ void GEOMToolsGUI::OnTransparency()
   dlg.exec();
 }
 
-void GEOMToolsGUI::OnNbIsos()
+void GEOMToolsGUI::OnChangeTransparency( bool increase )
 {
-  SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-  
+ SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app )
+    return;
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if ( !aSelMgr )
+    return;
+  SALOME_ListIO selected;
+  aSelMgr->selectedObjects( selected );
+  if ( selected.IsEmpty() )
+    return;
+
+  Handle(SALOME_InteractiveObject) FirstIOS =  selected.First();
+  if ( FirstIOS.IsNull() )
+    return;
+
+  // Delta
+  float delta = 0.1; // VSR: 23/11/2010 (transparency value <= 0.05 is ignored)
+  if ( !increase )
+    delta *= -1;
+        
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();
+  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+
+  if ( isVTK ) {
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+    if ( !vtkVW )
+      return;
+    SVTK_View* aView = vtkVW->getView();
+   
+    float transp = aView->GetTransparency(FirstIOS);
+    
+    // Compute new transparency value
+    transp = transp + delta;
+    if ( transp < 0 )
+      transp = 0;
+    else if ( transp > 1 )
+      transp = 1;
+
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      aView->SetTransparency( It.Value(), transp );
+    }
+    aView->Repaint();
+    GeometryGUI::Modified();
+  } // if ( isVTK )
+        
+  else if ( isOCC ) {
+    GEOMBase* gb = new GEOMBase();
+    Handle(GEOM_AISShape) aisShape;
+   
+    aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS, true );
+    if( aisShape.IsNull() )
+      return;
+    float transp = aisShape->Transparency();
+
+    // Compute new transparency value
+    transp = transp + delta;
+    if ( transp < 0 )
+      transp = 0;
+    else if ( transp > 1 )
+      transp = 1;
+
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+    if ( !vm )
+      return;
+    Handle(AIS_InteractiveContext) ic = vm->getAISContext();
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), true );
+      if ( !aisShape.IsNull() ) {
+        ic->SetTransparency( aisShape, transp, false );
+        ic->Redisplay( aisShape, Standard_False, Standard_True );
+      }
+    } // for...
+    ic->UpdateCurrentViewer();
+    GeometryGUI::Modified();
+  } // if ( isOCC )
+}
+
+void GEOMToolsGUI::OnNbIsos( ActionType actionType )
+{
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();
+
   bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 
@@ -402,40 +557,72 @@ void GEOMToolsGUI::OnNbIsos()
     ic->InitCurrent();
     if ( ic->MoreCurrent() ) {
       Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+      CurObject->restoreIsoNumbers();
       Handle(AIS_Drawer)    CurDrawer = CurObject->Attributes();
-      
+
       int UIso = CurDrawer->UIsoAspect()->Number();
       int VIso = CurDrawer->VIsoAspect()->Number();
-      
-      GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
-	new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
-      
-      NbIsosDlg->setU( UIso );
-      NbIsosDlg->setV( VIso );
-      
-      if ( NbIsosDlg->exec() ) {
-	SUIT_OverrideCursor();
-	for(; ic->MoreCurrent(); ic->NextCurrent()) {
-	  CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
-	  Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
-	  
-	  int nbUIso = NbIsosDlg->getU();
-	  int nbVIso = NbIsosDlg->getV();
-	  
-	  CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbUIso) );
-	  CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbVIso) );
-	  
-	  ic->SetLocalAttributes(CurObject, CurDrawer);
-	  ic->Redisplay(CurObject);
-	}
+
+      int newNbUIso = -1;
+      int newNbVIso = -1;
+
+      if ( actionType == SHOWDLG ) {
+        GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
+          new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
+
+        NbIsosDlg->setU( UIso );
+        NbIsosDlg->setV( VIso );
+
+        if ( NbIsosDlg->exec() ) {
+          SUIT_OverrideCursor();
+          
+          newNbUIso = NbIsosDlg->getU();
+          newNbVIso = NbIsosDlg->getV();
+        } else //Cancel case
+          return;
+      }
+      else if ( actionType == INCR || actionType == DECR ) {
+        int delta = 1;
+        if (actionType == DECR)
+          delta = -1;
+        
+        newNbUIso = UIso + delta;
+        newNbVIso = VIso + delta;
+
+        if ( newNbUIso < 0 || newNbVIso < 0 || newNbUIso > 99 || newNbVIso > 99 )
+          return;
+      }
+
+      for(; ic->MoreCurrent(); ic->NextCurrent()) {
+        int aMgrId = window->getViewManager()->getGlobalId();
+        CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+
+        Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
+
+	QVariant v = aStudy->getObjectProperty( aMgrId, CurObject->getIO()->getEntry(), EDGE_WIDTH_PROP , QVariant() );
+
+	int width = v.isValid() ? v.toInt() : 1;
+
+        CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, width , newNbUIso) );
+        CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, width , newNbVIso) );
+
+	CurObject->storeIsoNumbers();
+        
+        ic->SetLocalAttributes(CurObject, CurDrawer);
+        ic->Redisplay(CurObject);
+
+        QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
+        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_PROP, anIsos);
       }
     }
+    GeometryGUI::Modified();
   }
   else if(isVTK){ // if is VTKViewer
     //
     // Warning. It's works incorrect. must be recheked.
     //
-    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >
+      ( SUIT_Session::session()->activeApplication() );
     if ( !app )
       return;
     LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
@@ -445,7 +632,7 @@ void GEOMToolsGUI::OnNbIsos()
     aSelMgr->selectedObjects( selected );
     if ( selected.IsEmpty() )
       return;
-    
+
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( !vtkVW )
       return;
@@ -453,147 +640,197 @@ void GEOMToolsGUI::OnNbIsos()
     SALOME_View* view = GEOM_Displayer::GetActiveView();
 
     vtkActorCollection* aCollection = vtkActorCollection::New();
-    
+
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       Handle(SALOME_InteractiveObject) anIObject = It.Value();
-      SALOME_Prs* aPrs = view->CreatePrs( anIObject->getEntry() ); 
+      SALOME_Prs* aPrs = view->CreatePrs( anIObject->getEntry() );
       SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( aPrs );
       if ( vtkPrs ) {
-	vtkActorCollection* anActors = vtkPrs->GetObjects();
-	anActors->InitTraversal();
-	vtkActor* anAct = anActors->GetNextActor();
-	aCollection->AddItem(anAct);
+        vtkActorCollection* anActors = vtkPrs->GetObjects();
+        anActors->InitTraversal();
+        vtkActor* anAct = anActors->GetNextActor();
+        aCollection->AddItem(anAct);
       }
     }
-  
+
     if(aCollection)
       aCollection->InitTraversal();
     else
       return;
-   
+
     int UIso = 0;
     int VIso = 0;
-    
+
     vtkActor* anAct = aCollection->GetNextActor();
-    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct))
+    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
+      anActor->RestoreIsoNumbers();
       anActor->GetNbIsos(UIso,VIso);
+    }
     else
       return;
     
-    GEOMToolsGUI_NbIsosDlg* NbIsosDlg =
-      new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
+    int newNbUIso = -1;
+    int newNbVIso = -1;
 
-    NbIsosDlg->setU( UIso );
-    NbIsosDlg->setV( VIso );
+    if ( actionType == SHOWDLG ) {
+      GEOMToolsGUI_NbIsosDlg* NbIsosDlg =
+        new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
 
-    if ( NbIsosDlg->exec() ) {
-      SUIT_OverrideCursor();
-      
-      while( anAct!=NULL ) {
-	if(GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)){
-	  // There are no casting to needed actor.
-	  UIso = NbIsosDlg->getU();
-	  VIso = NbIsosDlg->getV();
-	  int aIsos[2]={UIso,VIso};
-	  anActor->SetNbIsos(aIsos);
-	}
-	anAct = aCollection->GetNextActor();
-      }
+      NbIsosDlg->setU( UIso );
+      NbIsosDlg->setV( VIso );
+
+      if ( NbIsosDlg->exec() ) {
+        SUIT_OverrideCursor();
+
+        newNbUIso = NbIsosDlg->getU();
+        newNbVIso = NbIsosDlg->getV();
+      } else 
+        return; //Cancel case 
     }
+    else if ( actionType == INCR || actionType == DECR ) {
+      int delta = 1;
+      if (actionType == DECR)
+        delta = -1;
+      
+      newNbUIso = UIso + delta;
+      newNbVIso = VIso + delta;
+      
+      if ( newNbUIso < 0 || newNbVIso < 0 || newNbUIso > 99 || newNbVIso > 99 )
+        return;
+    } 
+    
+    while( anAct!=NULL ) {
+      if(GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)){
+        // There are no casting to needed actor.
+        int aIsos[2]={newNbUIso,newNbVIso};
+        anActor->SetNbIsos(aIsos);
+	anActor->StoreIsoNumbers();
+
+        QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
+        int aMgrId = window->getViewManager()->getGlobalId();
+        aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), ISOS_PROP, anIsos);
+      }
+      anAct = aCollection->GetNextActor();
+    }
+    view->Repaint();
+    GeometryGUI::Modified();
   } // end vtkviewer
 }
 
-void GEOMToolsGUI::OnOpen()
+void GEOMToolsGUI::OnDeflection()
 {
-/*
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
-  _PTR(Study) aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
+  SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
 
-  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
-  Handle(SALOME_InteractiveObject) anIObject;
-  for(;It.More();It.Next()) {
-    anIObject = It.Value();
-    _PTR(SObject) obj ( aStudy->FindObjectID(anIObject->getEntry()) );
-    _PTR(AttributePersistentRef) aPersist;
-    _PTR(AttributeIOR) anIOR;
-    if(obj) {
-      // this SObject may be GEOM module root SObject
-      _PTR(ChildIterator) anIter ( aStudy->NewChildIterator() );
-      _PTR(GenericAttribute) anAttr;
-      bool useSubItems = false;
-      while (anIter->More() && !useSubItems) {
-	_PTR(SObject) subobj ( anIter->Value() );
-	if (subobj->FindAttribute(anAttr, "AttributePersistentRef")) {
-	  useSubItems = true;
-	  obj =  subobj;
-	}
-	else
-	  anIter->Next();
-      }
-      obj->FindAttribute(anAttr, "AttributePersistentRef");
 
-      while(useSubItems?anIter->More():!anAttr->_is_nil()) {
-	if(!obj->FindAttribute(anAttr, "AttributeIOR") &&
-	   obj->FindAttribute(anAttr, "AttributePersistentRef")) {
-	  _PTR(SComponent) FComp ( obj->GetFatherComponent() );
-	  if (FComp) {
-	    if (FComp->FindAttribute(anAttr, "AttributeName")) {
-	      _PTR(AttributeName) aName ( anAttr );
-	      QString compName = QAD_Application::getDesktop()->getComponentName(aName->Value().c_str());
-	      //		    parent->loadComponentData(parent->getComponentName(aName->Value()));
-	      Engines::Component_var comp ;
-	      if ( compName.compare("SUPERV") == 0 ) {
-		comp = QAD_Application::getDesktop()->getEngine( "SuperVisionContainer", compName) ;
-	      }
-	      else {
-		comp = QAD_Application::getDesktop()->getEngine( "FactoryServer", compName);
-		if ( comp->_is_nil() )
-		  comp = QAD_Application::getDesktop()->getEngine( "FactoryServerPy", compName);
-	      }
+  bool isOCC = (window && window->getViewManager()->getType() == OCCViewer_Viewer::Type());
+  bool isVTK = (window && window->getViewManager()->getType() == SVTK_Viewer::Type());
+  int mgrId = window->getViewManager()->getGlobalId();
 
-	      if (!CORBA::is_nil(comp)) {
-		SALOMEDS::Driver_var   driver = SALOMEDS::Driver::_narrow(comp);
-		if (!CORBA::is_nil(driver)) {
-		  SALOMEDS::StudyBuilder_var  B = dynamic_cast<SALOMEDS_Study*>(aStudy.get())->GetStudy()->NewBuilder();
-		  if (!CORBA::is_nil(B)) {
-		    B->LoadWith(FComp,driver);
-		  } else {
-		    return;
-		  }
-		}
-		else {
-		  MESSAGE("loadComponentData(): Driver is null");
-		  return;
-		}
-	      }
-	      else {
-		MESSAGE("loadComponentData(): Engine is null");
-		return;
-	      }
-		// 		// load
-		// 		Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer","GEOM");
-		// 		if (!CORBA::is_nil(comp)) {
-		// 		  SALOMEDS::Driver_var driver = SALOMEDS::Driver::_narrow(comp);
-		// 		  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
-		// 		  SALOMEDS::SComponent_var SC = aStudy->FindComponent("GEOM");
-		// 		  if (!CORBA::is_nil(SC))
-		// 		    aStudyBuilder->LoadWith(SC,driver);
-	    }
-	  }
-	  else {
-	    MESSAGE("Component is null");
-	  }
-	}
-	if(useSubItems) {
-	  anIter->Next();
-	  obj.reset( anIter->Value() );
-	}
-	else
-	  anAttr = NULL;
+  if (isOCC) { // if is OCCViewer
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>(window->getViewManager()->getViewModel());
+    Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+
+    ic->InitCurrent();
+    if (ic->MoreCurrent()) {
+      Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+
+      Standard_Real aDC, aPrevDC;
+      Standard_Boolean isOwnDC = CurObject->OwnDeviationCoefficient(aDC, aPrevDC);
+      if (!isOwnDC)
+        aDC = ic->DeviationCoefficient();
+
+      GEOMToolsGUI_DeflectionDlg * DeflectionDlg = new GEOMToolsGUI_DeflectionDlg
+        (SUIT_Session::session()->activeApplication()->desktop());
+      DeflectionDlg->setTheDC(aDC);
+      double aNewDC = 0.0;
+      bool ok = false;
+      while (!ok) {
+        if (DeflectionDlg->exec()) {
+          SUIT_OverrideCursor();
+          aNewDC = DeflectionDlg->getTheDC();
+          ok = (1e-07 <= aNewDC && aNewDC <= 1.0); // spinbox can return zero
+          if (ok) {
+            for (; ic->MoreCurrent(); ic->NextCurrent()) {
+              CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+              ic->SetDeviationCoefficient(CurObject, aNewDC, Standard_True);
+              ic->Redisplay(CurObject);
+              appStudy->setObjectProperty(mgrId,CurObject->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aNewDC);
+            }
+          }
+        }
+        else {
+          ok = true;
+        }
       }
     }
+    GeometryGUI::Modified();
   }
-*/
+  else if (isVTK) { // if is VTKViewer
+    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>
+      (SUIT_Session::session()->activeApplication());
+    if (!app)
+      return;
+
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if (!aSelMgr)
+      return;
+
+    SALOME_ListIO selected;
+    aSelMgr->selectedObjects(selected);
+    if (selected.IsEmpty())
+      return;
+
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>(window);
+    if (!vtkVW)
+      return;
+
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+
+    vtkActorCollection* aCollection = vtkActorCollection::New();
+
+    for (SALOME_ListIteratorOfListIO It (selected); It.More(); It.Next()) {
+      Handle(SALOME_InteractiveObject) anIObject = It.Value();
+      SALOME_Prs* aPrs = view->CreatePrs(anIObject->getEntry());
+      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>(aPrs);
+      if (vtkPrs) {
+        vtkActorCollection* anActors = vtkPrs->GetObjects();
+        anActors->InitTraversal();
+        vtkActor* anAct = anActors->GetNextActor();
+        aCollection->AddItem(anAct);
+      }
+    }
+
+    if (aCollection)
+      aCollection->InitTraversal();
+    else
+      return;
+
+    double aDC = 0.;
+
+    vtkActor* anAct = aCollection->GetNextActor();
+    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct))
+      aDC = anActor->GetDeflection();
+    else
+      return;
+
+    GEOMToolsGUI_DeflectionDlg* DeflectionDlg = new GEOMToolsGUI_DeflectionDlg
+      (SUIT_Session::session()->activeApplication()->desktop());
+    DeflectionDlg->setTheDC(aDC);
+    if (DeflectionDlg->exec()) {
+      SUIT_OverrideCursor();
+      aDC = DeflectionDlg->getTheDC();
+      while (anAct != NULL) {
+        if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
+          // There are no casting to needed actor.
+          anActor->SetDeflection(aDC);
+          appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aDC);
+        }
+        anAct = aCollection->GetNextActor();
+      }
+    }
+    GeometryGUI::Modified();
+  } // end vtkviewer
 }
 
 void GEOMToolsGUI::OnSelectOnly(int mode)
@@ -606,3 +843,496 @@ void GEOMToolsGUI::OnSelectOnly(int mode)
     getGeometryGUI()->setLocalSelectionMode(mode);
   }
 }
+
+void GEOMToolsGUI::OnShowHideChildren( bool show )
+{
+  SALOME_ListIO selected;
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  
+  SalomeApp_Module* mod = app ? dynamic_cast<SalomeApp_Module*>(app->activeModule()) : 0;
+  
+  GEOM_Displayer* disp  = mod ? dynamic_cast<GEOM_Displayer*>(mod->displayer()) : 0;
+
+  if ( app && disp ) {
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    if ( aSelMgr && appStudy ) {
+      aSelMgr->selectedObjects( selected );
+      if ( !selected.IsEmpty() ) {
+        _PTR(Study) aStudy = appStudy->studyDS();
+        _PTR(StudyBuilder) B = aStudy->NewBuilder();
+
+        bool aLocked = ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() ) )->IsLocked();
+        if ( aLocked ) {
+          SUIT_MessageBox::warning( app->desktop(),
+                                    QObject::tr( "WRN_WARNING" ),
+                                    QObject::tr( "WRN_STUDY_LOCKED" ) );
+          return;
+        }
+
+        for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+          Handle(SALOME_InteractiveObject) IObject = It.Value();
+
+          _PTR(SObject) obj ( aStudy->FindObjectID( IObject->getEntry() ) );
+          _PTR(GenericAttribute) anAttr;
+          if ( obj ) {
+            _PTR(AttributeExpandable) aExp = B->FindOrCreateAttribute( obj, "AttributeExpandable" );
+            aExp->SetExpandable( show );
+            if(!show)
+              disp->EraseWithChildren(IObject,true);
+          } // if ( obj )
+        } // iterator
+      }
+    }
+    app->updateObjectBrowser( false );
+    app->updateActions();
+  }
+}
+
+void GEOMToolsGUI::OnPointMarker()
+{
+  GEOMToolsGUI_MarkerDlg dlg( SUIT_Session::session()->activeApplication()->desktop() );
+  dlg.exec();
+}
+
+void GEOMToolsGUI::OnMaterialProperties()
+{
+  GEOMToolsGUI_MaterialPropertiesDlg dlg( SUIT_Session::session()->activeApplication()->desktop() );
+  dlg.exec();
+}
+
+void GEOMToolsGUI::OnUnpublishObject() {
+  SALOME_ListIO selected;
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+
+  SalomeApp_Module* mod = app ? dynamic_cast<SalomeApp_Module*>(app->activeModule()) : 0;
+
+  GEOM_Displayer* disp  = mod ? dynamic_cast<GEOM_Displayer*>(mod->displayer()) : 0;
+  
+  if ( app && disp ) {
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    if ( aSelMgr && appStudy ) {
+      aSelMgr->selectedObjects( selected );
+      if ( !selected.IsEmpty() ) {
+        _PTR(Study) aStudy = appStudy->studyDS();
+        _PTR(StudyBuilder) B = aStudy->NewBuilder();
+
+        bool aLocked = ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() ) )->IsLocked();
+        if ( aLocked ) {
+          SUIT_MessageBox::warning( app->desktop(),
+                                    QObject::tr( "WRN_WARNING" ),
+                                    QObject::tr( "WRN_STUDY_LOCKED" ) );
+          return;
+        }
+
+        for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+          Handle(SALOME_InteractiveObject) IObject = It.Value();
+
+          _PTR(SObject) obj ( aStudy->FindObjectID( IObject->getEntry() ) );
+          _PTR(GenericAttribute) anAttr;
+          if ( obj ) {
+            _PTR(AttributeDrawable) aDrw = B->FindOrCreateAttribute( obj, "AttributeDrawable" );
+            aDrw->SetDrawable( false );
+            disp->EraseWithChildren(IObject);
+          } // if ( obj )
+        } // iterator
+        aSelMgr->clearSelected();
+      }
+    }
+    app->updateObjectBrowser( false );
+    app->updateActions();
+  }
+ 
+}
+
+void GEOMToolsGUI::OnPublishObject() {
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if(!app)
+    return;
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if(!appStudy)
+    return;
+  
+  _PTR(Study) aStudy = appStudy->studyDS();
+  
+  if(!aStudy)
+    return;
+
+  //Check lock of the study
+  bool aLocked = ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() ) )->IsLocked();
+  if ( aLocked ) {
+    SUIT_MessageBox::warning( app->desktop(),
+                              QObject::tr( "WRN_WARNING" ),
+                              QObject::tr( "WRN_STUDY_LOCKED" ) );
+    return;
+  } 
+  
+  GEOMToolsGUI_PublishDlg * publishDlg =
+    new GEOMToolsGUI_PublishDlg( SUIT_Session::session()->activeApplication()->desktop() );
+  publishDlg->exec();
+}
+
+
+void GEOMToolsGUI::OnEdgeWidth()
+{
+  SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+
+
+  bool isOCC = (window && window->getViewManager()->getType() == OCCViewer_Viewer::Type());
+  bool isVTK = (window && window->getViewManager()->getType() == SVTK_Viewer::Type());
+  int mgrId = window->getViewManager()->getGlobalId();
+
+  if (isOCC) { // if is OCCViewer
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>(window->getViewManager()->getViewModel());
+    Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+    ic->InitCurrent();
+    if (ic->MoreCurrent()) {
+      Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+
+      int aWidth = (int)CurObject->Width();
+
+      GEOMToolsGUI_LineWidthDlg * Dlg = new GEOMToolsGUI_LineWidthDlg
+        (SUIT_Session::session()->activeApplication()->desktop(),"EDGE_WIDTH_TLT");
+      Dlg->setTheLW(aWidth);
+      int aNewWidth = 0;
+      if (Dlg->exec()) {
+		aNewWidth = Dlg->getTheLW();
+		bool ok = (aNewWidth != aWidth && aNewWidth != 0 );
+		if (ok) {
+		  for(; ic->MoreCurrent(); ic->NextCurrent()) {
+			CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+				SOCC_Prs* aPrs =  dynamic_cast<SOCC_Prs*>(view->CreatePrs(CurObject->getIO()->getEntry()));
+				AIS_ListOfInteractive anAISObjects;
+				aPrs->GetObjects( anAISObjects );
+				AIS_ListIteratorOfListOfInteractive aIter( anAISObjects );
+				for ( ; aIter.More(); aIter.Next() ) {
+				  Handle(SALOME_AISShape) cur =  Handle(SALOME_AISShape)::DownCast(aIter.Value());
+				  if ( !cur.IsNull() ) {
+	 				cur->SetWidth(aNewWidth);
+					ic->Redisplay(cur);
+				  }
+				}
+			appStudy->setObjectProperty(mgrId, CurObject->getIO()->getEntry(), EDGE_WIDTH_PROP, aNewWidth);
+		  }
+		}
+	  }
+    }
+    else {
+      return;
+    }
+    GeometryGUI::Modified();
+  }
+  else if (isVTK) { // if is VTKViewer
+    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>
+      (SUIT_Session::session()->activeApplication());
+    if (!app)
+      return;
+
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if (!aSelMgr)
+      return;
+
+    SALOME_ListIO selected;
+    aSelMgr->selectedObjects(selected);
+    if (selected.IsEmpty())
+      return;
+
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>(window);
+    if (!vtkVW)
+      return;
+
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+
+    vtkActorCollection* aCollection = vtkActorCollection::New();
+
+    for (SALOME_ListIteratorOfListIO It (selected); It.More(); It.Next()) {
+      Handle(SALOME_InteractiveObject) anIObject = It.Value();
+      SALOME_Prs* aPrs = view->CreatePrs(anIObject->getEntry());
+      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>(aPrs);
+      if (vtkPrs) {
+        vtkActorCollection* anActors = vtkPrs->GetObjects();
+        anActors->InitTraversal();
+        vtkActor* anAct = anActors->GetNextActor();
+        aCollection->AddItem(anAct);
+      }
+    }
+
+    if (aCollection)
+      aCollection->InitTraversal();
+    else
+      return;
+
+    int aWidth = 1;
+
+    vtkActor* anAct = aCollection->GetNextActor();
+    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct))
+      aWidth = anActor->GetWidth();
+    else
+      return;
+
+    GEOMToolsGUI_LineWidthDlg * Dlg = new GEOMToolsGUI_LineWidthDlg
+      (SUIT_Session::session()->activeApplication()->desktop(),"EDGE_WIDTH_TLT");
+    
+    Dlg->setTheLW(aWidth);
+    if (Dlg->exec()) {
+      SUIT_OverrideCursor();
+      aWidth = Dlg->getTheLW();
+      while (anAct != NULL) {
+        if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
+          // There are no casting to needed actor.
+          anActor->SetWidth(aWidth);
+          appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), EDGE_WIDTH_PROP, aWidth);
+        }
+        anAct = aCollection->GetNextActor();
+      }
+    }
+    GeometryGUI::Modified();
+  } // end vtkviewer
+}
+
+
+void GEOMToolsGUI::OnIsosWidth() {
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();
+
+  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+
+  if(isOCC){ // if is OCCViewer
+
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+    Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+
+    ic->InitCurrent();
+    if ( ic->MoreCurrent() ) {
+      Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+      CurObject->restoreIsoNumbers();
+      Handle(AIS_Drawer)    CurDrawer = CurObject->Attributes();
+
+      Handle(Graphic3d_AspectLine3d) asp = CurDrawer->UIsoAspect()->Aspect();
+      
+      Quantity_Color C;
+      Aspect_TypeOfLine T;
+      Standard_Real W;
+      asp->Values(C,T,W);
+
+      int aWidth = (int)W;
+
+      GEOMToolsGUI_LineWidthDlg * Dlg =
+	new GEOMToolsGUI_LineWidthDlg( SUIT_Session::session()->activeApplication()->desktop(),"ISOS_WIDTH_TLT" );
+
+      Dlg->setTheLW( aWidth );
+
+      if ( Dlg->exec() ) {
+	SUIT_OverrideCursor();          
+	aWidth = Dlg->getTheLW();
+      } else //Cancel case
+	return;
+      
+      for(; ic->MoreCurrent(); ic->NextCurrent()) {
+	int aMgrId = window->getViewManager()->getGlobalId();
+	CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+	
+	Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
+	
+	CurObject->Attributes()->UIsoAspect()->SetWidth(aWidth);
+	CurObject->Attributes()->VIsoAspect()->SetWidth(aWidth);
+	
+	ic->Redisplay(CurObject);
+	
+	aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_WIDTH_PROP, aWidth);
+      }
+      GeometryGUI::Modified();
+    }
+  }
+  else if(isVTK){ // if is VTKViewer
+    //
+    // Warning. It's works incorrect. must be recheked.
+    //
+    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >
+      ( SUIT_Session::session()->activeApplication() );
+    if ( !app )
+      return;
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if ( !aSelMgr )
+      return;
+    SALOME_ListIO selected;
+    aSelMgr->selectedObjects( selected );
+    if ( selected.IsEmpty() )
+      return;
+
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+    if ( !vtkVW )
+      return;
+
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+
+    vtkActorCollection* aCollection = vtkActorCollection::New();
+
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      Handle(SALOME_InteractiveObject) anIObject = It.Value();
+      SALOME_Prs* aPrs = view->CreatePrs( anIObject->getEntry() );
+      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( aPrs );
+      if ( vtkPrs ) {
+        vtkActorCollection* anActors = vtkPrs->GetObjects();
+        anActors->InitTraversal();
+        vtkActor* anAct = anActors->GetNextActor();
+        aCollection->AddItem(anAct);
+      }
+    }
+
+    if(aCollection)
+      aCollection->InitTraversal();
+    else
+      return;
+
+    int aWidth = 1;
+
+    vtkActor* anAct = aCollection->GetNextActor();
+    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
+      aWidth = anActor->GetIsosWidth();
+    }
+    else
+      return;
+    
+    GEOMToolsGUI_LineWidthDlg* Dlg =
+      new GEOMToolsGUI_LineWidthDlg( SUIT_Session::session()->activeApplication()->desktop(), "ISOS_WIDTH_TLT" );
+    
+    Dlg->setTheLW( aWidth );
+    if (Dlg->exec() ) {
+      SUIT_OverrideCursor();
+      aWidth = Dlg->getTheLW();
+    } else 
+      return; //Cancel case 
+    
+    while( anAct!= NULL ) {
+      if(GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
+        // There are no casting to needed actor.
+	anActor->SetIsosWidth(aWidth);
+	int aMgrId = window->getViewManager()->getGlobalId();
+        aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), ISOS_WIDTH_PROP, aWidth);
+      }
+      anAct = aCollection->GetNextActor();
+    }
+    
+    view->Repaint();
+    GeometryGUI::Modified();
+  } // end vtkviewer  
+}
+
+void GEOMToolsGUI::OnBringToFront() {
+ SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app )
+    return;
+
+  SalomeApp_Module* mod = dynamic_cast<SalomeApp_Module*>(app->activeModule());
+  if(!mod)
+    return;
+  
+  GEOM_Displayer* disp  = dynamic_cast<GEOM_Displayer*>(mod->displayer());
+  
+  if(!disp)
+    return;
+  
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if ( !aSelMgr )
+    return;
+
+  SALOME_ListIO selected;
+  aSelMgr->selectedObjects( selected );
+  if ( selected.IsEmpty() )
+    return;
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());  
+  if(!appStudy)
+    return;
+
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();
+
+  OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+  if ( !vm )
+    return;
+  
+  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+
+  QAction* a = getGeometryGUI()->getAction( GEOMOp::OpBringToFront );
+  bool checked = a->isChecked();
+  
+  if ( isOCC ) {
+    GEOMBase* gb = new GEOMBase();
+    Handle(GEOM_AISShape) aisShape;
+   
+    Handle(AIS_InteractiveContext) ic = vm->getAISContext();
+    SALOME_ListIO anIOlst;
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), true );
+      if ( !aisShape.IsNull() ) {
+	aisShape->setTopLevel(checked);
+	int aMgrId = window->getViewManager()->getGlobalId();
+	appStudy->setObjectProperty( aMgrId, aisShape->getIO()->getEntry(), TOP_LEVEL_PROP, checked );
+	anIOlst.Append(aisShape->getIO());
+      }
+    } // for...
+    disp->Redisplay(anIOlst);
+    GeometryGUI::Modified();
+  } // if ( isOCC )
+}
+
+void GEOMToolsGUI::OnClsBringToFront() {
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if(!app)
+    return;
+
+  SalomeApp_Module* mod = dynamic_cast<SalomeApp_Module*>(app->activeModule());
+  if(!mod)
+    return;
+  
+  GEOM_Displayer* disp  = dynamic_cast<GEOM_Displayer*>(mod->displayer());
+  
+  if(!disp)
+    return;
+
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());  
+  if(!appStudy)
+    return;
+  
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();  
+  
+  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  
+  if(isOCC){ // if is OCCViewer
+    
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+    Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    
+    SALOME_ListIO anIOlst;
+    AIS_ListOfInteractive aList;
+    ic->DisplayedObjects( aList );
+    for ( AIS_ListIteratorOfListOfInteractive it( aList ); it.More(); it.Next() ) {
+      
+      Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(it.Value());
+      
+      if(CurObject.IsNull())
+	continue;
+      
+      CurObject->setTopLevel(Standard_False);
+      
+      int aMgrId = window->getViewManager()->getGlobalId();
+      appStudy->setObjectProperty( aMgrId, QString(CurObject->getIO()->getEntry()), TOP_LEVEL_PROP, Standard_False );
+      anIOlst.Append(CurObject->getIO());
+    }
+    disp->Redisplay(anIOlst);
+    GeometryGUI::Modified();
+  }
+}
+  

@@ -1,0 +1,16 @@
+/*! 
+
+\page min_distance_page Min. Distance
+
+Returns the minimum distance between two geometrical objects and
+the coordinates of the vector of distance and shows the vector in the viewer.
+
+<b>TUI Command:</b> <em>geompy.MinDistance(Shape1, Shape2),</em>
+where \em Shape1 and \em Shape2 are shapes between which the minimal
+distance is computed.
+
+See also a \ref tui_min_distance_page "TUI example".
+
+\image html distance.png
+
+*/

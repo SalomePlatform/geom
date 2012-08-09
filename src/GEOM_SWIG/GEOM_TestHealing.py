@@ -1,30 +1,30 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#  -*- coding: iso-8859-1 -*-
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+# Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+# CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
-#  GEOM GEOM_SWIG : binding of C++ implementaion with Python
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
+#  GEOM_SWIG : binding of C++ implementaion with Python
 #  File   : GEOM_TestHealing.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
-#  $Header$
-#
+
 def TestProcessShape (geompy):
 
   ##Load shape from BREP file
@@ -84,7 +84,7 @@ def TestSuppressFaces (geompy):
 
   #IDList for SuppHole
   faces = []
-  faces = geompy.SubShapeAllSorted(Box, geompy.ShapeType["FACE"])
+  faces = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["FACE"])
 
   f_glob_id = geompy.GetSubShapeID(Box, faces[5])
 
@@ -235,7 +235,7 @@ def TestSuppressHoles (geompy):
 
   #IDList for SuppressFaces
   faces = []
-  faces = geompy.SubShapeAllSorted(Cut, geompy.ShapeType["FACE"])
+  faces = geompy.SubShapeAllSortedCentres(Cut, geompy.ShapeType["FACE"])
   ind = 0
   for face in faces:
       f_name = "FACE %d"%(ind)
@@ -247,9 +247,10 @@ def TestSuppressHoles (geompy):
 
   f_glob_id_0 = geompy.GetSubShapeID(Cut, faces[0])
   cut_without_f_0 = geompy.SuppressFaces(Cut, [f_glob_id_0])
+  geompy.addToStudy(cut_without_f_0, "Cut without face 0")
 
   faces1 = []
-  faces1 = geompy.SubShapeAllSorted(cut_without_f_0, geompy.ShapeType["FACE"])
+  faces1 = geompy.SubShapeAllSortedCentres(cut_without_f_0, geompy.ShapeType["FACE"])
   ind = 0
   for face in faces1:
       f_name = "FACE %d"%(ind)
@@ -259,25 +260,25 @@ def TestSuppressHoles (geompy):
       print "face ", ind, " global index = ", f_glob_id
       ind = ind + 1
 
-  f_glob_id_5 = geompy.GetSubShapeID(cut_without_f_0, faces1[5])
-  cut_without_f_0_5 = geompy.SuppressFaces(cut_without_f_0, [f_glob_id_5])
-  cut_without_f_0_5_id = geompy.addToStudy(cut_without_f_0_5, "Cut without faces 0 and 5")
+  f_glob_id_3 = geompy.GetSubShapeID(cut_without_f_0, faces1[3])
+  cut_without_f_0_3 = geompy.SuppressFaces(cut_without_f_0, [f_glob_id_3])
+  cut_without_f_0_3_id = geompy.addToStudy(cut_without_f_0_3, "Cut without faces 0 and 3")
 
   #IDList for SuppHole
   wires = []
-  wires = geompy.SubShapeAllSorted(cut_without_f_0_5, geompy.ShapeType["WIRE"])
+  wires = geompy.SubShapeAllSortedCentres(cut_without_f_0_3, geompy.ShapeType["WIRE"])
   ind = 0
   for wire in wires:
       w_name = "WIRE %d"%(ind)
-      w_id = geompy.addToStudyInFather(cut_without_f_0_5, wire, w_name)
+      w_id = geompy.addToStudyInFather(cut_without_f_0_3, wire, w_name)
 
-      w_glob_id = geompy.GetSubShapeID(cut_without_f_0_5, wire)
+      w_glob_id = geompy.GetSubShapeID(cut_without_f_0_3, wire)
       print "wire ", ind, " global index = ", w_glob_id
       ind = ind + 1
 
-  w_3 = geompy.GetSubShapeID(cut_without_f_0_5, wires[3])
+  w_3 = geompy.GetSubShapeID(cut_without_f_0_3, wires[3])
 
-  SuppHole3 = geompy.SuppressHoles(cut_without_f_0_5, [w_3])
+  SuppHole3 = geompy.SuppressHoles(cut_without_f_0_3, [w_3])
   SuppHole3_id = geompy.addToStudy(SuppHole3, "Supp Hole 3")
 
 def TestMakeSewing (geompy, math):
@@ -312,7 +313,7 @@ def TestDivideEdge (geompy):
   Box = geompy.MakeBoxDXDYDZ(200., 200., 200.)
 
   #Divide Edge
-  box_edges = geompy.SubShapeAllSorted(Box, geompy.ShapeType["EDGE"])
+  box_edges = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["EDGE"])
   edge_ind = geompy.GetSubShapeID(Box, box_edges[1])
 
   Divide = geompy.DivideEdge(Box, edge_ind, 0.5, 1) # Obj, ind, param, is_curve_param
@@ -320,6 +321,51 @@ def TestDivideEdge (geompy):
   #Add In Study
   Id_Box    = geompy.addToStudy(Box, "Box")
   Id_Divide = geompy.addToStudy(Divide, "Box with Divided Edge")
+
+def TestFuseEdges (geompy):
+
+  # create vertices
+  p1 = geompy.MakeVertex(0, 0, 0)
+  p2 = geompy.MakeVertex(70, 0, 0)
+  p3 = geompy.MakeVertex(70, 50, 0)
+  p4 = geompy.MakeVertex(70, 80, 0)
+  p5 = geompy.MakeVertex(50, 80, 0)
+  p6 = geompy.MakeVertex(20, 80, 0)
+  p7 = geompy.MakeVertex(0, 80, 0)
+  p8 = geompy.MakeVertex(0, 30, 0)
+
+  points = [p1, p2, p3, p4, p5, p6, p7, p8]
+
+  # make a wire
+  wire_1 = geompy.MakePolyline(points, True)
+
+  # suppress some vertices in the wire
+  wire_2 = geompy.FuseCollinearEdgesWithinWire(wire_1, [p3])
+  wire_3 = geompy.FuseCollinearEdgesWithinWire(wire_1, [p5, p6])
+
+  # suppress all suitable vertices in the wire
+  wire_4 = geompy.FuseCollinearEdgesWithinWire(wire_1, [])
+
+  wires = [wire_1, wire_2, wire_3, wire_4]
+
+  # add objects in the study
+  ii = 1
+  for point in points:
+    geompy.addToStudy(point, "p%d"%ii)
+    ii = ii + 1
+    pass
+
+  ii = 1
+  for wire in wires:
+    geompy.addToStudy(wire, "wire_%d"%ii)
+    wire_points = geompy.SubShapeAllSortedCentres(wire, geompy.ShapeType["VERTEX"])
+    jj = 1
+    for point in wire_points:
+      geompy.addToStudyInFather(wire, point, "point_%d"%jj)
+      jj = jj + 1
+      pass
+    ii = ii + 1
+    pass
 
 def TestHealingOperations (geompy, math):
 
@@ -330,3 +376,4 @@ def TestHealingOperations (geompy, math):
   TestCloseContour(geompy)
   TestSuppressFaces(geompy)
   TestProcessShape(geompy)
+  TestFuseEdges(geompy)

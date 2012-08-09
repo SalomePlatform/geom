@@ -1,30 +1,32 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_MaxToleranceDlg.cxx
 // Author : Nicolas REJNERI, Open CASCADE S.A.S.
 //
 #include "MeasureGUI_MaxToleranceDlg.h"
 #include "MeasureGUI_Widgets.h"
+#include "DlgRef.h"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -130,14 +132,17 @@ void MeasureGUI_MaxToleranceDlg::processObject()
   double invalidMin = RealLast();
   double invalidMax = -RealLast();
 
-  myGrp->LineEdit11->setText( aMinFaceToler != invalidMin ? QString( "%1" ).arg( aMinFaceToler, 5, 'e', 8 ) : QString("") );
-  myGrp->LineEdit12->setText( aMaxFaceToler != invalidMax ? QString( "%1" ).arg( aMaxFaceToler, 5, 'e', 8 ) : QString("") );
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", "len_tol_precision", -9);
 
-  myGrp->LineEdit21->setText( aMinEdgeToler != invalidMin ? QString( "%1" ).arg( aMinEdgeToler, 5, 'e', 8 ) : QString("") );
-  myGrp->LineEdit22->setText( aMaxEdgeToler != invalidMax ? QString( "%1" ).arg( aMaxEdgeToler, 5, 'e', 8 ) : QString("") );
+  myGrp->LineEdit11->setText( aMinFaceToler != invalidMin ? DlgRef::PrintDoubleValue( aMinFaceToler, aPrecision ) : QString("") );
+  myGrp->LineEdit12->setText( aMaxFaceToler != invalidMax ? DlgRef::PrintDoubleValue( aMaxFaceToler, aPrecision ) : QString("") );
 
-  myGrp->LineEdit31->setText( aMinVertexToler != invalidMin ? QString( "%1" ).arg( aMinVertexToler, 5, 'e', 8 ) : QString("") );
-  myGrp->LineEdit32->setText( aMaxVertexToler != invalidMax ? QString( "%1" ).arg( aMaxVertexToler, 5, 'e', 8 ) : QString("") );
+  myGrp->LineEdit21->setText( aMinEdgeToler != invalidMin ? DlgRef::PrintDoubleValue( aMinEdgeToler, aPrecision ) : QString("") );
+  myGrp->LineEdit22->setText( aMaxEdgeToler != invalidMax ? DlgRef::PrintDoubleValue( aMaxEdgeToler, aPrecision ) : QString("") );
+
+  myGrp->LineEdit31->setText( aMinVertexToler != invalidMin ? DlgRef::PrintDoubleValue( aMinVertexToler, aPrecision ) : QString("") );
+  myGrp->LineEdit32->setText( aMaxVertexToler != invalidMax ? DlgRef::PrintDoubleValue( aMaxVertexToler, aPrecision ) : QString("") );
 }
 
 //=================================================================================
@@ -156,16 +161,17 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetTolerance( myObj,
-        theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
-        theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
+      anOper->GetTolerance( myObj, 
+                            theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
+                            theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
     }
     catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }

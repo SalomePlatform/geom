@@ -2,9 +2,15 @@
 
 \page using_notebook_geom_page Using SALOME NoteBook
 
-It is possible to use variables defined through <b>SALOME NoteBook</b> for
-creation and modification of objects in the Geometry module with the following
-limitations:
+<b>SALOME NoteBook</b> allows defining variables to be used for creation and modification of objects.
+
+A detailed description of the SALOME NoteBook can be found the the GUI documentation.
+
+\image html using_notebook_geom.png "Definition of variables in SALOME NoteBook"
+
+\image html box3.png "Use of variables for creation of a box in Geometry module"
+
+The following limitations on the use of variables still exist:
 
 <ul>
 <li> \ref create_lcs_page "Local Coordinate System" dialog box.\n
@@ -14,5 +20,9 @@ limitations:
 <li> \ref color_page "Select color" dialog box.
 <li> \ref isolines_page "Select Number of Isos" dialog box.
 </ul>
+
+Our <b>TUI Scripts</b> provide you with useful examples of 
+\ref tui_notebook_geom "Using SALOME NoteBook".
+
 */
 

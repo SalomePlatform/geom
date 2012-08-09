@@ -1,12 +1,14 @@
 /*!
 
-\page restore_presentation_parameters_page Restore presentation parameters and a tree of subshapes
+\page restore_presentation_parameters_page Advanced Transformation Options
 
-\n This functionality allows the operation result to inherit colour
-and subshapes from its arguments.
+<br><center><b>Set presentation parameters and sub-shapes from arguments</b></center>
+
+\n This option allows the operation result to inherit color
+and sub-shapes from its arguments.
 
 \n To activate this functionality, check in "Set
-presentation parameters and subshapes from arguments" checkbox in the
+presentation parameters and sub-shapes from arguments" checkbox in the
 corresponding dialog.
 
 \n For example, there exist two objects: Box_1 with two published
@@ -15,43 +17,51 @@ faces and Cylinder_1 with free published edges.
 \image html restore-ss-viewer-before.png "The initial box and cylinder"
 
 First, we examine the case when the resulting shape corresponds to one argument (after transformation, 
-after the boolean operation Cut, or after the partiton with one object shape). 
+after the Boolean operation Cut, or after the partiton with one object shape). 
 
 We create a Cut of Box_1 with Cylinder_1.
 
 \image html restore-ss-cut.png
 
-The resulting shape inherits the subshapes and the colour of Box_1. 
+The resulting shape inherits the sub-shapes and the colour of Box_1. 
 
 \image html restore-ss-viewer-cut.png "The resulting shape"
 
 Second, we examine the case when the  resulting shape is composed from multiple arguments
-(after all boolean operations, except for Cut, or after the partition with
+(after all Boolean operations, except for Cut, or after the partition with
 several object shapes, or if the resulting shape is a compound).
 
 We create a Common of Box_1 and Cylinder_1.
 
 \image html restore-ss-dialog.png
 
-\n The resulting object is created with several subshapes that correspond to the
-operation arguments and their published subshapes. The resulting shape
-has a default colour, but its subshapes inherit colors corresponding
-to arguments and their subshapes.
+\n The resulting object is created with several sub-shapes that correspond to the
+operation arguments and their published sub-shapes. The resulting shape
+has a default color, but its sub-shapes inherit colors corresponding
+to arguments and their sub-shapes.
 
-\image html restore-ss-viewer-after.png "Thev resulting shape"
+\image html restore-ss-viewer-after.png "The resulting shape"
 
 
 Please, note that when the resulting shape corresponds to one
-argument, the inherited subshapes depend directly on the resulting shape.
+argument, the inherited sub-shapes depend directly on the resulting shape.
 
 \image html restore-ss-OB-cut.png
 
 When the resulting shape is composed from multiple arguments, the 
-inherited subshapes depend on the arguments.
+inherited sub-shapes depend on the arguments.
 
 \image html restore-ss-OB.png
 
 \n You can also call this functionality from your python scripts.
 See our <b>TUI Scripts</b> for \ref tui_restore_prs_params "example".
+
+<br><center><b>Add prefix to names of restored sub-shapes</b></center>
+This option allows adding the prefix "from_" to the names of
+restored sub-shapes, and the prefix "from_subshapes_of_" to the names of partially restored sub-shapes. 
+By default this option is On.
+
+\anchor preview_anchor <br><center><b>Preview</b></center>
+<b>Preview</b> checkbox allows displaying/erasing simulation of the <b>Result</b> in the viewer.
 
 */

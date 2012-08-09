@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOM_ICurvesOperations_i_HeaderFile
 #define _GEOM_ICurvesOperations_i_HeaderFile
 
@@ -57,6 +58,11 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
 				     GEOM::GEOM_Object_ptr theVector,
 				     double theRMajor, double theRMinor);
 
+  GEOM::GEOM_Object_ptr MakeEllipseVec (GEOM::GEOM_Object_ptr theCenter,
+					GEOM::GEOM_Object_ptr theVector,
+					double theRMajor, double theRMinor,
+					GEOM::GEOM_Object_ptr theVectorMajor);
+
   GEOM::GEOM_Object_ptr MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 				 GEOM::GEOM_Object_ptr thePnt2,
 				 GEOM::GEOM_Object_ptr thePnt3);
@@ -70,11 +76,23 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
 					  GEOM::GEOM_Object_ptr thePnt2,
 					  GEOM::GEOM_Object_ptr thePnt3);
   
-  GEOM::GEOM_Object_ptr MakePolyline (const GEOM::ListOfGO& thePoints);
+  GEOM::GEOM_Object_ptr MakePolyline (const GEOM::ListOfGO& thePoints,
+                                      CORBA::Boolean        theIsClosed);
 
-  GEOM::GEOM_Object_ptr MakeSplineBezier (const GEOM::ListOfGO& thePoints);
+  GEOM::GEOM_Object_ptr MakeSplineBezier (const GEOM::ListOfGO& thePoints,
+                                          CORBA::Boolean        theIsClosed);
 
-  GEOM::GEOM_Object_ptr MakeSplineInterpolation (const GEOM::ListOfGO& thePoints);
+  GEOM::GEOM_Object_ptr MakeSplineInterpolation (const GEOM::ListOfGO& thePoints,
+                                                 CORBA::Boolean        theIsClosed,
+                                                 CORBA::Boolean        theDoReordering);
+
+  GEOM::GEOM_Object_ptr MakeCurveParametric(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
+					    double theParamMin, double theParamMax, double theParamStep, 
+					    GEOM::curve_type theCurveType);
+  
+  GEOM::GEOM_Object_ptr MakeCurveParametricNew(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
+                        double theParamMin, double theParamMax, CORBA::Long theParamNbStep, 
+                        GEOM::curve_type theCurveType);
 
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane);
   

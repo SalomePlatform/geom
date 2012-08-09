@@ -2,7 +2,7 @@
 
 \page create_primitives_page Creating Primitives
 
-<b>New Entity -> Primitives </b> submenu allows to create voluminal
+<b>New Entity -> Primitives </b> submenu allows to create volumical
 geometrical objects, such as: 
 
 <ul>
@@ -11,8 +11,9 @@ geometrical objects, such as:
 <li>\subpage create_sphere_page</li>
 <li>\subpage create_torus_page</li>
 <li>\subpage create_cone_page</li>
-<li>\subpage create_squareface_page "Face"</li>
+<li>\subpage create_squareface_page</li>
 <li>\subpage create_disk_page</li>
+<li>\subpage create_pipetshape_page</li>
 </ul>
 
 */

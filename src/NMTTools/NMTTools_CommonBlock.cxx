@@ -1,44 +1,45 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_CommonBlock.cxx
-// Created:	Tue Dec  9 12:23:29 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+
+// File:        NMTTools_CommonBlock.cxx
+// Created:     Tue Dec  9 12:23:29 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
-#include <NMTTools_CommonBlock.ixx>
+#include <NMTTools_CommonBlock.hxx>
 
 #include <BOPTools_ListIteratorOfListOfPaveBlock.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 
 //=======================================================================
 // function:  NMTTools_CommonBlock::NMTTools_CommonBlock()
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlock::NMTTools_CommonBlock()
 {
 }
 //=======================================================================
 // function:  AddPaveBlock
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_CommonBlock::AddPaveBlock(const BOPTools_PaveBlock& aPB)
 {
@@ -46,7 +47,7 @@
 }
 //=======================================================================
 // function:  AddFace
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_CommonBlock::AddFace(const Standard_Integer aF)
 {
@@ -54,7 +55,7 @@
 }
 //=======================================================================
 // function:  AddFaces
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_CommonBlock::AddFaces(const TColStd_ListOfInteger& aLF)
 {
@@ -66,7 +67,7 @@
 }
 //=======================================================================
 // function:  PaveBlocks
-// purpose: 
+// purpose:
 //=======================================================================
   const BOPTools_ListOfPaveBlock& NMTTools_CommonBlock::PaveBlocks()const
 {
@@ -74,7 +75,7 @@
 }
 //=======================================================================
 // function:  Faces
-// purpose: 
+// purpose:
 //=======================================================================
   const TColStd_ListOfInteger& NMTTools_CommonBlock::Faces()const
 {
@@ -82,7 +83,7 @@
 }
 //=======================================================================
 // function:  PaveBlock1
-// purpose: 
+// purpose:
 //=======================================================================
   const BOPTools_PaveBlock& NMTTools_CommonBlock::PaveBlock1()const
 {
@@ -90,7 +91,7 @@
 }
 //=======================================================================
 // function:  PaveBlock1
-// purpose: 
+// purpose:
 //=======================================================================
    BOPTools_PaveBlock& NMTTools_CommonBlock::PaveBlock1(const Standard_Integer aIx)
 {
@@ -98,7 +99,7 @@
 }
 //=======================================================================
 // function:  PaveBlockOnEdge
-// purpose: 
+// purpose:
 //=======================================================================
    BOPTools_PaveBlock& NMTTools_CommonBlock::PaveBlockOnEdge(const Standard_Integer aIx)
 {
@@ -117,7 +118,7 @@
 }
 //=======================================================================
 // function:  IsPaveBlockOnFace
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_CommonBlock::IsPaveBlockOnFace(const Standard_Integer aIx)const
 {
@@ -135,7 +136,7 @@
 }
 //=======================================================================
 // function:  IsPaveBlockOnEdge
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_CommonBlock::IsPaveBlockOnEdge(const Standard_Integer aIx)const
 {
@@ -154,7 +155,7 @@
 }
 //=======================================================================
 // function:  IsEqual
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_CommonBlock::IsEqual(const NMTTools_CommonBlock& aOther)const
 {
@@ -188,7 +189,7 @@
 }
 //=======================================================================
 // function:  Contains
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_CommonBlock::Contains(const BOPTools_PaveBlock& aPBx)const
 {
@@ -214,7 +215,7 @@
 /*
 //=======================================================================
 // function:  SetEdge
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_CommonBlock::SetEdge(const Standard_Integer anEdge)
 {
@@ -228,7 +229,7 @@
 }
 //=======================================================================
 // function:  Edge
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer NMTTools_CommonBlock::Edge()const
 {

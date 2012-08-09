@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMBase_Skeleton.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -51,7 +52,7 @@
 //            true to construct a modal dialog.
 //=================================================================================
 GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* parent,
-				      bool modal, Qt::WindowFlags fl )
+                                      bool modal, Qt::WindowFlags fl )
   : QDialog( parent, fl ), 
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( theGeometryGUI ),
@@ -71,6 +72,8 @@ GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* pare
 
   myMainFrame->GroupBoxPublish->setTitle( tr( "GEOM_PUBLISH_RESULT_GRP" ) );
   myMainFrame->CheckBoxRestoreSS->setText( tr( "GEOM_RESTORE_SUB_SHAPES" ) );
+  myMainFrame->CheckBoxAddPrefix->setText( tr( "GEOM_RSS_ADD_FREFIX" ) );
+  myMainFrame->CheckBoxPreview->setText( tr("GEOM_PREVIEW") );
 
   buttonCancel()->setText( tr( "GEOM_BUT_CLOSE" ) );
   buttonOk()->setText( tr( "GEOM_BUT_APPLY_AND_CLOSE" ) );
@@ -123,12 +126,20 @@ void GEOMBase_Skeleton::Init()
   // connect help button on a private slot that displays help information
   connect( buttonHelp(), SIGNAL( clicked() ), this, SLOT( ClickOnHelp() ) );
 
+  connect( myMainFrame->CheckBoxPreview, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
+
   /* displays Dialog */
   myMainFrame->RadioButton1->setChecked( true );
   myMainFrame->RadioButton4->hide();
   myMainFrame->RadioButton5->hide();
 
   myMainFrame->CheckBoxRestoreSS->setChecked( false );
+  myMainFrame->CheckBoxAddPrefix->setChecked( true );
+
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  bool aPrv = (resMgr == 0) ? false : resMgr->booleanValue( "Geometry", "geom_preview", false );
+  
+  myMainFrame->CheckBoxPreview->setChecked( aPrv );
   myMainFrame->GroupBoxPublish->hide();
 }
 
@@ -137,7 +148,7 @@ void GEOMBase_Skeleton::Init()
 // purpose  : 
 //=================================================================================
 void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox, 
-				     int min,  int max, int step )
+                                     int min,  int max, int step )
 {
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
@@ -148,14 +159,23 @@ void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox,
 // purpose  : 
 //=================================================================================
 void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox, 
-				     double min,  double max, 
-				     double step, int decimals )
+                                     double min,  double max, 
+                                     double step, const char* quantity )
 {
-  spinBox->setPrecision( decimals );
-  spinBox->setDecimals( decimals ); // it's necessary to set decimals before the range setting,
+  // Obtain precision from preferences
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
+  
+  spinBox->setPrecision( aPrecision );
+  spinBox->setDecimals( qAbs( aPrecision ) ); // it's necessary to set decimals before the range setting,
                                     // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
+  
+  // Add a hint for the user saying how to tune precision
+  QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
+  spinBox->setProperty( "validity_tune_hint", 
+                        QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
 }
 
 //=================================================================================
@@ -164,7 +184,7 @@ void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
 //            In this case PublishInStudy isn't called, so we need to update object's attributes manually
 //=================================================================================
 void GEOMBase_Skeleton::updateAttributes( GEOM::GEOM_Object_ptr theObj,
-					  const QStringList& theParameters)
+                                          const QStringList& theParameters)
 {
   SALOMEDS::Study_var aStudy = GeometryGUI::ClientStudyToStudy(getStudy()->studyDS());
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
@@ -289,10 +309,35 @@ int GEOMBase_Skeleton::getConstructorId() const
   return -1;
 }
 
+//=================================================================================
+// function : setConstructorId( id )
+// purpose  :
+//=================================================================================
 void GEOMBase_Skeleton::setConstructorId( const int id )
 {
   if ( myRBGroup && myRBGroup->button( id ) )
     myRBGroup->button( id )->setChecked( true );
+}
+
+//=================================================================================
+// function : unsetConstructorId
+// purpose  :
+//=================================================================================
+void GEOMBase_Skeleton::unsetConstructorId()
+{
+  // 0020428: EDF 906 GEOM : Performance for Group creation in GEOM
+  // uncheck all buttons
+  // workaround, because setChecked( false ) does not result in Qt4
+  bool isExclusive = myRBGroup->exclusive();
+  myRBGroup->setExclusive( false );
+  QList<QAbstractButton*> btnList = myRBGroup->buttons();
+  for ( int j = 0; j < 2; j++ )
+  {
+    QList<QAbstractButton*>::const_iterator it = btnList.constBegin();
+    for ( ; it != btnList.constEnd(); ++it )
+      (*it)->setCheckable( j == 1 );
+  }
+  myRBGroup->setExclusive( isExclusive );
 }
 
 //=================================================================================
@@ -312,9 +357,9 @@ void GEOMBase_Skeleton::ClickOnHelp()
     platform = "application";
 #endif
     SUIT_MessageBox::warning( 0, QObject::tr( "WRN_WARNING" ),
-			      QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
-			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ),
-			      QObject::tr( "BUT_OK" ) );
+                              QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+                              arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ),
+                              QObject::tr( "BUT_OK" ) );
   }
 }
 
@@ -371,4 +416,23 @@ void GEOMBase_Skeleton::keyPressEvent( QKeyEvent* e )
     e->accept();
     ClickOnHelp();
   }
+}
+
+//=================================================================================
+// function : showOnlyPreviewControl()
+// purpose  : display only CheckBoxPreview check box,
+//            hide CheckBoxRestoreSS and CheckBoxAddPrefix 
+//=================================================================================
+void GEOMBase_Skeleton::showOnlyPreviewControl(){
+  mainFrame()->GroupBoxPublish->show();
+  mainFrame()->CheckBoxRestoreSS->hide();
+  mainFrame()->CheckBoxAddPrefix->hide();
+}
+
+//=================================================================================
+// function : processPreview()
+// purpose  : Display preview if CheckBoxPreview is checked
+//=================================================================================
+void GEOMBase_Skeleton::processPreview() {
+  displayPreview(mainFrame()->CheckBoxPreview->isChecked());
 }

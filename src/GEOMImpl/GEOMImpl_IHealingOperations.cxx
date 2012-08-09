@@ -1,28 +1,30 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
 
+#include <Standard_Version.hxx>
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IHealingOperations.hxx>
@@ -32,13 +34,17 @@
 #include <GEOMImpl_HealingDriver.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_IHealing.hxx>
+#include <GEOMImpl_IVector.hxx>
+#include <GEOMImpl_VectorDriver.hxx>
 #include <GEOMImpl_CopyDriver.hxx>
 
-#include <ShHealOper_ShapeProcess.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include "utilities.h"
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
+
+#include <ShHealOper_ShapeProcess.hxx>
 
 #include <ShapeAnalysis_FreeBounds.hxx>
 
@@ -54,13 +60,11 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
-
 //=============================================================================
 /*!
  *   constructor:
  */
 //=============================================================================
-
 GEOMImpl_IHealingOperations::GEOMImpl_IHealingOperations (GEOM_Engine* theEngine, int theDocID)
 : GEOM_IOperations(theEngine, theDocID)
 {
@@ -72,7 +76,6 @@ GEOMImpl_IHealingOperations::GEOMImpl_IHealingOperations (GEOM_Engine* theEngine
  *  destructor
  */
 //=============================================================================
-
 GEOMImpl_IHealingOperations::~GEOMImpl_IHealingOperations()
 {
   MESSAGE("GEOMImpl_IHealingOperations::~GEOMImpl_IHealingOperations");
@@ -138,7 +141,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
 
   //Compute the translation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction))
@@ -202,7 +205,7 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (std::list<std::stri
     {
       std::string anOperation = anOperators.Value( i ).ToCString();
       if ( GetOperatorParameters( anOperation, theParams, theValues ) )
-	theOperations.push_back( anOperation );
+        theOperations.push_back( anOperation );
       else
         nbOperatorErrors++;
     }
@@ -224,9 +227,9 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (std::list<std::stri
  *  GetOperatorParameters
  */
 //=============================================================================
-bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOperation, 
-							 std::list<std::string>& theParams,
-							 std::list<std::string>& theValues )
+bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOperation,
+                                                         std::list<std::string>& theParams,
+                                                         std::list<std::string>& theValues )
 {
   ShHealOper_ShapeProcess aHealer;
   int nbParamValueErrors( 0 );
@@ -236,11 +239,11 @@ bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOp
       TCollection_AsciiString aParam( (Standard_CString)(*it).c_str() );
       TCollection_AsciiString aValue;
       if ( aHealer.GetParameter( aParam, aValue ) ) {
-	theParams.push_back( aParam.ToCString() );
-	theValues.push_back( aValue.ToCString() );
+        theParams.push_back( aParam.ToCString() );
+        theValues.push_back( aValue.ToCString() );
       }
       else
-	nbParamValueErrors++;
+        nbParamValueErrors++;
     }
   }
   else
@@ -323,31 +326,31 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   // set error code, check parameters
   SetErrorCode(KO);
 
-  if ( theObject.IsNull() ) // if theFaces.IsNull() - it's OK, it means that ALL faces must be removed..
+  if (theObject.IsNull()) // if theFaces.IsNull() - it's OK, it means that ALL faces must be removed..
     return NULL;
 
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
-  if(aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), SUPPRESS_FACES);
 
-  if(aFunction.IsNull()) return NULL;
+  if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if(aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
 
   // prepare "data container" class IHealing
-  GEOMImpl_IHealing HI(aFunction);
-  HI.SetFaces( theFaces );
-  HI.SetOriginal( aLastFunction );
+  GEOMImpl_IHealing HI (aFunction);
+  HI.SetFaces(theFaces);
+  HI.SetOriginal(aLastFunction);
 
   //Compute the translation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction))
@@ -358,7 +361,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   }
   catch (Standard_Failure)
   {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -375,7 +378,6 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   SetErrorCode(OK);
   return aNewObject;
 }
-
 
 //=============================================================================
 /*!
@@ -418,7 +420,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
 
   //Compute the translation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction))
@@ -429,7 +431,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
   }
   catch (Standard_Failure)
   {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -487,7 +489,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires
 
   //Compute the translation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction))
@@ -555,7 +557,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
 
   //Compute the translation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction))
@@ -566,7 +568,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
   }
   catch (Standard_Failure)
   {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -623,7 +625,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
 
   //Compute the translation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction))
@@ -634,7 +636,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   }
   catch (Standard_Failure)
   {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -686,18 +688,16 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
 
   //Compute the translation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
-    if (!GetSolver()->ComputeFunction(aFunction))
-    {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Healing driver failed");
       return NULL;
     }
   }
-  catch (Standard_Failure)
-  {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -712,12 +712,87 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
 
 //=============================================================================
 /*!
+ *  FuseCollinearEdgesWithinWire
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::FuseCollinearEdgesWithinWire
+                                   (Handle(GEOM_Object) theWire,
+                                    std::list<Handle(GEOM_Object)> theVertices)
+{
+  SetErrorCode(KO);
+
+  if (theWire.IsNull()) return NULL;
+
+  // Add a new object
+  Handle(GEOM_Object) aRes = GetEngine()->AddObject(GetDocID(), theWire->GetType());
+
+  // Add a new function
+  Handle(GEOM_Function) aFunction;
+  aFunction = aRes->AddFunction(GEOMImpl_HealingDriver::GetID(), FUSE_COLLINEAR_EDGES);
+  if (aFunction.IsNull()) return NULL;
+
+  // Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+  GEOMImpl_IHealing aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theWire->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+  aCI.SetOriginal(aRefShape);
+
+  Handle(TColStd_HSequenceOfTransient) aVertices = new TColStd_HSequenceOfTransient;
+  std::list<Handle(GEOM_Object)>::iterator it = theVertices.begin();
+  for (; it != theVertices.end(); it++) {
+    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
+    if (aRefSh.IsNull()) {
+      SetErrorCode("NULL argument shape for the shape construction");
+      return NULL;
+    }
+    aVertices->Append(aRefSh);
+  }
+  aCI.SetShapes(aVertices);
+
+  // Compute the new wire
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Healing driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  // Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aRes << " = geompy.FuseCollinearEdgesWithinWire(" << theWire << ", [";
+  // Vertices
+  it = theVertices.begin();
+  if (it != theVertices.end()) {
+    pd << (*it++);
+    while (it != theVertices.end()) {
+      pd << ", " << (*it++);
+    }
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aRes;
+}
+
+//=============================================================================
+/*!
  *  GetFreeBoundary
  */
 //=============================================================================
 bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject,
-						   Handle(TColStd_HSequenceOfTransient)& theClosed,
-						   Handle(TColStd_HSequenceOfTransient)& theOpen )
+                                                   Handle(TColStd_HSequenceOfTransient)& theClosed,
+                                                   Handle(TColStd_HSequenceOfTransient)& theOpen )
 {
   // set error code, check parameters
   SetErrorCode(KO);
@@ -730,7 +805,13 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
     return false;
 
   // get free boundary shapes
-  ShapeAnalysis_FreeBounds anAnalizer( aShape );
+
+#if OCC_VERSION_LARGE > 0x06030008
+  ShapeAnalysis_FreeBounds anAnalizer(aShape, Standard_False,
+                                      Standard_True, Standard_True);
+#else
+  ShapeAnalysis_FreeBounds anAnalizer(aShape);
+#endif
   TopoDS_Compound aClosed = anAnalizer.GetClosedWires();
   TopoDS_Compound anOpen = anAnalizer.GetOpenWires();
 
@@ -806,30 +887,42 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
     return NULL;
 
   if (!theObject->IsMainShape()) {
-    SetErrorCode("Sub shape cannot be transformed - need to create a copy");
+    SetErrorCode("Sub-shape cannot be transformed - need to create a copy");
     return NULL;
   }
 
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
-  if (aLastFunction.IsNull()) 
+  if (aLastFunction.IsNull())
     return NULL; //There is no function which creates an object to be processed
 
-  //Add the function
-  aFunction = theObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
+  if (theObject->GetType() == GEOM_VECTOR) { // Mantis issue 21066
+    //Add the function
+    aFunction = theObject->AddFunction(GEOMImpl_VectorDriver::GetID(), VECTOR_REVERSE);
 
-  if (aFunction.IsNull())
-    return NULL;
+    //Check if the function is set correctly
+    if (aFunction.IsNull()) return NULL;
+    if (aFunction->GetDriverGUID() != GEOMImpl_VectorDriver::GetID()) return NULL;
 
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+    // prepare "data container" class IVector
+    GEOMImpl_IVector aVI (aFunction);
+    aVI.SetCurve(aLastFunction);
+  }
+  else {
+    //Add the function
+    aFunction = theObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
 
-  // prepare "data container" class IHealing
-  GEOMImpl_IHealing HI(aFunction);
-  HI.SetOriginal( aLastFunction );
+    //Check if the function is set correctly
+    if (aFunction.IsNull()) return NULL;
+    if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+    // prepare "data container" class IHealing
+    GEOMImpl_IHealing HI (aFunction);
+    HI.SetOriginal(aLastFunction);
+  }
 
   //Compute the translation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -851,7 +944,6 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
   return theObject;
 }
 
-
 //=============================================================================
 /*!
  *  ChangeOrientationCopy
@@ -870,24 +962,36 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
     return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), theObject->GetType());
 
-  //Add the function
-  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
+  if (theObject->GetType() == GEOM_VECTOR) { // Mantis issue 21066
+    //Add the function
+    aFunction = aNewObject->AddFunction(GEOMImpl_VectorDriver::GetID(), VECTOR_REVERSE);
 
-  if (aFunction.IsNull())
-    return NULL;
+    //Check if the function is set correctly
+    if (aFunction.IsNull()) return NULL;
+    if (aFunction->GetDriverGUID() != GEOMImpl_VectorDriver::GetID()) return NULL;
 
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+    // prepare "data container" class IVector
+    GEOMImpl_IVector aVI (aFunction);
+    aVI.SetCurve(aLastFunction);
+  }
+  else {
+    //Add the function
+    aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
 
-  // prepare "data container" class IHealing
-  GEOMImpl_IHealing HI(aFunction);
-  HI.SetOriginal( aLastFunction );
+    //Check if the function is set correctly
+    if (aFunction.IsNull()) return NULL;
+    if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
 
-  //Compute the translation
+    // prepare "data container" class IHealing
+    GEOMImpl_IHealing aHI (aFunction);
+    aHI.SetOriginal(aLastFunction);
+  }
+
+  // Compute the result
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -909,3 +1013,61 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
   return aNewObject;
 }
 
+//=============================================================================
+/*!
+ *  LimitTolerance
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Object) theObject,
+                                                                 double theTolerance)
+{
+  // Set error code, check parameters
+  SetErrorCode(KO);
+
+  if (theObject.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull())
+    return NULL; // There is no function which creates an object to be processed
+
+  // Add a new object
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+
+  // Add the function
+  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), LIMIT_TOLERANCE);
+
+  if (aFunction.IsNull())
+    return NULL;
+
+  // Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+  // Prepare "data container" class IHealing
+  GEOMImpl_IHealing HI (aFunction);
+  HI.SetOriginal(aLastFunction);
+  HI.SetTolerance(theTolerance);
+
+  // Compute
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Healing driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.LimitTolerance("
+                               << theObject << ", " << theTolerance << ")";
+
+  SetErrorCode(OK);
+  return aNewObject;
+}

@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : PrimitiveGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -26,6 +27,7 @@
 #include "PrimitiveGUI.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
@@ -68,25 +70,25 @@ bool PrimitiveGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
-  case 4021: // BOX
+  case GEOMOp::OpBox:       // BOX
     aDlg = new PrimitiveGUI_BoxDlg( getGeometryGUI(), parent );
     break;
-  case 4022: // CYLINDER
+  case GEOMOp::OpCylinder:  // CYLINDER
     aDlg = new PrimitiveGUI_CylinderDlg( getGeometryGUI(), parent );
     break;
-  case 4023: // SPHERE
+  case GEOMOp::OpSphere:    // SPHERE
     aDlg = new PrimitiveGUI_SphereDlg( getGeometryGUI(), parent );
     break;
-  case 4024: // TORUS
+  case GEOMOp::OpTorus:     // TORUS
     aDlg = new PrimitiveGUI_TorusDlg( getGeometryGUI(), parent );
     break;
-  case 4025: // CONE
+  case GEOMOp::OpCone:      // CONE
     aDlg = new PrimitiveGUI_ConeDlg( getGeometryGUI(), parent);
     break;
-  case 4026: // FACE
+  case GEOMOp::OpRectangle: // FACE
     aDlg = new PrimitiveGUI_FaceDlg( getGeometryGUI(), parent);
     break;
-  case 4027: // DISK
+  case GEOMOp::OpDisk:      // DISK
     aDlg = new PrimitiveGUI_DiskDlg( getGeometryGUI(), parent);
     break;
   default:

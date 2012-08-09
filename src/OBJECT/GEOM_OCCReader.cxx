@@ -1,30 +1,30 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  GEOM OBJECT : interactive object for Geometry entities visualization
 //  File   : GEOM_OCCReader.h
 //  Author : Christophe ATTANASIO
 //  Module : GEOM
-//  $Header$
-//
+
 #include "GEOM_OCCReader.h"
 
 // VTK Includes
@@ -61,10 +61,9 @@
 
 #include "utilities.h"
 
-using namespace std;
 
-#define MAX2(X, Y)	(  Abs(X) > Abs(Y)? Abs(X) : Abs(Y) )
-#define MAX3(X, Y, Z)	( MAX2 ( MAX2(X,Y) , Z) )
+#define MAX2(X, Y)      (  Abs(X) > Abs(Y)? Abs(X) : Abs(Y) )
+#define MAX3(X, Y, Z)   ( MAX2 ( MAX2(X,Y) , Z) )
 
 // Constante for iso building
 static Standard_Real IntersectorConfusion = 1.e-10 ; // -8 ;
@@ -130,7 +129,7 @@ void GEOM_OCCReader::Execute() {
   // Allocation
   Pts = vtkPoints::New();
   Cells = vtkCellArray::New();
-	
+        
   //Compute number of triangles and points
   Standard_Integer nbpoly=0,nbpts=0;
 
@@ -142,9 +141,9 @@ void GEOM_OCCReader::Execute() {
       const TopoDS_Face& aFace = TopoDS::Face(myShape);
       Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
       if(aPoly.IsNull()) {
-	Pts->Delete();
-	Cells->Delete();
-	return;
+        Pts->Delete();
+        Cells->Delete();
+        return;
       }
 
       nbpts = aPoly->NbNodes();
@@ -154,9 +153,9 @@ void GEOM_OCCReader::Execute() {
       Cells->Allocate(Cells->EstimateSize(nbpoly,3));
     }
     else { 
-	Cells->Delete();
-	Pts->Delete();
-	return; 
+        Cells->Delete();
+        Pts->Delete();
+        return; 
     }
   }
 
@@ -209,8 +208,8 @@ void GEOM_OCCReader::ComputeWireframe(vtkPoints* Pts,vtkCellArray* Cells){
 //=======================================================================
 
 void GEOM_OCCReader::TransferFaceWData(const TopoDS_Face& aFace,
-					 vtkPoints* Pts,
-					 vtkCellArray* Cells) 
+                                         vtkPoints* Pts,
+                                         vtkCellArray* Cells) 
 {
   TopoDS_Face aCopyFace = aFace; 
   aCopyFace.Orientation (TopAbs_FORWARD);
@@ -223,17 +222,17 @@ void GEOM_OCCReader::TransferFaceWData(const TopoDS_Face& aFace,
 //=======================================================================
 
 void GEOM_OCCReader::createISO (const TopoDS_Face&     TopologicalFace,
-				  const Standard_Real    Infinite,
-				  const Standard_Integer NbIsos,
-				  vtkPoints* Pts,
-				  vtkCellArray* Cell)
+                                  const Standard_Real    Infinite,
+                                  const Standard_Integer NbIsos,
+                                  vtkPoints* Pts,
+                                  vtkCellArray* Cell)
 {
   Geom2dHatch_Hatcher aHatcher (Geom2dHatch_Intersector (IntersectorConfusion,
-							 IntersectorTangency),
-				HatcherConfusion2d,
-				HatcherConfusion3d,
-				Standard_True,
-				Standard_False);
+                                                         IntersectorTangency),
+                                HatcherConfusion2d,
+                                HatcherConfusion3d,
+                                Standard_True,
+                                Standard_False);
   
   Standard_Real myInfinite,myUMin,myUMax,myVMin,myVMax;
   //myInfinite = Precision::Infinite();
@@ -293,27 +292,27 @@ void GEOM_OCCReader::createISO (const TopoDS_Face&     TopologicalFace,
 
     //-- Test if a TrimmedCurve is necessary
     if(   Abs(PCurve->FirstParameter()-U1)<= Precision::PConfusion() 
-	  && Abs(PCurve->LastParameter()-U2)<= Precision::PConfusion()) { 
+          && Abs(PCurve->LastParameter()-U2)<= Precision::PConfusion()) { 
       aHatcher.AddElement (PCurve, TopologicalEdge.Orientation()) ;      
     }
     else { 
       if (!PCurve->IsPeriodic()) {
-	Handle (Geom2d_TrimmedCurve) TrimPCurve =Handle(Geom2d_TrimmedCurve)::DownCast(PCurve);
-	if (!TrimPCurve.IsNull()) {
-	  if (TrimPCurve->BasisCurve()->FirstParameter()-U1 > Precision::PConfusion() ||
-	      U2-TrimPCurve->BasisCurve()->LastParameter()  > Precision::PConfusion()) {
-	    aHatcher.AddElement (PCurve, TopologicalEdge.Orientation()) ;      
-	    return;
-	  }
-	}
-	else {
-	  if (PCurve->FirstParameter()-U1 > Precision::PConfusion()){
-	    U1=PCurve->FirstParameter();
-	  }
-	  if (U2-PCurve->LastParameter()  > Precision::PConfusion()){
-	    U2=PCurve->LastParameter();
-	  }
-	}
+        Handle (Geom2d_TrimmedCurve) TrimPCurve =Handle(Geom2d_TrimmedCurve)::DownCast(PCurve);
+        if (!TrimPCurve.IsNull()) {
+          if (TrimPCurve->BasisCurve()->FirstParameter()-U1 > Precision::PConfusion() ||
+              U2-TrimPCurve->BasisCurve()->LastParameter()  > Precision::PConfusion()) {
+            aHatcher.AddElement (PCurve, TopologicalEdge.Orientation()) ;      
+            return;
+          }
+        }
+        else {
+          if (PCurve->FirstParameter()-U1 > Precision::PConfusion()){
+            U1=PCurve->FirstParameter();
+          }
+          if (U2-PCurve->LastParameter()  > Precision::PConfusion()){
+            U2=PCurve->LastParameter();
+          }
+        }
       }
       Handle (Geom2d_TrimmedCurve) TrimPCurve = new Geom2d_TrimmedCurve (PCurve, U1, U2) ;
       aHatcher.AddElement (TrimPCurve, TopologicalEdge.Orientation()) ;
@@ -370,16 +369,16 @@ void GEOM_OCCReader::createISO (const TopoDS_Face&     TopologicalFace,
     Index = myUInd(IIso) ;
     if (Index != 0) {
       if (aHatcher.TrimDone (Index) && !aHatcher.TrimFailed (Index)) {
-	aHatcher.ComputeDomains (Index);
-	if (aHatcher.IsDone (Index)) myNbDom = myNbDom + aHatcher.NbDomains (Index) ;
+        aHatcher.ComputeDomains (Index);
+        if (aHatcher.IsDone (Index)) myNbDom = myNbDom + aHatcher.NbDomains (Index) ;
       }
     }
 
     Index = myVInd(IIso) ;
     if (Index != 0) {
       if (aHatcher.TrimDone (Index) && !aHatcher.TrimFailed (Index)) {
-	aHatcher.ComputeDomains (Index);
-	if (aHatcher.IsDone (Index)) myNbDom = myNbDom + aHatcher.NbDomains (Index) ;
+        aHatcher.ComputeDomains (Index);
+        if (aHatcher.IsDone (Index)) myNbDom = myNbDom + aHatcher.NbDomains (Index) ;
       }
     }
   }
@@ -396,22 +395,22 @@ void GEOM_OCCReader::createISO (const TopoDS_Face&     TopologicalFace,
     if (UInd != 0) {
       Standard_Real UPrm = myUPrm.Value (UIso) ;
       if (!aHatcher.IsDone (UInd)) {
-	MESSAGE("DBRep_IsoBuilder:: U iso of parameter: "<<UPrm)
-	switch (aHatcher.Status (UInd)) {
-	case HatchGen_NoProblem          : MESSAGE("No Problem")          ; break ;
-	case HatchGen_TrimFailure        : MESSAGE("Trim Failure")        ; break ;
-	case HatchGen_TransitionFailure  : MESSAGE("Transition Failure")  ; break ;
-	case HatchGen_IncoherentParity   : MESSAGE("Incoherent Parity")   ; break ;
-	case HatchGen_IncompatibleStates : MESSAGE("Incompatible States") ; break ;
-	}
+        MESSAGE("DBRep_IsoBuilder:: U iso of parameter: "<<UPrm)
+        switch (aHatcher.Status (UInd)) {
+        case HatchGen_NoProblem          : MESSAGE("No Problem")          ; break ;
+        case HatchGen_TrimFailure        : MESSAGE("Trim Failure")        ; break ;
+        case HatchGen_TransitionFailure  : MESSAGE("Transition Failure")  ; break ;
+        case HatchGen_IncoherentParity   : MESSAGE("Incoherent Parity")   ; break ;
+        case HatchGen_IncompatibleStates : MESSAGE("Incompatible States") ; break ;
+        }
       } else {
-	Standard_Integer NbDom = aHatcher.NbDomains (UInd) ;
-	for (Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++) {
-	  const HatchGen_Domain& Dom = aHatcher.Domain (UInd, IDom) ;
-	  Standard_Real V1 = Dom.HasFirstPoint()  ? Dom.FirstPoint().Parameter()  : myVMin - myInfinite ;
-	  Standard_Real V2 = Dom.HasSecondPoint() ? Dom.SecondPoint().Parameter() : myVMax + myInfinite ;
-	  DrawIso(GeomAbs_IsoU, UPrm, V1, V2, Pts, Cell,pt_start_idx);
-	}
+        Standard_Integer NbDom = aHatcher.NbDomains (UInd) ;
+        for (Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++) {
+          const HatchGen_Domain& Dom = aHatcher.Domain (UInd, IDom) ;
+          Standard_Real V1 = Dom.HasFirstPoint()  ? Dom.FirstPoint().Parameter()  : myVMin - myInfinite ;
+          Standard_Real V2 = Dom.HasSecondPoint() ? Dom.SecondPoint().Parameter() : myVMax + myInfinite ;
+          DrawIso(GeomAbs_IsoU, UPrm, V1, V2, Pts, Cell,pt_start_idx);
+        }
       }
     }
   }
@@ -421,22 +420,22 @@ void GEOM_OCCReader::createISO (const TopoDS_Face&     TopologicalFace,
     if (VInd != 0) {
       Standard_Real VPrm = myVPrm.Value (VIso) ;
       if (!aHatcher.IsDone (VInd)) {
-	MESSAGE("DBRep_IsoBuilder:: V iso of parameter: "<<VPrm)
-	switch (aHatcher.Status (VInd)) {
-	case HatchGen_NoProblem          : MESSAGE("No Problem")          ; break ;
-	case HatchGen_TrimFailure        : MESSAGE("Trim Failure")        ; break ;
-	case HatchGen_TransitionFailure  : MESSAGE("Transition Failure")  ; break ;
-	case HatchGen_IncoherentParity   : MESSAGE("Incoherent Parity")   ; break ;
-	case HatchGen_IncompatibleStates : MESSAGE("Incompatible States") ; break ;
-	}
+        MESSAGE("DBRep_IsoBuilder:: V iso of parameter: "<<VPrm)
+        switch (aHatcher.Status (VInd)) {
+        case HatchGen_NoProblem          : MESSAGE("No Problem")          ; break ;
+        case HatchGen_TrimFailure        : MESSAGE("Trim Failure")        ; break ;
+        case HatchGen_TransitionFailure  : MESSAGE("Transition Failure")  ; break ;
+        case HatchGen_IncoherentParity   : MESSAGE("Incoherent Parity")   ; break ;
+        case HatchGen_IncompatibleStates : MESSAGE("Incompatible States") ; break ;
+        }
       } else {
-	Standard_Integer NbDom = aHatcher.NbDomains (VInd) ;
-	for (Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++) {
-	  const HatchGen_Domain& Dom = aHatcher.Domain (VInd, IDom) ;
-	  Standard_Real U1 = Dom.HasFirstPoint()  ? Dom.FirstPoint().Parameter()  : myVMin - myInfinite ;
-	  Standard_Real U2 = Dom.HasSecondPoint() ? Dom.SecondPoint().Parameter() : myVMax + myInfinite ;
-	  DrawIso(GeomAbs_IsoV, VPrm, U1, U2, Pts, Cell,pt_start_idx) ;
-	}
+        Standard_Integer NbDom = aHatcher.NbDomains (VInd) ;
+        for (Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++) {
+          const HatchGen_Domain& Dom = aHatcher.Domain (VInd, IDom) ;
+          Standard_Real U1 = Dom.HasFirstPoint()  ? Dom.FirstPoint().Parameter()  : myVMin - myInfinite ;
+          Standard_Real U2 = Dom.HasSecondPoint() ? Dom.SecondPoint().Parameter() : myVMax + myInfinite ;
+          DrawIso(GeomAbs_IsoV, VPrm, U1, U2, Pts, Cell,pt_start_idx) ;
+        }
       }
     }
   }
@@ -448,7 +447,7 @@ void GEOM_OCCReader::createISO (const TopoDS_Face&     TopologicalFace,
 // Purpose  : Init VTK ISO PLOT
 //=======================================================================
 void GEOM_OCCReader::MoveTo(gp_Pnt P,
-			      vtkPoints* Pts)
+                              vtkPoints* Pts)
 {    
   float coord[3];
 
@@ -462,8 +461,8 @@ void GEOM_OCCReader::MoveTo(gp_Pnt P,
 // Purpose  : Plot point in VTK
 //=======================================================================
 void GEOM_OCCReader::DrawTo(gp_Pnt P,
-			      vtkPoints* Pts,
-			      vtkCellArray* Cells)
+                              vtkPoints* Pts,
+                              vtkCellArray* Cells)
 {
   float coord[3];
   coord[0] = P.X(); coord[1] = P.Y(); coord[2] = P.Z();
@@ -484,12 +483,12 @@ void GEOM_OCCReader::DrawTo(gp_Pnt P,
 // Purpose  : Draw an iso on vtk
 //=======================================================================
 void GEOM_OCCReader::DrawIso(GeomAbs_IsoType T, 
-			       Standard_Real Par, 
-			       Standard_Real T1,
-			       Standard_Real T2,
-			       vtkPoints* Pts,
-			       vtkCellArray* Cells,
-			       Standard_Integer& startidx)
+                               Standard_Real Par, 
+                               Standard_Real T1,
+                               Standard_Real T2,
+                               vtkPoints* Pts,
+                               vtkCellArray* Cells,
+                               Standard_Integer& startidx)
 {
 
   Standard_Boolean halt = Standard_False;
@@ -529,112 +528,112 @@ void GEOM_OCCReader::DrawIso(GeomAbs_IsoType T,
       V2 = Par;
       stepV = 0;
       nbIntv = nbUIntv;
-    }	
-	
+    }   
+        
     S.D0(U1,V1,P);
     MoveTo(P,Pts);
 
     for (Intrv = 1; Intrv <= nbIntv; Intrv++) {
 
       if (TI(Intrv) <= T1 && TI(Intrv + 1) <= T1)
-	continue;
+        continue;
       if (TI(Intrv) >= T2 && TI(Intrv + 1) >= T2)
-	continue;
+        continue;
       if (T == GeomAbs_IsoU) {
-	V1 = Max(T1, TI(Intrv));
-	V2 = Min(T2, TI(Intrv + 1));
-	stepV = (V2 - V1) / myDiscret;
+        V1 = Max(T1, TI(Intrv));
+        V2 = Min(T2, TI(Intrv + 1));
+        stepV = (V2 - V1) / myDiscret;
       }
       else {
-	U1 = Max(T1, TI(Intrv));
-	U2 = Min(T2, TI(Intrv + 1));
-	stepU = (U2 - U1) / myDiscret;
+        U1 = Max(T1, TI(Intrv));
+        U2 = Min(T2, TI(Intrv + 1));
+        stepU = (U2 - U1) / myDiscret;
       }
 
       switch (SurfType) {
-	//-------------GeomAbs_Plane---------------
+        //-------------GeomAbs_Plane---------------
       case GeomAbs_Plane :
-	break;
-	//----GeomAbs_Cylinder   GeomAbs_Cone------
+        break;
+        //----GeomAbs_Cylinder   GeomAbs_Cone------
       case GeomAbs_Cylinder :
       case GeomAbs_Cone :
-	if (T == GeomAbs_IsoV) {
-	  for (j = 1; j < myDiscret; j++) {
-	    U1 += stepU;
-	    V1 += stepV;
-	    S.D0(U1,V1,P);
-	    DrawTo(P,Pts,Cells);
-	  }
-	}
-	break;
-	//---GeomAbs_Sphere   GeomAbs_Torus--------
-	//GeomAbs_BezierSurface GeomAbs_BezierSurface
+        if (T == GeomAbs_IsoV) {
+          for (j = 1; j < myDiscret; j++) {
+            U1 += stepU;
+            V1 += stepV;
+            S.D0(U1,V1,P);
+            DrawTo(P,Pts,Cells);
+          }
+        }
+        break;
+        //---GeomAbs_Sphere   GeomAbs_Torus--------
+        //GeomAbs_BezierSurface GeomAbs_BezierSurface
       case GeomAbs_Sphere :
       case GeomAbs_Torus :
       case GeomAbs_OffsetSurface :
       case GeomAbs_OtherSurface :
-	for (j = 1; j < myDiscret; j++) {
-	  U1 += stepU;
-	  V1 += stepV;
-	  S.D0(U1,V1,P);
-	  DrawTo(P,Pts,Cells);
-	}
-	break;
-	//-------------GeomAbs_BSplineSurface------
+        for (j = 1; j < myDiscret; j++) {
+          U1 += stepU;
+          V1 += stepV;
+          S.D0(U1,V1,P);
+          DrawTo(P,Pts,Cells);
+        }
+        break;
+        //-------------GeomAbs_BSplineSurface------
       case GeomAbs_BezierSurface :
       case GeomAbs_BSplineSurface :
-	for (j = 1; j <= myDiscret/2; j++) {
+        for (j = 1; j <= myDiscret/2; j++) {
 
-	  PlotCount = 0;
+          PlotCount = 0;
 
-	  PlotIso ( S, T, U1, V1, (T == GeomAbs_IsoV) ? stepU*2. : stepV*2., halt, Pts, Cells);
-	  U1 += stepU*2.;
-	  V1 += stepV*2.;
-	}
-	break;
-	//-------------GeomAbs_SurfaceOfExtrusion--
-	//-------------GeomAbs_SurfaceOfRevolution-
+          PlotIso ( S, T, U1, V1, (T == GeomAbs_IsoV) ? stepU*2. : stepV*2., halt, Pts, Cells);
+          U1 += stepU*2.;
+          V1 += stepV*2.;
+        }
+        break;
+        //-------------GeomAbs_SurfaceOfExtrusion--
+        //-------------GeomAbs_SurfaceOfRevolution-
       case GeomAbs_SurfaceOfExtrusion :
       case GeomAbs_SurfaceOfRevolution :
-	if ((T == GeomAbs_IsoV && SurfType == GeomAbs_SurfaceOfRevolution) ||
-	    (T == GeomAbs_IsoU && SurfType == GeomAbs_SurfaceOfExtrusion)) {
-	  if (SurfType == GeomAbs_SurfaceOfExtrusion) break;
-	  for (j = 1; j < myDiscret; j++) {
-	    U1 += stepU;
-	    V1 += stepV;
-	    S.D0(U1,V1,P);
-	    DrawTo(P,Pts,Cells);
-	  }
-	} else {
-	  CurvType = (S.BasisCurve())->GetType();
-	  switch (CurvType) {
-	  case GeomAbs_Line :
-	    break;
-	  case GeomAbs_Circle :
-	  case GeomAbs_Ellipse :
-	    for (j = 1; j < myDiscret; j++) {
-	      U1 += stepU;
-	      V1 += stepV;
-	      S.D0(U1,V1,P);
-	      DrawTo(P,Pts,Cells);
-	    }
-	    break;
-	  case GeomAbs_Parabola :
-	  case GeomAbs_Hyperbola :
-	  case GeomAbs_BezierCurve :
-	  case GeomAbs_BSplineCurve :
-	  case GeomAbs_OtherCurve :
-	    for (j = 1; j <= myDiscret/2; j++) {
+        if ((T == GeomAbs_IsoV && SurfType == GeomAbs_SurfaceOfRevolution) ||
+            (T == GeomAbs_IsoU && SurfType == GeomAbs_SurfaceOfExtrusion)) {
+          if (SurfType == GeomAbs_SurfaceOfExtrusion) break;
+          for (j = 1; j < myDiscret; j++) {
+            U1 += stepU;
+            V1 += stepV;
+            S.D0(U1,V1,P);
+            DrawTo(P,Pts,Cells);
+          }
+        } else {
+          CurvType = (S.BasisCurve())->GetType();
+          switch (CurvType) {
+          case GeomAbs_Line :
+            break;
+          case GeomAbs_Circle :
+          case GeomAbs_Ellipse :
+            for (j = 1; j < myDiscret; j++) {
+              U1 += stepU;
+              V1 += stepV;
+              S.D0(U1,V1,P);
+              DrawTo(P,Pts,Cells);
+            }
+            break;
+          case GeomAbs_Parabola :
+          case GeomAbs_Hyperbola :
+          case GeomAbs_BezierCurve :
+          case GeomAbs_BSplineCurve :
+          case GeomAbs_OtherCurve :
+            for (j = 1; j <= myDiscret/2; j++) {
 
-	      PlotCount = 0;
+              PlotCount = 0;
 
-	      PlotIso ( S, T, U1, V1,(T == GeomAbs_IsoV) ? stepU*2. : stepV*2., halt, Pts, Cells);
-	      U1 += stepU*2.;
-	      V1 += stepV*2.;
-	    }
-	    break;
-	  }
-	}
+              PlotIso ( S, T, U1, V1,(T == GeomAbs_IsoV) ? stepU*2. : stepV*2., halt, Pts, Cells);
+              U1 += stepU*2.;
+              V1 += stepV*2.;
+            }
+            break;
+          }
+        }
       }
     }
     S.D0(U2,V2,P);
@@ -648,13 +647,13 @@ void GEOM_OCCReader::DrawIso(GeomAbs_IsoType T,
 //=======================================================================
 
 void GEOM_OCCReader::PlotIso (BRepAdaptor_Surface& S, 
-				GeomAbs_IsoType T,
-				Standard_Real& U, 
-				Standard_Real& V, 
-				Standard_Real Step, 
-				Standard_Boolean& halt,
-				vtkPoints* Pts,
-				vtkCellArray* Cells)
+                                GeomAbs_IsoType T,
+                                Standard_Real& U, 
+                                Standard_Real& V, 
+                                Standard_Real Step, 
+                                Standard_Boolean& halt,
+                                vtkPoints* Pts,
+                                vtkCellArray* Cells)
 {
 
   ++PlotCount; 
@@ -696,8 +695,8 @@ void GEOM_OCCReader::PlotIso (BRepAdaptor_Surface& S,
 //=======================================================================
 
 void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
-					 vtkPoints* Pts,
-					 vtkCellArray* Cells) {
+                                         vtkPoints* Pts,
+                                         vtkCellArray* Cells) {
   
   
   Handle(Poly_PolygonOnTriangulation) aEdgePoly;
@@ -742,9 +741,9 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
       gp_Pnt pt2 = theNodesP(j+1);
     
       if(!isidtrsf) {
-	// apply edge transformation
-	pt1.Transform(edgeTransf);
-	pt2.Transform(edgeTransf);
+        // apply edge transformation
+        pt1.Transform(edgeTransf);
+        pt2.Transform(edgeTransf);
       }
       
       // insert pt1
@@ -777,9 +776,9 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
       gp_Pnt pt2 = theNodesPoly(id2);
           
       if(!isidtrsf) {
-	// apply edge transformation
-	pt1.Transform(edgeTransf);
-	pt2.Transform(edgeTransf);
+        // apply edge transformation
+        pt1.Transform(edgeTransf);
+        pt2.Transform(edgeTransf);
       }
       
       // insert pt1
@@ -810,7 +809,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     if (aDist < gp::Resolution()) return;
     gp_Dir aDirection (aDirVec);
 
-    Standard_Real anAngle = PI/180.*5.;
+    Standard_Real anAngle = M_PI/180. * 5.;
     Standard_Real aLength = aDist/10.;
 
     Standard_Real dx,dy,dz;
@@ -848,8 +847,8 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     int NbPoints = 15;
     for (int i = 1; i <= NbPoints; i++, ptPrev = ptCur)
     {
-      cosinus = cos(2. * PI / NbPoints * (i-1));   
-      sinus   = sin(2. * PI / NbPoints * (i-1));
+      cosinus = cos(2. * M_PI / NbPoints * (i-1));   
+      sinus   = sin(2. * M_PI / NbPoints * (i-1));
 
       gp_XYZ aP = aPc + (aDirI.XYZ() * cosinus + aDirJ.XYZ() * sinus) * aLength * Tg;
       coord[0] = aP.X();
@@ -925,8 +924,8 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
 //=======================================================================
 
 void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
-					 vtkPoints* Pts,
-					 vtkCellArray* Cells) {
+                                         vtkPoints* Pts,
+                                         vtkCellArray* Cells) {
 #define ZERO_COORD coord[0] = 0.0; coord[1] = 0.0; coord[2] = 0.0
   
   gp_Pnt P = BRep_Tool::Pnt( aVertex );
@@ -955,7 +954,7 @@ void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
   Cells->InsertNextCell(2,pts);
 
 #undef ZERO_COORD
-}	
+}       
 
 //=======================================================================
 // Function : TransferEdgeSData(
@@ -963,8 +962,8 @@ void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
 //=======================================================================
 
 void GEOM_OCCReader::TransferEdgeSData(const TopoDS_Edge& aFace,
-					 vtkPoints* Pts,
-					 vtkCellArray* Cells) 
+                                         vtkPoints* Pts,
+                                         vtkCellArray* Cells) 
 {
 }
 
@@ -974,8 +973,8 @@ void GEOM_OCCReader::TransferEdgeSData(const TopoDS_Edge& aFace,
 // Purpose  : Transfert shading data for FACE
 //=======================================================================
 void GEOM_OCCReader::TransferFaceSData(const TopoDS_Face& aFace,
-					 vtkPoints* Pts,
-					 vtkCellArray* Cells) {
+                                         vtkPoints* Pts,
+                                         vtkCellArray* Cells) {
 
   TopLoc_Location aLoc;
   Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
@@ -991,7 +990,7 @@ void GEOM_OCCReader::TransferFaceSData(const TopoDS_Face& aFace,
 
     Standard_Integer nbNodesInFace = aPoly->NbNodes();
     Standard_Integer nbTriInFace = aPoly->NbTriangles();
-		
+                
     const Poly_Array1OfTriangle& Triangles = aPoly->Triangles();
     const TColgp_Array1OfPnt& Nodes = aPoly->Nodes();
       
@@ -1006,10 +1005,10 @@ void GEOM_OCCReader::TransferFaceSData(const TopoDS_Face& aFace,
 
     for(i=1;i<=nbTriInFace;i++) {
       // Get the triangle
-	
+        
       Standard_Integer N1,N2,N3;
       Triangles(i).Get(N1,N2,N3);
-	
+        
       vtkIdType pts[3];
       pts[0] = N1-1; pts[1] = N2-1; pts[2] = N3-1;
       Cells->InsertNextCell(3,pts);
@@ -1069,5 +1068,3 @@ const TopoDS_Shape& GEOM_OCCReader::getTopo() {
 int GEOM_OCCReader::getDisplayMode() {
   return amode;
 }
-
-

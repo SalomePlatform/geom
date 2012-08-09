@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOM_Object_HeaderFile
 #define _GEOM_Object_HeaderFile
 
@@ -55,10 +56,10 @@
 #ifndef _TCollection_AsciiString_HeaderFile
 #include <TCollection_AsciiString.hxx>
 #endif
+#ifndef _Aspect_TypeOfMarker_HeaderFile
+#include <Aspect_TypeOfMarker.hxx>
+#endif
 
-#include "SALOMEconfig.h"
-#include CORBA_SERVER_HEADER(SALOMEDS)
-#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
 class Handle_TColStd_HSequenceOfTransient;
 class Standard_Transient;
@@ -129,6 +130,16 @@ class Handle(GEOM_Object) : public Handle(MMgt_TShared) {
 class GEOM_Object : public MMgt_TShared
 {
  friend class GEOM_Engine;
+ 
+ public:
+  struct Color {
+    //! Red component of the color
+    double R;
+    //! Green component of the color
+    double G;
+    //! Blue component  of the color
+    double B;
+  };
 
  public:
   inline void* operator new(size_t,void* anAddress)
@@ -156,7 +167,7 @@ class GEOM_Object : public MMgt_TShared
 
  public:
   Standard_EXPORT GEOM_Object(TDF_Label& theEntry, int theType);
-  Standard_EXPORT ~GEOM_Object() {;}
+  Standard_EXPORT ~GEOM_Object();
 
   //Finds a GEOM_Object on the label theLabel
   Standard_EXPORT static Handle(GEOM_Object) GetObject(TDF_Label& theLabel);
@@ -167,7 +178,7 @@ class GEOM_Object : public MMgt_TShared
   //Returns a GEOM_Object common GUID
   Standard_EXPORT static const Standard_GUID& GetObjectID();
 
-  //Returns a GUID associated with a sub shape object
+  //Returns a GUID associated with a sub-shape object
   Standard_EXPORT static const Standard_GUID& GetSubShapeID();
 
   //###########################################################
@@ -204,16 +215,34 @@ class GEOM_Object : public MMgt_TShared
   Standard_EXPORT char* GetName();
 
   //Sets a color of this GEOM_Object
-  Standard_EXPORT void SetColor(const SALOMEDS::Color& theColor);
+  Standard_EXPORT void SetColor(const Color& theColor);
 
   //Returns a color of this GEOM_Object
-  Standard_EXPORT SALOMEDS::Color GetColor();
+  Standard_EXPORT Color GetColor();
 
   //Toggles an auto color mode on this GEOM_Object
-  Standard_EXPORT void SetAutoColor(CORBA::Boolean theAutoColor);
+  Standard_EXPORT void SetAutoColor(bool theAutoColor);
 
   //Returns a flag of auto color mode of this GEOM_Object
-  Standard_EXPORT CORBA::Boolean GetAutoColor();
+  Standard_EXPORT bool GetAutoColor();
+
+  //Sets predefined point marker texture
+  Standard_EXPORT void SetMarkerStd(const Aspect_TypeOfMarker theType, double theSize);
+  
+  //Sets custom point marker texture
+  Standard_EXPORT void SetMarkerTexture(int theTextureId);
+
+  //Gets point marker type
+  Standard_EXPORT Aspect_TypeOfMarker GetMarkerType();
+
+  //Gets point marker scale factor / size
+  Standard_EXPORT double GetMarkerSize();
+
+  //Gets custom marker texture ID
+  Standard_EXPORT int GetMarkerTexture();
+
+  //Unsets point marker
+  Standard_EXPORT void UnsetMarker();
 
   //Sets an auxiliary data
   Standard_EXPORT void SetAuxData(const char* theData);
@@ -228,10 +257,10 @@ class GEOM_Object : public MMgt_TShared
   Standard_EXPORT TCollection_AsciiString GetParameters() const;
 
   //###########################################################
-  // Sub shape methods
+  // Sub-shape methods
   //###########################################################
 
-  //Returns false if the object is a sub shape of another object
+  //Returns false if the object is a sub-shape of another object
   Standard_EXPORT bool IsMainShape();
 
   //###########################################################
@@ -250,7 +279,9 @@ class GEOM_Object : public MMgt_TShared
 
   //Adds a function with a driver GUID = theGUID and a type theFunctionType
   //to the function tree of this GEOM_Object
-  Standard_EXPORT Handle(GEOM_Function) AddFunction(const Standard_GUID& theGUID, int theFunctionType);
+  Standard_EXPORT Handle(GEOM_Function) AddFunction(const Standard_GUID& theGUID,
+                                                    int                  theFunctionType,
+                                                    bool                 allowSubShape=false);
 
   //Returns a number of functions of this GEOM_Object
   Standard_EXPORT int GetNbFunctions();
@@ -279,6 +310,9 @@ class GEOM_Object : public MMgt_TShared
   TDF_Label                 _label;
   TCollection_AsciiString   _ior;
   TCollection_AsciiString   _parameters;
+  int                       _docID;
+
+
 };
 
 #endif

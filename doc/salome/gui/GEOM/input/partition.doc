@@ -2,55 +2,109 @@
 
 \page partition_page Partition
 
-\n To produce a \b Partition in the <b>Main Menu</b> select <b>Operations - > Partition</b>
+For detail description of the Partition operation please refer to
+<a href="SALOME_BOA_PA.pdf">this document</a>. 
+It provides a general review of the Partition and Boolean
+operations algorithms, describes the usage methodology and highlighs
+major limitations of these operations.
 
-\n This operation builds a compound by intersection of several shapes with a tool object or a plane.
-\n The \b Result will be any \b GEOM_Object.
+To produce a \b Partition in the <b>Main Menu</b> select <b>Operations - > Partition</b>
+
+This operation builds a compound by intersection of several shapes
+with a set of tool objects or with a plane.
+The \b Result will be a \b GEOM_Object.
 
 <br><h2>Intersection of two shapes.</h2>
 
-\n As far as the intersection of two objects can produce any type of
-geometrical objects, <b>Resulting type</b> box allows choosing the
-preferrable result, i.e. a solid, a shell, a list of faces, etc.
-\n <b>TUI Command:</b> <em>geompy.MakePartition(ListOfShapes,
-ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs,
-ListOfMaterials),</em> where where \em ListOfShapes is a list of shapes to
-be intersected and \em ListOfTools is a list of shapes to intersect the
-shapes from ListOfShapes.
-\n Since the implementation of a new version of PartitionAlgo other
-parameters are ignored by the current functionality and remain there
-only to support the old scripts.
-\n <b>Arguments:</b> Name + 2 lists of shapes (the shapes from the
-first list will be intersected with the shapes from the second list) +
-reconstruction limit.
-\n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
-
 \image html partition1.png
 
-<b>Keep shapes of lower type</b> checkbox allows building geometrical objects. 
-Only lower type objects will be preserved without the upper ones.
+<b>Arguments:</b> Name + 2 lists of shapes (the shapes from the
+first list will be intersected with the shapes from the second list) +
+Resulting Type of shape.
 
+As far as the intersection of two objects can produce any type of
+geometrical objects, <b>Resulting type</b> box allows choosing the
+preferrable result, i.e. a solid, a shell, a list of faces, etc.
+
+The <b>Resulting type</b> has to be equal or lower than the type of the
+\em Objects. In other words, if the \em Objects don't contain any
+shape of this type, Partition fails.
+
+<b>Keep shapes of lower type</b> checkbox manages standalone shapes of
+type other than the \em Limit. If it is checked, lower dimension
+objects will be preserved, else they will be lost.
+
+For example, you partition a box (Solid) and a face (Face)
+without any tool (the box is split in two parts by the shape). If you
+choose the Resulting Type "Solid", you will
+obtain a compound of two solids, but if you also check <b>Keep shapes of lower
+type</b> checkbox, you will obtain a compound of two solids and one
+face (there will be a hole in the resulting face, where the original
+face intersects with the box, see the corresponding \ref partition_picture_3 "picture" below).
+
+<b>No sub-shapes intersection (Compounds only)</b> check box affects
+only input shapes of the Compound type. If this option is switched off (default
+behavior) each input compound will be automatically exploded into
+sub-shapes and the intersection between these shapes will be also
+computed. If this option is switched on, the intersection between
+sub-shapes will not be performed. In this case the Partition algorithm
+will work faster, but the result might differ from the default behavior.
+
+ <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+
+\note Partition is a complex operation, so its result of it depends
+      on the quality of the initial shapes. Sometimes, if partition fails,
+      such healing operations as <b>Shape Processing</b>
+      and <b>Limit Tolerance</b> can help to attune source shapes to obtain correct result of the Partition.
+      See also \ref tui_limit_tolerance "TUI example" of shape healing.
+
+<b>TUI Command (with sub-shapes intersection):</b>
+
+<em>geompy.MakePartition(ListOfShapes, ListOfTools, ListOfKeepInside,
+ListOfRemoveInside, Limit, RemoveWebs, ListOfMaterials,
+KeepNonlimitShapes)</em>
+
+<b>TUI Command (without sub-shapes intersection):</b>
+
+<em>geompy.MakePartitionNonSelfIntersectedShape(ListOfShapes,
+ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs,
+ListOfMaterials, KeepNonlimitShapes)</em>
+
+Here,
+- \em ListOfShapes is a list of shapes to be intersected
+- \em ListOfTools is a list of shapes to intersect the shapes from
+\em ListOfShapes
+- \em Limit is a Type of resulting shapes
+- \em KeepNonlimitShapes is a flag that allows to preserve standalone
+shapes of low dimension (than \em Limit) in the result.
+- Other parameters are obsolete and kept only for compatibility with
+previous versions of SALOME.
 
 <br><h2>Intersection of a Shape and a Plane.</h2>
 
-\n <b>TUI Command:</b> <em> geompy.MakeHalfPartition(Shapes,
-Plane),</em> where \em Shapes are a list of Shapes to be intersected
-and \em Plane is a Tool shape, to intersect the \em Shapes.
-\n <b>Arguments:</b> Name + a list of shapes which will be intersected
-+ 1 cutting plane.
-\n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
-
 \image html partition2.png
 
-\n <b>Example:</b>
+<b>Arguments:</b> Name + 1 shape to be intersected + 1 cutting plane.
+
+<b>Advanced option:</b>
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+
+<b>TUI Command:</b>
+
+<em>geompy.MakeHalfPartition(Shape, Plane)</em>, where:
+- \em Shape is a source shape to be intersected by the \em Plane
+- \em Plane is a tool shape, to intersect the \em Shape.
+
+<b>Examples:</b>
 
 \image html partitionsn1.png "Box intersected by a plane"
 
 \image html partitionsn2.png "Result of intersection"
 
-Our <b>TUI Scripts</b> provide you with useful examples of the use of
-\ref tui_partition "Basic Operations".
+\anchor partition_picture_3
+\image html partitionsn3.png "Result of intersection of a box and a plane (both as \em Objects, no tools) with the Resulting type \em Solid and checked 'Keep shapes of lower type'"
+
+Our <b>TUI Scripts</b> provide you with useful examples of \ref tui_partition "Basic Operations".
 
 */

@@ -1,27 +1,28 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Builder_1.cxx
-// Created:	
-// Author:	Peter KURNEV 
+
+// File:        GEOMAlgo_Builder_1.cxx
+// Created:
+// Author:      Peter KURNEV
 //
 #include <GEOMAlgo_Builder.hxx>
 //
@@ -64,16 +65,16 @@
 
 static
   void FillImagesCompounds(const TopTools_MapOfShape& ,
-			   BRepAlgo_Image& );
+                           BRepAlgo_Image& );
 
 static
   void FillImagesCompound(const TopoDS_Shape& ,
-			BRepAlgo_Image& ,
-			TopTools_MapOfShape& );
+                        BRepAlgo_Image& ,
+                        TopTools_MapOfShape& );
 
 //=======================================================================
 //function : FillImagesVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesVertices()
 {
@@ -90,19 +91,19 @@ static
     if (aV.ShapeType()==TopAbs_VERTEX) {
       iV=pPF->FindSDVertex(i);
       if (iV) {
-	const TopoDS_Shape& aVSD=aDS.Shape(iV);
-	if (!myImages.HasImage(aV)) {
-	  myImages.Bind(aV, aVSD);
-	  //
-	  mySameDomainShapes.Add(aV, aVSD);
-	}
+        const TopoDS_Shape& aVSD=aDS.Shape(iV);
+        if (!myImages.HasImage(aV)) {
+          myImages.Bind(aV, aVSD);
+          //
+          mySameDomainShapes.Add(aV, aVSD);
+        }
       }
     }
   }
 }
 //=======================================================================
 // function: FillImagesEdges
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesEdges()
 {
@@ -111,11 +112,10 @@ static
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
   const BOPTools_SplitShapesPool& aSSP=pPF->SplitShapesPool();
-  NMTTools_CommonBlockPool& aCBP=pPF->ChangeCommonBlockPool();
-  IntTools_Context& aCtx=pPF->ChangeContext();
+  const Handle(IntTools_Context)& aCtx=pPF->Context();
   //
   Standard_Boolean bToReverse;
-  Standard_Integer i, aNb, aNbSp, nSp, nSpR, nSpx, aIsCB;
+  Standard_Integer i, aNb, aNbSp, nSp, nSpR, nSpx, aIsCB, aNbLB;
   TColStd_ListIteratorOfListOfInteger aItLB;
   TColStd_ListOfInteger aLB;
   TopoDS_Edge aEE, aESpR;
@@ -149,31 +149,32 @@ static
       nSp=aPB.Edge();
       const TopoDS_Shape& aSp=aDS.Shape(nSp);
       //
-      //modified by NIZNHY-PKV Fri Nov 30 10:40:36 2007 f
-      //const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
       const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB, aIsCB);
-      //modified by NIZNHY-PKV Fri Nov 30 10:40:48 2007t
+      //modified by NIZNHY-PKV Wed Oct 27 11:19:30 2010f
+      aNbLB=aLB.Extent();
+      if (aIsCB && aNbLB<2) {
+	aIsCB=0;
+      }
+      //modified by NIZNHY-PKV Wed Oct 27 11:19:34 2010t
+      //
       nSpR=aPBR.Edge();
       const TopoDS_Shape& aSpR=aDS.Shape(nSpR);
-      //modified by NIZNHY-PKV Fri Nov 30 10:41:39 2007f
-      //if (aSpR.IsSame(aSp) && aSpR.IsSame(aE)) {
       if (aSpR.IsSame(aSp) && aSpR.IsSame(aE) && !aIsCB) {
-	//modified by NIZNHY-PKV Fri Nov 30 10:41:46 2007t
-	continue;
+        continue;
       }
       //
       aESpR=TopoDS::Edge(aSpR);
       bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aESpR, aEE, aCtx);
       if (bToReverse) {
-	aESpR.Reverse();
+        aESpR.Reverse();
       }
       aLSp.Append(aESpR);
       //
       aItLB.Initialize(aLB);
       for (; aItLB.More(); aItLB.Next()) {
-	nSpx=aItLB.Value();
-	const TopoDS_Shape& aSpx=aDS.Shape(nSpx);
-	mySameDomainShapes.Add(aSpx ,aSpR);
+        nSpx=aItLB.Value();
+        const TopoDS_Shape& aSpx=aDS.Shape(nSpx);
+        mySameDomainShapes.Add(aSpx ,aSpR);
       }
       //
       //
@@ -181,38 +182,34 @@ static
     else {
       aIt.Initialize(aLPB);
       for (; aIt.More(); aIt.Next()) {
-	const BOPTools_PaveBlock& aPB=aIt.Value();
-	//modified by NIZNHY-PKV Fri Nov 30 10:42:15 2007f
-	//const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
-	const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB, aIsCB);
-	//modified by NIZNHY-PKV Fri Nov 30 10:42:20 2007t
-	nSpR=aPBR.Edge();
-	const TopoDS_Shape& aSpR=aDS.Shape(nSpR);
-	//
-	aESpR=TopoDS::Edge(aSpR);
-	bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aESpR, aEE, aCtx);
-	if (bToReverse) {
-	  aESpR.Reverse();
-	}
-	aLSp.Append(aESpR);
-	//
-	aItLB.Initialize(aLB);
-	for (; aItLB.More(); aItLB.Next()) {
-	  nSpx=aItLB.Value();
-	  const TopoDS_Shape& aSpx=aDS.Shape(nSpx);
-	  mySameDomainShapes.Add(aSpx ,aSpR);
-	}
-	//
+        const BOPTools_PaveBlock& aPB=aIt.Value();
+        const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB, aIsCB);
+        nSpR=aPBR.Edge();
+        const TopoDS_Shape& aSpR=aDS.Shape(nSpR);
+        //
+        aESpR=TopoDS::Edge(aSpR);
+        bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aESpR, aEE, aCtx);
+        if (bToReverse) {
+          aESpR.Reverse();
+        }
+        aLSp.Append(aESpR);
+        //
+        aItLB.Initialize(aLB);
+        for (; aItLB.More(); aItLB.Next()) {
+          nSpx=aItLB.Value();
+          const TopoDS_Shape& aSpx=aDS.Shape(nSpx);
+          mySameDomainShapes.Add(aSpx ,aSpR);
+        }
       }
     }
     //
     myImages.Bind(aE, aLSp);
-    
+
   }//for (i=1; i<=aNb; ++i)
 }
 //=======================================================================
 // function: FillImagesContainers
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesContainers(const TopAbs_ShapeEnum theType)
 {
@@ -223,13 +220,13 @@ static
   TopAbs_ShapeEnum aType;
   BRep_Builder aBB;
   TopoDS_Iterator aIt;
-  TopTools_ListIteratorOfListOfShape aItIm; 
+  TopTools_ListIteratorOfListOfShape aItIm;
   TopTools_MapOfShape aMS;
   TopTools_MapIteratorOfMapOfShape aItS;
   //
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
-  IntTools_Context& aCtx= pPF->ChangeContext();
+  const Handle(IntTools_Context)& aCtx= pPF->Context();
   //
   aNbS=aDS.NumberOfShapesOfTheObject();
   for (i=1; i<=aNbS; ++i) {
@@ -254,8 +251,8 @@ static
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aF=aIt.Value();
       if (myImages.HasImage(aF)) {
-	bInterferred=!bInterferred;
-	break;
+        bInterferred=!bInterferred;
+        break;
       }
     }
     if (!bInterferred){
@@ -269,31 +266,31 @@ static
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aF=aIt.Value();
       if (myImages.HasImage(aF)) {
-	const TopTools_ListOfShape& aLFIm=myImages.Image(aF);
-	aItIm.Initialize(aLFIm);
-	for (; aItIm.More(); aItIm.Next()) {
-	  TopoDS_Shape aFIm=aItIm.Value();
-	  //
-	  bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aFIm, aF, aCtx);
-	  if (bToReverse) {
-	    aFIm.Reverse();
-	  }
-	  aBB.Add(aCIm, aFIm);
-	}
+        const TopTools_ListOfShape& aLFIm=myImages.Image(aF);
+        aItIm.Initialize(aLFIm);
+        for (; aItIm.More(); aItIm.Next()) {
+          TopoDS_Shape aFIm=aItIm.Value();
+          //
+          bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aFIm, aF, aCtx);
+          if (bToReverse) {
+            aFIm.Reverse();
+          }
+          aBB.Add(aCIm, aFIm);
+        }
       }
       else {
-	aBB.Add(aCIm, aF);
+        aBB.Add(aCIm, aF);
       }
     }
-    myImages.Bind(aC, aCIm); 
+    myImages.Bind(aC, aCIm);
   }// for (; aItS.More(); aItS.Next()) {
 }
 //=======================================================================
 // function: FillImagesCompounds
-// purpose: 
+// purpose:
 //=======================================================================
 void FillImagesCompounds(const TopTools_MapOfShape& theMS,
-			 BRepAlgo_Image& theImages)
+                         BRepAlgo_Image& theImages)
 {
   TopTools_MapOfShape aMFP;
   TopTools_MapIteratorOfMapOfShape aItS;
@@ -306,18 +303,18 @@ void FillImagesCompounds(const TopTools_MapOfShape& theMS,
 }
 //=======================================================================
 //function : FillImagesCompound
-//purpose  : 
+//purpose  :
 //=======================================================================
 void FillImagesCompound(const TopoDS_Shape& theS,
-			BRepAlgo_Image& theImages,
-			TopTools_MapOfShape& theMFP)
-{ 
+                        BRepAlgo_Image& theImages,
+                        TopTools_MapOfShape& theMFP)
+{
   Standard_Boolean bInterferred;
   TopAbs_ShapeEnum aTypeX;
   TopAbs_Orientation aOrX;
   TopoDS_Iterator aIt;
   BRep_Builder aBB;
-  TopTools_ListIteratorOfListOfShape aItIm; 
+  TopTools_ListIteratorOfListOfShape aItIm;
   //
   if (!theMFP.Add(theS)) {
     return;
@@ -350,14 +347,14 @@ void FillImagesCompound(const TopoDS_Shape& theS,
       const TopTools_ListOfShape& aLFIm=theImages.Image(aSX);
       aItIm.Initialize(aLFIm);
       for (; aItIm.More(); aItIm.Next()) {
-	TopoDS_Shape aSXIm=aItIm.Value();
-	aSXIm.Orientation(aOrX);
-	aBB.Add(aCIm, aSXIm);
+        TopoDS_Shape aSXIm=aItIm.Value();
+        aSXIm.Orientation(aOrX);
+        aBB.Add(aCIm, aSXIm);
       }
     }
     else {
       aBB.Add(aCIm, aSX);
     }
   }
-  theImages.Bind(theS, aCIm); 
+  theImages.Bind(theS, aCIm);
 }

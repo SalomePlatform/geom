@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_ClippingDlg.cxx
 // Author : Michael Zorin, Open CASCADE S.A.S. (mikhail.zorin@opencascade.com)
@@ -28,7 +29,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
@@ -74,13 +75,15 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( GeometryGUI* theGeometryGUI,
   TextLabelNear = new QLabel( tr( "Near" ), GroupArguments );
   GroupArgumentsLayout->addWidget( TextLabelNear, 0, 0 );
 
-  SpinBox_Near = new SalomeApp_DoubleSpinBox( COORD_MIN, COORD_MAX, 10.0, 3, 10, GroupArguments );
+  SpinBox_Near = new SalomeApp_DoubleSpinBox( GroupArguments );
+  initSpinBox( SpinBox_Near, COORD_MIN, COORD_MAX, 10.0, "length_precision" );
   GroupArgumentsLayout->addWidget( SpinBox_Near, 0, 1 );
 
   TextLabelFar = new QLabel( tr( "Far" ), GroupArguments );
   GroupArgumentsLayout->addWidget( TextLabelFar, 0, 2 );
 
-  SpinBox_Far = new SalomeApp_DoubleSpinBox( COORD_MIN, COORD_MAX, 10.0, 3, 10, GroupArguments );
+  SpinBox_Far = new SalomeApp_DoubleSpinBox( GroupArguments );
+  initSpinBox( SpinBox_Far, COORD_MIN, COORD_MAX, 10.0, "length_precision" );
   GroupArgumentsLayout->addWidget( SpinBox_Far, 0, 3 );
 
   resetButton  = new QPushButton( tr( "Reset" ), GroupArguments );
@@ -160,12 +163,12 @@ void OperationGUI_ClippingDlg::Init()
     center[2] = ( bounds[4] + bounds[5] ) / 2.0;
 
     double width = sqrt( ( bounds[1]-bounds[0] ) * ( bounds[1]-bounds[0] ) +
-			 ( bounds[3]-bounds[2] ) * ( bounds[3]-bounds[2] ) +
-			 ( bounds[5]-bounds[4] ) * ( bounds[5]-bounds[4] ) );
+                         ( bounds[3]-bounds[2] ) * ( bounds[3]-bounds[2] ) +
+                         ( bounds[5]-bounds[4] ) * ( bounds[5]-bounds[4] ) );
 
     double distance = sqrt( ( position[0]-center[0] ) * ( position[0]-center[0] ) +
-			    ( position[1]-center[1] ) * ( position[1]-center[1] ) +
-			    ( position[2]-center[2] ) * ( position[2]-center[2] ) );
+                            ( position[1]-center[1] ) * ( position[1]-center[1] ) +
+                            ( position[2]-center[2] ) * ( position[2]-center[2] ) );
 
     vtkFloatingPointType range[2] = { distance - width/2.0, distance + width/2.0 };
 
@@ -246,6 +249,7 @@ bool OperationGUI_ClippingDlg::ClickOnApply()
 //=================================================================================
 void OperationGUI_ClippingDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -307,12 +311,12 @@ void OperationGUI_ClippingDlg::onReset()
     center[2] = ( bounds[4] + bounds[5] ) / 2.0;
 
     double width = sqrt( ( bounds[1]-bounds[0] ) * ( bounds[1]-bounds[0] ) +
-			 ( bounds[3]-bounds[2] ) * ( bounds[3]-bounds[2] ) +
-			 ( bounds[5]-bounds[4] ) * ( bounds[5]-bounds[4] ) );
+                         ( bounds[3]-bounds[2] ) * ( bounds[3]-bounds[2] ) +
+                         ( bounds[5]-bounds[4] ) * ( bounds[5]-bounds[4] ) );
 
     double distance = sqrt( ( position[0]-center[0] ) * ( position[0]-center[0] ) +
-			    ( position[1]-center[1] ) * ( position[1]-center[1] ) +
-			    ( position[2]-center[2] ) * ( position[2]-center[2] ) );
+                            ( position[1]-center[1] ) * ( position[1]-center[1] ) +
+                            ( position[2]-center[2] ) * ( position[2]-center[2] ) );
 
     vtkFloatingPointType range[2] = { distance - width/2.0, distance + width/2.0 };
 

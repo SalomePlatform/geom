@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_DistanceDlg.cxx
 // Author : Nicolas REJNERI, Open CASCADE S.A.S.
@@ -44,6 +45,9 @@
 // OCCT Includes
 #include <Geom_Plane.hxx>
 #include <AIS_LengthDimension.hxx>
+#include <AIS_Drawer.hxx>
+#include <Prs3d_LengthAspect.hxx>
+#include <Prs3d_LineAspect.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <gce_MakePln.hxx>
@@ -141,10 +145,7 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
 
   if (aSelList.Extent() > 0) {
-    Standard_Boolean testResult = Standard_False;
-    aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult)
-      aSelectedObject = GEOM::GEOM_Object::_nil();
+    aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
   }
 
   // clear selection
@@ -179,12 +180,15 @@ void MeasureGUI_DistanceDlg::processObject()
   gp_Pnt aPnt1, aPnt2;
   double aDist = 0.;
   if (getParameters(aDist, aPnt1, aPnt2)) {
-    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(aDist));
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+
+    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(aDist, aPrecision));
 
     gp_XYZ aVec = aPnt2.XYZ() - aPnt1.XYZ();
-    myGrp->LineEdit4->setText(DlgRef::PrintDoubleValue(aVec.X()));
-    myGrp->LineEdit5->setText(DlgRef::PrintDoubleValue(aVec.Y()));
-    myGrp->LineEdit6->setText(DlgRef::PrintDoubleValue(aVec.Z()));
+    myGrp->LineEdit4->setText(DlgRef::PrintDoubleValue(aVec.X(), aPrecision));
+    myGrp->LineEdit5->setText(DlgRef::PrintDoubleValue(aVec.Y(), aPrecision));
+    myGrp->LineEdit6->setText(DlgRef::PrintDoubleValue(aVec.Z(), aPrecision));
 
     redisplayPreview();
   }
@@ -207,10 +211,11 @@ bool MeasureGUI_DistanceDlg::getParameters (double& theDistance,
 {
   QString msg;
   if (isValid(msg)) {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+
     try {
       double x1, y1, z1, x2, y2, z2;
-      theDistance = GEOM::GEOM_IMeasureOperations::_narrow(getOperation())->
-        GetMinDistance(myObj, myObj2, x1, y1, z1, x2, y2, z2);
+      theDistance = anOper->GetMinDistance(myObj, myObj2, x1, y1, z1, x2, y2, z2);
 
       thePnt1.SetCoord(x1, y1, z1);
       thePnt2.SetCoord(x2, y2, z2);
@@ -220,7 +225,7 @@ bool MeasureGUI_DistanceDlg::getParameters (double& theDistance,
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 
   return false;
@@ -325,6 +330,12 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       Handle(AIS_LengthDimension) anIO = new AIS_LengthDimension(
         aVert1, aVert2, P, aDist, TCollection_ExtendedString((Standard_CString)aLabel.toLatin1().constData()));
       anIO->SetArrowSize(aDist/20);
+      
+      SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+      int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
+      Handle(Prs3d_LengthAspect) asp = new Prs3d_LengthAspect();
+      asp->LineAspect()->SetWidth(w);
+      anIO->Attributes()->SetLengthAspect(asp);
 
       SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
 

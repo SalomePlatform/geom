@@ -1,0 +1,27 @@
+/*!
+
+\page create_dividedcylinder_page DividedCylinder
+
+The <b>Divided cylinder</b> object is a cylinder divided into \b blocks for easy hexaedral meshing</b>.
+
+\image html dividedcylinder.png
+
+To create a \b DividedCylinder in the <b>Main Menu</b> select <b>New Entity - >
+Advanced - > DividedCylinder </b>
+
+Specify the parameters of the DividedCylinder object creation in the opened dialog
+box and press "Apply" or "Apply & Close" button.
+Result of each operation will be a GEOM_Object.
+
+<b>TUI Command:</b> <em>geompy.MakeDividedCylinder(R, H)</em>
+
+<b>Arguments:</b>
+- \b R - Radius of the cylinder
+- \b H - Height of the cylinder
+
+\image html dividedcylinder_dlg.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_dividedcylinder "Advanced objects".
+
+*/

@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : TransformationGUI_OffsetDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -42,7 +43,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-							  bool modal, Qt::WindowFlags fl )
+                                                          bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_OFFSET" ) ) );
@@ -100,17 +101,19 @@ void TransformationGUI_OffsetDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly( true );
+
+  myObjects.clear();
   
   /* Get setting of step value from file configuration */
   double step = 1;
    
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
   GroupPoints->SpinBox_DX->setValue( 1e-05 );
   
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked( true );
-  CreateCopyModeChanged( true );
+  CreateCopyModeChanged();
 
   mainFrame()->GroupBoxPublish->show();
 
@@ -120,14 +123,16 @@ void TransformationGUI_OffsetDlg::Init()
   
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   connect( GroupPoints->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
-  connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( CreateCopyModeChanged( bool ) ) );
+  connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( CreateCopyModeChanged() ) );
   
   initName( tr( "GEOM_OFFSET" ) );
 
   globalSelection( GEOM_ALLSHAPES );
+  resize(100,100);
+  SelectionIntoArgument();
 }
 
 
@@ -137,6 +142,7 @@ void TransformationGUI_OffsetDlg::Init()
 //=================================================================================
 void TransformationGUI_OffsetDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -162,41 +168,16 @@ bool TransformationGUI_OffsetDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_OffsetDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText( "" );
-  QString aName;
-
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
-  if ( aNbSel < 1 ) {
-    myObjects.length( 0 );
-    return;
+  myObjects = getSelected( TopAbs_SHAPE, -1 );
+  if ( !myObjects.isEmpty() ) {
+    QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
+    myEditCurrentArgument->setText( aName );
+  }
+  else {
+    myEditCurrentArgument->setText("");
   }
 
-  // nbSel > 0
-  GEOMBase::ConvertListOfIOInListOfGO (aSelList, myObjects);
-  if (!myObjects.length())
-    return;
-
-  myEditCurrentArgument->setText(aName);
-
-  displayPreview();
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void TransformationGUI_OffsetDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPoints->LineEdit1 ) {
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
+  processPreview();
 }
 
 
@@ -236,7 +217,7 @@ void TransformationGUI_OffsetDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   globalSelection( GEOM_ALLSHAPES );
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
@@ -249,7 +230,7 @@ void TransformationGUI_OffsetDlg::ActivateThisDialog()
 //=================================================================================
 void TransformationGUI_OffsetDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  processPreview();
 }
 
 
@@ -268,17 +249,14 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_OffsetDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_OffsetDlg::isValid( QString& msg )
 {
-  //return !(myObjects.length() == 0);
-  if ( myObjects.length() == 0 ) return false;
-
-  for ( int i = 0; i < myObjects.length(); i++ ) {
+  bool ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && !myObjects.isEmpty();
+  for ( int i = 0; i < myObjects.count() && ok; i++ ) {
     GEOM::shape_type aType = myObjects[i]->GetShapeType();
-    if ( aType != GEOM::FACE && aType != GEOM::SHELL && aType != GEOM::SOLID ) {
+    ok = aType == GEOM::FACE || aType == GEOM::SHELL || aType == GEOM::SOLID;
+    if ( !ok )
       msg = tr( "ERROR_SHAPE_TYPE" );
-      return false;
-    }
   }
-  return GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
+  return ok;
 }
 
 //=================================================================================
@@ -291,23 +269,25 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
   
   GEOM::GEOM_Object_var anObj;
   
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   if ( GroupPoints->CheckButton1->isChecked() || IsPreview() ) {
-    for ( int i = 0; i < myObjects.length(); i++ ) {
+    for ( int i = 0; i < myObjects.count(); i++ ) {
       
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->OffsetShapeCopy( myObjects[i], GetOffset() );
+      anObj = anOper->OffsetShapeCopy( myObjects[i].get(), GetOffset() );
       if ( !anObj->_is_nil() ) {
         if(!IsPreview()) {
           anObj->SetParameters(GroupPoints->SpinBox_DX->text().toLatin1().constData());
         }
-	objects.push_back( anObj._retn() );
+        objects.push_back( anObj._retn() );
       }
     }
   }
   else {
-    for ( int i = 0; i < myObjects.length(); i++ ) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->OffsetShape( myObjects[i], GetOffset() );
+    for ( int i = 0; i < myObjects.count(); i++ ) {
+      anObj = anOper->OffsetShape( myObjects[i].get(), GetOffset() );
       if ( !anObj->_is_nil() )
-	objects.push_back( anObj._retn() );
+        objects.push_back( anObj._retn() );
     }
   }
   res = true;
@@ -325,8 +305,9 @@ void TransformationGUI_OffsetDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStu
   if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
-					 /*theFindMethod=*/GEOM::FSM_Transformed,
-					 /*theInheritFirstArg=*/true );
+                                         /*theFindMethod=*/GEOM::FSM_Transformed,
+                                         /*theInheritFirstArg=*/true,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked() );
   }
 }
 
@@ -343,7 +324,7 @@ double TransformationGUI_OffsetDlg::GetOffset() const
 // function :  CreateCopyModeChanged()
 // purpose  :
 //=================================================================================
-void TransformationGUI_OffsetDlg::CreateCopyModeChanged( bool isCreateCopy )
+void TransformationGUI_OffsetDlg::CreateCopyModeChanged()
 {
-  mainFrame()->GroupBoxName->setEnabled( isCreateCopy );
+  mainFrame()->GroupBoxName->setEnabled( GroupPoints->CheckButton1->isChecked() );
 }

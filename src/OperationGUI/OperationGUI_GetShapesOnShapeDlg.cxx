@@ -1,24 +1,22 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_GetShapesOnShapeDlg.cxx
 // Author : Sergey KUUL, Open CASCADE S.A.S. (sergey.kuul@opencascade.com)
@@ -95,7 +93,7 @@ OperationGUI_GetShapesOnShapeDlg::~OperationGUI_GetShapesOnShapeDlg()
 //=================================================================================
 void OperationGUI_GetShapesOnShapeDlg::Init()
 {
-  // type for sub shape selection
+  // type for sub-shape selection
   GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_SOLID"));
   // commented by skl for IPAL19949 - finder isn't allowed such type
   //GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_SHELL"));
@@ -115,6 +113,8 @@ void OperationGUI_GetShapesOnShapeDlg::Init()
   GroupPoints->LineEdit1->clear();
   GroupPoints->LineEdit2->clear();
   myObject1 = myObject2 = GEOM::GEOM_Object::_nil();
+
+  showOnlyPreviewControl();
 
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -144,6 +144,7 @@ void OperationGUI_GetShapesOnShapeDlg::Init()
 
   GroupPoints->PushButton1->click();
   SelectionIntoArgument();
+  resize(100,100);
 }
 
 //=================================================================================
@@ -152,6 +153,7 @@ void OperationGUI_GetShapesOnShapeDlg::Init()
 //=================================================================================
 void OperationGUI_GetShapesOnShapeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -190,9 +192,8 @@ void OperationGUI_GetShapesOnShapeDlg::SelectionIntoArgument()
   int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName, true);
 
   if (nbSel > 0) {
-    Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
-    if (!CORBA::is_nil(aSelectedObject) && aRes && GEOMBase::IsShape(aSelectedObject)) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( GEOMBase::IsShape(aSelectedObject) ) {
       myEditCurrentArgument->setText(aName);
 
       // clear selection
@@ -213,6 +214,7 @@ void OperationGUI_GetShapesOnShapeDlg::SelectionIntoArgument()
       }
     }
   }
+  processPreview();
 }
 
 //=================================================================================
@@ -266,7 +268,8 @@ void OperationGUI_GetShapesOnShapeDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection(GEOM_ALLSHAPES);
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
+  processPreview();
 }
 
 //=================================================================================
@@ -295,9 +298,8 @@ GEOM::GEOM_IOperations_ptr OperationGUI_GetShapesOnShapeDlg::createOperation()
 bool OperationGUI_GetShapesOnShapeDlg::isValid(QString&)
 {
   //Handle(SALOME_InteractiveObject) IO = firstIObject();
-  //Standard_Boolean testResult;
-  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject(IO, testResult);
-  //if (!testResult || anObject->_is_nil())
+  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO );
+  //if ( anObject->_is_nil() )
   //  return false;
 
   return !CORBA::is_nil(myObject1) && !CORBA::is_nil(myObject2);
@@ -330,11 +332,10 @@ bool OperationGUI_GetShapesOnShapeDlg::execute (ObjectList& objects)
     default: break;
   }
 
-  GEOM::GEOM_Object_var anObj =
-    GEOM::GEOM_IShapesOperations::_narrow(getOperation())->
-    GetShapesOnShapeAsCompound(myObject2, myObject1,
-                               (CORBA::Short) aLimit,
-                               aState);
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->GetShapesOnShapeAsCompound(myObject2, myObject1,
+                                                                   (CORBA::Short) aLimit,
+                                                                   aState);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
@@ -350,4 +351,5 @@ void OperationGUI_GetShapesOnShapeDlg::ComboTextChanged()
 {
   // VRS ???? What is it for ??? commented for a while...
   //bool IsEnabled = GroupPoints->ComboBox1->currentIndex() < 3;
+  processPreview();
 }

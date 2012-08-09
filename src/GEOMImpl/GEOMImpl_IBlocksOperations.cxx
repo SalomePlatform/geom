@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -34,6 +35,7 @@
 #include <GEOMImpl_IBlockTrsf.hxx>
 #include <GEOMImpl_CopyDriver.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
 
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
@@ -43,6 +45,8 @@
 #include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
 #include <GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx>
 #include <BlockFix_CheckTool.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include "utilities.h"
 #include <OpUtil.hxx>
@@ -164,7 +168,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad
 
   //Compute the Face value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -222,7 +226,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad2Edges
 
   //Compute the Face value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -287,7 +291,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeQuad4Vertices
 
   //Compute the Face value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -359,7 +363,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa
 
   //Compute the Block value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -418,7 +422,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeHexa2Faces
 
   //Compute the Block value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -474,7 +478,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeBlockCompound
 
   //Compute the Blocks Compound value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -570,6 +574,81 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetPoint
 
 //=============================================================================
 /*!
+ *  GetVertexNearPoint
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetVertexNearPoint
+                                               (Handle(GEOM_Object) theShape,
+                                                Handle(GEOM_Object) thePoint)
+{
+  SetErrorCode(KO);
+
+  // New Point object
+  Handle(GEOM_Object) aResult;
+
+  // Arguments
+  if (theShape.IsNull() || thePoint.IsNull()) return NULL;
+
+  TopoDS_Shape aBlockOrComp = theShape->GetValue();
+  TopoDS_Shape aPoint       = thePoint->GetValue();
+  if (aBlockOrComp.IsNull() || aPoint.IsNull()) {
+    SetErrorCode("Given shape is null");
+    return NULL;
+  }
+
+  if (aPoint.ShapeType() != TopAbs_VERTEX) {
+    SetErrorCode("Element for vertex identification is not a vertex");
+    return NULL;
+  }
+
+  TopoDS_Vertex aVert = TopoDS::Vertex(aPoint);
+  gp_Pnt aP = BRep_Tool::Pnt(aVert);
+
+  // Compute the Vertex value
+  TopoDS_Shape V;
+  bool isFound = false;
+  Standard_Real aDist = RealLast();
+  TopTools_MapOfShape mapShape;
+
+  TopExp_Explorer exp (aBlockOrComp, TopAbs_VERTEX);
+  for (; exp.More(); exp.Next()) {
+    if (mapShape.Add(exp.Current())) {
+      TopoDS_Vertex aVi = TopoDS::Vertex(exp.Current());
+      gp_Pnt aPi = BRep_Tool::Pnt(aVi);
+      Standard_Real aDisti = aPi.Distance(aP);
+      if (aDisti < aDist) {
+        V = aVi;
+        aDist = aDisti;
+        isFound = true;
+      }
+    }
+  }
+
+  if (!isFound) {
+    SetErrorCode("Vertex has not been found");
+    return NULL;
+  }
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aBlockOrComp, anIndices);
+  Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
+  anArray->SetValue(1, anIndices.FindIndex(V));
+  aResult = GetEngine()->AddSubShape(theShape, anArray);
+
+  // The GetPoint() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction, /*append=*/true)
+    << aResult << " = geompy.GetVertexNearPoint("
+    << theShape << ", " << thePoint << ")";
+
+  SetErrorCode(OK);
+  return aResult;
+}
+
+//=============================================================================
+/*!
  *  GetEdge
  */
 //=============================================================================
@@ -606,7 +685,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdge
 
   //Compute the Edge value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopTools_IndexedDataMapOfShapeListOfShape MVE;
@@ -712,7 +791,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdgeNearPoint
 
   //Compute the Edge value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopoDS_Shape aShape;
@@ -844,7 +923,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByPoints
 
   //Compute the Face value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopoDS_Shape aShape;
@@ -979,7 +1058,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByEdges
 
   //Compute the Face value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopoDS_Shape aShape;
@@ -1104,7 +1183,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetOppositeFace
 
   //Compute the Face value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopoDS_Shape aShape;
@@ -1170,7 +1249,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceNearPoint
 
   //Compute the Face value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopoDS_Shape aShape;
@@ -1362,7 +1441,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByNormale
 
   //Compute the Face value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopoDS_Shape aShape;
@@ -1459,6 +1538,137 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByNormale
 
 //=============================================================================
 /*!
+ *  GetShapesNearPoint
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetShapesNearPoint
+                                         (Handle(GEOM_Object)    theShape,
+                                          Handle(GEOM_Object)    thePoint,
+                                          const Standard_Integer theShapeType,
+                                          const Standard_Real    theConstTolerance)
+{
+  SetErrorCode(KO);
+
+  // New object
+  Handle(GEOM_Object) aResult;
+
+  // Arguments
+  if (theShape.IsNull() || thePoint.IsNull()) return NULL;
+
+  TopoDS_Shape aBlockOrComp = theShape->GetValue();
+  if (aBlockOrComp.IsNull()) {
+    SetErrorCode("Block or compound is null");
+    return NULL;
+  }
+
+  TopoDS_Shape anArg = thePoint->GetValue();
+  if (anArg.IsNull()) {
+    SetErrorCode("Null shape is given as argument");
+    return NULL;
+  }
+  if (anArg.ShapeType() != TopAbs_VERTEX) {
+    SetErrorCode("Element for face identification is not a vertex");
+    return NULL;
+  }
+
+  if (theShapeType < TopAbs_SOLID || TopAbs_VERTEX < theShapeType) {
+    SetErrorCode("Invalid type of result is requested");
+    return NULL;
+  }
+  
+  Standard_Real theTolerance = theConstTolerance;
+  if (theTolerance < Precision::Confusion()) {
+    theTolerance = Precision::Confusion();
+  }
+
+  // Compute the result
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    TopoDS_Vertex aVert = TopoDS::Vertex(anArg);
+
+    TopTools_MapOfShape mapShape;
+    Standard_Integer nbEdges = 0;
+    TopExp_Explorer exp (aBlockOrComp, TopAbs_ShapeEnum(theShapeType));
+    for (; exp.More(); exp.Next()) {
+      if (mapShape.Add(exp.Current())) {
+        nbEdges++;
+      }
+    }
+
+    if (nbEdges == 0) {
+      SetErrorCode("Given shape contains no sub-shapes of requested type");
+      return NULL;
+    }
+
+    // Calculate distances and find min
+    mapShape.Clear();
+    Standard_Integer ind = 1;
+    Standard_Real aMinDist = RealLast();
+    TopTools_Array1OfShape anEdges (1, nbEdges);
+    TColStd_Array1OfReal aDistances (1, nbEdges);
+    for (exp.Init(aBlockOrComp, TopAbs_ShapeEnum(theShapeType)); exp.More(); exp.Next()) {
+      if (mapShape.Add(exp.Current())) {
+        TopoDS_Shape anEdge = exp.Current();
+        anEdges(ind) = anEdge;
+
+        BRepExtrema_DistShapeShape aDistTool (aVert, anEdges(ind));
+        if (!aDistTool.IsDone()) {
+          SetErrorCode("Can not find a distance from the given point to one of sub-shapes");
+          return NULL;
+        }
+        aDistances(ind) = aDistTool.Value();
+        if (aDistances(ind) < aMinDist) {
+          aMinDist = aDistances(ind);
+        }
+        ind++;
+      }
+    }
+
+    if (aMinDist < RealLast()) {
+      // Collect sub-shapes with distance < (aMinDist + theTolerance)
+      int nbSubShapes = 0;
+      TopTools_Array1OfShape aNearShapes (1, nbEdges);
+      for (ind = 1; ind <= nbEdges; ind++) {
+        if (aDistances(ind) < aMinDist + theTolerance) {
+          nbSubShapes++;
+          aNearShapes(nbSubShapes) = anEdges(ind);
+        }
+      }
+
+      // Add sub-shape
+      TopTools_IndexedMapOfShape anIndices;
+      TopExp::MapShapes(aBlockOrComp, anIndices);
+      Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger (1, nbSubShapes);
+      for (ind = 1; ind <= nbSubShapes; ind++) {
+        anArray->SetValue(ind, anIndices.FindIndex(aNearShapes(ind)));
+      }
+      aResult = GetEngine()->AddSubShape(theShape, anArray);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  if (aResult.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction)
+    << aResult << " = geompy.GetShapesNearPoint(" << theShape << ", " << thePoint
+    << ", " << TopAbs_ShapeEnum(theShapeType) << ", " << theTolerance << ")";
+
+  SetErrorCode(OK);
+  return aResult;
+}
+
+//=============================================================================
+/*!
  *  IsCompoundOfBlocks
  */
 //=============================================================================
@@ -1478,7 +1688,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::IsCompoundOfBlocks
   //Check
   isCompOfBlocks = Standard_True;
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopTools_MapOfShape mapShape;
@@ -2126,7 +2336,7 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
                                               (Handle(GEOM_Object) theCompound,
-                                               std::list<BCError>&      theErrors)
+                                               std::list<BCError>& theErrors)
 {
   SetErrorCode(KO);
 
@@ -2222,7 +2432,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
   }
 
   // 3. Find not glued blocks
-  GEOMAlgo_GlueAnalyser aGD; 
+  GEOMAlgo_GlueAnalyser aGD;
 
   aGD.SetShape(aComp);
   aGD.SetTolerance(Precision::Confusion());
@@ -2309,7 +2519,8 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
-                                             (Handle(GEOM_Object) theObject)
+                                     (Handle(GEOM_Object) theObject,
+                                      const Standard_Integer theOptimumNbFaces)
 {
   SetErrorCode(KO);
 
@@ -2330,10 +2541,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
 
   GEOMImpl_IBlockTrsf aTI (aFunction);
   aTI.SetOriginal(aLastFunction);
+  aTI.SetOptimumNbFaces(theOptimumNbFaces);
 
   //Compute the fixed shape
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -2348,8 +2560,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aCopy
-    << " = geompy.RemoveExtraEdges(" << theObject << ")";
+  std::string doUnionFaces = (theOptimumNbFaces < 0) ? "False" : "True";
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.RemoveExtraEdges("
+                               << theObject << ", " << doUnionFaces.data() << ")";
 
   SetErrorCode(OK);
   return aCopy;
@@ -2383,9 +2596,13 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::CheckAndImprove
   GEOMImpl_IBlockTrsf aTI (aFunction);
   aTI.SetOriginal(aLastFunction);
 
+  // -1 means do not unite faces on common surface (?except case of seam edge between them?)
+  //aTI.SetOptimumNbFaces(-1);
+  aTI.SetOptimumNbFaces(6);
+
   //Compute the fixed shape
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -2437,7 +2654,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::ExplodeCompound
 
   // Explode
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopExp_Explorer exp (aBlockOrComp, TopAbs_SOLID);
@@ -2532,7 +2749,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockNearPoint
 
   //Compute the Block value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopoDS_Shape aShape;
@@ -2711,7 +2928,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetBlockByParts
 
   //Compute the Block value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     // 1. Explode compound on solids
@@ -2830,7 +3047,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::GetBlocksByPart
 
   //Get the Blocks
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopTools_MapOfShape mapShape;
@@ -2953,7 +3170,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation1D
 
   //Compute the transformation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -3017,7 +3234,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::MakeMultiTransformation2D
 
   //Compute the transformation
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -3068,6 +3285,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
 
   TopTools_MapOfShape mapAcceptedEdges;
   TCollection_AsciiString aListRes, anEntry;
+
+  // Sort shapes in current chain (Mantis issue 21053)
+  TopTools_DataMapOfShapeListOfShape aMapChains;
+  TopTools_ListOfShape aFirstInChains;
 
   for (ie = 1; ie <= nbEdges; ie++) {
     TopoDS_Shape curE = MEW.FindKey(ie);
@@ -3129,6 +3350,21 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
       listPrevEdges = listCurEdges;
     } // while (listPrevEdges.Extent() > 0)
 
+    // Sort shapes in current chain (Mantis issue 21053)
+    GEOMImpl_IShapesOperations::SortShapes(currentChain, Standard_False);
+    aFirstInChains.Append(currentChain.First());
+    aMapChains.Bind(currentChain.First(), currentChain);
+  }
+
+  // Sort chains (Mantis issue 21053)
+  GEOMImpl_IShapesOperations::SortShapes(aFirstInChains, Standard_False);
+
+  // Store sorted chains in the document
+  TopTools_ListIteratorOfListOfShape aChainsIt (aFirstInChains);
+  for (; aChainsIt.More(); aChainsIt.Next()) {
+    TopoDS_Shape aFirstInChain = aChainsIt.Value();
+    const TopTools_ListOfShape& currentChain = aMapChains.Find(aFirstInChain);
+
     // Store the chain in the document
     Handle(TColStd_HArray1OfInteger) anArray =
       new TColStd_HArray1OfInteger (1, currentChain.Extent());
@@ -3146,7 +3382,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
     // Set a GROUP type
     aChain->SetType(GEOM_GROUP);
 
-    // Set a sub shape type
+    // Set a sub-shape type
     TDF_Label aFreeLabel = aChain->GetFreeLabel();
     TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)TopAbs_EDGE);
 

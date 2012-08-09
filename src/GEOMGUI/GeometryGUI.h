@@ -1,32 +1,35 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GeometryGUI.h
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #ifndef GEOMETRYGUI_H
 #define GEOMETRYGUI_H
 
 #include "GEOM_GEOMGUI.hxx"
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <SalomeApp_Module.h>
 
@@ -42,18 +45,24 @@
 // OCCT Includes
 #include <gp_Ax3.hxx>
 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+#include <TColStd_HArray1OfByte.hxx>
+#else
+#include <Graphic3d_HArray1OfBytes.hxx>
+#endif
+
 // IDL headers
 #include "SALOMEconfig.h"
 #include CORBA_CLIENT_HEADER(SALOMEDS)
 
-typedef QMap<QString, GEOMGUI*> GUIMap;
-
 class QDialog;
 class QMenu;
+class QAction;
 class GEOMGUI_OCCSelector;
 class LightApp_VTKSelector;
 class LightApp_Selection;
 class SUIT_ViewManager;
+class SalomeApp_Study;
 
 //=================================================================================
 // class    : GeometryGUI
@@ -74,19 +83,22 @@ public:
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
 
-  static bool                 InitGeomGen();   //BugID IPAL9186: SRN: To be called by Python scripts
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  static Handle(TColStd_HArray1OfByte) getTexture (SalomeApp_Study*, int, int&, int&);
+#else
+  static Handle(Graphic3d_HArray1OfBytes) getTexture (SalomeApp_Study*, int, int&, int&);
+#endif
 
-  static  GEOM::GEOM_Gen_var  GetGeomGen();//        { return GeometryGUI::myComponentGeom; }
+  static bool                 InitGeomGen();
+
+  static  GEOM::GEOM_Gen_var  GetGeomGen();
 
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
   static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
 
-  static char*                JoinObjectParameters(const QStringList& theParametersList);
+  static void                 Modified( bool = true );
 
-  GEOM_Client&                GetShapeReader()    { return myShapeReader; }
-  Standard_CString&           GetFatherior()      { return myFatherior; }
-  //void                        SetState( const int state ) { myState = state; }
-  //int                         GetState() const    { return myState; }
+  GEOM_Client&                GetShapeReader()    { static SHAPE_READER(myShapeReader);return myShapeReader; }
 
   // Get active dialog box
   QDialog*                    GetActiveDialogBox(){ return myActiveDialogBox; }
@@ -98,20 +110,16 @@ public:
   void                        EmitSignalCloseAllDialogs();
   void                        EmitSignalDefaultStepValueChanged( double newVal );
 
+  // Process action
   void                        OnGUIEvent( int id );
-
-//  virtual bool                SetSettings();
-//  virtual void                SupportedViewType ( int* buffer, int bufferSize );
-  virtual void                BuildPresentation( const Handle(SALOME_InteractiveObject)&, SUIT_ViewWindow* = 0 );
-
-//  virtual void                DefinePopup( QString & theContext, QString & theParent, QString & theObject);
-//  virtual bool                CustomPopup( QAD_Desktop* parent, QMenu* popup, const QString& theContext,
-//			                   const QString& theParent, const QString& theObject );
 
   // The Working Plane management
   void                        SetWorkingPlane( gp_Ax3 wp ) { myWorkingPlane = wp;   }
   gp_Ax3                      GetWorkingPlane()            { return myWorkingPlane; }
   void                        ActiveWorkingPlane();
+
+  virtual bool                renameObject( const QString&, const QString& );
+  virtual bool                renameAllowed( const QString& ) const;
 
   virtual void                windows( QMap<int, int>& ) const;
   virtual void                viewManagers( QStringList& ) const;
@@ -125,12 +133,15 @@ public:
   virtual void storeVisualParameters  (int savePoint);
   virtual void restoreVisualParameters(int savePoint);
 
+  QAction*                    getAction(const int id);
+
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
   virtual bool                activateModule( SUIT_Study* );
   virtual void                OnKeyPress  ( SUIT_ViewWindow*, QKeyEvent*   );
   virtual void                OnMousePress( SUIT_ViewWindow*, QMouseEvent* );
   virtual void                OnMouseMove ( SUIT_ViewWindow*, QMouseEvent* );
+  virtual void                OnMouseRelease ( SUIT_ViewWindow*, QMouseEvent* );
 
 protected slots:
   virtual void                onViewManagerAdded( SUIT_ViewManager* );
@@ -139,6 +150,7 @@ protected slots:
 private slots:
   void                        OnGUIEvent();
   void                        onWindowActivated( SUIT_ViewWindow* );
+  void                        onViewAboutToShow();
 
 signals :
   void                        SignalDeactivateActiveDialog();
@@ -151,23 +163,35 @@ protected:
 private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
   void                        createGeomAction( const int id, const QString& po_id,
-						const QString& icon_id = QString(""),
-						const int key = 0, const bool toggle = false );
+                                                const QString& icon_id = QString(""),
+                                                const int key = 0, const bool toggle = false,
+						const QString& shortcutAction = QString() );
   void                        createPopupItem( const int, const QString& clients, const QString& types,
-					       const bool isSingle = false, const int isVisible = -1,
-					       const bool isExpandAll = false, const bool isOCC = false,
-					       const int parentId = -1 );
+                                               const bool isSingle = false, const int isVisible = -1,
+                                               const bool isExpandAll = false, const bool isOCC = false,
+                                               const int parentId = -1 );
+
+  void                        createOriginAndBaseVectors();
 
 public:
   static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine!!!
+
 private:  
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  typedef QMap<long, Handle(TColStd_HArray1OfByte)> TextureMap;
+#else
+  typedef QMap<long, Handle(Graphic3d_HArray1OfBytes)> TextureMap;
+#endif
+
+  typedef QMap<long, TextureMap> StudyTextureMap;
+  typedef QMap<QString, GEOMGUI*> GUIMap;
+
   GUIMap                      myGUIMap;          // GUI libraries map
   QDialog*                    myActiveDialogBox; // active dialog box
-  GEOM_Client                 myShapeReader;     // geom shape reader
-  Standard_CString            myFatherior;
-  int                         myState;           // identify a method
   gp_Ax3                      myWorkingPlane;
   QMap<int,QString>           myRules;           // popup rules
+  static StudyTextureMap      myTextureMap;      // texture map
 
   QList<GEOMGUI_OCCSelector*>  myOCCSelectors;
   QList<LightApp_VTKSelector*> myVTKSelectors;
@@ -175,7 +199,7 @@ private:
   LightApp_Displayer*         myDisplayer;
   int                         myLocalSelectionMode; //Select Only
 
-friend class DisplayGUI;
+  friend class DisplayGUI;
 };
 
 #endif

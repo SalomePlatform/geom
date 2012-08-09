@@ -1,0 +1,19 @@
+/*!
+
+\page deflection_page Deflection
+
+\n In this menu you can change the deflection coefficient of the
+shape. The less is the coefficient the better is the quality of the shape in the
+viewer.
+
+\n <b>Arguments: </b>1 floating point value (deviation coefficient).
+
+\image html neo-deflection.png
+
+\n <b>Example:</b>
+
+\image html deflection_001.png
+
+\image html deflection_0001.png
+
+*/

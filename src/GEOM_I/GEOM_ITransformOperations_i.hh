@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOM_ITransformOperations_i_HeaderFile
 #define _GEOM_ITransformOperations_i_HeaderFile
 
@@ -50,10 +51,12 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 						GEOM::GEOM_Object_ptr thePoint1,
 						GEOM::GEOM_Object_ptr thePoint2);
 
-  GEOM::GEOM_Object_ptr TranslateDXDYDZ (GEOM::GEOM_Object_ptr theObject, CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ);
+  GEOM::GEOM_Object_ptr TranslateDXDYDZ (GEOM::GEOM_Object_ptr theObject,
+                                         CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ);
 
 
-  GEOM::GEOM_Object_ptr TranslateDXDYDZCopy (GEOM::GEOM_Object_ptr theObject,  CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ);
+  GEOM::GEOM_Object_ptr TranslateDXDYDZCopy (GEOM::GEOM_Object_ptr theObject,
+                                             CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ);
 
   GEOM::GEOM_Object_ptr TranslateVector (GEOM::GEOM_Object_ptr theObject,
 					 GEOM::GEOM_Object_ptr theVector);
@@ -66,10 +69,15 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 						 CORBA::Double theDistance,
 						 CORBA::Boolean theCopy);
 
-  GEOM::GEOM_Object_ptr MultiTranslate1D (GEOM::GEOM_Object_ptr theObject, GEOM::GEOM_Object_ptr theVector, CORBA::Double theStep, CORBA::Long theNbTimes);
+  GEOM::GEOM_Object_ptr MultiTranslate1D (GEOM::GEOM_Object_ptr theObject,
+                                          GEOM::GEOM_Object_ptr theVector,
+                                          CORBA::Double theStep, CORBA::Long theNbTimes);
 
-  GEOM::GEOM_Object_ptr MultiTranslate2D (GEOM::GEOM_Object_ptr theObject, GEOM::GEOM_Object_ptr theVector1, CORBA::Double theStep1, CORBA::Long theNbTimes1,
-				                       GEOM::GEOM_Object_ptr theVector2, CORBA::Double theStep2, CORBA::Long theNbTimes2);
+  GEOM::GEOM_Object_ptr MultiTranslate2D (GEOM::GEOM_Object_ptr theObject,
+                                          GEOM::GEOM_Object_ptr theVector1,
+                                          CORBA::Double theStep1, CORBA::Long theNbTimes1,
+                                          GEOM::GEOM_Object_ptr theVector2,
+                                          CORBA::Double theStep2, CORBA::Long theNbTimes2);
 
   GEOM::GEOM_Object_ptr Rotate (GEOM::GEOM_Object_ptr theObject,
                                 GEOM::GEOM_Object_ptr theAxis,
@@ -114,6 +122,9 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
   GEOM::GEOM_Object_ptr OffsetShapeCopy (GEOM::GEOM_Object_ptr theObject,
 					 CORBA::Double theOffset);
 
+  GEOM::GEOM_Object_ptr ProjectShapeCopy (GEOM::GEOM_Object_ptr theSource,
+                                          GEOM::GEOM_Object_ptr theTarget);
+
   GEOM::GEOM_Object_ptr ScaleShape (GEOM::GEOM_Object_ptr theObject,
 				    GEOM::GEOM_Object_ptr thePoint,
 				    CORBA::Double theFactor);
@@ -157,6 +168,9 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 					       GEOM::GEOM_Object_ptr theCentPoint,
 					       GEOM::GEOM_Object_ptr thePoint1,
 					       GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr TransformLikeOtherCopy (GEOM::GEOM_Object_ptr theObject,
+                                                GEOM::GEOM_Object_ptr theSample);
 
   GEOM::GEOM_Object_ptr RecomputeObject (GEOM::GEOM_Object_ptr theObject);
 

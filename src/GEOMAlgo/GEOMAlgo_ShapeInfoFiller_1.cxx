@@ -1,27 +1,26 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-#include <GEOMAlgo_ShapeInfoFiller.ixx>
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
+#include <GEOMAlgo_ShapeInfoFiller.hxx>
 
 #include <Precision.hxx>
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
 
 #include <gp_Lin.hxx>
 #include <gp_XYZ.hxx>
@@ -32,6 +31,8 @@
 #include <gp_Ax3.hxx>
 
 #include <ElCLib.hxx>
+
+#include <GeomAdaptor_Surface.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
@@ -47,18 +48,25 @@
 
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+
 #include <BRepTools_WireExplorer.hxx>
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
 
 #include <GEOMAlgo_ShapeInfo.hxx>
-#include <TColStd_MapOfInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+
+static
+  Standard_Boolean IsEqual(const gp_Sphere& aSp1,
+                           const gp_Sphere& aSp2,
+                           const Standard_Real aTolDst);
 
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
 {
+  Standard_Boolean bIsStepSphere;
   Standard_Integer i, aNbF, aNbCyl, aNbCon, aNbPgn, aNbRct, aNbCrc, aNbX;
   TopoDS_Shape aFCyl, aFCon;
   TopTools_IndexedMapOfShape aMF;
@@ -79,17 +87,26 @@
     GEOMAlgo_ShapeInfo& aInfoF=myMapInfo.ChangeFromKey(aF);
     aKNF=aInfoF.KindOfName(); // mb: sphere, torus
     if (aKNF==GEOMAlgo_KN_SPHERE ||
-	aKNF==GEOMAlgo_KN_TORUS) {
+        aKNF==GEOMAlgo_KN_TORUS) {
       aInfo.SetKindOfName(aKNF);
       aInfo.SetLocation(aInfoF.Location());
       aInfo.SetPosition(aInfoF.Position());
       aInfo.SetRadius1(aInfoF.Radius1());
       if(aKNF==GEOMAlgo_KN_TORUS) {
-	aInfo.SetRadius2(aInfoF.Radius2());
+        aInfo.SetRadius2(aInfoF.Radius2());
       }
       return;
     }
   }
+  //modified by NIZNHY-PKV Tue Jul 03 13:23:55 2012f
+  else if (aNbF==2) {
+    // specific solid that should be treated as a sphere
+    bIsStepSphere=TreatStepSphere(aSd);
+    if (bIsStepSphere) {
+      return;
+    }
+  }
+  //modified by NIZNHY-PKV Tue Jul 03 13:23:57 2012t
   //
   aNbCyl=0;
   aNbCon=0;
@@ -99,7 +116,7 @@
   for (i=1; i<=aNbF; ++i) {
     const TopoDS_Shape& aF=aMF(i);
     GEOMAlgo_ShapeInfo& aInfoF=myMapInfo.ChangeFromKey(aF);
-    aKNF=aInfoF.KindOfName(); 
+    aKNF=aInfoF.KindOfName();
     if (aKNF==GEOMAlgo_KN_CYLINDER) {
       aFCyl=aF;
       ++aNbCyl;
@@ -112,11 +129,10 @@
       ++aNbCrc;
     }
     else if (aKNF==GEOMAlgo_KN_POLYGON ||
-	    aKNF==GEOMAlgo_KN_TRIANGLE ||
-	    aKNF==GEOMAlgo_KN_QUADRANGLE) {
+             aKNF==GEOMAlgo_KN_TRIANGLE ||
+             aKNF==GEOMAlgo_KN_QUADRANGLE) {
       ++aNbPgn;
-      
-    } 
+    }
     else if (aKNF==GEOMAlgo_KN_RECTANGLE) {
       ++aNbPgn;
       ++aNbRct;
@@ -127,7 +143,7 @@
   if (aNbCyl==1 && aNbCrc==2 && aNbX==aNbF) {
     // cylinder (as they understand it)
     GEOMAlgo_ShapeInfo& aInfoF=myMapInfo.ChangeFromKey(aFCyl);
-    aKNF=aInfoF.KindOfName(); 
+    aKNF=aInfoF.KindOfName();
     aInfo.SetKindOfName(aKNF);
     aInfo.SetLocation(aInfoF.Location());
     aInfo.SetPosition(aInfoF.Position());
@@ -140,7 +156,7 @@
   if (aNbCon==1 && (aNbCrc==1 || aNbCrc==2) && aNbX==aNbF) {
     // cone
     GEOMAlgo_ShapeInfo& aInfoF=myMapInfo.ChangeFromKey(aFCon);
-    aKNF=aInfoF.KindOfName(); 
+    aKNF=aInfoF.KindOfName();
     aInfo.SetKindOfName(aKNF);
     aInfo.SetLocation(aInfoF.Location());
     aInfo.SetPosition(aInfoF.Position());
@@ -150,10 +166,14 @@
     return;
   }
   //
+  if (aNbF!=aNbPgn) {
+    return;// -> GEOMAlgo_KN_UNKNOWN
+  }
   if (aNbPgn!=6) {
     aInfo.SetKindOfName(GEOMAlgo_KN_POLYHEDRON);
     return;
   }
+  // aNbPgn==6
   if (aNbPgn!=aNbRct) {
     aInfo.SetKindOfName(GEOMAlgo_KN_POLYHEDRON);
     return;
@@ -200,7 +220,7 @@
     //
     for (j=i+1; j<=aNbF; ++j) {
       if (aMp.Contains(j)) {
-	continue;
+        continue;
       }
       //
       const TopoDS_Shape& aFj=aMF(j);
@@ -208,11 +228,16 @@
       const gp_Dir& aDNj=aIFj.Position().Direction();
       //
       aDot=aDNi*aDNj;
+      //modified by NIZNHY-PKV Tue Jul 03 10:01:56 2012f
+      if (aDot<0.) {
+        aDot=-aDot;
+      }
+      //modified by NIZNHY-PKV Tue Jul 03 10:01:52 2012t
       if (fabs(1.-aDot)<0.0001) {
-	aMp.Add(i);
-	aMp.Add(j);
-	aMFi.Add(aFi);
-	break;
+        aMp.Add(i);
+        aMp.Add(j);
+        aMFi.Add(aFi);
+        break;
       }
       //
     }
@@ -264,10 +289,10 @@
 }
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-					     const gp_Pln& aPln)
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Pln& aPln)
 {
   Standard_Integer aNbV, aNbE, i, j;
   Standard_Real aDot, aD0, aD1, aLength, aWidth;
@@ -336,7 +361,7 @@
       const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
       aKNE=aInfoE.KindOfName();
       if (aKNE!=GEOMAlgo_KN_SEGMENT) {
-	return;
+        return;
       }
     }
     //
@@ -348,11 +373,11 @@
       aXYZc.SetCoord(0.,0.,0.);
       TopExp::MapShapes(aF, TopAbs_VERTEX, aMV);
       for (i=1; i<=aNbV; ++i) {
-	const TopoDS_Vertex& aV=TopoDS::Vertex(aMV(i));
-	aP=BRep_Tool::Pnt(aV);
-	const gp_XYZ& aXYZ=aP.XYZ();
-	aXYZc=aXYZc+aXYZ;
-	aPx[i-1]=aP;
+        const TopoDS_Vertex& aV=TopoDS::Vertex(aMV(i));
+        aP=BRep_Tool::Pnt(aV);
+        const gp_XYZ& aXYZ=aP.XYZ();
+        aXYZc=aXYZc+aXYZ;
+        aPx[i-1]=aP;
       }
       aXYZc.Divide(3.);
       //
@@ -394,12 +419,12 @@
       j=(i==3) ? 0 : i+1;
       aDot=aDx[i]*aDx[j];
       if (fabs (aDot) > myTolerance) {
-	aInfo.SetKindOfName(GEOMAlgo_KN_QUADRANGLE);
-	return;
+        aInfo.SetKindOfName(GEOMAlgo_KN_QUADRANGLE);
+        return;
       }
     }
     //
-    // rectangle 
+    // rectangle
     aInfo.SetKindOfName(GEOMAlgo_KN_RECTANGLE);
     //
     // shift location to the center and calc. sizes
@@ -446,20 +471,20 @@
     gp_Ax3 aAx3(aAx2);
     aInfo.SetPosition(aAx3);
   }
-  
+
   return;
 }
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-					     const gp_Sphere& )
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Sphere& )
 {
   Standard_Integer aNbV, aNbE, aNbSE, aNbDE;
-  TopoDS_Edge aE; 
+  TopoDS_Edge aE;
   TopExp_Explorer aExp;
-  TopTools_MapOfShape aM; 
+  TopTools_MapOfShape aM;
   GEOMAlgo_KindOfShape aKS, aKSE;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
@@ -486,10 +511,10 @@
       aKSE=aInfoE.KindOfShape();
       //
       if (BRep_Tool::IsClosed(aE, aF)) {
-	++aNbSE;
+        ++aNbSE;
       }
       else if (aKSE==GEOMAlgo_KS_DEGENERATED) {
-	++aNbDE;
+        ++aNbDE;
       }
     }
   }
@@ -501,10 +526,10 @@
 }
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-					     const gp_Cone& )//aCone)
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Cone& )//aCone)
 {
   Standard_Integer aNbV, aNbE, aNbCE, aNbSE, aNbDE, i;
   Standard_Real aR[3], aHeight;
@@ -550,34 +575,34 @@
       aKCE=aInfoE.KindOfClosed();
       aKSE=aInfoE.KindOfShape();
       if (aKNE==GEOMAlgo_KN_CIRCLE && aKCE==GEOMAlgo_KC_CLOSED) {
-	aPC[i]=aInfoE.Location();
-	aR[i]=aInfoE.Radius1();
-	//
-	aIt.Initialize(aE);
-	for (; aIt.More(); aIt.Next()) {
-	  aVD=TopoDS::Vertex(aIt.Value());
-	  break;
-	}
-	aPX[i]=BRep_Tool::Pnt(aVD);
-	//
-	++i;
-	++aNbCE;
+        aPC[i]=aInfoE.Location();
+        aR[i]=aInfoE.Radius1();
+        //
+        aIt.Initialize(aE);
+        for (; aIt.More(); aIt.Next()) {
+          aVD=TopoDS::Vertex(aIt.Value());
+          break;
+        }
+        aPX[i]=BRep_Tool::Pnt(aVD);
+        //
+        ++i;
+        ++aNbCE;
       }
       else if (aKNE==GEOMAlgo_KN_SEGMENT) {
-	if (BRep_Tool::IsClosed(aE, aF)) {
-	  ++aNbSE;
-	}
+        if (BRep_Tool::IsClosed(aE, aF)) {
+          ++aNbSE;
+        }
       }
       else if (aKSE==GEOMAlgo_KS_DEGENERATED) {
-	aIt.Initialize(aE);
-	for (; aIt.More(); aIt.Next()) {
-	  aVD=TopoDS::Vertex(aIt.Value());
-	  break;
-	}
-	//
-	aPD=BRep_Tool::Pnt(aVD);
-	//
-	++aNbDE;
+        aIt.Initialize(aE);
+        for (; aIt.More(); aIt.Next()) {
+          aVD=TopoDS::Vertex(aIt.Value());
+          break;
+        }
+        //
+        aPD=BRep_Tool::Pnt(aVD);
+        //
+        ++aNbDE;
       }
     }
   }
@@ -630,10 +655,10 @@
 }
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-					     const gp_Cylinder& aCyl)
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Cylinder& aCyl)
 {
   Standard_Integer i, aNbV, aNbE, aNbCE, aNbSE;
   Standard_Real aT0, aT1, aHeight;
@@ -644,7 +669,7 @@
   GEOMAlgo_KindOfShape aKS;
   GEOMAlgo_KindOfName aKN, aKNE;
   GEOMAlgo_KindOfClosed aKCE;
-  // 
+  //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
   aKN=GEOMAlgo_KN_UNKNOWN;
   aInfo.SetKindOfName(aKN);
@@ -675,13 +700,13 @@
       aKNE=aInfoE.KindOfName();
       aKCE=aInfoE.KindOfClosed();
       if (aKNE==GEOMAlgo_KN_CIRCLE && aKCE==GEOMAlgo_KC_CLOSED) {
-	aPC[aNbCE]=aInfoE.Location();
-	++aNbCE;
+        aPC[aNbCE]=aInfoE.Location();
+        ++aNbCE;
       }
       else if (aKNE==GEOMAlgo_KN_SEGMENT) {
-	if (BRep_Tool::IsClosed(aE, aF)) {
-	  ++aNbSE;
-	}
+        if (BRep_Tool::IsClosed(aE, aF)) {
+          ++aNbSE;
+        }
       }
     }
   }
@@ -715,15 +740,15 @@
 
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-					     const gp_Torus& )
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Torus& )
 {
   Standard_Integer aNbV, aNbE, aNbSE;
-  TopoDS_Edge aE; 
+  TopoDS_Edge aE;
   TopExp_Explorer aExp;
-  TopTools_MapOfShape aM; 
+  TopTools_MapOfShape aM;
   GEOMAlgo_KindOfShape aKS;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
@@ -745,9 +770,8 @@
   for (; aExp.More(); aExp.Next()) {
     aE=TopoDS::Edge(aExp.Current());
     if (aM.Add(aE)) {
-      //const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
       if (BRep_Tool::IsClosed(aE, aF)) {
-	++aNbSE;
+        ++aNbSE;
       }
     }
   }
@@ -757,3 +781,121 @@
   }
   aInfo.SetKindOfName(GEOMAlgo_KN_TORUS);
 }
+//modified by NIZNHY-PKV Tue Jul 03 13:29:41 2012f
+//=======================================================================
+//function : TreatStepSphere
+//purpose  :
+//=======================================================================
+Standard_Boolean
+  GEOMAlgo_ShapeInfoFiller::TreatStepSphere(const TopoDS_Solid& aSd)
+{
+  Standard_Boolean bRet, bIsAllowedType, bOnlyClosed, bIsEqual;
+  Standard_Integer j;
+  Standard_Real aTolAng, aTolLin;
+  Standard_Real aVolume, aVolumeS, dV, aArea, aAreaS, dA;
+  gp_Sphere aSphere[2];
+  GeomAbs_SurfaceType aST;
+  Handle(Geom_Surface) aS;
+  GeomAdaptor_Surface aGAS;
+  TopExp_Explorer aExp;
+  //
+  bRet=Standard_False;
+  aTolLin=Precision::Confusion();
+  aTolAng=Precision::Angular();
+  //
+  aExp.Init(aSd, TopAbs_FACE);
+  for (j=0; aExp.More(); aExp.Next(), ++j) {
+    const TopoDS_Face& aF=*((TopoDS_Face*)&aExp.Current());
+    aS=BRep_Tool::Surface(aF);
+    aGAS.Load(aS);
+    aST=aGAS.GetType();
+    bIsAllowedType=GEOMAlgo_ShapeInfoFiller::IsAllowedType(aST);
+    if (!bIsAllowedType) {
+      return bRet;
+    }
+    //
+    if (aST!=GeomAbs_Sphere) {
+      return bRet;
+    }
+    //
+    aSphere[j]=aGAS.Sphere();
+  }
+  //
+  bIsEqual=IsEqual(aSphere[0], aSphere[1], aTolLin);
+  if (!bIsEqual) {
+    return bRet;
+  }
+  //
+  //--------------------------------
+  GProp_GProps aGProps;
+  //
+  bOnlyClosed=Standard_False;
+  //
+  aVolume=aSphere[0].Volume();
+  //
+  BRepGProp::VolumeProperties(aSd, aGProps,  bOnlyClosed);
+  aVolumeS=aGProps.Mass();
+  if (aVolumeS<0.) {
+    aVolumeS=-aVolumeS;
+  }
+  //
+  dV=fabs(aVolumeS-aVolume);
+  if (dV>aTolLin) {
+    return bRet;
+  }
+  //--------------------------------
+  aArea=aSphere[0].Area();
+  //
+  BRepGProp::SurfaceProperties(aSd, aGProps);
+  aAreaS=aGProps.Mass();
+  //
+  dA=fabs(aAreaS-aArea);
+  if (dA>aTolLin) {
+    return bRet;
+  }
+  //
+  //--------------------------------
+  gp_Pnt aP0;
+  gp_Ax3 aAx3;
+  Standard_Real aR1;
+  //
+  aP0=aSphere[0].Location();
+  aAx3=aSphere[0].Position();
+  aR1=aSphere[0].Radius();
+  //
+  GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aSd);
+  //
+  aInfo.SetKindOfName(GEOMAlgo_KN_SPHERE);
+  aInfo.SetLocation(aP0);
+  aInfo.SetPosition(aAx3);
+  aInfo.SetRadius1(aR1);
+  //
+  return !bRet;// true
+}
+//=======================================================================
+//function : IsEqual
+//purpose  :
+//=======================================================================
+Standard_Boolean IsEqual(const gp_Sphere& aSp1,
+                         const gp_Sphere& aSp2,
+                         const Standard_Real aTolLin)
+{
+  Standard_Boolean bRet;
+  Standard_Real aR1, aR2, aD2;
+  //
+  bRet=Standard_False;
+  aR1=aSp1.Radius();
+  aR2=aSp2.Radius();
+  if (fabs(aR1-aR2)>aTolLin) {
+    return bRet;
+  }
+  //
+  const gp_Pnt& aPC1=aSp1.Position().Location();
+  const gp_Pnt& aPC2=aSp2.Position().Location();
+  //
+  aD2=aPC1.SquareDistance(aPC2);
+  bRet=(aD2<aTolLin*aTolLin);
+  //
+  return bRet;
+}
+//modified by NIZNHY-PKV Tue Jul 03 13:29:43 2012t

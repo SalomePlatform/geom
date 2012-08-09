@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_ChangeOrientationDlg.cxx
 // Author : Sergey KUUL, Open CASCADE S.A.S. (sergey.kuul@opencascade.com)
@@ -46,8 +47,8 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 RepairGUI_ChangeOrientationDlg::RepairGUI_ChangeOrientationDlg( GeometryGUI* theGeometryGUI,
-								QWidget* parent,
-								bool modal )
+                                                                QWidget* parent,
+                                                                bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   //QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_FACE")));
@@ -113,9 +114,11 @@ void RepairGUI_ChangeOrientationDlg::Init()
   connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( CreateCopyModeChanged( bool ) ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "CHANGE_ORIENTATION_NEW_OBJ_NAME" ) );
+  resize(100,100);
+  SelectionIntoArgument();
 }
 
 
@@ -125,6 +128,7 @@ void RepairGUI_ChangeOrientationDlg::Init()
 //=================================================================================
 void RepairGUI_ChangeOrientationDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -170,11 +174,10 @@ void RepairGUI_ChangeOrientationDlg::SelectionIntoArgument()
   }
 
   // nbSel == 1
-  Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_ptr aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), testResult );
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
   
-  if ( !testResult )
+  if ( CORBA::is_nil( aSelectedObject ) )
     return;
 
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
@@ -224,7 +227,7 @@ void RepairGUI_ChangeOrientationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 
@@ -268,11 +271,12 @@ bool RepairGUI_ChangeOrientationDlg::execute( ObjectList& objects )
   bool toCreateCopy = GroupPoints->CheckButton1->isChecked();
 
   GEOM::GEOM_Object_var anObj;
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
   if ( toCreateCopy ) {
-    anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->ChangeOrientationCopy( myObject );
+    anObj = anOper->ChangeOrientationCopy( myObject );
   }
   else {
-    anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->ChangeOrientation( myObject );
+    anObj = anOper->ChangeOrientation( myObject );
   }
 
   if ( !anObj->_is_nil() )

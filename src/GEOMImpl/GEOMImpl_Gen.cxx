@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -62,10 +63,12 @@
 #include <GEOMImpl_BooleanDriver.hxx>
 #include <GEOMImpl_ChamferDriver.hxx>
 #include <GEOMImpl_FilletDriver.hxx>
+#include <GEOMImpl_Fillet1dDriver.hxx>
 #include <GEOMImpl_Fillet2dDriver.hxx>
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_RotateDriver.hxx>
 #include <GEOMImpl_MirrorDriver.hxx>
+#include <GEOMImpl_ProjectionDriver.hxx>
 #include <GEOMImpl_OffsetDriver.hxx>
 #include <GEOMImpl_ScaleDriver.hxx>
 #include <GEOMImpl_PositionDriver.hxx>
@@ -78,6 +81,11 @@
 #include <GEOMImpl_FillingDriver.hxx>
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_MeasureDriver.hxx>
+// Advanced operations
+#include <GEOMImpl_PipeTShapeDriver.hxx>
+#include <GEOMImpl_DividedDiskDriver.hxx>
+// #include <GEOMImpl_DividedCylinderDriver.hxx>
+/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 //=============================================================================
 /*!
@@ -134,6 +142,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    // Local Operations
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ChamferDriver::GetID(), new GEOMImpl_ChamferDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FilletDriver::GetID(), new GEOMImpl_FilletDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_Fillet1dDriver::GetID(), new GEOMImpl_Fillet1dDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_Fillet2dDriver::GetID(), new GEOMImpl_Fillet2dDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ArchimedeDriver::GetID(), new GEOMImpl_ArchimedeDriver());
 
@@ -141,6 +150,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_TranslateDriver::GetID(), new GEOMImpl_TranslateDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_RotateDriver::GetID(), new GEOMImpl_RotateDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_MirrorDriver::GetID(), new GEOMImpl_MirrorDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ProjectionDriver::GetID(), new GEOMImpl_ProjectionDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_OffsetDriver::GetID(), new GEOMImpl_OffsetDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ScaleDriver::GetID(), new GEOMImpl_ScaleDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PositionDriver::GetID(), new GEOMImpl_PositionDriver());
@@ -155,6 +165,12 @@ GEOMImpl_Gen::GEOMImpl_Gen()
 
    // Measurements
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_MeasureDriver::GetID(), new GEOMImpl_MeasureDriver());
+
+   // Advanced operations
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PipeTShapeDriver::GetID(), new GEOMImpl_PipeTShapeDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_DividedDiskDriver::GetID(), new GEOMImpl_DividedDiskDriver());
+//    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_DividedCylinderDriver::GetID(), new GEOMImpl_DividedCylinderDriver());
+   /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
    SetEngine(this);
 }
@@ -385,3 +401,18 @@ GEOMImpl_IGroupOperations* GEOMImpl_Gen::GetIGroupOperations(int theDocID)
 
   return _mapOfGroupOperations[theDocID];
 }
+
+//=============================================================================
+/*!
+ * GetIAdvancedOperations
+ */
+//=============================================================================
+GEOMImpl_IAdvancedOperations* GEOMImpl_Gen::GetIAdvancedOperations(int theDocID)
+{
+  if(_mapOfAdvancedOperations.find(theDocID) == _mapOfAdvancedOperations.end()) {
+    _mapOfAdvancedOperations[theDocID] = new GEOMImpl_IAdvancedOperations(this, theDocID);
+  }
+
+  return _mapOfAdvancedOperations[theDocID];
+}
+

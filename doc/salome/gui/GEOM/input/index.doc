@@ -4,23 +4,37 @@
 
 \image html geomscreen.png
 
+If you are a new user some general information about GEOM usage are given here:
+\subpage first_steps_guide
+
 \b Geometry module of SALOME is destined for: 
-<ul>
-<li>\subpage import_export_geom_obj_page "import and export of geometrical models" in IGES, BREP and STEP formats;</li>
-<li>\subpage create_geom_obj_page "construction of geometrical objects"
-using a wide range of functions;</li>
-<li>\subpage view_geom_obj_page "viewing geometrical objects" in the OCC viewer;</li>
-<li>\subpage transform_geom_obj_page "transformation of geometrical objects" using
-various algorithms;</li>
-<li>\subpage repairing_operations_page "optimization of geometrical objects";</li>
-<li>\subpage using_measurement_tools_page "provision of information about geometrical objects".</li>
-<li>\subpage using_notebook_geom_page.</li>
-</ul>
+- \subpage import_export_geom_obj_page "import and export of geometrical models"
+  in IGES, BREP and STEP formats;
+- \subpage create_geom_obj_page "construction of geometrical objects"
+  using a wide range of functions; 
+- \subpage view_geom_obj_page "viewing geometrical objects" in the OCC
+  viewer; 
+- \subpage transform_geom_obj_page "transformation of geometrical objects"
+  using various algorithms;
+- \subpage repairing_operations_page "optimization of geometrical objects";
+- viewing \subpage geometrical_obj_prop_page "geometrical object properties"
+  and other information about geometrical objects using 
+  \subpage using_measurement_tools_page "measurement tools";
+- \subpage pictures_page "designing shapes from pictures";
+- easily setting parameters via the variables predefined in
+  \subpage using_notebook_geom_page "SALOME notebook".
+
+Geometry module preferences are described in the
+\subpage geometry_preferences_page section of SALOME Geometry Help.
 
 Almost all geometry module functionalities are accessible via
 \subpage geompy_page "Geometry module Python Interface"
 
-\image html image3.jpg "Example of Geometry module usage for engineering tasks"
+Other functions are available in <a class="el" target="_new" href="../../tui/GEOM/docutils/index.html">salome.geom python package</a>.
 
+\image html image3.png "Example of Geometry module usage for engineering tasks"
+
+There are also \subpage related_docs_page "additional reference documents"
+for Geometry module that can be useful.
 
 */

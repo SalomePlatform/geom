@@ -4,10 +4,10 @@
 
 \n To <b>Change Orientation</b> in the <b>Main Menu</b> select <b>Repair - > Change Orientation</b>.
 \n This operation reverses the normals of selected faces or the normal
-of faces composing composing the selected opened shell.
+of faces composing the selected opened shell. For edge or wire the operation reverses its direction.
 
 \n <b>TUI Command:</b> <em>geompy.ChangeOrientation(shape)</em>
-\n <b>Arguments:</b> Name + one or several objects (face(s)), opened shell(s).
+\n <b>Arguments:</b> Name + one or several objects (edge(s), wire(s), face(s), opened shell(s)).
 \n Uncheck <b>Create a copy</b> checkbox if you don't wish to leave
 the initial object in the project (<b>Result name</b> field will be
 locked).
@@ -16,10 +16,10 @@ locked).
 
 \n <b>Example:</b>
 
-\image html image38.gif
+\image html image38.png
 <center><em>Inward orientation</em></center>
 
-\image html image40.gif
+\image html image40.png
 <center><em>Outward orientation</em></center>
 
 */

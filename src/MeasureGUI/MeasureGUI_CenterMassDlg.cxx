@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_CenterMassDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -116,7 +117,7 @@ void MeasureGUI_CenterMassDlg::Init()
   connect( myGrp->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_POINT") );
   globalSelection();
@@ -169,18 +170,17 @@ void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
     return;
   }
 
-  Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if (!testResult || aSelectedObject->_is_nil()) {
+  if ( aSelectedObject->_is_nil() ) {
     processObject();
     return;
   }
 
   myObj = aSelectedObject;
   processObject();
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -218,10 +218,10 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   globalSelection();
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -243,11 +243,14 @@ void MeasureGUI_CenterMassDlg::processObject()
     getParameters( x, y, z );
     
     myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
-    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( x ) );
-    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( y ) );
-    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( z ) );
 
-    displayPreview();
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( x, aPrecision ) );
+    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( y, aPrecision ) );
+    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( z, aPrecision ) );
+
+    displayPreview(true);
   }
 }
 
@@ -290,9 +293,9 @@ bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double
     return false;
   else {
     try {
-      GEOM::GEOM_Object_var anObj;
-      anObj = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetCentreOfMass( myObj );
-      if ( !getOperation()->IsDone() )
+      GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+      GEOM::GEOM_Object_var anObj = anOper->GetCentreOfMass( myObj );
+      if ( !anOper->IsDone() )
         return false;
 
       TopoDS_Shape aShape;
@@ -324,9 +327,8 @@ bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double
 //=================================================================================
 bool MeasureGUI_CenterMassDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
-  anObj = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetCentreOfMass( myObj );
+  GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->GetCentreOfMass( myObj );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

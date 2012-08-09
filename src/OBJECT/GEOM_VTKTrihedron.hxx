@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  SALOME GEOM : 
 //  File   : GEOM_VTKTrihedron.h
 //  Author : Sergey LITONIN
@@ -57,6 +58,7 @@ public:
 
   virtual vtkFloatingPointType      GetSize() { return mySize;}
 
+  virtual void                      SetVisibility( int theVisibility );
   virtual void                      SetVisibility( VTKViewer_Trihedron::TVisibility theVis );
   virtual void                      VisibilityOff() { SetVisibility( VTKViewer_Trihedron::eOff ); }
   virtual void                      VisibilityOn() { SetVisibility( VTKViewer_Trihedron::eOn ); }
@@ -79,7 +81,16 @@ public:
   void                              SetColor( vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b );
   void                              GetColor( vtkFloatingPointType& r, vtkFloatingPointType& g, vtkFloatingPointType& b );
 
-  virtual bool                      hasHighlight() { return false; } 
+  virtual bool                      hasHighlight() { return true; } 
+
+  virtual void                      Highlight( bool theHighlight );
+  virtual bool                      PreHighlight( vtkInteractorStyle* theInteractorStyle,
+                                                  SVTK_SelectionEvent* theSelectionEvent,
+                                                  bool theIsHighlight );
+
+protected:
+  virtual void                      ResetAxesColors();
+  virtual void                      SetAxesColors( vtkFloatingPointType theColor[3], bool theIsDiffuse = false );
 
 protected:
   VTKViewer_Axis*                   myAxis[3];
@@ -88,6 +99,9 @@ protected:
   gp_Pnt                            myLocation;
   gp_Dir                            myDirX, myDirY, myDirZ;
   vtkFloatingPointType              myColor[ 3 ];
+  vtkFloatingPointType              myDefaultColor[ 3 ];
+  vtkFloatingPointType              myPreHighlightColor[ 3 ];
+  vtkFloatingPointType              myHighlightColor[ 3 ];
 };
 
 #endif

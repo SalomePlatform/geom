@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_RotateDriver.hxx>
@@ -99,7 +100,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     gp_Dir aDir(gp_Vec(aP1, aP2));
     gp_Ax1 anAx1(aP1, aDir);
     Standard_Real anAngle = RI.GetAngle();
-    if (fabs(anAngle) < Precision::Angular()) anAngle += 2*PI; // NPAL19665,19769
+    if (fabs(anAngle) < Precision::Angular()) anAngle += 2.*M_PI; // NPAL19665,19769
     aTrsf.SetRotation(anAx1, anAngle);
 
     //NPAL18620: performance problem: multiple locations are accumulated
@@ -134,7 +135,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     gp_Dir aDir (aVec1 ^ aVec2);
     gp_Ax1 anAx1 (aCP, aDir);
     Standard_Real anAngle = aVec1.Angle(aVec2);
-    if (fabs(anAngle) < Precision::Angular()) anAngle += 2*PI; // NPAL19665
+    if (fabs(anAngle) < Precision::Angular()) anAngle += 2.*M_PI; // NPAL19665
     aTrsf.SetRotation(anAx1, anAngle);
     //NPAL18620: performance problem: multiple locations are accumulated
     //           in shape and need a great time to process
@@ -176,7 +177,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
         B.Add(aCompound, anOriginal);
       }
       else {
-        aTrsf.SetRotation(AX1, i*angle*PI180);
+        aTrsf.SetRotation(AX1, i*angle*M_PI/180.);
         //TopLoc_Location aLocRes (aTrsf * aTrsfOrig); // gp_Trsf::Multiply() has a bug
         gp_Trsf aTrsfNew (aTrsfOrig);
         aTrsfNew.PreMultiply(aTrsf);
@@ -204,35 +205,45 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
 
     gp_Ax1 AX1(aP1, D);
 
-
     gp_Trsf aTrsf1;
     gp_Trsf aTrsf2;
-    gp_Pnt P1;
-    GProp_GProps System;
 
-    if (anOriginal.ShapeType() == TopAbs_VERTEX) {
-      P1 = BRep_Tool::Pnt(TopoDS::Vertex( anOriginal ));
-    }
-    else if ( anOriginal.ShapeType() == TopAbs_EDGE || anOriginal.ShapeType() == TopAbs_WIRE ) {
-      BRepGProp::LinearProperties(anOriginal, System);
-      P1 = System.CentreOfMass();
-    }
-    else if ( anOriginal.ShapeType() == TopAbs_FACE || anOriginal.ShapeType() == TopAbs_SHELL ) {
-      BRepGProp::SurfaceProperties(anOriginal, System);
-      P1 = System.CentreOfMass();
-    }
-    else {
-      BRepGProp::VolumeProperties(anOriginal, System);
-      P1 = System.CentreOfMass();
+    gp_XYZ aDir2 = RI.GetDir2(); // can be set by previous execution
+    if (aDir2.Modulus() < gp::Resolution()) {
+      // Calculate direction as vector from the axis to the shape's center
+      gp_Pnt P1;
+      GProp_GProps System;
+
+      if (anOriginal.ShapeType() == TopAbs_VERTEX) {
+        P1 = BRep_Tool::Pnt(TopoDS::Vertex( anOriginal ));
+      }
+      else if ( anOriginal.ShapeType() == TopAbs_EDGE || anOriginal.ShapeType() == TopAbs_WIRE ) {
+        BRepGProp::LinearProperties(anOriginal, System);
+        P1 = System.CentreOfMass();
+      }
+      else if ( anOriginal.ShapeType() == TopAbs_FACE || anOriginal.ShapeType() == TopAbs_SHELL ) {
+        BRepGProp::SurfaceProperties(anOriginal, System);
+        P1 = System.CentreOfMass();
+      }
+      else {
+        BRepGProp::VolumeProperties(anOriginal, System);
+        P1 = System.CentreOfMass();
+      }
+
+      Handle(Geom_Line) Line = new Geom_Line(AX1);
+      GeomAPI_ProjectPointOnCurve aPrjTool( P1, Line );
+      gp_Pnt P2 = aPrjTool.NearestPoint();
+
+      if ( P1.IsEqual(P2, Precision::Confusion() ) ) return 0;
+
+      aDir2 = gp_XYZ(P1.X()-P2.X(), P1.Y()-P2.Y(), P1.Z()-P2.Z());
+
+      // Attention: this abnormal action is done for good working of
+      // TransformLikeOther(), used by RestoreSubShapes functionality
+      RI.SetDir2(aDir2);
     }
 
-    Handle(Geom_Line) Line = new Geom_Line(AX1);
-    GeomAPI_ProjectPointOnCurve aPrjTool( P1, Line );
-    gp_Pnt P2 = aPrjTool.NearestPoint();
-
-    if ( P1.IsEqual(P2, Precision::Confusion() ) ) return 0;
-
-    gp_Vec Vec (P1.X()-P2.X(), P1.Y()-P2.Y(), P1.Z()-P2.Z());
+    gp_Vec Vec (aDir2);
     Vec.Normalize();
 
     Standard_Integer nbtimes2 = RI.GetNbIter2();
@@ -263,7 +274,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
           B.Add(aCompound, anOriginal.Located(aLocRes));
         }
         else {
-          aTrsf2.SetRotation(AX1, j*ang*PI180);
+          aTrsf2.SetRotation(AX1, j*ang*M_PI/180.);
           //TopLoc_Location aLocRes (aTrsf2 * aTrsf1 * aTrsfOrig); // gp_Trsf::Multiply() has a bug
           gp_Trsf aTrsfNew (aTrsfOrig);
           aTrsfNew.PreMultiply(aTrsf1);
@@ -309,10 +320,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_RotateDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_RotateDriver",
-			                                 sizeof(GEOMImpl_RotateDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_RotateDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

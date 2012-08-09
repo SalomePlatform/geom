@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_OffsetDriver.hxx>
@@ -37,6 +38,11 @@
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
 
+#include <BRepCheck_Analyzer.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
+#include <ShapeFix_Shape.hxx>
+
+#include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
 
 //=======================================================================
@@ -90,7 +96,22 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(TFunction_Logbook& log) const
                                       aTol);
     if (MO.IsDone()) {
       aShape = MO.Shape();
-    } else {
+      // 23.04.2010 skl for bug 21699 from Mantis
+      BRepCheck_Analyzer ana (aShape, Standard_True);
+      ana.Init(aShape);
+      if (!ana.IsValid()) {
+        ShapeFix_ShapeTolerance aSFT;
+        aSFT.LimitTolerance(aShape, Precision::Confusion(),
+                            Precision::Confusion(), TopAbs_SHAPE);
+        Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+        aSfs->Perform();
+        aShape = aSfs->Shape();
+        ana.Init(aShape);
+        if (!ana.IsValid())
+          Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
+      }
+    }
+    else {
       StdFail_NotDone::Raise("Offset construction failed");
     }
   } else {
@@ -123,10 +144,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_OffsetDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_OffsetDriver",
-			                                 sizeof(GEOMImpl_OffsetDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_OffsetDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

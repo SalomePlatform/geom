@@ -1,27 +1,28 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  File   : GEOMImpl_Block6Explorer.hxx
 //  Module : GEOMImpl
-//
+
 #ifndef GEOMImpl_Block6Explorer_HeaderFile
 #define GEOMImpl_Block6Explorer_HeaderFile
 
@@ -29,6 +30,7 @@
 #include <TopoDS_Wire.hxx>
 #include <TopTools_Array1OfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TCollection_AsciiString.hxx>
 #include <gp_Trsf.hxx>
 
   //  Class GEOMImpl_Block6Explorer gives easy and fast access to a certain sub-elements of hexahedral solid
@@ -213,9 +215,27 @@ class GEOMImpl_Block6Explorer
                                     const Standard_Boolean findAll = Standard_False);
   // returns number of found faces
 
-  static void MakeFace (const TopoDS_Wire&     theWire,
-                        const Standard_Boolean isPlanarWanted,
-                        TopoDS_Shape&          theResult);
+  /*!
+   * Build a face, bound by the given wire.
+   * \param theWire The initial wire to build the face on.
+   * \param isPlanarWanted If true, try to build a planar face.
+   * \note If isPlanarWanted is true, but planar face cannot be built
+   *       with acceptable tolerance, any face will be built.
+   * \param theResult The resulting shape.
+   * \return Error or warning description. Empty string in case of success.
+   */
+  static TCollection_AsciiString MakeFace (const TopoDS_Wire&     theWire,
+                                           const Standard_Boolean isPlanarWanted,
+                                           TopoDS_Shape&          theResult);
+
+  /*!
+   * Build a face, bound by the given wire.
+   * \param theWire The initial wire to build the face on.
+   * \param theResult The resulting shape.
+   * \return Error or warning description. Empty string in case of success.
+   */
+  static TCollection_AsciiString MakeAnyFace (const TopoDS_Wire& theWire,
+                                              TopoDS_Shape&      theResult);
 
  private:
   // ---------- PRIVATE FIELDS ----------

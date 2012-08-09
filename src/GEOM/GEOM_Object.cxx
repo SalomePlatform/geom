@@ -1,25 +1,28 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
+
+#include "utilities.h"
 
 #include <GEOM_Object.hxx>
 #include <GEOM_Engine.hxx>
@@ -31,11 +34,13 @@
 #include <TDocStd_Owner.hxx>
 #include <TDocStd_Document.hxx>
 #include <TDataStd_Integer.hxx>
+#include <TDataStd_Real.hxx>
 #include <TDataStd_ChildNodeIterator.hxx>
 #include <TDataStd_UAttribute.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDataStd_Comment.hxx>
 #include <TDataStd_RealArray.hxx>
+#include <TDataStd_ByteArray.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
@@ -43,11 +48,16 @@
 #include <TopExp.hxx>
 
 #define FUNCTION_LABEL(theNb) (_label.FindChild(1).FindChild((theNb)))
-#define TYPE_LABEL 2
-#define FREE_LABEL 3
-#define TIC_LABEL  4
+#define TYPE_LABEL       2
+#define FREE_LABEL       3
+#define TIC_LABEL        4
 #define COLOR_LABEL      5
 #define AUTO_COLOR_LABEL 6
+#define MARKER_LABEL     7
+
+#define MARKER_LABEL_TYPE 1
+#define MARKER_LABEL_SIZE 2
+#define MARKER_LABEL_ID   3
 
 //=======================================================================
 //function : GetObjectID
@@ -138,8 +148,14 @@ Handle(GEOM_Object) GEOM_Object::GetReferencedObject(TDF_Label& theLabel)
  */
 //=============================================================================
 GEOM_Object::GEOM_Object(TDF_Label& theEntry)
-: _label(theEntry), _ior("")
+  : _label(theEntry), _ior(""), _docID(-1)
 {
+  Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
+  if(!aDoc.IsNull()) {
+    Handle(TDataStd_Integer) anID;
+    if(aDoc->Main().FindAttribute(TDataStd_Integer::GetID(), anID)) _docID = anID->Get();
+  }
+
   if(!theEntry.FindAttribute(TDataStd_TreeNode::GetDefaultTreeID(), _root))
     _root = TDataStd_TreeNode::Set(theEntry);
 }
@@ -150,8 +166,14 @@ GEOM_Object::GEOM_Object(TDF_Label& theEntry)
  */
 //=============================================================================
 GEOM_Object::GEOM_Object(TDF_Label& theEntry, int theType)
-: _label(theEntry), _ior("")
+: _label(theEntry), _ior(""), _docID(-1)
 {
+  Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
+  if(!aDoc.IsNull()) {
+    Handle(TDataStd_Integer) anID;
+    if(aDoc->Main().FindAttribute(TDataStd_Integer::GetID(), anID)) _docID = anID->Get();
+  }
+
   theEntry.ForgetAllAttributes(Standard_True);
 
   if(!theEntry.FindAttribute(TDataStd_TreeNode::GetDefaultTreeID(), _root))
@@ -160,6 +182,16 @@ GEOM_Object::GEOM_Object(TDF_Label& theEntry, int theType)
   TDataStd_Integer::Set(theEntry.FindChild(TYPE_LABEL), theType);
 
   TDataStd_UAttribute::Set(theEntry, GetObjectID());
+}
+
+//=============================================================================
+/*!
+ *  Destructor
+ */
+//=============================================================================
+GEOM_Object::~GEOM_Object()
+{
+  MESSAGE("GEOM_Object::~GEOM_Object()");
 }
 
 //=============================================================================
@@ -243,13 +275,7 @@ void GEOM_Object::IncrementTic()
 //=============================================================================
 int GEOM_Object::GetDocID()
 {
-  Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
-  if(aDoc.IsNull()) return -1;
-
-  Handle(TDataStd_Integer) anID;
-  if(!aDoc->Main().FindAttribute(TDataStd_Integer::GetID(), anID)) return -1;
-
-  return anID->Get();
+  return _docID;
 }
 
 
@@ -302,7 +328,7 @@ char* GEOM_Object::GetName()
  *  SetColor
  */
 //=============================================================================
-void GEOM_Object::SetColor(const SALOMEDS::Color& theColor)
+void GEOM_Object::SetColor(const GEOM_Object::Color& theColor)
 {
   Handle(TDataStd_RealArray) anArray = new TDataStd_RealArray();
   anArray->Init( 1, 3 );
@@ -320,15 +346,15 @@ void GEOM_Object::SetColor(const SALOMEDS::Color& theColor)
  *  GetColor
  */
 //=============================================================================
-SALOMEDS::Color GEOM_Object::GetColor()
+GEOM_Object::Color GEOM_Object::GetColor()
 {
   Handle(TDataStd_RealArray) anArray;
   bool isFound = _label.FindChild(COLOR_LABEL).FindAttribute(TDataStd_RealArray::GetID(), anArray);
 
-  SALOMEDS::Color aColor;
-  aColor.R = isFound ? anArray->Value( 1 ) : 0.f;
-  aColor.G = isFound ? anArray->Value( 2 ) : 0.f;
-  aColor.B = isFound ? anArray->Value( 3 ) : 0.f;
+  GEOM_Object::Color aColor;
+  aColor.R = isFound ? anArray->Value( 1 ) : -1;
+  aColor.G = isFound ? anArray->Value( 2 ) : -1;
+  aColor.B = isFound ? anArray->Value( 3 ) : -1;
 
   return aColor;
 }
@@ -338,7 +364,7 @@ SALOMEDS::Color GEOM_Object::GetColor()
  *  SetAutoColor
  */
 //=============================================================================
-void GEOM_Object::SetAutoColor(CORBA::Boolean theAutoColor)
+void GEOM_Object::SetAutoColor(bool theAutoColor)
 {
   TDataStd_Integer::Set(_label.FindChild(AUTO_COLOR_LABEL), (int)theAutoColor);
 }
@@ -348,12 +374,102 @@ void GEOM_Object::SetAutoColor(CORBA::Boolean theAutoColor)
  *  GetAutoColor
  */
 //=============================================================================
-CORBA::Boolean GEOM_Object::GetAutoColor()
+bool GEOM_Object::GetAutoColor()
 {
   Handle(TDataStd_Integer) anAutoColor;
   if(!_label.FindChild(AUTO_COLOR_LABEL).FindAttribute(TDataStd_Integer::GetID(), anAutoColor)) return false;
 
-  return anAutoColor->Get();
+  return bool(anAutoColor->Get());
+}
+
+//=============================================================================
+/*!
+ *  SetMarkerStd
+ */
+//=============================================================================
+void GEOM_Object::SetMarkerStd(const Aspect_TypeOfMarker theType, double theSize)
+{
+  TDF_Label aMarkerLabel = _label.FindChild(MARKER_LABEL);
+  TDataStd_Integer::Set(aMarkerLabel.FindChild(MARKER_LABEL_TYPE), (int)theType);
+  TDataStd_Real::Set(aMarkerLabel.FindChild(MARKER_LABEL_SIZE), theSize);
+}
+  
+//=============================================================================
+/*!
+ *  SetMarkerTexture
+ */
+//=============================================================================
+void GEOM_Object::SetMarkerTexture(int theTextureId)
+{
+  TDF_Label aMarkerLabel = _label.FindChild(MARKER_LABEL);
+  TDataStd_Integer::Set(aMarkerLabel.FindChild(MARKER_LABEL_TYPE), (int)Aspect_TOM_USERDEFINED);
+  TDataStd_Integer::Set(aMarkerLabel.FindChild(MARKER_LABEL_ID),   theTextureId);
+}
+
+//=============================================================================
+/*!
+ *  GetMarkerType
+ */
+//=============================================================================
+Aspect_TypeOfMarker GEOM_Object::GetMarkerType()
+{
+  Standard_Integer aType = -1;
+  TDF_Label aMarkerLabel = _label.FindChild(MARKER_LABEL, Standard_False);
+  if(!aMarkerLabel.IsNull()) {
+    TDF_Label aTypeLabel = aMarkerLabel.FindChild(MARKER_LABEL_TYPE, Standard_False);
+    Handle(TDataStd_Integer) aTypeAttr;
+    if (!aTypeLabel.IsNull() && aTypeLabel.FindAttribute(TDataStd_Integer::GetID(), aTypeAttr))
+      aType = aTypeAttr->Get();
+  }
+  return (Aspect_TypeOfMarker)aType;
+}
+
+//=============================================================================
+/*!
+ *  GetMarkerSize
+ */
+//=============================================================================
+double GEOM_Object::GetMarkerSize()
+{
+  Standard_Real aSize = 0.;
+  TDF_Label aMarkerLabel = _label.FindChild(MARKER_LABEL, Standard_False);
+  if(!aMarkerLabel.IsNull()) {
+    TDF_Label aSizeLabel = aMarkerLabel.FindChild(MARKER_LABEL_SIZE, Standard_False);
+    Handle(TDataStd_Real) aSizeAttr;
+    if (!aSizeLabel.IsNull() && aSizeLabel.FindAttribute(TDataStd_Real::GetID(), aSizeAttr))
+      aSize = aSizeAttr->Get();
+  }
+  return aSize;
+}
+
+//=============================================================================
+/*!
+ *  GetMarkerTexture
+ */
+//=============================================================================
+int GEOM_Object::GetMarkerTexture()
+{
+  Standard_Integer anId = 0;
+  if ( GetMarkerType() == Aspect_TOM_USERDEFINED) {
+    TDF_Label aMarkerLabel = _label.FindChild(MARKER_LABEL, Standard_False);
+    if(!aMarkerLabel.IsNull()) {
+      TDF_Label aTypeLabel = aMarkerLabel.FindChild(MARKER_LABEL_ID, Standard_False);
+      Handle(TDataStd_Integer) anIdAttr;
+      if (!aTypeLabel.IsNull() && aTypeLabel.FindAttribute(TDataStd_Integer::GetID(), anIdAttr))
+        anId = anIdAttr->Get();
+    }
+  }
+  return anId;
+}
+
+//=============================================================================
+/*!
+ *  SetAuxData
+ */
+//=============================================================================
+void GEOM_Object::UnsetMarker()
+{
+  SetMarkerStd((Aspect_TypeOfMarker)-1, 0.);
 }
 
 //=============================================================================
@@ -426,10 +542,12 @@ bool GEOM_Object::IsMainShape()
  *  AddFunction
  */
 //=============================================================================
-Handle(GEOM_Function) GEOM_Object::AddFunction(const Standard_GUID& theGUID, int theFunctionType)
+Handle(GEOM_Function) GEOM_Object::AddFunction(const Standard_GUID& theGUID,
+                                               int                  theFunctionType,
+                                               bool                 allowSubShape)
 {
   Standard_Integer nb = GetNbFunctions();
-  if(nb == 1 && theGUID == GetSubShapeID()) return NULL; //It's impossible to add a function to sub shape
+  if(!allowSubShape && nb == 1 && theGUID == GetSubShapeID()) return NULL; //It's impossible to add a function to sub-shape
   nb++;
   TDF_Label aChild = FUNCTION_LABEL(nb);
 
@@ -556,10 +674,10 @@ Standard_EXPORT Handle_Standard_Type& GEOM_Object_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOM_Object",
-			                                 sizeof(GEOM_Object),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOM_Object),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
   return _aType;
 }
 

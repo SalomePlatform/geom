@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_RemoveHolesDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -134,6 +135,7 @@ void RepairGUI_RemoveHolesDlg::Init()
 
   GroupPoints->PushButton1->click();
   SelectionIntoArgument();
+  resize(100,100);
 }
 
 //=================================================================================
@@ -142,6 +144,7 @@ void RepairGUI_RemoveHolesDlg::Init()
 //=================================================================================
 void RepairGUI_RemoveHolesDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -184,9 +187,8 @@ void RepairGUI_RemoveHolesDlg::SelectionIntoArgument()
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
 
     if (myEditCurrentArgument == GroupPoints->LineEdit1) { // face selection
-      Standard_Boolean aRes;
-      myObject = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
-      if (aRes && GEOMBase::IsShape(myObject)) {
+      myObject = GEOMBase::ConvertIOinGEOMObject( anIO );
+      if ( GEOMBase::IsShape(myObject) ) {
         myEditCurrentArgument->setText(GEOMBase::GetName(myObject));
 
         // clear selection
@@ -272,7 +274,7 @@ void RepairGUI_RemoveHolesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setText( "" );
@@ -328,8 +330,8 @@ bool RepairGUI_RemoveHolesDlg::execute (ObjectList& objects)
     // highlight them (add to objects), display message dialog
     GEOM::ListOfGO_var aClosed, anOpen;
 
-    aResult = GEOM::GEOM_IHealingOperations::_narrow(getOperation())->
-      GetFreeBoundary(myObject, aClosed, anOpen);
+    GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
+    aResult = anOper->GetFreeBoundary(myObject, aClosed, anOpen);
 
     if (aResult) {
       myClosed = aClosed->length();
@@ -344,8 +346,8 @@ bool RepairGUI_RemoveHolesDlg::execute (ObjectList& objects)
       myClosed = -1;
   }
   else {
-    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow(getOperation())->
-      FillHoles(myObject, myWiresInd);
+    GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
+    GEOM::GEOM_Object_var anObj = anOper->FillHoles(myObject, myWiresInd);
     aResult = !anObj->_is_nil();
     if (aResult)
       objects.push_back(anObj._retn());
@@ -402,7 +404,7 @@ void RepairGUI_RemoveHolesDlg::initSelection()
 //=================================================================================
 void RepairGUI_RemoveHolesDlg::onDetect()
 {
-  displayPreview(false, true, true, 3);
+  displayPreview(true, false, true, true, 3);
 
   // field myClosed,myOpen is initialized in execute() method, called by displayPreview().
   QString msg;

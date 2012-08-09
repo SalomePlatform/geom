@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMBase_Helper.h
 // Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
@@ -27,6 +28,7 @@
 #define GEOMBASE_HELPER_H
 
 #include "GEOM_GEOMBase.hxx"
+#include "GEOM_GenericObjPtr.h"
 
 #include <GEOM_Displayer.h>
 #include <SALOME_ListIO.hxx>
@@ -70,7 +72,8 @@ protected:
   void redisplay       ( const ObjectList&, const bool = true, const bool = true );
   void redisplay       ( GEOM::GEOM_Object_ptr, const bool = true, const bool = true );
 
-  virtual void displayPreview ( const bool   activate = false, 
+  virtual void displayPreview ( const bool   display,
+                                const bool   activate = false, 
                                 const bool   update = true,
                                 const bool   toRemoveFromEngine = true,
                                 const double lineWidth = -1, 
@@ -87,8 +90,8 @@ protected:
                                  const int    displayMode = -1,
                                  const int    color  = -1 );
   void displayPreview  ( const SALOME_Prs* prs, 
-			 const bool append = false, 
-			 const bool = true );
+                         const bool append = false, 
+                         const bool = true );
   void erasePreview    ( const bool = true );
 
   void localSelection( const ObjectList&, const int );
@@ -102,7 +105,7 @@ protected:
   void prepareSelection( const ObjectList&, const int );
   void prepareSelection( GEOM::GEOM_Object_ptr, const int );
 
-  void addInStudy      ( GEOM::GEOM_Object_ptr, const char* theName ); 
+  QString addInStudy   ( GEOM::GEOM_Object_ptr, const char* theName ); 
 
   bool openCommand     ();
   bool abortCommand    ();
@@ -114,7 +117,7 @@ protected:
   SalomeApp_Study* getStudy  () const;
   bool checkViewWindow ();
 
-  bool onAccept( const bool publish = true, const bool useTransaction = true );
+  bool onAccept( const bool publish = true, const bool useTransaction = true, bool erasePreviewFlag = true);
   // This method should be called from "OK" button handler.
   // <publish> == true means that objects returned by execute() 
   // should be published in a study.
@@ -161,12 +164,17 @@ protected:
   // as a top-level object.
 
   virtual QString getNewObjectName() const; 
+  virtual bool extractPrefix() const;
   virtual void addSubshapesToStudy();
 
   GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const QString& theName );
-  //This Metod to find SubObject in theFather Object by Name (theName)
+  GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, int theIndex );
+  // These methods are used to find published sub-object (sub-shape) in the parent object (main shape)
 
-  void addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>& theMap );
+  GEOM::GeomObjPtr        getSelected( TopAbs_ShapeEnum type );
+  GEOM::GeomObjPtr        getSelected( const QList<TopAbs_ShapeEnum>& types );
+  QList<GEOM::GeomObjPtr> getSelected( TopAbs_ShapeEnum type, int count, bool strict = true );
+  QList<GEOM::GeomObjPtr> getSelected( const QList<TopAbs_ShapeEnum>& types, int count, bool strict = true );
 
   void SetIsPreview(const bool thePreview) {isPreview = thePreview;}
   bool IsPreview() {return isPreview;}
@@ -174,8 +182,20 @@ protected:
   GEOM_Displayer*             getDisplayer();
   SUIT_Desktop*               getDesktop() const;
 
+  virtual void                setIsApplyAndClose( const bool theFlag );
+  virtual bool                isApplyAndClose() const;
+
+  virtual void                setIsOptimizedBrowsing( const bool theFlag );
+  virtual bool                isOptimizedBrowsing() const;
+  
+  virtual void                setIsWaitCursorEnabled( const bool theFlag ) {myIsWaitCursorEnabled = theFlag;}
+  virtual bool                isWaitCursorEnabled() const {return myIsWaitCursorEnabled ;}
+  virtual void                setIsDisableBrowsing( const bool theFlag ) { myIsDisableBrowsing = theFlag; }
+  virtual bool                isDisableBrowsing() const { return myIsDisableBrowsing; }
+  
+
 private:
-  char* getEntry              ( GEOM::GEOM_Object_ptr ) const;
+  QString                     getEntry( GEOM::GEOM_Object_ptr ) const;
   void                        clearShapeBuffer( GEOM::GEOM_Object_ptr );
 
 private:
@@ -190,6 +210,11 @@ private:
   bool                        isPreview;
   SALOME_ListIO               mySelected;
   SUIT_Desktop*               myDesktop;
+  bool                        myIsApplyAndClose;
+  bool                        myIsOptimizedBrowsing;
+  bool                        myIsWaitCursorEnabled;
+  bool                        myIsDisableBrowsing;  //This flag enable/disable selection 
+                                                    //in the Object Browser newly created objects.
 
 };
 

@@ -3,10 +3,10 @@
 \page shape_processing_operation_page Shape Processing
 
 \n To produce a <b>Shape Processing</b> operation in the <b>Main Menu</b> 
-select <b>Repair - > Shape Processing</b>.
+   select <b>Repair - > Shape Processing</b>.
 \n This operation processes one or more shapes using various operators.
 
-\n The \b Result will be a \b GEOM_Object.
+\n The \b Result will be a \b GEOM.GEOM_Object.
 
 \n <b>TUI Command:</b> <em>geompy.ProcessShape(Shape, Operators,
 Parameters, Values),</em> where \em Shape is a processed shape, \em Operators
@@ -14,6 +14,19 @@ is a list of operators ("FixShape", "SplitClosedFaces", etc.),
 \em Parameters is a list of parameters ("FixShape.Tolerance3d",
 etc), \em Values is a list of values of parameters placed in the same
 order as in the list of Parameters.
+
+\note <b>Shape Processing</b> is useful not only on invalid shapes,
+      but also on the shapes, that are classified as valid by
+      the <b>Check</b> functionality. Use it, if an operation (for
+      example, <b>Partition</b>) fails.
+      Example of usage:
+      <ol>
+      <li>Try to partition objects obj1 and obj2.</li>
+      <li>Partition fails.</li>
+      <li>Perform Shape Processing on objects obj1 and obj2.</li>
+      <li>Try to partition them again.</li>
+      </ol>
+      See also \ref tui_limit_tolerance "TUI example".
 
 \n In this dialog box you can select the object that you need to
 process, define its name and operators applied to it during
@@ -140,15 +153,15 @@ curves not having the same parameter.</li>
 
 \n <b>Example:</b>
 
-\image html image154.jpg
+\image html image154.png
 <center><em>Shape before applying Shape Processing (FixShape
 operator). View # 1.</em></center>
 
-\image html image156.jpg
+\image html image156.png
 <center><em>Shape before applying Shape Processing (FixShape
 operator). View # 2.</em></center>
 
-\image html image160.jpg
+\image html image160.png
 <center><em>The same shape after applying Shape
 Processing.</em></center>
 

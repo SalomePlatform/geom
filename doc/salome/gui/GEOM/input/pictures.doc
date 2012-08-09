@@ -1,0 +1,12 @@
+/*!
+
+\page pictures_page Designing shapes from pictures
+
+Some tools in GEOM allow you to create shapes, basing the design on imported pictures (engineering drawings, nautical charts ...) :
+
+<ul>
+<li>\subpage import_picture_page, such as engeneering drawings or nautical charts as a support for shape design.
+<li>\subpage shape_recognition_page previously imported in the OCC viewer .
+</ul>
+
+*/

@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BlocksGUI_TrsfDlg.cxx
 // Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
@@ -111,13 +112,14 @@ BlocksGUI_TrsfDlg::~BlocksGUI_TrsfDlg()
 void BlocksGUI_TrsfDlg::Init()
 {
   // Set range of spinboxes
-  double SpecificStep = 1.0;
-  QMap<int, SalomeApp_DoubleSpinBox*>::iterator anIter;
+  int SpecificStep = 1;
+  QMap<int, SalomeApp_IntSpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
-    //anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
-    initSpinBox(anIter.value(), 1.0, 999, SpecificStep, 3);
+    initSpinBox(anIter.value(), 1, 999, SpecificStep);
   }
 
+  showOnlyPreviewControl();
+  
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -128,7 +130,7 @@ void BlocksGUI_TrsfDlg::Init()
   for (anIterBtn = mySelBtn.begin(); anIterBtn != mySelBtn.end(); ++anIterBtn)
     connect(anIterBtn.value(), SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  QMap<int, SalomeApp_DoubleSpinBox*>::iterator anIterSpin;
+  QMap<int, SalomeApp_IntSpinBox*>::iterator anIterSpin;
   for (anIterSpin = mySpinBox.begin(); anIterSpin != mySpinBox.end(); ++anIterSpin)
     connect(anIterSpin.value(), SIGNAL(valueChanged(int)), this, SLOT(ValueChangedInSpinBox(int)));
 
@@ -166,16 +168,13 @@ void BlocksGUI_TrsfDlg::ConstructorsClicked (int constructorId)
     myGrp2->hide();
     myGrp1->show();
     mySpinBox[SpinBox1]->setValue(2);
-    mySpinBox[SpinBox1]->setDecimals(0);
     mySelBtn[MainObj1]->click();
     break;
   case 1:
     myGrp1->hide();
     myGrp2->show();
     mySpinBox[SpinBox2U]->setValue(2);
-    mySpinBox[SpinBox2U]->setDecimals(0);
     mySpinBox[SpinBox2V]->setValue(2);
-    mySpinBox[SpinBox2V]->setDecimals(0);
     mySelBtn[MainObj2]->click();
     break;
   default:
@@ -196,6 +195,7 @@ void BlocksGUI_TrsfDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void BlocksGUI_TrsfDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -243,10 +243,9 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
   {
     // If selection of main object is activated
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
-      anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+      anObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
+      if ( GEOMBase::IsShape(anObj) ) {
         aName = GEOMBase::GetName(anObj);
       }
     }
@@ -260,9 +259,8 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
     // If face selection is activated
     int anIndex = -1;
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
-      anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
-      if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
+      anObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+      if ( GEOMBase::IsShape(anObj) ) {
         aName = GEOMBase::GetName(anObj);
         TColStd_IndexedMapOfInteger anIndexes;
         aSelMgr->GetIndexes(aSelList.First(), anIndexes);
@@ -275,7 +273,7 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
     }
     myEditCurrentArgument->setText(aName);
     myFaces[aCurrFocus] = anIndex;
-    displayPreview();
+    processPreview();
   }
 
   switch (aCurrFocus) {
@@ -393,7 +391,7 @@ void BlocksGUI_TrsfDlg::ActivateThisDialog()
   activateSelection();
 
   // ??
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -412,7 +410,7 @@ void BlocksGUI_TrsfDlg::enterEvent (QEvent*)
 //=================================================================================
 void BlocksGUI_TrsfDlg::ValueChangedInSpinBox(int)
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -453,7 +451,7 @@ void BlocksGUI_TrsfDlg::createSpinWg (const QString& theLbl,
                                       const int      theId)
 {
   QLabel* lab = new QLabel(theLbl, theParent);
-  mySpinBox[theId] = new SalomeApp_DoubleSpinBox(theParent);
+  mySpinBox[theId] = new SalomeApp_IntSpinBox(theParent);
   QGridLayout* l = 0;
   if (!theParent->layout()) {
     l = new QGridLayout(theParent);
@@ -579,28 +577,28 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeMultiTransformation1D(myShape,
-                                myFaces[Face1], myFaces[Face2],
-                                mySpinBox[SpinBox1]->value());
+    anObj = anOper->MakeMultiTransformation1D(myShape,
+                                              myFaces[Face1], myFaces[Face2],
+                                              mySpinBox[SpinBox1]->value());
     if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
       aParameters << "" << "";
       aParameters << mySpinBox[SpinBox1]->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;
   case 1:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeMultiTransformation2D (myShape,
-                                 myFaces[Face1U], myFaces[Face2U],
-                                 mySpinBox[SpinBox2U]->value(),
-                                 myFaces[Face1V], myFaces[Face2V],
-                                 mySpinBox[SpinBox2V]->value());
+    anObj = anOper->MakeMultiTransformation2D (myShape,
+                                               myFaces[Face1U], myFaces[Face2U],
+                                               mySpinBox[SpinBox2U]->value(),
+                                               myFaces[Face1V], myFaces[Face2V],
+                                               mySpinBox[SpinBox2V]->value());
     if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
@@ -608,7 +606,7 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
       aParameters << mySpinBox[SpinBox2U]->text();
       aParameters << "" << "";
       aParameters << mySpinBox[SpinBox2V]->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;

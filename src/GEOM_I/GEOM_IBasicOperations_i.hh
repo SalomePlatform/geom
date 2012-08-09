@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOM_IBasicOperations_i_HeaderFile
 #define _GEOM_IBasicOperations_i_HeaderFile
 
@@ -54,9 +55,23 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
    GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theCurve,
 					   CORBA::Double theParameter);
 
+   GEOM::GEOM_Object_ptr MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theCurve,
+						   CORBA::Double         theLength,
+						   GEOM::GEOM_Object_ptr theStartPoint);
+
+   GEOM::GEOM_Object_ptr MakePointOnCurveByCoord (GEOM::GEOM_Object_ptr theCurve,
+                                                  CORBA::Double theXParameter,
+                                                  CORBA::Double theYParameter,
+                                                  CORBA::Double theZParameter);
+
    GEOM::GEOM_Object_ptr MakePointOnSurface (GEOM::GEOM_Object_ptr theSurface,
 					     CORBA::Double theUParameter,
 					     CORBA::Double theVParameter);
+
+   GEOM::GEOM_Object_ptr MakePointOnSurfaceByCoord (GEOM::GEOM_Object_ptr theSurface,
+                                                    CORBA::Double theXParameter,
+                                                    CORBA::Double theYParameter,
+                                                    CORBA::Double theZParameter);
 
    GEOM::GEOM_Object_ptr MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theLine1,
 						       GEOM::GEOM_Object_ptr theLine2);
@@ -91,10 +106,22 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
 
    GEOM::GEOM_Object_ptr MakePlaneFace (GEOM::GEOM_Object_ptr theFace,
 					CORBA::Double theTrimSize);
+					
+   GEOM::GEOM_Object_ptr MakePlane2Vec (GEOM::GEOM_Object_ptr theVec1,
+					  GEOM::GEOM_Object_ptr theVec2,
+					  CORBA::Double theTrimSize);
+					  
+   GEOM::GEOM_Object_ptr MakePlaneLCS (GEOM::GEOM_Object_ptr theLCS,
+				       CORBA::Double theTrimSize,
+				       CORBA::Double theOrientation );
 
    GEOM::GEOM_Object_ptr MakeMarker (CORBA::Double theOX , CORBA::Double theOY , CORBA::Double theOZ,
 				     CORBA::Double theXDX, CORBA::Double theXDY, CORBA::Double theXDZ,
 				     CORBA::Double theYDX, CORBA::Double theYDY, CORBA::Double theYDZ);
+
+   GEOM::GEOM_Object_ptr MakeMarkerFromShape (GEOM::GEOM_Object_ptr theShape);
+   
+   GEOM::GEOM_Object_ptr MakeMarkerPntTwoVec (GEOM::GEOM_Object_ptr theOrigin, GEOM::GEOM_Object_ptr theXVec, GEOM::GEOM_Object_ptr theYVec);
 
    GEOM::GEOM_Object_ptr MakeTangentPlaneOnFace (GEOM::GEOM_Object_ptr theFace, 
 						 CORBA::Double theParameterU,

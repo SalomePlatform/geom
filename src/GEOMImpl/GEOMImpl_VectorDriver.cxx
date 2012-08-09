@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_VectorDriver.hxx>
@@ -30,7 +31,9 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 
@@ -71,7 +74,8 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
 
   GEOMImpl_IVector aPI (aFunction);
   Standard_Integer aType = aFunction->GetType();
-  if (aType != VECTOR_DX_DY_DZ && aType != VECTOR_TWO_PNT && aType != VECTOR_TANGENT_CURVE_PAR) return 0;
+  if (aType != VECTOR_DX_DY_DZ && aType != VECTOR_TWO_PNT &&
+      aType != VECTOR_TANGENT_CURVE_PAR && aType != VECTOR_REVERSE) return 0;
 
   TopoDS_Shape aShape;
 
@@ -84,7 +88,8 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
       Standard_ConstructionError::Raise(aMsg.ToCString());
     }
     aShape = BRepBuilderAPI_MakeEdge(P1, P2).Shape();
-  } else if (aType == VECTOR_TWO_PNT) {
+  }
+  else if (aType == VECTOR_TWO_PNT) {
     Handle(GEOM_Function) aRefPnt1 = aPI.GetPoint1();
     Handle(GEOM_Function) aRefPnt2 = aPI.GetPoint2();
     TopoDS_Shape aShape1 = aRefPnt1->GetValue();
@@ -103,7 +108,7 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
     }
     aShape = BRepBuilderAPI_MakeEdge(V1, V2).Shape();
   } 
-  else if(aType == VECTOR_TANGENT_CURVE_PAR) {
+  else if (aType == VECTOR_TANGENT_CURVE_PAR) {
     Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
     TopoDS_Shape aRefShape = aRefCurve->GetValue();
     if (aRefShape.ShapeType() != TopAbs_EDGE) {
@@ -128,6 +133,18 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
     BRepBuilderAPI_MakeEdge aBuilder(aPoint1,aPoint2);
     if(aBuilder.IsDone())
       aShape = aBuilder.Shape();
+  }
+  else if (aType == VECTOR_REVERSE) {
+    Handle(GEOM_Function) aRefVec = aPI.GetCurve();
+    TopoDS_Shape aRefShape = aRefVec->GetValue();
+    if (aRefShape.ShapeType() != TopAbs_EDGE) {
+      Standard_TypeMismatch::Raise
+        ("Reversed vector creation aborted : vector shape is not an edge");
+    }
+    TopoDS_Edge anE = TopoDS::Edge(aRefShape);
+    TopoDS_Vertex V1, V2;
+    TopExp::Vertices(anE, V1, V2, Standard_True);
+    aShape = BRepBuilderAPI_MakeEdge(V2, V1).Shape();
   }
 
   if (aShape.IsNull()) return 0;
@@ -157,10 +174,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_VectorDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_VectorDriver",
-			                                 sizeof(GEOMImpl_VectorDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_VectorDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }
@@ -180,5 +197,5 @@ const Handle(GEOMImpl_VectorDriver) Handle(GEOMImpl_VectorDriver)::DownCast
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

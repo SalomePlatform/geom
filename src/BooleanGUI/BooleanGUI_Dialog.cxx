@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BooleanGUI_Dialog.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -134,14 +135,12 @@ void BooleanGUI_Dialog::Init()
 
   myGroup->LineEdit1->setText("");
   myGroup->LineEdit2->setText("");
-  myObject1 = myObject2 = GEOM::GEOM_Object::_nil();
+  myObject1.nullify();
+  myObject2.nullify();
  
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-
-  connect(myGroup->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(myGroup->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(myGroup->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(myGroup->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -161,6 +160,7 @@ void BooleanGUI_Dialog::Init()
 
   myGroup->PushButton1->click();
   SelectionIntoArgument();
+  resize(100,100);
 }
 
 //=================================================================================
@@ -169,6 +169,7 @@ void BooleanGUI_Dialog::Init()
 //=================================================================================
 void BooleanGUI_Dialog::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -196,22 +197,11 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  if (aSelList.Extent() != 1) {
-    if      (myEditCurrentArgument == myGroup->LineEdit1) myObject1 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == myGroup->LineEdit2) myObject2 = GEOM::GEOM_Object::_nil();
-    return;
-  }
-
-  // nbSel == 1
-  Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
-  if (!CORBA::is_nil(aSelectedObject) && aRes && GEOMBase::IsShape(aSelectedObject))
-  {
-    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+  GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_SHAPE );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
+    myEditCurrentArgument->setText( aName );
 
     // clear selection
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
@@ -221,14 +211,18 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 
     if (myEditCurrentArgument == myGroup->LineEdit1) {
       myObject1 = aSelectedObject;
-      if (myObject2->_is_nil())
+      if (!myObject2)
         myGroup->PushButton2->click();
     }
     else if (myEditCurrentArgument == myGroup->LineEdit2) {
       myObject2 = aSelectedObject;
-      if (myObject1->_is_nil())
+      if (!myObject1)
         myGroup->PushButton1->click();
     }
+  }
+  else {
+    if      (myEditCurrentArgument == myGroup->LineEdit1) myObject1.nullify();
+    else if (myEditCurrentArgument == myGroup->LineEdit2) myObject2.nullify();
   }
 }
 
@@ -261,19 +255,6 @@ void BooleanGUI_Dialog::SetEditCurrentArgument()
 }
 
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BooleanGUI_Dialog::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == myGroup->LineEdit1 || send == myGroup->LineEdit2) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-}
-
-//=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
@@ -282,8 +263,8 @@ void BooleanGUI_Dialog::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
-  displayPreview();
+           this, SLOT( SelectionIntoArgument() ) );
+  processPreview();
 }
 
 //=================================================================================
@@ -311,13 +292,7 @@ GEOM::GEOM_IOperations_ptr BooleanGUI_Dialog::createOperation()
 //=================================================================================
 bool BooleanGUI_Dialog::isValid (QString&)
 {
-  //Handle(SALOME_InteractiveObject) IO = firstIObject();
-  //Standard_Boolean testResult;
-  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject(IO, testResult);
-  //if (!testResult || anObject->_is_nil())
-  //  return false;
-
-  return !CORBA::is_nil(myObject1) && !CORBA::is_nil(myObject2);
+  return myObject1 && myObject2;
 }
 
 //=================================================================================
@@ -328,8 +303,8 @@ bool BooleanGUI_Dialog::execute (ObjectList& objects)
 {
   GEOM::GEOM_Object_var anObj;
 
-  anObj = GEOM::GEOM_IBooleanOperations::_narrow(getOperation())->
-    MakeBoolean(myObject1, myObject2, myOperation);
+  GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
+  anObj = anOper->MakeBoolean(myObject1.get(), myObject2.get(), myOperation);
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
 
@@ -347,6 +322,7 @@ void BooleanGUI_Dialog::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
                                          /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GEOM::FSM_GetSame
-                                         /*theInheritFirstArg=*/myOperation == BooleanGUI::CUT); // ? false
+                                         /*theInheritFirstArg=*/myOperation == BooleanGUI::CUT,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked()); // ? false
   }
 }

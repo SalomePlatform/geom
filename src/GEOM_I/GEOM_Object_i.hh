@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOM_Object_i_HeaderFile
 #define _GEOM_Object_i_HeaderFile
 
@@ -50,6 +51,12 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual GEOM::shape_type GetShapeType();
 
+  virtual GEOM::shape_type GetTopologyType();
+
+  virtual GEOM::shape_type GetMinShapeType();
+
+  virtual GEOM::shape_type GetMaxShapeType();
+
   virtual void SetName(const char* theName);
 
   virtual char* GetName();
@@ -62,6 +69,16 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual CORBA::Boolean GetAutoColor();
 
+  void SetMarkerStd(GEOM::marker_type theType, GEOM::marker_size theSize);
+  
+  void SetMarkerTexture(CORBA::Long theTextureId);
+  
+  GEOM::marker_type GetMarkerType();
+
+  GEOM::marker_size GetMarkerSize();
+
+  CORBA::Long GetMarkerTexture();
+  
   virtual void SetStudyEntry(const char* theEntry);
 
   virtual char* GetStudyEntry();
@@ -79,6 +96,8 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
   virtual GEOM::ListOfLong* GetSubShapeIndices();
 
   virtual GEOM::GEOM_Object_ptr GetMainShape();
+
+  virtual bool IsSame(GEOM::GEOM_Object_ptr other);
 
   virtual bool IsShape();
 

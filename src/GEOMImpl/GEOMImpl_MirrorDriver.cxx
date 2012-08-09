@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_MirrorDriver.hxx>
@@ -29,6 +30,9 @@
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepClass_FaceClassifier.hxx>
+#include <BRepTools.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -117,8 +121,8 @@ Standard_Integer GEOMImpl_MirrorDriver::Execute(TFunction_Logbook& log) const
     const gp_Dir dir = pos.Direction(); /* Main direction of the plane (Z axis) */
     gp_Ax2 aPln (loc, dir);
     aTrsf.SetMirror(aPln);
-
-  } else if (aType == MIRROR_AXIS || aType == MIRROR_AXIS_COPY) {
+  }
+  else if (aType == MIRROR_AXIS || aType == MIRROR_AXIS_COPY) {
     Handle(GEOM_Function) anAxis = TI.GetAxis();
     if (anAxis.IsNull()) return 0;
     TopoDS_Shape anAxisShape = anAxis->GetValue();
@@ -130,8 +134,8 @@ Standard_Integer GEOMImpl_MirrorDriver::Execute(TFunction_Logbook& log) const
     gp_Vec aV (aP1, aP2);
     gp_Ax1 anAx1 (aP1, aV);
     aTrsf.SetMirror(anAx1);
-
-  } else if (aType == MIRROR_POINT || aType == MIRROR_POINT_COPY) {
+  }
+  else if (aType == MIRROR_POINT || aType == MIRROR_POINT_COPY) {
     Handle(GEOM_Function) aPoint = TI.GetPoint();
     if (aPoint.IsNull()) return 0;
     TopoDS_Shape aVertexShape = aPoint->GetValue();
@@ -140,7 +144,8 @@ Standard_Integer GEOMImpl_MirrorDriver::Execute(TFunction_Logbook& log) const
 
     gp_Pnt aP = BRep_Tool::Pnt(aVertex);
     aTrsf.SetMirror(aP);
-  } else {
+  }
+  else {
     return 0;
   }
 
@@ -174,10 +179,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_MirrorDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_MirrorDriver",
-			                                 sizeof(GEOMImpl_MirrorDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_MirrorDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }
@@ -197,7 +202,5 @@ const Handle(GEOMImpl_MirrorDriver) Handle(GEOMImpl_MirrorDriver)::DownCast(cons
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }
-
-

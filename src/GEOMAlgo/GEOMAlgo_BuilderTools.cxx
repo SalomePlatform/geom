@@ -1,30 +1,31 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_BuilderTools.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
-//
-#include <GEOMAlgo_BuilderTools.ixx>
+
+// File:        GEOMAlgo_BuilderTools.cxx
+// Author:      Peter KURNEV
+
+#include <GEOMAlgo_BuilderTools.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <TColStd_Array1OfReal.hxx>
 
@@ -52,25 +53,30 @@
 #include <TopoDS_Edge.hxx>
 #include <TopExp_Explorer.hxx>
 
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+#include <TopExp.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#endif
+
 #include <BRep_Tool.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepMesh_FastDiscret.hxx>
 #include <Bnd_Box.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
 
-static 
+static
   Standard_Integer ComputeProps(const TopoDS_Face& aF,
-				Standard_Real& aA,
-				Standard_Real& aV);
+                                Standard_Real& aA,
+                                Standard_Real& aV);
 static
   void BuildTriangulation(const TopoDS_Face& aF);
 
 //=======================================================================
 //function : IsHole
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_BuilderTools::IsHole(const TopoDS_Shape& aW,
-						 const TopoDS_Shape& aFace)
+                                                 const TopoDS_Shape& aFace)
 {
   Standard_Boolean bIsHole;
   Standard_Integer i, aNbS;
@@ -78,7 +84,7 @@ static
   Standard_Real aU1, aU2, aU, dU;
   Standard_Real aX1, aY1, aX0, aY0;
   TopAbs_Orientation aOr;
-  
+
   gp_Pnt2d aP2D0, aP2D1;
   Handle(Geom2d_Curve) aC2D;
   TopoDS_Face aF, aFF;
@@ -92,11 +98,11 @@ static
   //
   aS=0.;
   aItW.Initialize(aW);
-  for (; aItW.More(); aItW.Next()) { 
+  for (; aItW.More(); aItW.Next()) {
     const TopoDS_Edge& aE=TopoDS::Edge(aItW.Value());
     aOr=aE.Orientation();
-    if (!(aOr==TopAbs_FORWARD || 
-	  aOr==TopAbs_REVERSED)) {
+    if (!(aOr==TopAbs_FORWARD ||
+          aOr==TopAbs_REVERSED)) {
       continue;
     }
     //
@@ -129,17 +135,17 @@ static
       aP2D0.Coord(aX0, aY0);
       aP2D1.Coord(aX1, aY1);
       //
-      aS=aS+(aY0+aY1)*(aX1-aX0); 
+      aS=aS+(aY0+aY1)*(aX1-aX0);
       //
       aP2D0=aP2D1;
     }
-  }//for (; aItW.More(); aItW.Next()) { 
+  }//for (; aItW.More(); aItW.Next()) {
   bIsHole=(aS>0.);
   return bIsHole;
 }
 //=======================================================================
 //function : IsHole
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_BuilderTools::IsHole(const TopoDS_Shape& aShell)
 {
@@ -165,11 +171,11 @@ static
 }
 //=======================================================================
 //function : ComputeProps
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer ComputeProps(const TopoDS_Face& aF,
-			      Standard_Real& aA,
-			      Standard_Real& aV)
+                              Standard_Real& aA,
+                              Standard_Real& aV)
 {
   Standard_Integer j, i, i1, i2, aNbNodes, aNbTrigs, n[3];
   Standard_Real aAi, aVi;
@@ -225,7 +231,7 @@ Standard_Integer ComputeProps(const TopoDS_Face& aF,
       Standard_Real aSx, aZx;
       gp_Dir aDN(aVN);
       if (aOr==TopAbs_REVERSED) {
-	aDN.Reverse();
+        aDN.Reverse();
       }
       //
       aSx=aAi*aDN.Z();
@@ -238,7 +244,7 @@ Standard_Integer ComputeProps(const TopoDS_Face& aF,
 }
 //=======================================================================
 //function : BuildTriangulation
-//purpose  : 
+//purpose  :
 //=======================================================================
 void BuildTriangulation(const TopoDS_Face& aF)
 {
@@ -269,11 +275,18 @@ void BuildTriangulation(const TopoDS_Face& aF)
   aDiscret=aCoeff*dMax;
   //
   BRepMesh_FastDiscret aMesher(aDiscret,
-			       aAngle,
-			       aBox,
-			       bWithShare,
-			       Standard_True,
-			       Standard_False,
-			       Standard_True);
+                               aAngle,
+                               aBox,
+                               bWithShare,
+                               Standard_True,
+                               Standard_False,
+                               Standard_True);
+
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  TopTools_IndexedDataMapOfShapeListOfShape anAncestors;
+  TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, anAncestors);
+  aMesher.Add(aF, anAncestors);
+#else
   aMesher.Add(aF);
+#endif
 }

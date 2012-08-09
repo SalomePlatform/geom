@@ -1,29 +1,31 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CurveDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "BasicGUI_CurveDlg.h"
+#include "BasicGUI_ParamCurveWidget.h"
 
 #include <DlgRef.h>
 #include <GeometryGUI.h>
@@ -48,13 +50,13 @@
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg()
-// purpose  : Constructs a BasicGUI_CurveDlg which is a child of 'parent', with the 
+// purpose  : Constructs a BasicGUI_CurveDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-				      bool modal, Qt::WindowFlags fl )
+                                      bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POLYLINE" ) ) );
@@ -69,7 +71,21 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   mainFrame()->RadioButton2->setIcon( image3 );
   mainFrame()->RadioButton3->setIcon( image2 );
 
-  GroupPoints = new DlgRef_1Sel( centralWidget() );
+  QGroupBox* creationModeCroup = new QGroupBox(this);
+  QButtonGroup* bg = new QButtonGroup(this);
+
+  creationModeCroup->setTitle( tr( "GEOM_CURVE_CRMODE" ) );  
+  QHBoxLayout * creationModeLayout = new QHBoxLayout(creationModeCroup);
+  myBySelectionBtn = new QRadioButton(  tr( "GEOM_CURVE_SELECTION" ) ,creationModeCroup );
+  myAnaliticalBtn = new QRadioButton(  tr( "GEOM_CURVE_ANALITICAL" ) ,creationModeCroup );
+
+  bg->addButton(myBySelectionBtn);
+  bg->addButton(myAnaliticalBtn);
+  
+  creationModeLayout->addWidget(myBySelectionBtn);
+  creationModeLayout->addWidget(myAnaliticalBtn);
+
+  GroupPoints = new DlgRef_1Sel3Check( centralWidget() );
 
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_NODES" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_POINTS" ) );
@@ -78,9 +94,23 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* pare
 
   GroupPoints->LineEdit1->setReadOnly( true );
 
+  GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
+  GroupPoints->CheckButton1->setChecked(false);
+  //GroupPoints->CheckButton1->hide();
+
+  GroupPoints->CheckButton2->setText( tr( "GEOM_IS_REORDER" ) );
+  GroupPoints->CheckButton2->setChecked(false);
+  GroupPoints->CheckButton2->hide();
+
+  GroupPoints->CheckButton3->hide();
+
+  myParams = new BasicGUI_ParamCurveWidget( centralWidget() );
+
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( creationModeCroup );
   layout->addWidget( GroupPoints );
+  layout->addWidget( myParams );
   /***************************************************************/
 
   setHelpFileName( "create_curve_page.html" );
@@ -107,29 +137,66 @@ void BasicGUI_CurveDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myPoints = new GEOM::ListOfGO();
-  myPoints->length( 0 );
+  myPoints.clear();
 
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
-  /* signals and slots connections */
-  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog( ) ) );
-  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
+  showOnlyPreviewControl();
+  myBySelectionBtn->setChecked(true);
+
+  /* Get setting of step value from file configuration */
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double step = resMgr ? resMgr->doubleValue( "Geometry", "SettingsGeomStep", 10. ) : 10.;
+
+  double aMax( 100. ), aMin( 0.0 );
+
+  /* min, max, step and decimals for spin boxes & initial values */
+  initSpinBox( myParams->myPMin, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( myParams->myPMax, COORD_MIN, COORD_MAX, step, "length_precision" );
+  myParams->myPStep->setValue( 10 );
+  myParams->myPStep->setMaximum( 999 );
+  myParams->myPStep->setSingleStep( 10 );
+  myParams->myPMin->setValue( aMin );
+  myParams->myPMax->setValue( aMax );
+  myParams->myPStep->setValue( step );
+  myParams->myXExpr->setText("t");
+  myParams->myYExpr->setText("t");
+  myParams->myZExpr->setText("t");
   
-  connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  myParams->hide();
 
-  connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
+  /* signals and slots connections */
+  connect( myGeomGUI,        SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog( ) ) );
+  connect( myGeomGUI,        SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
 
-  connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( buttonOk(),       SIGNAL( clicked() ),                      this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(),    SIGNAL( clicked() ),                      this, SLOT( ClickOnApply() ) );
 
-  connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) ) ;
- 
+  connect( this,             SIGNAL( constructorsClicked( int ) ),     this, SLOT( ConstructorsClicked( int ) ) );
+
+  connect( GroupPoints->PushButton1,  SIGNAL( clicked() ),             this, SLOT( SetEditCurrentArgument() ) );
+
+  connect( GroupPoints->CheckButton1, SIGNAL( toggled(bool) ),         this, SLOT( CheckButtonToggled() ) );
+  connect( GroupPoints->CheckButton2, SIGNAL( toggled(bool) ),         this, SLOT( CheckButtonToggled() ) );
+
+  connect( myGeomGUI->getApp()->selectionMgr(),
+           SIGNAL( currentSelectionChanged() ),                        this, SLOT( SelectionIntoArgument() ) );
+
+  connect( myBySelectionBtn, SIGNAL( clicked() ),                      this, SLOT( CreationModeChanged() ) );
+  connect( myAnaliticalBtn,  SIGNAL( clicked() ),                      this, SLOT( CreationModeChanged() ) );
+
+  connect(myParams->myPMin,  SIGNAL(valueChanged(double)),             this, SLOT(ValueChangedInSpinBox(double)));
+  connect(myParams->myPMax,  SIGNAL(valueChanged(double)),             this, SLOT(ValueChangedInSpinBox(double)));
+  connect(myParams->myPStep, SIGNAL(valueChanged(int)),                this, SLOT(ValueChangedInSpinBox(int)));
+
+  connect(myParams->myXExpr, SIGNAL(editingFinished()),                this, SLOT(OnEditingFinished()));
+  connect(myParams->myYExpr, SIGNAL(editingFinished()),                this, SLOT(OnEditingFinished()));
+  connect(myParams->myZExpr, SIGNAL(editingFinished()),                this, SLOT(OnEditingFinished()));
+
   initName( tr( "GEOM_CURVE" ) );
-  ConstructorsClicked( 0 );
+  resize(100,100);
+  ConstructorsClicked( 0 );  
 }
 
 //=================================================================================
@@ -140,11 +207,30 @@ void BasicGUI_CurveDlg::ConstructorsClicked( int id )
 {
   QString aTitle = tr( id == 0 ? "GEOM_POLYLINE" : id == 1 ? "GEOM_BEZIER" : "GEOM_INTERPOL" );
   mainFrame()->GroupConstructors->setTitle( aTitle );
-	
-  myPoints = new GEOM::ListOfGO();
-  myPoints->length( 0 );  
+
+  if (id == 0) { // polyline (wire)
+    //GroupPoints->CheckButton1->hide();
+    GroupPoints->CheckButton1->setText( tr( "GEOM_BUILD_CLOSED_WIRE" ) );
+    GroupPoints->CheckButton2->hide();
+  }
+  else if (id == 1) { // bezier
+    //GroupPoints->CheckButton1->hide();
+    GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
+    GroupPoints->CheckButton2->hide();
+  }
+  else { // b-spline
+    //GroupPoints->CheckButton1->show();
+    GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
+    GroupPoints->CheckButton2->show();
+  }
+
+  myPoints.clear();
 
   myEditCurrentArgument->setText( "" );
+  qApp->processEvents();
+  updateGeometry();
+  resize( minimumSizeHint() );
+  SelectionIntoArgument();
 }
 
 
@@ -154,24 +240,19 @@ void BasicGUI_CurveDlg::ConstructorsClicked( int id )
 //=================================================================================
 void BasicGUI_CurveDlg::SetEditCurrentArgument()
 {
-  if ( sender() == GroupPoints->PushButton1 ) 
+  if ( sender() == GroupPoints->PushButton1 )
     myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
 
-
 //=================================================================================
-// function : LineEditReturnPressed()
+// function : CheckButtonToggled()
 // purpose  :
 //=================================================================================
-void BasicGUI_CurveDlg::LineEditReturnPressed()
+void BasicGUI_CurveDlg::CheckButtonToggled()
 {
-  if ( sender() == GroupPoints->LineEdit1 ) 
-  {
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
+  processPreview();
 }
 
 //=================================================================================
@@ -180,6 +261,7 @@ void BasicGUI_CurveDlg::LineEditReturnPressed()
 //=================================================================================
 void BasicGUI_CurveDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -199,56 +281,29 @@ bool BasicGUI_CurveDlg::ClickOnApply()
   return true;
 }
 
-//=================================================================================
-/*! function : isPointInList()
- *  purpose  : Check is point (theObject) in the list \a thePoints.
- * \author enk
- * \retval -1, if point not in list, else 1 in list
- */
-//=================================================================================
-static int isPointInList( std::list<GEOM::GEOM_Object_var>& thePoints,
-			  GEOM::GEOM_Object_var& theObject )
+static void synchronize( QList<GEOM::GeomObjPtr>& left, QList<GEOM::GeomObjPtr>& right )
 {
-  int len = thePoints.size();
-  
-  if ( len < 1 ) {
-    return -1;
-  }
-  
-  for ( std::list<GEOM::GEOM_Object_var>::iterator i = thePoints.begin(); i != thePoints.end(); i++ ) {
-    if ( std::string( (*i)->GetEntry() ) == std::string( theObject->GetEntry() ) ) {
-      return 1;
-    }
-  }
-
-  return -1;
-}
-//=================================================================================
-/*! function : removeUnnecessaryPnt()
- *  purpose  : Remove unnecessary points from list \a theOldPoints
- * \author enk
- * \li \a theOldPoints - ordered sequence with unnecessary point
- * \li \a theNewPoints - not ordered sequence with necessary points
- */
-//=================================================================================
-static void removeUnnecessaryPnt( std::list<GEOM::GEOM_Object_var>& theOldPoints,
-				  GEOM::ListOfGO_var& theNewPoints )
-{
-  std::list<GEOM::GEOM_Object_var> objs_to_remove;
-  for ( std::list<GEOM::GEOM_Object_var>::iterator i = theOldPoints.begin(); i != theOldPoints.end(); i++ ) {
+  // 1. remove items from the "left" list that are not in the "right" list
+  QMutableListIterator<GEOM::GeomObjPtr> it1( left );
+  while ( it1.hasNext() ) {
+    GEOM::GeomObjPtr o1 = it1.next();
     bool found = false;
-    for ( int j = 0; j < theNewPoints->length() && !found ; j++ ) {
-      if ( std::string( (*i)->GetEntry() ) == std::string( theNewPoints[j]->GetEntry() ) ) {
-	found = true;
-      }
-    }
-    if ( !found ) {
-      objs_to_remove.push_back( *i );
-      //cout << "removed: " << (*i)->GetEntry() << endl;
-    }
+    QMutableListIterator<GEOM::GeomObjPtr> it2( right );
+    while ( it2.hasNext() && !found )
+      found = o1 == it2.next();
+    if ( !found )
+      it1.remove();
   }
-  for ( std::list<GEOM::GEOM_Object_var>::iterator i = objs_to_remove.begin(); i != objs_to_remove.end(); i++ ) {
-    theOldPoints.remove( *i );
+  // 2. add items from the "right" list that are not in the "left" list (to keep selection order)
+  it1 = right;
+  while ( it1.hasNext() ) {
+    GEOM::GeomObjPtr o1 = it1.next();
+    bool found = false;
+    QMutableListIterator<GEOM::GeomObjPtr> it2( left );
+    while ( it2.hasNext() && !found )
+      found = o1 == it2.next();
+    if ( !found )
+      left << o1;
   }
 }
 
@@ -258,99 +313,13 @@ static void removeUnnecessaryPnt( std::list<GEOM::GEOM_Object_var>& theOldPoints
 //=================================================================================
 void BasicGUI_CurveDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText( "" );
-
-  Standard_Boolean aRes = Standard_False;
-
-  SalomeApp_Application* app = myGeomGUI->getApp();
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-  _PTR(Study) aDStudy = appStudy->studyDS();
-  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-
-  int anIndex;
-  TopoDS_Shape aShape;
-  TColStd_IndexedMapOfInteger aMapIndexes;
-  GEOM::GEOM_Object_var anObject;
-  std::list<GEOM::GEOM_Object_var> aList;
-  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-  SALOME_ListIO selected;
-  aSelMgr->selectedObjects(selected, QString::null, false);
-
-  int IOC = selected.Extent();
-  // bool is_append = myPoints->length() < IOC; // if true - add point, else remove
-  // myPoints->length( IOC ); // this length may be greater than number of objects,
-                           // that will actually be put into myPoints
-  
-  for (SALOME_ListIteratorOfListIO anIt (selected); anIt.More(); anIt.Next()) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(anIt.Value(), aRes);
-    if (!CORBA::is_nil(aSelectedObject) && aRes) {
-      if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
-	aSelMgr->GetIndexes(anIt.Value(), aMapIndexes);
-	
-	if (aMapIndexes.Extent() > 0) {
-	  for (int ii = 1; ii <= aMapIndexes.Extent(); ii++) {
-	    anIndex = aMapIndexes(ii);
-	    QString aName = GEOMBase::GetName( aSelectedObject );
-	    aName = aName + ":vertex_" + QString::number( anIndex );
-	    anObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-	    //Find Object in study
-	    _PTR(SObject) obj ( aDStudy->FindObjectID( anIt.Value()->getEntry() ) );
-	    bool inStudy = false;
-            _PTR(ChildIterator) iit( aDStudy->NewChildIterator( obj ) );
-            for (; iit->More() && !inStudy; iit->Next()) {
-	      _PTR(SObject) child( iit->Value() );
-	      QString aChildName = child->GetName().c_str();
-	      if ( aChildName == aName ) {
-		inStudy = true;
-		CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( iit->Value() );
-		anObject = GEOM::GEOM_Object::_narrow( corbaObj );
-	      }
-	    }
-	    
-	    if ( !inStudy )
-	      GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( aDStudy ),
-						     anObject, aName.toLatin1().data(), aSelectedObject );
-	    
-	    int pos = isPointInList( myOrderedSel, anObject );
-	    if ( pos == -1 ) {
-	      myOrderedSel.push_back( anObject );
-	    }
-	    //		    if (!inStudy)
-	    aList.push_back(anObject);
-	  }
-	} 
-	else { // aMap.Extent() == 0
-	  int pos = isPointInList( myOrderedSel, aSelectedObject );
-	  if ( pos == -1 )
-	    myOrderedSel.push_back( aSelectedObject );
-	  aList.push_back( aSelectedObject );
-	} 
-      }
-    }
-  }
-  
-  myPoints->length( aList.size()  );  
-
-  int k = 0;
-  for ( std::list<GEOM::GEOM_Object_var>::iterator j = aList.begin(); j != aList.end(); j++ )
-    myPoints[k++] = *j;
-
-  if ( IOC == 0 )
-    myOrderedSel.clear();
+  QList<GEOM::GeomObjPtr> points = getSelected( TopAbs_VERTEX, -1 );
+  synchronize( myPoints, points );
+  if ( !myPoints.isEmpty()  )
+    GroupPoints->LineEdit1->setText( QString::number( myPoints.count() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
   else
-    removeUnnecessaryPnt( myOrderedSel, myPoints );
-
-  // if ( myOrderedSel.size() == myPoints->length() ) {
-  myPoints->length( myOrderedSel.size()  );  
-  k = 0;
-  for ( std::list<GEOM::GEOM_Object_var>::iterator j = myOrderedSel.begin(); j != myOrderedSel.end(); j++ )
-    myPoints[k++] = *j;
-  //  }
-
-  if ( myPoints->length() > 0  )
-    GroupPoints->LineEdit1->setText( QString::number( myPoints->length() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
-   
-displayPreview(); 
+    GroupPoints->LineEdit1->setText( "" );
+  processPreview();
 }
 
 
@@ -362,7 +331,7 @@ void BasicGUI_CurveDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
@@ -405,7 +374,17 @@ GEOM::GEOM_IOperations_ptr BasicGUI_CurveDlg::createOperation()
 //=================================================================================
 bool BasicGUI_CurveDlg::isValid( QString& msg )
 {
-  return myPoints->length() > 1;
+  if( myBySelectionBtn->isChecked() )
+    return myPoints.count() > 1;
+  else {
+    bool ok = myParams->myPMin->isValid( msg, !IsPreview() ) &&
+              myParams->myPMax->isValid( msg, !IsPreview() ) &&
+              myParams->myPStep->isValid( msg, !IsPreview() );
+    ok &= !myParams->myXExpr->text().isEmpty();
+    ok &= !myParams->myYExpr->text().isEmpty();
+    ok &= !myParams->myZExpr->text().isEmpty();
+    return ok;
+  }
 }
 
 //=================================================================================
@@ -418,23 +397,115 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
+
+  GEOM::ListOfGO_var points = new GEOM::ListOfGO();
+  points->length( myPoints.count() );
+  for ( int i = 0; i < myPoints.count(); i++ )
+    points[i] = myPoints[i].copy();
+
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakePolyline( myPoints );
+    if( myBySelectionBtn->isChecked() )
+      anObj = anOper->MakePolyline( points.in(), GroupPoints->CheckButton1->isChecked() );
+    else
+      anObj = anOper->MakeCurveParametricNew(qPrintable(myParams->myXExpr->text()),
+					  qPrintable(myParams->myYExpr->text()),
+					  qPrintable(myParams->myZExpr->text()),
+					  myParams->myPMin->value(),
+					  myParams->myPMax->value(),
+					  myParams->myPStep->value(),
+					  GEOM::Polyline);
     res = true;
     break;
   case 1 :
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSplineBezier( myPoints );
+    if( myBySelectionBtn->isChecked() )
+      anObj = anOper->MakeSplineBezier( points.in(), GroupPoints->CheckButton1->isChecked() );
+    else
+      anObj = anOper->MakeCurveParametricNew(qPrintable(myParams->myXExpr->text()),
+					  qPrintable(myParams->myYExpr->text()),
+					  qPrintable(myParams->myZExpr->text()),
+					  myParams->myPMin->value(),
+					  myParams->myPMax->value(),
+					  myParams->myPStep->value(),
+					  GEOM::Bezier);
+
     res = true;
     break;
   case 2 :
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSplineInterpolation( myPoints );
+    if( myBySelectionBtn->isChecked() )
+      anObj = anOper->MakeSplineInterpolation( points.in(), GroupPoints->CheckButton1->isChecked(),
+					       GroupPoints->CheckButton2->isChecked() );
+    else
+      anObj = anOper->MakeCurveParametricNew(qPrintable(myParams->myXExpr->text()),
+					  qPrintable(myParams->myYExpr->text()),
+					  qPrintable(myParams->myZExpr->text()),
+					  myParams->myPMin->value(),
+					  myParams->myPMax->value(),
+					  myParams->myPStep->value(),
+					  GEOM::Interpolation);
     res = true;
     break;
   }
 
-  if ( !anObj->_is_nil() )
+  if ( !anObj->_is_nil() ) {
+    if(myAnaliticalBtn->isChecked() && !IsPreview()) {
+      QStringList aParameters;
+      aParameters<<myParams->myPMin->text();
+      aParameters<<myParams->myPMax->text();
+      aParameters<<myParams->myPStep->text();
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    }
     objects.push_back( anObj._retn() );
-
+  }
+  
   return res;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_CurveDlg::addSubshapesToStudy()
+{
+  for ( int i = 0; i < myPoints.count(); i++ )
+    GEOMBase::PublishSubObject( myPoints[i].get() );
+}
+
+//=================================================================================
+// function : CreationModeChanged
+// purpose  :
+//=================================================================================
+void BasicGUI_CurveDlg::CreationModeChanged() {
+  const QObject* s = sender();
+  GroupPoints->setVisible(myBySelectionBtn == s);
+  myParams->setVisible(myBySelectionBtn != s);
+  
+  ConstructorsClicked( getConstructorId() );
+}
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void BasicGUI_CurveDlg::ValueChangedInSpinBox(double/*theValue*/)
+{
+  processPreview();
+}
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void BasicGUI_CurveDlg::ValueChangedInSpinBox(int/*theValue*/)
+{
+  processPreview();
+}
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void BasicGUI_CurveDlg::OnEditingFinished() {
+  processPreview();
 }

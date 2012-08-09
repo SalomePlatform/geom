@@ -1,35 +1,35 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_ShapeProcessDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "RepairGUI_ShapeProcessDlg.h"
 
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
-#include <QtxDoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DoubleSpinBox.h>
@@ -40,6 +40,8 @@
 #include <SUIT_MessageBox.h>
 #include <SALOME_ListIteratorOfListIO.hxx>
 #include <SALOME_ListIO.hxx>
+
+#include <Basics_Utils.hxx>
 
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_MapOfInteger.hxx>
@@ -55,7 +57,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-						      bool modal )
+                                                      bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   setHelpFileName( "shape_processing_operation_page.html" );
@@ -80,7 +82,7 @@ void RepairGUI_ShapeProcessDlg::init()
 
   initParamsValues();
   initSelection();
-	
+        
   setWindowTitle( tr( "GEOM_SHAPEPROCESS_TITLE" ) );
 
   mainFrame()->GroupConstructors->hide();
@@ -126,8 +128,10 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      myFixShapeTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
-      myFixShapeMaxTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myFixShapeTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myFixShapeTol3D, 0., 100., 1e-7, "len_tol_precision" );
+      myFixShapeMaxTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myFixShapeMaxTol3D, 0., 100., 1e-7, "len_tol_precision" );      
       
       aLay->addWidget( new QLabel( tr( "GEOM_3D_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myFixShapeTol3D, 0, 1 );
@@ -141,7 +145,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      myFixFaceSizeTol = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myFixFaceSizeTol = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myFixFaceSizeTol, 0., 100., 1e-7, "len_tol_precision" );      
       
       aLay->addWidget( new QLabel( tr( "GEOM_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myFixFaceSizeTol, 0, 1 );
@@ -153,7 +158,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      myDropSmallEdgesTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myDropSmallEdgesTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myDropSmallEdgesTol3D, 0., 100., 1e-7, "len_tol_precision" );
   
       aLay->addWidget( new QLabel( tr( "GEOM_3D_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myDropSmallEdgesTol3D, 0, 1 );
@@ -165,8 +171,10 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      mySplitAngleAngle = new SalomeApp_DoubleSpinBox( 0, 360, 1, 10, 10, w );
-      mySplitAngleMaxTol = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      mySplitAngleAngle = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( mySplitAngleAngle, 0, 360, 1, "angle_precision" );      
+      mySplitAngleMaxTol = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( mySplitAngleMaxTol, 0., 100., 1e-7, "ang_tol_precision" );      
       
       aLay->addWidget( new QLabel( tr( "GEOM_ANGLE_1" ), w ), 0, 0 );
       aLay->addWidget( mySplitAngleAngle, 0, 1 );
@@ -192,7 +200,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
 
-      mySplitContTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      mySplitContTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( mySplitContTol3D, 0., 100., 1e-7, "len_tol_precision" );
       mySplitContSurfCont = new QComboBox( w );
       mySplitContSurfCont->addItems( aContinueties );
       mySplitContCurvCont = new QComboBox( w );
@@ -216,9 +225,11 @@ void RepairGUI_ShapeProcessDlg::init()
       myBSpline3DCurveChk = new QCheckBox( tr("GEOM_3D_CURVE_MODE"), w );
       myBSpline2DCurveChk = new QCheckBox( tr("GEOM_2D_CURVE_MODE"), w );
 
-      myBSplineTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myBSplineTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myBSplineTol3D, 0., 100., 1e-7, "len_tol_precision" );
       
-      myBSplineTol2D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myBSplineTol2D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myBSplineTol2D, 0., 100., 1e-7, "param_tol_precision" );      
 
       myBSplineDegree = new SalomeApp_IntSpinBox( w );
       myBSplineSegments = new SalomeApp_IntSpinBox( w );
@@ -258,7 +269,8 @@ void RepairGUI_ShapeProcessDlg::init()
       myToBezier3DCurveChk = new QCheckBox( tr("GEOM_3D_CURVE_MODE"), w );
       myToBezier2DCurveChk = new QCheckBox( tr("GEOM_2D_CURVE_MODE"), w );
   
-      myToBezierMaxTol = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myToBezierMaxTol = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myToBezierMaxTol, 0., 100., 1e-7, "len_tol_precision" );            
 
       aLay->addWidget( myToBezierSurfModeChk, 0, 0 );
       aLay->addWidget( myToBezier3DCurveChk, 1, 0 );
@@ -273,7 +285,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
 
-      mySameParameterTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      mySameParameterTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( mySameParameterTol3D, 0., 100., 1e-7, "len_tol_precision" );            
       
       aLay->addWidget( new QLabel( tr( "GEOM_3D_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( mySameParameterTol3D, 0, 1 );
@@ -296,7 +309,7 @@ void RepairGUI_ShapeProcessDlg::init()
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( onApply() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
 
   connect( mySelectWdgt->PushButton1, SIGNAL( clicked() ),       this, SLOT( selectClicked() ) );
   connect( mySelectWdgt->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( lineEditReturnPressed() ) );
@@ -311,6 +324,7 @@ void RepairGUI_ShapeProcessDlg::init()
   reset();
 
   initName( tr( "PROCESS_SHAPE_NEW_OBJ_NAME" ) );
+  selectionChanged();
 }
 
 //=================================================================================
@@ -319,6 +333,7 @@ void RepairGUI_ShapeProcessDlg::init()
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::onOk()
 {
+  setIsApplyAndClose( true );
   if ( onApply() )
     ClickOnCancel();
 }
@@ -349,18 +364,17 @@ bool RepairGUI_ShapeProcessDlg::onApply()
 void RepairGUI_ShapeProcessDlg::selectionChanged()
 {
   reset();
-	
+        
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  Standard_Boolean aRes = Standard_False;
   int i = 0;
   myObjects->length(aSelList.Extent());
   for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-	myObjects[i++] = aSelectedObject;
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value() );
+    if ( !CORBA::is_nil( aSelectedObject ) )
+      myObjects[i++] = aSelectedObject;
   }
   myObjects->length( i );
   if ( i == 1 )
@@ -400,8 +414,8 @@ void RepairGUI_ShapeProcessDlg::activate()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication( ) ))->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
-	
+           SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
+        
   reset();
   //myGeomGUI->SetState( 0 );
   initSelection();
@@ -426,7 +440,7 @@ void RepairGUI_ShapeProcessDlg::enterEvent( QEvent* )
 void RepairGUI_ShapeProcessDlg::reset()
 {
   myObjects = new GEOM::ListOfGO();
-  myObjects->length( 0 );	
+  myObjects->length( 0 );       
   mySelectWdgt->LineEdit1->setText( "" );
 }
 
@@ -438,7 +452,7 @@ void RepairGUI_ShapeProcessDlg::reset()
 const char* get_convert( const char* theParam, const QString& theValue )
 {
   if ( !strcmp( theParam, "SplitAngle.Angle" ) ) {
-    double doubleValue = theValue.toDouble() * PI / 180;
+    double doubleValue = theValue.toDouble() * M_PI / 180.;
     return CORBA::string_dup( QString::number( doubleValue ).toLatin1().constData() );
   }
   return CORBA::string_dup( theValue.toLatin1().constData() );
@@ -448,14 +462,14 @@ const char* get_convert( const char* theParam, const QString& theValue )
 // function : set_convert
 // purpose  : conversion of angle values to degrees (non-angle values are not converted)
 //=================================================================================
-const char* set_convert( const char* theParam, const char* theValue )
+QString set_convert( const char* theParam, const char* theValue )
 {
   if ( !strcmp( theParam, "SplitAngle.Angle" ) ) {
-    double doubleValue = atof( theValue ) * 180 / PI;
-    TCollection_AsciiString str( doubleValue );
-    return CORBA::string_dup( str.ToCString() );
+    Kernel_Utils::Localizer loc;
+    double doubleValue = atof( theValue ) * 180. / M_PI;
+    return QString::number( doubleValue );
   }
-  return CORBA::string_dup( theValue );
+  return QString( theValue );
 }
 
 //=================================================================================
@@ -487,8 +501,7 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
 
     for ( int j = 0; j < aParams->length(); j++ ) {
       QWidget* aCtrl = getControl( (const char*)aParams[j] );
-      const char* aValue = set_convert( (const char*)aParams[j], aValues[j] );
-      setValue( aCtrl, aValue );
+      setValue( aCtrl, set_convert( (const char*)aParams[j], aValues[j] ) );
     }
   }
 }
@@ -570,9 +583,9 @@ bool RepairGUI_ShapeProcessDlg::isValid( QString& msg )
       const QString& aParam = aListIter.next();
       QWidget* aControl = getControl( aParam );
       if ( qobject_cast<SalomeApp_DoubleSpinBox*>( aControl ) )
-	ok = qobject_cast<SalomeApp_DoubleSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
+        ok = qobject_cast<SalomeApp_DoubleSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
       else if ( qobject_cast<SalomeApp_IntSpinBox*>( aControl ) )
-	ok = qobject_cast<SalomeApp_IntSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
+        ok = qobject_cast<SalomeApp_IntSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
     }
   }
 
@@ -603,42 +616,42 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
 
   /*//-- check --
   int z;
-	MESSAGE("Objects : ");
-	for ( z = 0; z < myObjects->length(); z++ )
- 		MESSAGE(myObjects[z]->GetName() << " ");
-	MESSAGE("\nOperators : ");
-	for ( z = 0; z < anOperators->length(); z++ )
-		MESSAGE(anOperators[z] << " ");
-	MESSAGE("\nParameters : ");
-	for ( z = 0; z < aParams->length(); z++ )
-		MESSAGE(aParams[z] << " ");
-	MESSAGE("\nValues : ");
-	for ( z = 0; z < aValues->length(); z ++ )
-		MESSAGE(aValues[z] << " ");
-	MESSAGE("\n");
+        MESSAGE("Objects : ");
+        for ( z = 0; z < myObjects->length(); z++ )
+                MESSAGE(myObjects[z]->GetName() << " ");
+        MESSAGE("\nOperators : ");
+        for ( z = 0; z < anOperators->length(); z++ )
+                MESSAGE(anOperators[z] << " ");
+        MESSAGE("\nParameters : ");
+        for ( z = 0; z < aParams->length(); z++ )
+                MESSAGE(aParams[z] << " ");
+        MESSAGE("\nValues : ");
+        for ( z = 0; z < aValues->length(); z ++ )
+                MESSAGE(aValues[z] << " ");
+        MESSAGE("\n");
   */// -----------
 
   QStringList anErrorObjNames;
   for ( int i = 0; i < myObjects->length(); i++ ) {
     GEOM::GEOM_Object_var obj = myObjects[i];
-    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->
-      ProcessShape( obj, anOperators, aParams, aValues );
+    GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
+    GEOM::GEOM_Object_var anObj = anOper->ProcessShape( obj, anOperators, aParams, aValues );
     if ( anObj->_is_nil() )
       anErrorObjNames << GEOMBase::GetName( obj );
     else
     {
       if ( !IsPreview() )
       {
-	QStringList aParameters;
+        QStringList aParameters;
 
-	for ( int i = 0; i < anOperators->length(); i++ )
-	  aParameters << QString( anOperators[i] );
+        for ( int i = 0; i < anOperators->length(); i++ )
+          aParameters << QString( anOperators[i] );
 
-	for ( int i = 0; i < aParams->length(); i++ )
-	  aParameters << QString( aParams[i] );
+        for ( int i = 0; i < aParams->length(); i++ )
+          aParameters << QString( aParams[i] );
 
-	aParameters << getTexts( aParams );
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        aParameters << getTexts( aParams );
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       objects.push_back( anObj._retn() );
     }
@@ -668,7 +681,7 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getActiveOperators()
 
   for ( int i = 0; i < aCheckedList.count(); i++ )
     anOperators[i] = CORBA::string_dup( aCheckedList[i].toLatin1().constData() );
-	 	 
+                 
   return anOperators._retn();
 }
 
@@ -816,7 +829,7 @@ QStringList RepairGUI_ShapeProcessDlg::getTexts( const GEOM::string_array& thePa
     {
       QString aText = getText( aCtrl );
       if( !aText.isNull() )
-	aTexts.append( aText );
+        aTexts.append( aText );
     }
   }
     
@@ -849,7 +862,7 @@ void RepairGUI_ShapeProcessDlg::advOptionToggled( bool on )
   QAbstractButton* btn = (QAbstractButton*)sender();
   if ( on && btn->isCheckable() &&
        SUIT_MessageBox::warning( this,
-				 tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ),
-				 SUIT_MessageBox::Yes | SUIT_MessageBox::No ) == SUIT_MessageBox::No )
+                                 tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ),
+                                 SUIT_MessageBox::Yes | SUIT_MessageBox::No ) == SUIT_MessageBox::No )
     btn->toggle();
 }

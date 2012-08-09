@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_SewingDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -28,7 +29,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -51,7 +52,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					  bool modal )
+                                          bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SEWING" ) ) );
@@ -75,11 +76,12 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* 
 
   QGridLayout* aLay = new QGridLayout( GroupPoints->Box );
   aLay->setMargin( 0 ); aLay->setSpacing( 6 );
-  myTolEdt = new SalomeApp_DoubleSpinBox( 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, 7, 10, GroupPoints->Box );
+  myTolEdt = new SalomeApp_DoubleSpinBox( GroupPoints->Box );
+  initSpinBox( myTolEdt, 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, "len_tol_precision" );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
   myFreeBoundBtn = new QPushButton( tr( "GEOM_DETECT" ) + QString( " [%1]" ).arg( tr( "GEOM_FREE_BOUNDARIES" ) ), 
-				    GroupPoints->Box );
+                                    GroupPoints->Box );
   aLay->addWidget( aLbl1,          0, 0 );
   aLay->addWidget( myTolEdt,       0, 1 );
   aLay->addWidget( myFreeBoundBtn, 1, 0, 1, 2 );
@@ -120,7 +122,7 @@ void RepairGUI_SewingDlg::Init()
 
   myClosed = -1;
   myOpen = -1;
-	
+        
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -129,11 +131,13 @@ void RepairGUI_SewingDlg::Init()
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   connect( myFreeBoundBtn, SIGNAL( clicked() ), this, SLOT( onDetect() ) );
 
   initName( tr( "SEWING_NEW_OBJ_NAME" ) );
+  resize(100,100);
+  SelectionIntoArgument();
 }
 
 
@@ -143,6 +147,7 @@ void RepairGUI_SewingDlg::Init()
 //=================================================================================
 void RepairGUI_SewingDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -154,7 +159,7 @@ void RepairGUI_SewingDlg::ClickOnOk()
 bool RepairGUI_SewingDlg::ClickOnApply()
 {
   if ( !onAccept() )
-  	return false;
+        return false;
 
   initName();
 
@@ -183,9 +188,8 @@ void RepairGUI_SewingDlg::SelectionIntoArgument()
 
   if ( aSelList.Extent() == 1 ) {
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    Standard_Boolean aRes;
-    myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-    if ( aRes )
+    myObject = GEOMBase::ConvertIOinGEOMObject( anIO );
+    if ( !CORBA::is_nil( myObject ) )
       myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
   }
 }
@@ -226,7 +230,7 @@ void RepairGUI_SewingDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   GroupPoints->LineEdit1->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
@@ -277,33 +281,35 @@ bool RepairGUI_SewingDlg::isValid( QString& msg )
 bool RepairGUI_SewingDlg::execute( ObjectList& objects )
 {
   bool aResult = false;
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
+
   if ( IsPreview() ) { // called from onDetect(): detect free boundary edges, highlight them (add to objects), display message dialog
     GEOM::ListOfGO_var aClosed, anOpen;
 
-    aResult = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->GetFreeBoundary( myObject, aClosed, anOpen );
+    aResult = anOper->GetFreeBoundary( myObject, aClosed, anOpen );
 
     if ( aResult ) {
       myClosed = aClosed->length();
       myOpen = anOpen->length();
       int i;
       for ( i = 0; i < myClosed; i++ )
-	objects.push_back( aClosed[i]._retn() );
+        objects.push_back( aClosed[i]._retn() );
       for ( i = 0; i < myOpen; i++ )
-	objects.push_back( anOpen[i]._retn() );
+        objects.push_back( anOpen[i]._retn() );
     }
     else
       myClosed = -1;
   }
   else {
-    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->Sew( myObject, myTolEdt->value() );
+    GEOM::GEOM_Object_var anObj = anOper->Sew( myObject, myTolEdt->value() );
     aResult = !anObj->_is_nil();
     if ( aResult )
     {
       if ( !IsPreview() )
       {
-	QStringList aParameters;
-	aParameters << myTolEdt->text();
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        QStringList aParameters;
+        aParameters << myTolEdt->text();
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       objects.push_back( anObj._retn() );
     }
@@ -331,7 +337,7 @@ void RepairGUI_SewingDlg::initSelection()
 //=================================================================================
 void RepairGUI_SewingDlg::onDetect()
 {
-  displayPreview( false, true, true, 3 );
+  displayPreview( true, false, true, true, 3 );
 
   // field myClosed,myOpen is initialized in execute() method, called by displayPreview().
   QString msg;

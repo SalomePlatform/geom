@@ -1,30 +1,31 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_WireSolid.cxx
-// Created:	Wed Jan 12 10:19:31 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+
+// File:        GEOMAlgo_WireSolid.cxx
+// Created:     Wed Jan 12 10:19:31 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
-#include <GEOMAlgo_WireSolid.ixx>
+#include <GEOMAlgo_WireSolid.hxx>
 
 #include <Standard_Failure.hxx>
 
@@ -46,23 +47,23 @@
 
 //=======================================================================
 //function : GEOMAlgo_WireSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_WireSolid::GEOMAlgo_WireSolid()
-: 
+:
   GEOMAlgo_ShapeSolid()
 {
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_WireSolid::~GEOMAlgo_WireSolid()
 {
 }
 //=======================================================================
 // function: Perform
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_WireSolid::Perform()
 {
@@ -81,7 +82,7 @@ void GEOMAlgo_WireSolid::Perform()
     Standard_Boolean bIsNewFiller;
     //
     bIsNewFiller=myDSFiller->IsNewFiller();
-    
+
     if (bIsNewFiller) {
       Prepare();
       myDSFiller->SetNewFiller(!bIsNewFiller);
@@ -92,10 +93,10 @@ void GEOMAlgo_WireSolid::Perform()
   catch (Standard_Failure) {
     myErrorStatus= 12;
   }
-} 
+}
 //=======================================================================
 // function: Prepare
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_WireSolid::Prepare()
 {
@@ -107,7 +108,7 @@ void GEOMAlgo_WireSolid::Prepare()
 }
 //=======================================================================
 // function: BuildResult
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_WireSolid::BuildResult()
 {
@@ -138,34 +139,34 @@ void GEOMAlgo_WireSolid::BuildResult()
       aNbPB=aLPB.Extent();
       //
       if (!aNbPB) {
-	aState=aDS.GetState(i);
-	//
-	if (aState==BooleanOperations_IN) {
-	  myLSIN.Append(aE);
-	}
-	else if (aState==BooleanOperations_OUT) {
-	  myLSOUT.Append(aE);
-	}
-	else if (aState==BooleanOperations_ON) {
-	  myLSON.Append(aE);
-	}
+        aState=aDS.GetState(i);
+        //
+        if (aState==BooleanOperations_IN) {
+          myLSIN.Append(aE);
+        }
+        else if (aState==BooleanOperations_OUT) {
+          myLSOUT.Append(aE);
+        }
+        else if (aState==BooleanOperations_ON) {
+          myLSON.Append(aE);
+        }
       }
       //
       else if (aNbPB==1) {
-	const BOPTools_PaveBlock& aPB=aLPB.First();
-	nSp=aPB.Edge();
-	const TopoDS_Shape& aSp=aDS.Shape(nSp);
-	aState=aDS.GetState(nSp);
-	 //
-	if (aState==BooleanOperations_IN) {
-	  myLSIN.Append(aE);
-	}
-	else if (aState==BooleanOperations_OUT) {
-	  myLSOUT.Append(aE);
-	}
-	else if (aState==BooleanOperations_ON) {
-	  myLSON.Append(aE);
-	} 
+        const BOPTools_PaveBlock& aPB=aLPB.First();
+        nSp=aPB.Edge();
+        /*const TopoDS_Shape& aSp=*/aDS.Shape(nSp);
+        aState=aDS.GetState(nSp);
+         //
+        if (aState==BooleanOperations_IN) {
+          myLSIN.Append(aE);
+        }
+        else if (aState==BooleanOperations_OUT) {
+          myLSOUT.Append(aE);
+        }
+        else if (aState==BooleanOperations_ON) {
+          myLSON.Append(aE);
+        }
       }
     }
   }

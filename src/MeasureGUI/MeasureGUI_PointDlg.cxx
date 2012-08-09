@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_PointDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -134,11 +135,10 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     if (aSelList.Extent() < 1)
       return;
 
-    Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+      GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-    if (!testResult || aSelectedObject->_is_nil())
+    if ( aSelectedObject->_is_nil() )
       return;
 
     myObj = aSelectedObject;
@@ -171,9 +171,11 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     if ( !aPoint.IsNull() ) {
       gp_Pnt aPnt = BRep_Tool::Pnt( aPoint );
       myGrp->LineEdit1->setText( aName );
-      myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aPnt.X() ) );
-      myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( aPnt.Y() ) );
-      myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aPnt.Z() ) );
+      SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+      int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+      myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aPnt.X(), aPrecision ) );
+      myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( aPnt.Y(), aPrecision ) );
+      myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aPnt.Z(), aPrecision ) );
     }
   }
   catch( ... )

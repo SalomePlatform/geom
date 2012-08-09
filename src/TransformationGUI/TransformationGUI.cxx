@@ -1,32 +1,34 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : TransformationGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #include "TransformationGUI.h"
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewModel.h>
@@ -44,6 +46,7 @@
 #include "TransformationGUI_MirrorDlg.h"             // Method MIRROR
 #include "TransformationGUI_ScaleDlg.h"              // Method SCALE
 #include "TransformationGUI_OffsetDlg.h"             // Method OFFSET
+#include "TransformationGUI_ProjectionDlg.h"         // Method PROJECTION
 #include "TransformationGUI_PositionDlg.h"           // Method POSITION
 
 //=======================================================================
@@ -77,31 +80,34 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
-  case 5021: // TRANSLATION
+  case GEOMOp::OpTranslate:      // TRANSLATION
     aDlg = new TransformationGUI_TranslationDlg( getGeometryGUI(), parent );
     break;
-  case 5022: // ROTATION
+  case GEOMOp::OpRotate:         // ROTATION
     aDlg = new TransformationGUI_RotationDlg( getGeometryGUI(), parent );
     break;
-  case 5023: // POSITION
+  case GEOMOp::OpChangeLoc:      // POSITION
     aDlg = new TransformationGUI_PositionDlg( getGeometryGUI(), parent );
     break;
-  case 5024: // MIRROR
+  case GEOMOp::OpMirror:         // MIRROR
     aDlg = new TransformationGUI_MirrorDlg( getGeometryGUI(), parent );
     break;
-  case 5025: // SCALE
+  case GEOMOp::OpScale:          // SCALE
     aDlg = new TransformationGUI_ScaleDlg( getGeometryGUI(), parent );
     break;
-  case 5026: // OFFSET
+  case GEOMOp::OpOffset:         // OFFSET
     aDlg = new TransformationGUI_OffsetDlg( getGeometryGUI(), parent );
     break;
-  case 5027: // MULTI TRANSLATION
+  case GEOMOp::OpProjection:     // PROJECTION
+    aDlg = new TransformationGUI_ProjectionDlg( getGeometryGUI(), parent );
+    break;
+  case GEOMOp::OpMultiTranslate: // MULTI TRANSLATION
     aDlg = new TransformationGUI_MultiTranslationDlg( getGeometryGUI(), parent );
     break;
-  case 5028: // MULTI ROTATION
+  case GEOMOp::OpMultiRotate:    // MULTI ROTATION
     aDlg = new TransformationGUI_MultiRotationDlg( getGeometryGUI(), parent );
     break;
-  case 5029: // RELOAD IMPORTED SHAPE
+  case GEOMOp::OpReimport:       // RELOAD IMPORTED SHAPE
     {
       SalomeApp_Study* anAppStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
 
@@ -120,9 +126,8 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
       SALOME_ListIteratorOfListIO aSelIt (aSelList);
       for (; aSelIt.More(); aSelIt.Next()) {
         Handle(SALOME_InteractiveObject) io = aSelIt.Value();
-        Standard_Boolean testResult = Standard_False;
-        GEOM::GEOM_Object_var aGeomObj = GEOMBase::ConvertIOinGEOMObject(io, testResult);
-        if (testResult) {
+        GEOM::GEOM_Object_var aGeomObj = GEOMBase::ConvertIOinGEOMObject( io );
+        if ( !CORBA::is_nil( aGeomObj ) ) {
           anOp->RecomputeObject(aGeomObj);
 
           SUIT_ViewWindow* wnd;
@@ -133,7 +138,8 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
               if (SUIT_ViewModel* vmodel = vman->getViewModel()) {
                 if (SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel)) {
                   if (view->isVisible(io)) {
-                    aDisp.Erase(io, false, false, view);
+                    aDisp.Erase(io, true, false, view);
+		    getGeometryGUI()->GetShapeReader().RemoveShapeFromBuffer( getGeometryGUI()->getApp()->orb()->object_to_string( aGeomObj.in() ) );
                     aDisp.Display(io, true, view);
                   }
                   // ? Redisplay subshapes ?

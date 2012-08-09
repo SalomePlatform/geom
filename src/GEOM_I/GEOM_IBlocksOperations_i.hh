@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOM_IBlocksOperations_i_HeaderFile
 #define _GEOM_IBlocksOperations_i_HeaderFile
 
@@ -74,6 +75,9 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
 				  CORBA::Double   theZ,
 				  CORBA::Double   theEpsilon);
 
+  GEOM::GEOM_Object_ptr GetVertexNearPoint (GEOM::GEOM_Object_ptr theShape,
+                                            GEOM::GEOM_Object_ptr thePoint);
+
   GEOM::GEOM_Object_ptr GetEdge (GEOM::GEOM_Object_ptr theShape,
 				 GEOM::GEOM_Object_ptr thePoint1,
 				 GEOM::GEOM_Object_ptr thePoint2);
@@ -100,10 +104,15 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
   GEOM::GEOM_Object_ptr GetFaceByNormale (GEOM::GEOM_Object_ptr theBlock,
 					  GEOM::GEOM_Object_ptr theVector);
 
+  GEOM::GEOM_Object_ptr GetShapesNearPoint (GEOM::GEOM_Object_ptr theShape,
+                                            GEOM::GEOM_Object_ptr thePoint,
+                                            CORBA::Long           theShapeType,
+                                            CORBA::Double         theTolerance);
+
   // Check blocks compound
   CORBA::Boolean IsCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-				     CORBA::Long     theMinNbFaces,
-				     CORBA::Long     theMaxNbFaces,
+				     CORBA::Long           theMinNbFaces,
+				     CORBA::Long           theMaxNbFaces,
 				     CORBA::Long&          theNbBlocks);
 
   CORBA::Boolean CheckCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
@@ -112,7 +121,8 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
   char* PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 		       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
 
-  GEOM::GEOM_Object_ptr RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape);
+  GEOM::GEOM_Object_ptr RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape,
+                                          CORBA::Long           theOptimumNbFaces);
 
   GEOM::GEOM_Object_ptr CheckAndImprove (GEOM::GEOM_Object_ptr theCompound);
 

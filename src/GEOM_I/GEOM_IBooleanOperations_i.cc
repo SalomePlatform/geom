@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IBooleanOperations_i.hh"
@@ -37,8 +38,8 @@
  */
 //=============================================================================
 GEOM_IBooleanOperations_i::GEOM_IBooleanOperations_i (PortableServer::POA_ptr thePOA,
-						      GEOM::GEOM_Gen_ptr theEngine,
-						      ::GEOMImpl_IBooleanOperations* theImpl)
+                                                      GEOM::GEOM_Gen_ptr theEngine,
+                                                      ::GEOMImpl_IBooleanOperations* theImpl)
 :GEOM_IOperations_i(thePOA, theEngine, theImpl)
 {
   MESSAGE("GEOM_IBooleanOperations_i::GEOM_IBooleanOperations_i");
@@ -62,23 +63,17 @@ GEOM_IBooleanOperations_i::~GEOM_IBooleanOperations_i()
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
                                                  (GEOM::GEOM_Object_ptr theShape1,
-						  GEOM::GEOM_Object_ptr theShape2,
-						  CORBA::Long           theOp)
+                                                  GEOM::GEOM_Object_ptr theShape2,
+                                                  CORBA::Long           theOp)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape1 == NULL || theShape2 == NULL) return aGEOMObject._retn();
-
   //Get the reference shapes
-  CORBA::String_var entry=theShape1->GetEntry();
-  Handle(GEOM_Object) aSh1 = GetOperations()->GetEngine()->GetObject
-    (theShape1->GetStudyID(), entry);
-  entry=theShape2->GetEntry();
-  Handle(GEOM_Object) aSh2 = GetOperations()->GetEngine()->GetObject
-    (theShape2->GetStudyID(), entry);
+  Handle(GEOM_Object) aSh1 = GetObjectImpl(theShape1);
+  Handle(GEOM_Object) aSh2 = GetObjectImpl(theShape2);
 
   if (aSh1.IsNull() || aSh2.IsNull()) return aGEOMObject._retn();
 
@@ -97,13 +92,13 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
                                       (const GEOM::ListOfGO&   theShapes,
-				       const GEOM::ListOfGO&   theTools,
-				       const GEOM::ListOfGO&   theKeepIns,
-				       const GEOM::ListOfGO&   theRemoveIns,
-				       CORBA::Short            theLimit,
-				       CORBA::Boolean          theRemoveWebs,
-				       const GEOM::ListOfLong& theMaterials,
-				       CORBA::Short theKeepNonlimitShapes)
+                                       const GEOM::ListOfGO&   theTools,
+                                       const GEOM::ListOfGO&   theKeepIns,
+                                       const GEOM::ListOfGO&   theRemoveIns,
+                                       CORBA::Short            theLimit,
+                                       CORBA::Boolean          theRemoveWebs,
+                                       const GEOM::ListOfLong& theMaterials,
+                                       CORBA::Short theKeepNonlimitShapes)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -120,9 +115,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
   //Get the shapes
   aLen = theShapes.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theShapes[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theShapes[ind]->GetStudyID(), theShapes[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theShapes[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aShapes->Append(aSh);
   }
@@ -130,9 +123,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
   //Get the tools
   aLen = theTools.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theTools[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theTools[ind]->GetStudyID(), theTools[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theTools[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aTools->Append(aSh);
   }
@@ -140,9 +131,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
   //Get the keep inside shapes
   aLen = theKeepIns.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theKeepIns[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theKeepIns[ind]->GetStudyID(), theKeepIns[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theKeepIns[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aKeepIns->Append(aSh);
   }
@@ -150,9 +139,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
   //Get the remove inside shapes
   aLen = theRemoveIns.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theRemoveIns[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theRemoveIns[ind]->GetStudyID(), theRemoveIns[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theRemoveIns[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aRemIns->Append(aSh);
   }
@@ -169,9 +156,9 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
   // Make Partition
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
-				   theLimit, theRemoveWebs, aMaterials,
-				   theKeepNonlimitShapes,
-				   /*PerformSelfIntersections*/Standard_True);
+                                   theLimit, theRemoveWebs, aMaterials,
+                                   theKeepNonlimitShapes,
+                                   /*PerformSelfIntersections*/Standard_True);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -185,13 +172,13 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersectedShape
                                       (const GEOM::ListOfGO&   theShapes,
-				       const GEOM::ListOfGO&   theTools,
-				       const GEOM::ListOfGO&   theKeepIns,
-				       const GEOM::ListOfGO&   theRemoveIns,
-				       CORBA::Short            theLimit,
-				       CORBA::Boolean          theRemoveWebs,
-				       const GEOM::ListOfLong& theMaterials,
-				       CORBA::Short theKeepNonlimitShapes)
+                                       const GEOM::ListOfGO&   theTools,
+                                       const GEOM::ListOfGO&   theKeepIns,
+                                       const GEOM::ListOfGO&   theRemoveIns,
+                                       CORBA::Short            theLimit,
+                                       CORBA::Boolean          theRemoveWebs,
+                                       const GEOM::ListOfLong& theMaterials,
+                                       CORBA::Short theKeepNonlimitShapes)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -208,9 +195,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
   //Get the shapes
   aLen = theShapes.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theShapes[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theShapes[ind]->GetStudyID(), theShapes[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theShapes[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aShapes->Append(aSh);
   }
@@ -218,9 +203,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
   //Get the tools
   aLen = theTools.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theTools[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theTools[ind]->GetStudyID(), theTools[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theTools[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aTools->Append(aSh);
   }
@@ -228,9 +211,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
   //Get the keep inside shapes
   aLen = theKeepIns.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theKeepIns[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theKeepIns[ind]->GetStudyID(), theKeepIns[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theKeepIns[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aKeepIns->Append(aSh);
   }
@@ -238,9 +219,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
   //Get the remove inside shapes
   aLen = theRemoveIns.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theRemoveIns[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theRemoveIns[ind]->GetStudyID(), theRemoveIns[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theRemoveIns[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aRemIns->Append(aSh);
   }
@@ -257,9 +236,9 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
   // Make Partition
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
-				   theLimit, theRemoveWebs, aMaterials,
-				   theKeepNonlimitShapes,
-				   /*PerformSelfIntersections*/Standard_False);
+                                   theLimit, theRemoveWebs, aMaterials,
+                                   theKeepNonlimitShapes,
+                                   /*PerformSelfIntersections*/Standard_False);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -273,20 +252,16 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
                                                  (GEOM::GEOM_Object_ptr theShape,
-						  GEOM::GEOM_Object_ptr thePlane)
+                                                  GEOM::GEOM_Object_ptr thePlane)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || thePlane == NULL) return aGEOMObject._retn();
-
   //Get the reference shapes
-  Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aPl = GetOperations()->GetEngine()->GetObject
-    (thePlane->GetStudyID(), thePlane->GetEntry());
+  Handle(GEOM_Object) aSh = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aPl = GetObjectImpl(thePlane);
 
   if (aSh.IsNull() || aPl.IsNull()) return aGEOMObject._retn();
 

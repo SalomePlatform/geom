@@ -72,7 +72,7 @@
        </widget>
       </item>
       <item row="2" column="1" colspan="2" >
-       <widget class="QtxDoubleSpinBox" name="SpinBox_S" />
+       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_S" />
       </item>
       <item row="1" column="0" colspan="3" >
        <widget class="QGroupBox" name="groupBox" >
@@ -112,7 +112,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QtxDoubleSpinBox" name="SpinBox_DX" />
+          <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DX" />
          </item>
          <item>
           <widget class="QLabel" name="TextLabel4" >
@@ -131,7 +131,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QtxDoubleSpinBox" name="SpinBox_DY" />
+          <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DY" />
          </item>
          <item>
           <widget class="QLabel" name="TextLabel5" >
@@ -150,7 +150,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QtxDoubleSpinBox" name="SpinBox_DZ" />
+          <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DZ" />
          </item>
         </layout>
        </widget>
@@ -196,9 +196,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>QtxDoubleSpinBox</class>
+   <class>SalomeApp_DoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header location="global" >QtxDoubleSpinBox.h</header>
+   <header location="global" >SalomeApp_DoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BlocksGUI_ExplodeDlg.cxx
 // Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
@@ -121,7 +122,7 @@ void BlocksGUI_ExplodeDlg::Init()
   connect( myGrp1->CheckBox1, SIGNAL( stateChanged( int ) ), this, SLOT( SubShapeToggled() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   myConstructorId = -1;
   ConstructorsClicked( 0 );
@@ -162,6 +163,7 @@ void BlocksGUI_ExplodeDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void BlocksGUI_ExplodeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -174,15 +176,15 @@ bool BlocksGUI_ExplodeDlg::ClickOnApply()
 {
   SUIT_Session::session()->activeApplication()->putInfo( tr( "" ) );
 
-  // Explode all sub shapes
+  // Explode all sub-shapes
   if ( isAllSubShapes() ) {
-    // More than 30 subshapes : ask confirmation
+    // More than 30 sub-shapes : ask confirmation
     if ( myNbBlocks > 30 ) {
       if ( SUIT_MessageBox::warning( this, 
-				     tr( "GEOM_CONFIRM" ),
-				     tr( "GEOM_CONFIRM_INFO" ).arg( myNbBlocks ),
-				     tr( "GEOM_BUT_EXPLODE" ),
-				     tr( "GEOM_BUT_CANCEL" ) ) != 0 )
+                                     tr( "GEOM_CONFIRM" ),
+                                     tr( "GEOM_CONFIRM_INFO" ).arg( myNbBlocks ),
+                                     tr( "GEOM_BUT_EXPLODE" ),
+                                     tr( "GEOM_BUT_CANCEL" ) ) != 0 )
         return false;  /* aborted */
     }
   }
@@ -212,10 +214,9 @@ void BlocksGUI_ExplodeDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() == 1) {
-    Standard_Boolean aResult = Standard_False;
-    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-    if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
+    if ( GEOMBase::IsShape(anObj) ) {
       myObject = anObj;
       myGrp1->LineEdit1->setText(GEOMBase::GetName(anObj));
     }
@@ -249,7 +250,7 @@ void BlocksGUI_ExplodeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
 }
@@ -278,7 +279,7 @@ void BlocksGUI_ExplodeDlg::ValueChangedInSpinBox()
 
 //=================================================================================
 // function : SubShapeToggled()
-// purpose  : Allow user selection of all or only selected sub shapes
+// purpose  : Allow user selection of all or only selected sub-shapes
 //          : Called when 'myGrp1->CheckBox1' state change
 //=================================================================================
 void BlocksGUI_ExplodeDlg::SubShapeToggled()
@@ -297,16 +298,16 @@ void BlocksGUI_ExplodeDlg::activateSelection()
 
   if ( isAllSubShapes() ) { // Sub-shapes selection disabled
     disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-		SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+                SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
     globalSelection( GEOM_ALLSHAPES );
     if ( myObject->_is_nil() ) {
       SelectionIntoArgument();
     }
     connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	     SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+             SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   } 
   else {
-    displayPreview( true, true, false );
+    displayPreview( true, true, true, false );
     globalSelection( GEOM_PREVIEW );
   }
 }
@@ -332,11 +333,11 @@ void BlocksGUI_ExplodeDlg::updateButtonState()
     myGrp1->TextBrowser1->setText( "" );
   } 
   else {
-    bool isOnlyBlocks = GEOM::GEOM_IBlocksOperations::_narrow
-      ( getOperation() )->IsCompoundOfBlocks( myObject,
-					      myGrp1->SpinBox1->value(),
-					      myGrp1->SpinBox2->value(),
-					      myNbBlocks );
+    GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+    bool isOnlyBlocks = anOper->IsCompoundOfBlocks( myObject,
+                                                    myGrp1->SpinBox1->value(),
+                                                    myGrp1->SpinBox2->value(),
+                                                    myNbBlocks );
     if ( isOnlyBlocks )
       myGrp1->TextBrowser1->setText( tr( "GEOM_NB_BLOCKS_NO_OTHERS" ).arg( myNbBlocks ) );
     else
@@ -401,12 +402,13 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
 {
   GEOM::ListOfGO_var aList;
 
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+
   switch ( getConstructorId() ) {
   case 0:
-    aList = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->ExplodeCompoundOfBlocks
-      ( myObject,
-	myGrp1->SpinBox1->value(),
-	myGrp1->SpinBox2->value() );
+    aList = anOper->ExplodeCompoundOfBlocks( myObject,
+                                             myGrp1->SpinBox1->value(),
+                                             myGrp1->SpinBox2->value() );
     break;
   }
   
@@ -451,8 +453,8 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
       CORBA::String_var objStr = myGeomGUI->getApp()->orb()->object_to_string( *anIter );
       if ( selected.contains( QString( objStr.in() ) ) )
       {
-	if ( !IsPreview() )
-	  (*anIter)->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        if ( !IsPreview() )
+          (*anIter)->SetParameters(aParameters.join(":").toLatin1().constData());
         objects.push_back( *anIter );
       }
       else
@@ -472,7 +474,7 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
     {
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_duplicate( aList[i] );
       if ( !IsPreview() )
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       objects.push_back( anObj._retn() );
     }
   }

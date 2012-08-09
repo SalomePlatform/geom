@@ -1,0 +1,30 @@
+/*!
+
+\page shared_shapes_page Get Shared Shapes
+
+This operation is a special case of <b>Explode</b> operation. It
+produces sub-shapes of the exploded shape (the first shape in the list
+of argument shapes), which are shared with all other shapes in the
+arguments.
+
+To use this operation, select in the Main Menu <b>Operations -> Get
+Shared Shapes.</b> The following dialog box will appear.
+
+\image html shared_shapes.png
+
+<ul>
+<li> <b>Name</b> is the base name of the resulting shapes; </li>
+<li> <b>Shapes</b> are the shapes to fing shared sub-shapes of; </li>
+<li> <b>Sub-shapes Type</b> is the type of required sub-shapes; </li>
+</ul>
+
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
+
+\n <b>TUI Command:</b> <em> geompy.GetSharedShapesMulti(Shapes,
+Type),</em> where \em Shapes is a list of shapes to fing shared sub-
+shapes of and \em Type is the type of required sub-shapes.
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref swig_GetSharedShapes "Get Shared Shapes" functionality.
+ 
+*/

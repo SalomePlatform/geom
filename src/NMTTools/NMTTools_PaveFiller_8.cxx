@@ -1,34 +1,37 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_8.cxx
-// Created:	Fri Dec 19 11:15:53 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+
+// File:        NMTTools_PaveFiller_8.cxx
+// Created:     Fri Dec 19 11:15:53 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
+
+#include <TopTools_ListOfShape.hxx>
 
 #include <BooleanOperations_ShapesDataStructure.hxx>
 #include <BooleanOperations_OnceExplorer.hxx>
@@ -45,16 +48,16 @@
 #include <NMTTools_CommonBlockAPI.hxx>
 
 
-// Modified  to add new method Thu Sep 14 14:35:18 2006 
+// Modified  to add new method Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 // function:  SharedEdges
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::SharedEdges(const Standard_Integer nF1,
-					const Standard_Integer nF2,
-					TColStd_ListOfInteger& aLNE,
-					TopTools_ListOfShape& aLSE)
+                                        const Standard_Integer nF2,
+                                        TColStd_ListOfInteger& aLNE,
+                                        TopTools_ListOfShape& aLSE)
 {
   Standard_Integer nE1, nE2;
   TColStd_MapOfInteger aM1;
@@ -67,7 +70,7 @@
     nE1=aExp.Current();
     aM1.Add(nE1);
   }
-  
+
   aExp.Init(nF2, TopAbs_EDGE);
   for (; aExp.More(); aExp.Next()) {
     nE2=aExp.Current();
@@ -100,7 +103,7 @@
   if (aCBAPI.IsCommonBlock(aPB)) {
     NMTTools_CommonBlock& aCB=aCBAPI.CommonBlock(aPB);
     //
-    aIsCommonBlock=1;   
+    aIsCommonBlock=1;
     //
     const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
     aItPBx.Initialize(aLPBx);
@@ -139,7 +142,7 @@
 // purpose:
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::CommonBlocksFace(const Standard_Integer nF,
-							 NMTTools_ListOfCommonBlock& aLCB)
+                                                         NMTTools_ListOfCommonBlock& aLCB)
 {
   Standard_Integer nE;
   TopAbs_ShapeEnum aT;
@@ -175,7 +178,7 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsFace(const Standard_Integer nF,
-					   BOPTools_ListOfPaveBlock& aLPB)
+                                           BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE;
   BOPTools_ListIteratorOfListOfPaveBlock anIt;
@@ -200,7 +203,7 @@
 // purpose:
 //=======================================================================
   Standard_Boolean NMTTools_PaveFiller::HasRealSplitsInOnFace(const Standard_Integer nF1,
-							      const Standard_Integer nF2)
+                                                              const Standard_Integer nF2)
 {
   Standard_Boolean bFlag;
   BOPTools_ListOfPaveBlock aLPB;
@@ -222,9 +225,9 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsInFace(const Standard_Integer ,//for overriding
-					     const Standard_Integer nF1,
-					     const Standard_Integer nF2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nF1,
+                                             const Standard_Integer nF2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE1;
   //
@@ -241,8 +244,8 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsInFace(const Standard_Integer nE1,
-					     const Standard_Integer nF2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nF2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nF1;
   //
@@ -253,7 +256,7 @@
   //
   anItCB.Initialize(aLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1(nE1);
     const BOPTools_PaveBlock& aPB1R=RealPaveBlock(aPB1);
 
@@ -262,7 +265,7 @@
     for (; anItLFCB.More(); anItLFCB.Next()) {
       nF1=anItLFCB.Value();
       if (nF1==nF2) {
-	aLPB.Append(aPB1R);
+        aLPB.Append(aPB1R);
       }
     }
   }
@@ -272,8 +275,8 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsOnEdge(const Standard_Integer nE1,
-					     const Standard_Integer nE2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nE2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE;
   //
@@ -284,7 +287,7 @@
 
   anItCB.Initialize(aLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1(nE1);
     const BOPTools_PaveBlock& aPB1R=RealPaveBlock(aPB1);
     //
@@ -294,7 +297,7 @@
       const BOPTools_PaveBlock& aPB2=anIt.Value();
       nE=aPB2.OriginalEdge();
       if (nE==nE2) {
-	aLPB.Append(aPB1R);
+        aLPB.Append(aPB1R);
       }
     }
   }
@@ -304,8 +307,8 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsOnFace(const Standard_Integer nE1,
-					     const Standard_Integer nF2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nF2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE2;
   //
@@ -322,13 +325,13 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsOnFace(const Standard_Integer ,//for overriding
-					     const Standard_Integer nF1,
-					     const Standard_Integer nF2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nF1,
+                                             const Standard_Integer nF2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE1;
   //
-  BooleanOperations_ShapesDataStructure *pDS=myDS;
+//   BooleanOperations_ShapesDataStructure *pDS=myDS;
   BooleanOperations_OnceExplorer aExp(*myDS);
   aExp.Init(nF1, TopAbs_EDGE);
   for (; aExp.More(); aExp.Next()) {
@@ -343,7 +346,7 @@
 // purpose:
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsFace(const Standard_Integer nF,
-						   BOPTools_ListOfPaveBlock& aLPB)
+                                                   BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE;
   TopAbs_ShapeEnum aT;
@@ -376,9 +379,9 @@
 // purpose: splits of edges from nF1 in nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsInFace(const Standard_Integer ,//for overriding
-						     const Standard_Integer nF1,
-						     const Standard_Integer nF2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nF1,
+                                                     const Standard_Integer nF2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE1;
   TopAbs_ShapeEnum aT1, aT2;
@@ -403,8 +406,8 @@
 // purpose: splits of edge nE1 in aFace2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsInFace(const Standard_Integer nE1,
-						     const Standard_Integer nF2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nF2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nF1;
   TopAbs_ShapeEnum aT1, aT2;
@@ -423,7 +426,7 @@
   //
   anItCB.Initialize(aLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1(nE1);
 
     const TColStd_ListOfInteger& aLFCB=aCB.Faces();
@@ -431,7 +434,7 @@
     for (; anItLFCB.More(); anItLFCB.Next()) {
       nF1=anItLFCB.Value();
       if (nF1==nF2) {
-	aLPB.Append(aPB1);
+        aLPB.Append(aPB1);
       }
     }
   }
@@ -442,8 +445,8 @@
 // purpose:  splits of edge nE1 on nE2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnEdge(const Standard_Integer nE1,
-						     const Standard_Integer nE2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nE2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE;
   TopAbs_ShapeEnum aT1, aT2;
@@ -462,7 +465,7 @@
 
   anItCB.Initialize(aLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1(nE1);//XXX
     //
     const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
@@ -471,7 +474,7 @@
       const BOPTools_PaveBlock& aPB2=anIt.Value();
       nE=aPB2.OriginalEdge();
       if (nE==nE2) {
-	aLPB.Append(aPB1);
+        aLPB.Append(aPB1);
       }
     }
   }
@@ -482,8 +485,8 @@
 // purpose:  splits of edge nE1 on face nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnFace(const Standard_Integer nE1,
-						     const Standard_Integer nF2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nF2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE2, ip;
   TopAbs_ShapeEnum aT1, aT2;
@@ -511,9 +514,9 @@
 // purpose:  splits of edges from face nF1 on face nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnFace(const Standard_Integer ,//for overriding
-						     const Standard_Integer nF1,
-						     const Standard_Integer nF2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nF1,
+                                                     const Standard_Integer nF2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE1, ip;
   TopAbs_ShapeEnum aT1, aT2;
@@ -524,7 +527,7 @@
   if (aT1!=TopAbs_FACE || aT2!=TopAbs_FACE) {
     return 1; // Type mismatch
   }
-  BooleanOperations_ShapesDataStructure *pDS=myDS;
+//   BooleanOperations_ShapesDataStructure *pDS=myDS;
   BooleanOperations_OnceExplorer aExp(*myDS);
   aExp.Init(nF1, TopAbs_EDGE);
   for (; aExp.More(); aExp.Next()) {
@@ -543,7 +546,7 @@
 // purpose:
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsFace(const Standard_Integer nF,
-						   TColStd_ListOfInteger& aSplits)
+                                                   TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -568,9 +571,9 @@
 // purpose: splits of edges from nF1 in nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsInFace(const Standard_Integer ,//for overriding
-						     const Standard_Integer nF1,
-						     const Standard_Integer nF2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nF1,
+                                                     const Standard_Integer nF2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -593,8 +596,8 @@
 // purpose: splits of edge nE1 in aFace2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsInFace(const Standard_Integer nE1,
-						     const Standard_Integer nF2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nF2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -617,8 +620,8 @@
 // purpose:  splits of edge nE1 on nE2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnEdge(const Standard_Integer nE1,
-						     const Standard_Integer nE2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nE2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -641,8 +644,8 @@
 // purpose:  splits of edge nE1 on face nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnFace(const Standard_Integer nE1,
-						     const Standard_Integer nF2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nF2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -665,9 +668,9 @@
 // purpose:  splits of edges from face nF1 on face nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnFace(const Standard_Integer ,//for overriding
-						     const Standard_Integer nF1,
-						     const Standard_Integer nF2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nF1,
+                                                     const Standard_Integer nF2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -686,3 +689,142 @@
   }
   return 0; //Ok
 }
+//modified by NIZNHY-PKV Mon Oct 17 12:07:48 2011f
+static
+  void SortPaveBlocks(BOPTools_ListOfPaveBlock &);
+static
+  void SortShell(const Standard_Integer,
+		 BOPTools_PaveBlock *);
+static
+  Standard_Boolean Less(const BOPTools_PaveBlock &,
+			const BOPTools_PaveBlock &);
+
+//=======================================================================
+// function: RealSplitsInFace
+// purpose:
+//=======================================================================
+  void NMTTools_PaveFiller::RealSplitsInFace(const Standard_Integer nF,
+                                             BOPTools_ListOfPaveBlock& aLPBIn)
+{
+  Standard_Integer j, aNbCBP, nSpIn;
+  TColStd_MapOfInteger aMFence;
+  BOPTools_ListOfPaveBlock aLPB;
+  BOPTools_ListIteratorOfListOfPaveBlock aItPB;
+  NMTTools_ListIteratorOfListOfCommonBlock aItCB;
+  //
+  NMTTools_CommonBlockPool& aCBP=ChangeCommonBlockPool();
+  //
+  aNbCBP=aCBP.Extent();
+  for (j=1; j<=aNbCBP; ++j) {
+    NMTTools_ListOfCommonBlock& aLCB=aCBP(j);
+    aItCB.Initialize(aLCB);
+    for (; aItCB.More(); aItCB.Next()) {
+      NMTTools_CommonBlock& aCB=aItCB.ChangeValue();
+      if (aCB.IsPaveBlockOnFace(nF)) {
+	const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1();
+	nSpIn=aPB1.Edge();
+	if (aMFence.Add(nSpIn)){
+	  aLPB.Append(aPB1);
+	}
+      }
+    }
+  }
+  //
+  SortPaveBlocks(aLPB);
+  //
+  aItPB.Initialize(aLPB);
+  for (; aItPB.More(); aItPB.Next()) {
+    const BOPTools_PaveBlock& aPB=aItPB.Value();
+    aLPBIn.Append(aPB);
+  }
+}
+//=======================================================================
+// function: SortPaveBlocks
+// purpose:
+//=======================================================================
+void SortPaveBlocks(BOPTools_ListOfPaveBlock &aLPBIn)
+{
+  Standard_Integer i, aNbPBIn;
+  BOPTools_ListIteratorOfListOfPaveBlock aItPB;
+  BOPTools_PaveBlock *pPB;
+  //
+  aNbPBIn=aLPBIn.Extent();
+  if (aNbPBIn<2) {
+    return;
+  }
+  //
+  pPB=new BOPTools_PaveBlock[aNbPBIn];
+  //
+  aItPB.Initialize(aLPBIn);
+  for (i=0; aItPB.More(); aItPB.Next(), ++i) {
+    const BOPTools_PaveBlock& aPB=aItPB.Value();
+    pPB[i]=aPB;
+  }
+  //
+  SortShell(aNbPBIn, pPB);
+  //
+  aLPBIn.Clear();
+  for (i=0; i<aNbPBIn; ++i) {
+    aLPBIn.Append(pPB[i]);
+  }
+  //
+  delete [] (BOPTools_PaveBlock*)pPB;
+}
+//=======================================================================
+//function : SortShell
+//purpose  :
+//=======================================================================
+void SortShell(const Standard_Integer n,
+	       BOPTools_PaveBlock *a)
+{
+  Standard_Integer nd, i, j, l, d=1;
+  BOPTools_PaveBlock x;
+  //
+  while(d<=n) {
+    d*=2;
+  }
+  //
+  while (d) {
+    d=(d-1)/2;
+    //
+    nd=n-d;
+    for (i=0; i<nd; ++i) {
+      j=i;
+    m30:;
+      l=j+d;
+      if (Less(a[l], a[j])) {
+      //if (a[l] < a[j]){
+	x=a[j];
+	a[j]=a[l];
+	a[l]=x;
+	j-=d;
+	if (j > -1) goto m30;
+      }//if (a[l] < a[j]){
+    }//for (i=0; i<nd; ++i)
+  }//while (1)
+}
+
+//=======================================================================
+//function : Less
+//purpose  :
+//=======================================================================
+Standard_Boolean Less(const BOPTools_PaveBlock &aPB1,
+		      const BOPTools_PaveBlock &aPB2)
+{
+  Standard_Boolean bRet;
+  Standard_Integer iE1, iE2;
+  Standard_Real aT11, aT12, aT21, aT22;
+  //
+  iE1=aPB1.OriginalEdge();
+  iE2=aPB2.OriginalEdge();
+  if (iE1!=iE2) {
+    bRet=(iE1<iE2);
+    return bRet;
+  }
+  //
+  aPB1.Parameters(aT11, aT12);
+  aPB2.Parameters(aT21, aT22);
+  bRet=(aT11<aT21);
+  return bRet;
+}
+//modified by NIZNHY-PKV Mon Oct 17 11:44:45 2011t

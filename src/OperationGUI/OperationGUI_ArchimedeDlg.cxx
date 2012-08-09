@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_ArchimedeDlg.cxx
 // Author : Nicolas REJNERI, Open CASCADE S.A.S.
@@ -106,9 +107,11 @@ void OperationGUI_ArchimedeDlg::Init()
   double SpecificStep1 = 0.1;
   double SpecificStep2 = 0.01;
   /* min, max, myStep and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, myStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, myStep, "weight_precision" );
+  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, "density_precision" );
+  initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, "parametric_precision" );
+
+  showOnlyPreviewControl();
 
   GroupPoints->SpinBox_DX->setValue( 100.0 );
   GroupPoints->SpinBox_DY->setValue( 1.0 );
@@ -123,13 +126,19 @@ void OperationGUI_ArchimedeDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
   
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
+
+
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DZ, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
   
   initName( tr( "GEOM_ARCHIMEDE" ) );
   
   globalSelection( GEOM_ALLSHAPES );
 
   SelectionIntoArgument();
+  resize(100,100);
 }
 
 
@@ -140,8 +149,10 @@ void OperationGUI_ArchimedeDlg::Init()
 void OperationGUI_ArchimedeDlg::SetDoubleSpinBoxStep( double step )
 {
   GroupPoints->SpinBox_DX->setSingleStep(step);
-  GroupPoints->SpinBox_DY->setSingleStep(step);
-  GroupPoints->SpinBox_DZ->setSingleStep(step);
+  
+  // san: Commented so as not to override specific step settings
+  //GroupPoints->SpinBox_DY->setSingleStep(step);
+  //GroupPoints->SpinBox_DZ->setSingleStep(step);
 }
 
 //=================================================================================
@@ -150,6 +161,7 @@ void OperationGUI_ArchimedeDlg::SetDoubleSpinBoxStep( double step )
 //=================================================================================
 void OperationGUI_ArchimedeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -184,15 +196,14 @@ void OperationGUI_ArchimedeDlg::SelectionIntoArgument()
   if (aSelList.Extent() != 1)
     return;
 
-  Standard_Boolean testResult = Standard_False;
-  myShape = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  myShape = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if (!testResult || myShape->_is_nil() || !GEOMBase::IsShape(myShape)) {
+  if ( !GEOMBase::IsShape(myShape) ) {
     myShape = GEOM::GEOM_Object::_nil();
     return;
   }
-
   myEditCurrentArgument->setText(GEOMBase::GetName(myShape));
+  processPreview();
 }
 
 //=================================================================================
@@ -219,7 +230,8 @@ void OperationGUI_ArchimedeDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_ALLSHAPES );
   connect( myGeomGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  processPreview();
 }
 
 
@@ -263,14 +275,12 @@ bool OperationGUI_ArchimedeDlg::isValid( QString& msg )
 //=================================================================================
 bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
   double aWeight         = GroupPoints->SpinBox_DX->value();
   double aWaterDensity   = GroupPoints->SpinBox_DY->value();
   double aMeshDeflection = GroupPoints->SpinBox_DZ->value();
   
-  anObj = GEOM::GEOM_ILocalOperations::_narrow(
-    getOperation() )->MakeArchimede( myShape, aWeight, aWaterDensity, aMeshDeflection );
+  GEOM::GEOM_ILocalOperations_var anOper = GEOM::GEOM_ILocalOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->MakeArchimede( myShape, aWeight, aWaterDensity, aMeshDeflection );
 
   if ( !anObj->_is_nil() )
   {
@@ -280,10 +290,19 @@ bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
       aParameters << GroupPoints->SpinBox_DX->text();
       aParameters << GroupPoints->SpinBox_DY->text();
       aParameters << GroupPoints->SpinBox_DZ->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     objects.push_back( anObj._retn() );
   }
 
   return true;
+}
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void OperationGUI_ArchimedeDlg::ValueChangedInSpinBox(double newValue)
+{
+  processPreview();
 }

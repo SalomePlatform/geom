@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  SALOME GEOM : 
 //  File   : GEOM_VTKTrihedron.cxx
 //  Author : Sergey LITONIN
@@ -44,6 +45,9 @@
 #include <vtkMatrix4x4.h>
 #include <vtkTransform.h>
 #include <vtkVectorText.h>
+#include <vtkCoordinate.h>
+#include <vtkTextActor.h>
+#include <vtkTextMapper.h>
 
 /*
   Class       : GEOM_VTKTrihedron
@@ -80,10 +84,7 @@ vtkStandardNewMacro( GEOM_VTKTrihedronAxis );
 
 GEOM_VTKTrihedronAxis::GEOM_VTKTrihedronAxis()
 {
-  vtkProperty* aProperty = vtkProperty::New();
-  aProperty->SetColor( 0.0, 0.0, 1.0 );
-  SetProperty( aProperty );
-  aProperty->Delete();
+  VTKViewer_Axis::SetColor( 0.0, 0.0, 1.0 );
   myMatrix = vtkMatrix4x4::New();
   myTrsf = vtkTransform::New();
 }
@@ -97,8 +98,8 @@ GEOM_VTKTrihedronAxis::~GEOM_VTKTrihedronAxis()
 void GEOM_VTKTrihedronAxis::SetSize( vtkFloatingPointType theSize )
 {
   vtkFloatingPointType aPosition[ 3 ] = { myOri[ 0 ] + myDir[ 0 ] * theSize,
-					  myOri[ 1 ] + myDir[ 1 ] * theSize,
-					  myOri[ 2 ] + myDir[ 2 ] * theSize };
+                                          myOri[ 1 ] + myDir[ 1 ] * theSize,
+                                          myOri[ 2 ] + myDir[ 2 ] * theSize };
                            
   myLineSource->SetPoint1( myOri[ 0 ], myOri[ 1 ], myOri[ 2 ] );
   myLineSource->SetPoint2( aPosition );
@@ -112,7 +113,7 @@ void GEOM_VTKTrihedronAxis::SetSize( vtkFloatingPointType theSize )
   aTrsf.SetDisplacement( gp_Ax3( gp_Pnt( 0, 0, 0 ), gp_Dir( 1, 0, 0 ) ),
                          gp_Ax3( GetOri(), gp_Dir( myDir[ 0 ], myDir[ 1 ], myDir[ 2 ] ) ) );
 
-  const gp_XYZ& aTrans = aTrsf.TranslationPart();
+//   const gp_XYZ& aTrans = aTrsf.TranslationPart();
   gp_Mat aRot = aTrsf.VectorialPart();
 
   for ( int i = 1; i <= 3; i++ )
@@ -122,15 +123,22 @@ void GEOM_VTKTrihedronAxis::SetSize( vtkFloatingPointType theSize )
   myArrowActor->SetUserMatrix( myMatrix );
   myArrowActor->SetPosition( aPosition );
     
+#ifdef IPAL21440
+  if( vtkCoordinate* aCoord = myLabelActor->GetPositionCoordinate()->GetReferenceCoordinate() )
+    aCoord->SetValue( aPosition );
+#else
   myLabelActor->SetPosition( 0, 0, 0 );
   myLabelActor->AddPosition( aPosition );
+#endif
 }
 
 void GEOM_VTKTrihedronAxis::Render(vtkRenderer* theRenderer)
 {
   myLineActor->Render( theRenderer );
   myArrowActor->Render( theRenderer );
+#ifndef IPAL21440
   myLabelActor->Render( theRenderer );
+#endif
 
   vtkCamera* aCamera = theRenderer->GetActiveCamera();
   SetCamera( aCamera );
@@ -158,25 +166,25 @@ void GEOM_VTKTrihedronAxis::SetAxis( const gp_Ax1& theAxis,
 
   vtkFloatingPointType aColor[ 3 ] = { 0, 0, 0 };
   aColor[ theRot ] = 1;
-  vtkProperty* aProperty = vtkProperty::New();
   if ( theColor[ 0 ] == -1 )
-    aProperty->SetColor( aColor[ 0 ], aColor[ 1 ], aColor[ 2 ] );
+    VTKViewer_Axis::SetColor( aColor[ 0 ], aColor[ 1 ], aColor[ 2 ] );
   else
-    aProperty->SetColor( theColor[ 0 ], theColor[ 1 ], theColor[ 2 ] );
-  SetProperty( aProperty );
-  aProperty->Delete();
+    VTKViewer_Axis::SetColor( theColor[ 0 ], theColor[ 1 ], theColor[ 2 ] );
 
+#ifdef IPAL21440
+  if      ( theRot == 0 ) myTextMapper->SetInput( "X" );
+  else if ( theRot == 1 ) myTextMapper->SetInput( "Y" );
+  else if ( theRot == 2 ) myTextMapper->SetInput( "Z" );
+#else
   if      ( theRot == 0 ) myVectorText->SetText( "X" );
   else if ( theRot == 1 ) myVectorText->SetText( "Y" );
   else if ( theRot == 2 ) myVectorText->SetText( "Z" );
+#endif
 }
 
 void GEOM_VTKTrihedronAxis::SetColor( const vtkFloatingPointType theColor[ 3 ] )
 {
-  vtkProperty* aProperty = vtkProperty::New();
-  aProperty->SetColor( theColor[ 0 ], theColor[ 1 ], theColor[ 2 ] );
-  SetProperty( aProperty );
-  aProperty->Delete();
+  VTKViewer_Axis::SetColor( theColor[ 0 ], theColor[ 1 ], theColor[ 2 ] );
 }
 
 
@@ -193,9 +201,18 @@ GEOM_VTKTrihedron::GEOM_VTKTrihedron()
   myMapper = vtkPolyDataMapper::New();
   myAxis[ 0 ] = myAxis[ 1 ] = myAxis[ 2 ] = 0;
   mySize = 100;
-  SetInfinitive( true );
-  myColor[ 0 ] = myColor[ 1 ] = myColor[ 1 ] = -1;
-  SetInfinitive( true );
+
+  myColor[ 0 ] = myColor[ 1 ] = myColor[ 2 ] = -1;
+
+  myDefaultColor[ 0 ] = myDefaultColor[ 1 ] = myDefaultColor[ 2 ] = 1;
+
+  myPreHighlightColor[ 0 ] = 0;
+  myPreHighlightColor[ 1 ] = myPreHighlightColor[ 2 ] = 1;
+
+  myHighlightColor[ 0 ] = myHighlightColor[ 1 ] = myHighlightColor[ 2 ] = 1;
+
+  //SetInfinitive( true );
+  SetPickable( true );
 }
 
 GEOM_VTKTrihedron::~GEOM_VTKTrihedron()
@@ -245,6 +262,12 @@ void GEOM_VTKTrihedron::SetSize( vtkFloatingPointType theSize )
   aSrcY->Delete();
   aSrcZ->Delete();
   aRes->Delete();
+}
+
+void GEOM_VTKTrihedron::SetVisibility( int theVisibility )
+{
+  Superclass::SetVisibility( theVisibility );
+  SetVisibility( theVisibility == 1 ? VTKViewer_Trihedron::eOn : VTKViewer_Trihedron::eOff );
 }
 
 void GEOM_VTKTrihedron::SetVisibility( VTKViewer_Trihedron::TVisibility theVis )
@@ -361,21 +384,48 @@ bool GEOM_VTKTrihedron::IsSetCamera() const
 
 bool GEOM_VTKTrihedron::IsResizable() const
 {
-  return true;
+  return false;
 }
 
+void GEOM_VTKTrihedron::Highlight( bool theIsHighlight )
+{
+  if( theIsHighlight )
+    SetAxesColors( myHighlightColor );
+  else
+    ResetAxesColors();
 
+  Superclass::Highlight( theIsHighlight );
+}
 
+bool GEOM_VTKTrihedron::PreHighlight( vtkInteractorStyle *theInteractorStyle, 
+                                      SVTK_SelectionEvent* theSelectionEvent,
+                                      bool theIsHighlight )
+{
+  if ( !GetPickable() )
+    return false;  
 
+  if ( !isHighlighted() )
+  {
+    if( theIsHighlight )
+      SetAxesColors( myPreHighlightColor );
+    else
+      ResetAxesColors();
+  }
 
+  return Superclass::PreHighlight( theInteractorStyle, theSelectionEvent, theIsHighlight );
+}
 
+void GEOM_VTKTrihedron::ResetAxesColors()
+{
+  if( myColor[0] != -1 )
+    SetAxesColors( myColor );
+  else
+    SetAxesColors( myDefaultColor, true );
+}
 
-
-
-
-
-
-
-
-
-
+void GEOM_VTKTrihedron::SetAxesColors( vtkFloatingPointType theColor[3], bool theIsDiffuse )
+{
+  myAxis[ 0 ]->SetColor( theColor[0], theIsDiffuse ? 0.0 : theColor[1], theIsDiffuse ? 0.0 : theColor[2] );
+  myAxis[ 1 ]->SetColor( theIsDiffuse ? 0.0 : theColor[0], theColor[1], theIsDiffuse ? 0.0 : theColor[2] );
+  myAxis[ 2 ]->SetColor( theIsDiffuse ? 0.0 : theColor[0], theIsDiffuse ? 0.0 : theColor[1], theColor[2] );
+}

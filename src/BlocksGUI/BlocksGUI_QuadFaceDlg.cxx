@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BlocksGUI_QuadFaceDlg.cxx
 // Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
@@ -145,8 +146,10 @@ void BlocksGUI_QuadFaceDlg::ConstructorsClicked (int constructorId)
   myConstructorId = constructorId;
 
   // init fields
-  myShape1 = myShape2 = GEOM::GEOM_Object::_nil();
-  myShape3 = myShape4 = myShape1;
+  myShape1.nullify();
+  myShape2.nullify();
+  myShape3.nullify();
+  myShape4.nullify();
 
   // clear line edits
   QMap<int, QLineEdit*>::iterator anIterLE;
@@ -190,6 +193,7 @@ void BlocksGUI_QuadFaceDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void BlocksGUI_QuadFaceDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -225,123 +229,107 @@ void BlocksGUI_QuadFaceDlg::SelectionIntoArgument()
     }
   }
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
   TopAbs_ShapeEnum aType = TopAbs_EDGE;
   if (aCurrFocus == Vertex1 || aCurrFocus == Vertex2 ||
       aCurrFocus == Vertex3 || aCurrFocus == Vertex4)
     aType = TopAbs_VERTEX;
 
-  QString aName;
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_nil();
-
-  if (aSelList.Extent() == 1) {
-    Standard_Boolean aResult = Standard_False;
-    anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
-    if (aResult && !anObj->_is_nil()) {
-      aName = GEOMBase::GetName(anObj);
-
-      // Get Selected object if selected subshape
-      TopoDS_Shape aShape;
-      if (GEOMBase::GetShape(anObj, aShape, TopAbs_SHAPE) && !aShape.IsNull())
-      {
-        TColStd_IndexedMapOfInteger aMap;
-        aSelMgr->GetIndexes(aSelList.First(), aMap);
-        if (aMap.Extent() == 1) // Local Selection
-        {
-          int anIndex = aMap(1);
-          if (aType == TopAbs_VERTEX)
-            aName += QString(":vertex_%1").arg(anIndex);
-          else
-            aName += QString(":edge_%1").arg(anIndex);
-
-          //Find SubShape Object in Father
-          GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(anObj, aName);
-
-          if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
-            GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-            anObj = aShapesOp->GetSubShape(anObj, anIndex);
-          }
-          else
-            anObj = aFindedObject; // get Object from study
-        }
-        else // Global Selection
-        {
-          if (aShape.ShapeType() != aType) {
-            anObj = GEOM::GEOM_Object::_nil();
-            aName = "";
-          }
-        }
-      }
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aType );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
+    myEditCurrentArgument->setText( aName );
+    switch (aCurrFocus) {
+      // four vertices
+    case Vertex1:
+      myShape1 = aSelectedObject;
+      if      (!myShape2) mySelBtn[Vertex2]->click();
+      else if (!myShape3) mySelBtn[Vertex3]->click();
+      else if (!myShape4) mySelBtn[Vertex4]->click();
+      break;
+    case Vertex2:
+      myShape2 = aSelectedObject;
+      if      (!myShape3) mySelBtn[Vertex3]->click();
+      else if (!myShape4) mySelBtn[Vertex4]->click();
+      else if (!myShape1) mySelBtn[Vertex1]->click();
+      break;
+    case Vertex3:
+      myShape3 = aSelectedObject;
+      if      (!myShape4) mySelBtn[Vertex4]->click();
+      else if (!myShape1) mySelBtn[Vertex1]->click();
+      else if (!myShape2) mySelBtn[Vertex2]->click();
+      break;
+    case Vertex4:
+      myShape4 = aSelectedObject;
+      if      (!myShape1) mySelBtn[Vertex1]->click();
+      else if (!myShape2) mySelBtn[Vertex2]->click();
+      else if (!myShape3) mySelBtn[Vertex3]->click();
+      break;
+      // two edges
+    case Edge12:
+      myShape1 = aSelectedObject;
+      if      (!myShape2) mySelBtn[Edge22]->click();
+      break;
+    case Edge22:
+      myShape2 = aSelectedObject;
+      if      (!myShape1) mySelBtn[Edge12]->click();
+      break;
+      // four edges
+    case Edge14:
+      myShape1 = aSelectedObject;
+      if      (!myShape2) mySelBtn[Edge24]->click();
+      else if (!myShape3) mySelBtn[Edge34]->click();
+      else if (!myShape4) mySelBtn[Edge44]->click();
+      break;
+    case Edge24:
+      myShape2 = aSelectedObject;
+      if      (!myShape3) mySelBtn[Edge34]->click();
+      else if (!myShape4) mySelBtn[Edge44]->click();
+      else if (!myShape1) mySelBtn[Edge14]->click();
+      break;
+    case Edge34:
+      myShape3 = aSelectedObject;
+      if      (!myShape4) mySelBtn[Edge44]->click();
+      else if (!myShape1) mySelBtn[Edge14]->click();
+      else if (!myShape2) mySelBtn[Edge24]->click();
+      break;
+    case Edge44:
+      myShape4 = aSelectedObject;
+      if      (!myShape1) mySelBtn[Edge14]->click();
+      else if (!myShape2) mySelBtn[Edge24]->click();
+      else if (!myShape3) mySelBtn[Edge34]->click();
+      break;
+    default:
+      break;
     }
   }
-
-  myEditCurrentArgument->setText(aName);
-
-  switch (aCurrFocus) {
-    // four vertices
-  case Vertex1:
-    myShape1 = anObj;
-    if (!myShape1->_is_nil() && myShape2->_is_nil())
-      mySelBtn[Vertex2]->click();
-    break;
-  case Vertex2:
-    myShape2 = anObj;
-    if (!myShape2->_is_nil() && myShape3->_is_nil())
-      mySelBtn[Vertex3]->click();
-    break;
-  case Vertex3:
-    myShape3 = anObj;
-    if (!myShape3->_is_nil() && myShape4->_is_nil())
-      mySelBtn[Vertex4]->click();
-    break;
-  case Vertex4:
-    myShape4 = anObj;
-    if (!myShape4->_is_nil() && myShape1->_is_nil())
-      mySelBtn[Vertex1]->click();
-    break;
-
-    // two edges
-  case Edge12:
-    myShape1 = anObj;
-    if (!myShape1->_is_nil() && myShape2->_is_nil())
-      mySelBtn[Edge22]->click();
-    break;
-  case Edge22:
-    myShape2 = anObj;
-    if (!myShape2->_is_nil() && myShape1->_is_nil())
-      mySelBtn[Edge12]->click();
-    break;
-
-    // four edges
-  case Edge14:
-    myShape1 = anObj;
-    if (!myShape1->_is_nil() && myShape2->_is_nil())
-      mySelBtn[Edge24]->click();
-    break;
-  case Edge24:
-    myShape2 = anObj;
-    if (!myShape2->_is_nil() && myShape3->_is_nil())
-      mySelBtn[Edge34]->click();
-    break;
-  case Edge34:
-    myShape3 = anObj;
-    if (!myShape3->_is_nil() && myShape4->_is_nil())
-      mySelBtn[Edge44]->click();
-    break;
-  case Edge44:
-    myShape4 = anObj;
-    if (!myShape4->_is_nil() && myShape1->_is_nil())
-      mySelBtn[Edge14]->click();
-    break;
-
-  default:
-    break;
+  else {
+    switch (aCurrFocus) {
+    case Vertex1:
+    case Edge12:
+    case Edge14:
+      myShape1.nullify();
+      break;
+    case Vertex2:
+    case Edge22:
+    case Edge24:
+      myShape2.nullify();
+      break;
+    case Vertex3:
+    case Edge34:
+      myShape3.nullify();
+      break;
+    case Vertex4:
+    case Edge44:
+      myShape4.nullify();
+      break;
+    default:
+      break;
+    }
+    myEditCurrentArgument->setText( "" );
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -424,7 +412,7 @@ void BlocksGUI_QuadFaceDlg::ActivateThisDialog()
   activateSelection();
 
   // ??
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -506,15 +494,13 @@ bool BlocksGUI_QuadFaceDlg::isValid (QString&)
   bool ok = false;
   switch (getConstructorId()) {
   case 0:
-    ok = (!myShape1->_is_nil() && !myShape2->_is_nil() &&
-          !myShape3->_is_nil() && !myShape4->_is_nil());
+    ok = myShape1 && myShape2 && myShape3 && myShape4;
     break;
   case 1:
-    ok = (!myShape1->_is_nil() && !myShape2->_is_nil());
+    ok = myShape1 && myShape2;
     break;
   case 2:
-    ok = (!myShape1->_is_nil() && !myShape2->_is_nil() &&
-          !myShape3->_is_nil() && !myShape4->_is_nil());
+    ok = myShape1 && myShape2 && myShape3 && myShape4;
     break;
   default:
     break;
@@ -532,20 +518,19 @@ bool BlocksGUI_QuadFaceDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeQuad4Vertices(myShape1, myShape2, myShape3, myShape4);
+    anObj = anOper->MakeQuad4Vertices(myShape1.get(), myShape2.get(), myShape3.get(), myShape4.get());
     res = true;
     break;
   case 1:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeQuad2Edges(myShape1, myShape2);
+    anObj = anOper->MakeQuad2Edges(myShape1.get(), myShape2.get());
     res = true;
     break;
   case 2:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeQuad(myShape1, myShape2, myShape3, myShape4);
+    anObj = anOper->MakeQuad(myShape1.get(), myShape2.get(), myShape3.get(), myShape4.get());
     res = true;
     break;
   default:
@@ -564,25 +549,24 @@ bool BlocksGUI_QuadFaceDlg::execute (ObjectList& objects)
 //=================================================================================
 void BlocksGUI_QuadFaceDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
   switch (getConstructorId()) {
   case 0:
-    objMap[mySelName[Vertex1]->text()] = myShape1;
-    objMap[mySelName[Vertex2]->text()] = myShape2;
-    objMap[mySelName[Vertex3]->text()] = myShape3;
-    objMap[mySelName[Vertex4]->text()] = myShape4;
+    GEOMBase::PublishSubObject( myShape1.get() );
+    GEOMBase::PublishSubObject( myShape2.get() );
+    GEOMBase::PublishSubObject( myShape3.get() );
+    GEOMBase::PublishSubObject( myShape4.get() );
     break;
   case 1:
-    objMap[mySelName[Edge12]->text()] = myShape1;
-    objMap[mySelName[Edge22]->text()] = myShape2;
+    GEOMBase::PublishSubObject( myShape1.get() );
+    GEOMBase::PublishSubObject( myShape2.get() );
     break;
   case 2:
-    objMap[mySelName[Edge14]->text()] = myShape1;
-    objMap[mySelName[Edge24]->text()] = myShape2;
-    objMap[mySelName[Edge34]->text()] = myShape3;
-    objMap[mySelName[Edge44]->text()] = myShape4;
+    GEOMBase::PublishSubObject( myShape1.get() );
+    GEOMBase::PublishSubObject( myShape2.get() );
+    GEOMBase::PublishSubObject( myShape3.get() );
+    GEOMBase::PublishSubObject( myShape4.get() );
+    break;
+  default:
     break;
   }
-  addSubshapesToFather(objMap);
 }

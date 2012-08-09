@@ -1,29 +1,35 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <GEOMImpl_BooleanDriver.hxx>
 #include <GEOMImpl_IBoolean.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOM_Function.hxx>
+
+#include <TNaming_CopyShape.hxx>
+
+#include <ShapeFix_ShapeTolerance.hxx>
+#include <ShapeFix_Shape.hxx>
 
 #include <BRep_Builder.hxx>
 #include <BRepAlgo.hxx>
@@ -31,6 +37,8 @@
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Section.hxx>
+#include <BRepCheck_Analyzer.hxx>
+
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Compound.hxx>
@@ -38,10 +46,10 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+
+#include <TColStd_IndexedDataMapOfTransientTransient.hxx>
+
 #include <Precision.hxx>
-#include <BRepCheck_Analyzer.hxx>
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <ShapeFix_Shape.hxx>
 
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
@@ -55,7 +63,6 @@ const Standard_GUID& GEOMImpl_BooleanDriver::GetID()
   static Standard_GUID aBooleanDriver("FF1BBB21-5D14-4df2-980B-3A668264EA16");
   return aBooleanDriver;
 }
-
 
 //=======================================================================
 //function : GEOMImpl_BooleanDriver
@@ -93,7 +100,7 @@ void AddSimpleShapes(TopoDS_Shape theShape, TopTools_ListOfShape& theList)
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -107,7 +114,15 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
   Handle(GEOM_Function) aRefShape2 = aCI.GetShape2();
   TopoDS_Shape aShape1 = aRefShape1->GetValue();
   TopoDS_Shape aShape2 = aRefShape2->GetValue();
+
   if (!aShape1.IsNull() && !aShape2.IsNull()) {
+    // check arguments for Mantis issue 0021019
+    BRepCheck_Analyzer ana (aShape1, Standard_True);
+    if (!ana.IsValid())
+      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
+    ana.Init(aShape2);
+    if (!ana.IsValid())
+      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
     // perform COMMON operation
     if (aType == BOOLEAN_COMMON) {
@@ -363,6 +378,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
           // we obtain BSpline curve of degree 1 (C0), which is slowly
           // processed by some algorithms (Partition for example).
           BO.Approximation(Standard_True);
+	  //modified by NIZNHY-PKV Tue Oct 18 14:34:16 2011f
+	  BO.ComputePCurveOn1(Standard_True);
+	  BO.ComputePCurveOn2(Standard_True);
+	  //modified by NIZNHY-PKV Tue Oct 18 14:34:18 2011t
+	  
           BO.Build();
           if (!BO.IsDone()) {
             StdFail_NotDone::Raise("Section operation can not be performed on the given shapes");
@@ -410,6 +430,15 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
 
   if (aShape.IsNull()) return 0;
 
+  // as boolean operations always produce compound, lets simplify it
+  // for the case, if it contains only one sub-shape
+  TopTools_ListOfShape listShapeRes;
+  AddSimpleShapes(aShape, listShapeRes);
+  if (listShapeRes.Extent() == 1) {
+    aShape = listShapeRes.First();
+    if (aShape.IsNull()) return 0;
+  }
+
   // 08.07.2008 skl for bug 19761 from Mantis
   BRepCheck_Analyzer ana (aShape, Standard_True);
   ana.Init(aShape);
@@ -428,6 +457,88 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
   //  Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
   //}
 
+  // BEGIN: Mantis issue 0021060: always limit tolerance of BOP result
+  // 1. Get shape parameters for comparison
+  int nbTypes [TopAbs_SHAPE];
+  {
+    for (int iType = 0; iType < TopAbs_SHAPE; ++iType)
+      nbTypes[iType] = 0;
+    nbTypes[aShape.ShapeType()]++;
+
+    TopTools_MapOfShape aMapOfShape;
+    aMapOfShape.Add(aShape);
+    TopTools_ListOfShape aListOfShape;
+    aListOfShape.Append(aShape);
+
+    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
+    for (; itL.More(); itL.Next()) {
+      TopoDS_Iterator it (itL.Value());
+      for (; it.More(); it.Next()) {
+        TopoDS_Shape s = it.Value();
+        if (aMapOfShape.Add(s)) {
+          aListOfShape.Append(s);
+          nbTypes[s.ShapeType()]++;
+        }
+      }
+    }
+  }
+
+  // 2. Limit tolerance
+  TopoDS_Shape aShapeCopy;
+  TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+  TNaming_CopyShape::CopyTool(aShape, aMapTShapes, aShapeCopy);
+  ShapeFix_ShapeTolerance aSFT;
+  aSFT.LimitTolerance(aShapeCopy, Precision::Confusion(), Precision::Confusion(), TopAbs_SHAPE);
+  Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape (aShapeCopy);
+  aSfs->Perform();
+  aShapeCopy = aSfs->Shape();
+
+  // 3. Check parameters
+  ana.Init(aShapeCopy);
+  if (ana.IsValid()) {
+    int iType, nbTypesCopy [TopAbs_SHAPE];
+
+    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
+      nbTypesCopy[iType] = 0;
+    nbTypesCopy[aShapeCopy.ShapeType()]++;
+
+    TopTools_MapOfShape aMapOfShape;
+    aMapOfShape.Add(aShapeCopy);
+    TopTools_ListOfShape aListOfShape;
+    aListOfShape.Append(aShapeCopy);
+
+    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
+    for (; itL.More(); itL.Next()) {
+      TopoDS_Iterator it (itL.Value());
+      for (; it.More(); it.Next()) {
+        TopoDS_Shape s = it.Value();
+        if (aMapOfShape.Add(s)) {
+          aListOfShape.Append(s);
+          nbTypesCopy[s.ShapeType()]++;
+        }
+      }
+    }
+
+    bool isEqual = true;
+    for (iType = 0; iType < TopAbs_SHAPE && isEqual; ++iType) {
+      if (nbTypes[iType] != nbTypesCopy[iType])
+        isEqual = false;
+    }
+    if (isEqual)
+      aShape = aShapeCopy;
+  }
+  // END: Mantis issue 0021060
+
+  //Alternative case to check shape result Mantis 0020604: EDF 1172
+/*  TopoDS_Iterator It (aShape, Standard_True, Standard_True);
+  int nbSubshapes=0;
+  for (; It.More(); It.Next())
+    nbSubshapes++;
+  if (!nbSubshapes)
+    Standard_ConstructionError::Raise("Boolean operation aborted : result object is empty compound");*/
+  //end of 0020604: EDF 1172
+  //! the changes temporary commented because of customer needs (see the same mantis bug)
+
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
@@ -442,7 +553,6 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
 //=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_BooleanDriver_Type_()
 {
-
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
@@ -450,13 +560,12 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_BooleanDriver_Type_()
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
 
-
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_BooleanDriver",
-			                                 sizeof(GEOMImpl_BooleanDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_BooleanDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }
@@ -470,10 +579,10 @@ const Handle(GEOMImpl_BooleanDriver) Handle(GEOMImpl_BooleanDriver)::DownCast(co
   Handle(GEOMImpl_BooleanDriver) _anOtherObject;
 
   if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_BooleanDriver))) {
-       _anOtherObject = Handle(GEOMImpl_BooleanDriver)((Handle(GEOMImpl_BooleanDriver)&)AnObject);
-     }
+    if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_BooleanDriver))) {
+      _anOtherObject = Handle(GEOMImpl_BooleanDriver)((Handle(GEOMImpl_BooleanDriver)&)AnObject);
+    }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

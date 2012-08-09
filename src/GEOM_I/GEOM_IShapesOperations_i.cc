@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IShapesOperations_i.hh"
@@ -30,6 +31,7 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#include <TopAbs.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 
@@ -39,8 +41,8 @@
  */
 //=============================================================================
 GEOM_IShapesOperations_i::GEOM_IShapesOperations_i (PortableServer::POA_ptr thePOA,
-						    GEOM::GEOM_Gen_ptr theEngine,
-						    ::GEOMImpl_IShapesOperations* theImpl)
+                                                    GEOM::GEOM_Gen_ptr theEngine,
+                                                    ::GEOMImpl_IShapesOperations* theImpl)
 :GEOM_IOperations_i(thePOA, theEngine, theImpl)
 {
   MESSAGE("GEOM_IShapesOperations_i::GEOM_IShapesOperations_i");
@@ -70,13 +72,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt1 == NULL || thePnt2 == NULL) return aGEOMObject._retn();
-
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetOperations()->GetEngine()->GetObject
-    (thePnt1->GetStudyID(), thePnt1->GetEntry());
-  Handle(GEOM_Object) aPnt2 = GetOperations()->GetEngine()->GetObject
-    (thePnt2->GetStudyID(), thePnt2->GetEntry());
+  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
 
   if (aPnt1.IsNull() || aPnt2.IsNull()) return aGEOMObject._retn();
 
@@ -90,11 +88,74 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
 
 //=============================================================================
 /*!
+ *  MakeEdgeOnCurveByLength
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeOnCurveByLength
+                  (GEOM::GEOM_Object_ptr theCurve,
+                   CORBA::Double         theLength,
+                   GEOM::GEOM_Object_ptr theStartPoint)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference curve
+  Handle(GEOM_Object) aRefCurve = GetObjectImpl(theCurve);
+  if (aRefCurve.IsNull()) return aGEOMObject._retn();
+
+  //Get the reference point (can be NULL)
+  Handle(GEOM_Object) aRefPoint;
+  if (!CORBA::is_nil(theStartPoint)) {
+    aRefPoint = GetObjectImpl(theStartPoint);
+  }
+
+  //Create the point
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeEdgeOnCurveByLength(aRefCurve, theLength, aRefPoint);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeEdgeWire
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeWire
+                      (GEOM::GEOM_Object_ptr theWire,
+                       const CORBA::Double theLinearTolerance,
+                       const CORBA::Double theAngularTolerance)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the source wire
+  Handle(GEOM_Object) aWire = GetObjectImpl(theWire);
+
+  if (aWire.IsNull()) return aGEOMObject._retn();
+
+  //Create the Edge
+  Handle(GEOM_Object) anObject = GetOperations()->MakeEdgeWire(aWire, theLinearTolerance, theAngularTolerance);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeWire
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
-                                      (const GEOM::ListOfGO& theEdgesAndWires)
+                           (const GEOM::ListOfGO& theEdgesAndWires,
+                            const CORBA::Double   theTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -102,21 +163,19 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theEdgesAndWires.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theEdgesAndWires[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theEdgesAndWires[ind]->GetStudyID(), theEdgesAndWires[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theEdgesAndWires[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aShapes.push_back(aSh);
   }
 
   // Make Solid
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeWire(aShapes);
+    GetOperations()->MakeWire(aShapes, theTolerance);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -130,24 +189,22 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFace
                       (GEOM::GEOM_Object_ptr theWire,
-		       const CORBA::Boolean  isPlanarWanted)
+                       const CORBA::Boolean  isPlanarWanted)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theWire == NULL) return aGEOMObject._retn();
-
   //Get the reference wire
-  Handle(GEOM_Object) aWire = GetOperations()->GetEngine()->GetObject
-    (theWire->GetStudyID(), theWire->GetEntry());
-
+  Handle(GEOM_Object) aWire = GetObjectImpl(theWire);
   if (aWire.IsNull()) return aGEOMObject._retn();
 
   //Create the Face
   Handle(GEOM_Object) anObject = GetOperations()->MakeFace(aWire, isPlanarWanted);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
+  //if (!GetOperations()->IsDone() || anObject.IsNull())
+  // enable warning status
+  if (anObject.IsNull())
     return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -160,7 +217,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFace
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWires
                                          (const GEOM::ListOfGO& theWires,
-					  const CORBA::Boolean  isPlanarWanted)
+                                          const CORBA::Boolean  isPlanarWanted)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -168,14 +225,12 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWires
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theWires.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theWires[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theWires[ind]->GetStudyID(), theWires[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theWires[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aShapes.push_back(aSh);
   }
@@ -183,7 +238,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWires
   // Make Face
   Handle(GEOM_Object) anObject =
     GetOperations()->MakeFaceWires(aShapes, isPlanarWanted);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
+  //if (!GetOperations()->IsDone() || anObject.IsNull())
+  // enable warning status
+  if (anObject.IsNull())
     return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -203,14 +260,12 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeShell
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theFacesAndShells.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theFacesAndShells[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theFacesAndShells[ind]->GetStudyID(), theFacesAndShells[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theFacesAndShells[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aShapes.push_back(aSh);
   }
@@ -237,16 +292,15 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShell
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShell == NULL) return aGEOMObject._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShell = GetOperations()->GetEngine()->GetObject
-    (theShell->GetStudyID(), theShell->GetEntry());
-
+  Handle(GEOM_Object) aShell = GetObjectImpl(theShell);
   if (aShell.IsNull()) return aGEOMObject._retn();
 
+  std::list<Handle(GEOM_Object)> aShapes;
+  aShapes.push_back(aShell);
+
   //Create the Solid
-  Handle(GEOM_Object) anObject = GetOperations()->MakeSolidShell(aShell);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeSolidShells(aShapes);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -267,14 +321,12 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShells
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theShells.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theShells[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theShells[ind]->GetStudyID(), theShells[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theShells[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aShapes.push_back(aSh);
   }
@@ -302,14 +354,12 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theShapes.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theShapes[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theShapes[ind]->GetStudyID(), theShapes[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theShapes[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aShapes.push_back(aSh);
   }
@@ -330,20 +380,16 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
                                            (GEOM::GEOM_Object_ptr theShape,
-					    CORBA::Double   theTolerance,
-					    CORBA::Boolean  doKeepNonSolids)
+                                            CORBA::Double   theTolerance,
+                                            CORBA::Boolean  doKeepNonSolids)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aGEOMObject._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Perform the gluing
@@ -357,7 +403,6 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
   return GetObject(anObject);
 }
 
-
 //=============================================================================
 /*!
  *  GetGlueFaces
@@ -365,22 +410,20 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
                                            (GEOM::GEOM_Object_ptr theShape,
-					    const CORBA::Double   theTolerance)
+                                            const CORBA::Double   theTolerance)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    GetOperations()->GetGlueFaces(aShape, theTolerance);
+    //GetOperations()->GetGlueFaces(aShape, theTolerance);
+    GetOperations()->GetGlueShapes(aShape, theTolerance, TopAbs_FACE);
 
   //if (!GetOperations()->IsDone() || aHSeq.IsNull())
   // to allow warning
@@ -395,7 +438,6 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
   return aSeq._retn();
 }
 
-
 //=============================================================================
 /*!
  *  MakeGlueFacesByList
@@ -403,38 +445,33 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
                                            (GEOM::GEOM_Object_ptr theShape,
-					    CORBA::Double   theTolerance,
-					    const GEOM::ListOfGO& theFaces,
-					    CORBA::Boolean  doKeepNonSolids)
+                                            CORBA::Double   theTolerance,
+                                            const GEOM::ListOfGO& theFaces,
+                                            CORBA::Boolean doKeepNonSolids,
+                                            CORBA::Boolean doGlueAllEdges)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aGEOMObject._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aFaces;
+  std::list<Handle(GEOM_Object)> aFaces;
   //Get the shapes
   aLen = theFaces.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theFaces[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theFaces[ind]->GetStudyID(), theFaces[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theFaces[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aFaces.push_back(aSh);
   }
 
   //Perform the gluing
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces, doKeepNonSolids);
+    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces, doKeepNonSolids, doGlueAllEdges);
   //if (!GetOperations()->IsDone() || anObject.IsNull())
   // to allow warning
   if (anObject.IsNull())
@@ -443,24 +480,209 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  MakeGlueEdges
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdges
+                                           (GEOM::GEOM_Object_ptr theShape,
+                                            CORBA::Double   theTolerance)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  //Perform the gluing
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeGlueEdges(aShape, theTolerance);
+  //if (!GetOperations()->IsDone() || anObject.IsNull())
+  // to allow warning
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
 
 //=============================================================================
 /*!
- *  MakeExplode
+ *  GetGlueEdges
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueEdges
+                                           (GEOM::GEOM_Object_ptr theShape,
+                                            const CORBA::Double   theTolerance)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->GetGlueShapes(aShape, theTolerance, TopAbs_EDGE);
+
+  //if (!GetOperations()->IsDone() || aHSeq.IsNull())
+  // to allow warning
+  if (aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakeGlueEdgesByList
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdgesByList
+                                           (GEOM::GEOM_Object_ptr theShape,
+                                            CORBA::Double   theTolerance,
+                                            const GEOM::ListOfGO& theEdges)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  int ind, aLen;
+  std::list<Handle(GEOM_Object)> anEdges;
+  //Get the shapes
+  aLen = theEdges.length();
+  for (ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aSh = GetObjectImpl(theEdges[ind]);
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    anEdges.push_back(aSh);
+  }
+
+  //Perform the gluing
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeGlueEdgesByList(aShape, theTolerance, anEdges);
+  //if (!GetOperations()->IsDone() || anObject.IsNull())
+  // to allow warning
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetExistingSubObjects
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetExistingSubObjects (GEOM::GEOM_Object_ptr theShape,
+                                                                 CORBA::Boolean        theGroupsOnly)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->GetExistingSubObjects(aShape, theGroupsOnly);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakeExplode (including theShape itself, bad sorting)
  */
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeExplode (GEOM::GEOM_Object_ptr theShape,
-						       const CORBA::Long     theShapeType,
-						       const CORBA::Boolean  isSorted)
+                                                       const CORBA::Long     theShapeType,
+                                                       const CORBA::Boolean  isSorted)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
-  if (theShape == NULL) return aSeq._retn();
 
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    GetOperations()->MakeExplode(aShape, theShapeType, isSorted);
+    GetOperations()->MakeExplode(aShape, theShapeType, isSorted,
+                                 GEOMImpl_IShapesOperations::EXPLODE_OLD_INCLUDE_MAIN);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakeAllSubShapes (including theShape itself, good sorting)
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeAllSubShapes (GEOM::GEOM_Object_ptr theShape,
+                                                            const CORBA::Long     theShapeType,
+                                                            const CORBA::Boolean  isSorted)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakeExplode(aShape, theShapeType, isSorted,
+                                 GEOMImpl_IShapesOperations::EXPLODE_NEW_INCLUDE_MAIN);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  ExtractSubShapes (excluding theShape itself, good sorting)
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::ExtractSubShapes (GEOM::GEOM_Object_ptr theShape,
+                                                            const CORBA::Long     theShapeType,
+                                                            const CORBA::Boolean  isSorted)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    // TODO: enum instead of bool for the last argument
+    GetOperations()->MakeExplode(aShape, theShapeType, isSorted,
+                                 GEOMImpl_IShapesOperations::EXPLODE_NEW_EXCLUDE_MAIN);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 
@@ -478,17 +700,44 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeExplode (GEOM::GEOM_Object_ptr the
  */
 //=============================================================================
 GEOM::ListOfLong* GEOM_IShapesOperations_i::SubShapeAllIDs (GEOM::GEOM_Object_ptr theShape,
-							    const CORBA::Long     theShapeType,
-							    const CORBA::Boolean  isSorted)
+                                                            const CORBA::Long     theShapeType,
+                                                            const CORBA::Boolean  isSorted)
 {
   GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
-  if (theShape == NULL) return aSeq._retn();
 
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfInteger) aHSeq =
-    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted);
+    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted,
+                                    GEOMImpl_IShapesOperations::EXPLODE_OLD_INCLUDE_MAIN);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull()) return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetAllSubShapesIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetAllSubShapesIDs (GEOM::GEOM_Object_ptr theShape,
+                                                                const CORBA::Long     theShapeType,
+                                                                const CORBA::Boolean  isSorted)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfInteger) aHSeq =
+    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted,
+                                    GEOMImpl_IShapesOperations::EXPLODE_NEW_INCLUDE_MAIN);
   if (!GetOperations()->IsDone() || aHSeq.IsNull()) return aSeq._retn();
 
   Standard_Integer aLength = aHSeq->Length();
@@ -506,19 +755,15 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::SubShapeAllIDs (GEOM::GEOM_Object_pt
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetSubShape
                                            (GEOM::GEOM_Object_ptr theMainShape,
-					    const CORBA::Long     theID)
+                                            const CORBA::Long     theID)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theMainShape == NULL) return aGEOMObject._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theMainShape->GetStudyID(), theMainShape->GetEntry());
-
+  Handle(GEOM_Object) aShape = GetObjectImpl(theMainShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   Handle(GEOM_Object) anObject = GetOperations()->GetSubShape(aShape, theID);
@@ -530,19 +775,52 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetSubShape
 
 //=============================================================================
 /*!
+ *  MakeSubShapes
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeSubShapes (GEOM::GEOM_Object_ptr theMainShape,
+                                                         const GEOM::ListOfLong& theIndices)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+  Standard_Integer i;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theIndices.length() < 1)
+    return aSeq._retn();
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theMainShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger (1, theIndices.length());
+  for (i = 0; i < theIndices.length(); i++)
+    anArray->SetValue(i+1, theIndices[i]);
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakeSubShapes(aShape, anArray);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (i = 0; i < aLength; i++)
+    aSeq[i] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i+1)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
  *  GetSubShapeIndex
  */
 //=============================================================================
 CORBA::Long GEOM_IShapesOperations_i::GetSubShapeIndex
   (GEOM::GEOM_Object_ptr theMainShape, GEOM::GEOM_Object_ptr theSubShape)
 {
-  if (theMainShape == NULL || theSubShape == NULL) return -1;
-
   //Get the reference shapes
-  Handle(GEOM_Object) aMainShapeRef = GetOperations()->GetEngine()->GetObject
-    (theMainShape->GetStudyID(), theMainShape->GetEntry());
-  Handle(GEOM_Object) aSubShapeRef = GetOperations()->GetEngine()->GetObject
-    (theSubShape->GetStudyID(), theSubShape->GetEntry());
+  Handle(GEOM_Object) aMainShapeRef = GetObjectImpl(theMainShape);
+  Handle(GEOM_Object) aSubShapeRef = GetObjectImpl(theSubShape);
+
   if (aMainShapeRef.IsNull() || aSubShapeRef.IsNull()) return -1;
 
   //Get the unique ID of <theSubShape> inside <theMainShape>
@@ -561,13 +839,10 @@ CORBA::Long GEOM_IShapesOperations_i::GetSubShapeIndex
 CORBA::Long GEOM_IShapesOperations_i::GetTopologyIndex
   (GEOM::GEOM_Object_ptr theMainShape, GEOM::GEOM_Object_ptr theSubShape)
 {
-  if (theMainShape == NULL || theSubShape == NULL) return -1;
-
   //Get the reference shapes
-  Handle(GEOM_Object) aMainShapeRef = GetOperations()->GetEngine()->GetObject
-    (theMainShape->GetStudyID(), theMainShape->GetEntry());
-  Handle(GEOM_Object) aSubShapeRef = GetOperations()->GetEngine()->GetObject
-    (theSubShape->GetStudyID(), theSubShape->GetEntry());
+  Handle(GEOM_Object) aMainShapeRef = GetObjectImpl(theMainShape);
+  Handle(GEOM_Object) aSubShapeRef = GetObjectImpl(theSubShape);
+
   if (aMainShapeRef.IsNull() || aSubShapeRef.IsNull()) return -1;
 
   //Get an ID of <theSubShape>, unique among all sub-shapes of <theMainShape> of the same type
@@ -585,12 +860,8 @@ CORBA::Long GEOM_IShapesOperations_i::GetTopologyIndex
 //=============================================================================
 char* GEOM_IShapesOperations_i::GetShapeTypeString (GEOM::GEOM_Object_ptr theShape)
 {
-  if (theShape == NULL) return NULL;
-
   //Get the reference shape
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return NULL;
 
   // Get shape parameters
@@ -605,15 +876,7 @@ char* GEOM_IShapesOperations_i::GetShapeTypeString (GEOM::GEOM_Object_ptr theSha
 //=============================================================================
 CORBA::Long GEOM_IShapesOperations_i::NumberOfFaces (GEOM::GEOM_Object_ptr theShape)
 {
-  if (theShape == NULL) return -1;
-
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-
-  CORBA::Long aNb = GetOperations()->NumberOfFaces(aShape);
-  if (!GetOperations()->IsDone()) return -1;
-
-  return aNb;
+  return NumberOfSubShapes(theShape, Standard_Integer(TopAbs_FACE));
 }
 
 //=============================================================================
@@ -623,12 +886,21 @@ CORBA::Long GEOM_IShapesOperations_i::NumberOfFaces (GEOM::GEOM_Object_ptr theSh
 //=============================================================================
 CORBA::Long GEOM_IShapesOperations_i::NumberOfEdges (GEOM::GEOM_Object_ptr theShape)
 {
-  if (theShape == NULL) return -1;
+  return NumberOfSubShapes(theShape, Standard_Integer(TopAbs_EDGE));
+}
 
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
+//=============================================================================
+/*!
+ *  NumberOfSubShapes
+ */
+//=============================================================================
+CORBA::Long GEOM_IShapesOperations_i::NumberOfSubShapes (GEOM::GEOM_Object_ptr theShape,
+                                                         const CORBA::Long     theShapeType)
+{
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return -1;
 
-  CORBA::Long aNb = GetOperations()->NumberOfEdges(aShape);
+  CORBA::Long aNb = GetOperations()->NumberOfSubShapes(aShape, theShapeType);
   if (!GetOperations()->IsDone()) return -1;
 
   return aNb;
@@ -647,12 +919,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::ChangeOrientation
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aGEOMObject._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Create the Solid
@@ -674,10 +942,9 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetFreeFacesIDs (GEOM::GEOM_Object_p
   GetOperations()->SetNotDone();
 
   GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
-  if (theShape == NULL) return aSeq._retn();
 
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfInteger) aHSeq =
     GetOperations()->GetFreeFacesIDs(aShape);
@@ -698,26 +965,57 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetFreeFacesIDs (GEOM::GEOM_Object_p
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSharedShapes
                                           (GEOM::GEOM_Object_ptr theShape1,
-					   GEOM::GEOM_Object_ptr theShape2,
-					   const CORBA::Long     theShapeType)
+                                           GEOM::GEOM_Object_ptr theShape2,
+                                           const CORBA::Long     theShapeType)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
-  if (theShape1 == NULL ||
-      theShape2 == NULL) return aSeq._retn();
 
-  Handle(GEOM_Object) aShape1 = GetOperations()->GetEngine()->GetObject
-    (theShape1->GetStudyID(), theShape1->GetEntry());
-  Handle(GEOM_Object) aShape2 = GetOperations()->GetEngine()->GetObject
-    (theShape2->GetStudyID(), theShape2->GetEntry());
+  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
 
-  if (aShape1.IsNull() ||
-      aShape2.IsNull()) return aSeq._retn();
+  if (aShape1.IsNull() || aShape2.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
     GetOperations()->GetSharedShapes(aShape1, aShape2, theShapeType);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetSharedShapesMulti
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSharedShapesMulti
+                                          (const GEOM::ListOfGO& theShapes,
+                                           const CORBA::Long     theShapeType)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Get the shapes
+  std::list<Handle(GEOM_Object)> aShapes;
+  int aLen = theShapes.length();
+  for (int ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aSh = GetObjectImpl(theShapes[ind]);
+    if (aSh.IsNull()) return aSeq._retn();
+    aShapes.push_back(aSh);
+  }
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->GetSharedShapes(aShapes, theShapeType);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 
@@ -763,22 +1061,18 @@ static GEOMAlgo_State ShapeState (const GEOM::shape_state theState)
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnPlane
                                                 (GEOM::GEOM_Object_ptr   theShape,
-						 const CORBA::Long       theShapeType,
-						 GEOM::GEOM_Object_ptr   theAx1,
-						 const GEOM::shape_state theState)
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAx1,
+                                                 const GEOM::shape_state theState)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theAx1 == NULL) return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) anAx1 = GetOperations()->GetEngine()->GetObject
-    (theAx1->GetStudyID(), theAx1->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAx1 = GetObjectImpl(theAx1);
 
   if (aShape.IsNull() || anAx1.IsNull()) return aSeq._retn();
 
@@ -803,25 +1097,20 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnPlane
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnPlaneWithLocation
                                                 (GEOM::GEOM_Object_ptr   theShape,
-						 const CORBA::Long       theShapeType,
-						 GEOM::GEOM_Object_ptr   theAx1,
-						 GEOM::GEOM_Object_ptr   thePnt,
-						 const GEOM::shape_state theState)
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAx1,
+                                                 GEOM::GEOM_Object_ptr   thePnt,
+                                                 const GEOM::shape_state theState)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theAx1 == NULL || thePnt == NULL) return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) anAx1 = GetOperations()->GetEngine()->GetObject
-    (theAx1->GetStudyID(), theAx1->GetEntry());
-  Handle(GEOM_Object) anPnt = GetOperations()->GetEngine()->GetObject
-    (thePnt->GetStudyID(), thePnt->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAx1 = GetObjectImpl(theAx1);
+  Handle(GEOM_Object) anPnt = GetObjectImpl(thePnt);
 
   if (aShape.IsNull() || anAx1.IsNull() || anPnt.IsNull()) return aSeq._retn();
 
@@ -846,23 +1135,19 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnPlaneWithLocation
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnCylinder
                                                 (GEOM::GEOM_Object_ptr   theShape,
-						 const CORBA::Long       theShapeType,
-						 GEOM::GEOM_Object_ptr   theAxis,
-						 const CORBA::Double     theRadius,
-						 const GEOM::shape_state theState)
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAxis,
+                                                 const CORBA::Double     theRadius,
+                                                 const GEOM::shape_state theState)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theAxis == NULL) return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) anAxis = GetOperations()->GetEngine()->GetObject
-    (theAxis->GetStudyID(), theAxis->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
 
   if (aShape.IsNull() || anAxis.IsNull()) return aSeq._retn();
 
@@ -882,28 +1167,63 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnCylinder
 
 //=============================================================================
 /*!
- *  GetShapesOnSphere
+ *  GetShapesOnCylinderWithLocation
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnSphere
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnCylinderWithLocation
                                                 (GEOM::GEOM_Object_ptr   theShape,
-						 const CORBA::Long       theShapeType,
-						 GEOM::GEOM_Object_ptr   theCenter,
-						 const CORBA::Double     theRadius,
-						 const GEOM::shape_state theState)
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAxis,
+                                                 GEOM::GEOM_Object_ptr   thePnt,
+                                                 const CORBA::Double     theRadius,
+                                                 const GEOM::shape_state theState)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theCenter == NULL) return aSeq._retn();
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
+  Handle(GEOM_Object) aPnt   = GetObjectImpl(thePnt);
+
+  if (aShape.IsNull() || anAxis.IsNull() || aPnt.IsNull()) return aSeq._retn();
+
+  //Get Shapes On Cylinder
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->GetShapesOnCylinderWithLocation
+    (aShape, theShapeType, anAxis, aPnt, theRadius, ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnSphere
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnSphere
+                                                (GEOM::GEOM_Object_ptr   theShape,
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theCenter,
+                                                 const CORBA::Double     theRadius,
+                                                 const GEOM::shape_state theState)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aCenter = GetOperations()->GetEngine()->GetObject
-    (theCenter->GetStudyID(), theCenter->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aCenter = GetObjectImpl(theCenter);
 
   if (aShape.IsNull() || aCenter.IsNull()) return aSeq._retn();
 
@@ -940,30 +1260,18 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnQuadrangle
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape            == NULL ||
-      theTopLeftPoint     == NULL ||   
-      theTopRigthPoint    == NULL || 
-      theBottomLeftPoint  == NULL ||
-      theBottomRigthPoint == NULL )
-    return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aTopLeftPoint = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theTopLeftPoint->GetEntry());
-  Handle(GEOM_Object) aTopRigthPoint = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theTopRigthPoint->GetEntry());
-  Handle(GEOM_Object) aBottomLeftPoint = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theBottomLeftPoint->GetEntry());
-  Handle(GEOM_Object) aBottomRigthPoint = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theBottomRigthPoint->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aTopLeftPoint = GetObjectImpl(theTopLeftPoint);
+  Handle(GEOM_Object) aTopRigthPoint = GetObjectImpl(theTopRigthPoint);
+  Handle(GEOM_Object) aBottomLeftPoint = GetObjectImpl(theBottomLeftPoint);
+  Handle(GEOM_Object) aBottomRigthPoint = GetObjectImpl(theBottomRigthPoint);
 
   if (aShape.IsNull() ||
       aTopLeftPoint.IsNull() ||
       aTopRigthPoint.IsNull() ||
       aBottomLeftPoint.IsNull() ||
-      aBottomRigthPoint.IsNull() )
+      aBottomRigthPoint.IsNull())
     return aSeq._retn();
 
   //Get Shapes On Quadrangle
@@ -989,22 +1297,18 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnQuadrangle
 //=============================================================================
 GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnPlaneIDs
                                                 (GEOM::GEOM_Object_ptr   theShape,
-						 const CORBA::Long       theShapeType,
-						 GEOM::GEOM_Object_ptr   theAx1,
-						 const GEOM::shape_state theState)
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAx1,
+                                                 const GEOM::shape_state theState)
 {
   GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theAx1 == NULL) return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) anAx1 = GetOperations()->GetEngine()->GetObject
-    (theAx1->GetStudyID(), theAx1->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAx1 = GetObjectImpl(theAx1);
 
   if (aShape.IsNull() || anAx1.IsNull()) return aSeq._retn();
 
@@ -1029,31 +1333,27 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnPlaneIDs
 //=============================================================================
 GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnPlaneWithLocationIDs
                                                 (GEOM::GEOM_Object_ptr   theShape,
-						 const CORBA::Long       theShapeType,
-						 GEOM::GEOM_Object_ptr   theAx1,
-						 GEOM::GEOM_Object_ptr   thePnt,
-						 const GEOM::shape_state theState)
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAx1,
+                                                 GEOM::GEOM_Object_ptr   thePnt,
+                                                 const GEOM::shape_state theState)
 {
   GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theAx1 == NULL || thePnt == NULL) return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) anAx1 = GetOperations()->GetEngine()->GetObject
-    (theAx1->GetStudyID(), theAx1->GetEntry());
-  Handle(GEOM_Object) anPnt = GetOperations()->GetEngine()->GetObject
-    (thePnt->GetStudyID(), thePnt->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAx1 = GetObjectImpl(theAx1);
+  Handle(GEOM_Object) anPnt = GetObjectImpl(thePnt);
 
   if (aShape.IsNull() || anAx1.IsNull() || anPnt.IsNull()) return aSeq._retn();
 
   //Get Shapes On Plane
   Handle(TColStd_HSequenceOfInteger) aHSeq =
-    GetOperations()->GetShapesOnPlaneWithLocationIDs(aShape, theShapeType, anAx1, anPnt, ShapeState(theState));
+    GetOperations()->GetShapesOnPlaneWithLocationIDs(aShape, theShapeType,
+                                                     anAx1, anPnt, ShapeState(theState));
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 
@@ -1072,23 +1372,19 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnPlaneWithLocationIDs
 //=============================================================================
 GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnCylinderIDs
                                                 (GEOM::GEOM_Object_ptr   theShape,
-						 const CORBA::Long       theShapeType,
-						 GEOM::GEOM_Object_ptr   theAxis,
-						 const CORBA::Double     theRadius,
-						 const GEOM::shape_state theState)
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAxis,
+                                                 const CORBA::Double     theRadius,
+                                                 const GEOM::shape_state theState)
 {
   GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theAxis == NULL) return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) anAxis = GetOperations()->GetEngine()->GetObject
-    (theAxis->GetStudyID(), theAxis->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
 
   if (aShape.IsNull() || anAxis.IsNull()) return aSeq._retn();
 
@@ -1108,28 +1404,63 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnCylinderIDs
 
 //=============================================================================
 /*!
- *  GetShapesOnSphereIDs
+ *  GetShapesOnCylinderWithLocationIDs
  */
 //=============================================================================
-GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnSphereIDs
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnCylinderWithLocationIDs
                                                 (GEOM::GEOM_Object_ptr   theShape,
-						 const CORBA::Long       theShapeType,
-						 GEOM::GEOM_Object_ptr   theCenter,
-						 const CORBA::Double     theRadius,
-						 const GEOM::shape_state theState)
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAxis,
+                                                 GEOM::GEOM_Object_ptr   thePnt,
+                                                 const CORBA::Double     theRadius,
+                                                 const GEOM::shape_state theState)
 {
   GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theCenter == NULL) return aSeq._retn();
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
+  Handle(GEOM_Object) aPnt   = GetObjectImpl(thePnt);
+
+  if (aShape.IsNull() || anAxis.IsNull() || aPnt.IsNull()) return aSeq._retn();
+
+  //Get Shapes On Cylinder
+  Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnCylinderWithLocationIDs
+    (aShape, theShapeType, anAxis, aPnt, theRadius, ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnSphereIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnSphereIDs
+                                                (GEOM::GEOM_Object_ptr   theShape,
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theCenter,
+                                                 const CORBA::Double     theRadius,
+                                                 const GEOM::shape_state theState)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aCenter = GetOperations()->GetEngine()->GetObject
-    (theCenter->GetStudyID(), theCenter->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aCenter = GetObjectImpl(theCenter);
 
   if (aShape.IsNull() || aCenter.IsNull()) return aSeq._retn();
 
@@ -1166,24 +1497,12 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnQuadrangleIDs
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape            == NULL ||
-      theTopLeftPoint     == NULL ||   
-      theTopRigthPoint    == NULL || 
-      theBottomLeftPoint  == NULL ||
-      theBottomRigthPoint == NULL )
-    return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aTopLeftPoint = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theTopLeftPoint->GetEntry());
-  Handle(GEOM_Object) aTopRigthPoint = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theTopRigthPoint->GetEntry());
-  Handle(GEOM_Object) aBottomLeftPoint = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theBottomLeftPoint->GetEntry());
-  Handle(GEOM_Object) aBottomRigthPoint = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theBottomRigthPoint->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aTopLeftPoint = GetObjectImpl(theTopLeftPoint);
+  Handle(GEOM_Object) aTopRigthPoint = GetObjectImpl(theTopRigthPoint);
+  Handle(GEOM_Object) aBottomLeftPoint = GetObjectImpl(theBottomLeftPoint);
+  Handle(GEOM_Object) aBottomRigthPoint = GetObjectImpl(theBottomRigthPoint);
 
   if (aShape.IsNull() ||
       aTopLeftPoint.IsNull() ||
@@ -1224,14 +1543,9 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnBox
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if ( theShape == NULL ||  theBox == NULL )
-    return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aBox = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theBox->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aBox = GetObjectImpl(theBox);
 
   if (aShape.IsNull() || aBox.IsNull() )
     return aSeq._retn();
@@ -1257,7 +1571,7 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnBox
 //=============================================================================
 GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnBoxIDs
                                                 (GEOM::GEOM_Object_ptr theBox,
-						 GEOM::GEOM_Object_ptr theShape,
+                                                 GEOM::GEOM_Object_ptr theShape,
                                                  CORBA::Long           theShapeType,
                                                  GEOM::shape_state     theState)
 {
@@ -1266,14 +1580,9 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnBoxIDs
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if ( theShape == NULL ||  theBox == NULL )
-    return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aBox = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theBox->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aBox = GetObjectImpl(theBox);
 
   if (aShape.IsNull() || aBox.IsNull() )
     return aSeq._retn();
@@ -1300,23 +1609,18 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnBoxIDs
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnShape
                                            (GEOM::GEOM_Object_ptr theCheckShape,
-					    GEOM::GEOM_Object_ptr theShape,
-					    CORBA::Short          theShapeType,
-					    GEOM::shape_state     theState)
+                                            GEOM::GEOM_Object_ptr theShape,
+                                            CORBA::Short          theShapeType,
+                                            GEOM::shape_state     theState)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if ( theShape == NULL ||  theCheckShape == NULL )
-    return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aCheckShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theCheckShape->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aCheckShape = GetObjectImpl(theCheckShape);
 
   if (aShape.IsNull() || aCheckShape.IsNull() )
     return aSeq._retn();
@@ -1344,23 +1648,18 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnShape
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetShapesOnShapeAsCompound
                                            (GEOM::GEOM_Object_ptr theCheckShape,
-					    GEOM::GEOM_Object_ptr theShape,
-					    CORBA::Short          theShapeType,
-					    GEOM::shape_state     theState)
+                                            GEOM::GEOM_Object_ptr theShape,
+                                            CORBA::Short          theShapeType,
+                                            GEOM::shape_state     theState)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if ( theShape == NULL ||  theCheckShape == NULL )
-    return aGEOMObject._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aCheckShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theCheckShape->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aCheckShape = GetObjectImpl(theCheckShape);
 
   if (aShape.IsNull() || aCheckShape.IsNull() )
     return aGEOMObject._retn();
@@ -1383,23 +1682,18 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetShapesOnShapeAsCompound
 //=============================================================================
 GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnShapeIDs
                                            (GEOM::GEOM_Object_ptr theCheckShape,
-					    GEOM::GEOM_Object_ptr theShape,
-					    CORBA::Short          theShapeType,
-					    GEOM::shape_state     theState)
+                                            GEOM::GEOM_Object_ptr theShape,
+                                            CORBA::Short          theShapeType,
+                                            GEOM::shape_state     theState)
 {
   GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if ( theShape == NULL ||  theCheckShape == NULL )
-    return aSeq._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aCheckShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theCheckShape->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aCheckShape = GetObjectImpl(theCheckShape);
 
   if (aShape.IsNull() || aCheckShape.IsNull() )
     return aSeq._retn();
@@ -1426,21 +1720,16 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnShapeIDs
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlace
                                           (GEOM::GEOM_Object_ptr theShapeWhere,
-					   GEOM::GEOM_Object_ptr theShapeWhat)
+                                           GEOM::GEOM_Object_ptr theShapeWhat)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShapeWhere == NULL ||
-      theShapeWhat == NULL) return aGEOMObject._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShapeWhere = GetOperations()->GetEngine()->GetObject
-    (theShapeWhere->GetStudyID(), theShapeWhere->GetEntry());
-  Handle(GEOM_Object) aShapeWhat = GetOperations()->GetEngine()->GetObject
-    (theShapeWhat->GetStudyID(), theShapeWhat->GetEntry());
+  Handle(GEOM_Object) aShapeWhere = GetObjectImpl(theShapeWhere);
+  Handle(GEOM_Object) aShapeWhat = GetObjectImpl(theShapeWhat);
 
   if (aShapeWhere.IsNull() ||
       aShapeWhat.IsNull()) return aGEOMObject._retn();
@@ -1456,26 +1745,51 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlace
 
 //=============================================================================
 /*!
- *  GetInPlaceByHistory
+ *  GetInPlaceOld
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlaceByHistory
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlaceOld
                                           (GEOM::GEOM_Object_ptr theShapeWhere,
-					   GEOM::GEOM_Object_ptr theShapeWhat)
+                                           GEOM::GEOM_Object_ptr theShapeWhat)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShapeWhere == NULL ||
-      theShapeWhat == NULL) return aGEOMObject._retn();
+  //Get the reference objects
+  Handle(GEOM_Object) aShapeWhere = GetObjectImpl(theShapeWhere);
+  Handle(GEOM_Object) aShapeWhat = GetObjectImpl(theShapeWhat);
+
+  if (aShapeWhere.IsNull() ||
+      aShapeWhat.IsNull()) return aGEOMObject._retn();
+
+  //Get Shapes in place of aShapeWhat
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetInPlaceOld(aShapeWhere, aShapeWhat);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetInPlaceByHistory
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlaceByHistory
+                                          (GEOM::GEOM_Object_ptr theShapeWhere,
+                                           GEOM::GEOM_Object_ptr theShapeWhat)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShapeWhere = GetOperations()->GetEngine()->GetObject
-    (theShapeWhere->GetStudyID(), theShapeWhere->GetEntry());
-  Handle(GEOM_Object) aShapeWhat = GetOperations()->GetEngine()->GetObject
-    (theShapeWhat->GetStudyID(), theShapeWhat->GetEntry());
+  Handle(GEOM_Object) aShapeWhere = GetObjectImpl(theShapeWhere);
+  Handle(GEOM_Object) aShapeWhat = GetObjectImpl(theShapeWhat);
 
   if (aShapeWhere.IsNull() ||
       aShapeWhat.IsNull()) return aGEOMObject._retn();
@@ -1496,21 +1810,16 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetInPlaceByHistory
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetSame
                                           (GEOM::GEOM_Object_ptr theShapeWhere,
-					   GEOM::GEOM_Object_ptr theShapeWhat)
+                                           GEOM::GEOM_Object_ptr theShapeWhat)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShapeWhere == NULL ||
-      theShapeWhat == NULL) return aGEOMObject._retn();
-
   //Get the reference objects
-  Handle(GEOM_Object) aShapeWhere = GetOperations()->GetEngine()->GetObject
-    (theShapeWhere->GetStudyID(), theShapeWhere->GetEntry());
-  Handle(GEOM_Object) aShapeWhat = GetOperations()->GetEngine()->GetObject
-    (theShapeWhat->GetStudyID(), theShapeWhat->GetEntry());
+  Handle(GEOM_Object) aShapeWhere = GetObjectImpl(theShapeWhere);
+  Handle(GEOM_Object) aShapeWhat = GetObjectImpl(theShapeWhat);
 
   if (aShapeWhere.IsNull() ||
       aShapeWhat.IsNull()) return aGEOMObject._retn();
@@ -1524,3 +1833,33 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetSame
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  GetSameIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetSameIDs
+                                          (GEOM::GEOM_Object_ptr theShapeWhere,
+                                           GEOM::GEOM_Object_ptr theShapeWhat) {
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShapeWhere = GetObjectImpl(theShapeWhere);
+  Handle(GEOM_Object) aShapeWhat = GetObjectImpl(theShapeWhat);
+
+  if (aShapeWhere.IsNull() ||
+      aShapeWhat.IsNull()) return aSeq._retn();
+
+
+  Handle(TColStd_HSequenceOfInteger) aHSeq =
+    GetOperations()->GetSameIDs(aShapeWhere, aShapeWhat);
+
+  if (!GetOperations()->IsDone() || aHSeq.IsNull()) return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}

@@ -1,24 +1,26 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#  -*- coding: iso-8859-1 -*-
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+# Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+# CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 def TestMeasureOperations (geompy, math):
 
   p0   = geompy.MakeVertex(0 ,  0,  0)
@@ -45,11 +47,30 @@ def TestMeasureOperations (geompy, math):
   else:
     print "\nBox is valid"
 
+  ####### Detect Self-intersections #######
+
+  [Face_1,Face_2] = geompy.SubShapes(box, [33, 23])
+  Translation_1 = geompy.MakeTranslation(Face_1, 5, -15, -40)
+  Compound_1 = geompy.MakeCompound([Face_2, Translation_1])
+  if geompy.CheckSelfIntersections(Compound_1) == True:
+    raise RuntimeError, "Existing self-intersection is not detected"
+
   ####### WhatIs #######
 
   Descr = geompy.WhatIs(box)
   print "\nBox 10x30x70 description:"
   print Descr
+
+  ####### NbShapes #######
+
+  NbSolids = geompy.NbShapes(box, geompy.ShapeType["SOLID"])
+  print "\nBox 10x30x70 quantity of solids:", NbSolids
+
+  ####### ShapeInfo #######
+
+  BoxInfo = geompy.ShapeInfo(box)
+  print "\nBox 10x30x70 shapes:"
+  print BoxInfo
 
   ####### BasicProperties #######
 
@@ -113,7 +134,7 @@ def TestMeasureOperations (geompy, math):
 
   ####### GetNormal #######
 
-  faces = geompy.SubShapeAllSorted(box, geompy.ShapeType["FACE"])
+  faces = geompy.SubShapeAllSortedCentres(box, geompy.ShapeType["FACE"])
   face0 = faces[0]
   vnorm = geompy.GetNormal(face0)
   if vnorm is None:

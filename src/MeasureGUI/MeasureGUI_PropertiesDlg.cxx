@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_PropertiesDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -138,9 +139,11 @@ void MeasureGUI_PropertiesDlg::processObject()
     myGrp->LineEdit4->setText( "" );
   }
   else {
-    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aLength ) );
-    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( anArea ) );
-    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aVolume ) );
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aLength, aPrecision ) );
+    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( anArea,  aPrecision ) );
+    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aVolume, aPrecision ) );
   }
 }
 
@@ -155,16 +158,16 @@ bool MeasureGUI_PropertiesDlg::getParameters( double& theLength,
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetBasicProperties(
-        myObj, theLength, theArea, theVolume );
+      anOper->GetBasicProperties( myObj, theLength, theArea, theVolume );
     }
     catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }
 
@@ -174,16 +177,13 @@ bool MeasureGUI_PropertiesDlg::getParameters( double& theLength,
 //=================================================================================
 SALOME_Prs* MeasureGUI_PropertiesDlg::buildPrs()
 {
-  TopoDS_Shape aShape, aResult;
+  SALOME_Prs* prs = 0;
+  TopoDS_Shape shape;
   
-  if ( myObj->_is_nil() ||
-       !GEOMBase::GetShape( myObj, aShape ) ||
-       aShape.IsNull() ||
-       aShape.ShapeType() != TopAbs_EDGE ||
-       !GEOMBase::CreateArrowForLinearEdge( aShape, aResult ) ||
-       aResult.IsNull() )
-    return 0;
-
-  return getDisplayer()->BuildPrs( aResult );
-  
+  if ( GEOMBase::GetShape( myObj, shape, TopAbs_EDGE ) ) {
+    shape = GEOMBase::CreateArrowForLinearEdge( shape );
+    if ( !shape.IsNull() )
+      prs = getDisplayer()->BuildPrs( shape );
+  }
+  return prs;
 }

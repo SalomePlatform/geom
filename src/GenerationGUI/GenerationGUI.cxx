@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GenerationGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -26,6 +27,7 @@
 #include "GenerationGUI.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
@@ -67,10 +69,10 @@ bool GenerationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
-  case 4031: aDlg = new GenerationGUI_PrismDlg   ( getGeometryGUI(), parent ); break;
-  case 4032: aDlg = new GenerationGUI_RevolDlg   ( getGeometryGUI(), parent ); break;
-  case 4033: aDlg = new GenerationGUI_FillingDlg ( getGeometryGUI(), parent ); break;
-  case 4034: aDlg = new GenerationGUI_PipeDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPrism:      aDlg = new GenerationGUI_PrismDlg   ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpRevolution: aDlg = new GenerationGUI_RevolDlg   ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpFilling:    aDlg = new GenerationGUI_FillingDlg ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPipe:       aDlg = new GenerationGUI_PipeDlg    ( getGeometryGUI(), parent ); break;
     
   default: app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
   }

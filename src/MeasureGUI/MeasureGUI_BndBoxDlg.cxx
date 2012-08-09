@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_BndBoxDlg.cxx
 // Author : Nicolas REJNERI, Open CASCADE S.A.S.
@@ -26,7 +27,10 @@
 #include "MeasureGUI_BndBoxDlg.h"
 #include "MeasureGUI_Widgets.h"
 
+#include "GeometryGUI.h"
+
 #include <GEOMBase.h>
+#include <DlgRef.h>
 
 #include <GEOM_Function.hxx>
 #include <GEOM_Object.hxx>
@@ -86,6 +90,12 @@ MeasureGUI_BndBoxDlg::MeasureGUI_BndBoxDlg( GeometryGUI* GUI, QWidget* parent )
   myGrp->LineEdit22->setReadOnly( true );
   myGrp->LineEdit31->setReadOnly( true );
   myGrp->LineEdit32->setReadOnly( true );
+  myGrp->LineEdit11->setMinimumWidth(120);
+  myGrp->LineEdit12->setMinimumWidth(120);
+  myGrp->LineEdit21->setMinimumWidth(120);
+  myGrp->LineEdit22->setMinimumWidth(120);
+  myGrp->LineEdit31->setMinimumWidth(120);
+  myGrp->LineEdit32->setMinimumWidth(120);
   myGrp->PushButton1->setIcon( image1 );
   myGrp->LineEdit1->setReadOnly( true );
 
@@ -140,14 +150,17 @@ void MeasureGUI_BndBoxDlg::processObject()
     myGrp->LineEdit32->setText( "" );
   }
   else {
-    myGrp->LineEdit11->setText( tr( "%1" ).arg( aXMin, 12, 'f', 6 ) );
-    myGrp->LineEdit12->setText( tr( "%1" ).arg( aXMax, 12, 'f', 6 ) );
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
 
-    myGrp->LineEdit21->setText( tr( "%1" ).arg( aYMin, 12, 'f', 6 ) );
-    myGrp->LineEdit22->setText( tr( "%1" ).arg( aYMax, 12, 'f', 6 ) );
+    myGrp->LineEdit11->setText( DlgRef::PrintDoubleValue( aXMin, aPrecision ) );
+    myGrp->LineEdit12->setText( DlgRef::PrintDoubleValue( aXMax, aPrecision ) );
 
-    myGrp->LineEdit31->setText( tr( "%1" ).arg( aZMin, 12, 'f', 6 ) );
-    myGrp->LineEdit32->setText( tr( "%1" ).arg( aZMax, 12, 'f', 6 ) );            
+    myGrp->LineEdit21->setText( DlgRef::PrintDoubleValue( aYMin, aPrecision ) );
+    myGrp->LineEdit22->setText( DlgRef::PrintDoubleValue( aYMax, aPrecision ) );
+
+    myGrp->LineEdit31->setText( DlgRef::PrintDoubleValue( aZMin, aPrecision ) );
+    myGrp->LineEdit32->setText( DlgRef::PrintDoubleValue( aZMax, aPrecision ) );
   }
 }
 
@@ -162,72 +175,63 @@ bool MeasureGUI_BndBoxDlg::getParameters( double& theXmin, double& theXmax,
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
       Handle(Poly_Triangulation) Trtn = 0; 
 
-      Handle(GEOM_Object) anObject = GEOM_Engine::GetEngine()->GetObject(myObj->GetStudyID(), myObj->GetEntry());
-      if (!anObject.IsNull())
-      {
-	Handle(GEOM_Function) aRefShape = anObject->GetLastFunction();
-	if (!aRefShape.IsNull())
-	{
-	  TopoDS_Shape aShape = aRefShape->GetValue();
-	  if (!aShape.IsNull())
-	  {
-	    TopLoc_Location l;
-	    Handle(Poly_Triangulation) T;
-	    TopExp_Explorer ex;
-	    for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
-	      const TopoDS_Face& F = TopoDS::Face(ex.Current());
-	      
-	      BRepAdaptor_Surface surf(F);
-	      if (surf.GetType() == GeomAbs_Sphere)
-	      {
-		T = BRep_Tool::Triangulation(F, l);
-		if (!T.IsNull()) {
-		  Handle(Poly_Triangulation) NullTrtn = 0;
-		  (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(NullTrtn);
-		  Trtn = T;
-		  break;
-		}
-	      }
-	      else
-		break;
-	    }
-	  }
-	}
-      }
+      GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
+      if ( CORBA::is_nil(aGeomGen) )
+        return false;
 
-      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetBoundingBox(
-        myObj, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax );
+      QString IOR = GEOMBase::GetIORFromObject( myObj );
+      GEOM::GEOM_Object_var anObject = aGeomGen->GetIORFromString( IOR.toLatin1().constData() );
+      if ( CORBA::is_nil(anObject) )
+        return false;
+
+      TopoDS_Shape aShape;
+      GEOMBase::GetShape(anObject, aShape, TopAbs_SHAPE);
+      if ( aShape.IsNull() )
+        return false;
       
-      if (!Trtn.IsNull())
-      {
-	Handle(GEOM_Function) aRefShape = anObject->GetLastFunction();
-	if (!aRefShape.IsNull())
-	{
-	  TopoDS_Shape aShape = aRefShape->GetValue();
-	  if (!aShape.IsNull())
-	  {
-	    TopLoc_Location l;
-	    Handle(Poly_Triangulation) T;
-	    TopExp_Explorer ex;
-	    for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
-	      const TopoDS_Face& F = TopoDS::Face(ex.Current());
-	      (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(Trtn);
-	      break;
-	    }
-	  }
-	}
+      TopLoc_Location l;
+      Handle(Poly_Triangulation) T;
+      TopExp_Explorer ex;
+      for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
+        const TopoDS_Face& F = TopoDS::Face(ex.Current());
+        BRepAdaptor_Surface surf(F);
+        if (surf.GetType() == GeomAbs_Sphere) {
+          T = BRep_Tool::Triangulation(F, l);
+          if (!T.IsNull()) {
+            Handle(Poly_Triangulation) NullTrtn = 0;
+            (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(NullTrtn);
+            Trtn = T;
+            break;
+          }
+        }
+        else
+          break;
       }
-
+      
+      anOper->GetBoundingBox( myObj, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax );
+      
+      if (!Trtn.IsNull()) {
+        TopLoc_Location l;
+        Handle(Poly_Triangulation) T;
+        TopExp_Explorer ex;
+        for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
+          const TopoDS_Face& F = TopoDS::Face(ex.Current());
+          (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(Trtn);
+          break;
+        }
+      }
+      
     }
     catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }
 

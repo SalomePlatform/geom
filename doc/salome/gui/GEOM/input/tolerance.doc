@@ -1,0 +1,17 @@
+/*!
+
+\page tolerance_page Tolerance 
+
+\n Returns the maximum and the minimum tolerance for the selected
+geometrical object.
+
+\n <b>Result:</b> Displays the tolerance values (FaceMinTol,
+FaceMaxTol, EgdeMinTol, EgdeMaxTol, VertexMinTol, VertexMaxTol).
+\n <b>TUI Command:</b> <em>geompy.Tolerance(Shape),</em> where \em Shape
+is a shape for which minimal and maximal tolerances are returned.
+
+See also a \ref tui_tolerance_page "TUI example".
+
+\image html new-tolerance.png
+
+*/

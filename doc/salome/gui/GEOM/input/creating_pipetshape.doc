@@ -1,0 +1,59 @@
+/*!
+
+\page create_pipetshape_page PipeTShape
+
+To create a \b PipeTShape in the <b>Main Menu</b> select <b>New Entity -> Primitives -> PipeTShape</b>
+
+Specify the parameters of the PipeTShape object in the opened dialog
+box and press "Apply" or "Apply & Close" button.
+The <b>result</b> of the operation will be a <b>GEOM_Object</b>.
+
+<b>TUI Command:</b> <em>geompy.MakePipeTShape(R1, W1, L1, R2, W2, L2, HexMesh=True, P1=None, P2=None, P3=None)</em>
+
+<b>Arguments:</b>
+- \b R1 - Radius of the main T-shape pipe.
+- \b W1 - Thickness of the main T-shape pipe.
+- \b L1 - Length of the main T-shape pipe.
+- \b R2 - Radius of the incident T-shape pipe.
+- \b W2 - Thickness of the incident T-shape pipe.
+- \b L2 - Length of the incident T-shape pipe.
+- \b HexMesh - If True, the shape is splitted into blocks (suitable for hexaedral mesh).
+- \b P1 - First junction point of the main pipe (GEOM Vertex).
+- \b P2 - Second junction point of the main pipe (GEOM Vertex).
+- \b P3 - Junction point of the incident pipe (GEOM Vertex).
+
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
+
+\image html pipetshape_dlg.png
+
+Example:
+
+\image html pipetshape.png
+
+A Pipe T-Shape can be created with a chamfer at the junction of the main and the incident pipes:
+
+<b>TUI Command:</b> <em>geompy.MakePipeTShapeChamfer(R1, W1, L1, R2, W2, L2, H, W, HexMesh=True, P1=None, P2=None, P3=None)</em>
+
+<b>The arguments are the same as of the normal Pipe T-Shape plus:</b>
+- \b H - Height of the chamfer along the incident pipe.
+- \b W - Width of the chamfer along the main pipe.
+
+Example:
+
+\image html pipetshapechamfer.png
+
+A Pipe T-Shape can be created with a fillet at the junction of the main and the incident pipes:
+
+<b>TUI Command:</b> <em>geompy.MakePipeTShapeFillet(R1, W1, L1, R2, W2, L2, RF, HexMesh=True, P1=None, P2=None, P3=None)</em>
+
+<b>The arguments are the same as of the normal Pipe T-Shape plus:</b>
+- \b RF - Radius of the fillet.
+
+Example:
+
+\image html pipetshapefillet.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_pipetshape "Advanced objects".
+
+*/

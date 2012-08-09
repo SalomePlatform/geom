@@ -1,24 +1,22 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 //  GEOM RepairGUI : GUI for Geometry component
 //  File   : RepairGUI_RemoveExtraEdgesDlg.cxx
 //  Author : Michael Zorin, Open CASCADE S.A.S.
@@ -46,7 +44,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 RepairGUI_RemoveExtraEdgesDlg::RepairGUI_RemoveExtraEdgesDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-							      bool modal )
+                                                              bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -63,11 +61,14 @@ RepairGUI_RemoveExtraEdgesDlg::RepairGUI_RemoveExtraEdgesDlg( GeometryGUI* theGe
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel( centralWidget() );
+  GroupPoints = new DlgRef_1Sel1Check( centralWidget() );
+
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_REMOVE_EXTRA_EDGES" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_SELECTED_SHAPE" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
+
+  GroupPoints->CheckButton1->setText( tr( "GEOM_RMEE_UNION_FACES" ) );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -101,9 +102,13 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
   
   myOkObject = false;
 
+  GroupPoints->CheckButton1->setChecked( false );
+
   activateSelection();
   
   mainFrame()->GroupBoxPublish->show();
+  //Hide preview checkbox
+  mainFrame()->CheckBoxPreview->hide();
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -113,9 +118,11 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "REMOVE_EXTRA_EDGES_NEW_OBJ_NAME" ) );
+  resize(100,100);
+  SelectionIntoArgument();
 }
 
 
@@ -125,6 +132,7 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
 //=================================================================================
 void RepairGUI_RemoveExtraEdgesDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -174,11 +182,10 @@ void RepairGUI_RemoveExtraEdgesDlg::SelectionIntoArgument()
   }
   
   // nbSel == 1
-  Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_ptr aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), testResult );
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if ( !testResult )
+  if ( CORBA::is_nil( aSelectedObject ) )
     return;
   
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
@@ -224,7 +231,7 @@ void RepairGUI_RemoveExtraEdgesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
 }
@@ -248,6 +255,7 @@ void RepairGUI_RemoveExtraEdgesDlg::enterEvent(QEvent* e)
 void RepairGUI_RemoveExtraEdgesDlg::activateSelection()
 {
   TColStd_MapOfInteger aTypes;
+  aTypes.Add( GEOM_SHELL );
   aTypes.Add( GEOM_SOLID );
   aTypes.Add( GEOM_COMPOUND );
   globalSelection( aTypes );
@@ -278,11 +286,15 @@ bool RepairGUI_RemoveExtraEdgesDlg::isValid( QString& msg )
 bool RepairGUI_RemoveExtraEdgesDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
-  
-  anObj = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->RemoveExtraEdges( myObject );
-  
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+
+  int nbFacesOptimum = -1; // -1 means do not union faces
+  if (GroupPoints->CheckButton1->isChecked())
+    nbFacesOptimum = 0; // 0 means union all faces, that possible
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+  anObj = anOper->RemoveExtraEdges(myObject, nbFacesOptimum);
+
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
 
   return true;
 }
@@ -297,7 +309,8 @@ void RepairGUI_RemoveExtraEdgesDlg::restoreSubShapes( SALOMEDS::Study_ptr   theS
   if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
-					 /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GetInPlaceByHistory
-					 /*theInheritFirstArg=*/true );
+                                         /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GetInPlaceByHistory
+                                         /*theInheritFirstArg=*/true,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked() );
   }
 }

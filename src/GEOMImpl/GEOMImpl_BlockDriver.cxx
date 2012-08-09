@@ -1,24 +1,24 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
 #include <Standard_Stream.hxx>
 
 #include <BRepOffsetAPI_MakeFilling.hxx>
@@ -36,13 +36,14 @@
 
 #include <ShHealOper_Sewing.hxx>
 #include <ShHealOper_ShapeProcess.hxx>
-#include <GEOMAlgo_Gluer.hxx>
+//#include <GEOMAlgo_Gluer.hxx>
 #include <BlockFix_BlockFixAPI.hxx>
 
 #include "utilities.h"
 
 #include <TNaming_CopyShape.hxx>
 
+#include <BRepAdaptor_Curve.hxx>
 #include <BRepLib.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
@@ -81,6 +82,9 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 #include <GProp_GProps.hxx>
+
+#include <Geom_Line.hxx>
+#include <GC_MakeLine.hxx>
 
 #include <gp.hxx>
 #include <gp_Pnt.hxx>
@@ -234,7 +238,14 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
           ("Impossible to build a connected wire from the given edges");
       }
       TopoDS_Wire aWire = *MW;
-      delete MW; 
+      delete MW;
+
+      // check the wire closure
+      TopoDS_Vertex aV1, aV2;
+      TopExp::Vertices(aWire, aV1, aV2);
+      if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+        aWire.Closed( true );
+
       if (!aWire.Closed()) {
         Standard_ConstructionError::Raise
           ("Impossible to build a closed wire from the given edges");
@@ -263,16 +274,26 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
 
       // create two edges, linking ends of the given edges
       TopoDS_Vertex V11, V12, V21, V22;
-      TopExp::Vertices(anEdge1, V11, V12, Standard_True);
-      TopExp::Vertices(anEdge2, V21, V22, Standard_True);
+      TopExp::Vertices(anEdge1, V11, V12, Standard_False);
+      TopExp::Vertices(anEdge2, V21, V22, Standard_False);
       if (V11.IsNull() || V12.IsNull() ||
           V21.IsNull() || V22.IsNull()) {
         Standard_NullObject::Raise("Bad edge for face construction: vertex is not defined");
       }
-      gp_Pnt P11 = BRep_Tool::Pnt(V11);
-      gp_Pnt P12 = BRep_Tool::Pnt(V12);
-      gp_Pnt P21 = BRep_Tool::Pnt(V21);
-      gp_Pnt P22 = BRep_Tool::Pnt(V22);
+
+      BRepAdaptor_Curve C1 (anEdge1);
+      BRepAdaptor_Curve C2 (anEdge2);
+      gp_Pnt P11, P12, P21, P22;
+
+      // Mantis issue 0020599: Creation of a quadrangle face from 2 edges: SIGSEGV
+      P11 = C1.Value(C1.FirstParameter());
+      P12 = C1.Value(C1.LastParameter());
+      P21 = C2.Value(C2.FirstParameter());
+      P22 = C2.Value(C2.LastParameter());
+      //gp_Pnt P11 = BRep_Tool::Pnt(V11);
+      //gp_Pnt P12 = BRep_Tool::Pnt(V12);
+      //gp_Pnt P21 = BRep_Tool::Pnt(V21);
+      //gp_Pnt P22 = BRep_Tool::Pnt(V22);
 
       if (P11.Distance(P21) < prec || P12.Distance(P22) < prec ||
           P11.Distance(P22) < prec || P12.Distance(P21) < prec) {
@@ -282,24 +303,70 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       Standard_Real per11 = P11.Distance(P21) + P12.Distance(P22);
       Standard_Real per12 = P11.Distance(P22) + P12.Distance(P21);
 
+      BRep_Builder BB;
+
       TopoDS_Edge anEdge3;
       TopoDS_Edge anEdge4;
+
+      // Mantis issue 0020599: Creation of a quadrangle face from 2 edges: SIGSEGV
       if (per11 < per12) {
-        anEdge3 = BRepBuilderAPI_MakeEdge(V11, V21);
-        anEdge4 = BRepBuilderAPI_MakeEdge(V12, V22);
-      } else {
-        anEdge3 = BRepBuilderAPI_MakeEdge(V11, V22);
-        anEdge4 = BRepBuilderAPI_MakeEdge(V12, V21);
+        Handle(Geom_Line) Line1 = GC_MakeLine(P11, P21).Value();
+        Handle(Geom_Line) Line2 = GC_MakeLine(P12, P22).Value();
+
+        BB.MakeEdge(anEdge3, Line1, Precision::Confusion());
+        BB.Range(anEdge3, 0., P11.Distance(P21));
+        BB.Add(anEdge3, V11.Oriented(TopAbs_FORWARD));
+        BB.Add(anEdge3, V21.Oriented(TopAbs_REVERSED));
+
+        BB.MakeEdge(anEdge4, Line2, Precision::Confusion());
+        BB.Range(anEdge4, 0., P12.Distance(P22));
+        BB.Add(anEdge4, V12.Oriented(TopAbs_FORWARD));
+        BB.Add(anEdge4, V22.Oriented(TopAbs_REVERSED));
       }
+      else {
+        Handle(Geom_Line) Line1 = GC_MakeLine(P11, P22).Value();
+        Handle(Geom_Line) Line2 = GC_MakeLine(P12, P21).Value();
+
+        BB.MakeEdge(anEdge3, Line1, Precision::Confusion());
+        BB.Range(anEdge3, 0., P11.Distance(P22));
+        BB.Add(anEdge3, V11.Oriented(TopAbs_FORWARD));
+        BB.Add(anEdge3, V22.Oriented(TopAbs_REVERSED));
+
+        BB.MakeEdge(anEdge4, Line2, Precision::Confusion());
+        BB.Range(anEdge4, 0., P12.Distance(P21));
+        BB.Add(anEdge4, V12.Oriented(TopAbs_FORWARD));
+        BB.Add(anEdge4, V21.Oriented(TopAbs_REVERSED));
+      }
+      //if (per11 < per12) {
+      //  anEdge3 = BRepBuilderAPI_MakeEdge(V11, V21);
+      //  anEdge4 = BRepBuilderAPI_MakeEdge(V12, V22);
+      //} else {
+      //  anEdge3 = BRepBuilderAPI_MakeEdge(V11, V22);
+      //  anEdge4 = BRepBuilderAPI_MakeEdge(V12, V21);
+      //}
 
       // build a wire
-      BRepBuilderAPI_MakeWire MW (anEdge1, anEdge3, anEdge2, anEdge4);
-      if (!MW.IsDone()) {
+      BRepBuilderAPI_MakeWire* MW;
+      MW = new BRepBuilderAPI_MakeWire(anEdge1, anEdge3, anEdge2, anEdge4);
+      if (!MW->IsDone()) {
         Standard_ConstructionError::Raise("Wire construction failed");
       }
 
+      TopoDS_Wire aWire = *MW;
+      delete MW;
+
+      TopoDS_Vertex aV1, aV2;
+      TopExp::Vertices(aWire, aV1, aV2);
+      if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+        aWire.Closed( true );
+
+      if (!aWire.Closed()) {
+        Standard_ConstructionError::Raise
+          ("Impossible to build a closed wire from the given edges");
+      }
+
       // try to build face on the wire
-      GEOMImpl_Block6Explorer::MakeFace(MW, Standard_False, aShape);
+      GEOMImpl_Block6Explorer::MakeFace(aWire, Standard_False, aShape);
       if (aShape.IsNull()) {
         Standard_ConstructionError::Raise("Face construction failed");
       }
@@ -357,6 +424,7 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       }
 
       // try to build face on the wire
+      aMkPoly.Close();
       GEOMImpl_Block6Explorer::MakeFace(aMkPoly, Standard_False, aShape);
       if (aShape.IsNull()) {
         Standard_ConstructionError::Raise("Face construction failed");
@@ -367,7 +435,6 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       BRepTools_Quilt Glue;
 
       if (aType == BLOCK_SIX_FACES) {
-
         // Make block (hexahedral solid) from six faces
         for (Standard_Integer ind = 1; ind <= nbshapes; ind++) {
           if (anArgs(ind).ShapeType() != TopAbs_FACE) {
@@ -376,8 +443,8 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
           Glue.Add(anArgs(ind));
         }
 
-      } else {
-
+      }
+      else {
         // Make block (hexahedral solid) from two opposite faces
         if (anArgs(1).ShapeType() != TopAbs_FACE ||
             anArgs(2).ShapeType() != TopAbs_FACE) {
@@ -461,9 +528,8 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       }
       aShape = Sol;
       BRepLib::SameParameter(aShape, 1.E-5, Standard_True);
-
-    } else if (aType == BLOCK_COMPOUND_GLUE) {
-
+    }
+    else if (aType == BLOCK_COMPOUND_GLUE) {
       // Make blocks compound from a compound
       if (anArgs(1).ShapeType() != TopAbs_COMPOUND &&
           anArgs(2).ShapeType() != TopAbs_COMPSOLID) {
@@ -472,23 +538,15 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
 
       TopoDS_Shape aCompound = anArgs(1);
 
-      // Glue coincident faces and edges (with Partition algorithm).
-      //NMTAlgo_Splitter1 PS;
-      //PS.AddShape(aCompound);
-      //PS.Compute();
-      //PS.SetRemoveWebs(Standard_False);
-      //      PS.Build(aCompound.ShapeType());
-      //PS.Build(TopAbs_SOLID);
-      //aShape = PS.Shape();
-
-      GEOMAlgo_Gluer aGluer;
-      aGluer.SetShape(aCompound);
-      aGluer.SetCheckGeometry(Standard_True);
-      aGluer.Perform();
-      aShape = aGluer.Result();
-
-
-    } else {
+      // Glue coincident faces and edges
+      aShape = GEOMImpl_GlueDriver::GlueFaces(aCompound, Precision::Confusion(), Standard_True);
+      //GEOMAlgo_Gluer aGluer;
+      //aGluer.SetShape(aCompound);
+      //aGluer.SetCheckGeometry(Standard_True);
+      //aGluer.Perform();
+      //aShape = aGluer.Result();
+    }
+    else {
     }
 
   } else { // Multi-transformations and compound improving
@@ -503,9 +561,16 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("Null Shape given");
       }
 
+      // Copy shape to avoid problems (Mantis issue 0021683)
+      TopoDS_Shape aShapeCopy;
+      TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+      TNaming_CopyShape::CopyTool(aBlockOrComp, aMapTShapes, aShapeCopy);
+      aBlockOrComp = aShapeCopy;
+
       // 1. Improve solids with seam and/or degenerated edges
       BlockFix_BlockFixAPI aTool;
       //aTool.Tolerance() = toler;
+      aTool.OptimumNbFaces() = aCI.GetOptimumNbFaces();
       aTool.SetShape(aBlockOrComp);
       aTool.Perform();
 
@@ -1012,7 +1077,8 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_BlockDriver_Type_()
 //function : DownCast
 //purpose  :
 //=======================================================================
-const Handle(GEOMImpl_BlockDriver) Handle(GEOMImpl_BlockDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
+const Handle(GEOMImpl_BlockDriver) Handle(GEOMImpl_BlockDriver)::DownCast
+  (const Handle(Standard_Transient)& AnObject)
 {
   Handle(GEOMImpl_BlockDriver) _anOtherObject;
 
@@ -1022,5 +1088,5 @@ const Handle(GEOMImpl_BlockDriver) Handle(GEOMImpl_BlockDriver)::DownCast(const 
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

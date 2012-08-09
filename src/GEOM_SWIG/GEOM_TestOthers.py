@@ -1,34 +1,35 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#  -*- coding: iso-8859-1 -*-
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+# Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+# CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#  GEOM GEOM_SWIG : binding of C++ implementaion with Python
 #  File   : GEOM_TestOthers.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
 #  $Header$
+#
 # ! Please, if you edit this example file, update also
 # ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_others.doc
 # ! as some sequences of symbols from this example are used during
 # ! documentation generation to identify certain places of this file
-#
+
 import os
 
 def TestExportImport (geompy, shape):
@@ -75,7 +76,7 @@ def TestExportImport (geompy, shape):
   geompy.ExportSTEP(shape, fileExportImportSTEP)
 
   # Import
-  Import = geompy.Import(fileExportImport, "BREP")
+  Import = geompy.ImportFile(fileExportImport, "BREP")
 
   id_Import = geompy.addToStudy(Import, "Import")
 
@@ -103,6 +104,8 @@ def TestOtherOperations (geompy, math):
   vx = geompy.MakeVectorDXDYDZ( 1,  0,  0)
   vy = geompy.MakeVectorDXDYDZ( 0,  1,  0)
   vz = geompy.MakeVectorDXDYDZ( 0,  0,  1)
+
+  v_y = geompy.MakeVectorDXDYDZ( 0, -1,  0)
 
   p11 = geompy.MakeVertex( 0,  0, 0)
   p12 = geompy.MakeVertex(30,  0, 0)
@@ -177,7 +180,7 @@ def TestOtherOperations (geompy, math):
 
   # MakeFilletAll
   radius_fillet = 10.
-  face5 = geompy.SubShapeSorted(Box, geompy.ShapeType["FACE"], [5])
+  face5 = geompy.SubShapeSortedCentres(Box, geompy.ShapeType["FACE"], [5])
   f_glob_id = geompy.GetSubShapeID(Box, face5)
   SuppFace = geompy.SuppressFaces(Box, [f_glob_id])
 
@@ -192,7 +195,7 @@ def TestOtherOperations (geompy, math):
   # MakeChamfer
   d1 = 13.
   d2 = 7.
-  box_faces = geompy.SubShapeAllSorted(Box, geompy.ShapeType["FACE"])
+  box_faces = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["FACE"])
   f_ind_1 = geompy.GetSubShapeID(Box, box_faces[0])
   f_ind_2 = geompy.GetSubShapeID(Box, box_faces[1])
   f_ind_3 = geompy.GetSubShapeID(Box, box_faces[2])
@@ -201,15 +204,22 @@ def TestOtherOperations (geompy, math):
                                    [f_ind_1, f_ind_2, f_ind_3])
   id_MakeChamfer = geompy.addToStudy(MakeChamfer, "MakeChamfer")
 
-  # NumberOfFaces
+  # NumberOf
   NumberOfFaces = geompy.NumberOfFaces(Box)
   if NumberOfFaces != 6:
     print "Bad number of faces in BOX!"
 
-  # NumberOfEdges
   NumberOfEdges = geompy.NumberOfEdges(Box)
   if NumberOfEdges != 12:
     print "Bad number of edges in BOX!"
+
+  NumberOfSolids = geompy.NumberOfSolids(Box)
+  if NumberOfSolids != 1:
+    print "Bad number of solids in BOX!"
+
+  NumberOfShapes = geompy.NumberOfSubShapes(Box, geompy.ShapeType["SHAPE"])
+  if NumberOfShapes != 34:
+    print "Bad number of shapes in BOX!"
 
   # MakeBlockExplode
   Compound = geompy.MakeCompound([Box, Sphere])
@@ -320,18 +330,17 @@ def TestOtherOperations (geompy, math):
 
   v_0pp = geompy.MakeVectorDXDYDZ( 0,  1,  1)
   #v_0np = geompy.MakeVectorDXDYDZ( 0, -1,  1)
-  #v_p0p = geompy.MakeVectorDXDYDZ( 1,  0,  1)
-  #v_n0p = geompy.MakeVectorDXDYDZ(-1,  0,  1)
-  #v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
-  #v_np0 = geompy.MakeVectorDXDYDZ(-1,  1,  0)
-  v_0n0 = geompy.MakeVectorDXDYDZ( 0, -1,  0)
+  v_p0p = geompy.MakeVectorDXDYDZ( 1,  0,  1)
+  v_p0n = geompy.MakeVectorDXDYDZ(1,  0,  -1)
+  v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
+  v_pn0 = geompy.MakeVectorDXDYDZ(1,  -1,  0)
 
   #pln_0pp = geompy.MakePlane(p0, v_0pp, 300)
   #pln_0np = geompy.MakePlane(p0, v_0np, 300)
-  #pln_p0p = geompy.MakePlane(p0, v_p0p, 300)
-  #pln_n0p = geompy.MakePlane(p0, v_n0p, 300)
-  #pln_pp0 = geompy.MakePlane(p0, v_pp0, 300)
-  #pln_np0 = geompy.MakePlane(p0, v_np0, 300)
+  pln_p0p = geompy.MakePlane(p0, v_p0p, 300)
+  pln_p0n = geompy.MakePlane(p0, v_p0n, 300)
+  pln_pp0 = geompy.MakePlane(p0, v_pp0, 300)
+  pln_pn0 = geompy.MakePlane(p0, v_pn0, 300)
   #
   #part_objs = [b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0]
   #part_tool_1 = geompy.MakePartition(part_objs, [], [], [b0])
@@ -410,17 +419,70 @@ def TestOtherOperations (geompy, math):
 
   geompy.addToStudy(freeFaces, "freeFaces")
 
-  # RemoveExtraEdges
+  # RemoveExtraEdges with union of all faces, sharing common surfaces
+  tools = [pln_pp0, pln_pn0, pln_p0p, pln_p0n]
+
+  Partition_1 = geompy.MakePartition([Sphere], tools, [], [], geompy.ShapeType["SOLID"], 0, [])
+  geompy.addToStudy(Partition_1, "Partition_1")
+
+  faces = geompy.SubShapeAllSortedCentres(Partition_1, geompy.ShapeType["FACE"])
+
+  Face_1 = faces[0]
+  Face_2 = faces[39]
+  Face_3 = faces[40]
+
+  geompy.addToStudyInFather(Partition_1, Face_1, "Face_1")
+  geompy.addToStudyInFather(Partition_1, Face_2, "Face_2")
+  geompy.addToStudyInFather(Partition_1, Face_3, "Face_3")
+
+  Vector_5 = geompy.MakeVectorDXDYDZ(0, 20, 0)
+  geompy.addToStudy(Vector_5, "Vector_5")
+
+  Rotation_1 = geompy.MakeRotation(Face_1, Vector_5, 90*math.pi/180.0)
+  Rotation_2 = geompy.MakeRotation(Face_1, Vector_5, 180*math.pi/180.0)
+  Rotation_3 = geompy.MakeRotation(Face_1, Vector_5, 270*math.pi/180.0)
+
+  geompy.addToStudy(Rotation_1, "Rotation_1")
+  geompy.addToStudy(Rotation_2, "Rotation_2")
+  geompy.addToStudy(Rotation_3, "Rotation_3")
+
+  Vector_6 = geompy.MakeVectorDXDYDZ(0, 0, 20)
+  geompy.addToStudy(Vector_6, "Vector_6")
+
+  Rotation_4 = geompy.MakeRotation(Face_1, Vector_6, 90*math.pi/180.0)
+  Rotation_5 = geompy.MakeRotation(Face_1, Vector_6, -90*math.pi/180.0)
+  geompy.addToStudy(Rotation_4, "Rotation_4")
+  geompy.addToStudy(Rotation_5, "Rotation_5")
+
+  Shell_1 = geompy.MakeShell([Face_1, Rotation_1, Rotation_2, Rotation_3, Rotation_4, Rotation_5])
+  Solid_1 = geompy.MakeSolid([Shell_1])
+  NoExtraEdges_1 = geompy.RemoveExtraEdges(Solid_1, True) # doUnionFaces = True
+
+  geompy.addToStudy(Shell_1, "Shell_1")
+  geompy.addToStudy(Solid_1, "Solid_1")
+  geompy.addToStudy(NoExtraEdges_1, "NoExtraEdges_1")
+
+  # RemoveExtraEdges (by default, doUnionFaces = False)
   freeFacesWithoutExtra = geompy.RemoveExtraEdges(freeFaces)
 
   geompy.addToStudy(freeFacesWithoutExtra, "freeFacesWithoutExtra")
 
   # GetSharedShapes
-  sharedFaces = geompy.GetSharedShapes(part, freeFacesWithoutExtra,
+  sharedFaces = geompy.GetSharedShapes(part, freeFaces,
                                        geompy.ShapeType["FACE"])
-
+  ind = 1
   for shFace in sharedFaces:
-    geompy.addToStudy(shFace, "sharedFace")
+    geompy.addToStudy(shFace, "sharedFace_" + `ind`)
+    ind = ind + 1
+    pass
+
+  sharedEdges = geompy.GetSharedShapesMulti([part, freeFaces],
+                                             geompy.ShapeType["EDGE"])
+  ind = 1
+  for shEdge in sharedEdges:
+    geompy.addToStudy(shEdge, "sharedEdge_" + `ind`)
+    ind = ind + 1
+    pass
 
   # CheckAndImprove
   blocksComp = geompy.CheckAndImprove(part)
@@ -447,6 +509,17 @@ def TestOtherOperations (geompy, math):
   geompy.addToStudyInFather(blocksComp, pb0_top_1, "point from blocksComp (-50,  50,  50)")
   geompy.addToStudyInFather(blocksComp, pb0_bot_1, "point from blocksComp (-50, -50, -50)")
 
+  # GetVertexNearPoint(theShape, thePoint)
+  pb0_top_2_near = geompy.MakeVertex(40, 40, 40)
+  pb0_top_2      = geompy.GetVertexNearPoint(blocksComp, pb0_top_2_near)
+
+  geompy.addToStudyInFather(blocksComp, pb0_top_2, "point from blocksComp near (40,  40,  40)")
+
+  # GetEdge(theShape, thePoint1, thePoint2)
+  edge_top_y50 = geompy.GetEdge(blocksComp, pb0_top_1, pb0_top_2)
+
+  geompy.addToStudyInFather(blocksComp, edge_top_y50, "edge from blocksComp by two points")
+
   # GetEdgeNearPoint(theShape, thePoint)
   pmidle = geompy.MakeVertex(50, 0, 50)
   edge1 = geompy.GetEdgeNearPoint(blocksComp, pmidle)
@@ -457,6 +530,11 @@ def TestOtherOperations (geompy, math):
   b0_image = geompy.GetBlockByParts(blocksComp, [pb0_top_1, pb0_bot_1, edge1])
 
   geompy.addToStudyInFather(blocksComp, b0_image, "b0 image")
+
+  # GetShapesNearPoint(theShape, thePoint, theShapeType, theTolerance)
+  b0_faces_plus = geompy.GetShapesNearPoint(blocksComp, pb0_top_2_near, geompy.ShapeType["FACE"], 0.01)
+
+  geompy.addToStudyInFather(blocksComp, b0_faces_plus, "faces near point (40,  40,  40)")
 
   # GetShapesOnPlane
   faces_on_pln = geompy.GetShapesOnPlane(blocksComp, geompy.ShapeType["FACE"],
@@ -474,13 +552,13 @@ def TestOtherOperations (geompy, math):
   # GetShapesOnPlaneWithLocation
   Loc = geompy.MakeVertex(0, -50, 0)
   edges_on_pln = geompy.GetShapesOnPlaneWithLocation(blocksComp, geompy.ShapeType["EDGE"],
-                                                     v_0n0, Loc, geompy.GEOM.ST_ON)
+                                                     v_y, Loc, geompy.GEOM.ST_ON)
   for edge_i in edges_on_pln:
     geompy.addToStudy(edge_i, "Edge on Plane (N = (0, -1, 0) & Location = (0, -50, 0)")
-    
+
   # GetShapesOnPlaneWithLocationIDs
   edges_on_pln_ids = geompy.GetShapesOnPlaneWithLocationIDs(
-           blocksComp, geompy.ShapeType["EDGE"], v_0n0, Loc, geompy.GEOM.ST_ON)
+           blocksComp, geompy.ShapeType["EDGE"], v_y, Loc, geompy.GEOM.ST_ON)
   group_edges_on_pln = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(group_edges_on_pln, edges_on_pln_ids)
   grname = "Group of edges on Plane (N = (0, -1, 0) & Location = (0, -50, 0))"
@@ -498,6 +576,19 @@ def TestOtherOperations (geompy, math):
   edges_in = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(edges_in, edges_in_cyl_ids)
   geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), r = 55)")
+
+  # GetShapesOnCylinderWithLocation
+  edges_out_cyl = geompy.GetShapesOnCylinderWithLocation(blocksComp, geompy.ShapeType["EDGE"],
+                                                         vy, p11, 55, geompy.GEOM.ST_OUT)
+  for edge_i in edges_out_cyl:
+    geompy.addToStudy(edge_i, "Edge out of Cylinder (axis = (0, 1, 0),  loc = (0, 0, 0), r = 55)")
+
+  # GetShapesOnCylinderWithLocationIDs
+  edges_in_cyl_ids = geompy.GetShapesOnCylinderWithLocationIDs(blocksComp, geompy.ShapeType["EDGE"],
+                                                               vy, p11, 80, geompy.GEOM.ST_IN)
+  edges_in = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
+  geompy.UnionIDs(edges_in, edges_in_cyl_ids)
+  geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), loc = (0, 0, 0), r = 80)")
 
   # GetShapesOnSphere
   vertices_on_sph = geompy.GetShapesOnSphere(blocksComp, geompy.ShapeType["VERTEX"],
@@ -562,10 +653,10 @@ def TestOtherOperations (geompy, math):
   pcyl = geompy.MakeVertex(50, 50, -50)
   cyli = geompy.MakeCylinder(pcyl, vz, 40, 100)
   fuse = geompy.MakeFuse(sph1, cyli)
-  fuse = geompy.MakeFuse(fuse, sph2)
+  sh_1 = geompy.MakeFuse(fuse, sph2)
   # As after Fuse we have a compound, we need to obtain a solid from it
-  shsh = geompy.SubShapeAll(fuse, geompy.ShapeType["SOLID"])
-  sh_1 = shsh[0]
+  #shsh = geompy.SubShapeAll(fuse, geompy.ShapeType["SOLID"])
+  #sh_1 = shsh[0]
   geompy.addToStudy(sh_1, "sh_1")
 
   # GetShapesOnShape

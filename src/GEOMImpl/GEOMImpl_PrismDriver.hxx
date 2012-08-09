@@ -1,27 +1,28 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  File   : GEOMImpl_PrismDriver.ixx
 //  Module : GEOMImpl
-//
+
 #ifndef _GEOMImpl_PrismDriver_HeaderFile
 #define _GEOMImpl_PrismDriver_HeaderFile
 
@@ -103,9 +104,9 @@ class Handle(GEOMImpl_PrismDriver) : public Handle(TFunction_Driver) {
       return (GEOMImpl_PrismDriver *)ControlAccess();
      }
 
-   Standard_EXPORT ~Handle(GEOMImpl_PrismDriver)() {};
+    Standard_EXPORT ~Handle(GEOMImpl_PrismDriver)() {};
  
-   Standard_EXPORT static const Handle(GEOMImpl_PrismDriver) DownCast(const Handle(Standard_Transient)& AnObject);
+    Standard_EXPORT static const Handle(GEOMImpl_PrismDriver) DownCast(const Handle(Standard_Transient)& AnObject);
 };
 
 #ifndef _TFunction_Driver_HeaderFile
@@ -118,6 +119,10 @@ class Handle(GEOMImpl_PrismDriver) : public Handle(TFunction_Driver) {
 #include <Standard_CString.hxx>
 #endif
 
+#include <TopoDS_Shape.hxx>
+#include <gp_Vec.hxx>
+#include <Standard_Real.hxx>
+
 class TColStd_SequenceOfExtendedString;
 
 
@@ -125,35 +130,48 @@ class GEOMImpl_PrismDriver : public TFunction_Driver {
 
 public:
 
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
+  inline void* operator new(size_t,void* anAddress) 
+  {
+    return anAddress;
+  }
+  inline void* operator new(size_t size) 
+  { 
+    return Standard::Allocate(size); 
+  }
+  inline void  operator delete(void *anAddress) 
+  { 
+    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  }
 
- // Methods PUBLIC
- // 
-Standard_EXPORT GEOMImpl_PrismDriver();
-Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
-Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
-Standard_EXPORT static const Standard_GUID& GetID();
-Standard_EXPORT ~GEOMImpl_PrismDriver() {};
+  // Methods PUBLIC
+
+  Standard_EXPORT GEOMImpl_PrismDriver();
+  Standard_EXPORT ~GEOMImpl_PrismDriver() {};
+
+  Standard_EXPORT virtual Standard_Integer Execute (TFunction_Logbook& log) const; 
+  Standard_EXPORT virtual void Validate (TFunction_Logbook&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute (const TFunction_Logbook&) const { return Standard_True; }
+  Standard_EXPORT static const Standard_GUID& GetID();
+
+  Standard_EXPORT static TopoDS_Shape MakeScaledPrism (const TopoDS_Shape& theShapeBase,
+                                                       const gp_Vec&       theVector,
+                                                       const Standard_Real theScaleFactor,
+                                                       const gp_Pnt&       theCDG = gp::Origin(),
+                                                       bool                isCDG = false);
+  
+  Standard_EXPORT static TopoDS_Shape MakeDraftPrism (const TopoDS_Shape& theInitShape,
+                                                      const TopoDS_Shape& theBaseShape,
+                                                      const Standard_Real theHeight,
+                                                      const Standard_Real theAngle,
+                                                      bool                isProtrusion,
+                                                      const TopoDS_Shape& theSupport);
 
 
- // Type management
- //
-Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_PrismDriver_Type_();
-Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_PrismDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_PrismDriver) == AType || TFunction_Driver::IsKind(AType)); } 
+  // Type management
 
+  Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_PrismDriver_Type_();
+  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_PrismDriver) ; }
+  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_PrismDriver) == AType || TFunction_Driver::IsKind(AType)); } 
 
 };
 

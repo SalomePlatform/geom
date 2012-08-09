@@ -1,27 +1,28 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Builder_4.cxx
-// Created:	
-// Author:	Peter KURNEV 
+
+// File:        GEOMAlgo_Builder_4.cxx
+// Created:
+// Author:      Peter KURNEV
 //
 #include <GEOMAlgo_Builder.hxx>
 
@@ -42,17 +43,16 @@
 
 static
   void MapShapes(const TopoDS_Shape& aS,
-		 TopTools_MapOfShape& aM);
+                 TopTools_MapOfShape& aM);
 
 //=======================================================================
 //function : Generated
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Builder::Generated(const TopoDS_Shape& theS)
 {
-  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
-  IntTools_Context& aCtx=pPF->ChangeContext();
+  const Handle(IntTools_Context)& aCtx=pPF->Context();
   //
   Standard_Boolean bHasImage, bToReverse;
   TopAbs_ShapeEnum aType;
@@ -71,28 +71,28 @@ static
   //
   aType=theS.ShapeType();
   //
-  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE || 
-      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) { 
+  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE ||
+      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
     const TopTools_ListOfShape& aLSp=myImages.Image(theS);
     aIt.Initialize(aLSp);
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aSp=aIt.Value();
       if (mySameDomainShapes.Contains(aSp)) {
-	if (myMapShape.Contains(aSp)) {
-	  TopoDS_Shape aSpR=mySameDomainShapes.FindFromKey(aSp);
-	  //
-	  if (aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
-	    aSpR.Orientation(theS.Orientation());
-	  }
-	  else {
-	    bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aSpR, theS, aCtx);
-	    if (bToReverse) {
-	      aSpR.Reverse();
-	    }
-	  }
-	  //
-	  myHistShapes.Append(aSpR);
-	}
+        if (myMapShape.Contains(aSp)) {
+          TopoDS_Shape aSpR=mySameDomainShapes.FindFromKey(aSp);
+          //
+          if (aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
+            aSpR.Orientation(theS.Orientation());
+          }
+          else {
+            bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aSpR, theS, aCtx);
+            if (bToReverse) {
+              aSpR.Reverse();
+            }
+          }
+          //
+          myHistShapes.Append(aSpR);
+        }
       }
     }
   }
@@ -101,13 +101,12 @@ static
 }
 //=======================================================================
 //function : Modified
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Builder::Modified(const TopoDS_Shape& theS)
 {
-  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
-  IntTools_Context& aCtx=pPF->ChangeContext();
+  const Handle(IntTools_Context)& aCtx=pPF->Context();
   //
   Standard_Boolean bHasImage, bToReverse;
   TopAbs_ShapeEnum aType;
@@ -126,27 +125,27 @@ static
   //
   aType=theS.ShapeType();
   //
-  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE || 
-      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) { 
+  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE ||
+      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
     const TopTools_ListOfShape& aLSp=myImages.Image(theS);
     aIt.Initialize(aLSp);
     for (; aIt.More(); aIt.Next()) {
       TopoDS_Shape aSp=aIt.Value();
       if (!mySameDomainShapes.Contains(aSp)) {
-	if (myMapShape.Contains(aSp)) {
-	  //
-	  if (aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
-	    aSp.Orientation(theS.Orientation());
-	  }
-	  else {
-	    bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aSp, theS, aCtx);
-	    if (bToReverse) {
-	      aSp.Reverse();
-	    }
-	  }
-	  //
-	  myHistShapes.Append(aSp);
-	}
+        if (myMapShape.Contains(aSp)) {
+          //
+          if (aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
+            aSp.Orientation(theS.Orientation());
+          }
+          else {
+            bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aSp, theS, aCtx);
+            if (bToReverse) {
+              aSp.Reverse();
+            }
+          }
+          //
+          myHistShapes.Append(aSp);
+        }
       }
     }
   }
@@ -155,7 +154,7 @@ static
 }
 //=======================================================================
 //function : IsDeleted
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_Builder::IsDeleted(const TopoDS_Shape& theS)
 {
@@ -180,23 +179,23 @@ static
   }
   //
   aType=theS.ShapeType();
-  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE || 
-      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) { 
+  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE ||
+      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
     const TopTools_ListOfShape& aLSp=myImages.Image(theS);
     aIt.Initialize(aLSp);
     for (; aIt.More(); aIt.Next()) {
       TopoDS_Shape aSp=aIt.Value();
       //
       if (!mySameDomainShapes.Contains(aSp)) {
-	if (myMapShape.Contains(aSp)) {
-	  return bRet; //false
-	}
+        if (myMapShape.Contains(aSp)) {
+          return bRet; //false
+        }
       }
       else {
-	TopoDS_Shape aSpR=mySameDomainShapes.FindFromKey(aSp);
-	if (myMapShape.Contains(aSpR)) {
-	  return bRet; //false
-	}
+        TopoDS_Shape aSpR=mySameDomainShapes.FindFromKey(aSp);
+        if (myMapShape.Contains(aSpR)) {
+          return bRet; //false
+        }
       }
     }
   }
@@ -204,7 +203,7 @@ static
 }
 //=======================================================================
 //function : PrepareHistory
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::PrepareHistory()
 {
@@ -218,10 +217,10 @@ static
   TopTools_ListIteratorOfListOfShape aIt;
   TopTools_MapIteratorOfMapOfShape aItM;
   //
-  // 1. Clearing 
+  // 1. Clearing
   GEOMAlgo_BuilderShape::PrepareHistory();
   //
-  // 2. myMapShape - all shapes of result with theirs sub-shapes 
+  // 2. myMapShape - all shapes of result with theirs sub-shapes
   MapShapes(myShape, myMapShape);
   //
   // 3. MS - all argument shapes with theirs sub-shapes
@@ -244,68 +243,68 @@ static
     bHasImage=myImages.HasImage(aSx);
     if (!bHasImage) {
       if (myMapShape.Contains(aSx)) {
-	aLSx.Append(aSx);
-	myImagesResult.Add(aSx, aLSx);
+        aLSx.Append(aSx);
+        myImagesResult.Add(aSx, aLSx);
       }
     }
     else {
       const TopTools_ListOfShape& aLSp=myImages.Image(aSx);
       aIt.Initialize(aLSp);
       for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aSp=aIt.Value();
-	if (myMapShape.Contains(aSp)) {
-	  aLSx.Append(aSp);
-	}
+        const TopoDS_Shape& aSp=aIt.Value();
+        if (myMapShape.Contains(aSp)) {
+          aLSx.Append(aSp);
+        }
       }
       myImagesResult.Add(aSx, aLSx);
     }
     //
     //modified by NIZNHY-PKV Thu Dec  7 11:34:10 2006t
     //
-    // 4.2 As it was 
+    // 4.2 As it was
     if (!myHasDeleted) {
       myHasDeleted=IsDeleted(aSx);//xx
     }
     //
     if (!myHasGenerated || !myHasModified) {
-      if (aType==TopAbs_EDGE   || aType==TopAbs_FACE || 
-	  aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
-	//modified by NIZNHY-PKV Thu Dec  7 11:53:01 2006f
-	//bHasImage=myImages.HasImage(aSx);
-	//modified by NIZNHY-PKV Thu Dec  7 11:53:04 2006t
-	if (bHasImage) {
-	  const TopTools_ListOfShape& aLSp=myImages.Image(aSx);
-	  aIt.Initialize(aLSp);
-	  for (; aIt.More(); aIt.Next()) {
-	    const TopoDS_Shape& aSp=aIt.Value();
-	    //
-	    if (myMapShape.Contains(aSp)) {
-	      bContainsSD=mySameDomainShapes.Contains(aSp);
-	      //
-	      if (!myHasGenerated) {
-		if (bContainsSD) {
-		  myHasGenerated=Standard_True;
-		}
-	      }
-	      if (!myHasModified) {
-		if (!bContainsSD) {
-		  myHasModified=Standard_True;
-		}
-	      }
-	    } // if (myMapShape.Contains(aSp))
-	  }
-	}
-      } 
+      if (aType==TopAbs_EDGE   || aType==TopAbs_FACE ||
+          aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
+        //modified by NIZNHY-PKV Thu Dec  7 11:53:01 2006f
+        //bHasImage=myImages.HasImage(aSx);
+        //modified by NIZNHY-PKV Thu Dec  7 11:53:04 2006t
+        if (bHasImage) {
+          const TopTools_ListOfShape& aLSp=myImages.Image(aSx);
+          aIt.Initialize(aLSp);
+          for (; aIt.More(); aIt.Next()) {
+            const TopoDS_Shape& aSp=aIt.Value();
+            //
+            if (myMapShape.Contains(aSp)) {
+              bContainsSD=mySameDomainShapes.Contains(aSp);
+              //
+              if (!myHasGenerated) {
+                if (bContainsSD) {
+                  myHasGenerated=Standard_True;
+                }
+              }
+              if (!myHasModified) {
+                if (!bContainsSD) {
+                  myHasModified=Standard_True;
+                }
+              }
+            } // if (myMapShape.Contains(aSp))
+          }
+        }
+      }
     }
   }
-  
+
 }
 //=======================================================================
 //function : MapShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void MapShapes(const TopoDS_Shape& theS,
-		 TopTools_MapOfShape& theM)
+                 TopTools_MapOfShape& theM)
 {
   theM.Add(theS);
   TopoDS_Iterator anIt;

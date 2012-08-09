@@ -1,29 +1,27 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
+// File:        NMTTools_CheckerSI.cxx
+// Created:     Mon Feb 19 11:32:08 2007
+// Author:      Peter KURNEV
 //
-// File:	NMTTools_CheckerSI.cxx
-// Created:	Mon Feb 19 11:32:08 2007
-// Author:	Peter KURNEV
-//
-#include <NMTTools_CheckerSI.ixx>
+#include <NMTTools_CheckerSI.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_IteratorCheckerSI.hxx>
 
@@ -48,28 +46,28 @@
 
 static
   Standard_Boolean IsValid(const TopoDS_Edge& aE,
-			   const TopoDS_Vertex& aV,
-			   const Standard_Real aTV1,
-			   const Standard_Real aTV2);
+                           const TopoDS_Vertex& aV,
+                           const Standard_Real aTV1,
+                           const Standard_Real aTV2);
 
 //=======================================================================
 // function: PreparePaveBlocks
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_CheckerSI::PreparePaveBlocks(const TopAbs_ShapeEnum aType1, 
-					     const TopAbs_ShapeEnum aType2)
+  void NMTTools_CheckerSI::PreparePaveBlocks(const TopAbs_ShapeEnum aType1,
+                                             const TopAbs_ShapeEnum aType2)
 {
   NMTTools_PaveFiller::PreparePaveBlocks(aType1, aType2);
 }
 //=======================================================================
 // function: PreparePaveBlocks
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_CheckerSI::PreparePaveBlocks(const Standard_Integer nE)
 {
   myIsDone=Standard_False;
   //
-  char buf[32]={"SR"};
+  // char buf[32]={"SR"};
   Standard_Boolean bIsValid;
   Standard_Integer nV1, nV2, iErr;
   Standard_Real aT1, aT2;
@@ -77,7 +75,7 @@ static
   TopoDS_Vertex aV1, aV2;
   //
   BOPTools_ListOfPaveBlock& aLPB=mySplitShapesPool(myDS->RefEdge(nE));
-  // Edge 
+  // Edge
   aE=TopoDS::Edge(myDS->Shape(nE));
   if (BRep_Tool::Degenerated(aE)) {
     myIsDone=Standard_True;
@@ -85,7 +83,7 @@ static
   }
   //
   BOPTools_PaveSet& aPS=myPavePool(myDS->RefEdge(nE));
-  
+
   BOPTools_PaveBlockIterator aPBIt(nE, aPS);
   for (; aPBIt.More(); aPBIt.Next()) {
     BOPTools_PaveBlock& aPB=aPBIt.Value();
@@ -98,15 +96,15 @@ static
     //
     const BOPTools_Pave& aPave2=aPB.Pave2();
     nV2=aPave2.Index();
-    aV2=TopoDS::Vertex(myDS->Shape(nV2)); 
+    aV2=TopoDS::Vertex(myDS->Shape(nV2));
     aT2=aPave2.Param();
     //
     bIsValid=Standard_True;
     if (nV1==nV2) {
       bIsValid=IsValid(aE, aV1, aT1, aT2);
       if (!bIsValid) {
-	//printf(" pb SR: nV    nE: %d  nV1:( %d %15.10lf ) nV2:( %d %15.10lf )\n", nE, nV1, aT1, nV2, aT2);
-	myStopStatus=1;
+        //printf(" pb SR: nV    nE: %d  nV1:( %d %15.10lf ) nV2:( %d %15.10lf )\n", nE, nV1, aT1, nV2, aT2);
+        myStopStatus=1;
       }
     }
     //
@@ -123,18 +121,18 @@ static
     }
     aPB.SetShrunkRange(aSR);
     aLPB.Append(aPB);
-  } //for (; aPBIt.More(); aPBIt.Next()) 
+  } //for (; aPBIt.More(); aPBIt.Next())
   myIsDone=Standard_True;
 }
 
 //=======================================================================
 //function : IsValid
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsValid(const TopoDS_Edge& aE,
-			 const TopoDS_Vertex& aV,
-			 const Standard_Real aTV1,
-			 const Standard_Real aTV2)
+                         const TopoDS_Vertex& aV,
+                         const Standard_Real aTV1,
+                         const Standard_Real aTV2)
 {
   Standard_Boolean bRet;
   Standard_Integer i, aNbP, aNbP1;

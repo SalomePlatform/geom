@@ -5,11 +5,13 @@
 <ul>
 <li>\subpage tui_basic_geom_objs_page</li>
 <li>\subpage tui_primitives_page</li>
+<li>\subpage tui_advanced_geom_objs_page</li>
 <li>\subpage tui_complex_objs_page</li>
 <li>\subpage tui_working_with_groups_page</li>
 <li>\subpage tui_building_by_blocks_page</li>
 <li>\subpage tui_sketcher_page</li>
-<li>\subpage tui_advanced_geom_objs_page</li>
+<li>\subpage tui_3dsketcher_page</li>
+<li>\subpage tui_topological_geom_objs_page</li>
 </ul>
 
 */

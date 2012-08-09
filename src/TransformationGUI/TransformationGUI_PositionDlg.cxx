@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : TransformationGUI_PositionDlg.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -90,8 +91,7 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
 
   // Activate Create a Copy mode
   Group1->CheckButton1->setChecked(true);
-  Group1->CheckButton1->setChecked(false);
-  CreateCopyModeChanged(true);
+  CreateCopyModeChanged();
 
   Init();
 }
@@ -122,12 +122,15 @@ void TransformationGUI_PositionDlg::Init()
   Group1->LineEdit4->setText("");
   Group1->LineEdit5->setText("");
 
-  initSpinBox(Group1->SpinBox_DX, 0, 1, 0.05, 6); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox(Group1->SpinBox_DX, 0, 1, 0.05, "parametric_precision" );
   Group1->SpinBox_DX->setValue(0);
 
   Group1->CheckButton2->setEnabled(false);
 
-  myStartLCS = myEndLCS = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
+  myStartLCS.nullify();
+  myEndLCS.nullify();
+  myPath.nullify();
 
   mainFrame()->GroupBoxPublish->show();
 
@@ -142,12 +145,7 @@ void TransformationGUI_PositionDlg::Init()
   connect(Group1->PushButton4, SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
   connect(Group1->PushButton5, SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
 
-  connect(Group1->LineEdit1,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group1->LineEdit2,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group1->LineEdit4,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group1->LineEdit5,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-
-  connect(Group1->CheckButton1,   SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
+  connect(Group1->CheckButton1,   SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged()));
   connect(Group1->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   connect(Group1->CheckButton2,   SIGNAL(toggled(bool)), this, SLOT(SelectionTypeButtonClicked()));
@@ -169,9 +167,9 @@ void TransformationGUI_PositionDlg::ConstructorsClicked (int constructorId)
   Group1->LineEdit2->clear();
   Group1->LineEdit4->clear();
   Group1->LineEdit5->clear();
-  myStartLCS = GEOM::GEOM_Object::_nil();
-  myEndLCS = GEOM::GEOM_Object::_nil();
-  myPath = GEOM::GEOM_Object::_nil();
+  myStartLCS.nullify();
+  myEndLCS.nullify();
+  myPath.nullify();
 
   switch (constructorId) {
   case 0:
@@ -250,7 +248,7 @@ void TransformationGUI_PositionDlg::ConstructorsClicked (int constructorId)
     SelectionIntoArgument();
   }
   else {
-    displayPreview();
+    processPreview();
   }
 }
 
@@ -276,7 +274,7 @@ void TransformationGUI_PositionDlg::SelectionTypeButtonClicked()
 //=================================================================================
 void TransformationGUI_PositionDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -285,6 +283,7 @@ void TransformationGUI_PositionDlg::ValueChangedInSpinBox()
 //=================================================================================
 void TransformationGUI_PositionDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -299,8 +298,11 @@ bool TransformationGUI_PositionDlg::ClickOnApply()
     return false;
 
   initName();
+
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
+  SelectionIntoArgument();
+
   return true;
 }
 
@@ -313,124 +315,59 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
 
-  if (myEditCurrentArgument == Group1->LineEdit1)
-    myObjects.length(0);
-  else if (myEditCurrentArgument == Group1->LineEdit2)
-    myStartLCS = GEOM::GEOM_Object::_nil();
-  else if (myEditCurrentArgument == Group1->LineEdit4)
-    myEndLCS = GEOM::GEOM_Object::_nil();
-  else if (myEditCurrentArgument == Group1->LineEdit5)
-    myPath = GEOM::GEOM_Object::_nil();
-
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  QString aName;
-
-  if (myEditCurrentArgument == Group1->LineEdit1) {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
-    if (aNbSel < 1)
-      return;
-
-    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
-    if (!myObjects.length())
-      return;
-    else
-      myEditCurrentArgument->setText(aName);
-
-    if (getConstructorId() == 2)
-      Group1->PushButton5->click();
+  if ( myEditCurrentArgument == Group1->LineEdit1 ) {
+    myObjects = getSelected( TopAbs_SHAPE, -1 );
+    if ( !myObjects.isEmpty() ) {
+      QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
+      myEditCurrentArgument->setText( aName );
+    }
   }
-  else if (myEditCurrentArgument == Group1->LineEdit2) {
-    if (aSelList.Extent() != 1)
-      return;
-
-    // nbSel == 1
-    Standard_Boolean testResult = Standard_False;
-    myStartLCS = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult || CORBA::is_nil(myStartLCS))
-      return;
-
-    aName = GEOMBase::GetName(myStartLCS);
-    myEditCurrentArgument->setText(aName);
-
-    if (!myStartLCS->_is_nil() && myEndLCS->_is_nil())
-      Group1->PushButton4->click();
+  else if ( myEditCurrentArgument == Group1->LineEdit5 ) {
+    QList<TopAbs_ShapeEnum> types;
+    types << TopAbs_EDGE << TopAbs_WIRE;
+    GEOM::GeomObjPtr aSelectedObject = getSelected( types );
+    TopoDS_Shape aShape;
+    if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+      QString aName = GEOMBase::GetName( aSelectedObject.get() );
+      myEditCurrentArgument->setText( aName );
+      myPath = aSelectedObject;
+      if ( myObjects.isEmpty() )
+	Group1->PushButton1->click();
+    }
+    else {
+      myPath.nullify();
+    }
   }
-  else if (myEditCurrentArgument == Group1->LineEdit4) {
-    myEndLCS = GEOM::GEOM_Object::_nil();
-    if (aSelList.Extent() != 1)
-      return;
-
-    Standard_Boolean testResult = Standard_False;
-    myEndLCS = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult || CORBA::is_nil(myEndLCS))
-      return;
-
-    aName = GEOMBase::GetName(myEndLCS);
-    myEditCurrentArgument->setText(aName);
-
-    if (!myEndLCS->_is_nil() && !myObjects.length())
-      Group1->PushButton1->click();
-  }
-  else if (myEditCurrentArgument == Group1->LineEdit5) {
-    myPath = GEOM::GEOM_Object::_nil();
-    if (aSelList.Extent() != 1)
-      return;
-
-    Standard_Boolean testResult = Standard_False;
-    GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult || aSelectedObject->_is_nil())
-      return;
-
-    aName = GEOMBase::GetName(myPath);
-    // Local Selection
-    TopoDS_Shape S;
-    if (!GEOMBase::GetShape(aSelectedObject, S))
-      return;
-    
-    TColStd_IndexedMapOfInteger aMap;
-    aSelMgr->GetIndexes(aSelList.First(), aMap);
-    aName = GEOMBase::GetName(aSelectedObject);
-    if (aMap.Extent() == 1) {
-      int anIndex = aMap(1);
-      aName.append(":edge_" + QString::number(anIndex));
-      
-      //Find SubShape Object in Father
-      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-      
-      if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
-	GEOM::GEOM_IShapesOperations_var aShapesOp =
-	  getGeomEngine()->GetIShapesOperations(getStudyId());
-	aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+  else {
+    GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_SHAPE );
+    TopoDS_Shape aShape;
+    if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+      QString aName = GEOMBase::GetName( aSelectedObject.get() );
+      myEditCurrentArgument->setText( aName );
+      if ( myEditCurrentArgument == Group1->LineEdit2 ) {
+	myStartLCS = aSelectedObject;
+	if ( !myEndLCS )
+	  Group1->PushButton4->click();
+	else if ( myObjects.isEmpty() )
+	  Group1->PushButton1->click();
       }
-      else { // get Object from study
-	aSelectedObject = aFindedObject;
+      else if ( myEditCurrentArgument == Group1->LineEdit4 ) {
+	myEndLCS = aSelectedObject;
+	if ( myObjects.isEmpty() )
+	  Group1->PushButton1->click();
+	else if ( getConstructorId() == 1 && !myStartLCS )
+	  Group1->PushButton2->click();
       }
     }
     else {
-      if (S.ShapeType() != TopAbs_EDGE && S.ShapeType() != TopAbs_WIRE) {
-	aSelectedObject = GEOM::GEOM_Object::_nil();
-	aName = "";
-	return;
-      }
+      if ( myEditCurrentArgument == Group1->LineEdit2 )
+	myStartLCS.nullify();
+      else if ( myEditCurrentArgument == Group1->LineEdit4 )
+	myEndLCS.nullify();
     }
-    
-    myEditCurrentArgument->setText(aName);
-    myPath = aSelectedObject;
-
-    if (!myPath->_is_nil() && !myObjects.length())
-      Group1->PushButton1->click();
   }
 
-  // clear selection
-  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this, SLOT(SelectionIntoArgument()));
-
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -521,28 +458,7 @@ void TransformationGUI_PositionDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
-}
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void TransformationGUI_PositionDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == Group1->LineEdit1 ||
-      send == Group1->LineEdit2 ||
-      send == Group1->LineEdit4 ||
-      send == Group1->LineEdit5 ) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-
-  if (send == Group1->LineEdit5)
-    Group1->CheckButton2->setEnabled(true);
-  else
-    Group1->CheckButton2->setEnabled(false);
+  processPreview();
 }
 
 //=================================================================================
@@ -553,10 +469,10 @@ void TransformationGUI_PositionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -586,15 +502,21 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_PositionDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_PositionDlg::isValid (QString& /*msg*/)
 {
-  bool res;
-  if (getConstructorId() == 0)
-    res = !(myObjects.length() == 0 || myEndLCS->_is_nil());
-  else if ( getConstructorId() == 1 )
-    res = !(myObjects.length() == 0 || myStartLCS->_is_nil() || myEndLCS->_is_nil());
-  else if ( getConstructorId() == 2 )
-    res = !(myObjects.length() == 0 || myPath->_is_nil());
-
-  return res;
+  bool ok = false;
+  switch (getConstructorId()) {
+  case 0:
+    ok = !myObjects.isEmpty() && myEndLCS;
+    break;
+  case 1:
+    ok = !myObjects.isEmpty() && myStartLCS && myEndLCS;
+    break;
+  case 2:
+    ok = !myObjects.isEmpty() && myPath;
+    break;
+  default:
+    break;
+  }
+  return ok;
 }
 
 //=================================================================================
@@ -607,16 +529,15 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
   bool toCreateCopy = IsPreview() || Group1->CheckButton1->isChecked();
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     {
-      for (int i = 0; i < myObjects.length(); i++) {
-        if (toCreateCopy)
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            PositionShapeCopy(myObjects[i], myObjects[i], myEndLCS);
-        else
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            PositionShape(myObjects[i], myObjects[i], myEndLCS);
+      for (int i = 0; i < myObjects.count(); i++) {
+        anObj = toCreateCopy ? 
+          anOper->PositionShapeCopy(myObjects[i].get(), myObjects[i].get(), myEndLCS.get()) :
+          anOper->PositionShape(myObjects[i].get(), myObjects[i].get(), myEndLCS.get());
 
         if (!anObj->_is_nil())
           objects.push_back(anObj._retn());
@@ -626,13 +547,10 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
     }
   case 1:
     {
-      for (int i = 0; i < myObjects.length(); i++) {
-        if (toCreateCopy)
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            PositionShapeCopy(myObjects[i], myStartLCS, myEndLCS);
-        else
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            PositionShape(myObjects[i], myStartLCS, myEndLCS);
+      for (int i = 0; i < myObjects.count(); i++) {
+          anObj = toCreateCopy ? 
+            anOper->PositionShapeCopy(myObjects[i].get(), myStartLCS.get(), myEndLCS.get()) :
+            anOper->PositionShape(myObjects[i].get(), myStartLCS.get(), myEndLCS.get());
         if (!anObj->_is_nil())
           objects.push_back(anObj._retn());
       }
@@ -643,11 +561,10 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
     {
       double aDistance = Group1->SpinBox_DX->value();
       bool toReverse = Group1->CheckButton3->isChecked();
-      for (int i = 0; i < myObjects.length(); i++) {
-	anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-	  PositionAlongPath(myObjects[i], myPath, aDistance, toCreateCopy, toReverse);
-	if (!anObj->_is_nil())
-	  objects.push_back(anObj._retn());
+      for (int i = 0; i < myObjects.count(); i++) {
+        anObj = anOper->PositionAlongPath(myObjects[i].get(), myPath.get(), aDistance, toCreateCopy, toReverse);
+        if (!anObj->_is_nil())
+          objects.push_back(anObj._retn());
       }
       res = true;
       break;
@@ -668,7 +585,8 @@ void TransformationGUI_PositionDlg::restoreSubShapes (SALOMEDS::Study_ptr   theS
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
-                                        /*theInheritFirstArg=*/true);
+                                        /*theInheritFirstArg=*/true,
+                                        mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }
 
@@ -676,9 +594,9 @@ void TransformationGUI_PositionDlg::restoreSubShapes (SALOMEDS::Study_ptr   theS
 // function :  CreateCopyModeChanged()
 // purpose  :
 //=================================================================================
-void TransformationGUI_PositionDlg::CreateCopyModeChanged (bool isCreateCopy)
+void TransformationGUI_PositionDlg::CreateCopyModeChanged()
 {
-  mainFrame()->GroupBoxName->setEnabled(isCreateCopy);
+  mainFrame()->GroupBoxName->setEnabled(Group1->CheckButton1->isChecked());
 }
 
 //=================================================================================
@@ -687,9 +605,6 @@ void TransformationGUI_PositionDlg::CreateCopyModeChanged (bool isCreateCopy)
 //=================================================================================
 void TransformationGUI_PositionDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
-  objMap[Group1->LineEdit5->text()] = myPath;
-
-  addSubshapesToFather(objMap);
+  if ( getConstructorId() == 2 )
+    GEOMBase::PublishSubObject( myPath.get() );
 }

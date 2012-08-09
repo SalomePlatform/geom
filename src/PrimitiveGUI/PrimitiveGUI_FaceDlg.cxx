@@ -1,24 +1,22 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : PrimitiveGUI_FaceDlg.cxx
 // Author : Dmitry Matveitchev, OCN.
@@ -50,17 +48,17 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 PrimitiveGUI_FaceDlg::PrimitiveGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-				    bool modal, Qt::WindowFlags fl )
+                                    bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FACE_OBJ_HW")));
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
   QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FACE_HW")));
 
-  setWindowTitle( tr( "GEOM_FACE_TITLE" ) );
+  setWindowTitle( tr( "GEOM_RECTANGLE_TITLE" ) );
  
   /***************************************************************/
-  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_FACE" ) );
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_RECTANGLE" ) );
   mainFrame()->RadioButton1->setIcon( image2 );
   mainFrame()->RadioButton2->setIcon( image0 );
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
@@ -126,8 +124,8 @@ void PrimitiveGUI_FaceDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPlane->LineEdit1;
   GroupType->RadioButton1->setChecked(true);
-  myEdge = GEOM::GEOM_Object::_nil();
-  myFace = GEOM::GEOM_Object::_nil();
+  myEdge.nullify();
+  myFace.nullify();
   globalSelection(); // close local contexts, if any
   //  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 
@@ -139,17 +137,17 @@ void PrimitiveGUI_FaceDlg::Init()
 
   double aDefaultSize = 100.0;
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( GroupPlane->SpinBox_DX, 0.00001, COORD_MAX, aStep, 5 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPlane->SpinBox_DX, 0.00001, COORD_MAX, aStep, "length_precision" );
   GroupPlane->SpinBox_DX->setValue( aDefaultSize );
-  initSpinBox( GroupPlane->SpinBox_DY, 0.00001, COORD_MAX, aStep, 5 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPlane->SpinBox_DY, 0.00001, COORD_MAX, aStep, "length_precision" );
   GroupPlane->SpinBox_DY->setValue( aDefaultSize );
 
-  initSpinBox( GroupDimensions->SpinBox_DX, 0.00001, COORD_MAX, aStep, 5 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DX, 0.00001, COORD_MAX, aStep, "length_precision" );
   GroupDimensions->SpinBox_DX->setValue( aDefaultSize );
-  initSpinBox( GroupDimensions->SpinBox_DY, 0.00001, COORD_MAX, aStep, 5 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DY, 0.00001, COORD_MAX, aStep, "length_precision" );
   GroupDimensions->SpinBox_DY->setValue( aDefaultSize );
 
-	
+        
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
@@ -161,7 +159,6 @@ void PrimitiveGUI_FaceDlg::Init()
   connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
   connect( GroupPlane->PushButton1,  SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupPlane->LineEdit1,    SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( GroupPlane->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPlane->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
@@ -176,7 +173,7 @@ void PrimitiveGUI_FaceDlg::Init()
   connect( GroupType->RadioButton2, SIGNAL( clicked() ), this, SLOT( TypeButtonClicked() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_FACE" ) );
 
@@ -191,6 +188,8 @@ void PrimitiveGUI_FaceDlg::SetDoubleSpinBoxStep( double step )
 {
   GroupPlane->SpinBox_DX->setSingleStep(step);
   GroupPlane->SpinBox_DY->setSingleStep(step);
+  GroupDimensions->SpinBox_DX->setSingleStep(step);
+  GroupDimensions->SpinBox_DY->setSingleStep(step);
 }
 
 //=================================================================================
@@ -199,7 +198,7 @@ void PrimitiveGUI_FaceDlg::SetDoubleSpinBoxStep( double step )
 //=================================================================================
 void PrimitiveGUI_FaceDlg::ValueChangedInSpinBox( double newValue )
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -214,7 +213,7 @@ void PrimitiveGUI_FaceDlg::RadioButtonClicked()
     myOrientationType = 2;
   else if ( GroupOrientation->RadioButton3->isChecked() )
     myOrientationType = 3;
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -233,6 +232,10 @@ void PrimitiveGUI_FaceDlg::TypeButtonClicked()
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
     GroupPlane->TextLabel1->setText( tr( "GEOM_FACE" ) );
   }
+  myEditCurrentArgument = GroupPlane->LineEdit1;
+  myEditCurrentArgument->setText( "" );
+  myEdge.nullify();
+  myFace.nullify();
 }
 
 //=================================================================================
@@ -241,6 +244,7 @@ void PrimitiveGUI_FaceDlg::TypeButtonClicked()
 //=================================================================================
 void PrimitiveGUI_FaceDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -287,8 +291,8 @@ void PrimitiveGUI_FaceDlg::ConstructorsClicked( int constructorId )
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
       myEditCurrentArgument = GroupPlane->LineEdit1;
       myEditCurrentArgument->setText("");
-      myEdge = GEOM::GEOM_Object::_nil();
-      myFace = GEOM::GEOM_Object::_nil();
+      myEdge.nullify();
+      myFace.nullify();
       GroupType->RadioButton1->setChecked( true );
       TypeButtonClicked();
       GroupDimensions->hide();
@@ -303,7 +307,7 @@ void PrimitiveGUI_FaceDlg::ConstructorsClicked( int constructorId )
   updateGeometry();
   resize( minimumSizeHint() );
   SelectionIntoArgument();
-  //displayPreview();
+  //displayPreview(true);
 }
 
 //=================================================================================
@@ -313,7 +317,7 @@ void PrimitiveGUI_FaceDlg::ConstructorsClicked( int constructorId )
 void PrimitiveGUI_FaceDlg::SelectionIntoArgument()
 {
   if (getConstructorId() == 0) {
-    displayPreview();
+    displayPreview(true);
     return;
   }
 
@@ -324,56 +328,25 @@ void PrimitiveGUI_FaceDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if ( aSelList.Extent() != 1 ) {
-    if ( myEditCurrentArgument == GroupPlane->LineEdit1 )  myEdge = GEOM::GEOM_Object::_nil();
+    if ( myEditCurrentArgument == GroupPlane->LineEdit1 )  myEdge.nullify();
     return;
   }
 
-  // nbSel == 1 
-  Standard_Boolean aRes = Standard_False;
-  TopAbs_ShapeEnum aNeedType = TopAbs_EDGE;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
-    QString aName = GEOMBase::GetName( aSelectedObject );
-    
-    TopoDS_Shape aShape;
-    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      if (GroupType->RadioButton2->isChecked())
-	aNeedType = TopAbs_FACE;
-
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( aSelList.First(), aMap );
-      if ( aMap.Extent() == 1 ) { // Local Selection
-	int anIndex = aMap( 1 );
-	if ( aNeedType == TopAbs_EDGE )
-          aName += QString( ":edge_%1" ).arg( anIndex );
-        else
-	  aName += QString( ":face_%1" ).arg( anIndex );
-
-	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
-
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-	}
-	else
-	  aSelectedObject = aFindedObject; // get Object from study
-      }
-      else { // Global Selection
-        if ( aShape.ShapeType() != aNeedType ) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-        }
-      }
-    }
+  TopAbs_ShapeEnum aNeedType = GroupType->RadioButton2->isChecked() ? TopAbs_FACE : TopAbs_EDGE;
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
 
     myEditCurrentArgument->setText( aName );
+    
     if ( myEditCurrentArgument == GroupPlane->LineEdit1 && aNeedType == TopAbs_EDGE )
       myEdge = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPlane->LineEdit1 && aNeedType == TopAbs_FACE )
       myFace = aSelectedObject;
   }
-  displayPreview();
+
+  displayPreview(true);
 }
 
 
@@ -398,20 +371,6 @@ void PrimitiveGUI_FaceDlg::SetEditCurrentArgument()
   SelectionIntoArgument();
 }
 
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void PrimitiveGUI_FaceDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPlane->LineEdit1 )  myEditCurrentArgument = GroupPlane->LineEdit1;
-  else return;
-  GEOMBase_Skeleton::LineEditReturnPressed();
-}
-
-
 //=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
@@ -420,7 +379,7 @@ void PrimitiveGUI_FaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -459,28 +418,19 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_FaceDlg::createOperation()
 //=================================================================================
 bool PrimitiveGUI_FaceDlg::isValid( QString& msg )
 {
-  bool ok = true;
+  bool ok = false;
   if( getConstructorId() == 0 )
   {
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+         GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() );
   }
   else if( getConstructorId() == 1 )
   {
-    ok = GroupPlane->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPlane->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPlane->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+         GroupPlane->SpinBox_DY->isValid( msg, !IsPreview() ) &&
+         ( GroupType->RadioButton1->isChecked() ? myEdge : myFace );
   }
-
-  const int id = getConstructorId();
-  if ( id == 0 )
-    return ok;
-  else if ( id == 1 ) {
-    if (GroupType->RadioButton1->isChecked())
-      return !myEdge->_is_nil() && ok;
-    else if (GroupType->RadioButton2->isChecked())
-      return !myFace->_is_nil() && ok;
-  }
-  return false;
+  return ok;
 }
 
 //=================================================================================
@@ -492,31 +442,30 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
   bool res = false;
   QStringList aParameters;
   GEOM::GEOM_Object_var anObj;
+
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
-                 GroupDimensions->SpinBox_DY->value(), myOrientationType);
+    anObj = anOper->MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
+                               GroupDimensions->SpinBox_DY->value(), myOrientationType);
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupDimensions->SpinBox_DX->text();
       aParameters << GroupDimensions->SpinBox_DY->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;
   case 1:
-    if (GroupType->RadioButton1->isChecked())
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakeFaceObjHW(myEdge, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
-    else if (GroupType->RadioButton2->isChecked())
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakeFaceObjHW(myFace, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
+    anObj = GroupType->RadioButton1->isChecked() ? 
+      anOper->MakeFaceObjHW(myEdge.get(), GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value()) : 
+      anOper->MakeFaceObjHW(myFace.get(), GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupPlane->SpinBox_DX->text();
       aParameters << GroupPlane->SpinBox_DY->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;
@@ -534,14 +483,10 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
 //=================================================================================
 void PrimitiveGUI_FaceDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-  switch ( getConstructorId() ) {
-  case 1 :
+  if ( getConstructorId() == 1 ) {
     if ( GroupType->RadioButton1->isChecked() )
-      objMap[GroupPlane->LineEdit1->text()] = myEdge;
+     GEOMBase::PublishSubObject( myEdge.get() );
     if ( GroupType->RadioButton2->isChecked() )
-      objMap[GroupPlane->LineEdit1->text()] = myFace;
-    break;
+     GEOMBase::PublishSubObject( myFace.get() );
   }
-  addSubshapesToFather( objMap );
 }

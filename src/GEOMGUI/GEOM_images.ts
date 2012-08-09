@@ -1,28 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<!--
-  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-
-  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-
-  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-
--->
-<TS version="1.1" >
+<TS version="2.0" language="en_US">
     <context>
         <name>@default</name>
         <message>
@@ -41,7 +19,7 @@
             <source>ICON_DLG_ARC_CENTER</source>
             <translation>arccenter.png</translation>
         </message>
-	<message>
+        <message>
             <source>ICON_DLG_ARC_OF_ELLIPSE</source>
             <translation>arcofellipse.png</translation>
         </message>
@@ -110,6 +88,14 @@
             <translation>build_edge.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_BUILD_EDGE_WIRE</source>
+            <translation>build_edge_wire.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_BUILD_EDGE_CURVE</source>
+            <translation>build_edge_curve.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_BUILD_FACE</source>
             <translation>build_face.png</translation>
         </message>
@@ -162,8 +148,16 @@
             <translation>change_orientation.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_CHANGE_DIRECTION</source>
+            <translation>change_direction.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_REMOVE_EXTRA_EDGES</source>
             <translation>remove_extra_edges.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_FUSE_EDGES</source>
+            <translation>fuse_collinear_edges.png</translation>
         </message>
         <message>
             <source>ICON_DLG_CHECKSHAPE</source>
@@ -172,6 +166,10 @@
         <message>
             <source>ICON_DLG_CHECK_COMPOUND_OF_BLOCKS</source>
             <translation>check_blocks_compound.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_CHECK_SELF_INTERSECTIONS</source>
+            <translation>check_self_intersections.png</translation>
         </message>
         <message>
             <source>ICON_DLG_CIRCLE_PNTS</source>
@@ -226,6 +224,10 @@
             <translation>fillet.png</translation>
         </message>
 	<message>
+            <source>ICON_DLG_FILLET_1D</source>
+            <translation>fillet1d.png</translation>
+        </message>
+	<message>
             <source>ICON_DLG_FILLET_2D</source>
             <translation>fillet2d.png</translation>
         </message>
@@ -236,6 +238,10 @@
         <message>
             <source>ICON_DLG_FILLET_EDGE</source>
             <translation>filletedge.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_FILLET_WIRE</source>
+            <translation>filletwire.png</translation>
         </message>
         <message>
             <source>ICON_DLG_FILLET_FACE</source>
@@ -262,12 +268,28 @@
             <translation>glue2.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_GLUE_EDGES</source>
+            <translation>glue.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_GLUE_EDGES2</source>
+            <translation>glue2.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_LIMIT_TOLERANCE</source>
+            <translation>limit_tolerance.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_INERTIA</source>
             <translation>axisinertia.png</translation>
         </message>
         <message>
             <source>ICON_DLG_INTERPOL</source>
             <translation>interpol.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_IMPORT_PICTURE</source>
+            <translation>import_picture.png</translation>
         </message>
         <message>
             <source>ICON_DLG_LINE_2P</source>
@@ -320,6 +342,10 @@
         <message>
             <source>ICON_DLG_OFFSET</source>
             <translation>offset.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_PROJECTION</source>
+            <translation>projection.png</translation>
         </message>
         <message>
             <source>ICON_DLG_PARTITION</source>
@@ -420,6 +446,10 @@
         <message>
             <source>ICON_DLG_QUAD_FACE_4_VERT</source>
             <translation>block_face_4v.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_RECTANGLE</source>
+            <translation>rectangle.png</translation>
         </message>
         <message>
             <source>ICON_DLG_REDO</source>
@@ -621,6 +651,58 @@
             <source>ICON_SELECT</source>
             <translation>select1.png</translation>
         </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_1</source>
+            <translation>marker_1.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_2</source>
+            <translation>marker_2.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_3</source>
+            <translation>marker_3.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_4</source>
+            <translation>marker_4.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_5</source>
+            <translation>marker_5.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_6</source>
+            <translation>marker_6.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_7</source>
+            <translation>marker_7.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_8</source>
+            <translation>marker_8.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_9</source>
+            <translation>marker_9.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_10</source>
+            <translation>marker_10.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_11</source>
+            <translation>marker_11.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_12</source>
+            <translation>marker_12.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_13</source>
+            <translation>marker_13.png</translation>
+        </message>
         <message>
             <source>ICO_ARC</source>
             <translation>arc.png</translation>
@@ -656,6 +738,10 @@
         <message>
             <source>ICO_CHECK_COMPOUND</source>
             <translation>check_blocks_compound.png</translation>
+        </message>
+        <message>
+            <source>ICO_CHECK_SELF_INTERSECTIONS</source>
+            <translation>check_self_intersections.png</translation>
         </message>
         <message>
             <source>ICO_CHECK_FREE_BNDS</source>
@@ -705,7 +791,7 @@
             <source>ICO_DELETE</source>
             <translation>delete.png</translation>
         </message>
-	<message>
+        <message>
             <source>ICO_DISK</source>
             <translation>disk.png</translation>
         </message>
@@ -720,6 +806,10 @@
         <message>
             <source>ICO_DISPLAY_ONLY</source>
             <translation>displayonly.png</translation>
+        </message>
+        <message>
+            <source>ICO_DRAFT</source>
+            <translation>draft.png</translation>
         </message>
         <message>
             <source>ICO_EDGE</source>
@@ -749,6 +839,14 @@
             <source>ICO_EXPLODE_BLOCKS</source>
             <translation>subshape.png</translation>
         </message>
+         <message>
+            <source>ICO_EXTRUDED_BOSS</source>
+            <translation>extruded_boss.png</translation>
+        </message>
+        <message>
+            <source>ICO_EXTRUDED_CUT</source>
+            <translation>extruded_cut.png</translation>
+        </message>
         <message>
             <source>ICO_EXTRUSION</source>
             <translation>prism.png</translation>
@@ -758,12 +856,24 @@
             <translation>build_face.png</translation>
         </message>
         <message>
+            <source>ICO_RECTANGLE</source>
+            <translation>build_face.png</translation>
+        </message>
+        <message>
             <source>ICO_FACE_SEL_ONLY</source>
             <translation>build_face.png</translation>
         </message>
         <message>
+            <source>ICO_FEATURE_DETECTION</source>
+            <translation>feature_detect.png</translation>
+        </message>
+        <message>
             <source>ICO_FILLET</source>
             <translation>fillet.png</translation>
+        </message>
+	<message>
+            <source>ICO_FILLET_1D</source>
+            <translation>fillet1d.png</translation>
         </message>
 	<message>
             <source>ICO_FILLET_2D</source>
@@ -782,6 +892,14 @@
             <translation>glue.png</translation>
         </message>
         <message>
+            <source>ICO_GLUE_EDGES</source>
+            <translation>glue.png</translation>
+        </message>
+        <message>
+            <source>ICO_LIMIT_TOLERANCE</source>
+            <translation>limit_tolerance.png</translation>
+        </message>
+        <message>
             <source>ICO_GROUP_CREATE</source>
             <translation>group_new.png</translation>
         </message>
@@ -797,7 +915,11 @@
             <source>ICO_INERTIA</source>
             <translation>axisinertia.png</translation>
         </message>
-	<message>
+        <message>
+            <source>ICO_PICTURE_IMPORT</source>
+            <translation>import_picture.png</translation>
+        </message>
+	    <message>
             <source>ICO_LINE</source>
             <translation>line.png</translation>
         </message>
@@ -838,6 +960,14 @@
             <translation>offset.png</translation>
         </message>
         <message>
+            <source>ICO_PROJECTION</source>
+            <translation>projection.png</translation>
+        </message>
+        <message>
+            <source>ICO_ORIGIN_AND_VECTORS</source>
+            <translation>origin_and_vectors.png</translation>
+        </message>
+        <message>
             <source>ICO_PARTITION</source>
             <translation>partition.png</translation>
         </message>
@@ -852,6 +982,10 @@
         <message>
             <source>ICO_REMOVE_EXTRA_EDGES</source>
             <translation>remove_extra_edges.png</translation>
+        </message>
+        <message>
+            <source>ICO_FUSE_EDGES</source>
+            <translation>fuse_collinear_edges.png</translation>
         </message>
         <message>
             <source>ICO_NORMALE</source>
@@ -906,8 +1040,20 @@
             <translation>sewing.png</translation>
         </message>
 	<message>
+            <source>ICO_WIREFRAME</source>
+            <translation>wireframe.png</translation>
+        </message>
+	<message>
             <source>ICO_SHADING</source>
             <translation>shading.png</translation>
+        </message>
+	<message>
+            <source>ICO_SHADING_WITH_EDGES</source>
+            <translation>shading_with_edges.png</translation>
+        </message>
+	<message>
+            <source>ICO_VECTOR_MODE</source>
+            <translation>vector_mode.png</translation>
         </message>
         <message>
             <source>ICO_SHAPE_PROCESS</source>
@@ -990,8 +1136,12 @@
             <translation>planeWorking.png</translation>
         </message>
         <message>
-            <source>ICO_GET_SHAPES_ON_SHAPES</source>
+            <source>ICO_GET_SHAPES_ON_SHAPE</source>
             <translation>shapesonshape.png</translation>
+        </message>
+        <message>
+            <source>ICO_GET_SHARED_SHAPES</source>
+            <translation>shared_shapes.png</translation>
         </message>
         <message>
             <source>ICON_DLG_POINT_FACE</source>
@@ -1002,8 +1152,162 @@
             <translation>shapesonshape.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_SHARED_SHAPES</source>
+            <translation>shared_shapes.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_SCALE_ALONG_AXES</source>
             <translation>scale_along_axes.png</translation>
         </message>
+        <message>
+            <source>ICON_DLG_PIPETSHAPE</source>
+            <translation>pipetshape.png</translation>
+        </message>
+        <message>
+            <source>ICO_PIPETSHAPE</source>
+            <translation>pipetshape.png</translation>
+        </message>
+        <message>
+            <source>ICO_PIPETSHAPE_IMPORT</source>
+            <translation>pipetshape_import_icon.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE</source>
+            <translation>dlg_pipetshape.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_L1</source>
+            <translation>dlg_pipetshapel1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_R1</source>
+            <translation>dlg_pipetshaper1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_W1</source>
+            <translation>dlg_pipetshapew1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_L2</source>
+            <translation>dlg_pipetshapel2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_R2</source>
+            <translation>dlg_pipetshaper2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_W2</source>
+            <translation>dlg_pipetshapew2.png</translation>
+        </message>
+        
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET</source>
+            <translation>dlg_pipetshapefillet.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_L1</source>
+            <translation>dlg_pipetshapefilletl1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_R1</source>
+            <translation>dlg_pipetshapefilletr1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_W1</source>
+            <translation>dlg_pipetshapefilletw1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_L2</source>
+            <translation>dlg_pipetshapefilletl2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_R2</source>
+            <translation>dlg_pipetshapefilletr2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_W2</source>
+            <translation>dlg_pipetshapefilletw2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_RF</source>
+            <translation>dlg_pipetshapefilletrf.png</translation>
+        </message>
+        
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER</source>
+            <translation>dlg_pipetshapechamfer.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_L1</source>
+            <translation>dlg_pipetshapechamferl1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_R1</source>
+            <translation>dlg_pipetshapechamferr1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_W1</source>
+            <translation>dlg_pipetshapechamferw1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_L2</source>
+            <translation>dlg_pipetshapechamferl2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_R2</source>
+            <translation>dlg_pipetshapechamferr2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_W2</source>
+            <translation>dlg_pipetshapechamferw2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_H</source>
+            <translation>dlg_pipetshapechamferh.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_W</source>
+            <translation>dlg_pipetshapechamferw.png</translation>
+        </message>
+        
+        <message>
+            <source>ICON_OBJBROWSER_ADVANCED_201</source>
+            <translation>tree_pipetshape.png</translation>
+	</message>
+<!--
+	<message>
+            <source>ICON_DLG_PIPETSHAPEGROUPS</source>
+            <translation>pipetshapegroups.png</translation>
+        </message>
+        <message>
+            <source>ICO_PIPETSHAPEGROUPS</source>
+            <translation>pipetshapegroups.png</translation>
+        </message>
+-->
+        <message>
+            <source>ICON_DLG_DIVIDEDDISK_R_RATIO</source>
+            <translation>divided_disk.png</translation>
+        </message>
+        <message>
+            <source>ICO_DIVIDEDDISK</source>
+            <translation>divided_disk.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_ADVANCED_202</source>
+            <translation>divided_disk.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_DIVIDEDCYLINDER_R_H</source>
+            <translation>dividedcylinder_r_h.png</translation>
+        </message>
+        <message>
+            <source>ICO_DIVIDEDCYLINDER</source>
+            <translation>dividedcylinder.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_ADVANCED_203</source>
+            <translation>dividedcylinder.png</translation>
+        </message>
+	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>
 </TS>

@@ -1,0 +1,18 @@
+/*!
+
+\page line_width_page Line Width
+
+\n In this menu you can change the width of the edges and isolines displayed within
+a shape.
+
+\n <b>Arguments: </b>1 value (width of the edge or isoline).
+
+\image html line_width.png
+
+\n <b>Example:</b>
+
+\image html line_width_1.png
+
+\image html line_width_2.png
+
+*/

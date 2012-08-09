@@ -1,50 +1,52 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Algo.cxx
-// Created:	Sat Dec 04 12:39:47 2004
-// Author:	Peter KURNEV
-//		<peter@PREFEX>
+
+// File:        GEOMAlgo_Algo.cxx
+// Created:     Sat Dec 04 12:39:47 2004
+// Author:      Peter KURNEV
+//              <peter@PREFEX>
 //
-#include <GEOMAlgo_Algo.ixx>
+#include <GEOMAlgo_Algo.hxx>
 
 //=======================================================================
-// function: 
-// purpose: 
+// function:
+// purpose:
 //=======================================================================
   GEOMAlgo_Algo::GEOMAlgo_Algo()
 :
   myErrorStatus(1),
-  myWarningStatus(0)
+  myWarningStatus(0),
+  myComputeInternalShapes(Standard_True)
 {}
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   GEOMAlgo_Algo::~GEOMAlgo_Algo()
 {
 }
 //=======================================================================
 // function: CheckData
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Algo::CheckData()
 {
@@ -52,7 +54,7 @@
 }
 //=======================================================================
 // function: CheckResult
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Algo::CheckResult()
 {
@@ -60,7 +62,7 @@
 }
 //=======================================================================
 // function: ErrorStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_Algo::ErrorStatus()const
 {
@@ -68,7 +70,7 @@
 }
 //=======================================================================
 // function: WarningStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_Algo::WarningStatus()const
 {
@@ -77,3 +79,12 @@
 //  myErrorStatus
 //
 // 1 - object is just initialized
+
+//=======================================================================
+//function : ComputeInternalShapes
+//purpose  :
+//=======================================================================
+  void GEOMAlgo_Algo::ComputeInternalShapes(const Standard_Boolean theFlag)
+{
+  myComputeInternalShapes = theFlag;
+}

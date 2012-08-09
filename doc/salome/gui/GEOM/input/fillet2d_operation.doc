@@ -2,20 +2,26 @@
 
 \page fillet2d_operation_page Fillet 2D
 
-This operation creates fillets on the corners of a <b>2D Planar Face</b>.
+This operation creates fillets on the corners of a <b>2D Planar Face</b>
+or a <b>Shell, made of 2D Planar Faces</b>.
 
 \image html fillet2d_2.png
 
-To produce a \b Fillet 2D in the <b>Main Menu</b> select 
-<b>Operations - > Transformation - > Fillet 2D</b>
+To produce a <b>Fillet 2D</b> in the <b>Main Menu</b> select 
+<b>Operations - > Fillet 2D</b>
 
-Define the <b>Planar Face</b> to create a fillet on, select the necessary 
-vertexes on this face in the OCC Viewer and define the \b Radius of the Fillet.
+Define the <b>Planar Face</b> or the <b>Shell</b> to create a fillet
+on, select the necessary vertexes on this shape in the OCC Viewer and
+define the \b Radius of the Fillet.
 
-\b Note: This Operation Works for the <b>Planar 2D</b> Faces Only.
+\b Note: This operation works only for <b>Planar 2D Faces</b> and
+shells, made of such faces. For shells, only corner vertexes are
+available for fillet building, i.e. the vertexes that belong to only
+one face of this shell.
 
-<b>TUI Command:</b> <em>geompy.MakeFillet(Shape, R, ListVertexes)</em>
+<b>TUI Command:</b> <em>geompy.MakeFillet2D(Shape, R, ListVertexes)</em>
 \n <b>Arguments:</b> Name + 1 shape + one or several vertexes + 1 value (Fillet radius).
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 <b>Examples:</b>
 

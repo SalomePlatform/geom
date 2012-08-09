@@ -1,26 +1,28 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//GEOM_Object types
-//
+
+
+// GEOM_Object types
+
 #define GEOM_COPY    0
 #define GEOM_IMPORT  1
 
@@ -49,6 +51,7 @@
 
 #define GEOM_FILLET    20
 #define GEOM_FILLET_2D 45
+#define GEOM_FILLET_1D 46
 #define GEOM_CHAMFER   21
 
 #define GEOM_EDGE  22
@@ -92,6 +95,12 @@
 
 #define GEOM_3DSKETCHER 44
 
+#define GEOM_PROJECTION 45
+
+#define GEOM_EXTRUDED_CUT 46
+
+#define GEOM_EXTRUDED_BOSS 47
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -105,17 +114,22 @@
 #define POINT_CURVE_PAR          3
 #define POINT_LINES_INTERSECTION 4
 #define POINT_SURFACE_PAR        5
-//#define POINT_FACE_PAR 5
+#define POINT_CURVE_COORD        6
+#define POINT_SURFACE_COORD      7
+#define POINT_CURVE_LENGTH       8 
 
+// Vector
 #define VECTOR_TWO_PNT  1
 #define VECTOR_DX_DY_DZ 2
 #define VECTOR_TANGENT_CURVE_PAR 3
-#define VECTOR_FACE_NORMALE 4
+#define VECTOR_REVERSE 4
 
-#define PLANE_PNT_VEC   1
-#define PLANE_FACE      2
-#define PLANE_THREE_PNT 3
+#define PLANE_PNT_VEC      1
+#define PLANE_FACE         2
+#define PLANE_THREE_PNT    3
 #define PLANE_TANGENT_FACE 4
+#define PLANE_2_VEC        5
+#define PLANE_LCS          6
 
 #define LINE_TWO_PNT   1
 #define LINE_PNT_DIR   2
@@ -147,6 +161,8 @@
 
 #define OFFSET_SHAPE      1
 #define OFFSET_SHAPE_COPY 2
+
+#define PROJECTION_COPY 1
 
 #define SCALE_SHAPE      1
 #define SCALE_SHAPE_COPY 2
@@ -187,6 +203,7 @@
 #define PRISM_BASE_TWO_PNT_2WAYS 4
 #define PRISM_BASE_DXDYDZ        5
 #define PRISM_BASE_DXDYDZ_2WAYS  6
+#define DRAFT_PRISM_FEATURE      7
 
 #define REVOLUTION_BASE_AXIS_ANGLE       1
 #define REVOLUTION_BASE_AXIS_ANGLE_2WAYS 2
@@ -211,15 +228,16 @@
 
 #define POLYLINE_POINTS 1
 
+#define SPLINE_BEZIER        1
+#define SPLINE_INTERPOLATION 2
+
 #define CIRCLE_THREE_PNT 1
 #define CIRCLE_PNT_VEC_R 2
 #define CIRCLE_CENTER_TWO_PNT 3
 
-#define SPLINE_BEZIER        1
-#define SPLINE_INTERPOLATION 2
-
 #define ELLIPSE_PNT_VEC_RR 1
 
+// Arc
 #define CIRC_ARC_THREE_PNT         1
 #define CIRC_ARC_CENTER            2
 #define ELLIPSE_ARC_CENTER_TWO_PNT 3
@@ -231,6 +249,7 @@
 #define FILLET_SHAPE_FACES_2R 5
 
 #define FILLET_2D_SHAPE_VERTEXES      1
+#define FILLET_1D_SHAPE_VERTEXES      1
 
 #define CHAMFER_SHAPE_ALL      1
 #define CHAMFER_SHAPE_EDGE     2
@@ -240,6 +259,7 @@
 #define CHAMFER_SHAPE_FACES_AD 6
 #define CHAMFER_SHAPE_EDGES_AD 7
 
+// Shape creation
 #define WIRE_EDGES          1
 #define FACE_WIRE           2
 #define SHELL_FACES         3
@@ -249,7 +269,9 @@
 #define SUBSHAPE_SORTED     7
 #define SUBSHAPE_NOT_SORTED 8
 #define FACE_WIRES          9
-#define REVERSE_ORIENTATION 10
+//#define REVERSE_ORIENTATION 10
+#define EDGE_WIRE           11
+#define EDGE_CURVE_LENGTH   12
 
 #define ARCHIMEDE_TYPE 1
 
@@ -262,20 +284,31 @@
 #define SEWING             6
 #define DIVIDE_EDGE        7
 #define CHANGE_ORIENTATION 8
+#define LIMIT_TOLERANCE    9
+#define FUSE_COLLINEAR_EDGES 10
 
 #define BASIC_FILLING 1
 
-#define GLUE_FACES 1
+#define GLUE_FACES         1
 #define GLUE_FACES_BY_LIST 2
+#define GLUE_EDGES         3
+#define GLUE_EDGES_BY_LIST 4
 
 #define SKETCHER_NINE_DOUBLS 1
 #define SKETCHER_PLANE 2
 
+// Measures
 #define CDG_MEASURE 1
+#define VECTOR_FACE_NORMALE 4
+#define VERTEX_BY_INDEX 5
 
 #define GROUP_FUNCTION 1
 
 #define SHAPES_ON_SHAPE 1
+
+// Curve constructor type
+#define POINT_CONSTRUCTOR 0
+#define COORD_CONSTRUCTOR 1
 
 // Blocks
 #define BLOCK_FACE_FOUR_PNT       1
@@ -290,4 +323,21 @@
 #define BLOCK_COMPOUND_IMPROVE    10
 
 // Marker
-#define MARKER_CS 1
+#define MARKER_CS      1
+#define MARKER_SHAPE   2
+#define MARKER_PNT2VEC 3
+
+// Advanced functions (base = 200)
+#define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)
+#define GEOM_TSHAPE 201
+#define GEOM_DIVIDEDDISK 202
+#define GEOM_DIVIDEDCYLINDER 203
+/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
+// Advanced functions sub-operations codes
+#define TSHAPE_BASIC 1
+#define TSHAPE_CHAMFER 2
+#define TSHAPE_FILLET 3
+#define DIVIDEDDISK_R_RATIO 1
+#define DIVIDEDDISK_R_VECTOR_PNT 2
+#define DIVIDEDCYLINDER_R_H 1
+/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

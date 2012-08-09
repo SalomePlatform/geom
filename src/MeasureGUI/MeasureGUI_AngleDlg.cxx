@@ -1,34 +1,34 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // GEOM GEOMGUI : GUI for Geometry component
-//  File   : MeasureGUI_AngleDlg.cxx
-//  Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
-//
+// File   : MeasureGUI_AngleDlg.cxx
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
+
 #include "MeasureGUI_AngleDlg.h"
 #include "MeasureGUI_Widgets.h"
 
 #include <DlgRef.h>
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
@@ -55,6 +55,9 @@
 #include <gce_MakePln.hxx>
 #include <Precision.hxx>
 #include <AIS.hxx>
+#include <AIS_Drawer.hxx>
+#include <Prs3d_AngleAspect.hxx>
+#include <Prs3d_LineAspect.hxx>
 
 // QT Includes
 #include <qlineedit.h>
@@ -161,10 +164,7 @@ void MeasureGUI_AngleDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
 
   if (aSelList.Extent() > 0) {
-    Standard_Boolean testResult = Standard_False;
-    aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult)
-      aSelectedObject = GEOM::GEOM_Object::_nil();
+    aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
   }
 
   // clear selection
@@ -198,7 +198,9 @@ void MeasureGUI_AngleDlg::processObject()
 
   double anAngle = 0.;
   if (getParameters(anAngle)) {
-    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(anAngle));
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "angle_precision", 6 );
+    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(anAngle, aPrecision));
     redisplayPreview();
   }
   else {
@@ -215,17 +217,18 @@ bool MeasureGUI_AngleDlg::getParameters (double& theAngle)
 {
   QString msg;
   if (isValid(msg)) {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      theAngle = GEOM::GEOM_IMeasureOperations::_narrow(getOperation())->GetAngle(myObj, myObj2);
+      theAngle = anOper->GetAngle(myObj, myObj2);
     }
     catch(const SALOME::SALOME_Exception& e) {
       SalomeApp_Tools::QtCatchCorbaException(e);
       return false;
     }
 
-    bool isDone = getOperation()->IsDone();
+    bool isDone = anOper->IsDone();
     if (!isDone) {
-      CORBA::String_var aMsg = getOperation()->GetErrorCode();
+      CORBA::String_var aMsg = anOper->GetErrorCode();
       SUIT_MessageBox::warning(this,
                                QObject::tr("WRN_WARNING"),
                                QObject::tr(aMsg.in()));
@@ -309,7 +312,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
 
   if (anAngle > Precision::Angular()) {
     try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
 #endif
       TopoDS_Shape S1, S2;
@@ -350,8 +353,8 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         aLabel.sprintf("%.1f", anAngle);
 
         Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension
-          (anEdge1, anEdge2, aPlane, anAngle * PI180,
-            TCollection_ExtendedString((Standard_CString)aLabel.toLatin1().data()));
+          (anEdge1, anEdge2, aPlane, anAngle * M_PI / 180.,
+           TCollection_ExtendedString((Standard_CString)aLabel.toLatin1().data()));
         Handle(Geom_Line) geom_lin1,geom_lin2;
         gp_Pnt ptat11,ptat12,ptat21,ptat22;
         Standard_Boolean isInfinite1,isInfinite2;
@@ -377,6 +380,12 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
           Standard_Real arrowSize = Max(arrSize1,arrSize2);
           anIO->SetArrowSize(arrowSize);
         }
+
+	SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+	int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
+  Handle(Prs3d_AngleAspect) asp = new Prs3d_AngleAspect();
+  asp->LineAspect()->SetWidth(w);
+	anIO->Attributes()->SetAngleAspect(asp);
 
         SOCC_Prs* aPrs =
           dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));

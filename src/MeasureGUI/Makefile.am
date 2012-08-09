@@ -1,29 +1,27 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
+
 # GEOM MEASUREGUI : 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : MeasureGUI
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -42,6 +40,7 @@ salomeinclude_HEADERS =				\
 	MeasureGUI_WhatisDlg.h			\
 	MeasureGUI_CheckShapeDlg.h		\
 	MeasureGUI_CheckCompoundOfBlocksDlg.h	\
+	MeasureGUI_CheckSelfIntersectionsDlg.h	\
 	MeasureGUI_PointDlg.h
 
 # Libraries targets
@@ -61,7 +60,8 @@ dist_libMeasureGUI_la_SOURCES =			\
 	MeasureGUI_MaxToleranceDlg.cxx		\
 	MeasureGUI_WhatisDlg.cxx		\
 	MeasureGUI_CheckShapeDlg.cxx		\
-	MeasureGUI_CheckCompoundOfBlocksDlg.cxx \
+	MeasureGUI_CheckCompoundOfBlocksDlg.cxx	\
+	MeasureGUI_CheckSelfIntersectionsDlg.cxx \
 	MeasureGUI_PointDlg.cxx
 
 MOC_FILES = 						\
@@ -78,6 +78,7 @@ MOC_FILES = 						\
 	MeasureGUI_WhatisDlg_moc.cxx			\
 	MeasureGUI_CheckShapeDlg_moc.cxx		\
 	MeasureGUI_CheckCompoundOfBlocksDlg_moc.cxx	\
+	MeasureGUI_CheckSelfIntersectionsDlg_moc.cxx	\
 	MeasureGUI_PointDlg_moc.cxx
 
 nodist_libMeasureGUI_la_SOURCES =			\
@@ -116,9 +117,9 @@ libMeasureGUI_la_CPPFLAGS =		\
 	-I$(srcdir)/../GEOMImpl		\
 	-I$(srcdir)/../GEOM             \
 	-I$(top_builddir)/src/DlgRef	\
-	-I$(top_builddir)/idl		\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libMeasureGUI_la_LDFLAGS  =		\
-	../GEOMBase/libGEOMBase.la
+	$(CAS_LDFLAGS) -lTKGeomBase \
+	../GEOMBase/libGEOMBase.la ../DlgRef/libDlgRef.la
 

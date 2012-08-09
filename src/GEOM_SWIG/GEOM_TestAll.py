@@ -1,44 +1,45 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#  -*- coding: iso-8859-1 -*-
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+# Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+# CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : GEOM_usinggeom.py
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
-#
+
 # ! Please, if you edit this example file, update also
 # ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_all.doc
 # ! as some sequences of symbols from this example are used during
 # ! documentation generation to identify certain places of this file
-#
-def TestAll (geompy, math):
 
+def TestAll (geompy, math):
+  import GEOM
+  
   #Create base Variables
   nbtimes1  = 5      #Short
   nbtimes2  = 5
   mindeg = 2
   maxdeg = 5
   nbiter = 5
-  ShapeTypeFace = geompy.ShapeType["FACE"]
-  ShapeTypeEdge = geompy.ShapeType["EDGE"]
   WantPlanarFace = 1 #True
 
   radius  = 10.  #Double
@@ -62,97 +63,114 @@ def TestAll (geompy, math):
   precision = 0.00001
 
   #Create base points
-  p0   = geompy.MakeVertex(0.  , 0.  , 0.  ) #(3 Doubles)->GEOM_Object_ptr
+  p0   = geompy.MakeVertex(0.  , 0.  , 0.  ) #(3 Doubles)->GEOM_Object
   px   = geompy.MakeVertex(100., 0.  , 0.  )
   py   = geompy.MakeVertex(0.  , 100., 0.  )
   pz   = geompy.MakeVertex(0.  , 0.  , 100.)
   pxyz = geompy.MakeVertex(100., 100., 100.)
 
-  p200 = geompy.MakeVertexWithRef(pxyz, 100., 100., 100.) #(GEOM_Object_ptr, 3 Doubles)->GEOM_Object_ptr
+  p200 = geompy.MakeVertexWithRef(pxyz, 100., 100., 100.) #(GEOM_Object, 3 Doubles)->GEOM_Object
 
   #Create base directions
-  vx   = geompy.MakeVector(p0, px) #(GEOM_Object_ptr, GEOM_Object_ptr)->GEOM_Object_ptr
+  vx   = geompy.MakeVector(p0, px) #(GEOM_Object, GEOM_Object)->GEOM_Object
   vy   = geompy.MakeVector(p0, py)
   vz   = geompy.MakeVector(p0, pz)
   vxy  = geompy.MakeVector(px, py)
 
-  vxyz = geompy.MakeVectorDXDYDZ(100., 100., 100.) #(3 Doubles)->GEOM_Object_ptr
+  vxyz = geompy.MakeVectorDXDYDZ(100., 100., 100.) #(3 Doubles)->GEOM_Object
 
   #Create local coordinate systems
-  cs1 = geompy.MakeMarker(50,50,50, 1,0,0, 0,1,0) #(9 Doubles)->GEOM_Object_ptr
-  cs2 = geompy.MakeMarker(70,80,10, 1,0,1, 1,1,0) #(9 Doubles)->GEOM_Object_ptr
-  cs3 = geompy.MakeMarkerPntTwoVec(pz, vxy, vz)   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  cs1 = geompy.MakeMarker(50,50,50, 1,0,0, 0,1,0) #(9 Doubles)->GEOM_Object
+  cs2 = geompy.MakeMarker(70,80,10, 1,0,1, 1,1,0) #(9 Doubles)->GEOM_Object
+  cs3 = geompy.MakeMarkerPntTwoVec(pz, vxy, vz)   #(3 GEOM_Object)->GEOM_Object
 
   #Create base geometry 2D
-  Line   = geompy.MakeLineTwoPnt(p0, pxyz)                  #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  Line1  = geompy.MakeLine(pz, vxy)                         #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  Line2  = geompy.MakeLineTwoPnt(pxyz, pz)                  #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  Plane  = geompy.MakePlane(pz, vxyz, trimsize)             #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  Plane1 = geompy.MakePlaneThreePnt(px, pz, p200, trimsize) #(4 Doubles)->GEOM_Object_ptr
+  Line   = geompy.MakeLineTwoPnt(p0, pxyz)                  #(2 GEOM_Object)->GEOM_Object
+  Line1  = geompy.MakeLine(pz, vxy)                         #(2 GEOM_Object)->GEOM_Object
+  Line2  = geompy.MakeLineTwoPnt(pxyz, pz)                  #(2 GEOM_Object)->GEOM_Object
+  Plane  = geompy.MakePlane(pz, vxyz, trimsize)             #(2 GEOM_Object, Double)->GEOM_Object
+  Plane1 = geompy.MakePlaneThreePnt(px, pz, p200, trimsize) #(4 Doubles)->GEOM_Object
+  Plane2 = geompy.MakePlane2Vec(vx, vz, trimsize)	    #(2 GEOM_Object, Double)->GEOM_Object
+  Plane3 = geompy.MakePlaneLCS(cs1, trimsize, 3)	    #(1 GEOM_Object, 2 Double)->GEOM_Object
 
-  Arc      = geompy.MakeArc(py, pz, px)                   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  Arc2     = geompy.MakeArcCenter(py, pz, px,0)           #(3 GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
-  Arc3     = geompy.MakeArcOfEllipse(p0, px, pz)          #(3 GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
-  Circle   = geompy.MakeCircle(p0, vz, radius1)           #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  Circle1  = geompy.MakeCircleThreePnt(p0, pxyz, px)      #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  Circle2  = geompy.MakeCircleCenter2Pnt(p0, pxyz, py)    #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  Ellipse  = geompy.MakeEllipse(p0, vy, radius2, radius1) #(2 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
-  Polyline = geompy.MakePolyline([p0, pz, py, p200])      #(List of GEOM_Object_ptr)->GEOM_Object_ptr
-  Bezier   = geompy.MakeBezier([p0, pz, p200, px])        #(List of GEOM_Object_ptr)->GEOM_Object_ptr
-  Interpol = geompy.MakeInterpol([px, py, p200, pxyz])    #(List of GEOM_Object_ptr)->GEOM_Object_ptr
+  Arc      = geompy.MakeArc(py, pz, px)                   #(3 GEOM_Object)->GEOM_Object
+  Arc2     = geompy.MakeArcCenter(py, pz, px,0)           #(3 GEOM_Object,Boolean)->GEOM_Object
+  Arc3     = geompy.MakeArcOfEllipse(p0, px, pz)          #(3 GEOM_Object,Boolean)->GEOM_Object
+  Circle   = geompy.MakeCircle(p0, vz, radius1)           #(2 GEOM_Object, Double)->GEOM_Object
+  Circle1  = geompy.MakeCircleThreePnt(p0, pxyz, px)      #(3 GEOM_Object)->GEOM_Object
+  Circle2  = geompy.MakeCircleCenter2Pnt(p0, pxyz, py)    #(3 GEOM_Object)->GEOM_Object
+  Ellipse  = geompy.MakeEllipse(p0, vy, radius2, radius1) #(2 GEOM_Object, 2 Doubles)->GEOM_Object
+  Polyline = geompy.MakePolyline([p0, pz, py, p200])      #(List of GEOM_Object)->GEOM_Object
+  Bezier   = geompy.MakeBezier([p0, pz, p200, px])        #(List of GEOM_Object)->GEOM_Object
+  Interpol = geompy.MakeInterpol([px, py, p200, pxyz], True) #(List of GEOM_Object,Boolean)->GEOM_Object
   Sketcher = geompy.MakeSketcher("Sketcher:F -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW",
-                                 [100,0,0, 1,1,1, -1,1,0]) #(String, List of Doubles)->GEOM_Object_ptr
+                                 [100,0,0, 1,1,1, -1,1,0]) #(String, List of Doubles)->GEOM_Object
   Sketcher3d = geompy.Make3DSketcher([0,0,0, 50,50,50, 0,50,50, 10,0,0])
+  
+  #Create local coordinate system from shape
+  cs4 = geompy.MakeMarkerFromShape(Plane)
 
   #Test point on curve creation
-  p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25) #(GEOM_Object, Double)->GEOM_Object
+  p_on_arc2 = geompy.MakeVertexOnCurveByCoord(Arc, 100, -10, 10 ) #(GEOM_Object, Double)->GEOM_Object
+  p_on_arc3 = geompy.MakeVertexOnCurveByLength(Arc, 50, py) #(GEOM_Object, Double, GEOM_Object)->GEOM_Object
 
   #Test point on lines intersection
-  p_on_l1l2 = geompy.MakeVertexOnLinesIntersection(Line1, Line2) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  p_on_l1l2 = geompy.MakeVertexOnLinesIntersection(Line1, Line2) #(2 GEOM_Object)->GEOM_Object
 
   #Test tangent on curve creation
-  tan_on_arc = geompy.MakeTangentOnCurve(Arc, 0.7) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  tan_on_arc = geompy.MakeTangentOnCurve(Arc, 0.7) #(GEOM_Object, Double)->GEOM_Object
+  
+  #Test tangent on face creation
+  tan_vertex_1 = geompy.MakeVertex(0, 0, 0)
+  tan_vertex_2 = geompy.MakeVertex(0, 90, 30)
+  tan_vertex_3 = geompy.MakeVertex(100, 90, 0)
+  tan_vertex_4 = geompy.MakeVertex(-100, 90, 0)
+  tan_curve = geompy.MakeInterpol([tan_vertex_4, tan_vertex_2, tan_vertex_3, tan_vertex_1], False)
+  tan_extrusion = geompy.MakePrismDXDYDZ(tan_curve, 0, 30, -60)
+  tan_on_face = geompy.MakeTangentPlaneOnFace(tan_extrusion, 0.7, 0.5, 150)
 
   #Create base geometry 3D
-  Box      = geompy.MakeBoxTwoPnt(p0, p200)                   #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  Box1     = geompy.MakeBoxDXDYDZ(10, 20, 30)                 #(3 Doubles)->GEOM_Object_ptr
-  Box2     = geompy.MakeBox(10,20,30, 15,25,35)               #(6 Doubles)->GEOM_Object_ptr
-  Cylinder = geompy.MakeCylinder(p0, vz, radius1, height)     #(2 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
-  Cyl1     = geompy.MakeCylinderRH(radius2, height)           #(2 Doubles)->GEOM_Object_ptr
-  Sphere   = geompy.MakeSpherePntR(p0, radius1)               #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  Sphere1  = geompy.MakeSphereR(radius)                       #(Double)->GEOM_Object_ptr
-  Sphere2  = geompy.MakeSphere(50, 70, 30, radius)            #(4 Doubles)->GEOM_Object_ptr
-  Cone     = geompy.MakeCone(p0, vz, radius2, radius, height) #(2 GEOM_Object_ptr, 3 Doubles)->GEOM_Object_ptr
-  Cone1    = geompy.MakeConeR1R2H(radius1, radius, height)    #(3 Doubles)->GEOM_Object_ptr
-  Torus    = geompy.MakeTorus(p0, vz, radius2, radius)        #(2 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
-  Torus1   = geompy.MakeTorusRR(radius2, radius1)             #(2 Doubles)->GEOM_Object_ptr
+  Box      = geompy.MakeBoxTwoPnt(p0, p200)                   #(2 GEOM_Object)->GEOM_Object
+  Box1     = geompy.MakeBoxDXDYDZ(10, 20, 30)                 #(3 Doubles)->GEOM_Object
+  Box2     = geompy.MakeBox(10,20,30, 15,25,35)               #(6 Doubles)->GEOM_Object
+  Cylinder = geompy.MakeCylinder(p0, vz, radius1, height)     #(2 GEOM_Object, 2 Doubles)->GEOM_Object
+  Cyl1     = geompy.MakeCylinderRH(radius2, height)           #(2 Doubles)->GEOM_Object
+  Sphere   = geompy.MakeSpherePntR(p0, radius1)               #(GEOM_Object, Double)->GEOM_Object
+  Sphere1  = geompy.MakeSphereR(radius)                       #(Double)->GEOM_Object
+  Sphere2  = geompy.MakeSphere(50, 70, 30, radius)            #(4 Doubles)->GEOM_Object
+  Cone     = geompy.MakeCone(p0, vz, radius2, radius, height) #(2 GEOM_Object, 3 Doubles)->GEOM_Object
+  Cone1    = geompy.MakeConeR1R2H(radius1, radius, height)    #(3 Doubles)->GEOM_Object
+  Torus    = geompy.MakeTorus(p0, vz, radius2, radius)        #(2 GEOM_Object, 2 Doubles)->GEOM_Object
+  Torus1   = geompy.MakeTorusRR(radius2, radius1)             #(2 Doubles)->GEOM_Object
 
   #Boolean (Common, Cut, Fuse, Section)
-  Common  = geompy.MakeBoolean(Box, Sphere, 1) #(2 GEOM_Object_ptr, Short)->GEOM_Object_ptr
+  Common  = geompy.MakeBoolean(Box, Sphere, 1) #(2 GEOM_Object, Short)->GEOM_Object
   Cut     = geompy.MakeBoolean(Box, Sphere, 2)
   Fuse    = geompy.MakeBoolean(Box, Sphere, 3)
   Section = geompy.MakeBoolean(Box, Sphere, 4)
 
   #Create base objects
-  Edge     = geompy.MakeEdge(p0, pxyz)               #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  Wire     = geompy.MakeWire([vxy, Arc])             #(List Of GEOM_Object_ptr)->GEOM_Object_ptr
-  Face     = geompy.MakeFace(Wire, WantPlanarFace)   #(GEOM_Object_ptr, Boolean)->GEOM_Object_ptr
+  Edge     = geompy.MakeEdge(p0, pxyz)               #(2 GEOM_Object)->GEOM_Object
+  Edge1    = geompy.MakeEdgeOnCurveByLength(Arc, 50, px) #(GEOM_Object, Double, GEOM_Object)->GEOM_Object
+  Wire     = geompy.MakeWire([vxy, Arc])             #(List Of GEOM_Object)->GEOM_Object
+  Face     = geompy.MakeFace(Wire, WantPlanarFace)   #(GEOM_Object, Boolean)->GEOM_Object
   Face1    = geompy.MakeFaceWires([Wire, Sketcher],
-                                  WantPlanarFace)    #(List of GEOM_Object_ptr, Boolean)->GEOM_Object_ptr
+                                  WantPlanarFace)    #(List of GEOM_Object, Boolean)->GEOM_Object
   Face2    = geompy.MakeFace(Sketcher, WantPlanarFace)
-  Face3    = geompy.MakeFaceHW (100., 200., 1)       #(2 Doubles, 1 Int)->GEOM_Object_ptr
-  Face4    = geompy.MakeFaceObjHW (vz, 200., 100.)   #(1 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
-  Disk     = geompy.MakeDiskPntVecR (p0, vz, radius) #(2 GEOM_Object_ptr, 1 Double)->GEOM_Object_ptr
-  Disk2    = geompy.MakeDiskThreePnt(p0, p200, pz)   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  Disk3    = geompy.MakeDiskR(100., 1)               #(1 Doubles, 1 Int)->GEOM_Object_ptr
-  Shell    = geompy.MakeShell([Face, Face1])         #(List of GEOM_Object_ptr)->GEOM_Object_ptr
+  Face3    = geompy.MakeFaceHW (100., 200., 1)       #(2 Doubles, 1 Int)->GEOM_Object
+  Face4    = geompy.MakeFaceObjHW (vz, 200., 100.)   #(1 GEOM_Object, 2 Doubles)->GEOM_Object
+  Disk     = geompy.MakeDiskPntVecR (p0, vz, radius) #(2 GEOM_Object, 1 Double)->GEOM_Object
+  Disk2    = geompy.MakeDiskThreePnt(p0, p200, pz)   #(3 GEOM_Object)->GEOM_Object
+  Disk3    = geompy.MakeDiskR(100., 1)               #(1 Doubles, 1 Int)->GEOM_Object
+  Shell    = geompy.MakeShell([Face, Face1])         #(List of GEOM_Object)->GEOM_Object
 
-  Prism1   = geompy.MakePrism(Face2, p0, pxyz)       #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  prism1_faces = geompy.SubShapeAllSorted(Prism1, ShapeTypeFace)
+  Prism1   = geompy.MakePrism(Face2, p0, pxyz)       #(3 GEOM_Object)->GEOM_Object
+  prism1_faces = geompy.SubShapeAllSortedCentres(Prism1, geompy.ShapeType["FACE"])
   Shell1   = geompy.MakeShell([prism1_faces[0], prism1_faces[1],
                                prism1_faces[3], prism1_faces[4],
                                prism1_faces[5], prism1_faces[2]])
-  Solid    = geompy.MakeSolid([Shell1])              #(List of GEOM_Object_ptr)->GEOM_Object_ptr
+  Solid    = geompy.MakeSolid([Shell1])              #(List of GEOM_Object)->GEOM_Object
 
   ShapeListCompound = []
   i = 0
@@ -160,59 +178,62 @@ def TestAll (geompy, math):
         S = geompy.MakeTranslation(Arc, i * 100., i * 100., i * 100.)
         ShapeListCompound.append(S)
         i = i + 1
-  Compound = geompy.MakeCompound(ShapeListCompound)  #(List of GEOM_Object_ptr)->GEOM_Object_ptr
+  Compound = geompy.MakeCompound(ShapeListCompound)  #(List of GEOM_Object)->GEOM_Object
 
   #Test point on surface creation
-  p_on_face = geompy.MakeVertexOnSurface(Face, 0.1, 0.8) #(GEOM_Object_ptr, Double, Double)->GEOM_Object_ptr
+  p_on_face = geompy.MakeVertexOnSurface(Face, 0.1, 0.8) #(GEOM_Object, Double, Double)->GEOM_Object
+  p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(Face, 0., 0., 0.) #(GEOM_Object, Double, Double, Double)->GEOM_Object
 
   # Test plane from existing face creation
-  Plane2 = geompy.MakePlaneFace(Face, trimsize)      #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Plane2 = geompy.MakePlaneFace(Face, trimsize)      #(GEOM_Object, Double)->GEOM_Object
 
   #ShapeList for Sewing
   S = geompy.MakeRotation(Face, vxy, angle1)
 
   #Test Line on Faces Intersection
-  Line3 = geompy.MakeLineTwoFaces(prism1_faces[0], prism1_faces[1]) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  Line3 = geompy.MakeLineTwoFaces(prism1_faces[0], prism1_faces[1]) #(2 GEOM_Object)->GEOM_Object
 
   #Create advanced objects
-  Copy       = geompy.MakeCopy(Box)                      #(GEOM_Object_ptr)->GEOM_Object_ptr
-  Prism      = geompy.MakePrismVecH(Face, vz, 100.0)     #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  Prism2Ways = geompy.MakePrismVecH2Ways(Face, vz, 10.0) #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  PrismDXDYDZ= geompy.MakePrismDXDYDZ(Face2, 10, 20, 100)#(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  PrismDXDYDZ2Ways= geompy.MakePrismDXDYDZ2Ways(Face, 30, -20, 200)#(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  Revolution = geompy.MakeRevolution(Face, vz, angle2)   #
-  Revolution2Ways = geompy.MakeRevolution(Face, vz, angle1)   #
-  Filling    = geompy.MakeFilling(Compound, mindeg, maxdeg,
-                                  tol2d, tol3d, nbiter)  #(GEOM_Object_ptr, 4 Doubles, Short)->GEOM_Object_ptr
-  Pipe       = geompy.MakePipe(Wire, Edge)               #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  Sewing     = geompy.MakeSewing([Face, S], precision)   #(List Of GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Copy       = geompy.MakeCopy(Box)                      #(GEOM_Object)->GEOM_Object
+  Prism            = geompy.MakePrismVecH(Face, vz, 100.0)     #(2 GEOM_Object, Double)->GEOM_Object
+  Prism2Ways       = geompy.MakePrismVecH2Ways(Face, vz, 10.0) #(2 GEOM_Object, Double)->GEOM_Object
+  PrismTwoPnt      = geompy.MakePrism(Face2, p0, pxyz)         #(3 GEOM_Object)->GEOM_Object
+  PrismTwoPnt2Ways = geompy.MakePrism2Ways(Face2, p0, pxyz)    #(3 GEOM_Object)->GEOM_Object
+  PrismDXDYDZ      = geompy.MakePrismDXDYDZ(Face2, 10, 20, 100)#(2 GEOM_Object, Double)->GEOM_Object
+  PrismDXDYDZ2Ways = geompy.MakePrismDXDYDZ2Ways(Face, 30, -20, 200)#(2 GEOM_Object, Double)->GEOM_Object
+  Revolution       = geompy.MakeRevolution(Face, vz, angle2)   #
+  Revolution2Ways  = geompy.MakeRevolution(Face, vz, angle1)   #
+  Filling          = geompy.MakeFilling(Compound, mindeg, maxdeg,
+                                  tol2d, tol3d, nbiter)  #(GEOM_Object, 4 Doubles, Short)->GEOM_Object
+  Pipe       = geompy.MakePipe(Wire, Edge)               #(2 GEOM_Object)->GEOM_Object
+  Sewing     = geompy.MakeSewing([Face, S], precision)   #(List Of GEOM_Object, Double)->GEOM_Object
 
   #Transform objects
-  Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)    #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  TranslVect  = geompy.MakeTranslationVector(Box, vxyz)         #(2 GEOM_Object_ptr)->GEOM_Object_ptr
-  TranslVectD = geompy.MakeTranslationVectorDistance(Box, vxyz, 50.0)   #(2 GEOM_Object_ptr)->GEOM_Object_ptr  
-  Rotation    = geompy.MakeRotation(Box, vz, angle1)            #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  RotatPnt    = geompy.MakeRotationThreePoints(Box, px, py, pz) #(4 GEOM_Object_ptr)->GEOM_Object_ptr
+  Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)    #(3 GEOM_Object)->GEOM_Object
+  TranslVect  = geompy.MakeTranslationVector(Box, vxyz)         #(2 GEOM_Object)->GEOM_Object
+  TranslVectD = geompy.MakeTranslationVectorDistance(Box, vxyz, 50.0)   #(2 GEOM_Object)->GEOM_Object  
+  Rotation    = geompy.MakeRotation(Box, vz, angle1)            #(2 GEOM_Object, Double)->GEOM_Object
+  RotatPnt    = geompy.MakeRotationThreePoints(Box, px, py, pz) #(4 GEOM_Object)->GEOM_Object
 
   #Scale by factor relatively given point
-  Scale1 = geompy.MakeScaleTransform(Box, pxyz, factor)      #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Scale1 = geompy.MakeScaleTransform(Box, pxyz, factor)      #(2 GEOM_Object, Double)->GEOM_Object
   #Scale by factor relatively the origin of global CS
   Scale2 = geompy.MakeScaleTransform(Box, None, factor)      #
   #Scale along axes of global CS by different factors. Scale relatively given point
-  Scale3 = geompy.MakeScaleAlongAxes(Box, pxyz, 1.5, 0.5, 3) #(2 GEOM_Object_ptr, 3 Doubles)->GEOM_Object_ptr
+  Scale3 = geompy.MakeScaleAlongAxes(Box, pxyz, 1.5, 0.5, 3) #(2 GEOM_Object, 3 Doubles)->GEOM_Object
   #Scale along axes of global CS by different factors. Scale relatively the origin of global CS
   Scale4 = geompy.MakeScaleAlongAxes(Box, None, 1.5, 0.5, 3) #
 
-  Mirror      = geompy.MakeMirrorByPlane(Box, Plane) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  Mirror      = geompy.MakeMirrorByPlane(Box, Plane) #(2 GEOM_Object)->GEOM_Object
   MirrorAxis  = geompy.MakeMirrorByAxis(Box, Line1)  #
   MirrorPnt   = geompy.MakeMirrorByPoint(Box, p200)  #
-  Position    = geompy.MakePosition(Box, cs1, cs2)   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  Position2   = geompy.PositionAlongPath(Box, Arc, 0.5, 1, 0)  #(2 GEOM_Object_ptr, 1 Double, 2 Bool)->GEOM_Object_ptr
-  Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Position    = geompy.MakePosition(Box, cs1, cs2)   #(3 GEOM_Object)->GEOM_Object
+  Position2   = geompy.PositionAlongPath(Box, Arc, 0.5, 1, 0)  #(2 GEOM_Object, 1 Double, 2 Bool)->GEOM_Object
+  Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object, Double)->GEOM_Object
   Orientation = geompy.ChangeOrientation(Box)
 
   #IDList for Fillet/Chamfer
-  prism_edges = geompy.SubShapeAllSorted(Prism, ShapeTypeEdge)
+  prism_edges = geompy.ExtractShapes(Prism, geompy.ShapeType["EDGE"], True)
 
   for anEdge in prism_edges:
     eid = geompy.GetSubShapeID(Prism, anEdge)
@@ -227,7 +248,7 @@ def TestAll (geompy, math):
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[1]))
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[2]))
 
-  prism_faces = geompy.SubShapeAllSorted(Prism, ShapeTypeFace)
+  prism_faces = geompy.ExtractShapes(Prism, geompy.ShapeType["FACE"], True)
 
   f_ind_1 = geompy.GetSubShapeID(Prism, prism_faces[0])
   f_ind_2 = geompy.GetSubShapeID(Prism, prism_faces[1])
@@ -235,19 +256,19 @@ def TestAll (geompy, math):
   IDlist_f = [f_ind_1, f_ind_2]
   
   #Local operations
-  Fillet2d = geompy.MakeFillet2D(Face3, radius, [4, 7, 9]) #(GEOM_Object_ptr, Double, ListOfLong)->GEOM_Object_ptr
-  Fillet   = geompy.MakeFillet (Prism, radius, ShapeTypeEdge,
-                                IDlist_e) #(GEOM_Object_ptr, Double, Short, ListOfLong)->GEOM_Object_ptr
-  Fillet2  = geompy.MakeFilletR1R2 (Prism, 7., 13., ShapeTypeEdge,
-                                    IDlist_e) #(GEOM_Object_ptr, Double, Double, Short, ListOfLong)->GEOM_Object_ptr
+  Fillet2d = geompy.MakeFillet2D(Face3, radius, [4, 7, 9]) #(GEOM_Object, Double, ListOfLong)->GEOM_Object
+  Fillet   = geompy.MakeFillet (Prism, radius, geompy.ShapeType["EDGE"],
+                                IDlist_e) #(GEOM_Object, Double, Short, ListOfLong)->GEOM_Object
+  Fillet2  = geompy.MakeFilletR1R2 (Prism, 7., 13., geompy.ShapeType["EDGE"],
+                                    IDlist_e) #(GEOM_Object, Double, Double, Short, ListOfLong)->GEOM_Object
   Chamfer  = geompy.MakeChamferEdge(Prism, d1, d2,
-                                    f_ind_1, f_ind_2) #(GEOM_Object_ptr, 2 Doubles, 2 Long)->GEOM_Object_ptr
+                                    f_ind_1, f_ind_2) #(GEOM_Object, 2 Doubles, 2 Long)->GEOM_Object
   Chamfer2 = geompy.MakeChamferFaces(Prism, d1, d2,
-                                     IDlist_f) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
+                                     IDlist_f) #(GEOM_Object, 2 Doubles, ListOfLong)->GEOM_Object
   Chamfer3 = geompy.MakeChamferEdges(Prism, d1, d2,
-                                     IDlist_e) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
+                                     IDlist_e) #(GEOM_Object, 2 Doubles, ListOfLong)->GEOM_Object
   Chamfer4 = geompy.MakeChamferFacesAD(Prism, d1, 20. * math.pi / 180.,
-                                       IDlist_f) #(GEOM_Object_ptr, 2 Doubles, ListOfLong)->GEOM_Object_ptr
+                                       IDlist_f) #(GEOM_Object, 2 Doubles, ListOfLong)->GEOM_Object
   #End of Local operations
 
   #Create Patterns
@@ -258,18 +279,18 @@ def TestAll (geompy, math):
   MultiRot2D   = geompy.MultiRotate2D(Chamfer, vx, angle, nbtimes1, step1, nbtimes2)
 
   #Create Informations objects
-  CDG        = geompy.MakeCDG(Prism)               #(GEOM_Object_ptr)->GEOM_Object_ptr
+  CDG        = geompy.MakeCDG(Prism)               #(GEOM_Object)->GEOM_Object
   Archimede  = geompy.Archimede(Box, weight, waterdensity,
-                                meshingdeflection) #(GEOM_Object_ptr, 3 Doubles)->GEOM_Object_ptr
-  mindist = geompy.MinDistanceComponents(TranslVect, Mirror) #(2 GEOM_Object_ptr)->4 Doubles
+                                meshingdeflection) #(GEOM_Object, 3 Doubles)->GEOM_Object
+  mindist = geompy.MinDistanceComponents(TranslVect, Mirror) #(2 GEOM_Object)->4 Doubles
   print "Minumal distance between TranslVect and Mirror is", mindist[0],
   print "by components:", mindist[1], ",", mindist[2], ",", mindist[3]
-  CheckShape = geompy.CheckShape(Prism)            #(GEOM_Object_ptr)->Boolean
+  CheckShape = geompy.CheckShape(Prism)            #(GEOM_Object)->Boolean
   print "CheckShape(Prism) = ", CheckShape
 
   #Partition objects
-  Partition  = geompy.MakePartition([Box], [Plane]) #(2 Lists Of GEOM_Object_ptr)->GEOM_Object_ptr
-  Partition1 = geompy.MakeHalfPartition(Box, Plane) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
+  Partition  = geompy.MakePartition([Box], [Plane]) #(2 Lists Of GEOM_Object)->GEOM_Object
+  Partition1 = geompy.MakeHalfPartition(Box, Plane) #(2 GEOM_Object)->GEOM_Object
 
   #Add In Study
   id_p0   = geompy.addToStudy(p0,   "Vertex 0")
@@ -288,12 +309,15 @@ def TestAll (geompy, math):
   id_cs1 = geompy.addToStudy(cs1, "CS 50,50,50, 1,0,0, 0,1,0")
   id_cs2 = geompy.addToStudy(cs2, "CS 70,80,10, 1,0,1, 1,1,0")
   id_cs3 = geompy.addToStudy(cs3, "CS: pz, vxy, vz")
+  id_cs4 = geompy.addToStudy(cs4, "CS: Plane")
 
   id_Line   = geompy.addToStudy(Line,   "Line")
   id_Line1  = geompy.addToStudy(Line1,  "Line by point and vector")
   id_Line3  = geompy.addToStudy(Line3,  "Line on Two Faces Intersection")
   id_Plane  = geompy.addToStudy(Plane,  "Plane")
   id_Plane1 = geompy.addToStudy(Plane1,  "Plane by 3 points")
+  id_Plane2 = geompy.addToStudy(Plane2,  "Plane by 2 vectors")
+  id_Plane3 = geompy.addToStudy(Plane3,  "Plane by LCS")
 
   id_Arc      = geompy.addToStudy(Arc,      "Arc")
   id_Arc2     = geompy.addToStudy(Arc2,     "Arc2")
@@ -309,9 +333,13 @@ def TestAll (geompy, math):
   id_Sketcher3d = geompy.addToStudy(Sketcher3d, "Sketcher 3D")
 
   id_p_on_arc  = geompy.addToStudy(p_on_arc,  "Vertex on Arc (0.25)")
+  id_p_on_arc2 = geompy.addToStudy(p_on_arc2, "Vertex on Arc at(100, -10, 10)" )
+  id_p_on_arc3 = geompy.addToStudy(p_on_arc3, "Vertex on Arc length 50 from Vertex X" )
+  
   id_p_on_l1l2 = geompy.addToStudy(p_on_l1l2, "Vertex on Lines Intersection")
 
-  id_tan_on_arc = geompy.addToStudy(tan_on_arc, "Tangent on Arc (0.7)")
+  id_tan_on_arc  = geompy.addToStudy(tan_on_arc, "Tangent on Arc (0.7)")
+  id_tan_on_face = geompy.addToStudy(tan_on_face, "Tangent on Face")
 
   id_Box      = geompy.addToStudy(Box,      "Box")
   id_Box1     = geompy.addToStudy(Box1,     "Box 10x20x30")
@@ -332,6 +360,7 @@ def TestAll (geompy, math):
   id_Section = geompy.addToStudy(Section, "Section")
 
   id_Edge     = geompy.addToStudy(Edge,     "Edge")
+  id_Edge1    = geompy.addToStudy(Edge1,    "Edge on Arc length 50 from Vertex Y")
   id_Wire     = geompy.addToStudy(Wire,     "Wire")
   id_Face     = geompy.addToStudy(Face,     "Face")
   id_Face1    = geompy.addToStudy(Face1,    "Face from two wires")
@@ -344,6 +373,7 @@ def TestAll (geompy, math):
   id_Shell    = geompy.addToStudy(Shell,    "Shell")
 
   id_p_on_face = geompy.addToStudy(p_on_face, "Vertex on Face (0.1, 0.8)")
+  id_p_on_face2 = geompy.addToStudy(p_on_face2, "Vertex on Face at(0., 0., 0.)")
 
   id_Prism1   = geompy.addToStudy(Prism1,     "Prism by Two Pnt")
   id_Shell1   = geompy.addToStudy(Shell1,   "Shell from Prism1 faces")
@@ -353,12 +383,14 @@ def TestAll (geompy, math):
   id_Plane2   = geompy.addToStudy(Plane2,   "Plane on Face")
 
   id_Copy       = geompy.addToStudy(Copy,       "Copy")
-  id_Prism      = geompy.addToStudy(Prism,      "Prism")
-  id_Prism2Ways = geompy.addToStudy(Prism2Ways, "Prism2Ways")
-  id_PrismDXDYDZ= geompy.addToStudy(PrismDXDYDZ,"PrismDXDYDZ")
-  id_PrismDXDYDZ2Ways= geompy.addToStudy(PrismDXDYDZ2Ways,"PrismDXDYDZ2Ways")
-  id_Revolution = geompy.addToStudy(Revolution, "Revolution")
-  id_Revolution2Ways = geompy.addToStudy(Revolution2Ways, "Revolution2Ways")
+  id_Prism            = geompy.addToStudy(Prism,            "Prism")
+  id_Prism2Ways       = geompy.addToStudy(Prism2Ways,       "Prism2Ways")
+  id_PrismTwoPnt      = geompy.addToStudy(PrismTwoPnt,      "PrismTwoPnt")
+  id_PrismTwoPnt2Ways = geompy.addToStudy(PrismTwoPnt2Ways, "PrismTwoPnt2Ways")
+  id_PrismDXDYDZ      = geompy.addToStudy(PrismDXDYDZ,      "PrismDXDYDZ")
+  id_PrismDXDYDZ2Ways = geompy.addToStudy(PrismDXDYDZ2Ways, "PrismDXDYDZ2Ways")
+  id_Revolution       = geompy.addToStudy(Revolution,       "Revolution")
+  id_Revolution2Ways  = geompy.addToStudy(Revolution2Ways,  "Revolution2Ways")
   id_Filling    = geompy.addToStudy(Filling,    "Filling")
   id_Pipe       = geompy.addToStudy(Pipe,       "Pipe")
   id_Sewing     = geompy.addToStudy(Sewing,     "Sewing")
@@ -407,10 +439,18 @@ def TestAll (geompy, math):
   name       = geompy.SubShapeName(SubFace, Box)
   id_SubFace = geompy.addToStudyInFather(Box, SubFace, name)
 
-  # SubShapeSorted
-  SubFaceS   = geompy.SubShapeSorted(Box, geompy.ShapeType["FACE"], [5])
+  # SubShapeSortedCentres
+  SubFaceS   = geompy.SubShapeSortedCentres(Box, geompy.ShapeType["FACE"], [5])
   nameS      = geompy.SubShapeName(SubFaceS, Box)
   id_SubFace = geompy.addToStudyInFather(Box, SubFaceS, nameS)
+
+  # GetExistingSubObjects
+  SubObjsAll = geompy.GetExistingSubObjects(Box, True)
+  print "For now, Box has the following created sub-objects:", SubObjsAll
+
+  # GetGroups
+  SubGrpsAll = geompy.GetGroups(Box)
+  print "For now, Box has the following created groups:", SubGrpsAll
 
   # SubShapeAll
   SubEdgeList = geompy.SubShapeAll(SubFace, geompy.ShapeType["EDGE"])
@@ -426,8 +466,8 @@ def TestAll (geompy, math):
   geompy.UnionIDs(group, SubEdgeIDsList)
   geompy.addToStudyInFather(SubFace, group, "Group of all edges")
 
-  # SubShapeAllSortedIDs
-  SubEdgeIDsList = geompy.SubShapeAllSortedIDs(SubFace, geompy.ShapeType["EDGE"])
+  # SubShapeAllSortedCentresIDs
+  SubEdgeIDsList = geompy.SubShapeAllSortedCentresIDs(SubFace, geompy.ShapeType["EDGE"])
   print "IDs of edges of SubFace:", SubEdgeIDsList, "(sorted)"
 
   # GetSubShape and GetSubShapeID
@@ -436,5 +476,11 @@ def TestAll (geompy, math):
     ind_e = geompy.GetSubShapeID(SubFace, edge)
     if ind_e != ind:
       print "Error in GetSubShape or GetSubShapeID"
+
+  # RestoreSubShapes
+  geompy.RestoreSubShapes(Copy)
+  geompy.RestoreSubShapes(RotatPnt, [], GEOM.FSM_Transformed)
+  geompy.RestoreSubShapes(Partition, [Box])
+  geompy.RestoreSubShapes(Partition1)
 
   print "DONE"

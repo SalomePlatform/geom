@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_RemoveIntWiresDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -122,6 +123,7 @@ void RepairGUI_RemoveIntWiresDlg::Init()
 
   GroupPoints->PushButton1->click();
   SelectionIntoArgument();
+  resize(100,100);
 }
 
 //=================================================================================
@@ -130,6 +132,7 @@ void RepairGUI_RemoveIntWiresDlg::Init()
 //=================================================================================
 void RepairGUI_RemoveIntWiresDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -171,9 +174,8 @@ void RepairGUI_RemoveIntWiresDlg::SelectionIntoArgument()
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
 
     if (myEditCurrentArgument == GroupPoints->LineEdit1) { // face selection
-      Standard_Boolean aRes;
-      myObject = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
-      if (aRes && GEOMBase::IsShape(myObject)) {
+      myObject = GEOMBase::ConvertIOinGEOMObject( anIO );
+      if ( GEOMBase::IsShape(myObject) ) {
         myEditCurrentArgument->setText(GEOMBase::GetName(myObject));
 
         // clear selection
@@ -259,7 +261,7 @@ void RepairGUI_RemoveIntWiresDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setText( "" );
@@ -305,8 +307,8 @@ bool RepairGUI_RemoveIntWiresDlg::isValid (QString&)
 //=================================================================================
 bool RepairGUI_RemoveIntWiresDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow(getOperation())->
-    RemoveIntWires(myObject, myWiresInd);
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->RemoveIntWires(myObject, myWiresInd);
 
   bool aResult = !anObj->_is_nil();
   if (aResult)

@@ -1,28 +1,29 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_FaceDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "BuildGUI_FaceDlg.h"
 
 #include <GEOMImpl_Types.hxx>
@@ -32,10 +33,13 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SUIT_MessageBox.h>
+#include <SUIT_OverrideCursor.h>
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg()
@@ -100,6 +104,7 @@ void BuildGUI_FaceDlg::Init()
   GroupWire->LineEdit1->setReadOnly( true );
 
   GroupWire->CheckButton1->setChecked( true );
+  myWires.clear();
 
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_EDGE );
@@ -112,9 +117,10 @@ void BuildGUI_FaceDlg::Init()
   connect( GroupWire->LineEdit1,   SIGNAL( returnPressed()), this, SLOT( LineEditReturnPressed() ) );
   connect( GroupWire->PushButton1, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_FACE" ) );
+  SelectionIntoArgument();
 }
 
 
@@ -124,6 +130,7 @@ void BuildGUI_FaceDlg::Init()
 //=================================================================================
 void BuildGUI_FaceDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }
@@ -150,26 +157,15 @@ bool BuildGUI_FaceDlg::ClickOnApply()
 void BuildGUI_FaceDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-  QString aName;
-  
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
 
-  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
-  
-  if ( aNbSel < 1) {
-    myWires.length(0);
-    return;
+  QList<TopAbs_ShapeEnum> types;
+  types << TopAbs_EDGE << TopAbs_WIRE;
+  myWires = getSelected( types, -1 );
+
+  if ( !myWires.isEmpty() ) {
+    QString aName = myWires.count() > 1 ? QString( "%1_objects").arg( myWires.count() ) : GEOMBase::GetName( myWires[0].get() );
+    myEditCurrentArgument->setText( aName );
   }
-  
-  GEOMBase::ConvertListOfIOInListOfGO(aSelList, myWires);
-  if ( !myWires.length() )
-    return;
-  if ( aNbSel != 1 )
-    aName = tr( "%1_objects" ).arg( aNbSel );
-  
-  myEditCurrentArgument->setText( aName );
 }
 
 
@@ -203,7 +199,7 @@ void BuildGUI_FaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_EDGE );
   aMap.Add( GEOM_WIRE );
@@ -236,7 +232,7 @@ GEOM::GEOM_IOperations_ptr BuildGUI_FaceDlg::createOperation()
 //=================================================================================
 bool BuildGUI_FaceDlg::isValid( QString& )
 {
-  return ( myWires.length() != 0 );
+  return !myWires.isEmpty();
 }
 
 //=================================================================================
@@ -245,15 +241,26 @@ bool BuildGUI_FaceDlg::isValid( QString& )
 //=================================================================================
 bool BuildGUI_FaceDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
 
-  bool isPlanarWanted = GroupWire->CheckButton1->isChecked();
-  anObj = GEOM::GEOM_IShapesOperations::_narrow(
-    getOperation() )->MakeFaceWires( myWires, isPlanarWanted );
+  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+  objlist->length( myWires.count() );
+  for ( int i = 0; i < myWires.count(); i++ )
+    objlist[i] = myWires[i].copy();
 
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+  GEOM::GEOM_Object_var anObj = anOper->MakeFaceWires( objlist.in(), GroupWire->CheckButton1->isChecked() );
+
+  if (!anObj->_is_nil()) {
+    objects.push_back(anObj._retn());
+
+    if (!anOper->IsDone() && QString(anOper->GetErrorCode()) == "MAKE_FACE_TOLERANCE_TOO_BIG") {
+      SUIT_OverrideCursor wc;
+      wc.suspend();
+      QString msgw = QObject::tr(anOper->GetErrorCode());
+      SUIT_MessageBox::warning(this, tr("WRN_WARNING"), msgw, tr("BUT_OK"));
+      anOper->SetErrorCode("PAL_NO_ERROR");
+    }
+  }
 
   return true;
 }
-

@@ -1,24 +1,22 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
+
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : BasicGUI
@@ -38,8 +36,11 @@ salomeinclude_HEADERS =			\
 	BasicGUI_MarkerDlg.h		\
 	BasicGUI_PlaneDlg.h		\
 	BasicGUI_PointDlg.h		\
-	BasicGUI_VectorDlg.h		\
-	BasicGUI_WorkingPlaneDlg.h
+	BasicGUI_VectorDlg.h            \
+	BasicGUI_ParamCurveWidget.h
+#
+# OBSOLETE: BasicGUI_WorkingPlaneDlg.h
+#
 
 # Libraries targets
 
@@ -55,9 +56,12 @@ dist_libBasicGUI_la_SOURCES =		\
 	BasicGUI_ArcDlg.cxx		\
 	BasicGUI_VectorDlg.cxx		\
 	BasicGUI_PlaneDlg.cxx		\
-	BasicGUI_WorkingPlaneDlg.cxx	\
 	BasicGUI_CurveDlg.cxx		\
-	BasicGUI_MarkerDlg.cxx
+	BasicGUI_MarkerDlg.cxx          \
+	BasicGUI_ParamCurveWidget.cxx
+#
+# OBSOLETE: BasicGUI_WorkingPlaneDlg.cxx
+#
 
 MOC_FILES =					\
 	BasicGUI_PointDlg_moc.cxx		\
@@ -67,9 +71,12 @@ MOC_FILES =					\
 	BasicGUI_ArcDlg_moc.cxx			\
 	BasicGUI_VectorDlg_moc.cxx		\
 	BasicGUI_PlaneDlg_moc.cxx		\
-	BasicGUI_WorkingPlaneDlg_moc.cxx	\
 	BasicGUI_CurveDlg_moc.cxx		\
-	BasicGUI_MarkerDlg_moc.cxx
+	BasicGUI_MarkerDlg_moc.cxx		\
+	BasicGUI_ParamCurveWidget_moc.cxx
+#
+# OBSOLETE: BasicGUI_WorkingPlaneDlg_moc.cxx
+#
 
 nodist_libBasicGUI_la_SOURCES =			\
 	$(MOC_FILES)
@@ -86,6 +93,7 @@ libBasicGUI_la_CPPFLAGS =			\
 	$(GUI_CXXFLAGS)				\
 	$(CORBA_CXXFLAGS)			\
 	$(CORBA_INCLUDES)			\
+	$(OPENCV_INCLUDES)			\
 	-I$(srcdir)/../OBJECT			\
 	-I$(srcdir)/../DlgRef			\
 	-I$(srcdir)/../GEOMGUI			\
@@ -94,12 +102,13 @@ libBasicGUI_la_CPPFLAGS =			\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(srcdir)/../GEOMClient		\
 	-I$(top_builddir)/src/DlgRef		\
-	-I$(top_builddir)/idl			\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 
 libBasicGUI_la_LDFLAGS  =					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMBase/libGEOMBase.la				\
 	../GEOMGUI/libGEOM.la					\
-	$(GUI_LDFLAGS) -lsuit
+	$(CAS_LDFLAGS) -lTKGeomBase                             \
+	$(GUI_LDFLAGS) -lsuit					\
+	$(OPENCV_LIBS) 

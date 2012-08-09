@@ -13,7 +13,7 @@ with the origin of the Local Coordinate System.
 will be removed.
 \n <b>Arguments:</b> Name + one or several objects + End Coordinate System.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation5.png
 
@@ -21,7 +21,7 @@ will be removed.
 is to the right and the modified cube with the Local Coordinate
 System in the center of it is to the left .
 
-\image html image30.gif
+\image html image30.png
 
 \n The second algorithm  modifies the location of an object using Start
 and End LSC, although the final position of the object will not
@@ -34,7 +34,7 @@ otherwise it will be removed.
 \n <b>Arguments:</b> Name + one or several objects + Start Coordinate System + End
 Coordinate System.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation6.png
 
@@ -42,30 +42,29 @@ In this picture we see the initial cube with the global coordinate
 system and two LCS: LocalCS1 (GCS+100 along x-axis) and LocalCS2
 (GCS+200 along x-axis)
 
-\image html image1.gif
+\image html image1.png
 
 Selecting Start LCS = LCS1 and End LCS = LCS2, we obtain the
 translated cube at the position (100;0;0)
 
-\image html image2.gif
+\image html image21.png
 
 Selecting Start LCS = LCS2 and End LCS = LCS1, we obtain the
 translated cube at the position (-100;0;0)
 
-\image html image4.gif
+\image html image4.png
 
 The third algorithm modifies the location of an object using the Path object (Wire or Edge)
 and the Distance parameter (ranging from 0 to 1) defining  how far the object will move along the path.
 \n <b>Create a copy</b> checkbox allows to keep the initial object,
 otherwise it will be removed.
-\n <b>Select Unpublished edges</b> checkbox allows to select subshape edges on
+\n <b>Select Unpublished edges</b> checkbox allows to select sub-shape edges on
 the other objects.
 \n <b>Reverse Direction</b> checkbox allows to REVERSE the direction of the object movement along its path.
 
 <b>Arguments:</b> Name + one or several objects + Translation path.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation
-   parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
    
 \image html transformation13.png
 

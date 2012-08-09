@@ -1,26 +1,27 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//NOTE: This is an intreface to a function for the point creation.
-//
+
+//NOTE: This is an interface to a function for the point creation.
+
 #include "GEOM_Function.hxx"
 
 #define ARG_X     1
@@ -36,6 +37,10 @@
 
 #define ARG_SURFACE 9
 #define ARG_PARAM2 10
+
+#define ARG_LENGTH 11
+
+//#define ARG_FLAG 12
 
 class GEOMImpl_IPoint
 {
@@ -67,9 +72,13 @@ class GEOMImpl_IPoint
 
   void SetParameter(double theParam) { _func->SetReal(ARG_PARAM, theParam); }
   void SetParameter2(double theParam) { _func->SetReal(ARG_PARAM2, theParam); }
+  void SetLength(double theLength) { _func->SetReal(ARG_LENGTH, theLength); }
+  //void SetReversed(bool theReversed)  { _func->SetInteger(ARG_FLAG, theReversed); }
 
   double GetParameter() { return _func->GetReal(ARG_PARAM); }
   double GetParameter2() { return _func->GetReal(ARG_PARAM2); }
+  double GetLength() { return _func->GetReal(ARG_LENGTH); }
+  //bool   GetReversed() { return _func->GetInteger(ARG_FLAG); }
 
  private:
 

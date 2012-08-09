@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_Block6Explorer.hxx>
@@ -26,6 +27,8 @@
 #include <ShHealOper_ShapeProcess.hxx>
 
 #include "utilities.h"
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRep_TFace.hxx>
@@ -61,8 +64,11 @@
 #include <Geom_TrimmedCurve.hxx>
 #include <GeomFill_Generator.hxx>
 
+#include <gce_MakePln.hxx>
+
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
+#include <gp_Pln.hxx>
 #include <TColgp_Array1OfPnt.hxx>
 
 #include <StdFail_NotDone.hxx>
@@ -74,6 +80,8 @@
 #define NBFACES 6
 #define NBEDGES 12
 #define NBVERTS 8
+
+#define PLANAR_FACE_MAX_TOLERANCE 1e-06
 
 static Standard_Integer mod4 (Standard_Integer nb)
 {
@@ -983,6 +991,19 @@ void GEOMImpl_Block6Explorer::InitByTwoFaces (const TopoDS_Shape& theFace1,
     myEdges(edge_id(2, i)) = anEdges2(nb);
   }
 
+  // check the wires closure
+  TopoDS_Wire wire1 = TopoDS::Wire(aWire1);
+  TopoDS_Wire wire2 = TopoDS::Wire(aWire2);
+  TopoDS_Vertex aV1, aV2;
+
+  TopExp::Vertices(wire1, aV1, aV2);
+  if (!aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2))
+    aWire1.Closed(true);
+
+  TopExp::Vertices(wire2, aV1, aV2);
+  if (!aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2))
+    aWire2.Closed(true);
+
   // 4. Generate side surface
   if (!aWire1.Closed() || !aWire2.Closed()) {
     // BRepOffsetAPI_ThruSections is not applicable on not closed wires
@@ -1180,131 +1201,235 @@ Standard_Integer GEOMImpl_Block6Explorer::FindFace
 //function : MakeFace
 //purpose  :
 //=======================================================================
-void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
-                                        const Standard_Boolean isPlanarWanted,
-                                        TopoDS_Shape&          theResult)
+TCollection_AsciiString GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
+                                                           const Standard_Boolean isPlanarWanted,
+                                                           TopoDS_Shape&          theResult)
 {
-  // try to build face on plane or on any surface under the edges of the wire
-  BRepBuilderAPI_MakeFace MK (theWire, isPlanarWanted);
-  if (MK.IsDone()) {
-    theResult = MK.Shape();
-    return;
+  if (!isPlanarWanted)
+    return MakeAnyFace(theWire, theResult);
+
+  // Try to build a planar face.
+
+  // If required tolerance increase will be
+  // higher than PLANAR_FACE_MAX_TOLERANCE,
+  // we will try to build a non-planar face.
+
+  TCollection_AsciiString aWarning;
+
+  // Workaround for Mantis issue 0020956
+
+  // Count the number of points in the wire.
+  // Collect the first three points.
+  gp_Pnt p1, p2, p3;
+  bool is3Pnts (false);
+  bool p1set(false), p2set(false), p3set(false);
+  BRepTools_WireExplorer wexpl (theWire);
+  for (; wexpl.More(); wexpl.Next()) {
+    if (!p1set) {
+      p1set = true;
+      p1 = BRep_Tool::Pnt(wexpl.CurrentVertex());
+    }
+    else if (!p2set) {
+      p2set = true;
+      p2 = BRep_Tool::Pnt(wexpl.CurrentVertex());
+    }
+    else if (!p3set) {
+      p3set = true;
+      is3Pnts = true;
+      p3 = BRep_Tool::Pnt(wexpl.CurrentVertex());
+    }
+    else {
+      is3Pnts = false;
+      break;
+    }
   }
 
-  if (!isPlanarWanted) {
-    // try to construct filling surface
-    BRepOffsetAPI_MakeFilling MF;
-
-    Standard_Integer nbEdges = 0;
-    BRepTools_WireExplorer aWE (theWire);
-    for (; aWE.More(); aWE.Next(), nbEdges++) {
-      MF.Add(TopoDS::Edge(aWE.Current()), GeomAbs_C0);
+  // Construct a plane for the case of three points in the wire.
+  gp_Pln plane;
+  if (is3Pnts) {
+    gce_MakePln mkPln (p1, p2, p3);
+    if (mkPln.IsDone()) {
+      plane = mkPln.Value();
     }
-
-    MF.Build();
-    if (MF.IsDone()) {
-      // Result of filling
-      TopoDS_Shape aFace = MF.Shape();
-
-      // 12.04.2006 for PAL12149 begin
-      Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aFace));
-      BRepBuilderAPI_MakeFace MK1 (aGS, theWire);
-      if (MK1.IsDone()) {
-        TopoDS_Shape aFace1 = MK1.Shape();
-
-        BRepCheck_Analyzer ana (aFace1, false);
-        if (!ana.IsValid()) {
-          TopoDS_Shape aFace2;
-          ShHealOper_ShapeProcess aHealer;
-          aHealer.Perform(aFace1, aFace2);
-          if (aHealer.isDone())
-            theResult = aFace2;
-        }
-      }
-      // 12.04.2006 for PAL12149 end
-
-      if (theResult.IsNull()) { // try to deal with pure result of filling
-        // Update tolerance
-        Standard_Real aTol = MF.G0Error();
-
-        TColgp_Array1OfPnt aPnts (1,nbEdges); // points of the given wire
-        BRepTools_WireExplorer aWE1 (theWire);
-        Standard_Integer vi = 1;
-        for (; aWE1.More() && vi <= nbEdges; aWE1.Next(), vi++) {
-          aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE1.CurrentVertex()));
-        }
-
-        // Find maximum deviation in vertices
-        TopExp_Explorer exp (aFace, TopAbs_VERTEX);
-        TopTools_MapOfShape mapShape;
-        for (; exp.More(); exp.Next()) {
-          if (mapShape.Add(exp.Current())) {
-            TopoDS_Vertex aV = TopoDS::Vertex(exp.Current());
-            Standard_Real aTolV = BRep_Tool::Tolerance(aV);
-            gp_Pnt aP = BRep_Tool::Pnt(aV);
-            Standard_Real min_dist = aP.Distance(aPnts(1));
-            for (vi = 2; vi <= nbEdges; vi++) {
-              min_dist = Min(min_dist, aP.Distance(aPnts(vi)));
-            }
-            aTol = Max(aTol, aTolV);
-            aTol = Max(aTol, min_dist);
-          }
-        }
-
-        if ((*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance() < aTol) {
-          (*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance(aTol);
-        }
-        theResult = aFace;
-      }
+    else {
+      is3Pnts = false;
     }
-  } else {
-    // try to update wire tolerances to build a planar face
+  }
 
-#if 1 //(OCC_VERSION_MAJOR < 6) || (OCC_VERSION_MAJOR == 6 && OCC_VERSION_MINOR <= 1)
-    // Find a deviation
-    Standard_Real aToleranceReached, aTol;
-    BRepLib_FindSurface aFS;
-    aFS.Init(theWire, -1., isPlanarWanted);
+  // Construct a face based on the plane (in case of three points in the wire) or
+  // allow MakeFace to build the plane itself (in case of the number of points is greater than 3).
+  if (is3Pnts) {
+    BRepBuilderAPI_MakeFace MK (plane, theWire, isPlanarWanted);
+    if (MK.IsDone()) {
+      theResult = MK.Shape();
+      return aWarning;
+    }
+  }
+  else {
+    BRepBuilderAPI_MakeFace MK (theWire, isPlanarWanted);
+    if (MK.IsDone()) {
+      theResult = MK.Shape();
+      return aWarning;
+    }
+  }
+
+  // try to update wire tolerances to build a planar face
+
+  // Find a deviation
+  Standard_Real aToleranceReached, aTol;
+  BRepLib_FindSurface aFS;
+  aFS.Init(theWire, -1., isPlanarWanted);
+  aToleranceReached = aFS.ToleranceReached();
+  aTol = aFS.Tolerance();
+
+  if (!aFS.Found()) {
+    aFS.Init(theWire, aToleranceReached, isPlanarWanted);
+    if (!aFS.Found()) return aWarning;
     aToleranceReached = aFS.ToleranceReached();
     aTol = aFS.Tolerance();
-
-    if (!aFS.Found()) {
-      aFS.Init(theWire, aToleranceReached, isPlanarWanted);
-      if (!aFS.Found()) return;
-      aToleranceReached = aFS.ToleranceReached();
-      aTol = aFS.Tolerance();
-    }
-    aTol = Max(1.2 * aToleranceReached, aTol);
-
-    // Copy the wire, bacause it can be updated with very-very big tolerance here
-    BRepBuilderAPI_Copy aMC (theWire);
-    if (!aMC.IsDone()) return;
-    TopoDS_Wire aWire = TopoDS::Wire(aMC.Shape());
-    // Update tolerances to <aTol>
-    BRep_Builder B;
-    for (TopExp_Explorer expE (aWire, TopAbs_EDGE); expE.More(); expE.Next()) {
-      TopoDS_Edge anE = TopoDS::Edge(expE.Current());
-      B.UpdateEdge(anE, aTol);
-    }
-    for (TopExp_Explorer expV (aWire, TopAbs_VERTEX); expV.More(); expV.Next()) {
-      TopoDS_Vertex aV = TopoDS::Vertex(expV.Current());
-      B.UpdateVertex(aV, aTol);
-    }
-    //BRepLib::UpdateTolerances(aWire);
-    // Build face
-    BRepBuilderAPI_MakeFace MK1 (aWire, isPlanarWanted);
-    if (MK1.IsDone()) {
-      theResult = MK1.Shape();
-      return;
-    }
-
-#else // After migration on OCCT version, containing PKV's fix. See bug 8293
-    BRepLib_MakeFace aBMF;
-    aBMF.Init(theWire, isPlanarWanted, Standard_True);
-    if (aBMF.Error() == BRepLib_FaceDone) {
-      theResult = aBMF.Shape();
-      return;
-    }
-#endif
   }
+  aTol = Max(1.2 * aToleranceReached, aTol);
+
+  // Mantis issue 0021432: EDF GEOM: Faces with huge tolerance can be built in GEOM
+  if (aTol > PLANAR_FACE_MAX_TOLERANCE) {
+    aWarning = MakeAnyFace(theWire, theResult);
+    if (aWarning.IsEmpty() && !theResult.IsNull())
+      aWarning = "MAKE_FACE_TOLERANCE_TOO_BIG";
+    return aWarning;
+  }
+
+  // Copy the wire, bacause it can be updated with very-very big tolerance here
+  BRepBuilderAPI_Copy aMC (theWire);
+  if (!aMC.IsDone()) return aWarning;
+  TopoDS_Wire aWire = TopoDS::Wire(aMC.Shape());
+  // Update tolerances to <aTol>
+  BRep_Builder B;
+  for (TopExp_Explorer expE (aWire, TopAbs_EDGE); expE.More(); expE.Next()) {
+    TopoDS_Edge anE = TopoDS::Edge(expE.Current());
+    B.UpdateEdge(anE, aTol);
+  }
+  for (TopExp_Explorer expV (aWire, TopAbs_VERTEX); expV.More(); expV.Next()) {
+    TopoDS_Vertex aV = TopoDS::Vertex(expV.Current());
+    B.UpdateVertex(aV, aTol);
+  }
+  //BRepLib::UpdateTolerances(aWire);
+  // Build face
+  BRepBuilderAPI_MakeFace MK1 (aWire, isPlanarWanted);
+  if (MK1.IsDone()) {
+    theResult = MK1.Shape();
+    // Mantis issue 0021432: EDF GEOM: Faces with huge tolerance can be built in GEOM
+    //if (aTol > PLANAR_FACE_MAX_TOLERANCE)
+    //  aWarning = "MAKE_FACE_TOLERANCE_TOO_BIG";
+  }
+
+  return aWarning;
+}
+
+//=======================================================================
+//function : MakeAnyFace
+//purpose  :
+//=======================================================================
+TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire& theWire,
+                                                              TopoDS_Shape&      theResult)
+{
+  TCollection_AsciiString aWarning;
+
+  // try to build a face on any surface under the edges of the wire
+  BRepBuilderAPI_MakeFace MK (theWire, Standard_False);
+  if (MK.IsDone()) {
+    theResult = MK.Shape();
+    return aWarning;
+  }
+
+  // try to construct filling surface
+  BRepOffsetAPI_MakeFilling MF;
+
+  Standard_Integer nbEdges = 0;
+  BRepTools_WireExplorer aWE (theWire);
+  for (; aWE.More(); aWE.Next(), nbEdges++) {
+    MF.Add(TopoDS::Edge(aWE.Current()), GeomAbs_C0);
+  }
+
+  MF.Build();
+  if (!MF.IsDone()) {
+    aWarning = "BRepOffsetAPI_MakeFilling failed";
+    return aWarning;
+  }
+
+  // Result of filling
+  TopoDS_Shape aFace = MF.Shape();
+
+  // 12.04.2006 for PAL12149 begin
+  Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aFace));
+
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN
+// the following block, when enabled, leads to extra vertices generation by partition algorithm
+// in some cases, for example when fillet is made on a PipeTShape
+//#if OCC_VERSION_LARGE > 0x06050200
+#if 0
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END
+  BRep_Builder BB;
+  TopoDS_Iterator itw(theWire);
+  for (; itw.More(); itw.Next())
+  {
+    const TopoDS_Edge& anEdge = TopoDS::Edge(itw.Value());
+    TopoDS_Edge NewEdge = TopoDS::Edge(MF.Generated(anEdge).First());
+    Standard_Real fpar, lpar;
+    Handle(Geom2d_Curve) NewPCurve = BRep_Tool::CurveOnSurface(NewEdge, TopoDS::Face(aFace), fpar, lpar);
+    TopLoc_Location aLoc;
+    Standard_Real NewTol = BRep_Tool::Tolerance(NewEdge);
+    BB.UpdateEdge(anEdge, NewPCurve, aGS, aLoc, NewTol);
+  }
+#endif
+
+  BRepBuilderAPI_MakeFace MK1 (aGS, theWire);
+  if (MK1.IsDone()) {
+    TopoDS_Shape aFace1 = MK1.Shape();
+
+    BRepCheck_Analyzer ana (aFace1, false);
+    if (!ana.IsValid()) {
+      TopoDS_Shape aFace2;
+      ShHealOper_ShapeProcess aHealer;
+      aHealer.Perform(aFace1, aFace2);
+      if (aHealer.isDone())
+        theResult = aFace2;
+    }
+  }
+  // 12.04.2006 for PAL12149 end
+
+  if (theResult.IsNull()) { // try to deal with pure result of filling
+    // Update tolerance
+    Standard_Real aTol = MF.G0Error();
+
+    TColgp_Array1OfPnt aPnts (1,nbEdges); // points of the given wire
+    BRepTools_WireExplorer aWE1 (theWire);
+    Standard_Integer vi = 1;
+    for (; aWE1.More() && vi <= nbEdges; aWE1.Next(), vi++) {
+      aPnts(vi) = BRep_Tool::Pnt(TopoDS::Vertex(aWE1.CurrentVertex()));
+    }
+
+    // Find maximum deviation in vertices
+    TopExp_Explorer exp (aFace, TopAbs_VERTEX);
+    TopTools_MapOfShape mapShape;
+    for (; exp.More(); exp.Next()) {
+      if (mapShape.Add(exp.Current())) {
+        TopoDS_Vertex aV = TopoDS::Vertex(exp.Current());
+        Standard_Real aTolV = BRep_Tool::Tolerance(aV);
+        gp_Pnt aP = BRep_Tool::Pnt(aV);
+        Standard_Real min_dist = aP.Distance(aPnts(1));
+        for (vi = 2; vi <= nbEdges; vi++) {
+          min_dist = Min(min_dist, aP.Distance(aPnts(vi)));
+        }
+        aTol = Max(aTol, aTolV);
+        aTol = Max(aTol, min_dist);
+      }
+    }
+
+    if ((*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance() < aTol) {
+      (*((Handle(BRep_TFace)*)&aFace.TShape()))->Tolerance(aTol);
+    }
+    theResult = aFace;
+  }
+
+  return aWarning;
 }

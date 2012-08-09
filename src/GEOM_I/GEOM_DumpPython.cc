@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -36,13 +37,33 @@
 #include <string>
 
 //=======================================================================
+//function : RemoveTabulation
+//purpose  : 
+//=======================================================================
+void RemoveTabulation( TCollection_AsciiString& theScript )
+{
+  std::string aString( theScript.ToCString() );
+  std::string::size_type aPos = 0;
+  while( aPos < aString.length() )
+  {
+    aPos = aString.find( "\n\t", aPos );
+    if( aPos == std::string::npos )
+      break;
+    aString.replace( aPos, 2, "\n" );
+    aPos++;
+  }
+  theScript = aString.c_str();
+}
+
+//=======================================================================
 //function : DumpPython
 //purpose  : 
 //=======================================================================
 
 Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy, 
 					 CORBA::Boolean isPublished, 
-					 CORBA::Boolean& isValidScript)
+					 CORBA::Boolean isMultiFile,
+                                         CORBA::Boolean& isValidScript)
 {
   SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(theStudy);
   if(CORBA::is_nil(aStudy))
@@ -52,7 +73,8 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
   if(CORBA::is_nil(aSO))
     return new Engines::TMPFile(0);  
 
-  Resource_DataMapOfAsciiStringAsciiString aMap;
+  TObjectData objData;
+  std::vector<TObjectData> objectDataVec;
 
   TVariablesList aVariableMap;
 
@@ -64,9 +86,23 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
       CORBA::Object_var obj = _orb->string_to_object(IOR);
       GEOM::GEOM_Object_var GO = GEOM::GEOM_Object::_narrow(obj);
       if(!CORBA::is_nil(GO)) {
-        CORBA::String_var aName = aValue->GetName();
-        CORBA::String_var anEntry = GO->GetEntry();
-	aMap.Bind( (char*)anEntry.in(), (char*)aName.in() );
+        CORBA::String_var aName       = aValue->GetName();
+        CORBA::String_var anEntry     = GO->GetEntry();
+        CORBA::String_var aStudyEntry = aValue->GetID();
+        objData._name       = aName.in();
+        objData._entry      = anEntry.in();
+        objData._studyEntry = aStudyEntry.in();
+
+	//Find Drawable Attribute
+	SALOMEDS::GenericAttribute_var aGenAttr;
+	if(aValue->FindAttribute(aGenAttr, "AttributeDrawable") ) {
+	  SALOMEDS::AttributeDrawable_var aDrw = SALOMEDS::AttributeDrawable::_narrow(aGenAttr);
+	  objData._unpublished = !aDrw->IsDrawable();
+	} else {
+	  objData._unpublished = false;
+	}
+
+	objectDataVec.push_back( objData );
 
 	//Find attribute with list of used notebook variables
 	SALOMEDS::GenericAttribute_var anAttr;
@@ -85,19 +121,46 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	    }
 	    aStates->AddState(aState);
 	  }
-	  aVariableMap.insert(pair<TCollection_AsciiString,ObjectStates*>(TCollection_AsciiString(anEntry),aStates));
+	  aVariableMap.insert(std::make_pair(TCollection_AsciiString(anEntry),aStates));
 	}
       }
     }
   }
   
-  TCollection_AsciiString aScript =
-    "### This file is generated by SALOME automatically by dump python functionality\n"
-      "### of GEOM component\n\n";
-  aScript += _impl->DumpPython(aStudy->StudyId(), aMap, aVariableMap, isPublished, isValidScript);
+  TCollection_AsciiString aScript;
+  aScript += _impl->DumpPython(aStudy->StudyId(), objectDataVec, aVariableMap, isPublished, isMultiFile, isValidScript);
 
   if (isPublished)
   {
+
+    SALOMEDS::AttributeParameter_var ap = aStudy->GetModuleParameters("Interface Applicative", 
+								      ComponentDataType(),
+								      -1);
+    if(!CORBA::is_nil(ap)) {
+      //Add the id parameter of the object
+      std::vector<TObjectData>::iterator it = objectDataVec.begin();
+      for( ;it != objectDataVec.end(); it++ ) {
+      
+	//1. Encode entry
+        if ( (*it)._studyEntry.Length() < 7 ) continue;
+	std::string tail( (*it)._studyEntry.ToCString(), 6, (*it)._studyEntry.Length()-1 );
+	std::string newEntry(ComponentDataType());
+	newEntry+=("_"+tail);
+	
+	CORBA::String_var anEntry = CORBA::string_dup(newEntry.c_str());
+	
+	if( ap->IsSet(anEntry, 6) ) { //6 Means string array, see SALOMEDS_Attributes.idl AttributeParameter interface
+	  std::string idCommand = std::string("geompy.getObjectID(") + GetDumpName((*it)._studyEntry.ToCString()) + std::string(")");
+	  SALOMEDS::StringSeq_var aSeq= ap->GetStrArray(anEntry);
+	  int oldLenght = aSeq->length();	
+	  aSeq->length(oldLenght+2);
+	  aSeq[oldLenght] = CORBA::string_dup("_PT_OBJECT_ID_");
+	  aSeq[oldLenght + 1] = CORBA::string_dup(idCommand.c_str());
+	  ap->SetStrArray( anEntry, aSeq );
+	}	 
+      }
+    }
+  
     //Output the script that sets up the visual parameters.
     char* script = aStudy->GetDefaultScript(ComponentDataType(), "\t");
     if (script && strlen(script) > 0) {
@@ -107,7 +170,12 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
     }
   }
 
-  aScript += "\n\tpass\n";
+  if( isMultiFile )
+    aScript += "\n\tpass";
+  aScript += "\n";
+
+  if( !isMultiFile ) // remove unnecessary tabulation
+    RemoveTabulation( aScript );
 
   int aLen = aScript.Length(); 
   unsigned char* aBuffer = new unsigned char[aLen+1];

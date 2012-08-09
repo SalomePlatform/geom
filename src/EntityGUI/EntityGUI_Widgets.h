@@ -1,24 +1,22 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // File   : EntityGUI_Widgets.h
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
@@ -39,6 +37,39 @@ class EntityGUI_1Sel : public QWidget,
 public:
   EntityGUI_1Sel( QWidget* = 0, Qt::WindowFlags = 0 );
   ~EntityGUI_1Sel();
+};
+
+//////////////////////////////////////////
+// EntityGUI_2Sel1Check
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_2Sel1Check_QTD.h"
+
+class EntityGUI_2Sel1Check : public QWidget, 
+                       public Ui::EntityGUI_2Sel1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_2Sel1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_2Sel1Check();
+};
+
+
+//////////////////////////////////////////
+// EntityGUI_1Sel1Spin1Check
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_1Sel1Spin1Check_QTD.h"
+
+class EntityGUI_1Sel1Spin1Check : public QWidget, 
+                            public Ui::EntityGUI_1Sel1Spin1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_1Sel1Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_1Sel1Spin1Check();
 };
 
 //////////////////////////////////////////
@@ -106,6 +137,38 @@ public:
 };
 
 //////////////////////////////////////////
+// EntityGUI_3Spin1Check
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_3Spin1Check_QTD.h"
+
+class EntityGUI_3Spin1Check : public QWidget, 
+                        public Ui::EntityGUI_3Spin1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_3Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_3Spin1Check();
+};
+
+//////////////////////////////////////////
+// EntityGUI_4Spin1Check
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_4Spin1Check_QTD.h"
+
+class EntityGUI_4Spin1Check : public QWidget, 
+                        public Ui::EntityGUI_4Spin1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_4Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_4Spin1Check();
+};
+
+//////////////////////////////////////////
 // EntityGUI_Dir1
 //////////////////////////////////////////
 
@@ -157,6 +220,38 @@ public:
   ~EntityGUI_Point();
 
   QButtonGroup* ButtonGroup;
+};
+
+//////////////////////////////////////////
+// EntityGUI_Angles
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_Angles_QTD.h"
+
+class EntityGUI_Angles : public QWidget, 
+                        public Ui::EntityGUI_Angles_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_Angles( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_Angles();
+};
+
+//////////////////////////////////////////
+// EntityGUI_Controls
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_Controls_QTD.h"
+
+class EntityGUI_Controls : public QWidget, 
+                        public Ui::EntityGUI_Controls_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_Controls( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_Controls();
 };
 
 //////////////////////////////////////////

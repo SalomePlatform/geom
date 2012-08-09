@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOM_DataMapOfAsciiStringTransient_HeaderFile
 #define _GEOM_DataMapOfAsciiStringTransient_HeaderFile
 
@@ -37,6 +38,7 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_NoSuchObject;
 class TCollection_AsciiString;
@@ -44,13 +46,14 @@ class Standard_Transient;
 class GEOM_DataMapNodeOfDataMapOfAsciiStringTransient;
 class GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient;
 
-
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
 #endif
 #ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
 #endif
+
+#include <Basics_OCCTVersion.hxx>
 
 class GEOM_DataMapOfAsciiStringTransient  : public TCollection_BasicMap {
 
@@ -68,6 +71,7 @@ public:
       { 
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
+
  // Methods PUBLIC
  // 
 Standard_EXPORT GEOM_DataMapOfAsciiStringTransient(const Standard_Integer NbBuckets = 1);
@@ -99,40 +103,18 @@ Standard_EXPORT   Handle_Standard_Transient& ChangeFind(const TCollection_AsciiS
   return ChangeFind(K);
 }
 
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address Find1 (const TCollection_AsciiString& K) const;
+  Standard_EXPORT Standard_Address ChangeFind1 (const TCollection_AsciiString& K);
+#endif
 
 private: 
-
  // Methods PRIVATE
  // 
 Standard_EXPORT GEOM_DataMapOfAsciiStringTransient(const GEOM_DataMapOfAsciiStringTransient& Other);
-
-
- // Fields PRIVATE
- //
-
-
 };
-
-
-
-
 
 // other Inline functions and methods (like "C++: function call" methods)
 //
-
 
 #endif

@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : EntityGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -26,19 +27,32 @@
 #include "EntityGUI.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
+#include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewWindow.h>
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewManager.h>
+#include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewPort3d.h>
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
 
 #include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <BRep_Tool.hxx>
+#include <ProjLib.hxx>
+#include <ElSLib.hxx>
 
-#include "EntityGUI_SketcherDlg.h" // Sketcher
-#include "EntityGUI_3DSketcherDlg.h" // Sketcher
-#include "EntityGUI_SubShapeDlg.h" // Method SUBSHAPE
+#include <QMouseEvent>
+#include <QApplication>
+
+#include "EntityGUI_SketcherDlg.h"        // Sketcher
+#include "EntityGUI_3DSketcherDlg.h"      // Sketcher
+#include "EntityGUI_SubShapeDlg.h"        // Method SUBSHAPE
+#include "EntityGUI_FeatureDetectorDlg.h" // Feature Detection
+#include "EntityGUI_PictureImportDlg.h"   // Import Picture in viewer
 
 //=======================================================================
 // function : EntityGUI()
@@ -72,15 +86,23 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
-  case 404: // SKETCHER
+  case GEOMOp::Op2dSketcher: // 2D SKETCHER
     getGeometryGUI()->ActiveWorkingPlane();
     aDlg = new EntityGUI_SketcherDlg( getGeometryGUI(), parent );
     break;
-  case 405: // 3D SKETCHER
+  case GEOMOp::Op3dSketcher: // 3D SKETCHER
     aDlg = new EntityGUI_3DSketcherDlg( getGeometryGUI(), parent );
     break;
-  case 407: // EXPLODE : use ic
+  case GEOMOp::OpExplode:    // EXPLODE
     aDlg = new EntityGUI_SubShapeDlg( getGeometryGUI(), parent );
+    break;
+#ifdef WITH_OPENCV
+  case GEOMOp::OpFeatureDetect:    // FEATURE DETECTION
+    aDlg = new EntityGUI_FeatureDetectorDlg( getGeometryGUI(), parent );
+    break;
+#endif
+  case GEOMOp::OpPictureImport:    // IMPORT PICTURE IN VIEWER
+    aDlg = new EntityGUI_PictureImportDlg( getGeometryGUI(), parent );
     break;
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
@@ -92,6 +114,168 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   return true;
 }
 
+//=================================================================================
+// function : 0nMousePress()
+// purpose  : [static] manage mouse events
+//=================================================================================
+bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+{
+  QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
+
+  // Create Point dialog, OCC viewer 
+  if ( aDlg && 
+       theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
+       pe->modifiers() != Qt::ControlModifier ) {
+    
+    gp_Pnt aPnt;
+  
+    if ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_SketcherDlg" ) == 0 ) 
+    { 
+      EntityGUI_SketcherDlg* aSketcherDlg = (EntityGUI_SketcherDlg*) aDlg;
+      ((OCCViewer_ViewWindow*)theViewWindow)->setSketcherStyle(true);
+      if ( aSketcherDlg->acceptMouseEvent() ) {
+        OCCViewer_Viewer* anOCCViewer =
+          ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
+        Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();
+    
+        ic->InitSelected();
+        if ( pe->modifiers() == Qt::ShiftModifier )
+          ic->ShiftSelect();  // Append selection
+        else
+          ic->Select();       // New selection
+
+        ic->InitSelected();
+        if ( ic->MoreSelected() ) {
+          TopoDS_Shape aShape = ic->SelectedShape();
+          if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+            aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
+        }
+        else {
+          OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+          aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+        }
+        
+        Qt::KeyboardModifiers modifiers = pe->modifiers();
+        aSketcherDlg->OnPointSelected( modifiers, aPnt );  // "feed" the point to point construction dialog
+      } // acceptMouseEvent()
+    }
+#ifdef WITH_OPENCV
+    if (  QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) 
+    {
+      EntityGUI_FeatureDetectorDlg* aCornerDlg = (EntityGUI_FeatureDetectorDlg*) aDlg;
+      if ( aCornerDlg->acceptMouseEvent() ) {
+        OCCViewer_Viewer* anOCCViewer =
+          ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
+        Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();   
+
+        ic->InitSelected();
+        ic->Select();       // New selection
+
+        ic->InitSelected();
+        TopoDS_Shape aShape;
+        if ( ic->MoreSelected() ) 
+          aShape = ic->SelectedShape();
+        if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+            aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
+        else 
+        {
+          OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+          aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+        }
+        
+//         aCornerDlg->OnPointSelected( aPnt );  // "feed" the point to corner detection dialog
+        
+//         QPoint start = QPoint(pe->x(),pe->y());
+        aCornerDlg->setStartPnt( aPnt );
+      } // acceptMouseEvent()
+      
+    }
+#endif
+  }
+
+  return false;
+}
+
+//=================================================================================
+// function : 0nMouseRelease()
+// purpose  : [static] manage mouse events
+//=================================================================================
+bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+{
+  ((OCCViewer_ViewWindow*)theViewWindow)->setSketcherStyle(false);
+  QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
+#ifdef WITH_OPENCV
+  if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) &&
+       theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
+       pe->modifiers() != Qt::ControlModifier ) 
+  {   
+    EntityGUI_FeatureDetectorDlg* aCornerDlg = (EntityGUI_FeatureDetectorDlg*) aDlg;
+   
+    gp_Pnt aPnt; 
+      
+    if ( aCornerDlg->acceptMouseEvent() )
+    {
+//       QPoint end = QPoint(pe->x(),pe->y());
+      OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+      aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+      aCornerDlg->setEndPnt( aPnt );
+    }    
+  }
+#endif
+  return false;
+}
+
+//=================================================================================
+// function : 0nMouseMove()
+// purpose  : [static] manage mouse events
+//=================================================================================
+bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+{
+  QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
+  
+  if ( aDlg && QString( aDlg->metaObject()->className() ).compare( "EntityGUI_SketcherDlg" ) == 0 &&
+       theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) 
+  { 
+    EntityGUI_SketcherDlg* aSketcherDlg = (EntityGUI_SketcherDlg*) aDlg;
+    if ( aSketcherDlg->acceptMouseEvent() ) 
+    {    
+      OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+      gp_Pnt aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+  
+      Qt::KeyboardModifiers modifiers = pe->modifiers();
+      if (QApplication::mouseButtons() == Qt::LeftButton )
+        aSketcherDlg->OnPointSelected( modifiers, aPnt, false );  // "feed" the point to point construction dialog
+    }
+  }
+    
+  return false;
+}
+
+//=======================================================================
+// function : ConvertClickToPoint()
+// purpose  : Returns the point clicked in 3D view
+//=======================================================================
+gp_Pnt EntityGUI::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
+{
+  V3d_Coordinate XEye, YEye, ZEye, XAt, YAt, ZAt;
+  aView->Eye( XEye, YEye, ZEye );
+
+  aView->At( XAt, YAt, ZAt );
+  gp_Pnt EyePoint( XEye, YEye, ZEye );
+  gp_Pnt AtPoint( XAt, YAt, ZAt );
+
+  gp_Vec EyeVector( EyePoint, AtPoint );
+  gp_Dir EyeDir( EyeVector );
+
+  gp_Pln PlaneOfTheView = gp_Pln( AtPoint, EyeDir );
+  Standard_Real X, Y, Z;
+  aView->Convert( x, y, X, Y, Z );
+  gp_Pnt ConvertedPoint( X, Y, Z );
+
+  gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project( PlaneOfTheView, ConvertedPoint );
+  gp_Pnt ResultPoint = ElSLib::Value( ConvertedPointOnPlane.X(), ConvertedPointOnPlane.Y(), PlaneOfTheView );
+  return ResultPoint;
+}
 
 //=====================================================================================
 // function : DisplaySimulationShape() 
@@ -99,6 +283,7 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=====================================================================================
 void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Shape& S2 ) 
 {
+  MESSAGE("EntityGUI::DisplaySimulationShape")
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 
@@ -147,6 +332,7 @@ void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Sha
 //==================================================================================
 void EntityGUI::EraseSimulationShape()
 {
+  MESSAGE("EntityGUI::EraseSimulationShape")
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 
@@ -195,13 +381,13 @@ bool EntityGUI::SObjectExist( const _PTR(SObject)& theFatherObject, const char* 
     if ( SO->FindAttribute( anAttr, "AttributeIOR" ) ) {
       _PTR(AttributeIOR) anIOR ( anAttr  );
       if ( strcmp( anIOR->Value().c_str(), IOR ) == 0 )
-	return true;
+        return true;
     }
     if ( SO->ReferencedObject( RefSO ) ) {
       if ( RefSO->FindAttribute( anAttr, "AttributeIOR" ) ) {
         _PTR(AttributeIOR) anIOR ( anAttr );
-	if ( strcmp( anIOR->Value().c_str(), IOR ) == 0 )
-	  return true;
+        if ( strcmp( anIOR->Value().c_str(), IOR ) == 0 )
+          return true;
       }
     }
   }

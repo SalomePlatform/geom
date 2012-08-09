@@ -1,24 +1,25 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_LineDriver.hxx>
@@ -28,6 +29,7 @@
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -88,12 +90,14 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     if (aShape1.IsSame(aShape2)) {
       Standard_ConstructionError::Raise("The end points must be different");
     }
-    gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(aShape1));
-    gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(aShape2));
+    TopoDS_Vertex V1 = TopoDS::Vertex(aShape1);
+    TopoDS_Vertex V2 = TopoDS::Vertex(aShape2);
+    gp_Pnt P1 = BRep_Tool::Pnt(V1);
+    gp_Pnt P2 = BRep_Tool::Pnt(V2);
     if (P1.Distance(P2) < Precision::Confusion()) {
       Standard_ConstructionError::Raise("The end points are too close");
     }
-    aShape = BRepBuilderAPI_MakeEdge(P1, P2).Shape();
+    aShape = BRepBuilderAPI_MakeEdge(V1, V2).Shape();
 
   } else if (aType == LINE_TWO_FACES) {
     Handle(GEOM_Function) aRefFace1 = aPI.GetFace1();
@@ -115,18 +119,18 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     }
     else
     {
-	TopExp_Explorer Exp (E, TopAbs_EDGE);
-	if ( Exp.More() ){
-	    aShape = Exp.Current();
-	    Exp.Next();
-	}
-	else
-	  {
-	    Standard_ConstructionError::Raise("Faces not have intersection line");
-	    aShape = E.Shape();
-	  }
-	if ( Exp.More() )
-	  aShape = E.Shape();
+        TopExp_Explorer Exp (E, TopAbs_EDGE);
+        if ( Exp.More() ){
+            aShape = Exp.Current();
+            Exp.Next();
+        }
+        else
+          {
+            Standard_ConstructionError::Raise("Faces not have intersection line");
+            aShape = E.Shape();
+          }
+        if ( Exp.More() )
+          aShape = E.Shape();
     }
 
   } else if (aType == LINE_PNT_DIR) {
@@ -143,7 +147,8 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     if (aShape1.IsSame(aShape2)) {
       Standard_ConstructionError::Raise("The end points must be different");
     }
-    gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(aShape1));
+    TopoDS_Vertex Vstart = TopoDS::Vertex(aShape1);
+    gp_Pnt P1 = BRep_Tool::Pnt(Vstart);
 
     TopoDS_Edge anE = TopoDS::Edge(aShape2);
     TopoDS_Vertex V1, V2;
@@ -156,14 +161,19 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     if (PV1.Distance(PV2) < Precision::Confusion()) {
       Standard_ConstructionError::Raise("Vector with null magnitude");
     }
-
-    gp_Pnt P2 (P1.XYZ() + PV2.XYZ() - PV1.XYZ());
-    aShape = BRepBuilderAPI_MakeEdge(P1, P2).Shape();
+    TopoDS_Vertex Vend;
+    if ( V1.IsSame( Vstart ) )
+      Vend = V2;
+    else if ( V2.IsSame( Vstart ) )
+      Vend = V1;
+    else
+      Vend = BRepBuilderAPI_MakeVertex( gp_Pnt(P1.XYZ() + PV2.XYZ() - PV1.XYZ()) );
+    aShape = BRepBuilderAPI_MakeEdge(Vstart, Vend).Shape();
   } else {
   }
 
   if (aShape.IsNull()) return 0;
-  aShape.Infinite(true);
+  //aShape.Infinite(true); // VSR: 05/04/2010: Fix 20668 (Fit All for points & lines)
 
   aFunction->SetValue(aShape);
 
@@ -190,10 +200,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_LineDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_LineDriver",
-			                                 sizeof(GEOMImpl_LineDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_LineDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

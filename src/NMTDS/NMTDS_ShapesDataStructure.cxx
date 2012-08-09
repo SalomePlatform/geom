@@ -1,30 +1,29 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_ShapesDataStructure.cxx
-// Created:	Mon Dec  1 10:21:04 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
-//
-#include <NMTDS_ShapesDataStructure.ixx>
+
+// File:        NMTDS_ShapesDataStructure.cxx
+// Author:      Peter KURNEV
+
+#include <NMTDS_ShapesDataStructure.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
 #include <BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors.hxx>
@@ -41,18 +40,18 @@
 
 static
   void ComputeBoxExS(const Standard_Integer aIx,
-		     const NMTDS_ShapesDataStructure* pDS,
-		     Bnd_Box& aBoxEx);
+                     const NMTDS_ShapesDataStructure* pDS,
+                     Bnd_Box& aBoxEx);
 static
   void GetAllSuccessorsS(const Standard_Integer nS,
-			 const NMTDS_ShapesDataStructure* myDS,
-			 TColStd_IndexedMapOfInteger& aMA);
+                         const NMTDS_ShapesDataStructure* myDS,
+                         TColStd_IndexedMapOfInteger& aMA);
 
 //===========================================================================
 //function : NMTDS_ShapesDataStructure::NMTDS_ShapesDataStructure
 //purpose  : 
 //===========================================================================
-  NMTDS_ShapesDataStructure::NMTDS_ShapesDataStructure()
+NMTDS_ShapesDataStructure::NMTDS_ShapesDataStructure()
 :
   BooleanOperations_ShapesDataStructure()
 {}
@@ -60,7 +59,7 @@ static
 //function : SetCompositeShape
 //purpose  : 
 //===========================================================================
-  void NMTDS_ShapesDataStructure::SetCompositeShape(const TopoDS_Shape& aS)
+void NMTDS_ShapesDataStructure::SetCompositeShape(const TopoDS_Shape& aS)
 {
   myCompositeShape=aS;
 }
@@ -68,7 +67,7 @@ static
 //function : CompositeShape
 //purpose  : 
 //===========================================================================
-  const TopoDS_Shape& NMTDS_ShapesDataStructure::CompositeShape()const
+const TopoDS_Shape& NMTDS_ShapesDataStructure::CompositeShape()const
 {
   return myCompositeShape;
 }
@@ -76,17 +75,15 @@ static
 //function : Ranges
 //purpose  : 
 //===========================================================================
-  const NMTDS_CArray1OfIndexRange& NMTDS_ShapesDataStructure::Ranges()const
+const NMTDS_CArray1OfIndexRange& NMTDS_ShapesDataStructure::Ranges()const
 {
   return myRanges;
 }
-// Modified to Add new methods Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
 //===========================================================================
 //function : FillMap
 //purpose  : 
 //===========================================================================
-  void NMTDS_ShapesDataStructure::FillMap
+void NMTDS_ShapesDataStructure::FillMap
   (const TopoDS_Shape& aS,
    BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMSA,
    BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMS) const
@@ -110,8 +107,8 @@ static
     for(j=1; j<=aNbSc; ++j) {
       aIndex=aAS1.GetSuccessor(j);
       if(aMFence.Add(aIndex)) {
-	BooleanOperations_AncestorsSeqAndSuccessorsSeq& aAS2=aMSA.ChangeFromIndex(aIndex);
-	aAS2.SetNewAncestor(iX);
+        BooleanOperations_AncestorsSeqAndSuccessorsSeq& aAS2=aMSA.ChangeFromIndex(aIndex);
+        aAS2.SetNewAncestor(iX);
       }
     }
   }
@@ -120,7 +117,7 @@ static
 //function : FillSubshapes
 //purpose  : 
 //===========================================================================
-  void NMTDS_ShapesDataStructure::FillSubshapes
+void NMTDS_ShapesDataStructure::FillSubshapes
   (const TopoDS_Shape& aS,
    BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMSA,
    BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMS) const
@@ -152,12 +149,11 @@ static
     }
   }
 }
-// Contribution of Samtech www.samcef.com END 
 //===========================================================================
 //function : Init
 //purpose  : 
 //===========================================================================
-  void NMTDS_ShapesDataStructure::Init()
+void NMTDS_ShapesDataStructure::Init()
 {
   Standard_Integer i, j, aNbSx, aNbS, aShift, aNbRanges;
   Standard_Integer iFirst, iLast;
@@ -170,30 +166,21 @@ static
   for (; anIt.More(); anIt.Next()) {
     const TopoDS_Shape& aSx=anIt.Value(); 
     BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors aMS;
-    //modified by NIZNHY-PKV Tue Feb 27 17:05:47 2007f
-    //FillMap(aSx, aMSA, aMS);
-    //aLx.Append(aMS);
     //
     if (!aMSA.Contains(aSx)) {
       FillMap(aSx, aMSA, aMS);
       aLx.Append(aMS);
     }
-    //modified by NIZNHY-PKV Tue Feb 27 17:06:03 2007t
   }
   aNbS=aMSA.Extent(); 
   //
   // Fill myRanges
-  //modified by NIZNHY-PKV Tue Feb 27 17:10:07 2007f
   i=aLx.Extent();
-  //modified by NIZNHY-PKV Tue Feb 27 17:10:10 2007t
   myRanges.Resize(i);
   aLit.Initialize(aLx);
   for (i=1; aLit.More(); aLit.Next(), ++i) {
-    // Modified  Thu Sep 14 14:35:18 2006 
-    // Contribution of Samtech www.samcef.com BEGIN
     const BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMSx=aLit.Value();
     aNbSx=aMSx.Extent();
-    // Contribution of Samtech www.samcef.com END
     if (i==1) {
       iFirst=1;
       iLast=aNbSx;
@@ -208,34 +195,14 @@ static
   }
   //
   myNumberOfShapesOfTheObject=aNbS;
-  // Modified  Thu Sep 14 14:35:18 2006 
-  // Contribution of Samtech www.samcef.com BEGIN
-  //myNumberOfShapesOfTheTool=aNbS;
-  //myLength=3*aNbS;
   myNumberOfShapesOfTheTool=0;
   myLength=2*aNbS;
-  // Contribution of Samtech www.samcef.com END
   //
   // Allocate the whole Table
   myListOfShapeAndInterferences = (BooleanOperations_PShapeAndInterferences)
     Standard::Allocate(myLength*sizeof(BooleanOperations_ShapeAndInterferences));
-  // Modified  Thu Sep 14 14:35:18 2006 
-  // Contribution of Samtech www.samcef.com BEGIN
   //
   // Fill the table
-    
-  //aShift=0;
-  //for (i=0; i<2; ++i) {
-  //  if (i) {
-  //    aShift=aNbS;
-  //  }
-  //  for (j=1; j<=aNbS; ++j) {
-  //    const TopoDS_Shape& aSx=aMSA.FindKey(j);
-  //    const BooleanOperations_AncestorsSeqAndSuccessorsSeq& aASx=
-  //      aMSA.FindFromIndex(j);
-  //    InsertShapeAndAncestorsSuccessors(aSx, aASx, aShift);
-  //  }
-  //}
   
   aShift=0;
   for (j=1; j<=aNbS; ++j) {
@@ -243,24 +210,21 @@ static
     const BooleanOperations_AncestorsSeqAndSuccessorsSeq& aASx=aMSA.FindFromIndex(j);
     InsertShapeAndAncestorsSuccessors(aSx, aASx, aShift);
   }
-  // Contribution of Samtech www.samcef.com END
-  //
   // myShapeIndexMap
   myShapeIndexMap.Clear();
   //
+  //modified by NIZNHY-PKV Mon Dec 12 09:01:53 2011f
   aNbRanges=myRanges.Extent();
   for (i=1; i<=aNbRanges; ++i){
-    BooleanOperations_IndexedDataMapOfShapeInteger aSIM;
-    //
     const NMTDS_IndexRange& aR=myRanges(i);
     iFirst=aR.First();
     iLast =aR.Last();
     for (j=iFirst; j<=iLast; ++j) { 
       const TopoDS_Shape& aS=Shape(j);
-      aSIM.Add(aS, j);
+      myShapeIndexMap.Bind(aS, j);
     }
-    myShapeIndexMap.Add(i, aSIM);
   }
+  //modified by NIZNHY-PKV Mon Dec 12 09:02:00 2011t
   //
   // myRefEdges
   iLast=myNumberOfShapesOfTheObject+myNumberOfShapesOfTheTool;
@@ -279,7 +243,8 @@ static
 //function : ShapeRangeIndex
 //purpose  : 
 //===========================================================================
-  Standard_Integer NMTDS_ShapesDataStructure::ShapeRangeIndex(const Standard_Integer aId)const
+Standard_Integer NMTDS_ShapesDataStructure::ShapeRangeIndex
+  (const Standard_Integer aId)const
 {
   Standard_Boolean bFound;
   Standard_Integer i, aNbR, aIdx, aNbS, aZero=0;
@@ -309,7 +274,8 @@ static
 //function : Rank
 //purpose  : 
 //===========================================================================
-  Standard_Integer NMTDS_ShapesDataStructure::Rank(const Standard_Integer aId)const
+Standard_Integer NMTDS_ShapesDataStructure::Rank
+  (const Standard_Integer aId)const
 {
   Standard_Boolean bFound;
   Standard_Integer i, aNbR, aNbS, aZero=0;
@@ -334,41 +300,21 @@ static
 //function : ShapeIndex
 //purpose  : 
 //===========================================================================
-  Standard_Integer NMTDS_ShapesDataStructure::ShapeIndex(const TopoDS_Shape& aS,
-							 const Standard_Integer aRank)const
+Standard_Integer NMTDS_ShapesDataStructure::ShapeIndex
+  (const TopoDS_Shape& aS,
+   const Standard_Integer aRank)const
 {
-  Standard_Boolean bFound;
-  Standard_Integer aIndex=0;
+  Standard_Address pIndex;
+  Standard_Integer aIndex;
   //
-  bFound=myShapeIndexMap.Contains(aRank);
-  if (!bFound) {
-    return aIndex;
+  aIndex=0;
+  //
+  //modified by NIZNHY-PKV Mon Dec 12 09:02:48 2011f
+  pIndex=myShapeIndexMap.Find1(aS);
+  if (pIndex) {
+    aIndex=*((Standard_Integer*)pIndex);
   }
-  // Modified Thu Sep 14 14:35:18 2006 
-  // Contribution of Samtech www.samcef.com BEGIN
-  //
-  //const BooleanOperations_IndexedDataMapOfShapeInteger& aSIM=
-  //  myShapeIndexMap.FindFromKey(aRank);
-  //
-  //bFound=aSIM.Contains(aS);
-  //if (!bFound) {
-  //  return aIndex;
-  //}
-  //
-  //aIndex=aSIM.FindFromKey(aS);
-  //
-  Standard_Integer i, aNbRanks;
-  //
-  aNbRanks=myShapeIndexMap.Extent();
-  for (i=1; i<=aNbRanks; ++i){
-    const BooleanOperations_IndexedDataMapOfShapeInteger& aSIM=myShapeIndexMap.FindFromKey(i);
-    bFound=aSIM.Contains(aS);
-    if (bFound) {
-      aIndex=aSIM.FindFromKey(aS);
-      return aIndex;
-    }
-  }
-  // Contribution of Samtech www.samcef.com END
+  //modified by NIZNHY-PKV Mon Dec 12 09:02:54 2011t
   return aIndex;
 }
 
@@ -376,8 +322,9 @@ static
 //function : ComputeBoxEx
 //purpose  : 
 //=======================================================================
-  void NMTDS_ShapesDataStructure::ComputeBoxEx (const Standard_Integer aIx,
-						Bnd_Box& aBoxEx)const
+void NMTDS_ShapesDataStructure::ComputeBoxEx 
+  (const Standard_Integer aIx,
+   Bnd_Box& aBoxEx)const
 {
   ComputeBoxExS(aIx, this, aBoxEx);
 }
@@ -385,8 +332,9 @@ static
 //function : GetAllSuccessors
 //purpose  : 
 //=======================================================================
-  void NMTDS_ShapesDataStructure::GetAllSuccessors(const Standard_Integer nS,
-						   TColStd_IndexedMapOfInteger& aMA)const
+void NMTDS_ShapesDataStructure::GetAllSuccessors
+  (const Standard_Integer nS,
+   TColStd_IndexedMapOfInteger& aMA)const
 {
   GetAllSuccessorsS(nS, this, aMA);
 }
@@ -395,8 +343,8 @@ static
 //purpose  : 
 //=======================================================================
 void GetAllSuccessorsS(const Standard_Integer nS,
-		       const NMTDS_ShapesDataStructure* myDS,
-		       TColStd_IndexedMapOfInteger& aMA)
+                       const NMTDS_ShapesDataStructure* myDS,
+                       TColStd_IndexedMapOfInteger& aMA)
 {
   TopAbs_ShapeEnum aT;
   Standard_Integer i, nSx, aNbSuccessors, *pSuccessors;
@@ -423,9 +371,9 @@ void GetAllSuccessorsS(const Standard_Integer nS,
 // function: ComputeBoxExS
 // purpose: 
 //=======================================================================
-  void ComputeBoxExS(const Standard_Integer aIx,
-		     const NMTDS_ShapesDataStructure* pDS,
-		     Bnd_Box& aBoxEx)
+void ComputeBoxExS(const Standard_Integer aIx,
+		   const NMTDS_ShapesDataStructure* pDS,
+		   Bnd_Box& aBoxEx)
 {
   Standard_Integer i, aNbS, iS;
   //

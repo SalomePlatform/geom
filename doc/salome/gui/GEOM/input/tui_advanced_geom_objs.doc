@@ -2,220 +2,119 @@
 
 \page tui_advanced_geom_objs_page Advanced Geometrical Objects
 
-\anchor tui_creation_edge
-<br><h2>Creation of an Edge</h2>
+\anchor tui_creation_pipetshape
+<br><h2>Creation of PipeTShape</h2>
 
 \code
 import geompy
 import salome
 gg = salome.ImportComponentGUI("GEOM")
 
-# create vertices
-p0   = geompy.MakeVertex(0.  , 0.  , 0.  )
-pxyz = geompy.MakeVertex(100., 100., 100.)
-
-# create an edge
-edge = geompy.MakeEdge(p0, pxyz)
+# create PipeTShape object
+pipetshape = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0)
 
 # add object in the study
-id_edge = geompy.addToStudy(edge,"Edge")
+id_pipetshape = geompy.addToStudy(pipetshape[0],"PipeTShape")
+# add groups in the study
+for g in pipetshape[1:]:
+    geompy.addToStudyInFather(pipetshape[0], g, g.GetName())
+    
+# Create junction vertices
+P1 = geompy.MakeVertex(0.0, 0.0, 0.0)
+P2 = geompy.MakeVertex(400.0, 0.0, 0.0)
+P3 = geompy.MakeVertex(200.0, 0.0, 200.0)
 
-# display an edge
-gg.createAndDisplayGO(id_edge) 
-\endcode
- 
-\anchor tui_creation_wire
-<br><h2>Creation of a Wire</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-px   = geompy.MakeVertex(100., 0.  , 0.  )
-py   = geompy.MakeVertex(0.  , 100., 0.  )
-pz   = geompy.MakeVertex(0.  , 0.  , 100.)
-
-# create a vector from two points
-vxy = geompy.MakeVector(px, py)
-
-# create an arc from three points
-arc = geompy.MakeArc(py, pz, px)
-
-# create a wire
-wire = geompy.MakeWire([vxy, arc])
-
-# add an object in the study
-id_wire = geompy.addToStudy(wire,"Wire")
-
-# display the wire
-gg.createAndDisplayGO(id_wire) 
-\endcode
- 
-\anchor tui_creation_face
-<br><h2>Creation of a Face</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p0   = geompy.MakeVertex(0.  , 0.  , 0.  )
-px   = geompy.MakeVertex(100., 0.  , 0.  )
-py   = geompy.MakeVertex(0.  , 100., 0.  )
-pz   = geompy.MakeVertex(0.  , 0.  , 100.)
-pxyz = geompy.MakeVertex(100., 100., 100.)
-
-# create a vector from two points
-vxy = geompy.MakeVector(px, py)
-
-# create an arc from three points
-arc = geompy.MakeArc(py, pz, px)
-
-# create a wire
-wire = geompy.MakeWire([vxy, arc])
-
-# create sketchers
-sketcher1 = geompy.MakeSketcher("Sketcher:F -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW",
-                                [100,0,0, 1,1,1, -1,1,0])
-sketcher2 = geompy.MakeSketcher("Sketcher:F 0 0:TT 70 0:TT 70 70:TT 0 70:WW")
-sketcher3 = geompy.MakeSketcher("Sketcher:F 20 20:TT 50 20:TT 50 50:TT 20 50:WW")
-isPlanarFace = 1
-
-# create a face from the wire
-face1 = geompy.MakeFace(wire, isPlanarFace)
-
-# create faces from two wires
-face2 = geompy.MakeFaceWires([wire, sketcher1],isPlanarFace)
-face3 = geompy.MakeFaces([sketcher2, sketcher3],isPlanarFace)
-
-# add objects in the study
-id_face1 = geompy.addToStudy(face1,"Face1")
-id_face2 = geompy.addToStudy(face2,"Face2")
-id_face3 = geompy.addToStudy(face3,"Face3")
-
-# display the faces
-gg.createAndDisplayGO(id_face1)
-gg.setDisplayMode(id_face1,1)
-gg.setTransparency(id_face1,0.2)
-gg.createAndDisplayGO(id_face2)
-gg.setDisplayMode(id_face2,1)
-gg.setTransparency(id_face2,0.2)
-gg.createAndDisplayGO(id_face3)
-gg.setDisplayMode(id_face3,1)
-gg.setTransparency(id_face3,0.2) 
-\endcode
- 
-\anchor tui_creation_shell
-<br><h2>Creation of a Shell</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-#create vertices
-p0   = geompy.MakeVertex( 0.,  0.,  0.)
-pxyz = geompy.MakeVertex( 5.,  5., 40.)
-
-# create sketchers
-sketcher1 = geompy.MakeSketcher("Sketcher:F 0 0:TT 70 0:TT 70 70:TT 0 70:WW")
-sketcher2 = geompy.MakeSketcher("Sketcher:F 20 20:TT 50 20:TT 50 50:TT 20 50:WW")
-isPlanarFace = 1
-
-# create a face from two wires
-face = geompy.MakeFaces([sketcher1, sketcher2],isPlanarFace)
-
-# create a prism
-prism = geompy.MakePrism(face, p0, pxyz)
-
-# explode the prism into faces
-prism_faces = geompy.SubShapeAllSorted(prism, geompy.ShapeType["FACE"])
-
-# create a shell from a set of faces
-shell = geompy.MakeShell([prism_faces[0], prism_faces[2], prism_faces[3],
-                          prism_faces[7], prism_faces[9]])
-
-# add objects in the study
-id_shell = geompy.addToStudy(shell,"Shell")
-
-# display the shell
-gg.createAndDisplayGO(id_shell)
-gg.setDisplayMode(id_shell,1) 
-\endcode
- 
-\anchor tui_creation_solid
-<br><h2>Creation of a Solid</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-#create vertices
-p0 = geompy.MakeVertex( 0.,  0.,  0.)
-pz = geompy.MakeVertex( 0.,  0., 40.)
-
-# create sketchers
-sketcher = geompy.MakeSketcher("Sketcher:F -50 -50:TT 100 -50:R 0:C 50 70:R 0:L 100:WW")
-
-# create faces from two wires
-face = geompy.MakeFace(sketcher,1)
-
-# create a prism
-prism = geompy.MakePrism(face, p0, pz)
-
-# explode the prism into faces
-prism_faces = geompy.SubShapeAllSorted(prism, geompy.ShapeType["FACE"])
-
-# create a shell from a set of faces
-shell = geompy.MakeShell([prism_faces[0], prism_faces[1],
-                          prism_faces[3], prism_faces[4],
-                          prism_faces[5], prism_faces[2]])
-
-# create a solid, bounded by the given shells
-solid = geompy.MakeSolid([shell])
-
-# add objects in the study
-id_solid = geompy.addToStudy(solid,"Solid")
-
-# display the solid
-gg.createAndDisplayGO(id_solid)
-gg.setDisplayMode(id_solid,1) 
-\endcode
- 
-\anchor tui_creation_compound
-<br><h2>Creation of a Compound</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p1 = geompy.MakeVertex(  -30.,  -30.,  50.)
-p2 = geompy.MakeVertex(  -60.,  -60.,  30.)
-p3 = geompy.MakeVertex(  -30.,  -30.,  10.)
-
-# create an arc from three points
-arc = geompy.MakeArc(p1, p2, p3)
-ShapeListCompound = []
-i = 0
-while i <= 3 :
-    S = geompy.MakeTranslation(arc, i * 50., 0., 0.)
-    ShapeListCompound.append(S)
-    i = i + 1
-
-# create a compund of the given shapes
-compound = geompy.MakeCompound(ShapeListCompound)
+# create PipeTShape object with position
+pipetshape_position = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, True, P1, P2, P3)
 
 # add object in the study
-id_compound = geompy.addToStudy(compound,"Compound")
+id_pipetshape_position = geompy.addToStudy(pipetshape_position[0],"PipeTShape_position")
+# add groups in the study
+for g in pipetshape_position[1:]:
+    geompy.addToStudyInFather(pipetshape_position[0], g, g.GetName())
 
-# display the compound
-gg.createAndDisplayGO(id_compound) 
+# create PipeTShape with chamfer object
+pipetshapechamfer = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0)
+
+# add object in the study
+id_pipetshapechamfer = geompy.addToStudy(pipetshapechamfer[0],"PipeTShapeChamfer")
+# add groups in the study
+for g in pipetshapechamfer[1:]:
+    geompy.addToStudyInFather(pipetshapechamfer[0], g, g.GetName())
+
+# create PipeTShape with chamfer object with position
+pipetshapechamfer_position = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0, True, P1, P2, P3)
+
+# add object in the study
+id_pipetshapechamfer_position = geompy.addToStudy(pipetshapechamfer_position[0],"PipeTShapeChamfer_position")
+# add groups in the study
+for g in pipetshapechamfer_position[1:]:
+    geompy.addToStudyInFather(pipetshapechamfer_position[0], g, g.GetName())
+
+# create PipeTShape with fillet object
+pipetshapefillet = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0)
+
+# add object in the study
+id_pipetshapefillet = geompy.addToStudy(pipetshapefillet[0],"PipeTShapeFillet")
+# add groups in the study
+for g in pipetshapefillet[1:]:
+    geompy.addToStudyInFather(pipetshapefillet[0], g, g.GetName())
+
+# create PipeTShape with fillet object with position
+pipetshapefillet_position = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0, True, P1, P2, P3)
+
+# add object in the study
+id_pipetshapefillet_position = geompy.addToStudy(pipetshapefillet_position[0],"PipeTShapeFillet_position")
+# add groups in the study
+for g in pipetshapefillet_position[1:]:
+    geompy.addToStudyInFather(pipetshapefillet_position[0], g, g.GetName())
+    
+
+# display pipetshapes
+gg.createAndDisplayGO(id_pipetshape)
+gg.createAndDisplayGO(id_pipetshape_position)
+gg.createAndDisplayGO(id_pipetshapechamfer)
+gg.createAndDisplayGO(id_pipetshapechamfer_position)
+gg.createAndDisplayGO(id_pipetshapefillet)
+gg.createAndDisplayGO(id_pipetshapefillet_position)
+
 \endcode
 
+\anchor tui_creation_divideddisk
+<br><h2>Creation of DividedDisk</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create DividedDisk object
+divideddisk = geompy.MakeDividedDisk(100, 50)
+
+# add object in the study
+id_divideddisk = geompy.addToStudy(divideddisk,"DividedDisk")
+
+# display divideddisk
+gg.createAndDisplayGO(id_divideddisk) 
+\endcode
+
+\anchor tui_creation_dividedcylinder
+<br><h2>Creation of DividedCylinder</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create DividedCylinder object
+dividedcylinder = geompy.MakeDividedCylinder(100, 300)
+
+# add object in the study
+id_dividedcylinder = geompy.addToStudy(dividedcylinder,"DividedCylinder")
+
+# display dividedcylinder
+gg.createAndDisplayGO(id_dividedcylinder) 
+\endcode
+
+<!--@@ insert new functions before this line @@ do not remove this line @@-->
 */

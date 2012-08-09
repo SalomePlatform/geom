@@ -1,32 +1,34 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMBase_Tools.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #include "GEOMToolsGUI.h"
 #include "GEOMToolsGUI_DeleteDlg.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 #include <GEOMBase.h>
 #include <GEOM_Operation.h>
 #include <GEOM_Displayer.h>
@@ -57,8 +59,6 @@
 // OCCT Includes
 #include <TCollection_AsciiString.hxx>
 
-using namespace std;
-
 typedef QMap<QString, QString> FilterMap;
 static QString lastUsedFilter;
 
@@ -68,19 +68,19 @@ static QString lastUsedFilter;
 //            the selected file type code through <filter> argument.
 //=======================================================================
 static QString getFileName( QWidget*           parent,
-			    const QString&     initial,
-			    const FilterMap&   filterMap,
+                            const QString&     initial,
+                            const FilterMap&   filterMap,
                             const QStringList& filters,
-			    const QString&     caption,
-			    bool               open,
-			    QString&           format,
-			    bool               showCurrentDirInitially = false )
+                            const QString&     caption,
+                            bool               open,
+                            QString&           format,
+                            bool               showCurrentDirInitially = false )
 {
   //QStringList filters;
   QString aBrepFilter;
-  for ( FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it ) {
+  for (FilterMap::const_iterator it = filterMap.begin(); it != filterMap.end(); ++it) {
     //filters.push_back( it.key() );
-    if ( it.key().contains( "BREP", Qt::CaseInsensitive ) )
+    if (it.key().contains( "BREP", Qt::CaseInsensitive ))
       aBrepFilter = it.key();
   }
 
@@ -90,12 +90,12 @@ static QString getFileName( QWidget*           parent,
 
   if ( !initial.isEmpty() )
     fd->selectFile( initial );
-  
+
   if ( showCurrentDirInitially && SUIT_FileDlg::getLastVisitedPath().isEmpty() )
     fd->setDirectory( QDir::currentPath() );
 
   fd->setFilters( filters );
-  
+
   if ( !lastUsedFilter.isEmpty() && filterMap.contains( lastUsedFilter ) ) {
     fd->selectFilter( lastUsedFilter );
   }
@@ -121,11 +121,11 @@ static QString getFileName( QWidget*           parent,
 //            the selected file type code through <format> argument.
 //=======================================================================
 static QStringList getFileNames( QWidget*           parent,
-				 const QString&     initial,
-				 const FilterMap&   filterMap,
-				 const QString&     caption,
-				 QString&           format,
-				 bool               showCurrentDirInitially = false)
+                                 const QString&     initial,
+                                 const FilterMap&   filterMap,
+                                 const QString&     caption,
+                                 QString&           format,
+                                 bool               showCurrentDirInitially = false)
 {
   QString aBrepFilter;
   QStringList allFilters;
@@ -144,19 +144,19 @@ static QStringList getFileNames( QWidget*           parent,
     }
   }
   filters.append( QObject::tr( "GEOM_ALL_IMPORT_FILES" ).arg( allFilters.join( " " ) ) );
-  
+
   SUIT_FileDlg fd( parent, true, true, true );
-  fd.setFileMode( SUIT_FileDlg::ExistingFiles );     
+  fd.setFileMode( SUIT_FileDlg::ExistingFiles );
   if ( !caption.isEmpty() )
     fd.setWindowTitle( caption );
   if ( !initial.isEmpty() )
     fd.selectFile( initial );
-  
+
   if ( showCurrentDirInitially && SUIT_FileDlg::getLastVisitedPath().isEmpty() )
     fd.setDirectory( QDir::currentPath() );
-  
+
   fd.setFilters( filters );
-  
+
   if ( !lastUsedFilter.isEmpty() && filterMap.contains( lastUsedFilter ) )
     fd.selectFilter( lastUsedFilter );
   else if ( !aBrepFilter.isEmpty() )
@@ -200,7 +200,7 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
   // collect all GEOM objects being deleted
   QMap<QString, GEOM::GEOM_Object_var> gobjects;
   QMap<QString, QString>::ConstIterator oit;
-  list<_PTR(SObject)> aSelectedSO;
+  std::list<_PTR(SObject)> aSelectedSO;
   for ( oit = objects.begin(); oit != objects.end(); ++oit ) {
     _PTR(SObject) so = study->FindObjectID( oit.key().toLatin1().data() );
     if ( !so )
@@ -208,23 +208,23 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
     aSelectedSO.push_back(so);
     CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject( so );
     GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
-    if( CORBA::is_nil( geomObj_rem ) ) 
+    if( CORBA::is_nil( geomObj_rem ) )
       continue;
     gobjects.insert( oit.key(), geomObj_rem );
   }
 
   // Search References with other Modules
-  list< _PTR(SObject) >::iterator itSO = aSelectedSO.begin();
+  std::list< _PTR(SObject) >::iterator itSO = aSelectedSO.begin();
   for ( ; itSO != aSelectedSO.end(); ++itSO ) {
-    std::vector<_PTR(SObject)> aReferences = study->FindDependances( *itSO  );    
+    std::vector<_PTR(SObject)> aReferences = study->FindDependances( *itSO  );
     int aRefLength = aReferences.size();
     if (aRefLength) {
       for (int i = 0; i < aRefLength; i++) {
-	_PTR(SObject) firstSO( aReferences[i] );
-	_PTR(SComponent) aComponent = firstSO->GetFatherComponent();
-	QString type = aComponent->ComponentDataType().c_str();
-	if ( type == "SMESH" )
-	  return true;
+        _PTR(SObject) firstSO( aReferences[i] );
+        _PTR(SComponent) aComponent = firstSO->GetFatherComponent();
+        QString type = aComponent->ComponentDataType().c_str();
+        if ( type == "SMESH" )
+          return true;
       }
     }
   }
@@ -235,11 +235,11 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
     _PTR(SObject) child( it->Value() );
     CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( child );
     GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-    if( CORBA::is_nil( geomObj ) ) 
+    if( CORBA::is_nil( geomObj ) )
       continue;
 
     GEOM::ListOfGO_var list = geomObj->GetDependency();
-    if( list->length() == 0 ) 
+    if( list->length() == 0 )
       continue;
 
     for( int i = 0; i < list->length(); i++ ) {
@@ -247,16 +247,15 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
       bool deleted = false;
       QMap<QString, GEOM::GEOM_Object_var>::Iterator git;
       for ( git = gobjects.begin(); git != gobjects.end() && ( !depends || !deleted ); ++git ) {
-	depends = depends || list[i]->_is_equivalent( *git );
-	deleted = deleted || git.key() == child->GetID().c_str() ;//geomObj->_is_equivalent( *git );
+        depends = depends || list[i]->_is_equivalent( *git );
+        deleted = deleted || git.key() == child->GetID().c_str() ;//geomObj->_is_equivalent( *git );
       }
       if ( depends && !deleted )
-	return true;
+        return true;
     }
   }
   return false;
 }
-
 
 //=======================================================================
 // function : GEOMToolsGUI()
@@ -267,7 +266,6 @@ GEOMToolsGUI::GEOMToolsGUI( GeometryGUI* parent )
 {
 }
 
-
 //=======================================================================
 // function : ~GEOMToolsGUI()
 // purpose  : Destructor
@@ -275,7 +273,6 @@ GEOMToolsGUI::GEOMToolsGUI( GeometryGUI* parent )
 GEOMToolsGUI::~GEOMToolsGUI()
 {
 }
-
 
 //=======================================================================
 // function : OnGUIEvent()
@@ -285,136 +282,110 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
-  switch (theCommandID)
-    {
-    case 31: // COPY
-      {
-	OnEditCopy();
-	break;
-      }
-    case 33: // DELETE
-      {
-	OnEditDelete();
-	break;
-      }
-    case 111: // IMPORT BREP
-    case 112: // IMPORT IGES
-    case 113: // IMPORT STEP
-      {
-	Import();
-	break;
-      }
-    case 121: // EXPORT BREP
-    case 122: // EXPORT IGES
-    case 123: // EXPORT STEP
-      {
-	Export();
-	break;
-      }
-    case 2171: // POPUP VIEWER - SELECT ONLY - VERTEX
-      {
-	OnSelectOnly( GEOM_POINT );
-	break;
-      }
-    case 2172: // POPUP VIEWER - SELECT ONLY - EDGE
-      {
-	OnSelectOnly( GEOM_EDGE );
-	break;
-      }
-    case 2173: // POPUP VIEWER - SELECT ONLY - WIRE
-      {
-	OnSelectOnly( GEOM_WIRE );
-	break;
-      }
-    case 2174: // POPUP VIEWER - SELECT ONLY - FACE
-      {
-	OnSelectOnly( GEOM_FACE );
-	break;
-      }
-    case 2175: // POPUP VIEWER - SELECT ONLY - SHELL
-      {
-	OnSelectOnly( GEOM_SHELL );
-	break;
-      }
-    case 2176: // POPUP VIEWER - SELECT ONLY - SOLID
-      {
-	OnSelectOnly( GEOM_SOLID );
-	break;
-      }
-    case 2177: // POPUP VIEWER - SELECT ONLY - COMPOUND
-      {
-	OnSelectOnly( GEOM_COMPOUND );
-	break;
-      }
-    case 2178: // POPUP VIEWER - SELECT ONLY - SELECT ALL
-      {
-	OnSelectOnly( GEOM_ALLOBJECTS );
-	break;
-      }    
-    case 411: // SETTINGS - ADD IN STUDY
-      {
-	// SAN -- TO BE REMOVED !!!
-	break;
-      }
-    case 412: // SETTINGS - SHADING COLOR
-      {
-	OnSettingsColor();
-	break;
-      }
-    case 804: // ADD IN STUDY - POPUP VIEWER
-      {
-	// SAN -- TO BE REMOVED !!!!
-	break;
-      }
-    case 901: // RENAME
-      {
-	OnRename();
-	break;
-      }
-    case 5103: // CHECK GEOMETRY
-      {
-	OnCheckGeometry();
-	break;
-      }
-    case 8032: // COLOR - POPUP VIEWER
-      {
-	OnColor();
-	break;
-      }
-    case 8033: // TRANSPARENCY - POPUP VIEWER
-      {
-	OnTransparency();
-	break;
-      }
-    case 8034: // ISOS - POPUP VIEWER
-      {
-	OnNbIsos();
-	break;
-      }
-    case 8035: // AUTO COLOR - POPUP VIEWER
-      {
-	OnAutoColor();
-	break;
-      }
-    case 8036: // DISABLE AUTO COLOR - POPUP VIEWER
-      {
-	OnDisableAutoColor();
-	break;
-      }
-    case 9024 : // OPEN - OBJBROSER POPUP
-      {
-	OnOpen();
-	break;
-      }
-    default:
-      {
-	SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-	break;
-      }
-    }
+  switch ( theCommandID ) {
+  case GEOMOp::OpDelete:         // EDIT - DELETE
+    OnEditDelete();
+    break;
+  case GEOMOp::OpImport:         // FILE - IMPORT
+    Import();
+    break;
+  case GEOMOp::OpExport:         // FILE - EXPORT
+    Export();
+    break;
+  case GEOMOp::OpCheckGeom:      // TOOLS - CHECK GEOMETRY
+    OnCheckGeometry();
+    break;
+  case GEOMOp::OpSelectVertex:   // POPUP - SELECT ONLY - VERTEX
+    OnSelectOnly( GEOM_POINT );
+    break;
+  case GEOMOp::OpSelectEdge:     // POPUP - SELECT ONLY - EDGE
+    OnSelectOnly( GEOM_EDGE );
+    break;
+  case GEOMOp::OpSelectWire:     // POPUP - SELECT ONLY - WIRE
+    OnSelectOnly( GEOM_WIRE );
+    break;
+  case GEOMOp::OpSelectFace:     // POPUP - SELECT ONLY - FACE
+    OnSelectOnly( GEOM_FACE );
+    break;
+  case GEOMOp::OpSelectShell:    // POPUP - SELECT ONLY - SHELL
+    OnSelectOnly( GEOM_SHELL );
+    break;
+  case GEOMOp::OpSelectSolid:    // POPUP - SELECT ONLY - SOLID
+    OnSelectOnly( GEOM_SOLID );
+    break;
+  case GEOMOp::OpSelectCompound: // POPUP - SELECT ONLY - COMPOUND
+    OnSelectOnly( GEOM_COMPOUND );
+    break;
+  case GEOMOp::OpSelectAll:      // POPUP - SELECT ONLY - SELECT ALL
+    OnSelectOnly( GEOM_ALLOBJECTS );
+    break;
+  case GEOMOp::OpDeflection:     // POPUP - DEFLECTION ANGLE
+    OnDeflection();
+    break;
+  case GEOMOp::OpColor:          // POPUP - COLOR
+    OnColor();
+    break;
+  case GEOMOp::OpSetTexture:        // POPUP - TEXTURE
+    OnTexture();
+    break;
+  case GEOMOp::OpTransparency:   // POPUP - TRANSPARENCY
+    OnTransparency();
+    break;
+  case GEOMOp::OpIncrTransparency: // SHORTCUT   - INCREASE TRANSPARENCY
+    OnChangeTransparency( true );
+    break;
+  case GEOMOp::OpDecrTransparency: // SHORTCUT   - DECREASE TRANSPARENCY
+    OnChangeTransparency( false );
+    break;
+  case GEOMOp::OpIsos:           // POPUP - ISOS
+    OnNbIsos();
+    break;
+  case GEOMOp::OpIncrNbIsos:     // SHORTCUT   - INCREASE NB ISOLINES
+    OnNbIsos( INCR );
+    break;
+  case GEOMOp::OpDecrNbIsos:     // SHORTCUT   - DECREASE NB ISOLINES
+    OnNbIsos( DECR );
+    break;
+  case GEOMOp::OpMaterialProperties: // POPUP - MATERIAL PROPERTIES
+    OnMaterialProperties();
+    break;
+  case GEOMOp::OpAutoColor:      // POPUP - AUTO COLOR
+    OnAutoColor();
+    break;
+  case GEOMOp::OpNoAutoColor:    // POPUP - DISABLE AUTO COLOR
+    OnDisableAutoColor();
+    break;
+  case GEOMOp::OpShowChildren:   // POPUP - SHOW CHILDREN
+  case GEOMOp::OpHideChildren:   // POPUP - HIDE CHILDREN
+    OnShowHideChildren( theCommandID == GEOMOp::OpShowChildren );
+    break;
+  case GEOMOp::OpPointMarker:    // POPUP - POINT MARKER
+    OnPointMarker();
+    break;
+  case GEOMOp::OpUnpublishObject:// POPUP - UNPUBLISH
+    OnUnpublishObject();
+    break;
+  case GEOMOp::OpPublishObject:// GEOM ROOT OBJECT - POPUP - PUBLISH
+    OnPublishObject();
+    break;
+  case GEOMOp::OpEdgeWidth:
+    OnEdgeWidth();
+    break;
+  case GEOMOp::OpIsosWidth:
+    OnIsosWidth();
+    break;
+  case GEOMOp::OpBringToFront:
+    OnBringToFront();
+    break;
+  case GEOMOp::OpClsBringToFront:
+    OnClsBringToFront();
+     break;
+  default:
+    SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+    break;
+  }
   return true;
 }
-
 
 //===============================================================================
 // function : OnEditDelete()
@@ -439,15 +410,15 @@ void GEOMToolsGUI::OnEditDelete()
     return;
 
   _PTR(Study) aStudy = appStudy->studyDS();
-  
+
   // check if study is locked
   if ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() )->IsLocked() ) {
     SUIT_MessageBox::warning( app->desktop(),
-			      tr("WRN_WARNING"),
-			      tr("WRN_STUDY_LOCKED") );
+                              tr("WRN_WARNING"),
+                              tr("WRN_STUDY_LOCKED") );
     return; // study is locked
   }
-  
+
   // get GEOM component
   CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
   QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR.in() ) );
@@ -456,6 +427,7 @@ void GEOMToolsGUI::OnEditDelete()
   QMap<QString,QString> toBeDeleted;
   QMap<QString,QString> allDeleted;
   bool isComponentSelected = false;
+
   for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
     if ( !anIObject->hasEntry() )
@@ -467,20 +439,23 @@ void GEOMToolsGUI::OnEditDelete()
     QString parentComp = getParentComponent( obj );
     if ( parentComp != geomComp )  {
       SUIT_MessageBox::warning( app->desktop(),
-				QObject::tr("ERR_ERROR"),
-				QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ) );
+                                QObject::tr("ERR_ERROR"),
+                                QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ) );
       return; // not GEOM object selected
     }
 
     ///////////////////////////////////////////////////////
     // if GEOM component is selected, so skip other checks
-    if ( isComponentSelected ) continue; 
+    if ( isComponentSelected ) continue;
     ///////////////////////////////////////////////////////
-	
+
     // check if object is reference
     _PTR(SObject) refobj;
-    if ( obj && obj->ReferencedObject( refobj ) )
-      continue; // skip references
+    if ( obj && obj->ReferencedObject( refobj ) ) {
+      // get the main object by reference IPAL 21354
+      obj = refobj;
+      entry = obj->GetID().c_str();
+    }
     // ...
     QString aName = obj->GetName().c_str();
     if ( entry == geomComp ) {
@@ -495,13 +470,13 @@ void GEOMToolsGUI::OnEditDelete()
     for ( it->InitEx( true ); it->More(); it->Next() ) {
       _PTR(SObject) child( it->Value() );
       if ( child && child->ReferencedObject( refobj ) )
-	continue; // skip references
+        continue; // skip references
       aName = child->GetName().c_str();
       if ( !aName.isEmpty() )
-	allDeleted.insert( child->GetID().c_str(), aName );
+        allDeleted.insert( child->GetID().c_str(), aName );
     }
   }
-  
+
   // is there is anything to delete?
   if ( !isComponentSelected && allDeleted.count() <= 0 )
     return; // nothing to delete
@@ -510,7 +485,7 @@ void GEOMToolsGUI::OnEditDelete()
   GEOMToolsGUI_DeleteDlg dlg( app->desktop(), allDeleted, isComponentSelected );
   if ( !dlg.exec() )
     return; // operation is cancelled by user
-  
+
   // get currently opened views
   QList<SALOME_View*> views;
   SALOME_View* view;
@@ -522,10 +497,10 @@ void GEOMToolsGUI::OnEditDelete()
     if ( view )
       views.append( view );
   }
-  
+
   _PTR(StudyBuilder) aStudyBuilder (aStudy->NewBuilder());
   GEOM_Displayer* disp = new GEOM_Displayer( appStudy );
-  
+
   if ( isComponentSelected ) {
     // GEOM component is selected: delete all objects recursively
     _PTR(SObject) comp = aStudy->FindObjectID( geomComp.toLatin1().data() );
@@ -545,8 +520,8 @@ void GEOMToolsGUI::OnEditDelete()
     // GEOM component is not selected: check if selected objects are in use
     if ( inUse( aStudy, geomComp, allDeleted ) ) {
       SUIT_MessageBox::warning( app->desktop(),
-				QObject::tr("WRN_WARNING"),
-				QObject::tr("DEP_OBJECT") );
+                                QObject::tr("WRN_WARNING"),
+                                QObject::tr("DEP_OBJECT") );
       return; // object(s) in use
     }
     // ... and then delete all objects
@@ -559,57 +534,21 @@ void GEOMToolsGUI::OnEditDelete()
       aStudyBuilder->RemoveObjectWithChildren( obj );
     }
   }
-  
+
   selected.Clear();
   aSelMgr->setSelectedObjects( selected );
   getGeometryGUI()->updateObjBrowser();
   app->updateActions(); //SRN: To update a Save button in the toolbar
 }
 
-
-//==============================================================================
-// function : OnEditCopy()
-// purpose  :
-//==============================================================================
-void GEOMToolsGUI::OnEditCopy()
-{
-/*
- SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
-  GEOM::string_array_var listIOR = new GEOM::string_array;
-
-  const SALOME_ListIO& List = Sel->StoredIObjects();
-
-  myGeomBase->ConvertListOfIOInListOfIOR(List, listIOR);
-
-  Sel->ClearIObjects();
-
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  int aStudyID = aStudy->StudyId();
-
-  for (unsigned int ind = 0; ind < listIOR->length();ind++) {
-    GEOM::GEOM_Object_var aShapeInit = myGeom->GetIORFromString(listIOR[ind]);
-    try {
-      GEOM::GEOM_IInsertOperations_var IOp =  myGeom->GetIInsertOperations(aStudyID);
-      GEOM::GEOM_Object_var result = IOp->MakeCopy(aShapeInit);
-      myGeomBase->Display(result);
-    }
-    catch  (const SALOME::SALOME_Exception& S_ex) {
-      QtCatchCorbaException(S_ex);
-    }
-  }
-
-  QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_READY"));
-*/
-}
-
 //=====================================================================================
 // function : Import
-// purpose  : BRep, Iges, Step
+// purpose  : BRep, Iges, Step, ...
 //=====================================================================================
 bool GEOMToolsGUI::Import()
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( getGeometryGUI()->getApp() );
-  if (! app) return false;
+  if ( !app ) return false;
 
   SalomeApp_Study* stud = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
   if ( !stud ) {
@@ -622,8 +561,8 @@ bool GEOMToolsGUI::Import()
   bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
     SUIT_MessageBox::warning( app->desktop(),
-			      QObject::tr("WRN_WARNING"),
-			      QObject::tr("WRN_STUDY_LOCKED") );
+                              QObject::tr("WRN_WARNING"),
+                              QObject::tr("WRN_STUDY_LOCKED") );
     return false;
   }
 
@@ -631,8 +570,8 @@ bool GEOMToolsGUI::Import()
   GEOM::GEOM_Gen_var eng = GeometryGUI::GetGeomGen();
   if ( CORBA::is_nil( eng ) ) {
     SUIT_MessageBox::critical( app->desktop(),
-			       QObject::tr("WRN_WARNING"),
-			       QObject::tr( "GEOM Engine is not started" ) );
+                               QObject::tr("WRN_WARNING"),
+                               QObject::tr( "GEOM Engine is not started" ) );
     return false;
   }
 
@@ -651,7 +590,7 @@ bool GEOMToolsGUI::Import()
   // select files to be imported
   QString fileType;
   QStringList fileNames = getFileNames( app->desktop(), "", aMap,
-					tr( "GEOM_MEN_IMPORT" ), fileType, true );
+                                        tr( "GEOM_MEN_IMPORT" ), fileType, true );
 
   // set Wait cursor
   SUIT_OverrideCursor wc;
@@ -662,10 +601,16 @@ bool GEOMToolsGUI::Import()
   QStringList errors;
 
   QList< GEOM::GEOM_Object_var > objsForDisplay;
-  
+
+  QStringList anEntryList;
+
   // iterate through all selected files
-  for ( QStringList::ConstIterator it = fileNames.begin(); it != fileNames.end(); ++it ) {
-    QString fileName = *it;
+
+  SUIT_MessageBox::StandardButton igesAnswer = SUIT_MessageBox::NoButton;
+  SUIT_MessageBox::StandardButton acisAnswer = SUIT_MessageBox::NoButton;
+
+  for ( int i = 0; i < fileNames.count(); i++ ) {
+    QString fileName = fileNames[i];
 
     if ( fileName.isEmpty() )
       continue;
@@ -675,14 +620,14 @@ bool GEOMToolsGUI::Import()
       // file type is not defined, try to detect
       QString ext = QFileInfo( fileName ).suffix().toUpper();
       QRegExp re( "\\*\\.(\\w+)" );
-      for ( FilterMap::const_iterator it = aMap.begin(); 
-	    it != aMap.end() && aCurrentType.isEmpty(); ++it ) {
-	int pos = 0;
-	while ( re.indexIn( it.key(), pos ) >= 0 ) {
-	  QString f = re.cap(1).trimmed().toUpper();
-	  if ( ext == f ) { aCurrentType = it.value(); break; }
-	  pos = re.pos() + re.cap(1).length() + 2;
-	}
+      for ( FilterMap::const_iterator it = aMap.begin();
+            it != aMap.end() && aCurrentType.isEmpty(); ++it ) {
+        int pos = 0;
+        while ( re.indexIn( it.key(), pos ) >= 0 ) {
+          QString f = re.cap(1).trimmed().toUpper();
+          if ( ext == f ) { aCurrentType = it.value(); break; }
+          pos = re.pos() + re.cap(1).length() + 2;
+        }
       }
     }
     else {
@@ -701,25 +646,84 @@ bool GEOMToolsGUI::Import()
 
       CORBA::String_var fileN = fileName.toLatin1().constData();
       CORBA::String_var fileT = aCurrentType.toLatin1().constData();
-      GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, fileT );
+
+      // skl 29.05.2009
+      if ( aCurrentType == "IGES" ) {
+        GEOM::GEOM_Object_var anObj = aInsOp->ImportFile( fileN, "IGES_UNIT" );
+        bool needConvert = false;
+        TCollection_AsciiString aUnitName = aInsOp->GetErrorCode();
+        if ( aUnitName.SubString( 1, 4 ) == "UNIT" )
+          needConvert = aUnitName.SubString( 6, aUnitName.Length() ) != "M";
+
+        if ( needConvert ) {
+          if ( igesAnswer == SUIT_MessageBox::NoToAll ) {
+            // converting for all files is already approved
+            fileT = "IGES_SCALE";
+          }
+          else if ( igesAnswer != SUIT_MessageBox::YesToAll ) {
+            SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
+            if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
+            igesAnswer = SUIT_MessageBox::question( app->desktop(),
+                                                    "Question",//tr("WRN_WARNING"),
+                                                    tr("GEOM_SCALE_DIMENSIONS"),
+                                                    btns | SUIT_MessageBox::Cancel,
+                                                    SUIT_MessageBox::No );
+            switch ( igesAnswer ) {
+            case SUIT_MessageBox::Cancel:
+              return false;                // cancel (break) import operation
+            case SUIT_MessageBox::Yes:
+            case SUIT_MessageBox::YesToAll:
+              break;                       // scaling is confirmed
+            case SUIT_MessageBox::No:
+            case SUIT_MessageBox::NoAll:
+              fileT = "IGES_SCALE";
+            default:
+              break;                       // scaling is rejected
+            } // switch ( igesAnswer )
+          } // if ( igeAnswer != NoToAll )
+        } // if ( needConvert )
+      } // if ( aCurrentType == "IGES" )
+      else if ( aCurrentType == "ACIS" ) {
+        if ( acisAnswer != SUIT_MessageBox::YesToAll && acisAnswer != SUIT_MessageBox::NoToAll ) {
+          SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
+          if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
+          acisAnswer = SUIT_MessageBox::question( app->desktop(),
+                                                  "Question",//tr("WRN_WARNING"),
+                                                  tr("GEOM_PUBLISH_NAMED_SHAPES"),
+                                                  btns | SUIT_MessageBox::Cancel,
+                                                  SUIT_MessageBox::No );
+          if ( acisAnswer == SUIT_MessageBox::Cancel )
+            return false; // cancel (break) import operation
+        } // if ( acisAnswer != YesToAll && acisAnswer != NoToAll )
+      } // else if ( aCurrentType == "ACIS" )
+
+      GEOM::GEOM_Object_var anObj = aInsOp->ImportFile( fileN, fileT );
 
       if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
-	QString aPublishObjName = 
-	  GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, /*withExten=*/true ) );
-	
-	SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy( aStudy );
-	GeometryGUI::GetGeomGen()->PublishInStudy( aDSStudy,
-						   SALOMEDS::SObject::_nil(),
-						   anObj,
-						   aPublishObjName.toLatin1().constData() );
+        QString aPublishObjName =
+          GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, /*withExten=*/true ) );
 
-	objsForDisplay.append( anObj );
-	
-	anOp->commit();
+        SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy( aStudy );
+        SALOMEDS::SObject_var aSO =
+          GeometryGUI::GetGeomGen()->PublishInStudy( aDSStudy,
+                                                     SALOMEDS::SObject::_nil(),
+                                                     anObj,
+                                                     aPublishObjName.toLatin1().constData() );
+        if ( ( !aSO->_is_nil() ) )
+          anEntryList.append( aSO->GetID() );
+
+        objsForDisplay.append( anObj );
+
+        if ( aCurrentType == "ACIS" ) {
+          if ( acisAnswer == SUIT_MessageBox::Yes || acisAnswer == SUIT_MessageBox::YesToAll )
+            GeometryGUI::GetGeomGen()->PublishNamedShapesInStudy( aDSStudy, anObj );
+        }
+
+        anOp->commit();
       }
       else {
-	anOp->abort();
-	errors.append( QString( "%1 : %2" ).arg( fileName ).arg( aInsOp->GetErrorCode() ) );
+        anOp->abort();
+        errors.append( QString( "%1 : %2" ).arg( fileName ).arg( aInsOp->GetErrorCode() ) );
       }
     }
     catch( const SALOME::SALOME_Exception& S_ex ) {
@@ -731,21 +735,23 @@ bool GEOMToolsGUI::Import()
   // update object browser
   getGeometryGUI()->updateObjBrowser( true );
 
+  // browse published objects
+  app->browseObjects( anEntryList );
+
   // display imported model (if only one file is selected)
   if ( objsForDisplay.count() == 1 )
     GEOM_Displayer( stud ).Display( objsForDisplay[0].in() );
 
   if ( errors.count() > 0 ) {
     SUIT_MessageBox::critical( app->desktop(),
-			       QObject::tr( "GEOM_ERROR" ),
-			       QObject::tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ) );
+                               QObject::tr( "GEOM_ERROR" ),
+                               QObject::tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ) );
   }
 
   app->updateActions(); //SRN: To update a Save button in the toolbar
 
   return objsForDisplay.count() > 0;
 }
-
 
 //=====================================================================================
 // function : Export
@@ -766,8 +772,8 @@ bool GEOMToolsGUI::Export()
   GEOM::GEOM_Gen_var eng = GeometryGUI::GetGeomGen();
   if ( CORBA::is_nil( eng ) ) {
     SUIT_MessageBox::critical( app->desktop(),
-			       QObject::tr("WRN_WARNING"),
-			       QObject::tr( "GEOM Engine is not started" ) );
+                               QObject::tr("WRN_WARNING"),
+                               QObject::tr( "GEOM Engine is not started" ) );
     return false;
   }
 
@@ -795,17 +801,16 @@ bool GEOMToolsGUI::Export()
   bool appropriateObj = false;
 
   SALOME_ListIteratorOfListIO It( selectedObjects );
-  for(;It.More();It.Next()) {
+  for (; It.More(); It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
-    Standard_Boolean found;
-    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject(IObject, found);
+    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject( IObject );
 
-    if ( !found || anObj->_is_nil() )
+    if ( anObj->_is_nil() )
       continue;
 
     QString fileType;
     QString file = getFileName(app->desktop(), QString( IObject->getName() ), aMap, filters,
-			       tr("GEOM_MEN_EXPORT"), false, fileType, true);
+                               tr("GEOM_MEN_EXPORT"), false, fileType, true);
 
     // User has pressed "Cancel" --> stop the operation
     if ( file.isEmpty() || fileType.isEmpty() )
@@ -819,20 +824,18 @@ bool GEOMToolsGUI::Export()
 
       anOp->start();
 
-
       aInsOp->Export( anObj, file.toStdString().c_str(), fileType.toLatin1().constData() );
 
-      if ( aInsOp->IsDone() )
-	anOp->commit();
-      else
-	{
-	  anOp->abort();
-	  wc.suspend();
-	  SUIT_MessageBox::critical( app->desktop(),
-				     QObject::tr( "GEOM_ERROR" ),
-				     QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ) );
-	  return false;
-	}
+      if (aInsOp->IsDone())
+        anOp->commit();
+      else {
+        anOp->abort();
+        wc.suspend();
+        SUIT_MessageBox::critical(app->desktop(),
+                                  QObject::tr("GEOM_ERROR"),
+                                  QObject::tr("GEOM_PRP_ABORT") + "\n" + QObject::tr(aInsOp->GetErrorCode()));
+        return false;
+      }
     }
     catch (const SALOME::SALOME_Exception& S_ex) {
       //QtCatchCorbaException(S_ex);
@@ -844,14 +847,14 @@ bool GEOMToolsGUI::Export()
 
   if ( !appropriateObj )
     SUIT_MessageBox::warning( app->desktop(),
-			      QObject::tr("WRN_WARNING"),
-			      QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
+                              QObject::tr("WRN_WARNING"),
+                              QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
   return true;
 }
 
 //=====================================================================================
 // function : RemoveObjectWithChildren
-// purpose  : to be used by OnEditDelete() method
+// purpose  : used by OnEditDelete() method
 //=====================================================================================
 void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
                                             _PTR(Study) aStudy,
@@ -869,6 +872,8 @@ void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
   if (obj->FindAttribute(anAttr, "AttributeIOR")) {
     _PTR(AttributeIOR) anIOR (anAttr);
 
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+
     // Delete shape in Client
     const TCollection_AsciiString ASCIor ((char*)anIOR->Value().c_str());
     getGeometryGUI()->GetShapeReader().RemoveShapeFromBuffer(ASCIor);
@@ -876,14 +881,21 @@ void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
     CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(obj);
     GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
     if (!CORBA::is_nil(geomObj)) {
+
+      //Remove visual properties of the object
+      appStudy->removeObjectFromAll(obj->GetID().c_str());
+
       // Erase graphical object
       QListIterator<SALOME_View*> it( views );
       while ( it.hasNext() )
-	if ( SALOME_View* view = it.next() )
-	  disp->Erase(geomObj, true, view);
-      
+        if ( SALOME_View* view = it.next() )
+          disp->Erase(geomObj, true, view);
+
       // Remove object from Engine
-      GeometryGUI::GetGeomGen()->RemoveObject( geomObj );
+      // We can't directly remove object from engine. All we can do is to unpublish the object
+      // from the study. Another client could be using the object.
+      // Unpublishing is done just after in aStudyBuilder->RemoveObjectWithChildren( child );
+      //GeometryGUI::GetGeomGen()->RemoveObject( geomObj );
     }
   }
 }
