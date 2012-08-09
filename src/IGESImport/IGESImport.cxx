@@ -101,14 +101,18 @@ IGESIMPORT_EXPORT
           if (!aModel.IsNull()) {
             Handle(TCollection_HAsciiString) aUnitName =
               aModel->GlobalSection().UnitName();
-            //cout<<"aUnitName = "<<aUnitName->ToCString()<<endl;
-            //cout<<"aUnitFlag = "<<aModel->GlobalSection().UnitFlag()<<endl;
-            if (aUnitName->String()=="MM") {
-              P = gp_Pnt(0.001,0.0,0.0);
+            if (!aUnitName.IsNull()) {
+              //cout<<"aUnitName = "<<aUnitName->ToCString()<<endl;
+              //cout<<"aUnitFlag = "<<aModel->GlobalSection().UnitFlag()<<endl;
+              if (aUnitName->String()=="MM") {
+                P = gp_Pnt(0.001,0.0,0.0);
+              }
+              else if (aUnitName->String()=="CM") {
+                P = gp_Pnt(0.01,0.0,0.0);
+              }
             }
-            else if (aUnitName->String()=="CM") {
-              P = gp_Pnt(0.01,0.0,0.0);
-            }
+            //else
+            //  cout << "aUnitName is NULL !!" << endl;
           }
           BRep_Builder B;
           TopoDS_Vertex V;
