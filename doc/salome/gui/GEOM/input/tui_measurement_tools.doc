@@ -17,6 +17,7 @@
 <li>\subpage tui_free_faces_page</li>
 <li>\subpage tui_check_shape_page</li>
 <li>\subpage tui_check_compound_of_blocks_page</li>
+<li>\subpage tui_get_non_blocks_page</li>
 <li>\subpage tui_check_self_intersections_page</li>
 </ul>
 

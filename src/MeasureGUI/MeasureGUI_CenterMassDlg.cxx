@@ -84,7 +84,7 @@ MeasureGUI_CenterMassDlg::MeasureGUI_CenterMassDlg( GeometryGUI* theGeometryGUI,
 
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#center_mass_anchor";
+  myHelpFileName = "center_mass_page.html";
 
   /* Initialisation */
   Init();

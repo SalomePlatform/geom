@@ -549,6 +549,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpWhatIs:             // MENU MEASURE - WHATIS
   case GEOMOp::OpCheckShape:         // MENU MEASURE - CHECK
   case GEOMOp::OpCheckCompound:      // MENU MEASURE - CHECK COMPOUND OF BLOCKS
+  case GEOMOp::OpGetNonBlocks:       // MENU MEASURE - Get NON BLOCKS
   case GEOMOp::OpPointCoordinates:   // MENU MEASURE - POINT COORDINATES
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
     libName = "MeasureGUI";
@@ -829,6 +830,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpWhatIs,           "WHAT_IS" );
   createGeomAction( GEOMOp::OpCheckShape,       "CHECK" );
   createGeomAction( GEOMOp::OpCheckCompound,    "CHECK_COMPOUND" );
+  createGeomAction( GEOMOp::OpGetNonBlocks,     "GET_NON_BLOCKS" );
   createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
 
 #ifdef _DEBUG_ // PAL16821
@@ -1059,6 +1061,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpWhatIs,          measurId, -1 );
   createMenu( GEOMOp::OpCheckShape,      measurId, -1 );
   createMenu( GEOMOp::OpCheckCompound,   measurId, -1 );
+  createMenu( GEOMOp::OpGetNonBlocks,    measurId, -1 );
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
 
 #ifdef _DEBUG_ // PAL16821
@@ -1196,6 +1199,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpWhatIs,           measureTbId );
   createTool( GEOMOp::OpCheckShape,       measureTbId );
   createTool( GEOMOp::OpCheckCompound,    measureTbId );
+  createTool( GEOMOp::OpGetNonBlocks,     measureTbId );
   createTool( GEOMOp::OpCheckSelfInters,  measureTbId );
   
   int picturesTbId = createTool( tr( "TOOL_PICTURES" ) );

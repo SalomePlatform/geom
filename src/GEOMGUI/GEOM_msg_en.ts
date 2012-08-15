@@ -358,6 +358,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Incriminated Sub-shapes</translation>
     </message>
     <message>
+        <source>GEOM_GETNONBLOCKS_TITLE</source>
+        <translation>Get non-hexahedral solids and non-quadrangular faces</translation>
+    </message>
+    <message>
+        <source>GEOM_GETNONBLOCKS</source>
+        <translation>Get non blocks</translation>
+    </message>
+    <message>
+        <source>GEOM_NONBLOCKS</source>
+        <translation>NonBlocksGroup</translation>
+    </message>
+    <message>
         <source>GEOM_CHECK_INFOS</source>
         <translation>Object And Its Topological Information</translation>
     </message>
@@ -2311,6 +2323,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Check Compound of Blocks</translation>
     </message>
     <message>
+        <source>MEN_GET_NON_BLOCKS</source>
+        <translation>Get Non Blocks</translation>
+    </message>
+    <message>
         <source>MEN_CHECK_SELF_INTERSECTIONS</source>
         <translation>Detect Self-intersections</translation>
     </message>
@@ -3155,6 +3171,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Check compound of blocks</translation>
     </message>
     <message>
+        <source>STB_GET_NON_BLOCKS</source>
+        <translation>Get non blocks</translation>
+    </message>
+    <message>
         <source>STB_CHECK_SELF_INTERSECTIONS</source>
         <translation>Detect Self-intersections</translation>
     </message>
@@ -3761,6 +3781,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_CHECK_COMPOUND</source>
         <translation>Check compound of blocks</translation>
+    </message>
+    <message>
+        <source>TOP_GET_NON_BLOCKS</source>
+        <translation>Get non blocks</translation>
     </message>
     <message>
         <source>TOP_CHECK_SELF_INTERSECTIONS</source>

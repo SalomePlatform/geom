@@ -243,6 +243,11 @@ def TestOtherOperations (geompy, math):
   IsValid = geompy.CheckCompoundOfBlocks(Compound1)
   if IsValid == 0:
     print "The Blocks Compound is NOT VALID"
+    (NonBlocks, NonQuads) = geompy.GetNonBlocks(Compound1)
+    if NonBlocks is not None:
+      geompy.addToStudyInFather(Compound1, NonBlocks, "Group of non-hexahedral solids")
+    if NonQuads is not None:
+      geompy.addToStudyInFather(Compound1, NonQuads, "Group of non-quadrangular faces")
   else:
     print "The Blocks Compound is VALID"
 

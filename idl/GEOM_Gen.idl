@@ -2404,6 +2404,17 @@ module GEOM
                           in BCErrors    theErrors);
 
     /*!
+     *  \brief Retrieve all non blocks solids and faces from a shape.
+     *
+     *  \param theShape The shape to explore.
+     *  \param theNonQuads Output parameter. Group of all non quadrangular faces.
+     *
+     *  \return Group of all non block solids (= not 6 faces, or with 6
+     *          faces, but with the presence of non-quadrangular faces).
+     */
+    GEOM_Object GetNonBlocks (in GEOM_Object theShape, out GEOM_Object theNonQuads);
+
+    /*!
      *  \brief Remove all seam and degenerated edges from \a theShape.
      *
      *  Unite faces and edges, sharing one surface.

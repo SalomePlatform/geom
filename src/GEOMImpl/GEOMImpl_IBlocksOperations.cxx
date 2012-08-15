@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -1735,7 +1734,8 @@ Standard_Boolean GEOMImpl_IBlocksOperations::IsCompoundOfBlocks
 void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
                                                 TopTools_ListOfShape& BLO,
                                                 TopTools_ListOfShape& NOT,
-                                                TopTools_ListOfShape& EXT)
+                                                TopTools_ListOfShape& EXT,
+                                                TopTools_ListOfShape& NOQ)
 {
   TopAbs_ShapeEnum aType = theShape.ShapeType();
   switch (aType) {
@@ -1744,7 +1744,7 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
     {
       TopoDS_Iterator It (theShape);
       for (; It.More(); It.Next()) {
-        AddBlocksFrom(It.Value(), BLO, NOT, EXT);
+        AddBlocksFrom(It.Value(), BLO, NOT, EXT, NOQ);
       }
     }
     break;
@@ -1766,7 +1766,7 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
         for (; expF.More(); expF.Next()) {
           if (mapFaces.Add(expF.Current())) {
             nbFaces++;
-            if (nbFaces > 6) break;
+            //0021483//if (nbFaces > 6) break;
 
             // get wire
             TopoDS_Shape aF = expF.Current();
@@ -1774,14 +1774,18 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
             if (!wires.More()) {
               // no wire in the face
               hasNonQuadr = Standard_True;
-              break;
+              NOQ.Append(aF);//0021483
+              //0021483//break;
+              continue;
             }
             TopoDS_Shape aWire = wires.Current();
             wires.Next();
             if (wires.More()) {
               // multiple wires in the face
               hasNonQuadr = Standard_True;
-              break;
+              NOQ.Append(aF);//0021483
+              //0021483//break;
+              continue;
             }
 
             // Check number of edges in the face
@@ -1796,6 +1800,7 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
             }
             if (nbEdges != 4) {
               hasNonQuadr = Standard_True;
+              NOQ.Append(aF);//0021483
             }
           }
         }
@@ -1804,6 +1809,47 @@ void GEOMImpl_IBlocksOperations::AddBlocksFrom (const TopoDS_Shape&   theShape,
           BLO.Append(theShape);
         } else {
           NOT.Append(theShape);
+        }
+      }
+    }
+    break;
+  case TopAbs_SHELL: //0021483
+  case TopAbs_FACE: //0021483
+    {
+      // Count edges in each face
+      TopTools_MapOfShape mapFaces;
+      TopExp_Explorer expF (theShape, TopAbs_FACE);
+      for (; expF.More(); expF.Next()) {
+        if (mapFaces.Add(expF.Current())) {
+          // get wire
+          TopoDS_Shape aF = expF.Current();
+          TopExp_Explorer wires (aF, TopAbs_WIRE);
+          if (!wires.More()) {
+            // no wire in the face
+            NOQ.Append(aF);//0021483
+            continue;
+          }
+          TopoDS_Shape aWire = wires.Current();
+          wires.Next();
+          if (wires.More()) {
+            // multiple wires in the face
+            NOQ.Append(aF);//0021483
+            continue;
+          }
+
+          // Check number of edges in the face
+          Standard_Integer nbEdges = 0;
+          TopTools_MapOfShape mapEdges;
+          TopExp_Explorer expW (aWire, TopAbs_EDGE);
+          for (; expW.More(); expW.Next()) {
+            if (mapEdges.Add(expW.Current())) {
+              nbEdges++;
+              if (nbEdges > 4) break;
+            }
+          }
+          if (nbEdges != 4) {
+            NOQ.Append(aF);//0021483
+          }
         }
       }
     }
@@ -2353,7 +2399,8 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
   TopTools_ListOfShape NOT; // Not blocks
   TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
   TopTools_ListOfShape BLO; // All blocks from the given compound
-  AddBlocksFrom(aBlockOrComp, BLO, NOT, EXT);
+  TopTools_ListOfShape NOQ; // All non-quadrangular faces
+  AddBlocksFrom(aBlockOrComp, BLO, NOT, EXT, NOQ);
 
   // Report non-blocks
   if (NOT.Extent() > 0) {
@@ -2511,6 +2558,100 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
 
   SetErrorCode(OK);
   return isCompOfBlocks;
+}
+
+//=============================================================================
+/*!
+ *  GetNonBlocks
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetNonBlocks
+                                     (Handle(GEOM_Object) theShape,
+                                      Handle(GEOM_Object)& theNonQuads)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+  TopoDS_Shape aShape = theShape->GetValue();
+
+  // Separate blocks from non-blocks
+  TopTools_ListOfShape BLO; // All blocks from the given compound
+  TopTools_ListOfShape NOT; // Not blocks
+  TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
+  TopTools_ListOfShape NOQ; // All non-quadrangular faces
+  AddBlocksFrom(aShape, BLO, NOT, EXT, NOQ);
+
+  if (NOT.IsEmpty() && EXT.IsEmpty() && NOQ.IsEmpty()) {
+    SetErrorCode("NOT_FOUND_ANY");
+    return NULL;
+  }
+
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  // Non-blocks
+  Handle(GEOM_Object) aNonBlocks;
+  if (NOT.Extent() > 0 || EXT.Extent() > 0) {
+    Handle(TColStd_HArray1OfInteger) anArray =
+      new TColStd_HArray1OfInteger (1, NOT.Extent() + EXT.Extent());
+    Standard_Integer ii = 1;
+    TopTools_ListIteratorOfListOfShape it1 (NOT);
+    for (; it1.More(); it1.Next(), ii++) {
+      anArray->SetValue(ii, anIndices.FindIndex(it1.Value()));
+    }
+    TopTools_ListIteratorOfListOfShape it2 (EXT);
+    for (; it2.More(); it2.Next(), ii++) {
+      anArray->SetValue(ii, anIndices.FindIndex(it2.Value()));
+    }
+
+    aNonBlocks = GetEngine()->AddSubShape(theShape, anArray);
+    if (aNonBlocks.IsNull()) {
+      SetErrorCode("Error in algorithm: result found, but cannot be returned.");
+      return NULL;
+    }
+    aNonBlocks->SetType(GEOM_GROUP);
+    TDF_Label aFreeLabel = aNonBlocks->GetFreeLabel();
+    TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)TopAbs_SOLID);
+  }
+
+  // Non-quadrangles
+  if (NOQ.Extent() > 0) {
+    Handle(TColStd_HArray1OfInteger) anArray =
+      new TColStd_HArray1OfInteger (1, NOQ.Extent());
+    Standard_Integer ii = 1;
+    TopTools_ListIteratorOfListOfShape it1 (NOQ);
+    for (; it1.More(); it1.Next(), ii++) {
+      anArray->SetValue(ii, anIndices.FindIndex(it1.Value()));
+    }
+
+    theNonQuads = GetEngine()->AddSubShape(theShape, anArray);
+    if (theNonQuads.IsNull()) {
+      SetErrorCode("Error in algorithm: result found, but cannot be returned.");
+      return NULL;
+    }
+    theNonQuads->SetType(GEOM_GROUP);
+    TDF_Label aFreeLabel = theNonQuads->GetFreeLabel();
+    TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)TopAbs_FACE);
+  }
+
+  //Make a Python command
+  Handle(GEOM_Function) aMainShape = theShape->GetLastFunction();
+  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
+  pd << "(";
+  if (aNonBlocks.IsNull())
+    pd << "no_bad_solids";
+  else
+    pd << aNonBlocks;
+  pd << ", ";
+  if (theNonQuads.IsNull())
+    pd << "no_bad_faces";
+  else
+    pd << theNonQuads;
+  pd << ") = geompy.GetNonBlocks(" << theShape << ")";
+
+  SetErrorCode(OK);
+  return aNonBlocks;
 }
 
 //=============================================================================

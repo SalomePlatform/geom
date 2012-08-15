@@ -7774,6 +7774,36 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 print Descr
             return IsValid
 
+        ## Retrieve all non blocks solids and faces from \a theShape.
+        #  @param theShape The shape to explore.
+        #  @return A tuple of two GEOM_Objects. The first object is a group of all
+        #          non block solids (= not 6 faces, or with 6 faces, but with the
+        #          presence of non-quadrangular faces). The second object is a
+        #          group of all non quadrangular faces.
+        #
+        #  @ref tui_measurement_tools_page "Example 1"
+        #  \n @ref swig_GetNonBlocks "Example 2"
+        def GetNonBlocks (self, theShape):
+            """
+            Retrieve all non blocks solids and faces from theShape.
+
+            Parameters:
+                theShape The shape to explore.
+
+            Returns:
+                A tuple of two GEOM_Objects. The first object is a group of all
+                non block solids (= not 6 faces, or with 6 faces, but with the
+                presence of non-quadrangular faces). The second object is a
+                group of all non quadrangular faces.
+
+            Usage:
+                (res_sols, res_faces) = geompy.GetNonBlocks(myShape1)
+            """
+            # Example: see GEOM_Spanner.py
+            aTuple = self.BlocksOp.GetNonBlocks(theShape)
+            RaiseIfFailed("GetNonBlocks", self.BlocksOp)
+            return aTuple
+
         ## Remove all seam and degenerated edges from \a theShape.
         #  Unite faces and edges, sharing one surface. It means that
         #  this faces must have references to one C++ surface object (handle).

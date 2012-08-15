@@ -40,6 +40,7 @@ salomeinclude_HEADERS =				\
 	MeasureGUI_WhatisDlg.h			\
 	MeasureGUI_CheckShapeDlg.h		\
 	MeasureGUI_CheckCompoundOfBlocksDlg.h	\
+	MeasureGUI_GetNonBlocksDlg.h		\
 	MeasureGUI_CheckSelfIntersectionsDlg.h	\
 	MeasureGUI_PointDlg.h
 
@@ -61,6 +62,7 @@ dist_libMeasureGUI_la_SOURCES =			\
 	MeasureGUI_WhatisDlg.cxx		\
 	MeasureGUI_CheckShapeDlg.cxx		\
 	MeasureGUI_CheckCompoundOfBlocksDlg.cxx	\
+	MeasureGUI_GetNonBlocksDlg.cxx		\
 	MeasureGUI_CheckSelfIntersectionsDlg.cxx \
 	MeasureGUI_PointDlg.cxx
 
@@ -78,6 +80,7 @@ MOC_FILES = 						\
 	MeasureGUI_WhatisDlg_moc.cxx			\
 	MeasureGUI_CheckShapeDlg_moc.cxx		\
 	MeasureGUI_CheckCompoundOfBlocksDlg_moc.cxx	\
+	MeasureGUI_GetNonBlocksDlg_moc.cxx		\
 	MeasureGUI_CheckSelfIntersectionsDlg_moc.cxx	\
 	MeasureGUI_PointDlg_moc.cxx
 
@@ -122,4 +125,3 @@ libMeasureGUI_la_CPPFLAGS =		\
 libMeasureGUI_la_LDFLAGS  =		\
 	$(CAS_LDFLAGS) -lTKGeomBase \
 	../GEOMBase/libGEOMBase.la ../DlgRef/libDlgRef.la
-

@@ -168,6 +168,10 @@
             <translation>check_blocks_compound.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_GETNONBLOCKS</source>
+            <translation>get_non_blocks.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_CHECK_SELF_INTERSECTIONS</source>
             <translation>check_self_intersections.png</translation>
         </message>
@@ -738,6 +742,10 @@
         <message>
             <source>ICO_CHECK_COMPOUND</source>
             <translation>check_blocks_compound.png</translation>
+        </message>
+        <message>
+            <source>ICO_GET_NON_BLOCKS</source>
+            <translation>get_non_blocks.png</translation>
         </message>
         <message>
             <source>ICO_CHECK_SELF_INTERSECTIONS</source>

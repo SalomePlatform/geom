@@ -35,6 +35,11 @@
 \anchor swig_GetOppositeFace
 \until id_face41
 
+\until id_glueALL
+
+\anchor swig_GetNonBlocks
+\until Spanner is a
+
 \anchor spanner_continue
 \until return Spanner
 
