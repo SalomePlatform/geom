@@ -51,6 +51,8 @@
 #include <BRep_Builder.hxx>
 #include <gp_Pnt.hxx>
 
+#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
 #ifdef WNT
  #if defined IGESIMPORT_EXPORTS || defined IGESImport_EXPORTS
   #if defined WIN32
@@ -77,33 +79,84 @@
 
 extern "C"
 {
+  IGESIMPORT_EXPORT
+  Handle(TCollection_HAsciiString) GetValue (const TCollection_AsciiString& theFileName,
+                                             const TCollection_AsciiString& theParameterName,
+                                             TCollection_AsciiString&       theError)
+  {
+    Handle(TCollection_HAsciiString) aValue;
+
+    if (theParameterName != "LEN_UNITS") {
+      theError = theParameterName + " parameter reading is not supported by IGES plugin";
+      return aValue;
+    }
+
+    // Set "C" numeric locale to save numbers correctly
+    Kernel_Utils::Localizer loc;
+
+    IGESControl_Reader aReader;
+
+    Interface_Static::SetCVal("xstep.cascade.unit","M");
+
+    try {
+      OCC_CATCH_SIGNALS;
+
+      IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
+      if (status == IFSelect_RetDone) {
+        Handle(IGESData_IGESModel) aModel =
+          Handle(IGESData_IGESModel)::DownCast(aReader.Model());
+        if (!aModel.IsNull()) {
+          aValue = aModel->GlobalSection().UnitName();
+
+          if (!aValue.IsNull()) {
+            Handle(TCollection_HAsciiString) aPrefix = new TCollection_HAsciiString ("UNIT_");
+            aValue->Prepend(aPrefix);
+          }
+        }
+      }
+      else {
+        theError = theFileName + " reading failed";
+      }
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      theError = aFail->GetMessageString();
+    }
+
+    return aValue;
+  }
+
 IGESIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& theFormatName,
                        TCollection_AsciiString&       theError,
                        const TDF_Label&               theShapeLabel)
   {
+    TopoDS_Shape aResShape;
+
     // Set "C" numeric locale to save numbers correctly
     Kernel_Utils::Localizer loc;
 
     IGESControl_Reader aReader;
-    TopoDS_Shape aResShape;
+
     Interface_Static::SetCVal("xstep.cascade.unit","M");
+
     try {
+      OCC_CATCH_SIGNALS;
+
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
 
       if (status == IFSelect_RetDone) {
 
+        // BEGIN: old code
         if (theFormatName == "IGES_UNIT") {
           Handle(IGESData_IGESModel) aModel =
             Handle(IGESData_IGESModel)::DownCast(aReader.Model());
-          gp_Pnt P(1.0,0.0,0.0);
+          gp_Pnt P (1.0, 0.0, 0.0);
           if (!aModel.IsNull()) {
             Handle(TCollection_HAsciiString) aUnitName =
               aModel->GlobalSection().UnitName();
             if (!aUnitName.IsNull()) {
-              //cout<<"aUnitName = "<<aUnitName->ToCString()<<endl;
-              //cout<<"aUnitFlag = "<<aModel->GlobalSection().UnitFlag()<<endl;
               if (aUnitName->String()=="MM") {
                 P = gp_Pnt(0.001,0.0,0.0);
               }
@@ -111,8 +164,6 @@ IGESIMPORT_EXPORT
                 P = gp_Pnt(0.01,0.0,0.0);
               }
             }
-            //else
-            //  cout << "aUnitName is NULL !!" << endl;
           }
           BRep_Builder B;
           TopoDS_Vertex V;
@@ -120,6 +171,8 @@ IGESIMPORT_EXPORT
           aResShape = V;
           return aResShape;
         }
+        // END: old code
+
         if (theFormatName == "IGES_SCALE") {
           //cout<<"need re-scale a model"<<endl;
           // set UnitFlag to 'meter'

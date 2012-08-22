@@ -3212,6 +3212,17 @@ module GEOM
     GEOM_Object ImportFile (in string theFileName, in string theFormatName);
 
     /*!
+     *  \brief Read a value of parameter from a file, containing a shape.
+     *  \param theFileName The file, containing the shape.
+     *  \param theFormatName Specify format for the file reading.
+     *         Available formats can be obtained with <VAR>ImportTranslators()</VAR> method.
+     *  \param theParameterName Specify the parameter. For example, pass "LEN_UNITS"
+     *                          to obtain length units, in which the file is written.
+     *  \return Value of requested parameter in form of text string.
+     */
+    string ReadValue (in string theFileName, in string theFormatName, in string theParameterName);
+
+    /*!
      *  \brief Get the supported import formats and corresponding patterns for File dialog.
      *  \param theFormats Output. List of formats, available for import.
      *  \param thePatterns Output. List of file patterns, corresponding to available formats.

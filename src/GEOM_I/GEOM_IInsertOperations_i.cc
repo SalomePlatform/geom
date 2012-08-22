@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -47,7 +46,7 @@
 
 //=============================================================================
 /*!
- *   constructor:
+ *  constructor
  */
 //=============================================================================
 GEOM_IInsertOperations_i::GEOM_IInsertOperations_i (PortableServer::POA_ptr thePOA,
@@ -153,6 +152,32 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::ImportFile
   }
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  ReadValue
+ */
+//=============================================================================
+char* GEOM_IInsertOperations_i::ReadValue(const char* theFileName,
+                                          const char* theFormatName,
+                                          const char* theParameterName)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  char* aFileName      = strdup(theFileName);
+  char* aFormatName    = strdup(theFormatName);
+  char* aParameterName = strdup(theParameterName);
+
+  TCollection_AsciiString aUnits = GetOperations()->ReadValue
+    (aFileName, aFormatName, aParameterName);
+
+  free(aFileName);
+  free(aFormatName);
+  free(aParameterName);
+
+  return CORBA::string_dup(aUnits.ToCString());
 }
 
 //=============================================================================

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -61,10 +60,9 @@
 
 //=============================================================================
 /*!
- *   constructor:
+ *  constructor
  */
 //=============================================================================
-
 GEOMImpl_IInsertOperations::GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID)
 : GEOM_IOperations(theEngine, theDocID)
 {
@@ -76,20 +74,17 @@ GEOMImpl_IInsertOperations::GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, i
  *  destructor
  */
 //=============================================================================
-
 GEOMImpl_IInsertOperations::~GEOMImpl_IInsertOperations()
 {
   MESSAGE("GEOMImpl_IInsertOperations::~GEOMImpl_IInsertOperations");
 }
-
-
 
 //=============================================================================
 /*!
  *  MakeCopy
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy(Handle(GEOM_Object) theOriginal)
+Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy (Handle(GEOM_Object) theOriginal)
 {
   SetErrorCode(KO);
 
@@ -231,7 +226,6 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   aCI.SetFileName(theFileName);
   aCI.SetFormatName(theFormatName);
   aCI.SetPluginName(aLibName);
-  //cout<<"IIO: theFormatName = "<<theFormatName.ToCString()<<endl;
 
   //Perform the Import
   try {
@@ -257,7 +251,8 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
 
   SetErrorCode(OK);
 
-  if( theFormatName == "IGES_UNIT" ) {
+  // OLD CODE: begin
+  if (theFormatName == "IGES_UNIT") {
     TopoDS_Shape S = aFunction->GetValue();
     TopoDS_Vertex V = TopoDS::Vertex(S);
     gp_Pnt P = BRep_Tool::Pnt(V);
@@ -270,8 +265,40 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
     //cout<<"IIO: aUnitName = "<<aUnitName.ToCString()<<endl;
     SetErrorCode(aUnitName);
   }
+  // OLD CODE: end
 
   return result;
+}
+
+//=============================================================================
+/*!
+ *  ReadValue
+ */
+//=============================================================================
+TCollection_AsciiString GEOMImpl_IInsertOperations::ReadValue
+                                 (const TCollection_AsciiString& theFileName,
+                                  const TCollection_AsciiString& theFormatName,
+                                  const TCollection_AsciiString& theParameterName)
+{
+  SetErrorCode(KO);
+
+  TCollection_AsciiString aValue, anError;
+
+  if (theFileName.IsEmpty() || theFormatName.IsEmpty() || theParameterName.IsEmpty()) return aValue;
+
+  Handle(TCollection_HAsciiString) aHLibName;
+  if (!IsSupported(Standard_True, theFormatName.SubString(1,4), aHLibName)) {
+    return aValue;
+  }
+  TCollection_AsciiString aLibName = aHLibName->String();
+
+  aValue = GEOMImpl_ImportDriver::ReadValue(theFileName, aLibName, theParameterName, anError);
+  if (anError.IsEmpty())
+    SetErrorCode(OK);
+  else
+    SetErrorCode(anError.ToCString());
+
+  return aValue;
 }
 
 //=============================================================================

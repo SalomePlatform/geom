@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IInsertOperations_HXX_
 #define _GEOMImpl_IInsertOperations_HXX_
@@ -54,6 +53,10 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) Import (const TCollection_AsciiString& theFileName,
                                               const TCollection_AsciiString& theFormatType);
+
+  Standard_EXPORT TCollection_AsciiString ReadValue (const TCollection_AsciiString& theFileName,
+                                                     const TCollection_AsciiString& theFormatType,
+                                                     const TCollection_AsciiString& theParameterName);
 
   Standard_EXPORT void Export (const Handle(GEOM_Object)      theOriginal,
                                const TCollection_AsciiString& theFileName,
