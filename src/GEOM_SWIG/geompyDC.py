@@ -73,9 +73,14 @@
 
 ## @}
 
-import salome
-salome.salome_init()
-from salome import *
+# initialize SALOME session in try/except block
+# to avoid problems in some cases, e.g. when generating documentation
+try:
+    import salome
+    salome.salome_init()
+    from salome import *
+except:
+    pass
 
 from salome_notebook import *
 
