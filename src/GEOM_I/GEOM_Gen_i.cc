@@ -748,6 +748,11 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
   aResultSO = PublishInStudy(theStudy, aResultSO, theObject, theName);
   if(aResultSO->_is_nil()) return aResultSO._retn();
 
+  // ignore internal name (for example, read from STEP file)
+  // in case of publishing from script
+  if (strlen(theName) > 0)
+    aResultSO->SetAttrString("AttributeName", theName);
+
   GEOM::ListOfGO_var aList = theObject->GetDependency();
   Standard_Integer aLength = aList->length();
   if(aLength < 1) return aResultSO._retn();
