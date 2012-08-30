@@ -674,12 +674,13 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       // add function description before dump
       if (!aCurScript.IsEmpty())
       {
-        if ( aFunction->GetDriverGUID() == GEOM_Object::GetSubShapeID() )
+        if ( aFunction->GetDriverGUID() == GEOM_Object::GetSubShapeID() &&
+             aFuncScript.Length() > aCurScript.Length() )
           // avoid repeated SubShape...() command at the end
           if (aFuncScript.Location( aCurScript,
                                     aFuncScript.Length() - aCurScript.Length(),
                                     aFuncScript.Length()))
-              continue;
+            continue; // aCurScript is already at the end of aFuncScript
         aFuncScript += aCurScript;
       }
       if (isDumpCollected ) {
