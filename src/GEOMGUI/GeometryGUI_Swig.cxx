@@ -51,6 +51,7 @@
 #include "GEOM_AISShape.hxx"
 #include "GEOM_InteractiveObject.hxx"
 #include "GEOM_Displayer.h"
+#include "GEOM_Constants.h"
 
 #include "SALOME_Event.h"
 
@@ -60,6 +61,7 @@
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <AIS_Drawer.hxx>
+#include <Prs3d_IsoAspect.hxx>
 #include <BRepTools.hxx>
 
 // IDL Headers
@@ -498,6 +500,78 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, boo
     }
   };
   ProcessVoidEvent(new TEvent(theEntry, red, green, blue, isUpdated));
+}
+
+void GEOM_Swig::setIsos(const char* Entry, int nbU, int nbV, bool isUpdated )
+{
+  class TEvent: public SALOME_Event {
+    std::string myEntry;
+    int myNbU, myNbV;
+    bool myUpdateViewer;
+  public:
+    TEvent(const char* theEntry, int theNbU, int theNbV, bool theUpdated):
+      myEntry(theEntry), myNbU(theNbU), myNbV(theNbV), myUpdateViewer(theUpdated)
+    {}
+    virtual void Execute() {
+      SUIT_Application* app = SUIT_Session::session()->activeApplication();
+      if (!app) return;
+      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+      if (!study) return;
+
+      Handle(SALOME_InteractiveObject) anIO =
+        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
+
+      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
+        SVTK_Viewer* aView = dynamic_cast<SVTK_Viewer*>(aViewWindow->getViewManager()->getViewModel());
+	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( aView->CreatePrs( myEntry.c_str() ) );
+	if ( vtkPrs ) {
+	  vtkActorCollection* anActors = vtkPrs->GetObjects();
+	  anActors->InitTraversal();
+	  GEOM_Actor* anActor = GEOM_Actor::SafeDownCast( anActors->GetNextActor() );
+	  if ( anActor ) {
+	    int aIsos[2]={myNbU,myNbV};
+	    anActor->SetNbIsos(aIsos);
+	    anActor->StoreIsoNumbers();
+	    QString anIsos = QString("%1%2%3").arg(myNbU).arg(DIGIT_SEPARATOR).arg(myNbV);
+	    int aMgrId = aView->getViewManager()->getGlobalId();
+	    study->setObjectProperty(aMgrId, myEntry.c_str(), ISOS_PROP, anIsos);
+	  }
+	}
+	
+	if (myUpdateViewer)
+          aView->Repaint();
+      }
+      else if (OCCViewer_Viewer* occViewer = GetOCCViewer(app)) {
+        Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
+        SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
+        if (soccViewer) {
+	  int aMgrId = soccViewer->getViewManager()->getGlobalId();
+          SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( soccViewer->CreatePrs( myEntry.c_str() ) );
+          if ( occPrs && !occPrs->IsNull() ) {
+            AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
+            AIS_ListIteratorOfListOfInteractive interIter( shapes );
+            for ( ; interIter.More(); interIter.Next() ) {
+              Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
+	      if ( !aSh.IsNull() ) {
+		Handle(AIS_Drawer) drawer = aSh->Attributes();
+		QVariant v = study->getObjectProperty( aMgrId, myEntry.c_str(), EDGE_WIDTH_PROP, QVariant() );
+		int width = v.isValid() ? v.toInt() : 1;
+		drawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, width, myNbU) );
+		drawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, width, myNbV) );
+		aSh->storeIsoNumbers();
+                ic->SetLocalAttributes(aSh, drawer);
+		ic->Redisplay(aSh);
+		QString anIsos = QString("%1%2%3").arg(myNbU).arg(DIGIT_SEPARATOR).arg(myNbV);
+		study->setObjectProperty(aMgrId, myEntry.c_str(), ISOS_PROP, anIsos);
+	      }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  ProcessVoidEvent(new TEvent (Entry, nbU, nbV, isUpdated));
 }
 
 void GEOM_Swig::setTransparency(const char* theEntry, float transp, bool isUpdated)

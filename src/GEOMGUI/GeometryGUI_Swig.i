@@ -65,6 +65,7 @@ class GEOM_Swig
   void setVectorsMode(const char* Entry, bool isSet, bool isUpdated =true);
   void setColor(const char* Entry, int red, int green, int blue, bool isUpdated =true);
   void setTransparency(const char* Entry, float transp, bool isUpdated =true);
+  void setIsos(const char* Entry, int nbU, int nbV, bool isUpdated =true);
   void setDeflection(const char* Entry, float deflect);
   const char* getShapeTypeIcon(const char *Ior);
 
