@@ -486,6 +486,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             try:
                 aSObject = self.AddInStudy(self.myStudy, aShape, aName, None)
+                if aSObject and aName: aSObject.SetAttrString("AttributeName", aName)
                 if doRestoreSubShapes:
                     self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs,
                                             theFindMethod, theInheritFirstArg, True )
@@ -516,6 +517,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             try:
                 aSObject = self.AddInStudy(self.myStudy, aShape, aName, aFather)
+                if aSObject and aName: aSObject.SetAttrString("AttributeName", aName)
             except:
                 print "addToStudyInFather() failed"
                 return ""
