@@ -61,6 +61,7 @@ _libGEOM_Swig_la_CPPFLAGS =		\
 	$(GUI_CXXFLAGS)			\
 	$(CORBA_CXXFLAGS)		\
 	$(CORBA_INCLUDES)		\
+	$(BOOST_CPPFLAGS)               \
 	-I$(srcdir)/../GEOMClient	\
 	-I$(srcdir)/../OBJECT		\
 	-I$(srcdir)/../GEOMGUI		\
