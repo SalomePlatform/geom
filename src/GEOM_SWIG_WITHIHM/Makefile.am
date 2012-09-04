@@ -17,14 +17,6 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-#  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
-#  File   : Makefile.in
-#  Author : Nicolas REJNERI, Paul RASCLE
-#  Modified by : Alexander BORODIN (OCN) - autotools usage
-#  Module : GEOM
-#  $Header$
-# Libraries targets
-#
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # ===============================================================
@@ -40,28 +32,24 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # Step 2: build the dynamic library from cpp built source files and
 #         dependant libraries.
 #
-# swig_wrap.cpp -- gcc --> swig_wrap.o    |-- link --> _libSALOME_Swig.la
+# swig_wrap.cpp -- gcc --> swig_wrap.o    |-- link --> _libGEOM_Swig.la
 #                          +              |
 #                          dependant libs |
 #
-# The file libGEOM_Swig.py will be installed to the
-# <prefix>/bin/salome directory.
-# The library _libGEOM_Swig.so will be installed to the 
+# The files libGEOM_Swig.py and _libGEOM_Swig.so will be installed to the
 # <prefix>/lib/python<version>/site-package/salome directory.
 #
 
 SWIG_FLAGS    = @SWIG_FLAGS@ -I$(srcdir) -I$(srcdir)/../GEOMGUI
 SWIG_SOURCES  = libGEOM_Swig.i
 
+salomeinclude_HEADERS = $(SWIG_SOURCES) libGEOM_Swig.h
+
 salomepython_PYTHON = libGEOM_Swig.py
 salomepyexec_LTLIBRARIES = _libGEOM_Swig.la
 
-libGEOM_Swig.py: swig_wrap.cpp
-BUILT_SOURCES = swig_wrap.cpp
-_libGEOM_Swig_la_SOURCES        = $(SWIG_SOURCES)
-nodist__libGEOM_Swig_la_SOURCES = $(BUILT_SOURCES)
-
-salomeinclude_HEADERS           = $(SWIG_SOURCES)
+_libGEOM_Swig_la_SOURCES        = $(SWIG_SOURCES) libGEOM_Swig.h libGEOM_Swig.cxx
+nodist__libGEOM_Swig_la_SOURCES = swig_wrap.cpp
 
 _libGEOM_Swig_la_CPPFLAGS =		\
 	$(QT_INCLUDES)			\
@@ -73,16 +61,22 @@ _libGEOM_Swig_la_CPPFLAGS =		\
 	$(GUI_CXXFLAGS)			\
 	$(CORBA_CXXFLAGS)		\
 	$(CORBA_INCLUDES)		\
+	-I$(srcdir)/../GEOMClient	\
+	-I$(srcdir)/../OBJECT		\
 	-I$(srcdir)/../GEOMGUI		\
+	-I$(srcdir)/../GEOMToolsGUI	\
 	-I$(top_builddir)/idl
 
 _libGEOM_Swig_la_LDFLAGS = -module
 _libGEOM_Swig_la_LIBADD  =		\
 	../GEOMGUI/libGEOM.la		\
+	../GEOMToolsGUI/libGEOMToolsGUI.la	\
 	$(PYTHON_LIBS)
 
 swig_wrap.cpp : $(SWIG_SOURCES)
 	$(SWIG) $(SWIG_FLAGS) -o $@ $<
+
+libGEOM_Swig.py: swig_wrap.cpp
 
 CLEANFILES = swig_wrap.cpp libGEOM_Swig.py
 

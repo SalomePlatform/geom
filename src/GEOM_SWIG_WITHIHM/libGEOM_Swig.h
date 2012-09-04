@@ -21,9 +21,10 @@
 //
 
 // GEOM GEOMGUI : GUI for Geometry component
-// File   : GeometryGUI_Swig.hxx
+// File   : libGEOM_Swig.h
 // Author : Nicolas REJNERI, Paul RASCLE
 //
+
 #ifndef GEOMETRYGUI_SWIG_HXX
 #define GEOMETRYGUI_SWIG_HXX
 

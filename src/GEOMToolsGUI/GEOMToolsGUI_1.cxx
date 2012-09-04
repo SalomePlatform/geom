@@ -267,149 +267,238 @@ void GEOMToolsGUI::OnDisableAutoColor()
     return;
 
   aMainObject->SetAutoColor( false );
+}
 
+void GEOMToolsGUI::SetColor( const QString& entry, const QColor& color, bool /*updateViewer*/ )
+{
+  if ( entry.isEmpty() || !color.isValid() ) return;
+
+  // get active application
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+
+  // get current study
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !appStudy ) return;
+
+  // get active view
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();
+  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+
+  // get view id
+  int mgrId = window->getViewManager()->getGlobalId();
+
+  Handle(SALOME_InteractiveObject) IO =
+    new SALOME_InteractiveObject( entry.toLatin1().data(), "GEOM", "");
+
+  if ( isVTK ) {
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+    if ( !vtkVW ) return;
+    SVTK_View* aView = vtkVW->getView();
+
+    GEOMToolsGUI::setVtkColor( appStudy, mgrId, aView, IO, color );
+  }
+  else if ( isOCC ) {
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
+    Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    GEOMToolsGUI::setOccColor( appStudy, mgrId, ic, IO, color ); 
+  }
+
+  // mark study as modified
+  GeometryGUI::Modified();
+  
+  // update actions
+  app->updateActions(); //SRN: To update a Save button in the toolbar
 }
 
 void GEOMToolsGUI::OnColor()
 {
-  SALOME_ListIO selected;
+  // get active application
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+
+  // get current study
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if ( app && appStudy ) {
-    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-    if ( aSelMgr ) {
-      aSelMgr->selectedObjects( selected );
-      if ( !selected.IsEmpty() ) {
-        SUIT_ViewWindow* window = app->desktop()->activeWindow();
-        bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-        bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
-        int mgrId = window->getViewManager()->getGlobalId();
-        if ( isVTK ) {
-          SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
-          if ( !vtkVW )
-            return;
-          SVTK_View* aView = vtkVW->getView();
-          QColor initcolor = aView->GetColor( selected.First()  );
-          QColor c = QColorDialog::getColor( initcolor, app->desktop() );
-          if ( c.isValid() ) {
-            SUIT_OverrideCursor();
-            for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-              QString matProp;
-              matProp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, matProp).toString();
-              Material_Model material;
-              material.fromProperties( matProp );
-              if ( !material.isPhysical() ) {
-                aView->SetColor( It.Value(), c );
-                appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
-              }
-              // store color to GEOM_Object
-              _PTR(Study) aStudy = appStudy->studyDS();
-              _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
-              GEOM::GEOM_Object_var anObject =
-              GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
-              SALOMEDS::Color aSColor;
-              aSColor.R = (double)c.red() / 255.0;
-              aSColor.G = (double)c.green() / 255.0;
-              aSColor.B = (double)c.blue() / 255.0;
-              anObject->SetColor( aSColor );
-              anObject->SetAutoColor( false );		 
-            }
-            GeometryGUI::Modified();
-          }
-        } // if ( isVTK )
-        else if ( isOCC ) {
-	        Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
-          if ( !io.IsNull() ) {
-            Quantity_Color aColor;
-            io->Color( aColor ); 
-            QColor ic = QColor((int )( aColor.Red() * 255.0 ),
-			      (int)( aColor.Green() * 255.0 ),
-			      (int)( aColor.Blue() * 255.0 ));	    
+  if ( !appStudy ) return;
 
-			      QVariant v = appStudy->getObjectProperty(mgrId,selected.First()->getEntry(), COLOR_PROP, ic);
+  // get selection manager
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if ( !aSelMgr ) return;
 
-            QColor initcolor = v.value<QColor>();
-            QColor c =  QColorDialog::getColor( initcolor, app->desktop() );
-            if ( c.isValid() ) {
-              SUIT_OverrideCursor();
-              aColor = Quantity_Color( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
-              OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
-              Handle (AIS_InteractiveContext) ic = vm->getAISContext();
-              for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-                QString matProp;
-                matProp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, matProp).toString();
-		Material_Model material;
-		material.fromProperties( matProp );
-                io = GEOMBase::GetAIS( It.Value(), true );
-                if ( !io.IsNull()  && !material.isPhysical() ) { // change color only for shapes with not physical type of material
-                  
-                  if ( io->IsKind( STANDARD_TYPE(AIS_Shape) ) ) {
-                    TopoDS_Shape theShape = Handle(AIS_Shape)::DownCast( io )->Shape();
-                    bool onlyVertex = (theShape.ShapeType() == TopAbs_VERTEX || GEOM_Displayer::isCompoundOfVertices( theShape ));
-                    if (onlyVertex) {
-                      // Set color for a point
+  // get selection
+  SALOME_ListIO selected;
+  aSelMgr->selectedObjects( selected );
+  if ( selected.IsEmpty() ) return;
+  
+  // get active view
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();
+  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 
-                      Handle(AIS_Drawer) aCurDrawer = io->Attributes();
-                      Handle(Prs3d_PointAspect) aCurPointAspect =  aCurDrawer->PointAspect();
-                      Quantity_Color aCurColor;
-                      Standard_Real aCurScale;
-                      Aspect_TypeOfMarker aCurTypeOfMarker;
-                      aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
-                      if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
-                        aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aCurTypeOfMarker, aColor, aCurScale));
-                      }
-                      else {
-                        Standard_Integer aWidth, aHeight;
-                        aCurPointAspect->GetTextureSize( aWidth, aHeight );
+  // get view id
+  int mgrId = window->getViewManager()->getGlobalId();
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
-                        Handle(TColStd_HArray1OfByte) aTexture = aCurPointAspect->GetTexture();
-#else
-                        Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
-#endif
+  if ( isVTK ) {
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+    if ( !vtkVW ) return;
 
-                        aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aColor, 1, aWidth, aHeight, aTexture));
-                      }
-                      ic->SetLocalAttributes(io, aCurDrawer, Standard_False);
-                    }
-                  }
+    // get initial color (use first object from selection)
+    SVTK_View* aView = vtkVW->getView();
+    QColor color = aView->GetColor( selected.First()  );
+    QVariant v = appStudy->getObjectProperty( mgrId, selected.First()->getEntry(), COLOR_PROP, color );
 
-                  io->SetColor( aColor );
-                  if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) ) {
-                    Handle(GEOM_AISShape) aGAISShape = Handle(GEOM_AISShape)::DownCast( io );
-                    aGAISShape->SetShadingColor( aColor );
-                    aGAISShape->storeBoundaryColors();
-                  }
+    // show Choose Color dialog box
+    color = QColorDialog::getColor( v.value<QColor>(), app->desktop() );
+    if ( !color.isValid() ) return;
 
-                  appStudy->setObjectProperty(mgrId,It.Value()->getEntry(), COLOR_PROP, c);
-		  
-                  io->Redisplay( Standard_True );
+    // iterate through list of objects and assign new color
+    SUIT_OverrideCursor();
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      GEOMToolsGUI::setVtkColor( appStudy, mgrId, aView, It.Value(), color ); 
+    }
+  }
+  else if ( isOCC ) {
+    // find AIS interactive object (for first item in selection)
+    Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
+    if ( io.IsNull() ) return;
 
-                  // store color to GEOM_Object
-                  _PTR(Study) aStudy = appStudy->studyDS();
-                  _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
-                  GEOM::GEOM_Object_var anObject =
-                    GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
+    // get initial color (use first object from selection)
+    Quantity_Color aColor;
+    io->Color( aColor ); 
+    QColor color = QColor((int)( aColor.Red()   * 255.0 ),
+			  (int)( aColor.Green() * 255.0 ),
+			  (int)( aColor.Blue()  * 255.0 ));
+    QVariant v = appStudy->getObjectProperty( mgrId, selected.First()->getEntry(), COLOR_PROP, color );
 
+    // show Choose Color dialog box
+    color = QColorDialog::getColor( v.value<QColor>(), app->desktop() );
+    if ( !color.isValid() ) return;
 
-                  SALOMEDS::Color aSColor;
-                  aSColor.R = (double)c.red() / 255.0;
-                  aSColor.G = (double)c.green() / 255.0;
-                  aSColor.B = (double)c.blue() / 255.0;
-                  anObject->SetColor( aSColor );
-                  anObject->SetAutoColor( false );		 
-                }
-              } // for
-              ic->UpdateCurrentViewer();
-              GeometryGUI::Modified();
-            } // if c.isValid()
-          } // first IO is not null
-        } // if ( isOCC )
-      } // if ( selection not empty )
+    // iterate through list of objects and assign new color
+    SUIT_OverrideCursor();
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
+    Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      GEOMToolsGUI::setOccColor( appStudy, mgrId, ic, It.Value(), color ); 
     }
   }
 
+  // mark study as modified
+  GeometryGUI::Modified();
+  
+  // update actions
   app->updateActions(); //SRN: To update a Save button in the toolbar
+}
+
+
+void GEOMToolsGUI::setVtkColor( SalomeApp_Study* study,                     // study
+				int mgrId,                                  // view window id
+				SVTK_View* view,                            // VTK view
+				const Handle(SALOME_InteractiveObject)& IO, // interactive object
+				const QColor& color )                       // color 
+{
+  // get material property
+  QString matProp;
+  matProp = study->getObjectProperty( mgrId, IO->getEntry(), MATERIAL_PROP, matProp ).toString();
+  Material_Model material;
+  material.fromProperties( matProp );
+
+  // change color only for shapes with not physical type of material
+  if ( !material.isPhysical() ) {
+    view->SetColor( IO, color );
+    study->setObjectProperty( mgrId, IO->getEntry(), COLOR_PROP, color );
+  }
+
+  // store color to GEOM_Object
+  _PTR(Study) aStudy = study->studyDS();
+  _PTR(SObject) aSObject( aStudy->FindObjectID( IO->getEntry() ) );
+  if ( !aSObject ) return;
+
+  GEOM::GEOM_Object_var anObject =
+    GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
+
+  if ( CORBA::is_nil( anObject ) ) return;
+
+  SALOMEDS::Color aSColor;
+  aSColor.R = (double)color.red() / 255.0;
+  aSColor.G = (double)color.green() / 255.0;
+  aSColor.B = (double)color.blue() / 255.0;
+  anObject->SetColor( aSColor );
+  anObject->SetAutoColor( false );
+}
+
+void GEOMToolsGUI::setOccColor( SalomeApp_Study* study,                     // study
+				int mgrId,                                  // view window id
+				const Handle(AIS_InteractiveContext)& ic,   // OCC interactive context
+				const Handle(SALOME_InteractiveObject)& IO, // interactive object
+				const QColor& color )                       // color 
+{
+  // get AIS object
+  Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( IO, true );
+  if ( io.IsNull() ) return;
+
+  // get material property
+  QString matProp;
+  matProp = study->getObjectProperty( mgrId, IO->getEntry(), MATERIAL_PROP, matProp ).toString();
+  Material_Model material;
+  material.fromProperties( matProp );
+
+  Quantity_Color aColor = Quantity_Color( color.red() / 255., color.green() / 255., color.blue() / 255., Quantity_TOC_RGB );
+	      
+  // change color only for shapes with not physical type of material
+  if ( !material.isPhysical() ) {
+    if ( io->IsKind( STANDARD_TYPE(AIS_Shape) ) ) {
+      TopoDS_Shape theShape = Handle(AIS_Shape)::DownCast( io )->Shape();
+      bool onlyVertex = (theShape.ShapeType() == TopAbs_VERTEX || GEOM_Displayer::isCompoundOfVertices( theShape ));
+      if ( onlyVertex ) {
+	// set color for a point
+	Handle(AIS_Drawer) aCurDrawer = io->Attributes();
+	Handle(Prs3d_PointAspect) aCurPointAspect =  aCurDrawer->PointAspect();
+	Quantity_Color aCurColor;
+	Standard_Real aCurScale;
+	Aspect_TypeOfMarker aCurTypeOfMarker;
+	aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
+	if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
+	  aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aColor, aCurScale ) );
+	}
+	else {
+	  Standard_Integer aWidth, aHeight;
+	  aCurPointAspect->GetTextureSize( aWidth, aHeight );
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+	  Handle(TColStd_HArray1OfByte) aTexture = aCurPointAspect->GetTexture();
+#else
+	  Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+#endif
+	  aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aColor, 1, aWidth, aHeight, aTexture ) );
+	}
+	ic->SetLocalAttributes( io, aCurDrawer, Standard_False );
+      }
+    }
+    
+    io->SetColor( aColor );
+    if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) ) {
+      Handle(GEOM_AISShape) aGAISShape = Handle(GEOM_AISShape)::DownCast( io );
+      aGAISShape->SetShadingColor( aColor );
+      aGAISShape->storeBoundaryColors();
+    }
+
+    io->Redisplay( Standard_True );
+
+    study->setObjectProperty( mgrId, IO->getEntry(), COLOR_PROP, color );
+  }    
+
+  // store color to GEOM_Object
+  _PTR(Study) aStudy = study->studyDS();
+  _PTR(SObject) aSObject( aStudy->FindObjectID( IO->getEntry() ) );
+  GEOM::GEOM_Object_var anObject =
+    GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
+  SALOMEDS::Color aSColor;
+  aSColor.R = (double)color.red() / 255.0;
+  aSColor.G = (double)color.green() / 255.0;
+  aSColor.B = (double)color.blue() / 255.0;
+  anObject->SetColor( aSColor );
+  anObject->SetAutoColor( false );		 
 }
 
 void GEOMToolsGUI::OnTexture()

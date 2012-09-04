@@ -21,12 +21,13 @@
 //
 
 // GEOM GEOMGUI : GUI for Geometry component
-// File   : GeometryGUI_Swig.cxx
+// File   : libGEOM_Swig.cxx
 // Author : Nicolas REJNERI, Paul RASCLE
 //
-#include "GeometryGUI_Swig.hxx"
+#include "libGEOM_Swig.h"
 
 #include "GeometryGUI.h"
+#include "GEOMToolsGUI.h"
 
 #include "SUIT_Desktop.h"
 #include "SUIT_Session.h"
@@ -450,7 +451,7 @@ void GEOM_Swig::setVectorsMode(const char* theEntry, bool isOn, bool isUpdated)
 void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, bool isUpdated)
 {
   class TEvent: public SALOME_Event {
-    std::string myEntry;
+    QString myEntry;
     int myRed;
     int myGreen;
     int myBlue;
@@ -463,6 +464,8 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, boo
       SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
       if (!anApp) return;
 
+      GEOMToolsGUI::SetColor( myEntry, QColor( myRed, myGreen, myBlue), myUpdateViewer );
+      /*
       Handle(SALOME_InteractiveObject) anIO =
         new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
 
@@ -496,7 +499,7 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, boo
               }
             if (myUpdateViewer) occViewer->update();
           }
-      }
+	  }*/
     }
   };
   ProcessVoidEvent(new TEvent(theEntry, red, green, blue, isUpdated));

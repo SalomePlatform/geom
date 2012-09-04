@@ -30,12 +30,16 @@
 #include "GEOM_ToolsGUI.hxx"
 
 #include <GEOMGUI.h>
-
 #include <SALOMEDSClient.hxx>
 
 class GEOM_Displayer;
 class SALOME_View;
 class SALOME_ListIO;
+class SalomeApp_Study;
+class SVTK_View;
+class QColor;
+class Handle_SALOME_InteractiveObject;
+class Handle_AIS_InteractiveContext;
 
 #include <QList>
 
@@ -53,6 +57,8 @@ public:
   virtual void deactivate();
 
   enum ActionType { SHOWDLG, INCR, DECR };
+
+  static void  SetColor( const QString&, const QColor&, bool );
 
 private:
   // Import and export topology methods
@@ -89,6 +95,18 @@ private:
                                          _PTR(Study),
                                          QList<SALOME_View*>,
                                          GEOM_Displayer* );
+
+  static void setVtkColor( SalomeApp_Study* study,
+			   int mgrId,
+			   SVTK_View* view,
+			   const Handle_SALOME_InteractiveObject& IO,
+			   const QColor& color );
+
+  static void setOccColor( SalomeApp_Study* study,
+			   int mgrId,
+			   const Handle_AIS_InteractiveContext& ic,
+			   const Handle_SALOME_InteractiveObject& IO,
+			   const QColor& color );
 };
 
 #endif // GEOMTOOLSGUI_H
