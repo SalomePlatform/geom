@@ -4070,7 +4070,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 List of sub-shapes of type theShapeType, contained in theShape.
             """
             # Example: see GEOM_TestAll.py
-            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, aType, False)
+            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, EnumToLong( aType ), False)
             RaiseIfFailed("SubShapeAll", self.ShapesOp)
             return ListObj
 
@@ -4091,7 +4091,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Returns:
                 List of IDs of sub-shapes.
             """
-            ListObj = self.ShapesOp.GetAllSubShapesIDs(aShape, aType, False)
+            ListObj = self.ShapesOp.GetAllSubShapesIDs(aShape, EnumToLong( aType ), False)
             RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
             return ListObj
 
@@ -4120,7 +4120,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             ListOfIDs = []
-            AllShapeIDsList = self.SubShapeAllIDs(aShape, aType)
+            AllShapeIDsList = self.SubShapeAllIDs(aShape, EnumToLong( aType ))
             for ind in ListOfInd:
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
@@ -4148,7 +4148,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 List of sub-shapes of type theShapeType, contained in theShape.
             """
             # Example: see GEOM_TestAll.py
-            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, aType, True)
+            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("SubShapeAllSortedCentres", self.ShapesOp)
             return ListObj
 
@@ -4171,7 +4171,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Returns: 
                 List of IDs of sub-shapes.
             """
-            ListIDs = self.ShapesOp.GetAllSubShapesIDs(aShape, aType, True)
+            ListIDs = self.ShapesOp.GetAllSubShapesIDs(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
             return ListIDs
 
@@ -4200,7 +4200,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             ListOfIDs = []
-            AllShapeIDsList = self.SubShapeAllSortedCentresIDs(aShape, aType)
+            AllShapeIDsList = self.SubShapeAllSortedCentresIDs(aShape, EnumToLong( aType ))
             for ind in ListOfInd:
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
@@ -4226,7 +4226,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 List of sub-shapes of type aType, contained in aShape.
             """
             # Example: see GEOM_TestAll.py
-            ListObj = self.ShapesOp.ExtractSubShapes(aShape, aType, isSorted)
+            ListObj = self.ShapesOp.ExtractSubShapes(aShape, EnumToLong( aType ), isSorted)
             RaiseIfFailed("ExtractSubShapes", self.ShapesOp)
             return ListObj
 
@@ -4267,7 +4267,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             It works like geompy.SubShapeAllSortedCentres, but wrongly
             defines centres of faces, shells and solids.
             """
-            ListObj = self.ShapesOp.MakeExplode(aShape, aType, True)
+            ListObj = self.ShapesOp.MakeExplode(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("MakeExplode", self.ShapesOp)
             return ListObj
 
@@ -4280,7 +4280,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             It works like geompy.SubShapeAllSortedCentresIDs, but wrongly
             defines centres of faces, shells and solids.
             """
-            ListIDs = self.ShapesOp.SubShapeAllIDs(aShape, aType, True)
+            ListIDs = self.ShapesOp.SubShapeAllIDs(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
             return ListIDs
 
@@ -4294,7 +4294,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             (wrongly defines centres of faces, shells and solids).
             """
             ListOfIDs = []
-            AllShapeIDsList = self.SubShapeAllSortedIDs(aShape, aType)
+            AllShapeIDsList = self.SubShapeAllSortedIDs(aShape, EnumToLong( aType ))
             for ind in ListOfInd:
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
