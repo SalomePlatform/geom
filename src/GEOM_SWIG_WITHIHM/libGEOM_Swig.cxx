@@ -463,43 +463,7 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, boo
     virtual void Execute() {
       SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
       if (!anApp) return;
-
       GEOMToolsGUI::SetColor( myEntry, QColor( myRed, myGreen, myBlue), myUpdateViewer );
-      /*
-      Handle(SALOME_InteractiveObject) anIO =
-        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
-
-      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)){
-        SVTK_View* aView = aViewWindow->getView();
-        QColor aColor (myRed, myGreen, myBlue);
-        aView->SetColor(anIO, aColor);
-        if (myUpdateViewer)
-          aView->Repaint();
-      } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
-        Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
-        SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
-        if (soccViewer)
-          {
-            SALOME_Prs*   prs=      soccViewer->CreatePrs( myEntry.c_str() );
-            const SOCC_Prs* anOCCPrs = dynamic_cast<const SOCC_Prs*>( prs );
-            if ( !anOCCPrs || anOCCPrs->IsNull() )
-              return;
-
-            // get objects to be displayed
-            AIS_ListOfInteractive anAISObjects;
-            anOCCPrs->GetObjects( anAISObjects );
-            AIS_ListIteratorOfListOfInteractive ite( anAISObjects );
-            Quantity_Color CSFColor = Quantity_Color(myRed/255., myGreen/255., myBlue/255., Quantity_TOC_RGB);
-            for ( ; ite.More(); ite.Next() )
-              {
-                if(!ic->IsDisplayed(ite.Value()))continue;  //only displayed ais 
-                ite.Value()->SetColor(CSFColor);
-                if (ite.Value()->IsKind(STANDARD_TYPE(GEOM_AISShape))) Handle(GEOM_AISShape)::DownCast(ite.Value())->SetShadingColor(CSFColor);
-                ite.Value()->Redisplay(Standard_True); // as in OnColor
-              }
-            if (myUpdateViewer) occViewer->update();
-          }
-	  }*/
     }
   };
   ProcessVoidEvent(new TEvent(theEntry, red, green, blue, isUpdated));

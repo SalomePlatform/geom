@@ -283,6 +283,8 @@ void GEOMToolsGUI::SetColor( const QString& entry, const QColor& color, bool /*u
 
   // get active view
   SUIT_ViewWindow* window = app->desktop()->activeWindow();
+  if ( !window ) return;
+  
   bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 
