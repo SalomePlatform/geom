@@ -269,7 +269,7 @@ void GEOMToolsGUI::OnDisableAutoColor()
   aMainObject->SetAutoColor( false );
 }
 
-void GEOMToolsGUI::SetColor( const QString& entry, const QColor& color, bool /*updateViewer*/ )
+void GEOMToolsGUI::SetColor( const QString& entry, const QColor& color, bool updateViewer )
 {
   if ( entry.isEmpty() || !color.isValid() ) return;
 
@@ -300,11 +300,13 @@ void GEOMToolsGUI::SetColor( const QString& entry, const QColor& color, bool /*u
     SVTK_View* aView = vtkVW->getView();
 
     GEOMToolsGUI::setVtkColor( appStudy, mgrId, aView, IO, color );
+    if ( updateViewer ) aView->Repaint();
   }
   else if ( isOCC ) {
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
     Handle (AIS_InteractiveContext) ic = vm->getAISContext();
     GEOMToolsGUI::setOccColor( appStudy, mgrId, ic, IO, color ); 
+    if ( updateViewer ) ic->UpdateCurrentViewer();
   }
 
   // mark study as modified
@@ -359,6 +361,7 @@ void GEOMToolsGUI::OnColor()
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       GEOMToolsGUI::setVtkColor( appStudy, mgrId, aView, It.Value(), color ); 
     }
+    aView->Repaint();
   }
   else if ( isOCC ) {
     // find AIS interactive object (for first item in selection)
@@ -384,6 +387,7 @@ void GEOMToolsGUI::OnColor()
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       GEOMToolsGUI::setOccColor( appStudy, mgrId, ic, It.Value(), color ); 
     }
+    ic->UpdateCurrentViewer();
   }
 
   // mark study as modified
