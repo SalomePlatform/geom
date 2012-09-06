@@ -8870,7 +8870,6 @@ class Sketcher3D:
     for cc in listCoords:
       if ii == 1:
         self.myCommand = self.myCommand + ":TT"
-      #self.myCommand = self.myCommand + " %.7f"%cc
       self.myCommand = self.myCommand + " %s"%printVar(cc)
       if ii == 3:
         ii = 1
@@ -8883,7 +8882,6 @@ class Sketcher3D:
     for cc in listCoords:
       if ii == 1:
         self.myCommand = self.myCommand + ":T"
-      #self.myCommand = self.myCommand + " %.7f"%cc
       self.myCommand = self.myCommand + " %s"%printVar(cc)
       if ii == 3:
         ii = 1
@@ -8893,7 +8891,6 @@ class Sketcher3D:
 
   ## axes can be: "OXY", "OYZ" or "OXZ"
   def addPointAnglesLength (self, axes, angle1, angle2, length):
-    #self.myCommand = self.myCommand + ":%s %.7f %.7f %.7f" % (axes, angle1, angle2, length)
     self.myCommand = self.myCommand + ":%s %s %s %s" % (axes, printVar(angle1), printVar(angle2), printVar(length))
     pass
 
@@ -8903,9 +8900,7 @@ class Sketcher3D:
 
   ## Obtain the sketcher result
   def wire (self):
-    print "myCommand =", self.myCommand
     Command,Parameters = ParseSketcherCommand(self.myCommand)
-    print "Command =", Command
     wire = self.geompyD.CurvesOp.Make3DSketcherCommand(Command)
     self.myCommand = "3DSketcher"
     RaiseIfFailed("Sketcher3D", self.geompyD.CurvesOp)
