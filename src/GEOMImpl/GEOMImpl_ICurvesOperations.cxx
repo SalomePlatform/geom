@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 // E.A. : On windows with python 2.6, there is a conflict
@@ -1168,73 +1167,6 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
 
 //=============================================================================
 /*!
- *  Make3DSketcher
- */
-//=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (std::list<double> theCoordinates)
-{
-  SetErrorCode(KO);
-
-  //Add a new Sketcher object
-  Handle(GEOM_Object) a3DSketcher = GetEngine()->AddObject(GetDocID(), GEOM_3DSKETCHER);
-
-  //Add a new Sketcher function
-  Handle(GEOM_Function) aFunction =
-    a3DSketcher->AddFunction(GEOMImpl_3DSketcherDriver::GetID(), GEOM_3DSKETCHER);
-  if (aFunction.IsNull()) return NULL;
-
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_3DSketcherDriver::GetID()) return NULL;
-
-  GEOMImpl_I3DSketcher aCI (aFunction);
-
-  int nbOfCoords = 0;
-  std::list<double>::iterator it = theCoordinates.begin();
-  for (; it != theCoordinates.end(); it++)
-    nbOfCoords++;
-
-  Handle(TColStd_HArray1OfReal) aCoordsArray = new TColStd_HArray1OfReal (1, nbOfCoords);
-
-  it = theCoordinates.begin();
-  int ind = 1;
-  for (; it != theCoordinates.end(); it++, ind++)
-    aCoordsArray->SetValue(ind, *it);
-
-  aCI.SetCoordinates(aCoordsArray);
-
-  //Compute the Sketcher value
-  try {
-#if OCC_VERSION_LARGE > 0x06010000
-    OCC_CATCH_SIGNALS;
-#endif
-    if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("3D Sketcher driver failed");
-      return NULL;
-    }
-  }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
-    return NULL;
-  }
-
-  //Make a Python command
-  GEOM::TPythonDump pd (aFunction);
-  pd << a3DSketcher << " = geompy.Make3DSketcher([";
-
-  it = theCoordinates.begin();
-  pd << (*it++);
-  while (it != theCoordinates.end()) {
-    pd << ", " << (*it++);
-  }
-  pd << "])";
-
-  SetErrorCode(OK);
-  return a3DSketcher;
-}
-
-//=============================================================================
-/*!
  *  MakeSketcherOnPlane
  */
 //=============================================================================
@@ -1288,4 +1220,122 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
 
   SetErrorCode(OK);
   return aSketcher;
+}
+
+//=============================================================================
+/*!
+ *  Make3DSketcherCommand
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcherCommand (const char* theCommand)
+{
+  SetErrorCode(KO);
+
+  if (!theCommand || strcmp(theCommand, "") == 0) return NULL;
+
+  //Add a new Sketcher object
+  Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GetDocID(), GEOM_3DSKETCHER);
+
+  //Add a new Sketcher function
+  Handle(GEOM_Function) aFunction =
+    aSketcher->AddFunction(GEOMImpl_3DSketcherDriver::GetID(), SKETCHER3D_COMMAND);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_3DSketcherDriver::GetID()) return NULL;
+
+  GEOMImpl_I3DSketcher aCI (aFunction);
+
+  TCollection_AsciiString aCommand ((char*) theCommand);
+  aCI.SetCommand(aCommand);
+
+  //Compute the 3D Sketcher value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("3D Sketcher driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aSketcher << " = geompy.Make3DSketcherCommand(\"" << aCommand.ToCString() << "\")";
+
+  SetErrorCode(OK);
+  return aSketcher;
+}
+
+//=============================================================================
+/*!
+ *  Make3DSketcher
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (std::list<double> theCoordinates)
+{
+  SetErrorCode(KO);
+
+  //Add a new Sketcher object
+  Handle(GEOM_Object) a3DSketcher = GetEngine()->AddObject(GetDocID(), GEOM_3DSKETCHER);
+
+  //Add a new Sketcher function
+  Handle(GEOM_Function) aFunction =
+    a3DSketcher->AddFunction(GEOMImpl_3DSketcherDriver::GetID(), SKETCHER3D_COORDS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_3DSketcherDriver::GetID()) return NULL;
+
+  GEOMImpl_I3DSketcher aCI (aFunction);
+
+  int nbOfCoords = 0;
+  std::list<double>::iterator it = theCoordinates.begin();
+  for (; it != theCoordinates.end(); it++)
+    nbOfCoords++;
+
+  Handle(TColStd_HArray1OfReal) aCoordsArray = new TColStd_HArray1OfReal (1, nbOfCoords);
+
+  it = theCoordinates.begin();
+  int ind = 1;
+  for (; it != theCoordinates.end(); it++, ind++)
+    aCoordsArray->SetValue(ind, *it);
+
+  aCI.SetCoordinates(aCoordsArray);
+
+  //Compute the Sketcher value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("3D Sketcher driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << a3DSketcher << " = geompy.Make3DSketcher([";
+
+  it = theCoordinates.begin();
+  pd << (*it++);
+  while (it != theCoordinates.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return a3DSketcher;
 }

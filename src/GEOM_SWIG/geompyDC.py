@@ -1622,7 +1622,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #     - "C radius length" : Create arc by direction, radius and length(in degree)
         #     - "AA x y": Create arc by point at X & Y
         #     - "A dx dy" : Create arc by point with DX & DY
-        #     - "A dx dy" : Create arc by point with DX & DY
         #     - "UU x y radius flag1": Create arc by point at X & Y with given radiUs
         #     - "U dx dy radius flag1" : Create arc by point with DX & DY with given radiUs
         #     - "EE x y xc yc flag1 flag2": Create arc by point at X & Y with given cEnter coordinates
@@ -1671,7 +1670,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
                - "C radius length" : Create arc by direction, radius and length(in degree)
                - "AA x y": Create arc by point at X & Y
-               - "A dx dy" : Create arc by point with DX & DY
                - "A dx dy" : Create arc by point with DX & DY
                - "UU x y radius flag1": Create arc by point at X & Y with given radiUs
                - "U dx dy radius flag1" : Create arc by point with DX & DY with given radiUs
@@ -1729,8 +1727,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Returns:
                 New GEOM.GEOM_Object, containing the created wire.
             """
+            theCommand,Parameters = ParseSketcherCommand(theCommand)
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a sketcher wire, following the numerical description,
@@ -1758,6 +1758,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 
+        ## Obtain a 3D sketcher interface
+        def Sketcher3D (self):
+            """
+            Example of usage:
+            sk = geompy.Sketcher3D()
+            sk.addPointsAbsolute(0, 0, 0)
+            sk.addPointsAbsolute(70, 0, 0)
+            sk.addPointsRelative(0, 0, 130)
+            sk.addPointAnglesLength("OXY", 50, 0, 100)
+            sk.addPointAnglesLength("OXZ", 30, 80, 130)
+            a3D_Sketcher_1 = sk.makeWire()
+            """
+            sk = Sketcher3D (self)
+            return sk
+
         # end of l3_sketcher
         ## @}
 
@@ -1771,7 +1786,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM.GEOM_Object, containing the created box.
         #  @ref tui_creation_box "Example"
-        def MakeBox(self,x1,y1,z1,x2,y2,z2):
+        def MakeBox (self, x1,y1,z1, x2,y2,z2):
             """
             Create a box by coordinates of two opposite vertices.
             
@@ -8835,6 +8850,67 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             ID = self.InsertOp.AddTexture(Width, Height, Texture)
             RaiseIfFailed("AddTexture", self.InsertOp)
             return ID
+
+## 3D Sketcher functionality
+## Use geompy.Sketcher3D() to obtain an instance of this class
+def printVar (var):
+    if isinstance(var, str):
+        return "\'%s\'"%var
+    else:
+        return "%.7f"%var
+
+class Sketcher3D:
+  def __init__(self, geompyD):
+    self.geompyD = geompyD
+    self.myCommand = "3DSketcher"
+    pass
+
+  def addPointsAbsolute (self, *listCoords):
+    ii = 1
+    for cc in listCoords:
+      if ii == 1:
+        self.myCommand = self.myCommand + ":TT"
+      #self.myCommand = self.myCommand + " %.7f"%cc
+      self.myCommand = self.myCommand + " %s"%printVar(cc)
+      if ii == 3:
+        ii = 1
+      else:
+        ii = ii + 1
+    pass
+
+  def addPointsRelative (self, *listCoords):
+    ii = 1
+    for cc in listCoords:
+      if ii == 1:
+        self.myCommand = self.myCommand + ":T"
+      #self.myCommand = self.myCommand + " %.7f"%cc
+      self.myCommand = self.myCommand + " %s"%printVar(cc)
+      if ii == 3:
+        ii = 1
+      else:
+        ii = ii + 1
+    pass
+
+  ## axes can be: "OXY", "OYZ" or "OXZ"
+  def addPointAnglesLength (self, axes, angle1, angle2, length):
+    #self.myCommand = self.myCommand + ":%s %.7f %.7f %.7f" % (axes, angle1, angle2, length)
+    self.myCommand = self.myCommand + ":%s %s %s %s" % (axes, printVar(angle1), printVar(angle2), printVar(length))
+    pass
+
+  def close (self):
+    self.myCommand = self.myCommand + ":WW"
+    pass
+
+  ## Obtain the sketcher result
+  def wire (self):
+    print "myCommand =", self.myCommand
+    Command,Parameters = ParseSketcherCommand(self.myCommand)
+    print "Command =", Command
+    wire = self.geompyD.CurvesOp.Make3DSketcherCommand(Command)
+    self.myCommand = "3DSketcher"
+    RaiseIfFailed("Sketcher3D", self.geompyD.CurvesOp)
+    wire.SetParameters(Parameters)
+    return wire
 
 import omniORB
 #Register the new proxy for GEOM_Gen

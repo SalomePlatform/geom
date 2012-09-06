@@ -15,12 +15,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : EntityGUI_3DSketcherDlg.h
 // Author : DMV, OCN
-//
+
 #ifndef ENTITYGUI_3DSKETCHERDLG_H
 #define ENTITYGUI_3DSKETCHERDLG_H
 
@@ -53,14 +52,15 @@ class EntityGUI_3DSketcherDlg : public GEOMBase_Skeleton
 
   struct XYZ
   {
-    XYZ() { x = y = z = 0.0; xt = yt = zt = "0.0"; }
-    double  x,  y,  z;
-    QString xt, yt, zt;
+    XYZ() { x = y = z = 0.0; command = params = ""; }
+    double  x,  y,  z; // for preview only
+    QString command;
+    QString params;
   };
   typedef QList<XYZ> XYZList;
 
 public:
-  EntityGUI_3DSketcherDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0, const double = 2. );
+  EntityGUI_3DSketcherDlg (GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0, const double = 2.);
   ~EntityGUI_3DSketcherDlg();
 
 protected:

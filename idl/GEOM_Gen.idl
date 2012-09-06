@@ -2785,10 +2785,10 @@ module GEOM
 
     /*!
      *  \brief Create a sketcher (wire or face), following the textual description,
-     *  passed through \a theCommand argument.
+     *         passed through \a theCommand argument.
      *
      *  Edges of the resulting wire or face will be arcs of circles and/or linear segments. \n
-     *  Format of the description string have to be the following:
+     *  Format of the description string has to be the following:
      *
      *  "Sketcher[:F x1 y1]:CMD[:CMD[:CMD...]]"
      *
@@ -2816,32 +2816,60 @@ module GEOM
      *                    coordinates of the working plane.
      *  \param theWorkingPlane Nine double values, defining origin,
      *                         OZ and OX directions of the working plane.
-     *  \return New GEOM_Object, containing the created wire.
+     *  \return New GEOM_Object, containing the created wire or face.
      */
     GEOM_Object MakeSketcher (in string theCommand, in ListOfDouble theWorkingPlane);
 
     /*!
-     *  \brief Create a 3D sketcher, following the numerical description,
-     *  passed through points created by \a theCoordinates argument. 
-     *
-     *  Format of the description string have to be the following:
-     *
-     *  "Make3DSketcher[x1, y1, z1, x2, y2, z2, ..., xN, yN, zN]"
-     */
-
-    GEOM_Object Make3DSketcher (in ListOfDouble theCoordinates);
-
-      /*!
      *  \brief Create a sketcher (wire or face), following the textual description,
-     *  passed through \a theCommand argument. 
+     *         passed through \a theCommand argument. 
      *
      *  For format of the description string see the previous method.\n
+     *
      *  \param theCommand String, defining the sketcher in local
      *                    coordinates of the working plane.
      *  \param theWorkingPlane Planar Face or LCS(Marker) of the working plane.
-     *  \return New GEOM_Object, containing the created wire.
+     *  \return New GEOM_Object, containing the created wire or face.
      */
     GEOM_Object MakeSketcherOnPlane (in string theCommand, in GEOM_Object theWorkingPlane);
+
+    /*!
+     *  \brief Create a 3D sketcher, following the textual description,
+     *         passed through \a theCommand argument. 
+     *
+     *  Format of the description string has to be the following:
+     *
+     *  "3DSketcher:CMD[:CMD[:CMD...]]"
+     *
+     *  Where CMD is one of
+     *     - "TT x y z" : Create segment by point at X & Y or set the first point
+     *     - "T dx dy dz" : Create segment by point with DX & DY
+     *     .
+     *       \n
+     *     - "OXY angleX angle2 length" : Create segment by two angles and length
+     *     - "OYZ angleY angle2 length" : Create segment by two angles and length
+     *     - "OXZ angleX angle2 length" : Create segment by two angles and length
+     *     .
+     *       \n
+     *     - "WW" : Close Wire (to finish)
+     *
+     *  \param theCommand String, defining the sketcher in local
+     *                    coordinates of the working plane.
+     *  \return New GEOM_Object, containing the created wire.
+     */
+    GEOM_Object Make3DSketcherCommand (in string theCommand);
+
+    /*!
+     *  \brief Create a 3D sketcher, made of a straight segments, joining points
+     *         with coordinates passed through \a theCoordinates argument. 
+     *
+     *  Order of coordinates has to be the following:
+     *  x1, y1, z1, x2, y2, z2, ..., xN, yN, zN
+     *
+     *  \param theCoordinates List of double values.
+     *  \return New GEOM_Object, containing the created wire.
+     */
+    GEOM_Object Make3DSketcher (in ListOfDouble theCoordinates);
   };
 
  // # GEOM_ILocalOperations:
