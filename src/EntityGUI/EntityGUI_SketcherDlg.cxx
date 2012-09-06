@@ -674,6 +674,13 @@ void EntityGUI_SketcherDlg::DestClicked( int constructorId )
     GroupD2->show();
     Group3Spin->checkBox->hide();
     Group4Spin->checkBox->hide();
+    if (myConstructorId == 1) {
+      myRadius = 100.0;
+      myLength = 30.0;
+      myAngle = 0.0;
+      myDX = 0.0;
+      myDY = 0.0;
+    }
     Dir1Clicked( 2 );  // Angle
   }
   resize( minimumSizeHint() );
@@ -899,8 +906,18 @@ void EntityGUI_SketcherDlg::Dir1Clicked( int constructorId )
 void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
 {
   InitClick();
-  myAngle = 0.0;
-
+  Group3Spin->SpinBox_DX->blockSignals(true); // Block signals in order not to modify
+  Group3Spin->SpinBox_DY->blockSignals(true); // defaut values
+  Group3Spin->SpinBox_DZ->blockSignals(true);
+  
+  Group2Spin->SpinBox_DX->blockSignals(true);
+  Group2Spin->SpinBox_DY->blockSignals(true);
+  
+  Group4Spin->SpinBox_DX->blockSignals(true); 
+  Group4Spin->SpinBox_DY->blockSignals(true);
+  Group4Spin->SpinBox_DZ->blockSignals(true);
+  Group4Spin->SpinBox_DS->blockSignals(true); 
+  
   // Get setting of step value from file configuration
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
@@ -980,9 +997,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
       initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
       Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_VX2" ) );
       Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_VY2" ) );
-      myDX = 0.0;
       Group3Spin->SpinBox_DX->setValue( myDX );
-      myDY = 0.0;
       Group3Spin->SpinBox_DY->setValue( myDY );
       Group3Spin->show();
       Group3Spin->buttonApply->setFocus();
@@ -1015,9 +1030,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
         Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
         Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_ANGLE2" ));
         Group3Spin->SpinBox_DX->setValue( myAngle );
-        myRadius = 100.0;
         Group3Spin->SpinBox_DY->setValue( myRadius );
-        myLength = 30.0;
         Group3Spin->SpinBox_DZ->setValue( myLength );
         Group3Spin->show();
         Group3Spin->buttonApply->setFocus();
@@ -1030,9 +1043,9 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
         initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., "angle_precision" );
         Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
         Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
-        myRadius = 100.0;
+//         myRadius = 100.0;
         Group2Spin->SpinBox_DX->setValue( myRadius );
-        myLength = 30.0;
+//         myLength = 30.0;
         Group2Spin->SpinBox_DY->setValue( myLength );
         Group2Spin->show();
         Group2Spin->buttonApply->setFocus();
@@ -1045,9 +1058,9 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
         initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., "angle_precision" );
         Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
         Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
-        myRadius = 100.0;
+//         myRadius = 100.0;
         Group2Spin->SpinBox_DX->setValue( myRadius );
-        myLength = 30.0;
+//         myLength = 30.0;
         Group2Spin->SpinBox_DY->setValue( myLength );
         Group2Spin->show();
         Group2Spin->buttonApply->setFocus();
@@ -1064,19 +1077,29 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
 	initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
 	initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
 	initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., "length_precision" );
-        myDX = 0.0;
         Group4Spin->SpinBox_DX->setValue( myDX );
-        myDY = 0.0;
         Group4Spin->SpinBox_DY->setValue( myDY );
-        myRadius = 100.0;
+//         myRadius = 100.0;
         Group4Spin->SpinBox_DZ->setValue( myRadius );
-        myLength = 30.0;
+//         myLength = 30.0;
         Group4Spin->SpinBox_DS->setValue( myLength );
         Group4Spin->show();
         Group4Spin->buttonApply->setFocus();
       }
     }
   }
+  Group3Spin->SpinBox_DX->blockSignals(false); // Restore signals
+  Group3Spin->SpinBox_DY->blockSignals(false); 
+  Group3Spin->SpinBox_DZ->blockSignals(false);
+  
+  Group2Spin->SpinBox_DX->blockSignals(false);
+  Group2Spin->SpinBox_DY->blockSignals(false);
+  
+  Group4Spin->SpinBox_DX->blockSignals(false); 
+  Group4Spin->SpinBox_DY->blockSignals(false);
+  Group4Spin->SpinBox_DZ->blockSignals(false);
+  Group4Spin->SpinBox_DS->blockSignals(false); 
+  
   resize( minimumSizeHint() );
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
