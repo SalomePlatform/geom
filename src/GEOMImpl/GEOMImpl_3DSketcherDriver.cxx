@@ -242,15 +242,17 @@ Standard_Integer GEOMImpl_3DSketcherDriver::Execute(TFunction_Logbook& log) cons
           }
           else
             Standard_ConstructionError::Raise("3D Sketcher error: Bad format of command.");
+          
+          if ((vp - p).SquareModulus() > Precision::Confusion()) {
+            BRepBuilderAPI_MakeVertex MV (vp);
+            TopoDS_Vertex VV = TopoDS::Vertex(MV.Shape());
+            BRepBuilderAPI_MakeEdge ME (V, VV);
+            MW.Add(ME);
+            nbEdges++;
 
-          BRepBuilderAPI_MakeVertex MV (vp);
-          TopoDS_Vertex VV = TopoDS::Vertex(MV.Shape());
-          BRepBuilderAPI_MakeEdge ME (V, VV);
-          MW.Add(ME);
-          nbEdges++;
-
-          p = vp;
-          V = VV;
+            p = vp;
+            V = VV;
+          }
         }
         break;
       case 'W':
