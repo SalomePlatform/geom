@@ -114,6 +114,10 @@
 #include <Graphic3d_HArray1OfBytes.hxx>
 #endif
 
+// if the next macro is defined, autocolor feature works for all sub-shapes;
+// if it is undefined, autocolor feature works for groups only
+//#define GENERAL_AUTOCOLOR
+
 //================================================================
 // Function : getActiveStudy
 // Purpose  : Get active study, returns 0 if no open study frame
@@ -2003,48 +2007,75 @@ SALOMEDS::Color GEOM_Displayer::getColor(GEOM::GEOM_Object_var theGeomObject, bo
   hasColor = false;
 
   SUIT_Session* session = SUIT_Session::session();
-  SUIT_Application* app = session->activeApplication();
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
 
   if ( app && !theGeomObject->_is_nil()) {
     SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
 
     if ( study ) {
+      _PTR(Study) aStudy = study->studyDS();
       aSColor = theGeomObject->GetColor();
       hasColor = aSColor.R >= 0 && aSColor.G >= 0 && aSColor.B >= 0;
-      if( !hasColor && theGeomObject->GetType() == GEOM_GROUP ) { // auto color for group
-        GEOM::GEOM_Gen_var theGeomGen = GeometryGUI::GetGeomGen();
-        GEOM::GEOM_IGroupOperations_var anOperations = theGeomGen->GetIGroupOperations( study->id() );
-        GEOM::GEOM_Object_var aMainObject = anOperations->GetMainShape( theGeomObject );
-        if ( !aMainObject->_is_nil() && aMainObject->GetAutoColor() )
-          {
+      if ( !hasColor ) {
+#ifdef GENERAL_AUTOCOLOR // auto-color for all sub-shapes
+	GEOM::GEOM_Object_var aMainObject = theGeomObject->GetMainShape();
+	if ( !CORBA::is_nil( aMainObject ) && aMainObject->GetAutoColor() ) {
+	  QList<SALOMEDS::Color> aReservedColors;
+	  CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
+	  _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( IOR.in() ) );
+	  if ( aMainSObject ) {
+	    _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
+	    for ( ; it->More(); it->Next() ) {
+	      _PTR(SObject) aChildSObject( it->Value() );
+	      GEOM::GEOM_Object_var aChildObject =
+		GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
+	      if ( CORBA::is_nil( aChildObject ) )
+		continue;
+	      
+	      SALOMEDS::Color aReservedColor = aChildObject->GetColor();
+	      if ( aReservedColor.R >= 0 && aReservedColor.G >= 0 && aReservedColor.B >= 0 )
+		aReservedColors.append( aReservedColor );
+	    }
+	  }
+	  aSColor = getUniqueColor( aReservedColors );
+	  hasColor = true;
+	}
+#else // auto-color for groups only
+	if ( theGeomObject->GetType() == GEOM_GROUP ) {
+	  GEOM::GEOM_Gen_var theGeomGen = GeometryGUI::GetGeomGen();
+	  GEOM::GEOM_IGroupOperations_var anOperations = theGeomGen->GetIGroupOperations( study->id() );
+	  GEOM::GEOM_Object_var aMainObject = anOperations->GetMainShape( theGeomObject );
+	  if ( !aMainObject->_is_nil() && aMainObject->GetAutoColor() ) 
+	  {
             QList<SALOMEDS::Color> aReservedColors;
-
-            SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( app );
+	    
             CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
             if ( strcmp(IOR.in(), "") != 0 )
-              {
-                _PTR(Study) aStudy = study->studyDS();
-                _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( std::string(IOR) ) );
-                _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
-                for( ; it->More(); it->Next() )
-                  {
-                    _PTR(SObject) aChildSObject( it->Value() );
-                    GEOM::GEOM_Object_var aChildObject =
-                      GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
-                    if( CORBA::is_nil( aChildObject ) )
-                      continue;
-
-                    if( aChildObject->GetType() != GEOM_GROUP )
-                      continue;
-
-                    SALOMEDS::Color aReservedColor = aChildObject->GetColor();
-                    aReservedColors.append( aReservedColor );
-                  }
-              }
-
+            {
+	      _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( std::string(IOR) ) );
+	      _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
+	      for( ; it->More(); it->Next() )
+	      {
+		_PTR(SObject) aChildSObject( it->Value() );
+		GEOM::GEOM_Object_var aChildObject =
+		  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
+		if( CORBA::is_nil( aChildObject ) )
+		  continue;
+		
+		if( aChildObject->GetType() != GEOM_GROUP )
+		  continue;
+		
+		SALOMEDS::Color aReservedColor = aChildObject->GetColor();
+		if ( aReservedColor.R >= 0 && aReservedColor.G >= 0 && aReservedColor.B >= 0 )
+		  aReservedColors.append( aReservedColor );
+	      }
+	    }
+	    
             aSColor = getUniqueColor( aReservedColors );
             hasColor = true;
           }
+	}
+#endif
       }
     }
   }
