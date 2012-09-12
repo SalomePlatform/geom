@@ -1843,6 +1843,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Coordinates Type</translation>
     </message>
     <message>
+        <source>GEOM_CONTROLS</source>
+        <translation>Dimensions</translation>
+    </message>
+    <message>
         <source>GEOM_SOLID</source>
         <translation>Solid</translation>
     </message>

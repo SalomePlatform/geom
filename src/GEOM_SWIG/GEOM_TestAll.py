@@ -105,8 +105,18 @@ def TestAll (geompy, math):
   Interpol = geompy.MakeInterpol([px, py, p200, pxyz], True) #(List of GEOM_Object,Boolean)->GEOM_Object
   Sketcher = geompy.MakeSketcher("Sketcher:F -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW",
                                  [100,0,0, 1,1,1, -1,1,0]) #(String, List of Doubles)->GEOM_Object
-  Sketcher3d = geompy.Make3DSketcher([0,0,0, 50,50,50, 0,50,50, 10,0,0])
-  
+
+  #Create 3D wires with 3D Sketcher
+  sk = geompy.Sketcher3D()
+  sk.addPointsAbsolute(0,0,0, 70,0,0)
+  sk.addPointsRelative(0, 0, 130)
+  sk.addPointAnglesLength("OXY", 50, 0, 100)
+  sk.addPointAnglesLength("OXZ", 30, 80, 130)
+  sk.close()
+  Sketcher3d_1 = sk.wire()
+
+  Sketcher3d_2 = geompy.Make3DSketcher([0,0,0, 50,50,50, 0,50,50, 10,0,0])
+
   #Create local coordinate system from shape
   cs4 = geompy.MakeMarkerFromShape(Plane)
 
@@ -330,7 +340,9 @@ def TestAll (geompy, math):
   id_Bezier   = geompy.addToStudy(Bezier,   "Bezier")
   id_Interpol = geompy.addToStudy(Interpol, "Interpol")
   id_Sketcher = geompy.addToStudy(Sketcher, "Sketcher")
-  id_Sketcher3d = geompy.addToStudy(Sketcher3d, "Sketcher 3D")
+
+  id_Sketcher3d_1 = geompy.addToStudy(Sketcher3d_1, "Sketcher 3D by interface")
+  id_Sketcher3d_2 = geompy.addToStudy(Sketcher3d_2, "Sketcher 3D by list")
 
   id_p_on_arc  = geompy.addToStudy(p_on_arc,  "Vertex on Arc (0.25)")
   id_p_on_arc2 = geompy.addToStudy(p_on_arc2, "Vertex on Arc at(100, -10, 10)" )

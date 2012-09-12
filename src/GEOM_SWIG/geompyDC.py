@@ -88,6 +88,8 @@ import GEOM
 import math
 import os
 
+from gsketcher import Sketcher3D
+
 ## Enumeration ShapeType as a dictionary. \n
 ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
 #  @ingroup l1_geompy_auxiliary
@@ -1739,7 +1741,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                                                      passing from it.
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
-        #  @ref tui_sketcher_page "Example"
+        #  @ref tui_3dsketcher_page "Example"
         def Make3DSketcher(self, theCoordinates):
             """
             Create a sketcher wire, following the numerical description,
@@ -1759,16 +1761,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Obtain a 3D sketcher interface
+        #  @return An instance of @ref gsketcher.Sketcher3D "Sketcher3D" interface
+        #
+        #  @ref tui_3dsketcher_page "Example"
         def Sketcher3D (self):
             """
+            Obtain a 3D sketcher interface.
+
             Example of usage:
-            sk = geompy.Sketcher3D()
-            sk.addPointsAbsolute(0, 0, 0)
-            sk.addPointsAbsolute(70, 0, 0)
-            sk.addPointsRelative(0, 0, 130)
-            sk.addPointAnglesLength("OXY", 50, 0, 100)
-            sk.addPointAnglesLength("OXZ", 30, 80, 130)
-            a3D_Sketcher_1 = sk.makeWire()
+                sk = geompy.Sketcher3D()
+                sk.addPointsAbsolute(0,0,0, 70,0,0)
+                sk.addPointsRelative(0, 0, 130)
+                sk.addPointAnglesLength("OXY", 50, 0, 100)
+                sk.addPointAnglesLength("OXZ", 30, 80, 130)
+                sk.close()
+                a3D_Sketcher_1 = sk.wire()
             """
             sk = Sketcher3D (self)
             return sk
@@ -8850,62 +8857,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             ID = self.InsertOp.AddTexture(Width, Height, Texture)
             RaiseIfFailed("AddTexture", self.InsertOp)
             return ID
-
-## 3D Sketcher functionality
-## Use geompy.Sketcher3D() to obtain an instance of this class
-def printVar (var):
-    if isinstance(var, str):
-        return "\'%s\'"%var
-    else:
-        return "%.7f"%var
-
-class Sketcher3D:
-  def __init__(self, geompyD):
-    self.geompyD = geompyD
-    self.myCommand = "3DSketcher"
-    pass
-
-  def addPointsAbsolute (self, *listCoords):
-    ii = 1
-    for cc in listCoords:
-      if ii == 1:
-        self.myCommand = self.myCommand + ":TT"
-      self.myCommand = self.myCommand + " %s"%printVar(cc)
-      if ii == 3:
-        ii = 1
-      else:
-        ii = ii + 1
-    pass
-
-  def addPointsRelative (self, *listCoords):
-    ii = 1
-    for cc in listCoords:
-      if ii == 1:
-        self.myCommand = self.myCommand + ":T"
-      self.myCommand = self.myCommand + " %s"%printVar(cc)
-      if ii == 3:
-        ii = 1
-      else:
-        ii = ii + 1
-    pass
-
-  ## axes can be: "OXY", "OYZ" or "OXZ"
-  def addPointAnglesLength (self, axes, angle1, angle2, length):
-    self.myCommand = self.myCommand + ":%s %s %s %s" % (axes, printVar(angle1), printVar(angle2), printVar(length))
-    pass
-
-  def close (self):
-    self.myCommand = self.myCommand + ":WW"
-    pass
-
-  ## Obtain the sketcher result
-  def wire (self):
-    Command,Parameters = ParseSketcherCommand(self.myCommand)
-    wire = self.geompyD.CurvesOp.Make3DSketcherCommand(Command)
-    self.myCommand = "3DSketcher"
-    RaiseIfFailed("Sketcher3D", self.geompyD.CurvesOp)
-    wire.SetParameters(Parameters)
-    return wire
 
 import omniORB
 #Register the new proxy for GEOM_Gen
