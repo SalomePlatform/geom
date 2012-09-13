@@ -114,9 +114,12 @@
 #include <Graphic3d_HArray1OfBytes.hxx>
 #endif
 
-// if the next macro is defined, autocolor feature works for all sub-shapes;
+// If the next macro is defined, autocolor feature works for all sub-shapes;
 // if it is undefined, autocolor feature works for groups only
 //#define GENERAL_AUTOCOLOR
+// Below macro, when uncommented, switches on simplified (more performant) algorithm
+// of auto-color picking up
+//#define SIMPLE_AUTOCOLOR
 
 //================================================================
 // Function : getActiveStudy
@@ -1827,6 +1830,40 @@ int GEOM_Displayer::UnsetDisplayMode()
   return aPrevMode;
 }
 
+SALOMEDS::Color GEOM_Displayer::getPredefinedUniqueColor()
+{
+  static QList<QColor> colors;
+
+  if ( colors.isEmpty() ) {
+    const int rfactor = 4; // red   color component split factor, must be > 0
+    const int gfactor = 4; // green color component split factor, must be > 0
+    const int bfactor = 3; // blue  color component split factor, must be > 0
+                           // -
+                           // total number of pre-defined colors is defined as
+                           // nbcolors = rfactor * gfactor * bfactor
+                           // NB: all three factors should not have same values
+                           // otherwise all colors will be greyish
+    
+    for ( int g = 0; g < gfactor; g++ ) {
+      for ( int r = 0; r < rfactor; r++ ) {
+	for ( int b = 0; b < bfactor; b++ )
+	  colors.append( QColor( qRgb( r * 255 / (rfactor-1), g * 255 / (gfactor-1), b * 255 / (bfactor-1) ) ) );
+      }
+    }
+  }
+
+  static int currentColor = 0;
+
+  SALOMEDS::Color color;
+  color.R = (double)colors[currentColor].red()   / 255.0;
+  color.G = (double)colors[currentColor].green() / 255.0;
+  color.B = (double)colors[currentColor].blue()  / 255.0;
+
+  currentColor = (currentColor+1) % colors.count();
+
+  return color;
+}
+
 SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& theReservedColors )
 {
   int aHue = -1;
@@ -2018,51 +2055,27 @@ SALOMEDS::Color GEOM_Displayer::getColor(GEOM::GEOM_Object_var theGeomObject, bo
       hasColor = aSColor.R >= 0 && aSColor.G >= 0 && aSColor.B >= 0;
       if ( !hasColor ) {
 #ifdef GENERAL_AUTOCOLOR // auto-color for all sub-shapes
-	GEOM::GEOM_Object_var aMainObject = theGeomObject->GetMainShape();
-	if ( !CORBA::is_nil( aMainObject ) && aMainObject->GetAutoColor() ) {
-	  QList<SALOMEDS::Color> aReservedColors;
-	  CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
-	  _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( IOR.in() ) );
-	  if ( aMainSObject ) {
-	    _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
-	    for ( ; it->More(); it->Next() ) {
-	      _PTR(SObject) aChildSObject( it->Value() );
-	      GEOM::GEOM_Object_var aChildObject =
-		GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
-	      if ( CORBA::is_nil( aChildObject ) )
-		continue;
-	      
-	      SALOMEDS::Color aReservedColor = aChildObject->GetColor();
-	      if ( aReservedColor.R >= 0 && aReservedColor.G >= 0 && aReservedColor.B >= 0 )
-		aReservedColors.append( aReservedColor );
-	    }
-	  }
-	  aSColor = getUniqueColor( aReservedColors );
-	  hasColor = true;
-	}
-#else // auto-color for groups only
-	if ( theGeomObject->GetType() == GEOM_GROUP ) {
-	  GEOM::GEOM_Gen_var theGeomGen = GeometryGUI::GetGeomGen();
-	  GEOM::GEOM_IGroupOperations_var anOperations = theGeomGen->GetIGroupOperations( study->id() );
-	  GEOM::GEOM_Object_var aMainObject = anOperations->GetMainShape( theGeomObject );
-	  if ( !aMainObject->_is_nil() && aMainObject->GetAutoColor() ) 
-	  {
-            QList<SALOMEDS::Color> aReservedColors;
-	    
-            CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
-            if ( strcmp(IOR.in(), "") != 0 )
-            {
-	      _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( std::string(IOR) ) );
+	bool general_autocolor = true;
+#else                    // auto-color for groups only
+	bool general_autocolor = false;
+#endif                   // GENERAL_AUTOCOLOR
+	if ( general_autocolor || theGeomObject->GetType() == GEOM_GROUP ) {
+	  GEOM::GEOM_Object_var aMainObject = theGeomObject->GetMainShape();
+	  if ( !CORBA::is_nil( aMainObject ) && aMainObject->GetAutoColor() ) {
+#ifdef SIMPLE_AUTOCOLOR  // simplified algorithm for auto-colors
+	    aSColor = getPredefinedUniqueColor();
+	    hasColor = true;
+#else                    // old algorithm  for auto-colors
+	    QList<SALOMEDS::Color> aReservedColors;
+	    CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
+	    _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( IOR.in() ) );
+	    if ( aMainSObject ) {
 	      _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
-	      for( ; it->More(); it->Next() )
-	      {
+	      for ( ; it->More(); it->Next() ) {
 		_PTR(SObject) aChildSObject( it->Value() );
 		GEOM::GEOM_Object_var aChildObject =
 		  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
-		if( CORBA::is_nil( aChildObject ) )
-		  continue;
-		
-		if( aChildObject->GetType() != GEOM_GROUP )
+		if ( CORBA::is_nil( aChildObject ) )
 		  continue;
 		
 		SALOMEDS::Color aReservedColor = aChildObject->GetColor();
@@ -2070,12 +2083,11 @@ SALOMEDS::Color GEOM_Displayer::getColor(GEOM::GEOM_Object_var theGeomObject, bo
 		  aReservedColors.append( aReservedColor );
 	      }
 	    }
-	    
-            aSColor = getUniqueColor( aReservedColors );
-            hasColor = true;
-          }
+	    aSColor = getUniqueColor( aReservedColors );
+	    hasColor = true;
+#endif                   // SIMPLE_AUTOCOLOR
+	  }
 	}
-#endif
       }
     }
   }

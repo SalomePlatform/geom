@@ -109,6 +109,13 @@
 // VTK includes
 #include <vtkRenderer.h>
 
+// If the next macro is defined, autocolor feature works for all sub-shapes;
+// if it is undefined, autocolor feature works for groups only
+//#define GENERAL_AUTOCOLOR
+// Below macro, when uncommented, switches on simplified (more performant) algorithm
+// of auto-color picking up
+//#define SIMPLE_AUTOCOLOR
+
 void GEOMToolsGUI::OnCheckGeometry()
 {
   SalomeApp_Application* app =
@@ -163,12 +170,18 @@ void GEOMToolsGUI::OnAutoColor()
     if( CORBA::is_nil( aChildObject ) )
       continue;
 
+#ifndef GENERAL_AUTOCOLOR // auto-color for groups only
     if( aChildObject->GetType() != GEOM_GROUP )
       continue;
+#endif                    // GENERAL_AUTOCOLOR
 
+#ifdef SIMPLE_AUTOCOLOR   // simplified algorithm for auto-colors
+    SALOMEDS::Color aColor = GEOM_Displayer::getPredefinedUniqueColor();
+#else                     // old algorithm  for auto-colors
     SALOMEDS::Color aColor = GEOM_Displayer::getUniqueColor( aReservedColors );
-    aChildObject->SetColor( aColor );
     aReservedColors.append( aColor );
+#endif                    // SIMPLE_AUTOCOLOR
+    aChildObject->SetColor( aColor );
 
     QColor c( (int)( aColor.R * 255.0 ), (int)( aColor.G * 255.0 ), (int)( aColor.B * 255.0 ) );
 
