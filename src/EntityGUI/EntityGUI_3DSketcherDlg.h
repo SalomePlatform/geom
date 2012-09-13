@@ -132,6 +132,7 @@ private slots:
   bool                               ClickOnApply();
   //  bool                               isSameAsPrevious();
   void                               UpdateButtonsState();
+  void                               UpdatePointCoordinates();
 
   void                               ClickOnUndo();
   void                               ClickOnRedo();

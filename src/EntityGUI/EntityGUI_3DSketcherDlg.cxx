@@ -155,6 +155,19 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg (GeometryGUI* theGeometryGUI, Q
   GroupControls->GroupBox1->setTitle(tr("GEOM_CONTROLS"));
   GroupControls->CheckBox1->setText(tr("Show length dimensions")); //TODO translation
   GroupControls->CheckBox2->setText(tr("Show angle dimensions"));  //TODO translation
+  GroupControls->CheckBox3->setText(tr("Show start/end point coordinates"));  //TODO translation
+  GroupControls->lineEdit_1->setReadOnly(true);
+  GroupControls->lineEdit_2->setReadOnly(true);
+  GroupControls->lineEdit_3->setReadOnly(true);
+  GroupControls->lineEdit_4->setReadOnly(true);
+  GroupControls->lineEdit_5->setReadOnly(true);
+  GroupControls->lineEdit_6->setReadOnly(true);
+  GroupControls->label_1->setText(tr("X:"));
+  GroupControls->label_2->setText(tr("Y:"));
+  GroupControls->label_3->setText(tr("Z:"));
+  GroupControls->label_4->setText(tr("X:"));
+  GroupControls->label_5->setText(tr("Y:"));
+  GroupControls->label_6->setText(tr("Z:"));
 
   buttonOk()->setText(tr("GEOM_BUT_END_SKETCH"));
   buttonApply()->setText(tr("GEOM_BUT_CLOSE_SKETCH"));
@@ -198,6 +211,7 @@ void EntityGUI_3DSketcherDlg::Init()
   //TEST
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 //   globalSelection(GEOM_PREVIEW);
+//   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); 
 
   /* Get setting of step value from file configuration */
   double step = SUIT_Session::session()->resourceMgr()->doubleValue("Geometry", "SettingsGeomStep", 100.0);
@@ -225,6 +239,8 @@ void EntityGUI_3DSketcherDlg::Init()
 
   GroupControls->CheckBox1->setChecked(true);
   GroupControls->CheckBox2->setChecked(true);
+  GroupControls->CheckBox3->setChecked(true);
+  
   isLengthVisible = true;
   isAngleVisible = true;
 
@@ -261,6 +277,7 @@ void EntityGUI_3DSketcherDlg::Init()
   connect(GroupAngles->checkBox,        SIGNAL(clicked (bool)), this, SLOT(BoxChecked (bool))) ;
   connect(GroupControls->CheckBox1,     SIGNAL(clicked (bool)), this, SLOT(BoxChecked (bool))) ;
   connect(GroupControls->CheckBox2,     SIGNAL(clicked (bool)), this, SLOT(BoxChecked (bool))) ;
+  connect(GroupControls->CheckBox3,     SIGNAL(clicked (bool)), this, SLOT(BoxChecked (bool))) ;
 
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
@@ -268,6 +285,8 @@ void EntityGUI_3DSketcherDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()),        this, SLOT(ClickOnCancel()));
 
   initName(tr("GEOM_3DSKETCHER"));
+  
+  GroupControls->CheckBox3->click();
 
   UpdateButtonsState();
   GEOMBase_Helper::displayPreview(true, false, true, true, myLineWidth);
@@ -343,7 +362,7 @@ void EntityGUI_3DSketcherDlg::TypeClicked (int mode)
 // purpose  : called when the point coordinates is Applyed
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
-{
+{ 
   QString msg;
   if (!isValid(msg)) {
     showError(msg);
@@ -380,7 +399,8 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
   myLengthIORedoList.Clear();
   myAngleIORedoList.Clear();
 
-  if (myMode == 1) {
+  if (myMode == 1) 
+  {
     Group3Spin->SpinBox_DX->setValue(0.0);
     Group3Spin->SpinBox_DY->setValue(0.0);
     Group3Spin->SpinBox_DZ->setValue(0.0);
@@ -391,6 +411,9 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
     GroupAngles->SpinBox_DL->setValue(0.0);
     GroupAngles->SpinBox_DA2->setValue(0.0);
   }
+  
+  UpdatePointCoordinates();
+    
   UpdateButtonsState();
   GEOMBase_Helper::displayPreview(true, false, true, true, myLineWidth);
 }
@@ -408,6 +431,44 @@ void EntityGUI_3DSketcherDlg::UpdateButtonsState()
   Group3Spin->buttonRedo->setEnabled(myRedoList.count() > 0);
   GroupAngles->buttonUndo->setEnabled(myPointsList.count() > 0);
   GroupAngles->buttonRedo->setEnabled(myRedoList.count() > 0);
+}
+
+//=================================================================================
+// function : UpdatePointCoordinates()
+// purpose  :Update point coordinates in the control groupbox
+//=================================================================================
+void EntityGUI_3DSketcherDlg::UpdatePointCoordinates()
+{
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue("Geometry", "length_precision", 6);
+  
+  if (myPointsList.count() == 0)
+  {
+    GroupControls->lineEdit_1->setText("");
+    GroupControls->lineEdit_2->setText("");
+    GroupControls->lineEdit_3->setText("");
+    
+    GroupControls->lineEdit_4->setText("");
+    GroupControls->lineEdit_5->setText("");
+    GroupControls->lineEdit_6->setText("");
+  }
+  else if (myPointsList.count() == 1)
+  {
+    GroupControls->lineEdit_1->setText(DlgRef::PrintDoubleValue(getLastPoint().x, aPrecision));
+    GroupControls->lineEdit_2->setText(DlgRef::PrintDoubleValue(getLastPoint().y, aPrecision));
+    GroupControls->lineEdit_3->setText(DlgRef::PrintDoubleValue(getLastPoint().z, aPrecision));
+    
+    GroupControls->lineEdit_4->setText("");
+    GroupControls->lineEdit_5->setText("");
+    GroupControls->lineEdit_6->setText("");
+  }
+  else
+  {
+    GroupControls->lineEdit_4->setText(DlgRef::PrintDoubleValue(getLastPoint().x, aPrecision));
+    GroupControls->lineEdit_5->setText(DlgRef::PrintDoubleValue(getLastPoint().y, aPrecision));
+    GroupControls->lineEdit_6->setText(DlgRef::PrintDoubleValue(getLastPoint().z, aPrecision));
+  }
+  
 }
 
 //=================================================================================
@@ -452,6 +513,9 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
     if (isAngleVisible)
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
+    
+    // Update of point coordinates in the control groupbox
+    UpdatePointCoordinates();
 
     updateViewer();
   }
@@ -497,6 +561,9 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
     if (isAngleVisible)
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
+    
+    // Update of point coordinates in the control groupbox
+    UpdatePointCoordinates();
 
     updateViewer();
   }
@@ -674,7 +741,31 @@ void EntityGUI_3DSketcherDlg::BoxChecked (bool checked)
     else
       isAngleVisible=false;
   }
+  else if (send == GroupControls->CheckBox3)
+  {
+    GroupControls->lineEdit_1->setVisible(checked);
+    GroupControls->lineEdit_2->setVisible(checked);
+    GroupControls->lineEdit_3->setVisible(checked);
+    GroupControls->lineEdit_4->setVisible(checked);
+    GroupControls->lineEdit_5->setVisible(checked);
+    GroupControls->lineEdit_6->setVisible(checked);
+    
+    GroupControls->label_1->setVisible(checked);
+    GroupControls->label_2->setVisible(checked);
+    GroupControls->label_3->setVisible(checked);
+    GroupControls->label_4->setVisible(checked);
+    GroupControls->label_5->setVisible(checked);
+    GroupControls->label_6->setVisible(checked);
+    GroupControls->label_7->setVisible(checked);
+    GroupControls->label_8->setVisible(checked);
+    
+    GroupControls->updateGeometry();
+    GroupControls->resize(minimumSizeHint());
+  } 
 
+  updateGeometry();
+  resize(minimumSizeHint());
+  
   GEOMBase_Helper::displayPreview(true, false, true, true, myLineWidth);
 }
 
@@ -1081,8 +1172,8 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
     {
       P1 = gp_Pnt(Last.x + theLength,Last.y,Last.z);     // X direction
       P2 = gp_Pnt(Last.x + theLength * cos(theAngle1 * M_PI / 180.) ,
-                   Last.y,
-                   Last.z + theLength * sin(theAngle1 * M_PI / 180.));
+                  Last.y,
+                  Last.z + theLength * sin(theAngle1 * M_PI / 180.));
       break;
     }
   }
