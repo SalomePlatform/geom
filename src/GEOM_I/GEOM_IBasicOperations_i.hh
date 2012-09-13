@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_IBasicOperations_i_HeaderFile
 #define _GEOM_IBasicOperations_i_HeaderFile
@@ -72,6 +71,8 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
                                                     CORBA::Double theXParameter,
                                                     CORBA::Double theYParameter,
                                                     CORBA::Double theZParameter);
+
+   GEOM::GEOM_Object_ptr MakePointOnFace (GEOM::GEOM_Object_ptr theFace);
 
    GEOM::GEOM_Object_ptr MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theLine1,
 						       GEOM::GEOM_Object_ptr theLine2);

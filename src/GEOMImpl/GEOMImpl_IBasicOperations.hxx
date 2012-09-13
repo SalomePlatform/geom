@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IBasicOperations_HXX_
 #define _GEOMImpl_IBasicOperations_HXX_
@@ -63,6 +62,8 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                                                  double theXParam,
                                                                  double theYParam,
                                                                  double theZParam);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePointOnFace (Handle(GEOM_Object) theFace);
 
   // Vector
   Standard_EXPORT Handle(GEOM_Object) MakeVectorDXDYDZ (double theDX, double theDY, double theDZ);
@@ -128,7 +129,8 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
     PointOn_CurveByCoord,
     PointOn_CurveByLength,   
     PointOn_SurfaceByParam,
-    PointOn_SurfaceByCoord
+    PointOn_SurfaceByCoord,
+    PointOn_Face
   };
 
   Handle(GEOM_Object) makePointOnGeom (Handle(GEOM_Object) theGeomObj,

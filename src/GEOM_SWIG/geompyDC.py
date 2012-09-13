@@ -822,7 +822,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created point.
 
             Example of usage:
-                p_on_face = geompy.MakeVertexOnSurface(Face, 0.1, 0.8) #(GEOM_Object, Double, Double)->GEOM_Object
+                p_on_face = geompy.MakeVertexOnSurface(Face, 0.1, 0.8)
             """
             theUParameter, theVParameter, Parameters = ParseParameters(theUParameter, theVParameter)
             # Example: see GEOM_TestAll.py
@@ -853,13 +853,44 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created point.
 
             Example of usage:
-                p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(Face, 0., 0., 0.) #(GEOM_Object, Double, Double, Double)->GEOM_Object
+                p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(Face, 0., 0., 0.)
             """
             theX, theY, theZ, Parameters = ParseParameters(theX, theY, theZ)
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnSurfaceByCoord(theRefSurf, theX, theY, theZ)
             RaiseIfFailed("MakeVertexOnSurfaceByCoord", self.BasicOp)
             anObj.SetParameters(Parameters);
+            return anObj
+
+        ## Create a point, which lays on the given face.
+        #  The point will lay in arbitrary place of the face.
+        #  The only condition on it is a non-zero distance to the face boundary.
+        #  Such point can be used to uniquely identify the face inside any
+        #  shape in case, when the shape does not contain overlapped faces.
+        #  @param theFace The referenced face.
+        #  @return New GEOM.GEOM_Object, containing the created point.
+        #
+        #  @ref swig_MakeVertexInsideFace "Example"
+        def MakeVertexInsideFace (self, theFace):
+            """
+            Create a point, which lays on the given face.
+            The point will lay in arbitrary place of the face.
+            The only condition on it is a non-zero distance to the face boundary.
+            Such point can be used to uniquely identify the face inside any
+            shape in case, when the shape does not contain overlapped faces.
+
+            Parameters:
+                theFace The referenced face.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created point.
+
+            Example of usage:
+                p_on_face = geompy.MakeVertexInsideFace(Face)
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.BasicOp.MakePointOnFace(theFace)
+            RaiseIfFailed("MakeVertexInsideFace", self.BasicOp)
             return anObj
 
         ## Create a point on intersection of two lines.
@@ -900,7 +931,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created tangent.
 
             Example of usage:
-                tan_on_arc = geompy.MakeTangentOnCurve(Arc, 0.7) #(GEOM_Object, Double)->GEOM_Object
+                tan_on_arc = geompy.MakeTangentOnCurve(Arc, 0.7)
             """
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
@@ -1983,7 +2014,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created disk.
 
             Example of usage:
-                Disk3 = geompy.MakeDiskR(100., 1)   #(1 Doubles, 1 Int)->GEOM_Object
+                Disk3 = geompy.MakeDiskR(100., 1)
             """
             # Example: see GEOM_TestAll.py
             theR,Parameters = ParseParameters(theR)

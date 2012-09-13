@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -212,6 +211,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
     case PointOn_CurveByCoord:   fType = POINT_CURVE_COORD; break;
     case PointOn_SurfaceByParam: fType = POINT_SURFACE_PAR; break;
     case PointOn_SurfaceByCoord: fType = POINT_SURFACE_COORD; break;
+    case PointOn_Face:           fType = POINT_FACE_ANY; break;
     default: break;
     }
   Handle(GEOM_Function) aFunction = aPoint->AddFunction(GEOMImpl_PointDriver::GetID(), fType);
@@ -254,6 +254,10 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
       aPI.SetX(theParam1);
       aPI.SetY(theParam2);
       aPI.SetZ(theParam3);
+      break;
+    case PointOn_Face:
+      aPI.SetSurface(aRefFunction);
+      break;
     default: break;
     }
   
@@ -285,19 +289,24 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
                                    << theGeomObj << ", " << theParam1 << ", " << theRefPoint <<  ")";
       break;
     case PointOn_CurveByCoord:
-  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurveByCoord("
-                               << theGeomObj << ", " << theParam1 
-                               << ", " << theParam2 << ", " << theParam3 << ")";
+      GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurveByCoord("
+                                   << theGeomObj << ", " << theParam1 
+                                   << ", " << theParam2 << ", " << theParam3 << ")";
       break;
     case PointOn_SurfaceByParam:
-  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnSurface("
-                               << theGeomObj << ", " << theParam1 
-                               << ", " << theParam2 << ")";
+      GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnSurface("
+                                   << theGeomObj << ", " << theParam1 
+                                   << ", " << theParam2 << ")";
       break;
     case PointOn_SurfaceByCoord:
-  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnSurfaceByCoord("
-                               << theGeomObj << ", " << theParam1 
-                               << ", " << theParam2 << ", " << theParam3 << ")";
+      GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnSurfaceByCoord("
+                                   << theGeomObj << ", " << theParam1 
+                                   << ", " << theParam2 << ", " << theParam3 << ")";
+      break;
+    case PointOn_Face:
+      GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexInsideFace("
+                                   << theGeomObj << ")";
+      break;
     default: break;
     }
 
@@ -370,6 +379,15 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnSurfaceByCoord
   return makePointOnGeom(theSurface, theXParam, theYParam, theZParam, PointOn_SurfaceByCoord);
 }
 
+//=============================================================================
+/*!
+ *  MakePointOnFace
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnFace (Handle(GEOM_Object) theFace)
+{
+  return makePointOnGeom(theFace, 0., 0., 0., PointOn_Face);
+}
 
 //=============================================================================
 /*!

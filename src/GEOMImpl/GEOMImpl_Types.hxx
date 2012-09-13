@@ -115,7 +115,8 @@
 #define POINT_SURFACE_PAR        5
 #define POINT_CURVE_COORD        6
 #define POINT_SURFACE_COORD      7
-#define POINT_CURVE_LENGTH       8 
+#define POINT_CURVE_LENGTH       8
+#define POINT_FACE_ANY           9
 
 // Vector
 #define VECTOR_TWO_PNT  1

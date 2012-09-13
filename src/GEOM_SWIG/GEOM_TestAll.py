@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : GEOM_usinggeom.py
@@ -193,6 +192,7 @@ def TestAll (geompy, math):
   #Test point on surface creation
   p_on_face = geompy.MakeVertexOnSurface(Face, 0.1, 0.8) #(GEOM_Object, Double, Double)->GEOM_Object
   p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(Face, 0., 0., 0.) #(GEOM_Object, Double, Double, Double)->GEOM_Object
+  p_on_face3 = geompy.MakeVertexInsideFace(Face) #(GEOM_Object)->GEOM_Object
 
   # Test plane from existing face creation
   Plane2 = geompy.MakePlaneFace(Face, trimsize)      #(GEOM_Object, Double)->GEOM_Object
@@ -386,6 +386,7 @@ def TestAll (geompy, math):
 
   id_p_on_face = geompy.addToStudy(p_on_face, "Vertex on Face (0.1, 0.8)")
   id_p_on_face2 = geompy.addToStudy(p_on_face2, "Vertex on Face at(0., 0., 0.)")
+  id_p_on_face3 = geompy.addToStudy(p_on_face3, "Vertex inside Face")
 
   id_Prism1   = geompy.addToStudy(Prism1,     "Prism by Two Pnt")
   id_Shell1   = geompy.addToStudy(Shell1,   "Shell from Prism1 faces")

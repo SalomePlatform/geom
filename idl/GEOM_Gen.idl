@@ -540,6 +540,16 @@ module GEOM
                                            in double theYParameter,
                                            in double theZParameter);
 
+    /*!
+     *  \brief Create a point, which lays on the given face.
+     *         The point will lay in arbitrary place of the face.
+     *         The only condition on it is a non-zero distance to the face boundary.
+     *         Such point can be used to uniquely identify the face inside any
+     *         shape in case, when the shape does not contain overlapped faces.
+     *  \param theFace The referenced face.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointOnFace (in GEOM_Object theFace);
 
     /*!
      *  \brief Create a point, on two lines intersection.

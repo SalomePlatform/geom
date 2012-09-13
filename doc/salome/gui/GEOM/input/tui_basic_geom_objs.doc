@@ -37,6 +37,7 @@ Add_line = geompy.MakeLineTwoPnt(px, py)
 arc_face = geompy.MakeFaceWires([Arc, Add_line], 1)
 p_on_face1 = geompy.MakeVertexOnSurface(arc_face, 0.5, 0.5)
 p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(arc_face, 35, 35, 35)
+p_on_face3 = geompy.MakeVertexInsideFace(arc_face)
 
 
 # add objects in the study
@@ -54,6 +55,7 @@ id_p_on_arc3  = geompy.addToStudy(p_on_arc3, "Vertex on Arc by point projection"
 id_p_inter    = geompy.addToStudy(p_inter,   "Vertex on Lines Intersection")
 id_p_on_face1 = geompy.addToStudy(p_on_face1, "Vertex on face by parameter")
 id_p_on_face2 = geompy.addToStudy(p_on_face2, "Vertex on face by point projection")
+id_p_on_face3 = geompy.addToStudy(p_on_face3, "Vertex inside face")
 
 # display vertices
 gg.createAndDisplayGO(id_p0)

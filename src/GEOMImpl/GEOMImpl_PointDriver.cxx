@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -26,6 +25,7 @@
 #include <GEOMImpl_IPoint.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
+#include <GEOMAlgo_Tools3D.hxx>
 
 #include <ShapeAnalysis.hxx>
 
@@ -124,8 +124,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     aPnt = gp_Pnt(aPI.GetX(), aPI.GetY(), aPI.GetZ());
   }
   else if (aType == POINT_XYZ_REF) {
-    Handle(GEOM_Function) aRefPoint = aPI.GetRef();
-    TopoDS_Shape aRefShape = aRefPoint->GetValue();
+    Handle(GEOM_Function) aRefFunc = aPI.GetRef();
+    TopoDS_Shape aRefShape = aRefFunc->GetValue();
     if (aRefShape.ShapeType() != TopAbs_VERTEX) {
       Standard_TypeMismatch::Raise
         ("Point creation aborted : referenced shape is not a vertex");
@@ -134,8 +134,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     aPnt = gp_Pnt(P.X() + aPI.GetX(), P.Y() + aPI.GetY(), P.Z() + aPI.GetZ());
   }
   else if (aType == POINT_CURVE_PAR) {
-    Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
-    TopoDS_Shape aRefShape = aRefCurve->GetValue();
+    Handle(GEOM_Function) aRefFunc = aPI.GetCurve();
+    TopoDS_Shape aRefShape = aRefFunc->GetValue();
     if (aRefShape.ShapeType() != TopAbs_EDGE) {
       Standard_TypeMismatch::Raise
         ("Point On Curve creation aborted : curve shape is not an edge");
@@ -146,8 +146,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     aPnt = aCurve->Value(aP);
   }
   else if (aType == POINT_CURVE_COORD) {
-    Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
-    TopoDS_Shape aRefShape = aRefCurve->GetValue();
+    Handle(GEOM_Function) aRefFunc = aPI.GetCurve();
+    TopoDS_Shape aRefShape = aRefFunc->GetValue();
     if (aRefShape.ShapeType() != TopAbs_EDGE) {
       Standard_TypeMismatch::Raise
         ("Point On Curve creation aborted : curve shape is not an edge");
@@ -160,12 +160,12 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
   }
   else if (aType == POINT_CURVE_LENGTH) {
     // RefCurve
-    Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
-    if (aRefCurve.IsNull()) {
+    Handle(GEOM_Function) aRefFunc = aPI.GetCurve();
+    if (aRefFunc.IsNull()) {
       Standard_NullObject::Raise
         ("Point On Curve creation aborted : curve object is null");
     }
-    TopoDS_Shape aRefShape1 = aRefCurve->GetValue();
+    TopoDS_Shape aRefShape1 = aRefFunc->GetValue();
     if (aRefShape1.ShapeType() != TopAbs_EDGE) {
       Standard_TypeMismatch::Raise
         ("Point On Curve creation aborted : curve shape is not an edge");
@@ -222,8 +222,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     aPnt = AdapCurve.Value(aParam);
   }
   else if (aType == POINT_SURFACE_PAR) {
-    Handle(GEOM_Function) aRefCurve = aPI.GetSurface();
-    TopoDS_Shape aRefShape = aRefCurve->GetValue();
+    Handle(GEOM_Function) aRefFunc = aPI.GetSurface();
+    TopoDS_Shape aRefShape = aRefFunc->GetValue();
     if (aRefShape.ShapeType() != TopAbs_FACE) {
       Standard_TypeMismatch::Raise
         ("Point On Surface creation aborted : surface shape is not a face");
@@ -238,8 +238,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     aPnt = aSurf->Value(U,V);
   }
   else if (aType == POINT_SURFACE_COORD) {
-    Handle(GEOM_Function) aRefCurve = aPI.GetSurface();
-    TopoDS_Shape aRefShape = aRefCurve->GetValue();
+    Handle(GEOM_Function) aRefFunc = aPI.GetSurface();
+    TopoDS_Shape aRefShape = aRefFunc->GetValue();
     if (aRefShape.ShapeType() != TopAbs_FACE) {
       Standard_TypeMismatch::Raise
         ("Point On Surface creation aborted : surface shape is not a face");
@@ -249,6 +249,17 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
       Standard_ConstructionError::Raise
         ("Point On Surface creation aborted : cannot project point");
     }
+  }
+  else if (aType == POINT_FACE_ANY) {
+    Handle(GEOM_Function) aRefFunc = aPI.GetSurface();
+    TopoDS_Shape aRefShape = aRefFunc->GetValue();
+    if (aRefShape.ShapeType() != TopAbs_FACE) {
+      Standard_TypeMismatch::Raise
+        ("Point On Surface creation aborted : surface shape is not a face");
+    }
+    TopoDS_Face F = TopoDS::Face(aRefShape);
+    gp_Pnt2d aP2d;
+    GEOMAlgo_Tools3D::PntInFace(F, aPnt, aP2d);
   }
   else if (aType == POINT_LINES_INTERSECTION) {
     Handle(GEOM_Function) aRef1 = aPI.GetLine1();
