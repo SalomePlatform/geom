@@ -85,7 +85,7 @@ private:
   void                               displayTrihedron( int );
   
   void                               displayAngle( double, double, double, int, bool store = false );
-  void                               displayLength( double theLength = -1.0, bool store = false );
+  void                               displayLength( double theLength = -1.0, bool store = false, int type = 1);
 
   bool                               createShapes( GEOM::GEOM_Object_ptr,
                                                    TopoDS_Shape&,

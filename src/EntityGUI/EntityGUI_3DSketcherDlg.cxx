@@ -48,14 +48,8 @@
 #include <SalomeApp_Tools.h>
 
 //OCCT includes
-//#include <BRep_Tool.hxx>
-//#include <TopExp.hxx>
-//#include <TopExp_Explorer.hxx>
-//#include <TopoDS_Vertex.hxx>
 #include <TopoDS.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
-//#include <BRepBuilderAPI_Transform.hxx>
-//#include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -85,6 +79,13 @@ enum
   TYPE_TWO_ANGLES
 };
 
+enum
+{
+  OXY,
+  OYZ,
+  OXZ
+};
+
 class Locker
 {
 public:
@@ -110,6 +111,7 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg (GeometryGUI* theGeometryGUI, Q
     myLineWidth(lineWidth),
     myGeometryGUI(theGeometryGUI),
     myLengthIORedoList()
+//     myLastAngleNormal()
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_UNDO")));
@@ -201,7 +203,7 @@ EntityGUI_3DSketcherDlg::~EntityGUI_3DSketcherDlg()
 void EntityGUI_3DSketcherDlg::Init()
 {
   myOK = false;
-  myOrientation = 1;
+  myOrientation = OXY;
   myPrsType = NONE;
 
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
@@ -370,21 +372,21 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
   }
 
   // Display and store angle dimensions interactive objects in Prs
-  if (GroupType->RadioButton3->isChecked())
+  if (GroupType->RadioButton3->isChecked())    // ANGLES
   {
     double anAngle2 = 0.0;
     if (GroupAngles->checkBox->isChecked())
       anAngle2 = GroupAngles->SpinBox_DA2->value();
 
-    // Store length dimensions
-    displayLength(GroupAngles->SpinBox_DL->value(), /*store =*/true);
     // Store angle dimensions
     displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2,
                  GroupAngles->SpinBox_DL->value(), myOrientation,  /*store =*/true);
+    // Store length dimensions
+    displayLength(GroupAngles->SpinBox_DL->value(), /*store =*/true, /*type=*/myPrsType);
   }
 
   // Display and store store length dimension interactive object in Prs
-  if (GroupType->RadioButton1->isChecked() ||
+  if (GroupType->RadioButton1->isChecked() ||   // ABSOLUTE or RELATIVE coordinates
       GroupType->RadioButton2->isChecked())
   {
     displayLength(-1, /*store=*/true);
@@ -776,11 +778,11 @@ void EntityGUI_3DSketcherDlg::BoxChecked (bool checked)
 void EntityGUI_3DSketcherDlg::ButtonClicked (bool checked)
 {
   if (GroupAngles->radioButton_1->isChecked())
-    myOrientation = 1;
+    myOrientation = OXY;
   else if (GroupAngles->radioButton_2->isChecked())
-    myOrientation = 2;
+    myOrientation = OYZ;
   else
-    myOrientation = 3;
+    myOrientation = OXZ;
 
   GEOMBase_Helper::displayPreview(true, false, true, true, myLineWidth);
 }
@@ -1087,14 +1089,14 @@ void EntityGUI_3DSketcherDlg::displayPreview (GEOM::GEOM_Object_ptr object,
     displayTrihedron(2);
 
   // Display preview of suitable dimension presentations
-  if (myMode == 2) // ANGLES
+  if (myMode == 2)                 // ANGLES
   {
     double anAngle2 = 0.0;
     if (GroupAngles->checkBox->isChecked())
       anAngle2 = GroupAngles->SpinBox_DA2->value();
 
     displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation);
-    displayLength(GroupAngles->SpinBox_DL->value());
+    displayLength(GroupAngles->SpinBox_DL->value(), /*store=*/false, /*type=*/myPrsType);
   }
   if (myMode == 0 || myMode == 1)  // COORDINATES
     displayLength();
@@ -1152,7 +1154,7 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
 
   switch(theOrientation)
   {
-    case 1: //OXY
+    case OXY:
     {
       P1 = gp_Pnt(Last.x + theLength,Last.y,Last.z);    // X direction
       P2 = gp_Pnt(Last.x + theLength * cos(theAngle1 * M_PI / 180.),
@@ -1160,7 +1162,7 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
                   Last.z);
       break;
     }
-    case 2: //OYZ
+    case OYZ:
     {
       P1 = gp_Pnt(Last.x, Last.y + theLength,Last.z);     // Y direction
       P2 = gp_Pnt(Last.x,
@@ -1168,7 +1170,7 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
                   Last.z + theLength * sin(theAngle1 * M_PI / 180.));
       break;
     }
-    case 3: //OXZ
+    case OXZ:
     {
       P1 = gp_Pnt(Last.x + theLength,Last.y,Last.z);     // X direction
       P2 = gp_Pnt(Last.x + theLength * cos(theAngle1 * M_PI / 180.) ,
@@ -1189,7 +1191,7 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
   gce_MakePln gce_MP (Last_Pnt, P1, P2);
   Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
 
-  // Covert angles to string
+  // Convert angles to string
   std::string Angle1_str = doubleToString(theAngle1);
   std::string Angle2_str = doubleToString(theAngle2);
 
@@ -1213,9 +1215,7 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
   {
     // Erase dimensions presentations
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
-
     myAnglePrs->PrependObject(anAngleIO);
-    myPrsType = TYPE_ANGLE;  // Overwrite type with ANGLE
 
     // Display modified presentation
     if (isAngleVisible)
@@ -1225,7 +1225,8 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
   {
     aSPrs->AddObject(anAngleIO);
   }
-
+  myPrsType = TYPE_ANGLE;  // Overwrite type with ANGLE
+  
   if (twoAngles)
   {
     gce_MakePln gce_MP2(Last_Pnt, P2, Current_Pnt);
@@ -1242,9 +1243,7 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
     {
       // Erase dimensions presentations
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
-
       myAnglePrs->PrependObject(anAngle2IO);
-      myPrsType = TYPE_TWO_ANGLES;   // Overwrite type with TWO_ANGLES
 
       // Display modified presentation
       if (isAngleVisible)
@@ -1254,6 +1253,8 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
     {
       aSPrs->AddObject(anAngle2IO);
     }
+    
+    myPrsType = TYPE_TWO_ANGLES;   // Overwrite type with TWO_ANGLES
   }
 
   if (!store && isAngleVisible)
@@ -1266,14 +1267,17 @@ void EntityGUI_3DSketcherDlg::displayAngle (double theAngle1, double theAngle2,
 // Function : displayLength()
 // Purpose  : Method for displaying length dimensions
 //================================================================
-void EntityGUI_3DSketcherDlg::displayLength (double theLength, bool store)
+void EntityGUI_3DSketcherDlg::displayLength (double theLength, bool store, int type)
 {
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
 
   XYZ Last    = getLastPoint();
   XYZ Current = getCurrentPoint();
   XYZ Penultimate = getPenultimatePoint();
-
+  
+  bool withAngle = (type == TYPE_ANGLE || type == TYPE_TWO_ANGLES);
+  bool twoAngles = (type == TYPE_TWO_ANGLES);
+  
   double aLength = 0.0;
 
   if (theLength < 0)  // Calculate length if not given
@@ -1294,54 +1298,75 @@ void EntityGUI_3DSketcherDlg::displayLength (double theLength, bool store)
 
   gp_Vec Vec1(P1,P2);
   gp_Vec Vec2(P1,P3);
+  gp_Vec Vec3 = Vec1;
 
   TopoDS_Vertex aVert1 = BRepBuilderAPI_MakeVertex(P1);
   TopoDS_Vertex aVert2 = BRepBuilderAPI_MakeVertex(P2);
 
   // Convert length to string
   std::string aLength_str = doubleToString(aLength);
-
-  // Plane for the presentation
-  if (Abs(Vec1.CrossMagnitude(Vec2)) < Precision::Confusion()) // Check colinearity
+  
+  // Define the suitable plane for right relative positioning of dimension presentations
+  
+  gp_Dir aNormal;                  // Normal defining the plane of the presentation 
+  if (withAngle)                   // If one angle
   {
-    Vec2 = gp_Vec(gp::DX());
+    switch(myOrientation)
+    {
+      case OXY:
+      {
+        aNormal = gp::DZ().Crossed(gp_Dir(Vec1));//--> the plane is orthogonal to the angle presentation   
+                                                 //    plane and contains the current edge
+        if (twoAngles)            // If two angles 
+        { 
+          gp_XYZ Vec1_XY(Vec1.X(),Vec1.Y(),0.0);// --> define Vec3 as the projection of the current 
+          Vec3 = gp_Vec(Vec1_XY);               //     edge on the plane chosen for the first angle
+        }
+        break;
+      }
+      case OYZ:
+      {
+        aNormal = gp::DX().Crossed(gp_Dir(Vec1));
+        if (twoAngles)
+        {
+          gp_XYZ Vec1_YZ(0.0,Vec1.Y(),Vec1.Z());
+          Vec3 = gp_Vec(Vec1_YZ);
+        }
+        break;
+      }
+      case OXZ:
+      {
+        aNormal = gp::DY().Crossed(gp_Dir(Vec1));
+        if (twoAngles)
+        {
+          gp_XYZ Vec1_XZ(Vec1.X(),0.0,Vec1.Z());
+          Vec3 = gp_Vec(Vec1_XZ);
+        }
+        break;
+      }
+    }
+    if(twoAngles                  // If two angles 
+      && Abs(Vec1.CrossMagnitude(Vec3)) > Precision::Confusion())                                  
+    {                                                                    
+      aNormal = gp_Dir(Vec1.Crossed(Vec3));//       --> set the normal as the cross product of
+    }                                      //           the current edge with its projection           
+  }                                        //           it ensures that the dimension changes     
+  else
+  {
+    // Check colinearity
     if (Abs(Vec1.CrossMagnitude(Vec2)) < Precision::Confusion())
     {
-      Vec2 = gp_Vec(gp::DY());
+      Vec2 = gp_Vec(gp::DX());
+      if (Abs(Vec1.CrossMagnitude(Vec2)) < Precision::Confusion())
+      {
+        Vec2 = gp_Vec(gp::DY());
+      }
     }
-  }
-
-  // Normal to the representation plane
-  gp_Dir Normal(Vec2.Crossed(Vec1));
-
-//   // Check orientation of plane in order to avoid it to change during an Angle preview
-//   MESSAGE("repere0  abs = "<< Abs(Normal.Dot(gp::DZ())))
-//   if (Abs(Normal.Dot(gp::DZ())) > Precision::Confusion())
-//   {
-//     MESSAGE("repere1")
-//     if (Normal.Dot(gp::DZ()) < 0.0){
-//       MESSAGE("REVERSE on OZ basis")
-//       Normal.Reverse();
-//     }
-//   }
-//   else if (Abs(Normal.Dot(gp::DX())) > Precision::Confusion())
-//   {
-//     MESSAGE("repere2")
-//     if (Normal.Dot(gp::DX()) < 0.0){
-//       MESSAGE("REVERSE on OX basis")
-//       Normal.Reverse();
-//     }
-//   }
-//   else if (Abs(Normal.Dot(gp::DY())) > Precision::Confusion())
-//   {
-//     MESSAGE("repere3")
-//     if (Normal.Dot(gp::DY()) < 0.0){
-//       MESSAGE("REVERSE on OY basis")
-//       Normal.Reverse();
-//     }
-//   }
-
-  gce_MakePln gce_MP(P1, Normal);
+    aNormal = gp_Dir(Vec1.Crossed(Vec2)); // If no angles --> the plane is the one formed by
+  }                                       //                  the last edge and the current one
+  
+  // Plane construction
+  gce_MakePln gce_MP(P1, aNormal);
   Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
 
   Handle(AIS_LengthDimension) anIO =
@@ -1362,9 +1387,7 @@ void EntityGUI_3DSketcherDlg::displayLength (double theLength, bool store)
   {
     // Erase length dimensions presentation
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
-
     myLengthPrs->PrependObject(anIO);
-    myPrsType = TYPE_LENGTH;
 
     // Display modified presentation
     if (isLengthVisible)
@@ -1380,6 +1403,8 @@ void EntityGUI_3DSketcherDlg::displayLength (double theLength, bool store)
       GEOMBase_Helper::displayPreview(aSPrs, true, true);
     }
   }
+  
+  myPrsType = TYPE_LENGTH;
 }
 
 //================================================================
