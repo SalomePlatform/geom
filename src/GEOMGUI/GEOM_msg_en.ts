@@ -8,6 +8,10 @@
         <translation>Error: can&apos;t build object</translation>
     </message>
     <message>
+        <source>PAL_NOT_DONE_ERROR</source>
+        <translation>Operation aborted</translation>
+    </message>
+    <message>
         <source>CHANGE_ORIENTATION_NEW_OBJ_NAME</source>
         <translation>Invert</translation>
     </message>

@@ -18,11 +18,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_CheckSelfIntersectionsDlg.cxx
-// Author : Vladimir KLYACHIN, Open CASCADE S.A.S. (vladimir.klyachin@opencascade.com)
 
 #include "MeasureGUI_CheckSelfIntersectionsDlg.h"
 #include "MeasureGUI_Widgets.h"
@@ -144,7 +142,13 @@ void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
     SalomeApp_Tools::QtCatchCorbaException(e);
     isFailed = true;
   }
-  if (isFailed) {
+
+  if (!anOper->IsDone()) {
+    aMsg += tr(anOper->GetErrorCode());
+    myGrp->TextView1->setText(aMsg);
+    return;
+  }
+  else if (isFailed) {
     aMsg += tr("GEOM_CHECK_SELF_INTERSECTIONS_FAILED");
     myGrp->TextView1->setText(aMsg);
     return;
