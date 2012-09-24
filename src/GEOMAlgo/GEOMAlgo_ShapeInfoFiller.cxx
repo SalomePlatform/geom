@@ -570,9 +570,11 @@ void GEOMAlgo_ShapeInfoFiller::FillEdge(const TopoDS_Shape& aS)
     aPc.SetXYZ(aXYZc);
     aInfo.SetLocation(aPc);
     //
-    gp_Vec aVec(aPc, aP2);
-    gp_Dir aDir(aVec);
-    aInfo.SetDirection(aDir);
+    if ( aLength >= gp::Resolution() ) {
+      gp_Vec aVec(aPc, aP2);
+      gp_Dir aDir(aVec);
+      aInfo.SetDirection(aDir);
+    }
   }
   //modified by NIZNHY-PKV Tue Jul 03 10:19:06 2012t
   // Line
