@@ -176,6 +176,9 @@ namespace GEOMOp {
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT
     OpGroupCreatePopup    = 6002,   // POPUP MENU - CREATE GROUP
+    OpGroupUnion          = 6003,   // POPUP MENU - UNION GROUPS
+    OpGroupIntersect      = 6004,   // POPUP MENU - INTERSECT GROUPS
+    OpGroupCut            = 6005,   // POPUP MENU - CUT GROUPS
     // BlocksGUI -------------------//--------------------------------
     OpHexaSolid           = 6100,   // MENU BLOCKS - HEXAHEDRAL SOLID
     OpMultiTransform      = 6101,   // MENU BLOCKS - MULTI-TRANSFORMATION

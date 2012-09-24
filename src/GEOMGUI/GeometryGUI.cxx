@@ -557,6 +557,9 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpGroupCreate:        // MENU GROUP - CREATE
   case GEOMOp::OpGroupCreatePopup:   // POPUP MENU - CREATE GROUP
   case GEOMOp::OpGroupEdit:          // MENU GROUP - EDIT
+  case GEOMOp::OpGroupUnion:         // MENU GROUP - UNION
+  case GEOMOp::OpGroupIntersect:     // MENU GROUP - INTERSECT
+  case GEOMOp::OpGroupCut:           // MENU GROUP - CUT
     libName = "GroupGUI";
     break;
   case GEOMOp::OpHexaSolid:          // MENU BLOCKS - HEXAHEDRAL SOLID
@@ -749,6 +752,9 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::OpGroupCreate, "GROUP_CREATE" );
   createGeomAction( GEOMOp::OpGroupEdit,   "GROUP_EDIT" );
+  createGeomAction( GEOMOp::OpGroupUnion,  "GROUP_UNION" );
+  createGeomAction( GEOMOp::OpGroupIntersect, "GROUP_INTERSECT" );
+  createGeomAction( GEOMOp::OpGroupCut,    "GROUP_CUT" );
 
   createGeomAction( GEOMOp::OpReimport,    "RELOAD_IMPORTED" );
 
@@ -949,8 +955,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(), newEntId, -1 );
 
   int groupId = createMenu( tr( "MEN_GROUP" ), newEntId, -1 );
-  createMenu( GEOMOp::OpGroupCreate, groupId, -1 );
-  createMenu( GEOMOp::OpGroupEdit,   groupId, -1 );
+  createMenu( GEOMOp::OpGroupCreate,    groupId, -1 );
+  createMenu( GEOMOp::OpGroupEdit,      groupId, -1 );
+  createMenu( GEOMOp::OpGroupUnion,     groupId, -1 );
+  createMenu( GEOMOp::OpGroupIntersect, groupId, -1 );
+  createMenu( GEOMOp::OpGroupCut,       groupId, -1 );
 
   createMenu( separator(), newEntId, -1 );
 
@@ -1201,7 +1210,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpCheckCompound,    measureTbId );
   createTool( GEOMOp::OpGetNonBlocks,     measureTbId );
   createTool( GEOMOp::OpCheckSelfInters,  measureTbId );
-  
+
   int picturesTbId = createTool( tr( "TOOL_PICTURES" ) );
   createTool( GEOMOp::OpPictureImport,    picturesTbId );
   #ifdef WITH_OPENCV

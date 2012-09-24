@@ -3,12 +3,24 @@
 \page work_with_groups_page Working with groups
 
 Creation and editing groups of sub-shapes of a geometrical object makes
-handling sub-shapes much easier. This functionality is available in OCC
-viewer only.
+handling sub-shapes much easier. Also some Boolean operations on
+groups are available.
 
-<br><h2>Create a group</h2>
+<ul>
+<li>\ref create_groups_anchor "Create a Group"</li>
+<li>\ref edit_groups_anchor "Edit a Group"</li>
+<li>\ref union_groups_anchor "Union Groups"</li>
+<li>\ref intersect_groups_anchor "Intersect Groups"</li>
+<li>\ref cut_groups_anchor "Cut Groups"</li>
+</ul>
+
+<br>
+\anchor create_groups_anchor
+<h2>Create a group</h2>
 
 \image html image56.png
+
+This functionality is available in OCC viewer only.
 
 To create a group of sub-shapes of a geometrical object in the main
 menu select <b>New entity > Group > Create</b>
@@ -72,18 +84,28 @@ ShapeType),</em> where MainShape is a shape for which the group is
 created, ShapeType is a type of shapes in the created group.
 \n <b>Arguments:</b> 1 Shape + Type of sub-shape.
 
+Our <b>TUI Scripts</b> provide you with useful examples of 
+\ref tui_create_groups_anchor "Create a Group" operation.
+
 <b>Example:</b>
 
 \image html image193.png "Groups on a cylinder"
 
-
-<br><h2>Edit a group</h2>
+<br>
+\anchor edit_groups_anchor
+<h2>Edit a group</h2>
 
 \image html image57.png
+
+This functionality is available in OCC viewer only.
 
 To \b Edit an existing group in the main menu select <b>New entity >
 Group > Edit</b>. This menu is designed in the same way as the
 <b>Create a group</b> menu.
+
+\n <b>Dialog Box:</b> 
+
+\image html editgroup.png
 
 \n The \b Result of the operation will be a \b GEOM_Object.
 
@@ -101,11 +123,80 @@ the sub-shape to be removed from the group.</li>
 
 \n <b>Arguments:</b> 1 Shape + its sub-shapes.
 
-\n <b>Dialog Box:</b> 
+Our <b>TUI Scripts</b> provide you with useful examples of 
+\ref tui_edit_groups_anchor "Edit a Group" operation.
 
-\image html editgroup.png
+<br>
+\anchor union_groups_anchor
+<h2>Union of groups</h2>
+
+This operation allows to create a new group in such a way that all
+sub-shapes that are present in the initial groups will be added to
+the new one.
+
+<em>To union groups:</em>
+<ol>
+<li>In the <b>New Entity</b> menu select the \b Group - <b>Union Groups</b> item.
+The following dialog box will appear:
+
+\image html groups_union_dlg.png
+
+In this dialog box you should specify the name of the resulting group
+and set of groups which will be united.
+</li>
+<li>Click the \b Apply or <b>Apply and Close</b> button to confirm creation of the group.</li>
+</ol>
+
+<b>See Also</b> a sample TUI Script of a 
+\ref tui_union_groups_anchor "Union of Groups" operation.
+
+<br>
+\anchor intersect_groups_anchor
+<h2>Intersection of groups</h2>
+
+This operation allows to create a new group in such a way that only
+sub-shapes that are present in all initial groups together are added to the
+new one.
+
+<em>To intersect groups:</em>
+<ol>
+<li>In the <b>New Entity</b> menu select the \b Group - <b>Intersect Groups</b> item.
+The following dialog box will appear:
+
+\image html groups_intersect_dlg.png
+
+In this dialog box you should specify the name of the resulting group
+and set of groups which will be intersected.
+</li>
+<li>Click the \b Apply or <b>Apply and Close</b> button to confirm creation of the group.</li>
+</ol>
+
+<b>See Also</b> a sample TUI Script of an  
+\ref tui_intersect_groups_anchor "Intersection of Groups" operation.
+
+<br>
+\anchor cut_groups_anchor
+<h2>Cut of groups</h2>
+
+This operation allows to create a new group in such a way that all
+sub-shapes that are present in the main groups but are absent in the
+tool groups are added to the new one.
+
+<em>To cut groups:</em>
+<ol>
+<li>In the <b>New Entity</b> menu select the \b Group - <b>Cut Groups</b> item.
+The following dialog box will appear:
+
+\image html groups_cut_dlg.png
+
+In this dialog box you should specify the name of the resulting group
+and groups which will be cut.
+</li>
+<li>Click the \b Apply or <b>Apply and Close</b> button to confirm creation of the
+group.</li>
+</ol>
 
 Our <b>TUI Scripts</b> provide you with useful examples of 
-\ref tui_working_with_groups_page "Working with Groups".
+\ref tui_cut_groups_anchor "Cut of Groups" operation.
 
 */

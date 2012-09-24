@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_IGroupOperations_i_HeaderFile
 #define _GEOM_IGroupOperations_i_HeaderFile
@@ -33,17 +32,17 @@
 
 #include "GEOMImpl_IGroupOperations.hxx"
 
-class GEOM_I_EXPORT GEOM_IGroupOperations_i : 
+class GEOM_I_EXPORT GEOM_IGroupOperations_i :
     public virtual POA_GEOM::GEOM_IGroupOperations,
     public virtual GEOM_IOperations_i
 {
  public:
   GEOM_IGroupOperations_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine,
-			   ::GEOMImpl_IGroupOperations* theImpl);
+                           ::GEOMImpl_IGroupOperations* theImpl);
   ~GEOM_IGroupOperations_i();
 
-  GEOM::GEOM_Object_ptr CreateGroup  (GEOM::GEOM_Object_ptr theMainShape, CORBA::Long theShapeType);
- 
+  GEOM::GEOM_Object_ptr CreateGroup (GEOM::GEOM_Object_ptr theMainShape, CORBA::Long theShapeType);
+
   void AddObject (GEOM::GEOM_Object_ptr theGroup, CORBA::Long theSubShapeId);
 
   void RemoveObject (GEOM::GEOM_Object_ptr theGroup, CORBA::Long theSubShapeId);
@@ -56,8 +55,16 @@ class GEOM_I_EXPORT GEOM_IGroupOperations_i :
 
   void DifferenceIDs (GEOM::GEOM_Object_ptr theGroup, const GEOM::ListOfLong& theSubShapes);
 
+  GEOM::GEOM_Object_ptr UnionGroups (GEOM::GEOM_Object_ptr theGroup1, GEOM::GEOM_Object_ptr theGroup2);
+  GEOM::GEOM_Object_ptr IntersectGroups (GEOM::GEOM_Object_ptr theGroup1, GEOM::GEOM_Object_ptr theGroup2);
+  GEOM::GEOM_Object_ptr CutGroups (GEOM::GEOM_Object_ptr theGroup1, GEOM::GEOM_Object_ptr theGroup2);
+
+  GEOM::GEOM_Object_ptr UnionListOfGroups (const GEOM::ListOfGO& theGList);
+  GEOM::GEOM_Object_ptr IntersectListOfGroups (const GEOM::ListOfGO& theGList);
+  GEOM::GEOM_Object_ptr CutListOfGroups (const GEOM::ListOfGO& theGList1, const GEOM::ListOfGO& theGList2);
+
   CORBA::Long GetType (GEOM::GEOM_Object_ptr theGroup);
-  
+
   GEOM::GEOM_Object_ptr GetMainShape (GEOM::GEOM_Object_ptr theGroup);
 
   GEOM::ListOfLong* GetObjects (GEOM::GEOM_Object_ptr theGroup);

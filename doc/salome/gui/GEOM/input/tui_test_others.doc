@@ -79,6 +79,9 @@
 \anchor swig_UnionIDs
 \until print " ", ObjectID
 
+\anchor swig_bop_on_groups
+\until Box, Group_CL_2_4
+
 \anchor swig_GetType
 \until Type of elements
 

@@ -772,6 +772,10 @@
             <translation>common.png</translation>
         </message>
         <message>
+            <source>ICO_GROUP_INTERSECT</source>
+            <translation>common.png</translation>
+        </message>
+        <message>
             <source>ICO_COMPOUND</source>
             <translation>build_compound.png</translation>
         </message>
@@ -789,6 +793,10 @@
         </message>
         <message>
             <source>ICO_CUT</source>
+            <translation>cut.png</translation>
+        </message>
+        <message>
+            <source>ICO_GROUP_CUT</source>
             <translation>cut.png</translation>
         </message>
         <message>
@@ -893,6 +901,10 @@
         </message>
         <message>
             <source>ICO_FUSE</source>
+            <translation>fuse.png</translation>
+        </message>
+        <message>
+            <source>ICO_GROUP_UNION</source>
             <translation>fuse.png</translation>
         </message>
         <message>

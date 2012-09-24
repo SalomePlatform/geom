@@ -3696,6 +3696,65 @@ module GEOM
     void DifferenceIDs (in GEOM_Object theGroup, in ListOfLong theSubShapes);
 
     /*!
+     *  \brief Union of two groups.
+     *  New group is created. It will contain all entities
+     *  which are present in groups theGroup1 and theGroup2.
+     *  \param theGroup1, theGroup2 are the initial GEOM groups
+     *                              to create the united group from.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object UnionGroups (in GEOM_Object theGroup1, in GEOM_Object theGroup2);
+
+    /*!
+     *  \brief Intersection of two groups.
+     *  New group is created. It will contain only those entities
+     *  which are present in both groups theGroup1 and theGroup2.
+     *  \param theGroup1, theGroup2 are the initial GEOM groups to get common part of.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object IntersectGroups (in GEOM_Object theGroup1, in GEOM_Object theGroup2);
+
+    /*!
+     *  \brief Cut of two groups.
+     *  New group is created. It will contain entities which are
+     *  present in group theGroup1 but are not present in group theGroup2.
+     *  \param theGroup1 is a GEOM group to include elements of.
+     *  \param theGroup2 is a GEOM group to exclude elements of.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object CutGroups (in GEOM_Object theGroup1, in GEOM_Object theGroup2);
+
+    /*!
+     *  \brief Union of list of groups.
+     *  New group is created. It will contain all entities that are
+     *  present in groups listed in theGList.
+     *  \param theGList is a list of GEOM groups to create the united group from.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object UnionListOfGroups (in ListOfGO theGList);
+
+    /*!
+     *  \brief Intersection of list of groups.
+     *  New group is created. It will contain only entities
+     *  which are simultaneously present in the groups listed in theGList.
+     *  \param theGList is a list of GEOM groups to get common part of.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object IntersectListOfGroups (in ListOfGO theGList);
+
+    /*!
+     *  \brief Cut of lists of groups.
+     *  New group is created. It will contain only entities
+     *  which are present in groups listed in theGList1 but 
+     *  are not present in groups from theGList2.
+     *  \param theGList1 is a list of GEOM groups to include elements of.
+     *  \param theGList2 is a list of GEOM groups to exclude elements of.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object CutListOfGroups (in ListOfGO theGList1,
+                                 in ListOfGO theGList2);
+
+    /*!
      *  \brief Returns a type of sub-objects stored in the group
      *  \param theGroup is a GEOM group which type is returned.
      */

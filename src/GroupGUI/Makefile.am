@@ -15,13 +15,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
-# GEOM GROUPGUI : 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : GroupGUI
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Libraries targets
@@ -30,16 +28,20 @@ lib_LTLIBRARIES = libGroupGUI.la
 # header files 
 salomeinclude_HEADERS =		\
 	GroupGUI.h		\
+	GroupGUI_BooleanDlg.h	\
 	GroupGUI_GroupDlg.h
 
 dist_libGroupGUI_la_SOURCES =	\
 	GroupGUI.h		\
+	GroupGUI_BooleanDlg.h	\
 	GroupGUI_GroupDlg.h	\
 	GroupGUI.cxx		\
+	GroupGUI_BooleanDlg.cxx	\
 	GroupGUI_GroupDlg.cxx
 
-MOC_FILES =			\
-	GroupGUI_moc.cxx	\
+MOC_FILES =				\
+	GroupGUI_moc.cxx		\
+	GroupGUI_BooleanDlg_moc.cxx	\
 	GroupGUI_GroupDlg_moc.cxx 
 
 nodist_libGroupGUI_la_SOURCES =	\

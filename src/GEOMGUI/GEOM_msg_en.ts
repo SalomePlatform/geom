@@ -2575,6 +2575,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Edit</translation>
     </message>
     <message>
+        <source>MEN_GROUP_UNION</source>
+        <translation>Union Groups</translation>
+    </message>
+    <message>
+        <source>MEN_GROUP_INTERSECT</source>
+        <translation>Intersect Groups</translation>
+    </message>
+    <message>
+        <source>MEN_GROUP_CUT</source>
+        <translation>Cut Groups</translation>
+    </message>
+    <message>
         <source>MEN_RELOAD_IMPORTED</source>
         <translation>Reload From Disk</translation>
     </message>
@@ -3351,6 +3363,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Edit a group</translation>
     </message>
     <message>
+        <source>STB_GROUP_UNION</source>
+        <translation>Union Groups</translation>
+    </message>
+    <message>
+        <source>STB_GROUP_INTERSECT</source>
+        <translation>Intersect Groups</translation>
+    </message>
+    <message>
+        <source>STB_GROUP_CUT</source>
+        <translation>Cut Groups</translation>
+    </message>
+    <message>
         <source>STB_RELOAD_IMPORTED</source>
         <translation>Reload imported shape from its original place on disk</translation>
     </message>
@@ -3949,6 +3973,18 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_GROUP_EDIT</source>
         <translation>Edit a group</translation>
+    </message>
+    <message>
+        <source>TOP_GROUP_UNION</source>
+        <translation>Union Groups</translation>
+    </message>
+    <message>
+        <source>TOP_GROUP_INTERSECT</source>
+        <translation>Intersect Groups</translation>
+    </message>
+    <message>
+        <source>TOP_GROUP_CUT</source>
+        <translation>Cut Groups</translation>
     </message>
     <message>
         <source>TOP_HEX_SOLID</source>
@@ -5067,6 +5103,45 @@ Number of sketch points too small</translation>
     <message>
         <source>NO_GROUP</source>
         <translation>Please, select a group to edit</translation>
+    </message>
+</context>
+<context>
+    <name>GroupGUI_BooleanDlg</name>
+    <message>
+        <source>GEOM_UNION</source>
+        <translation>Union</translation>
+    </message>
+    <message>
+        <source>GEOM_UNION_TITLE</source>
+        <translation>Union Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERSECT</source>
+        <translation>Intersect</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERSECT_TITLE</source>
+        <translation>Intersect Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_CUT</source>
+        <translation>Cut</translation>
+    </message>
+    <message>
+        <source>GEOM_CUT_TITLE</source>
+        <translation>Cut Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_GROUPS</source>
+        <translation>Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_MAIN_GROUPS</source>
+        <translation>Main Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_TOOL_GROUPS</source>
+        <translation>Tool Groups</translation>
     </message>
 </context>
 <context>
