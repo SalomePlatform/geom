@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -40,10 +39,8 @@
 #include <NMTDS_Tools.hxx>
 #include <NMTDS_InterfPool.hxx>
 #include <NMTDS_PInterfPool.hxx>
-//#include <NMTDS_PassKeyBoolean.hxx>
 #include <NMTDS_PairBoolean.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
-//#include <NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx>
 #include <NMTDS_ListIteratorOfListOfPairBoolean.hxx>
 
 #include <Basics_OCCTVersion.hxx>
@@ -58,21 +55,22 @@
 #include <TFunction_Logbook.hxx>
 #include <TDF_Tool.hxx>
 
+#include <BRep_Builder.hxx>
+#include <BRep_TFace.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Surface.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepCheck.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_Shell.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
 
 #include <Bnd_Box.hxx>
-
-#include <GProp_GProps.hxx>
-#include <GProp_PrincipalProps.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -81,48 +79,48 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <ShapeAnalysis.hxx>
+#include <ShapeAnalysis_Surface.hxx>
+#include <ShapeFix_Shape.hxx>
+
+#include <GeomAPI_IntSS.hxx>
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+
 #include <GeomAbs_SurfaceType.hxx>
-#include <Geom_Surface.hxx>
-#include <Geom_Plane.hxx>
-#include <Geom_SphericalSurface.hxx>
-#include <Geom_CylindricalSurface.hxx>
-#include <Geom_ToroidalSurface.hxx>
-#include <Geom_ConicalSurface.hxx>
-#include <Geom_SurfaceOfLinearExtrusion.hxx>
-#include <Geom_SurfaceOfRevolution.hxx>
+
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BSplineSurface.hxx>
-#include <Geom_RectangularTrimmedSurface.hxx>
-#include <Geom_OffsetSurface.hxx>
+#include <Geom_Circle.hxx>
+#include <Geom_ConicalSurface.hxx>
+#include <Geom_CylindricalSurface.hxx>
 #include <Geom_Line.hxx>
+#include <Geom_OffsetSurface.hxx>
+#include <Geom_Plane.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
+#include <Geom_SphericalSurface.hxx>
+#include <Geom_Surface.hxx>
+#include <Geom_SurfaceOfLinearExtrusion.hxx>
+#include <Geom_SurfaceOfRevolution.hxx>
+#include <Geom_ToroidalSurface.hxx>
+
+#include <GeomLProp_CLProps.hxx>
+#include <GeomLProp_SLProps.hxx>
+
+#include <GProp_GProps.hxx>
+#include <GProp_PrincipalProps.hxx>
 
 #include <gp_Pln.hxx>
 #include <gp_Lin.hxx>
 
-#include <GeomAPI_ProjectPointOnCurve.hxx>
-#include <GeomLProp_CLProps.hxx>
-#include <GeomLProp_SLProps.hxx>
-#include <ShapeAnalysis.hxx>
-#include <ShapeAnalysis_Surface.hxx>
-
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
-
-#include <BRepClass3d_SolidClassifier.hxx>
-#include <BRep_Builder.hxx>
-#include <GeomAPI_IntSS.hxx>
-#include <Geom_Circle.hxx>
-#include <Geom_SphericalSurface.hxx>
-#include <Geom_ToroidalSurface.hxx>
-#include <ShapeFix_Shape.hxx>
-#include <TopoDS_Compound.hxx>
-
 
 //=============================================================================
 /*!
@@ -794,10 +792,10 @@ gp_Ax3 GEOMImpl_IMeasureOperations::GetPosition (const TopoDS_Shape& theShape)
       if(theShape.Orientation() == TopAbs_REVERSED)
       {
         gp_Dir Vx =  aResult.XDirection();
-        gp_Dir N  =  aResult.Direction().Mirrored(Vx); 
+        gp_Dir N  =  aResult.Direction().Mirrored(Vx);
         gp_Pnt P  =  aResult.Location();
         aResult = gp_Ax3(P, N, Vx);
-      }       
+      }
     }
   }
 
@@ -1206,6 +1204,17 @@ void GEOMImpl_IMeasureOperations::GetBoundingBox
 #if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
+    BRepBuilderAPI_Copy aCopyTool (aShape);
+    if (!aCopyTool.IsDone()) {
+      SetErrorCode("GetBoundingBox Error: Bad shape detected");
+      return;
+    }
+
+    aShape = aCopyTool.Shape();
+
+    // remove triangulation to obtain more exact boundaries
+    BRepTools::Clean(aShape);
+
     BRepBndLib::Add(aShape, B);
     B.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
   }
@@ -1386,7 +1395,7 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   const NMTDS_ShapesDataStructure& aDS = *(aCSI.DS());
   Standard_Integer aNbS = aDS.NumberOfShapesOfTheObject();
 
-  // 3. Get the pairs of interfered shapes 
+  // 3. Get the pairs of interfered shapes
   NMTDS_PInterfPool pIP = aCSI.IP();
   //const NMTDS_ListOfPassKeyBoolean& aLPKB = pIP->Get();
   const NMTDS_ListOfPairBoolean& aLPKB = pIP->Get();
