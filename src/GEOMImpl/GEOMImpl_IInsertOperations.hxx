@@ -72,6 +72,8 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
                                                 const TCollection_AsciiString& theFormat,
                                                 Handle(TCollection_HAsciiString)& theLibName);
 
+  Standard_EXPORT Handle(GEOM_Object) RestoreShape (std::istringstream& theStream);
+
   Standard_EXPORT int LoadTexture(const TCollection_AsciiString& theTextureFile);
 
   Standard_EXPORT int AddTexture(int theWidth, int theHeight,

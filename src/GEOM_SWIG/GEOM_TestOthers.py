@@ -95,6 +95,11 @@ def TestExportImport (geompy, shape):
   os.remove(fileExportImportIGES)
   os.remove(fileExportImportSTEP)
 
+  # Test RestoreShape from binary BRep stream
+  aStream = shape.GetShapeStream()
+  aNewShape = geompy.RestoreShape(aStream)
+  geompy.addToStudy(aNewShape, "aNewShape")
+
   print "OK"
 
 

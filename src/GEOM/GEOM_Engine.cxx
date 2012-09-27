@@ -1023,6 +1023,16 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
   //Check if its internal function which doesn't requires dumping
   if(aDescr == "None") return false;
 
+  //Check the very specific case of RestoreShape function,
+  //which is not dumped, but the result can be published by the user.
+  //We do not publish such objects to decrease danger of dumped script failure.
+  if(aDescr.Value(1) == '#') {
+    TCollection_AsciiString anObjEntry;
+    TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
+    theIgnoreObjs.insert(anObjEntry);
+    return false;
+  }
+
   // 0020001 PTv, check for critical functions, which require dump of objects
   if (theIsPublished)
   {

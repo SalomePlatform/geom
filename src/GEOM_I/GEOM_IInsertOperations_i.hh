@@ -61,6 +61,8 @@ class GEOM_I_EXPORT GEOM_IInsertOperations_i :
   void ExportTranslators (GEOM::string_array_out theFormats,
                           GEOM::string_array_out thePatterns);
 
+  GEOM::GEOM_Object_ptr RestoreShape (const SALOMEDS::TMPFile& theStream);
+
   CORBA::Long LoadTexture(const char* theTextureFile);
   CORBA::Long AddTexture(CORBA::Long theWidth, CORBA::Long theHeight,
                          const SALOMEDS::TMPFile& theTexture);

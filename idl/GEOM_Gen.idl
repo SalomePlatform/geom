@@ -360,7 +360,8 @@ module GEOM
  //   # Internal methods (For sub-shape identification)
  //   ######################################################################
     /*!
-     *  \brief Get geometric shape of the object as a byte stream
+     *  \brief Get geometric shape of the object as a byte stream in BRep format
+     *  \note GEOM_IInsertOperations::RestoreShape() method can be used to restore shape from a BRep stream.
      */
     SALOMEDS::TMPFile GetShapeStream();
 
@@ -3277,6 +3278,14 @@ module GEOM
      */
     void ExportTranslators (out string_array theFormats,
                             out string_array thePatterns);
+
+    /*!
+     *  \brief Read a shape from the binary stream, containing its bounding representation (BRep).
+     *  \note GEOM_Object::GetShapeStream() method can be used to obtain the shape's BRep stream.
+     *  \param theStream The BRep binary stream.
+     *  \return New GEOM_Object, containing the shape, read from theStream.
+     */
+    GEOM_Object RestoreShape (in SALOMEDS::TMPFile theStream);
 
     /*!
      * \brief Load texture from file

@@ -46,7 +46,9 @@
 
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 #include <gp_Pnt.hxx>
 
 #if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
@@ -579,6 +581,45 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
 
   return ( myResMgr->Find("Import") || myResMgr->Find("Export") ||
            myResMgrUser->Find("Import") || myResMgrUser->Find("Export"));
+}
+
+//=============================================================================
+/*!
+ *  RestoreShape
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IInsertOperations::RestoreShape (std::istringstream& theStream)
+{
+  SetErrorCode(KO);
+
+  //Add a new result object
+  Handle(GEOM_Object) result = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+
+  //Add a Copy function
+  Handle(GEOM_Function) aFunction = result->AddFunction(GEOMImpl_CopyDriver::GetID(), COPY_WITHOUT_REF);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_CopyDriver::GetID()) return NULL;
+
+  //Read a shape from the stream
+  TopoDS_Shape aShape;
+  BRep_Builder B;
+  BRepTools::Read(aShape, theStream, B);
+  if (aShape.IsNull()) {
+    SetErrorCode("RestoreShape error: BREP reading failed");
+  }
+
+  //Set function value
+  aFunction->SetValue(aShape);
+
+  //Special dump to avoid restored shapes publication.
+  //See correcponding code in GEOM_Engine.cxx (method ProcessFunction)
+  GEOM::TPythonDump(aFunction) << "#";
+
+  SetErrorCode(OK);
+
+  return result;
 }
 
 int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTextureFile)

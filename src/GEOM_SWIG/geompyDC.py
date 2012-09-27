@@ -2169,11 +2169,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theR2 Radius of the second cone base.
                 theH Cone height.
 
-           Note:
+            Note:
                 If both radiuses are non-zero, the cone will be truncated.
                 If the radiuses are equal, a cylinder will be created instead.
 
-           Returns:
+            Returns:
                 New GEOM.GEOM_Object, containing the created cone.
             """
             # Example: see GEOM_TestAll.py
@@ -2209,7 +2209,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 If both radiuses are non-zero, the cone will be truncated.
                 If the radiuses are equal, a cylinder will be created instead.
 
-           Returns:
+            Returns:
                 New GEOM.GEOM_Object, containing the created cone.
             """
             # Example: see GEOM_TestAll.py
@@ -7339,6 +7339,31 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             return self.ImportFile(theFileName, "STEP")
+
+        ## Read a shape from the binary stream, containing its bounding representation (BRep).
+        #  @note This method will not be dumped to the python script by DumpStudy functionality.
+        #  @note GEOM.GEOM_Object.GetShapeStream() method can be used to obtain the shape's BRep stream.
+        #  @param theStream The BRep binary stream.
+        #  @return New GEOM_Object, containing the shape, read from theStream.
+        #
+        #  @ref swig_Import_Export "Example"
+        def RestoreShape (self, theStream):
+            """
+            Read a shape from the binary stream, containing its bounding representation (BRep).
+
+            Note:
+                shape.GetShapeStream() method can be used to obtain the shape's BRep stream.
+
+            Parameters: 
+                theStream The BRep binary stream.
+
+            Returns:
+                New GEOM_Object, containing the shape, read from theStream.
+            """
+            # Example: see GEOM_TestOthers.py
+            anObj = self.InsertOp.RestoreShape(theStream)
+            RaiseIfFailed("RestoreShape", self.InsertOp)
+            return anObj
 
         ## Export the given shape into a file with given name.
         #  @param theObject Shape to be stored in the file.
