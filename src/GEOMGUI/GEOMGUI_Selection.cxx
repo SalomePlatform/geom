@@ -18,11 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File   : GEOMGUI_Selection.cxx
 // Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
-//
+
 #include "GEOMGUI_Selection.h"
 
 #include "GeometryGUI.h"
@@ -159,10 +158,12 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = isVectorsMode( idx );
   else if ( p == "topLevel" )
     v = topLevel( idx );
-  else if ( p == "hasHiddenChildren" )
-    v = hasHiddenChildren( idx );
-  else if ( p == "hasShownChildren" )
-    v = hasShownChildren( idx );
+  else if ( p == "hasChildren" )
+    v = hasChildren( idx );
+  else if ( p == "hasConcealedChildren" )
+    v = hasConcealedChildren( idx );
+  else if ( p == "hasDisclosedChildren" )
+    v = hasDisclosedChildren( idx );
   else if ( p == "compoundOfVertices" )
     v = compoundOfVertices( idx );
   else if ( p == "imported" )
@@ -446,7 +447,23 @@ bool GEOMGUI_Selection::isCompoundOfVertices( GEOM::GEOM_Object_ptr obj )
   return ret;
 }
 
-bool GEOMGUI_Selection::hasHiddenChildren( const int index ) const
+bool GEOMGUI_Selection::hasChildren( const int index ) const
+{
+  bool ok = false;
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );
+
+  if ( appStudy ) {
+    QString anEntry = entry( index );
+    _PTR(Study) study = appStudy->studyDS();
+    if ( study && !anEntry.isEmpty() ) {
+      _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
+      ok = hasChildren( aSO );
+    }
+  }
+  return ok;
+}
+
+bool GEOMGUI_Selection::hasConcealedChildren( const int index ) const
 {
   bool OK = false;
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );
@@ -462,7 +479,7 @@ bool GEOMGUI_Selection::hasHiddenChildren( const int index ) const
   return OK;
 }
 
-bool GEOMGUI_Selection::hasShownChildren( const int index ) const
+bool GEOMGUI_Selection::hasDisclosedChildren( const int index ) const
 {
   bool OK = false;
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );

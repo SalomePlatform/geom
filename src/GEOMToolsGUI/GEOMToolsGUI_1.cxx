@@ -952,7 +952,7 @@ void GEOMToolsGUI::OnSelectOnly(int mode)
   }
 }
 
-void GEOMToolsGUI::OnShowHideChildren( bool show )
+void GEOMToolsGUI::OnDiscloseConcealChildren( bool show )
 {
   SALOME_ListIO selected;
   SalomeApp_Application* app =

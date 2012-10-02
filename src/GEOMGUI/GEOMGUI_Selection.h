@@ -18,11 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File   : GEOMGUI_Selection.h
 // Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
-//
+
 #ifndef GEOMGUI_SELECTION_H
 #define GEOMGUI_SELECTION_H
 
@@ -66,8 +65,9 @@ private:
   QString               displayMode( const int ) const;
   QString               selectionMode() const;
   bool                  isVectorsMode( const int ) const;
-  bool                  hasHiddenChildren( const int ) const;
-  bool                  hasShownChildren( const int ) const;
+  bool                  hasChildren( const int ) const;
+  bool                  hasConcealedChildren( const int ) const;
+  bool                  hasDisclosedChildren( const int ) const;
   bool                  compoundOfVertices( const int ) const;
   bool                  topLevel( const int ) const;
   bool                  isPhysicalMaterial( const int ) const;

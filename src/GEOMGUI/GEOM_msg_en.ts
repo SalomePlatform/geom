@@ -2447,6 +2447,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show Only</translation>
     </message>
     <message>
+        <source>MEN_SHOW_ONLY_CHILDREN</source>
+        <translation>Show Only Children</translation>
+    </message>
+    <message>
         <source>MEN_BRING_TO_FRONT</source>
         <translation>Bring To Front</translation>
     </message>
@@ -2703,12 +2707,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create Group</translation>
     </message>
     <message>
-        <source>MEN_POP_SHOW_CHILDREN</source>
-        <translation>Show Children</translation>
+        <source>MEN_POP_DISCLOSE_CHILDREN</source>
+        <translation>Disclose child items</translation>
     </message>
     <message>
-        <source>MEN_POP_HIDE_CHILDREN</source>
-        <translation>Hide Children</translation>
+        <source>MEN_POP_CONCEAL_CHILDREN</source>
+        <translation>Conceal child items</translation>
     </message>
     <message>
         <source>MEN_POP_UNPUBLISH_OBJ</source>
@@ -3275,6 +3279,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show only</translation>
     </message>
     <message>
+        <source>STB_SHOW_ONLY_CHILDREN</source>
+        <translation>Show Only Children</translation>
+    </message>
+    <message>
         <source>STB_EDGE</source>
         <translation>Build an edge</translation>
     </message>
@@ -3479,10 +3487,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create Group</translation>
     </message>
     <message>
-        <source>STB_POP_SHOW_CHILDREN</source>
-        <translation>Show child objects</translation>
-    </message>
-    <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
         <translation>Unpublish object</translation>
     </message>
@@ -3491,8 +3495,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Publish object</translation>
     </message>
     <message>
-        <source>STB_POP_HIDE_CHILDREN</source>
-        <translation>Hide child objects</translation>
+        <source>STB_POP_DISCLOSE_CHILDREN</source>
+        <translation>Disclose child items</translation>
+    </message>
+    <message>
+        <source>STB_POP_CONCEAL_CHILDREN</source>
+        <translation>Conceal child items</translation>
     </message>
     <message>
         <source>STB_POP_ISOS</source>
@@ -3895,6 +3903,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show only</translation>
     </message>
     <message>
+        <source>TOP_SHOW_ONLY_CHILDREN</source>
+        <translation>Show Only Children</translation>
+    </message>
+    <message>
         <source>TOP_EDGE</source>
         <translation>Build edge</translation>
     </message>
@@ -4095,10 +4107,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create Group</translation>
     </message>
     <message>
-        <source>TOP_POP_SHOW_CHILDREN</source>
-        <translation>Show Children</translation>
-    </message>
-    <message>
         <source>TOP_POP_UNPUBLISH_OBJ</source>
         <translation>Unpublish object</translation>
     </message>
@@ -4107,8 +4115,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Publish object</translation>
     </message>
     <message>
-        <source>TOP_POP_HIDE_CHILDREN</source>
-        <translation>Hide Children</translation>
+        <source>TOP_POP_DISCLOSE_CHILDREN</source>
+        <translation>Disclose child items</translation>
+    </message>
+    <message>
+        <source>TOP_POP_CONCEAL_CHILDREN</source>
+        <translation>Conceal child items</translation>
     </message>
     <message>
         <source>TOP_POP_ISOS</source>

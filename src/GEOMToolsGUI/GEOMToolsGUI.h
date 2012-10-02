@@ -77,7 +77,7 @@ private:
   void         OnNbIsos( ActionType actionType = SHOWDLG );
   void         OnDeflection();
   void         OnSelectOnly(int mode);
-  void         OnShowHideChildren( bool );
+  void         OnDiscloseConcealChildren( bool );
   void         OnUnpublishObject();
   void         OnPublishObject() ;
   void         OnPointMarker();

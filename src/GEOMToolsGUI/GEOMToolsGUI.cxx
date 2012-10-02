@@ -355,9 +355,9 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpNoAutoColor:    // POPUP - DISABLE AUTO COLOR
     OnDisableAutoColor();
     break;
-  case GEOMOp::OpShowChildren:   // POPUP - SHOW CHILDREN
-  case GEOMOp::OpHideChildren:   // POPUP - HIDE CHILDREN
-    OnShowHideChildren( theCommandID == GEOMOp::OpShowChildren );
+  case GEOMOp::OpDiscloseChildren:   // POPUP - SHOW CHILDREN
+  case GEOMOp::OpConcealChildren:   // POPUP - HIDE CHILDREN
+    OnDiscloseConcealChildren( theCommandID == GEOMOp::OpDiscloseChildren );
     break;
   case GEOMOp::OpPointMarker:    // POPUP - POINT MARKER
     OnPointMarker();

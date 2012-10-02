@@ -50,13 +50,12 @@ namespace GEOMOp {
     OpPointMarker         = 1210,   // POPUP MENU - POINT MARKER
     OpSetTexture          = 1211,   // POPUP MENU - SETTEXTURE
     OpMaterialProperties  = 1212,   // POPUP MENU - MATERIAL PROPERTIES
-    OpShowChildren        = 1250,   // POPUP MENU - SHOW CHILDREN
-    OpHideChildren        = 1251,   // POPUP MENU - HIDE CHILDREN
+    OpDiscloseChildren    = 1250,   // POPUP MENU - DISCLOSE CHILD ITEMS
+    OpConcealChildren     = 1251,   // POPUP MENU - CONCEAL CHILD ITEMS
     OpUnpublishObject     = 1253,   // POPUP MENU - UNPUBLISH
     OpPublishObject       = 1254,   // GEOM ROOT OBJECT - POPUP MENU - PUBLISH
     OpEdgeWidth           = 1260,   // POPUP MENU - LINE WIDTH - EDGE WIDTH
     OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
-
     // DisplayGUI ------------------//--------------------------------
     OpSwitchVectors       = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION
     OpShowAll             = 2002,   // MENU VIEW  - SHOW ALL
@@ -67,6 +66,7 @@ namespace GEOMOp {
     OpShow                = 2100,   // POPUP MENU - SHOW
     OpShowOnly            = 2101,   // POPUP MENU - SHOW ONLY
     OpHide                = 2102,   // POPUP MENU - HIDE
+    OpShowOnlyChildren    = 2103,   // POPUP MENU - SHOW ONLY CHILDREN
     OpWireframe           = 2200,   // POPUP MENU - DISPLAY MODE - WIREFRAME
     OpShading             = 2201,   // POPUP MENU - DISPLAY MODE - SHADING
     OpShadingWithEdges    = 2202,   // POPUP MENU - DISPLAY MODE - SHADING WITH EDGES
