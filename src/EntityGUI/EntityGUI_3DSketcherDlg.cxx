@@ -84,7 +84,7 @@
 // + Améliorer rendu des cotes pour coordonées cylindriques (tailles relatives
 //   de la cote rayon et de la cote hauteur)
 // + Prendre en compte les remarques de Raphaël
-// + Traductions
+// + Traductions                                       Done
 
 enum
 {
@@ -135,11 +135,11 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg (GeometryGUI* theGeometryGUI, Q
 
   GroupType = new EntityGUI_Type(centralWidget());
   GroupType->GroupType2->setTitle(tr("GEOM_COORDINATES_TYPE"));
-  GroupType->GroupType1->setTitle(tr("Scope"));       // TODO translation 
+  GroupType->GroupType1->setTitle(tr("GEOM_MODE"));
   GroupType->RadioButton1->setText(tr("GEOM_SKETCHER_ABS"));
   GroupType->RadioButton2->setText(tr("GEOM_SKETCHER_REL"));
-  GroupType->RadioButton3->setText(tr("(X,Y,Z)")); //TODO translation
-  GroupType->RadioButton4->setText(tr("Angles")); //TODO translation
+  GroupType->RadioButton3->setText(tr("(X,Y,Z)"));
+  GroupType->RadioButton4->setText(tr("GEOM_ANGLES"));
  
   myTypeGroup1 = new QButtonGroup(this);
   myTypeGroup1->setExclusive(true);
@@ -164,14 +164,16 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg (GeometryGUI* theGeometryGUI, Q
   GroupAngles->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
   GroupAngles->buttonUndo->setIcon(image1);
   GroupAngles->buttonRedo->setIcon(image2);
-  GroupAngles->checkBox  ->setText(tr("Angle 2")); //TODO translation
-  GroupAngles->checkBox_2->setText(tr("Height")); //TODO translation
+  GroupAngles->TextLabel1->setText(tr("GEOM_LENGTH"));
+  GroupAngles->TextLabel2->setText(tr("GEOM_ANGLE")); 
+  GroupAngles->checkBox  ->setText(tr("GEOM_ANGLE_2"));
+  GroupAngles->checkBox_2->setText(tr("GEOM_HEIGHT"));
 
   GroupControls = new EntityGUI_Controls(centralWidget());
   GroupControls->GroupBox1->setTitle(tr("GEOM_CONTROLS"));
-  GroupControls->CheckBox1->setText(tr("Show length dimensions")); //TODO translation
-  GroupControls->CheckBox2->setText(tr("Show angle dimensions"));  //TODO translation
-  GroupControls->CheckBox3->setText(tr("Show start/end point coordinates"));  //TODO translation
+  GroupControls->CheckBox1->setText(tr("GEOM_SHOW_LENGTH")); 
+  GroupControls->CheckBox2->setText(tr("GEOM_SHOW_ANGLE"));
+  GroupControls->CheckBox3->setText(tr("GEOM_SHOW_POINTS_COORD"));
   GroupControls->lineEdit_1->setReadOnly(true);
   GroupControls->lineEdit_2->setReadOnly(true);
   GroupControls->lineEdit_3->setReadOnly(true);
@@ -184,6 +186,8 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg (GeometryGUI* theGeometryGUI, Q
   GroupControls->label_4->setText(tr("X:"));
   GroupControls->label_5->setText(tr("Y:"));
   GroupControls->label_6->setText(tr("Z:"));
+  GroupControls->label_7->setText(tr("GEOM_START"));
+  GroupControls->label_8->setText(tr("GEOM_END"));
 
   buttonOk()->setText(tr("GEOM_BUT_END_SKETCH"));
   buttonApply()->setText(tr("GEOM_BUT_CLOSE_SKETCH"));
@@ -1112,7 +1116,6 @@ EntityGUI_3DSketcherDlg::XYZ EntityGUI_3DSketcherDlg::getCurrentPoint() const
 //=================================================================================
 gp_Dir EntityGUI_3DSketcherDlg::getPresentationPlane() const
 { 
-  MESSAGE("EntityGUI_3DSketcherDlg::getPresentationPlane()")
   bool withAngle = (myCoordType == 1);
   bool twoAngles = GroupAngles->checkBox->isChecked();
   
@@ -1434,7 +1437,6 @@ void EntityGUI_3DSketcherDlg::displayLength (gp_Pnt P1,
   if (aLength < Precision::Confusion())
     return;
     
-  MESSAGE("REPERE 001; P1.Distance(P2) = "<<P1.Distance(P2))
   Handle(AIS_LengthDimension) anIO = createAISLengthDimension(aLength, P1, P2, theNormal);
 
   if (store)

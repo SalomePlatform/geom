@@ -114,6 +114,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Angle :</translation>
     </message>
     <message>
+        <source>GEOM_ANGLES</source>
+        <translation>Angles</translation>
+    </message>
+    <message>
+        <source>GEOM_ANGLE_2</source>
+        <translation>Angle 2 :</translation>
+    </message>
+    <message>
         <source>GEOM_ANGLE_1</source>
         <translation>Angle</translation>
     </message>
@@ -1079,6 +1087,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Mirror An Object</translation>
     </message>
     <message>
+        <source>GEOM_MODE</source>
+        <translation>Mode</translation>
+    </message>
+    <message>
         <source>GEOM_MULTIROTATION</source>
         <translation>Multi-Rotation</translation>
     </message>
@@ -1639,6 +1651,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shell Construction</translation>
     </message>
     <message>
+        <source>GEOM_SHOW_LENGTH</source>
+        <translation>Show length dimensions</translation>
+    </message>
+    <message>
+        <source>GEOM_SHOW_ANGLE</source>
+        <translation>Show angle dimensions</translation>
+    </message>
+    <message>
+        <source>GEOM_SHOW_POINTS_COORD</source>
+        <translation>Show start/end point coordinates</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCH</source>
         <translation>Sketch</translation>
     </message>
@@ -1848,7 +1872,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CONTROLS</source>
-        <translation>Dimensions</translation>
+        <translation>Controls</translation>
     </message>
     <message>
         <source>GEOM_SOLID</source>
@@ -1885,6 +1909,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SQUARE</source>
         <translation>Square</translation>
+    </message>
+    <message>
+        <source>GEOM_START</source>
+        <translation>Start :</translation>
+    </message>
+    <message>
+        <source>GEOM_END</source>
+        <translation>End :</translation>
     </message>
     <message>
         <source>GEOM_START_LCS</source>

@@ -110,6 +110,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Angle :</translation>
     </message>
     <message>
+        <source>GEOM_ANGLES</source>
+        <translation>Angles</translation>
+    </message>
+    <message>
+        <source>GEOM_ANGLE_2</source>
+        <translation>Angle 2 :</translation>
+    </message>
+    <message>
         <source>GEOM_ANGLE_1</source>
         <translation>Angle</translation>
     </message>
@@ -836,7 +844,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_HEIGHT</source>
-        <translation>Hauteur:</translation>
+        <translation>Hauteur :</translation>
     </message>
     <message>
         <source>GEOM_HEXAGON</source>
@@ -1057,6 +1065,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_MIRROR_TITLE</source>
         <translation>Refléter un objet</translation>
+    </message>
+    <message>
+        <source>GEOM_MODE</source>
+        <translation>Mode</translation>
     </message>
     <message>
         <source>GEOM_MULTIROTATION</source>
@@ -1619,6 +1631,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construction d&apos;une coque</translation>
     </message>
     <message>
+        <source>GEOM_SHOW_LENGTH</source>
+        <translation>Afficher les cotes de longueur</translation>
+    </message>
+    <message>
+        <source>GEOM_SHOW_ANGLE</source>
+        <translation>Afficher les cotes d'angle</translation>
+    </message>
+    <message>
+        <source>GEOM_SHOW_POINTS_COORD</source>
+        <translation>Afficher les points de départ/arrivée</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCH</source>
         <translation>Esquisse</translation>
     </message>
@@ -1827,6 +1851,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Type de coordonnées</translation>
     </message>
     <message>
+        <source>GEOM_CONTROLS</source>
+        <translation>Eléments de contrôle</translation>
+    </message>
+    <message>
         <source>GEOM_SOLID</source>
         <translation>Solide</translation>
     </message>
@@ -1861,6 +1889,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_SQUARE</source>
         <translation>Carré</translation>
+    </message>
+    <message>
+        <source>GEOM_START</source>
+        <translation>Départ :</translation>
+    </message>
+    <message>
+        <source>GEOM_END</source>
+        <translation>Arrivée :</translation>
     </message>
     <message>
         <source>GEOM_START_LCS</source>
