@@ -1101,9 +1101,18 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
             else if (aCMDpref == "WW") {
               aNewDescr += "sk.close()";
             }
-            else {
-              aNewDescr += "sk.addPointAnglesLength(\"";
-              aNewDescr += aCMDpref + "\", " +
+            else if (aCMDpref.Value(1) == 'O'){
+              TCollection_AsciiString aCMDtrunc = aStrVals.Value(1);
+              aCMDtrunc.Trunc(3);
+              if (aCMDpref.Value(4) == 'C')
+                aNewDescr += "sk.addPointAngleHRad";
+              else
+                aNewDescr += "sk.addPointAnglesRad";
+              if (aCMDpref.Value(5) == 'A')
+                aNewDescr += "Absolute(\"";
+              else
+                aNewDescr += "Relative(\"";
+              aNewDescr += aCMDtrunc + "\", " +
                 aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + aStrVals.Value(4) + ")";
             }
           }

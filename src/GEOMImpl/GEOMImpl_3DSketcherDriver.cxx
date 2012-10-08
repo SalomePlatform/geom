@@ -39,6 +39,8 @@
 
 #include <Standard_ConstructionError.hxx>
 
+#include <utilities.h>
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -214,9 +216,19 @@ Standard_Integer GEOMImpl_3DSketcherDriver::Execute(TFunction_Logbook& log) cons
           if (aStrVals.Length() != 4)
             Standard_ConstructionError::Raise("3D Sketcher error: Bad format of command.");
 
+          char type = aStrVals.Value(1).Value(4);
+          char mode = aStrVals.Value(1).Value(5);
+          
           double anAngle  = aStrVals.Value(2).RealValue() * M_PI/180.0;
-          double anAngle2 = aStrVals.Value(3).RealValue() * M_PI/180.0;
+          double anAngle2 = aStrVals.Value(3).RealValue() * M_PI/180.0; 
           double aLength  = aStrVals.Value(4).RealValue();
+          
+          double aHeight  = aLength * sin(anAngle2);
+          if (type == 'C')
+          {
+            aHeight = aStrVals.Value(3).RealValue();
+            anAngle2 = 0.0;
+          }
 
           double aProjectedLength = aLength * cos(anAngle2);
 
@@ -224,21 +236,28 @@ Standard_Integer GEOMImpl_3DSketcherDriver::Execute(TFunction_Logbook& log) cons
           vp.SetX(aStrVals.Value(2).RealValue());
           vp.SetY(aStrVals.Value(3).RealValue());
           vp.SetZ(aStrVals.Value(4).RealValue());
-
-          if (aStrVals.Value(1) == "OXY") {
-            vp.SetX(p.X() + aProjectedLength * cos(anAngle));
-            vp.SetY(p.Y() + aProjectedLength * sin(anAngle));
-            vp.SetZ(p.Z() + aLength * sin(anAngle2));
+          
+          gp_XYZ pref = gp::Origin().XYZ();                 
+          if(mode == 'R')
+            pref = p;
+          
+          TCollection_AsciiString aTruncatedCommand = aStrVals.Value(1);
+          aTruncatedCommand.Trunc(3);
+          
+          if (aTruncatedCommand == "OXY") {
+            vp.SetX(pref.X() + aProjectedLength * cos(anAngle));
+            vp.SetY(pref.Y() + aProjectedLength * sin(anAngle));
+            vp.SetZ(pref.Z() + aHeight);
           }
-          else if (aStrVals.Value(1) == "OYZ") {
-            vp.SetX(p.X() + aLength * sin(anAngle2));
-            vp.SetY(p.Y() + aProjectedLength * cos(anAngle));
-            vp.SetZ(p.Z() + aProjectedLength * sin(anAngle));
+          else if (aTruncatedCommand == "OYZ") {
+            vp.SetX(pref.X() + aHeight);
+            vp.SetY(pref.Y() + aProjectedLength * cos(anAngle));
+            vp.SetZ(pref.Z() + aProjectedLength * sin(anAngle));
           }
-          else if (aStrVals.Value(1) == "OXZ") {
-            vp.SetX(p.X() + aProjectedLength * cos(anAngle));
-            vp.SetY(p.Y() + aLength * sin(anAngle2));
-            vp.SetZ(p.Z() + aProjectedLength * sin(anAngle));
+          else if (aTruncatedCommand == "OXZ") {
+            vp.SetX(pref.X() + aProjectedLength * cos(anAngle));
+            vp.SetY(pref.Y() + aHeight);
+            vp.SetZ(pref.Z() + aProjectedLength * sin(anAngle));
           }
           else
             Standard_ConstructionError::Raise("3D Sketcher error: Bad format of command.");
@@ -295,7 +314,7 @@ Standard_Integer GEOMImpl_3DSketcherDriver::Execute(TFunction_Logbook& log) cons
   }
   else {
   }
-
+ 
   if (aShape.IsNull()) return 0;
 
   aFunction->SetValue(aShape);
