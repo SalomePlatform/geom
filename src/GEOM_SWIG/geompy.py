@@ -31,13 +31,22 @@ import salome
 import geompyDC
 from salome import *
 
-geom = lcc.FindOrLoadComponent("FactoryServer", "GEOM")
-geom.init_geom(salome.myStudy)
+# retrieve GEOM engine in try/except block
+# to avoid problems in some cases, e.g. when generating documentation
+try:
+    # get GEOM engine
+    geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
+    # initialize GEOM with current study
+    geom.init_geom( salome.myStudy )
 
-# Export the methods of geompyDC
-for k in dir(geom):
-  if k[0] == '_':continue
-  globals()[k]=getattr(geom,k)
-del k
-from geompyDC import ShapeType, GEOM, kind, info, PackData, ReadTexture, EnumToLong
-
+    # export the methods of geompyDC
+    for k in dir( geom ):
+	if k[0] == '_': continue
+	globals()[k] = getattr( geom, k )
+        pass
+    del k
+    from geompyDC import ShapeType, GEOM, kind, info, PackData, ReadTexture, EnumToLong
+    pass
+except:
+    geom = None
+    pass

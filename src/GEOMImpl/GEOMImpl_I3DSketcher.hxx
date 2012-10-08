@@ -15,28 +15,35 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //NOTE: This is an interface to a function for the Sketcher creation.
-//
+
 #include "GEOM_Function.hxx"
 
 #include <TColStd_HArray1OfReal.hxx>
 
-#define SKETCH_ARG_COORDS  1
-
 class GEOMImpl_I3DSketcher
 {
- public:
+public:
 
-  GEOMImpl_I3DSketcher(Handle(GEOM_Function) theFunction): _func(theFunction) {}
+  GEOMImpl_I3DSketcher (Handle(GEOM_Function) theFunction): _func(theFunction) {}
 
-  void SetCoordinates(const Handle(TColStd_HArray1OfReal)& theValue)
-              { _func->SetRealArray(SKETCH_ARG_COORDS, theValue); }
+  void SetCoordinates (const Handle(TColStd_HArray1OfReal)& theValue)
+  { _func->SetRealArray(SKETCH_ARG_COORDS, theValue); }
 
   Handle(TColStd_HArray1OfReal) GetCoordinates() { return _func->GetRealArray(SKETCH_ARG_COORDS); }
 
- private:
+  void SetCommand (const TCollection_AsciiString& theCommand)
+  { _func->SetString(SKETCH_ARG_COMMAND, theCommand); }
+
+  TCollection_AsciiString GetCommand() { return _func->GetString(SKETCH_ARG_COMMAND); }
+
+private:
+
+  enum {
+    SKETCH_ARG_COORDS = 1,
+    SKETCH_ARG_COMMAND = 2
+  };
 
   Handle(GEOM_Function) _func;
 };

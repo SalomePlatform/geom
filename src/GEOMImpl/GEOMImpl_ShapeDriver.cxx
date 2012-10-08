@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMImpl_ShapeDriver.hxx>
 
@@ -349,7 +348,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     unsigned int ind, nbshapes = aShapes->Length();
 
     // add faces
-    BRepBuilderAPI_Sewing aSewing(Precision::Confusion()*10.0);
+    BRepBuilderAPI_Sewing aSewing (Precision::Confusion()*10.0);
     for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
@@ -362,7 +361,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aSewing.Perform();
 
     TopoDS_Shape sh = aSewing.SewedShape();
-    if( sh.ShapeType()==TopAbs_FACE && nbshapes==1 ) {
+
+    if (sh.ShapeType()==TopAbs_FACE && nbshapes==1) {
       // case for creation of shell from one face - PAL12722 (skl 26.06.2006)
       TopoDS_Shell ss;
       B.MakeShell(ss);
@@ -378,8 +378,25 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         ish++;
       }
 
-      if (ish != 1)
-        aShape = aSewing.SewedShape();
+      if (ish != 1) {
+        // try the case of one face (Mantis issue 0021809)
+        TopExp_Explorer expF (sh, TopAbs_FACE);
+        Standard_Integer ifa = 0;
+        for (; expF.More(); expF.Next()) {
+          aShape = expF.Current();
+          ifa++;
+        }
+
+        if (ifa == 1) {
+          TopoDS_Shell ss;
+          B.MakeShell(ss);
+          B.Add(ss,aShape);
+          aShape = ss;
+        }
+        else {
+          aShape = aSewing.SewedShape();
+        }
+      }
     }
 
   }

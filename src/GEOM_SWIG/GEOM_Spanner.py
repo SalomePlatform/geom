@@ -20,18 +20,17 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
 #  GEOM GEOM_SWIG : binding of C++ implementaion with Python
 #  File   : GEOM_Spanner.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
-#  $Header$
+#
 # ! Please, if you edit this example file, update also
 # ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_spanner.doc
 # ! as some sequences of symbols from this example are used during
 # ! documentation generation to identify certain places of this file
-############# MakeSpanner #############
 #
+############# MakeSpanner #############
 def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
 
   ### Variables ###
@@ -304,6 +303,11 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
   isCompOfBlocks6 = BlocksOp.CheckCompoundOfBlocks(Spanner)
   if isCompOfBlocks6 == 0:
     print "Spanner is not a compound of hexahedral solids"
+    (NonBlocks, NonQuads) = geompy.GetNonBlocks(Spanner)
+    if NonBlocks is not None:
+      geompy.addToStudyInFather(Spanner, NonBlocks, "Group of non-hexahedral solids")
+    if NonQuads is not None:
+      geompy.addToStudyInFather(Spanner, NonQuads, "Group of non-quadrangular faces")
   else:
     print "Spanner is a compound of hexahedral solids"
 

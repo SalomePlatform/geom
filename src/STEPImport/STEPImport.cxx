@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File:        STEPImport.cxx
 //  Created:     Wed May 19 14:41:10 2004
@@ -29,7 +28,12 @@
 #include <Basics_Utils.hxx>
 #include <Basics_OCCTVersion.hxx>
 
-#include <BRep_Builder.hxx>
+#include <TDF_ChildIDIterator.hxx>
+#include <TDF_Label.hxx>
+#include <TDataStd_Name.hxx>
+#include <TNaming_Builder.hxx>
+#include <TNaming_NamedShape.hxx>
+
 #include <IFSelect_ReturnStatus.hxx>
 #include <Interface_InterfaceModel.hxx>
 #include <Interface_Static.hxx>
@@ -39,23 +43,23 @@
 #include <StepBasic_ProductDefinitionFormation.hxx>
 #include <StepGeom_GeometricRepresentationItem.hxx>
 #include <StepShape_TopologicalRepresentationItem.hxx>
-#include <TCollection_AsciiString.hxx>
-#include <TDF_ChildIDIterator.hxx>
-#include <TDF_Label.hxx>
-#include <TDataStd_Name.hxx>
-#include <TNaming_Builder.hxx>
-#include <TNaming_NamedShape.hxx>
+#include <TransferBRep.hxx>
+#include <Transfer_Binder.hxx>
+#include <Transfer_TransientProcess.hxx>
+#include <XSControl_TransferReader.hxx>
+#include <XSControl_WorkSession.hxx>
+
+#include <BRep_Builder.hxx>
+
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TransferBRep.hxx>
-#include <Transfer_Binder.hxx>
-#include <Transfer_TransientProcess.hxx>
-#include <XSControl_TransferReader.hxx>
-#include <XSControl_WorkSession.hxx>
+
+#include <TCollection_AsciiString.hxx>
+#include <TColStd_SequenceOfAsciiString.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -87,34 +91,134 @@
 extern "C"
 {
   STEPIMPORT_EXPORT
-  TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
-                       const TCollection_AsciiString& /*theFormatName*/,
-                       TCollection_AsciiString&       theError,
-                       const TDF_Label&               theShapeLabel)
+  Handle(TCollection_HAsciiString) GetValue (const TCollection_AsciiString& theFileName,
+                                             const TCollection_AsciiString& theParameterName,
+                                             TCollection_AsciiString&       theError)
   {
-    MESSAGE("Import STEP model from file " << theFileName.ToCString());
+    Handle(TCollection_HAsciiString) aValue;
+
+    if (theParameterName != "LEN_UNITS") {
+      theError = theParameterName + " parameter reading is not supported by STEP plugin";
+      return aValue;
+    }
+
     // Set "C" numeric locale to save numbers correctly
     Kernel_Utils::Localizer loc;
-    TopoDS_Shape aResShape;
-    //VRV: OCC 4.0 migration
+
     STEPControl_Reader aReader;
-    //VSR: 16/09/09: Convert to METERS
+
     Interface_Static::SetCVal("xstep.cascade.unit","M");
     Interface_Static::SetIVal("read.step.ideas", 1);
     Interface_Static::SetIVal("read.step.nonmanifold", 1);
-    //VRV: OCC 4.0 migration
-    TopoDS_Compound compound;
-    BRep_Builder B;
-    B.MakeCompound(compound);
+
     try {
 #if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
 #endif
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
+      if (status == IFSelect_RetDone) {
+        TColStd_SequenceOfAsciiString anUnitLengthNames;
+        TColStd_SequenceOfAsciiString anUnitAngleNames;
+        TColStd_SequenceOfAsciiString anUnitSolidAngleNames;
+        aReader.FileUnits(anUnitLengthNames, anUnitAngleNames, anUnitSolidAngleNames);
+        if (anUnitLengthNames.Length() > 0) {
+          TCollection_AsciiString aLenUnits = anUnitLengthNames.First();
+          if (aLenUnits == "millimetre")
+            aValue = new TCollection_HAsciiString ("UNIT_MM");
+          else if (aLenUnits == "centimetre")
+            aValue = new TCollection_HAsciiString ("UNIT_CM");
+          else if (aLenUnits == "metre")
+            aValue = new TCollection_HAsciiString ("UNIT_M");
+          else if (aLenUnits == "INCH")
+            aValue = new TCollection_HAsciiString ("UNIT_INCH");
+          // TODO
+          //else if (aLenUnits == "")
+          //  aValue = new TCollection_HAsciiString ("");
+
+          // tmp begin
+          //std::cout << "$$$ --- " << anUnitLengthNames.First();
+          //for (int ii = 2; ii <= anUnitLengthNames.Length(); ii++)
+          //  std::cout << ", " << anUnitLengthNames.Value(ii);
+          //std::cout << std::endl;
+          // tmp end
+        }
+      }
+      else {
+        theError = theFileName + " reading failed";
+      }
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      theError = aFail->GetMessageString();
+    }
+
+    return aValue;
+  }
+
+  STEPIMPORT_EXPORT
+  TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
+                       const TCollection_AsciiString& theFormatName,
+                       TCollection_AsciiString&       theError,
+                       const TDF_Label&               theShapeLabel)
+  {
+    TopoDS_Shape aResShape;
+
+    // Set "C" numeric locale to save numbers correctly
+    Kernel_Utils::Localizer loc;
+
+    STEPControl_Reader aReader;
+
+    //VSR: 16/09/09: Convert to METERS
+    Interface_Static::SetCVal("xstep.cascade.unit","M");
+    Interface_Static::SetIVal("read.step.ideas", 1);
+    Interface_Static::SetIVal("read.step.nonmanifold", 1);
+
+    BRep_Builder B;
+    TopoDS_Compound compound;
+    B.MakeCompound(compound);
+
+    try {
+      OCC_CATCH_SIGNALS;
+
+      IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
 
       if (status == IFSelect_RetDone) {
+
+        // Regard or not the model units
+        if (theFormatName == "STEP_SCALE") {
+          // set UnitFlag to units from file
+          TColStd_SequenceOfAsciiString anUnitLengthNames;
+          TColStd_SequenceOfAsciiString anUnitAngleNames;
+          TColStd_SequenceOfAsciiString anUnitSolidAngleNames;
+          aReader.FileUnits(anUnitLengthNames, anUnitAngleNames, anUnitSolidAngleNames);
+          if (anUnitLengthNames.Length() > 0) {
+            TCollection_AsciiString aLenUnits = anUnitLengthNames.First();
+            if (aLenUnits == "millimetre")
+              Interface_Static::SetCVal("xstep.cascade.unit", "MM");
+            else if (aLenUnits == "centimetre")
+              Interface_Static::SetCVal("xstep.cascade.unit", "CM");
+            else if (aLenUnits == "metre")
+              Interface_Static::SetCVal("xstep.cascade.unit", "M");
+            else if (aLenUnits == "INCH")
+              Interface_Static::SetCVal("xstep.cascade.unit", "INCH");
+            else {
+              theError = "The file contains not supported units.";
+              return aResShape;
+            }
+            // TODO
+            //else if (aLenUnits == "")
+            //  Interface_Static::SetCVal("xstep.cascade.unit", "");
+          }
+        }
+        else {
+          //cout<<"need re-scale a model"<<endl;
+          // set UnitFlag to 'meter'
+          Interface_Static::SetCVal("xstep.cascade.unit","M");
+        }
+
         Standard_Boolean failsonly = Standard_False;
         aReader.PrintCheckLoad(failsonly, IFSelect_ItemsByEntity);
+
         /* Root transfers */
         Standard_Integer nbr = aReader.NbRootsForTransfer();
         aReader.PrintCheckTransfer(failsonly, IFSelect_ItemsByEntity);

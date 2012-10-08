@@ -232,6 +232,7 @@ group_new.png			\
 group_edit.png			\
 glue.png			\
 check_blocks_compound.png	\
+get_non_blocks.png		\
 check_self_intersections.png	\
 free_faces.png			\
 propagate.png			\

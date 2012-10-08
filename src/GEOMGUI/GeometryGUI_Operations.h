@@ -24,7 +24,7 @@
 
 namespace GEOMOp {
   enum {
-    // ToolsGUI ------------------//--------------------------------
+    // ToolsGUI --------------------//--------------------------------
     OpImport              = 1000,   // MENU FILE  - IMPORT
     OpExport              = 1001,   // MENU FILE  - EXPORT
     OpDelete              = 1020,   // MENU EDIT  - DELETE
@@ -50,14 +50,13 @@ namespace GEOMOp {
     OpPointMarker         = 1210,   // POPUP MENU - POINT MARKER
     OpSetTexture          = 1211,   // POPUP MENU - SETTEXTURE
     OpMaterialProperties  = 1212,   // POPUP MENU - MATERIAL PROPERTIES
-    OpShowChildren        = 1250,   // POPUP MENU - SHOW CHILDREN
-    OpHideChildren        = 1251,   // POPUP MENU - HIDE CHILDREN
+    OpDiscloseChildren    = 1250,   // POPUP MENU - DISCLOSE CHILD ITEMS
+    OpConcealChildren     = 1251,   // POPUP MENU - CONCEAL CHILD ITEMS
     OpUnpublishObject     = 1253,   // POPUP MENU - UNPUBLISH
     OpPublishObject       = 1254,   // GEOM ROOT OBJECT - POPUP MENU - PUBLISH
     OpEdgeWidth           = 1260,   // POPUP MENU - LINE WIDTH - EDGE WIDTH
     OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
-
-    // DisplayGUI ----------------//--------------------------------
+    // DisplayGUI ------------------//--------------------------------
     OpSwitchVectors       = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION
     OpShowAll             = 2002,   // MENU VIEW  - SHOW ALL
     OpHideAll             = 2003,   // MENU VIEW  - HIDE ALL
@@ -67,6 +66,7 @@ namespace GEOMOp {
     OpShow                = 2100,   // POPUP MENU - SHOW
     OpShowOnly            = 2101,   // POPUP MENU - SHOW ONLY
     OpHide                = 2102,   // POPUP MENU - HIDE
+    OpShowOnlyChildren    = 2103,   // POPUP MENU - SHOW ONLY CHILDREN
     OpWireframe           = 2200,   // POPUP MENU - DISPLAY MODE - WIREFRAME
     OpShading             = 2201,   // POPUP MENU - DISPLAY MODE - SHADING
     OpShadingWithEdges    = 2202,   // POPUP MENU - DISPLAY MODE - SHADING WITH EDGES
@@ -74,7 +74,7 @@ namespace GEOMOp {
     OpTexture             = 2204,   // POPUP MENU - DISPLAY MODE - TEXTURE
     OpBringToFront        = 2205,   // POPUP MENU - BRING TO FRONT
     OpClsBringToFront     = 2206,
-    // BasicGUI ------------------//--------------------------------
+    // BasicGUI --------------------//--------------------------------
     OpPoint               = 3000,   // MENU NEW ENTITY - BASIC - POINT
     OpLine                = 3001,   // MENU NEW ENTITY - BASIC - LINE
     OpCircle              = 3002,   // MENU NEW ENTITY - BASIC - CIRCLE
@@ -85,7 +85,7 @@ namespace GEOMOp {
     OpCurve               = 3007,   // MENU NEW ENTITY - BASIC - CURVE
     OpLCS                 = 3008,   // MENU NEW ENTITY - BASIC - LOCAL COORDINATE SYSTEM
     OpOriginAndVectors    = 3009,   // MENU NEW ENTITY - BASIC - ORIGIN AND BASE VECTORS
-    // PrimitiveGUI --------------//--------------------------------
+    // PrimitiveGUI ----------------//--------------------------------
     OpBox                 = 3100,   // MENU NEW ENTITY - PRIMITIVES - BOX
     OpCylinder            = 3101,   // MENU NEW ENTITY - PRIMITIVES - CYLINDER
     OpSphere              = 3102,   // MENU NEW ENTITY - PRIMITIVES - SPHERE
@@ -93,12 +93,12 @@ namespace GEOMOp {
     OpCone                = 3104,   // MENU NEW ENTITY - PRIMITIVES - CONE
     OpRectangle           = 3105,   // MENU NEW ENTITY - PRIMITIVES - FACE
     OpDisk                = 3106,   // MENU NEW ENTITY - PRIMITIVES - DISK
-    // GenerationGUI -------------//--------------------------------
+    // GenerationGUI ---------------//--------------------------------
     OpPrism               = 3200,   // MENU NEW ENTITY - GENERATION - EXTRUSION
     OpRevolution          = 3201,   // MENU NEW ENTITY - GENERATION - REVOLUTION
     OpFilling             = 3202,   // MENU NEW ENTITY - GENERATION - FILLING
     OpPipe                = 3203,   // MENU NEW ENTITY - GENERATION - EXTRUSION ALONG PATH
-    // EntityGUI -----------------//--------------------------------
+    // EntityGUI -------------------//--------------------------------
     Op2dSketcher          = 3300,   // MENU NEW ENTITY - SKETCHER
     Op3dSketcher          = 3301,   // MENU NEW ENTITY - 3D SKETCHER
     OpExplode             = 3302,   // MENU NEW ENTITY - EXPLODE
@@ -106,20 +106,19 @@ namespace GEOMOp {
     OpFeatureDetect       = 3303,   // MENU NEW ENTITY - FEATURE DETECTION
 #endif
     OpPictureImport       = 3304,   // MENU NEW ENTITY - IMPORT PICTURE IN VIEWER
-
-    // BuildGUI ------------------//--------------------------------
+    // BuildGUI --------------------//--------------------------------
     OpEdge                = 3400,   // MENU NEW ENTITY - BUILD - EDGE
     OpWire                = 3401,   // MENU NEW ENTITY - BUILD - WIRE
     OpFace                = 3402,   // MENU NEW ENTITY - BUILD - FACE
     OpShell               = 3403,   // MENU NEW ENTITY - BUILD - SHELL
     OpSolid               = 3404,   // MENU NEW ENTITY - BUILD - SOLID
     OpCompound            = 3405,   // MENU NEW ENTITY - BUILD - COMPOUND
-    // BooleanGUI ----------------//--------------------------------
+    // BooleanGUI ------------------//--------------------------------
     OpFuse                = 3500,   // MENU OPERATIONS - BOOLEAN - FUSE
     OpCommon              = 3501,   // MENU OPERATIONS - BOOLEAN - COMMON
     OpCut                 = 3502,   // MENU OPERATIONS - BOOLEAN - CUT
     OpSection             = 3503,   // MENU OPERATIONS - BOOLEAN - SECTION
-    // TransformationGUI ---------//--------------------------------
+    // TransformationGUI -----------//--------------------------------
     OpTranslate           = 3600,   // MENU OPERATIONS - TRANSFORMATION - TRANSLATION
     OpRotate              = 3601,   // MENU OPERATIONS - TRANSFORMATION - ROTATION
     OpChangeLoc           = 3602,   // MENU OPERATIONS - TRANSFORMATION - LOCATION
@@ -130,7 +129,7 @@ namespace GEOMOp {
     OpMultiRotate         = 3607,   // MENU OPERATIONS - TRANSFORMATION - MULTI-ROTATION
     OpReimport            = 3608,   // POPUP MENU - RELOAD IMPORTED
     OpProjection          = 3609,   // MENU OPERATIONS - TRANSFORMATION - PROJECTION
-    // OperationGUI
+    // OperationGUI ----------------//--------------------------------
     OpPartition           = 3700,   // MENU OPERATION - PARTITION
     OpArchimede           = 3701,   // MENU OPERATION - ARCHIMEDE
     OpFillet3d            = 3702,   // MENU OPERATION - FILLET
@@ -142,7 +141,7 @@ namespace GEOMOp {
     OpSharedShapes        = 3708,   // MENU OPERATION - GET SHARED SHAPES
     OpExtrudedBoss        = 3709,   // MENU OPERATION - ETRUDED BOSS
     OpExtrudedCut         = 3710,   // MENU OPERATION - ETRUDED CUT
-    // RepairGUI -----------------//--------------------------------
+    // RepairGUI -------------------//--------------------------------
     OpSewing              = 4000,   // MENU REPAIR - SEWING
     OpSuppressFaces       = 4001,   // MENU REPAIR - SUPPRESS FACES
     OpSuppressHoles       = 4002,   // MENU REPAIR - SUPPRESS HOLES
@@ -158,7 +157,7 @@ namespace GEOMOp {
     OpLimitTolerance      = 4012,   // MENU REPAIR - LIMIT TOLERANCE
     OpGlueEdges           = 4013,   // MENU REPAIR - GLUE EDGES
     OpFuseEdges           = 4014,   // MENU REPAIR - FUSE COLLINEAR EDGES
-    // MeasureGUI ----------------//--------------------------------
+    // MeasureGUI ------------------//--------------------------------
     OpProperties          = 5000,   // MENU MEASURES - PROPERTIES
     OpCenterMass          = 5001,   // MENU MEASURES - CENTRE OF MASS
     OpInertia             = 5002,   // MENU MEASURES - INERTIA
@@ -172,22 +171,26 @@ namespace GEOMOp {
     OpCheckCompound       = 5010,   // MENU MEASURES - CHECK COMPOUND OF BLOCKS
     OpPointCoordinates    = 5011,   // MENU MEASURES - POINT COORDINATES
     OpCheckSelfInters     = 5012,   // MENU MEASURES - CHECK SELF INTERSECTIONS
-    // GroupGUI ------------------//--------------------------------
+    OpGetNonBlocks        = 5013,   // MENU MEASURES - GET NON BLOCKS
+    // GroupGUI --------------------//--------------------------------
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT
     OpGroupCreatePopup    = 6002,   // POPUP MENU - CREATE GROUP
-    // BlocksGUI -----------------//--------------------------------
+    OpGroupUnion          = 6003,   // POPUP MENU - UNION GROUPS
+    OpGroupIntersect      = 6004,   // POPUP MENU - INTERSECT GROUPS
+    OpGroupCut            = 6005,   // POPUP MENU - CUT GROUPS
+    // BlocksGUI -------------------//--------------------------------
     OpHexaSolid           = 6100,   // MENU BLOCKS - HEXAHEDRAL SOLID
     OpMultiTransform      = 6101,   // MENU BLOCKS - MULTI-TRANSFORMATION
     OpQuadFace            = 6102,   // MENU BLOCKS - QUADRANGLE FACE
     OpPropagate           = 6103,   // MENU BLOCKS - PROPAGATE
     OpExplodeBlock        = 6104,   // MENU BLOCKS - EXPLODE ON BLOCKS
-    // AdvancedGUI ---------------//--------------------------------
+    // AdvancedGUI -----------------//--------------------------------
     OpAdvancedNoOp        = 10000,  // NO OPERATION (advanced operations base)
     OpPipeTShape          = 10001,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
-//     OpPipeTShapeGroups  = 10002,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
-    OpDividedDisk            = 10003,  // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
-    OpDividedCylinder            = 10004,  // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
+    //OpPipeTShapeGroups  = 10002,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
+    OpDividedDisk         = 10003,  // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
+    OpDividedCylinder     = 10004,  // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
     //@@ insert new functions before this line @@ do not remove this line @@//
   };
 }

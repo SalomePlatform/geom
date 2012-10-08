@@ -2,7 +2,12 @@
 
 \page create_dividedcylinder_page DividedCylinder
 
-The <b>Divided cylinder</b> object is a cylinder divided into \b blocks for easy hexaedral meshing</b>.
+The <b>Divided cylinder</b> object is a cylinder divided into \b blocks for easy hexaedral meshing.Two division patterns are available :
+
+<ul>
+<li> A square pattern which is frequently used </li>
+<li> An hexagonal pattern which ensures a better mesh quality and especially less acute or obtuse angles </li>
+</ul>
 
 \image html dividedcylinder.png
 
@@ -13,11 +18,12 @@ Specify the parameters of the DividedCylinder object creation in the opened dial
 box and press "Apply" or "Apply & Close" button.
 Result of each operation will be a GEOM_Object.
 
-<b>TUI Command:</b> <em>geompy.MakeDividedCylinder(R, H)</em>
+<b>TUI Command:</b> <em>geompy.MakeDividedCylinder(R, H, Pattern)</em>
 
 <b>Arguments:</b>
 - \b R - Radius of the cylinder
 - \b H - Height of the cylinder
+- \b Pattern - Division pattern
 
 \image html dividedcylinder_dlg.png
 

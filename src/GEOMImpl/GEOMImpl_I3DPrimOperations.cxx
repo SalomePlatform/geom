@@ -1611,14 +1611,17 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
-  pd << aFilling << " = geompy.MakeFilling("
-     << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
-     << theTol2D << ", " << theTol3D << ", " << theNbIter  << ", ";
-  if( theMethod==1 ) pd << "GEOM.FOM_UseOri";
-  else if( theMethod==2 ) pd << "GEOM.FOM_AutoCorrect";
-  else pd << "GEOM.FOM_Default";
-  if(isApprox)
-    pd << ", " << isApprox ;
+  pd << aFilling << " = geompy.MakeFilling(" << theShape ;
+  if ( theMinDeg != 2 )   pd << ", theMinDeg=" << theMinDeg ;
+  if ( theMaxDeg != 5 )   pd << ", theMaxDeg=" << theMaxDeg ;
+  if ( fabs(theTol2D-0.0001) > Precision::Confusion() )
+                          pd << ", theTol2D=" << theTol2D ;
+  if ( fabs(theTol3D-0.0001) > Precision::Confusion() )
+                          pd << ", theTol3D=" << theTol3D ;
+  if ( theNbIter != 0 )   pd << ", theNbIter=" << theNbIter ;
+  if ( theMethod==1 )     pd << ", theMethod=GEOM.FOM_UseOri";
+  else if( theMethod==2 ) pd << ", theMethod=GEOM.FOM_AutoCorrect";
+  if(isApprox)            pd << ", isApprox=" << isApprox ;
   pd << ")";
 
   SetErrorCode(OK);

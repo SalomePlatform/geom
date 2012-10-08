@@ -21,9 +21,10 @@
 //
 
 // GEOM GEOMGUI : GUI for Geometry component
-// File   : GeometryGUI_Swig.hxx
+// File   : libGEOM_Swig.h
 // Author : Nicolas REJNERI, Paul RASCLE
 //
+
 #ifndef GEOMETRYGUI_SWIG_HXX
 #define GEOMETRYGUI_SWIG_HXX
 
@@ -49,6 +50,7 @@ public:
   void setVectorsMode(const char* Entry, bool isSet, bool isUpdated = true);
   void setColor(const char* Entry, int red, int green, int blue, bool isUpdated = true);
   void setTransparency(const char* Entry, float transp, bool isUpdated = true);
+  void setIsos(const char* Entry, int nbU, int nbV, bool isUpdated =true);
   void setDeflection(const char* Entry, float deflect);
 
   int  getIndexTopology(const char *SubEntry, const char *Entry);

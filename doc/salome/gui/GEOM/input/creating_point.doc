@@ -73,7 +73,7 @@ position of the point on the given face.
 \image html point5.png
 
 Alternatively, it is possible to define 3D coordinates of the point projected on the given face.
-\n <b>TUI Command:</b> <em>geompy.MakeVertexOnSurface(myFace,X,Y,Z).</em>
+\n <b>TUI Command:</b> <em>geompy.MakeVertexOnSurfaceByCoord(myFace,X,Y,Z).</em>
 \n <b>Arguments:</b> Name + 1 face  + 3 coordinate values
 to project point on the given face.
 

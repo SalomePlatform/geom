@@ -42,6 +42,10 @@
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
 
+// VSR 22/08/2012: issue 0021787: remove "Preview" button from BOP and Partition operations
+// Comment next line to enable preview in Partition dialog box
+#define NO_PREVIEW
+
 //=================================================================================
 // class    : OperationGUI_PartitionDlg()
 // purpose  : Constructs a OperationGUI_PartitionDlg which is a child of 'parent', with the
@@ -89,6 +93,10 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
 
   setHelpFileName( "partition_page.html" );
 
+#ifdef NO_PREVIEW
+  mainFrame()->CheckBoxPreview->setChecked( false );
+  mainFrame()->CheckBoxPreview->hide();
+#endif
   Init();
 }
 

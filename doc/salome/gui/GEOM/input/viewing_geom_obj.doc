@@ -74,17 +74,22 @@ on the viewer background:
 <li><b>Select Only</b> provides a filter for exclusive selection of objects of a certain type.</li>
 </ul>
 
-The the following commands appear in the Object Browser context menu
+The following commands appear in the Object Browser context menu
 under certain conditions:
 
 \image html ob_popup_menu.png <br>
 
 <ul>
 <li>\ref work_with_groups_page "Create Group" - allows creating groups of geometrical objects.</li>
-<li><b>Hide Children</b> / <b>Show Children</b> - hides / shows child
+
+<li><b>Conceal child items</b> / <b>Disclose child items</b> - hides / shows child
 sub-objects in the Object Browser, if the selected geometric object has
 child objects. When some child objects are hidden, the name of the
 parent object is hilghlighted with bold font.</li>
+
+<li><b>Show Only Children</b> - erase in current viewer all objects
+and then display only children of the selected object(s).
+</li>
 
 <li><b>Unpublish</b> - unpublish the selected geometric object from the Object Browser 
 and erase it from all viewers. To publish unpublished geometric objects select in the 

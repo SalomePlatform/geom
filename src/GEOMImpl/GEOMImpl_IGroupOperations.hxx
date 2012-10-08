@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IGroupOperations_HXX_
 #define _GEOMImpl_IGroupOperations_HXX_
@@ -28,7 +27,7 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 #include <TDocStd_Document.hxx>
-#include <TColStd_HArray1OfInteger.hxx> 
+#include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 #include <TopAbs.hxx>
 
@@ -54,6 +53,20 @@ class GEOMImpl_IGroupOperations : public GEOM_IOperations {
 
   Standard_EXPORT void DifferenceIDs (Handle(GEOM_Object) theGroup,
                       const Handle(TColStd_HSequenceOfInteger)& theSubShapes);
+
+  Standard_EXPORT Handle(GEOM_Object) UnionGroups (Handle(GEOM_Object) theGroup1,
+                                                   Handle(GEOM_Object) theGroup2);
+  Standard_EXPORT Handle(GEOM_Object) IntersectGroups (Handle(GEOM_Object) theGroup1,
+                                                       Handle(GEOM_Object) theGroup2);
+  Standard_EXPORT Handle(GEOM_Object) CutGroups (Handle(GEOM_Object) theGroup1,
+                                                 Handle(GEOM_Object) theGroup2);
+
+  Standard_EXPORT Handle(GEOM_Object) UnionListOfGroups
+                                                      (const Handle(TColStd_HSequenceOfTransient)& theGList);
+  Standard_EXPORT Handle(GEOM_Object) IntersectListOfGroups
+                                                      (const Handle(TColStd_HSequenceOfTransient)& theGList);
+  Standard_EXPORT Handle(GEOM_Object) CutListOfGroups (const Handle(TColStd_HSequenceOfTransient)& theGList1,
+                                                       const Handle(TColStd_HSequenceOfTransient)& theGList2);
 
   Standard_EXPORT TopAbs_ShapeEnum GetType(Handle(GEOM_Object) theGroup);
 

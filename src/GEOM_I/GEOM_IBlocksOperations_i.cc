@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -740,6 +739,39 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
 
   TCollection_AsciiString aDescr = GetOperations()->PrintBCErrors(aCompound, anErrors);
   return CORBA::string_dup(aDescr.ToCString());
+}
+
+//=============================================================================
+/*!
+ *  GetNonBlocks
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetNonBlocks
+                                      (GEOM::GEOM_Object_ptr theShape,
+                                       GEOM::GEOM_Object_out theNonQuads)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::GEOM_Object_var aNonQuads;
+
+  theNonQuads = aNonQuads._retn();
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference Objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  //Get the result
+  Handle(GEOM_Object) aFaces;
+  Handle(GEOM_Object) anObject = GetOperations()->GetNonBlocks(aShape, aFaces);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  if (!aFaces.IsNull())
+    theNonQuads = GetObject(aFaces);
+
+  return GetObject(anObject);
 }
 
 //=============================================================================

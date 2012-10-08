@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -433,13 +432,15 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
  *  MakeCurveParametric
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametric(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
-								    double theParamMin, double theParamMax, double theParamStep, 
-								    GEOM::curve_type theCurveType) {
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametric
+             (const char* thexExpr, const char* theyExpr, const char* thezExpr,
+              double theParamMin, double theParamMax, double theParamStep,
+              GEOM::curve_type theCurveType)
+{
   GEOM::GEOM_Object_var aGEOMObject;
   //Set a not done flag
   GetOperations()->SetNotDone();
-  
+
   GEOMImpl_ICurvesOperations::CurveType aType;
   switch(theCurveType) {
   case GEOM::Polyline:
@@ -453,18 +454,17 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametric(const char* 
     break;
   default:
     break;
-  }  
-  
+  }
 
   // Make Polyline
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeCurveParametric(thexExpr, theyExpr, thezExpr, 
-					   theParamMin, theParamMax, 
-					   theParamStep, aType);
-  
+    GetOperations()->MakeCurveParametric(thexExpr, theyExpr, thezExpr,
+                                         theParamMin, theParamMax,
+                                         theParamStep, aType);
+
   if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();  
-  
+    return aGEOMObject._retn();
+
   return GetObject(anObject);
 }
 
@@ -473,13 +473,15 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametric(const char* 
  *  MakeCurveParametricNew
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametricNew(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
-                                    double theParamMin, double theParamMax, CORBA::Long theParamNbStep, 
-                                    GEOM::curve_type theCurveType) {
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametricNew
+             (const char* thexExpr, const char* theyExpr, const char* thezExpr,
+              double theParamMin, double theParamMax, CORBA::Long theParamNbStep,
+              GEOM::curve_type theCurveType)
+{
   GEOM::GEOM_Object_var aGEOMObject;
   //Set a not done flag
   GetOperations()->SetNotDone();
-  
+
   GEOMImpl_ICurvesOperations::CurveType aType;
   switch(theCurveType) {
   case GEOM::Polyline:
@@ -493,18 +495,17 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametricNew(const cha
     break;
   default:
     break;
-  }  
-  
+  }
 
   // Make Polyline
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeCurveParametric(thexExpr, theyExpr, thezExpr, 
-                       theParamMin, theParamMax, 
+    GetOperations()->MakeCurveParametric(thexExpr, theyExpr, thezExpr,
+                       theParamMin, theParamMax,
                        0.0, aType, theParamNbStep, true);
-  
+
   if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();  
-  
+    return aGEOMObject._retn();
+
   return GetObject(anObject);
 }
 
@@ -536,6 +537,46 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
 
 //=============================================================================
 /*!
+ *  MakeSketcherOnPlane
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane
+                (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  Handle(GEOM_Object) aWorkingPlane = GetObjectImpl(theWorkingPlane);
+
+  // Make Sketcher
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakeSketcherOnPlane(theCommand, aWorkingPlane);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return GEOM::GEOM_Object::_nil();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  Make3DSketcherCommand
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcherCommand (const char* theCommand)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Make 3D Sketcher
+  Handle(GEOM_Object) anObject = GetOperations()->Make3DSketcherCommand(theCommand);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return GEOM::GEOM_Object::_nil();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  Make3DSketcher
  */
 //=============================================================================
@@ -554,28 +595,6 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcher
   // Make Sketcher
   Handle(GEOM_Object) anObject =
     GetOperations()->Make3DSketcher(aCoords);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
-    return GEOM::GEOM_Object::_nil();
-
-  return GetObject(anObject);
-}
-
-//=============================================================================
-/*!
- *  MakeSketcherOnPlane
- */
-//=============================================================================
-GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane
-                (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane)
-{
-  //Set a not done flag
-  GetOperations()->SetNotDone();
-
-  Handle(GEOM_Object) aWorkingPlane = GetObjectImpl(theWorkingPlane);
-
-  // Make Sketcher
-  Handle(GEOM_Object) anObject =
-      GetOperations()->MakeSketcherOnPlane(theCommand, aWorkingPlane);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return GEOM::GEOM_Object::_nil();
 

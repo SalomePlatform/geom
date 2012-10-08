@@ -8,6 +8,10 @@
         <translation>Error: can&apos;t build object</translation>
     </message>
     <message>
+        <source>PAL_NOT_DONE_ERROR</source>
+        <translation>Operation aborted</translation>
+    </message>
+    <message>
         <source>CHANGE_ORIENTATION_NEW_OBJ_NAME</source>
         <translation>Invert</translation>
     </message>
@@ -356,6 +360,18 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES</source>
         <translation>Incriminated Sub-shapes</translation>
+    </message>
+    <message>
+        <source>GEOM_GETNONBLOCKS_TITLE</source>
+        <translation>Get non-hexahedral solids and non-quadrangular faces</translation>
+    </message>
+    <message>
+        <source>GEOM_GETNONBLOCKS</source>
+        <translation>Get non blocks</translation>
+    </message>
+    <message>
+        <source>GEOM_NONBLOCKS</source>
+        <translation>NonBlocksGroup</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INFOS</source>
@@ -1831,6 +1847,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Coordinates Type</translation>
     </message>
     <message>
+        <source>GEOM_CONTROLS</source>
+        <translation>Dimensions</translation>
+    </message>
+    <message>
         <source>GEOM_SOLID</source>
         <translation>Solid</translation>
     </message>
@@ -2311,6 +2331,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Check Compound of Blocks</translation>
     </message>
     <message>
+        <source>MEN_GET_NON_BLOCKS</source>
+        <translation>Get Non Blocks</translation>
+    </message>
+    <message>
         <source>MEN_CHECK_SELF_INTERSECTIONS</source>
         <translation>Detect Self-intersections</translation>
     </message>
@@ -2421,6 +2445,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_DISPLAY_ONLY</source>
         <translation>Show Only</translation>
+    </message>
+    <message>
+        <source>MEN_SHOW_ONLY_CHILDREN</source>
+        <translation>Show Only Children</translation>
     </message>
     <message>
         <source>MEN_BRING_TO_FRONT</source>
@@ -2551,6 +2579,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Edit</translation>
     </message>
     <message>
+        <source>MEN_GROUP_UNION</source>
+        <translation>Union Groups</translation>
+    </message>
+    <message>
+        <source>MEN_GROUP_INTERSECT</source>
+        <translation>Intersect Groups</translation>
+    </message>
+    <message>
+        <source>MEN_GROUP_CUT</source>
+        <translation>Cut Groups</translation>
+    </message>
+    <message>
         <source>MEN_RELOAD_IMPORTED</source>
         <translation>Reload From Disk</translation>
     </message>
@@ -2667,12 +2707,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create Group</translation>
     </message>
     <message>
-        <source>MEN_POP_SHOW_CHILDREN</source>
-        <translation>Show Children</translation>
+        <source>MEN_POP_DISCLOSE_CHILDREN</source>
+        <translation>Disclose child items</translation>
     </message>
     <message>
-        <source>MEN_POP_HIDE_CHILDREN</source>
-        <translation>Hide Children</translation>
+        <source>MEN_POP_CONCEAL_CHILDREN</source>
+        <translation>Conceal child items</translation>
     </message>
     <message>
         <source>MEN_POP_UNPUBLISH_OBJ</source>
@@ -3155,6 +3195,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Check compound of blocks</translation>
     </message>
     <message>
+        <source>STB_GET_NON_BLOCKS</source>
+        <translation>Get non blocks</translation>
+    </message>
+    <message>
         <source>STB_CHECK_SELF_INTERSECTIONS</source>
         <translation>Detect Self-intersections</translation>
     </message>
@@ -3233,6 +3277,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_DISPLAY_ONLY</source>
         <translation>Show only</translation>
+    </message>
+    <message>
+        <source>STB_SHOW_ONLY_CHILDREN</source>
+        <translation>Show Only Children</translation>
     </message>
     <message>
         <source>STB_EDGE</source>
@@ -3321,6 +3369,18 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_GROUP_EDIT</source>
         <translation>Edit a group</translation>
+    </message>
+    <message>
+        <source>STB_GROUP_UNION</source>
+        <translation>Union Groups</translation>
+    </message>
+    <message>
+        <source>STB_GROUP_INTERSECT</source>
+        <translation>Intersect Groups</translation>
+    </message>
+    <message>
+        <source>STB_GROUP_CUT</source>
+        <translation>Cut Groups</translation>
     </message>
     <message>
         <source>STB_RELOAD_IMPORTED</source>
@@ -3427,10 +3487,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create Group</translation>
     </message>
     <message>
-        <source>STB_POP_SHOW_CHILDREN</source>
-        <translation>Show child objects</translation>
-    </message>
-    <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
         <translation>Unpublish object</translation>
     </message>
@@ -3439,8 +3495,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Publish object</translation>
     </message>
     <message>
-        <source>STB_POP_HIDE_CHILDREN</source>
-        <translation>Hide child objects</translation>
+        <source>STB_POP_DISCLOSE_CHILDREN</source>
+        <translation>Disclose child items</translation>
+    </message>
+    <message>
+        <source>STB_POP_CONCEAL_CHILDREN</source>
+        <translation>Conceal child items</translation>
     </message>
     <message>
         <source>STB_POP_ISOS</source>
@@ -3763,6 +3823,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Check compound of blocks</translation>
     </message>
     <message>
+        <source>TOP_GET_NON_BLOCKS</source>
+        <translation>Get non blocks</translation>
+    </message>
+    <message>
         <source>TOP_CHECK_SELF_INTERSECTIONS</source>
         <translation>Detect Self-intersections</translation>
     </message>
@@ -3837,6 +3901,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_DISPLAY_ONLY</source>
         <translation>Show only</translation>
+    </message>
+    <message>
+        <source>TOP_SHOW_ONLY_CHILDREN</source>
+        <translation>Show Only Children</translation>
     </message>
     <message>
         <source>TOP_EDGE</source>
@@ -3917,6 +3985,18 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_GROUP_EDIT</source>
         <translation>Edit a group</translation>
+    </message>
+    <message>
+        <source>TOP_GROUP_UNION</source>
+        <translation>Union Groups</translation>
+    </message>
+    <message>
+        <source>TOP_GROUP_INTERSECT</source>
+        <translation>Intersect Groups</translation>
+    </message>
+    <message>
+        <source>TOP_GROUP_CUT</source>
+        <translation>Cut Groups</translation>
     </message>
     <message>
         <source>TOP_HEX_SOLID</source>
@@ -4027,10 +4107,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create Group</translation>
     </message>
     <message>
-        <source>TOP_POP_SHOW_CHILDREN</source>
-        <translation>Show Children</translation>
-    </message>
-    <message>
         <source>TOP_POP_UNPUBLISH_OBJ</source>
         <translation>Unpublish object</translation>
     </message>
@@ -4039,8 +4115,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Publish object</translation>
     </message>
     <message>
-        <source>TOP_POP_HIDE_CHILDREN</source>
-        <translation>Hide Children</translation>
+        <source>TOP_POP_DISCLOSE_CHILDREN</source>
+        <translation>Disclose child items</translation>
+    </message>
+    <message>
+        <source>TOP_POP_CONCEAL_CHILDREN</source>
+        <translation>Conceal child items</translation>
     </message>
     <message>
         <source>TOP_POP_ISOS</source>
@@ -5035,6 +5115,45 @@ Number of sketch points too small</translation>
     <message>
         <source>NO_GROUP</source>
         <translation>Please, select a group to edit</translation>
+    </message>
+</context>
+<context>
+    <name>GroupGUI_BooleanDlg</name>
+    <message>
+        <source>GEOM_UNION</source>
+        <translation>Union</translation>
+    </message>
+    <message>
+        <source>GEOM_UNION_TITLE</source>
+        <translation>Union Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERSECT</source>
+        <translation>Intersect</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERSECT_TITLE</source>
+        <translation>Intersect Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_CUT</source>
+        <translation>Cut</translation>
+    </message>
+    <message>
+        <source>GEOM_CUT_TITLE</source>
+        <translation>Cut Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_GROUPS</source>
+        <translation>Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_MAIN_GROUPS</source>
+        <translation>Main Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_TOOL_GROUPS</source>
+        <translation>Tool Groups</translation>
     </message>
 </context>
 <context>

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -202,7 +201,6 @@ void GEOM_IGroupOperations_i::UnionIDs (GEOM::GEOM_Object_ptr   theGroup,
 
   //Perform the operation
   GetOperations()->UnionIDs(aGroupRef, aSubShapes);
-  return;
 }
 
 //=============================================================================
@@ -230,7 +228,176 @@ void GEOM_IGroupOperations_i::DifferenceIDs (GEOM::GEOM_Object_ptr   theGroup,
 
   //Perform the operation
   GetOperations()->DifferenceIDs(aGroupRef, aSubShapes);
-  return;
+}
+
+//=============================================================================
+/*!
+ *  UnionGroups
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::UnionGroups (GEOM::GEOM_Object_ptr theGroup1,
+                                                            GEOM::GEOM_Object_ptr theGroup2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference groups
+  Handle(GEOM_Object) aGroupRef1 = GetObjectImpl(theGroup1);
+  Handle(GEOM_Object) aGroupRef2 = GetObjectImpl(theGroup2);
+  if (aGroupRef1.IsNull() || aGroupRef2.IsNull()) return aGEOMObject._retn();
+
+  //Perform the operation
+  Handle(GEOM_Object) anObject = GetOperations()->UnionGroups(aGroupRef1, aGroupRef2);
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  IntersectGroups
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::IntersectGroups (GEOM::GEOM_Object_ptr theGroup1,
+                                                                GEOM::GEOM_Object_ptr theGroup2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference groups
+  Handle(GEOM_Object) aGroupRef1 = GetObjectImpl(theGroup1);
+  Handle(GEOM_Object) aGroupRef2 = GetObjectImpl(theGroup2);
+  if (aGroupRef1.IsNull() || aGroupRef2.IsNull()) return aGEOMObject._retn();
+
+  //Perform the operation
+  Handle(GEOM_Object) anObject = GetOperations()->IntersectGroups(aGroupRef1, aGroupRef2);
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  CutGroups
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::CutGroups (GEOM::GEOM_Object_ptr theGroup1,
+                                                          GEOM::GEOM_Object_ptr theGroup2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference groups
+  Handle(GEOM_Object) aGroupRef1 = GetObjectImpl(theGroup1);
+  Handle(GEOM_Object) aGroupRef2 = GetObjectImpl(theGroup2);
+  if (aGroupRef1.IsNull() || aGroupRef2.IsNull()) return aGEOMObject._retn();
+
+  //Perform the operation
+  Handle(GEOM_Object) anObject = GetOperations()->CutGroups(aGroupRef1, aGroupRef2);
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  UnionListOfGroups
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::UnionListOfGroups (const GEOM::ListOfGO& theGList)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference groups
+  Handle(TColStd_HSequenceOfTransient) aGroups = new TColStd_HSequenceOfTransient;
+
+  int ind, aLen = theGList.length();
+  for (ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aGr = GetObjectImpl(theGList[ind]);
+    if (aGr.IsNull()) return aGEOMObject._retn();
+    aGroups->Append(aGr);
+  }
+
+  //Perform the operation
+  Handle(GEOM_Object) anObject = GetOperations()->UnionListOfGroups(aGroups);
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  IntersectListOfGroups
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::IntersectListOfGroups (const GEOM::ListOfGO& theGList)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference groups
+  Handle(TColStd_HSequenceOfTransient) aGroups = new TColStd_HSequenceOfTransient;
+
+  int ind, aLen = theGList.length();
+  for (ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aGr = GetObjectImpl(theGList[ind]);
+    if (aGr.IsNull()) return aGEOMObject._retn();
+    aGroups->Append(aGr);
+  }
+
+  //Perform the operation
+  Handle(GEOM_Object) anObject = GetOperations()->IntersectListOfGroups(aGroups);
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  CutListOfGroups
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::CutListOfGroups (const GEOM::ListOfGO& theGList1,
+                                                                const GEOM::ListOfGO& theGList2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference groups
+  Handle(TColStd_HSequenceOfTransient) aGroups1 = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aGroups2 = new TColStd_HSequenceOfTransient;
+
+  int ind, aLen = theGList1.length();
+  for (ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aGr = GetObjectImpl(theGList1[ind]);
+    if (aGr.IsNull()) return aGEOMObject._retn();
+    aGroups1->Append(aGr);
+  }
+  aLen = theGList2.length();
+  for (ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aGr = GetObjectImpl(theGList2[ind]);
+    if (aGr.IsNull()) return aGEOMObject._retn();
+    aGroups2->Append(aGr);
+  }
+
+  //Perform the operation
+  Handle(GEOM_Object) anObject = GetOperations()->CutListOfGroups(aGroups1, aGroups2);
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject);
 }
 
 //=============================================================================

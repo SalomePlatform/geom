@@ -26,5 +26,51 @@
 //
 %module libGEOM_Swig
 
-%include "GeometryGUI_Swig.i"
+%{
+#include "libGEOM_Swig.h"
+%}
+
+/*
+  managing C++ exception in the Python API
+*/
+%exception
+{
+  class PyAllowThreadsGuard {
+   public:
+    // Py_BEGIN_ALLOW_THREADS
+    PyAllowThreadsGuard() { _save = PyEval_SaveThread(); }
+    // Py_END_ALLOW_THREADS
+    ~PyAllowThreadsGuard() { PyEval_RestoreThread(_save); }
+   private:
+    PyThreadState *_save;
+  };
+
+  PyAllowThreadsGuard guard;
+
+  $action
+}
+
+class GEOM_Swig
+{
+ public:
+  GEOM_Swig();
+  ~GEOM_Swig();
+
+  void createAndDisplayGO(const char* Entry, bool isUpdated =true);
+  void eraseGO(const char* Entry, bool allWindows);
+  void createAndDisplayFitAllGO(const char* Entry);
+  void UpdateViewer();
+  int  getIndexTopology(const char *SubEntry, const char *Entry);
+  const char* getShapeTypeString(const char *Entry);
+
+  void setDisplayMode(const char* Entry, int mode, bool isUpdated =true);
+  void setVectorsMode(const char* Entry, bool isSet, bool isUpdated =true);
+  void setColor(const char* Entry, int red, int green, int blue, bool isUpdated =true);
+  void setTransparency(const char* Entry, float transp, bool isUpdated =true);
+  void setIsos(const char* Entry, int nbU, int nbV, bool isUpdated =true);
+  void setDeflection(const char* Entry, float deflect);
+  const char* getShapeTypeIcon(const char *Ior);
+
+  bool initGeomGen();
+};
 

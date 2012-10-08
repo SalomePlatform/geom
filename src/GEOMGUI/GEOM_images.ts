@@ -168,6 +168,10 @@
             <translation>check_blocks_compound.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_GETNONBLOCKS</source>
+            <translation>get_non_blocks.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_CHECK_SELF_INTERSECTIONS</source>
             <translation>check_self_intersections.png</translation>
         </message>
@@ -740,6 +744,10 @@
             <translation>check_blocks_compound.png</translation>
         </message>
         <message>
+            <source>ICO_GET_NON_BLOCKS</source>
+            <translation>get_non_blocks.png</translation>
+        </message>
+        <message>
             <source>ICO_CHECK_SELF_INTERSECTIONS</source>
             <translation>check_self_intersections.png</translation>
         </message>
@@ -764,6 +772,10 @@
             <translation>common.png</translation>
         </message>
         <message>
+            <source>ICO_GROUP_INTERSECT</source>
+            <translation>common.png</translation>
+        </message>
+        <message>
             <source>ICO_COMPOUND</source>
             <translation>build_compound.png</translation>
         </message>
@@ -781,6 +793,10 @@
         </message>
         <message>
             <source>ICO_CUT</source>
+            <translation>cut.png</translation>
+        </message>
+        <message>
+            <source>ICO_GROUP_CUT</source>
             <translation>cut.png</translation>
         </message>
         <message>
@@ -885,6 +901,10 @@
         </message>
         <message>
             <source>ICO_FUSE</source>
+            <translation>fuse.png</translation>
+        </message>
+        <message>
+            <source>ICO_GROUP_UNION</source>
             <translation>fuse.png</translation>
         </message>
         <message>

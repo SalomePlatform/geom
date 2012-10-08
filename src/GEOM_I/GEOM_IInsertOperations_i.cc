@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -47,7 +46,7 @@
 
 //=============================================================================
 /*!
- *   constructor:
+ *  constructor
  */
 //=============================================================================
 GEOM_IInsertOperations_i::GEOM_IInsertOperations_i (PortableServer::POA_ptr thePOA,
@@ -157,6 +156,32 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::ImportFile
 
 //=============================================================================
 /*!
+ *  ReadValue
+ */
+//=============================================================================
+char* GEOM_IInsertOperations_i::ReadValue(const char* theFileName,
+                                          const char* theFormatName,
+                                          const char* theParameterName)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  char* aFileName      = strdup(theFileName);
+  char* aFormatName    = strdup(theFormatName);
+  char* aParameterName = strdup(theParameterName);
+
+  TCollection_AsciiString aUnits = GetOperations()->ReadValue
+    (aFileName, aFormatName, aParameterName);
+
+  free(aFileName);
+  free(aFormatName);
+  free(aParameterName);
+
+  return CORBA::string_dup(aUnits.ToCString());
+}
+
+//=============================================================================
+/*!
  *  ImportTranslators
  */
 //=============================================================================
@@ -225,12 +250,47 @@ void GEOM_IInsertOperations_i::ExportTranslators
   thePatterns = aPatternsArray._retn();
 }
 
+//=============================================================================
+/*!
+ *  RestoreShape
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::RestoreShape (const SALOMEDS::TMPFile& theStream)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theStream.length() < 1)
+    return aGEOMObject._retn();
+
+  char* buf = (char*)theStream.NP_data();
+  std::istringstream aStream (buf);
+
+  Handle(GEOM_Object) anObject = GetOperations()->RestoreShape(aStream);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  LoadTexture
+ */
+//=============================================================================
 CORBA::Long GEOM_IInsertOperations_i::LoadTexture(const char* theTextureFile)
 {
   GetOperations()->SetNotDone();
   return GetOperations()->LoadTexture( theTextureFile );
 }
 
+//=============================================================================
+/*!
+ *  AddTexture
+ */
+//=============================================================================
 CORBA::Long GEOM_IInsertOperations_i::AddTexture(CORBA::Long theWidth, CORBA::Long theHeight,
                                                  const SALOMEDS::TMPFile& theTexture)
 {
@@ -255,6 +315,11 @@ CORBA::Long GEOM_IInsertOperations_i::AddTexture(CORBA::Long theWidth, CORBA::Lo
   return GetOperations()->AddTexture( theWidth, theHeight, aTexture );
 }
 
+//=============================================================================
+/*!
+ *  GetTexture
+ */
+//=============================================================================
 SALOMEDS::TMPFile* GEOM_IInsertOperations_i::GetTexture(CORBA::Long theID,
                                                         CORBA::Long& theWidth,
                                                         CORBA::Long& theHeight)
@@ -278,6 +343,11 @@ SALOMEDS::TMPFile* GEOM_IInsertOperations_i::GetTexture(CORBA::Long theID,
   return aTexture._retn();
 }
 
+//=============================================================================
+/*!
+ *  GetAllTextures
+ */
+//=============================================================================
 GEOM::ListOfLong* GEOM_IInsertOperations_i::GetAllTextures()
 {
   std::list<int> localIDs = GetOperations()->GetAllTextures();

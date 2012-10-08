@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 
 // GEOM_Object types
@@ -116,7 +115,8 @@
 #define POINT_SURFACE_PAR        5
 #define POINT_CURVE_COORD        6
 #define POINT_SURFACE_COORD      7
-#define POINT_CURVE_LENGTH       8 
+#define POINT_CURVE_LENGTH       8
+#define POINT_FACE_ANY           9
 
 // Vector
 #define VECTOR_TWO_PNT  1
@@ -295,7 +295,10 @@
 #define GLUE_EDGES_BY_LIST 4
 
 #define SKETCHER_NINE_DOUBLS 1
-#define SKETCHER_PLANE 2
+#define SKETCHER_PLANE       2
+
+#define SKETCHER3D_COORDS  1
+#define SKETCHER3D_COMMAND 2
 
 // Measures
 #define CDG_MEASURE 1

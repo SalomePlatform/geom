@@ -376,8 +376,9 @@ void GeometryGUI::OnGUIEvent( int id )
   NotViewerDependentCommands << GEOMOp::OpDelete
                              << GEOMOp::OpShow
                              << GEOMOp::OpShowOnly
-                             << GEOMOp::OpShowChildren
-                             << GEOMOp::OpHideChildren
+                             << GEOMOp::OpShowOnlyChildren
+                             << GEOMOp::OpDiscloseChildren
+                             << GEOMOp::OpConcealChildren
                              << GEOMOp::OpUnpublishObject
                              << GEOMOp::OpPublishObject
                              << GEOMOp::OpPointMarker;
@@ -419,8 +420,8 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpDecrNbIsos:         // SHORTCUT   - DECREASE NB ISOS
   case GEOMOp::OpAutoColor:          // POPUP MENU - AUTO COLOR
   case GEOMOp::OpNoAutoColor:        // POPUP MENU - DISABLE AUTO COLOR
-  case GEOMOp::OpShowChildren:       // POPUP MENU - SHOW CHILDREN
-  case GEOMOp::OpHideChildren:       // POPUP MENU - HIDE CHILDREN
+  case GEOMOp::OpDiscloseChildren:   // POPUP MENU - DISCLOSE CHILD ITEMS
+  case GEOMOp::OpConcealChildren:    // POPUP MENU - CONCEAL CHILD ITEMS
   case GEOMOp::OpUnpublishObject:    // POPUP MENU - UNPUBLISH
   case GEOMOp::OpPublishObject:      // ROOT GEOM OBJECT - POPUP MENU - PUBLISH
   case GEOMOp::OpPointMarker:        // POPUP MENU - POINT MARKER
@@ -436,6 +437,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpDMShadingWithEdges: // MENU VIEW - SHADING
   case GEOMOp::OpShowAll:            // MENU VIEW - SHOW ALL
   case GEOMOp::OpShowOnly:           // MENU VIEW - DISPLAY ONLY
+  case GEOMOp::OpShowOnlyChildren:   // MENU VIEW - SHOW ONLY CHILDREN
   case GEOMOp::OpHideAll:            // MENU VIEW - ERASE ALL
   case GEOMOp::OpHide:               // MENU VIEW - ERASE
   case GEOMOp::OpShow:               // MENU VIEW - DISPLAY
@@ -549,6 +551,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpWhatIs:             // MENU MEASURE - WHATIS
   case GEOMOp::OpCheckShape:         // MENU MEASURE - CHECK
   case GEOMOp::OpCheckCompound:      // MENU MEASURE - CHECK COMPOUND OF BLOCKS
+  case GEOMOp::OpGetNonBlocks:       // MENU MEASURE - Get NON BLOCKS
   case GEOMOp::OpPointCoordinates:   // MENU MEASURE - POINT COORDINATES
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
     libName = "MeasureGUI";
@@ -556,6 +559,9 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpGroupCreate:        // MENU GROUP - CREATE
   case GEOMOp::OpGroupCreatePopup:   // POPUP MENU - CREATE GROUP
   case GEOMOp::OpGroupEdit:          // MENU GROUP - EDIT
+  case GEOMOp::OpGroupUnion:         // MENU GROUP - UNION
+  case GEOMOp::OpGroupIntersect:     // MENU GROUP - INTERSECT
+  case GEOMOp::OpGroupCut:           // MENU GROUP - CUT
     libName = "GroupGUI";
     break;
   case GEOMOp::OpHexaSolid:          // MENU BLOCKS - HEXAHEDRAL SOLID
@@ -748,6 +754,9 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::OpGroupCreate, "GROUP_CREATE" );
   createGeomAction( GEOMOp::OpGroupEdit,   "GROUP_EDIT" );
+  createGeomAction( GEOMOp::OpGroupUnion,  "GROUP_UNION" );
+  createGeomAction( GEOMOp::OpGroupIntersect, "GROUP_INTERSECT" );
+  createGeomAction( GEOMOp::OpGroupCut,    "GROUP_CUT" );
 
   createGeomAction( GEOMOp::OpReimport,    "RELOAD_IMPORTED" );
 
@@ -829,6 +838,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpWhatIs,           "WHAT_IS" );
   createGeomAction( GEOMOp::OpCheckShape,       "CHECK" );
   createGeomAction( GEOMOp::OpCheckCompound,    "CHECK_COMPOUND" );
+  createGeomAction( GEOMOp::OpGetNonBlocks,     "GET_NON_BLOCKS" );
   createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
 
 #ifdef _DEBUG_ // PAL16821
@@ -851,6 +861,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpSelectCompound,   "COMPOUND_SEL_ONLY", "",  0, true );
   createGeomAction( GEOMOp::OpSelectAll,        "ALL_SEL_ONLY", "",  0, true );
   createGeomAction( GEOMOp::OpShowOnly,         "DISPLAY_ONLY" );
+  createGeomAction( GEOMOp::OpShowOnlyChildren, "SHOW_ONLY_CHILDREN" );
   createGeomAction( GEOMOp::OpBringToFront,     "BRING_TO_FRONT", "", 0, true );
   createGeomAction( GEOMOp::OpClsBringToFront,  "CLS_BRING_TO_FRONT" );
   createGeomAction( GEOMOp::OpHide,             "ERASE" );
@@ -870,8 +881,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpAutoColor,        "POP_AUTO_COLOR" );
   createGeomAction( GEOMOp::OpNoAutoColor,      "POP_DISABLE_AUTO_COLOR" );
   createGeomAction( GEOMOp::OpGroupCreatePopup, "POP_CREATE_GROUP" );
-  createGeomAction( GEOMOp::OpShowChildren,     "POP_SHOW_CHILDREN" );
-  createGeomAction( GEOMOp::OpHideChildren,     "POP_HIDE_CHILDREN" );
+  createGeomAction( GEOMOp::OpDiscloseChildren, "POP_DISCLOSE_CHILDREN" );
+  createGeomAction( GEOMOp::OpConcealChildren,  "POP_CONCEAL_CHILDREN" );
   createGeomAction( GEOMOp::OpUnpublishObject,  "POP_UNPUBLISH_OBJ" );
   createGeomAction( GEOMOp::OpPublishObject,    "POP_PUBLISH_OBJ" );
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
@@ -947,8 +958,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(), newEntId, -1 );
 
   int groupId = createMenu( tr( "MEN_GROUP" ), newEntId, -1 );
-  createMenu( GEOMOp::OpGroupCreate, groupId, -1 );
-  createMenu( GEOMOp::OpGroupEdit,   groupId, -1 );
+  createMenu( GEOMOp::OpGroupCreate,    groupId, -1 );
+  createMenu( GEOMOp::OpGroupEdit,      groupId, -1 );
+  createMenu( GEOMOp::OpGroupUnion,     groupId, -1 );
+  createMenu( GEOMOp::OpGroupIntersect, groupId, -1 );
+  createMenu( GEOMOp::OpGroupCut,       groupId, -1 );
 
   createMenu( separator(), newEntId, -1 );
 
@@ -1059,6 +1073,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpWhatIs,          measurId, -1 );
   createMenu( GEOMOp::OpCheckShape,      measurId, -1 );
   createMenu( GEOMOp::OpCheckCompound,   measurId, -1 );
+  createMenu( GEOMOp::OpGetNonBlocks,    measurId, -1 );
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
 
 #ifdef _DEBUG_ // PAL16821
@@ -1196,8 +1211,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpWhatIs,           measureTbId );
   createTool( GEOMOp::OpCheckShape,       measureTbId );
   createTool( GEOMOp::OpCheckCompound,    measureTbId );
+  createTool( GEOMOp::OpGetNonBlocks,     measureTbId );
   createTool( GEOMOp::OpCheckSelfInters,  measureTbId );
-  
+
   int picturesTbId = createTool( tr( "TOOL_PICTURES" ) );
   createTool( GEOMOp::OpPictureImport,    picturesTbId );
   #ifdef WITH_OPENCV
@@ -1229,11 +1245,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpDelete ), QString("$type in {'Shape' 'Group'} and selcount>0"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpGroupCreatePopup ), -1, -1 ); // create group
   mgr->setRule( action( GEOMOp::OpGroupCreatePopup ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
-  mgr->insert( action(  GEOMOp::OpShowChildren ), -1, -1 ); // show children
-  mgr->setRule( action( GEOMOp::OpShowChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasHiddenChildren=true"), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  GEOMOp::OpDiscloseChildren ), -1, -1 ); // disclose child items
+  mgr->setRule( action( GEOMOp::OpDiscloseChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasConcealedChildren=true"), QtxPopupMgr::VisibleRule );
 
-  mgr->insert( action(  GEOMOp::OpHideChildren ), -1, -1 ); // hide children
-  mgr->setRule( action( GEOMOp::OpHideChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasShownChildren=true"), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  GEOMOp::OpConcealChildren ), -1, -1 ); // conceal shild items
+  mgr->setRule( action( GEOMOp::OpConcealChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasDisclosedChildren=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpGroupEdit ), -1, -1 );  // edit group
   mgr->setRule( action( GEOMOp::OpGroupEdit ),  QString("client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
@@ -1340,6 +1356,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule(action(GEOMOp::OpSelectAll),      selectOnly + " and selectionmode='ALL'", QtxPopupMgr::ToggleRule);
   mgr->insert( action(GEOMOp::OpShowOnly ), -1, -1 ); // display only
   mgr->setRule(action(GEOMOp::OpShowOnly ), rule.arg( types ).arg( "true" ), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(GEOMOp::OpShowOnlyChildren ), -1, -1 ); // display only children
+  mgr->setRule(action(GEOMOp::OpShowOnlyChildren ), (canDisplay + "and ($type in {%1}) and client='ObjectBrowser' and hasChildren=true").arg( types ), QtxPopupMgr::VisibleRule );
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpUnpublishObject ), -1, -1 ); // Unpublish object
@@ -1663,41 +1681,19 @@ LightApp_Selection* GeometryGUI::createSelection() const
 void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString& title )
 {
   SalomeApp_Module::contextMenuPopup( client, menu, title );
-
-  /*
   SALOME_ListIO lst;
-  getApp()->selectionMgr()->selectedObjects(lst);
-  if (lst.Extent() < 1)
-    return;
-
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
-  _PTR(Study) study = appStudy->studyDS();
-
-  bool isImported = true;
-  SALOME_ListIteratorOfListIO anIt (lst);
-  for (; anIt.More() && isImported; anIt.Next()) {
-    Handle(SALOME_InteractiveObject) io = anIt.Value();
-    _PTR(SObject) aSObj = study->FindObjectID(io->getEntry());
-    if (aSObj) {
-      if (lst.Extent() == 1) {
-        // Set context menu title
-        if (client == "OCCViewer" || client == "VTKViewer")
-          title = QString(aSObj->GetName().c_str());
-      }
-
-      CORBA::Object_var anObj = GeometryGUI::ClientSObjectToObject(aSObj);
-      GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(anObj);
-      if (CORBA::is_nil(aGeomObj) || aGeomObj->GetType() != GEOM_IMPORT)
-        isImported = false;
-    } else {
-      isImported = false;
+  getApp()->selectionMgr()->selectedObjects( lst );
+  if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() == 1 ) {
+    Handle(SALOME_InteractiveObject) io = lst.First();
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+    _PTR(Study) study = appStudy->studyDS();
+    _PTR(SObject) obj = study->FindObjectID( io->getEntry() );
+    if ( obj ) {
+      QString aName = QString( obj->GetName().c_str() );
+      aName.remove( QRegExp("\\s+$") );
+      title = aName;
     }
   }
-
-  if (isImported) {
-    menu->addAction(action(GEOMOp::OpReimport)); // Reload imported shape
-  }
-  */
 }
 
 void GeometryGUI::createPreferences()

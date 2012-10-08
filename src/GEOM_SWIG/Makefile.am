@@ -35,6 +35,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 dist_salomescript_DATA =		\
 	geompy.py			\
 	geompyDC.py			\
+	gsketcher.py			\
 	batchmode_geompy.py		\
 	GEOM_Spanner.py			\
 	GEOM_blocks.py			\

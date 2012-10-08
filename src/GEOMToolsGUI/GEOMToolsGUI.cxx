@@ -355,9 +355,9 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpNoAutoColor:    // POPUP - DISABLE AUTO COLOR
     OnDisableAutoColor();
     break;
-  case GEOMOp::OpShowChildren:   // POPUP - SHOW CHILDREN
-  case GEOMOp::OpHideChildren:   // POPUP - HIDE CHILDREN
-    OnShowHideChildren( theCommandID == GEOMOp::OpShowChildren );
+  case GEOMOp::OpDiscloseChildren:   // POPUP - SHOW CHILDREN
+  case GEOMOp::OpConcealChildren:   // POPUP - HIDE CHILDREN
+    OnDiscloseConcealChildren( theCommandID == GEOMOp::OpDiscloseChildren );
     break;
   case GEOMOp::OpPointMarker:    // POPUP - POINT MARKER
     OnPointMarker();
@@ -647,6 +647,42 @@ bool GEOMToolsGUI::Import()
       CORBA::String_var fileN = fileName.toLatin1().constData();
       CORBA::String_var fileT = aCurrentType.toLatin1().constData();
 
+      // jfa 21.08.2012 for mantis issue 21511 (STEP file units)
+      CORBA::String_var aUnits = aInsOp->ReadValue(fileN, fileT, "LEN_UNITS");
+      TCollection_AsciiString aUnitsStr (aUnits.in());
+      bool needConvert = true;
+      if (aUnitsStr.IsEmpty() || aUnitsStr == "UNIT_M")
+        needConvert = false;
+
+      if (needConvert) {
+        if (igesAnswer == SUIT_MessageBox::NoToAll) {
+          // converting for all files is already approved
+          fileT = (aCurrentType + "_SCALE").toLatin1().constData();
+        }
+        else if (igesAnswer != SUIT_MessageBox::YesToAll) {
+          SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
+          if (i < fileNames.count() - 1) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
+          igesAnswer = SUIT_MessageBox::question(app->desktop(),
+                                                 "Question",//tr("WRN_WARNING"),
+                                                 tr("GEOM_SCALE_DIMENSIONS"),
+                                                 btns | SUIT_MessageBox::Cancel,
+                                                 SUIT_MessageBox::No);
+          switch (igesAnswer) {
+          case SUIT_MessageBox::Cancel:
+            return false;                // cancel (break) import operation
+          case SUIT_MessageBox::Yes:
+          case SUIT_MessageBox::YesToAll:
+            break;                       // scaling is confirmed
+          case SUIT_MessageBox::No:
+          case SUIT_MessageBox::NoAll:
+            fileT = (aCurrentType + "_SCALE").toLatin1().constData();
+          default:
+            break;                       // scaling is rejected
+          } // switch ( igesAnswer )
+        } // if ( igeAnswer != NoToAll )
+      } // if ( needConvert )
+
+      /*
       // skl 29.05.2009
       if ( aCurrentType == "IGES" ) {
         GEOM::GEOM_Object_var anObj = aInsOp->ImportFile( fileN, "IGES_UNIT" );
@@ -684,6 +720,9 @@ bool GEOMToolsGUI::Import()
         } // if ( needConvert )
       } // if ( aCurrentType == "IGES" )
       else if ( aCurrentType == "ACIS" ) {
+      */
+
+      if ( aCurrentType == "ACIS" ) {
         if ( acisAnswer != SUIT_MessageBox::YesToAll && acisAnswer != SUIT_MessageBox::NoToAll ) {
           SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
           if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
@@ -697,6 +736,7 @@ bool GEOMToolsGUI::Import()
         } // if ( acisAnswer != YesToAll && acisAnswer != NoToAll )
       } // else if ( aCurrentType == "ACIS" )
 
+      // IMPORT
       GEOM::GEOM_Object_var anObj = aInsOp->ImportFile( fileN, fileT );
 
       if ( !anObj->_is_nil() && aInsOp->IsDone() ) {

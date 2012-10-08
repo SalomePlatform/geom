@@ -2,40 +2,55 @@
 
 \page create_3dsketcher_page 3D Sketcher
 
-3D Sketcher allows creating a closed or unclosed 3D wire from a list of points.
+3D Sketcher allows creating a closed or unclosed 3D wire, made of
+consequent straight segments.
 
 To create a 3D Sketch, select in the main menu <em>New Entity -> Basic -> 3D Sketch</em>.
 
 \image html 3dsketch2.png
 
-In this dialog it is possible to define the coordinates of the points.
+The first sketcher point can be defined by \b Absolute coordinates X, Y and Z.
+When the first point is defined, it is possible to add straight segments.
+Each segment will start at the end point of previous segment or at the
+sketcher first point, if there are no validated segments.
 
-The position of each point can be defined by \b  Absolute coordinates X, Y, Z or
-by \b Relative coordinates DX, DY, DZ with respect to the previous Applied point.
-The type of coordinates can be selected by the <b>Coordinates Type</b>
+Segment can be defined by:
+ - \b Absolute coordinates X, Y and Z of its second end,
+ - \b Relative coordinates DX, DY and DZ of its second end with
+   respect to the previous applied point,
+ - \b Direction and \b Length of the segment. Direction is set by two
+   \b Angles in selected coordinate system.
+
+The way of segment construction can be selected by the <b>Coordinates Type</b>
 radio buttons.
 
-To add the point in the list of points and to proceed with the
-definition of the next point, click <b>Apply</b> button. \b Undo and
-\b Redo buttons, respectively, remove or restore the last point in the list.
+To validate the segment and to proceed with the definition of the next
+segment, click <b>Apply</b> button. \b Undo and \b Redo buttons,
+respectively, remove or restore the last segment in the wire.
 
 \n <b>"Sketch Validation"</b> button applies the wire, built by the
 user, "as is".
 \n <b>"Sketch Closure"</b> closes the Sketch by a straight line from
 the start to the end point and applies it. 
 
-To make a closed wire using the TUI command, the first and the last point should 
-have the same coordinates.
-
-The Result of the operation will be a \b GEOM_Object.
-
-<b>TUI Command:</b> <em>geompy.Make3DSketcher( [ PointsList ] )</em>
-This algorithm creates a wire from the list of real values, which define XYZ 
-coordinates of points.
-
 <b>Example:</b>
 
 \image html 3dsketch1.png
+
+<b>TUI Command:</b> <em>geompy.Make3DSketcher( [ PointsList ] )</em>
+This algorithm creates a wire from the list of real values, which
+define absolute XYZ coordinates of points. The Result of the operation
+will be a \b GEOM_Object.
+
+\note To make a closed wire using this TUI command, the first and the
+last point should have the same coordinates.
+
+\n Another way to create the 3D Sketcher in TUI is using Sketcher3D
+interface.
+<b>TUI Command:</b> <em>sk = geompy.Sketcher3D()</em>
+Returns an instance of Sketcher3D interface <i>sk</i>.
+Use the below examples and see the \ref gsketcher.Sketcher3D "Sketcher3D"
+interface documentation for more information.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_3dsketcher_page "3D Sketcher".

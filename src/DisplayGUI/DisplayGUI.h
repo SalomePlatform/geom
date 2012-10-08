@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : DisplayGUI.h
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #ifndef DISPLAYGUI_H
 #define DISPLAYGUI_H
 
@@ -53,6 +52,8 @@ public:
   void Display();
   // Display selected GEOM objects and erase other
   void DisplayOnly();
+  // Display only children of selected GEOM objects and erase other
+  void DisplayOnlyChildren();
   // Erase selected GEOM objects
   void Erase();
 

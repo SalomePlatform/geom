@@ -40,6 +40,9 @@
 \anchor swig_MakeVertexOnSurfaceByCoord
 \until p_on_face2
 
+\anchor swig_MakeVertexInsideFace
+\until p_on_face3
+
 \until S = geompy.MakeRotation
 
 \anchor swig_MakeLineTwoFaces

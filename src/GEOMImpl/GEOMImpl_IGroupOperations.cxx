@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -511,10 +510,10 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
     if ( aLength - aRemLength > 0 ) {
       aNewSeq = new TColStd_HArray1OfInteger(1, aLength - aRemLength);
       for (j = 1; j <= aLength; j++) {
-	if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
-	  aNewSeq->SetValue(k, aSeq->Value(j));
-	  k++;
-	}
+        if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
+          aNewSeq->SetValue(k, aSeq->Value(j));
+          k++;
+        }
       }
     }
     else {
@@ -716,10 +715,10 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
     if ( aLength - aRemLength > 0 ) {
       aNewSeq = new TColStd_HArray1OfInteger(1, aLength - aRemLength);
       for (j = 1; j <= aLength; j++) {
-	if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
-	  aNewSeq->SetValue(k, aSeq->Value(j));
-	  k++;
-	}
+        if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
+          aNewSeq->SetValue(k, aSeq->Value(j));
+          k++;
+        }
       }
     }
     else {
@@ -748,6 +747,743 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
   pd << theSubShapes->Value(aLen) << "])";
 
   SetErrorCode(OK);
+}
+
+//=============================================================================
+/*!
+ *  UnionGroups
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IGroupOperations::UnionGroups (Handle(GEOM_Object) theGroup1,
+                                                            Handle(GEOM_Object) theGroup2)
+{
+  SetErrorCode(KO);
+  if (theGroup1.IsNull() || theGroup2.IsNull()) return NULL;
+
+  // Get group type
+  TopAbs_ShapeEnum aType1 = GetType(theGroup1);
+  TopAbs_ShapeEnum aType2 = GetType(theGroup2);
+  TopAbs_ShapeEnum aType = aType1;
+  if (aType1 != aType2) {
+    if (aType1 != TopAbs_SHAPE && aType1 != TopAbs_COMPOUND) {
+      if (aType2 == TopAbs_SHAPE || aType2 == TopAbs_COMPOUND)
+        aType = aType2;
+      else {
+        SetErrorCode("Error: UnionGroups cannot be performed on groups of different type");
+        return NULL;
+      }
+    }
+  }
+
+  // Get Main Shape
+  Handle(GEOM_Function) aFunction1 = theGroup1->GetLastFunction();
+  Handle(GEOM_Function) aFunction2 = theGroup2->GetLastFunction();
+  if (aFunction1.IsNull() || aFunction2.IsNull()) return NULL;
+
+  GEOM_ISubShape aSSI1 (aFunction1);
+  GEOM_ISubShape aSSI2 (aFunction2);
+
+  Handle(GEOM_Function) aMainShapeFunc1 = aSSI1.GetMainShape();
+  Handle(GEOM_Function) aMainShapeFunc2 = aSSI2.GetMainShape();
+  if (aMainShapeFunc1.IsNull() || aMainShapeFunc2.IsNull()) return NULL;
+
+  TDF_Label aLabel1 = aMainShapeFunc1->GetOwnerEntry();
+  TDF_Label aLabel2 = aMainShapeFunc2->GetOwnerEntry();
+  if (aLabel1.IsRoot() || aLabel2.IsRoot()) {
+    SetErrorCode("Error: UnionGroups can be performed only on groups");
+    return NULL;
+  }
+
+  if (aLabel1 != aLabel2) {
+    SetErrorCode("Error: UnionGroups cannot be performed on groups, built on different main shapes");
+    return NULL;
+  }
+
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel1);
+  if (aMainObj.IsNull()) return NULL;
+
+  // New contents of the group
+  TColStd_ListOfInteger aNewIDs;
+  TColStd_MapOfInteger mapIDs;
+
+  Handle(TColStd_HArray1OfInteger) aSeq1 = aSSI1.GetIndices();
+  Handle(TColStd_HArray1OfInteger) aSeq2 = aSSI2.GetIndices();
+  if (aSeq1.IsNull() || aSeq2.IsNull()) return NULL;
+
+  Standard_Integer j, val_j;
+  Standard_Integer aLength1 = aSeq1->Length();
+  Standard_Integer aLength2 = aSeq2->Length();
+
+  for (j = 1; j <= aLength1; j++) {
+    val_j = aSeq1->Value(j);
+    if (val_j > 0 && mapIDs.Add(val_j)) {
+      aNewIDs.Append(val_j);
+    }
+  }
+  for (j = 1; j <= aLength2; j++) {
+    val_j = aSeq2->Value(j);
+    if (val_j > 0 && mapIDs.Add(val_j)) {
+      aNewIDs.Append(val_j);
+    }
+  }
+
+  if (aNewIDs.Extent() < 1) {
+    SetErrorCode("Error: UnionGroups cannot be performed on two empty groups");
+    return NULL;
+  }
+
+  // Put new indices from the list into an array
+  Standard_Integer k = 1;
+  TColStd_ListIteratorOfListOfInteger aNewIDsIter (aNewIDs);
+  Handle(TColStd_HArray1OfInteger) aNewArr = new TColStd_HArray1OfInteger (1, aNewIDs.Extent());
+  for (; aNewIDsIter.More(); aNewIDsIter.Next(), k++) {
+    aNewArr->SetValue(k, aNewIDsIter.Value());
+  }
+
+  // Create the Group
+  Handle(GEOM_Object) aGroup = GetEngine()->AddSubShape(aMainObj, aNewArr);
+  aGroup->SetType(GEOM_GROUP);
+  TDF_Label aFreeLabel = aGroup->GetFreeLabel();
+  TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aType);
+
+  // Make a Python command
+  Handle(GEOM_Function) aFunction = aGroup->GetFunction(1);
+  GEOM::TPythonDump(aFunction) << aGroup << " = geompy.UnionGroups("
+                               << theGroup1 << ", " << theGroup2 << ")";
+
+  SetErrorCode(OK);
+  return aGroup;
+}
+
+//=============================================================================
+/*!
+ *  IntersectGroups
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IGroupOperations::IntersectGroups (Handle(GEOM_Object) theGroup1,
+                                                                Handle(GEOM_Object) theGroup2)
+{
+  SetErrorCode(KO);
+  if (theGroup1.IsNull() || theGroup2.IsNull()) return NULL;
+
+  // Get group type
+  TopAbs_ShapeEnum aType1 = GetType(theGroup1);
+  TopAbs_ShapeEnum aType2 = GetType(theGroup2);
+  TopAbs_ShapeEnum aType = aType1;
+  if (aType1 != aType2) {
+    if (aType1 != TopAbs_SHAPE && aType1 != TopAbs_COMPOUND) {
+      if (aType2 == TopAbs_SHAPE || aType2 == TopAbs_COMPOUND)
+        aType = aType2;
+      else {
+        SetErrorCode("Error: IntersectGroups cannot be performed on groups of different type");
+        return NULL;
+      }
+    }
+  }
+
+  // Get Main Shape
+  Handle(GEOM_Function) aFunction1 = theGroup1->GetLastFunction();
+  Handle(GEOM_Function) aFunction2 = theGroup2->GetLastFunction();
+  if (aFunction1.IsNull() || aFunction2.IsNull()) return NULL;
+
+  GEOM_ISubShape aSSI1 (aFunction1);
+  GEOM_ISubShape aSSI2 (aFunction2);
+
+  Handle(GEOM_Function) aMainShapeFunc1 = aSSI1.GetMainShape();
+  Handle(GEOM_Function) aMainShapeFunc2 = aSSI2.GetMainShape();
+  if (aMainShapeFunc1.IsNull() || aMainShapeFunc2.IsNull()) return NULL;
+
+  TDF_Label aLabel1 = aMainShapeFunc1->GetOwnerEntry();
+  TDF_Label aLabel2 = aMainShapeFunc2->GetOwnerEntry();
+  if (aLabel1.IsRoot() || aLabel2.IsRoot()) {
+    SetErrorCode("Error: UnionGroups can be performed only on groups");
+    return NULL;
+  }
+
+  if (aLabel1 != aLabel2) {
+    SetErrorCode("Error: IntersectGroups cannot be performed on groups, built on different main shapes");
+    return NULL;
+  }
+
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel1);
+  if (aMainObj.IsNull()) return NULL;
+
+  // New contents of the group
+  TColStd_ListOfInteger aNewIDs;
+  TColStd_MapOfInteger mapIDs;
+
+  Handle(TColStd_HArray1OfInteger) aSeq1 = aSSI1.GetIndices();
+  Handle(TColStd_HArray1OfInteger) aSeq2 = aSSI2.GetIndices();
+  if (aSeq1.IsNull() || aSeq2.IsNull()) return NULL;
+
+  Standard_Integer j, val_j;
+  Standard_Integer aLength1 = aSeq1->Length();
+  Standard_Integer aLength2 = aSeq2->Length();
+
+  for (j = 1; j <= aLength1; j++) {
+    mapIDs.Add(aSeq1->Value(j));
+  }
+  for (j = 1; j <= aLength2; j++) {
+    val_j = aSeq2->Value(j);
+    if (val_j > 0 && !mapIDs.Add(val_j)) {
+      // add index, if it is in mapIDs (filled from Group_1)
+      aNewIDs.Append(val_j);
+    }
+  }
+
+  Handle(TColStd_HArray1OfInteger) aNewArr;
+  if (aNewIDs.Extent() < 1) {
+    aNewArr = new TColStd_HArray1OfInteger (1, 1);
+    aNewArr->SetValue(1, -1);
+  }
+  else {
+    // Put new indices from the list into an array
+    Standard_Integer k = 1;
+    TColStd_ListIteratorOfListOfInteger aNewIDsIter (aNewIDs);
+    aNewArr = new TColStd_HArray1OfInteger (1, aNewIDs.Extent());
+    for (; aNewIDsIter.More(); aNewIDsIter.Next(), k++) {
+      aNewArr->SetValue(k, aNewIDsIter.Value());
+    }
+  }
+
+  // Create the Group
+  Handle(GEOM_Object) aGroup = GetEngine()->AddSubShape(aMainObj, aNewArr);
+  aGroup->SetType(GEOM_GROUP);
+  TDF_Label aFreeLabel = aGroup->GetFreeLabel();
+  TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aType);
+
+  // Make a Python command
+  Handle(GEOM_Function) aFunction = aGroup->GetFunction(1);
+  GEOM::TPythonDump(aFunction) << aGroup << " = geompy.IntersectGroups("
+                               << theGroup1 << ", " << theGroup2 << ")";
+
+  SetErrorCode(OK);
+  return aGroup;
+}
+
+//=============================================================================
+/*!
+ *  CutGroups
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IGroupOperations::CutGroups (Handle(GEOM_Object) theGroup1,
+                                                          Handle(GEOM_Object) theGroup2)
+{
+  SetErrorCode(KO);
+  if (theGroup1.IsNull() || theGroup2.IsNull()) return NULL;
+
+  // Get group type
+  TopAbs_ShapeEnum aType1 = GetType(theGroup1);
+  TopAbs_ShapeEnum aType2 = GetType(theGroup2);
+  TopAbs_ShapeEnum aType = aType1;
+  if (aType1 != aType2) {
+    if (aType1 != TopAbs_SHAPE && aType1 != TopAbs_COMPOUND) {
+      if (aType2 == TopAbs_SHAPE || aType2 == TopAbs_COMPOUND)
+        aType = aType2;
+      else {
+        SetErrorCode("Error: CutGroups cannot be performed on groups of different type");
+        return NULL;
+      }
+    }
+  }
+
+  // Get Main Shape
+  Handle(GEOM_Function) aFunction1 = theGroup1->GetLastFunction();
+  Handle(GEOM_Function) aFunction2 = theGroup2->GetLastFunction();
+  if (aFunction1.IsNull() || aFunction2.IsNull()) return NULL;
+
+  GEOM_ISubShape aSSI1 (aFunction1);
+  GEOM_ISubShape aSSI2 (aFunction2);
+
+  Handle(GEOM_Function) aMainShapeFunc1 = aSSI1.GetMainShape();
+  Handle(GEOM_Function) aMainShapeFunc2 = aSSI2.GetMainShape();
+  if (aMainShapeFunc1.IsNull() || aMainShapeFunc2.IsNull()) return NULL;
+
+  TDF_Label aLabel1 = aMainShapeFunc1->GetOwnerEntry();
+  TDF_Label aLabel2 = aMainShapeFunc2->GetOwnerEntry();
+  if (aLabel1.IsRoot() || aLabel2.IsRoot()) {
+    SetErrorCode("Error: UnionGroups can be performed only on groups");
+    return NULL;
+  }
+
+  if (aLabel1 != aLabel2) {
+    SetErrorCode("Error: CutGroups cannot be performed on groups, built on different main shapes");
+    return NULL;
+  }
+
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel1);
+  if (aMainObj.IsNull()) return NULL;
+
+  // New contents of the group
+  TColStd_ListOfInteger aNewIDs;
+  TColStd_MapOfInteger mapIDs;
+
+  Handle(TColStd_HArray1OfInteger) aSeq1 = aSSI1.GetIndices();
+  Handle(TColStd_HArray1OfInteger) aSeq2 = aSSI2.GetIndices();
+  if (aSeq1.IsNull() || aSeq2.IsNull()) return NULL;
+
+  Standard_Integer j, val_j;
+  Standard_Integer aLength1 = aSeq1->Length();
+  Standard_Integer aLength2 = aSeq2->Length();
+
+  for (j = 1; j <= aLength2; j++) {
+    mapIDs.Add(aSeq2->Value(j));
+  }
+  for (j = 1; j <= aLength1; j++) {
+    val_j = aSeq1->Value(j);
+    if (val_j > 0 && mapIDs.Add(val_j)) {
+      // add index, if it is not in mapIDs (filled from Group_2)
+      aNewIDs.Append(val_j);
+    }
+  }
+
+  Handle(TColStd_HArray1OfInteger) aNewArr;
+  if (aNewIDs.Extent() < 1) {
+    aNewArr = new TColStd_HArray1OfInteger (1, 1);
+    aNewArr->SetValue(1, -1);
+  }
+  else {
+    // Put new indices from the list into an array
+    Standard_Integer k = 1;
+    TColStd_ListIteratorOfListOfInteger aNewIDsIter (aNewIDs);
+    aNewArr = new TColStd_HArray1OfInteger (1, aNewIDs.Extent());
+    for (; aNewIDsIter.More(); aNewIDsIter.Next(), k++) {
+      aNewArr->SetValue(k, aNewIDsIter.Value());
+    }
+  }
+
+  // Create the Group
+  Handle(GEOM_Object) aGroup = GetEngine()->AddSubShape(aMainObj, aNewArr);
+  aGroup->SetType(GEOM_GROUP);
+  TDF_Label aFreeLabel = aGroup->GetFreeLabel();
+  TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aType);
+
+  // Make a Python command
+  Handle(GEOM_Function) aFunction = aGroup->GetFunction(1);
+  GEOM::TPythonDump(aFunction) << aGroup << " = geompy.CutGroups("
+                               << theGroup1 << ", " << theGroup2 << ")";
+
+  SetErrorCode(OK);
+  return aGroup;
+}
+
+//=============================================================================
+/*!
+ *  UnionListOfGroups
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IGroupOperations::UnionListOfGroups
+                         (const Handle(TColStd_HSequenceOfTransient)& theGList)
+{
+  SetErrorCode(KO);
+  if (theGList.IsNull()) return NULL;
+
+  Standard_Integer i, aLen = theGList->Length();
+  if (aLen < 1) {
+    SetErrorCode("UnionListOfGroups error: the list of groups is empty");
+    return NULL;
+  }
+
+  TopAbs_ShapeEnum aType, aType_i;
+  TDF_Label aLabel, aLabel_i;
+  TColStd_ListOfInteger aNewIDs;
+  TColStd_MapOfInteger mapIDs;
+
+  // Iterate on the initial groups
+  for (i = 1; i <= aLen; i++) {
+    Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList->Value(i));
+
+    // Get group type
+    aType_i = GetType(aGr_i);
+    if (i == 1)
+      aType = aType_i;
+    else {
+      if (aType_i != aType) {
+        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) {
+          if (aType_i == TopAbs_SHAPE || aType_i == TopAbs_COMPOUND)
+            aType = aType_i;
+          else {
+            SetErrorCode("Error: UnionListOfGroups cannot be performed on groups of different type");
+            return NULL;
+          }
+        }
+      }
+    }
+
+    // Get Main Shape
+    Handle(GEOM_Function) aFunction_i = aGr_i->GetLastFunction();
+    if (aFunction_i.IsNull()) return NULL;
+    GEOM_ISubShape aSSI (aFunction_i);
+    Handle(GEOM_Function) aMainShapeFunc = aSSI.GetMainShape();
+    if (aMainShapeFunc.IsNull()) return NULL;
+    aLabel_i = aMainShapeFunc->GetOwnerEntry();
+    if (aLabel_i.IsRoot()) {
+      SetErrorCode("Error: UnionGroups can be performed only on groups");
+      return NULL;
+    }
+    if (i == 1)
+      aLabel = aLabel_i;
+    else {
+      if (aLabel_i != aLabel) {
+        SetErrorCode("Error: UnionListOfGroups cannot be performed on groups, built on different main shapes");
+        return NULL;
+      }
+    }
+
+    // New contents of the group
+    Handle(TColStd_HArray1OfInteger) aSeq = aSSI.GetIndices();
+    if (aSeq.IsNull()) return NULL;
+
+    Standard_Integer j, val_j, aLength = aSeq->Length();
+    for (j = 1; j <= aLength; j++) {
+      val_j = aSeq->Value(j);
+      if (val_j > 0 && mapIDs.Add(val_j)) {
+        aNewIDs.Append(val_j);
+      }
+    }
+  }
+
+  // Check the resulting list of indices
+  if (aNewIDs.Extent() < 1) {
+    SetErrorCode("Error: UnionListOfGroups cannot be performed on all empty groups");
+    return NULL;
+  }
+
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel);
+  if (aMainObj.IsNull()) return NULL;
+
+  // Put new indices from the list into an array
+  Standard_Integer k = 1;
+  TColStd_ListIteratorOfListOfInteger aNewIDsIter (aNewIDs);
+  Handle(TColStd_HArray1OfInteger) aNewArr = new TColStd_HArray1OfInteger (1, aNewIDs.Extent());
+  for (; aNewIDsIter.More(); aNewIDsIter.Next(), k++) {
+    aNewArr->SetValue(k, aNewIDsIter.Value());
+  }
+
+  // Create the Group
+  Handle(GEOM_Object) aGroup = GetEngine()->AddSubShape(aMainObj, aNewArr);
+  aGroup->SetType(GEOM_GROUP);
+  TDF_Label aFreeLabel = aGroup->GetFreeLabel();
+  TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aType);
+
+  //Make a Python command
+  Handle(GEOM_Function) aFunction = aGroup->GetFunction(1);
+  GEOM::TPythonDump pd (aFunction);
+  pd << aGroup << " = geompy.UnionListOfGroups([";
+  for (i = 1; i <= aLen; i++) {
+    Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList->Value(i));
+    pd << aGr_i << ((i < aLen) ? ", " : "])");
+  }
+
+  SetErrorCode(OK);
+  return aGroup;
+}
+
+//=============================================================================
+/*!
+ *  IntersectListOfGroups
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IGroupOperations::IntersectListOfGroups
+                         (const Handle(TColStd_HSequenceOfTransient)& theGList)
+{
+  SetErrorCode(KO);
+  if (theGList.IsNull()) return NULL;
+
+  Standard_Integer i, aLen = theGList->Length();
+  if (aLen < 1) {
+    SetErrorCode("IntersectListOfGroups error: the list of groups is empty");
+    return NULL;
+  }
+
+  TopAbs_ShapeEnum aType, aType_i;
+  TDF_Label aLabel, aLabel_i;
+  TColStd_ListOfInteger aNewIDs;
+  TColStd_MapOfInteger mapIDs;
+
+  // Iterate on the initial groups
+  for (i = 1; i <= aLen; i++) {
+    Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList->Value(i));
+
+    // Get group type
+    aType_i = GetType(aGr_i);
+    if (i == 1)
+      aType = aType_i;
+    else {
+      if (aType_i != aType) {
+        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) {
+          if (aType_i == TopAbs_SHAPE || aType_i == TopAbs_COMPOUND)
+            aType = aType_i;
+          else {
+            SetErrorCode("Error: IntersectListOfGroups cannot be performed on groups of different type");
+            return NULL;
+          }
+        }
+      }
+    }
+
+    // Get Main Shape
+    Handle(GEOM_Function) aFunction_i = aGr_i->GetLastFunction();
+    if (aFunction_i.IsNull()) return NULL;
+    GEOM_ISubShape aSSI (aFunction_i);
+    Handle(GEOM_Function) aMainShapeFunc = aSSI.GetMainShape();
+    if (aMainShapeFunc.IsNull()) return NULL;
+    aLabel_i = aMainShapeFunc->GetOwnerEntry();
+    if (aLabel_i.IsRoot()) {
+     SetErrorCode("Error: UnionGroups can be performed only on groups");
+     return NULL;
+    }
+    if (i == 1)
+      aLabel = aLabel_i;
+    else {
+      if (aLabel_i != aLabel) {
+        SetErrorCode("Error: IntersectListOfGroups cannot be performed on groups, built on different main shapes");
+        return NULL;
+      }
+    }
+
+    // New contents of the group
+    Handle(TColStd_HArray1OfInteger) aSeq = aSSI.GetIndices();
+    if (aSeq.IsNull()) return NULL;
+
+    Standard_Integer j, val_j, aLength = aSeq->Length();
+    for (j = 1; j <= aLength; j++) {
+      val_j = aSeq->Value(j);
+      if (val_j > 0) {
+        if (i == 1) {
+          // get all elements of the first group
+          if (mapIDs.Add(val_j))
+            aNewIDs.Append(val_j);
+        }
+        else {
+          // get only elements, present in all previously processed groups
+          if (!mapIDs.Add(val_j))
+            aNewIDs.Append(val_j);
+        }
+      }
+    }
+
+    // refill the map with only validated elements
+    if (i > 1) {
+      mapIDs.Clear();
+      TColStd_ListIteratorOfListOfInteger aNewIDsIter (aNewIDs);
+      for (; aNewIDsIter.More(); aNewIDsIter.Next()) {
+        mapIDs.Add(aNewIDsIter.Value());
+      }
+    }
+    // clear the resulting list before starting the next sycle
+    if (i < aLen) {
+      aNewIDs.Clear();
+    }
+  }
+
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel);
+  if (aMainObj.IsNull()) return NULL;
+
+  Handle(TColStd_HArray1OfInteger) aNewArr;
+  if (aNewIDs.Extent() < 1) {
+    aNewArr = new TColStd_HArray1OfInteger (1, 1);
+    aNewArr->SetValue(1, -1);
+  }
+  else {
+    // Put new indices from the list into an array
+    Standard_Integer k = 1;
+    TColStd_ListIteratorOfListOfInteger aNewIDsIter (aNewIDs);
+    aNewArr = new TColStd_HArray1OfInteger (1, aNewIDs.Extent());
+    for (; aNewIDsIter.More(); aNewIDsIter.Next(), k++) {
+      aNewArr->SetValue(k, aNewIDsIter.Value());
+    }
+  }
+
+  // Create the Group
+  Handle(GEOM_Object) aGroup = GetEngine()->AddSubShape(aMainObj, aNewArr);
+  aGroup->SetType(GEOM_GROUP);
+  TDF_Label aFreeLabel = aGroup->GetFreeLabel();
+  TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aType);
+
+  //Make a Python command
+  Handle(GEOM_Function) aFunction = aGroup->GetFunction(1);
+  GEOM::TPythonDump pd (aFunction);
+  pd << aGroup << " = geompy.IntersectListOfGroups([";
+  for (i = 1; i <= aLen; i++) {
+    Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList->Value(i));
+    pd << aGr_i << ((i < aLen) ? ", " : "])");
+  }
+
+  SetErrorCode(OK);
+  return aGroup;
+}
+
+//=============================================================================
+/*!
+ *  CutListOfGroups
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IGroupOperations::CutListOfGroups
+                        (const Handle(TColStd_HSequenceOfTransient)& theGList1,
+                         const Handle(TColStd_HSequenceOfTransient)& theGList2)
+{
+  SetErrorCode(KO);
+  if (theGList1.IsNull() || theGList2.IsNull()) return NULL;
+
+  Standard_Integer i;
+  Standard_Integer aLen1 = theGList1->Length();
+  Standard_Integer aLen2 = theGList2->Length();
+  if (aLen1 < 1) {
+    SetErrorCode("CutListOfGroups error: the first list of groups is empty");
+    return NULL;
+  }
+
+  TopAbs_ShapeEnum aType, aType_i;
+  TDF_Label aLabel, aLabel_i;
+  TColStd_ListOfInteger aNewIDs;
+  TColStd_MapOfInteger mapIDs;
+
+  // 1. Collect indices to be excluded (from theGList2) into the mapIDs
+  for (i = 1; i <= aLen2; i++) {
+    Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList2->Value(i));
+
+    // Get group type
+    aType_i = GetType(aGr_i);
+    if (i == 1)
+      aType = aType_i;
+    else {
+      if (aType_i != aType) {
+        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) {
+          if (aType_i == TopAbs_SHAPE || aType_i == TopAbs_COMPOUND)
+            aType = aType_i;
+          else {
+            SetErrorCode("Error: CutListOfGroups cannot be performed on groups of different type");
+            return NULL;
+          }
+        }
+      }
+    }
+
+    // Get Main Shape
+    Handle(GEOM_Function) aFunction_i = aGr_i->GetLastFunction();
+    if (aFunction_i.IsNull()) return NULL;
+    GEOM_ISubShape aSSI (aFunction_i);
+    Handle(GEOM_Function) aMainShapeFunc = aSSI.GetMainShape();
+    if (aMainShapeFunc.IsNull()) return NULL;
+    aLabel_i = aMainShapeFunc->GetOwnerEntry();
+    if (aLabel_i.IsRoot()) {
+      SetErrorCode("Error: UnionGroups can be performed only on groups");
+      return NULL;
+    }
+    if (i == 1)
+      aLabel = aLabel_i;
+    else {
+      if (aLabel_i != aLabel) {
+        SetErrorCode("Error: CutListOfGroups cannot be performed on groups, built on different main shapes");
+        return NULL;
+      }
+    }
+
+    // Indiced to exclude
+    Handle(TColStd_HArray1OfInteger) aSeq = aSSI.GetIndices();
+    if (aSeq.IsNull()) return NULL;
+
+    Standard_Integer j, aLength = aSeq->Length();
+    for (j = 1; j <= aLength; j++) {
+      mapIDs.Add(aSeq->Value(j));
+    }
+  }
+
+  // 2. Collect indices from theGList1, avoiding indices from theGList2 (mapIDs)
+  for (i = 1; i <= aLen1; i++) {
+    Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList1->Value(i));
+
+    // Get group type
+    aType_i = GetType(aGr_i);
+    if (i == 1 && aLen2 < 1)
+      aType = aType_i;
+    else {
+      if (aType_i != aType) {
+        if (aType != TopAbs_SHAPE && aType != TopAbs_COMPOUND) {
+          if (aType_i == TopAbs_SHAPE || aType_i == TopAbs_COMPOUND)
+            aType = aType_i;
+          else {
+            SetErrorCode("Error: CutListOfGroups cannot be performed on groups of different type");
+            return NULL;
+          }
+        }
+      }
+    }
+
+    // Get Main Shape
+    Handle(GEOM_Function) aFunction_i = aGr_i->GetLastFunction();
+    if (aFunction_i.IsNull()) return NULL;
+    GEOM_ISubShape aSSI (aFunction_i);
+    Handle(GEOM_Function) aMainShapeFunc = aSSI.GetMainShape();
+    if (aMainShapeFunc.IsNull()) return NULL;
+    aLabel_i = aMainShapeFunc->GetOwnerEntry();
+    if (aLabel_i.IsRoot()) {
+      SetErrorCode("Error: UnionGroups can be performed only on groups");
+      return NULL;
+    }
+    if (i == 1 && aLen2 < 1)
+      aLabel = aLabel_i;
+    else {
+      if (aLabel_i != aLabel) {
+        SetErrorCode("Error: CutListOfGroups cannot be performed on groups, built on different main shapes");
+        return NULL;
+      }
+    }
+
+    // New contents of the group
+    Handle(TColStd_HArray1OfInteger) aSeq = aSSI.GetIndices();
+    if (aSeq.IsNull()) return NULL;
+
+    Standard_Integer j, val_j, aLength = aSeq->Length();
+    for (j = 1; j <= aLength; j++) {
+      val_j = aSeq->Value(j);
+      if (val_j > 0 && mapIDs.Add(val_j)) {
+        // get only elements, not present in mapIDs (theGList2)
+        aNewIDs.Append(val_j);
+      }
+    }
+  }
+
+  Handle(GEOM_Object) aMainObj = GEOM_Object::GetObject(aLabel);
+  if (aMainObj.IsNull()) return NULL;
+
+  Handle(TColStd_HArray1OfInteger) aNewArr;
+  if (aNewIDs.Extent() < 1) {
+    aNewArr = new TColStd_HArray1OfInteger (1, 1);
+    aNewArr->SetValue(1, -1);
+  }
+  else {
+    // Put new indices from the list into an array
+    Standard_Integer k = 1;
+    TColStd_ListIteratorOfListOfInteger aNewIDsIter (aNewIDs);
+    aNewArr = new TColStd_HArray1OfInteger (1, aNewIDs.Extent());
+    for (; aNewIDsIter.More(); aNewIDsIter.Next(), k++) {
+      aNewArr->SetValue(k, aNewIDsIter.Value());
+    }
+  }
+
+  // Create the Group
+  Handle(GEOM_Object) aGroup = GetEngine()->AddSubShape(aMainObj, aNewArr);
+  aGroup->SetType(GEOM_GROUP);
+  TDF_Label aFreeLabel = aGroup->GetFreeLabel();
+  TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aType);
+
+  //Make a Python command
+  Handle(GEOM_Function) aFunction = aGroup->GetFunction(1);
+  GEOM::TPythonDump pd (aFunction);
+  pd << aGroup << " = geompy.CutListOfGroups([";
+  for (i = 1; i <= aLen1; i++) {
+    Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList1->Value(i));
+    pd << aGr_i << ((i < aLen1) ? ", " : "], [");
+  }
+  for (i = 1; i <= aLen2; i++) {
+    Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList2->Value(i));
+    pd << aGr_i << ((i < aLen2) ? ", " : "])");
+  }
+
+  SetErrorCode(OK);
+  return aGroup;
 }
 
 //=============================================================================

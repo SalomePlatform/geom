@@ -95,6 +95,11 @@ def TestExportImport (geompy, shape):
   os.remove(fileExportImportIGES)
   os.remove(fileExportImportSTEP)
 
+  # Test RestoreShape from binary BRep stream
+  aStream = shape.GetShapeStream()
+  aNewShape = geompy.RestoreShape(aStream)
+  geompy.addToStudy(aNewShape, "aNewShape")
+
   print "OK"
 
 
@@ -144,6 +149,7 @@ def TestOtherOperations (geompy, math):
 
   # OrientationChange
   Box = geompy.MakeBoxDXDYDZ(200, 200, 200)
+  geompy.addToStudy(Box, "Box")
   Orientation = geompy.OrientationChange(Box)
   id_Orientation = geompy.addToStudy(Orientation, "OrientationChange")
 
@@ -243,6 +249,11 @@ def TestOtherOperations (geompy, math):
   IsValid = geompy.CheckCompoundOfBlocks(Compound1)
   if IsValid == 0:
     print "The Blocks Compound is NOT VALID"
+    (NonBlocks, NonQuads) = geompy.GetNonBlocks(Compound1)
+    if NonBlocks is not None:
+      geompy.addToStudyInFather(Compound1, NonBlocks, "Group of non-hexahedral solids")
+    if NonQuads is not None:
+      geompy.addToStudyInFather(Compound1, NonQuads, "Group of non-quadrangular faces")
   else:
     print "The Blocks Compound is VALID"
 
@@ -310,6 +321,42 @@ def TestOtherOperations (geompy, math):
   print "(must be ", f_ind_6, ", ", f_ind_1, " and ", f_ind_2, ")"
   for ObjectID in GetObjectIDs:
     print " ", ObjectID
+
+  # Boolean Operations on Groups (Union, Intersection, Cut)
+  Group_1 = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
+  geompy.UnionIDs(Group_1, [13, 23])
+  Group_2 = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
+  geompy.UnionIDs(Group_2, [3, 27])
+  Group_3 = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
+  geompy.UnionIDs(Group_3, [33, 23])
+  Group_4 = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
+  geompy.UnionIDs(Group_4, [31, 27])
+
+  geompy.addToStudyInFather(Box, Group_1, 'Group_1')
+  geompy.addToStudyInFather(Box, Group_2, 'Group_2')
+  geompy.addToStudyInFather(Box, Group_3, 'Group_3')
+  geompy.addToStudyInFather(Box, Group_4, 'Group_4')
+
+  # union groups
+  Group_U_1_2 = geompy.UnionGroups(Group_1, Group_2)
+  Group_UL_3_4 = geompy.UnionListOfGroups([Group_3, Group_4])
+
+  geompy.addToStudyInFather(Box, Group_U_1_2, 'Group_U_1_2')
+  geompy.addToStudyInFather(Box, Group_UL_3_4, 'Group_UL_3_4')
+
+  # intersect groups
+  Group_I_1_3 = geompy.IntersectGroups(Group_1, Group_3)
+  Group_IL_1_3 = geompy.IntersectListOfGroups([Group_1, Group_3])
+
+  geompy.addToStudyInFather(Box, Group_I_1_3, 'Group_I_1_3')
+  geompy.addToStudyInFather(Box, Group_IL_1_3, 'Group_IL_1_3')
+
+  # cut groups
+  Group_C_2_4 = geompy.CutGroups(Group_2, Group_4)
+  Group_CL_2_4 = geompy.CutListOfGroups([Group_2], [Group_4])
+
+  geompy.addToStudyInFather(Box, Group_C_2_4, 'Group_C_2_4')
+  geompy.addToStudyInFather(Box, Group_CL_2_4, 'Group_CL_2_4')
 
   # -----------------------------------------------------------------------------
   # enumeration ShapeTypeString as a dictionary

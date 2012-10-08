@@ -2222,6 +2222,11 @@ static TopoDS_Shape CreatePipeBiNormalAlongVector(const TopoDS_Wire& aWirePath,
     Standard_NullObject::Raise("MakePipe aborted : null base argument");
   }
 
+  // Make copy to prevent modifying of base object: 0021525
+  BRepBuilderAPI_Copy Copy (aShapeBase);
+  if (Copy.IsDone())
+    aShapeBase = Copy.Shape();
+
   TopoDS_Shape aProf;
   if (aShapeBase.ShapeType() == TopAbs_VERTEX) {
     aProf = aShapeBase;
@@ -2233,14 +2238,14 @@ static TopoDS_Shape CreatePipeBiNormalAlongVector(const TopoDS_Wire& aWirePath,
     aProf = aShapeBase;
   }
   else if (aShapeBase.ShapeType() == TopAbs_FACE) {
-    TopExp_Explorer wexp(aShapeBase,TopAbs_WIRE);
+    TopExp_Explorer wexp (aShapeBase,TopAbs_WIRE);
     aProf = wexp.Current();
   }
   else {
     Standard_TypeMismatch::Raise
       ("MakePipe aborted : invalid type of base");
   }
-  BRepOffsetAPI_MakePipeShell PipeBuilder(aWirePath);
+  BRepOffsetAPI_MakePipeShell PipeBuilder (aWirePath);
   PipeBuilder.Add(aProf);
 
   if (aShapeVec.IsNull()) {

@@ -73,15 +73,22 @@
 
 ## @}
 
-import salome
-salome.salome_init()
-from salome import *
+# initialize SALOME session in try/except block
+# to avoid problems in some cases, e.g. when generating documentation
+try:
+    import salome
+    salome.salome_init()
+    from salome import *
+except:
+    pass
 
 from salome_notebook import *
 
 import GEOM
 import math
 import os
+
+from gsketcher import Sketcher3D
 
 ## Enumeration ShapeType as a dictionary. \n
 ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
@@ -481,6 +488,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             try:
                 aSObject = self.AddInStudy(self.myStudy, aShape, aName, None)
+                if aSObject and aName: aSObject.SetAttrString("AttributeName", aName)
                 if doRestoreSubShapes:
                     self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs,
                                             theFindMethod, theInheritFirstArg, True )
@@ -511,6 +519,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             try:
                 aSObject = self.AddInStudy(self.myStudy, aShape, aName, aFather)
+                if aSObject and aName: aSObject.SetAttrString("AttributeName", aName)
             except:
                 print "addToStudyInFather() failed"
                 return ""
@@ -813,7 +822,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created point.
 
             Example of usage:
-                p_on_face = geompy.MakeVertexOnSurface(Face, 0.1, 0.8) #(GEOM_Object, Double, Double)->GEOM_Object
+                p_on_face = geompy.MakeVertexOnSurface(Face, 0.1, 0.8)
             """
             theUParameter, theVParameter, Parameters = ParseParameters(theUParameter, theVParameter)
             # Example: see GEOM_TestAll.py
@@ -844,13 +853,44 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created point.
 
             Example of usage:
-                p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(Face, 0., 0., 0.) #(GEOM_Object, Double, Double, Double)->GEOM_Object
+                p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(Face, 0., 0., 0.)
             """
             theX, theY, theZ, Parameters = ParseParameters(theX, theY, theZ)
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnSurfaceByCoord(theRefSurf, theX, theY, theZ)
             RaiseIfFailed("MakeVertexOnSurfaceByCoord", self.BasicOp)
             anObj.SetParameters(Parameters);
+            return anObj
+
+        ## Create a point, which lays on the given face.
+        #  The point will lay in arbitrary place of the face.
+        #  The only condition on it is a non-zero distance to the face boundary.
+        #  Such point can be used to uniquely identify the face inside any
+        #  shape in case, when the shape does not contain overlapped faces.
+        #  @param theFace The referenced face.
+        #  @return New GEOM.GEOM_Object, containing the created point.
+        #
+        #  @ref swig_MakeVertexInsideFace "Example"
+        def MakeVertexInsideFace (self, theFace):
+            """
+            Create a point, which lays on the given face.
+            The point will lay in arbitrary place of the face.
+            The only condition on it is a non-zero distance to the face boundary.
+            Such point can be used to uniquely identify the face inside any
+            shape in case, when the shape does not contain overlapped faces.
+
+            Parameters:
+                theFace The referenced face.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created point.
+
+            Example of usage:
+                p_on_face = geompy.MakeVertexInsideFace(Face)
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.BasicOp.MakePointOnFace(theFace)
+            RaiseIfFailed("MakeVertexInsideFace", self.BasicOp)
             return anObj
 
         ## Create a point on intersection of two lines.
@@ -891,7 +931,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created tangent.
 
             Example of usage:
-                tan_on_arc = geompy.MakeTangentOnCurve(Arc, 0.7) #(GEOM_Object, Double)->GEOM_Object
+                tan_on_arc = geompy.MakeTangentOnCurve(Arc, 0.7)
             """
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
@@ -1615,7 +1655,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #     - "C radius length" : Create arc by direction, radius and length(in degree)
         #     - "AA x y": Create arc by point at X & Y
         #     - "A dx dy" : Create arc by point with DX & DY
-        #     - "A dx dy" : Create arc by point with DX & DY
         #     - "UU x y radius flag1": Create arc by point at X & Y with given radiUs
         #     - "U dx dy radius flag1" : Create arc by point with DX & DY with given radiUs
         #     - "EE x y xc yc flag1 flag2": Create arc by point at X & Y with given cEnter coordinates
@@ -1664,7 +1703,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
                - "C radius length" : Create arc by direction, radius and length(in degree)
                - "AA x y": Create arc by point at X & Y
-               - "A dx dy" : Create arc by point with DX & DY
                - "A dx dy" : Create arc by point with DX & DY
                - "UU x y radius flag1": Create arc by point at X & Y with given radiUs
                - "U dx dy radius flag1" : Create arc by point with DX & DY with given radiUs
@@ -1722,8 +1760,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Returns:
                 New GEOM.GEOM_Object, containing the created wire.
             """
+            theCommand,Parameters = ParseSketcherCommand(theCommand)
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a sketcher wire, following the numerical description,
@@ -1732,7 +1772,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                                                      passing from it.
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
-        #  @ref tui_sketcher_page "Example"
+        #  @ref tui_3dsketcher_page "Example"
         def Make3DSketcher(self, theCoordinates):
             """
             Create a sketcher wire, following the numerical description,
@@ -1751,6 +1791,26 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 
+        ## Obtain a 3D sketcher interface
+        #  @return An instance of @ref gsketcher.Sketcher3D "Sketcher3D" interface
+        #
+        #  @ref tui_3dsketcher_page "Example"
+        def Sketcher3D (self):
+            """
+            Obtain a 3D sketcher interface.
+
+            Example of usage:
+                sk = geompy.Sketcher3D()
+                sk.addPointsAbsolute(0,0,0, 70,0,0)
+                sk.addPointsRelative(0, 0, 130)
+                sk.addPointAnglesLength("OXY", 50, 0, 100)
+                sk.addPointAnglesLength("OXZ", 30, 80, 130)
+                sk.close()
+                a3D_Sketcher_1 = sk.wire()
+            """
+            sk = Sketcher3D (self)
+            return sk
+
         # end of l3_sketcher
         ## @}
 
@@ -1764,7 +1824,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM.GEOM_Object, containing the created box.
         #  @ref tui_creation_box "Example"
-        def MakeBox(self,x1,y1,z1,x2,y2,z2):
+        def MakeBox (self, x1,y1,z1, x2,y2,z2):
             """
             Create a box by coordinates of two opposite vertices.
             
@@ -1954,7 +2014,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created disk.
 
             Example of usage:
-                Disk3 = geompy.MakeDiskR(100., 1)   #(1 Doubles, 1 Int)->GEOM_Object
+                Disk3 = geompy.MakeDiskR(100., 1)
             """
             # Example: see GEOM_TestAll.py
             theR,Parameters = ParseParameters(theR)
@@ -2109,11 +2169,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theR2 Radius of the second cone base.
                 theH Cone height.
 
-           Note:
+            Note:
                 If both radiuses are non-zero, the cone will be truncated.
                 If the radiuses are equal, a cylinder will be created instead.
 
-           Returns:
+            Returns:
                 New GEOM.GEOM_Object, containing the created cone.
             """
             # Example: see GEOM_TestAll.py
@@ -2149,7 +2209,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 If both radiuses are non-zero, the cone will be truncated.
                 If the radiuses are equal, a cylinder will be created instead.
 
-           Returns:
+            Returns:
                 New GEOM.GEOM_Object, containing the created cone.
             """
             # Example: see GEOM_TestAll.py
@@ -4063,7 +4123,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 List of sub-shapes of type theShapeType, contained in theShape.
             """
             # Example: see GEOM_TestAll.py
-            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, aType, False)
+            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, EnumToLong( aType ), False)
             RaiseIfFailed("SubShapeAll", self.ShapesOp)
             return ListObj
 
@@ -4084,7 +4144,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Returns:
                 List of IDs of sub-shapes.
             """
-            ListObj = self.ShapesOp.GetAllSubShapesIDs(aShape, aType, False)
+            ListObj = self.ShapesOp.GetAllSubShapesIDs(aShape, EnumToLong( aType ), False)
             RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
             return ListObj
 
@@ -4113,7 +4173,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             ListOfIDs = []
-            AllShapeIDsList = self.SubShapeAllIDs(aShape, aType)
+            AllShapeIDsList = self.SubShapeAllIDs(aShape, EnumToLong( aType ))
             for ind in ListOfInd:
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
@@ -4141,7 +4201,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 List of sub-shapes of type theShapeType, contained in theShape.
             """
             # Example: see GEOM_TestAll.py
-            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, aType, True)
+            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("SubShapeAllSortedCentres", self.ShapesOp)
             return ListObj
 
@@ -4164,7 +4224,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Returns: 
                 List of IDs of sub-shapes.
             """
-            ListIDs = self.ShapesOp.GetAllSubShapesIDs(aShape, aType, True)
+            ListIDs = self.ShapesOp.GetAllSubShapesIDs(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
             return ListIDs
 
@@ -4193,7 +4253,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             ListOfIDs = []
-            AllShapeIDsList = self.SubShapeAllSortedCentresIDs(aShape, aType)
+            AllShapeIDsList = self.SubShapeAllSortedCentresIDs(aShape, EnumToLong( aType ))
             for ind in ListOfInd:
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
@@ -4219,7 +4279,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 List of sub-shapes of type aType, contained in aShape.
             """
             # Example: see GEOM_TestAll.py
-            ListObj = self.ShapesOp.ExtractSubShapes(aShape, aType, isSorted)
+            ListObj = self.ShapesOp.ExtractSubShapes(aShape, EnumToLong( aType ), isSorted)
             RaiseIfFailed("ExtractSubShapes", self.ShapesOp)
             return ListObj
 
@@ -4260,7 +4320,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             It works like geompy.SubShapeAllSortedCentres, but wrongly
             defines centres of faces, shells and solids.
             """
-            ListObj = self.ShapesOp.MakeExplode(aShape, aType, True)
+            ListObj = self.ShapesOp.MakeExplode(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("MakeExplode", self.ShapesOp)
             return ListObj
 
@@ -4273,7 +4333,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             It works like geompy.SubShapeAllSortedCentresIDs, but wrongly
             defines centres of faces, shells and solids.
             """
-            ListIDs = self.ShapesOp.SubShapeAllIDs(aShape, aType, True)
+            ListIDs = self.ShapesOp.SubShapeAllIDs(aShape, EnumToLong( aType ), True)
             RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
             return ListIDs
 
@@ -4287,7 +4347,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             (wrongly defines centres of faces, shells and solids).
             """
             ListOfIDs = []
-            AllShapeIDsList = self.SubShapeAllSortedIDs(aShape, aType)
+            AllShapeIDsList = self.SubShapeAllSortedIDs(aShape, EnumToLong( aType ))
             for ind in ListOfInd:
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
@@ -7280,6 +7340,31 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             return self.ImportFile(theFileName, "STEP")
 
+        ## Read a shape from the binary stream, containing its bounding representation (BRep).
+        #  @note This method will not be dumped to the python script by DumpStudy functionality.
+        #  @note GEOM.GEOM_Object.GetShapeStream() method can be used to obtain the shape's BRep stream.
+        #  @param theStream The BRep binary stream.
+        #  @return New GEOM_Object, containing the shape, read from theStream.
+        #
+        #  @ref swig_Import_Export "Example"
+        def RestoreShape (self, theStream):
+            """
+            Read a shape from the binary stream, containing its bounding representation (BRep).
+
+            Note:
+                shape.GetShapeStream() method can be used to obtain the shape's BRep stream.
+
+            Parameters: 
+                theStream The BRep binary stream.
+
+            Returns:
+                New GEOM_Object, containing the shape, read from theStream.
+            """
+            # Example: see GEOM_TestOthers.py
+            anObj = self.InsertOp.RestoreShape(theStream)
+            RaiseIfFailed("RestoreShape", self.InsertOp)
+            return anObj
+
         ## Export the given shape into a file with given name.
         #  @param theObject Shape to be stored in the file.
         #  @param theFileName Name of the file to store the given shape in.
@@ -7774,6 +7859,36 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 print Descr
             return IsValid
 
+        ## Retrieve all non blocks solids and faces from \a theShape.
+        #  @param theShape The shape to explore.
+        #  @return A tuple of two GEOM_Objects. The first object is a group of all
+        #          non block solids (= not 6 faces, or with 6 faces, but with the
+        #          presence of non-quadrangular faces). The second object is a
+        #          group of all non quadrangular faces.
+        #
+        #  @ref tui_measurement_tools_page "Example 1"
+        #  \n @ref swig_GetNonBlocks "Example 2"
+        def GetNonBlocks (self, theShape):
+            """
+            Retrieve all non blocks solids and faces from theShape.
+
+            Parameters:
+                theShape The shape to explore.
+
+            Returns:
+                A tuple of two GEOM_Objects. The first object is a group of all
+                non block solids (= not 6 faces, or with 6 faces, but with the
+                presence of non-quadrangular faces). The second object is a
+                group of all non quadrangular faces.
+
+            Usage:
+                (res_sols, res_faces) = geompy.GetNonBlocks(myShape1)
+            """
+            # Example: see GEOM_Spanner.py
+            aTuple = self.BlocksOp.GetNonBlocks(theShape)
+            RaiseIfFailed("GetNonBlocks", self.BlocksOp)
+            return aTuple
+
         ## Remove all seam and degenerated edges from \a theShape.
         #  Unite faces and edges, sharing one surface. It means that
         #  this faces must have references to one C++ surface object (handle).
@@ -8179,6 +8294,156 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.GroupOp.DifferenceIDs(theGroup, theSubShapes)
             RaiseIfFailed("DifferenceIDs", self.GroupOp)
             pass
+
+        ## Union of two groups.
+        #  New group is created. It will contain all entities
+        #  which are present in groups theGroup1 and theGroup2.
+        #  @param theGroup1, theGroup2 are the initial GEOM groups
+        #                              to create the united group from.
+        #  @return a newly created GEOM group.
+        #  @ref tui_union_groups_anchor "Example"
+        def UnionGroups (self, theGroup1, theGroup2):
+            """
+            Union of two groups.
+            New group is created. It will contain all entities
+            which are present in groups theGroup1 and theGroup2.
+
+            Parameters:
+                theGroup1, theGroup2 are the initial GEOM groups
+                                     to create the united group from.
+
+            Returns:
+                a newly created GEOM group.
+            """
+            # Example: see GEOM_TestOthers.py
+            aGroup = self.GroupOp.UnionGroups(theGroup1, theGroup2)
+            RaiseIfFailed("UnionGroups", self.GroupOp)
+            return aGroup
+
+        ## Intersection of two groups.
+        #  New group is created. It will contain only those entities
+        #  which are present in both groups theGroup1 and theGroup2.
+        #  @param theGroup1, theGroup2 are the initial GEOM groups to get common part of.
+        #  @return a newly created GEOM group.
+        #  @ref tui_intersect_groups_anchor "Example"
+        def IntersectGroups (self, theGroup1, theGroup2):
+            """
+            Intersection of two groups.
+            New group is created. It will contain only those entities
+            which are present in both groups theGroup1 and theGroup2.
+
+            Parameters:
+                theGroup1, theGroup2 are the initial GEOM groups to get common part of.
+
+            Returns:
+                a newly created GEOM group.
+            """
+            # Example: see GEOM_TestOthers.py
+            aGroup = self.GroupOp.IntersectGroups(theGroup1, theGroup2)
+            RaiseIfFailed("IntersectGroups", self.GroupOp)
+            return aGroup
+
+        ## Cut of two groups.
+        #  New group is created. It will contain entities which are
+        #  present in group theGroup1 but are not present in group theGroup2.
+        #  @param theGroup1 is a GEOM group to include elements of.
+        #  @param theGroup2 is a GEOM group to exclude elements of.
+        #  @return a newly created GEOM group.
+        #  @ref tui_cut_groups_anchor "Example"
+        def CutGroups (self, theGroup1, theGroup2):
+            """
+            Cut of two groups.
+            New group is created. It will contain entities which are
+            present in group theGroup1 but are not present in group theGroup2.
+
+            Parameters:
+                theGroup1 is a GEOM group to include elements of.
+                theGroup2 is a GEOM group to exclude elements of.
+
+            Returns:
+                a newly created GEOM group.
+            """
+            # Example: see GEOM_TestOthers.py
+            aGroup = self.GroupOp.CutGroups(theGroup1, theGroup2)
+            RaiseIfFailed("CutGroups", self.GroupOp)
+            return aGroup
+
+        ## Union of list of groups.
+        #  New group is created. It will contain all entities that are
+        #  present in groups listed in theGList.
+        #  @param theGList is a list of GEOM groups to create the united group from.
+        #  @return a newly created GEOM group.
+        #  @ref tui_union_groups_anchor "Example"
+        def UnionListOfGroups (self, theGList):
+            """
+            Union of list of groups.
+            New group is created. It will contain all entities that are
+            present in groups listed in theGList.
+
+            Parameters:
+                theGList is a list of GEOM groups to create the united group from.
+
+            Returns:
+                a newly created GEOM group.
+            """
+            # Example: see GEOM_TestOthers.py
+            aGroup = self.GroupOp.UnionListOfGroups(theGList)
+            RaiseIfFailed("UnionListOfGroups", self.GroupOp)
+            return aGroup
+
+        ## Cut of lists of groups.
+        #  New group is created. It will contain only entities
+        #  which are present in groups listed in theGList1 but 
+        #  are not present in groups from theGList2.
+        #  @param theGList1 is a list of GEOM groups to include elements of.
+        #  @param theGList2 is a list of GEOM groups to exclude elements of.
+        #  @return a newly created GEOM group.
+        #  @ref tui_intersect_groups_anchor "Example"
+        def IntersectListOfGroups (self, theGList):
+            """
+            Cut of lists of groups.
+            New group is created. It will contain only entities
+            which are present in groups listed in theGList1 but 
+            are not present in groups from theGList2.
+
+            Parameters:
+                theGList1 is a list of GEOM groups to include elements of.
+                theGList2 is a list of GEOM groups to exclude elements of.
+
+            Returns:
+                a newly created GEOM group.
+            """
+            # Example: see GEOM_TestOthers.py
+            aGroup = self.GroupOp.IntersectListOfGroups(theGList)
+            RaiseIfFailed("IntersectListOfGroups", self.GroupOp)
+            return aGroup
+
+        ## Cut of lists of groups.
+        #  New group is created. It will contain only entities
+        #  which are present in groups listed in theGList1 but 
+        #  are not present in groups from theGList2.
+        #  @param theGList1 is a list of GEOM groups to include elements of.
+        #  @param theGList2 is a list of GEOM groups to exclude elements of.
+        #  @return a newly created GEOM group.
+        #  @ref tui_cut_groups_anchor "Example"
+        def CutListOfGroups (self, theGList1, theGList2):
+            """
+            Cut of lists of groups.
+            New group is created. It will contain only entities
+            which are present in groups listed in theGList1 but 
+            are not present in groups from theGList2.
+
+            Parameters:
+                theGList1 is a list of GEOM groups to include elements of.
+                theGList2 is a list of GEOM groups to exclude elements of.
+
+            Returns:
+                a newly created GEOM group.
+            """
+            # Example: see GEOM_TestOthers.py
+            aGroup = self.GroupOp.CutListOfGroups(theGList1, theGList2)
+            RaiseIfFailed("CutListOfGroups", self.GroupOp)
+            return aGroup
 
         ## Returns a list of sub-objects ID stored in the group
         #  @param theGroup is a GEOM group for which a list of IDs is requested

@@ -36,6 +36,10 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+// VSR 22/08/2012: issue 0021787: remove "Preview" button from BOP and Partition operations
+// Comment next line to enable preview in BOP dialog box
+#define NO_PREVIEW
+
 //=================================================================================
 // class    : BooleanGUI_Dialog()
 // purpose  : Constructs a BooleanGUI_Dialog which is a child of 'parent', with the
@@ -110,6 +114,10 @@ BooleanGUI_Dialog::BooleanGUI_Dialog (const int theOperation, GeometryGUI* theGe
   layout->addWidget(myGroup);
   /***************************************************************/
 
+#ifdef NO_PREVIEW
+  mainFrame()->CheckBoxPreview->setChecked( false );
+  mainFrame()->CheckBoxPreview->hide();
+#endif
   // Initialisation
   Init();
 }
@@ -224,6 +232,7 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
     if      (myEditCurrentArgument == myGroup->LineEdit1) myObject1.nullify();
     else if (myEditCurrentArgument == myGroup->LineEdit2) myObject2.nullify();
   }
+  processPreview();
 }
 
 //=================================================================================

@@ -35,8 +35,6 @@ salomeinclude_HEADERS = 	\
 	GEOM_Displayer.h	\
 	GEOMGUI_OCCSelector.h	\
 	GEOMGUI_Selection.h	\
-	GeometryGUI_Swig.hxx	\
-	GeometryGUI_Swig.i	\
 	GEOM_GEOMGUI.hxx
 
 dist_libGEOM_la_SOURCES =	\
@@ -44,8 +42,7 @@ dist_libGEOM_la_SOURCES =	\
 	GEOMGUI.cxx		\
 	GEOM_Displayer.cxx	\
         GEOMGUI_OCCSelector.cxx	\
-	GEOMGUI_Selection.cxx	\
-	GeometryGUI_Swig.cxx
+	GEOMGUI_Selection.cxx
 
 MOC_FILES =			\
 	GeometryGUI_moc.cxx

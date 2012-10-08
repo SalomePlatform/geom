@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : DisplayGUI.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #include "DisplayGUI.h"
 #include <GeometryGUI.h>
 #include "GeometryGUI_Operations.h"
@@ -109,6 +108,10 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpShowOnly:       // POPUP MENU - SHOW ONLY
     getGeometryGUI()->EmitSignalDeactivateDialog();
     DisplayOnly();
+    break;
+  case GEOMOp::OpShowOnlyChildren: // POPUP MENU - SHOW ONLY CHILDREN
+    getGeometryGUI()->EmitSignalDeactivateDialog();
+    DisplayOnlyChildren();
     break;
   case GEOMOp::OpHideAll:        // MENU VIEW - HIDE ALL
     EraseAll();
@@ -215,6 +218,62 @@ void DisplayGUI::DisplayOnly()
 {
   EraseAll();
   Display();
+}
+
+//=====================================================================================
+// function : DisplayGUI::DisplayOnlyChildren()
+// purpose  : Display only children of selected GEOM objects and erase other
+//=====================================================================================
+void DisplayGUI::DisplayOnlyChildren()
+{
+  EraseAll();
+
+  SALOME_ListIO listIO;
+
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if (!app) return;
+
+  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  if (!anActiveStudy) return;
+
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if (!aSelMgr) return;
+
+  // get selection
+  SALOME_ListIO aList;
+  //aSelMgr->selectedObjects(aList);
+  aSelMgr->selectedObjects(aList, "ObjectBrowser", false);
+  SALOME_ListIteratorOfListIO It (aList);
+
+  SUIT_OverrideCursor();
+
+  for (; It.More(); It.Next()) {
+    Handle(SALOME_InteractiveObject) anIObject = It.Value();
+    if (anIObject->hasEntry()) {
+      _PTR(SObject) SO (anActiveStudy->studyDS()->FindObjectID(anIObject->getEntry()));
+      if (SO) {
+        _PTR(SComponent) SC (SO->GetFatherComponent());
+        if (QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str())) {
+          // if component is selected, pass it
+        }
+        else {
+          _PTR(ChildIterator) anIter (anActiveStudy->studyDS()->NewChildIterator(SO));
+          anIter->InitEx(true);
+          while (anIter->More()) {
+            _PTR(SObject) valSO (anIter->Value());
+            _PTR(SObject) refSO;
+            if (!valSO->ReferencedObject(refSO)) {
+              listIO.Append(new SALOME_InteractiveObject(valSO->GetID().c_str(),
+                                                         SC->ComponentDataType().c_str(),
+                                                         valSO->GetName().c_str()));
+            }
+            anIter->Next();
+          }
+        }
+      }
+    }
+  }
+  GEOM_Displayer(anActiveStudy).Display(listIO, true);
 }
 
 //=====================================================================================

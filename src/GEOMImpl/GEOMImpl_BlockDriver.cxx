@@ -600,7 +600,8 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
         TopTools_ListOfShape BLO; // All blocks from the given compound
         TopTools_ListOfShape NOT; // Not blocks
         TopTools_ListOfShape EXT; // Hexahedral solids, having degenerated and/or seam edges
-        GEOMImpl_IBlocksOperations::AddBlocksFrom(aFixedExtra, BLO, NOT, EXT);
+        TopTools_ListOfShape NOQ; // All non-quadrangular faces
+        GEOMImpl_IBlocksOperations::AddBlocksFrom(aFixedExtra, BLO, NOT, EXT, NOQ);
 
         if (NOT.Extent() > 0) {
           MESSAGE("Some non-blocks have been removed");

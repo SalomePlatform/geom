@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI.cxx
@@ -42,6 +41,7 @@
 #include "MeasureGUI_WhatisDlg.h"        // Method WHATIS
 #include "MeasureGUI_CheckShapeDlg.h"    // Method CHECKSHAPE
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h" // Method CHECKCOMPOUND
+#include "MeasureGUI_GetNonBlocksDlg.h"  // Method GET NON BLOCKS
 #include "MeasureGUI_CheckSelfIntersectionsDlg.h" // Method CHECK SELF INTERSCTIONS
 #include "MeasureGUI_PointDlg.h"         // Method POINTCOORDINATES
 
@@ -110,6 +110,9 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpCheckCompound:
     dlg = new MeasureGUI_CheckCompoundOfBlocksDlg( getGeometryGUI(), parent );
     break; // CHECKCOMPOUND
+  case GEOMOp::OpGetNonBlocks:
+    dlg = new MeasureGUI_GetNonBlocksDlg(getGeometryGUI(), parent);
+    break; // GET NON BLOCKS
   case GEOMOp::OpCheckSelfInters:
     dlg = new MeasureGUI_CheckSelfIntersectionsDlg( getGeometryGUI(), parent );
     break; // CHECK SELF INTERSCTIONS

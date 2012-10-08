@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_ICurvesOperations_HXX_
 #define _GEOMImpl_ICurvesOperations_HXX_
@@ -78,16 +77,17 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
                                                                bool theIsClosed = false,
                                                                bool theDoReordering = false);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeCurveParametric(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
-							  double theParamMin, double theParamMax, double theParamStep, 
-							  CurveType theCurveType,
-                              int theParamNbStep=0, bool theNewMethod=false);
+  Standard_EXPORT Handle(GEOM_Object) MakeCurveParametric
+    (const char* thexExpr, const char* theyExpr, const char* thezExpr, 
+     double theParamMin, double theParamMax, double theParamStep, 
+     CurveType theCurveType, int theParamNbStep=0, bool theNewMethod=false);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const char* theCommand,
                                                     std::list<double> theWorkingPlane);
-  Standard_EXPORT Handle(GEOM_Object) Make3DSketcher (std::list<double> theCoordinates);
   Standard_EXPORT Handle(GEOM_Object) MakeSketcherOnPlane (const char* theCommand,
                                                            Handle(GEOM_Object) theWorkingPlane);
+  Standard_EXPORT Handle(GEOM_Object) Make3DSketcherCommand (const char* theCommand);
+  Standard_EXPORT Handle(GEOM_Object) Make3DSketcher (std::list<double> theCoordinates);
 };
 
 #endif

@@ -360,7 +360,8 @@ module GEOM
  //   # Internal methods (For sub-shape identification)
  //   ######################################################################
     /*!
-     *  \brief Get geometric shape of the object as a byte stream
+     *  \brief Get geometric shape of the object as a byte stream in BRep format
+     *  \note GEOM_IInsertOperations::RestoreShape() method can be used to restore shape from a BRep stream.
      */
     SALOMEDS::TMPFile GetShapeStream();
 
@@ -540,6 +541,16 @@ module GEOM
                                            in double theYParameter,
                                            in double theZParameter);
 
+    /*!
+     *  \brief Create a point, which lays on the given face.
+     *         The point will lay in arbitrary place of the face.
+     *         The only condition on it is a non-zero distance to the face boundary.
+     *         Such point can be used to uniquely identify the face inside any
+     *         shape in case, when the shape does not contain overlapped faces.
+     *  \param theFace The referenced face.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointOnFace (in GEOM_Object theFace);
 
     /*!
      *  \brief Create a point, on two lines intersection.
@@ -2404,6 +2415,17 @@ module GEOM
                           in BCErrors    theErrors);
 
     /*!
+     *  \brief Retrieve all non blocks solids and faces from a shape.
+     *
+     *  \param theShape The shape to explore.
+     *  \param theNonQuads Output parameter. Group of all non quadrangular faces.
+     *
+     *  \return Group of all non block solids (= not 6 faces, or with 6
+     *          faces, but with the presence of non-quadrangular faces).
+     */
+    GEOM_Object GetNonBlocks (in GEOM_Object theShape, out GEOM_Object theNonQuads);
+
+    /*!
      *  \brief Remove all seam and degenerated edges from \a theShape.
      *
      *  Unite faces and edges, sharing one surface.
@@ -2774,10 +2796,10 @@ module GEOM
 
     /*!
      *  \brief Create a sketcher (wire or face), following the textual description,
-     *  passed through \a theCommand argument.
+     *         passed through \a theCommand argument.
      *
      *  Edges of the resulting wire or face will be arcs of circles and/or linear segments. \n
-     *  Format of the description string have to be the following:
+     *  Format of the description string has to be the following:
      *
      *  "Sketcher[:F x1 y1]:CMD[:CMD[:CMD...]]"
      *
@@ -2805,32 +2827,60 @@ module GEOM
      *                    coordinates of the working plane.
      *  \param theWorkingPlane Nine double values, defining origin,
      *                         OZ and OX directions of the working plane.
-     *  \return New GEOM_Object, containing the created wire.
+     *  \return New GEOM_Object, containing the created wire or face.
      */
     GEOM_Object MakeSketcher (in string theCommand, in ListOfDouble theWorkingPlane);
 
     /*!
-     *  \brief Create a 3D sketcher, following the numerical description,
-     *  passed through points created by \a theCoordinates argument. 
-     *
-     *  Format of the description string have to be the following:
-     *
-     *  "Make3DSketcher[x1, y1, z1, x2, y2, z2, ..., xN, yN, zN]"
-     */
-
-    GEOM_Object Make3DSketcher (in ListOfDouble theCoordinates);
-
-      /*!
      *  \brief Create a sketcher (wire or face), following the textual description,
-     *  passed through \a theCommand argument. 
+     *         passed through \a theCommand argument. 
      *
      *  For format of the description string see the previous method.\n
+     *
      *  \param theCommand String, defining the sketcher in local
      *                    coordinates of the working plane.
      *  \param theWorkingPlane Planar Face or LCS(Marker) of the working plane.
-     *  \return New GEOM_Object, containing the created wire.
+     *  \return New GEOM_Object, containing the created wire or face.
      */
     GEOM_Object MakeSketcherOnPlane (in string theCommand, in GEOM_Object theWorkingPlane);
+
+    /*!
+     *  \brief Create a 3D sketcher, following the textual description,
+     *         passed through \a theCommand argument. 
+     *
+     *  Format of the description string has to be the following:
+     *
+     *  "3DSketcher:CMD[:CMD[:CMD...]]"
+     *
+     *  Where CMD is one of
+     *     - "TT x y z" : Create segment by point at X & Y or set the first point
+     *     - "T dx dy dz" : Create segment by point with DX & DY
+     *     .
+     *       \n
+     *     - "OXY angleX angle2 length" : Create segment by two angles and length
+     *     - "OYZ angleY angle2 length" : Create segment by two angles and length
+     *     - "OXZ angleX angle2 length" : Create segment by two angles and length
+     *     .
+     *       \n
+     *     - "WW" : Close Wire (to finish)
+     *
+     *  \param theCommand String, defining the sketcher in local
+     *                    coordinates of the working plane.
+     *  \return New GEOM_Object, containing the created wire.
+     */
+    GEOM_Object Make3DSketcherCommand (in string theCommand);
+
+    /*!
+     *  \brief Create a 3D sketcher, made of a straight segments, joining points
+     *         with coordinates passed through \a theCoordinates argument. 
+     *
+     *  Order of coordinates has to be the following:
+     *  x1, y1, z1, x2, y2, z2, ..., xN, yN, zN
+     *
+     *  \param theCoordinates List of double values.
+     *  \return New GEOM_Object, containing the created wire.
+     */
+    GEOM_Object Make3DSketcher (in ListOfDouble theCoordinates);
   };
 
  // # GEOM_ILocalOperations:
@@ -3201,6 +3251,17 @@ module GEOM
     GEOM_Object ImportFile (in string theFileName, in string theFormatName);
 
     /*!
+     *  \brief Read a value of parameter from a file, containing a shape.
+     *  \param theFileName The file, containing the shape.
+     *  \param theFormatName Specify format for the file reading.
+     *         Available formats can be obtained with <VAR>ImportTranslators()</VAR> method.
+     *  \param theParameterName Specify the parameter. For example, pass "LEN_UNITS"
+     *                          to obtain length units, in which the file is written.
+     *  \return Value of requested parameter in form of text string.
+     */
+    string ReadValue (in string theFileName, in string theFormatName, in string theParameterName);
+
+    /*!
      *  \brief Get the supported import formats and corresponding patterns for File dialog.
      *  \param theFormats Output. List of formats, available for import.
      *  \param thePatterns Output. List of file patterns, corresponding to available formats.
@@ -3217,6 +3278,14 @@ module GEOM
      */
     void ExportTranslators (out string_array theFormats,
                             out string_array thePatterns);
+
+    /*!
+     *  \brief Read a shape from the binary stream, containing its bounding representation (BRep).
+     *  \note GEOM_Object::GetShapeStream() method can be used to obtain the shape's BRep stream.
+     *  \param theStream The BRep binary stream.
+     *  \return New GEOM_Object, containing the shape, read from theStream.
+     */
+    GEOM_Object RestoreShape (in SALOMEDS::TMPFile theStream);
 
     /*!
      * \brief Load texture from file
@@ -3634,6 +3703,65 @@ module GEOM
      *  \param theSubShapes is a list of IDs of sub-shapes to be removed.
      */
     void DifferenceIDs (in GEOM_Object theGroup, in ListOfLong theSubShapes);
+
+    /*!
+     *  \brief Union of two groups.
+     *  New group is created. It will contain all entities
+     *  which are present in groups theGroup1 and theGroup2.
+     *  \param theGroup1, theGroup2 are the initial GEOM groups
+     *                              to create the united group from.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object UnionGroups (in GEOM_Object theGroup1, in GEOM_Object theGroup2);
+
+    /*!
+     *  \brief Intersection of two groups.
+     *  New group is created. It will contain only those entities
+     *  which are present in both groups theGroup1 and theGroup2.
+     *  \param theGroup1, theGroup2 are the initial GEOM groups to get common part of.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object IntersectGroups (in GEOM_Object theGroup1, in GEOM_Object theGroup2);
+
+    /*!
+     *  \brief Cut of two groups.
+     *  New group is created. It will contain entities which are
+     *  present in group theGroup1 but are not present in group theGroup2.
+     *  \param theGroup1 is a GEOM group to include elements of.
+     *  \param theGroup2 is a GEOM group to exclude elements of.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object CutGroups (in GEOM_Object theGroup1, in GEOM_Object theGroup2);
+
+    /*!
+     *  \brief Union of list of groups.
+     *  New group is created. It will contain all entities that are
+     *  present in groups listed in theGList.
+     *  \param theGList is a list of GEOM groups to create the united group from.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object UnionListOfGroups (in ListOfGO theGList);
+
+    /*!
+     *  \brief Intersection of list of groups.
+     *  New group is created. It will contain only entities
+     *  which are simultaneously present in the groups listed in theGList.
+     *  \param theGList is a list of GEOM groups to get common part of.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object IntersectListOfGroups (in ListOfGO theGList);
+
+    /*!
+     *  \brief Cut of lists of groups.
+     *  New group is created. It will contain only entities
+     *  which are present in groups listed in theGList1 but 
+     *  are not present in groups from theGList2.
+     *  \param theGList1 is a list of GEOM groups to include elements of.
+     *  \param theGList2 is a list of GEOM groups to exclude elements of.
+     *  \return a newly created GEOM group.
+     */
+    GEOM_Object CutListOfGroups (in ListOfGO theGList1,
+                                 in ListOfGO theGList2);
 
     /*!
      *  \brief Returns a type of sub-objects stored in the group

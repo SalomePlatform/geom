@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -47,7 +46,9 @@
 
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 #include <gp_Pnt.hxx>
 
 #if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
@@ -61,10 +62,9 @@
 
 //=============================================================================
 /*!
- *   constructor:
+ *  constructor
  */
 //=============================================================================
-
 GEOMImpl_IInsertOperations::GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID)
 : GEOM_IOperations(theEngine, theDocID)
 {
@@ -76,20 +76,17 @@ GEOMImpl_IInsertOperations::GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, i
  *  destructor
  */
 //=============================================================================
-
 GEOMImpl_IInsertOperations::~GEOMImpl_IInsertOperations()
 {
   MESSAGE("GEOMImpl_IInsertOperations::~GEOMImpl_IInsertOperations");
 }
-
-
 
 //=============================================================================
 /*!
  *  MakeCopy
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy(Handle(GEOM_Object) theOriginal)
+Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy (Handle(GEOM_Object) theOriginal)
 {
   SetErrorCode(KO);
 
@@ -231,7 +228,6 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   aCI.SetFileName(theFileName);
   aCI.SetFormatName(theFormatName);
   aCI.SetPluginName(aLibName);
-  //cout<<"IIO: theFormatName = "<<theFormatName.ToCString()<<endl;
 
   //Perform the Import
   try {
@@ -257,7 +253,8 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
 
   SetErrorCode(OK);
 
-  if( theFormatName == "IGES_UNIT" ) {
+  // OLD CODE: begin
+  if (theFormatName == "IGES_UNIT") {
     TopoDS_Shape S = aFunction->GetValue();
     TopoDS_Vertex V = TopoDS::Vertex(S);
     gp_Pnt P = BRep_Tool::Pnt(V);
@@ -270,8 +267,40 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
     //cout<<"IIO: aUnitName = "<<aUnitName.ToCString()<<endl;
     SetErrorCode(aUnitName);
   }
+  // OLD CODE: end
 
   return result;
+}
+
+//=============================================================================
+/*!
+ *  ReadValue
+ */
+//=============================================================================
+TCollection_AsciiString GEOMImpl_IInsertOperations::ReadValue
+                                 (const TCollection_AsciiString& theFileName,
+                                  const TCollection_AsciiString& theFormatName,
+                                  const TCollection_AsciiString& theParameterName)
+{
+  SetErrorCode(KO);
+
+  TCollection_AsciiString aValue, anError;
+
+  if (theFileName.IsEmpty() || theFormatName.IsEmpty() || theParameterName.IsEmpty()) return aValue;
+
+  Handle(TCollection_HAsciiString) aHLibName;
+  if (!IsSupported(Standard_True, theFormatName.SubString(1,4), aHLibName)) {
+    return aValue;
+  }
+  TCollection_AsciiString aLibName = aHLibName->String();
+
+  aValue = GEOMImpl_ImportDriver::ReadValue(theFileName, aLibName, theParameterName, anError);
+  if (anError.IsEmpty())
+    SetErrorCode(OK);
+  else
+    SetErrorCode(anError.ToCString());
+
+  return aValue;
 }
 
 //=============================================================================
@@ -552,6 +581,48 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
 
   return ( myResMgr->Find("Import") || myResMgr->Find("Export") ||
            myResMgrUser->Find("Import") || myResMgrUser->Find("Export"));
+}
+
+//=============================================================================
+/*!
+ *  RestoreShape
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IInsertOperations::RestoreShape (std::istringstream& theStream)
+{
+  SetErrorCode(KO);
+
+  //Add a new result object
+  Handle(GEOM_Object) result = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+
+  //Add a Copy function
+  Handle(GEOM_Function) aFunction = result->AddFunction(GEOMImpl_CopyDriver::GetID(), COPY_WITHOUT_REF);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_CopyDriver::GetID()) return NULL;
+
+  //Read a shape from the stream
+  TopoDS_Shape aShape;
+  BRep_Builder B;
+  BRepTools::Read(aShape, theStream, B);
+  if (aShape.IsNull()) {
+    SetErrorCode("RestoreShape error: BREP reading failed");
+  }
+
+  //Set function value
+  aFunction->SetValue(aShape);
+
+  //Special dump to avoid restored shapes publication.
+  //See correcponding code in GEOM_Engine.cxx (method ProcessFunction)
+  //GEOM::TPythonDump(aFunction) << "#";
+
+  GEOM::TPythonDump(aFunction) << result
+    << " = geompy.RestoreShape(\"\") # the shape string has not been dump for performance reason";
+
+  SetErrorCode(OK);
+
+  return result;
 }
 
 int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTextureFile)

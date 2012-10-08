@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_IInsertOperations_i_HeaderFile
 #define _GEOM_IInsertOperations_i_HeaderFile
@@ -52,11 +51,17 @@ class GEOM_I_EXPORT GEOM_IInsertOperations_i :
   GEOM::GEOM_Object_ptr ImportFile (const char* theFileName,
                                     const char* theFormatName);
 
+  char* ReadValue (const char* theFileName,
+                   const char* theFormatName,
+                   const char* theParameterName);
+
   void ImportTranslators (GEOM::string_array_out theFormats,
                           GEOM::string_array_out thePatterns);
 
   void ExportTranslators (GEOM::string_array_out theFormats,
                           GEOM::string_array_out thePatterns);
+
+  GEOM::GEOM_Object_ptr RestoreShape (const SALOMEDS::TMPFile& theStream);
 
   CORBA::Long LoadTexture(const char* theTextureFile);
   CORBA::Long AddTexture(CORBA::Long theWidth, CORBA::Long theHeight,

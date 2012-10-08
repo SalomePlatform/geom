@@ -169,6 +169,7 @@ public:
   SalomeApp_Study* getStudy() const;
 
   static SALOMEDS::Color getUniqueColor( const QList<SALOMEDS::Color>& );
+  static SALOMEDS::Color getPredefinedUniqueColor();
 
   static PropMap getDefaultPropertyMap(const QString& viewer_type);
   

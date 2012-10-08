@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -277,6 +276,29 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnSurfaceByCoord
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  MakePointOnFace
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnFace (GEOM::GEOM_Object_ptr theFace)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference face
+  Handle(GEOM_Object) aReference = GetObjectImpl(theFace);
+  if (aReference.IsNull()) return aGEOMObject._retn();
+
+  //Create the point
+  Handle(GEOM_Object) anObject = GetOperations()->MakePointOnFace(aReference);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
 
 //=============================================================================
 /*!

@@ -674,12 +674,13 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       // add function description before dump
       if (!aCurScript.IsEmpty())
       {
-        if ( aFunction->GetDriverGUID() == GEOM_Object::GetSubShapeID() )
+        if ( aFunction->GetDriverGUID() == GEOM_Object::GetSubShapeID() &&
+             aFuncScript.Length() > aCurScript.Length() )
           // avoid repeated SubShape...() command at the end
           if (aFuncScript.Location( aCurScript,
                                     aFuncScript.Length() - aCurScript.Length(),
                                     aFuncScript.Length()))
-              continue;
+            continue; // aCurScript is already at the end of aFuncScript
         aFuncScript += aCurScript;
       }
       if (isDumpCollected ) {
@@ -960,7 +961,7 @@ std::list<int> GEOM_Engine::getAllTextures(int theDocID)
 
 //=============================================================================
 /*!
- *  ProcessFunction: Dump fucntion description into script
+ *  ProcessFunction: Dump function description into script
  */
 //=============================================================================
 bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
@@ -1022,6 +1023,16 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
   //Check if its internal function which doesn't requires dumping
   if(aDescr == "None") return false;
 
+  //Check the very specific case of RestoreShape function,
+  //which is not dumped, but the result can be published by the user.
+  //We do not publish such objects to decrease danger of dumped script failure.
+  if(aDescr.Value(1) == '#') {
+    TCollection_AsciiString anObjEntry;
+    TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
+    theIgnoreObjs.insert(anObjEntry);
+    return false;
+  }
+
   // 0020001 PTv, check for critical functions, which require dump of objects
   if (theIsPublished)
   {
@@ -1035,6 +1046,95 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
 
   //Replace parameter by notebook variables
   ReplaceVariables(aDescr,theVariables);
+
+  //Process sketcher functions, replacing string command by calls to Sketcher interface
+  if (aDescr.Search( "Make3DSketcher" ) != -1) {
+    TCollection_AsciiString aNewDescr;
+    int i = 1;
+    TCollection_AsciiString aSubStr = aDescr.Token("\n\t", i);
+    for (; !aSubStr.IsEmpty(); aSubStr = aDescr.Token("\n\t", i)) {
+      if (aSubStr.Search( "Make3DSketcherCommand" ) != -1) {
+        TCollection_AsciiString aResult = aSubStr.Token(" ", 1);
+        // "3DSketcher:CMD[:CMD[:CMD...]]"
+        TCollection_AsciiString aCommand = aSubStr.Token("\"", 2);
+
+        // Split the command string to separate CMDs
+        int icmd = 2;
+        TColStd_SequenceOfAsciiString aSequence;
+        if (aCommand.Length()) {
+          TCollection_AsciiString aToken = aCommand.Token(":", icmd);
+          while (aToken.Length() > 0) {
+            aSequence.Append(aToken);
+            aToken = aCommand.Token(":", ++icmd);
+          }
+        }
+
+        if (aSequence.Length() > 0) {
+          if (i > 1)
+            aNewDescr += "\n\t";
+
+          aNewDescr += "sk = geompy.Sketcher3D()";
+          int nbCMDs = aSequence.Length();
+          for (icmd = 1; icmd <= nbCMDs; icmd++) {
+            aNewDescr += "\n\t";
+
+            TCollection_AsciiString aCMD = aSequence.Value(icmd);
+
+            // Split the CMD into string values
+            TColStd_SequenceOfAsciiString aStrVals;
+            int ival = 1;
+            TCollection_AsciiString aToken = aCMD.Token(" ", ival);
+            while (aToken.Length() > 0) {
+              aStrVals.Append(aToken);
+              aToken = aCMD.Token(" ", ++ival);
+            }
+
+            TCollection_AsciiString aCMDpref = aStrVals.Value(1);
+            if (aCMDpref == "TT") {
+              aNewDescr += "sk.addPointsAbsolute(";
+              aNewDescr += aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + aStrVals.Value(4) + ")";
+            }
+            else if (aCMDpref == "T") {
+              aNewDescr += "sk.addPointsRelative(";
+              aNewDescr += aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + aStrVals.Value(4) + ")";
+            }
+            else if (aCMDpref == "WW") {
+              aNewDescr += "sk.close()";
+            }
+            else {
+              aNewDescr += "sk.addPointAnglesLength(\"";
+              aNewDescr += aCMDpref + "\", " +
+                aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + aStrVals.Value(4) + ")";
+            }
+          }
+          aNewDescr += "\n\t";
+          aNewDescr += aResult + " = sk.wire()";
+        }
+      } // Make3DSketcherCommand
+      else if (aSubStr.Search( "Make3DSketcher" ) != -1) {
+        TCollection_AsciiString aResult = aSubStr.Token(" ", 1);
+        TCollection_AsciiString aCommand = aSubStr.Token("[", 2);
+        aCommand = aCommand.Token("]", 1);
+        if (i > 1)
+          aNewDescr += "\n\t";
+        aNewDescr += "sk = geompy.Sketcher3D()";
+        aNewDescr += "\n\t";
+        aNewDescr += "sk.addPointsAbsolute(";
+        aNewDescr += aCommand + ")";
+        aNewDescr += "\n\t";
+        aNewDescr += aResult + " = sk.wire()";
+      }
+      else {
+        if (i > 1)
+          aNewDescr += "\n\t";
+        aNewDescr += aSubStr;
+      }
+
+      i++;
+    }
+    aDescr = aNewDescr;
+  }
+
   if ( theIsDumpCollected ) {
     int i = 1;
     bool isBefore = true;

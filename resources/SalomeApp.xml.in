@@ -43,7 +43,7 @@
     <parameter name="SettingsGeomStep"    value="10" />
     <parameter name="display_mode"        value="0"  />
     <parameter name="shading_color"       value="255, 255, 0" />
-    <parameter name="edges_in_shading_color" value="255, 255, 255" />
+    <parameter name="edges_in_shading_color" value="180, 180, 180" />
     <parameter name="wireframe_color"     value="255, 255, 0" />
     <parameter name="free_bound_color"    value="0, 255, 0" />
     <parameter name="line_color"          value="255, 0, 0" />

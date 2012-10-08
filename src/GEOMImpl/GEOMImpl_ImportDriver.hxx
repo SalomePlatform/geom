@@ -18,11 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOMImpl_ImportDriver.ixx
 //  Module : GEOMImpl
-//
+
 #ifndef _GEOMImpl_ImportDriver_HeaderFile
 #define _GEOMImpl_ImportDriver_HeaderFile
 
@@ -119,6 +118,8 @@ class Handle(GEOMImpl_ImportDriver) : public Handle(TFunction_Driver) {
 #include <Standard_CString.hxx>
 #endif
 
+#include <TCollection_AsciiString.hxx>
+
 class TColStd_SequenceOfExtendedString;
 
 
@@ -148,6 +149,11 @@ Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { r
 Standard_EXPORT static const Standard_GUID& GetID();
 Standard_EXPORT ~GEOMImpl_ImportDriver() {};
 
+  // Static method
+  Standard_EXPORT static TCollection_AsciiString ReadValue (const TCollection_AsciiString& theFileName,
+                                                            const TCollection_AsciiString& theLibName,
+                                                            const TCollection_AsciiString& theParameterName,
+                                                            TCollection_AsciiString& theError);
 
  // Type management
  //
