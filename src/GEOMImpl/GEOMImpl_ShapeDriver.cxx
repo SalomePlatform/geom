@@ -594,6 +594,10 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   BRepCheck_Analyzer ana (aShape, false);
   if (!ana.IsValid()) {
     //Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+    // For Mantis issue 0021772: EDF 2336 GEOM: Non valid face created from two circles
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape (aShape);
+    aSfs->Perform();
+    aShape = aSfs->Shape();
   }
 
   aFunction->SetValue(aShape);
