@@ -7,7 +7,7 @@ select <b>Repair - > Fuse Collinear Edges within a Wire</b>.
 \n This operation removes selected vertices from a given wire in case
 if adjacent edges are C1 continuous. The function takes a list of
 vertices to suppress as a parameter. If the list is empty, all
-vertices in a wire are assumed.
+vertices in a wire are taken into account.
 
 \n <b>Arguments:</b> Name + a wire + a list of vertices (can be empty).
 
