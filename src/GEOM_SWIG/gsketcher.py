@@ -123,26 +123,26 @@ class Sketcher3D:
     #  origin (0, 0, 0) will become the first sketcher point.
     #  The radius and angles coordinates are defined 
     #  in a local coordinate system which origin is the last point of the sketch
-    #  
-    #  @param axes can be: "OXY", "OYZ" or "OXZ"
+    #
+    #  @param length length of the segment
     #  @param angle1 angle in a plane, defined by the \a axes
     #  @param angle2 angle from the plane, defined by the \a axes
-    #  @param length length of the segment
-    def addPointAnglesRadRelative (self, axes, angle1, angle2, length):
+    #  @param axes can be: "OXY", "OYZ" or "OXZ"
+    def addPointRadiusAnglesRelative (self, length, angle1, angle2, axes="OXY"):
         """
         Add one straight segment, defined by two angles and length.
         If the first point of sketcher is not yet defined, the
         origin (0, 0, 0) will become the first sketcher point.
 
         Parameters:
-            axes can be: "OXY", "OYZ" or "OXZ"
+            length length of the segment
             angle1 angle in a plane, defined by the \a axes
             angle2 angle from the plane, defined by the \a axes
-            length length of the segment
+            axes can be: "OXY", "OYZ" or "OXZ"
 
         Example of usage:
             sk = geompy.Sketcher3D()
-            sk.addPointAnglesRadRelative("OXY", 50, 0, 100)
+            sk.addPointRadiusAnglesRelative(100, 50, 0, "OXY")
             a3D_Sketcher_1 = sk.wire()
         """
         self.myCommand = self.myCommand + ":%s"%axes+"SR"+" %s %s %s" % (printVar(angle1), printVar(angle2), printVar(length))
@@ -154,25 +154,25 @@ class Sketcher3D:
     #  The radius and angles coordinates are defined 
     #  in a coordinate system which origin is the global coordinate system origin
     #  
-    #  @param axes can be: "OXY", "OYZ" or "OXZ"
+    #  @param radius distance to the coordinate system origin
     #  @param angle1 angle in a plane, defined by the \a axes
     #  @param angle2 angle from the plane, defined by the \a axes
-    #  @param radius distance to the coordinate system origin
-    def addPointAnglesRadAbsolute (self, axes, angle1, angle2, radius):
+    #  @param axes can be: "OXY", "OYZ" or "OXZ"
+    def addPointRadiusAnglesAbsolute (self, radius, angle1, angle2, axes="OXY"):
         """
         Add one straight segment, defined by two angles and length.
         If the first point of sketcher is not yet defined, the
         origin (0, 0, 0) will become the first sketcher point.
 
         Parameters:
-            axes can be: "OXY", "OYZ" or "OXZ"
+            radius distance to the coordinate system origin
             angle1 angle in a plane, defined by the \a axes
             angle2 angle from the plane, defined by the \a axes
-            radius distance to the coordinate system origin
+            axes can be: "OXY", "OYZ" or "OXZ"
 
         Example of usage:
             sk = geompy.Sketcher3D()
-            sk.addPointAnglesRadAbsolute("OXY", 50, 0, 100)
+            sk.addPointRadiusAnglesAbsolute(100, 50, 0, "OXY")
             a3D_Sketcher_1 = sk.wire()
         """
         self.myCommand = self.myCommand + ":%s"%axes+"SA"+" %s %s %s" % (printVar(angle1), printVar(angle2), printVar(radius))
@@ -188,21 +188,21 @@ class Sketcher3D:
     #  @param angle angle in a plane, defined by the \a axes
     #  @param height height from the plane, defined by the \a axes
     #  @param radius distance to the coordinate system origin
-    def addPointAngleHRadRelative (self, axes, angle, height, length):
+    def addPointRadiusAngleHRelative (self, length, angle, height, axes="OXY"):
         """
         Add one straight segment, defined by two angles and length.
         If the first point of sketcher is not yet defined, the
         origin (0, 0, 0) will become the first sketcher point.
 
         Parameters:
-            axes can be: "OXY", "OYZ" or "OXZ"
-            angle1 angle in a plane, defined by the \a axes
-            height height from the plane, defined by the \a axes
             radius distance to the coordinate system origin
+            angle  angle in a plane, defined by the \a axes
+            height height from the plane, defined by the \a axes
+            axes can be: "OXY", "OYZ" or "OXZ"
 
         Example of usage:
             sk = geompy.Sketcher3D()
-            sk.addPointAngleHRadRelative("OXY", 50, 40, 100)
+            sk.addPointRadiusAngleHRelative(100, 50, 40, "OXY")
             a3D_Sketcher_1 = sk.wire()
         """
         self.myCommand = self.myCommand + ":%s"%axes+"CR"+" %s %s %s" % (printVar(angle), printVar(height), printVar(length))
@@ -213,12 +213,12 @@ class Sketcher3D:
     #  origin (0, 0, 0) will become the first sketcher point.
     #  The radius height and angle coordinates are defined 
     #  in a coordinate system which origin is the global coordinate system origin
-    #  
-    #  @param axes can be: "OXY", "OYZ" or "OXZ"
+    # 
+    #  @param radius distance to the coordinate system origin
     #  @param angle angle in a plane, defined by the \a axes
     #  @param height height from the plane, defined by the \a axes
-    #  @param radius distance to the coordinate system origin
-    def addPointAngleHRadAbsolute (self, axes, angle, height, radius):
+    #  @param axes can be: "OXY", "OYZ" or "OXZ"
+    def addPointRadiusAngleHAbsolute (self, radius, angle, height, axes="OXY"):
         """
         Add one straight segment, defined by two angles and length.
         If the first point of sketcher is not yet defined, the
@@ -232,7 +232,7 @@ class Sketcher3D:
 
         Example of usage:
             sk = geompy.Sketcher3D()
-            sk.addPointAngleHRadAbsolute("OXY", 50, 40, 100)
+            sk.addPointRadiusAngleHAbsolute( 100, 50, 40, "OXY")
             a3D_Sketcher_1 = sk.wire()
         """
         self.myCommand = self.myCommand + ":%s"%axes+"CA"+" %s %s %s" % (printVar(angle), printVar(height), printVar(radius))
