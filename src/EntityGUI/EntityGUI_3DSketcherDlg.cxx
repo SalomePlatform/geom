@@ -418,7 +418,7 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
   
   myPrsType   = prsType();
   
-  if(myMode == 1)
+//   if(myMode == 1)
     displayDimensions( /*store = */true);
 
   myPointsList.append(getCurrentPoint());
@@ -457,8 +457,8 @@ void EntityGUI_3DSketcherDlg::UpdateButtonsState()
     GroupType->RadioButton3->click();
   }
   GroupType->RadioButton2->setEnabled(myPointsList.count() > 0);
-  GroupType->RadioButton3->setEnabled(myPointsList.count() > 0);
-  GroupType->RadioButton4->setEnabled(myPointsList.count() > 0);
+//   GroupType->RadioButton3->setEnabled(myPointsList.count() > 0);
+//   GroupType->RadioButton4->setEnabled(myPointsList.count() > 0);
   Group3Spin->buttonUndo->setEnabled(myPointsList.count() > 0);
   Group3Spin->buttonRedo->setEnabled(myRedoList.count() > 0);
   GroupAngles->buttonUndo->setEnabled(myPointsList.count() > 0);
@@ -1317,8 +1317,10 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
   
   if (myCoordType == 0)
   {
-    displayLength(Last_Pnt, Current_Pnt, aNormal, store);
-//     myPrsType = TYPE_LENGTH;
+//     displayLength(Last_Pnt, Current_Pnt, aNormal, store);
+    displayLength(gp_Pnt(Last.x,Current.y,Last.z), gp_Pnt(Current.x,Current.y,Last.z), gp::DZ().Reversed(), store);
+    displayLength(gp_Pnt(Current.x,Last.y,Last.z), gp_Pnt(Current.x,Current.y,Last.z), gp::DZ(), store);
+    displayLength(gp_Pnt(Current.x,Current.y,Last.z), Current_Pnt, gp::DY(), store);
   }
   if (myCoordType == 1)             // ANGLES
   {
@@ -1335,7 +1337,7 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
         P1 = gp_Pnt(Last.x + aLength,Last.y,Last.z);    // X direction
         P2 = gp_Pnt(Last.x + aLength * cos(anAngle1 * M_PI / 180.),
                     Last.y + aLength * sin(anAngle1 * M_PI / 180.),
-                    Last.z);
+                    Last.z);     
         break;
       }
       case OYZ:
@@ -1343,7 +1345,7 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
         P1 = gp_Pnt(Last.x, Last.y + aLength,Last.z);     // Y direction
         P2 = gp_Pnt(Last.x,
                     Last.y + aLength * cos(anAngle1 * M_PI / 180.),
-                    Last.z + aLength * sin(anAngle1 * M_PI / 180.));
+                    Last.z + aLength * sin(anAngle1 * M_PI / 180.));   
         break;
       }
       case OXZ:
@@ -1351,14 +1353,15 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
         P1 = gp_Pnt(Last.x + aLength,Last.y,Last.z);     // X direction
         P2 = gp_Pnt(Last.x + aLength * cos(anAngle1 * M_PI / 180.) ,
                     Last.y,
-                    Last.z + aLength * sin(anAngle1 * M_PI / 180.));
+                    Last.z + aLength * sin(anAngle1 * M_PI / 180.));    
         break;
       }
     }
     
     if(!cylindrical)
       displayLength(Last_Pnt, Current_Pnt, aNormal, store);
-    displayAngle(anAngle1, Last_Pnt, P1, P2, store);
+    if(myMode !=0  || !store)
+      displayAngle(anAngle1, Last_Pnt, P1, P2, store);
     
     if(spherical)
     {
@@ -1366,8 +1369,12 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
       displayAngle(anAngle2, Last_Pnt, P2, Current_Pnt, store);
     }
     if(cylindrical)
-    {
-      displayLength(Last_Pnt, P2, aNormal, store);               // Radius
+    { 
+      gp_Vec aVec(P2, Current_Pnt);
+      if (myMode == 0)
+        displayLength(Last_Pnt.Translated(aVec), P2.Translated(aVec), aNormal, store);               // Radius  
+      else
+        displayLength(Last_Pnt, P2, aNormal, store);
       displayLength(P2, Current_Pnt, aNormal.Reversed(), store); // Height
     }
   }
