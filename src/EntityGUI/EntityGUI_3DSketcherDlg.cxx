@@ -79,12 +79,13 @@
 // + Mettre en place la visualisation (côtes ...) pour les coordonnées cylindriques Done
 // + Changement du mode de représentation (côtes) pour le cas absolu                Half done
 // + Dump pour les coordonnées cylindriques et 
-//   report des modifs sur les autres types de coordonnées        Done
+//   report des modifs sur les autres types de coordonnées                          Done
 // + Correction BUG coordonées cylindriques relatives --> la hauteur est absolue    Done
-// + Améliorer rendu des cotes pour coordonées cylindriques (tailles relatives
+// + Améliorer rendu des cotes pour coordonées cylindriques (tailles relatives      Done
 //   de la cote rayon et de la cote hauteur)
-// + Prendre en compte les remarques de Raphaël
+// + Prendre en compte les remarques de Raphaël        Done
 // + Traductions                                       Done
+// + Doc
 
 enum
 {
@@ -1305,24 +1306,36 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
 {
   myPrsType   = prsType();
   XYZ Last    = getLastPoint();
-  if (myMode == 0)                   // Absolute coordinates 
-    Last.x=Last.y=Last.z=0.0;
-  
   XYZ Current = getCurrentPoint();
 
-  gp_Pnt Last_Pnt(Last.x,Last.y,Last.z);
+  gp_Pnt P0(Last.x,Last.y,Last.z);
+  if (myMode == 0)                 // Absolute coordinates
+    P0=gp::Origin();
   gp_Pnt Current_Pnt(Current.x,Current.y,Current.z);
   gp_Pnt P1, P2;
   gp_Dir aNormal = getPresentationPlane();
   
   if (myCoordType == 0)
   {
-//     displayLength(Last_Pnt, Current_Pnt, aNormal, store);
-    displayLength(gp_Pnt(Last.x,Current.y,Last.z), gp_Pnt(Current.x,Current.y,Last.z), gp::DZ().Reversed(), store);
-    displayLength(gp_Pnt(Current.x,Last.y,Last.z), gp_Pnt(Current.x,Current.y,Last.z), gp::DZ(), store);
-    displayLength(gp_Pnt(Current.x,Current.y,Last.z), Current_Pnt, gp::DY(), store);
+    if((( Abs(Last.x-Current.x) <= Precision::Confusion() && 
+          Abs(Last.y-Current.y) <= Precision::Confusion() ) ||
+        ( Abs(Last.x-Current.x) <= Precision::Confusion() && 
+          Abs(Last.z-Current.z) <= Precision::Confusion() ) ||
+        ( Abs(Last.y-Current.y) <= Precision::Confusion() && 
+          Abs(Last.z-Current.z) <= Precision::Confusion() ))&&
+         myMode == 1)
+    { 
+      // For better colocation of dimensions if only one coordinate changes (aNormal is a better choice)
+      displayLength(P0, Current_Pnt, aNormal, store);
+    }
+    else
+    {
+      displayLength(gp_Pnt(P0.X(),Current.y,P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ().Reversed(), store);
+      displayLength(gp_Pnt(Current.x,P0.Y(),P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ(), store);
+      displayLength(gp_Pnt(Current.x,Current.y,P0.Z()), Current_Pnt, gp::DX(), store);
+    }
   }
-  if (myCoordType == 1)             // ANGLES
+  else if (myCoordType == 1)             // ANGLES
   {
     bool spherical   = GroupAngles->checkBox->isChecked(); 
     bool cylindrical = GroupAngles->checkBox_2->isChecked();
@@ -1334,47 +1347,47 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
     {
       case OXY:
       {
-        P1 = gp_Pnt(Last.x + aLength,Last.y,Last.z);    // X direction
-        P2 = gp_Pnt(Last.x + aLength * cos(anAngle1 * M_PI / 180.),
-                    Last.y + aLength * sin(anAngle1 * M_PI / 180.),
-                    Last.z);     
+        P1 = gp_Pnt(P0.X() + aLength,P0.Y(),P0.Z());    // X direction
+        P2 = gp_Pnt(P0.X() + aLength * cos(anAngle1 * M_PI / 180.),
+                    P0.Y() + aLength * sin(anAngle1 * M_PI / 180.),
+                    P0.Z());     
         break;
       }
       case OYZ:
       {
-        P1 = gp_Pnt(Last.x, Last.y + aLength,Last.z);     // Y direction
-        P2 = gp_Pnt(Last.x,
-                    Last.y + aLength * cos(anAngle1 * M_PI / 180.),
-                    Last.z + aLength * sin(anAngle1 * M_PI / 180.));   
+        P1 = gp_Pnt(P0.X(), P0.Y() + aLength,P0.Z());     // Y direction
+        P2 = gp_Pnt(P0.X(),
+                    P0.Y() + aLength * cos(anAngle1 * M_PI / 180.),
+                    P0.Z() + aLength * sin(anAngle1 * M_PI / 180.));   
         break;
       }
       case OXZ:
       {
-        P1 = gp_Pnt(Last.x + aLength,Last.y,Last.z);     // X direction
-        P2 = gp_Pnt(Last.x + aLength * cos(anAngle1 * M_PI / 180.) ,
-                    Last.y,
-                    Last.z + aLength * sin(anAngle1 * M_PI / 180.));    
+        P1 = gp_Pnt(P0.X() + aLength,P0.Y(),P0.Z());     // X direction
+        P2 = gp_Pnt(P0.X() + aLength * cos(anAngle1 * M_PI / 180.) ,
+                    P0.Y(),
+                    P0.Z() + aLength * sin(anAngle1 * M_PI / 180.));    
         break;
       }
     }
     
     if(!cylindrical)
-      displayLength(Last_Pnt, Current_Pnt, aNormal, store);
+      displayLength(P0, Current_Pnt, aNormal, store);
     if(myMode !=0  || !store)
-      displayAngle(anAngle1, Last_Pnt, P1, P2, store);
+      displayAngle(anAngle1, P0, P1, P2, store);
     
     if(spherical)
     {
       double anAngle2 = GroupAngles->SpinBox_DA2->value();
-      displayAngle(anAngle2, Last_Pnt, P2, Current_Pnt, store);
+      displayAngle(anAngle2, P0, P2, Current_Pnt, store);
     }
     if(cylindrical)
     { 
       gp_Vec aVec(P2, Current_Pnt);
       if (myMode == 0)
-        displayLength(Last_Pnt.Translated(aVec), P2.Translated(aVec), aNormal, store);               // Radius  
+        displayLength(P0.Translated(aVec), P2.Translated(aVec), aNormal, store);  // Radius  
       else
-        displayLength(Last_Pnt, P2, aNormal, store);
+        displayLength(P0, P2, aNormal, store);
       displayLength(P2, Current_Pnt, aNormal.Reversed(), store); // Height
     }
   }
