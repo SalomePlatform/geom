@@ -2867,6 +2867,76 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePipeBiNormalAlongVector", self.PrimOp)
             return anObj
 
+        ## Build a middle path of a pipe-like shape.
+        #  The path shape can be a wire or an edge.
+        #  @param theShape It can be closed or unclosed pipe-like shell
+        #                  or a pipe-like solid.
+        #  @param theBase1, theBase2 Two bases of the supposed pipe. This
+        #                            should be wires or faces of theShape.
+        #  @note It is not assumed that exact or approximate copy of theShape
+        #        can be obtained by applying existing Pipe operation on the
+        #        resulting "Path" wire taking theBase1 as the base - it is not
+        #        always possible; though in some particular cases it might work
+        #        it is not guaranteed. Thus, RestorePath function should not be
+        #        considered as an exact reverse operation of the Pipe.
+        #  @return New GEOM.GEOM_Object, containing an edge or wire that represent
+        #                                source pipe's "path".
+        #
+        #  @ref tui_creation_pipe_path "Example"
+        def RestorePath (self, theShape, theBase1, theBase2):
+            """
+            Build a middle path of a pipe-like shape.
+            The path shape can be a wire or an edge.
+
+            Parameters:
+                theShape It can be closed or unclosed pipe-like shell
+                         or a pipe-like solid.
+                theBase1, theBase2 Two bases of the supposed pipe. This
+                                   should be wires or faces of theShape.
+
+            Returns:
+                New GEOM_Object, containing an edge or wire that represent
+                                 source pipe's path.
+            """
+            anObj = self.PrimOp.RestorePath(theShape, theBase1, theBase2)
+            RaiseIfFailed("RestorePath", self.PrimOp)
+            return anObj
+
+        ## Build a middle path of a pipe-like shape.
+        #  The path shape can be a wire or an edge.
+        #  @param theShape It can be closed or unclosed pipe-like shell
+        #                  or a pipe-like solid.
+        #  @param listEdges1, listEdges2 Two bases of the supposed pipe. This
+        #                                should be lists of edges of theShape.
+        #  @note It is not assumed that exact or approximate copy of theShape
+        #        can be obtained by applying existing Pipe operation on the
+        #        resulting "Path" wire taking theBase1 as the base - it is not
+        #        always possible; though in some particular cases it might work
+        #        it is not guaranteed. Thus, RestorePath function should not be
+        #        considered as an exact reverse operation of the Pipe.
+        #  @return New GEOM.GEOM_Object, containing an edge or wire that represent
+        #                                source pipe's "path".
+        #
+        #  @ref tui_creation_pipe_path "Example"
+        def RestorePathEdges (self, theShape, listEdges1, listEdges2):
+            """
+            Build a middle path of a pipe-like shape.
+            The path shape can be a wire or an edge.
+
+            Parameters:
+                theShape It can be closed or unclosed pipe-like shell
+                         or a pipe-like solid.
+                listEdges1, listEdges2 Two bases of the supposed pipe. This
+                                       should be lists of edges of theShape.
+
+            Returns:
+                New GEOM_Object, containing an edge or wire that represent
+                                 source pipe's path.
+            """
+            anObj = self.PrimOp.RestorePathEdges(theShape, listEdges1, listEdges2)
+            RaiseIfFailed("RestorePath", self.PrimOp)
+            return anObj
+
         # end of l3_complex
         ## @}
 

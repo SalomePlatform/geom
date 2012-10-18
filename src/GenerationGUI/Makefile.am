@@ -15,13 +15,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 # GEOM GENERATIONGUI : 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : GenerationGUI
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Libraries targets
@@ -33,7 +32,8 @@ salomeinclude_HEADERS =			\
 	GenerationGUI_PrismDlg.h	\
 	GenerationGUI_RevolDlg.h	\
 	GenerationGUI_FillingDlg.h	\
-	GenerationGUI_PipeDlg.h
+	GenerationGUI_PipeDlg.h		\
+	GenerationGUI_PipePathDlg.h
 
 dist_libGenerationGUI_la_SOURCES =	\
 	GenerationGUI.h			\
@@ -41,18 +41,21 @@ dist_libGenerationGUI_la_SOURCES =	\
 	GenerationGUI_RevolDlg.h	\
 	GenerationGUI_FillingDlg.h	\
 	GenerationGUI_PipeDlg.h		\
+	GenerationGUI_PipePathDlg.h	\
 					\
 	GenerationGUI.cxx		\
 	GenerationGUI_PrismDlg.cxx	\
 	GenerationGUI_RevolDlg.cxx	\
 	GenerationGUI_FillingDlg.cxx	\
-	GenerationGUI_PipeDlg.cxx
+	GenerationGUI_PipeDlg.cxx	\
+	GenerationGUI_PipePathDlg.cxx
 
 MOC_FILES = 					\
 	GenerationGUI_PrismDlg_moc.cxx		\
 	GenerationGUI_RevolDlg_moc.cxx		\
 	GenerationGUI_FillingDlg_moc.cxx	\
-	GenerationGUI_PipeDlg_moc.cxx
+	GenerationGUI_PipeDlg_moc.cxx		\
+	GenerationGUI_PipePathDlg_moc.cxx
 
 nodist_libGenerationGUI_la_SOURCES =	\
 	$(MOC_FILES)

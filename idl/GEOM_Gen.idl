@@ -715,6 +715,11 @@ module GEOM
                                        in double theTrimSize);
   };
 
+  /*!
+   *  \brief Interface for shapes transforming.
+   *
+   *  Translation, rotation, scaling, mirroring, offset, projection, recomputing.
+   */
   interface GEOM_ITransformOperations : GEOM_IOperations
   {
     /*!
@@ -1077,7 +1082,8 @@ module GEOM
      *  \param  thePath Wire or Edge along that the object will be translated.
      *  \param  theDistance progress of Path (0 = actual location, 1 = end of path location).
      *  \param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
-     *  \param  theReverse is a true or false parameter. true is to reverse direction, false is to move normal direction.
+     *  \param  theReverse is a true or false parameter. True is to reverse
+     *                     direction, false is to move normal direction.
      *  \return New GEOM_Object, containing the displaced shape.
      */
     GEOM_Object PositionAlongPath (in GEOM_Object theObject,
@@ -1105,7 +1111,6 @@ module GEOM
     GEOM_Object RecomputeObject (in GEOM_Object theObject);
   };
   
- // # GEOM_I3DPrimOperations:
   /*!
    *  \brief Interface for 3D primitives creation
    *
@@ -1485,9 +1490,49 @@ module GEOM
                                              in GEOM_Object thePath,
                                              in GEOM_Object theVec);
 
+    /*!
+     *  \brief Build a middle path of a pipe-like shape.
+     *
+     *  The path shape can be a wire or an edge.
+     *  \param theShape It can be closed or unclosed pipe-like shell
+     *                  or a pipe-like solid.
+     *  \param theBase1, theBase2 Two bases of the supposed pipe. This
+     *                            should be wires or faces of \a theShape.
+     *  \note It is not assumed that exact or approximate copy of \a theShape
+     *        can be obtained by applying existing Pipe operation on the
+     *        resulting "Path" wire taking \a theBase1 as the base - it is not
+     *        always possible; though in some particular cases it might work
+     *        it is not guaranteed. Thus, RestorePath function should not be
+     *        considered as an exact reverse operation of the Pipe.
+     *  \return New GEOM_Object, containing an edge or wire that represent
+     *                           source pipe's "path".
+     */
+    GEOM_Object RestorePath (in GEOM_Object theShape,
+                             in GEOM_Object theBase1,
+                             in GEOM_Object theBase2);
+
+    /*!
+     *  \brief Build a middle path of a pipe-like shape.
+     *
+     *  The path shape can be a wire or an edge.
+     *  \param theShape It can be closed or unclosed pipe-like shell
+     *                  or a pipe-like solid.
+     *  \param theBase1, theBase2 Two bases of the supposed pipe. This
+     *                            should be lists of edges of \a theShape.
+     *  \note It is not assumed that exact or approximate copy of \a theShape
+     *        can be obtained by applying existing Pipe operation on the
+     *        resulting "Path" wire taking \a theBase1 as the base - it is not
+     *        always possible; though in some particular cases it might work
+     *        it is not guaranteed. Thus, RestorePath function should not be
+     *        considered as an exact reverse operation of the Pipe.
+     *  \return New GEOM_Object, containing an edge or wire that represent
+     *                           source pipe's "path".
+     */
+    GEOM_Object RestorePathEdges (in GEOM_Object theShape,
+                                  in ListOfGO theBase1,
+                                  in ListOfGO theBase2);
   };
 
- // # GEOM_IShapesOperations
   /*!
    *  \brief Interface for Shapes creation:
    *

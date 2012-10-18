@@ -1279,6 +1279,26 @@ Please, select face, shell or solid and try again</translation>
         <translation>Pipe Construction</translation>
     </message>
     <message>
+        <source>GEOM_PIPE_PATH</source>
+        <translation>Path</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_PATH_TITLE</source>
+        <translation>Restore Path</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_LIKE_SHAPE</source>
+        <translation>Pipe-like shell or solid</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_BASE1_OBJECT</source>
+        <translation>First base face/wire/edges</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_BASE2_OBJECT</source>
+        <translation>Last base face/wire/edges</translation>
+    </message>
+    <message>
         <source>GEOM_PROFILE</source>
         <translation>Profile</translation>
     </message>
@@ -2715,6 +2735,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Extrusion Along Path</translation>
     </message>
     <message>
+        <source>MEN_PIPE_PATH</source>
+        <translation>Restore Path</translation>
+    </message>
+    <message>
         <source>MEN_PLANE</source>
         <translation>Plane</translation>
     </message>
@@ -3495,6 +3519,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create a shape by extrusion along a path</translation>
     </message>
     <message>
+        <source>STB_PIPE_PATH</source>
+        <translation>Restore path from a pipe-like shape</translation>
+    </message>
+    <message>
         <source>STB_PLANE</source>
         <translation>Create a plane</translation>
     </message>
@@ -4113,6 +4141,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_PIPE</source>
         <translation>Extrusion along path</translation>
+    </message>
+    <message>
+        <source>TOP_PIPE_PATH</source>
+        <translation>Restore path</translation>
     </message>
     <message>
         <source>TOP_PLANE</source>

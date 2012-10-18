@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_I3DPrimOperations_HXX_
 #define _GEOMImpl_I3DPrimOperations_HXX_
@@ -131,14 +130,21 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                 bool theWithContact,
                 bool theWithCorrections);
 
-  Standard_EXPORT Handle(GEOM_Object) MakePipeShellsWithoutPath(
-                const Handle(TColStd_HSequenceOfTransient)& theBases,
-                const Handle(TColStd_HSequenceOfTransient)& theLocations);
+  Standard_EXPORT Handle(GEOM_Object) MakePipeShellsWithoutPath
+                (const Handle(TColStd_HSequenceOfTransient)& theBases,
+                 const Handle(TColStd_HSequenceOfTransient)& theLocations);
 
   Standard_EXPORT Handle(GEOM_Object) MakePipeBiNormalAlongVector (Handle(GEOM_Object) theBase,
                                                                    Handle(GEOM_Object) thePath,
                                                                    Handle(GEOM_Object) theVec);
 
+  Standard_EXPORT Handle(GEOM_Object) RestorePath (Handle(GEOM_Object) theShape,
+                                                   Handle(GEOM_Object) theBase1,
+                                                   Handle(GEOM_Object) theBase2);
+
+  Standard_EXPORT Handle(GEOM_Object) RestorePath (Handle(GEOM_Object) theShape,
+                                                   const Handle(TColStd_HSequenceOfTransient)& theBase1,
+                                                   const Handle(TColStd_HSequenceOfTransient)& theBase2);
 };
 
 #endif

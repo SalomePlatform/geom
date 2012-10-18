@@ -19,11 +19,11 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-//  File   : GEOMImpl_ShapeDriver.ixx
+//  File   : GEOMImpl_PipePathDriver.ixx
 //  Module : GEOMImpl
 
-#ifndef _GEOMImpl_ShapeDriver_HeaderFile
-#define _GEOMImpl_ShapeDriver_HeaderFile
+#ifndef _GEOMImpl_PipePathDriver_HeaderFile
+#define _GEOMImpl_PipePathDriver_HeaderFile
 
 #ifndef _TColStd_SequenceOfExtendedString_HeaderFile
 #include <TColStd_SequenceOfExtendedString.hxx>
@@ -50,14 +50,15 @@
 #include <Handle_TFunction_Driver.hxx>
 #endif
 
+
 class Standard_Transient;
 class Handle_Standard_Type;
 class Handle(TFunction_Driver);
-class GEOMImpl_ShapeDriver;
+class GEOMImpl_PipePathDriver;
 
-Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_ShapeDriver);
+Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_PipePathDriver);
 
-class Handle(GEOMImpl_ShapeDriver) : public Handle(TFunction_Driver) {
+class Handle(GEOMImpl_PipePathDriver) : public Handle(TFunction_Driver) {
   public:
     inline void* operator new(size_t,void* anAddress) 
       {
@@ -72,40 +73,40 @@ class Handle(GEOMImpl_ShapeDriver) : public Handle(TFunction_Driver) {
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
 
-    Handle(GEOMImpl_ShapeDriver)():Handle(TFunction_Driver)() {} 
-    Handle(GEOMImpl_ShapeDriver)(const Handle(GEOMImpl_ShapeDriver)& aHandle) : Handle(TFunction_Driver)(aHandle) 
+    Handle(GEOMImpl_PipePathDriver)():Handle(TFunction_Driver)() {} 
+    Handle(GEOMImpl_PipePathDriver)(const Handle(GEOMImpl_PipePathDriver)& aHandle) : Handle(TFunction_Driver)(aHandle) 
      {
      }
 
-    Handle(GEOMImpl_ShapeDriver)(const GEOMImpl_ShapeDriver* anItem) : Handle(TFunction_Driver)((TFunction_Driver *)anItem) 
+    Handle(GEOMImpl_PipePathDriver)(const GEOMImpl_PipePathDriver* anItem) : Handle(TFunction_Driver)((TFunction_Driver *)anItem) 
      {
      }
 
-    Handle(GEOMImpl_ShapeDriver)& operator=(const Handle(GEOMImpl_ShapeDriver)& aHandle)
+    Handle(GEOMImpl_PipePathDriver)& operator=(const Handle(GEOMImpl_PipePathDriver)& aHandle)
      {
       Assign(aHandle.Access());
       return *this;
      }
 
-    Handle(GEOMImpl_ShapeDriver)& operator=(const GEOMImpl_ShapeDriver* anItem)
+    Handle(GEOMImpl_PipePathDriver)& operator=(const GEOMImpl_PipePathDriver* anItem)
      {
       Assign((Standard_Transient *)anItem);
       return *this;
      }
 
-    GEOMImpl_ShapeDriver* operator->() 
+    GEOMImpl_PipePathDriver* operator->() 
      {
-      return (GEOMImpl_ShapeDriver *)ControlAccess();
+      return (GEOMImpl_PipePathDriver *)ControlAccess();
      }
 
-    GEOMImpl_ShapeDriver* operator->() const 
+    GEOMImpl_PipePathDriver* operator->() const 
      {
-      return (GEOMImpl_ShapeDriver *)ControlAccess();
+      return (GEOMImpl_PipePathDriver *)ControlAccess();
      }
 
-   Standard_EXPORT ~Handle(GEOMImpl_ShapeDriver)() {};
+   Standard_EXPORT ~Handle(GEOMImpl_PipePathDriver)() {};
  
-   Standard_EXPORT static const Handle(GEOMImpl_ShapeDriver) DownCast(const Handle(Standard_Transient)& AnObject);
+   Standard_EXPORT static const Handle(GEOMImpl_PipePathDriver) DownCast(const Handle(Standard_Transient)& AnObject);
 };
 
 #ifndef _TFunction_Driver_HeaderFile
@@ -118,54 +119,48 @@ class Handle(GEOMImpl_ShapeDriver) : public Handle(TFunction_Driver) {
 #include <Standard_CString.hxx>
 #endif
 
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Edge.hxx>
 #include <TopoDS_Wire.hxx>
-#include <TColStd_HSequenceOfTransient.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopTools_HSequenceOfShape.hxx>
 
 class TColStd_SequenceOfExtendedString;
 
 
-class GEOMImpl_ShapeDriver : public TFunction_Driver {
+class GEOMImpl_PipePathDriver : public TFunction_Driver {
 
 public:
 
-  inline void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  inline void* operator new(size_t size) 
-  { 
-    return Standard::Allocate(size); 
-  }
-  inline void  operator delete(void *anAddress) 
-  { 
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
+    inline void* operator new(size_t,void* anAddress) 
+      {
+        return anAddress;
+      }
+    inline void* operator new(size_t size) 
+      { 
+        return Standard::Allocate(size); 
+      }
+    inline void  operator delete(void *anAddress) 
+      { 
+        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+      }
 
   // Methods PUBLIC
   // 
-  Standard_EXPORT GEOMImpl_ShapeDriver();
-  Standard_EXPORT ~GEOMImpl_ShapeDriver() {};
-
+  Standard_EXPORT GEOMImpl_PipePathDriver();
   Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
   Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-  Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
+  Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const
+  { return Standard_True; }
   Standard_EXPORT static const Standard_GUID& GetID();
-
-  Standard_EXPORT static TopoDS_Edge MakeEdgeFromWire (const TopoDS_Shape& aWire,
-                                                       const Standard_Real LinTol,
-                                                       const Standard_Real AngTol);
-
-  Standard_EXPORT static TopoDS_Wire MakeWireFromEdges
-                                     (const Handle(TColStd_HSequenceOfTransient)& theEdgesFuncs,
-                                      const Standard_Real theTolerance);
+  Standard_EXPORT ~GEOMImpl_PipePathDriver() {};
 
   // Type management
   //
-  Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_ShapeDriver_Type_();
-  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_ShapeDriver) ; }
-  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_ShapeDriver) == AType || TFunction_Driver::IsKind(AType)); } 
+  Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_PipePathDriver_Type_();
+  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const
+  { return STANDARD_TYPE(GEOMImpl_PipePathDriver) ; }
+  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const
+  { return (STANDARD_TYPE(GEOMImpl_PipePathDriver) == AType ||
+            TFunction_Driver::IsKind(AType)); } 
 
 };
 

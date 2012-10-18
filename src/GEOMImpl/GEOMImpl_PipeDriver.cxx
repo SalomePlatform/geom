@@ -28,6 +28,7 @@
 #include <GEOMImpl_IPipeShellSect.hxx>
 #include <GEOMImpl_IPipeBiNormal.hxx>
 #include <GEOMImpl_IPipe.hxx>
+#include <GEOMImpl_IPipePath.hxx>
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
@@ -41,15 +42,14 @@
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepCheck_Analyzer.hxx>
+#include <BRepGProp.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
-#include <GProp_GProps.hxx>
-#include <BRepGProp.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
-#include <BRepBuilderAPI_Copy.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -67,6 +67,8 @@
 #include <TopTools_IndexedDataMapOfShapeShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+
+#include <GProp_GProps.hxx>
 
 #include <GeomAPI_ProjectPointOnCurve.hxx>
 #include <GeomAPI_Interpolate.hxx>
@@ -88,6 +90,7 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 
 #include <Precision.hxx>
+
 #include <Standard_NullObject.hxx>
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
@@ -100,7 +103,7 @@
 //=======================================================================
 const Standard_GUID& GEOMImpl_PipeDriver::GetID()
 {
-  static Standard_GUID aPipeDriver("FF1BBB19-5D14-4df2-980B-3A668264EA16");
+  static Standard_GUID aPipeDriver ("FF1BBB19-5D14-4df2-980B-3A668264EA16");
   return aPipeDriver;
 }
 
@@ -2277,23 +2280,23 @@ static TopoDS_Shape CreatePipeBiNormalAlongVector(const TopoDS_Wire& aWirePath,
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
 {
-  //cout<<"PipeDriver::Execute"<<endl;
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
-  GEOMImpl_IPipe* aCI= 0;
   Standard_Integer aType = aFunction->GetType();
+
+  GEOMImpl_IPipe* aCI = 0;
   if (aType == PIPE_BASE_PATH)
-    aCI = new GEOMImpl_IPipe(aFunction);
+    aCI = new GEOMImpl_IPipe (aFunction);
   else if (aType == PIPE_DIFFERENT_SECTIONS)
-    aCI = new GEOMImpl_IPipeDiffSect(aFunction);
+    aCI = new GEOMImpl_IPipeDiffSect (aFunction);
   else if (aType == PIPE_SHELL_SECTIONS)
-    aCI = new GEOMImpl_IPipeShellSect(aFunction);
+    aCI = new GEOMImpl_IPipeShellSect (aFunction);
   else if (aType == PIPE_SHELLS_WITHOUT_PATH)
-    aCI = new GEOMImpl_IPipeShellSect(aFunction);
+    aCI = new GEOMImpl_IPipeShellSect (aFunction);
   else if (aType == PIPE_BI_NORMAL_ALONG_VECTOR)
-    aCI = new GEOMImpl_IPipeBiNormal(aFunction);
+    aCI = new GEOMImpl_IPipeBiNormal (aFunction);
   else
     return 0;
 

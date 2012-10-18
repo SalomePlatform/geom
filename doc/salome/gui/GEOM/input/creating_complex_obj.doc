@@ -14,7 +14,7 @@ axis, creating a body of revolution.</li>
 <li>\subpage create_filling_page  "Create a surface" from a set of edges.</li>
 <li>\subpage create_extrusion_alongpath_page "Extrude an object along a path", 
 creating a more complex trajectory object.</li>
-
+<li>\subpage create_pipe_path_page "Restore Path" of a pipe-like shape.</li>
 </ul>
 
 */

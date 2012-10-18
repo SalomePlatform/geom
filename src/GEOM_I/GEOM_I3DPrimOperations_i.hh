@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_I3DPrimOperations_i_HeaderFile
 #define _GEOM_I3DPrimOperations_i_HeaderFile
@@ -187,6 +186,13 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
   GEOM::GEOM_Object_ptr MakePipeBiNormalAlongVector (GEOM::GEOM_Object_ptr theBase,
 						     GEOM::GEOM_Object_ptr thePath,
 						     GEOM::GEOM_Object_ptr theVec);
+
+  GEOM::GEOM_Object_ptr RestorePath (GEOM::GEOM_Object_ptr theShape,
+                                     GEOM::GEOM_Object_ptr theBase1,
+                                     GEOM::GEOM_Object_ptr theBase2);
+  GEOM::GEOM_Object_ptr RestorePathEdges (GEOM::GEOM_Object_ptr theShape,
+                                          const GEOM::ListOfGO& theBase1,
+                                          const GEOM::ListOfGO& theBase2);
 
   ::GEOMImpl_I3DPrimOperations* GetOperations()
   { return (::GEOMImpl_I3DPrimOperations*)GetImpl(); }
