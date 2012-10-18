@@ -208,7 +208,7 @@ def TestAll (geompy, math):
   Line3 = geompy.MakeLineTwoFaces(prism1_faces[0], prism1_faces[1]) #(2 GEOM_Object)->GEOM_Object
 
   #Create advanced objects
-  Copy       = geompy.MakeCopy(Box)                      #(GEOM_Object)->GEOM_Object
+  Copy             = geompy.MakeCopy(Box)                      #(GEOM_Object)->GEOM_Object
   Prism            = geompy.MakePrismVecH(Face, vz, 100.0)     #(2 GEOM_Object, Double)->GEOM_Object
   Prism2Ways       = geompy.MakePrismVecH2Ways(Face, vz, 10.0) #(2 GEOM_Object, Double)->GEOM_Object
   PrismTwoPnt      = geompy.MakePrism(Face2, p0, pxyz)         #(3 GEOM_Object)->GEOM_Object
@@ -218,9 +218,9 @@ def TestAll (geompy, math):
   Revolution       = geompy.MakeRevolution(Face, vz, angle2)   #
   Revolution2Ways  = geompy.MakeRevolution(Face, vz, angle1)   #
   Filling          = geompy.MakeFilling(Compound, mindeg, maxdeg,
-                                  tol2d, tol3d, nbiter)  #(GEOM_Object, 4 Doubles, Short)->GEOM_Object
-  Pipe       = geompy.MakePipe(Wire, Edge)               #(2 GEOM_Object)->GEOM_Object
-  Sewing     = geompy.MakeSewing([Face, S], precision)   #(List Of GEOM_Object, Double)->GEOM_Object
+                                        tol2d, tol3d, nbiter)  #(GEOM_Object, 4 Doubles, Short)->GEOM_Object
+  Pipe             = geompy.MakePipe(Wire, Edge)               #(2 GEOM_Object)->GEOM_Object
+  Sewing           = geompy.MakeSewing([Face, S], precision)   #(List Of GEOM_Object, Double)->GEOM_Object
 
   #Transform objects
   Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)    #(3 GEOM_Object)->GEOM_Object
@@ -411,6 +411,28 @@ def TestAll (geompy, math):
   id_Filling    = geompy.addToStudy(Filling,    "Filling")
   id_Pipe       = geompy.addToStudy(Pipe,       "Pipe")
   id_Sewing     = geompy.addToStudy(Sewing,     "Sewing")
+
+  import salome_version
+  if int(salome_version.getXVersion(), 16) >= int('0x060600', 16):
+    [Face5, Face6] = geompy.SubShapes(Box, [31, 33])
+    [b1_e1, b1_e2, b1_e3, b1_e4] = geompy.SubShapes(Box, [12, 22, 25, 29])
+    [b2_e1, b2_e2, b2_e3, b2_e4] = geompy.SubShapes(Box, [ 8, 18, 26, 30])
+    Path1 = geompy.RestorePath(Box, Face5, Face6)
+    Path2 = geompy.RestorePathEdges(Box, [b1_e1, b1_e2, b1_e3, b1_e4], [b2_e1, b2_e2, b2_e3, b2_e4])
+
+    id_Base1      = geompy.addToStudyInFather(Box, Face5, "Base1")
+    id_Base2      = geompy.addToStudyInFather(Box, Face6, "Base2")
+    id_Base1e1    = geompy.addToStudyInFather(Box, b1_e1, "Base1 Edge1")
+    id_Base1e2    = geompy.addToStudyInFather(Box, b1_e2, "Base1 Edge2")
+    id_Base1e3    = geompy.addToStudyInFather(Box, b1_e3, "Base1 Edge3")
+    id_Base1e4    = geompy.addToStudyInFather(Box, b1_e4, "Base1 Edge4")
+    id_Base2e1    = geompy.addToStudyInFather(Box, b2_e1, "Base2 Edge1")
+    id_Base2e2    = geompy.addToStudyInFather(Box, b2_e2, "Base2 Edge2")
+    id_Base2e3    = geompy.addToStudyInFather(Box, b2_e3, "Base2 Edge3")
+    id_Base2e4    = geompy.addToStudyInFather(Box, b2_e4, "Base2 Edge4")
+    id_Path1      = geompy.addToStudy(Path1,      "Path1")
+    id_Path2      = geompy.addToStudy(Path2,      "Path2")
+    pass
 
   id_Translation = geompy.addToStudy(Translation, "Translation")
   id_TranslVect  = geompy.addToStudy(TranslVect , "Translation along vector")
