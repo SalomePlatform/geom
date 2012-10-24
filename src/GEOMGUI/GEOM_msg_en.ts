@@ -3807,6 +3807,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Basic</translation>
     </message>
     <message>
+        <source>TOOL_BLOCKS</source>
+        <translation>Blocks</translation>
+    </message>
+    <message>
         <source>TOOL_BOOLEAN</source>
         <translation>Boolean operations</translation>
     </message>

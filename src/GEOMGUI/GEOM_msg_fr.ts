@@ -8,6 +8,10 @@
         <translation>Erreur: impossible de construire l&apos;objet</translation>
     </message>
     <message>
+        <source>PAL_NOT_DONE_ERROR</source>
+        <translation>Opération annulée</translation>
+    </message>
+    <message>
         <source>CHANGE_ORIENTATION_NEW_OBJ_NAME</source>
         <translation>Inverser</translation>
     </message>
@@ -366,6 +370,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Sous-objets incriminés</translation>
     </message>
     <message>
+        <source>GEOM_GETNONBLOCKS_TITLE</source>
+        <translation>Récupérer les solides non-hexahédres et les faces non-quadrangles</translation>
+    </message>
+    <message>
+        <source>GEOM_GETNONBLOCKS</source>
+        <translation>Récupérer les solides non blocs</translation>
+    </message>
+    <message>
+        <source>GEOM_NONBLOCKS</source>
+        <translation>GroupeSolidesNonBlocs</translation>
+    </message>
+    <message>
         <source>GEOM_CHECK_INFOS</source>
         <translation>Objet et son information topologique</translation>
     </message>
@@ -717,6 +733,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_FILLET_1D</source>
         <translation>Congé 1D</translation>
+    </message>
+    <message>
+        <source>GEOM_FILLET_1D_IGNORE_SECANT</source>
+        <translation>Fusionner les arêtes collinéaires pour permettre des rayons plus grands</translation>
     </message>
     <message>
         <source>GEOM_FILLET_ABORT</source>
@@ -1257,6 +1277,26 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_PIPE_TITLE</source>
         <translation>Construction d&apos;un tuyau</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_PATH</source>
+        <translation>Chemin</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_PATH_TITLE</source>
+        <translation>Récupérer le chemin</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_LIKE_SHAPE</source>
+        <translation>Coque ou solide de type tuyau</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_BASE1_OBJECT</source>
+        <translation>Premier(ère) face/contour/arête de base</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_BASE2_OBJECT</source>
+        <translation>Dernier(ère) face/contour/arête de base</translation>
     </message>
     <message>
         <source>GEOM_PROFILE</source>
@@ -2343,6 +2383,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Contrôler un assemblage de blocs</translation>
     </message>
     <message>
+        <source>MEN_GET_NON_BLOCKS</source>
+        <translation>Récupérer les solides non blocs</translation>
+    </message>
+    <message>
         <source>MEN_CHECK_SELF_INTERSECTIONS</source>
         <translation>Détections des auto-intersections</translation>
     </message>
@@ -2453,6 +2497,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_DISPLAY_ONLY</source>
         <translation>Afficher uniquement</translation>
+    </message>
+    <message>
+        <source>MEN_SHOW_ONLY_CHILDREN</source>
+        <translation>Afficher uniquement les enfants</translation>
     </message>
     <message>
         <source>MEN_BRING_TO_FRONT</source>
@@ -2583,6 +2631,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Editer</translation>
     </message>
     <message>
+        <source>MEN_GROUP_UNION</source>
+        <translation>Union de groupes</translation>
+    </message>
+    <message>
+        <source>MEN_GROUP_INTERSECT</source>
+        <translation>Intersection de groupes</translation>
+    </message>
+    <message>
+        <source>MEN_GROUP_CUT</source>
+        <translation>Découpe de groupes</translation>
+    </message>
+    <message>
         <source>MEN_RELOAD_IMPORTED</source>
         <translation>Recharger à partir du disque</translation>
     </message>
@@ -2673,6 +2733,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_PIPE</source>
         <translation>Extrusion suivant un chemin</translation>
+    </message>
+    <message>
+        <source>MEN_PIPE_PATH</source>
+        <translation>Retrouver le chemin</translation>
     </message>
     <message>
         <source>MEN_PLANE</source>
@@ -3051,6 +3115,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Couleur des objets mis au premier plan</translation>
     </message>
     <message>
+        <source>PREF_TOPLEVEL_DM</source>
+        <translation>Mode d'affichage des objets mis au premier plan</translation>
+    </message>
+    <message>
+        <source>MEN_KEEP_CURRENT_DM</source>
+        <translation>Conserver le mode d'affichage en cours</translation>
+    </message>
+    <message>
+        <source>MEN_SHOW_ADD_WACTOR</source>
+        <translation>Afficher un contour en plus</translation>
+    </message>
+    <message>
         <source>PREF_LINE_COLOR</source>
         <translation>Couleur des arêtes, vecteurs, contours</translation>
     </message>
@@ -3175,6 +3251,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Contrôler un assemblage de blocs</translation>
     </message>
     <message>
+        <source>STB_GET_NON_BLOCKS</source>
+        <translation>Récupérer les solides non-blocs</translation>
+    </message>
+    <message>
         <source>STB_CHECK_SELF_INTERSECTIONS</source>
         <translation>Détecte les auto-intersections</translation>
     </message>
@@ -3253,6 +3333,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_DISPLAY_ONLY</source>
         <translation>Afficher uniquement</translation>
+    </message>
+    <message>
+        <source>STB_SHOW_ONLY_CHILDREN</source>
+        <translation>Afficher uniquement les enfants</translation>
     </message>
     <message>
         <source>STB_EDGE</source>
@@ -3343,6 +3427,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Editer un groupe</translation>
     </message>
     <message>
+        <source>STB_GROUP_UNION</source>
+        <translation>Union de groupes</translation>
+    </message>
+    <message>
+        <source>STB_GROUP_INTERSECT</source>
+        <translation>Intersection de groupes</translation>
+    </message>
+    <message>
+        <source>STB_GROUP_CUT</source>
+        <translation>Découpe de groupes</translation>
+    </message>
+    <message>
         <source>STB_RELOAD_IMPORTED</source>
         <translation>Recharger l&apos;objet importé depuis le disque</translation>
     </message>
@@ -3423,6 +3519,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer un objet par extrusion suivant un chemin</translation>
     </message>
     <message>
+        <source>STB_PIPE_PATH</source>
+        <translation>Retrouver le chemin à partir d'un objet de type tuyau</translation>
+    </message>
+    <message>
         <source>STB_PLANE</source>
         <translation>Créer un plan</translation>
     </message>
@@ -3447,10 +3547,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer un groupe</translation>
     </message>
     <message>
-        <source>STB_POP_SHOW_CHILDREN</source>
-        <translation>Monter les objets fils</translation>
-    </message>
-    <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
         <translation>Dépublier l&apos;objet</translation>
     </message>
@@ -3459,7 +3555,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Publier l&apos;objet</translation>
     </message>
     <message>
-        <source>STB_POP_HIDE_CHILDREN</source>
+        <source>STB_POP_DISCLOSE_CHILDREN</source>
+        <translation>Afficher les objets fils</translation>
+    </message>
+    <message>
+        <source>STB_POP_CONCEAL_CHILDREN</source>
         <translation>Cacher les objets fils</translation>
     </message>
     <message>
@@ -3707,6 +3807,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Objets de base</translation>
     </message>
     <message>
+        <source>TOOL_BLOCKS</source>
+        <translation>Blocs</translation>
+    </message>
+    <message>
         <source>TOOL_BOOLEAN</source>
         <translation>Opérations booléennes </translation>
     </message>
@@ -3783,6 +3887,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Valider l&apos;assemblage de blocs</translation>
     </message>
     <message>
+        <source>TOP_GET_NON_BLOCKS</source>
+        <translation>Récupérer les solides non-blocs</translation>
+    </message>
+    <message>
         <source>TOP_CHECK_SELF_INTERSECTIONS</source>
         <translation>Détection des auto-intersections</translation>
     </message>
@@ -3857,6 +3965,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_DISPLAY_ONLY</source>
         <translation>Afficher uniquement</translation>
+    </message>
+    <message>
+        <source>TOP_SHOW_ONLY_CHILDREN</source>
+        <translation>Afficher uniquement les enfants</translation>
     </message>
     <message>
         <source>TOP_EDGE</source>
@@ -3937,6 +4049,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_GROUP_EDIT</source>
         <translation>Editer un groupe</translation>
+    </message>
+    <message>
+        <source>TOP_GROUP_UNION</source>
+        <translation>Union de groupes</translation>
+    </message>
+    <message>
+        <source>TOP_GROUP_INTERSECT</source>
+        <translation>Intersection de groupes</translation>
+    </message>
+    <message>
+        <source>TOP_GROUP_CUT</source>
+        <translation>Découpe de groupes</translation>
     </message>
     <message>
         <source>TOP_HEX_SOLID</source>
@@ -4023,6 +4147,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Extrusion suivant un chemin</translation>
     </message>
     <message>
+        <source>TOP_PIPE_PATH</source>
+        <translation>Retrouver le chemin</translation>
+    </message>
+    <message>
         <source>TOP_PLANE</source>
         <translation>Créer un plan</translation>
     </message>
@@ -4047,10 +4175,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer un groupe</translation>
     </message>
     <message>
-        <source>TOP_POP_SHOW_CHILDREN</source>
-        <translation>Montrer les enfants</translation>
-    </message>
-    <message>
         <source>TOP_POP_UNPUBLISH_OBJ</source>
         <translation>Dépublier l&apos;objet</translation>
     </message>
@@ -4059,8 +4183,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Publier l&apos;objet</translation>
     </message>
     <message>
-        <source>TOP_POP_HIDE_CHILDREN</source>
-        <translation>Cacher les enfants</translation>
+        <source>TOP_POP_DISCLOSE_CHILDREN</source>
+        <translation>Afficher les objets fils</translation>
+    </message>
+    <message>
+        <source>TOP_POP_CONCEAL_CHILDREN</source>
+        <translation>Cacher les objets fils</translation>
     </message>
     <message>
         <source>TOP_POP_ISOS</source>
@@ -4329,6 +4457,30 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_REMOVE_EXTRA_EDGES</source>
         <translation>Supprimer les arêtes inutiles</translation>
+    </message>
+    <message>
+        <source>GEOM_FUSE_EDGES_TITLE</source>
+        <translation>Fusionner les arêtes collinéaires au sein d'un contour</translation>
+    </message>
+    <message>
+        <source>GEOM_FUSE_EDGES</source>
+        <translation>Fusionner les arêtes</translation>
+    </message>
+    <message>
+        <source>FUSE_EDGES_NEW_OBJ_NAME</source>
+        <translation>FusionArêtes</translation>
+    </message>
+    <message>
+        <source>TOP_FUSE_EDGES</source>
+        <translation>Fusionner les arêtes collinéaires au sein d'un contour</translation>
+    </message>
+    <message>
+        <source>MEN_FUSE_EDGES</source>
+        <translation>Fusionner les arêtes collinéaires au sein d'un contour</translation>
+    </message>
+    <message>
+        <source>STB_FUSE_EDGES</source>
+        <translation>Fusionner les arêtes collinéaires au sein d'un contour</translation>
     </message>
     <message>
         <source>TOP_NORMALE</source>
@@ -5031,6 +5183,45 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>NO_GROUP</source>
         <translation>Choisissez un groupe à éditer</translation>
+    </message>
+</context>
+<context>
+    <name>GroupGUI_BooleanDlg</name>
+    <message>
+        <source>GEOM_UNION</source>
+        <translation>Union</translation>
+    </message>
+    <message>
+        <source>GEOM_UNION_TITLE</source>
+        <translation>Union de groupes</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERSECT</source>
+        <translation>Intersection</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERSECT_TITLE</source>
+        <translation>Intersection de groupes</translation>
+    </message>
+    <message>
+        <source>GEOM_CUT</source>
+        <translation>Découpe</translation>
+    </message>
+    <message>
+        <source>GEOM_CUT_TITLE</source>
+        <translation>Découpe de groupes</translation>
+    </message>
+    <message>
+        <source>GEOM_GROUPS</source>
+        <translation>Groupes</translation>
+    </message>
+    <message>
+        <source>GEOM_MAIN_GROUPS</source>
+        <translation>Groupes principaux</translation>
+    </message>
+    <message>
+        <source>GEOM_TOOL_GROUPS</source>
+        <translation>Groups outils</translation>
     </message>
 </context>
 <context>
