@@ -2285,7 +2285,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::RestorePath (Handle(GEOM_Object)
   }
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
+    SetErrorCode("RestorePath: inappropriate arguments given");
     return NULL;
   }
 
