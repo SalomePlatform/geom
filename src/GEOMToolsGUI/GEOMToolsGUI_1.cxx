@@ -111,10 +111,10 @@
 
 // If the next macro is defined, autocolor feature works for all sub-shapes;
 // if it is undefined, autocolor feature works for groups only
-//#define GENERAL_AUTOCOLOR
+#define GENERAL_AUTOCOLOR
 // Below macro, when uncommented, switches on simplified (more performant) algorithm
 // of auto-color picking up
-//#define SIMPLE_AUTOCOLOR
+#define SIMPLE_AUTOCOLOR
 
 void GEOMToolsGUI::OnCheckGeometry()
 {
