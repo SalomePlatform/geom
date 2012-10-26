@@ -1308,11 +1308,17 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
   XYZ Last    = getLastPoint();
   XYZ Current = getCurrentPoint();
 
-  gp_Pnt P0(Last.x,Last.y,Last.z);
+  gp_Pnt Last_Pnt(Last.x,Last.y,Last.z);
+  gp_Pnt P0 = Last_Pnt;
   if (myMode == 0)                 // Absolute coordinates
     P0=gp::Origin();
   gp_Pnt Current_Pnt(Current.x,Current.y,Current.z);
   gp_Pnt P1, P2;
+  
+  // Check if last end current point are coincident
+  if (Last_Pnt.IsEqual(Current_Pnt, 1e-7))
+    return;
+  
   gp_Dir aNormal = getPresentationPlane();
   
   if (myCoordType == 0)
@@ -1535,7 +1541,7 @@ Handle(AIS_AngleDimension) EntityGUI_3DSketcherDlg::createAISAngleDimension(doub
   double aLength = P0.Distance(P1);
   
   // Check input data
-  if (Abs(theAngle - 90.0) < Precision::Angular() ||
+  if (Abs(theAngle) < Precision::Angular() ||
       aLength < Precision::Confusion())
     return NULL;
   
