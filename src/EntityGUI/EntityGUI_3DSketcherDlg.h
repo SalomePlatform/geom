@@ -45,6 +45,9 @@ class gp_Dir;
 #  define DBL_DIGITS_DISPLAY 16
 #endif // COORD_MIN
 
+// For convenience
+bool isSame (double d1, double d2);
+
 //=================================================================================
 // class    : EntityGUI_Dlg
 // purpose  :
@@ -131,8 +134,16 @@ private:
   
   std::string                        doubleToString( double );
   
+  gp_Trsf                            toReferenceSystem(gp_Pnt origin) const;
+  gp_Trsf                            toCurrentSystem(gp_Pnt origin) const;
+  
   void                               removeLastIOFromPrs();
   void                               restoreLastIOToPrs();
+  
+  double                             radius(gp_Pnt) const;
+  double                             height(gp_Pnt) const;
+  double                             longitude(gp_Pnt) const;
+  double                             latitude(gp_Pnt) const;
 
 private:
   XYZList                            myPointsList;

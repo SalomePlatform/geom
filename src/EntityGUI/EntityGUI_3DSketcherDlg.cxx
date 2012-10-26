@@ -103,6 +103,11 @@ private:
   bool& myLock;
 };
 
+bool isSame (double d1, double d2)
+{ 
+  return Abs(d1 - d2) <= Precision::Confusion();
+}
+
 //=================================================================================
 // class    : EntityGUI_3DSketcherDlg()
 // purpose  : Constructs a EntityGUI_3DSketcherDlg which is a child of 'parent', with the
@@ -1133,65 +1138,43 @@ gp_Dir EntityGUI_3DSketcherDlg::getPresentationPlane() const
   
   gp_Vec Vec1(P1,P2);
   gp_Vec Vec2(P1,P3);
-  gp_Vec Vec3 = Vec1;
   
   gp_Dir aNormal;                  // Normal defining the plane of the presentation 
   
   if (withAngle)                   // If one angle
   {
-    switch(myOrientation)
+    // Transformation from the current coordinate system 
+    // to the reference coordinate system
+    gp_Trsf aTransform = toReferenceSystem (P1);
+    gp_Dir N1 = gp::DZ();
+    gp_Dir N2 = gp::DY();
+    N1.Transform(aTransform);
+    N2.Transform(aTransform);
+    
+    if (Vec1.CrossMagnitude(N1) > Precision::Confusion())
     {
-      case OXY:
-      {
-        if (Vec1.CrossMagnitude(gp::DZ()) > Precision::Confusion())
-          aNormal = gp::DZ().Crossed(gp_Dir(Vec1)); // --> the plane is orthogonal to the angle presentation   
-        else                                        //     plane and contains the current edge
-          aNormal = gp::DY();
-
-        if (twoAngles)            // If two angles 
-        { 
-          gp_XYZ Vec1_XY(Vec1.X(),Vec1.Y(),0.0);// --> define Vec3 as the projection of the current 
-          Vec3 = gp_Vec(Vec1_XY);               //     edge on the plane chosen for the first angle
-        }
-        break;
-      }
-      case OYZ:
-      {
-        if (Vec1.CrossMagnitude(gp::DX()) > Precision::Confusion())
-          aNormal = gp::DX().Crossed(gp_Dir(Vec1));
-        else
-          aNormal = gp::DZ();
-          
-        if (twoAngles)
-        {
-          gp_XYZ Vec1_YZ(0.0,Vec1.Y(),Vec1.Z());
-          Vec3 = gp_Vec(Vec1_YZ);
-        }
-        break;
-      }
-      case OXZ:
-      {
-        if (Vec1.CrossMagnitude(gp::DY()) > Precision::Confusion())
-          aNormal = gp::DY().Crossed(gp_Dir(Vec1));
-        else
-          aNormal = gp::DZ();
-        
-        if (twoAngles)
-        {
-          gp_XYZ Vec1_XZ(Vec1.X(),0.0,Vec1.Z());
-          Vec3 = gp_Vec(Vec1_XZ);
-        }
-        break;
-      }
+      // The plane is orthogonal to the angle presentation plane 
+      // and contains the current edge
+      aNormal = N1.Crossed(gp_Dir(Vec1));
     }
- 
-    if(twoAngles                  // If two angles 
-      && Abs(Vec1.CrossMagnitude(Vec3)) > Precision::Confusion())                                  
+    else
+      aNormal = N2;
+
+    if (twoAngles)
     { 
-      aNormal = gp_Dir(Vec1.Crossed(Vec3));//       --> set the normal as the cross product of
-    }                                      //           the current edge with its projection           
-  }                                        //           it ensures that the dimension changes
-                                           //           side when the angle becomes negative
+      gp_Vec V = Vec1.Transformed(aTransform.Inverted());
+      gp_Vec Vec3(V.X(),V.Y(),0.0);
+      
+      // Express the coordinates in the refernce coordinate system (OXY)
+      Vec3.Transform(aTransform);   
+      if(Abs(Vec1.CrossMagnitude(Vec3)) > Precision::Confusion())                                  
+      { 
+        //  set the normal as the cross product of the current edge with its projection
+        //  it ensures that the dimension changes side when the angle becomes negative
+        aNormal = gp_Dir(Vec1.Crossed(Vec3));  
+      } 
+    }         
+  }
   else
   {
     // Check colinearity
@@ -1203,8 +1186,9 @@ gp_Dir EntityGUI_3DSketcherDlg::getPresentationPlane() const
         Vec2 = gp_Vec(gp::DY());
       }
     }
-    aNormal = gp_Dir(Vec1.Crossed(Vec2)); // If no angles --> the plane is the one formed by
-  }                                       //                  the last edge and the current one
+    // If no angles, the plane is the one formed by the last edge and the current one
+    aNormal = gp_Dir(Vec1.Crossed(Vec2)); 
+  }
   return aNormal;
 }
 
@@ -1309,9 +1293,12 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
   XYZ Current = getCurrentPoint();
 
   gp_Pnt Last_Pnt(Last.x,Last.y,Last.z);
+  
   gp_Pnt P0 = Last_Pnt;
+  gp_Pnt Origin = gp::Origin();
   if (myMode == 0)                 // Absolute coordinates
-    P0=gp::Origin();
+    P0 = Origin;
+  
   gp_Pnt Current_Pnt(Current.x,Current.y,Current.z);
   gp_Pnt P1, P2;
   
@@ -1323,22 +1310,26 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
   
   if (myCoordType == 0)
   {
-    if((( Abs(Last.x-Current.x) <= Precision::Confusion() && 
-          Abs(Last.y-Current.y) <= Precision::Confusion() ) ||
-        ( Abs(Last.x-Current.x) <= Precision::Confusion() && 
-          Abs(Last.z-Current.z) <= Precision::Confusion() ) ||
-        ( Abs(Last.y-Current.y) <= Precision::Confusion() && 
-          Abs(Last.z-Current.z) <= Precision::Confusion() ))&&
-         myMode == 1)
+    bool oneDimensionalMove =  (isSame(Last_Pnt.X(), Current_Pnt.X()) && 
+                                isSame(Last_Pnt.Y(), Current_Pnt.Y()) ) ||
+                               (isSame(Last_Pnt.Y(), Current_Pnt.Y()) && 
+                                isSame(Last_Pnt.Z(), Current_Pnt.Z()) ) ||
+                               (isSame(Last_Pnt.X(), Current_Pnt.X()) && 
+                                isSame(Last_Pnt.Z(), Current_Pnt.Z()) );
+                               
+    if(oneDimensionalMove && myMode == 1)
     { 
       // For better colocation of dimensions if only one coordinate changes (aNormal is a better choice)
       displayLength(P0, Current_Pnt, aNormal, store);
     }
     else
     {
-      displayLength(gp_Pnt(P0.X(),Current.y,P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ().Reversed(), store);
-      displayLength(gp_Pnt(Current.x,P0.Y(),P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ(), store);
-      displayLength(gp_Pnt(Current.x,Current.y,P0.Z()), Current_Pnt, gp::DX(), store);
+      if (!isSame(Last_Pnt.X(),Current_Pnt.X()))
+        displayLength(gp_Pnt(P0.X(),Current.y,P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ().Reversed(), store);
+      if (!isSame(Last_Pnt.Y(),Current_Pnt.Y()))
+        displayLength(gp_Pnt(Current.x,P0.Y(),P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ(), store);
+      if (!isSame(Last_Pnt.Z(),Current_Pnt.Z()))
+        displayLength(gp_Pnt(Current.x,Current.y,P0.Z()), Current_Pnt, gp::DX(), store);
     }
   }
   else if (myCoordType == 1)             // ANGLES
@@ -1349,36 +1340,19 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
     double anAngle1 = GroupAngles->SpinBox_DA->value();
     double aLength  = GroupAngles->SpinBox_DL->value();
     
-    switch(myOrientation)
-    {
-      case OXY:
-      {
-        P1 = gp_Pnt(P0.X() + aLength,P0.Y(),P0.Z());    // X direction
-        P2 = gp_Pnt(P0.X() + aLength * cos(anAngle1 * M_PI / 180.),
-                    P0.Y() + aLength * sin(anAngle1 * M_PI / 180.),
-                    P0.Z());     
-        break;
-      }
-      case OYZ:
-      {
-        P1 = gp_Pnt(P0.X(), P0.Y() + aLength,P0.Z());     // Y direction
-        P2 = gp_Pnt(P0.X(),
-                    P0.Y() + aLength * cos(anAngle1 * M_PI / 180.),
-                    P0.Z() + aLength * sin(anAngle1 * M_PI / 180.));   
-        break;
-      }
-      case OXZ:
-      {
-        P1 = gp_Pnt(P0.X() + aLength,P0.Y(),P0.Z());     // X direction
-        P2 = gp_Pnt(P0.X() + aLength * cos(anAngle1 * M_PI / 180.) ,
-                    P0.Y(),
-                    P0.Z() + aLength * sin(anAngle1 * M_PI / 180.));    
-        break;
-      }
-    }
+    // Set the coordinates in the current coordinate system
+    P1.SetCoord( aLength, 0.0, 0.0);    // X direction
+    P2.SetCoord( aLength * cos(anAngle1 * M_PI / 180. ),
+                 aLength * sin(anAngle1 * M_PI / 180. ),
+                 0.0); 
     
-    if(!cylindrical)
-      displayLength(P0, Current_Pnt, aNormal, store);
+    // Express the coordinates in the refernce coordinate system (OXY)
+    gp_Trsf aTranform = toReferenceSystem(P0);
+    P1.Transform(aTranform);    
+    P2.Transform(aTranform);
+    P1.Translate(Origin, P0);
+    P2.Translate(Origin, P0);
+    
     if(myMode !=0  || !store)
       displayAngle(anAngle1, P0, P1, P2, store);
     
@@ -1386,15 +1360,25 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
     {
       double anAngle2 = GroupAngles->SpinBox_DA2->value();
       displayAngle(anAngle2, P0, P2, Current_Pnt, store);
+      displayLength(P0, Current_Pnt, aNormal, store);
     }
-    if(cylindrical)
-    { 
+    else
+    {
+      bool sameRadius = isSame ( radius(Last_Pnt), radius(Current_Pnt) );
+      bool sameHeight = isSame ( height(Last_Pnt), height(Current_Pnt) );
+                            
       gp_Vec aVec(P2, Current_Pnt);
-      if (myMode == 0)
+      
+      if (myMode == 0 && !sameRadius)
+      {
         displayLength(P0.Translated(aVec), P2.Translated(aVec), aNormal, store);  // Radius  
-      else
+      }
+      else if (myMode == 1)
         displayLength(P0, P2, aNormal, store);
-      displayLength(P2, Current_Pnt, aNormal.Reversed(), store); // Height
+      
+      if ( cylindrical && 
+          (myMode == 1 || !sameHeight) )
+        displayLength(P2, Current_Pnt, aNormal.Reversed(), store); // Height
     }
   }
 }
@@ -1662,4 +1646,70 @@ std::string EntityGUI_3DSketcherDlg::doubleToString (double num)
   char format = 'g'; // truncated to a number of significant digits
 
   return QString::number(num, format, digNum).toStdString();
+}
+
+//================================================================
+// Function : toReferenceSystem ()
+// Purpose  :
+//================================================================
+gp_Trsf EntityGUI_3DSketcherDlg::toReferenceSystem(gp_Pnt origin) const
+{ 
+  gp_Trsf T;                        // Identity transformation
+  gp_Ax3 reference_system;          // OXY
+  reference_system.SetLocation(origin);
+  
+  gp_Ax3 current_system = reference_system;
+  switch (myOrientation)
+  {
+    case OYZ:
+    {
+      current_system = gp_Ax3(origin, gp::DX(), gp::DY());
+      break;
+    }
+    case OXZ:
+    {
+      current_system = gp_Ax3(origin, gp::DY().Reversed(), gp::DX());
+      break;
+    }
+  }
+  
+  T.SetTransformation( current_system, reference_system );
+  
+  return T;
+}
+
+//================================================================
+// Function : toCurrentSystem ()
+// Purpose  :
+//================================================================
+gp_Trsf EntityGUI_3DSketcherDlg::toCurrentSystem(gp_Pnt origin) const
+{
+  return toReferenceSystem(origin).Inverted();
+}
+
+//================================================================
+// Function : radius (gp_Pnt) const
+// Purpose  :
+//================================================================
+double EntityGUI_3DSketcherDlg::radius (gp_Pnt thePnt) const
+{
+  // Get the point coordinates in the current coordinates system
+  gp_Trsf aTrsf = toCurrentSystem(gp::Origin());
+  gp_Pnt aPnt = thePnt.Transformed(aTrsf);
+  
+  double radius = sqrt(aPnt.X()*aPnt.X() + aPnt.Y()*aPnt.Y());
+  return radius;
+}
+
+//================================================================
+// Function : height (gp_Pnt) const
+// Purpose  :
+//================================================================
+double EntityGUI_3DSketcherDlg::height (gp_Pnt thePnt) const
+{
+  // Get the point coordinates in the current coordinates system
+  gp_Trsf aTrsf = toCurrentSystem(gp::Origin());
+  gp_Pnt aPnt = thePnt.Transformed(aTrsf);
+  
+  return aPnt.Z();
 }
