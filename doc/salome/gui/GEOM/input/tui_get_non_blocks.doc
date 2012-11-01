@@ -14,7 +14,7 @@ geompy.addToStudy(box, 'box')
 geompy.addToStudy(cyl, 'cyl')
 
 # make a compound
-compound = geompy.MakeCompound([box1, box2])
+compound = geompy.MakeCompound([box, cyl])
 geompy.addToStudy(compound, 'compound')
 
 # explore the compound
