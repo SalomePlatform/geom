@@ -18,13 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        STEPExport.cxx
 // Created:     Wed May 19 14:53:52 2004
 // Author:      Pavel TELKOV
-//              <ptv@mutex.nnov.opencascade.com>
-//
+
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>
@@ -63,36 +61,37 @@
 
 extern "C"
 {
-STEPEXPORT_EXPORT
+  STEPEXPORT_EXPORT
   int Export(const TopoDS_Shape& theShape, const TCollection_AsciiString& theFileName)
   {
     MESSAGE("Export STEP into file " << theFileName.ToCString());
 
-  try 
-    {
-      // Set "C" numeric locale to save numbers correctly
-      Kernel_Utils::Localizer loc;
+    try 
+      {
+        // Set "C" numeric locale to save numbers correctly
+        Kernel_Utils::Localizer loc;
 
-      IFSelect_ReturnStatus status ;
-      //VRV: OCC 4.0 migration
-      STEPControl_Writer aWriter;
-      //VSR: 16/09/09: Convert to METERS
-      Interface_Static::SetCVal("xstep.cascade.unit","M");
-      Interface_Static::SetIVal("write.step.nonmanifold", 1);
-//JFA: PAL6162      status = aWriter.Transfer( theShape, STEPControl_ManifoldSolidBrep );
-      status = aWriter.Transfer( theShape, STEPControl_AsIs );
-      //VRV: OCC 4.0 migration
-      if ( status == IFSelect_RetDone ) 
+        IFSelect_ReturnStatus status ;
+        //VRV: OCC 4.0 migration
+        STEPControl_Writer aWriter;
+        //VSR: 16/09/09: Convert to METERS
+        Interface_Static::SetCVal("xstep.cascade.unit","M");
+        Interface_Static::SetCVal("write.step.unit", "M");
+        Interface_Static::SetIVal("write.step.nonmanifold", 1);
+        //JFA: PAL6162      status = aWriter.Transfer( theShape, STEPControl_ManifoldSolidBrep );
+        status = aWriter.Transfer( theShape, STEPControl_AsIs );
+        //VRV: OCC 4.0 migration
+        if ( status == IFSelect_RetDone ) 
           status = aWriter.Write( theFileName.ToCString() );
 
-      // Return previous locale
-      if ( status == IFSelect_RetDone ) 
-        return 1;
-    }
-  catch(Standard_Failure) 
-    {
-      //THROW_SALOME_CORBA_EXCEPTION("Exception catched in STEPExport", SALOME::BAD_PARAM);
-    }
-  return 0;
+        // Return previous locale
+        if ( status == IFSelect_RetDone ) 
+          return 1;
+      }
+    catch (Standard_Failure) 
+      {
+        //THROW_SALOME_CORBA_EXCEPTION("Exception catched in STEPExport", SALOME::BAD_PARAM);
+      }
+    return 0;
   }
 }
