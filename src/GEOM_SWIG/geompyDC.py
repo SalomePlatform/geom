@@ -7321,12 +7321,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theFileName The file, containing the shape.
         #  @param theFormatName Specify format for the file reading.
         #         Available formats can be obtained with InsertOp.ImportTranslators() method.
-        #         If format 'IGES_SCALE' is used instead 'IGES' length unit will be
-        #         set to 'meter' and result model will be scaled.
+        #         If format 'IGES_SCALE' is used instead of 'IGES' or
+        #            format 'STEP_SCALE' is used instead of 'STEP',
+        #            length unit will be set to 'meter' and result model will be scaled.
         #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportFile(self,theFileName, theFormatName):
+        def ImportFile(self, theFileName, theFormatName):
             """
             Import a shape from the BREP or IGES or STEP file
             (depends on given format) with given name.
@@ -7334,9 +7335,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters: 
                 theFileName The file, containing the shape.
                 theFormatName Specify format for the file reading.
-                              Available formats can be obtained with geompy.InsertOp.ImportTranslators() method.
-                              If format 'IGES_SCALE' is used instead 'IGES' length unit will be
-                              set to 'meter' and result model will be scaled.
+                    Available formats can be obtained with geompy.InsertOp.ImportTranslators() method.
+                    If format 'IGES_SCALE' is used instead of 'IGES' or
+                       format 'STEP_SCALE' is used instead of 'STEP',
+                       length unit will be set to 'meter' and result model will be scaled.
 
             Returns:
                 New GEOM.GEOM_Object, containing the imported shape.
@@ -7347,7 +7349,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Deprecated analog of ImportFile()
-        def Import(self,theFileName, theFormatName):
+        def Import(self, theFileName, theFormatName):
             """
             Deprecated analog of geompy.ImportFile
             """
@@ -7359,7 +7361,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Shortcut to ImportFile() for BREP format
         #
         #  @ref swig_Import_Export "Example"
-        def ImportBREP(self,theFileName):
+        def ImportBREP(self, theFileName):
             """
             geompy.ImportFile(...) function for BREP format
             """
@@ -7367,48 +7369,66 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return self.ImportFile(theFileName, "BREP")
 
         ## Shortcut to ImportFile() for IGES format
+        #  @param doScale If True, file length units will be ignored (set to 'meter')
+        #                 and result model will be scaled.
+        #                 If False (default), file length units will be taken into account.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportIGES(self,theFileName):
+        def ImportIGES(self, theFileName, doScale = False):
             """
             geompy.ImportFile(...) function for IGES format
+
+            Parameters: 
+                doScale If True, file length units will be ignored (set to 'meter')
+                        and result model will be scaled.
+                        If False (default), file length units will be taken into account.
             """
             # Example: see GEOM_TestOthers.py
+            if doScale:
+                return self.ImportFile(theFileName, "IGES_SCALE")
             return self.ImportFile(theFileName, "IGES")
 
         ## Return length unit from given IGES file
+        #  @param doScale If True, file length units will be ignored (set to 'meter')
+        #                 and result model will be scaled.
+        #                 If False (default), file length units will be taken into account.
         #
         #  @ref swig_Import_Export "Example"
-        def GetIGESUnit(self,theFileName):
+        def GetIGESUnit(self, theFileName, doScale = False):
             """
-            Return length unit from given IGES file
+            Return length units from given IGES file
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.InsertOp.ImportFile(theFileName, "IGES_UNIT")
-            #RaiseIfFailed("Import", self.InsertOp)
-            # recieve name using returned vertex
-            UnitName = "M"
-            if anObj.GetShapeType() == GEOM.VERTEX:
-                vertices = [anObj]
-            else:
-                vertices = self.SubShapeAll(anObj,ShapeType["VERTEX"])
-            if len(vertices)>0:
-                p = self.PointCoordinates(vertices[0])
-                if abs(p[0]-0.01) < 1.e-6:
-                    UnitName = "CM"
-                elif abs(p[0]-0.001) < 1.e-6:
-                    UnitName = "MM"
-            return UnitName
+            aUnitName = self.InsertOp.ReadValue(theFileName, "IGES", "LEN_UNITS")
+            return aUnitName
 
         ## Shortcut to ImportFile() for STEP format
         #
         #  @ref swig_Import_Export "Example"
-        def ImportSTEP(self,theFileName):
+        def ImportSTEP(self, theFileName, doScale = False):
             """
             geompy.ImportFile(...) function for STEP format
+
+            Parameters: 
+                doScale If True, file length units will be ignored (set to 'meter')
+                        and result model will be scaled.
+                        If False (default), file length units will be taken into account.
             """
             # Example: see GEOM_TestOthers.py
+            if doScale:
+                return self.ImportFile(theFileName, "STEP_SCALE")
             return self.ImportFile(theFileName, "STEP")
+
+        ## Return length unit from given IGES or STEP file
+        #
+        #  @ref swig_Import_Export "Example"
+        def GetSTEPUnit(self, theFileName):
+            """
+            Return length units from given STEP file
+            """
+            # Example: see GEOM_TestOthers.py
+            aUnitName = self.InsertOp.ReadValue(theFileName, "STEP", "LEN_UNITS")
+            return aUnitName
 
         ## Read a shape from the binary stream, containing its bounding representation (BRep).
         #  @note This method will not be dumped to the python script by DumpStudy functionality.
@@ -7442,7 +7462,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #         Available formats can be obtained with InsertOp.ImportTranslators() method.
         #
         #  @ref swig_Import_Export "Example"
-        def Export(self,theObject, theFileName, theFormatName):
+        def Export(self, theObject, theFileName, theFormatName):
             """
             Export the given shape into a file with given name.
 

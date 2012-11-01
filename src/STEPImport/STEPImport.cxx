@@ -124,13 +124,13 @@ extern "C"
         if (anUnitLengthNames.Length() > 0) {
           TCollection_AsciiString aLenUnits = anUnitLengthNames.First();
           if (aLenUnits == "millimetre")
-            aValue = new TCollection_HAsciiString ("UNIT_MM");
+            aValue = new TCollection_HAsciiString ("MM");
           else if (aLenUnits == "centimetre")
-            aValue = new TCollection_HAsciiString ("UNIT_CM");
+            aValue = new TCollection_HAsciiString ("CM");
           else if (aLenUnits == "metre")
-            aValue = new TCollection_HAsciiString ("UNIT_M");
+            aValue = new TCollection_HAsciiString ("M");
           else if (aLenUnits == "INCH")
-            aValue = new TCollection_HAsciiString ("UNIT_INCH");
+            aValue = new TCollection_HAsciiString ("INCH");
           // TODO
           //else if (aLenUnits == "")
           //  aValue = new TCollection_HAsciiString ("");

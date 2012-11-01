@@ -108,10 +108,10 @@ extern "C"
         if (!aModel.IsNull()) {
           aValue = aModel->GlobalSection().UnitName();
 
-          if (!aValue.IsNull()) {
-            Handle(TCollection_HAsciiString) aPrefix = new TCollection_HAsciiString ("UNIT_");
-            aValue->Prepend(aPrefix);
-          }
+          //if (!aValue.IsNull()) {
+          //  Handle(TCollection_HAsciiString) aPrefix = new TCollection_HAsciiString ("UNIT_");
+          //  aValue->Prepend(aPrefix);
+          //}
         }
       }
       else {

@@ -3289,8 +3289,9 @@ module GEOM
      *  \param theFileName The file, containing the shape.
      *  \param theFormatName Specify format for the file reading.
      *         Available formats can be obtained with <VAR>ImportTranslators()</VAR> method.
-     *         If format 'IGES_SCALE' is used instead 'IGES' length unit will be
-     *         set to 'meter' and result model will be scaled.
+     *         If format 'IGES_SCALE' is used instead of 'IGES' or
+     *            format 'STEP_SCALE' is used instead of 'STEP',
+     *            file length unit will be ignored (set to 'meter') and result model will be scaled.
      *  \return New GEOM_Object, containing the imported shape.
      */
     GEOM_Object ImportFile (in string theFileName, in string theFormatName);

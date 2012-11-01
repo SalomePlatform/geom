@@ -78,16 +78,25 @@ def TestExportImport (geompy, shape):
   # Import
   Import = geompy.ImportFile(fileExportImport, "BREP")
 
-  id_Import = geompy.addToStudy(Import, "Import")
+  geompy.addToStudy(Import, "Import")
 
   # ImportBREP, ImportIGES, ImportSTEP
   ImportBREP = geompy.ImportBREP(fileExportImportBREP)
   ImportIGES = geompy.ImportIGES(fileExportImportIGES)
   ImportSTEP = geompy.ImportSTEP(fileExportImportSTEP)
 
-  id_ImportBREP = geompy.addToStudy(ImportBREP, "ImportBREP")
-  id_ImportIGES = geompy.addToStudy(ImportIGES, "ImportIGES")
-  id_ImportSTEP = geompy.addToStudy(ImportSTEP, "ImportSTEP")
+  geompy.addToStudy(ImportBREP, "ImportBREP")
+  geompy.addToStudy(ImportIGES, "ImportIGES")
+  geompy.addToStudy(ImportSTEP, "ImportSTEP")
+
+  # GetIGESUnit and GetSTEPUnit
+  if geompy.GetIGESUnit(fileExportImportIGES) != "M":
+    ImportIGES_scaled = geompy.ImportIGES(fileExportImportIGES, True)
+    geompy.addToStudy(ImportIGES_scaled, "ImportIGES_scaled")
+
+  if geompy.GetSTEPUnit(fileExportImportSTEP) != "M":
+    ImportSTEP_scaled = geompy.ImportSTEP(fileExportImportSTEP, True)
+    geompy.addToStudy(ImportSTEP_scaled, "ImportSTEP_scaled")
 
   # Remove files for Export/Import testing
   os.remove(fileExportImport)

@@ -651,7 +651,7 @@ bool GEOMToolsGUI::Import()
       CORBA::String_var aUnits = aInsOp->ReadValue(fileN, fileT, "LEN_UNITS");
       TCollection_AsciiString aUnitsStr (aUnits.in());
       bool needConvert = true;
-      if (aUnitsStr.IsEmpty() || aUnitsStr == "UNIT_M")
+      if (aUnitsStr.IsEmpty() || aUnitsStr == "M")
         needConvert = false;
 
       if (needConvert) {
