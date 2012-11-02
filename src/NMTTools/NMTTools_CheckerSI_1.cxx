@@ -42,14 +42,6 @@
 #include <Geom_Curve.hxx>
 #include <gp_Pnt.hxx>
 
-
-
-static
-  Standard_Boolean IsValid(const TopoDS_Edge& aE,
-                           const TopoDS_Vertex& aV,
-                           const Standard_Real aTV1,
-                           const Standard_Real aTV2);
-
 //=======================================================================
 // function: PreparePaveBlocks
 // purpose:
@@ -65,14 +57,13 @@ static
 //=======================================================================
   void NMTTools_CheckerSI::PreparePaveBlocks(const Standard_Integer nE)
 {
-  myIsDone=Standard_False;
-  //
-  // char buf[32]={"SR"};
-  Standard_Boolean bIsValid;
+  //Standard_Boolean bIsValid;
   Standard_Integer nV1, nV2, iErr;
   Standard_Real aT1, aT2;
   TopoDS_Edge aE;
   TopoDS_Vertex aV1, aV2;
+  // 
+  myIsDone=Standard_False;
   //
   BOPTools_ListOfPaveBlock& aLPB=mySplitShapesPool(myDS->RefEdge(nE));
   // Edge
@@ -99,21 +90,23 @@ static
     aV2=TopoDS::Vertex(myDS->Shape(nV2));
     aT2=aPave2.Param();
     //
+    //modified by NIZNHY-PKV Thu Nov 01 13:46:00 2012f
+    //w/a: http://salome.mantis.opencascade.com/view.php?id=21835 
+    /*
     bIsValid=Standard_True;
     if (nV1==nV2) {
       bIsValid=IsValid(aE, aV1, aT1, aT2);
       if (!bIsValid) {
-        //printf(" pb SR: nV    nE: %d  nV1:( %d %15.10lf ) nV2:( %d %15.10lf )\n", nE, nV1, aT1, nV2, aT2);
         myStopStatus=1;
       }
     }
+    */
+    //modified by NIZNHY-PKV Thu Nov 01 13:46:09 2012t
     //
     IntTools_ShrunkRange aSR (aE, aV1, aV2, aRange, myContext);
     iErr=aSR.ErrorStatus();
     if (!aSR.IsDone()) {
-      //printf(" pb SR: Done  nE: %d  nV1:( %d %15.10lf ) nV2:( %d %15.10lf )\n", nE, nV1, aT1, nV2, aT2);
       aSR.SetShrunkRange(aRange);
-      //throw BOPTColStd_Failure(buf) ;
     }
     else if (iErr!=6) {
       CorrectShrunkRanges (0, aPave1, aSR);
@@ -124,7 +117,9 @@ static
   } //for (; aPBIt.More(); aPBIt.Next())
   myIsDone=Standard_True;
 }
-
+//modified by NIZNHY-PKV Thu Nov 01 13:46:55 2012f
+//w/a: http://salome.mantis.opencascade.com/view.php?id=21835 
+/*
 //=======================================================================
 //function : IsValid
 //purpose  :
@@ -157,3 +152,5 @@ Standard_Boolean IsValid(const TopoDS_Edge& aE,
   }
   return bRet;
 }
+*/
+//modified by NIZNHY-PKV Thu Nov 01 13:47:07 2012t
