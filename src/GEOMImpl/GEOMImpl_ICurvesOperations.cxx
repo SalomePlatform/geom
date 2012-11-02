@@ -975,15 +975,17 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
     return NULL;
   }
 
-  Handle(TColStd_HArray1OfReal) aCoordsArray = new TColStd_HArray1OfReal (1, PyList_Size( coords ) * 3);
+  int lsize = PyList_Size( coords );
 
-  if(PyList_Size( coords ) <= 0) {
+  if(lsize <= 0) {
     SetErrorCode("Empty list of the points, please check input parameters !!!");
     return NULL;
   }
 
+  Handle(TColStd_HArray1OfReal) aCoordsArray = new TColStd_HArray1OfReal (1, lsize * 3);
+
   int k=1;
-  for ( Py_ssize_t i = 0; i< PyList_Size( coords ); ++i ) {
+  for ( Py_ssize_t i = 0; i < lsize; ++i ) {
     PyObject* coord = PyList_GetItem( coords, i );
     if (coord != NULL) {
       for ( Py_ssize_t j = 0; j < PyList_Size(coord); ++j) {
@@ -1016,7 +1018,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
     GEOMImpl_IPolyline aCI (aFunction);
 
-    aCI.SetLength(PyList_Size( coords ));
+    aCI.SetLength(lsize);
     aCI.SetConstructorType(COORD_CONSTRUCTOR);
     aCI.SetIsClosed(false);
     aCI.SetCoordinates(aCoordsArray);
@@ -1036,7 +1038,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
     GEOMImpl_ISpline aCI (aFunction);
 
-    aCI.SetLength(PyList_Size( coords ));
+    aCI.SetLength(lsize);
     aCI.SetConstructorType(COORD_CONSTRUCTOR);
     aCI.SetIsClosed(false);
     aCI.SetCoordinates(aCoordsArray);
@@ -1056,7 +1058,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
     GEOMImpl_ISpline aCI (aFunction);
     aCI.SetConstructorType(COORD_CONSTRUCTOR);
-    aCI.SetLength(PyList_Size( coords ));
+    aCI.SetLength(lsize);
     aCI.SetIsClosed(false);
     aCI.SetDoReordering(false);
     aCI.SetCoordinates(aCoordsArray);
