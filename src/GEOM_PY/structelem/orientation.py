@@ -27,7 +27,7 @@ import math
 
 from salome.kernel.logger import Logger
 from salome.kernel import termcolor
-logger = Logger("__PAL_GEOM__.structelem.orientation", color = termcolor.RED)
+logger = Logger("salome.geom.structelem.orientation", color = termcolor.RED)
 
 
 class Orientation1D:
@@ -57,25 +57,24 @@ class Orientation1D:
           coordinate system.
         
         The parameters can be specified several times. In this case, only the
-        first "VECT_Y" is taken into account, and the values of "ANGL_VRIL"
-        are added to obtain the total rotation angle.
+        last "VECT_Y" or "ANGL_VRIL" is taken into account.
         """
+        if self._vectorYCoords is not None or self._angle != 0.0:
+            logger.warning('Orientation parameters are specified several '
+                           'times for the same mesh group, only the last '
+                           'parameter will be used')
         mydict = params.copy()
         if mydict.has_key("VECT_Y"):
             newVecCoords = mydict.pop("VECT_Y")
-            if self._vectorYCoords is None:
-                logger.debug("Setting orientation vector Y to %s" %
+            logger.debug("Setting orientation vector Y to %s" %
                              str(newVecCoords))
-                self._vectorYCoords = newVecCoords
-            else:
-                logger.warning('Orientation parameter "VECT_Y" is specified '
-                               'several times for the same mesh group, vector'
-                               ' %s will be used' % str(self._vectorYCoords))
+            self._vectorYCoords = newVecCoords
+            self._angle = 0.0
         if mydict.has_key("ANGL_VRIL"):
             newAngle = mydict.pop("ANGL_VRIL")
-            self._angle += newAngle
-            logger.debug("Adding angle %f to orientation, new angle is %f." %
-                         (newAngle, self._angle))
+            logger.debug("Setting orientation angle to %f" % newAngle)
+            self._angle = newAngle
+            self._vectorYCoords = None
         if len(mydict) > 0:
             logger.warning("Invalid orientation parameter(s) (ignored): %s" %
                            str(mydict))
