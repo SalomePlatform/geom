@@ -65,6 +65,15 @@
 #include <Prs3d_AngleAspect.hxx>
 #include <Prs3d_LineAspect.hxx>
 #include <Prs3d_LengthAspect.hxx>
+#include <Prs3d_TextAspect.hxx>
+#include <Prs3d_Presentation.hxx>
+#include <Prs3d_Text.hxx>
+
+#include <Graphic3d_VerticalTextAlignment.hxx>
+#include <Graphic3d_HorizontalTextAlignment.hxx>
+#include <Graphic3d_AspectText3d.hxx>
+
+#include <Font_FontAspect.hxx>
 
 // This include must be *AFTER* SOCC_ViewModel.h because
 // of the constant ROTATE which is a #define in
@@ -73,19 +82,8 @@
 
 // TODO
 //
-// + Ecrire la partie absolute / relative pour les coordonnées angulaires       Done
-// + Ecrire les bons tests pour les coordonnées cylindriques                    Done
-// + Finir refactoring des outils de display (displayLength)                    Done
-// + Mettre en place la visualisation (côtes ...) pour les coordonnées cylindriques Done
-// + Changement du mode de représentation (côtes) pour le cas absolu                Half done
-// + Dump pour les coordonnées cylindriques et 
-//   report des modifs sur les autres types de coordonnées                          Done
-// + Correction BUG coordonées cylindriques relatives --> la hauteur est absolue    Done
-// + Améliorer rendu des cotes pour coordonées cylindriques (tailles relatives      Done
-//   de la cote rayon et de la cote hauteur)
-// + Prendre en compte les remarques de Raphaël        Done
-// + Traductions                                       Done
-// + Doc
+// Avoid duplication of angle coordinates in cylindrical mode
+// Check spherical mode in absolute
 
 enum
 {
@@ -101,6 +99,100 @@ public:
   ~Locker()                   { myLock = false; }
 private:
   bool& myLock;
+};
+
+DEFINE_STANDARD_HANDLE(AIS_Text, AIS_InteractiveObject)
+
+class AIS_Text:public AIS_InteractiveObject
+{
+public:
+  // CASCADE RTTI
+  DEFINE_STANDARD_RTTI(AIS_Text );
+
+  AIS_Text(){};
+
+  AIS_Text
+    (
+      const TCollection_ExtendedString& , const gp_Pnt& ,
+      Quantity_Color color,
+      Standard_Integer aHJust,
+      Standard_Integer aVJust ,
+      Standard_Real Angle ,
+      Standard_Boolean Zoom ,
+      Standard_Real  Height,
+      Font_FontAspect FontAspect,
+      Standard_CString Font
+    );
+
+private:
+
+  void Compute (  const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+                  const Handle(Prs3d_Presentation)& aPresentation,
+                  const Standard_Integer aMode);
+
+  void ComputeSelection (  const Handle(SelectMgr_Selection)& aSelection,
+                           const Standard_Integer aMode){} ;
+
+protected:
+  TCollection_ExtendedString          aText;
+  gp_Pnt                              aPosition;
+  Standard_Real                       Red;
+  Standard_Real                       Green;
+  Standard_Real                       Blue;
+  Standard_Real                       aAngle;
+  Standard_Real                       aHeight;
+  Standard_Boolean                    aZoomable;
+  Quantity_Color                      aColor;
+  Standard_CString                    aFont;
+  Font_FontAspect                      aFontAspect;
+  Graphic3d_HorizontalTextAlignment   aHJustification;
+  Graphic3d_VerticalTextAlignment     aVJustification;
+};
+
+IMPLEMENT_STANDARD_HANDLE(AIS_Text, AIS_InteractiveObject)
+IMPLEMENT_STANDARD_RTTIEXT(AIS_Text, AIS_InteractiveObject)
+
+AIS_Text::AIS_Text( const TCollection_ExtendedString& text, const gp_Pnt& position,
+                          Quantity_Color    color       = Quantity_NOC_YELLOW,
+                          Standard_Integer  aHJust      = Graphic3d_HTA_LEFT,
+                          Standard_Integer  aVJust      = Graphic3d_VTA_BOTTOM,
+                          Standard_Real     angle       = 0.0 ,
+                          Standard_Boolean  zoomable    = Standard_False,
+                          Standard_Real     height      = 16.,
+                          Font_FontAspect    fontAspect  = Font_FA_Regular,
+                          Standard_CString  font        = "Courier")
+{
+  aText           = text;
+  aPosition       = position;
+  aHJustification = Graphic3d_HorizontalTextAlignment(aHJust);
+  aVJustification = Graphic3d_VerticalTextAlignment(aVJust);
+  aAngle          = angle;
+  aZoomable       = zoomable;
+  aHeight         = height;
+  aColor          = color;
+  aFontAspect     = fontAspect;
+  aFont           = font;
+};
+
+void AIS_Text::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+                          const Handle(Prs3d_Presentation)& aPresentation,
+                          const Standard_Integer aMode)
+{
+
+  aPresentation->Clear();
+
+  Handle_Prs3d_TextAspect asp = myDrawer->TextAspect();
+
+  asp->SetFont(aFont);
+  asp->SetColor(aColor);
+  asp->SetHeight(aHeight); // I am changing the myHeight value
+
+  asp->SetHorizontalJustification(aHJustification);
+  asp->SetVerticalJustification(aVJustification);
+  asp->Aspect()->SetTextZoomable(aZoomable);
+  asp->Aspect()->SetTextAngle(aAngle);
+  asp->Aspect()->SetTextFontAspect(aFontAspect);
+  Prs3d_Text::Draw(aPresentation, asp, aText, aPosition);
 };
 
 bool isSame (double d1, double d2)
@@ -233,6 +325,7 @@ void EntityGUI_3DSketcherDlg::Init()
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   myAnglePrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
   myLengthPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+  myTextPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
 
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
@@ -1283,7 +1376,7 @@ void EntityGUI_3DSketcherDlg::displayTrihedron (int selMode)
 
 //================================================================
 // Function : displayDimensions( bool store )
-// Purpose  : Method for displaying dimensions if store = true
+// Purpose  : Method for displaying dimensions. If store = true
 //            the presentation is stored in a list
 //================================================================
 void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
@@ -1316,20 +1409,27 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
                                 isSame(Last_Pnt.Z(), Current_Pnt.Z()) ) ||
                                (isSame(Last_Pnt.X(), Current_Pnt.X()) && 
                                 isSame(Last_Pnt.Z(), Current_Pnt.Z()) );
-                               
-    if(oneDimensionalMove && myMode == 1)
-    { 
-      // For better colocation of dimensions if only one coordinate changes (aNormal is a better choice)
-      displayLength(P0, Current_Pnt, aNormal, store);
-    }
-    else
+     
+    if (myMode == 0)
     {
-      if (!isSame(Last_Pnt.X(),Current_Pnt.X()))
+      std::string aCoordText = "( " + doubleToString(Current_Pnt.X()) + 
+                               ", " + doubleToString(Current_Pnt.Y()) +
+                               ", " + doubleToString(Current_Pnt.Z()) + " )";
+      displayText(aCoordText, Current_Pnt, store);
+    }
+    else 
+    { 
+      if (oneDimensionalMove)
+      {
+        // For better colocation of dimensions if only one coordinate changes (aNormal is a better choice)
+        displayLength(P0, Current_Pnt, aNormal, store);
+      }
+      else
+      {
         displayLength(gp_Pnt(P0.X(),Current.y,P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ().Reversed(), store);
-      if (!isSame(Last_Pnt.Y(),Current_Pnt.Y()))
         displayLength(gp_Pnt(Current.x,P0.Y(),P0.Z()), gp_Pnt(Current.x,Current.y,P0.Z()), gp::DZ(), store);
-      if (!isSame(Last_Pnt.Z(),Current_Pnt.Z()))
         displayLength(gp_Pnt(Current.x,Current.y,P0.Z()), Current_Pnt, gp::DX(), store);
+      }
     }
   }
   else if (myCoordType == 1)             // ANGLES
@@ -1355,6 +1455,11 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
     
     if(myMode !=0  || !store)
       displayAngle(anAngle1, P0, P1, P2, store);
+    else
+    {
+      std::string anAngleText = doubleToString(anAngle1) + "deg";
+      displayText(anAngleText, Current_Pnt, store);
+    }
     
     if(spherical)
     {
@@ -1463,6 +1568,40 @@ void EntityGUI_3DSketcherDlg::displayLength (gp_Pnt P1,
     myPrsType.L += 1;
   }
   else if (isLengthVisible)
+  {
+    SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>
+      (((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+    if (aSPrs)
+    {
+      aSPrs->PrependObject(anIO);
+      GEOMBase_Helper::displayPreview(aSPrs, true, true);
+    }
+  }
+}
+
+//================================================================
+// Function : displayText()
+// Purpose  : Method for displaying length dimensions for a segment
+//            creation step
+//================================================================
+void EntityGUI_3DSketcherDlg::displayText ( std::string theText,
+                                            gp_Pnt P,
+                                            bool store )
+{
+  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+    
+  Handle(AIS_Text) anIO = new AIS_Text(TCollection_ExtendedString(theText.c_str()), P);
+
+  if (store)
+  {
+    // Erase length dimensions presentation
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myTextPrs, true);
+    myTextPrs->PrependObject(anIO);
+
+    // Display modified presentation
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myTextPrs);
+  }
+  else
   {
     SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>
       (((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));

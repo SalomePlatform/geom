@@ -118,6 +118,10 @@ private:
                                                    gp_Dir theNormal,
                                                    bool store = false);
   
+  void                               displayText(std::string theText,
+                                                 gp_Pnt P,
+                                                 bool store = false);
+  
   void                               displayTrihedron( int );
   
   void                               displayDimensions(bool store = false);
@@ -170,6 +174,7 @@ private:
   GeometryGUI*                       myGeometryGUI;
   SOCC_Prs*                          myAnglePrs;
   SOCC_Prs*                          myLengthPrs;
+  SOCC_Prs*                          myTextPrs;
 
 private slots:
   void                               ClickOnOk();
