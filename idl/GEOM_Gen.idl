@@ -209,7 +209,10 @@ module GEOM
   {
 
     /*!
-     *  \brief Get an entry of the object in GEOM component.
+     *  \brief Get internal (unique) entry of the object in the GEOM component's data tree.
+     *  \note This is not an entry of the data object in SALOME study. 
+     *  This is internal function of GEOM component, though it can be used outside it for 
+        appropriate reason (e.g. for unique identification of geometry object).
      */
     string GetEntry();
 
