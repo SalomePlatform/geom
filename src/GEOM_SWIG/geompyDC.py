@@ -9093,13 +9093,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("LoadTexture", self.InsertOp)
             return ID
 
-        ## Get entry of the object
+        ## Get internal name of the object based on its study entry
+        #  @note This method does not provide an unique identifier of the geometry object.
+        #  @note This is internal function of GEOM component, though it can be used outside it for 
+        #  appropriate reason (e.g. for identification of geometry object).
         #  @param obj geometry object
         #  @return unique object identifier
         #  @ingroup l1_geompy_auxiliary
         def getObjectID(self, obj):
             """
-            Get entry of the object
+            Get internal name of the object based on its study entry.
+            Note: this method does not provide an unique identifier of the geometry object.
+            It is an internal function of GEOM component, though it can be used outside GEOM for 
+            appropriate reason (e.g. for identification of geometry object).
 
             Parameters:
                 obj geometry object
