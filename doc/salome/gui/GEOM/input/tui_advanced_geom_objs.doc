@@ -86,16 +86,17 @@ gg.createAndDisplayGO(id_pipetshapefillet_position)
 \code
 import geompy
 import salome
+import GEOM
 gg = salome.ImportComponentGUI("GEOM")
 
 # create DividedDisk object
-divideddisk = geompy.MakeDividedDisk(100, 50)
+divideddisk = geompy.MakeDividedDisk(100, 1, GEOM.SQUARE)
 
 # add object in the study
 id_divideddisk = geompy.addToStudy(divideddisk,"DividedDisk")
 
 # display divideddisk
-gg.createAndDisplayGO(id_divideddisk) 
+gg.createAndDisplayGO(id_divideddisk)
 \endcode
 
 \anchor tui_creation_dividedcylinder
@@ -104,16 +105,17 @@ gg.createAndDisplayGO(id_divideddisk)
 \code
 import geompy
 import salome
+import GEOM
 gg = salome.ImportComponentGUI("GEOM")
 
 # create DividedCylinder object
-dividedcylinder = geompy.MakeDividedCylinder(100, 300)
+dividedcylinder = geompy.MakeDividedCylinder(100, 300, GEOM.SQUARE)
 
 # add object in the study
 id_dividedcylinder = geompy.addToStudy(dividedcylinder,"DividedCylinder")
 
 # display dividedcylinder
-gg.createAndDisplayGO(id_dividedcylinder) 
+gg.createAndDisplayGO(id_dividedcylinder)
 \endcode
 
 <!--@@ insert new functions before this line @@ do not remove this line @@-->
