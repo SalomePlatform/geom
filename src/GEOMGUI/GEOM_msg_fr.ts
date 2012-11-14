@@ -4756,7 +4756,7 @@ les coques et solides d&apos;un autre.</translation>
     <message>
         <source>GEOM_SCALE_DIMENSIONS</source>
         <translation>Voulez-vous prendre les unités en considération?
-Sinon les dimensions seront préservées sans modifications.</translation>
+Sinon le modèle sera mis à l'échèlle GEOM (unités interprétées comme des mètres).</translation>
     </message>
     <message>
         <source>GEOM_ADVANCED</source>
