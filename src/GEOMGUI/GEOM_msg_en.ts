@@ -4755,8 +4755,9 @@ shells and solids on the other hand.</translation>
     </message>
     <message>
         <source>GEOM_SCALE_DIMENSIONS</source>
-        <translation>Would you like to take into account the units?
-Otherwise the dimensions will be kept without modifications.</translation>
+        <translation>Take into account the units (%1) embedded to the file?
+Ignoring units will cause model scaling (as dimensions are supposed to
+be specified in meters).</translation>
     </message>
     <message>
         <source>GEOM_ADVANCED</source>
