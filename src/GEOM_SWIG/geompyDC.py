@@ -7358,73 +7358,113 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("Import", self.InsertOp)
             return anObj
 
-        ## Shortcut to ImportFile() for BREP format
+        ## Shortcut to ImportFile() for BREP format.
+        #  Import a shape from the BREP file with given name.
+        #  @param theFileName The file, containing the shape.
+        #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
         def ImportBREP(self, theFileName):
             """
             geompy.ImportFile(...) function for BREP format
+            Import a shape from the BREP file with given name.
+
+            Parameters: 
+                theFileName The file, containing the shape.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
             return self.ImportFile(theFileName, "BREP")
 
         ## Shortcut to ImportFile() for IGES format
-        #  @param doScale If True, file length units will be ignored (set to 'meter')
-        #                 and result model will be scaled.
-        #                 If False (default), file length units will be taken into account.
+        #  Import a shape from the IGES file with given name.
+        #  @param theFileName The file, containing the shape.
+        #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
+        #                     and result model will be scaled, if its units are not meters.
+        #                     If False (default), file length units will be taken into account.
+        #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportIGES(self, theFileName, doScale = False):
+        def ImportIGES(self, theFileName, ignoreUnits = False):
             """
             geompy.ImportFile(...) function for IGES format
 
-            Parameters: 
-                doScale If True, file length units will be ignored (set to 'meter')
-                        and result model will be scaled.
-                        If False (default), file length units will be taken into account.
+            Parameters:
+                theFileName The file, containing the shape.
+                ignoreUnits If True, file length units will be ignored (set to 'meter')
+                            and result model will be scaled, if its units are not meters.
+                            If False (default), file length units will be taken into account.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
-            if doScale:
+            if ignoreUnits:
                 return self.ImportFile(theFileName, "IGES_SCALE")
             return self.ImportFile(theFileName, "IGES")
 
         ## Return length unit from given IGES file
-        #  @param doScale If True, file length units will be ignored (set to 'meter')
-        #                 and result model will be scaled.
-        #                 If False (default), file length units will be taken into account.
+        #  @param theFileName The file, containing the shape.
+        #  @return String, containing the units name.
         #
         #  @ref swig_Import_Export "Example"
-        def GetIGESUnit(self, theFileName, doScale = False):
+        def GetIGESUnit(self, theFileName):
             """
             Return length units from given IGES file
+
+            Parameters:
+                theFileName The file, containing the shape.
+
+            Returns:
+                String, containing the units name.
             """
             # Example: see GEOM_TestOthers.py
             aUnitName = self.InsertOp.ReadValue(theFileName, "IGES", "LEN_UNITS")
             return aUnitName
 
         ## Shortcut to ImportFile() for STEP format
+        #  Import a shape from the STEP file with given name.
+        #  @param theFileName The file, containing the shape.
+        #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
+        #                     and result model will be scaled, if its units are not meters.
+        #                     If False (default), file length units will be taken into account.
+        #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportSTEP(self, theFileName, doScale = False):
+        def ImportSTEP(self, theFileName, ignoreUnits = False):
             """
             geompy.ImportFile(...) function for STEP format
 
-            Parameters: 
-                doScale If True, file length units will be ignored (set to 'meter')
-                        and result model will be scaled.
-                        If False (default), file length units will be taken into account.
+            Parameters:
+                theFileName The file, containing the shape.
+                ignoreUnits If True, file length units will be ignored (set to 'meter')
+                            and result model will be scaled, if its units are not meters.
+                            If False (default), file length units will be taken into account.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
-            if doScale:
+            if ignoreUnits:
                 return self.ImportFile(theFileName, "STEP_SCALE")
             return self.ImportFile(theFileName, "STEP")
 
         ## Return length unit from given IGES or STEP file
+        #  @param theFileName The file, containing the shape.
+        #  @return String, containing the units name.
         #
         #  @ref swig_Import_Export "Example"
         def GetSTEPUnit(self, theFileName):
             """
             Return length units from given STEP file
+
+            Parameters:
+                theFileName The file, containing the shape.
+
+            Returns:
+                String, containing the units name.
             """
             # Example: see GEOM_TestOthers.py
             aUnitName = self.InsertOp.ReadValue(theFileName, "STEP", "LEN_UNITS")

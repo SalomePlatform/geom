@@ -131,7 +131,7 @@ extern "C"
             aValue = new TCollection_HAsciiString ("M");
           else if (aLenUnits == "INCH")
             aValue = new TCollection_HAsciiString ("INCH");
-          // TODO
+          // TODO (for other units than mm, cm, m or inch)
           //else if (aLenUnits == "")
           //  aValue = new TCollection_HAsciiString ("");
 
@@ -197,7 +197,7 @@ extern "C"
               Interface_Static::SetCVal("xstep.cascade.unit", "MM");
             else if (aLenUnits == "centimetre")
               Interface_Static::SetCVal("xstep.cascade.unit", "CM");
-            else if (aLenUnits == "metre")
+            else if (aLenUnits == "metre" || aLenUnits.IsEmpty())
               Interface_Static::SetCVal("xstep.cascade.unit", "M");
             else if (aLenUnits == "INCH")
               Interface_Static::SetCVal("xstep.cascade.unit", "INCH");
@@ -205,7 +205,7 @@ extern "C"
               theError = "The file contains not supported units.";
               return aResShape;
             }
-            // TODO
+            // TODO (for other units than mm, cm, m or inch)
             //else if (aLenUnits == "")
             //  Interface_Static::SetCVal("xstep.cascade.unit", "");
           }
