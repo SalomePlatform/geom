@@ -2287,7 +2287,14 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
                                                                    int theOrientation, int thePattern)
 {
   SetErrorCode(KO);
-
+  
+  if (theOrientation != 1 &&
+      theOrientation != 2 &&
+      theOrientation != 3)
+  {
+    SetErrorCode("theOrientation must be 1(=OXY), 2(=OYZ) or 3(=OZX)");
+    return NULL;
+  }
   //Add a new object
   Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_DIVIDEDDISK);
 
