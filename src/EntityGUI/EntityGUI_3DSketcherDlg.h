@@ -58,18 +58,19 @@ class EntityGUI_3DSketcherDlg : public GEOMBase_Skeleton
 
   struct XYZ
   {
-    XYZ() { x = y = z = 0.0; command = params = ""; L=A=0; }
+    XYZ() { x = y = z = 0.0; command = params = ""; L=A=T=0; }
     double  x,  y,  z; // for preview only
-    int L, A;          // for preview only
+    int L, A, T;       // for preview only
     QString command;
     QString params;
   };
   
   struct prsType
   {
-    prsType(){L=A=0;}
+    prsType(){L=A=T=0;}
     int L;
     int A;
+    int T;
   };
   
   typedef QList<XYZ> XYZList;
@@ -154,6 +155,7 @@ private:
   XYZList                            myRedoList;
   AIS_ListOfInteractive              myLengthIORedoList;
   AIS_ListOfInteractive              myAngleIORedoList;
+  AIS_ListOfInteractive              myTextIORedoList;
   prsType                            myPrsType;
 
   EntityGUI_3Spin*                   Group3Spin;

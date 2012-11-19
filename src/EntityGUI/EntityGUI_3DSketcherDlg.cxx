@@ -530,6 +530,7 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
   myRedoList.clear();
   myLengthIORedoList.Clear();
   myAngleIORedoList.Clear();
+  myTextIORedoList.Clear();
 
   if (myCoordType == 0 && myMode == 1)     // RELATIVE CARTESIAN COORDINATES
   {
@@ -622,6 +623,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
     SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myTextPrs, true);
     
     removeLastIOFromPrs();
 
@@ -630,6 +632,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
     if (isAngleVisible)
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myTextPrs);
     
     // Remove last point from list
     myPointsList.removeLast();
@@ -657,6 +660,7 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
     SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myTextPrs, true);
     
     restoreLastIOToPrs();
 
@@ -665,6 +669,7 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
     if (isAngleVisible)
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myTextPrs);
     
     // Remove last point from redo list
     myRedoList.removeLast();
@@ -699,6 +704,12 @@ void EntityGUI_3DSketcherDlg::removeLastIOFromPrs ()
     myAngleIORedoList.Prepend(anIOList.First());  // Store last prepended Angle IO in redo list
     myAnglePrs->RemoveFirst();                    // Remove it from myAnglePrs
   }
+  for (int t = 0; t<Last.T; t++)
+  {
+    myTextPrs->GetObjects(anIOList);
+    myTextIORedoList.Prepend(anIOList.First());  // Store last prepended Text IO in redo list
+    myTextPrs->RemoveFirst();                    // Remove it from myTextPrs
+  }
 }
 
 //=================================================================================
@@ -718,6 +729,11 @@ void EntityGUI_3DSketcherDlg::restoreLastIOToPrs ()
   {
     myAnglePrs->PrependObject(myAngleIORedoList.First());  // Restore last removed IO
     myAngleIORedoList.RemoveFirst();                       // Remove it from redo list
+  }
+  for (int t = 0; t<LastDeleted.T; t++)
+  {
+    myTextPrs->PrependObject(myTextIORedoList.First());  // Restore last removed IO
+    myTextIORedoList.RemoveFirst();                       // Remove it from redo list
   }
 }
 
@@ -1209,6 +1225,7 @@ EntityGUI_3DSketcherDlg::XYZ EntityGUI_3DSketcherDlg::getCurrentPoint() const
   // Update point presentation type
   xyz.A = myPrsType.A;  // Number of angle diomensions
   xyz.L = myPrsType.L;  // Number of length dimensions
+  xyz.T = myPrsType.T;  // Number of text objects
   
   return xyz;
 }
@@ -1463,7 +1480,7 @@ void EntityGUI_3DSketcherDlg::displayDimensions (bool store)
       displayAngle(anAngle1, P0, P1, P2, store);
     else
     {
-      std::string anAngleText = doubleToString(anAngle1) + "deg";
+      std::string anAngleText = doubleToString(anAngle1) + " deg.";
       displayText(anAngleText, Current_Pnt, store);
     }
     
@@ -1607,6 +1624,9 @@ void EntityGUI_3DSketcherDlg::displayText ( std::string theText,
 
     // Display modified presentation
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myTextPrs);
+    
+    // Update dimension presentation text count for later undo / redo
+    myPrsType.T += 1;
   }
   else
   {
