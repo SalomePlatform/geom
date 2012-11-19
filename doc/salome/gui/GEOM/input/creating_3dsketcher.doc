@@ -5,21 +5,18 @@
 3D Sketcher allows creating a closed or unclosed 3D wire, made of
 consequent straight segments.
 
+<b>Example:</b>
+
+\image html 3dsketch4.png
+
 To create a 3D Sketch, select in the main menu <em>New Entity -> Basic -> 3D Sketch</em>.
 
-\image html 3dsketch2.png
+\image html 3dsketch_dlg.png
 
 The first sketcher point can be defined by \b Absolute coordinates X, Y and Z.
 When the first point is defined, it is possible to add straight segments.
 Each segment will start at the end point of previous segment or at the
 sketcher first point, if there are no validated segments.
-
-Segment can be defined by:
- - \b Absolute coordinates X, Y and Z of its second end,
- - \b Relative coordinates DX, DY and DZ of its second end with
-   respect to the previous applied point,
- - \b Direction and \b Length of the segment. Direction is set by two
-   \b Angles in selected coordinate system.
 
 The way of segment construction can be selected by the <b>Coordinates Type</b>
 radio buttons.
@@ -33,9 +30,37 @@ user, "as is".
 \n <b>"Sketch Closure"</b> closes the Sketch by a straight line from
 the start to the end point and applies it. 
 
-<b>Example:</b>
+Segment can be defined by:
+- <b>Cartesian coordinates</b> of its second end, it can be either:
+ - \b Absolute coordinates X, Y and Z,
+ - \b Relative coordinates DX, DY and DZ with
+   respect to the previous applied point,
+   
+- <b>Angular coordinates</b> of its second end, which is specified by:
+<ul>
+ <li> the \b Length of the segment and an \b Angle in the chosen plane (OXY for example) in \b Relative mode.
+   The angle is then relative to a local coordinate system with the last point of the sketch as origin </li>
+   
+   \image html 3dsketch_angle_rel.png
+   
+ <li> a \b Radius (i.e. the distance from the origin) and an \b Angle in the chosen plane in \b Absolute mode </li>
+   
+   \image html 3dsketch_angle_abs.png
 
-\image html 3dsketch1.png
+ In both angular modes you can additionally specify either:
+ 
+ <li> a second \b Angle (latitude) </li>
+ 
+ \image html 3dsketch_2angles_rel.png
+   
+ or
+   
+ <li> a \b Height </li>
+ 
+ \image html 3dsketch_angle_height_rel.png
+   
+
+</ul>
 
 <b>TUI Command:</b> <em>geompy.Make3DSketcher( [ PointsList ] )</em>
 This algorithm creates a wire from the list of real values, which
