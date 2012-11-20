@@ -651,7 +651,7 @@ bool GEOMToolsGUI::Import()
       CORBA::String_var aUnits = aInsOp->ReadValue(fileN, fileT, "LEN_UNITS");
       QString aUnitsStr (aUnits.in());
       bool needConvert = true;
-      if (aUnitsStr.isEmpty() || aUnitsStr == "M")
+      if (aUnitsStr.isEmpty() || aUnitsStr == "M" || aUnitsStr.toLower() == "metre")
         needConvert = false;
 
       if (needConvert) {
