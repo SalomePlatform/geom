@@ -22,4 +22,8 @@ Entity - > Build - > Compound</b>.
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_compound "Advanced Geometric Objects".
 
+<b> More details: </b>
+
+Perhaps you ask yourself : \ref partition_explanation "What's the difference between partition, compounds and fuse operation ?"
+
 */
