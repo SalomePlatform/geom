@@ -218,7 +218,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   if (aFunction->GetDriverGUID() != GEOMImpl_ImportDriver::GetID()) return result;
 
   Handle(TCollection_HAsciiString) aHLibName;
-  if (!IsSupported(Standard_True, theFormatName.SubString(1,4), aHLibName)) {
+  if (!IsSupported(Standard_True, theFormatName/*.SubString(1,4)*/, aHLibName)) {
     return result;
   }
   TCollection_AsciiString aLibName = aHLibName->String();
@@ -289,7 +289,7 @@ TCollection_AsciiString GEOMImpl_IInsertOperations::ReadValue
   if (theFileName.IsEmpty() || theFormatName.IsEmpty() || theParameterName.IsEmpty()) return aValue;
 
   Handle(TCollection_HAsciiString) aHLibName;
-  if (!IsSupported(Standard_True, theFormatName.SubString(1,4), aHLibName)) {
+  if (!IsSupported(Standard_True, theFormatName/*.SubString(1,4)*/, aHLibName)) {
     return aValue;
   }
   TCollection_AsciiString aLibName = aHLibName->String();
