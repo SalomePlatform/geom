@@ -101,11 +101,10 @@ static
                         const Standard_Integer ,
                         NMTTools_IndexedDataMapOfIndexedMapOfInteger& );
 
-//modified by NIZNHY-PKV Thu Feb 16 12:24:52 2012f
 static
   Standard_Boolean IsClosed(const TopoDS_Edge& ,
-			    const TopoDS_Face& );
-//modified by NIZNHY-PKV Thu Feb 16 12:24:56 2012t
+			    const TopoDS_Face&,
+			    Standard_Boolean&  );
 
 //=======================================================================
 //function : FillImagesFaces
@@ -216,6 +215,7 @@ void GEOMAlgo_Builder::BuildSplitFaces()
   const Handle(IntTools_Context)& aCtx= pPF->Context();
   //
   Standard_Boolean bToReverse, bIsClosed, bIsDegenerated;
+  Standard_Boolean bFlagClosed;
   Standard_Integer i, aNb, aNbF, nF;
   TopTools_MapOfShape aMFence;
   TColStd_IndexedMapOfInteger aMFP;
@@ -312,10 +312,7 @@ void GEOMAlgo_Builder::BuildSplitFaces()
       }
       //
       bIsDegenerated=BRep_Tool::Degenerated(aE);
-      //modified by NIZNHY-PKV Wed Mar 07 07:46:09 2012f
-      bIsClosed=IsClosed(aE, aF);
-      //bIsClosed=BRep_Tool::IsClosed(aE, aF);
-      //modified by NIZNHY-PKV Wed Mar 07 07:46:13 2012t
+      bIsClosed=IsClosed(aE, aF, bFlagClosed);
       //
       const TopTools_ListOfShape& aLIE=myImages.Image(aE);
       aIt.Initialize(aLIE);
@@ -349,7 +346,16 @@ void GEOMAlgo_Builder::BuildSplitFaces()
             aWES.AddStartElement(aSp);
           }
           continue;
-        }// if (aMFence.Add(aSp))
+        }//  if (bIsClosed){
+	//
+	//modified by NIZNHY-PKV Wed Nov 28 13:50:34 2012f
+	if (!bIsClosed && bFlagClosed) {
+	  if (!BRep_Tool::IsClosed(aSp, aF)){
+	    BOPTools_Tools3D::DoSplitSEAMOnFace(aSp, aF);
+	  }
+	}
+	//modified by NIZNHY-PKV Wed Nov 28 13:50:36 2012t
+	//
         //
         aSp.Orientation(anOriE);
         bToReverse=BOPTools_Tools3D::IsSplitToReverse1(aSp, aE, aCtx);
@@ -942,11 +948,13 @@ void UpdateCandidates(const Standard_Integer theNF,
 //purpose  :
 //=======================================================================
 Standard_Boolean IsClosed(const TopoDS_Edge& aE,
-			  const TopoDS_Face& aF)
+			  const TopoDS_Face& aF,
+			  Standard_Boolean& bFlag)
 {
   Standard_Boolean bRet;
   //
   bRet=BRep_Tool::IsClosed(aE, aF);
+  bFlag=bRet;
   if (bRet) {
     Standard_Integer iCnt;
     TopoDS_Shape aE1;
