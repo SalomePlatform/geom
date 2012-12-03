@@ -2,38 +2,44 @@
 
 \page create_quadrangle_face_page Quadrangle face
 
-\n <b>Description:</b> Builds a face using the below mentioned
-arguments. This operation allows to build a face bypassing the
-intermediate stage of building edges and wires (in the case of
-building by 4 points) or wires (in the case of building by 4 or 2
+This operation allows to build a face bypassing the
+intermediate stage of building edges and wires (in case of
+building by 4 points) or wires (in case of building by 4 or 2
 edges).
 
-\n The \b Result of the operation will be a \b GEOM_Object (face).
+There are 3 algorithms to create a Quadrangle Face in the 3D space. 
+\n The \b Result of each op
 
-\n <b>TUI Command:</b>
-<ul>
-<li><em>geompy.MakeQuad4Vertices(V1, V2, V3, V4),</em> where V1, V2,
-V3, V4 are four vertices from which a face is constructed. Edges are
-created automatically.</li>
-<li><em>geompy.MakeQuad2Edges(E1, E2),</em> where E1, E2 are edges from
-which the face is constructed, two other edges are created
-automatically.</li>
-<li><em>geompy.MakeQuad(E1, E2, E3, E4),</em> where E1, E2, E3, E4 are
-four edges from which the face is constructed.</li>
-</ul>
+The created blocks can be processed with  \ref blocks_operations_page "Operations on Blocks".
 
-<b>Arguments:</b>
-<ul>
-<li>Name + 4 Points, or</li>
-<li>Name + 2 Edges, or</li>
-<li>Name + 4 Edges.</li>
-</ul>
+Our <b>TUI Scripts</b> provide you with useful examples of
+\ref tui_building_by_blocks_p
 
-\n <b>Dialog Box:</b>
+The created blocks can be processed with  \ref blocks_operations_page "Operations on Blocks".
+
+Our <b>TUI Scripts</b> provide you with useful examples of
+\ref tui_building_by_blocks_page "Building by Blocks".
+age "Building by Blocks".
+eration will be a \b GEOM_Object (face).
+
+Firstly you can define a Quadrangle Face by four vertices. Edges are
+created automatically.
+
+<b>TUI Command:</b> <em>geompy.MakeQuad4Vertices(V1, V2, V3, V4),</em> 
+<b>Arguments:</b> Name + 4 Points.
 
 \image html block1.png
 
+Secondly, you can define a Quadrangle Face by two edges, while the other two edges are created automatically.
+<b>TUI Command:</b> <em>geompy.MakeQuad2Edges(E1, E2)
+<b>Arguments:</b> Name + 2 Edges.
+
 \image html block2.png
+
+Finally, you can define a Quadrangle Face by four edges.
+
+<b>TUI Command:</b> <em>geompy.MakeQuad(E1, E2, E3, E4),</em>.
+<b>Arguments:</b> Name + 4 Edges.
 
 \image html block3.png
 

@@ -2,11 +2,11 @@
 
 \page create_dividedcylinder_page DividedCylinder
 
-The <b>Divided cylinder</b> object is a cylinder divided into \b blocks for easy hexaedral meshing.Two division patterns are available :
+The <b>Divided cylinder</b> object is a cylinder divided into \b blocks for easy hexahedral meshing. Two division patterns are available :
 
 <ul>
-<li> A square pattern which is frequently used </li>
-<li> An hexagonal pattern which ensures a better mesh quality and especially less acute or obtuse angles </li>
+<li> A square pattern, which is frequently used; </li>
+<li> A hexagonal pattern, which ensures a better mesh quality and especially less acute or obtuse angles. </li>
 </ul>
 
 \image html dividedcylinder.png

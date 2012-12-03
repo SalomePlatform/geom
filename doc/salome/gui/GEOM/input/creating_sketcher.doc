@@ -27,7 +27,7 @@ To create a <b> 2D Sketch</b>:
 <li> Select the \b plane or the <b>planar face</b> on which to create the sketch. 
 \note By default the sketch is created on the XOY plane of the global coordinate system.
 If Local Coordinate Systems have been created in the study they appear
-in the combobox and can be selected as a reference coordinate system.</li>
+in the combo-box and can be selected as a reference coordinate system.</li>
 
 <li> Choose a \b segment or an \b arc element to start a \b profile or choose \b rectangle to draw a rectangle.
 
@@ -50,7 +50,7 @@ origin of the reference coordinate system.</li>
 
 <li> You can define the segment by either its <b>end point</b> or \b direction and \b length. The direction is defined relatively to the tangent at the last point of the sketch. It can be:
   <ul>
-    <li> Tangent (colinear to the tangent at the last point)</li>
+    <li> Tangent (collinear to the tangent at the last point)</li>
     <li> Perpendicular</li>
     <li> Defined by an angle</li>
     <li> Defined by a vector (Vx, Vy)</li>
@@ -159,7 +159,7 @@ points in the current LCS.
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_sketcher_page "Sketcher".
 
-A wrapper also exists to help in the construction of a sketcher using simple commands.
+There is also a wrapper that can help in the construction of a sketcher using simple commands.
 The description of this wrapper can be found in the <a class="el" target="_new" href="../../tui/GEOM/docutils/docapi.html#module-salome.geom.sketcher">
 dedicated page</a> of the <a class="el" target="_new" href="../../tui/GEOM/docutils/index.html">salome.geom python package</a>.
 

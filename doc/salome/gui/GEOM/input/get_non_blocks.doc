@@ -4,18 +4,18 @@
 
 \image html measures2.png
 
-Retrieve all non blocks solids and faces from the given shape.
-Collect them in two groups: solids and faces separately.
+This operation retrieves all non block solids and faces from the given
+shape in two groups: solids and faces separately.
 
-\n <b>Result:</b> Two or less groups are published in the Object
-                  Browser under the processed object. Reports error if
-                  no bad sub-shapes (solids and faces) have been found.
+Two or less groups are published in the Object
+Browser under the processed object. An error is raised if
+no bad sub-shapes (solids and faces) have been found.
 
 \n <b>TUI Command:</b>
 <em>geompy.GetNonBlocks(Compound).</em> Returns a tuple of two
     GEOM_Objects. The first object is a group of all non block solids
-    (= not 6 faces, or with 6 faces, but with the presence of
-    non-quadrangular faces). The second object is a group of all non
+    (not having 6 faces, or having 6 faces, but some of them
+    are not quadrangular). The second object is a group of all non
     quadrangular faces.
 
 See also a \ref tui_get_non_blocks_page "TUI example".

@@ -6,11 +6,11 @@ To generate a \b Path in the <b>Main Menu</b> select <b>New Entity - > Generatio
 
 \image html pipe_path_dlg.png
 
-\n To obtain a \b Path of a pipe-like shape, you should define the
-<b>Pipe-like shell or solid</b> and two pipe \b Bases, each of them can
-be set as a wire, a face or a list of edges.<br>
+\n To obtain the \b Path of a pipe-like shape, you should define the
+<b>Pipe-like shell or solid</b> and two pipe \b Bases, which can
+be defined by a wire, a face or a list of edges.<br>
 \n <b>Select unpublished edges</b> checkbox - if checked, allows
-selection of edges in the viewer, that are not published in the Object
+selecting in the viewer the edges, that are not published in the Object
 Browser.<br>
 \n The \b Result of the operation will be a GEOM_Object (edge or wire).<br>
 
@@ -19,11 +19,11 @@ Browser.<br>
 <li>\ref preview_anchor "Preview"</li>
 </ul><br>
 
-\note It is not assumed that exact or approximate copy of the Shape
-      can be obtained by applying existing Pipe operation on the
-      resulting "Path" wire taking the first Base as the base - it is
-      not always possible; though in some particular cases it might
-      work it is not guaranteed. Thus, RestorePath function should not
+\note It is not always possible to obtain an exact or approximate
+      copy of the Shape by applying the \b Pipe operation to the
+      resulting "Path" wire with the first Base as the base;
+      though in some particular cases it might
+      work. Thus, Restore Path function should not
       be considered as an exact reverse operation of the Pipe.<br>
 
 \n <b>Example:</b>
