@@ -122,16 +122,18 @@ extern "C"
         TColStd_SequenceOfAsciiString anUnitSolidAngleNames;
         aReader.FileUnits(anUnitLengthNames, anUnitAngleNames, anUnitSolidAngleNames);
         if (anUnitLengthNames.Length() > 0) {
+	  aValue = new TCollection_HAsciiString( anUnitLengthNames.First() );
+	  /*
           TCollection_AsciiString aLenUnits = anUnitLengthNames.First();
           if (aLenUnits == "millimetre")
-            aValue = new TCollection_HAsciiString ("UNIT_MM");
+            aValue = new TCollection_HAsciiString ("MM");
           else if (aLenUnits == "centimetre")
-            aValue = new TCollection_HAsciiString ("UNIT_CM");
+            aValue = new TCollection_HAsciiString ("CM");
           else if (aLenUnits == "metre")
-            aValue = new TCollection_HAsciiString ("UNIT_M");
+            aValue = new TCollection_HAsciiString ("M");
           else if (aLenUnits == "INCH")
-            aValue = new TCollection_HAsciiString ("UNIT_INCH");
-          // TODO
+            aValue = new TCollection_HAsciiString ("INCH");
+          // TODO (for other units than mm, cm, m or inch)
           //else if (aLenUnits == "")
           //  aValue = new TCollection_HAsciiString ("");
 
@@ -141,6 +143,7 @@ extern "C"
           //  std::cout << ", " << anUnitLengthNames.Value(ii);
           //std::cout << std::endl;
           // tmp end
+	  */
         }
       }
       else {
@@ -197,7 +200,7 @@ extern "C"
               Interface_Static::SetCVal("xstep.cascade.unit", "MM");
             else if (aLenUnits == "centimetre")
               Interface_Static::SetCVal("xstep.cascade.unit", "CM");
-            else if (aLenUnits == "metre")
+            else if (aLenUnits == "metre" || aLenUnits.IsEmpty())
               Interface_Static::SetCVal("xstep.cascade.unit", "M");
             else if (aLenUnits == "INCH")
               Interface_Static::SetCVal("xstep.cascade.unit", "INCH");
@@ -205,9 +208,9 @@ extern "C"
               theError = "The file contains not supported units.";
               return aResShape;
             }
-            // TODO
+            // TODO (for other units than mm, cm, m or inch)
             //else if (aLenUnits == "")
-            //  Interface_Static::SetCVal("xstep.cascade.unit", "");
+            //  Interface_Static::SetCVal("xstep.cascade.unit", "???");
           }
         }
         else {

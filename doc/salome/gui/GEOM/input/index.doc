@@ -4,9 +4,6 @@
 
 \image html geomscreen.png
 
-If you are a new user some general information about GEOM usage are given here:
-\subpage first_steps_guide
-
 \b Geometry module of SALOME is destined for: 
 - \subpage import_export_geom_obj_page "import and export of geometrical models"
   in IGES, BREP and STEP formats;
@@ -29,6 +26,9 @@ Geometry module preferences are described in the
 
 Almost all geometry module functionalities are accessible via
 \subpage geompy_page "Geometry module Python Interface"
+
+You can find the answer to some Frequently Asked Questions in this page:
+- \subpage faq "Frequently Asked Questions"
 
 Other functions are available in <a class="el" target="_new" href="../../tui/GEOM/docutils/index.html">salome.geom python package</a>.
 

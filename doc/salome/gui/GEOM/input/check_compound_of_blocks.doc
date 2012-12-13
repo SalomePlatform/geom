@@ -7,9 +7,9 @@ considered as a compound of blocks, the given shape must satisfy the
 following conditions:
 <ul>
 <li>Each element of the compound should be a Block (6 faces and 12 edges);</li>
-<li>A connection between two Blocks should be an entire quadrangle face or an entire edge;</li>
+<li>Blocks can be connected only via an entire quadrangle face or an entire edge;</li>
 <li>The compound should be connected;</li>
-<li>Two quadrangle faces should be glued.</li>
+<li>Each couple of connecting quadrangle faces should be glued.</li>
 </ul>
 
 \n Informs of the following possible errors:

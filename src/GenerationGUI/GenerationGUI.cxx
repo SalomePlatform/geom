@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GenerationGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #include "GenerationGUI.h"
 
 #include <GeometryGUI.h>
@@ -36,6 +35,7 @@
 #include "GenerationGUI_RevolDlg.h"     // Method REVOL
 #include "GenerationGUI_FillingDlg.h"   // Method FILLING
 #include "GenerationGUI_PipeDlg.h"      // Method PIPE
+#include "GenerationGUI_PipePathDlg.h"  // Method RESTORE PATH
 
 //=======================================================================
 // function : GenerationGUI()
@@ -73,6 +73,7 @@ bool GenerationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpRevolution: aDlg = new GenerationGUI_RevolDlg   ( getGeometryGUI(), parent ); break;
   case GEOMOp::OpFilling:    aDlg = new GenerationGUI_FillingDlg ( getGeometryGUI(), parent ); break;
   case GEOMOp::OpPipe:       aDlg = new GenerationGUI_PipeDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPipePath:   aDlg = new GenerationGUI_PipePathDlg( getGeometryGUI(), parent ); break;
     
   default: app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
   }

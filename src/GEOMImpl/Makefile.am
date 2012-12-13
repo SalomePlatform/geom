@@ -83,6 +83,7 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_ITorus.hxx			\
 	GEOMImpl_IPrism.hxx			\
 	GEOMImpl_IPipe.hxx			\
+	GEOMImpl_IPipePath.hxx			\
 	GEOMImpl_IRevolution.hxx		\
 	GEOMImpl_IMeasure.hxx			\
 	GEOMImpl_IShapes.hxx			\
@@ -111,6 +112,7 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_TorusDriver.hxx		\
 	GEOMImpl_PrismDriver.hxx		\
 	GEOMImpl_PipeDriver.hxx			\
+	GEOMImpl_PipePathDriver.hxx		\
 	GEOMImpl_ThruSectionsDriver.hxx		\
 	GEOMImpl_RevolutionDriver.hxx		\
 	GEOMImpl_ShapeDriver.hxx		\
@@ -185,6 +187,7 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_TorusDriver.cxx		\
 	GEOMImpl_PrismDriver.cxx		\
 	GEOMImpl_PipeDriver.cxx			\
+	GEOMImpl_PipePathDriver.cxx		\
 	GEOMImpl_ThruSectionsDriver.cxx		\
 	GEOMImpl_RevolutionDriver.cxx		\
 	GEOMImpl_ShapeDriver.cxx		\

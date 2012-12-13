@@ -649,9 +649,9 @@ bool GEOMToolsGUI::Import()
 
       // jfa 21.08.2012 for mantis issue 21511 (STEP file units)
       CORBA::String_var aUnits = aInsOp->ReadValue(fileN, fileT, "LEN_UNITS");
-      TCollection_AsciiString aUnitsStr (aUnits.in());
+      QString aUnitsStr (aUnits.in());
       bool needConvert = true;
-      if (aUnitsStr.IsEmpty() || aUnitsStr == "UNIT_M")
+      if (aUnitsStr.isEmpty() || aUnitsStr == "M" || aUnitsStr.toLower() == "metre")
         needConvert = false;
 
       if (needConvert) {
@@ -664,7 +664,7 @@ bool GEOMToolsGUI::Import()
           if (i < fileNames.count() - 1) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
           igesAnswer = SUIT_MessageBox::question(app->desktop(),
                                                  "Question",//tr("WRN_WARNING"),
-                                                 tr("GEOM_SCALE_DIMENSIONS"),
+                                                 tr("GEOM_SCALE_DIMENSIONS").arg(aUnitsStr),
                                                  btns | SUIT_MessageBox::Cancel,
                                                  SUIT_MessageBox::No);
           switch (igesAnswer) {

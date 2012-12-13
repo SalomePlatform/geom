@@ -28,6 +28,7 @@
 
 #include "GEOM_Gen_i.hh"
 #include "GEOM_Object_i.hh"
+#include "GEOM_version.h"
 
 #include <set>
 #include <sstream>
@@ -2549,6 +2550,16 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
   char* ret = CORBA::string_dup(anInfo);
   delete [] anInfo;
   return ret;
+}
+
+// Version information
+char* GEOM_Gen_i::getVersion()
+{
+#if GEOM_DEVELOPMENT
+  return CORBA::string_dup(GEOM_VERSION_STR"dev");
+#else
+  return CORBA::string_dup(GEOM_VERSION_STR);
+#endif
 }
 
 //=====================================================================================

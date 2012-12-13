@@ -2,11 +2,15 @@
 
 \page partition_page Partition
 
-For detail description of the Partition operation please refer to
+<ul>
+<li>For a detailed description of the Partition operation please refer to
 <a href="SALOME_BOA_PA.pdf">this document</a>. 
 It provides a general review of the Partition and Boolean
-operations algorithms, describes the usage methodology and highlighs
-major limitations of these operations.
+operations algorithms, describes the usage methodology and highlights
+major limitations of these operations.</li>
+  
+<li>Perhaps you also ask yourself : \ref partition_explanation "What's the difference between partition, compounds and fuse operation ?"</li>
+</ul>
 
 To produce a \b Partition in the <b>Main Menu</b> select <b>Operations - > Partition</b>
 

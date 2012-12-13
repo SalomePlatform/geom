@@ -147,7 +147,13 @@ class StructuralElementManager:
                 (meshGroupList, newparams) = self._extractMeshGroups(command)
                 for meshGroup in meshGroupList:
                     # Get the geometrical primitive object
-                    groupSObj = self._studyEditor.study.FindObject(meshGroup)
+                    if meshGroup.startswith('/'):
+                        groupSObj = self._studyEditor.study.FindObjectByPath(meshGroup)
+                        meshGroup = meshGroup.split('/')[-1]
+                        pass
+                    else:
+                        groupSObj = self._studyEditor.study.FindObject(meshGroup)
+                        pass
                     groupGeomObj = None
                     if groupSObj is not None:
                         groupGeomObj = \

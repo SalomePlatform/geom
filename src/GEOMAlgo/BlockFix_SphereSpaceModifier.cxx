@@ -40,6 +40,8 @@
 #include <ShapeFix_Edge.hxx>
 #include <Geom_Curve.hxx>
 #include <Geom2d_Curve.hxx>
+#include <GProp_GProps.hxx>
+#include <BRepGProp.hxx>
 
 
 //=======================================================================
@@ -88,6 +90,16 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
     if(Vmax > PI2 - Precision::PConfusion() || Vmin < -PI2+::Precision::PConfusion()) {
       Handle(Geom_SphericalSurface) aSphere = Handle(Geom_SphericalSurface)::DownCast(S);
       gp_Sphere sp = aSphere->Sphere();
+      //modified by jgv, 12.11.2012 for issue 21777//
+      Standard_Real Radius = sp.Radius();
+      Standard_Real HalfArea = 2.*M_PI*Radius*Radius;
+      GProp_GProps Properties;
+      BRepGProp::SurfaceProperties(aFace, Properties);
+      Standard_Real anArea = Properties.Mass();
+      Standard_Real AreaTol = Radius*Radius*1.e-6;
+      if (anArea > HalfArea - AreaTol) //no chance to avoid singularity
+	return Standard_False;
+      ///////////////////////////////////////////////
       gp_Ax3 ax3 = sp.Position();
       if(Abs(Vmax-Vmin) < PI2) {
         gp_Ax3 axnew3(ax3.Axis().Location(), ax3.Direction()^ax3.XDirection(),ax3.XDirection());

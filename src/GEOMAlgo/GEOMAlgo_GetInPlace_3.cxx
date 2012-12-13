@@ -125,7 +125,7 @@ const NMTTools_CoupleOfShape& GEOMAlgo_GetInPlaceIterator::Value()const
 Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType1,
 			       const TopAbs_ShapeEnum aType2)
 {
-  Standard_Integer iRet, iT1, iT2, iX;
+  Standard_Integer iRet;
   //
   iRet=-1;
   //

@@ -114,6 +114,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Angle :</translation>
     </message>
     <message>
+        <source>GEOM_ANGLES</source>
+        <translation>Angles</translation>
+    </message>
+    <message>
+        <source>GEOM_ANGLE_2</source>
+        <translation>Angle 2 :</translation>
+    </message>
+    <message>
         <source>GEOM_ANGLE_1</source>
         <translation>Angle</translation>
     </message>
@@ -1079,6 +1087,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Mirror An Object</translation>
     </message>
     <message>
+        <source>GEOM_MODE</source>
+        <translation>Mode</translation>
+    </message>
+    <message>
         <source>GEOM_MULTIROTATION</source>
         <translation>Multi-Rotation</translation>
     </message>
@@ -1265,6 +1277,26 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_PIPE_TITLE</source>
         <translation>Pipe Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_PATH</source>
+        <translation>Path</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_PATH_TITLE</source>
+        <translation>Restore Path</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_LIKE_SHAPE</source>
+        <translation>Pipe-like shell or solid</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_BASE1_OBJECT</source>
+        <translation>First base face/wire/edges</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_BASE2_OBJECT</source>
+        <translation>Last base face/wire/edges</translation>
     </message>
     <message>
         <source>GEOM_PROFILE</source>
@@ -1639,6 +1671,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shell Construction</translation>
     </message>
     <message>
+        <source>GEOM_SHOW_LENGTH</source>
+        <translation>Show length dimensions</translation>
+    </message>
+    <message>
+        <source>GEOM_SHOW_ANGLE</source>
+        <translation>Show angle dimensions</translation>
+    </message>
+    <message>
+        <source>GEOM_SHOW_POINTS_COORD</source>
+        <translation>Show start/end point coordinates</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCH</source>
         <translation>Sketch</translation>
     </message>
@@ -1848,7 +1892,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CONTROLS</source>
-        <translation>Dimensions</translation>
+        <translation>Controls</translation>
     </message>
     <message>
         <source>GEOM_SOLID</source>
@@ -1885,6 +1929,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SQUARE</source>
         <translation>Square</translation>
+    </message>
+    <message>
+        <source>GEOM_START</source>
+        <translation>Start :</translation>
+    </message>
+    <message>
+        <source>GEOM_END</source>
+        <translation>End :</translation>
     </message>
     <message>
         <source>GEOM_START_LCS</source>
@@ -2683,6 +2735,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Extrusion Along Path</translation>
     </message>
     <message>
+        <source>MEN_PIPE_PATH</source>
+        <translation>Restore Path</translation>
+    </message>
+    <message>
         <source>MEN_PLANE</source>
         <translation>Plane</translation>
     </message>
@@ -3463,6 +3519,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create a shape by extrusion along a path</translation>
     </message>
     <message>
+        <source>STB_PIPE_PATH</source>
+        <translation>Restore path from a pipe-like shape</translation>
+    </message>
+    <message>
         <source>STB_PLANE</source>
         <translation>Create a plane</translation>
     </message>
@@ -3745,6 +3805,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOOL_BASIC</source>
         <translation>Basic</translation>
+    </message>
+    <message>
+        <source>TOOL_BLOCKS</source>
+        <translation>Blocks</translation>
     </message>
     <message>
         <source>TOOL_BOOLEAN</source>
@@ -4081,6 +4145,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_PIPE</source>
         <translation>Extrusion along path</translation>
+    </message>
+    <message>
+        <source>TOP_PIPE_PATH</source>
+        <translation>Restore path</translation>
     </message>
     <message>
         <source>TOP_PLANE</source>
@@ -4687,8 +4755,9 @@ shells and solids on the other hand.</translation>
     </message>
     <message>
         <source>GEOM_SCALE_DIMENSIONS</source>
-        <translation>Would you like to take into account the units?
-Otherwise the dimensions will be kept without modifications.</translation>
+        <translation>Take into account the units (%1) embedded to the file?
+Ignoring units will cause model scaling (as dimensions are supposed to
+be specified in meters).</translation>
     </message>
     <message>
         <source>GEOM_ADVANCED</source>

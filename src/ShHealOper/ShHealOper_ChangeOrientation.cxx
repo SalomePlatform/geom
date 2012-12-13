@@ -26,10 +26,17 @@
 
 #include <ShHealOper_ChangeOrientation.hxx>
 
-#include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
-
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRep_Builder.hxx>
+#include <Geom_Curve.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <Geom_TrimmedCurve.hxx>
 
 //=======================================================================
 //function : ShHealOper_ChangeOrientation()
@@ -59,7 +66,8 @@ void ShHealOper_ChangeOrientation::Init(const TopoDS_Shape& theShape)
 Standard_Boolean ShHealOper_ChangeOrientation::Perform()
 {
   BRep_Builder B;
-  if (myInitShape.ShapeType() == TopAbs_SHELL) {
+  if (myInitShape.ShapeType() == TopAbs_SHELL)
+  {
     myResultShape = myInitShape.EmptyCopied();
     TopoDS_Iterator itr (myInitShape);
     while (itr.More()) {
@@ -67,7 +75,8 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
       itr.Next();
     }
   }
-  else if (myInitShape.ShapeType() == TopAbs_FACE) {
+  else if (myInitShape.ShapeType() == TopAbs_FACE)
+  {
     myResultShape = myInitShape.EmptyCopied();
     TopoDS_Iterator itr (myInitShape);
     while (itr.More()) {
@@ -76,16 +85,43 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
     }
     myResultShape.Reverse();
   }
-  else if ( myInitShape.ShapeType() == TopAbs_WIRE || myInitShape.ShapeType() == TopAbs_EDGE) {
-    myResultShape = myInitShape.EmptyCopied();
-    TopoDS_Iterator itr (myInitShape);
-    while (itr.More()) {
-      B.Add(myResultShape,itr.Value());
-      itr.Next();
+  else if ( myInitShape.ShapeType() == TopAbs_WIRE || myInitShape.ShapeType() == TopAbs_EDGE)
+  {
+    TopTools_ListOfShape reversedEdges;
+    for ( TopExp_Explorer edgeIt( myInitShape, TopAbs_EDGE ); edgeIt.More(); edgeIt.Next() )
+    {
+      const TopoDS_Edge& edge = TopoDS::Edge( edgeIt.Current() );
+
+      double f,l;
+      Handle(Geom_Curve) curve = BRep_Tool::Curve( edge, f,l );
+      Handle(Geom_TrimmedCurve) tc = Handle(Geom_TrimmedCurve)::DownCast(curve);
+      if ( !tc.IsNull() ) curve = tc->BasisCurve();
+
+      f = curve->ReversedParameter( f );
+      l = curve->ReversedParameter( l );
+      curve = curve->Reversed();
+      reversedEdges.Prepend( BRepBuilderAPI_MakeEdge( curve, Min( f, l ), Max( f, l )));
     }
-    myResultShape.Reverse();
+    if ( myInitShape.ShapeType() == TopAbs_EDGE )
+    {
+      myResultShape = reversedEdges.First();
+    }
+    else
+    {
+      BRepBuilderAPI_MakeWire wire;
+      wire.Add( reversedEdges );
+      myResultShape = wire;
+    }
+    // myResultShape = myInitShape.EmptyCopied();
+    // TopoDS_Iterator itr (myInitShape);
+    // while (itr.More()) {
+    //   B.Add(myResultShape,itr.Value());
+    //   itr.Next();
+    // }
+    // myResultShape.Reverse();
   }
-  else {
+  else
+  {
     BRepBuilderAPI_Copy Copy (myInitShape);
     if (!Copy.IsDone()) return false;
 

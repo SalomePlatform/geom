@@ -22,10 +22,10 @@ Select the required file and click \b Open. Your file will be imported in
 the module and its contents (geometrical object) will be displayed in
 the <b>Object Browser</b>.
 
-\note If the selected file is in IGES format and the length is not
-expressed in meters, it will be suggested to scale the model into the
-metric system (see the picture below). This feature can be helpful if
-some wrong units have been written to the IGES file by a
+\note If the selected file is in IGES or STEP format and the length
+is not expressed in meters, it will be asked whether to take or not these
+units into account (see the picture below). This feature can be
+helpful if some wrong units have been written to the IGES or STEP file by a
 3rd-party software.
 
 \image html iges_unit.png

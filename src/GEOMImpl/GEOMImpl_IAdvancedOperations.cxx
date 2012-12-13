@@ -56,6 +56,7 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TColStd_IndexedDataMapOfTransientTransient.hxx>
 
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
@@ -70,6 +71,7 @@
 #include <TFunction_Driver.hxx>
 #include <TFunction_Logbook.hxx>
 #include <TDF_Tool.hxx>
+#include <TNaming_CopyShape.hxx>
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -1138,6 +1140,11 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Objec
     return false;
   }
 
+  // Copy source shape
+  TopoDS_Shape aShapeCopy;
+  TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+  TNaming_CopyShape::CopyTool(Te7->GetValue(), aMapTShapes, aShapeCopy);
+
   Handle(GEOM_Object) Te8 = myShapesOperations->MakeGlueFaces(Te7, 1e-7, true);
   if (Te8.IsNull()) {
     SetErrorCode("Impossible to glue faces of TShape");
@@ -1145,6 +1152,34 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Objec
   }
 
   TopoDS_Shape aShape = Te8->GetValue();
+  BRepCheck_Analyzer anAna (aShape, Standard_True);
+
+  if (!anAna.IsValid()) {
+    // Try to do gluing with the tolerance equal to maximal
+    // tolerance of vertices of the source shape.
+    Standard_Real aTolMax = -RealLast();
+
+    for (TopExp_Explorer ExV (aShapeCopy, TopAbs_VERTEX); ExV.More(); ExV.Next()) {
+      TopoDS_Vertex aVertex = TopoDS::Vertex(ExV.Current());
+      Standard_Real aTol = BRep_Tool::Tolerance(aVertex);
+
+      if (aTol > aTolMax) {
+        aTolMax = aTol;
+      }
+    }
+
+    // Perform gluing
+    Te7->GetLastFunction()->SetValue(aShapeCopy);
+    Te8 = myShapesOperations->MakeGlueFaces(Te7, aTolMax, true);
+
+    if (Te8.IsNull()) {
+      SetErrorCode("Impossible to glue faces of TShape");
+      return false;
+    }
+
+    aShape = Te8->GetValue();
+  }
+
 
   theShape->GetLastFunction()->SetValue(aShape);
 
@@ -2252,7 +2287,14 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
                                                                    int theOrientation, int thePattern)
 {
   SetErrorCode(KO);
-
+  
+  if (theOrientation != 1 &&
+      theOrientation != 2 &&
+      theOrientation != 3)
+  {
+    SetErrorCode("theOrientation must be 1(=OXY), 2(=OYZ) or 3(=OZX)");
+    return NULL;
+  }
   //Add a new object
   Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_DIVIDEDDISK);
 

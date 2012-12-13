@@ -100,7 +100,6 @@ void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF,
   Standard_Boolean bIsToReverse, bIsUPeriodic;
   Standard_Integer iRet;
   Standard_Real aTol, aUMin, aUMax, aVMin, aVMax;
-  TopAbs_Orientation aOrE;
   Handle(Geom_Surface) aS;
   TopLoc_Location aLoc;
   TopoDS_Shape aW, aWr;

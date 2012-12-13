@@ -511,8 +511,7 @@ void GEOMAlgo_GlueDetector::CheckDetected
    const TopTools_IndexedDataMapOfShapeListOfShape& aMVE,
    const TopTools_IndexedDataMapOfShapeListOfShape& aMEV)
 {
-  Standard_Integer i, aNbVSD, aNbA, iRet;
-  TopAbs_ShapeEnum aTypeS, aTypeA[2];
+  Standard_Integer aNbVSD, iRet;
   TopExp_Explorer aExp, aExpA;
   TopTools_MapOfShape aMFence, aMVSD;
   TopTools_ListOfShape aLV;

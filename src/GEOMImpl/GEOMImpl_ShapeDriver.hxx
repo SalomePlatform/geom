@@ -120,6 +120,8 @@ class Handle(GEOMImpl_ShapeDriver) : public Handle(TFunction_Driver) {
 
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Wire.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
 
 class TColStd_SequenceOfExtendedString;
 
@@ -151,9 +153,13 @@ public:
   Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
   Standard_EXPORT static const Standard_GUID& GetID();
 
-  Standard_EXPORT static TopoDS_Edge MakeEdgeFromWire(const TopoDS_Shape& aWire,
-                                                      const Standard_Real LinTol,
-                                                      const Standard_Real AngTol);
+  Standard_EXPORT static TopoDS_Edge MakeEdgeFromWire (const TopoDS_Shape& aWire,
+                                                       const Standard_Real LinTol,
+                                                       const Standard_Real AngTol);
+
+  Standard_EXPORT static TopoDS_Wire MakeWireFromEdges
+                                     (const Handle(TColStd_HSequenceOfTransient)& theEdgesFuncs,
+                                      const Standard_Real theTolerance);
 
   // Type management
   //

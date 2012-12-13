@@ -116,10 +116,10 @@
 
 // If the next macro is defined, autocolor feature works for all sub-shapes;
 // if it is undefined, autocolor feature works for groups only
-//#define GENERAL_AUTOCOLOR
+#define GENERAL_AUTOCOLOR
 // Below macro, when uncommented, switches on simplified (more performant) algorithm
 // of auto-color picking up
-//#define SIMPLE_AUTOCOLOR
+#define SIMPLE_AUTOCOLOR
 
 //================================================================
 // Function : getActiveStudy
@@ -1835,19 +1835,15 @@ SALOMEDS::Color GEOM_Displayer::getPredefinedUniqueColor()
   static QList<QColor> colors;
 
   if ( colors.isEmpty() ) {
-    const int rfactor = 4; // red   color component split factor, must be > 0
-    const int gfactor = 4; // green color component split factor, must be > 0
-    const int bfactor = 3; // blue  color component split factor, must be > 0
-                           // -
-                           // total number of pre-defined colors is defined as
-                           // nbcolors = rfactor * gfactor * bfactor
-                           // NB: all three factors should not have same values
-                           // otherwise all colors will be greyish
-    
-    for ( int g = 0; g < gfactor; g++ ) {
-      for ( int r = 0; r < rfactor; r++ ) {
-	for ( int b = 0; b < bfactor; b++ )
-	  colors.append( QColor( qRgb( r * 255 / (rfactor-1), g * 255 / (gfactor-1), b * 255 / (bfactor-1) ) ) );
+
+    for (int s = 0; s < 2 ; s++)
+    {
+      for (int v = 100; v >= 40; v = v - 20)
+      {
+        for (int h = 0; h < 359 ; h = h + 60)
+        {
+          colors.append(QColor::fromHsv(h, 255 - s * 127, v * 255 / 100));
+        }
       }
     }
   }

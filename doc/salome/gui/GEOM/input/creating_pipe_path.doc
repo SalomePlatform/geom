@@ -1,0 +1,44 @@
+/*!
+
+\page create_pipe_path_page Restore Path
+
+To generate a \b Path in the <b>Main Menu</b> select <b>New Entity - > Generation - > Restore Path</b>
+
+\image html pipe_path_dlg.png
+
+\n To obtain the \b Path of a pipe-like shape, you should define the
+<b>Pipe-like shell or solid</b> and two pipe \b Bases, which can
+be defined by a wire, a face or a list of edges.<br>
+\n <b>Select unpublished edges</b> checkbox - if checked, allows
+selecting in the viewer the edges, that are not published in the Object
+Browser.<br>
+\n The \b Result of the operation will be a GEOM_Object (edge or wire).<br>
+
+\n <b>Advanced options</b>:
+<ul>
+<li>\ref preview_anchor "Preview"</li>
+</ul><br>
+
+\note It is not always possible to obtain an exact or approximate
+      copy of the Shape by applying the \b Pipe operation to the
+      resulting "Path" wire with the first Base as the base;
+      though in some particular cases it might
+      work. Thus, Restore Path function should not
+      be considered as an exact reverse operation of the Pipe.<br>
+
+\n <b>Example:</b>
+
+\image html pipe_path.png "Path (red) between two faces (green)"
+
+\n <b>TUI Command:</b> <em>geompy.RestorePath(aShape, aBase1, aBase2)</em>
+\n <b>Arguments:</b> Name + 1 pipe-like shape (shell or solid) + 1
+shape (edge, wire or face) for the first base + 1 shape (edge, wire or
+face) for the last base.
+\n <b>TUI Command:</b> <em>geompy.RestorePathEdges(aShape, listEdges1, listEdges2)</em>
+\n <b>Arguments:</b> Name + 1 pipe-like shape (shell or solid) + 1
+list of edges for the first base + 1 list of edges for the last base.
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_pipe_path "Complex Geometric Objects".
+
+*/

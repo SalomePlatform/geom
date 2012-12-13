@@ -2,33 +2,30 @@
 
 \page create_hexa_solid_page Hexaedral solid
 
-\n <b>Description:</b> Builds a hexahedral solid. either of the below
-mentioned arguments. This operation allows to build a solid bypassing
-the intermediate stage of building a shell and 4 faces (in the case of
-building by 2 faces) or just a shell (in the case of building by 6
+This operation allows to build a hexahedral solid bypassing
+the intermediate stage of building a shell and 4 faces (in case of
+building by 2 faces) or just a shell (in case of building by 6
 faces).
 
+There are 2 algorithms to create a hexahedral solid in the 3D space.
 \n The \b Result of the operation will be a \b GEOM_Object (solid).
 
-\n <b>TUI Command:</b>
-<ul>
-<li><em>geompy.MakeHexa2Faces(F1, F2),</em> where F1 and F2 are faces
-from which the hexahedron is constructed, other four faces are created
-automatically.</li>
-<li><em>geompy.MakeHexa(F1, F2, F3, F4, F5, F6),</em> where F1 &mdash; F6 are six faces from which the hexahedron is constructed.</li>
-</ul>
+Firstly, you can define a Hexahedral Solid by two faces, other four faces are created automatically.
 
-\n <b>Arguments:</b>
-<ul>
-<li>Name + 2 Faces, or</li>
-<li>Name + 6 Faces.</li>
-</ul>
-
-\n <b>Dialog Box:</b>
+<b>TUI Command:</b> <em>geompy.MakeHexa2Faces(F1, F2),</em> 
+<b>Arguments: Name + 2 Faces.
 
 \image html block4.png
 
+\n <b>Example:</b>
 
+\image html image181.png
+<center>Hexahedral Solid built on the base of two Faces</center>
+
+Secondly, you can define a Hexahedral Solid by all six faces.
+
+<b>TUI Command:</b> <em>geompy.MakeHexa(F1, F2, F3, F4, F5, F6),</em> 
+<b>Arguments:</b> Name + 6 Faces.
 
 \image html block5.png
 
@@ -36,9 +33,6 @@ automatically.</li>
 
 \image html image180.png
 <center>Hexahedral Solid built on the base of six Faces</center>
-
-\image html image181.png
-<center>Hexahedral Solid built on the base of two Faces</center>
 
 
 The created blocks can be processed with  \ref blocks_operations_page "Operations on Blocks".

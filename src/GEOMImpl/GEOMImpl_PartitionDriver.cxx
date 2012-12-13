@@ -147,15 +147,10 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       if (aShape_i.IsNull()) {
         Standard_NullObject::Raise("In Partition a shape is null");
       }
-      //
-      //BRepBuilderAPI_Copy aCopyTool (aShape_i);
+
       TopoDS_Shape aShape_i_copy;
       TNaming_CopyShape::CopyTool(aShape_i, aMapTShapes, aShape_i_copy);
-      //if (aCopyTool.IsDone())
-      //  aShape_i_copy = aCopyTool.Shape();
-      //else
-      //  Standard_NullObject::Raise("Bad shape detected");
-      //
+
       // fill aCopyMap for history
       TopTools_IndexedMapOfShape aShape_i_inds;
       TopTools_IndexedMapOfShape aShape_i_copy_inds;
@@ -384,11 +379,17 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   }
 
   aShape = PS.Shape();
-  if (aShape.IsNull()) return 0;
+  if (aShape.IsNull()) {
+    // Mantis issue 22009
+    if (PS.ErrorStatus() == 10 && PS.Tools().Extent() == 0 && PS.Shapes().Extent() == 1)
+      aShape = PS.Shapes().First();
+    else
+      return 0;
+  }
 
   //Alternative case to check not valid partition IPAL21418
   TopoDS_Iterator It (aShape, Standard_True, Standard_True);
-  int nbSubshapes=0;
+  int nbSubshapes = 0;
   for (; It.More(); It.Next())
     nbSubshapes++;
   if (!nbSubshapes)

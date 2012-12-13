@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -1096,7 +1095,6 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
   return GetObject(anObject);
 }
 
-
 //=============================================================================
 /*!
  *  MakePipeBiNormalAlongVector
@@ -1122,6 +1120,84 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
   //Create the Pipe
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePipeBiNormalAlongVector(aBase, aPath, aVec);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  RestorePath
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::RestorePath
+                 (GEOM::GEOM_Object_ptr theShape,
+                  GEOM::GEOM_Object_ptr theBase1,
+                  GEOM::GEOM_Object_ptr theBase2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aBase1 = GetObjectImpl(theBase1);
+  Handle(GEOM_Object) aBase2 = GetObjectImpl(theBase2);
+
+  if (aShape.IsNull() || aBase1.IsNull() || aBase2.IsNull()) return aGEOMObject._retn();
+
+  // Create the Path
+  Handle(GEOM_Object) anObject = GetOperations()->RestorePath(aShape, aBase1, aBase2);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  RestorePathEdges
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::RestorePathEdges
+                 (GEOM::GEOM_Object_ptr theShape,
+                  const GEOM::ListOfGO& theBase1,
+                  const GEOM::ListOfGO& theBase2)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aSeqBases1 = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqBases2 = new TColStd_HSequenceOfTransient;
+
+  int ind;
+  int aNbBases1 = theBase1.length();
+  int aNbBases2 = theBase2.length();
+
+  for (ind = 0; ind < aNbBases1; ind++) {
+    Handle(GEOM_Object) aBase = GetObjectImpl(theBase1[ind]);
+    if (!aBase.IsNull())
+      aSeqBases1->Append(aBase);
+  }
+  for (ind = 0; ind < aNbBases2; ind++) {
+    Handle(GEOM_Object) aBase = GetObjectImpl(theBase2[ind]);
+    if (!aBase.IsNull())
+      aSeqBases2->Append(aBase);
+  }
+
+  if (!aSeqBases1->Length() || !aSeqBases2->Length())
+    return aGEOMObject._retn();
+
+  // Create the Path
+  Handle(GEOM_Object) anObject = GetOperations()->RestorePath(aShape, aSeqBases1, aSeqBases2);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

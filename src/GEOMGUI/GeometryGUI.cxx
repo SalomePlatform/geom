@@ -107,7 +107,6 @@
 
 #include <GEOM_version.h>
 
-
 #include "GEOMImpl_Types.hxx"
 
 extern "C" {
@@ -135,7 +134,7 @@ GEOM::GEOM_Gen_var GeometryGUI::GetGeomGen()
 bool GeometryGUI::InitGeomGen()
 {
   GeometryGUI aGG;
-  if( CORBA::is_nil( myComponentGeom ) ) return false;
+  if ( CORBA::is_nil( myComponentGeom ) ) return false;
   return true;
 }
 
@@ -173,12 +172,12 @@ SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
   return aDSStudy._retn();
 }
 
-void GeometryGUI::Modified( bool theIsUpdateActions )
+void GeometryGUI::Modified (bool theIsUpdateActions)
 {
-  if( SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() ) ) {
-    if( SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) ) {
+  if ( SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() ) ) {
+    if ( SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) ) {
       appStudy->Modified();
-      if( theIsUpdateActions )
+      if ( theIsUpdateActions )
         app->updateActions();
     }
   }
@@ -281,17 +280,17 @@ void GeometryGUI::ActiveWorkingPlane()
   bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
 
-  if( ViewOCC ) {
+  if ( ViewOCC ) {
     OCCViewer_ViewWindow* vw = dynamic_cast<OCCViewer_ViewWindow*>( window );
     if ( vw ) {
       Handle(V3d_View) view3d =  vw->getViewPort()->getView();
 
       view3d->SetProj(DZ.X(), DZ.Y(), DZ.Z());
       view3d->SetUp(DY.X(), DY.Y(), DY.Z());
-      vw->onViewFitAll(); 
+      vw->onViewFitAll();
     }
   }
-  else if( ViewVTK ) {
+  else if ( ViewVTK ) {
     SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( vw ) {
       vtkCamera* camera = vw->getRenderer()->GetActiveCamera();
@@ -473,6 +472,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpRevolution:         // MENU GENERATION - REVOLUTION
   case GEOMOp::OpFilling:            // MENU GENERATION - FILLING
   case GEOMOp::OpPipe:               // MENU GENERATION - PIPE
+  case GEOMOp::OpPipePath:           // MENU GENERATION - RESTORE PATH
     libName = "GenerationGUI";
     break;
   case GEOMOp::Op2dSketcher:         // MENU ENTITY - SKETCHER
@@ -596,15 +596,15 @@ void GeometryGUI::OnGUIEvent( int id )
   // call method of corresponding GUI library
   if ( library ) {
     library->OnGUIEvent( id, desk );
-    
+
     // Update a list of materials for "Preferences" dialog
     if ( id == GEOMOp::OpMaterialProperties ) {
       LightApp_Preferences* pref = preferences();
       if ( pref ) {
-	Material_ResourceMgr aMatResMgr;
-	setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_MATERIAL" ), true )->id(),
-			       "strings",
-			       aMatResMgr.materials() );
+        Material_ResourceMgr aMatResMgr;
+        setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_MATERIAL" ), true )->id(),
+                               "strings",
+                               aMatResMgr.materials() );
       }
     }
   }
@@ -689,11 +689,11 @@ void GeometryGUI::createGeomAction( const int id, const QString& label, const QS
 void GeometryGUI::createOriginAndBaseVectors()
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
-  if( appStudy ) {
+  if ( appStudy ) {
     _PTR(Study) studyDS = appStudy->studyDS();
-    if( studyDS && !CORBA::is_nil( GetGeomGen() ) ) {
+    if ( studyDS && !CORBA::is_nil( GetGeomGen() ) ) {
       GEOM::GEOM_IBasicOperations_var aBasicOperations = GetGeomGen()->GetIBasicOperations( studyDS->StudyId() );
-      if( !aBasicOperations->_is_nil() ) {
+      if ( !aBasicOperations->_is_nil() ) {
         SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
         double aLength = aResourceMgr->doubleValue( "Geometry", "base_vectors_length", 1.0 );
         GEOM::GEOM_Object_var anOrigin = aBasicOperations->MakePointXYZ( 0.0, 0.0, 0.0 );
@@ -751,6 +751,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpRevolution,  "REVOLUTION" );
   createGeomAction( GEOMOp::OpFilling,     "FILLING" );
   createGeomAction( GEOMOp::OpPipe,        "PIPE" );
+  createGeomAction( GEOMOp::OpPipePath,    "PIPE_PATH" );
 
   createGeomAction( GEOMOp::OpGroupCreate, "GROUP_CREATE" );
   createGeomAction( GEOMOp::OpGroupEdit,   "GROUP_EDIT" );
@@ -950,6 +951,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpRevolution, genId, -1 );
   createMenu( GEOMOp::OpFilling,    genId, -1 );
   createMenu( GEOMOp::OpPipe,       genId, -1 );
+#if OCC_VERSION_LARGE > 0x06050300
+  createMenu( GEOMOp::OpPipePath,   genId, -1 );
+#endif
 
 //   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
 
@@ -983,9 +987,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpShell,    buildId, -1 );
   createMenu( GEOMOp::OpSolid,    buildId, -1 );
   createMenu( GEOMOp::OpCompound, buildId, -1 );
-  
+
   createMenu( separator(),          newEntId, -1 );
-  
+
   createMenu( GEOMOp::OpPictureImport, newEntId, -1 );
 #ifdef WITH_OPENCV
   createMenu( GEOMOp::OpFeatureDetect, newEntId, -1 );
@@ -1110,7 +1114,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 */
 
   // ---- create toolbars --------------------------
-  
+
   int basicTbId = createTool( tr( "TOOL_BASIC" ) );
   createTool( GEOMOp::OpPoint,      basicTbId );
   createTool( GEOMOp::OpLine,       basicTbId );
@@ -1124,11 +1128,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpPlane,      basicTbId );
   createTool( GEOMOp::OpLCS,        basicTbId );
   createTool( GEOMOp::OpOriginAndVectors, basicTbId );
-  
+
 //   int sketchTbId = createTool( tr( "TOOL_SKETCH" ) );
 //   createTool( GEOMOp::Op2dSketcher,  sketchTbId );
 //   createTool( GEOMOp::Op3dSketcher,  sketchTbId );
-  
+
   int primTbId = createTool( tr( "TOOL_PRIMITIVES" ) );
   createTool( GEOMOp::OpBox,        primTbId );
   createTool( GEOMOp::OpCylinder,   primTbId );
@@ -1138,26 +1142,29 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpRectangle,  primTbId );
   createTool( GEOMOp::OpDisk,       primTbId );
   createTool( GEOMOp::OpPipeTShape, primTbId ); //rnc
-  
+
   int blocksTbId = createTool( tr( "TOOL_BLOCKS" ) );
   createTool( GEOMOp::OpDividedDisk, blocksTbId );
   createTool( GEOMOp::OpDividedCylinder, blocksTbId );
-  
+
 //   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) ); //rnc
 //   createTool( GEOMOp::OpPipeTShape, advancedTbId );
-  
+
   int boolTbId = createTool( tr( "TOOL_BOOLEAN" ) );
   createTool( GEOMOp::OpFuse,       boolTbId );
   createTool( GEOMOp::OpCommon,     boolTbId );
   createTool( GEOMOp::OpCut,        boolTbId );
   createTool( GEOMOp::OpSection,    boolTbId );
-  
-   int genTbId = createTool( tr( "TOOL_GENERATION" ) );
+
+  int genTbId = createTool( tr( "TOOL_GENERATION" ) );
   createTool( GEOMOp::OpPrism,      genTbId );
   createTool( GEOMOp::OpRevolution, genTbId );
   createTool( GEOMOp::OpFilling,    genTbId );
   createTool( GEOMOp::OpPipe,       genTbId );
-  
+#if OCC_VERSION_LARGE > 0x06050300
+  createTool( GEOMOp::OpPipePath,   genTbId );
+#endif
+
   int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ) );
   createTool( GEOMOp::OpTranslate,      transTbId );
   createTool( GEOMOp::OpRotate,         transTbId );
@@ -1169,14 +1176,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( separator(),              transTbId );
   createTool( GEOMOp::OpMultiTranslate, transTbId );
   createTool( GEOMOp::OpMultiRotate,    transTbId );
-  
+
   int operTbId = createTool( tr( "TOOL_OPERATIONS" ) );
   createTool( GEOMOp::OpExplode,         operTbId );
   createTool( GEOMOp::OpPartition,       operTbId );
   createTool( GEOMOp::OpArchimede,       operTbId );
   createTool( GEOMOp::OpShapesOnShape,   operTbId );
   createTool( GEOMOp::OpSharedShapes,    operTbId );
-  
+
   int featTbId = createTool( tr( "TOOL_FEATURES" ) );
   createTool( GEOMOp::OpFillet1d,        featTbId );
   createTool( GEOMOp::OpFillet2d,        featTbId );
@@ -1184,7 +1191,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpChamfer,         featTbId );
   createTool( GEOMOp::OpExtrudedBoss,    featTbId );
   createTool( GEOMOp::OpExtrudedCut,     featTbId );
-  
+
   int buildTbId = createTool( tr( "TOOL_BUILD" ) );
   createTool( GEOMOp::OpEdge,     buildTbId );
   createTool( GEOMOp::OpWire,     buildTbId );
@@ -1219,7 +1226,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   #ifdef WITH_OPENCV
     createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
   #endif
-  
+
 //   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
 
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
@@ -1261,7 +1268,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule(action(GEOMOp::OpBringToFront), bringRule, QtxPopupMgr::VisibleRule );
   mgr->setRule(action(GEOMOp::OpBringToFront), "topLevel=true", QtxPopupMgr::ToggleRule );
   mgr->insert( action(GEOMOp::OpClsBringToFront ), -1, -1 ); // clear bring to front
-  mgr->setRule( action(GEOMOp::OpClsBringToFront ), clientOCC, QtxPopupMgr::VisibleRule );  
+  mgr->setRule( action(GEOMOp::OpClsBringToFront ), clientOCC, QtxPopupMgr::VisibleRule );
 #endif
   mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
@@ -1293,7 +1300,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpPointMarker ), -1, -1 ); // point marker
   //mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg(GEOM_POINT ), QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and ( $typeid in {%1} or compoundOfVertices=true ) " ).arg(GEOM::VERTEX).arg(GEOM::COMPOUND), QtxPopupMgr::VisibleRule );
-  mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 ); // material properties  
+  mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 ); // material properties
   mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'}) and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpSetTexture ), -1, -1 ); // texture
   mgr->setRule( action( GEOMOp::OpSetTexture ), clientOCCorOB_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
@@ -1304,7 +1311,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   mgr->insert( action(  GEOMOp::OpIsosWidth ), lineW, -1 ); // isos width
   mgr->setRule( action( GEOMOp::OpIsosWidth ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
-  
+
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpAutoColor ), -1, -1 ); // auto color
   mgr->setRule( action( GEOMOp::OpAutoColor ), autoColorPrefix + " and isAutoColor=false", QtxPopupMgr::VisibleRule );
@@ -1363,7 +1370,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpUnpublishObject ), -1, -1 ); // Unpublish object
   mgr->setRule( action( GEOMOp::OpUnpublishObject ), QString("client='ObjectBrowser' and $type in {'Shape' 'Group'} and selcount>0"), QtxPopupMgr::VisibleRule );
 
-
   mgr->insert( action(  GEOMOp::OpPublishObject ), -1, -1 ); // Publish object
   mgr->setRule( action( GEOMOp::OpPublishObject ), QString("client='ObjectBrowser' and isComponent=true"), QtxPopupMgr::VisibleRule );
 
@@ -1372,9 +1378,8 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 
-  
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  if(resMgr) {
+  if (resMgr) {
     GEOM_AISShape::setTopLevelDisplayMode((GEOM_AISShape::TopLevelDispMode)resMgr->integerValue("Geometry", "toplevel_dm", 0));
     QColor c = resMgr->colorValue( "Geometry", "toplevel_color", QColor( 170, 85, 0 ) );
     GEOM_AISShape::setTopLevelColor(SalomeApp_Tools::color(c));
@@ -1399,16 +1404,18 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
   PyGILState_STATE gstate = PyGILState_Ensure();
-  PyObject* pluginsmanager=PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
-  if(pluginsmanager==NULL)
+  PyObject* pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
+  if (pluginsmanager == NULL)
     PyErr_Print();
-  else
-    {
-      PyObject* result=PyObject_CallMethod( pluginsmanager, (char*)"initialize", (char*)"isss",1,"geom",tr("MEN_NEW_ENTITY").toStdString().c_str(),tr("GEOM_PLUGINS_OTHER").toStdString().c_str());
-      if(result==NULL)
-        PyErr_Print();
-      Py_XDECREF(result);
-    }
+  else {
+    PyObject* result =
+      PyObject_CallMethod(pluginsmanager, (char*)"initialize", (char*)"isss", 1, "geom",
+                          tr("MEN_NEW_ENTITY").toStdString().c_str(),
+                          tr("GEOM_PLUGINS_OTHER").toStdString().c_str());
+    if (result == NULL)
+      PyErr_Print();
+    Py_XDECREF(result);
+  }
   PyGILState_Release(gstate);
   // end of GEOM plugins loading
 
@@ -1466,13 +1473,13 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   // 0020836 (Basic vectors and origin)
   SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
-  if( aResourceMgr->booleanValue( "Geometry", "auto_create_base_objects", false ) ) {
+  if ( aResourceMgr->booleanValue( "Geometry", "auto_create_base_objects", false ) ) {
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
-    if( appStudy ) {
+    if ( appStudy ) {
       _PTR(Study) studyDS = appStudy->studyDS();
-      if( studyDS ) {
+      if ( studyDS ) {
         _PTR(SComponent) aSComponent = studyDS->FindComponent("GEOM");
-        if( !aSComponent ) // create objects automatically only if there is no GEOM component
+        if ( !aSComponent ) // create objects automatically only if there is no GEOM component
           createOriginAndBaseVectors();
       }
     }
@@ -1480,7 +1487,6 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   return true;
 }
-
 
 //=======================================================================
 // function : GeometryGUI::deactivateModule()
@@ -1571,7 +1577,7 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
              this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
     connect( vm, SIGNAL( mouseRelease ( SUIT_ViewWindow*, QMouseEvent* ) ),
              this, SLOT( OnMouseRelease( SUIT_ViewWindow*, QMouseEvent* ) ) );
-    
+
     LightApp_SelectionMgr* sm = getApp()->selectionMgr();
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
 
@@ -1741,30 +1747,29 @@ void GeometryGUI::createPreferences()
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
 
   int material = addPreference( tr( "PREF_MATERIAL" ), genGroup,
-				      LightApp_Preferences::Selector,
-				      "Geometry", "material" );
-  
+                                      LightApp_Preferences::Selector,
+                                      "Geometry", "material" );
+
   const int nb = 4;
   int wd[nb];
   int iter=0;
 
   wd[iter++] = addPreference( tr( "PREF_EDGE_WIDTH" ), genGroup,
-			      LightApp_Preferences::IntSpin, "Geometry", "edge_width" );
+                              LightApp_Preferences::IntSpin, "Geometry", "edge_width" );
 
   wd[iter++] = addPreference( tr( "PREF_ISOLINES_WIDTH" ), genGroup,
-			      LightApp_Preferences::IntSpin, "Geometry", "isolines_width" );
+                              LightApp_Preferences::IntSpin, "Geometry", "isolines_width" );
 
   wd[iter++] = addPreference( tr( "PREF_PREVIEW_EDGE_WIDTH" ), genGroup,
-				     LightApp_Preferences::IntSpin, "Geometry", "preview_edge_width" );
-  
-  wd[iter++] = addPreference( tr( "PREF_MEASURES_LINE_WIDTH" ), genGroup,
-			      LightApp_Preferences::IntSpin, "Geometry", "measures_line_width" );
+                                     LightApp_Preferences::IntSpin, "Geometry", "preview_edge_width" );
 
-  for(int i = 0; i < nb; i++) {
-    setPreferenceProperty( wd[i], "min", 1 );    
+  wd[iter++] = addPreference( tr( "PREF_MEASURES_LINE_WIDTH" ), genGroup,
+                              LightApp_Preferences::IntSpin, "Geometry", "measures_line_width" );
+
+  for (int i = 0; i < nb; i++) {
+    setPreferenceProperty( wd[i], "min", 1 );
     setPreferenceProperty( wd[i], "max", 5 );
   }
-
 
   // Quantities with individual precision settings
   int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
@@ -1818,7 +1823,6 @@ void GeometryGUI::createPreferences()
 
   setPreferenceProperty( dispmode, "strings", aModesList );
   setPreferenceProperty( dispmode, "indexes", anIndexesList );
-
 
   // Set property for top level display mode
   QStringList aTopModesList;
@@ -1891,7 +1895,6 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_AUTO_CREATE" ), originGroup,
                  LightApp_Preferences::Bool, "Geometry", "auto_create_base_objects" );
 
-
   int operationsGroup = addPreference( tr( "PREF_GROUP_OPERATIONS" ), tabId );
   setPreferenceProperty( operationsGroup, "columns", 2 );
 
@@ -1906,18 +1909,20 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
     if (param == QString("SettingsGeomStep")) {
       double spin_step = aResourceMgr->doubleValue(section, param, 100.);
       EmitSignalDefaultStepValueChanged(spin_step);
-    } else if(param == QString("toplevel_color")) {
+    }
+    else if (param == QString("toplevel_color")) {
       QColor c = aResourceMgr->colorValue( "Geometry", "toplevel_color", QColor( 170, 85, 0 ) );
       GEOM_AISShape::setTopLevelColor(SalomeApp_Tools::color(c));
-    } else if(param == QString("toplevel_dm")) {
+    }
+    else if (param == QString("toplevel_dm")) {
       GEOM_AISShape::setTopLevelDisplayMode((GEOM_AISShape::TopLevelDispMode)aResourceMgr->integerValue("Geometry", "toplevel_dm", 0));
     }
-  } 
+  }
 }
 
 LightApp_Displayer* GeometryGUI::displayer()
 {
-  if( !myDisplayer )
+  if ( !myDisplayer )
     myDisplayer = new GEOM_Displayer( dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) );
   return myDisplayer;
 }
@@ -1926,6 +1931,7 @@ void GeometryGUI::setLocalSelectionMode(const int mode)
 {
   myLocalSelectionMode = mode;
 }
+
 int GeometryGUI::getLocalSelectionMode() const
 {
   return myLocalSelectionMode;
@@ -1986,7 +1992,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         std::string entry = ip->encodeEntry(o_it.key().toLatin1().data(), componentName);
 
         _PTR(GenericAttribute) anAttr;
-        if( !obj->FindAttribute(anAttr, "AttributeIOR"))
+        if (!obj->FindAttribute(anAttr, "AttributeIOR"))
           continue;
 
         std::string param,occParam = vType.toLatin1().data();
@@ -1994,17 +2000,17 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         occParam += QString::number(aMgrId).toLatin1().data();
         occParam += NAME_SEPARATOR;
 
-        if(aProps.contains(VISIBILITY_PROP)) {
+        if (aProps.contains(VISIBILITY_PROP)) {
           param = occParam + VISIBILITY_PROP;
           ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
         }
 
-        if(aProps.contains(DISPLAY_MODE_PROP)) {
+        if (aProps.contains(DISPLAY_MODE_PROP)) {
           param = occParam + DISPLAY_MODE_PROP;
           ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
         }
 
-        if(aProps.contains(COLOR_PROP)) {
+        if (aProps.contains(COLOR_PROP)) {
           QColor c = aProps.value(COLOR_PROP).value<QColor>();
           QString colorStr = QString::number(c.red()/255.);
           colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
@@ -2013,59 +2019,59 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           ip->setParameter(entry, param, colorStr.toLatin1().data());
         }
 
-        if(vType == SVTK_Viewer::Type()) {
-          if(aProps.contains(OPACITY_PROP)) {
+        if (vType == SVTK_Viewer::Type()) {
+          if (aProps.contains(OPACITY_PROP)) {
             param = occParam + OPACITY_PROP;
             ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
           }
         } else if (vType == SOCC_Viewer::Type()) {
-          if(aProps.contains(TRANSPARENCY_PROP)) {
+          if (aProps.contains(TRANSPARENCY_PROP)) {
             param = occParam + TRANSPARENCY_PROP;
             ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
           }
 
-          if(aProps.contains(TOP_LEVEL_PROP)) {
+          if (aProps.contains(TOP_LEVEL_PROP)) {
             param = occParam + TOP_LEVEL_PROP;
-	    Standard_Boolean val = aProps.value(TOP_LEVEL_PROP).value<Standard_Boolean>();
-	    if (val == Standard_True) 
-	      ip->setParameter(entry, param, "1");
-          }	  
+            Standard_Boolean val = aProps.value(TOP_LEVEL_PROP).value<Standard_Boolean>();
+            if (val == Standard_True)
+              ip->setParameter(entry, param, "1");
+          }
         }
 
-        if(aProps.contains(ISOS_PROP)) {
+        if (aProps.contains(ISOS_PROP)) {
           param = occParam + ISOS_PROP;
           ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
         }
 
-        if(aProps.contains(VECTOR_MODE_PROP)) {
+        if (aProps.contains(VECTOR_MODE_PROP)) {
           param = occParam + VECTOR_MODE_PROP;
           ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
         }
 
-        if(aProps.contains(DEFLECTION_COEFF_PROP)) {
+        if (aProps.contains(DEFLECTION_COEFF_PROP)) {
           param = occParam + DEFLECTION_COEFF_PROP;
           ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
         }
 
         //Marker type of the vertex - ONLY for the "Vertex" and "Compound of the Vertex"
-        if(aProps.contains(MARKER_TYPE_PROP)) {
+        if (aProps.contains(MARKER_TYPE_PROP)) {
           param = occParam + MARKER_TYPE_PROP;
           ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
         }
 
-	if(aProps.contains(MATERIAL_PROP)) {
+        if (aProps.contains(MATERIAL_PROP)) {
           param = occParam + MATERIAL_PROP;
           ip->setParameter(entry, param, aProps.value(MATERIAL_PROP).toString().toLatin1().data());
         }
 
-	if(aProps.contains( EDGE_WIDTH_PROP )) {
+        if (aProps.contains(EDGE_WIDTH_PROP)) {
              param = occParam + EDGE_WIDTH_PROP;
-           ip->setParameter(entry, param, aProps.value(EDGE_WIDTH_PROP).toString().toLatin1().data());				     
+           ip->setParameter(entry, param, aProps.value(EDGE_WIDTH_PROP).toString().toLatin1().data());
         }
-	
-	if(aProps.contains( ISOS_WIDTH_PROP )) {
-	  param = occParam + ISOS_WIDTH_PROP;
-	  ip->setParameter(entry, param, aProps.value(ISOS_WIDTH_PROP).toString().toLatin1().data());
+
+        if (aProps.contains(ISOS_WIDTH_PROP)) {
+          param = occParam + ISOS_WIDTH_PROP;
+          ip->setParameter(entry, param, aProps.value(ISOS_WIDTH_PROP).toString().toLatin1().data());
         }
       } // object iterator
     } // for (views)
@@ -2141,52 +2147,42 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       if (!ok) // bad conversion of view index to integer
         continue;
 
-      if((viewIndex + 1) > aListOfMap.count()) {
+      if ((viewIndex + 1) > aListOfMap.count()) {
         aListOfMap.resize(viewIndex + 1);
       }
 
       QString val((*valuesIt).c_str());
-      if(paramNameStr == VISIBILITY_PROP){
+      if (paramNameStr == VISIBILITY_PROP) {
         aListOfMap[viewIndex].insert(VISIBILITY_PROP, val == "On" ? 1 : 0);
-
-      } else if(paramNameStr == OPACITY_PROP) {
+      } else if (paramNameStr == OPACITY_PROP) {
         aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, 1. - val.toDouble());
-
-      } else if(paramNameStr == TRANSPARENCY_PROP) {
+      } else if (paramNameStr == TRANSPARENCY_PROP) {
         aListOfMap[viewIndex].insert( TRANSPARENCY_PROP, val.toDouble() );
-
-      }	else if(paramNameStr == TOP_LEVEL_PROP) {
-	  aListOfMap[viewIndex].insert( TRANSPARENCY_PROP, val == "1" ? Standard_True : Standard_False );
-	  
-      } else if(paramNameStr == DISPLAY_MODE_PROP) {
+      } else if (paramNameStr == TOP_LEVEL_PROP) {
+          aListOfMap[viewIndex].insert( TRANSPARENCY_PROP, val == "1" ? Standard_True : Standard_False );
+      } else if (paramNameStr == DISPLAY_MODE_PROP) {
         aListOfMap[viewIndex].insert( DISPLAY_MODE_PROP, val.toInt());
-
-      } else if(paramNameStr == ISOS_PROP) {
+      } else if (paramNameStr == ISOS_PROP) {
         aListOfMap[viewIndex].insert( ISOS_PROP, val);
-
-      } else if(paramNameStr == COLOR_PROP) {
+      } else if (paramNameStr == COLOR_PROP) {
         QStringList rgb = val.split(DIGIT_SEPARATOR);
-        if(rgb.count() == 3) {
+        if (rgb.count() == 3) {
           QColor c(int(rgb[0].toDouble()*255), int(rgb[1].toDouble()*255), int(rgb[2].toDouble()*255));
           aListOfMap[viewIndex].insert( COLOR_PROP, c);
         }
-      } else if(paramNameStr == VECTOR_MODE_PROP) {
+      } else if (paramNameStr == VECTOR_MODE_PROP) {
         aListOfMap[viewIndex].insert( VECTOR_MODE_PROP, val.toInt());
-
-      }  else if(paramNameStr == DEFLECTION_COEFF_PROP) {
+      } else if (paramNameStr == DEFLECTION_COEFF_PROP) {
         aListOfMap[viewIndex].insert( DEFLECTION_COEFF_PROP, val.toDouble());
-      }  else if(paramNameStr == MARKER_TYPE_PROP) {
+      } else if (paramNameStr == MARKER_TYPE_PROP) {
         aListOfMap[viewIndex].insert( MARKER_TYPE_PROP, val);
-      } else if(paramNameStr == MATERIAL_PROP) {
+      } else if (paramNameStr == MATERIAL_PROP) {
         aListOfMap[viewIndex].insert( MATERIAL_PROP, val);
-      }  else if(paramNameStr == EDGE_WIDTH_PROP) {
-	aListOfMap[viewIndex].insert( EDGE_WIDTH_PROP , val);
-      }  else if(paramNameStr == ISOS_WIDTH_PROP) {
-	aListOfMap[viewIndex].insert( ISOS_WIDTH_PROP , val);
+      } else if (paramNameStr == EDGE_WIDTH_PROP) {
+        aListOfMap[viewIndex].insert( EDGE_WIDTH_PROP, val);
+      } else if (paramNameStr == ISOS_WIDTH_PROP) {
+        aListOfMap[viewIndex].insert( ISOS_WIDTH_PROP, val);
       }
-
-		    
-
     } // for names/parameters iterator
 
     QList<SUIT_ViewManager*> lst = getApp()->viewManagers();
@@ -2202,7 +2198,6 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         displayer()->Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
       }
     }
-
   } // for entries iterator
 
   // update all VTK and OCC views
@@ -2243,7 +2238,7 @@ void GeometryGUI::onViewAboutToShow()
 /*!
   \brief Return action by id
   \param id identifier of the action
-  \return action 
+  \return action
 */
 QAction* GeometryGUI::getAction(const int id) {
   return action(id);
@@ -2261,12 +2256,11 @@ QAction* GeometryGUI::getAction(const int id) {
 bool GeometryGUI::renameAllowed( const QString& entry) const {
 
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0; 
+  SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0;
   SalomeApp_DataObject* obj = appStudy ? dynamic_cast<SalomeApp_DataObject*>(appStudy->findObjectByEntry(entry)) : 0;
-  
+
   return (app && appStudy && obj && !appStudy->isComponent(entry) && !obj->isReference());
 }
-
 
 /*!
   Rename object by entry.
@@ -2274,19 +2268,20 @@ bool GeometryGUI::renameAllowed( const QString& entry) const {
   \param name new name of the object
   \brief Return \c true if rename operation finished successfully, \c false otherwise.
 */
-bool GeometryGUI::renameObject( const QString& entry, const QString& name) {
-  
+bool GeometryGUI::renameObject( const QString& entry, const QString& name)
+{
   bool result = false;
-  
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication());
+
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication());
   SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0;
-  
-  if(!appStudy)
+
+  if (!appStudy)
     return result;
-  
+
   _PTR(Study) aStudy = appStudy->studyDS();
-  
-  if(!aStudy)
+
+  if (!aStudy)
     return result;
 
   bool aLocked = (_PTR(AttributeStudyProperties)(appStudy->studyDS()->GetProperties()))->IsLocked();
@@ -2311,4 +2306,3 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name) {
   }
   return result;
 }
-

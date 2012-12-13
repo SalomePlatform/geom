@@ -623,31 +623,78 @@ from math import pi
 spring = MakeSpring(50, 100, 2*pi, 1, 5, pi/2)
 \endcode
 
+
+\anchor tui_creation_pipe_path
+<br><h2>Creation of a Middle Path</h2>
+
+\code
+import salome
+import geompy
+
+# Create a box
+Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)
+
+# Get two opposite faces
+[Face_1,Face_2] = geompy.SubShapes(Box_1, [31, 33])
+
+# Get edges
+Box_1_edge_12 = geompy.GetSubShape(Box_1, [12])
+Box_1_edge_22 = geompy.GetSubShape(Box_1, [22])
+Box_1_edge_25 = geompy.GetSubShape(Box_1, [25])
+Box_1_edge_29 = geompy.GetSubShape(Box_1, [29])
+Box_1_edge_8 = geompy.GetSubShape(Box_1, [8])
+Box_1_edge_18 = geompy.GetSubShape(Box_1, [18])
+Box_1_edge_26 = geompy.GetSubShape(Box_1, [26])
+Box_1_edge_30 = geompy.GetSubShape(Box_1, [30])
+
+# These three calls to RestorePath return the same result
+Path_1 = geompy.RestorePath(Box_1, Face_1, Face_2)
+Path_2 = geompy.RestorePathEdges(Box_1, [Face_1], [Face_2])
+Path_3 = geompy.RestorePathEdges(Box_1,
+                                 [Box_1_edge_12, Box_1_edge_22, Box_1_edge_25, Box_1_edge_29],
+                                 [Box_1_edge_8, Box_1_edge_18, Box_1_edge_26, Box_1_edge_30])
+
+# Publish created objects
+geompy.addToStudy( Box_1, 'Box_1' )
+geompy.addToStudyInFather( Box_1, Face_1, 'Face_1' )
+geompy.addToStudyInFather( Box_1, Face_2, 'Face_2' )
+geompy.addToStudyInFather( Box_1, Box_1_edge_25, 'Box_1:edge_25' )
+geompy.addToStudyInFather( Box_1, Box_1_edge_22, 'Box_1:edge_22' )
+geompy.addToStudyInFather( Box_1, Box_1_edge_12, 'Box_1:edge_12' )
+geompy.addToStudyInFather( Box_1, Box_1_edge_29, 'Box_1:edge_29' )
+geompy.addToStudyInFather( Box_1, Box_1_edge_18, 'Box_1:edge_18' )
+geompy.addToStudyInFather( Box_1, Box_1_edge_26, 'Box_1:edge_26' )
+geompy.addToStudyInFather( Box_1, Box_1_edge_8, 'Box_1:edge_8' )
+geompy.addToStudyInFather( Box_1, Box_1_edge_30, 'Box_1:edge_30' )
+geompy.addToStudy( Path_1, 'Path_1' )
+geompy.addToStudy( Path_2, 'Path_2' )
+geompy.addToStudy( Path_3, 'Path_3' )
+\endcode
+
 <br><h2>Creation of Tangent Plane On Face</h2>
 \code
 import salome
 import geompy
 
-    # Create Vertexes for curve
-    Vertex_1 = geompy.MakeVertex(0, 0, 0)
-    Vertex_2 = geompy.MakeVertex(0, 90, 30)
-    Vertex_3 = geompy.MakeVertex(100, 90, 0)
-    Vertex_4 = geompy.MakeVertex(-100, 90, 0)
-    # Create curve
-    Curve_1 = geompy.MakeInterpol([Vertex_4, Vertex_2, Vertex_3, Vertex_1])
-    # Create Face by Extrusion of the Curve
-    Extrusion_1 = geompy.MakePrismDXDYDZ(Curve_1, 0, 30, -60)
-    # Make Tangent on this Extrusion (Face)
-    Tangent_1 = geompy.MakeTangentPlaneOnFace(Extrusion_1, 0.7, 0.5, 150)
-    # Publish in the study
-    geompy.addToStudy( Vertex_1, "Vertex_1" )
-    geompy.addToStudy( Vertex_2, "Vertex_2" )
-    geompy.addToStudy( Vertex_3, "Vertex_3" )
-    geompy.addToStudy( Vertex_4, "Vertex_4" )
-    geompy.addToStudy( Curve_1, "Curve_1" )
-    geompy.addToStudy( Extrusion_1, "Extrusion_1" )
-    geompy.addToStudy( Tangent_1, "Tangent_1" )
+# Create Vertexes for curve
+Vertex_1 = geompy.MakeVertex(0, 0, 0)
+Vertex_2 = geompy.MakeVertex(0, 90, 30)
+Vertex_3 = geompy.MakeVertex(100, 90, 0)
+Vertex_4 = geompy.MakeVertex(-100, 90, 0)
+# Create curve
+Curve_1 = geompy.MakeInterpol([Vertex_4, Vertex_2, Vertex_3, Vertex_1])
+# Create Face by Extrusion of the Curve
+Extrusion_1 = geompy.MakePrismDXDYDZ(Curve_1, 0, 30, -60)
+# Make Tangent on this Extrusion (Face)
+Tangent_1 = geompy.MakeTangentPlaneOnFace(Extrusion_1, 0.7, 0.5, 150)
+# Publish in the study
+geompy.addToStudy( Vertex_1, "Vertex_1" )
+geompy.addToStudy( Vertex_2, "Vertex_2" )
+geompy.addToStudy( Vertex_3, "Vertex_3" )
+geompy.addToStudy( Vertex_4, "Vertex_4" )
+geompy.addToStudy( Curve_1, "Curve_1" )
+geompy.addToStudy( Extrusion_1, "Extrusion_1" )
+geompy.addToStudy( Tangent_1, "Tangent_1" )
 \endcode
-
 
 */

@@ -98,6 +98,7 @@ namespace GEOMOp {
     OpRevolution          = 3201,   // MENU NEW ENTITY - GENERATION - REVOLUTION
     OpFilling             = 3202,   // MENU NEW ENTITY - GENERATION - FILLING
     OpPipe                = 3203,   // MENU NEW ENTITY - GENERATION - EXTRUSION ALONG PATH
+    OpPipePath            = 3204,   // MENU NEW ENTITY - GENERATION - RESTORE PATH
     // EntityGUI -------------------//--------------------------------
     Op2dSketcher          = 3300,   // MENU NEW ENTITY - SKETCHER
     Op3dSketcher          = 3301,   // MENU NEW ENTITY - 3D SKETCHER

@@ -223,6 +223,22 @@ public:
 };
 
 //////////////////////////////////////////
+// EntityGUI_Type
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_Type_QTD.h"
+
+class EntityGUI_Type : public QWidget, 
+                        public Ui::EntityGUI_Type_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_Type( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_Type();
+};
+
+//////////////////////////////////////////
 // EntityGUI_Angles
 //////////////////////////////////////////
 

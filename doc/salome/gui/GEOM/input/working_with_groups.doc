@@ -3,8 +3,8 @@
 \page work_with_groups_page Working with groups
 
 Creation and editing groups of sub-shapes of a geometrical object makes
-handling sub-shapes much easier. Also some Boolean operations on
-groups are available.
+handling sub-shapes much easier. Boolean operations on
+groups are also available.
 
 <ul>
 <li>\ref create_groups_anchor "Create a Group"</li>
@@ -142,7 +142,7 @@ The following dialog box will appear:
 \image html groups_union_dlg.png
 
 In this dialog box you should specify the name of the resulting group
-and set of groups which will be united.
+and select the groups, which will be united.
 </li>
 <li>Click the \b Apply or <b>Apply and Close</b> button to confirm creation of the group.</li>
 </ol>
@@ -155,7 +155,7 @@ and set of groups which will be united.
 <h2>Intersection of groups</h2>
 
 This operation allows to create a new group in such a way that only
-sub-shapes that are present in all initial groups together are added to the
+the sub-shapes that are present in all initial groups are added to the
 new one.
 
 <em>To intersect groups:</em>
@@ -166,7 +166,7 @@ The following dialog box will appear:
 \image html groups_intersect_dlg.png
 
 In this dialog box you should specify the name of the resulting group
-and set of groups which will be intersected.
+and select the groups, which will be intersected.
 </li>
 <li>Click the \b Apply or <b>Apply and Close</b> button to confirm creation of the group.</li>
 </ol>
@@ -190,10 +190,9 @@ The following dialog box will appear:
 \image html groups_cut_dlg.png
 
 In this dialog box you should specify the name of the resulting group
-and groups which will be cut.
+and the groups which will be cut.
 </li>
-<li>Click the \b Apply or <b>Apply and Close</b> button to confirm creation of the
-group.</li>
+<li>Click the \b Apply or <b>Apply and Close</b> button to confirm creation of the group.</li>
 </ol>
 
 Our <b>TUI Scripts</b> provide you with useful examples of 

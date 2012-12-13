@@ -364,6 +364,10 @@
             <translation>partitionplane.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_PIPE_PATH</source>
+            <translation>pipe.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_PIPE</source>
             <translation>pipe.png</translation>
         </message>
@@ -993,6 +997,10 @@
         </message>
         <message>
             <source>ICO_PIPE</source>
+            <translation>pipe.png</translation>
+        </message>
+        <message>
+            <source>ICO_PIPE_PATH</source>
             <translation>pipe.png</translation>
         </message>
         <message>

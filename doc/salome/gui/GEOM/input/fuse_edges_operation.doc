@@ -4,10 +4,20 @@
 
 \n To <b>Fuse Collinear Edges within a Wire</b> in the <b>Main Menu</b>
 select <b>Repair - > Fuse Collinear Edges within a Wire</b>.
-\n This operation removes selected vertices from a given wire in case
-if adjacent edges are C1 continuous. The function takes a list of
+\n This operation removes the selected vertices from a given wire,
+provided that the junction of two adjacent edges is C1 continuous
+(i.e. the edges have equal tangents at the junction). 
+\n The function takes a list of
 vertices to suppress as a parameter. If the list is empty, all
-vertices in a wire are assumed.
+vertices in a wire are taken into account.
+
+\n \b Example:
+
+Wire with 2 colinear edges:
+\image html wire_before_fuse.png
+
+Fused wire (only one edge):
+\image html fused_wire.png
 
 \n <b>Arguments:</b> Name + a wire + a list of vertices (can be empty).
 

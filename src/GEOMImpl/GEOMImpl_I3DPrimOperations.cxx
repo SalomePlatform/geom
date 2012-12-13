@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -49,6 +48,7 @@
 #include <GEOMImpl_TorusDriver.hxx>
 #include <GEOMImpl_PrismDriver.hxx>
 #include <GEOMImpl_PipeDriver.hxx>
+#include <GEOMImpl_PipePathDriver.hxx>
 #include <GEOMImpl_RevolutionDriver.hxx>
 #include <GEOMImpl_ShapeDriver.hxx>
 #include <GEOMImpl_FillingDriver.hxx>
@@ -69,6 +69,7 @@
 #include <GEOMImpl_IPipeDiffSect.hxx>
 #include <GEOMImpl_IPipeShellSect.hxx>
 #include <GEOMImpl_IPipeBiNormal.hxx>
+#include <GEOMImpl_IPipePath.hxx>
 
 #include <Precision.hxx>
 
@@ -2176,7 +2177,6 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
 
 }
 
-
 //=============================================================================
 /*!
  *  MakePipeBiNormalAlongVector
@@ -2235,4 +2235,174 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeBiNormalAlongVector (Han
 
   SetErrorCode(OK);
   return aPipe;
+}
+
+//=============================================================================
+/*!
+ *  RestorePath
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::RestorePath (Handle(GEOM_Object) theShape,
+                                                             Handle(GEOM_Object) theBase1,
+                                                             Handle(GEOM_Object) theBase2)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theBase1.IsNull() || theBase2.IsNull()) return NULL;
+
+  // Add a new Path object
+  Handle(GEOM_Object) aPath = GetEngine()->AddObject(GetDocID(), GEOM_PIPE_PATH);
+
+  // Add a new Path function
+  Handle(GEOM_Function) aFunction =
+    aPath->AddFunction(GEOMImpl_PipePathDriver::GetID(), PIPE_PATH_TWO_BASES);
+  if (aFunction.IsNull()) return NULL;
+
+  // Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PipePathDriver::GetID()) return NULL;
+
+  GEOMImpl_IPipePath aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  Handle(GEOM_Function) aRefBase1 = theBase1->GetLastFunction();
+  Handle(GEOM_Function) aRefBase2 = theBase2->GetLastFunction();
+
+  if (aRefShape.IsNull() || aRefBase1.IsNull() || aRefBase2.IsNull()) return NULL;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetBase1(aRefBase1);
+  aCI.SetBase2(aRefBase2);
+
+  // Compute the Path value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("PipePath driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode("RestorePath: inappropriate arguments given");
+    return NULL;
+  }
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction) << aPath << " = geompy.RestorePath("
+    << theShape << ", " << theBase1 << ", " << theBase2 << ")";
+
+  SetErrorCode(OK);
+  return aPath;
+}
+
+//=============================================================================
+/*!
+ *  RestorePath
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::RestorePath
+                         (Handle(GEOM_Object) theShape,
+                          const Handle(TColStd_HSequenceOfTransient)& theBase1,
+                          const Handle(TColStd_HSequenceOfTransient)& theBase2)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theBase1.IsNull() || theBase2.IsNull()) return NULL;
+
+  Standard_Integer nbBases1 = theBase1->Length();
+  Standard_Integer nbBases2 = theBase2->Length();
+
+  if (!nbBases1 || !nbBases2)
+    return NULL;
+
+  // Add a new Path object
+  Handle(GEOM_Object) aPath = GetEngine()->AddObject(GetDocID(), GEOM_PIPE_PATH);
+
+  // Add a new Path function
+  Handle(GEOM_Function) aFunction =
+    aPath->AddFunction(GEOMImpl_PipePathDriver::GetID(), PIPE_PATH_TWO_SEQS);
+  if (aFunction.IsNull()) return NULL;
+
+  // Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PipePathDriver::GetID()) return NULL;
+
+  GEOMImpl_IPipePath aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  Handle(TColStd_HSequenceOfTransient) aSeqBases1 = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aSeqBases2 = new TColStd_HSequenceOfTransient;
+
+  Standard_Integer i;
+  for (i = 1; i <= nbBases1; i++) {
+    Handle(Standard_Transient) anItem = theBase1->Value(i);
+    if (!anItem.IsNull()) {
+      Handle(GEOM_Object) aBase = Handle(GEOM_Object)::DownCast(anItem);
+      if (!aBase.IsNull()) {
+        Handle(GEOM_Function) aRefBase = aBase->GetLastFunction();
+        if (!aRefBase.IsNull())
+          aSeqBases1->Append(aRefBase);
+      }
+    }
+  }
+  for (i = 1; i <= nbBases2; i++) {
+    Handle(Standard_Transient) anItem = theBase2->Value(i);
+    if (!anItem.IsNull()) {
+      Handle(GEOM_Object) aBase = Handle(GEOM_Object)::DownCast(anItem);
+      if (!aBase.IsNull()) {
+        Handle(GEOM_Function) aRefBase = aBase->GetLastFunction();
+        if (!aRefBase.IsNull())
+          aSeqBases2->Append(aRefBase);
+      }
+    }
+  }
+  if (!aSeqBases1->Length() || !aSeqBases2->Length()) return NULL;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetBaseSeq1(aSeqBases1);
+  aCI.SetBaseSeq2(aSeqBases2);
+
+  // Compute the Path value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("PipePath driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode("RestorePath: inappropriate arguments given");
+    return NULL;
+  }
+
+  // Make a Python command
+  GEOM::TPythonDump pyDump (aFunction);
+  pyDump << aPath << " = geompy.RestorePathEdges(" << theShape << ", [";
+  for (i = 1; i <= nbBases1; i++) {
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(theBase1->Value(i));
+    if (!anObj.IsNull()) {
+      pyDump << anObj;
+      if (i < nbBases1)
+        pyDump << ", ";
+    }
+  }
+  pyDump<< "], [";
+  for (i = 1; i <= nbBases2; i++) {
+    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(theBase2->Value(i));
+    if (!anObj.IsNull()) {
+      pyDump << anObj;
+      if (i < nbBases2)
+        pyDump << ", ";
+    }
+  }
+  pyDump << "])";
+
+  SetErrorCode(OK);
+  return aPath;
 }

@@ -2,15 +2,15 @@
 
 \page create_divideddisk_page DividedDisk
 
-The <b>Divided disk</b> object is a disk divided into \b blocks. It means that it's a shape <b>prepared for hexaedral meshing</b>. Two division patterns are available :
+The <b>Divided disk</b> object is a disk divided into \b blocks for easy hexahedral meshing. Two division patterns are available :
 
 <ul>
-<li> A square pattern which is frequently used </li>
-<li> An hexagonal pattern which ensures a better mesh quality and especially less acute or obtuse angles </li>
+<li> A square pattern, which is frequently used; </li>
+<li> A hexagonal pattern, which ensures a better mesh quality and especially less acute or obtuse angles. </li>
 </ul>
 
 
-\n Moreover this shape can be used as a basis in an \ref create_extrusion_alongpath_page "Extrusion along a path" operation in order to obtain any <b>tube shape</b> prepared for hexaedral meshing 
+\n Moreover, this shape can be used as a basis in an \ref create_extrusion_alongpath_page "Extrusion along a path" operation in order to obtain any <b>tube shape</b> prepared for hexahedral meshing 
 (see example below). (Another alternative is to create a 2D mesh on the divided disk and create a 3D mesh by extrusion in the SMESH module.)
 
 
@@ -21,13 +21,13 @@ Example:
 To create a <b> Divided Disk </b> in the <b>Main Menu</b> select <b>New Entity - >
 Advanced - > DividedDisk </b>
 
-\n Then there are 2 ways to create a <b> Divided Disk</b> in 3D space. 
+\n There are 2 ways to create a <b> Divided Disk</b> in 3D space. 
 \n For both operations : 
 Specify the parameters of the DividedDisk object creation in the opened dialog
 box and press "Apply" or "Apply & Close" button.
 The result of each operation will be a GEOM_Object.
 
-\n First way : by radius and orientation (plane "OXY", "OYZ" or "OZX"). The resulting disk is located at the origin of coordinates
+\n At first it is possible to define a disk by its radius and orientation (plane "OXY", "OYZ" or "OZX"). The resulting disk is located at the origin of coordinates
 
 <b>TUI Command:</b> <em>geompy.MakeDividedDisk(Radius, Orientation, Pattern)</em>
 
@@ -38,7 +38,7 @@ The result of each operation will be a GEOM_Object.
 
 \image html divided_disk_dlg.png
 
-\n Second way : by giving its center, normal and radius.
+\n At second the disk can be defined by its center, normal and radius.
 
 <b>TUI Command:</b> <em>geompy.MakeDividedDiskPntVecR(Center, Vector,
 Radius, Pattern)</em>

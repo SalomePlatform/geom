@@ -5,27 +5,24 @@
 3D Sketcher allows creating a closed or unclosed 3D wire, made of
 consequent straight segments.
 
+<b>Example:</b>
+
+\image html 3dsketch4.png
+
 To create a 3D Sketch, select in the main menu <em>New Entity -> Basic -> 3D Sketch</em>.
 
-\image html 3dsketch2.png
+\image html 3dsketch_dlg.png
 
-The first sketcher point can be defined by \b Absolute coordinates X, Y and Z.
+The first point of a sketch can be defined by \b Absolute coordinates X, Y and Z.
 When the first point is defined, it is possible to add straight segments.
-Each segment will start at the end point of previous segment or at the
-sketcher first point, if there are no validated segments.
-
-Segment can be defined by:
- - \b Absolute coordinates X, Y and Z of its second end,
- - \b Relative coordinates DX, DY and DZ of its second end with
-   respect to the previous applied point,
- - \b Direction and \b Length of the segment. Direction is set by two
-   \b Angles in selected coordinate system.
+Each segment will start at the end point of the previous segment or at the
+first point of the sketch, if there are no validated segments.
 
 The way of segment construction can be selected by the <b>Coordinates Type</b>
 radio buttons.
 
-To validate the segment and to proceed with the definition of the next
-segment, click <b>Apply</b> button. \b Undo and \b Redo buttons,
+To validate a segment and to proceed with the definition of the next
+one, click <b>Apply</b> button. \b Undo and \b Redo buttons,
 respectively, remove or restore the last segment in the wire.
 
 \n <b>"Sketch Validation"</b> button applies the wire, built by the
@@ -33,9 +30,37 @@ user, "as is".
 \n <b>"Sketch Closure"</b> closes the Sketch by a straight line from
 the start to the end point and applies it. 
 
-<b>Example:</b>
+A segment can be defined by:
+- <b>Cartesian coordinates</b> of its second end, which can be either:
+ - \b Absolute coordinates X, Y and Z, or
+ - \b Relative coordinates DX, DY and DZ with
+   respect to the previous applied point,
+   
+- <b>Angular coordinates</b> of its second end specified by:
+<ul>
+ <li> the \b Length of the segment and an \b Angle in the chosen plane (OXY for example) in \b Relative mode.
+   The angle is then relative to a local coordinate system with the last point of the sketch as origin. </li>
+   
+   \image html 3dsketch_angle_rel.png
+   
+ <li> the \b Radius (i.e. the distance from the origin) and an \b Angle in the chosen plane in \b Absolute mode </li>
+   
+   \image html 3dsketch_angle_abs.png
 
-\image html 3dsketch1.png
+ In both angular modes you can additionally specify the following:
+ 
+ <li> the second \b Angle (latitude) </li>
+ 
+ \image html 3dsketch_2angles_rel.png
+   
+ or
+   
+ <li> the \b Height </li>
+ 
+ \image html 3dsketch_angle_height_rel.png
+   
+
+</ul>
 
 <b>TUI Command:</b> <em>geompy.Make3DSketcher( [ PointsList ] )</em>
 This algorithm creates a wire from the list of real values, which

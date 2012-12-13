@@ -2867,6 +2867,76 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePipeBiNormalAlongVector", self.PrimOp)
             return anObj
 
+        ## Build a middle path of a pipe-like shape.
+        #  The path shape can be a wire or an edge.
+        #  @param theShape It can be closed or unclosed pipe-like shell
+        #                  or a pipe-like solid.
+        #  @param theBase1, theBase2 Two bases of the supposed pipe. This
+        #                            should be wires or faces of theShape.
+        #  @note It is not assumed that exact or approximate copy of theShape
+        #        can be obtained by applying existing Pipe operation on the
+        #        resulting "Path" wire taking theBase1 as the base - it is not
+        #        always possible; though in some particular cases it might work
+        #        it is not guaranteed. Thus, RestorePath function should not be
+        #        considered as an exact reverse operation of the Pipe.
+        #  @return New GEOM.GEOM_Object, containing an edge or wire that represent
+        #                                source pipe's "path".
+        #
+        #  @ref tui_creation_pipe_path "Example"
+        def RestorePath (self, theShape, theBase1, theBase2):
+            """
+            Build a middle path of a pipe-like shape.
+            The path shape can be a wire or an edge.
+
+            Parameters:
+                theShape It can be closed or unclosed pipe-like shell
+                         or a pipe-like solid.
+                theBase1, theBase2 Two bases of the supposed pipe. This
+                                   should be wires or faces of theShape.
+
+            Returns:
+                New GEOM_Object, containing an edge or wire that represent
+                                 source pipe's path.
+            """
+            anObj = self.PrimOp.RestorePath(theShape, theBase1, theBase2)
+            RaiseIfFailed("RestorePath", self.PrimOp)
+            return anObj
+
+        ## Build a middle path of a pipe-like shape.
+        #  The path shape can be a wire or an edge.
+        #  @param theShape It can be closed or unclosed pipe-like shell
+        #                  or a pipe-like solid.
+        #  @param listEdges1, listEdges2 Two bases of the supposed pipe. This
+        #                                should be lists of edges of theShape.
+        #  @note It is not assumed that exact or approximate copy of theShape
+        #        can be obtained by applying existing Pipe operation on the
+        #        resulting "Path" wire taking theBase1 as the base - it is not
+        #        always possible; though in some particular cases it might work
+        #        it is not guaranteed. Thus, RestorePath function should not be
+        #        considered as an exact reverse operation of the Pipe.
+        #  @return New GEOM.GEOM_Object, containing an edge or wire that represent
+        #                                source pipe's "path".
+        #
+        #  @ref tui_creation_pipe_path "Example"
+        def RestorePathEdges (self, theShape, listEdges1, listEdges2):
+            """
+            Build a middle path of a pipe-like shape.
+            The path shape can be a wire or an edge.
+
+            Parameters:
+                theShape It can be closed or unclosed pipe-like shell
+                         or a pipe-like solid.
+                listEdges1, listEdges2 Two bases of the supposed pipe. This
+                                       should be lists of edges of theShape.
+
+            Returns:
+                New GEOM_Object, containing an edge or wire that represent
+                                 source pipe's path.
+            """
+            anObj = self.PrimOp.RestorePathEdges(theShape, listEdges1, listEdges2)
+            RaiseIfFailed("RestorePath", self.PrimOp)
+            return anObj
+
         # end of l3_complex
         ## @}
 
@@ -7251,12 +7321,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theFileName The file, containing the shape.
         #  @param theFormatName Specify format for the file reading.
         #         Available formats can be obtained with InsertOp.ImportTranslators() method.
-        #         If format 'IGES_SCALE' is used instead 'IGES' length unit will be
-        #         set to 'meter' and result model will be scaled.
+        #         If format 'IGES_SCALE' is used instead of 'IGES' or
+        #            format 'STEP_SCALE' is used instead of 'STEP',
+        #            length unit will be set to 'meter' and result model will be scaled.
         #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportFile(self,theFileName, theFormatName):
+        def ImportFile(self, theFileName, theFormatName):
             """
             Import a shape from the BREP or IGES or STEP file
             (depends on given format) with given name.
@@ -7264,9 +7335,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Parameters: 
                 theFileName The file, containing the shape.
                 theFormatName Specify format for the file reading.
-                              Available formats can be obtained with geompy.InsertOp.ImportTranslators() method.
-                              If format 'IGES_SCALE' is used instead 'IGES' length unit will be
-                              set to 'meter' and result model will be scaled.
+                    Available formats can be obtained with geompy.InsertOp.ImportTranslators() method.
+                    If format 'IGES_SCALE' is used instead of 'IGES' or
+                       format 'STEP_SCALE' is used instead of 'STEP',
+                       length unit will be set to 'meter' and result model will be scaled.
 
             Returns:
                 New GEOM.GEOM_Object, containing the imported shape.
@@ -7277,7 +7349,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Deprecated analog of ImportFile()
-        def Import(self,theFileName, theFormatName):
+        def Import(self, theFileName, theFormatName):
             """
             Deprecated analog of geompy.ImportFile
             """
@@ -7286,59 +7358,117 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("Import", self.InsertOp)
             return anObj
 
-        ## Shortcut to ImportFile() for BREP format
+        ## Shortcut to ImportFile() for BREP format.
+        #  Import a shape from the BREP file with given name.
+        #  @param theFileName The file, containing the shape.
+        #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportBREP(self,theFileName):
+        def ImportBREP(self, theFileName):
             """
             geompy.ImportFile(...) function for BREP format
+            Import a shape from the BREP file with given name.
+
+            Parameters: 
+                theFileName The file, containing the shape.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
             return self.ImportFile(theFileName, "BREP")
 
         ## Shortcut to ImportFile() for IGES format
+        #  Import a shape from the IGES file with given name.
+        #  @param theFileName The file, containing the shape.
+        #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
+        #                     and result model will be scaled, if its units are not meters.
+        #                     If False (default), file length units will be taken into account.
+        #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportIGES(self,theFileName):
+        def ImportIGES(self, theFileName, ignoreUnits = False):
             """
             geompy.ImportFile(...) function for IGES format
+
+            Parameters:
+                theFileName The file, containing the shape.
+                ignoreUnits If True, file length units will be ignored (set to 'meter')
+                            and result model will be scaled, if its units are not meters.
+                            If False (default), file length units will be taken into account.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
+            if ignoreUnits:
+                return self.ImportFile(theFileName, "IGES_SCALE")
             return self.ImportFile(theFileName, "IGES")
 
         ## Return length unit from given IGES file
+        #  @param theFileName The file, containing the shape.
+        #  @return String, containing the units name.
         #
         #  @ref swig_Import_Export "Example"
-        def GetIGESUnit(self,theFileName):
+        def GetIGESUnit(self, theFileName):
             """
-            Return length unit from given IGES file
+            Return length units from given IGES file
+
+            Parameters:
+                theFileName The file, containing the shape.
+
+            Returns:
+                String, containing the units name.
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.InsertOp.ImportFile(theFileName, "IGES_UNIT")
-            #RaiseIfFailed("Import", self.InsertOp)
-            # recieve name using returned vertex
-            UnitName = "M"
-            if anObj.GetShapeType() == GEOM.VERTEX:
-                vertices = [anObj]
-            else:
-                vertices = self.SubShapeAll(anObj,ShapeType["VERTEX"])
-            if len(vertices)>0:
-                p = self.PointCoordinates(vertices[0])
-                if abs(p[0]-0.01) < 1.e-6:
-                    UnitName = "CM"
-                elif abs(p[0]-0.001) < 1.e-6:
-                    UnitName = "MM"
-            return UnitName
+            aUnitName = self.InsertOp.ReadValue(theFileName, "IGES", "LEN_UNITS")
+            return aUnitName
 
         ## Shortcut to ImportFile() for STEP format
+        #  Import a shape from the STEP file with given name.
+        #  @param theFileName The file, containing the shape.
+        #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
+        #                     and result model will be scaled, if its units are not meters.
+        #                     If False (default), file length units will be taken into account.
+        #  @return New GEOM.GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def ImportSTEP(self,theFileName):
+        def ImportSTEP(self, theFileName, ignoreUnits = False):
             """
             geompy.ImportFile(...) function for STEP format
+
+            Parameters:
+                theFileName The file, containing the shape.
+                ignoreUnits If True, file length units will be ignored (set to 'meter')
+                            and result model will be scaled, if its units are not meters.
+                            If False (default), file length units will be taken into account.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the imported shape.
             """
             # Example: see GEOM_TestOthers.py
+            if ignoreUnits:
+                return self.ImportFile(theFileName, "STEP_SCALE")
             return self.ImportFile(theFileName, "STEP")
+
+        ## Return length unit from given IGES or STEP file
+        #  @param theFileName The file, containing the shape.
+        #  @return String, containing the units name.
+        #
+        #  @ref swig_Import_Export "Example"
+        def GetSTEPUnit(self, theFileName):
+            """
+            Return length units from given STEP file
+
+            Parameters:
+                theFileName The file, containing the shape.
+
+            Returns:
+                String, containing the units name.
+            """
+            # Example: see GEOM_TestOthers.py
+            aUnitName = self.InsertOp.ReadValue(theFileName, "STEP", "LEN_UNITS")
+            return aUnitName
 
         ## Read a shape from the binary stream, containing its bounding representation (BRep).
         #  @note This method will not be dumped to the python script by DumpStudy functionality.
@@ -7372,7 +7502,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #         Available formats can be obtained with InsertOp.ImportTranslators() method.
         #
         #  @ref swig_Import_Export "Example"
-        def Export(self,theObject, theFileName, theFormatName):
+        def Export(self, theObject, theFileName, theFormatName):
             """
             Export the given shape into a file with given name.
 
@@ -9003,13 +9133,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("LoadTexture", self.InsertOp)
             return ID
 
-        ## Get entry of the object
+        ## Get internal name of the object based on its study entry
+        #  @note This method does not provide an unique identifier of the geometry object.
+        #  @note This is internal function of GEOM component, though it can be used outside it for 
+        #  appropriate reason (e.g. for identification of geometry object).
         #  @param obj geometry object
         #  @return unique object identifier
         #  @ingroup l1_geompy_auxiliary
         def getObjectID(self, obj):
             """
-            Get entry of the object
+            Get internal name of the object based on its study entry.
+            Note: this method does not provide an unique identifier of the geometry object.
+            It is an internal function of GEOM component, though it can be used outside GEOM for 
+            appropriate reason (e.g. for identification of geometry object).
 
             Parameters:
                 obj geometry object

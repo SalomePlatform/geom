@@ -2,24 +2,11 @@
 
 \page fuse_operation_page Fuse
 
-For detail description of the Boolean operations please refer to
-<a href="SALOME_BOA_PA.pdf">this document</a>. 
-It provides a general review of the Partition and Boolean
-operations algorithms, describes the usage methodology and highlighs
-major limitations of these operations.
-
 To produce a \b Fuse operation in the <b>Main Menu</b> select
-<b>Operations - > Boolean - > Fuse</b>
+<b>Operations - > Boolean - > Fuse</b>. 
 
-This operation creates a shape from two shapes.
-
+This operation creates one shape from two shapes.
 The \b Result will be any \b GEOM_Object.
-<b>TUI Command:</b> <em>geompy.MakeFuse(s1, s2)</em>
-<b>Arguments:</b> Name + 2 shapes.
-<b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
-
-\image html bool1.png
 
 <b>Example:</b>
 
@@ -27,7 +14,24 @@ The \b Result will be any \b GEOM_Object.
 
 \image html fusesn2.png "The resulting fuse"
 
+<b>TUI Command:</b> <em>geompy.MakeFuse(s1, s2)</em>\n
+<b>Arguments:</b> Name + 2 shapes.\n
+<b>Advanced option:</b>
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+
+\image html bool1.png
+
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_fuse "Boolean Operations".
+
+<b> More details </b>
+<ul>
+  <li>For a detailed description of the Boolean operations please refer to
+<a href="SALOME_BOA_PA.pdf">this document</a>. 
+It provides a general review of the Partition and Boolean
+operations algorithms, describes the usage methodology and highlights
+major limitations of these operations.</li>
+  <li>Perhaps you also ask yourself : \ref partition_explanation "What is the difference between partition, compounds and fuse operation ?"</li>
+</ul>
 
 */

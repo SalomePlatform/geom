@@ -4,15 +4,15 @@
 
 \tableofcontents
 
-It is frequently asked about the difference between the above mentioned operations. It's indeed simple. Lets take the example of a cylinder and a box that you want to join together.
+It is frequently asked about the difference between the above mentioned operations. It is indeed simple. Let us take the example of a cylinder and a box that you want to join together.
 
 \section sec1 Fuse
 
-The \b fuse operation will make a <b>single solid</b> from the two given solids. It allows you to build complex models by putting simple shapes together.
+The \b fuse operation will make a <b>single solid</b> from two given solids. It allows you to build complex models by putting simple shapes together.
 \image html fuse.png
 
 \section sec2 Partition
-The \b partition operation will also connect the two solids but it will <b>keep a face at the frontier</b> (in brown on the picture below). The resulting shape will consist in <b>two connected solids</b> that share 
+The \b partition operation will also connect the solids but it will <b>keep a face at the frontier</b> (in brown in the picture below). The resulting shape will consist of <b>two connected solids</b> that share 
 a face at their frontier. It means that this face is present only one time in the resulting shape and is a sub-shape of both the box and the cylinder.
 
 \n This operation allows you to identify different areas in a shape (e.g. different materials) and to ensure a <b>conformal mesh</b> when meshing it later. Indeed the face at the frontier is meshed only once. 
@@ -21,10 +21,10 @@ a face at their frontier. It means that this face is present only one time in th
 
 
 \section sec3 Compound
-When you build a \b compound by using the build -> compound operation you just make <b>an object that contains the two separate solids</b> like in a "bag".
+When you build a \b compound by using the Build -> Compound operation you just make <b>an object that contains two separate solids</b> like in a "bag".
 The two solids remain unconnected. The compound is just a set of shapes, no more.
 
-\n The compound Allows applying operations to a collection of shapes.
+\n The compound allows applying operations to a collection of shapes.
 
 \image html compound2.png
 
@@ -42,7 +42,7 @@ In the frame of this example we can summarize the following differences:
 <li> \b Partition
 <ul>
 <li>\a Result : Two <b>connected solids</b> sharing faces.</li>
-<li>\a Purpose : Useful to ensure a conformal mesh of separated areas of your model (fluid / solid , concrete / steel ...)</li>
+<li>\a Purpose : Useful to ensure a conformal mesh of separate areas of your model (fluid / solid , concrete / steel ...).</li>
 </ul>
 <li> \b Compound
 <ul>

@@ -246,9 +246,22 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   }
 
   //Make a Python command
-  if( theFormatName != "IGES_UNIT" ) {
-    GEOM::TPythonDump(aFunction) << result << " = geompy.ImportFile(\""
-      << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
+  if (theFormatName != "IGES_UNIT") {
+    GEOM::TPythonDump pd (aFunction);
+    if (theFormatName == "BREP")
+      pd << result << " = geompy.ImportBREP(\"" << theFileName.ToCString() << "\")";
+    else if (theFormatName == "IGES")
+      pd << result << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\")";
+    else if (theFormatName == "IGES_SCALE")
+      pd << result << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\", True)";
+    else if (theFormatName == "STEP")
+      pd << result << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\")";
+    else if (theFormatName == "STEP_SCALE")
+      pd << result << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\", True)";
+    else {
+      pd << result << " = geompy.ImportFile(\""
+         << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
+    }
   }
 
   SetErrorCode(OK);
@@ -260,9 +273,9 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
     gp_Pnt P = BRep_Tool::Pnt(V);
     double scale = P.X();
     TCollection_AsciiString aUnitName = "UNIT_M";
-    if( fabs(scale-0.01) < 1.e-6 )
+    if (fabs(scale-0.01) < 1.e-6)
       aUnitName = "UNIT_CM";
-    else if( fabs(scale-0.001) < 1.e-6 )
+    else if (fabs(scale-0.001) < 1.e-6)
       aUnitName = "UNIT_MM";
     //cout<<"IIO: aUnitName = "<<aUnitName.ToCString()<<endl;
     SetErrorCode(aUnitName);

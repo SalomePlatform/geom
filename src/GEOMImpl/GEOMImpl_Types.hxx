@@ -100,6 +100,8 @@
 
 #define GEOM_EXTRUDED_BOSS 47
 
+#define GEOM_PIPE_PATH 48
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -213,6 +215,10 @@
 #define PIPE_SHELL_SECTIONS 3
 #define PIPE_SHELLS_WITHOUT_PATH 4
 #define PIPE_BI_NORMAL_ALONG_VECTOR 5
+
+// RestorePath
+#define PIPE_PATH_TWO_BASES 1
+#define PIPE_PATH_TWO_SEQS  2
 
 #define THRUSECTIONS_RULED 1
 #define THRUSECTIONS_SMOOTHED 2
