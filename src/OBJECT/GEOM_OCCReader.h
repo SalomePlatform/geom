@@ -24,7 +24,6 @@
 //  File   : GEOM_OCCReader.h
 //  Author : Christophe ATTANASIO
 //  Module : GEOM
-//  $Header$
 //
 /*!
   \class GEOM_OCCReader GEOM_OCCReader.h

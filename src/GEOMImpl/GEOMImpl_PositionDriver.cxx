@@ -18,16 +18,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//#include <Standard_Stream.hxx>
-//
 #include <GEOMImpl_PositionDriver.hxx>
+
 #include <GEOMImpl_IPosition.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
 
-#include <GEOMImpl_IMeasureOperations.hxx>
+#include <GEOMUtils.hxx>
 
 // OCCT Includes
 #include <BRepBuilderAPI_Transform.hxx>
@@ -117,10 +116,10 @@ Standard_Integer GEOMImpl_PositionDriver::Execute(TFunction_Logbook& log) const
     gp_Ax3 aStartAx3, aDestAx3;
 
     // End LCS
-    aDestAx3 = GEOMImpl_IMeasureOperations::GetPosition(aShapeEndLCS);
+    aDestAx3 = GEOMUtils::GetPosition(aShapeEndLCS);
 
     // Start LCS
-    aStartAx3 = GEOMImpl_IMeasureOperations::GetPosition(aShapeStartLCS);
+    aStartAx3 = GEOMUtils::GetPosition(aShapeStartLCS);
 
     // Set transformation
     aTrsf.SetDisplacement(aStartAx3, aDestAx3);
@@ -145,7 +144,7 @@ Standard_Integer GEOMImpl_PositionDriver::Execute(TFunction_Logbook& log) const
     gp_Ax3 aStartAx3, aDestAx3;
 
     // End LCS
-    aDestAx3 = GEOMImpl_IMeasureOperations::GetPosition(aShapeEndLCS);
+    aDestAx3 = GEOMUtils::GetPosition(aShapeEndLCS);
 
     // Set transformation
     aTrsf.SetDisplacement(aStartAx3, aDestAx3);

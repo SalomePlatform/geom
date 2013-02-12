@@ -32,7 +32,7 @@
 
 #include <Graphic3d_MaterialAspect.hxx>
 
-class QtxResourceMgr;
+class Material_ResourceMgr;
 class GEOM_VTKPropertyMaterial;
 
 class MATERIAL_SALOME_EXPORT Material_Model
@@ -51,8 +51,8 @@ public:
 
   void                fromProperties( const QString& );
   QString             toProperties();
-  void                fromResources( const QString& = QString(), QtxResourceMgr* = 0 );
-  void                toResources( const QString&, QtxResourceMgr* );
+  void                fromResources( const QString& = QString(), Material_ResourceMgr* = 0 );
+  void                toResources( const QString&, Material_ResourceMgr* );
 
   bool                isPhysical() const;
   void                setPhysical( bool );
@@ -63,32 +63,35 @@ public:
   QColor              color( ReflectionType ) const;
   void                setColor( ReflectionType, const QColor& );
 
-  double              reflection( ReflectionType ) const;
-  void                setReflection( ReflectionType, double );
+  double              reflection( ReflectionType, bool = true ) const;
+  void                setReflection( ReflectionType, double, bool = true );
 
-  double              shininess() const;
-  void                setShininess( double );
+  double              shininess( bool = true) const;
+  void                setShininess( double, bool = true );
 
   double              transparency() const;
   void                setTransparency( double );
 
-  Graphic3d_MaterialAspect  getMaterialOCCAspect();
-  GEOM_VTKPropertyMaterial* getMaterialVTKProperty();
+  Graphic3d_MaterialAspect  getMaterialOCCAspect( bool = true );
+  GEOM_VTKPropertyMaterial* getMaterialVTKProperty( bool = true );
 
 private:
   void                init();
+  void                read( const QString&, Material_ResourceMgr* );
 
 private:
   typedef struct {
     QColor color;
-    double coef;
+    double front_coef;
+    double back_coef;
     bool   enabled;
   } ReflectionData;
 
   typedef QVector<ReflectionData> ReflectionList;
 
   bool                myIsPhysical;
-  double              myShininess;
+  double              myFrontShininess;
+  double              myBackShininess;
   double              myTransparency;
   ReflectionList      myReflection;
 };

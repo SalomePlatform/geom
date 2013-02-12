@@ -18,17 +18,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMImpl_PrismDriver.hxx>
 
 #include <GEOMImpl_IPrism.hxx>
-#include <GEOMImpl_IShapesOperations.hxx>
-#include <GEOMImpl_IMeasureOperations.hxx>
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_PipeDriver.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
+#include <GEOM_Object.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <BRepFeat_MakeDPrism.hxx>
@@ -249,7 +250,7 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
   }
   else
   {
-    TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
+    TopoDS_Shape aRes = GEOMUtils::CompsolidToCompound(aShape);
     aFunction->SetValue(aRes);
   }
   
@@ -275,7 +276,7 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeScaledPrism (const TopoDS_Shape& theShape
   // 1. aCDG = geompy.MakeCDG(theBase)
   gp_Pnt aCDG = theCDG;
   if (!isCDG) {
-    gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(theShapeBase);
+    gp_Ax3 aPos = GEOMUtils::GetPosition(theShapeBase);
     aCDG = aPos.Location();
   }
   TopoDS_Shape aShapeCDG_1 = BRepBuilderAPI_MakeVertex(aCDG).Shape();

@@ -85,6 +85,10 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
                                                  CORBA::Boolean        theIsClosed,
                                                  CORBA::Boolean        theDoReordering);
 
+  GEOM::GEOM_Object_ptr MakeSplineInterpolWithTangents (const GEOM::ListOfGO& thePoints,
+                                                        GEOM::GEOM_Object_ptr theFirstVec,
+                                                        GEOM::GEOM_Object_ptr theLastVec);
+
   GEOM::GEOM_Object_ptr MakeCurveParametric
     (const char* thexExpr, const char* theyExpr, const char* thezExpr,
      double theParamMin, double theParamMax, double theParamStep,

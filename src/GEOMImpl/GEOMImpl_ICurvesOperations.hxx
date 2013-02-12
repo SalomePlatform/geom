@@ -32,11 +32,11 @@ class GEOM_Engine;
 class Handle(GEOM_Object);
 
 class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
-  
+
  public:
 
   enum CurveType { Polyline, Bezier, Interpolation };
-  
+
   Standard_EXPORT GEOMImpl_ICurvesOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_ICurvesOperations();
 
@@ -57,7 +57,7 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeArc (Handle(GEOM_Object) thePnt1,
                                                Handle(GEOM_Object) thePnt2,
                                                Handle(GEOM_Object) thePnt3);
- 
+
   Standard_EXPORT Handle(GEOM_Object) MakeArcCenter (Handle(GEOM_Object) thePnt1,
                                                      Handle(GEOM_Object) thePnt2,
                                                      Handle(GEOM_Object) thePnt3,
@@ -77,9 +77,14 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
                                                                bool theIsClosed = false,
                                                                bool theDoReordering = false);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeSplineInterpolWithTangents
+                                      (std::list<Handle(GEOM_Object)> thePoints,
+                                       Handle(GEOM_Object) theFirstVec,
+                                       Handle(GEOM_Object) theLastVec);
+
   Standard_EXPORT Handle(GEOM_Object) MakeCurveParametric
-    (const char* thexExpr, const char* theyExpr, const char* thezExpr, 
-     double theParamMin, double theParamMax, double theParamStep, 
+    (const char* thexExpr, const char* theyExpr, const char* thezExpr,
+     double theParamMin, double theParamMax, double theParamStep,
      CurveType theCurveType, int theParamNbStep=0, bool theNewMethod=false);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const char* theCommand,

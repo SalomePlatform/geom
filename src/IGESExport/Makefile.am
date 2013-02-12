@@ -21,7 +21,6 @@
 #  Author : Pavel TELKOV
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
-#  $Header$
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 

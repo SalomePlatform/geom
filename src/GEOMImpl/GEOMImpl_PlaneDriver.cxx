@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -27,7 +26,7 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
-#include <GEOMImpl_IMeasureOperations.hxx>
+#include <GEOMUtils.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -142,7 +141,7 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
     //  Standard_TypeMismatch::Raise("Plane creation aborted: non-planar face given as argument");
     //}
     //aShape = BRepBuilderAPI_MakeFace(aGS, -aSize, +aSize, -aSize, +aSize).Shape();
-    gp_Ax3 anAx3 = GEOMImpl_IMeasureOperations::GetPosition(aRefShape);
+    gp_Ax3 anAx3 = GEOMUtils::GetPosition(aRefShape);
     gp_Pln aPln (anAx3);
     aShape = BRepBuilderAPI_MakeFace(aPln, -aSize, +aSize, -aSize, +aSize).Shape();
   }
@@ -223,7 +222,7 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aRefShape = aRef->GetValue();
       if (aRefShape.ShapeType() != TopAbs_FACE)
         return 0;
-      anAx3 = GEOMImpl_IMeasureOperations::GetPosition(aRefShape);
+      anAx3 = GEOMUtils::GetPosition(aRefShape);
     }
 
     if ( anOrientation == 2)

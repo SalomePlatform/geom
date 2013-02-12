@@ -26,6 +26,7 @@
 #include "GEOM_Constants.h"
 #include "GEOM_VTKPropertyMaterial.hxx"
 #include "GEOMBase.h"
+#include "GEOM_Displayer.h"
 
 #include <QtxColorButton.h>
 #include <QtxDoubleSpinBox.h>
@@ -50,6 +51,7 @@
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMap>
 #include <QMenu>
 #include <QPushButton>
@@ -89,13 +91,17 @@ void GEOMToolsGUI_MaterialList::contextMenuEvent( QContextMenuEvent* e )
 /*!
   \brief Constructor
   \param parent parent widget
+  \param showSelWidget if \c true then objects can be selected by user
+  \param modal if \c true dialog box is modal
+  \param f specified control buttons for dialog box (QtxDialog::ButtonFlags)
 */
-GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget* parent )
-  : QtxDialog( parent, true, true, OK | Close | Apply | Help )
+GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget* parent,bool showSelWidget, bool modal,const int f )
+  : QtxDialog( parent, modal, true, f )
 {
+  myShowSelWidget = showSelWidget;
   // Set title
   setWindowTitle( tr( "MATERIAL_PROPERTIES_TLT" ) );
-
+	
   // main layout
   QVBoxLayout* main = new QVBoxLayout( mainFrame() );
   main->setMargin( 0 );
@@ -105,6 +111,11 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   QFrame* fr = new QFrame( mainFrame() );
   fr->setFrameStyle( QFrame::Box | QFrame::Sunken );
   main->addWidget( fr );
+  // selection widget
+  myLineEditCurArg = new QLineEdit(fr);
+  myLineEditCurArg->setReadOnly(true);
+  myPushBtn = new QPushButton(fr);
+  QLabel* PushBtnLab = new QLabel( tr( "GEOM_OBJECTS" ), fr );
 
   // materials list widget
   myMaterials = new GEOMToolsGUI_MaterialList( fr );
@@ -130,41 +141,64 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   // "physical" material type widgets
   myPhysical = new QCheckBox( tr( "PHYSICAL" ), propWidget );
 
+  // Labels for front and back reflection components
+  QLabel* aFrontLabel = new QLabel( tr( "FRONT_FACE" ), propWidget );
+  QLabel* aBackLabel = new QLabel( tr( "BACK_FACE" ), propWidget );
+
   // reflection components widgets
   for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ )
   {
     Reflection refl;
+    
+    refl.enabled = new QCheckBox( propWidget );
 
     refl.label = new QLabel( tr( QString( "REFLECTION_%1" ).arg( i ).toLatin1().data() ), propWidget );
 
     refl.color = new QtxColorButton( propWidget );
     //refl.color->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
 
-    refl.coef = new QtxDoubleSpinBox( propWidget );
-    refl.coef->setPrecision( 4 );
-    refl.coef->setDecimals( 4 ); 
-    refl.coef->setRange( 0., 1. );
-    refl.coef->setSingleStep( 0.05 );
-    refl.coef->setMinimumWidth( 80 );
-
-    refl.enabled = new QCheckBox( tr( "ENABLED" ), propWidget );
+    refl.front_coef = new QtxDoubleSpinBox( propWidget );
+    refl.front_coef->setPrecision( 4 );
+    refl.front_coef->setDecimals( 4 ); 
+    refl.front_coef->setRange( 0., 1. );
+    refl.front_coef->setSingleStep( 0.05 );
+    refl.front_coef->setMinimumWidth( 80 );
+    
+    refl.back_coef = new QtxDoubleSpinBox( propWidget );
+    refl.back_coef->setPrecision( 4 );
+    refl.back_coef->setDecimals( 4 ); 
+    refl.back_coef->setRange( 0., 1. );
+    refl.back_coef->setSingleStep( 0.05 );
+    refl.back_coef->setMinimumWidth( 80 );
 
     myReflection << refl;
   }
 
   // shininess widgets
   QLabel* shininessLab = new QLabel( tr( "SHININESS" ), propWidget );
-  myShininess = new QtxDoubleSpinBox( propWidget );
-  myShininess->setPrecision( 4 );
-  myShininess->setDecimals( 4 ); 
-  myShininess->setRange( 0., 1. );
-  myShininess->setSingleStep( 0.05 );
+  myFrontShininess = new QtxDoubleSpinBox( propWidget );
+  myFrontShininess->setPrecision( 4 );
+  myFrontShininess->setDecimals( 4 ); 
+  myFrontShininess->setRange( 0., 1. );
+  myFrontShininess->setSingleStep( 0.05 );
+
+  myBackShininess = new QtxDoubleSpinBox( propWidget );
+  myBackShininess->setPrecision( 4 );
+  myBackShininess->setDecimals( 4 ); 
+  myBackShininess->setRange( 0., 1. );
+  myBackShininess->setSingleStep( 0.05 );
 
   // separator widgets
   QFrame* line1 = new QFrame( propWidget );
   line1->setFrameStyle( QFrame::HLine | QFrame::Sunken );
   QFrame* line2 = new QFrame( propWidget );
   line2->setFrameStyle( QFrame::HLine | QFrame::Sunken );
+  QFrame* line3 = new QFrame( propWidget );
+  line3->setFrameStyle( QFrame::VLine | QFrame::Sunken );
+  QFrame* line4 = new QFrame( propWidget );
+  line4->setFrameStyle( QFrame::VLine | QFrame::Sunken );
+  QFrame* line5 = new QFrame( propWidget );
+  line5->setFrameStyle( QFrame::HLine | QFrame::Sunken );
 
   // add / remove material buttons
   myAddButton = new QPushButton( tr( "ADD_MATERIAL" ),    propWidget );
@@ -178,21 +212,42 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   btnLayout->addWidget( myDelButton );
 
   // layout all properties widgets together
-  propLayout->addWidget( myColorLab, 0, 0 );
-  propLayout->addWidget( myColor,    0, 1 );
-  propLayout->addWidget( line1, 1, 0, 1, 4 );
-  propLayout->addWidget( myPhysical,     2, 0, 1, 2 );
-  for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ ) {
-    propLayout->addWidget( myReflection[i].label,   i+3, 0 );
-    propLayout->addWidget( myReflection[i].color,   i+3, 1 );
-    propLayout->addWidget( myReflection[i].coef,    i+3, 2 );
-    propLayout->addWidget( myReflection[i].enabled, i+3, 3 );
+  propLayout->addWidget( PushBtnLab,0,0);
+  propLayout->addWidget( myPushBtn,0,1);
+  propLayout->addWidget( myLineEditCurArg, 0, 2, 1, 5 );
+  propLayout->addWidget( line1, 1, 0, 1, 7 );
+  propLayout->addWidget( myColorLab, 2, 1 );
+  propLayout->addWidget( myColor,    2, 2 );
+  propLayout->addWidget( myPhysical, 2, 0 );
+  propLayout->addWidget( line2, 3, 0, 1, 7 );
+  propLayout->addWidget( aFrontLabel, 4, 4);
+  propLayout->addWidget( aBackLabel, 4, 6);
+  
+  propLayout->addWidget( line3, 4, 3, 6, 1 );
+  propLayout->addWidget( line4, 4, 5, 6, 1 );
+
+  if( !myShowSelWidget ) {
+    myColorLab->hide();
+    myColor->hide();
+    line1->hide();
+    myLineEditCurArg->hide();
+    myPushBtn->hide();
+    PushBtnLab->hide();
   }
-  propLayout->addWidget( shininessLab,   7, 0 );
-  propLayout->addWidget( myShininess,    7, 2 );
-  propLayout->addWidget( line2, 8, 0, 1, 4 );
-  propLayout->setRowStretch( 9, 5 );
-  propLayout->addLayout( btnLayout, 10, 0, 1, 4 );
+  for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ ) {
+    propLayout->addWidget( myReflection[i].enabled, i+5, 0 );
+    propLayout->addWidget( myReflection[i].label,   i+5, 1 );
+    propLayout->addWidget( myReflection[i].color,   i+5, 2 );
+    propLayout->addWidget( myReflection[i].front_coef,    i+5, 4 );
+    propLayout->addWidget( myReflection[i].back_coef,    i+5, 6 );
+  }
+
+  propLayout->addWidget( shininessLab,   9, 0 );
+  propLayout->addWidget( myFrontShininess,    9, 4 );
+  propLayout->addWidget( myBackShininess,    9, 6 );
+  propLayout->addWidget( line5, 10, 0, 1, 7 );
+  propLayout->setRowStretch( 11, 5 );
+  propLayout->addLayout( btnLayout, 12, 0, 1, 7 );
 
   // initialize dialog box
   setButtonPosition( Right, Close );
@@ -227,6 +282,9 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   // install event filter to the materials list to process key press events
   myMaterials->installEventFilter( this );
 
+  //Set image
+  myPushBtn->setIcon(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
+
   // connect signals
   // note: all widgets, that change material properties, are connected to the common signal
   // changed(), instead of connecting directly to the slot - this allows easy temporary blocking 
@@ -234,10 +292,12 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   connect( myPhysical, SIGNAL( toggled( bool ) ), this, SIGNAL( changed() ) ); 
   for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ ) {
     connect( myReflection[i].color,   SIGNAL( changed( QColor ) ),   this, SIGNAL( changed() ) );
-    connect( myReflection[i].coef,    SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
+    connect( myReflection[i].front_coef,    SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
+    connect( myReflection[i].back_coef,    SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
     connect( myReflection[i].enabled, SIGNAL( toggled( bool ) ),     this, SIGNAL( changed() ) );
   }
-  connect( myShininess, SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
+  connect( myFrontShininess, SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
+  connect( myBackShininess, SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
   connect( myMaterials, SIGNAL( itemSelectionChanged() ),
            this,        SLOT( onMaterialChanged() ) );
   connect( myMaterials, SIGNAL( itemChanged( QListWidgetItem* ) ),
@@ -249,6 +309,9 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   connect( this, SIGNAL( dlgApply() ), this, SLOT( onApply() ) );
   connect( this, SIGNAL( dlgHelp() ),  this, SLOT( onHelp() ) );
   connect( this, SIGNAL( changed() ),  this, SLOT( onChanged() ) );
+  connect(myPushBtn, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
+           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   // initialize current material model according to the selection
   myColor->setColor( SUIT_Session::session()->resourceMgr()->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) ) );
@@ -266,17 +329,20 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
         if ( window ) {
           int mgrId = window->getViewManager()->getGlobalId();
           PropMap propMap = study->getObjectPropMap( mgrId, io->getEntry() );
-          QString matProp = propMap.value(MATERIAL_PROP).toString();	    
+          QString matProp = propMap.value(GEOM::propertyName( GEOM::Material )).toString();	    
           if ( !matProp.isEmpty() )
             myCurrentModel.fromProperties( matProp );
-          QColor c = propMap.value(COLOR_PROP).value<QColor>();
+          QColor c = propMap.value(GEOM::propertyName( GEOM::Color )).value<QColor>();
           if ( c.isValid() )
             myColor->setColor( c );
         }
       }
     }
   }
-  
+  myLineEditCurArg->setText(""); 
+  myPushBtn->click();
+  SelectionIntoArgument();
+
   // finally activate current material properties
   myMaterials->setCurrentRow( 0 );
 }
@@ -324,12 +390,14 @@ void GEOMToolsGUI_MaterialPropertiesDlg::fromModel( const Material_Model& model 
   for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ )
   {
     myReflection[i].color->setColor( model.color( (Material_Model::ReflectionType)i ) );
-    myReflection[i].coef->setValue( model.reflection( (Material_Model::ReflectionType)i ) );
+    myReflection[i].front_coef->setValue( model.reflection( (Material_Model::ReflectionType)i, true ) );
+    myReflection[i].back_coef->setValue( model.reflection( (Material_Model::ReflectionType)i, false ) );
     myReflection[i].enabled->setChecked( model.hasReflection( (Material_Model::ReflectionType)i ) );
   }
   
   // shininess
-  myShininess->setValue( model.shininess() );
+  myFrontShininess->setValue( model.shininess( true ) );
+  myBackShininess->setValue( model.shininess( false ) );
 
   // type (physical or no)
   myPhysical->setChecked( model.isPhysical() );
@@ -345,13 +413,15 @@ void GEOMToolsGUI_MaterialPropertiesDlg::toModel( Material_Model& model ) const
   model.setPhysical( myPhysical->isChecked() );
 
   // shininess
-  model.setShininess( myShininess->value() );
+  model.setShininess( myFrontShininess->value(), true );
+  model.setShininess( myBackShininess->value(), false );
 
   // reflection components
   for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ )
   {
     model.setColor     ( (Material_Model::ReflectionType)i, myReflection[i].color->color() );
-    model.setReflection( (Material_Model::ReflectionType)i, myReflection[i].coef->value() );
+    model.setReflection( (Material_Model::ReflectionType)i, myReflection[i].front_coef->value(), true );
+    model.setReflection( (Material_Model::ReflectionType)i, myReflection[i].back_coef->value(), false );
     model.setReflection( (Material_Model::ReflectionType)i, myReflection[i].enabled->isChecked() );
   }
 }
@@ -391,7 +461,7 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onApply()
 {  
   // save user materials
   myResourceMgr.save();
-
+  if( !myShowSelWidget ) return;
   // store selected material properties in the current model
   toModel( myCurrentModel );
 
@@ -421,19 +491,20 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onApply()
     SVTK_View* aView = vtkVW->getView();
 
     // get VTK material properties from the current model
-    GEOM_VTKPropertyMaterial* vtkProp = myCurrentModel.getMaterialVTKProperty();
+    GEOM_VTKPropertyMaterial* vtkPropF = myCurrentModel.getMaterialVTKProperty();
+    GEOM_VTKPropertyMaterial* vtkPropB = myCurrentModel.getMaterialVTKProperty( false );
 
     SUIT_OverrideCursor wc();
 
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       // set material property to the presentation
-      aView->SetMaterial( It.Value(), vtkProp );
+      aView->SetMaterial( It.Value(), vtkPropF, vtkPropB );
       // store chosen material in the property map
-      study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
+      study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Material ), prop );
       // set correct color for the non-physical material
       if ( !myCurrentModel.isPhysical() ) {
         aView->SetColor( It.Value(), myColor->color() );
-	study->setObjectProperty( mgrId, It.Value()->getEntry(), COLOR_PROP, myColor->color() );
+        study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Color ), myColor->color() );
       }
     }
     aView->Repaint();
@@ -448,25 +519,32 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onApply()
     Handle(AIS_InteractiveContext) ic = vm->getAISContext();
 
     // get OCC material aspect from the current model
-    Graphic3d_MaterialAspect occAspect = myCurrentModel.getMaterialOCCAspect();
+    Graphic3d_MaterialAspect front_occAspect = myCurrentModel.getMaterialOCCAspect( true );
+    Graphic3d_MaterialAspect back_occAspect = myCurrentModel.getMaterialOCCAspect( false );
 
     SUIT_OverrideCursor wc();
 
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       Handle(GEOM_AISShape) aisShape = GEOMBase::ConvertIOinGEOMAISShape( It.Value(), true );
       if ( !aisShape.IsNull() ) {
-	// set material property to the presentation
-	aisShape->SetMaterial( occAspect );
-	// store chosen material in the property map
-	study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
-	// set correct color for the non-physical material
-	if ( !myCurrentModel.isPhysical() ) {
-	  aisShape->SetShadingColor( SalomeApp_Tools::color( myColor->color() ) );
-	  study->setObjectProperty( mgrId, It.Value()->getEntry(), COLOR_PROP, myColor->color() );
-	  ic->RecomputePrsOnly( aisShape, Standard_False );
-	}
-	//if ( aisShape->DisplayMode() != AIS_Shaded/*aisShape->DisplayMode() == GEOM_AISShape::ShadingWithEdges*/)
-	ic->Redisplay( aisShape, Standard_False );
+        // Set front material for the selected shape
+        aisShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
+        aisShape->SetMaterial(front_occAspect);
+        // Set back material for the selected shape
+        aisShape->SetCurrentFacingModel(Aspect_TOFM_BACK_SIDE);
+        aisShape->SetMaterial(back_occAspect);
+        // Return to the default facing mode
+        aisShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
+        // store chosen material in the property map
+        study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Material ), prop );
+        // set correct color for the non-physical material
+        if ( !myCurrentModel.isPhysical() ) {
+          aisShape->SetShadingColor( SalomeApp_Tools::color( myColor->color() ) );
+          study->setObjectProperty( mgrId, It.Value()->getEntry(), GEOM::propertyName( GEOM::Color ), myColor->color() );
+          ic->RecomputePrsOnly( aisShape, Standard_False );
+        }
+        //if ( aisShape->DisplayMode() != AIS_Shaded/*aisShape->DisplayMode() == GEOM_AISShape::ShadingWithEdges*/)
+        ic->Redisplay( aisShape, Standard_False );
       }
     }
     ic->UpdateCurrentViewer();
@@ -669,4 +747,38 @@ void GEOMToolsGUI_MaterialPropertiesDlg::updateState()
   myColorLab->setEnabled( !myPhysical->isChecked() );
   myColor->setEnabled( !myPhysical->isChecked() );
   myReflection[0].color->setEnabled( myPhysical->isChecked() );
+}
+
+
+void GEOMToolsGUI_MaterialPropertiesDlg::SetEditCurrentArgument()
+{
+  QPushButton* send = (QPushButton*)sender();
+
+  if (send == myPushBtn) {
+  // enable line edit
+  myLineEditCurArg->setEnabled(true);
+  myLineEditCurArg->setFocus();
+	SelectionIntoArgument();
+  // after setFocus(), because it will be setDown(false) when loses focus
+  send->setDown(true);
+  }
+}
+
+/*!
+  \brief  Called when selection as changed or other case
+*/
+void GEOMToolsGUI_MaterialPropertiesDlg::SelectionIntoArgument()
+{
+  myLineEditCurArg->setText( "" );
+  QString aString = "";
+
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if ( study ) {
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+		int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
+	}
+  myLineEditCurArg->setText( aString );
 }

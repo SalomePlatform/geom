@@ -103,9 +103,18 @@ To \b Edit an existing group in the main menu select <b>New entity >
 Group > Edit</b>. This menu is designed in the same way as the
 <b>Create a group</b> menu.
 
-\n <b>Dialog Box:</b> 
+\n When a GEOM group is edited, the main shape appears in the 3D viewer in the same mode 
+as it is displayed in the viewer. If the main shape was not displayed in the viewer, then 
+the default mode defined in the preferences will be used. 
+
+\n <b>Working with Dialog Box:</b> 
 
 \image html editgroup.png
+
+\n The subshapes already in the group are displayed in the 3D viewer with a specific color, 
+defined via preferences. The IDs of the subshapes already in the group also are displayed in 
+a specific color in the dialog box. When user adds some subshapes, the new IDs are 
+displayed in the other color.
 
 \n The \b Result of the operation will be a \b GEOM_Object.
 

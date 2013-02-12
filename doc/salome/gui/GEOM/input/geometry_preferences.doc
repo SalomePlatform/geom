@@ -36,8 +36,10 @@ of values set in spin boxes.</li>
 <li><b>Deflection coefficient</b> - allows to define default deflection
 coefficient for lines and surfaces. A smaller coefficient provides
 better quality of a shape in the viewer.</li>
-<li><b>Default front material</b> - allows to define default front face material.</li>
-<li><b>Default back material</b> - allows to define default back face material.</li>
+<li><b>Show predefined materials in popup menu</b> - allows to customize the displaying of popup menu with list of 
+predefined materials.</li>
+<li><b>Default material</b> - allows to define default material.</li>
+<li><b>Subshapes color for editing a group</b> - allows to select default color for subshapes in a group.</li>
 <li><b>Edges width</b> - allows to define default width of the edges.</li>
 <li><b>Isolines width</b> - allows to define default width of the isolines.</li>
 <li><b>Preview edges width</b> - allows to define width of the edges for preview.</li>

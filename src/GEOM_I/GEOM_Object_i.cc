@@ -206,7 +206,7 @@ char* GEOM_Object_i::GetName()
   char* aName = _impl->GetName();
   if (aName)
     return aName; // this is already copy of pointer (see implementation of _impl)
-  return strdup("");
+  return CORBA::string_dup("");
 }
 
 //=============================================================================

@@ -82,10 +82,10 @@ TransformationGUI_MultiTranslationDlg::TransformationGUI_MultiTranslationDlg
   GroupPoints = new DlgRef_2Sel2Spin1Check(centralWidget());
   GroupPoints->GroupBox1->setTitle(tr("GEOM_MULTITRANSLATION_SIMPLE"));
   GroupPoints->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR_U"));
-  GroupPoints->TextLabel3->setText(tr("GEOM_STEP_U"));
-  GroupPoints->TextLabel4->setText(tr("GEOM_NB_TIMES_U"));
-  GroupPoints->CheckButton1->setText(tr("GEOM_REVERSE_U"));
+  GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
+  GroupPoints->TextLabel3->setText(tr("GEOM_STEP"));
+  GroupPoints->TextLabel4->setText(tr("GEOM_NB_TIMES"));
+  GroupPoints->CheckButton1->setText(tr("GEOM_REVERSE_DIRECTION"));
   GroupPoints->PushButton1->setIcon(image2);
   GroupPoints->PushButton2->setIcon(image2);
   GroupPoints->LineEdit1->setReadOnly(true);
@@ -142,7 +142,7 @@ void TransformationGUI_MultiTranslationDlg::Init()
   int SpecificStep = 1;
   // init variables
   myStepU = myStepV = 50.0;
-  myNbTimesU = myNbTimesV = 2;
+  myNbTimesU = myNbTimesV = 3;
 
   // min, max, step and decimals for spin boxes & initial values
   initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
@@ -328,9 +328,20 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
   if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
     QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText( aName );
+
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
       myBase = aSelectedObject;
-      if ( !myVectorU )
+
+      // recompute myStepU (Mantis issue 0021718)
+      GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations(getStudyId());
+      double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
+      anOper->GetBoundingBox(myBase.get(), Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+      if (anOper->IsDone()) {
+        myStepU = floor(1.5 * (Xmax - Xmin));
+        GroupPoints->SpinBox_DX->setValue(myStepU);
+      }
+
+      if (!myVectorU)
 	GroupPoints->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
@@ -340,6 +351,18 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
     }
     else if ( myEditCurrentArgument == GroupDimensions->LineEdit1 ) {
       myBase = aSelectedObject;
+
+      // recompute myStepU and myStepV (Mantis issue 0021718)
+      GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations(getStudyId());
+      double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
+      anOper->GetBoundingBox(myBase.get(), Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+      if (anOper->IsDone()) {
+        myStepU = floor(1.5 * (Xmax - Xmin));
+        myStepV = floor(1.5 * (Ymax - Ymin));
+        GroupDimensions->SpinBox_DX1->setValue(myStepU);
+        GroupDimensions->SpinBox_DX2->setValue(myStepV);
+      }
+
       if ( !myVectorU )
 	GroupDimensions->PushButton2->click();
       else if ( !myVectorV )
@@ -597,18 +620,20 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_MultiTranslationDlg::createOperatio
 bool TransformationGUI_MultiTranslationDlg::isValid (QString& msg)
 {
   bool ok = false;
-  switch ( getConstructorId() ) {
+  switch (getConstructorId()) {
   case 0:
     ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) &&
          GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) &&
-         myBase && myVectorU;
+         myBase;
+         //myBase && myVectorU; // Mantis issue 0021718
     break;
   case 1:
     ok = GroupDimensions->SpinBox_DX1->isValid( msg, !IsPreview() ) &&
          GroupDimensions->SpinBox_DY1->isValid( msg, !IsPreview() ) &&
          GroupDimensions->SpinBox_DX2->isValid( msg, !IsPreview() ) &&
          GroupDimensions->SpinBox_DY2->isValid( msg, !IsPreview() ) &&
-         myBase && myVectorU && myVectorV;
+         myBase;
+         //myBase && myVectorU && myVectorV; // Mantis issue 0021718
     break;
   default:
     break;
@@ -625,43 +650,38 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
   bool res = false;
 
   GEOM::GEOM_Object_var anObj;
-
   QStringList aParameters;
 
   GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
 
   switch (getConstructorId()) {
   case 0:
-    if ( myBase && myVectorU ) {
-      createPathPreview ( myVectorU.get() );
-      anObj = anOper->MultiTranslate1D(myBase.get(), myVectorU.get(), myStepU, myNbTimesU);
-      if(!IsPreview()) {
-        aParameters<<GroupPoints->SpinBox_DX->text();
-        aParameters<<GroupPoints->SpinBox_DY->text();
-      }
-      res = true;
+    createPathPreview(myVectorU.get());
+    anObj = anOper->MultiTranslate1D(myBase.get(), myVectorU.get(), myStepU, myNbTimesU);
+    if (!IsPreview()) {
+      aParameters << GroupPoints->SpinBox_DX->text();
+      aParameters << GroupPoints->SpinBox_DY->text();
     }
+    res = true;
     break;
   case 1:
-    if ( myBase && myVectorU && myVectorV ) {
-      createPathPreview ( myVectorU.get() );
-      createPathPreview ( myVectorV.get() );
-      anObj = anOper->MultiTranslate2D(myBase.get(),
-                                       myVectorU.get(), myStepU, myNbTimesU,
-                                       myVectorV.get(), myStepV, myNbTimesV);
-      if(!IsPreview()) {
-        aParameters<<GroupDimensions->SpinBox_DX1->text();
-        aParameters<<GroupDimensions->SpinBox_DY1->text();
-        aParameters<<GroupDimensions->SpinBox_DX2->text();
-        aParameters<<GroupDimensions->SpinBox_DY2->text();
-      }
-      res = true;
+    createPathPreview(myVectorU.get());
+    createPathPreview(myVectorV.get());
+    anObj = anOper->MultiTranslate2D(myBase.get(),
+                                     myVectorU.get(), myStepU, myNbTimesU,
+                                     myVectorV.get(), myStepV, myNbTimesV);
+    if (!IsPreview()) {
+      aParameters << GroupDimensions->SpinBox_DX1->text();
+      aParameters << GroupDimensions->SpinBox_DY1->text();
+      aParameters << GroupDimensions->SpinBox_DX2->text();
+      aParameters << GroupDimensions->SpinBox_DY2->text();
     }
+    res = true;
     break;
   }
 
   if (!anObj->_is_nil()) {
-    if(!IsPreview())
+    if (!IsPreview())
       anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back(anObj._retn());
   }
@@ -716,6 +736,7 @@ void TransformationGUI_MultiTranslationDlg::restoreSubShapes (SALOMEDS::Study_pt
 void TransformationGUI_MultiTranslationDlg::createPathPreview ( GEOM::GEOM_Object_ptr thePath )
 {
   if ( IsPreview() ) {
+    if (thePath->_is_nil()) return;
     TopoDS_Shape aShape;
     GEOMBase::GetShape( thePath, aShape, TopAbs_SHAPE );
     TopoDS_Edge anEdge = TopoDS::Edge( aShape );

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -958,7 +957,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate1D
 
   //Get the vector of translation
   Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
-  if (aVector.IsNull()) return aGEOMObject._retn();
+  //if (aVector.IsNull()) return aGEOMObject._retn(); // DX by default
 
   //Perform the translation
   Handle(GEOM_Object) anObject =
@@ -992,11 +991,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiTranslate2D (GEOM::GEOM_
 
   //Get the vector1 of translation
   Handle(GEOM_Object) aVector1 = GetObjectImpl(theVector1);
-  if (aVector1.IsNull()) return aGEOMObject._retn();
+  //if (aVector1.IsNull()) return aGEOMObject._retn(); // DX by default
 
   //Get the vector2 of translation
   Handle(GEOM_Object) aVector2 = GetObjectImpl(theVector2);
-  if (aVector2.IsNull()) return aGEOMObject._retn();
+  //if (aVector2.IsNull()) return aGEOMObject._retn(); // DY by default
 
   //Perform the translation
   Handle(GEOM_Object) anObject = GetOperations()->Translate2D
@@ -1026,10 +1025,105 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate1D (GEOM::GEOM_Obj
 
   //Get the a directon of rotation
   Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
-  if (aVector.IsNull()) return aGEOMObject._retn();
+  //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
 
   //Perform the rotation
   Handle(GEOM_Object) anObject = GetOperations()->Rotate1D(aBasicObject, aVector, theNbTimes);
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MultiRotate1DByStep
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate1DByStep (GEOM::GEOM_Object_ptr theObject,
+                                                                        GEOM::GEOM_Object_ptr theVector,
+                                                                        CORBA::Double theAngleStep,
+                                                                        CORBA::Long theNbSteps)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Get the object itself
+  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the a directon of rotation
+  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
+
+  //Perform the rotation
+  Handle(GEOM_Object) anObject = GetOperations()->Rotate1D(aBasicObject, aVector, theAngleStep, theNbSteps);
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MultiRotate2DNbTimes
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2DNbTimes (GEOM::GEOM_Object_ptr theObject,
+                                                                         GEOM::GEOM_Object_ptr theVector,
+                                                                         CORBA::Long theNbObjects,
+                                                                         CORBA::Double theRadialStep,
+                                                                         CORBA::Long theNbSteps)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Get the object itself
+  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the a directon of rotation
+  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
+
+  //Perform the rotation
+  Handle(GEOM_Object) anObject = GetOperations()->Rotate2D
+    (aBasicObject, aVector, theNbObjects, theRadialStep, theNbSteps);
+  if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MultiRotate2DByStep
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2DByStep (GEOM::GEOM_Object_ptr theObject,
+                                                                        GEOM::GEOM_Object_ptr theVector,
+                                                                        CORBA::Double theAngle,
+                                                                        CORBA::Long theNbTimes1,
+                                                                        CORBA::Double theStep,
+                                                                        CORBA::Long theNbTimes2)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Get the object itself
+  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the a directon of rotation
+  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
+  //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
+
+  //Perform the rotation
+  Handle(GEOM_Object) anObject = GetOperations()->Rotate2D
+    (aBasicObject, aVector, theAngle, theNbTimes1, theStep, theNbTimes2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -1058,11 +1152,13 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MultiRotate2D (GEOM::GEOM_Obj
 
   //Get the a directon of rotation
   Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
-  if (aVector.IsNull()) return aGEOMObject._retn();
+  //if (aVector.IsNull()) return aGEOMObject._retn(); // DZ by default
+
+  double anAngle = M_PI * theAngle / 180.;
 
   //Perform the rotation
   Handle(GEOM_Object) anObject = GetOperations()->Rotate2D
-    (aBasicObject, aVector, theAngle, theNbTimes1, theStep, theNbTimes2);
+    (aBasicObject, aVector, anAngle, theNbTimes1, theStep, theNbTimes2);
   if (!GetOperations()->IsDone() || anObject.IsNull()) return aGEOMObject._retn();
 
   return GetObject(anObject);

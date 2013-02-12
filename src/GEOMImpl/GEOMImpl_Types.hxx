@@ -153,6 +153,7 @@
 #define ROTATE_2D                 4
 #define ROTATE_THREE_POINTS       5
 #define ROTATE_THREE_POINTS_COPY  6
+#define ROTATE_1D_STEP            7
 
 #define MIRROR_PLANE      1
 #define MIRROR_PLANE_COPY 2
@@ -234,8 +235,9 @@
 
 #define POLYLINE_POINTS 1
 
-#define SPLINE_BEZIER        1
-#define SPLINE_INTERPOLATION 2
+#define SPLINE_BEZIER            1
+#define SPLINE_INTERPOLATION     2
+#define SPLINE_INTERPOL_TANGENTS 3
 
 #define CIRCLE_THREE_PNT 1
 #define CIRCLE_PNT_VEC_R 2
@@ -308,6 +310,7 @@
 
 // Measures
 #define CDG_MEASURE 1
+#define BND_BOX_MEASURE 2
 #define VECTOR_FACE_NORMALE 4
 #define VERTEX_BY_INDEX 5
 

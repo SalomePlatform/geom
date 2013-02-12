@@ -78,7 +78,7 @@ GEOMToolsGUI_DeflectionDlg::GEOMToolsGUI_DeflectionDlg (QWidget* parent)
   SpinBox->setAcceptNames( false );
   SpinBox->setPrecision( aPrecision );
   SpinBox->setDecimals( aPrecision );
-  SpinBox->setRange( DEFLECTION_MIN, 1.0 );
+  SpinBox->setRange( GEOM::minDeflection(), 1.0 );
   SpinBox->setSingleStep( 1.0e-04 );
   // Add a hint for the user saying how to tune precision
   QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );

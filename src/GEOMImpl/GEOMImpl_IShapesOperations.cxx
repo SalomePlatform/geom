@@ -48,6 +48,8 @@
 #include "GEOM_ISubShape.hxx"
 #include "GEOM_PythonDump.hxx"
 
+#include "GEOMUtils.hxx"
+
 #include "GEOMAlgo_ClsfBox.hxx"
 #include "GEOMAlgo_ClsfSolid.hxx"
 #include "GEOMAlgo_CoupleOfShapes.hxx"
@@ -140,8 +142,6 @@
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <Precision.hxx>
-
-#define STD_SORT_ALGO 1
 
 //=============================================================================
 /*!
@@ -1023,7 +1023,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueShapes
   }
 
   // for stable order of returned entities
-  GEOMImpl_IShapesOperations::SortShapes(listOnePerSet, Standard_False);
+  GEOMUtils::SortShapes(listOnePerSet, Standard_False);
 
   TopTools_ListIteratorOfListOfShape aListIt (listOnePerSet);
   for (; aListIt.More(); aListIt.Next()) {
@@ -1267,7 +1267,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
     bool isOldSorting = false;
     if (theExplodeType == EXPLODE_OLD_INCLUDE_MAIN)
       isOldSorting = true;
-    SortShapes(listShape, isOldSorting);
+    GEOMUtils::SortShapes(listShape, isOldSorting);
   }
 
   TopTools_IndexedMapOfShape anIndices;
@@ -1391,7 +1391,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
     bool isOldSorting = false;
     if (theExplodeType == EXPLODE_OLD_INCLUDE_MAIN)
       isOldSorting = true;
-    SortShapes(listShape, isOldSorting);
+    GEOMUtils::SortShapes(listShape, isOldSorting);
   }
 
   TopTools_IndexedMapOfShape anIndices;
@@ -1558,13 +1558,61 @@ Standard_Integer GEOMImpl_IShapesOperations::GetSubShapeIndex (Handle(GEOM_Objec
 
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aMainShape, anIndices);
-  if (anIndices.Contains(aSubShape)) {
+//   if (anIndices.Contains(aSubShape)) {
+//     SetErrorCode(OK);
+//     return anIndices.FindIndex(aSubShape);
+//   }
+  int id = anIndices.FindIndex(aSubShape);
+  if (id > 0)
+  {
     SetErrorCode(OK);
-    return anIndices.FindIndex(aSubShape);
+    return id;
   }
-
   return -1;
 }
+
+
+
+//=============================================================================
+/*!
+ *  GetSubShapeIndices
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSubShapesIndices (Handle(GEOM_Object) theMainShape,
+                                                                                    std::list<Handle(GEOM_Object)> theSubShapes)
+{
+  MESSAGE("GEOMImpl_IShapesOperations::GetSubShapesIndices")
+  SetErrorCode(KO);
+  
+  Handle(TColStd_HSequenceOfInteger) aSeq = new TColStd_HSequenceOfInteger;
+  
+  TopoDS_Shape aMainShape = theMainShape->GetValue();
+  if (aMainShape.IsNull())
+  {
+    MESSAGE("NULL main shape")
+    return NULL;
+  }
+  
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aMainShape, anIndices);
+  
+  std::list<Handle(GEOM_Object)>::iterator it;
+  for (it=theSubShapes.begin(); it != theSubShapes.end(); ++it)
+  {
+    TopoDS_Shape aSubShape = (*it)->GetValue(); 
+    if (aSubShape.IsNull())
+    {
+      MESSAGE("NULL subshape")
+      return NULL;
+    }
+    int id = anIndices.FindIndex(aSubShape);
+    aSeq->Append(id);
+  }  
+  
+  SetErrorCode(OK);
+  return aSeq;
+}
+
 
 //=============================================================================
 /*!
@@ -2217,7 +2265,7 @@ Handle(TColStd_HSequenceOfInteger)
   TopoDS_Shape aShape = theShape->GetValue();
 
   // Check presence of triangulation, build if need
-  if (!CheckTriangulation(aShape)) {
+  if (!GEOMUtils::CheckTriangulation(aShape)) {
     SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }
@@ -2302,7 +2350,7 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShape,theBox)->GetLastFunction();
 
   // Make a Python command
-  GEOM::TPythonDump(aFunction)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnBoxIDs = geompy.GetShapesOnBoxIDs("
     << theBox << ", "
     << theShape << ", "
@@ -2384,7 +2432,7 @@ Handle(TColStd_HSequenceOfInteger)
   TopTools_ListOfShape res;
 
   // Check presence of triangulation, build if need
-  if (!CheckTriangulation(aShape)) {
+  if (!GEOMUtils::CheckTriangulation(aShape)) {
     SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }
@@ -2475,7 +2523,7 @@ Handle(TColStd_HSequenceOfInteger)
     GEOM::GetCreatedLast(theShape,theCheckShape)->GetLastFunction();
 
   // Make a Python command
-  GEOM::TPythonDump(aFunction)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listShapesOnBoxIDs = geompy.GetShapesOnShapeIDs("
     << theCheckShape << ", "
     << theShape << ", "
@@ -2604,7 +2652,7 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!CheckTriangulation(theShape)) {
+  if (!GEOMUtils::CheckTriangulation(theShape)) {
     SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }
@@ -3321,7 +3369,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
 
   // Make a Python command
   GEOM::TPythonDump(aFunction, /*append=*/true)
-    << "listShapesOnCylinder = geompy.GetShapesOnCylinderIDs"
+    << "listShapesOnCylinder = geompy.GetShapesOnSphereIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theCenter << ", "
     << theRadius << ", " << theState << ")";
 
@@ -3385,7 +3433,7 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!CheckTriangulation(aShape)) {
+  if (!GEOMUtils::CheckTriangulation(aShape)) {
     SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }
@@ -3776,28 +3824,6 @@ namespace {
   }
 }
 
-//================================================================================
-/*!
- * \brief Return type of shape for explode. In case of compound it will be a type of sub-shape.
- */
-//================================================================================
-TopAbs_ShapeEnum GEOMImpl_IShapesOperations::GetTypeOfSimplePart (const TopoDS_Shape& theShape)
-{
-  TopAbs_ShapeEnum aType = theShape.ShapeType();
-  if      (aType == TopAbs_VERTEX)                             return TopAbs_VERTEX;
-  else if (aType == TopAbs_EDGE  || aType == TopAbs_WIRE)      return TopAbs_EDGE;
-  else if (aType == TopAbs_FACE  || aType == TopAbs_SHELL)     return TopAbs_FACE;
-  else if (aType == TopAbs_SOLID || aType == TopAbs_COMPSOLID) return TopAbs_SOLID;
-  else if (aType == TopAbs_COMPOUND) {
-    // Only the iType of the first shape in the compound is taken into account
-    TopoDS_Iterator It (theShape, Standard_False, Standard_False);
-    if (It.More()) {
-      return GetTypeOfSimplePart(It.Value());
-    }
-  }
-  return TopAbs_SHAPE;
-}
-
 //=============================================================================
 /*!
  *  case GetInPlace:
@@ -3839,7 +3865,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   GProp_GProps     aProps;
 
   // Find the iType of the aWhat shape
-  iType = GetTypeOfSimplePart(aWhat);
+  iType = GEOMUtils::GetTypeOfSimplePart(aWhat);
   if (iType == TopAbs_SHAPE) {
     SetErrorCode("Error: An attempt to extract a shape of not supported type.");
     return NULL;
@@ -4041,7 +4067,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceOld (Handle(GEOM_Objec
     return NULL;
   }
   */
-  iType = GetTypeOfSimplePart(aWhat);
+  iType = GEOMUtils::GetTypeOfSimplePart(aWhat);
   if (iType == TopAbs_SHAPE) {
     SetErrorCode("Error: An attempt to extract a shape of not supported type.");
     return NULL;
@@ -4264,321 +4290,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
 
   SetErrorCode(OK);
   return aResult;
-}
-
-//=======================================================================
-//function : ShapeToDouble
-//purpose  : used by CompareShapes::operator()
-//=======================================================================
-std::pair<double, double> ShapeToDouble (const TopoDS_Shape& S, bool isOldSorting)
-{
-  // Computing of CentreOfMass
-  gp_Pnt GPoint;
-  double Len;
-
-  if (S.ShapeType() == TopAbs_VERTEX) {
-    GPoint = BRep_Tool::Pnt(TopoDS::Vertex(S));
-    Len = (double)S.Orientation();
-  }
-  else {
-    GProp_GProps GPr;
-    // BEGIN: fix for Mantis issue 0020842
-    if (isOldSorting) {
-      BRepGProp::LinearProperties(S, GPr);
-    }
-    else {
-      if (S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE) {
-        BRepGProp::LinearProperties(S, GPr);
-      }
-      else if (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL) {
-        BRepGProp::SurfaceProperties(S, GPr);
-      }
-      else {
-        BRepGProp::VolumeProperties(S, GPr);
-      }
-    }
-    // END: fix for Mantis issue 0020842
-    GPoint = GPr.CentreOfMass();
-    Len = GPr.Mass();
-  }
-
-  double dMidXYZ = GPoint.X() * 999.0 + GPoint.Y() * 99.0 + GPoint.Z() * 0.9;
-  return std::make_pair(dMidXYZ, Len);
-}
-
-//=======================================================================
-//function : CompareShapes::operator()
-//purpose  : used by std::sort(), called from SortShapes()
-//=======================================================================
-bool GEOMImpl_IShapesOperations::CompareShapes::operator()(const TopoDS_Shape& theShape1,
-                                                           const TopoDS_Shape& theShape2)
-{
-  if (!myMap.IsBound(theShape1)) {
-    myMap.Bind(theShape1, ShapeToDouble(theShape1, myIsOldSorting));
-  }
-
-  if (!myMap.IsBound(theShape2)) {
-    myMap.Bind(theShape2, ShapeToDouble(theShape2, myIsOldSorting));
-  }
-
-  std::pair<double, double> val1 = myMap.Find(theShape1);
-  std::pair<double, double> val2 = myMap.Find(theShape2);
-
-  double tol = Precision::Confusion();
-  bool exchange = Standard_False;
-
-  double dMidXYZ = val1.first - val2.first;
-  if (dMidXYZ >= tol) {
-    exchange = Standard_True;
-  }
-  else if (Abs(dMidXYZ) < tol) {
-    double dLength = val1.second - val2.second;
-    if (dLength >= tol) {
-      exchange = Standard_True;
-    }
-    else if (Abs(dLength) < tol && theShape1.ShapeType() <= TopAbs_FACE) {
-      // PAL17233
-      // equal values possible on shapes such as two halves of a sphere and
-      // a membrane inside the sphere
-      Bnd_Box box1,box2;
-      BRepBndLib::Add(theShape1, box1);
-      if (!box1.IsVoid()) {
-        BRepBndLib::Add(theShape2, box2);
-        Standard_Real dSquareExtent = box1.SquareExtent() - box2.SquareExtent();
-        if (dSquareExtent >= tol) {
-          exchange = Standard_True;
-        }
-        else if (Abs(dSquareExtent) < tol) {
-          Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax, val1, val2;
-          box1.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-          val1 = (aXmin+aXmax)*999.0 + (aYmin+aYmax)*99.0 + (aZmin+aZmax)*0.9;
-          box2.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-          val2 = (aXmin+aXmax)*999.0 + (aYmin+aYmax)*99.0 + (aZmin+aZmax)*0.9;
-          if ((val1 - val2) >= tol) {
-            exchange = Standard_True;
-          }
-        }
-      }
-    }
-  }
-
-  //return val1 < val2;
-  return !exchange;
-}
-
-//=======================================================================
-//function : SortShapes
-//purpose  :
-//=======================================================================
-void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL,
-                                            const Standard_Boolean isOldSorting)
-{
-#ifdef STD_SORT_ALGO
-  std::vector<TopoDS_Shape> aShapesVec;
-  aShapesVec.reserve(SL.Extent());
-
-  TopTools_ListIteratorOfListOfShape it (SL);
-  for (; it.More(); it.Next()) {
-    aShapesVec.push_back(it.Value());
-  }
-  SL.Clear();
-
-  CompareShapes shComp (isOldSorting);
-  std::stable_sort(aShapesVec.begin(), aShapesVec.end(), shComp);
-  //std::sort(aShapesVec.begin(), aShapesVec.end(), shComp);
-
-  std::vector<TopoDS_Shape>::const_iterator anIter = aShapesVec.begin();
-  for (; anIter != aShapesVec.end(); ++anIter) {
-    SL.Append(*anIter);
-  }
-#else
-  // old implementation
-  Standard_Integer MaxShapes = SL.Extent();
-  TopTools_Array1OfShape  aShapes (1,MaxShapes);
-  TColStd_Array1OfInteger OrderInd(1,MaxShapes);
-  TColStd_Array1OfReal    MidXYZ  (1,MaxShapes); //X,Y,Z;
-  TColStd_Array1OfReal    Length  (1,MaxShapes); //X,Y,Z;
-
-  // Computing of CentreOfMass
-  Standard_Integer Index;
-  GProp_GProps GPr;
-  gp_Pnt GPoint;
-  TopTools_ListIteratorOfListOfShape it(SL);
-  for (Index=1;  it.More();  Index++)
-  {
-    TopoDS_Shape S = it.Value();
-    SL.Remove( it ); // == it.Next()
-    aShapes(Index) = S;
-    OrderInd.SetValue (Index, Index);
-    if (S.ShapeType() == TopAbs_VERTEX) {
-      GPoint = BRep_Tool::Pnt( TopoDS::Vertex( S ));
-      Length.SetValue( Index, (Standard_Real) S.Orientation());
-    }
-    else {
-      // BEGIN: fix for Mantis issue 0020842
-      if (isOldSorting) {
-        BRepGProp::LinearProperties (S, GPr);
-      }
-      else {
-        if (S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE) {
-          BRepGProp::LinearProperties (S, GPr);
-        }
-        else if (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL) {
-          BRepGProp::SurfaceProperties(S, GPr);
-        }
-        else {
-          BRepGProp::VolumeProperties(S, GPr);
-        }
-      }
-      // END: fix for Mantis issue 0020842
-      GPoint = GPr.CentreOfMass();
-      Length.SetValue(Index, GPr.Mass());
-    }
-    MidXYZ.SetValue(Index, GPoint.X()*999.0 + GPoint.Y()*99.0 + GPoint.Z()*0.9);
-    //cout << Index << " L: " << Length(Index) << "CG: " << MidXYZ(Index) << endl;
-  }
-
-  // Sorting
-  Standard_Integer aTemp;
-  Standard_Boolean exchange, Sort = Standard_True;
-  Standard_Real    tol = Precision::Confusion();
-  while (Sort)
-  {
-    Sort = Standard_False;
-    for (Index=1; Index < MaxShapes; Index++)
-    {
-      exchange = Standard_False;
-      Standard_Real dMidXYZ = MidXYZ(OrderInd(Index)) - MidXYZ(OrderInd(Index+1));
-      Standard_Real dLength = Length(OrderInd(Index)) - Length(OrderInd(Index+1));
-      if ( dMidXYZ >= tol ) {
-//         cout << "MidXYZ: " << MidXYZ(OrderInd(Index))<< " > " <<MidXYZ(OrderInd(Index+1))
-//              << " d: " << dMidXYZ << endl;
-        exchange = Standard_True;
-      }
-      else if ( Abs(dMidXYZ) < tol && dLength >= tol ) {
-//         cout << "Length: " << Length(OrderInd(Index))<< " > " <<Length(OrderInd(Index+1))
-//              << " d: " << dLength << endl;
-        exchange = Standard_True;
-      }
-      else if ( Abs(dMidXYZ) < tol && Abs(dLength) < tol &&
-                aShapes(OrderInd(Index)).ShapeType() <= TopAbs_FACE) {
-        // PAL17233
-        // equal values possible on shapes such as two halves of a sphere and
-        // a membrane inside the sphere
-        Bnd_Box box1,box2;
-        BRepBndLib::Add( aShapes( OrderInd(Index) ), box1 );
-        if ( box1.IsVoid() ) continue;
-        BRepBndLib::Add( aShapes( OrderInd(Index+1) ), box2 );
-        Standard_Real dSquareExtent = box1.SquareExtent() - box2.SquareExtent();
-        if ( dSquareExtent >= tol ) {
-//           cout << "SquareExtent: " << box1.SquareExtent()<<" > "<<box2.SquareExtent() << endl;
-          exchange = Standard_True;
-        }
-        else if ( Abs(dSquareExtent) < tol ) {
-          Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax, val1, val2;
-          box1.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-          val1 = (aXmin+aXmax)*999 + (aYmin+aYmax)*99 + (aZmin+aZmax)*0.9;
-          box2.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-          val2 = (aXmin+aXmax)*999 + (aYmin+aYmax)*99 + (aZmin+aZmax)*0.9;
-          //exchange = val1 > val2;
-          if ((val1 - val2) >= tol) {
-            exchange = Standard_True;
-          }
-          //cout << "box: " << val1<<" > "<<val2 << endl;
-        }
-      }
-
-      if (exchange)
-      {
-//         cout << "exchange " << Index << " & " << Index+1 << endl;
-        aTemp = OrderInd(Index);
-        OrderInd(Index) = OrderInd(Index+1);
-        OrderInd(Index+1) = aTemp;
-        Sort = Standard_True;
-      }
-    }
-  }
-
-  for (Index=1; Index <= MaxShapes; Index++)
-    SL.Append( aShapes( OrderInd(Index) ));
-#endif
-}
-
-//=======================================================================
-//function : CompsolidToCompound
-//purpose  :
-//=======================================================================
-TopoDS_Shape GEOMImpl_IShapesOperations::CompsolidToCompound (const TopoDS_Shape& theCompsolid)
-{
-  if (theCompsolid.ShapeType() != TopAbs_COMPSOLID) {
-    return theCompsolid;
-  }
-
-  TopoDS_Compound aCompound;
-  BRep_Builder B;
-  B.MakeCompound(aCompound);
-
-  TopTools_MapOfShape mapShape;
-  TopoDS_Iterator It (theCompsolid, Standard_True, Standard_True);
-
-  for (; It.More(); It.Next()) {
-    TopoDS_Shape aShape_i = It.Value();
-    if (mapShape.Add(aShape_i)) {
-      B.Add(aCompound, aShape_i);
-    }
-  }
-
-  return aCompound;
-}
-
-//=======================================================================
-//function : CheckTriangulation
-//purpose  :
-//=======================================================================
-bool GEOMImpl_IShapesOperations::CheckTriangulation (const TopoDS_Shape& aShape)
-{
-  bool isTriangulation = true;
-
-  TopExp_Explorer exp (aShape, TopAbs_FACE);
-  if (exp.More())
-  {
-    TopLoc_Location aTopLoc;
-    Handle(Poly_Triangulation) aTRF;
-    aTRF = BRep_Tool::Triangulation(TopoDS::Face(exp.Current()), aTopLoc);
-    if (aTRF.IsNull()) {
-      isTriangulation = false;
-    }
-  }
-  else // no faces, try edges
-  {
-    TopExp_Explorer expe (aShape, TopAbs_EDGE);
-    if (!expe.More()) {
-      return false;
-    }
-    TopLoc_Location aLoc;
-    Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(TopoDS::Edge(expe.Current()), aLoc);
-    if (aPE.IsNull()) {
-      isTriangulation = false;
-    }
-  }
-
-  if (!isTriangulation) {
-    // calculate deflection
-    Standard_Real aDeviationCoefficient = 0.001;
-
-    Bnd_Box B;
-    BRepBndLib::Add(aShape, B);
-    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-    B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-
-    Standard_Real dx = aXmax - aXmin, dy = aYmax - aYmin, dz = aZmax - aZmin;
-    Standard_Real aDeflection = Max(Max(dx, dy), dz) * aDeviationCoefficient * 4;
-    Standard_Real aHLRAngle = 0.349066;
-
-    BRepMesh_IncrementalMesh Inc (aShape, aDeflection, Standard_False, aHLRAngle);
-  }
-
-  return true;
 }
 
 #define MAX_TOLERANCE 1.e-7
@@ -5008,7 +4719,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs
     Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShapeWhere,theShapeWhat)->GetLastFunction();
 
   // Make a Python command
-  GEOM::TPythonDump(aFunction)
+  GEOM::TPythonDump(aFunction, /*append=*/true)
     << "listSameIDs = geompy.GetSameIDs("
     << theShapeWhere << ", "
     << theShapeWhat << ")";

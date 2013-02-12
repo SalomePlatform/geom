@@ -52,6 +52,15 @@ GEOMGUI::~GEOMGUI()
 // class    : GEOMGUI::OnGUIEvent
 // purpose  : Main/popup menu events processing
 //=================================================================================
+bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, SUIT_Desktop* /*parent*/, const QVariant& /*theParam*/  )
+{
+  return TRUE;
+}
+
+//=================================================================================
+// class    : GEOMGUI::OnGUIEvent
+// purpose  : Main/popup menu events processing
+//=================================================================================
 bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, SUIT_Desktop* /*parent*/ )
 {
   return TRUE;

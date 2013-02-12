@@ -22,7 +22,6 @@
 #  Author : Patrick GOLDBRONN (CEA)
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
-#  $Header$
 
 # Libraries targets
 include $(top_srcdir)/adm_local/unix/make_common_starter.am

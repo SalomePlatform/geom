@@ -577,10 +577,10 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
           }
         }
 	if(mode == 0 || mode == 1 || mode == 2) {
-	  aStudy->setObjectProperty(mgrId,It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+	  aStudy->setObjectProperty(mgrId,It.Value()->getEntry(),GEOM::propertyName( GEOM::DisplayMode ), mode);
 	}
 	else if (mode == 4) {
-	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);	
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),GEOM::propertyName( GEOM::EdgesDirection ), vectorMode);	
 	}
       }
     }
@@ -625,10 +625,10 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
           }
         }
 	if(mode == 0 || mode == 1 || mode == 2 || mode == 3) {
-	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),GEOM::propertyName( GEOM::DisplayMode ), mode);
 	}
 	else if (mode == 4) {
-	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),GEOM::propertyName( GEOM::EdgesDirection ), vectorMode);
 	}
       }
     }

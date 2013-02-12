@@ -509,7 +509,7 @@ GEOM::GEOM_Object_ptr BlocksGUI_ExplodeDlg::getFather( GEOM::GEOM_Object_ptr )
 // Function : getNewObjectName
 // Purpose  : Redefine this method to return proper name for a new object
 //================================================================
-QString BlocksGUI_ExplodeDlg::getNewObjectName() const
+QString BlocksGUI_ExplodeDlg::getNewObjectName (int) const
 {
   return QString::null;
 }

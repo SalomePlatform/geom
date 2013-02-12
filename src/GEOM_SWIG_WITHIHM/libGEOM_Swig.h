@@ -19,22 +19,13 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// GEOM GEOMGUI : GUI for Geometry component
 // File   : libGEOM_Swig.h
 // Author : Nicolas REJNERI, Paul RASCLE
-//
 
-#ifndef GEOMETRYGUI_SWIG_HXX
-#define GEOMETRYGUI_SWIG_HXX
+#ifndef LIBGEOM_SWIG_H
+#define LIBGEOM_SWIG_H
 
 #include "GEOM_GEOMGUI.hxx"
-
-// IDL Headers
-#include <SALOMEconfig.h>
-#include CORBA_SERVER_HEADER(GEOM_Gen)
-#include CORBA_SERVER_HEADER(SALOMEDS)
-#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
 class GEOMGUI_EXPORT GEOM_Swig
 {
@@ -42,22 +33,29 @@ public:
   GEOM_Swig();
   ~GEOM_Swig();
 
-  void createAndDisplayGO(const char* Entry, bool isUpdated = true);
-  void eraseGO(const char* Entry, bool allWindows);
-  void createAndDisplayFitAllGO(const char* Entry);
-  void UpdateViewer();
-  void setDisplayMode(const char* Entry, int mode, bool isUpdated = true);
-  void setVectorsMode(const char* Entry, bool isSet, bool isUpdated = true);
-  void setColor(const char* Entry, int red, int green, int blue, bool isUpdated = true);
-  void setTransparency(const char* Entry, float transp, bool isUpdated = true);
-  void setIsos(const char* Entry, int nbU, int nbV, bool isUpdated =true);
-  void setDeflection(const char* Entry, float deflect);
+  void createAndDisplayGO( const char* theEntry, bool theUpdateViewer = true );
+  void createAndDisplayFitAllGO( const char* theEntry );
+  void eraseGO( const char* theEntry, bool theUpdateViewer = true );
 
-  int  getIndexTopology(const char *SubEntry, const char *Entry);
-  const char* getShapeTypeString(const char *Entry);
-  const char* getShapeTypeIcon(const char *Ior);
+  void UpdateViewer();
+
+  void setDisplayMode( const char* theEntry, int theMode, bool theUpdateViewer = true );
+  void setVectorsMode( const char* theEntry, bool theOn, bool theUpdateViewer = true );
+  void setColor( const char* theEntry, int theRed, int theGreen, int theBlue, bool theUpdateViewer = true );
+  void setTransparency( const char* theEntry, float theTransparency, bool theUpdateViewer = true );
+  void setIsos( const char* theEntry, int theNbU, int theNbV, bool theUpdateViewer = true );
+  void setDeflection( const char* theEntry, float theDeflection, bool theUpdateViewer = true );
+  void setMaterial( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
+  void setMaterialProperty( const char* theEntry, const char* theMaterial, bool theUpdateViewer = true );
+
+  int         getIndexTopology( const char* theSubIOR, const char* theMainIOR );
+  const char* getShapeTypeString( const char* theIOR );
+  const char* getShapeTypeIcon( const char* theIOR );
 
   bool initGeomGen();
+private:
+
+  void init();
 };
 
-#endif // GEOMETRYGUI_SWIG_HXX
+#endif // LIBGEOM_SWIG_H

@@ -23,7 +23,6 @@
 #  File   : GEOM_TestOthers.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
-#  $Header$
 #
 # ! Please, if you edit this example file, update also
 # ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_others.doc
@@ -187,11 +186,16 @@ def TestOtherOperations (geompy, math):
   pz = geompy.MakeVertex(0, 0, 100)
   vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
 
-  MultiRot1D = geompy.MakeMultiRotation1D(f12, vy, pz, 6)
-  MultiRot2D = geompy.MakeMultiRotation2D(f12, vy, pz, 45, 6, 30, 3)
+  MultiRot1Dt = geompy.MakeMultiRotation1DNbTimes(f12, vy, pz, 6)
+  MultiRot1Ds = geompy.MakeMultiRotation1DByStep(f12, vy, pz, math.pi/5., 6)
 
-  id_MultiRot1D = geompy.addToStudy(MultiRot1D, "MakeMultiRotation1D")
-  id_MultiRot2D = geompy.addToStudy(MultiRot2D, "MakeMultiRotation2D")
+  MultiRot2Dt = geompy.MakeMultiRotation2DNbTimes(f12, vy, pz, 5, 30, 3)
+  MultiRot2Ds = geompy.MakeMultiRotation2DByStep(f12, vy, pz, math.pi/4., 6, 30, 3)
+
+  geompy.addToStudy(MultiRot1Dt, "MakeMultiRotation1DNbTimes")
+  geompy.addToStudy(MultiRot1Ds, "MakeMultiRotation1DByStep")
+  geompy.addToStudy(MultiRot2Dt, "MakeMultiRotation2DNbTimes")
+  geompy.addToStudy(MultiRot2Ds, "MakeMultiRotation2DByStep")
 
   # MakeFilletAll
   radius_fillet = 10.

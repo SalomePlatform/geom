@@ -18,16 +18,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_BndBoxDlg.h
 // Author : Nicolas REJNERI, Open CASCADE S.A.S.
-//
+
 #ifndef MEASUREGUI_BNDBOXDLG_H
 #define MEASUREGUI_BNDBOXDLG_H
 
-#include "MeasureGUI_Skeleton.h"
+#include "GEOMBase_Skeleton.h"
 
 class MeasureGUI_1Sel6LineEdit;
 
@@ -35,27 +34,38 @@ class MeasureGUI_1Sel6LineEdit;
 // class    : DialogBox_PROPERTIES
 // purpose  :
 //=================================================================================
-class MeasureGUI_BndBoxDlg : public MeasureGUI_Skeleton
+class MeasureGUI_BndBoxDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 
 public:
-  MeasureGUI_BndBoxDlg( GeometryGUI*, QWidget* );
+  MeasureGUI_BndBoxDlg (GeometryGUI*, QWidget*);
   ~MeasureGUI_BndBoxDlg();
 
 protected:
-  // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
-  virtual void                        processObject();
-  virtual SALOME_Prs*                 buildPrs();
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);
+
+  void                               redisplayPreview();
+  virtual void                       processObject();
+  virtual SALOME_Prs*                buildPrs();
 
 private:
-  void                                Init();
-  bool                                getParameters( double&, double&,
-                                                     double&, double&,
-                                                     double&, double& );
+  void                               Init();
+  void                               enterEvent (QEvent*);
+  bool                               getParameters (double&, double&, double&, double&, double&, double&);
 
 private:
-  MeasureGUI_1Sel6LineEdit*           myGrp;
+  GEOM::GEOM_Object_var              myObj;
+  MeasureGUI_1Sel6LineEdit*          myGrp;
+
+private slots:
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               SelectionIntoArgument();
+  void                               ActivateThisDialog();
 };
 
 #endif // MEASUREGUI_BNDBOXDLG_H

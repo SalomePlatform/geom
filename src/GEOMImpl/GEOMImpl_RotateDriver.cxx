@@ -18,35 +18,41 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_RotateDriver.hxx>
 #include <GEOMImpl_IRotate.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
+
+#include <GEOMUtils.hxx>
+
+#include <BRepBuilderAPI_Transform.hxx>
+#include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepGProp.hxx>
+
+#include <TopAbs.hxx>
+#include <TopExp.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopoDS_Edge.hxx>
+
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <Geom_Line.hxx>
+#include <GProp_GProps.hxx>
+
+#include <Precision.hxx>
+
 #include <gp_Trsf.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
 #include <gp_Dir.hxx>
 #include <gp_Ax1.hxx>
-#include <BRepBuilderAPI_Transform.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Compound.hxx>
-#include <TopAbs.hxx>
-#include <TopExp.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Edge.hxx>
-#include <BRep_Tool.hxx>
-#include <BRep_Builder.hxx>
-#include <GeomAPI_ProjectPointOnCurve.hxx>
-#include <Geom_Line.hxx>
-#include <GProp_GProps.hxx>
-#include <BRepGProp.hxx>
-#include <Precision.hxx>
 
 //=======================================================================
 //function : GetID
@@ -92,13 +98,12 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) anAxis = RI.GetAxis();
     if (anAxis.IsNull()) return 0;
     TopoDS_Shape A = anAxis->GetValue();
-    if (A.IsNull() || A.ShapeType() != TopAbs_EDGE) return 0;
+    gp_Vec aV = GEOMUtils::GetVector(A);
     TopoDS_Edge anEdge = TopoDS::Edge(A);
-
     gp_Pnt aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
-    gp_Pnt aP2 = BRep_Tool::Pnt(TopExp::LastVertex(anEdge));
-    gp_Dir aDir(gp_Vec(aP1, aP2));
-    gp_Ax1 anAx1(aP1, aDir);
+    gp_Dir aDir (aV);
+    gp_Ax1 anAx1 (aP1, aDir);
+
     Standard_Real anAngle = RI.GetAngle();
     if (fabs(anAngle) < Precision::Angular()) anAngle += 2.*M_PI; // NPAL19665,19769
     aTrsf.SetRotation(anAx1, anAngle);
@@ -148,22 +153,24 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     TopLoc_Location aLocRes (aTrsfOrig);
     aShape = anOriginal.Located(aLocRes);
   }
-  else if (aType == ROTATE_1D) {
+  else if (aType == ROTATE_1D || aType == ROTATE_1D_STEP) {
     //Get direction
+    gp_Pnt aP1 = gp::Origin();
+    gp_Dir D = gp::DZ();
     Handle(GEOM_Function) anAxis = RI.GetAxis();
-    if(anAxis.IsNull()) return 0;
-    TopoDS_Shape A = anAxis->GetValue();
-    if(A.IsNull() || A.ShapeType() != TopAbs_EDGE) return 0;
-    TopoDS_Edge anEdge = TopoDS::Edge(A);
-
-    gp_Pnt aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
-    gp_Pnt aP2 = BRep_Tool::Pnt(TopExp::LastVertex(anEdge));
-    gp_Dir D(gp_Vec(aP1, aP2));
-
-    gp_Ax1 AX1(aP1, D);
+    if (!anAxis.IsNull()) {
+      TopoDS_Shape A = anAxis->GetValue();
+      gp_Vec aV = GEOMUtils::GetVector(A);
+      TopoDS_Edge anEdge = TopoDS::Edge(A);
+      aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
+      D = gp_Dir(aV);
+    }
+    gp_Ax1 AX1 (aP1, D);
 
     Standard_Integer nbtimes = RI.GetNbIter1();
-    Standard_Real angle = 360.0/nbtimes;
+    Standard_Real angle = 360. / nbtimes;
+    if (aType == ROTATE_1D_STEP)
+      angle = RI.GetAngle();
 
     TopoDS_Compound aCompound;
     BRep_Builder B;
@@ -177,7 +184,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
         B.Add(aCompound, anOriginal);
       }
       else {
-        aTrsf.SetRotation(AX1, i*angle*M_PI/180.);
+        aTrsf.SetRotation(AX1, i * angle * M_PI / 180.);
         //TopLoc_Location aLocRes (aTrsf * aTrsfOrig); // gp_Trsf::Multiply() has a bug
         gp_Trsf aTrsfNew (aTrsfOrig);
         aTrsfNew.PreMultiply(aTrsf);
@@ -194,16 +201,17 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
   }
   else if (aType == ROTATE_2D) {
     //Get direction
+    gp_Pnt aP1 = gp::Origin();
+    gp_Dir D = gp::DZ();
     Handle(GEOM_Function) anAxis = RI.GetAxis();
-    if(anAxis.IsNull()) return 0;
-    TopoDS_Shape A = anAxis->GetValue();
-    if(A.IsNull() || A.ShapeType() != TopAbs_EDGE) return 0;
-    TopoDS_Edge anEdge = TopoDS::Edge(A);
-    gp_Pnt aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
-    gp_Pnt aP2 = BRep_Tool::Pnt(TopExp::LastVertex(anEdge));
-    gp_Dir D(gp_Vec(aP1, aP2));
-
-    gp_Ax1 AX1(aP1, D);
+    if (!anAxis.IsNull()) {
+      TopoDS_Shape A = anAxis->GetValue();
+      gp_Vec aV = GEOMUtils::GetVector(A);
+      TopoDS_Edge anEdge = TopoDS::Edge(A);
+      aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
+      D = gp_Dir(aV);
+    }
+    gp_Ax1 AX1 (aP1, D);
 
     gp_Trsf aTrsf1;
     gp_Trsf aTrsf2;
@@ -274,7 +282,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
           B.Add(aCompound, anOriginal.Located(aLocRes));
         }
         else {
-          aTrsf2.SetRotation(AX1, j*ang*M_PI/180.);
+          aTrsf2.SetRotation(AX1, j * ang * M_PI / 180.);
           //TopLoc_Location aLocRes (aTrsf2 * aTrsf1 * aTrsfOrig); // gp_Trsf::Multiply() has a bug
           gp_Trsf aTrsfNew (aTrsfOrig);
           aTrsfNew.PreMultiply(aTrsf1);

@@ -18,17 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_FreeBoundDlg.h
 // Author : Sergey LITONIN, Open CASCADE S.A.S. (sergey.litonin@opencascade.com)
-//
+
 #ifndef REPAIRGUI_FREEBOUNDDLG_H
 #define REPAIRGUI_FREEBOUNDDLG_H
 
 #include <QDialog>
-#include <GEOMBase_Helper.h>
+#include <GEOMBase_Skeleton.h>
 
 class QLineEdit;
 class QLabel;
@@ -38,42 +37,42 @@ class GeometryGUI;
 // class    : RepairGUI_FreeBoundDlg
 // purpose  : Dialog for displaying free boundaries of selected face, shell or solid
 //=================================================================================
-class RepairGUI_FreeBoundDlg : public QDialog,
-                               public GEOMBase_Helper
+class RepairGUI_FreeBoundDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 
 public:
-  RepairGUI_FreeBoundDlg( GeometryGUI*, QWidget* );
+  RepairGUI_FreeBoundDlg (GeometryGUI*, QWidget*);
   ~RepairGUI_FreeBoundDlg();
 
-private slots:
-  void                                  onClose();
-  void                                  onHelp(); 
-  void                                  onDeactivate();
-  void                                  onActivate();
-  void                                  onSelectionDone();
+protected:
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr    createOperation();
+  virtual bool                          isValid (QString&);
+  virtual bool                          execute (ObjectList&);
+  virtual GEOM::GEOM_Object_ptr         getFather (GEOM::GEOM_Object_ptr);
+  virtual QString                       getNewObjectName (int CurrObj = -1) const; 
                                                                                   
 private:
   void                                  Init();
-  void                                  enterEvent( QEvent* );
-  void                                  closeEvent( QCloseEvent* );
-  void                                  keyPressEvent( QKeyEvent* );
+  void                                  enterEvent (QEvent*);
   void                                  activateSelection();
-  
-  virtual GEOM::GEOM_IOperations_ptr    createOperation();
-  virtual bool                          execute( ObjectList& );
-  virtual bool                          isValid( QString& );
 
 private:
   QLineEdit*                            myEdit;
   QLabel*                               myClosedLbl;
   QLabel*                               myOpenLbl;
+
   GEOM::GEOM_Object_var                 myObj;
-  GeometryGUI*                          myGeomGUI;
   int                                   myNbClosed;
   int                                   myNbOpen;
-  QString                               myHelpFileName;
+  int                                   myCurrObj;
+
+private slots:
+  void                                  ClickOnOk();
+  bool                                  ClickOnApply();
+  void                                  SelectionIntoArgument();
+  void                                  ActivateThisDialog();
 };
 
 #endif // REPAIRGUI_FREEBOUNDDLG_H

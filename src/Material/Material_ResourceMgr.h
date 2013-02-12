@@ -25,10 +25,18 @@
 
 #include "Material.h"
 
+#include <QObject>
+#include <QMutex>
 #include <QtxResourceMgr.h>
 
-class MATERIAL_SALOME_EXPORT Material_ResourceMgr : public QtxResourceMgr
+class QFileSystemWatcher;
+
+class MATERIAL_SALOME_EXPORT Material_ResourceMgr : public QObject, public QtxResourceMgr
 {
+  Q_OBJECT;
+
+  class Updater;
+
 public:
   //! Material type
   typedef enum {
@@ -40,8 +48,24 @@ public:
   Material_ResourceMgr();
   ~Material_ResourceMgr();
 
+  static Material_ResourceMgr* resourceMgr();
+
   QStringList materials( MaterialType = All, bool = true );
-  
+
+signals:
+  void changed();
+
+private:
+  void watchUserFile( bool );
+
+private slots:
+  void update();
+
+private:
+  QFileSystemWatcher* myWatcher;
+  QMutex              myMutex;
+
+  friend class Material_Model;
 };
 
 #endif // MATERIAL_RESOURCEMGR_H

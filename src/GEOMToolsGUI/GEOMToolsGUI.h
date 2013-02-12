@@ -54,6 +54,8 @@ public:
   ~GEOMToolsGUI();
 
   bool         OnGUIEvent( int, SUIT_Desktop* );
+  bool         OnGUIEvent( int theCommandID, SUIT_Desktop*, const QVariant& );
+
   virtual void deactivate();
 
   enum ActionType { SHOWDLG, INCR, DECR };
@@ -82,6 +84,8 @@ private:
   void         OnPublishObject() ;
   void         OnPointMarker();
   void         OnMaterialProperties();
+  void         OnMaterialsLibrary();
+  void         OnSetMaterial(const QVariant& );
   void         OnEdgeWidth();
   void         OnIsosWidth();
   void         OnBringToFront();

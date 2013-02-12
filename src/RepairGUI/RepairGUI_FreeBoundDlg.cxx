@@ -18,15 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_FreeBoundDlg.cxx
 // Author : Sergey LITONIN, Open CASCADE S.A.S. (sergey.litonin@opencascade.com)
-//
+
 #include "RepairGUI_FreeBoundDlg.h"
 
 #include <GEOMBase.h>
+#include <DlgRef.h>
+
 #include <GeometryGUI.h>
 #include <GEOM_Displayer.h>
 #include <GEOMImpl_Types.hxx>
@@ -51,7 +52,7 @@
 #include <QKeyEvent>
 
 #define SPACING 6
-#define MARGIN  9
+#define MARGIN  0
 
 /*!
   Class       : RepairGUI_FreeBoundDlg
@@ -62,59 +63,55 @@
 // function : RepairGUI_FreeBoundDlg
 // purpose  : Constructor
 //=================================================================================
-RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( GeometryGUI* theGUI, QWidget* theParent )
-  : QDialog( theParent, 0 ),
-    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( theParent ) ),
-    myGeomGUI( theGUI )
+RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg (GeometryGUI* theGUI, QWidget* theParent)
+  : GEOMBase_Skeleton(theGUI, theParent)
 {
-  setAttribute( Qt::WA_DeleteOnClose );
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FREE_BOUNDS")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle( tr( "CAPTION" ) );
+  setWindowTitle(tr("CAPTION"));
 
-  QPixmap iconSelect( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
-  
-  QGroupBox* aMainGrp = new QGroupBox( tr( "FREE_BOUND" ), this );
-  
-  QLabel* lab = new QLabel( tr( "GEOM_OBJECT" ), aMainGrp );
-  QPushButton* btn = new QPushButton( aMainGrp );
-  btn->setIcon( iconSelect );
-  myEdit = new QLineEdit( aMainGrp );
-  myEdit->setReadOnly( true );
-  myEdit->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
+  /***************************************************************/
 
-  myClosedLbl = new QLabel( tr( "NUMBER_CLOSED" ), aMainGrp );
-  myOpenLbl   = new QLabel( tr( "NUMBER_OPEN" ),   aMainGrp );
-  myClosedLbl->setMinimumWidth( 150 );
-  myOpenLbl->setMinimumWidth( 150 );
-  
-  QGridLayout* aMainGrpLayout = new QGridLayout( aMainGrp );
-  aMainGrpLayout->setMargin( MARGIN ); aMainGrpLayout->setSpacing( SPACING );
-  aMainGrpLayout->addWidget( lab,    0, 0 );
-  aMainGrpLayout->addWidget( btn,    0, 1 );
-  aMainGrpLayout->addWidget( myEdit, 0, 2 );
-  aMainGrpLayout->addWidget( myClosedLbl, 1, 0, 1, 3 );
-  aMainGrpLayout->addWidget( myOpenLbl,   2, 0, 1, 3 );
+  mainFrame()->GroupConstructors->setTitle(tr("FREE_BOUND"));
+  mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
+  mainFrame()->RadioButton3->close();
 
-  QFrame* aFrame = new QFrame( this );
-  aFrame->setFrameStyle( QFrame::Box | QFrame::Sunken );
-  QPushButton* aCloseBtn = new QPushButton( tr( "GEOM_BUT_CLOSE" ), aFrame );
-  QPushButton* aHelpBtn = new QPushButton( tr( "GEOM_BUT_HELP" ), aFrame );
-  QHBoxLayout* aBtnLay = new QHBoxLayout( aFrame );
-  aBtnLay->setMargin( MARGIN ); aBtnLay->setSpacing( SPACING );
-  aBtnLay->addWidget( aCloseBtn );
-  aBtnLay->addSpacing( SPACING ); aBtnLay->addStretch();
-  aBtnLay->addWidget( aHelpBtn );
+  mainFrame()->GroupBoxName->hide();
 
-  QVBoxLayout* aLay = new QVBoxLayout( this );
-  aLay->setSpacing( SPACING );
-  aLay->setMargin( MARGIN );
-  aLay->addWidget( aMainGrp );
-  aLay->addWidget( aFrame );
+  QGroupBox* aMainGrp = new QGroupBox (tr("FREE_BOUND"), this);
 
-  myHelpFileName = "using_measurement_tools_page.html#boundaries_anchor";
+  QLabel* lab = new QLabel (tr("GEOM_OBJECT"), aMainGrp);
+  QPushButton* btn = new QPushButton (aMainGrp);
+  btn->setIcon(image1);
+  myEdit = new QLineEdit (aMainGrp);
+  myEdit->setReadOnly(true);
+  myEdit->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-  connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
-  connect( aHelpBtn,  SIGNAL( clicked() ), SLOT( onHelp() ) );
+  myClosedLbl = new QLabel (tr("NUMBER_CLOSED"), aMainGrp);
+  myOpenLbl   = new QLabel (tr("NUMBER_OPEN"),   aMainGrp);
+  myClosedLbl->setMinimumWidth(150);
+  myOpenLbl->setMinimumWidth(150);
+
+  QGridLayout* aMainGrpLayout = new QGridLayout (aMainGrp);
+  aMainGrpLayout->addWidget(lab,    0, 0);
+  aMainGrpLayout->addWidget(btn,    0, 1);
+  aMainGrpLayout->addWidget(myEdit, 0, 2);
+  aMainGrpLayout->addWidget(myClosedLbl, 1, 0, 1, 3);
+  aMainGrpLayout->addWidget(myOpenLbl,   2, 0, 1, 3);
+
+  QVBoxLayout* aLay = new QVBoxLayout (centralWidget());
+  aLay->setSpacing(SPACING);
+  aLay->setMargin(MARGIN);
+  aLay->addWidget(aMainGrp);
+
+  resize(minimumSizeHint());
+  /***************************************************************/
+
+  myHelpFileName = "boundaries_page.html";
 
   Init();
 }
@@ -128,94 +125,6 @@ RepairGUI_FreeBoundDlg::~RepairGUI_FreeBoundDlg()
 }
 
 //=================================================================================
-// function : onClose
-// purpose  : SLOT. Called when "close" button pressed. Close dialog
-//=================================================================================
-void RepairGUI_FreeBoundDlg::onClose()
-{
-  globalSelection();
-  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
-  myGeomGUI->SetActiveDialogBox( 0 );
-  reject();
-  erasePreview();
-}
-
-//=================================================================================
-// function : onHelp()
-// purpose  :
-//=================================================================================
-void RepairGUI_FreeBoundDlg::onHelp()
-{
-  LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
-  if ( app )
-    app->onHelpContextModule( myGeomGUI ? app->moduleName( myGeomGUI->moduleName() ) : QString(""), myHelpFileName );
-  else {
-    QString platform;
-#ifdef WIN32
-    platform = "winapplication";
-#else
-    platform = "application";
-#endif
-    SUIT_MessageBox::warning( this, 
-                              tr( "WRN_WARNING" ), 
-                              tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-                              arg( app->resourceMgr()->stringValue( "ExternalBrowser", 
-                                                                    platform ) ).arg( myHelpFileName ) );
-  }
-}
-
-//=================================================================================
-// function : onDeactivate
-// purpose  : Deactivate this dialog
-//=================================================================================
-void RepairGUI_FreeBoundDlg::onDeactivate()
-{
-  setEnabled( false );
-  globalSelection();
-  disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
-  myGeomGUI->SetActiveDialogBox( 0 );
-}
-
-//=================================================================================
-// function : onActivate
-// purpose  : Activate this dialog
-//=================================================================================
-void RepairGUI_FreeBoundDlg::onActivate()
-{
-  myGeomGUI->EmitSignalDeactivateDialog();
-  setEnabled( true );
-  myGeomGUI->SetActiveDialogBox( this );
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-           SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
-  activateSelection();
-  onSelectionDone();
-}
-
-//=================================================================================
-// function : onSelectionDone
-// purpose  : SLOT. Called when selection changed.
-//=================================================================================
-void RepairGUI_FreeBoundDlg::onSelectionDone()
-{
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  if ( aSelList.Extent() != 1 )
-    return;
-
-  GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-
-  if ( !GEOMBase::IsShape( anObj ) )
-    return;
-  else {
-    myObj = anObj;
-    displayPreview( true, false, true, true, 3 );
-  }
-}
-
-//=================================================================================
 // function : Init
 // purpose  : Initialize dialog fields
 //=================================================================================
@@ -224,30 +133,91 @@ void RepairGUI_FreeBoundDlg::Init()
   myNbClosed = myNbOpen = 0;
   myObj = GEOM::GEOM_Object::_nil();
 
-  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-           SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
+  myEditCurrentArgument = myEdit;
+
+  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
   activateSelection();
-  onSelectionDone();
+  SelectionIntoArgument();
 }
 
 //=================================================================================
-// function : enterEvent
-// purpose  : Activate dialog
+// function : ClickOnOk()
+// purpose  :
 //=================================================================================
-void RepairGUI_FreeBoundDlg::enterEvent( QEvent* )
+void RepairGUI_FreeBoundDlg::ClickOnOk()
 {
-  onActivate();
+  if (ClickOnApply())
+    ClickOnCancel();
 }
 
 //=================================================================================
-// function : closeEvent
-// purpose  : Close dialog
+// function : ClickOnApply()
+// purpose  :
 //=================================================================================
-void RepairGUI_FreeBoundDlg::closeEvent( QCloseEvent* )
+bool RepairGUI_FreeBoundDlg::ClickOnApply()
 {
-  onClose();
+  if (!onAccept())
+    return false;
+  return true;
+}
+
+//=================================================================================
+// function : ActivateThisDialog()
+// purpose  :
+//=================================================================================
+void RepairGUI_FreeBoundDlg::ActivateThisDialog()
+{
+  GEOMBase_Skeleton::ActivateThisDialog();
+
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
+  activateSelection();
+  displayPreview(true);
+}
+
+//=================================================================================
+// function : enterEvent()
+// purpose  :
+//=================================================================================
+void RepairGUI_FreeBoundDlg::enterEvent(QEvent*)
+{
+  if (!mainFrame()->GroupConstructors->isEnabled())
+    ActivateThisDialog();
+}
+
+//=================================================================================
+// function : SelectionIntoArgument
+// purpose  : SLOT. Called when selection changed.
+//=================================================================================
+void RepairGUI_FreeBoundDlg::SelectionIntoArgument()
+{
+  myEditCurrentArgument->setText("");
+  myClosedLbl->setText(tr("NUMBER_CLOSED"));
+  myOpenLbl->setText(tr("NUMBER_OPEN"));
+  myObj = GEOM::GEOM_Object::_nil();
+  erasePreview();
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1)
+    return;
+
+  GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First());
+
+  if (!GEOMBase::IsShape(anObj))
+    return;
+
+  myObj = anObj;
+  myEditCurrentArgument->setText(GEOMBase::GetName(myObj));
+  displayPreview(true, false, true, true, 3);
 }
 
 //=================================================================================
@@ -257,11 +227,11 @@ void RepairGUI_FreeBoundDlg::closeEvent( QCloseEvent* )
 void RepairGUI_FreeBoundDlg::activateSelection()
 {
   TColStd_MapOfInteger aMap;
-  aMap.Add( GEOM_FACE );
-  aMap.Add( GEOM_SHELL );
-  aMap.Add( GEOM_SOLID );
-  aMap.Add( GEOM_COMPOUND );
-  globalSelection( aMap );
+  aMap.Add(GEOM_FACE);
+  aMap.Add(GEOM_SHELL);
+  aMap.Add(GEOM_SOLID);
+  aMap.Add(GEOM_COMPOUND);
+  globalSelection(aMap);
 }
 
 //=================================================================================
@@ -270,14 +240,14 @@ void RepairGUI_FreeBoundDlg::activateSelection()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr RepairGUI_FreeBoundDlg::createOperation()
 {
-  return getGeomEngine()->GetIHealingOperations( getStudyId() );
+  return getGeomEngine()->GetIHealingOperations(getStudyId());
 }
 
 //=================================================================================
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_FreeBoundDlg::isValid( QString& )
+bool RepairGUI_FreeBoundDlg::isValid (QString&)
 {
   return !myObj->_is_nil();
 }
@@ -286,52 +256,50 @@ bool RepairGUI_FreeBoundDlg::isValid( QString& )
 // function : execute
 // purpose  : Get free boundaries
 //=================================================================================
-bool RepairGUI_FreeBoundDlg::execute( ObjectList& objects )
+bool RepairGUI_FreeBoundDlg::execute (ObjectList& objects)
 {
-  if ( !IsPreview() || myObj->_is_nil() )
-    return false;
-
   GEOM::ListOfGO_var aClosed, anOpen;
 
-  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
-  bool result = anOper->GetFreeBoundary( myObj, aClosed, anOpen );
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
+  bool result = anOper->GetFreeBoundary(myObj, aClosed, anOpen);
 
-  if ( result ) {
+  if (result) {
     myNbClosed = aClosed->length();
     myNbOpen = anOpen->length();
     int i;
-    for ( i = 0; i < myNbClosed; i++ )
-      objects.push_back( aClosed[i]._retn() );
-    for ( i = 0; i < myNbOpen; i++ )
-      objects.push_back( anOpen[i]._retn() );
+    for (i = 0; i < myNbClosed; i++)
+      objects.push_back(aClosed[i]._retn());
+    for (i = 0; i < myNbOpen; i++)
+      objects.push_back(anOpen[i]._retn());
 
-    myEdit->setText( GEOMBase::GetName( myObj ) );
-    QString aLabelText = tr( "NUMBER_CLOSED" ) + QString( "%1" ).arg( myNbClosed );
-    myClosedLbl->setText( aLabelText );
-    aLabelText = tr( "NUMBER_OPEN" ) + QString( "%1" ).arg( myNbOpen );
-    myOpenLbl->setText( aLabelText );
-  }
-  else {
-    myEdit->setText( GEOMBase::GetName( myObj ) );
-    myClosedLbl->setText( tr( "NUMBER_CLOSED" ) );
-    myOpenLbl->setText( tr( "NUMBER_OPEN" ) );
+    QString aLabelText = tr("NUMBER_CLOSED") + QString("%1").arg(myNbClosed);
+    myClosedLbl->setText(aLabelText);
+    aLabelText = tr("NUMBER_OPEN") + QString("%1").arg(myNbOpen);
+    myOpenLbl->setText(aLabelText);
   }
 
+  myCurrObj = 1;
   return result;
 }
 
-//=================================================================================
-// function : keyPressEvent()
-// purpose  :
-//=================================================================================
-void RepairGUI_FreeBoundDlg::keyPressEvent( QKeyEvent* e )
+//================================================================
+// Function : getNewObjectName
+// Purpose  : Redefine this method to return proper name for a new object
+//================================================================
+QString RepairGUI_FreeBoundDlg::getNewObjectName (int currObj) const
 {
-  QDialog::keyPressEvent( e );
-  if ( e->isAccepted() )
-    return;
+  QString aName = tr("NAME_CLOSED").arg(currObj);
+  if (currObj > myNbClosed)
+    aName = tr("NAME_OPEN").arg(currObj);
+  return aName;
+}
 
-  if ( e->key() == Qt::Key_F1 ) {
-    e->accept();
-    onHelp();
-  }
+//================================================================
+// Function : getFather
+// Purpose  : Get father object for object to be added in study
+//            (called with addInStudy method)
+//================================================================
+GEOM::GEOM_Object_ptr RepairGUI_FreeBoundDlg::getFather (GEOM::GEOM_Object_ptr)
+{
+  return myObj;
 }

@@ -51,6 +51,7 @@
     <parameter name="isos_color"          value="200, 200, 200" />
     <parameter name="toplevel_color"      value="170, 85, 0" />
     <parameter name="toplevel_dm"         value="0" />
+    <parameter name="editgroup_color"     value="170, 85, 0" />
     <parameter name="type_of_marker"      value="1"  />
     <parameter name="deflection_coeff"    value="0.001"  />
     <parameter name="auto_create_base_objects" value="false"  />
@@ -58,10 +59,13 @@
     <parameter name="marker_scale"        value="1"  />
     <parameter name="geom_preview"        value="false"  />
     <parameter name="material"            value="Plastic" />
+    <parameter name="predef_materials"    value="true" />
     <parameter name="edge_width"          value="1" />
     <parameter name="isolines_width"      value="1" />
     <parameter name="preview_edge_width"  value="1" />
     <parameter name="measures_line_width" value="1" />
+    <parameter name="iso_number_u"        value="1" />
+    <parameter name="iso_number_v"        value="1" />
 
     <!-- Input field precisions -->
     <parameter name="def_precision"       value="3"  />

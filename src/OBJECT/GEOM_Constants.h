@@ -21,31 +21,49 @@
 //
 
 //  File   : GEOM_Constants.h
-//  Author : Margarita KARPUNINA
-//  Module : GEOM
-//
+//  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
+
 #ifndef GEOM_CONSTANTS_H
 #define GEOM_CONSTANTS_H
 
-// minimum allowed value for deflection coefficient
-#define DEFLECTION_MIN 1e-06
+#include <QString>
 
-//Define separators
-#define NAME_SEPARATOR  '_' // character used to separate parameter names
-#define DIGIT_SEPARATOR ':' // character used to separate numeric parameter values (color = r:g:b)
+#include "GEOM_OBJECT_defs.hxx"
 
-#define VISIBILITY_PROP       "Visibility"      //Object visibility property
-#define OPACITY_PROP          "Opacity"         //Object opacity property
-#define TRANSPARENCY_PROP     "Transparency"    //Object transparency property
-#define DISPLAY_MODE_PROP     "DisplayMode"     //Object display mode property
-#define ISOS_PROP             "Isos"            //Number of the Isos property of the object
-#define COLOR_PROP            "Color"           //Color of the object 
-#define VECTOR_MODE_PROP      "VectorMode"      //Vector mode property
-#define DEFLECTION_COEFF_PROP "DeflectionCoeff" //Deflection coeff property
-#define MARKER_TYPE_PROP      "MarkerType"      //Marker type property
-#define MATERIAL_PROP         "Material"        //Object material property
-#define EDGE_WIDTH_PROP       "EdgeWidth"       //Width of the edge
-#define ISOS_WIDTH_PROP       "IsosWidth"       //Width of the iso-lines
-#define TOP_LEVEL_PROP        "TopLevelFlag"    //Top level flag
+namespace GEOM
+{
+  enum Property {
+    Visibility,
+    Transparency,
+    DisplayMode,
+    NbIsos,
+    Color,
+    EdgesDirection,
+    Deflection,
+    PointMarker,
+    Material,
+    LineWidth,
+    IsosWidth,
+    TopLevel,
+    LastStudyProperty = TopLevel,
+    Opacity,
+    ShadingColor,
+    WireframeColor,
+    LineColor,
+    FreeBndColor,
+    PointColor,
+    IsosColor,
+    OutlineColor,
+    LastProperty = OutlineColor,
+  };
 
+  GEOM_OBJECT_EXPORT double minDeflection();
+  
+  GEOM_OBJECT_EXPORT QString sectionSeparator();
+  GEOM_OBJECT_EXPORT QString subSectionSeparator();
+
+  GEOM_OBJECT_EXPORT QString propertyName( Property );
+}
+
+  
 #endif //GEOM_CONSTANTS_H

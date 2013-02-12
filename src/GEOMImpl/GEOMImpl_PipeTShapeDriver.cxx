@@ -15,20 +15,20 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-#include <Standard_Stream.hxx>
 
 #include <GEOMImpl_PipeTShapeDriver.hxx>
+
 #include <GEOMImpl_IPipeTShape.hxx>
 #include <GEOMImpl_Types.hxx>
-
 #include <GEOMImpl_Block6Explorer.hxx>
-#include <GEOM_Function.hxx>
 
-#include <GEOMImpl_IShapesOperations.hxx>
-#include "GEOMAlgo_FinderShapeOn1.hxx"
-#include "GEOMAlgo_FinderShapeOn2.hxx"
+#include <GEOM_Function.hxx>
+#include <GEOM_IOperations.hxx>
+
+#include <GEOMUtils.hxx>
+
+#include <GEOMAlgo_FinderShapeOn1.hxx>
+#include <GEOMAlgo_FinderShapeOn2.hxx>
 #include <GEOMAlgo_ClsfBox.hxx>
 
 #include <TFunction_Logbook.hxx>
@@ -106,7 +106,7 @@ GEOMImpl_PipeTShapeDriver::GetShapesOnBoxIDs(const TopoDS_Shape& aBox,
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!GEOMImpl_IShapesOperations::CheckTriangulation(aShape)) {
+  if (!GEOMUtils::CheckTriangulation(aShape)) {
     StdFail_NotDone::Raise("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }
@@ -179,7 +179,7 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!GEOMImpl_IShapesOperations::CheckTriangulation(theShape)) {
+  if (!GEOMUtils::CheckTriangulation(theShape)) {
     StdFail_NotDone::Raise("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }

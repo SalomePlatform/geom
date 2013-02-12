@@ -228,13 +228,13 @@ void GEOMToolsGUI_MarkerDlg::accept()
                 anObject->SetMarkerStd( getMarkerType(), getStandardMarkerScale() );
                 QString aMarker = "%1%2%3";
                 aMarker = aMarker.arg(getMarkerType());
-                aMarker = aMarker.arg(DIGIT_SEPARATOR);
+                aMarker = aMarker.arg(GEOM::subSectionSeparator());
                 aMarker = aMarker.arg(getStandardMarkerScale());
-                getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),MARKER_TYPE_PROP, aMarker);
+                getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),GEOM::propertyName( GEOM::PointMarker ), aMarker);
               }
               else if ( getCustomMarkerID() > 0 ) {
                 anObject->SetMarkerTexture( getCustomMarkerID() );
-                getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),MARKER_TYPE_PROP, QString::number(getCustomMarkerID()));
+                getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),GEOM::propertyName( GEOM::PointMarker ), QString::number(getCustomMarkerID()));
               }
             }
           }

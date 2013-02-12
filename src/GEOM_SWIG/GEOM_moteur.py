@@ -25,7 +25,6 @@
 #  File   : GEOM_moteur.py
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
-#  $Header$
 #
 import salome
 import geompy

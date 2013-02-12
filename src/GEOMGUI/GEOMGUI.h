@@ -51,6 +51,7 @@ public :
 
   // Each of this methods can be redifined by descendants
   virtual bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent );
+  virtual bool OnGUIEvent( int theCommandID, SUIT_Desktop* parent, const QVariant& theParam  );
 
   virtual bool OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* );
   virtual bool OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* );

@@ -23,6 +23,8 @@
 
 #include "GEOM_Function.hxx"
 
+#include <TColStd_HSequenceOfTransient.hxx>
+
 class GEOMImpl_IPipePath
 {
  public:

@@ -4,78 +4,22 @@
 
 \anchor tui_change_disp_mode
 <br><h2>Changing Display Mode</h2>
-
-\code
-import salome
-import geompy
-box = geompy.MakeBox(0,0,0, 50,50,50)
-box2 = geompy.MakeBox(-50,-50,-50, 0,0,0)
-
-sphere = geompy.MakeSphere(50,50,50, 30)
-fuse = geompy.MakeBoolean(box,sphere,3)
-fuse_id = geompy.addToStudy(fuse,"Fuse")
-box_id = geompy.addToStudy(box2, "Box")
-
-gg = salome.ImportComponentGUI("GEOM")
-gg.createAndDisplayGO(fuse_id)
-gg.setDisplayMode(fuse_id,1)
-gg.createAndDisplayGO(box_id)
-gg.setVectorsMode(box_id, 1)
-\endcode
+\include viewing_geom_objs_ex01.py
+<a href="../../examples/GEOM/viewing_geom_objs_ex01.py">Download this script</a>
 
 \anchor tui_change_color 
 <br><h2> Changing Color</h2>
-
-\code
-import salome
-import geompy
-box = geompy.MakeBox(0,0,0, 50,50,50)
-
-sphere = geompy.MakeSphere(50,50,50, 30)
-fuse = geompy.MakeBoolean(box,sphere,3)
-fuse_id = geompy.addToStudy(fuse,"Fuse")
-
-gg = salome.ImportComponentGUI("GEOM")
-gg.createAndDisplayGO(fuse_id)
-gg.setDisplayMode(fuse_id,1)
-gg.setColor(fuse_id,218,165,31) 
-\endcode
+\include viewing_geom_objs_ex02.py
+<a href="../../examples/GEOM/viewing_geom_objs_ex02.py">Download this script</a>
 
 \anchor tui_change_transparency
 <br><h2>Changing Transparency</h2>
-
-\code
-import salome
-import geompy
-
-box = geompy.MakeBox(0,0,0, 50,50,50)
-sphere = geompy.MakeSphere(50,50,50, 30)
-
-fuse = geompy.MakeBoolean(box,sphere,3)
-fuse_id = geompy.addToStudy(fuse,"Fuse")
-
-gg = salome.ImportComponentGUI("GEOM")
-gg.createAndDisplayGO(fuse_id)
-gg.setDisplayMode(fuse_id,1)
-gg.setColor(fuse_id,218,165,31)
-gg.setTransparency(fuse_id,0.5) 
-\endcode
+\include viewing_geom_objs_ex03.py
+<a href="../../examples/GEOM/viewing_geom_objs_ex03.py">Download this script</a>
 
 \anchor tui_point_marker
 <br><h2>Set Point Marker</h2>
+\include viewing_geom_objs_ex04.py
+<a href="../../examples/GEOM/viewing_geom_objs_ex04.py">Download this script</a>
 
-\code
-import salome
-import geompy
-
-texture = geompy.LoadTexture("/users/user/mytexture.dat")
-
-v1 = geompy.MakeVertex(0, 0, 0)
-v2 = geompy.MakeVertex(100, 0, 0)
-v3 = geompy.MakeVertex(0, 100, 0)
-
-v1.SetMarkerStd(GEOM.MT_O_PLUS, GEOM.MS_25)
-v2.SetMarkerStd(GEOM.MT_BALL,   GEOM.MS_40)
-v3.SetMarkerTexture(texture)
-\endcode
 */

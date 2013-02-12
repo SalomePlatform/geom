@@ -87,15 +87,15 @@ namespace GEOM
     void Register()
     {
       if ( !CORBA::is_nil( this->myObject ) )
-	this->myObject->Register();
+        this->myObject->Register();
     }
 
     //! Decrement counter for the object.
     void UnRegister()
     {
       if ( !CORBA::is_nil( this->myObject ) ) {
-	this->myObject->UnRegister();
-	this->myObject = TInterface::_nil();
+        this->myObject->UnRegister();
+        this->myObject = TInterface::_nil();
       }
     }
       

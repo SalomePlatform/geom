@@ -75,6 +75,20 @@ GetProperty()
 
 void 
 GEOM_DeviceActor:: 
+SetBackfaceProperty(vtkProperty* theProperty)
+{
+  myActor->SetBackfaceProperty(theProperty);
+}
+ 
+vtkProperty* 
+GEOM_DeviceActor:: 
+GetBackfaceProperty()
+{
+  return myActor->GetBackfaceProperty();
+}
+ 
+void 
+GEOM_DeviceActor:: 
 SetVisibility(int theVisibility)
 {
   myActor->SetVisibility(theVisibility);

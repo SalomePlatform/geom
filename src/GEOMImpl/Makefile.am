@@ -238,14 +238,18 @@ libGEOMimpl_la_CPPFLAGS =		\
 	-I$(srcdir)/../NMTDS		\
 	-I$(srcdir)/../NMTTools		\
 	-I$(srcdir)/../GEOM		\
+	-I$(srcdir)/../BlockFix		\
 	-I$(srcdir)/../GEOMAlgo		\
+	-I$(srcdir)/../GEOMUtils	\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
 	-I$(top_builddir)/idl
 
 libGEOMimpl_la_LDFLAGS  =			\
 	../GEOM/libGEOMbasic.la			\
+	../BlockFix/libBlockFix.la		\
 	../GEOMAlgo/libGEOMAlgo.la		\
+	../GEOMUtils/libGEOMUtils.la		\
 	../ShHealOper/libShHealOper.la		\
 	../ARCHIMEDE/libGEOMArchimede.la	\
 	../SKETCHER/libGEOMSketcher.la		\

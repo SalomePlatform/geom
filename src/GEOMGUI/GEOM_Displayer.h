@@ -31,6 +31,7 @@
 
 #include <SALOME_InteractiveObject.hxx>
 
+class GEOM_Actor;
 class SALOME_ListIO;
 class SALOME_View;
 class SALOME_Prs;
@@ -63,6 +64,7 @@ class LightApp_SelectionMgr;
 class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_SelectionFilter;
+class Handle_GEOM_AISShape;
 //class SALOME_Selection;
 
 class GEOMGUI_EXPORT GEOM_Displayer : public LightApp_Displayer
@@ -144,7 +146,7 @@ public:
   int           SetDisplayMode( const int );
   int           GetDisplayMode() const;
   int           UnsetDisplayMode();
-
+  bool          HasDisplayMode() const;
 
   /* Sets name - for temporary objects only */
   void          SetName( const char* theName );
@@ -171,10 +173,6 @@ public:
   static SALOMEDS::Color getUniqueColor( const QList<SALOMEDS::Color>& );
   static SALOMEDS::Color getPredefinedUniqueColor();
 
-  static PropMap getDefaultPropertyMap(const QString& viewer_type);
-  
-  static bool MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault);
-  
   /*Get color of the geom object*/
   static SALOMEDS::Color getColor(GEOM::GEOM_Object_var aGeomObject, bool& hasColor);
 
@@ -209,6 +207,14 @@ protected:
   SUIT_SelectionFilter* getFilter( const int theMode );
   SUIT_SelectionFilter* getComplexFilter( const QList<int>* );
 
+  Quantity_Color qColorFromResources( const QString&, const QColor& );
+  QColor         colorFromResources( const QString&, const QColor& );
+  void           updateShapeProperties( const Handle(GEOM_AISShape)&, bool );
+  void           updateActorProperties( GEOM_Actor*, bool );
+
+  PropMap getObjectProperties( SalomeApp_Study*, const QString&, SALOME_View* = 0 );
+  PropMap getDefaultPropertyMap();
+  
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
@@ -224,11 +230,13 @@ protected:
   int                              myIsosWidth;
   bool                             myToActivate;
   int                              myDisplayMode;
+  bool                             myHasDisplayMode;
   Aspect_TypeOfMarker              myTypeOfMarker;
   double                           myScaleOfMarker;
 
 private:
   SalomeApp_Application* myApp;
+  friend class GEOM_Swig;
 };
 
 #endif // GEOM_DISPLAYER_H

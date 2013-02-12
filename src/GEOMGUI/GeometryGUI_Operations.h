@@ -29,6 +29,7 @@ namespace GEOMOp {
     OpExport              = 1001,   // MENU FILE  - EXPORT
     OpDelete              = 1020,   // MENU EDIT  - DELETE
     OpCheckGeom           = 1030,   // MENU TOOLS - CHECK GEOMETRY
+    OpMaterialsLibrary    = 1040,   // MENU TOOLS - MATERIALS LIBRARY
     OpSelectVertex        = 1100,   // POPUP MENU - SELECT ONLY - VERTEX
     OpSelectEdge          = 1101,   // POPUP MENU - SELECT ONLY - EDGE
     OpSelectWire          = 1102,   // POPUP MENU - SELECT ONLY - WIRE
@@ -50,6 +51,8 @@ namespace GEOMOp {
     OpPointMarker         = 1210,   // POPUP MENU - POINT MARKER
     OpSetTexture          = 1211,   // POPUP MENU - SETTEXTURE
     OpMaterialProperties  = 1212,   // POPUP MENU - MATERIAL PROPERTIES
+    OpPredefMaterial      = 1213,   // POPUP MENU - MATERIAL PROPERTIES - <SOME MATERIAL>
+    OpPredefMaterCustom   = 1214,   // POPUP MENU - MATERIAL PROPERTIES - CUSTOM...
     OpDiscloseChildren    = 1250,   // POPUP MENU - DISCLOSE CHILD ITEMS
     OpConcealChildren     = 1251,   // POPUP MENU - CONCEAL CHILD ITEMS
     OpUnpublishObject     = 1253,   // POPUP MENU - UNPUBLISH

@@ -102,6 +102,8 @@ def TestAll (geompy, math):
   Polyline = geompy.MakePolyline([p0, pz, py, p200])      #(List of GEOM_Object)->GEOM_Object
   Bezier   = geompy.MakeBezier([p0, pz, p200, px])        #(List of GEOM_Object)->GEOM_Object
   Interpol = geompy.MakeInterpol([px, py, p200, pxyz], True) #(List of GEOM_Object,Boolean)->GEOM_Object
+  InterpT1 = geompy.MakeInterpolWithTangents([px, py, pxyz], vx, vz) #(List of GO, GO, GO)->GEOM_Object
+  InterpT2 = geompy.MakeInterpolWithTangents([px, py, pxyz], vxy, vxyz) #(List of GO, GO, GO)->GEOM_Object
   Sketcher = geompy.MakeSketcher("Sketcher:F -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW",
                                  [100,0,0, 1,1,1, -1,1,0]) #(String, List of Doubles)->GEOM_Object
 
@@ -288,9 +290,10 @@ def TestAll (geompy, math):
   #Create Patterns
   MultiTrans1D = geompy.MakeMultiTranslation1D(Fillet, vz, step1, nbtimes1)
   MultiTrans2D = geompy.MakeMultiTranslation2D(Fillet, vz, step1, nbtimes1, vy, step2, nbtimes2)
-  #!!!!Angle In Degree!!!!
-  MultiRot1D   = geompy.MultiRotate1D(Chamfer, vx, nbtimes1)
-  MultiRot2D   = geompy.MultiRotate2D(Chamfer, vx, angle, nbtimes1, step1, nbtimes2)
+  MultiRot1Dt  = geompy.MultiRotate1DNbTimes(Chamfer, vx, nbtimes1)
+  MultiRot1Ds  = geompy.MultiRotate1DByStep(Chamfer, vx, math.pi/4., nbtimes1)
+  MultiRot2Dt  = geompy.MultiRotate2DNbTimes(Chamfer, vx, nbtimes1, step1, nbtimes2)
+  MultiRot2Ds  = geompy.MultiRotate2DByStep(Chamfer, vx, angle1, nbtimes1, step1, nbtimes2)
 
   #Create Informations objects
   CDG        = geompy.MakeCDG(Prism)               #(GEOM_Object)->GEOM_Object
@@ -343,6 +346,8 @@ def TestAll (geompy, math):
   id_Polyline = geompy.addToStudy(Polyline, "Polyline")
   id_Bezier   = geompy.addToStudy(Bezier,   "Bezier")
   id_Interpol = geompy.addToStudy(Interpol, "Interpol")
+  id_InterpT1 = geompy.addToStudy(InterpT1, "InterpT1")
+  id_InterpT2 = geompy.addToStudy(InterpT2, "InterpT2")
   id_Sketcher = geompy.addToStudy(Sketcher, "Sketcher")
 
   id_Sketcher3d_1 = geompy.addToStudy(Sketcher3d_1, "Sketcher 3D by interface")
@@ -462,8 +467,10 @@ def TestAll (geompy, math):
 
   id_MultiTrans1D = geompy.addToStudy(MultiTrans1D, "MultiTrans1D")
   id_MultiTrans2D = geompy.addToStudy(MultiTrans2D, "MultiTrans2D")
-  id_MultiRot1D   = geompy.addToStudy(MultiRot1D,   "MultiRot1D")
-  id_MultiRot2D   = geompy.addToStudy(MultiRot2D,   "MultiRot2D")
+  id_MultiRot1Dt  = geompy.addToStudy(MultiRot1Dt,  "MultiRot1D NbTimes")
+  id_MultiRot1Ds  = geompy.addToStudy(MultiRot1Ds,  "MultiRot1D ByStep")
+  id_MultiRot2Dt  = geompy.addToStudy(MultiRot2Dt,  "MultiRot2D NbTimes")
+  id_MultiRot2Ds  = geompy.addToStudy(MultiRot2Ds,  "MultiRot2D ByStep")
 
   id_CDG       = geompy.addToStudy(CDG,       "CDG")
   id_Archimede = geompy.addToStudy(Archimede, "Archimede")

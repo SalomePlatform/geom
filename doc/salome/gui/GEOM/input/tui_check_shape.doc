@@ -1,17 +1,7 @@
 /*!
 
 \page tui_check_shape_page Check Shape
-
-\code
-import geompy
-
-# create a box
-box = geompy.MakeBoxDXDYDZ(100,30,100)
-IsValid = geompy.CheckShape(box)
-if IsValid == 0:
-    raise RuntimeError, "Invalid box created"
-else:
-    print "\nBox is valid"
-\endcode
+\include check_shape.py
+<a href="../../examples/GEOM/check_shape.py">Download this script</a>
 
 */

@@ -24,7 +24,6 @@
 //  File   : GEOM_VTKTrihedron.cxx
 //  Author : Sergey LITONIN
 //  Module : SALOME
-//  $Header:
 //
 #include "GEOM_VTKTrihedron.hxx"
 
@@ -117,11 +116,15 @@ void GEOM_VTKTrihedronAxis::SetSize( vtkFloatingPointType theSize )
   gp_Mat aRot = aTrsf.VectorialPart();
 
   for ( int i = 1; i <= 3; i++ )
+  {
     for ( int j = 1; j <= 3; j++ )
       myMatrix->SetElement( i - 1, j - 1, aRot( i, j ) );
+ 
+  // Set Arrow Position
+  myMatrix->SetElement( i - 1 , 3, aPosition[ i - 1 ] );
+  }
 
   myArrowActor->SetUserMatrix( myMatrix );
-  myArrowActor->SetPosition( aPosition );
     
 #ifdef IPAL21440
   if( vtkCoordinate* aCoord = myLabelActor->GetPositionCoordinate()->GetReferenceCoordinate() )
@@ -429,3 +432,4 @@ void GEOM_VTKTrihedron::SetAxesColors( vtkFloatingPointType theColor[3], bool th
   myAxis[ 1 ]->SetColor( theIsDiffuse ? 0.0 : theColor[0], theColor[1], theIsDiffuse ? 0.0 : theColor[2] );
   myAxis[ 2 ]->SetColor( theIsDiffuse ? 0.0 : theColor[0], theIsDiffuse ? 0.0 : theColor[1], theColor[2] );
 }
+

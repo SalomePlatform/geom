@@ -25,7 +25,6 @@
 #  File   : GEOM_usinggeom.py
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
-#  $Header$
 #
 import geompy
 import math

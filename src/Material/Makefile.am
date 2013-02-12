@@ -36,6 +36,12 @@ dist_libMaterial_la_SOURCES =		\
 	Material_Model.cxx		\
 	Material_ResourceMgr.cxx
 
+MOC_FILES =				\
+	Material_ResourceMgr_moc.cxx
+
+nodist_libMaterial_la_SOURCES =		\
+	$(MOC_FILES)
+
 # additional information to compile and link file
 libMaterial_la_CPPFLAGS =		\
 	$(QT_INCLUDES)			\

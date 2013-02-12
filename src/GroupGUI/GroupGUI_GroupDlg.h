@@ -102,6 +102,8 @@ private:
   GEOM::GEOM_Object_var               myInPlaceObj;
   int                                 myInPlaceObjSelectState;
   TColStd_DataMapOfIntegerInteger     myMain2InPlaceIndices;
+  QList<int>                          myGroupIdList;
+  int                                 myDmMode;
 
   QPushButton*                        mySelBtn;
   QLineEdit*                          myMainName;

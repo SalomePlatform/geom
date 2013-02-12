@@ -23,7 +23,6 @@
 // GEOM OBJECT : interactive object for Geometry entities visualization
 // File   : GEOM_AISVector.cxx
 // Author : Julia DOROVSKIKH
-// $Header$
 //
 #include <GEOM_AISVector.hxx>
 

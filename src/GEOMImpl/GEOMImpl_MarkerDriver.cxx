@@ -18,15 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_MarkerDriver.hxx>
 #include <GEOMImpl_IMarker.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
-#include <GEOMImpl_IMeasureOperations.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Tool.hxx>
@@ -109,7 +110,7 @@ Standard_Integer GEOMImpl_MarkerDriver::Execute(TFunction_Logbook& log) const
   } else if (aType == MARKER_SHAPE) {
     Handle(GEOM_Function) aRefShape = aPI.GetShape();
     TopoDS_Shape aSh = aRefShape->GetValue();
-    gp_Ax3 anAx3 = GEOMImpl_IMeasureOperations::GetPosition(aSh);
+    gp_Ax3 anAx3 = GEOMUtils::GetPosition(aSh);
     gp_Pln aPln (anAx3);
 
     double aTrimSize = 100.0;

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -27,7 +26,7 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
-#include <GEOMImpl_IMeasureOperations.hxx>
+#include <GEOMUtils.hxx>
 
 #include <Basics_Utils.hxx>
 
@@ -117,7 +116,7 @@ Standard_Integer GEOMImpl_SketcherDriver::Execute(TFunction_Logbook& log) const
     //  return 0;
     //Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast( aGS );
     //aWPlane = aGPlane->Pln().Position();
-    aWPlane = GEOMImpl_IMeasureOperations::GetPosition(aShape);
+    aWPlane = GEOMUtils::GetPosition(aShape);
   }
   gp_Trsf aTrans;
   aTrans.SetTransformation(aWPlane);

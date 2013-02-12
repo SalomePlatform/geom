@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -173,13 +172,14 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
     B.MakeCompound( aCompound );
 
     Handle(GEOM_Function) aVector = TI.GetVector();
-    if(aVector.IsNull()) return 0;
-    TopoDS_Shape aV = aVector->GetValue();
-    if(aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
-    TopoDS_Edge anEdge = TopoDS::Edge(aV);
-
-    gp_Vec Vec(BRep_Tool::Pnt(TopExp::FirstVertex(anEdge)), BRep_Tool::Pnt(TopExp::LastVertex(anEdge)));
-    Vec.Normalize();
+    gp_Vec Vec = gp::DX();
+    if (!aVector.IsNull()) {
+      TopoDS_Shape aV = aVector->GetValue();
+      if (aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
+      TopoDS_Edge anEdge = TopoDS::Edge(aV);
+      Vec = gp_Vec(BRep_Tool::Pnt(TopExp::FirstVertex(anEdge)), BRep_Tool::Pnt(TopExp::LastVertex(anEdge)));
+      Vec.Normalize();
+    }
 
     TopLoc_Location aLocOrig = anOriginal.Location();
     gp_Trsf aTrsfOrig = aLocOrig.Transformation();
@@ -202,32 +202,36 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
   }
   else if (aType == TRANSLATE_2D) {
     Standard_Integer nbtimes1 = TI.GetNbIter1(), nbtimes2 = TI.GetNbIter2();
-    Standard_Real DX, DY, DZ,  step1 = TI.GetStep1(),  step2 = TI.GetStep2();
-    gp_Vec aVec;
+    Standard_Real DX, DY, DZ, step1 = TI.GetStep1(), step2 = TI.GetStep2();
     Handle(GEOM_Function) aVector = TI.GetVector();
-    if(aVector.IsNull()) return 0;
-    TopoDS_Shape aV = aVector->GetValue();
-    if(aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
-    TopoDS_Edge anEdge = TopoDS::Edge(aV);
-
-    gp_Vec Vec1(BRep_Tool::Pnt(TopExp::FirstVertex(anEdge)), BRep_Tool::Pnt(TopExp::LastVertex(anEdge)));
-    Vec1.Normalize();
-
     Handle(GEOM_Function) aVector2 = TI.GetVector2();
-    if(aVector2.IsNull()) return 0;
-    aV = aVector2->GetValue();
-    if(aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
-    anEdge = TopoDS::Edge(aV);
 
-    gp_Vec Vec2(BRep_Tool::Pnt(TopExp::FirstVertex(anEdge)), BRep_Tool::Pnt(TopExp::LastVertex(anEdge)));
-    Vec2.Normalize();
+    gp_Vec Vec1 = gp::DX();
+    gp_Vec Vec2 = gp::DY();
+
+    if (!aVector.IsNull()) {
+      TopoDS_Shape aV = aVector->GetValue();
+      if (aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
+      TopoDS_Edge anEdge = TopoDS::Edge(aV);
+      Vec1 = gp_Vec(BRep_Tool::Pnt(TopExp::FirstVertex(anEdge)), BRep_Tool::Pnt(TopExp::LastVertex(anEdge)));
+      Vec1.Normalize();
+    }
+
+    if (!aVector2.IsNull()) {
+      TopoDS_Shape aV = aVector2->GetValue();
+      if (aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
+      TopoDS_Edge anEdge = TopoDS::Edge(aV);
+      Vec2 = gp_Vec(BRep_Tool::Pnt(TopExp::FirstVertex(anEdge)), BRep_Tool::Pnt(TopExp::LastVertex(anEdge)));
+      Vec2.Normalize();
+    }
 
     TopoDS_Compound aCompound;
     BRep_Builder B;
-    B.MakeCompound( aCompound );
+    B.MakeCompound(aCompound);
 
     TopLoc_Location aLocOrig = anOriginal.Location();
     gp_Trsf aTrsfOrig = aLocOrig.Transformation();
+    gp_Vec aVec;
 
     for (int i = 0; i < nbtimes1; i++) {
       for (int j = 0; j < nbtimes2; j++) {

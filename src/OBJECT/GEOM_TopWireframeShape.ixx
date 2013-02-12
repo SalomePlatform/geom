@@ -30,8 +30,6 @@
 #include <Standard_TypeMismatch.hxx>
 #endif
 
-GEOM_TopWireframeShape::~GEOM_TopWireframeShape() {}
-
 Standard_EXPORT Handle_Standard_Type& GEOM_TopWireframeShape_Type_()
 {
 

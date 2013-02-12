@@ -26,7 +26,6 @@
 # Author : Marc Tajchman - CEA
 # Date : 10/10/2002
 # Modified by : Alexander BORODIN (OCN) - autotools usage
-# $Header$
 # 13/03/2007: Alexander BORODIN - OCN
 # Reorganization for usage of autotools
 #

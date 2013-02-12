@@ -50,7 +50,7 @@ protected:
   virtual bool                       execute( ObjectList& );
   virtual GEOM::GEOM_Object_ptr      getFather( GEOM::GEOM_Object_ptr );
 
-  virtual QString                    getNewObjectName() const; 
+  virtual QString                    getNewObjectName (int CurrObj = -1) const; 
 
 private:
   void                               Init();

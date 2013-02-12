@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GEOMBase_Helper.cxx
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+
 #include "GEOMBase_Helper.h"
 #include "GEOMBase.h"
 #include "GEOM_Operation.h"
@@ -90,7 +89,7 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
   : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false ),
     myIsApplyAndClose( false ), myIsOptimizedBrowsing( false ), myIsWaitCursorEnabled( true ),
-    myIsDisableBrowsing(false)
+    myIsDisableBrowsing(false), myIsDisplayResult(true)
 {
 }
 
@@ -319,19 +318,16 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
                                       const int             displayMode,
                                       const int             color )
 {
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();    
+
   // Set color for preview shape
   getDisplayer()->SetColor( color == -1 ? Quantity_NOC_VIOLET : color );
 
   // set width of displayed shape
-  int lw = lineWidth;
-  if(lw == -1) {
-    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();    
-    lw = resMgr->integerValue("Geometry", "preview_edge_width", -1);
-  }
-  getDisplayer()->SetWidth( lw );
+  getDisplayer()->SetWidth( lineWidth == -1 ? resMgr->integerValue("Geometry", "preview_edge_width", -1) : lineWidth );
 
   // set display mode of displayed shape
-  int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode );
+  int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode == -1 ? resMgr->integerValue( "Geometry", "display_mode", 0 ) : displayMode );
 
   // Disable activation of selection
   getDisplayer()->SetToActivate( activate );
@@ -554,9 +550,10 @@ QString GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* t
     getGeomEngine()->AddInStudy(aStudyDS, theObj, theName, aFatherObj);
 
   QString anEntry;
-  if ( !aSO->_is_nil() )
-    anEntry = aSO->GetID();
-
+  if ( !aSO->_is_nil() ) {
+    CORBA::String_var entry = aSO->GetID();
+    anEntry = entry.in();
+  }
   // Each dialog is responsible for this method implementation,
   // default implementation does nothing
   restoreSubShapes(aStudyDS, aSO);
@@ -770,7 +767,6 @@ bool GEOMBase_Helper::commitCommand( const char* )
 //================================================================
 bool GEOMBase_Helper::hasCommand() const
 {
-  bool res = (bool) myCommand;
   return (bool)myCommand;
 }
 
@@ -858,11 +854,11 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
         addSubshapesToStudy(); // add Sub-shapes if local selection
         const int nbObjs = objects.size();
         QStringList anEntryList;
-        int aNumber = 1;
-        for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
+        int currObj = 1, aNumber = 1;
+        for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it, currObj++ ) {
           GEOM::GEOM_Object_var obj=*it;
           if ( publish ) {
-            QString aName = getNewObjectName();
+            QString aName = getNewObjectName(currObj);
             if ( nbObjs > 1 ) {
               if (aName.isEmpty())
                 aName = getPrefix(obj);
@@ -880,7 +876,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
             }
             anEntryList << addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
-            display( obj, false );
+            if( isDisplayResult() )
+              display( obj, false );
 #ifdef WITHGENERICOBJ
             // obj has been published in study. Its refcount has been incremented.
             // It is safe to decrement its refcount
@@ -893,7 +890,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
             // was modified, and need to be re-cached in GEOM_Client before redisplay
             clearShapeBuffer( obj );
             // withChildren=true, updateView=false
-            redisplay( obj, true, false );
+            if( isDisplayResult() )
+              redisplay( obj, true, false );
           }
         }
 
@@ -1006,7 +1004,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::getFather( GEOM::GEOM_Object_ptr theObj )
 // Function : getNewObjectName
 // Purpose  : Redefine this method to return proper name for a new object
 //================================================================
-QString GEOMBase_Helper::getNewObjectName() const
+QString GEOMBase_Helper::getNewObjectName (int) const
 {
   return QString::null;
 }
@@ -1137,17 +1135,17 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
     if ( sobject ) {
       _PTR(ChildIterator) it( studyDS->NewChildIterator( sobject ) );
       for ( ; it->More() && !found; it->Next() ) {
-	GEOM::GEOM_Object_var cobject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( it->Value() ) );
-	if ( !CORBA::is_nil( cobject ) ) {
-	  GEOM::ListOfLong_var indices = cobject->GetSubShapeIndices();
-	  int length = indices->length();
-	  for ( int i = 0; i < length && !found; i++ ) {
-	    if ( indices[i] == theIndex ) {
-	      object = cobject;
-	      found = true;
-	    }
-	  }
-	}
+        GEOM::GEOM_Object_var cobject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( it->Value() ) );
+        if ( !CORBA::is_nil( cobject ) ) {
+          GEOM::ListOfLong_var indices = cobject->GetSubShapeIndices();
+          int length = indices->length();
+          for ( int i = 0; i < length && !found; i++ ) {
+            if ( indices[i] == theIndex ) {
+              object = cobject;
+              found = true;
+            }
+          }
+        }
       }
     }
   }
@@ -1277,58 +1275,58 @@ QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEn
       SALOME_ListIteratorOfListIO it( selected );
       bool stopped = false;
       for ( ; it.More() && !stopped; it.Next() ) {
-	Handle(SALOME_InteractiveObject) IO = it.Value();
-	GEOM::GeomObjPtr object = GEOMBase::ConvertIOinGEOMObject( IO );
-	if ( object ) {
-	  TColStd_IndexedMapOfInteger subShapes;
-	  selMgr->GetIndexes( IO, subShapes );
-	  int nbSubShapes = subShapes.Extent();
-	  if ( nbSubShapes == 0 ) {
-	    // global selection
-	    if ( typeInList( (TopAbs_ShapeEnum)(object->GetShapeType()), types ) ) {
-	      result << object;
-	      if ( count > 0 ) {
-		if ( strict && result.count() > count ) {
-		  result.clear();
-		  stopped = true;
-		}
-		else if ( !strict && result.count() == count )
-		  stopped = true;
-	      }
-	    }
-	    else if ( strict ) {
-	      result.clear();
-	      stopped = true;
-	    }
-	  }
-	  else {
-	    // local selection
-	    for ( int i = 1; i <= nbSubShapes && !stopped; i++ ) {
-	      int idx = subShapes( i );
-	      GEOM::GeomObjPtr subShape = findObjectInFather( object.get(), idx );
-	      if ( !subShape ) {
-		// sub-shape is not yet published in the study
-		GEOM::ShapesOpPtr shapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-		subShape.take( shapesOp->GetSubShape( object.get(), idx ) ); // take ownership!
-	      }
-	      if ( typeInList( (TopAbs_ShapeEnum)(subShape->GetShapeType()), types ) ) {
-		result << subShape;
-		if ( count > 0 ) {
-		  if ( strict && result.count() > count ) {
-		    result.clear();
-		    stopped = true;
-		  }
-		  else if ( !strict && result.count() == count )
-		    stopped = true;
-		}
-	      }
-	      else if ( strict ) {
-		result.clear();
-		stopped = true;
-	      }
-	    }
-	  }
-	}
+        Handle(SALOME_InteractiveObject) IO = it.Value();
+        GEOM::GeomObjPtr object = GEOMBase::ConvertIOinGEOMObject( IO );
+        if ( object ) {
+          TColStd_IndexedMapOfInteger subShapes;
+          selMgr->GetIndexes( IO, subShapes );
+          int nbSubShapes = subShapes.Extent();
+          if ( nbSubShapes == 0 ) {
+            // global selection
+            if ( typeInList( (TopAbs_ShapeEnum)(object->GetShapeType()), types ) ) {
+              result << object;
+              if ( count > 0 ) {
+                if ( strict && result.count() > count ) {
+                  result.clear();
+                  stopped = true;
+                }
+                else if ( !strict && result.count() == count )
+                  stopped = true;
+              }
+            }
+            else if ( strict ) {
+              result.clear();
+              stopped = true;
+            }
+          }
+          else {
+            // local selection
+            for ( int i = 1; i <= nbSubShapes && !stopped; i++ ) {
+              int idx = subShapes( i );
+              GEOM::GeomObjPtr subShape = findObjectInFather( object.get(), idx );
+              if ( !subShape ) {
+                // sub-shape is not yet published in the study
+                GEOM::ShapesOpPtr shapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+                subShape.take( shapesOp->GetSubShape( object.get(), idx ) ); // take ownership!
+              }
+              if ( typeInList( (TopAbs_ShapeEnum)(subShape->GetShapeType()), types ) ) {
+                result << subShape;
+                if ( count > 0 ) {
+                  if ( strict && result.count() > count ) {
+                    result.clear();
+                    stopped = true;
+                  }
+                  else if ( !strict && result.count() == count )
+                    stopped = true;
+                }
+              }
+              else if ( strict ) {
+                result.clear();
+                stopped = true;
+              }
+            }
+          }
+        }
       }
     }
   }

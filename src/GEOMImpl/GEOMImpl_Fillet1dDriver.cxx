@@ -23,9 +23,11 @@
 #include <GEOMImpl_Fillet1d.hxx>
 #include <GEOMImpl_IFillet1d.hxx>
 #include <GEOMImpl_Types.hxx>
-#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_HealingDriver.hxx>
+
 #include <GEOM_Function.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <ShapeFix_Wire.hxx>
 #include <StdFail_NotDone.hxx>
@@ -352,7 +354,7 @@ bool GEOMImpl_Fillet1dDriver::MakeFillet(const TopoDS_Wire& aWire,
       aListOfNewEdge.Append(anEdgeToEdgeMap.Find(anEdge));
   }
 
-  GEOMImpl_IShapesOperations::SortShapes(aListOfNewEdge);
+  GEOMUtils::SortShapes(aListOfNewEdge);
 
   BRepBuilderAPI_MakeWire aWireTool;
   aWireTool.Add(aListOfNewEdge);

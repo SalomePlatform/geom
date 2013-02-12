@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IMeasureOperations_HXX_
 #define _GEOMImpl_IMeasureOperations_HXX_
@@ -118,6 +117,8 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                        Standard_Real& Ymin, Standard_Real& Ymax,
                                        Standard_Real& Zmin, Standard_Real& Zmax);
 
+  Standard_EXPORT Handle(GEOM_Object) GetBoundingBox (Handle(GEOM_Object) theShape);
+
   Standard_EXPORT void GetTolerance (Handle(GEOM_Object) theShape,
                                      Standard_Real& FaceMin, Standard_Real& FaceMax,
                                      Standard_Real& EdgeMin, Standard_Real& EdgeMax,
@@ -143,6 +144,10 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                                 Standard_Real& X1, Standard_Real& Y1, Standard_Real& Z1,
                                                 Standard_Real& X2, Standard_Real& Y2, Standard_Real& Z2);
 
+  Standard_EXPORT Standard_Integer ClosestPoints (Handle(GEOM_Object) theShape1,
+                                                  Handle(GEOM_Object) theShape2,
+                                                  Handle(TColStd_HSequenceOfReal)& theDoubles);
+
   Standard_EXPORT void PointCoordinates (Handle(GEOM_Object) theShape,
                                          Standard_Real& theX, Standard_Real& theY, Standard_Real& theZ);
 
@@ -167,9 +172,6 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                                             Standard_Real& theVParam);
   Standard_EXPORT Standard_Real MinSurfaceCurvatureByPoint (Handle(GEOM_Object) theSurf,
                                                             Handle(GEOM_Object) thePoint);
-
- public:
-  Standard_EXPORT static gp_Ax3 GetPosition (const TopoDS_Shape& theShape);
 
  private:
   void StructuralDump (const BRepCheck_Analyzer& theAna,

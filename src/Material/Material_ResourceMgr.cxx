@@ -22,6 +22,31 @@
 
 #include "Material_ResourceMgr.h"
 
+#include <QFileSystemWatcher>
+#include <QThread>
+
+/*!
+  \class Material_ResourceMgr::Updater
+  \brief Updates the contents of the resource manager as soon as
+  user materials database file is changed
+  \internal
+*/
+class Material_ResourceMgr::Updater : public QThread
+{
+public:
+  Material_ResourceMgr* myResourceMgr;
+  Updater( Material_ResourceMgr* resMgr ) : myResourceMgr( resMgr )
+  {
+    start();
+  }
+  void run()
+  {
+    QMutexLocker lock( &myResourceMgr->myMutex );
+    myResourceMgr->clear();
+    myResourceMgr->load();
+  }
+};
+
 /*!
   \class Material_ResourceMgr
   \brief Material properties resources manager.
@@ -41,7 +66,8 @@
   \brief Constructor
 */
 Material_ResourceMgr::Material_ResourceMgr()
-  : QtxResourceMgr( "SalomeMaterial", "%1Config" )
+  : QtxResourceMgr( "SalomeMaterial", "%1Config" ),
+    myWatcher( 0 )
 {
   if ( dirList().isEmpty() && ::getenv( "GEOM_ROOT_DIR" ) )
     setDirList( QStringList() << Qtx::addSlash( ::getenv( "GEOM_ROOT_DIR" ) ) + "share/salome/resources/geom" );
@@ -53,6 +79,24 @@ Material_ResourceMgr::Material_ResourceMgr()
 */
 Material_ResourceMgr::~Material_ResourceMgr()
 {
+  watchUserFile( false );
+}
+
+/*!
+  \brief Get shared instance of resources manager
+  
+  This instance of resource manager is global for the application;
+  it watches for changes in the user materials database file to
+  maintain the fresh version of the materials data.
+*/
+Material_ResourceMgr* Material_ResourceMgr::resourceMgr()
+{
+  static Material_ResourceMgr* resMgr = 0;
+  if ( !resMgr ) {
+    resMgr = new Material_ResourceMgr();
+    resMgr->watchUserFile( true );
+  }
+  return resMgr;
 }
 
 /*!
@@ -63,6 +107,8 @@ Material_ResourceMgr::~Material_ResourceMgr()
 */
 QStringList Material_ResourceMgr::materials( MaterialType theType, bool theSort )
 {
+  QMutexLocker lock( &myMutex );
+
   // store original working mode
   WorkingMode m = workingMode();
 
@@ -113,4 +159,35 @@ QStringList Material_ResourceMgr::materials( MaterialType theType, bool theSort 
   }
 
   return result;
+}
+
+/*!
+  \brief Start/stop this resource manager watching the user materials database file.
+  \internal
+*/
+void Material_ResourceMgr::watchUserFile( bool on )
+{
+  if ( on ) {
+    if ( !myWatcher ) {
+      myWatcher = new QFileSystemWatcher( this );
+      myWatcher->addPath( userFileName( appName() ) );
+      connect( myWatcher, SIGNAL( fileChanged( QString ) ), this, SLOT( update() ) );
+    }
+  }
+  else {
+    if ( myWatcher ) {
+      delete myWatcher;
+      myWatcher = 0;
+    }
+  }
+}
+
+/*!
+  \brief Update user database slot
+  \internal
+*/
+void Material_ResourceMgr::update()
+{
+  Updater( this ).wait();
+  emit changed();
 }

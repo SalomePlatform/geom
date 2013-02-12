@@ -56,6 +56,10 @@ GEOM_TopWireframeShape::GEOM_TopWireframeShape(const TopoDS_Shape& shape)
       SetColor(GEOM_AISShape::topLevelColor());
 }
 
+GEOM_TopWireframeShape::~GEOM_TopWireframeShape()
+{
+}
+
 Handle(SALOME_InteractiveObject) GEOM_TopWireframeShape::getIO(){
   Handle(SALOME_InteractiveObject) IO;
   if ( !GetOwner().IsNull() )

@@ -1,15 +1,7 @@
 /*!
 
 \page tui_min_distance_page Minimal Distance
-
-\code
-import geompy
-
-# create boxes
-box1 = geompy.MakeBoxDXDYDZ(100,30,100)
-box2 = geompy.MakeBox(105,0,0,200,30,100)
-min_dist = geompy.MinDistance(box1,box2)
-print "\nMinimal distance between box1 and box2 = ", min_dist
-\endcode
+\include min_distance.py
+<a href="../../examples/GEOM/min_distance.py">Download this script</a>
 
 */

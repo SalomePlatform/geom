@@ -38,6 +38,7 @@
 #include "GEOM_Actor.h"
 
 #include <Material_ResourceMgr.h>
+#include <Material_Model.h>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
@@ -84,6 +85,7 @@
 #include <QFileInfo>
 #include <QString>
 #include <QPainter>
+#include <QSignalMapper>
 
 #include <AIS_Drawer.hxx>
 #include <AIS_ListOfInteractive.hxx>
@@ -188,8 +190,7 @@ void GeometryGUI::Modified (bool theIsUpdateActions)
 // purpose  : Constructor
 //=======================================================================
 GeometryGUI::GeometryGUI() :
-  SalomeApp_Module( "GEOM" ),
-  LightApp_Module( "GEOM" )
+  SalomeApp_Module( "GEOM" )
 {
   if ( CORBA::is_nil( myComponentGeom ) )
   {
@@ -206,6 +207,8 @@ GeometryGUI::GeometryGUI() :
 
   myDisplayer = 0;
   myLocalSelectionMode = GEOM_ALLOBJECTS;
+
+  connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
 }
 
 //=======================================================================
@@ -359,7 +362,7 @@ void GeometryGUI::OnGUIEvent()
 // function : GeometryGUI::OnGUIEvent()
 // purpose  : manage all events on GUI [static]
 //=======================================================================
-void GeometryGUI::OnGUIEvent( int id )
+void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
 {
   SUIT_Application* anApp = application();
   if (!anApp) return;
@@ -408,6 +411,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpSelectAll:          // POPUP MENU - SELECT ONLY - SELECT ALL
   case GEOMOp::OpDelete:             // MENU EDIT - DELETE
   case GEOMOp::OpCheckGeom:          // MENU TOOLS - CHECK GEOMETRY
+  case GEOMOp::OpMaterialsLibrary:   // MENU TOOLS - MATERIALS LIBRARY
   case GEOMOp::OpDeflection:         // POPUP MENU - DEFLECTION COEFFICIENT
   case GEOMOp::OpColor:              // POPUP MENU - COLOR
   case GEOMOp::OpSetTexture:         // POPUP MENU - SETTEXTURE
@@ -425,6 +429,8 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpPublishObject:      // ROOT GEOM OBJECT - POPUP MENU - PUBLISH
   case GEOMOp::OpPointMarker:        // POPUP MENU - POINT MARKER
   case GEOMOp::OpMaterialProperties: // POPUP MENU - MATERIAL PROPERTIES
+  case GEOMOp::OpPredefMaterial:     // POPUP MENU - <SOME MATERIAL>
+  case GEOMOp::OpPredefMaterCustom:  // POPUP MENU - MATERIAL PROPERTIES - CUSTOM...
   case GEOMOp::OpEdgeWidth:          // POPUP MENU - LINE WIDTH - EDGE WIDTH
   case GEOMOp::OpIsosWidth:          // POPUP MENU - LINE WIDTH - ISOS WIDTH
   case GEOMOp::OpBringToFront:       // POPUP MENU - BRING TO FRONT
@@ -595,18 +601,10 @@ void GeometryGUI::OnGUIEvent( int id )
 
   // call method of corresponding GUI library
   if ( library ) {
-    library->OnGUIEvent( id, desk );
-
-    // Update a list of materials for "Preferences" dialog
-    if ( id == GEOMOp::OpMaterialProperties ) {
-      LightApp_Preferences* pref = preferences();
-      if ( pref ) {
-        Material_ResourceMgr aMatResMgr;
-        setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_MATERIAL" ), true )->id(),
-                               "strings",
-                               aMatResMgr.materials() );
-      }
-    }
+    if( !theParam.isValid() )
+      library->OnGUIEvent( id, desk );
+    else
+      library->OnGUIEvent( id, desk, theParam);
   }
   else
     SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
@@ -846,6 +844,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
 #endif
 
+  createGeomAction( GEOMOp::OpMaterialsLibrary,   "MATERIALS_LIBRARY" );
   createGeomAction( GEOMOp::OpDMWireframe,        "WIREFRAME" );
   createGeomAction( GEOMOp::OpDMShading,          "SHADING" );
   createGeomAction( GEOMOp::OpDMShadingWithEdges, "SHADING_WITH_EDGES" );
@@ -887,7 +886,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpUnpublishObject,  "POP_UNPUBLISH_OBJ" );
   createGeomAction( GEOMOp::OpPublishObject,    "POP_PUBLISH_OBJ" );
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
-  createGeomAction( GEOMOp::OpMaterialProperties, "POP_MATERIAL_PROPERTIES" );
+  createGeomAction( GEOMOp::OpMaterialProperties,   "POP_MATERIAL_PROPERTIES" );
+  createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
 
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
 
@@ -1080,11 +1080,15 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpGetNonBlocks,    measurId, -1 );
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
 
-#ifdef _DEBUG_ // PAL16821
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
+#if defined(_DEBUG_) || defined(_DEBUG) // PAL16821
   createMenu( separator(),         toolsId, -1 );
   createMenu( GEOMOp::OpCheckGeom, toolsId, -1 );
 #endif
+ 
+  createMenu( separator(),         toolsId, -1 );
+  createMenu( GEOMOp::OpMaterialsLibrary, toolsId, -1 );
+  createMenu( separator(),         toolsId, -1 );
 
   int viewId = createMenu( tr( "MEN_VIEW" ), -1, -1 );
   createMenu( separator(),       viewId, -1 );
@@ -1273,44 +1277,49 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  GEOMOp::OpWireframe ), dispmodeId, -1 ); // wireframe
-  mgr->setRule( action( GEOMOp::OpWireframe ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpWireframe ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpWireframe ), clientOCCorVTK + " and displaymode='Wireframe'", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  GEOMOp::OpShading ), dispmodeId, -1 ); // shading
-  mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK + " and displaymode='Shading'", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  GEOMOp::OpShadingWithEdges ), dispmodeId, -1 ); // shading with edges
-  mgr->setRule( action( GEOMOp::OpShadingWithEdges ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpShadingWithEdges ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpShadingWithEdges ), clientOCCorVTK + " and displaymode='ShadingWithEdges'", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  GEOMOp::OpTexture ), dispmodeId, -1 ); // wireframe
   mgr->setRule( action( GEOMOp::OpTexture ), clientOCC_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpTexture), clientOCC + " and displaymode='Texture'", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), dispmodeId, -1 );
   mgr->insert( action(  GEOMOp::OpVectors ), dispmodeId, -1 ); // vectors
-  mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK + " and isVectorsMode", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
+  
   mgr->insert( action(  GEOMOp::OpColor ), -1, -1 ); // color
   mgr->setRule( action( GEOMOp::OpColor ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})" + "and isPhysicalMaterial=false", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpTransparency ), -1, -1 ); // transparency
-  mgr->setRule( action( GEOMOp::OpTransparency ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpTransparency ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpIsos ), -1, -1 ); // isos
-  mgr->setRule( action( GEOMOp::OpIsos ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpIsos ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible" + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDeflection ), -1, -1 ); // deflection
-  mgr->setRule( action( GEOMOp::OpDeflection ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpDeflection ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible" + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpPointMarker ), -1, -1 ); // point marker
   //mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg(GEOM_POINT ), QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and ( $typeid in {%1} or compoundOfVertices=true ) " ).arg(GEOM::VERTEX).arg(GEOM::COMPOUND), QtxPopupMgr::VisibleRule );
-  mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 ); // material properties
-  mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'}) and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
-  mgr->insert( action(  GEOMOp::OpSetTexture ), -1, -1 ); // texture
+  
+  // material properties
+  mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 ); 
+  mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+
+ // texture
+  mgr->insert( action(  GEOMOp::OpSetTexture ), -1, -1 );
   mgr->setRule( action( GEOMOp::OpSetTexture ), clientOCCorOB_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
 
   int lineW = mgr->insert(  tr( "MEN_LINE_WIDTH" ), -1, -1 ); // line width menu
   mgr->insert( action(  GEOMOp::OpEdgeWidth ), lineW, -1 ); // edge width
-  mgr->setRule( action( GEOMOp::OpEdgeWidth ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpEdgeWidth ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
 
   mgr->insert( action(  GEOMOp::OpIsosWidth ), lineW, -1 ); // isos width
-  mgr->setRule( action( GEOMOp::OpIsosWidth ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpIsosWidth ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpAutoColor ), -1, -1 ); // auto color
@@ -1612,7 +1621,7 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
       if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
         if ( sr->viewer() == viewer )
         {
-          delete myOCCSelectors.takeAt( myOCCSelectors.indexOf( sr ) );
+          /*delete*/ myOCCSelectors.takeAt( myOCCSelectors.indexOf( sr ) );
           break;
         }
   }
@@ -1623,7 +1632,7 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
       if ( LightApp_VTKSelector* sr = itVTKSel.next() )
         if ( sr->viewer() == viewer )
         {
-          delete myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
+          /*delete*/ myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
           break;
         }
   }
@@ -1689,6 +1698,58 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
   SalomeApp_Module::contextMenuPopup( client, menu, title );
   SALOME_ListIO lst;
   getApp()->selectionMgr()->selectedObjects( lst );
+
+  //Add submenu for predefined materials
+  bool isPredefMat = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "predef_materials" );
+  if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() > 0 ) {
+    QtxPopupMgr* mgr = popupMgr();
+    //get parrent for submenu
+    QAction* act = mgr->action( mgr->actionId( action(  GEOMOp::OpMaterialProperties ) ) );
+    //Clear old  menu
+    QMenu* oldMenu = act->menu() ;
+    if( oldMenu ) {
+      delete oldMenu;
+    }
+    if( isPredefMat ){
+      QMenu* matMenu = new QMenu();
+      QSignalMapper* signalMapper = new QSignalMapper( matMenu );
+      
+      //Get current material model for the object
+      QVariant v;
+      LightApp_Application* anApp = dynamic_cast<LightApp_Application*>( getApp() );
+      if ( anApp && anApp->activeViewManager() ) {
+        LightApp_Study* aStudy = dynamic_cast<LightApp_Study*>( anApp->activeStudy() );
+        if( aStudy ) {
+          v = aStudy->getObjectProperty( anApp->activeViewManager()->getGlobalId(), lst.Last()->getEntry(), GEOM::propertyName( GEOM::Material ), QVariant() );
+        }
+      }
+      QString curModel = "";
+      if ( v.canConvert<QString>() ) curModel = v.toString();
+      // get list of all predefined materials
+      QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
+      bool found = false;
+      foreach ( QString material, materials ) 
+      {
+        QAction* menAct = matMenu->addAction( material );
+        connect(menAct, SIGNAL( toggled( bool ) ), signalMapper, SLOT( map() ) );
+        signalMapper->setMapping( menAct, material );
+        menAct->setCheckable( true );
+        // Set checked if this material is current 
+        Material_Model aModel;
+        aModel.fromResources( material );
+	if ( !found && aModel.toProperties() == curModel ) {
+	  menAct->setChecked( true );
+	  found = true;
+	}
+      }
+      matMenu->insertAction( matMenu->addSeparator(), action(  GEOMOp::OpPredefMaterCustom ) );
+      matMenu->insertSeparator( action(  GEOMOp::OpPredefMaterCustom ) );
+      connect( signalMapper, SIGNAL( mapped( const QString & ) ),
+                 this, SLOT( OnSetMaterial( const QString & ) ) );
+      act->setMenu( matMenu );
+    }
+  }
+  //Set name
   if ( ( client == "OCCViewer" || client == "VTKViewer" ) && lst.Extent() == 1 ) {
     Handle(SALOME_InteractiveObject) io = lst.First();
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
@@ -1701,6 +1762,12 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
     }
   }
 }
+
+void GeometryGUI::OnSetMaterial(const QString& theName)
+{
+  OnGUIEvent( GEOMOp::OpPredefMaterial, QVariant( theName ) );
+}
+
 
 void GeometryGUI::createPreferences()
 {
@@ -1746,9 +1813,15 @@ void GeometryGUI::createPreferences()
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
 
+  addPreference( tr( "PREF_PREDEF_MATERIALS" ), genGroup,
+		 LightApp_Preferences::Bool, "Geometry", "predef_materials" );
+
   int material = addPreference( tr( "PREF_MATERIAL" ), genGroup,
-                                      LightApp_Preferences::Selector,
-                                      "Geometry", "material" );
+				LightApp_Preferences::Selector,
+				"Geometry", "material" );
+
+  addPreference( tr( "PREF_EDITGROUP_COLOR" ), genGroup,
+                 LightApp_Preferences::Color, "Geometry", "editgroup_color" );
 
   const int nb = 4;
   int wd[nb];
@@ -1770,6 +1843,17 @@ void GeometryGUI::createPreferences()
     setPreferenceProperty( wd[i], "min", 1 );
     setPreferenceProperty( wd[i], "max", 5 );
   }
+ 
+  int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
+  setPreferenceProperty( isoGroup, "columns", 2 );
+  int isoU = addPreference( tr( "PREF_ISOS_U" ), isoGroup,
+                                  LightApp_Preferences::IntSpin, "Geometry", "iso_number_u" );
+  setPreferenceProperty( isoU, "min", 0 );
+  setPreferenceProperty( isoU, "max", 100000 );
+  int isoV = addPreference( tr( "PREF_ISOS_V" ), isoGroup,
+                                 LightApp_Preferences::IntSpin, "Geometry", "iso_number_v" );
+  setPreferenceProperty( isoV, "min", 0 );
+  setPreferenceProperty( isoV, "max", 100000 );
 
   // Quantities with individual precision settings
   int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
@@ -1848,15 +1932,14 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( step, "precision", 3 );
 
   // Set property for deflection value for spinboxes
-  setPreferenceProperty( defl, "min", DEFLECTION_MIN );
+  setPreferenceProperty( defl, "min", GEOM::minDeflection() );
   setPreferenceProperty( defl, "max", 1.0 );
   setPreferenceProperty( defl, "step", 1.0e-04 );
   setPreferenceProperty( defl, "precision", 6 );
 
   // Set property for default material
-  Material_ResourceMgr aMatResMgr;
-  setPreferenceProperty( material, "strings", aMatResMgr.materials() );
-
+  setPreferenceProperty( material, "strings", Material_ResourceMgr::resourceMgr()->materials() );
+  
   // Set property vertex marker type
   QList<QVariant> aMarkerTypeIndicesList;
   QList<QVariant> aMarkerTypeIconsList;
@@ -1995,83 +2078,82 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         if (!obj->FindAttribute(anAttr, "AttributeIOR"))
           continue;
 
-        std::string param,occParam = vType.toLatin1().data();
-        occParam += NAME_SEPARATOR;
-        occParam += QString::number(aMgrId).toLatin1().data();
-        occParam += NAME_SEPARATOR;
+        QString param, occParam = vType;
+        occParam += GEOM::sectionSeparator();
+        occParam += QString::number(aMgrId);
+        occParam += GEOM::sectionSeparator();
 
-        if (aProps.contains(VISIBILITY_PROP)) {
-          param = occParam + VISIBILITY_PROP;
-          ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
+        if (aProps.contains(GEOM::propertyName( GEOM::Visibility ))) {
+          param = occParam + GEOM::propertyName( GEOM::Visibility );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Visibility )).toBool() ? "On" : "Off");
         }
 
-        if (aProps.contains(DISPLAY_MODE_PROP)) {
-          param = occParam + DISPLAY_MODE_PROP;
-          ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
+        if (aProps.contains(GEOM::propertyName( GEOM::DisplayMode ))) {
+          param = occParam + GEOM::propertyName( GEOM::DisplayMode );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::DisplayMode )).toString().toStdString());
         }
 
-        if (aProps.contains(COLOR_PROP)) {
-          QColor c = aProps.value(COLOR_PROP).value<QColor>();
-          QString colorStr = QString::number(c.red()/255.);
-          colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
-          colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
-          param = occParam + COLOR_PROP;
-          ip->setParameter(entry, param, colorStr.toLatin1().data());
+        if (aProps.contains(GEOM::propertyName( GEOM::Color ))) {
+          QColor c = aProps.value(GEOM::propertyName( GEOM::Color )).value<QColor>();
+	  QStringList val;
+	  val << QString::number(c.redF());
+	  val << QString::number(c.greenF());
+	  val << QString::number(c.blueF());
+          param = occParam + GEOM::propertyName( GEOM::Color );
+          ip->setParameter(entry, param.toStdString(), val.join( GEOM::subSectionSeparator()).toStdString());
         }
 
         if (vType == SVTK_Viewer::Type()) {
-          if (aProps.contains(OPACITY_PROP)) {
-            param = occParam + OPACITY_PROP;
-            ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+          if (aProps.contains(GEOM::propertyName( GEOM::Opacity ))) {
+            param = occParam + GEOM::propertyName( GEOM::Opacity );
+            ip->setParameter(entry, param.toStdString(), QString::number(1. - aProps.value(GEOM::propertyName( GEOM::Transparency )).toDouble()).toStdString());
           }
         } else if (vType == SOCC_Viewer::Type()) {
-          if (aProps.contains(TRANSPARENCY_PROP)) {
-            param = occParam + TRANSPARENCY_PROP;
-            ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+          if (aProps.contains(GEOM::propertyName( GEOM::Transparency ))) {
+            param = occParam + GEOM::propertyName( GEOM::Transparency );
+            ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Transparency )).toString().toStdString());
           }
 
-          if (aProps.contains(TOP_LEVEL_PROP)) {
-            param = occParam + TOP_LEVEL_PROP;
-            Standard_Boolean val = aProps.value(TOP_LEVEL_PROP).value<Standard_Boolean>();
-            if (val == Standard_True)
-              ip->setParameter(entry, param, "1");
+          if (aProps.contains(GEOM::propertyName( GEOM::TopLevel ))) {
+            param = occParam + GEOM::propertyName( GEOM::TopLevel );
+            ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::TopLevel )).toString().toStdString());
           }
         }
 
-        if (aProps.contains(ISOS_PROP)) {
-          param = occParam + ISOS_PROP;
-          ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
+        if (aProps.contains(GEOM::propertyName( GEOM::NbIsos ))) {
+          param = occParam + GEOM::propertyName( GEOM::NbIsos );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::NbIsos )).toString().toStdString());
         }
 
-        if (aProps.contains(VECTOR_MODE_PROP)) {
-          param = occParam + VECTOR_MODE_PROP;
-          ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
+        if (aProps.contains(GEOM::propertyName( GEOM::EdgesDirection ))) {
+          param = occParam + GEOM::propertyName( GEOM::EdgesDirection );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::EdgesDirection )).toString().toStdString());
         }
 
-        if (aProps.contains(DEFLECTION_COEFF_PROP)) {
-          param = occParam + DEFLECTION_COEFF_PROP;
-          ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
+        if (aProps.contains(GEOM::propertyName( GEOM::Deflection ))) {
+          param = occParam + GEOM::propertyName( GEOM::Deflection );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Deflection )).toString().toStdString());
         }
 
         //Marker type of the vertex - ONLY for the "Vertex" and "Compound of the Vertex"
-        if (aProps.contains(MARKER_TYPE_PROP)) {
-          param = occParam + MARKER_TYPE_PROP;
-          ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
+        if (aProps.contains(GEOM::propertyName( GEOM::PointMarker ))) {
+          param = occParam + GEOM::propertyName( GEOM::PointMarker );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::PointMarker )).toString().toStdString());
         }
 
-        if (aProps.contains(MATERIAL_PROP)) {
-          param = occParam + MATERIAL_PROP;
-          ip->setParameter(entry, param, aProps.value(MATERIAL_PROP).toString().toLatin1().data());
+        if (aProps.contains(GEOM::propertyName( GEOM::Material ))) {
+          param = occParam + GEOM::propertyName( GEOM::Material );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Material )).toString().toStdString());
         }
 
-        if (aProps.contains(EDGE_WIDTH_PROP)) {
-             param = occParam + EDGE_WIDTH_PROP;
-           ip->setParameter(entry, param, aProps.value(EDGE_WIDTH_PROP).toString().toLatin1().data());
+        if (aProps.contains(GEOM::propertyName( GEOM::LineWidth ))) {
+             param = occParam + GEOM::propertyName( GEOM::LineWidth );
+           ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::LineWidth )).toString().toStdString());
         }
 
-        if (aProps.contains(ISOS_WIDTH_PROP)) {
-          param = occParam + ISOS_WIDTH_PROP;
-          ip->setParameter(entry, param, aProps.value(ISOS_WIDTH_PROP).toString().toLatin1().data());
+        if (aProps.contains(GEOM::propertyName( GEOM::IsosWidth ))) {
+          param = occParam + GEOM::propertyName( GEOM::IsosWidth );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::IsosWidth )).toString().toStdString());
         }
       } // object iterator
     } // for (views)
@@ -2134,7 +2216,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
     {
       // visual parameters are stored in strings as follows: ViewerType_ViewIndex_ParamName.
       // '_' is used as separator and should not be used in viewer type or parameter names.
-      QStringList lst = QString((*namesIt).c_str()).split(NAME_SEPARATOR, QString::SkipEmptyParts);
+      QStringList lst = QString((*namesIt).c_str()).split( GEOM::sectionSeparator(), QString::SkipEmptyParts);
       if (lst.size() != 3)
         continue;
 
@@ -2152,36 +2234,36 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       }
 
       QString val((*valuesIt).c_str());
-      if (paramNameStr == VISIBILITY_PROP) {
-        aListOfMap[viewIndex].insert(VISIBILITY_PROP, val == "On" ? 1 : 0);
-      } else if (paramNameStr == OPACITY_PROP) {
-        aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, 1. - val.toDouble());
-      } else if (paramNameStr == TRANSPARENCY_PROP) {
-        aListOfMap[viewIndex].insert( TRANSPARENCY_PROP, val.toDouble() );
-      } else if (paramNameStr == TOP_LEVEL_PROP) {
-          aListOfMap[viewIndex].insert( TRANSPARENCY_PROP, val == "1" ? Standard_True : Standard_False );
-      } else if (paramNameStr == DISPLAY_MODE_PROP) {
-        aListOfMap[viewIndex].insert( DISPLAY_MODE_PROP, val.toInt());
-      } else if (paramNameStr == ISOS_PROP) {
-        aListOfMap[viewIndex].insert( ISOS_PROP, val);
-      } else if (paramNameStr == COLOR_PROP) {
-        QStringList rgb = val.split(DIGIT_SEPARATOR);
+      if (paramNameStr == GEOM::propertyName( GEOM::Visibility )) {
+        aListOfMap[viewIndex].insert(GEOM::propertyName( GEOM::Visibility ), val == "On");
+      } else if (paramNameStr == GEOM::propertyName( GEOM::Opacity )) {
+        aListOfMap[viewIndex].insert(GEOM::propertyName( GEOM::Transparency ), 1. - val.toDouble());
+      } else if (paramNameStr == GEOM::propertyName( GEOM::Transparency )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Transparency ), val.toDouble() );
+      } else if (paramNameStr == GEOM::propertyName( GEOM::TopLevel )) {
+	aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::TopLevel ), val == "true" || val == "1");
+      } else if (paramNameStr == GEOM::propertyName( GEOM::DisplayMode )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::DisplayMode ), val.toInt());
+      } else if (paramNameStr == GEOM::propertyName( GEOM::NbIsos )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::NbIsos ), val);
+      } else if (paramNameStr == GEOM::propertyName( GEOM::Color )) {
+        QStringList rgb = val.split(GEOM::subSectionSeparator());
         if (rgb.count() == 3) {
-          QColor c(int(rgb[0].toDouble()*255), int(rgb[1].toDouble()*255), int(rgb[2].toDouble()*255));
-          aListOfMap[viewIndex].insert( COLOR_PROP, c);
+          QColor c = QColor::fromRgbF(rgb[0].toDouble(), rgb[1].toDouble(), rgb[2].toDouble());
+          aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Color ), c);
         }
-      } else if (paramNameStr == VECTOR_MODE_PROP) {
-        aListOfMap[viewIndex].insert( VECTOR_MODE_PROP, val.toInt());
-      } else if (paramNameStr == DEFLECTION_COEFF_PROP) {
-        aListOfMap[viewIndex].insert( DEFLECTION_COEFF_PROP, val.toDouble());
-      } else if (paramNameStr == MARKER_TYPE_PROP) {
-        aListOfMap[viewIndex].insert( MARKER_TYPE_PROP, val);
-      } else if (paramNameStr == MATERIAL_PROP) {
-        aListOfMap[viewIndex].insert( MATERIAL_PROP, val);
-      } else if (paramNameStr == EDGE_WIDTH_PROP) {
-        aListOfMap[viewIndex].insert( EDGE_WIDTH_PROP, val);
-      } else if (paramNameStr == ISOS_WIDTH_PROP) {
-        aListOfMap[viewIndex].insert( ISOS_WIDTH_PROP, val);
+      } else if (paramNameStr == GEOM::propertyName( GEOM::EdgesDirection )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::EdgesDirection ), val == "true" || val == "1");
+      } else if (paramNameStr == GEOM::propertyName( GEOM::Deflection )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Deflection ), val.toDouble());
+      } else if (paramNameStr == GEOM::propertyName( GEOM::PointMarker )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::PointMarker ), val);
+      } else if (paramNameStr == GEOM::propertyName( GEOM::Material )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Material ), val);
+      } else if (paramNameStr == GEOM::propertyName( GEOM::LineWidth )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::LineWidth ), val.toInt());
+      } else if (paramNameStr == GEOM::propertyName( GEOM::IsosWidth )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::IsosWidth ), val.toInt());
       }
     } // for names/parameters iterator
 
@@ -2192,7 +2274,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       appStudy->setObjectPropMap(index, entry, aListOfMap[index]);
 
       //Get Visibility property of the current PropMap
-      if (aListOfMap[index].value(VISIBILITY_PROP) == 1) {
+      if (aListOfMap[index].value(GEOM::propertyName( GEOM::Visibility )) == 1) {
         SUIT_ViewManager* vman = lst.at(index);
         SUIT_ViewModel* vmodel = vman->getViewModel();
         displayer()->Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
@@ -2305,4 +2387,23 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
     }
   }
   return result;
+}
+
+void GeometryGUI::updateMaterials()
+{
+  LightApp_Preferences* pref = preferences();
+  if ( pref ) {
+    QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
+    QString currentMaterial = SUIT_Session::session()->resourceMgr()->stringValue( "Geometry", "material" );
+    if ( !materials.contains( currentMaterial ) )
+      // user material set as default in the preferences, might be removed
+      SUIT_Session::session()->resourceMgr()->setValue( "Geometry", "material", QString( "Plastic" ) );
+
+    QtxPreferenceItem* prefItem = pref->rootItem()->findItem( tr( "PREF_MATERIAL" ), true );
+    if ( prefItem ) {
+      setPreferenceProperty( prefItem->id(),
+			     "strings", materials );
+      prefItem->retrieve();
+    }
+  }
 }

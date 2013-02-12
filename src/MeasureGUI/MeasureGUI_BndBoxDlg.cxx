@@ -35,6 +35,10 @@
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_OverrideCursor.h>
+#include <SalomeApp_Application.h>
+#include <SalomeApp_Tools.h>
+#include <LightApp_SelectionMgr.h>
 
 //=================================================================================
 // class    : MeasureGUI_BndBoxDlg()
@@ -44,21 +48,23 @@
 //            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_BndBoxDlg::MeasureGUI_BndBoxDlg (GeometryGUI* GUI, QWidget* parent)
-  : MeasureGUI_Skeleton(GUI, parent)
+  : GEOMBase_Skeleton(GUI, parent)
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM", tr( "ICON_DLG_BOUNDING_BOX" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap(
-    "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BOUNDING_BOX")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle( tr( "GEOM_BNDBOX_TITLE" ) );
+  setWindowTitle(tr("GEOM_BNDBOX_TITLE"));
 
   /***************************************************************/
 
-  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_BNDBOX" ) );
-  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_BNDBOX"));
+  mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  myGrp = new MeasureGUI_1Sel6LineEdit( centralWidget() );
+  myGrp = new MeasureGUI_1Sel6LineEdit (centralWidget());
   myGrp->GroupBox1->setTitle( tr( "GEOM_BNDBOX_OBJDIM" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
   myGrp->TextLabel2->setText( tr( "GEOM_MIN" ) );
@@ -87,7 +93,7 @@ MeasureGUI_BndBoxDlg::MeasureGUI_BndBoxDlg (GeometryGUI* GUI, QWidget* parent)
 
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#bounding_box_anchor";
+  myHelpFileName = "bounding_box_page.html";
 
   /* Initialisation */
   Init();
@@ -107,9 +113,66 @@ MeasureGUI_BndBoxDlg::~MeasureGUI_BndBoxDlg()
 //=================================================================================
 void MeasureGUI_BndBoxDlg::Init()
 {
-  mySelBtn = myGrp->PushButton1;
-  mySelEdit = myGrp->LineEdit1;
-  MeasureGUI_Skeleton::Init();
+  myEditCurrentArgument = myGrp->LineEdit1;
+
+  connect(buttonOk(),         SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply(),      SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect(myGrp->PushButton1, SIGNAL(clicked()), this, SLOT(SelectionIntoArgument()));
+
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
+  initName(tr("GEOM_BNDBOX"));
+  globalSelection();
+  SelectionIntoArgument();
+}
+
+//=================================================================================
+// function : ClickOnOk()
+// purpose  :
+//=================================================================================
+void MeasureGUI_BndBoxDlg::ClickOnOk()
+{
+  if (ClickOnApply())
+    ClickOnCancel();
+}
+
+//=================================================================================
+// function : ClickOnApply()
+// purpose  :
+//=================================================================================
+bool MeasureGUI_BndBoxDlg::ClickOnApply()
+{
+  if (!onAccept())
+    return false;
+
+  initName();
+  return true;
+}
+
+//=================================================================================
+// function : ActivateThisDialog()
+// purpose  :
+//=================================================================================
+void MeasureGUI_BndBoxDlg::ActivateThisDialog()
+{
+  GEOMBase_Skeleton::ActivateThisDialog();
+
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
+  globalSelection();
+  redisplayPreview();
+}
+
+//=================================================================================
+// function : enterEvent()
+// purpose  :
+//=================================================================================
+void MeasureGUI_BndBoxDlg::enterEvent(QEvent*)
+{
+  if (!mainFrame()->GroupConstructors->isEnabled())
+    ActivateThisDialog();
 }
 
 //=================================================================================
@@ -121,7 +184,7 @@ void MeasureGUI_BndBoxDlg::processObject()
   double aXMin, aXMax, aYMin, aYMax, aZMin, aZMax;
 
   if (!getParameters(aXMin, aXMax, aYMin, aYMax, aZMin, aZMax)) {
-    mySelEdit->setText("");
+    myEditCurrentArgument->setText("");
     myGrp->LineEdit11->setText("");
     myGrp->LineEdit12->setText("");
     myGrp->LineEdit21->setText("");
@@ -176,4 +239,98 @@ SALOME_Prs* MeasureGUI_BndBoxDlg::buildPrs()
                                             gp_Pnt(aXMax, aYMax, aZMax)).Shape();
 
   return !aShape.IsNull() ? getDisplayer()->BuildPrs(aShape) : 0;
+}
+
+//=================================================================================
+// function : SelectionIntoArgument()
+// purpose  : Called when selection as changed or other case
+//=================================================================================
+void MeasureGUI_BndBoxDlg::SelectionIntoArgument()
+{
+  myEditCurrentArgument->setText("");
+  myObj = GEOM::GEOM_Object::_nil();
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    processObject();
+    erasePreview();
+    return;
+  }
+
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First());
+
+  if (aSelectedObject->_is_nil()) {
+    processObject();
+    erasePreview();
+    return;
+  }
+
+  myObj = aSelectedObject;
+  myEditCurrentArgument->setText(GEOMBase::GetName(myObj));
+  processObject();
+  redisplayPreview();
+}
+
+//=================================================================================
+// function : createOperation
+// purpose  :
+//=================================================================================
+GEOM::GEOM_IOperations_ptr MeasureGUI_BndBoxDlg::createOperation()
+{
+  return getGeomEngine()->GetIMeasureOperations(getStudyId());
+}
+
+//=================================================================================
+// function : isValid
+// purpose  :
+//=================================================================================
+bool MeasureGUI_BndBoxDlg::isValid (QString&)
+{
+  return !myObj->_is_nil();
+}
+
+//=================================================================================
+// function : execute
+// purpose  :
+//=================================================================================
+bool MeasureGUI_BndBoxDlg::execute (ObjectList& objects)
+{
+  GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->MakeBoundingBox(myObj);
+
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
+
+  return true;
+}
+
+//=================================================================================
+// function : redisplayPreview()
+// purpose  :
+//=================================================================================
+void MeasureGUI_BndBoxDlg::redisplayPreview()
+{
+  QString aMess;
+  if (!isValid(aMess)) {
+    erasePreview(true);
+    return;
+  }
+
+  erasePreview(false);
+
+  try {
+    SUIT_OverrideCursor();
+
+    getDisplayer()->SetColor(Quantity_NOC_VIOLET);
+    getDisplayer()->SetToActivate(false);
+    
+    if (SALOME_Prs* aPrs = buildPrs())
+      displayPreview(aPrs);
+  }
+  catch (const SALOME::SALOME_Exception& e) {
+    SalomeApp_Tools::QtCatchCorbaException(e);
+  }
 }

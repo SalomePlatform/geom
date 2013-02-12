@@ -12,7 +12,21 @@ be changed in the future versions of SALOME Geometry module.
 
 \n You can change the material properties of the selected shape(s) in
 the dedicated dialog box. This dialog box can be invoked from the
-context popup menu using "Material properties" item:
+context popup menu. 
+
+\n Appearance of popup menu can be customizable via 
+"Show predefined materials in popup menu" option from preferences.
+If this option is switched off, only "Material properties" item will 
+be shown in popup menu. If this option is on (by default), "Material 
+properties" item in popup menu will open submenu listing predefined 
+materials and additionally "Custom..." item.
+
+\n "Show predefined materials in popup menu" option is switched off:
+\image html hide_predef_material.PNG
+\n "Show predefined materials in popup menu" option is switched on  
+\image html show_predef_material.PNG
+
+\n"Custom..." or "Material properties" item will open dialog box:
 
 \image html material.png
 
@@ -21,6 +35,12 @@ In this dialog box you can:
 shape presentation;
 - assign one of predefined global materials to the shape;
 - create a custom material model and apply it to the shape.
+
+\n You also can work with custom materials in the "Materials library" dialog box. 
+This dialog box can be invoked from the "Tools" main menu using 
+"Materials library" item:
+
+\image html materials_library.png
 
 \note This functionality is available in both OCC and VTK 3D
 viewers. However, note that due to the differencies between underlying API
@@ -80,8 +100,7 @@ scattered light tends to be red, although the light directly striking
 objects is white. OpenGL allows you to set the red, green, and blue
 values for each component of light independently.  
 
-\section material Material properties dialog box
-
+\section material_lib Materials library dialog box
 The dialog box consists of two parts:
 - The list box at the left shows all available material models, both
 predefined by the application and custom one specified by the user.
@@ -98,22 +117,8 @@ it simulates light originating from an object.
 - \b Shininess
 - \b Type of material model: \em physical or \em artificial.
 
-If the material model is specified as a \em physical one (like \em Gold,
-for instance), this means that the color of the shape (more precisely
-its \em ambient color) can not be modified. If you assign a physical
-material model to the shape, the "Color" menu item will not be
-available in the popup menu.
-
-If the model is non-physical (\em artificial), the color can be changed
-to any appopriate one, only other attributes will be constant. In the
-dialog box you will be able to modify the color of the shape via the
-"Color" button. "Ambient color" button becomes disabled to signalize
-that this attribute of the model is ignored. Also, it will be possible
-to modify the color of the shape via the
-\ref color_page "corresponding popup menu command".
-
 All available predefined material models are shown in the list box of
-the <b>Color and Material Properties</b> dialog:
+the <b>Materials dialog</b> dialog:
 - <b>[Current]</b> item in the list corresponds to the material model
   currently assigned to the selected shape(s). This model can be
   freely modified by the user.
@@ -129,6 +134,26 @@ models. The same commands are also available via the popup menu that
 is shown if the user presses right mouse button in the materials list
 box. An additional "Rename material" command, available in popup menu,
 can be used to change the name of material model.
+
+\section material Material properties dialog box
+
+The dialog box looks like "Materials library" dialog box but has 
+some additions in the form of selection objects mechanizm and "Color"
+property.
+
+If the material model is specified as a \em physical one (like \em Gold,
+for instance), this means that the color of the shape (more precisely
+its \em ambient color) can not be modified. If you assign a physical
+material model to the shape, the "Color" menu item will not be
+available in the popup menu.
+
+If the model is non-physical (\em artificial), the color can be changed
+to any appopriate one, only other attributes will be constant. In the
+dialog box you will be able to modify the color of the shape via the
+"Color" button. "Ambient color" button becomes disabled to signalize
+that this attribute of the model is ignored. Also, it will be possible
+to modify the color of the shape via the
+\ref color_page "corresponding popup menu command".
 
 <b>Examples:</b>
 

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -143,7 +142,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPoints
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.TranslateTwoPoints("
+  GEOM::TPythonDump(aFunction) << "geompy.TranslateTwoPoints("
     << theObject << ", " << thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);
@@ -362,7 +361,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVector
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.TranslateVector("
+  GEOM::TPythonDump(aFunction) << "geompy.TranslateVector("
                                << theObject << ", " << theVector << ")";
 
   SetErrorCode(OK);
@@ -500,7 +499,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate1D
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || theVector.IsNull()) return NULL;
+  if (theObject.IsNull()) return NULL;
 
   Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
@@ -515,9 +514,10 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate1D
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_TranslateDriver::GetID()) return NULL;
 
-  GEOMImpl_ITranslate aTI(aFunction);
-  aTI.SetVector(theVector->GetLastFunction());
+  GEOMImpl_ITranslate aTI (aFunction);
   aTI.SetOriginal(aLastFunction);
+  if (!theVector.IsNull())
+    aTI.SetVector(theVector->GetLastFunction());
   aTI.SetStep1(theStep);
   aTI.SetNbIter1(theNbTimes);
 
@@ -560,7 +560,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate2D (Handle(GEOM_Obje
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || theVector.IsNull() || theVector2.IsNull()) return NULL;
+  if (theObject.IsNull()) return NULL;
 
   Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
@@ -576,11 +576,13 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate2D (Handle(GEOM_Obje
   if (aFunction->GetDriverGUID() != GEOMImpl_TranslateDriver::GetID()) return NULL;
 
   GEOMImpl_ITranslate aTI (aFunction);
-  aTI.SetVector(theVector->GetLastFunction());
-  aTI.SetVector2(theVector2->GetLastFunction());
   aTI.SetOriginal(aLastFunction);
+  if (!theVector.IsNull())
+    aTI.SetVector(theVector->GetLastFunction());
   aTI.SetStep1(theStep1);
   aTI.SetNbIter1(theNbTimes1);
+  if (!theVector2.IsNull())
+    aTI.SetVector2(theVector2->GetLastFunction());
   aTI.SetStep2(theStep2);
   aTI.SetNbIter2(theNbTimes2);
 
@@ -799,7 +801,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlane
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.MirrorPlane("
+  GEOM::TPythonDump(aFunction) << "geompy.MirrorByPlane("
                                << theObject << ", " << thePlane << ")";
 
   SetErrorCode(OK);
@@ -906,7 +908,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPoint
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.MirrorPoint("
+  GEOM::TPythonDump(aFunction) << "geompy.MirrorByPoint("
                                << theObject << ", " << thePoint << ")";
 
   SetErrorCode(OK);
@@ -1013,7 +1015,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxis
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.MirrorAxis("
+  GEOM::TPythonDump(aFunction) << "geompy.MirrorByAxis("
                                << theObject << ", " << theAxis << ")";
 
   SetErrorCode(OK);
@@ -1118,7 +1120,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShape
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.OffsetShape("
+  GEOM::TPythonDump(aFunction) << "geompy.Offset("
                                << theObject << ", " << theOffset << ")";
 
   SetErrorCode(OK);
@@ -1285,7 +1287,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.ScaleShape("
+  GEOM::TPythonDump(aFunction) << "geompy.Scale("
     << theObject << ", " << thePoint << ", " << theFactor << ")";
 
   SetErrorCode(OK);
@@ -1426,7 +1428,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeAlongAxes (Handle(G
     return aCopy;
   }
 
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.ScaleShapeAlongAxes("
+  GEOM::TPythonDump(aFunction) << "geompy.ScaleAlongAxes("
                                << theObject << ", " << thePoint << ", "
                                << theFactorX << ", " << theFactorY << ", " << theFactorZ << ")";
   return theObject;
@@ -1482,7 +1484,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.PositionShape("
+  GEOM::TPythonDump(aFunction) << "geompy.Position("
     << theObject << ", " << theStartLCS << ", " << theEndLCS << ")";
 
   SetErrorCode(OK);
@@ -1604,13 +1606,13 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
 
   //Make a Python command
   if (theCopy) {
-    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.PositionAlongPath("
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakePositionAlongPath("
                                  << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
     SetErrorCode(OK);
     return aCopy;
   }
 
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.PositionAlongPath("
+  GEOM::TPythonDump(aFunction) << "geompy.PositionAlongPath("
     << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
 
   SetErrorCode(OK);
@@ -1675,10 +1677,12 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate (Handle(GEOM_Object) t
 
 //=============================================================================
 /*!
- *  Rotate
+ *  RotateCopy
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Object) theObject, Handle(GEOM_Object) theAxis, double theAngle)
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Object) theObject,
+                                                               Handle(GEOM_Object) theAxis,
+                                                               double theAngle)
 {
   SetErrorCode(KO);
 
@@ -1728,7 +1732,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Objec
 
 //=============================================================================
 /*!
- *  Rotate1D
+ *  Rotate1D (for MultiRotate1DNbTimes)
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object) theObject,
@@ -1737,7 +1741,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || theAxis.IsNull()) return NULL;
+  if (theObject.IsNull()) return NULL;
 
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
   if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
@@ -1754,7 +1758,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
 
   GEOMImpl_IRotate aRI(aFunction);
   aRI.SetOriginal(aLastFunction);
-  aRI.SetAxis(theAxis->GetLastFunction());
+  if (!theAxis.IsNull())
+    aRI.SetAxis(theAxis->GetLastFunction());
   aRI.SetNbIter1(theNbTimes);
 
   //Compute the translation
@@ -1774,7 +1779,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MultiRotate1D("
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MultiRotate1DNbTimes("
     << theObject << ", " << theAxis << ", " << theNbTimes << ")";
 
   SetErrorCode(OK);
@@ -1783,19 +1788,17 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
 
 //=============================================================================
 /*!
- *  Rotate2D
+ *  Rotate1D (for MultiRotate1DByStep)
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object) theObject,
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object) theObject,
                                                              Handle(GEOM_Object) theAxis,
-                                                             double theAngle,
-                                                             Standard_Integer theNbTimes1,
-                                                             double theStep,
-                                                             Standard_Integer theNbTimes2)
+                                                             double theAngleStep,
+                                                             Standard_Integer theNbSteps)
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || theAxis.IsNull()) return NULL;
+  if (theObject.IsNull()) return NULL;
 
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
   if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
@@ -1804,19 +1807,21 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object)
   Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
 
   //Add a rotate function
-  aFunction = aCopy->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_2D);
+  aFunction = aCopy->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_1D_STEP);
   if (aFunction.IsNull()) return NULL;
 
-    //Check if the function is set correctly
+  //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_RotateDriver::GetID()) return NULL;
 
-  GEOMImpl_IRotate aRI(aFunction);
-  aRI.SetAxis(theAxis->GetLastFunction());
+  //Convert angle into degrees
+  double anAngleStep = theAngleStep * 180. / M_PI;
+
+  GEOMImpl_IRotate aRI (aFunction);
   aRI.SetOriginal(aLastFunction);
-  aRI.SetNbIter1(theNbTimes1);
-  aRI.SetNbIter2(theNbTimes2);
-  aRI.SetAngle(theAngle);
-  aRI.SetStep(theStep);
+  if (!theAxis.IsNull())
+    aRI.SetAxis(theAxis->GetLastFunction());
+  aRI.SetAngle(anAngleStep);
+  aRI.SetNbIter1(theNbSteps);
 
   //Compute the translation
   try {
@@ -1835,9 +1840,140 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object)
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MultiRotate2D("
-    << theObject << ", " << theAxis << ", " << theAngle << ", "
-      << theNbTimes1 << ", " << theStep << ", " << theNbTimes2 << ")";
+  GEOM::TPythonDump(aFunction)
+    << aCopy << " = geompy.MultiRotate1DByStep(" << theObject << ", "
+    << theAxis << ", " << anAngleStep << "*math.pi/180.0, " << theNbSteps << ")";
+
+  SetErrorCode(OK);
+  return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  Rotate2D (for MultiRotate2DNbTimes)
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object) theObject,
+                                                             Handle(GEOM_Object) theAxis,
+                                                             Standard_Integer theNbObjects,
+                                                             double theRadialStep,
+                                                             Standard_Integer theNbSteps)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
+
+  //Add a new Copy object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+
+  //Add a rotate function
+  aFunction = aCopy->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_2D);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_RotateDriver::GetID()) return NULL;
+
+  double anAngle = 360. / (double)theNbObjects;
+
+  GEOMImpl_IRotate aRI (aFunction);
+  aRI.SetOriginal(aLastFunction);
+  if (!theAxis.IsNull())
+    aRI.SetAxis(theAxis->GetLastFunction());
+  aRI.SetAngle(anAngle);
+  aRI.SetNbIter1(theNbObjects);
+  aRI.SetStep(theRadialStep);
+  aRI.SetNbIter2(theNbSteps);
+
+  //Compute the translation
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Rotate driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MultiRotate2DNbTimes("
+                               << theObject << ", " << theAxis << ", " << theNbObjects
+                               << ", " << theRadialStep << ", " << theNbSteps << ")";
+
+  SetErrorCode(OK);
+  return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  Rotate2D (for MultiRotate2DByStep)
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object) theObject,
+                                                             Handle(GEOM_Object) theAxis,
+                                                             double theAngleStep,
+                                                             Standard_Integer theNbTimes1,
+                                                             double theStep,
+                                                             Standard_Integer theNbTimes2)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be rotated
+
+  //Add a new Copy object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+
+  //Add a rotate function
+  aFunction = aCopy->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_2D);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_RotateDriver::GetID()) return NULL;
+
+  //Convert angle into degrees
+  double anAngleStep = theAngleStep * 180. / M_PI;
+
+  GEOMImpl_IRotate aRI (aFunction);
+  aRI.SetOriginal(aLastFunction);
+  if (!theAxis.IsNull())
+    aRI.SetAxis(theAxis->GetLastFunction());
+  aRI.SetAngle(anAngleStep);
+  aRI.SetNbIter1(theNbTimes1);
+  aRI.SetStep(theStep);
+  aRI.SetNbIter2(theNbTimes2);
+
+  //Compute the translation
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Rotate driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction)
+    << aCopy << " = geompy.MultiRotate2DByStep(" << theObject << ", "
+    << theAxis << ", " << anAngleStep << "*math.pi/180.0, "
+    << theNbTimes1 << ", " << theStep << ", " << theNbTimes2 << ")";
 
   SetErrorCode(OK);
   return aCopy;
@@ -1858,7 +1994,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePoints (Handle(GEO
   if (theObject.IsNull() || theCentPoint.IsNull() || thePoint1.IsNull() || thePoint2.IsNull()) return NULL;
 
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
-  if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be rotated
 
   // Get last functions of the arguments
   Handle(GEOM_Function) aCPF = theCentPoint->GetLastFunction();
@@ -1897,7 +2033,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePoints (Handle(GEO
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.RotateThreePoints(" << theObject
+  GEOM::TPythonDump(aFunction) << "geompy.RotateThreePoints(" << theObject
                                << ", " << theCentPoint << ", "<<thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);

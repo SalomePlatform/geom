@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CurveDlg.h
@@ -34,6 +33,9 @@
 
 class DlgRef_1Sel3Check;
 class QRadioButton;
+class QPushButton;
+class QLineEdit;
+class QGroupBox;
 class BasicGUI_ParamCurveWidget;
 
 //=================================================================================
@@ -45,26 +47,34 @@ class BasicGUI_CurveDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BasicGUI_CurveDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
+  BasicGUI_CurveDlg (GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0);
   ~BasicGUI_CurveDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);
   virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
-  void                               enterEvent( QEvent* );
+  void                               enterEvent (QEvent*);
 
 private:
-  DlgRef_1Sel3Check*                 GroupPoints;
-  QList<GEOM::GeomObjPtr>            myPoints;
   QRadioButton*                      myAnaliticalBtn;
   QRadioButton*                      myBySelectionBtn;
-  BasicGUI_ParamCurveWidget*         myParams; 
+  DlgRef_1Sel3Check*                 myGroupPoints;
+  BasicGUI_ParamCurveWidget*         myGroupParams;
+  QGroupBox*                         myGroupTangents;
+
+  QPushButton*                       myPushBtnV1;
+  QPushButton*                       myPushBtnV2;
+  QLineEdit*                         myLineEditV1;
+  QLineEdit*                         myLineEditV2;
+
+  QList<GEOM::GeomObjPtr>            myPoints;
+  GEOM::GeomObjPtr                   myVec1, myVec2;
 
 private slots:
   void                               ClickOnOk();
@@ -73,13 +83,13 @@ private slots:
   void                               ActivateThisDialog();
   void                               DeactivateActiveDialog();
 
-  void                               ConstructorsClicked( int );
+  void                               ConstructorsClicked (int);
   void                               CheckButtonToggled();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               CreationModeChanged();
-  void                               ValueChangedInSpinBox(double/*theValue*/);
-  void                               ValueChangedInSpinBox(int   /*theValue*/);
+  void                               ValueChangedInSpinBox (double/*theValue*/);
+  void                               ValueChangedInSpinBox (int   /*theValue*/);
   void                               OnEditingFinished();
 };
 

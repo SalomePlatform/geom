@@ -18,20 +18,24 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_MeasureDriver.hxx>
 #include <GEOMImpl_IMeasure.hxx>
-#include <GEOMImpl_IMeasureOperations.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
 
+#include <GEOMUtils.hxx>
+
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 #include <BRepGProp.hxx>
-#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepPrimAPI_MakeBox.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -54,6 +58,7 @@
 #include <gp_Pnt.hxx>
 #include <Precision.hxx>
 #include <Standard_NullObject.hxx>
+#include <StdFail_NotDone.hxx>
 
 //=======================================================================
 //function : GetID
@@ -92,13 +97,46 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
   {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
-    if (aShapeBase.IsNull()) {
+    if (aShapeBase.IsNull())
       Standard_NullObject::Raise("Shape for centre of mass calculation is null");
-    }
 
-    gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(aShapeBase);
+    gp_Ax3 aPos = GEOMUtils::GetPosition(aShapeBase);
     gp_Pnt aCenterMass = aPos.Location();
     aShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
+  }
+  else if (aType == BND_BOX_MEASURE)
+  {
+    Handle(GEOM_Function) aRefBase = aCI.GetBase();
+    TopoDS_Shape aShapeBase = aRefBase->GetValue();
+    if (aShapeBase.IsNull())
+      Standard_NullObject::Raise("Shape for bounding box calculation is null");
+
+    BRepBuilderAPI_Copy aCopyTool (aShapeBase);
+    if (!aCopyTool.IsDone())
+      Standard_NullObject::Raise("Shape for bounding box calculation is bad");
+
+    aShapeBase = aCopyTool.Shape();
+
+    // remove triangulation to obtain more exact boundaries
+    BRepTools::Clean(aShapeBase);
+
+    Bnd_Box B;
+    BRepBndLib::Add(aShapeBase, B);
+
+    Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    B.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
+
+    if (Xmax - Xmin < Precision::Confusion()) Xmax += Precision::Confusion();
+    if (Ymax - Ymin < Precision::Confusion()) Ymax += Precision::Confusion();
+    if (Zmax - Zmin < Precision::Confusion()) Zmax += Precision::Confusion();
+
+    gp_Pnt P1 (Xmin, Ymin, Zmin);
+    gp_Pnt P2 (Xmax, Ymax, Zmax);
+
+    BRepPrimAPI_MakeBox MB (P1, P2);
+    MB.Build();
+    if (!MB.IsDone()) StdFail_NotDone::Raise("Bounding box cannot be computed from the given shape");
+    aShape = MB.Shape();
   }
   else if (aType == VERTEX_BY_INDEX)
   {
@@ -189,7 +227,7 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
     }
     else
     {
-      gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(aFace);
+      gp_Ax3 aPos = GEOMUtils::GetPosition(aFace);
       p1 = aPos.Location();
     }
 

@@ -43,7 +43,7 @@ FILE_PATTERNS     = *.doc
 EXCLUDE_PATTERNS  = creating_adv_obj.doc
 EXCLUDE           = 
 IMAGE_PATH        = @srcdir@/images
-EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG
+EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG @top_srcdir@/doc/salome/examples
 
 #---------------------------------------------------------------------------
 #HTML related options

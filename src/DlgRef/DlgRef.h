@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File   : DlgRef.h
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
@@ -260,38 +259,6 @@ public:
 };
 
 //////////////////////////////////////////
-// DlgRef_1Sel4Spin2Check
-//////////////////////////////////////////
-
-#include "ui_DlgRef_1Sel4Spin2Check_QTD.h"
-
-class DLGREF_EXPORT DlgRef_1Sel4Spin2Check : public QWidget, 
-                                             public Ui::DlgRef_1Sel4Spin2Check_QTD
-{
-  Q_OBJECT
-
-public:
-  DlgRef_1Sel4Spin2Check( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_1Sel4Spin2Check();
-};
-
-//////////////////////////////////////////
-// DlgRef_1Sel4Spin
-//////////////////////////////////////////
-
-#include "ui_DlgRef_1Sel4Spin_QTD.h"
-
-class DLGREF_EXPORT DlgRef_1Sel4Spin : public QWidget, 
-                                       public Ui::DlgRef_1Sel4Spin_QTD
-{
-  Q_OBJECT
-
-public:
-  DlgRef_1Sel4Spin( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_1Sel4Spin();
-};
-
-//////////////////////////////////////////
 // DlgRef_1Sel5Spin1Check
 //////////////////////////////////////////
 
@@ -305,22 +272,6 @@ class DLGREF_EXPORT DlgRef_1Sel5Spin1Check : public QWidget,
 public:
   DlgRef_1Sel5Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_1Sel5Spin1Check();
-};
-
-//////////////////////////////////////////
-// DlgRef_1Sel5Spin
-//////////////////////////////////////////
-
-#include "ui_DlgRef_1Sel5Spin_QTD.h"
-
-class DLGREF_EXPORT DlgRef_1Sel5Spin : public QWidget, 
-                                       public Ui::DlgRef_1Sel5Spin_QTD
-{
-  Q_OBJECT
-
-public:
-  DlgRef_1Sel5Spin( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_1Sel5Spin();
 };
 
 //////////////////////////////////////////
@@ -609,22 +560,6 @@ class DLGREF_EXPORT DlgRef_2Sel3Spin : public QWidget,
 public:
   DlgRef_2Sel3Spin( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_2Sel3Spin();
-};
-
-//////////////////////////////////////////
-// DlgRef_2Sel4Spin1Check
-//////////////////////////////////////////
-
-#include "ui_DlgRef_2Sel4Spin1Check_QTD.h"
-
-class DLGREF_EXPORT DlgRef_2Sel4Spin1Check : public QWidget, 
-                                             public Ui::DlgRef_2Sel4Spin1Check_QTD
-{
-  Q_OBJECT
-
-public:
-  DlgRef_2Sel4Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_2Sel4Spin1Check();
 };
 
 //////////////////////////////////////////

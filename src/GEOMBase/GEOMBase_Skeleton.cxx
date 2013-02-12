@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMBase_Skeleton.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #include "GEOMBase_Skeleton.h"
 #include "GEOMBase.h"
 
@@ -293,7 +292,7 @@ void GEOMBase_Skeleton::initName( const QString& thePrefix )
 // function : getNewObjectName()
 // purpose  : returns contents of Name field
 //=================================================================================
-QString GEOMBase_Skeleton::getNewObjectName() const
+QString GEOMBase_Skeleton::getNewObjectName (int) const
 {
   return myMainFrame->ResultName->text();
 }

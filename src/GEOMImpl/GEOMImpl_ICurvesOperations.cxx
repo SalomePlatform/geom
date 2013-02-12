@@ -736,19 +736,19 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
 
   GEOMImpl_ISpline aCI (aFunction);
 
-  int aLen = thePoints.size();
-  aCI.SetLength(aLen);
   aCI.SetConstructorType(POINT_CONSTRUCTOR);
 
-  int ind = 1;
+  Handle(TColStd_HSequenceOfTransient) aPoints = new TColStd_HSequenceOfTransient;
   std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
-  for (; it != thePoints.end(); it++, ind++) {
+  for (; it != thePoints.end(); it++) {
     Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
-
-    if (aRefPnt.IsNull()) return NULL;
-
-    aCI.SetPoint(ind, aRefPnt);
+    if (aRefPnt.IsNull()) {
+      SetErrorCode("NULL point for Besier curve");
+      return NULL;
+    }
+    aPoints->Append(aRefPnt);
   }
+  aCI.SetPoints(aPoints);
 
   aCI.SetIsClosed(theIsClosed);
 
@@ -798,7 +798,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
   //Add a new Spline object
   Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GetDocID(), GEOM_SPLINE);
 
-  //Add a new Spline function for creation a bezier curve relatively to points set
+  //Add a new Spline function for interpolation type
   Handle(GEOM_Function) aFunction =
     aSpline->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_INTERPOLATION);
   if (aFunction.IsNull()) return NULL;
@@ -808,19 +808,18 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 
   GEOMImpl_ISpline aCI (aFunction);
 
-  int aLen = thePoints.size();
   aCI.SetConstructorType(POINT_CONSTRUCTOR);
-  aCI.SetLength(aLen);
 
-  int ind = 1;
+  Handle(TColStd_HSequenceOfTransient) aPoints = new TColStd_HSequenceOfTransient;
   std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
-  for (; it != thePoints.end(); it++, ind++) {
+  for (; it != thePoints.end(); it++) {
     Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
-
-    if (aRefPnt.IsNull()) return NULL;
-
-    aCI.SetPoint(ind, aRefPnt);
+    if (aRefPnt.IsNull()) {
+      return NULL;
+    }
+    aPoints->Append(aRefPnt);
   }
+  aCI.SetPoints(aPoints);
 
   aCI.SetIsClosed(theIsClosed);
   aCI.SetDoReordering(theDoReordering);
@@ -856,6 +855,85 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
   return aSpline;
 }
 
+
+//=============================================================================
+/*!
+ *  MakeSplineInterpolWithTangents
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolWithTangents
+                                          (std::list<Handle(GEOM_Object)> thePoints,
+                                           Handle(GEOM_Object) theFirstVec,
+                                           Handle(GEOM_Object) theLastVec)
+{
+  SetErrorCode(KO);
+
+  //Add a new Spline object
+  Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GetDocID(), GEOM_SPLINE);
+
+  //Add a new Spline function for interpolation type
+  Handle(GEOM_Function) aFunction =
+    aSpline->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_INTERPOL_TANGENTS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_SplineDriver::GetID()) return NULL;
+
+  GEOMImpl_ISpline aCI (aFunction);
+
+  aCI.SetConstructorType(POINT_CONSTRUCTOR);
+
+  Handle(TColStd_HSequenceOfTransient) aPoints = new TColStd_HSequenceOfTransient;
+  std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
+  for (; it != thePoints.end(); it++) {
+    Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
+    if (aRefPnt.IsNull()) {
+      SetErrorCode("NULL point for Interpolation");
+      return NULL;
+    }
+    aPoints->Append(aRefPnt);
+  }
+  aCI.SetPoints(aPoints);
+
+  Handle(GEOM_Function) aVec1 = theFirstVec->GetLastFunction();
+  Handle(GEOM_Function) aVec2 = theLastVec->GetLastFunction();
+
+  if (aVec1.IsNull() || aVec2.IsNull()) return NULL;
+
+  aCI.SetFirstVector(aVec1);
+  aCI.SetLastVector(aVec2);
+
+  //Compute the Spline value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Spline driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aSpline << " = geompy.MakeInterpolWithTangents([";
+
+  it = thePoints.begin();
+  pd << (*it++);
+  while (it != thePoints.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "], " << theFirstVec << ", " << theLastVec << ")";
+
+  SetErrorCode(OK);
+  return aSpline;
+}
+
 //=============================================================================
 /*!
  *  MakeCurveParametric
@@ -864,7 +942,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
              (const char* thexExpr, const char* theyExpr, const char* thezExpr,
               double theParamMin, double theParamMax, double theParamStep,
-              CurveType theCurveType, 
+              CurveType theCurveType,
               int theParamNbStep, bool theNewMethod)
 {
   TCollection_AsciiString aPyScript;
@@ -958,7 +1036,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
     coords = PyObject_CallFunction(func,(char*)"(d, d, i)", theParamMin, theParamMax, theParamNbStep );
   else
     coords = PyObject_CallFunction(func,(char*)"(d, d, d)", theParamMin, theParamMax, theParamStep );
-  
+
   PyObject* new_stderr = NULL;
 
   if (coords == NULL){
@@ -1038,7 +1116,6 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
     GEOMImpl_ISpline aCI (aFunction);
 
-    aCI.SetLength(lsize);
     aCI.SetConstructorType(COORD_CONSTRUCTOR);
     aCI.SetIsClosed(false);
     aCI.SetCoordinates(aCoordsArray);
@@ -1058,7 +1135,6 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
     GEOMImpl_ISpline aCI (aFunction);
     aCI.SetConstructorType(COORD_CONSTRUCTOR);
-    aCI.SetLength(lsize);
     aCI.SetIsClosed(false);
     aCI.SetDoReordering(false);
     aCI.SetCoordinates(aCoordsArray);

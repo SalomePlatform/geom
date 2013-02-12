@@ -2,8 +2,10 @@
 
 \page bounding_box_page Bounding Box
 
-Returns the dimensions of the bounding box for the selected
-geometrical object.
+Shows the dimensions of the bounding box for the selected
+geometrical object. Creates corresponding shape (box) on "Apply".
+
+\image html measures5.png
 
 \note To take into account any possible shape distortion  
 that affects the resulting bounding box, the algorithm enlarges 
@@ -12,14 +14,10 @@ faces (by iterating through all faces of a shape).
 This functionallity is implemented in such a way to have 
 a satisfactory performance.
 
-<b>Result:</b> Displays the bounding box dimensions of a
-geometrical object in form of a Python Tuple (Xmin, Xmax, Ymin,
-Ymax, Zmin, Zmax).
-\n <b>TUI Command:</b> <em>geompy.BoundingBox(Shape),</em> where \em Shape
+\n <b>TUI Commands:</b> <em>[Xmin,Xmax, Ymin,Ymax, Zmin,Zmax] = geompy.BoundingBox(Shape)</em>,
+<em>BBox = geompy.MakeBoundingBox(Shape)</em>, where \em Shape
 is the shape for which a bounding box is computed.
 
 See also a \ref tui_bounding_box_page "TUI example".
-
-\image html measures5.png
 
 */

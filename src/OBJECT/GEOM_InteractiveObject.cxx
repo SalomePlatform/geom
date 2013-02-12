@@ -24,7 +24,6 @@
 //  File   : GEOM_InteractiveObject.cxx
 //  Author : Christophe ATTANASIO
 //  Module : GEOM
-//  $Header$
 //
 /*!
   \class GEOM_InteractiveObject GEOM_InteractiveObject.hxx

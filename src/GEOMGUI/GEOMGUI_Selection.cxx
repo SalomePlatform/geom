@@ -213,27 +213,20 @@ int GEOMGUI_Selection::typeId( const int index ) const
 
 bool GEOMGUI_Selection::isVisible( const int index ) const
 {
+#ifdef USE_VISUAL_PROP_MAP
+  QVariant v = visibleProperty( entry( index ), GEOM::propertyName( GEOM::Visibility ) );
+  if ( v.canConvert( QVariant::Bool ) )
+    return v.toBool();
+#endif
+
   bool res = false;
 
-#ifdef USE_VISUAL_PROP_MAP
-  bool found = false;
-  QVariant v = visibleProperty( entry( index ), VISIBILITY_PROP );
-  if ( v.canConvert( QVariant::Bool ) ) {
-    res = v.toBool();
-    found = true;
+  GEOM::GEOM_Object_var obj = getObject( index );
+  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  if ( !CORBA::is_nil( obj ) && view ) {
+    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).toLatin1().constData(), "GEOM", "TEMP_IO" );
+    res = view->isVisible( io );
   }
-
-  if ( !found ) {
-#endif
-    GEOM::GEOM_Object_var obj = getObject( index );
-    SALOME_View* view = GEOM_Displayer::GetActiveView();
-    if ( !CORBA::is_nil( obj ) && view ) {
-      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).toLatin1().constData(), "GEOM", "TEMP_IO" );
-      res = view->isVisible( io );
-    }
-#ifdef USE_VISUAL_PROP_MAP
-  }
-#endif
 
   return res;
 }
@@ -288,8 +281,9 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 {
   QString res;
   QString viewType = activeViewType();
+  
 #ifdef USE_VISUAL_PROP_MAP
-  QVariant v = visibleProperty( entry( index ), DISPLAY_MODE_PROP );
+  QVariant v = visibleProperty( entry( index ), GEOM::propertyName( GEOM::DisplayMode ) );
   if ( v.canConvert( QVariant::Int ) ) {
     int dm = v.toInt();
     if ( viewType == OCCViewer_Viewer::Type() ) {
@@ -297,113 +291,103 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
     } else if ( viewType == SVTK_Viewer::Type() ) {
       VTK_DISPLAY_MODE_TO_STRING( res, dm );
     }
+    return res;
   }
-
-  if ( res.isEmpty() ) {
 #endif
-    SALOME_View* view = GEOM_Displayer::GetActiveView();
-    if ( view /*fix for 9320==>*/&& ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
-      SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
-      if ( prs ) {
-	if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
-	  SOCC_Prs* occPrs = (SOCC_Prs*) prs;
-	  AIS_ListOfInteractive lst;
-	  occPrs->GetObjects( lst );
-	  if ( lst.Extent() ) {
-	    Handle(AIS_InteractiveObject) io = lst.First();
-	    if ( !io.IsNull() ) {
-        int dm;
-        Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
-        if(!aSh.IsNull()) {
-          dm = aSh->isTopLevel() ? aSh->prevDisplayMode() : aSh->DisplayMode();
-        } else {
-          dm = io->DisplayMode();
-        }
+
+  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  if ( view /*fix for 9320==>*/&& ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    if ( prs ) {
+      if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
+	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+	AIS_ListOfInteractive lst;
+	occPrs->GetObjects( lst );
+	if ( lst.Extent() ) {
+	  Handle(AIS_InteractiveObject) io = lst.First();
+	  if ( !io.IsNull() ) {
+	    int dm;
+	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+	    if(!aSh.IsNull()) {
+	      dm = aSh->isTopLevel() ? aSh->prevDisplayMode() : aSh->DisplayMode();
+	    } else {
+	      dm = io->DisplayMode();
+	    }
+	    OCC_DISPLAY_MODE_TO_STRING( res, dm );
+	    if ( res.isEmpty() ) { // return default display mode of AIS_InteractiveContext
+	      OCCViewer_Viewer* occViewer = (OCCViewer_Viewer*)SUIT_Session::session()->activeApplication()->
+		desktop()->activeWindow()->getViewManager()->getViewModel();
+	      Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
+	      dm = ic->DisplayMode();
 	      OCC_DISPLAY_MODE_TO_STRING( res, dm );
-	      if ( res.isEmpty() ) { // return default display mode of AIS_InteractiveContext
-		OCCViewer_Viewer* occViewer = (OCCViewer_Viewer*)SUIT_Session::session()->activeApplication()->
-		  desktop()->activeWindow()->getViewManager()->getViewModel();
-		Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
-		dm = ic->DisplayMode();
-		OCC_DISPLAY_MODE_TO_STRING( res, dm );
-	      }
 	    }
 	  }
 	}
-  else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
-	  SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
-	  vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
-	  if ( lst ) {
-	    lst->InitTraversal();
-	    vtkActor* actor = lst->GetNextActor();
-	    if ( actor ) {
-	      SALOME_Actor* salActor = dynamic_cast<SALOME_Actor*>( actor );
-	      if ( salActor ) {
-		int dm = salActor->getDisplayMode();
-		VTK_DISPLAY_MODE_TO_STRING( res, dm );
-	      } // if ( salome actor )
-	    } // if ( actor )
-	  } // if ( lst == vtkPrs->GetObjects() )
-	} // if VTK
       }
+      else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
+	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+	vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
+	if ( lst ) {
+	  lst->InitTraversal();
+	  vtkActor* actor = lst->GetNextActor();
+	  if ( actor ) {
+	    SALOME_Actor* salActor = dynamic_cast<SALOME_Actor*>( actor );
+	    if ( salActor ) {
+	      int dm = salActor->getDisplayMode();
+	      VTK_DISPLAY_MODE_TO_STRING( res, dm );
+	    } // if ( salome actor )
+	  } // if ( actor )
+	} // if ( lst == vtkPrs->GetObjects() )
+      } // if VTK
     }
-
-#ifdef USE_VISUAL_PROP_MAP
   }
-#endif
 
   return res;
 }
 
 bool GEOMGUI_Selection::isVectorsMode( const int index ) const
 {
-  bool res = false;
-
 #ifdef USE_VISUAL_PROP_MAP
-  bool found = false;
-  QVariant v = visibleProperty( entry( index ), VECTOR_MODE_PROP );
-  if ( v.canConvert( QVariant::Bool ) ) {
-    res = v.toBool();
-    found = true;
-  }
-
-  if ( !found ) {
+  QVariant v = visibleProperty( entry( index ), GEOM::propertyName( GEOM::EdgesDirection ) );
+  if ( v.canConvert( QVariant::Bool ) )
+    return v.toBool();
 #endif
-    SALOME_View* view = GEOM_Displayer::GetActiveView();
-    QString viewType = activeViewType();
-    if ( view && ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
-      SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
-      if ( prs ) {
-	if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
-	  SOCC_Prs* occPrs = (SOCC_Prs*) prs;
-	  AIS_ListOfInteractive lst;
-	  occPrs->GetObjects( lst );
-	  if ( lst.Extent() ) {
-	    Handle(AIS_InteractiveObject) io = lst.First();
-	    if ( !io.IsNull() ) {
-	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
-	      if ( !aSh.IsNull() )
-		res = aSh->isShowVectors();
-	    }
-	  }
-	} else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
-	  SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
-	  vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
-	  if ( lst ) {
-	    lst->InitTraversal();
-	    vtkActor* actor = lst->GetNextActor();
-	    if ( actor ) {
-	      GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(actor);
-	      if ( aGeomActor )
-		res = aGeomActor->GetVectorMode();
-	    }
+
+  bool res = false;
+  
+  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  QString viewType = activeViewType();
+  if ( view && ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    if ( prs ) {
+      if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
+	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+	AIS_ListOfInteractive lst;
+	occPrs->GetObjects( lst );
+	if ( lst.Extent() ) {
+	  Handle(AIS_InteractiveObject) io = lst.First();
+	  if ( !io.IsNull() ) {
+	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+	    if ( !aSh.IsNull() )
+	      res = aSh->isShowVectors();
 	  }
 	}
       }
+      else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
+	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+	vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
+	if ( lst ) {
+	  lst->InitTraversal();
+	  vtkActor* actor = lst->GetNextActor();
+	  if ( actor ) {
+	    GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(actor);
+	    if ( aGeomActor )
+	      res = aGeomActor->GetVectorMode();
+	    }
+	}
+      }
     }
-#ifdef USE_VISUAL_PROP_MAP
   }
-#endif
 
   return res;
 }
@@ -548,35 +532,31 @@ QString GEOMGUI_Selection::selectionMode() const
   return "";
 }
 
-bool GEOMGUI_Selection::topLevel( const int index ) const {
+bool GEOMGUI_Selection::topLevel( const int index ) const
+{
+#ifdef USE_VISUAL_PROP_MAP
+  QVariant v = visibleProperty( entry( index ), GEOM::propertyName( GEOM::TopLevel ) );
+  if ( v.canConvert<bool>() )
+    return v.toBool();
+#endif
+
   bool res = false;
 
-#ifdef USE_VISUAL_PROP_MAP
-  bool found = false;
-  QVariant v = visibleProperty( entry( index ), TOP_LEVEL_PROP );
-  if ( v.canConvert<bool>() ) {
-    res = v.toBool();
-    found = true;
-  }
-
-  if ( !found ) {
-#endif
-    SALOME_View* view = GEOM_Displayer::GetActiveView();
-    QString viewType = activeViewType();
-    if ( view && viewType == OCCViewer_Viewer::Type() ) {
-      SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
-      if ( prs ) {
-	if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
-	  SOCC_Prs* occPrs = (SOCC_Prs*) prs;
-	  AIS_ListOfInteractive lst;
-	  occPrs->GetObjects( lst );
-	  if ( lst.Extent() ) {
-	    Handle(AIS_InteractiveObject) io = lst.First();
-	    if ( !io.IsNull() ) {
-	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
-	      if ( !aSh.IsNull() )
-		res = (bool)aSh->isTopLevel();
-	    }
+  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  QString viewType = activeViewType();
+  if ( view && viewType == OCCViewer_Viewer::Type() ) {
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    if ( prs ) {
+      if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
+	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+	AIS_ListOfInteractive lst;
+	occPrs->GetObjects( lst );
+	if ( lst.Extent() ) {
+	  Handle(AIS_InteractiveObject) io = lst.First();
+	  if ( !io.IsNull() ) {
+	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+	    if ( !aSh.IsNull() )
+	      res = (bool)aSh->isTopLevel();
 	  }
 	}
       }
@@ -585,57 +565,55 @@ bool GEOMGUI_Selection::topLevel( const int index ) const {
   return res;
 }
 
-bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const{
-   bool res = false;
-
+bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const
+{
 #ifdef USE_VISUAL_PROP_MAP
-   bool found = false;
-   QVariant v = visibleProperty( entry( idx ), MATERIAL_PROP );
-   if ( v.canConvert<QString>() ) {
-     Material_Model material;
-     material.fromProperties( v.toString() );
-     res = material.isPhysical();
-     found = true;
-   }
-
-   if ( !found ) {
+  QVariant v = visibleProperty( entry( idx ), GEOM::propertyName( GEOM::Material ) );
+  if ( v.canConvert<QString>() ) {
+    Material_Model material;
+    material.fromProperties( v.toString() );
+    return material.isPhysical();
+  }
 #endif
-     SALOME_View* view = GEOM_Displayer::GetActiveView();
-     QString viewType = activeViewType();
-     if ( view ) {
-       SALOME_Prs* prs = view->CreatePrs( entry( idx ).toLatin1().constData() );
-       if ( prs ) {
-         if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
-           SOCC_Prs* occPrs = (SOCC_Prs*) prs;
-           AIS_ListOfInteractive lst;
-           occPrs->GetObjects( lst );
-           if ( lst.Extent() ) {
-             Handle(AIS_InteractiveObject) io = lst.First();
-             if ( !io.IsNull() ) {
-               Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
-               if ( !aSh.IsNull() )
-                 res = (bool) aSh->Attributes()->ShadingAspect()->
-			 Material(Aspect_TOFM_BOTH_SIDE).MaterialType( Graphic3d_MATERIAL_PHYSIC );
-             }
-           }
-         }
-         else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
-	        SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
-	        vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
-	        if ( lst ) {
-	          lst->InitTraversal();
-	          vtkActor* actor = lst->GetNextActor();
-	          if ( actor ) {
-              GEOM_Actor* aGeomGActor = GEOM_Actor::SafeDownCast( actor );
-	            if ( aGeomGActor ) {
-                GEOM_VTKPropertyMaterial* mat  = GEOM_VTKPropertyMaterial::SafeDownCast(aGeomGActor->GetProperty());
-                res = mat->GetPhysical();
-	            } // if ( salome actor )
-	          } // if ( actor )
-          } // if ( lst == vtkPrs->GetObjects() )
-         }
-       }
-     }
-   }
-   return res;
+
+  bool res = false;
+  
+  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  QString viewType = activeViewType();
+  if ( view ) {
+    SALOME_Prs* prs = view->CreatePrs( entry( idx ).toLatin1().constData() );
+    if ( prs ) {
+      if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
+	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+	AIS_ListOfInteractive lst;
+	occPrs->GetObjects( lst );
+	if ( lst.Extent() ) {
+	  Handle(AIS_InteractiveObject) io = lst.First();
+	  if ( !io.IsNull() ) {
+	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+	    if ( !aSh.IsNull() )
+	      res = (bool) aSh->Attributes()->ShadingAspect()->
+		Material(Aspect_TOFM_BOTH_SIDE).MaterialType( Graphic3d_MATERIAL_PHYSIC );
+	  }
+	}
+      }
+      else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
+	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+	vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
+	if ( lst ) {
+	  lst->InitTraversal();
+	  vtkActor* actor = lst->GetNextActor();
+	  if ( actor ) {
+	    GEOM_Actor* aGeomGActor = GEOM_Actor::SafeDownCast( actor );
+	    if ( aGeomGActor ) {
+	      GEOM_VTKPropertyMaterial* mat  = GEOM_VTKPropertyMaterial::SafeDownCast(aGeomGActor->GetProperty());
+	      res = mat->GetPhysical();
+	    } // if ( salome actor )
+	  } // if ( actor )
+	} // if ( lst == vtkPrs->GetObjects() )
+      }
+    }
+  }
+
+  return res;
 }

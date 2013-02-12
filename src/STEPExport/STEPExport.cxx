@@ -61,8 +61,9 @@
 
 extern "C"
 {
-  STEPEXPORT_EXPORT
-  int Export(const TopoDS_Shape& theShape, const TCollection_AsciiString& theFileName)
+  STEPEXPORT_EXPORT int Export (const TopoDS_Shape& theShape,
+                                const TCollection_AsciiString& theFileName,
+                                const TCollection_AsciiString& /*theFormatName*/)
   {
     MESSAGE("Export STEP into file " << theFileName.ToCString());
 

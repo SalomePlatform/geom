@@ -70,10 +70,15 @@ closed edge.</li>
 <li> If <b>Reorder vertices taking into account distances</b> is
 checked, the interpolation algorithm does not follow the order of
 vertices but searches for the closest vertex.</li>
+<li><b>Tangents</b> are two vectors, defining direction of curve at
+its ends. Both or none vectors must be set. This option available only
+if two above check boxes are not checked.
+</li>
 </ul>
 
 \n <b>TUI Command:</b>
-<em>geompy.MakeInterpol(ListOfShapes,isClosed,doReordering)</em>
+<br><em>geompy.MakeInterpol(ListOfShapes,isClosed,doReordering)</em>
+<br><em>geompy.MakeInterpolWithTangents(ListOfShapes,Vector1,Vector2)</em>
 
 <b>Analytical Definition</b>
 

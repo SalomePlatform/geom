@@ -65,7 +65,8 @@ dist_libGEOMObject_la_SOURCES =		\
 	GEOM_VTKPropertyMaterial.cxx	\
 	GEOM_AISVector.cxx		\
 	GEOM_PainterPolyDataMapper.cxx	\
-	GEOM_DeviceActor.cxx
+	GEOM_DeviceActor.cxx            \
+	GEOM_Constants.cxx
 
 
 libGEOMObject_la_CPPFLAGS =	\

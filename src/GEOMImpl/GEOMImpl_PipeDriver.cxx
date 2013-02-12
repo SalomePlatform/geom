@@ -19,11 +19,8 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_PipeDriver.hxx>
 
-#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_IPipeDiffSect.hxx>
 #include <GEOMImpl_IPipeShellSect.hxx>
 #include <GEOMImpl_IPipeBiNormal.hxx>
@@ -31,7 +28,10 @@
 #include <GEOMImpl_IPipePath.hxx>
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -96,6 +96,13 @@
 #include <Standard_ConstructionError.hxx>
 
 #include "utilities.h"
+
+//////////////////////////////////////////////////////////////////////////
+// Uncomment below macro to perform gluing in the end of MakePipe operation
+// as fix of issue 0020207.
+//////////////////////////////////////////////////////////////////////////
+//#define GLUE_0020207
+
 
 //=======================================================================
 //function : GetID
@@ -2477,6 +2484,8 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
   }
 
   // Glue (for bug 0020207)
+  // No gluing is needed as the bug 0020207 is fixed in OCCT.
+#ifdef GLUE_0020207
   TopExp_Explorer anExpV (aShape, TopAbs_VERTEX);
   if (anExpV.More()) {
     Standard_Real aVertMaxTol = -RealLast();
@@ -2490,8 +2499,9 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
     aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, aVertMaxTol, Standard_True);
     //aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, Precision::Confusion(), Standard_True);
   }
+#endif
 
-  TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
+  TopoDS_Shape aRes = GEOMUtils::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);
 
   log.SetTouched(Label());

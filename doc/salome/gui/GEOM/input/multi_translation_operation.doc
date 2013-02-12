@@ -7,9 +7,8 @@ select <b>Operations - > Transformation - > Multi Translation</b>
 
 \n This operation makes several translations of a shape in \b one or \b
 two directions.
-\n The \b Result will be one or several \b GEOM_Objects
-(compound). The total number of shapes in the resulting compound (for
-a single initial selected shape) will be equal to:
+\n The \b Result will be one \b GEOM_Object (compound). The total
+number of shape copies in the resulting compound will be equal to:
 - in case of \ref single_multi_translation "Single multi translation":
 \a NbTimes (if \a NbTimes parameter is equal to 1, the result will
 contain only the initial non-translated shape). 
@@ -21,14 +20,11 @@ initial shape).
 \anchor single_multi_translation
 \n To produce a <b>Simple Multi Translation</b> (in one direction) you
 need to indicate an \b Object to be translated, a \b Vector of
-translation, a \b Step of translation and a <b>Number of Times</b> the
-Object should be duplicated. If a curve has been selected instead of
-the Vector, only its first and last vertices will be used to get the vector direction
-and the dialog preview will display the vector along which the object will be translated.
-\n <b>TUI Command:</b> <em>geompy.MakeMultiTranslation1D(Shape, Dir,
-Step, NbTimes)</em>
-\n <b>Arguments:</b> Name + 1 shape + 1 vector (for direction) + 1
-step value + 1 value (repetition).
+translation (DX by default), a \b Step of translation and a <b>Number
+of Times</b> the Object should be duplicated. If a curve has been
+selected instead of the Vector, only its first and last vertices will
+be used to get the vector direction and the dialog preview will
+display the vector along which the object will be translated.
 
 \image html mtrans1.png
 
@@ -36,12 +32,26 @@ step value + 1 value (repetition).
 
 \image html multi_translation1dsn.png "The result of a simple multi-translation"
 
+\n <b>TUI Command:</b> <em>geompy.MakeMultiTranslation1D(Shape, Dir,
+Step, NbTimes)</em>
+\n <b>Arguments:</b> Name + 1 shape + 1 vector (for direction) + 1
+step value + 1 value (repetition).
+
 \anchor double_multi_translation
 \n To produce a <b>Double Multi Translation</b> (in two directions) you need to
 indicate an \b Object to be translated, and, for both axes, a \b
-Vector of translation, a \b Step of translation and a <b>Number of Times</b> the shape must be duplicated.
-If a curve has been selected instead of the Vector, only its first and last vertices will be used to get the vector direction
-and the dialog preview will display the vector along which the object will be translated.
+Vector of translation (DX and DY by default), a \b Step of translation
+and a <b>Number of Times</b> the shape must be duplicated.
+If a curve has been selected instead of the Vector, only its first and
+last vertices will be used to get the vector direction and the dialog
+preview will display the vector along which the object will be
+translated.
+
+\image html mtrans2.png
+
+\image html multi_translation_initialsn.png "The initial object"
+
+\image html multi_translation2dsn.png "The result of a double multi-translation"
 
 \n <b>TUI Command:</b> <em>geompy.MakeMultiTranslation2D(Shape, Dir1,
 Step1, NbTimes1, Dir2, Step2, NbTimes2),</em> where \em Shape is a shape
@@ -52,12 +62,6 @@ second translation, \em NbTimes2 is a number of translations to be done
 along \em Dir2.
 \n <b>Arguments:</b> Name + 1 shape + 2 vectors defining the direction
 + 2 step values + 2 values (repetitions).
-
-\image html mtrans2.png
-
-\image html multi_translation_initialsn.png "The initial object"
-
-\image html multi_translation2dsn.png "The result of a double multi-translation"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_multi_translation "Transformation Operations".

@@ -25,7 +25,6 @@
 #  File   : GEOM_example.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
-#  $Header$
 #
 import salome
 import geompy

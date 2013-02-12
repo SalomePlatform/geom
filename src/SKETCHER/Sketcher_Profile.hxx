@@ -24,7 +24,6 @@
 //  File   : Sketcher_Profile.h
 //  Author : Damien COQUERET
 //  Module : GEOM
-//  $Header: 
 //
 #include <gp_Pnt.hxx>
 #include <gp_Dir.hxx>

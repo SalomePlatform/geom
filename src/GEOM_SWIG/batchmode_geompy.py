@@ -21,11 +21,10 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-#  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
+#  GEOM GEOM_SWIG : binding of C++ implementaion with Python
 #  File   : batchmode_geompy.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
-#  $Header$
-# From Salome version 3.2.0 geompy package suits for work in batch mode
+#  From Salome version 3.2.0 geompy package suits for work in batch mode
 #
 from geompy import *

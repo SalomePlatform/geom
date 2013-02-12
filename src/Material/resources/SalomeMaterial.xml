@@ -23,196 +23,279 @@
 -->
 <document>
   <section name="[common]" >
-    <parameter name="physical"                value="false" />
-    <parameter name="shininess"               value="0.039" />
-    <parameter name="ambient"                 value="true" />
-    <parameter name="ambient-coefficient"     value="0.3" />
-    <parameter name="ambient-color"           value="#333333" />
-    <parameter name="diffuse"                 value="true" />
-    <parameter name="diffuse-coefficient"     value="0.65" />
-    <parameter name="diffuse-color"           value="#000000" />
-    <parameter name="specular"                value="true" />
-    <parameter name="specular-coefficient"    value="0.0" />
-    <parameter name="specular-color"          value="#ffffff" />
-    <parameter name="emissive"                value="false" />
-    <parameter name="emissive-coefficient"    value="0.0" />
-    <parameter name="emissive-color"          value="#000000" />
-    <parameter name="transparency"            value="0.0" />
+    <parameter name="physical"                   value="false" />
+    <parameter name="front_shininess"            value="0.039" />
+    <parameter name="back_shininess"             value="0.039" />
+    <parameter name="ambient"                    value="true" />
+    <parameter name="front_ambient-coefficient"  value="0.3" />
+    <parameter name="back_ambient-coefficient"   value="0.3" />
+    <parameter name="ambient-color"              value="#333333" />
+    <parameter name="diffuse"                    value="true" />
+    <parameter name="front_diffuse-coefficient"  value="0.65" />
+    <parameter name="back_diffuse-coefficient"   value="0.65" />
+    <parameter name="diffuse-color"              value="#000000" />
+    <parameter name="specular"                   value="true" />
+    <parameter name="front_specular-coefficient" value="0.0" />
+    <parameter name="back_specular-coefficient"  value="0.0" />
+    <parameter name="specular-color"             value="#ffffff" />
+    <parameter name="emissive"                   value="false" />
+    <parameter name="front_emissive-coefficient" value="0.0" />
+    <parameter name="back_emissive-coefficient"  value="0.0" />
+    <parameter name="emissive-color"             value="#000000" />
+    <parameter name="transparency"               value="0.0" />
   </section>
   <section name="Plastic" >
-    <parameter name="shininess"               value="0.0078125" />
-    <parameter name="ambient-coefficient"     value="0.5" />
-    <parameter name="diffuse-coefficient"     value="0.24" />
-    <parameter name="specular-coefficient"    value="0.06" />
+    <parameter name="front_shininess"            value="0.0078" />
+    <parameter name="back_shininess"             value="0.0078" />
+    <parameter name="front_ambient-coefficient"  value="0.5" />
+    <parameter name="back_ambient-coefficient"   value="0.35" />
+    <parameter name="front_diffuse-coefficient"  value="0.24" />
+    <parameter name="back_diffuse-coefficient"   value="0.24" />
+    <parameter name="front_specular-coefficient" value="0.06" />
+    <parameter name="back_specular-coefficient"  value="0.06" />
   </section>
   <section name="Shiny plastic" >
-    <parameter name="shininess"               value="1.0" />
-    <parameter name="ambient-coefficient"     value="0.44" />
-    <parameter name="diffuse-coefficient"     value="0.5" />
-    <parameter name="specular-coefficient"    value="1.0" />
+    <parameter name="front_shininess"            value="1.0" />
+    <parameter name="back_shininess"             value="1.0" />
+    <parameter name="front_ambient-coefficient"  value="0.44" />
+    <parameter name="back_ambient-coefficient"   value="0.36" />
+    <parameter name="front_diffuse-coefficient"  value="0.5" />
+    <parameter name="back_diffuse-coefficient"   value="0.4" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="1.0" />
   </section>
   <section name="Satin" >
-    <parameter name="shininess"               value="0.09375" />
-    <parameter name="ambient-coefficient"     value="0.33" />
-    <parameter name="diffuse-coefficient"     value="0.4" />
-    <parameter name="specular-coefficient"    value="0.44" />
+    <parameter name="front_shininess"            value="0.0938" />
+    <parameter name="back_shininess"             value="0.0938" />
+    <parameter name="front_ambient-coefficient"  value="0.33" />
+    <parameter name="back_ambient-coefficient"   value="0.28" />
+    <parameter name="front_diffuse-coefficient"  value="0.4" />
+    <parameter name="back_diffuse-coefficient"   value="0.35" />
+    <parameter name="front_specular-coefficient" value="0.44" />
+    <parameter name="back_specular-coefficient"  value="0.44" />
   </section>
   <section name="Neon" >
-    <parameter name="shininess"               value="0.05" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="specular-coefficient"    value="0.62" />
-    <parameter name="emissive-coefficient"    value="1.0" />
-    <parameter name="ambient"                 value="false" />
-    <parameter name="emissive"                value="true" />
+    <parameter name="front_shininess"            value="0.05" />
+    <parameter name="back_shininess"             value="0.05" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="0.6" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="0.6" />
+    <parameter name="front_specular-coefficient" value="0.62" />
+    <parameter name="back_specular-coefficient"  value="0.27" />
+    <parameter name="front_emissive-coefficient" value="1.0" />
+    <parameter name="back_emissive-coefficient"  value="0.5" />
+    <parameter name="ambient"                    value="false" />
+    <parameter name="emissive"                   value="true" />
   </section>
   <section name="Metalized" >
-    <parameter name="shininess"               value="0.13" />
-    <parameter name="ambient"                 value="false" />
-    <parameter name="ambient-coefficient"     value="0.9" />
-    <parameter name="diffuse-coefficient"     value="0.47" />
-    <parameter name="specular-coefficient"    value="0.45" />
+    <parameter name="front_shininess"            value="0.08" />
+    <parameter name="back_shininess"             value="0.13" />
+    <parameter name="ambient"                    value="false" />
+    <parameter name="front_ambient-coefficient"  value="0.9" />
+    <parameter name="back_ambient-coefficient"   value="0.7" />
+    <parameter name="front_diffuse-coefficient"  value="0.57" />
+    <parameter name="back_diffuse-coefficient"   value="0.42" />
+    <parameter name="front_specular-coefficient" value="0.45" />
+    <parameter name="back_specular-coefficient"  value="0.45" />
   </section>
   <section name="Brass">
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.21794844" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#543907" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#c7911d" />
-    <parameter name="specular-coefficient"    value="1.0" />
-    <parameter name="specular-color"          value="#fdf0ce" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.2179" />
+    <parameter name="back_shininess"             value="0.2179" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="0.6" />
+    <parameter name="ambient-color"              value="#543907" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="0.9" />
+    <parameter name="diffuse-color"              value="#c7911d" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="1.0" />
+    <parameter name="specular-color"             value="#fdf0ce" />
   </section>
   <section name="Bronze">
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.2" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#36200d" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#b66d2e" />
-    <parameter name="specular-coefficient"    value="1.0" />
-    <parameter name="specular-color"          value="#64452a" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.2" />
+    <parameter name="back_shininess"             value="0.2" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="0.6" />
+    <parameter name="ambient-color"              value="#36200d" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="0.9" />
+    <parameter name="diffuse-color"              value="#b66d2e" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="0.95" />
+    <parameter name="specular-color"             value="#64452a" />
   </section>
   <section name="Copper" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.93" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#54423a" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#801c00" />
-    <parameter name="specular-coefficient"    value="1.0" />
-    <parameter name="specular-color"          value="#f3ba00" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.93" />
+    <parameter name="back_shininess"             value="0.93" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="0.6" />
+    <parameter name="ambient-color"              value="#54423a" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="1.0" />
+    <parameter name="diffuse-color"              value="#801c00" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="1.0" />
+    <parameter name="specular-color"             value="#f3ba00" />
   </section>
   <section name="Gold" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.0625" />
-    <parameter name="ambient-coefficient"     value="0.3" />
-    <parameter name="ambient-color"           value="#ffc451" />
-    <parameter name="diffuse-coefficient"     value="0.4" />
-    <parameter name="diffuse-color"           value="#ffb000" />
-    <parameter name="specular-coefficient"    value="0.9" />
-    <parameter name="specular-color"          value="#fffac7" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.0625" />
+    <parameter name="back_shininess"             value="0.0625" />
+    <parameter name="front_ambient-coefficient"  value="0.3" />
+    <parameter name="back_ambient-coefficient"   value="0.25" />
+    <parameter name="ambient-color"              value="#ffc451" />
+    <parameter name="front_diffuse-coefficient"  value="0.4" />
+    <parameter name="back_diffuse-coefficient"   value="0.3" />
+    <parameter name="diffuse-color"              value="#ffb000" />
+    <parameter name="front_specular-coefficient" value="0.9" />
+    <parameter name="back_specular-coefficient"  value="0.9" />
+    <parameter name="specular-color"             value="#fffac7" />
   </section>
   <section name="Pewter" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.076923047" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#1b0f1d" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#6d788a" />
-    <parameter name="specular-coefficient"    value="1.0" />
-    <parameter name="specular-color"          value="#555585" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.0769" />
+    <parameter name="back_shininess"             value="0.0769" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="0.6" />
+    <parameter name="ambient-color"              value="#1b0f1d" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="0.9" />
+    <parameter name="diffuse-color"              value="#6d788a" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="1.0" />
+    <parameter name="specular-color"             value="#555585" />
   </section>
   <section name="Plaster" >
-    <parameter name="shininess"               value="0.0078125" />
-    <parameter name="ambient-coefficient"     value="0.26" />
-    <parameter name="ambient-color"           value="#313131" />
-    <parameter name="diffuse-coefficient"     value="0.23" />
-    <parameter name="diffuse-color"           value="#818181" />
-    <parameter name="specular-coefficient"    value="0.06" />
-    <parameter name="specular-color"          value="#828282" />
+    <parameter name="front_shininess"            value="0.0078" />
+    <parameter name="back_shininess"             value="0.0078" />
+    <parameter name="front_ambient-coefficient"  value="0.26" />
+    <parameter name="back_ambient-coefficient"   value="0.18" />
+    <parameter name="ambient-color"              value="#313131" />
+    <parameter name="front_diffuse-coefficient"  value="0.23" />
+    <parameter name="back_diffuse-coefficient"   value="0.18" />
+    <parameter name="diffuse-color"              value="#818181" />
+    <parameter name="front_specular-coefficient" value="0.06" />
+    <parameter name="back_specular-coefficient"  value="0.06" />
+    <parameter name="specular-color"             value="#828282" />
   </section>
   <section name="Silver" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.2" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#313131" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#818181" />
-    <parameter name="specular-coefficient"    value="1.0" />
-    <parameter name="specular-color"          value="#828282" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.2" />
+    <parameter name="back_shininess"             value="0.2" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="0.6" />
+    <parameter name="ambient-color"              value="#313131" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="0.95" />
+    <parameter name="diffuse-color"              value="#818181" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="1.0" />
+    <parameter name="specular-color"             value="#828282" />
   </section>
   <section name="Steel" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.06" />
-    <parameter name="ambient-coefficient"     value="0.01" />
-    <parameter name="diffuse-coefficient"     value="0.03" />
-    <parameter name="specular-coefficient"    value="0.98" />
-    <parameter name="specular-color"          value="#ffffff" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.06" />
+    <parameter name="back_shininess"             value="0.06" />
+    <parameter name="front_ambient-coefficient"  value="0.01" />
+    <parameter name="back_ambient-coefficient"   value="0.01" />
+    <parameter name="front_diffuse-coefficient"  value="0.03" />
+    <parameter name="back_diffuse-coefficient"   value="0.01" />
+    <parameter name="front_specular-coefficient" value="0.98" />
+    <parameter name="back_specular-coefficient"  value="0.63" />
+    <parameter name="specular-color"             value="#ffffff" />
   </section>
   <section name="Stone" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.17" />
-    <parameter name="ambient-coefficient"     value="0.19" />
-    <parameter name="ambient-color"           value="#ffcc9e" />
-    <parameter name="diffuse-coefficient"     value="0.75" />
-    <parameter name="diffuse-color"           value="#ffcc9e" />
-    <parameter name="specular-coefficient"    value="0.08" />
-    <parameter name="specular-color"          value="#faff99" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.17" />
+    <parameter name="back_shininess"             value="0.17" />
+    <parameter name="front_ambient-coefficient"  value="0.19" />
+    <parameter name="back_ambient-coefficient"   value="0.19" />
+    <parameter name="ambient-color"              value="#ffcc9e" />
+    <parameter name="front_diffuse-coefficient"  value="0.75" />
+    <parameter name="back_diffuse-coefficient"   value="0.5" />
+    <parameter name="diffuse-color"              value="#ffcc9e" />
+    <parameter name="front_specular-coefficient" value="0.08" />
+    <parameter name="back_specular-coefficient"  value="0.08" />
+    <parameter name="specular-color"             value="#faff99" />
   </section>
   <section name="Chrome" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.1" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#595959" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#666666" />
-    <parameter name="specular-coefficient"    value="1.0" />
-    <parameter name="specular-color"          value="#f9f9f9" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.1" />
+    <parameter name="back_shininess"             value="0.1" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="0.6" />
+    <parameter name="ambient-color"              value="#595959" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="0.95" />
+    <parameter name="diffuse-color"              value="#666666" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="1.0" />
+    <parameter name="specular-color"             value="#f9f9f9" />
   </section>
   <section name="Neon (physical)" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.05" />
-    <parameter name="ambient"                 value="false" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#ffffff" />
-    <parameter name="diffuse"                 value="false" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#ffffff" />
-    <parameter name="specular-coefficient"    value="0.62" />
-    <parameter name="specular-color"          value="#ffffff" />
-    <parameter name="emissive"                value="true" />
-    <parameter name="emissive-coefficient"    value="0.9" />
-    <parameter name="emissive-color"          value="#00ff75" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.05" />
+    <parameter name="back_shininess"             value="0.05" />
+    <parameter name="ambient"                    value="false" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="1.0" />
+    <parameter name="ambient-color"              value="#ffffff" />
+    <parameter name="diffuse"                    value="false" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="1.0" />
+    <parameter name="diffuse-color"              value="#ffffff" />
+    <parameter name="front_specular-coefficient" value="0.62" />
+    <parameter name="back_specular-coefficient"  value="0.62" />
+    <parameter name="specular-color"             value="#ffffff" />
+    <parameter name="emissive"                   value="true" />
+    <parameter name="front_emissive-coefficient" value="0.9" />
+    <parameter name="back_emissive-coefficient"  value="0.72" />
+    <parameter name="emissive-color"             value="#00ff75" />
   </section>
   <section name="Aluminium" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.09" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#4c4c4c" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#4c4c4c" />
-    <parameter name="specular-coefficient"    value="1.0" />
-    <parameter name="specular-color"          value="#b3b3cc" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.09" />
+    <parameter name="back_shininess"             value="0.09" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="0.6" />
+    <parameter name="ambient-color"              value="#4c4c4c" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="1.0" />
+    <parameter name="diffuse-color"              value="#4c4c4c" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="1.0" />
+    <parameter name="specular-color"             value="#b3b3cc" />
   </section>
   <section name="Obsidian" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.3" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#0d0c10" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#2e2b39" />
-    <parameter name="specular-coefficient"    value="1.0" />
-    <parameter name="specular-color"          value="#555458" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.3" />
+    <parameter name="back_shininess"             value="0.3" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="1.0" />
+    <parameter name="ambient-color"              value="#0d0c10" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="0.7" />
+    <parameter name="diffuse-color"              value="#2e2b39" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="0.9" />
+    <parameter name="specular-color"             value="#555458" />
   </section>
   <section name="Jade" >
-    <parameter name="physical"                value="true" />
-    <parameter name="shininess"               value="0.1" />
-    <parameter name="ambient-coefficient"     value="1.0" />
-    <parameter name="ambient-color"           value="#223828" />
-    <parameter name="diffuse-coefficient"     value="1.0" />
-    <parameter name="diffuse-color"           value="#8ae3a1" />
-    <parameter name="specular-coefficient"    value="1.0" />
-    <parameter name="specular-color"          value="#505050" />
+    <parameter name="physical"                   value="true" />
+    <parameter name="front_shininess"            value="0.1" />
+    <parameter name="back_shininess"             value="0.1" />
+    <parameter name="front_ambient-coefficient"  value="1.0" />
+    <parameter name="back_ambient-coefficient"   value="0.6" />
+    <parameter name="ambient-color"              value="#223828" />
+    <parameter name="front_diffuse-coefficient"  value="1.0" />
+    <parameter name="back_diffuse-coefficient"   value="0.85" />
+    <parameter name="diffuse-color"              value="#8ae3a1" />
+    <parameter name="front_specular-coefficient" value="1.0" />
+    <parameter name="back_specular-coefficient"  value="1.0" />
+    <parameter name="specular-color"             value="#505050" />
   </section>  
 </document>

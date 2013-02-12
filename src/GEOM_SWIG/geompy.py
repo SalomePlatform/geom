@@ -25,7 +25,6 @@
 #  File   : geompy.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
-#  $Header$
 #
 import salome
 import geompyDC

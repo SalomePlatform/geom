@@ -28,6 +28,8 @@
 #include <GEOMImpl_IMeasure.hxx>
 #include <GEOMImpl_IShapesOperations.hxx>
 
+#include <GEOMUtils.hxx>
+
 #include <GEOMAlgo_ShapeInfo.hxx>
 #include <GEOMAlgo_ShapeInfoFiller.hxx>
 
@@ -766,69 +768,6 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
 }
 
 //=============================================================================
-/*! Get LCS, corresponding to the given shape.
- *  Origin of the LCS is situated at the shape's center of mass.
- *  Axes of the LCS are obtained from shape's location or,
- *  if the shape is a planar face, from position of its plane.
- */
-//=============================================================================
-gp_Ax3 GEOMImpl_IMeasureOperations::GetPosition (const TopoDS_Shape& theShape)
-{
-  gp_Ax3 aResult;
-
-  if (theShape.IsNull())
-    return aResult;
-
-  // Axes
-  aResult.Transform(theShape.Location().Transformation());
-  if (theShape.ShapeType() == TopAbs_FACE) {
-    Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(theShape));
-    if (!aGS.IsNull() && aGS->IsKind(STANDARD_TYPE(Geom_Plane))) {
-      Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast(aGS);
-      gp_Pln aPln = aGPlane->Pln();
-      aResult = aPln.Position();
-      // In case of reverse orinetation of the face invert the plane normal
-      // (the face's normal does not mathc the plane's normal in this case)
-      if(theShape.Orientation() == TopAbs_REVERSED)
-      {
-        gp_Dir Vx =  aResult.XDirection();
-        gp_Dir N  =  aResult.Direction().Mirrored(Vx);
-        gp_Pnt P  =  aResult.Location();
-        aResult = gp_Ax3(P, N, Vx);
-      }
-    }
-  }
-
-  // Origin
-  gp_Pnt aPnt;
-
-  TopAbs_ShapeEnum aShType = theShape.ShapeType();
-
-  if (aShType == TopAbs_VERTEX) {
-    aPnt = BRep_Tool::Pnt(TopoDS::Vertex(theShape));
-  }
-  else {
-    if (aShType == TopAbs_COMPOUND) {
-      aShType = GEOMImpl_IShapesOperations::GetTypeOfSimplePart(theShape);
-    }
-
-    GProp_GProps aSystem;
-    if (aShType == TopAbs_EDGE || aShType == TopAbs_WIRE)
-      BRepGProp::LinearProperties(theShape, aSystem);
-    else if (aShType == TopAbs_FACE || aShType == TopAbs_SHELL)
-      BRepGProp::SurfaceProperties(theShape, aSystem);
-    else
-      BRepGProp::VolumeProperties(theShape, aSystem);
-
-    aPnt = aSystem.CentreOfMass();
-  }
-
-  aResult.SetLocation(aPnt);
-
-  return aResult;
-}
-
-//=============================================================================
 /*!
  *  GetPosition
  */
@@ -861,7 +800,7 @@ void GEOMImpl_IMeasureOperations::GetPosition
     OCC_CATCH_SIGNALS;
 #endif
 
-    gp_Ax3 anAx3 = GetPosition(aShape);
+    gp_Ax3 anAx3 = GEOMUtils::GetPosition(aShape);
 
     gp_Pnt anOri = anAx3.Location();
     gp_Dir aDirZ = anAx3.Direction();
@@ -1229,6 +1168,59 @@ void GEOMImpl_IMeasureOperations::GetBoundingBox
 
 //=============================================================================
 /*!
+ *  GetBoundingBox
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetBoundingBox
+                                                (Handle(GEOM_Object) theShape)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  //Add a new BoundingBox object
+  Handle(GEOM_Object) aBnd = GetEngine()->AddObject(GetDocID(), GEOM_BOX);
+
+  //Add a new BoundingBox function
+  Handle(GEOM_Function) aFunction =
+    aBnd->AddFunction(GEOMImpl_MeasureDriver::GetID(), BND_BOX_MEASURE);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_MeasureDriver::GetID()) return NULL;
+
+  GEOMImpl_IMeasure aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetBase(aRefShape);
+
+  //Compute the BoundingBox value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Measure driver failed to compute a bounding box");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aBnd << " = geompy.MakeBoundingBox(" << theShape << ")";
+
+  SetErrorCode(OK);
+  return aBnd;
+}
+
+//=============================================================================
+/*!
  *  GetTolerance
  */
 //=============================================================================
@@ -1550,6 +1542,36 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
   return Astr;
 }
 
+//=============================================================================
+/*!
+ *  AreCoordsInside
+ */
+//=============================================================================
+std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object) theShape,
+                                                               const std::vector<double>& coords,
+                                                               double tolerance)
+{
+  std::vector<bool> res;
+  if (!theShape.IsNull()) {
+    Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+    if (!aRefShape.IsNull()) {
+      TopoDS_Shape aShape = aRefShape->GetValue();
+      if (!aShape.IsNull()) {
+        BRepClass3d_SolidClassifier SC(aShape);
+        unsigned int nb_points = coords.size()/3;
+        for (int i = 0; i < nb_points; i++) {
+          double x = coords[3*i];
+          double y = coords[3*i+1];
+          double z = coords[3*i+2];
+          gp_Pnt aPnt(x, y, z);
+          SC.Perform(aPnt, tolerance);
+          res.push_back( ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON ) );
+        }
+      }
+    }
+  }
+  return res;
+}
 
 //=======================================================================
 //function : CheckSingularCase
@@ -1853,38 +1875,6 @@ static bool CheckSingularCase(const TopoDS_Shape& aSh1,
 }
 */
 
-
-//=============================================================================
-/*!
- *  AreCoordsInside
- */
-//=============================================================================
-std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object) theShape,
-                                                               const std::vector<double>& coords,
-                                                               double tolerance)
-{
-  std::vector<bool> res;
-  if (!theShape.IsNull()) {
-    Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-    if (!aRefShape.IsNull()) {
-      TopoDS_Shape aShape = aRefShape->GetValue();
-      if (!aShape.IsNull()) {
-        BRepClass3d_SolidClassifier SC(aShape);
-        unsigned int nb_points = coords.size()/3;
-        for (int i = 0; i < nb_points; i++) {
-          double x = coords[3*i];
-          double y = coords[3*i+1];
-          double z = coords[3*i+2];
-          gp_Pnt aPnt(x, y, z);
-          SC.Perform(aPnt, tolerance);
-          res.push_back( ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON ) );
-        }
-      }
-    }
-  }
-  return res;
-}
-
 //=============================================================================
 /*!
  *  GetMinDistance
@@ -1949,7 +1939,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
     // additional workaround for bugs 19899, 19908 and 19910 from Mantis
     gp_Pnt Ptmp1, Ptmp2;
     double dist = CheckSingularCase(aShape1, aShape2, Ptmp1, Ptmp2);
-    if(dist>-1.0) {
+    if (dist > -1.0) {
       Ptmp1.Coord(X1, Y1, Z1);
       Ptmp2.Coord(X2, Y2, Z2);
       SetErrorCode(OK);
@@ -1984,6 +1974,84 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
 
   SetErrorCode(OK);
   return MinDist;
+}
+
+//=======================================================================
+/*!
+ *  Get coordinates of closest points of two shapes
+ */
+//=======================================================================
+Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object) theShape1,
+                                                             Handle(GEOM_Object) theShape2,
+                                                             Handle(TColStd_HSequenceOfReal)& theDoubles)
+{
+  SetErrorCode(KO);
+  Standard_Integer nbSolutions = 0;
+
+  if (theShape1.IsNull() || theShape2.IsNull()) return nbSolutions;
+
+  Handle(GEOM_Function) aRefShape1 = theShape1->GetLastFunction();
+  Handle(GEOM_Function) aRefShape2 = theShape2->GetLastFunction();
+  if (aRefShape1.IsNull() || aRefShape2.IsNull()) return nbSolutions;
+
+  TopoDS_Shape aShape1 = aRefShape1->GetValue();
+  TopoDS_Shape aShape2 = aRefShape2->GetValue();
+  if (aShape1.IsNull() || aShape2.IsNull()) {
+    SetErrorCode("One of Objects has NULL Shape");
+    return nbSolutions;
+  }
+
+  // Compute the extremities
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+
+    // skl 30.06.2008
+    // additional workaround for bugs 19899, 19908 and 19910 from Mantis
+    gp_Pnt P1, P2;
+    double dist = CheckSingularCase(aShape1, aShape2, P1, P2);
+    if (dist > -1.0) {
+      nbSolutions = 1;
+
+      theDoubles->Append(P1.X());
+      theDoubles->Append(P1.Y());
+      theDoubles->Append(P1.Z());
+      theDoubles->Append(P2.X());
+      theDoubles->Append(P2.Y());
+      theDoubles->Append(P2.Z());
+
+      SetErrorCode(OK);
+      return nbSolutions;
+    }
+
+    BRepExtrema_DistShapeShape dst (aShape1, aShape2);
+    if (dst.IsDone()) {
+      nbSolutions = dst.NbSolution();
+      if (theDoubles.IsNull()) theDoubles = new TColStd_HSequenceOfReal;
+
+      gp_Pnt P1, P2;
+      for (int i = 1; i <= nbSolutions; i++) {
+        P1 = dst.PointOnShape1(i);
+        P2 = dst.PointOnShape2(i);
+
+        theDoubles->Append(P1.X());
+        theDoubles->Append(P1.Y());
+        theDoubles->Append(P1.Z());
+        theDoubles->Append(P2.X());
+        theDoubles->Append(P2.Y());
+        theDoubles->Append(P2.Z());
+      }
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return nbSolutions;
+  }
+
+  SetErrorCode(OK);
+  return nbSolutions;
 }
 
 //=======================================================================

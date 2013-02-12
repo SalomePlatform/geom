@@ -45,7 +45,7 @@ class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_MaterialPropertiesDlg : public QtxDialog
   enum { TypeRole = Qt::UserRole + 123, NameRole  };
 
 public:
-  GEOMToolsGUI_MaterialPropertiesDlg( QWidget* = 0 );
+  GEOMToolsGUI_MaterialPropertiesDlg(  QWidget* = 0 , bool  = true, bool  = false,const int  = Standard  );
   ~GEOMToolsGUI_MaterialPropertiesDlg();  
 
   void                  accept();
@@ -72,26 +72,33 @@ private slots:
   void                  onAddMaterial();
   void                  onApply();
   void                  onHelp();
+  void                  SetEditCurrentArgument();
+  void                  SelectionIntoArgument();
 
 private:
   typedef struct
   {
+    QCheckBox*        enabled;
     QLabel*           label;
     QtxColorButton*   color;
-    QtxDoubleSpinBox* coef;
-    QCheckBox*        enabled;
+    QtxDoubleSpinBox* front_coef;
+    QtxDoubleSpinBox* back_coef;
   } Reflection;
 
   GEOMToolsGUI_MaterialList* myMaterials;
   QCheckBox*                 myPhysical;
   QList<Reflection>          myReflection;
-  QtxDoubleSpinBox*          myShininess;
+  QtxDoubleSpinBox*          myFrontShininess;  
+  QtxDoubleSpinBox*          myBackShininess;
   QLabel*                    myColorLab;
   QtxColorButton*            myColor;
   QPushButton*               myAddButton;
   QPushButton*               myDelButton;
   Material_ResourceMgr       myResourceMgr;
   Material_Model             myCurrentModel;
+  bool                       myShowSelWidget;
+  QLineEdit*                 myLineEditCurArg;
+  QPushButton*               myPushBtn;
 };
 
 class GEOMToolsGUI_MaterialList : public QListWidget

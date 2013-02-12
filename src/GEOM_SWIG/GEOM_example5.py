@@ -25,7 +25,6 @@
 #  File   : GEOM_example5.py
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
-#  $Header$
 #
 import salome
 import geompy

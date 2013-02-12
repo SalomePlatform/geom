@@ -58,8 +58,9 @@
 
 extern "C"
 {
-BREPEXPORT_EXPORT
-  int Export(const TopoDS_Shape& theShape, const TCollection_AsciiString& theFileName)
+  BREPEXPORT_EXPORT int Export (const TopoDS_Shape& theShape,
+                                const TCollection_AsciiString& theFileName,
+                                const TCollection_AsciiString& /*theFormatName*/)
   {
     MESSAGE("Export BREP into file " << theFileName.ToCString());
 

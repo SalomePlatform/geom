@@ -4,444 +4,57 @@
 
 \anchor tui_shape_processing
 <br><h2>Shape Processing</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices, an edge, an arc, a wire, a face and a prism
-p1 = geompy.MakeVertex(0,0,0)
-p2 = geompy.MakeVertex(200,0,0)
-p3 = geompy.MakeVertex(100,150,0)
-edge = geompy.MakeEdge(p1,p2)
-arc  = geompy.MakeArc(p1,p3,p2)
-wire = geompy.MakeWire([edge,arc])
-face = geompy.MakeFace(wire, 1)
-theShape = geompy.MakePrismVecH(face, edge, 130)
-
-# check the shape at the beginning
-print "Before ProcessShape:"
-isValid = geompy.CheckShape(theShape)
-if isValid == 0:
-    print "The shape is not valid"
-else:
-    print "The shape seems to be valid"
-
-# process the Shape
-Operators = ["FixShape"]
-Parameters = ["FixShape.Tolerance3d"]
-Values = ["1e-7"]
-PS = geompy.ProcessShape(theShape, Operators, Parameters, Values)
-
-# check the shape at the end
-print "After ProcessShape:"
-isValid = geompy.CheckShape(PS)
-if isValid == 0:
-    print "The shape is not valid"
-    raise RuntimeError, "It seems, that the ProcessShape() has failed"
-else:
-    print "The shape seems to be valid"
-
-# add in the study and display
-Id_Shape = geompy.addToStudy(theShape, "Invalid Shape")
-Id_PS    = geompy.addToStudy(PS, "Processed Shape")
-gg.createAndDisplayGO(Id_Shape)
-gg.setDisplayMode(Id_Shape,1)
-gg.createAndDisplayGO(Id_PS)
-gg.setDisplayMode(Id_PS,1) 
-\endcode
+\include repairing_operations_ex01.py
+<a href="../../examples/GEOM/repairing_operations_ex01.py">Download this script</a>
 
 \anchor tui_suppress_faces
 <br><h2>Suppress Faces</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a box
-box = geompy.MakeBoxDXDYDZ(200, 200, 200)
-
-# The list of IDs (IDList) for suppress faces
-sup_faces = []
-sup_faces = geompy.SubShapeAllSortedCentres(box, geompy.ShapeType["FACE"])
-
-# get indices of the sub-shape
-f1_id = geompy.GetSubShapeID(box, sup_faces[3])
-
-# remove faces from the given object (shape)
-result = geompy.SuppressFaces(box, [f1_id])
-
-# add objects in the study
-id_box = geompy.addToStudy(box, "Box")
-id_result = geompy.addToStudy(result, "Result")
-
-# display the results
-gg.createAndDisplayGO(id_box)
-gg.setDisplayMode(id_box,1)
-gg.createAndDisplayGO(id_result)
-gg.setDisplayMode(id_result,1)
-\endcode
+\include repairing_operations_ex02.py
+<a href="../../examples/GEOM/repairing_operations_ex02.py">Download this script</a>
 
 \anchor tui_close_contour
 <br><h2>Close Contour</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices and vectors
-p0  = geompy.MakeVertex(  0.,   0.,   0.)
-px  = geompy.MakeVertex(100.,   0.,   0.)
-py  = geompy.MakeVertex(  0., 100.,   0.)
-py1 = geompy.MakeVertex(  0., 140.,   0.)
-pz  = geompy.MakeVertex(  0.,   0., 100.)
-vxy = geompy.MakeVector(px, py)
-
-# create an arc
-arc = geompy.MakeArc(py1, pz, px)
-
-# create a wire
-wire = geompy.MakeWire([vxy, arc])
-
-# close an open wire by creation of an edge between ends
-wire_close = geompy.CloseContour(wire, [1], 0)
-
-# add objects in the study
-id_wire = geompy.addToStudy(wire, "Wire")
-id_wire_close = geompy.addToStudy(wire_close, "Wire close")
-
-# display the results
-gg.createAndDisplayGO(id_wire)
-gg.createAndDisplayGO(id_wire_close) 
-\endcode
+\include repairing_operations_ex03.py
+<a href="../../examples/GEOM/repairing_operations_ex03.py">Download this script</a>
 
 \anchor tui_suppress_internal_wires 
 <br><h2>Suppress Internal Wires</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p1 = geompy.MakeVertex(55, 65, 50)
-p2 = geompy.MakeVertex(55,  0, 50)
-v = geompy.MakeVector(p1, p2)
-
-# create a cylinder
-height = 100
-radius1 = 40
-cylinder = geompy.MakeCylinder(p1, v, radius1, height)
-
-# create a box
-box = geompy.MakeBoxDXDYDZ(100, 100, 100)
-
-# make a cut
-cut = geompy.MakeCut(box, cylinder)
-
-# suppress all internal wires
-result = geompy.SuppressInternalWires(cut, [])
-
-# add objects in the study
-id_cut = geompy.addToStudy(cut, "Cut")
-id_result = geompy.addToStudy(result, "Result")
-
-# display the results
-gg.createAndDisplayGO(id_cut)
-gg.setDisplayMode(id_cut,1)
-gg.createAndDisplayGO(id_result)
-gg.setDisplayMode(id_result,1) 
-\endcode
+\include repairing_operations_ex04.py
+<a href="../../examples/GEOM/repairing_operations_ex04.py">Download this script</a>
 
 \anchor tui_suppress_holes
 <br><h2>Suppress Holes</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p1 = geompy.MakeVertex(35, 35, 0)
-p2 = geompy.MakeVertex(35, 35, 50)
-v = geompy.MakeVector(p1, p2)
-
-# create a cylinder
-height = 20
-radius1 = 20
-cylinder = geompy.MakeCylinder(p1, v, radius1, height)
-
-# create a cone
-cone = geompy.MakeCone(p1, v, 70, 0, 80)
-
-# make a cut
-cut = geompy.MakeCut(cone, cylinder)
-
-# get faces as sub-shapes
-faces = []
-faces = geompy.SubShapeAllSortedCentres(cut, geompy.ShapeType["FACE"])
-f_2 = geompy.GetSubShapeID(cut, faces[2])
-
-# remove one face from the shape
-cut_without_f_2 = geompy.SuppressFaces(cut, [f_2])
-
-# get wires as sub-shapes
-wires = []
-wires = geompy.SubShapeAllSortedCentres(cut_without_f_2, geompy.ShapeType["WIRE"])
-w_0 = geompy.GetSubShapeID(cut_without_f_2, wires[0])
-
-# suppress the selected wire
-result = geompy.SuppressHoles(cut_without_f_2, [w_0])
-
-# add objects in the study
-id_cut = geompy.addToStudy(cut, "Cut")
-id_cut_without_f_2 = geompy.addToStudy(cut_without_f_2, "Cut without f_2")
-id_result = geompy.addToStudy(result, "Result")
-
-# display the results
-gg.createAndDisplayGO(id_cut)
-gg.setDisplayMode(id_cut,1)
-gg.createAndDisplayGO(id_cut_without_f_2)
-gg.setDisplayMode(id_cut_without_f_2,1)
-gg.createAndDisplayGO(id_result)
-gg.setDisplayMode(id_result,1) 
-\endcode
+\include repairing_operations_ex05.py
+<a href="../../examples/GEOM/repairing_operations_ex05.py">Download this script</a>
 
 \anchor tui_sewing
 <br><h2>Sewing</h2>
-
-\code
-import geompy
-import salome
-import math
-gg = salome.ImportComponentGUI("GEOM")
-
-# create base points
-px = geompy.MakeVertex(100., 0., 0.)
-py = geompy.MakeVertex(0., 100., 0.)
-pz = geompy.MakeVertex(0., 0., 100.)
-
-# create base geometry 2D & 3D
-vector = geompy.MakeVector(px, py)
-arc = geompy.MakeArc(py, pz, px)
-
-# create base objects
-angle = 45. * math.pi / 180
-WantPlanarFace = 1 #True
-wire = geompy.MakeWire([vector, arc])
-face = geompy.MakeFace(wire, WantPlanarFace)
-face_rot = geompy.MakeRotation(face, vector, angle)
-
-# make sewing
-precision = 0.00001
-sewing = geompy.MakeSewing([face, face_rot], precision)
-
-# add objects in the study
-id_face = geompy.addToStudy(face, "Face")
-id_face_rot = geompy.addToStudy(face_rot, "Face rotation")
-id_sewing = geompy.addToStudy(sewing, "Sewing")
-
-# display the results
-gg.createAndDisplayGO(id_face)
-gg.setDisplayMode(id_face,1)
-gg.createAndDisplayGO(id_face_rot)
-gg.setDisplayMode(id_face_rot,1)
-gg.createAndDisplayGO(id_sewing)
-gg.setDisplayMode(id_sewing,1) 
-\endcode
+\include repairing_operations_ex06.py
+<a href="../../examples/GEOM/repairing_operations_ex06.py">Download this script</a>
 
 \anchor tui_glue_faces
 <br><h2>Glue Faces</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create boxes
-box1 = geompy.MakeBox(0,0,0,100,50,100)
-box2 = geompy.MakeBox(100,0,0,250,50,100)
-
-# make compound
-compound = geompy.MakeCompound([box1, box2])
-
-# glue compound's faces
-tolerance = 1e-5
-glue = geompy.MakeGlueFaces(compound, tolerance)
-
-# add objects in study
-id_box1 = geompy.addToStudy(box1, "Box1")
-id_box2 = geompy.addToStudy(box2, "Box2")
-id_compound = geompy.addToStudy(compound, "Compound")
-id_glue = geompy.addToStudy(glue, "Glue faces")
-
-# display results
-gg.createAndDisplayGO(id_box1)
-gg.setDisplayMode(id_box1,1)
-gg.createAndDisplayGO(id_box2)
-gg.setDisplayMode(id_box2,1)
-gg.createAndDisplayGO(id_compound)
-gg.setDisplayMode(id_compound,1)
-gg.createAndDisplayGO(id_glue)
-gg.setDisplayMode(id_glue,1) 
-\endcode
+\include repairing_operations_ex07.py
+<a href="../../examples/GEOM/repairing_operations_ex07.py">Download this script</a>
 
 \anchor tui_glue_edges
 <br><h2>Glue Edges</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create boxes
-box1 = geompy.MakeBox(0,0,0,100,50,100)
-box2 = geompy.MakeBox(100,0,0,250,50,100)
-
-# make compound
-compound = geompy.MakeCompound([box1, box2])
-
-# glue all compound's edges
-tolerance = 1e-5
-glue1 = geompy.MakeGlueEdges(compound, tolerance)
-
-# glue some compound's edges
-list_edges = geompy.GetGlueEdges(compound, tolerance)
-glue2 = geompy.MakeGlueEdgesByList(compound, tolerance, [list_edges[0], list_edges[2]])
-
-# add objects in study
-geompy.addToStudy(box1, "Box1")
-geompy.addToStudy(box2, "Box2")
-geompy.addToStudy(compound, "Compound")
-geompy.addToStudy(glue1, "Glue all edges")
-geompy.addToStudy(glue2, "Glue two edges")
-
-if salome.sg.hasDesktop():
-  salome.sg.updateObjBrowser(1)
-\endcode
+\include repairing_operations_ex08.py
+<a href="../../examples/GEOM/repairing_operations_ex08.py">Download this script</a>
 
 \anchor tui_limit_tolerance
 <br><h2>Limit Tolerance</h2>
-
-\code
-import geompy
-gg = salome.ImportComponentGUI("GEOM")
-
-# import initial topology
-shape1 = geompy.ImportBREP("my_shape_1.brep")
-shape2 = geompy.ImportBREP("my_shape_2.brep")
-
-geompy.addToStudy(shape1, "Shape 1")
-geompy.addToStudy(shape2, "Shape 2")
-
-# perform partition
-try:
-    part = geompy.MakePartition([shape1, shape2])
-except:
-    # limit tolerance
-    tolerance = 1e-07
-    shape1_lt = geompy.LimitTolerance(shape1, tolerance)
-    shape2_lt = geompy.LimitTolerance(shape2, tolerance)
-
-    # process shape
-    good_shape1 = geompy.ProcessShape(shape1_lt, ["FixShape"], ["FixShape.Tolerance3d"], ["1e-7"])
-    good_shape2 = geompy.ProcessShape(shape2_lt, ["FixShape"], ["FixShape.Tolerance3d"], ["1e-7"])
-
-    geompy.addToStudy(good_shape1, "Shape 1 corrected")
-    geompy.addToStudy(good_shape2, "Shape 2 corrected")
-
-    # perform partition on corrected shapes
-    part = geompy.MakePartition([good_shape1, good_shape2])
-    pass
-
-geompy.addToStudy(part, "Partition")
-\endcode
+\include repairing_operations_ex09.py
+<a href="../../examples/GEOM/repairing_operations_ex09.py">Download this script</a>
 
 \anchor tui_add_point_on_edge
 <br><h2>Add Point on Edge</h2>
-
-\code
-import geompy
-import salome
-
-# create vertices
-p1 = geompy.MakeVertex(0,0,50)
-p2 = geompy.MakeVertex(60,0,50)
-
-# make an edge
-edge = geompy.MakeEdge(p1, p2) #geompy.GetSubShape(box, edge_ind)
-
-# divide an edge
-divide = geompy.DivideEdge(edge, -1, 0.5, 0)
-
-# add objects in the study
-id_edge = geompy.addToStudy(edge, "Edge")
-edge_points = geompy.SubShapeAllSortedCentres(edge, geompy.ShapeType["VERTEX"])
-for point in edge_points:
-    geompy.addToStudyInFather(edge, point, "Edge's point")
-
-id_divide = geompy.addToStudy(divide, "Divided edge")
-edge_points = geompy.SubShapeAllSortedCentres(divide, geompy.ShapeType["VERTEX"])
-for point in edge_points:
-    geompy.addToStudyInFather(divide, point, "Edge's point after divide")
-
-salome.sg.updateObjBrowser(1) 
-\endcode
+\include repairing_operations_ex10.py
+<a href="../../examples/GEOM/repairing_operations_ex10.py">Download this script</a>
 
 \anchor tui_fuse_collinear_edges
 <br><h2>Fuse Collinear Edges within a Wire</h2>
-
-\code
-import geompy
-import salome
-
-# create vertices
-p1 = geompy.MakeVertex(0, 0, 0)
-p2 = geompy.MakeVertex(70, 0, 0)
-p3 = geompy.MakeVertex(70, 50, 0)
-p4 = geompy.MakeVertex(70, 80, 0)
-p5 = geompy.MakeVertex(50, 80, 0)
-p6 = geompy.MakeVertex(20, 80, 0)
-p7 = geompy.MakeVertex(0, 80, 0)
-p8 = geompy.MakeVertex(0, 30, 0)
-
-points = [p1, p2, p3, p4, p5, p6, p7, p8]
-
-# make a wire
-wire_1 = geompy.MakePolyline(points, True)
-
-# suppress some vertices in the wire
-wire_2 = geompy.FuseCollinearEdgesWithinWire(wire_1, [p3])
-wire_3 = geompy.FuseCollinearEdgesWithinWire(wire_1, [p5, p6])
-
-# suppress all suitable vertices in the wire
-wire_4 = geompy.FuseCollinearEdgesWithinWire(wire_1, [])
-
-wires = [wire_1, wire_2, wire_3, wire_4]
-
-# add objects in the study
-ii = 1
-for point in points:
-    geompy.addToStudy(point, "p%d"%ii)
-    ii = ii + 1
-    pass
-
-ii = 1
-for wire in wires:
-    geompy.addToStudy(wire, "wire_%d"%ii)
-    wire_points = geompy.SubShapeAllSortedCentres(wire, geompy.ShapeType["VERTEX"])
-    jj = 1
-    for point in wire_points:
-        geompy.addToStudyInFather(wire, point, "point_%d"%jj)
-        jj = jj + 1
-        pass
-    ii = ii + 1
-    pass
-
-salome.sg.updateObjBrowser(1) 
-\endcode
+\include repairing_operations_ex11.py
+<a href="../../examples/GEOM/repairing_operations_ex11.py">Download this script</a>
 
 */

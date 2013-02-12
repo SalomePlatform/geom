@@ -22,7 +22,6 @@
 #  File   : GEOM_example6.py
 #  Author : Dmitry MATVEITChEV
 #  Module : GEOM
-#  $Header$
 #
 import salome
 import geompy

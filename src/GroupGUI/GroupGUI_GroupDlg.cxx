@@ -33,6 +33,7 @@
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
+#include <SalomeApp_Tools.h>
 
 #include <LightApp_SelectionMgr.h>
 
@@ -65,6 +66,9 @@
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerInteger.hxx>
 
 #include <GEOMImpl_Types.hxx>
+
+#define GROUP_IDLST_COLOR Qt::blue // Specific color for the IDs of subShapes in the dialog box
+#define GROUP_NEWIDLST_COLOR Qt::red // Specific color for the new IDs of subShapes in the dialog box
 
 enum { ALL_SUBSHAPES = 0, GET_IN_PLACE, SUBSHAPES_OF_SHAPE2, SUBSHAPES_OF_INVISIBLE_SHAPE2 };
 
@@ -186,11 +190,13 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
 
 GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
 {
+  GEOM_Displayer* aDisplayer = getDisplayer();
   if (myIsHiddenMain) {
-    GEOM_Displayer* aDisplayer = getDisplayer();
     aDisplayer->Display(myMainObj);
     myIsHiddenMain = false;
   }
+  aDisplayer->Display(myGroup);
+  myDmMode = -1;
 }
 
 //=================================================================================
@@ -199,6 +205,7 @@ GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
 //=================================================================================
 void GroupGUI_GroupDlg::Init()
 {
+  myDmMode = -1;
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
 
   //unset shape type to avoid preparation of selection before exact user shape type selection
@@ -236,9 +243,12 @@ void GroupGUI_GroupDlg::Init()
         setShapeType((TopAbs_ShapeEnum)anOper->GetType(myGroup));
 
         GEOM::ListOfLong_var aCurrList = anOper->GetObjects(myGroup);
-        for (int i = 0, n = aCurrList->length(); i < n; i++)
-          myIdList->addItem(new QListWidgetItem(QString("%1").arg(aCurrList[i])));
-
+        for (int i = 0, n = aCurrList->length(); i < n; i++) {
+          QListWidgetItem* itm = new QListWidgetItem( QString( "%1" ).arg( aCurrList[ i ] ) );
+          myGroupIdList.append( aCurrList[ i ] );
+          itm->setTextColor( QColor( GROUP_IDLST_COLOR ) );
+          myIdList->addItem( itm );
+        }
         myEditCurrentArgument = 0;
       }
       connect(mySelBtn2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -306,14 +316,18 @@ void GroupGUI_GroupDlg::ClickOnOk()
 //=================================================================================
 bool GroupGUI_GroupDlg::ClickOnApply()
 {
-  if(!isApplyAndClose())
+  if(!isApplyAndClose()) {
     setIsDisableBrowsing( true );
+    setIsDisplayResult( false );
+  }
     
-  if (!onAccept(myMode == CreateGroup, true,isApplyAndClose()))
+  if (!onAccept(myMode == CreateGroup, true, isApplyAndClose()))
     return false;
 
-  if(!isApplyAndClose())
+  if(!isApplyAndClose()) {
     setIsDisableBrowsing( false );
+    setIsDisplayResult( true );
+  }
 
   if (myMode == CreateGroup)
   {
@@ -322,8 +336,19 @@ bool GroupGUI_GroupDlg::ClickOnApply()
     ConstructorsClicked(getConstructorId());
   }
   else
+  {
+    int n = myIdList->count();
+    myGroupIdList.clear();
+    if (n > 0)
+    {
+      for (int i = 0; i < n; i++) {
+        QListWidgetItem* anItem  = myIdList->item( i );
+        myGroupIdList.append( anItem->text().toInt() );
+        anItem->setTextColor( GROUP_IDLST_COLOR );
+      }
+    }
     activateSelection();
-
+  }
   return true;
 }
 
@@ -576,7 +601,7 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
   if (aSubShapes->length() > 0) {
     if (subSelectionWay() == ALL_SUBSHAPES)
     {
-      myIdList->clear(); // for sorted final list?
+//      myIdList->clear(); // for sorted final list?
 
       if (!aShOp->IsDone())
         return;
@@ -600,12 +625,13 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
 
       QListWidgetItem* anItem = 0;
       QString text = QString("%1").arg(anIndex);
-      if (!myInPlaceObj->_is_nil()) {
+//      if (!myInPlaceObj->_is_nil()) {
         QList<QListWidgetItem*> found = myIdList->findItems(text, Qt::MatchExactly);
         if (found.count()) anItem = found[0];
-      }
+//      }
       if (!anItem) {
         anItem = new QListWidgetItem(text);
+        anItem->setTextColor( myGroupIdList.contains(anIndex) ? QColor( GROUP_IDLST_COLOR ) : QColor( GROUP_NEWIDLST_COLOR ) );
         myIdList->addItem(anItem);
       }
       anItem->setSelected(true);
@@ -754,6 +780,7 @@ void GroupGUI_GroupDlg::add()
         continue;
 
       QListWidgetItem* anItem = new QListWidgetItem(QString("%1").arg(aMapIndex(i)));
+      anItem->setTextColor( myGroupIdList.contains( aMapIndex( i ) ) ? QColor( GROUP_IDLST_COLOR ) : QColor( GROUP_NEWIDLST_COLOR ) );
       myIdList->addItem(anItem);
       anItem->setSelected(true);
     }
@@ -835,7 +862,7 @@ void GroupGUI_GroupDlg::setShapeType(const TopAbs_ShapeEnum theType)
 void GroupGUI_GroupDlg::activateSelection()
 {
   bool isApply = ((QPushButton*)sender() == buttonApply());
-  if(!isApply)
+  if(!isApplyAndClose())
     erasePreview(false);
 
   // local selection
@@ -844,27 +871,42 @@ void GroupGUI_GroupDlg::activateSelection()
       myIsShapeType) // check if shape type is already choosen by user
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
+  
+    //display mode for main shape
+    if ( myDmMode == -1 ) {
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+      if (view) {
+        CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+        Handle(SALOME_InteractiveObject) io =
+          new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+        if ( view->isVisible( io ) ) {
+          Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIOinGEOMAISShape( io, true );
+          if(!aSh.IsNull()) {
+            myDmMode = aSh->isTopLevel() ? aSh->prevDisplayMode() : aSh->DisplayMode();
+          }
+          // Hide main shape, if explode on VERTEX
+          if(getShapeType() != TopAbs_VERTEX) {
+            aDisplayer->Erase(myMainObj, false, false);
+            myIsHiddenMain = true;
+          }
+        }
+        else
+          myDmMode = SUIT_Session::session()->resourceMgr()->integerValue( "Geometry", "display_mode" );
+      }
+    }
+    aDisplayer->SetDisplayMode(myDmMode);
 
     // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
     if (getShapeType() == TopAbs_VERTEX) {
       if (myIsHiddenMain)
         aDisplayer->Display(myMainObj);
     }
-    else {
-      SALOME_View* view = GEOM_Displayer::GetActiveView();
-      if (view) {
-        CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
-        Handle(SALOME_InteractiveObject) io =
-          new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
-        if (view->isVisible(io)) {
-          aDisplayer->Erase(myMainObj, false, false);
-          myIsHiddenMain = true;
-        }
-      }
-    }
-    if(!isApply) {
-      int prevDisplayMode = aDisplayer->SetDisplayMode(0);
+    aDisplayer->Erase(myGroup, false, false);
 
+    QColor aColor = SUIT_Session::session()->resourceMgr()->colorValue( "Geometry", "editgroup_color" );
+    Quantity_NameOfColor aCol = SalomeApp_Tools::color( aColor ).Name();
+
+    if(!isApplyAndClose()) {
       SUIT_ViewWindow* aViewWindow = 0;
       SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
       if (activeStudy)
@@ -895,8 +937,15 @@ void GroupGUI_GroupDlg::activateSelection()
         for (; anExp.More(); anExp.Next()) {
           TopoDS_Shape aSubShape = anExp.Current();
           int index = aSubShapesMap.FindIndex(aSubShape);
-          QString anEntry = anEntryBase + QString("_%1").arg(index);
-
+          QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
+          Handle(SALOME_InteractiveObject) io =
+            new SALOME_InteractiveObject(anEntry.toAscii(), "GEOM", "TEMP_IO");
+          if ( myGroupIdList.contains( index ) ) {
+            aDisplayer->SetColor( aCol );
+          }
+          else {
+            aDisplayer->UnsetColor();
+          }
           SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
           if (aPrs) {
             displayPreview(aPrs, true, false); // append, do not update
@@ -914,7 +963,14 @@ void GroupGUI_GroupDlg::activateSelection()
         for (; aM2IPit.More(); aM2IPit.Next()) {
           int index = aM2IPit.Key();
           TopoDS_Shape aSubShape = aSubShapesMap.FindKey(index);
-          QString anEntry = anEntryBase + QString("_%1").arg(index);
+          QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
+
+          if ( myGroupIdList.contains( index ) ) {
+            aDisplayer->SetColor( aCol );
+          }
+          else {
+            aDisplayer->UnsetColor();
+          }
 
           SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
           if (aPrs) {
@@ -923,9 +979,9 @@ void GroupGUI_GroupDlg::activateSelection()
         }
       }
       else ;
-
+      aDisplayer->UnsetDisplayMode();
+      aDisplayer->UnsetColor();
       aDisplayer->UpdateViewer();
-      aDisplayer->SetDisplayMode(prevDisplayMode);
     }
   }
 

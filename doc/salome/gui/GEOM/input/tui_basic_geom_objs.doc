@@ -4,423 +4,47 @@
 
 \anchor tui_creation_point
 <br><h2>Creation of a Point</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p0 = geompy.MakeVertex(0., 0., 0.)
-p100 = geompy.MakeVertexWithRef(p0, 100., 100., 100.)
-px = geompy.MakeVertex(100., 0., 0.)
-py = geompy.MakeVertex(0., 100., 0.)
-pz = geompy.MakeVertex(0., 0., 100.)
-p1 = geompy.MakeVertex(50., 50., 30.)
-
-# create a curve and vertices on it
-Arc = geompy.MakeArc(py, pz, px)
-# create a vertex by parameter
-p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25)
-# create a vertex by length
-p_on_arc2 = geompy.MakeVertexOnCurveByLength(Arc, 50., None)
-#create a vertex by point projection
-p_on_arc3 = geompy.MakeVertexOnCurveByCoord(Arc, 100, -10, 10)
-
-# create 2 lines and make a point on its intersection
-line_1 = geompy.MakeLineTwoPnt(p0, p100)
-line_2 = geompy.MakeLineTwoPnt(p1, pz)
-p_inter = geompy.MakeVertexOnLinesIntersection(line_1, line_2)
-
-# create a face and vertices on it
-Add_line = geompy.MakeLineTwoPnt(px, py)
-arc_face = geompy.MakeFaceWires([Arc, Add_line], 1)
-p_on_face1 = geompy.MakeVertexOnSurface(arc_face, 0.5, 0.5)
-p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(arc_face, 35, 35, 35)
-p_on_face3 = geompy.MakeVertexInsideFace(arc_face)
-
-
-# add objects in the study
-id_p0       = geompy.addToStudy(p0,   "Vertex 0")
-id_p100     = geompy.addToStudy(p100, "Vertex 100")
-id_px       = geompy.addToStudy(px,   "Vertex X")
-id_py       = geompy.addToStudy(py,   "Vertex Y")
-id_pz       = geompy.addToStudy(pz,   "Vertex Z")
-id_Arc      = geompy.addToStudy(Arc,  "Arc")
-id_line_1   = geompy.addToStudy(line_1,  "Line 1")
-id_line_2   = geompy.addToStudy(line_2,  "Line 2")
-id_p_on_arc = geompy.addToStudy(p_on_arc, "Vertex on Arc by parameter")
-id_p_on_arc2  = geompy.addToStudy(p_on_arc2, "Vertex on Arc by length")
-id_p_on_arc3  = geompy.addToStudy(p_on_arc3, "Vertex on Arc by point projection")
-id_p_inter    = geompy.addToStudy(p_inter,   "Vertex on Lines Intersection")
-id_p_on_face1 = geompy.addToStudy(p_on_face1, "Vertex on face by parameter")
-id_p_on_face2 = geompy.addToStudy(p_on_face2, "Vertex on face by point projection")
-id_p_on_face3 = geompy.addToStudy(p_on_face3, "Vertex inside face")
-
-# display vertices
-gg.createAndDisplayGO(id_p0)
-gg.createAndDisplayGO(id_p100)
-gg.createAndDisplayGO(id_Arc)
-gg.createAndDisplayGO(id_p_inter)
-gg.createAndDisplayGO(id_p_on_arc)
-gg.createAndDisplayGO(id_p_on_arc2)
-gg.createAndDisplayGO(id_p_on_arc3)
-\endcode
+\include basic_geom_objs_ex01.py
+<a href="../../examples/GEOM/basic_geom_objs_ex01.py">Download this script</a>
 
 \anchor tui_creation_line
 <br><h2>Creation of a Line</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p0 = geompy.MakeVertex(0., 0., 0.)
-p100 = geompy.MakeVertexWithRef(p0, 100., 100., 100.)
-px = geompy.MakeVertex(100., 0.  , 0.  )
-py = geompy.MakeVertex(0.  , 100., 0.  )
-pz = geompy.MakeVertex(0.  , 0.  , 100.)
-
-# create a vector from two points
-vxy  = geompy.MakeVector(px, py)
-
-# create a line from a point and a vector
-line1 = geompy.MakeLine(pz, vxy)
-
-#create a line from two points
-line2 = geompy.MakeLineTwoPnt(p0, p100)
-
-# add objects in the study
-id_vxy      = geompy.addToStudy(vxy,  "Vector")
-id_line1    = geompy.addToStudy(line1,"Line1")
-id_line2    = geompy.addToStudy(line2,"Line2")
-
-# display lines
-gg.createAndDisplayGO(id_vxy)
-gg.createAndDisplayGO(id_line1)
-gg.createAndDisplayGO(id_line2) 
-\endcode
+\include basic_geom_objs_ex02.py
+<a href="../../examples/GEOM/basic_geom_objs_ex02.py">Download this script</a>
 
 \anchor tui_creation_circle
 <br><h2>Creation of a Circle</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p0 = geompy.MakeVertex(0., 0., 0.)
-px = geompy.MakeVertex(100., 0.  , 0.  )
-py = geompy.MakeVertex(0.  , 100., 0.  )
-pz = geompy.MakeVertex(0.  , 0.  , 100.)
-
-# create a vector on two points
-vxy  = geompy.MakeVector(px, py)
-
-# create a circle from a point, a vector and a radius
-circle1 = geompy.MakeCircle(pz, vxy, 30)
-
-#create a circle from three points
-circle2 = geompy.MakeCircleThreePnt(p0, px, py)
-
-# add objects in the study
-id_vxy      = geompy.addToStudy(vxy,    "Vector")
-id_circle1  = geompy.addToStudy(circle1,"Circle1")
-id_circle2  = geompy.addToStudy(circle2,"Circle2")
-
-# display circles
-gg.createAndDisplayGO(id_vxy)
-gg.createAndDisplayGO(id_circle1)
-gg.createAndDisplayGO(id_circle2)
-\endcode
+\include basic_geom_objs_ex03.py
+<a href="../../examples/GEOM/basic_geom_objs_ex03.py">Download this script</a>
 
 \anchor tui_creation_ellipse
 <br><h2>Creation of an Ellipse</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p0 = geompy.MakeVertex(0., 0., 0.)
-p1 = geompy.MakeVertex(50., 50., 50.)
-p2 = geompy.MakeVertex(0., 50., 0.)
-
-# create a normal vector from two points
-normal  = geompy.MakeVector(p0, p1)
-
-# create a major axis vector from two points
-major   = geompy.MakeVector(p0, p2)
-
-# create an ellipse from a point, a vector and radiuses
-ellipse1 = geompy.MakeEllipse(p1, normal, 50, 25)
-
-# create an ellipse from a point, a normal vector, radiuses and a major axis vector
-ellipse2 = geompy.MakeEllipse(p1, normal, 50, 25, major)
-
-# add objects in the study
-id_normal   = geompy.addToStudy(normal,   "Normal")
-id_major    = geompy.addToStudy(major,    "Major Axis")
-id_ellipse1 = geompy.addToStudy(ellipse1, "Ellipse 1")
-id_ellipse2 = geompy.addToStudy(ellipse2, "Ellipse 2")
-
-# display the ellipse and its normal vector
-gg.createAndDisplayGO(id_normal)
-gg.createAndDisplayGO(id_major)
-gg.createAndDisplayGO(id_ellipse1)
-gg.createAndDisplayGO(id_ellipse2)
-\endcode
+\include basic_geom_objs_ex04.py
+<a href="../../examples/GEOM/basic_geom_objs_ex04.py">Download this script</a>
 
 \anchor tui_creation_arc
 <br><h2>Creation of an Arc</h2>
+\include basic_geom_objs_ex05.py
+<a href="../../examples/GEOM/basic_geom_objs_ex05.py">Download this script</a>
 
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p0 = geompy.MakeVertex(0., 0., 0.)
-p1 = geompy.MakeVertex(100., 0., 0.)
-p2 = geompy.MakeVertex(50., 0., 50.)
-
-# create an arc from a three points
-arc1 = geompy.MakeArc(p0, p1, p2)
-
-# create an arc from a center point, a start point and end point
-arc2 = geompy.MakeArcCenter(p0, p1, p2, 1)
-
-# create an arc from a center point, a major point and minor point
-arc3 = geompy.MakeArcOfEllipse(p0, p1, p2)
-
-# add objects in the study
-id_arc1 = geompy.addToStudy(arc1, "Arc 1")
-id_arc2 = geompy.addToStudy(arc2, "Arc 2")
-id_arc3 = geompy.addToStudy(arc3, "Arc 3")
-
-# display the arcs
-gg.createAndDisplayGO(id_arc1)
-gg.createAndDisplayGO(id_arc2)
-gg.createAndDisplayGO(id_arc3)
-\endcode
- 
 \anchor tui_creation_curve
 <br><h2>Creation of a Curve</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p0 = geompy.MakeVertex(0.  , 0.  , 0.  )
-p1 = geompy.MakeVertex(50. , 100., 200.)
-p2 = geompy.MakeVertex(150.,  50., 100.)
-p3 = geompy.MakeVertex(100., 150., 170.)
-p4 = geompy.MakeVertex(200., 200., 150.)
-
-# create a polyline from a list of points
-polyline = geompy.MakePolyline([p0, p1, p2, p3, p4])
-
-# create a bezier curve from a list of points
-bezier = geompy.MakeBezier([p0, p1, p2, p3, p4])
-
-#create a b-spline curve from a list of points
-interpol = geompy.MakeInterpol([p0, p1, p2, p3, p4], False)
-
-#create a polyline using parametric definition of the basic points
-param_polyline = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, geompy.GEOM.Polyline, theNewMethod=True)
-
-# create a bezier curve using parametric definition of the basic points
-param_bezier = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, geompy.GEOM.Bezier, theNewMethod=True)
-
-#create a b-spline curve using parametric definition of the basic points
-param_interpol = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, geompy.GEOM.Interpolation, theNewMethod=True)
-
-
-
-# add objects in the study
-id_p0       = geompy.addToStudy(p0,       "Point1")
-id_p1       = geompy.addToStudy(p1,       "Point2")
-id_p2       = geompy.addToStudy(p2,       "Point3")
-id_p3       = geompy.addToStudy(p3,       "Point4")
-id_p4       = geompy.addToStudy(p4,       "Point5")
-id_polyline = geompy.addToStudy(polyline, "Polyline")
-id_bezier   = geompy.addToStudy(bezier,   "Bezier")
-id_interpol = geompy.addToStudy(interpol, "Interpol")
-id_param_polyline = geompy.addToStudy(param_polyline, "Polyline Parametric")
-id_param_bezier = geompy.addToStudy(param_bezier, "Bezier Parametric")
-id_param_interpol = geompy.addToStudy(param_interpol, "Interpol Parametric")
-
-
-
-# display the points and the curves
-gg.createAndDisplayGO(id_p0)
-gg.createAndDisplayGO(id_p1)
-gg.createAndDisplayGO(id_p2)
-gg.createAndDisplayGO(id_p3)
-gg.createAndDisplayGO(id_p4)
-gg.createAndDisplayGO(id_polyline)
-gg.createAndDisplayGO(id_bezier)
-gg.createAndDisplayGO(id_interpol) 
-gg.createAndDisplayGO(id_param_polyline)
-gg.createAndDisplayGO(id_param_bezier)
-gg.createAndDisplayGO(id_param_interpol)
-
-\endcode
+\include basic_geom_objs_ex06.py
+<a href="../../examples/GEOM/basic_geom_objs_ex06.py">Download this script</a>
 
 \anchor tui_creation_vector
 <br><h2>Creation of a Vector</h2>
-
-\code
-mport geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p1 = geompy.MakeVertex(10., 50., 20.)
-p2 = geompy.MakeVertex(70., 70., 70.)
-
-# create a vector from two points
-vector1 = geompy.MakeVector(p1, p2)
-
-# create a vector from the given components
-vector2 = geompy.MakeVectorDXDYDZ(30, 30, 100)
-
-# add objects in the study
-id_p1      = geompy.addToStudy(p1,     "Point1")
-id_p2      = geompy.addToStudy(p2,     "Point2")
-id_vector1 = geompy.addToStudy(vector1,"Vector1")
-id_vector2 = geompy.addToStudy(vector2,"Vector2")
-
-# display the points and the vectors
-gg.createAndDisplayGO(id_p1)
-gg.createAndDisplayGO(id_p2)
-gg.createAndDisplayGO(id_vector1)
-gg.createAndDisplayGO(id_vector2) 
-\endcode
+\include basic_geom_objs_ex07.py
+<a href="../../examples/GEOM/basic_geom_objs_ex07.py">Download this script</a>
 
 \anchor tui_creation_plane
 <br><h2>Creation of a Plane</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p1 = geompy.MakeVertex(  0.,   0., 100.)
-p2 = geompy.MakeVertex(100.,   0.,   0.)
-p3 = geompy.MakeVertex(200., 200., 200.)
-p4 = geompy.MakeVertex(100., 100.,   0.)
-p5 = geompy.MakeVertex(0.  , 100.,   0.)
-
-# create a vectors from the given components
-vector1 = geompy.MakeVectorDXDYDZ(100., 100., 100.)
-vector2 = geompy.MakeVectorDXDYDZ(-100., 0., 100.)
-
-# create a vector from two points
-vector_arc = geompy.MakeVector(p2, p5)
-
-# create an arc from three points
-arc = geompy.MakeArc(p2, p4, p5)
-
-# create a wire
-wire = geompy.MakeWire([vector_arc, arc])
-
-# create a face
-isPlanarWanted = 1
-face = geompy.MakeFace(wire, isPlanarWanted)
-trimsize = 1000.
-
-# create a Local Coordinate System
-
-LCS = geompy.MakeMarker(100., 100., 101., 1, 0, 0, 0, 1, 0)
-
-# create a plane from a point, a vector and a trimsize
-plane1 = geompy.MakePlane(p1, vector1, trimsize)
-
-# create a plane from three points and a trimsize
-plane2 = geompy.MakePlaneThreePnt(p1, p2, p3, trimsize)
-
-# create a plane from the given face
-plane3 = geompy.MakePlaneFace(face, trimsize)
-
-# create a plane from two vectors and a trimsize
-plane4 = geompy.MakePlane2Vec(vector1, vector2, trimsize)
-
-# create a plane with the Local Coordinate System and a trimsize
-plane5 = geompy.MakePlaneLCS(LCS, trimsize, 1)
-
-# add objects in the study
-id_face   = geompy.addToStudy(face,  "Face")
-id_plane1 = geompy.addToStudy(plane1,"Plane1")
-id_plane2 = geompy.addToStudy(plane2,"Plane2")
-id_plane3 = geompy.addToStudy(plane3,"Plane3")
-id_plane4 = geompy.addToStudy(plane4,"Plane4")
-id_plane5 = geompy.addToStudy(plane5,"Plane5")
-
-# display the points and the vectors
-gg.createAndDisplayGO(id_face)
-gg.createAndDisplayGO(id_plane1)
-gg.createAndDisplayGO(id_plane2)
-gg.createAndDisplayGO(id_plane3)
-gg.createAndDisplayGO(id_plane4)
-gg.createAndDisplayGO(id_plane5)
-gg.setDisplayMode(id_plane1,1)
-gg.setTransparency(id_plane1,0.5)
-gg.setDisplayMode(id_plane2,1)
-gg.setTransparency(id_plane2,0.5)
-gg.setDisplayMode(id_plane3,1)
-gg.setTransparency(id_plane3,0.5)
-gg.setDisplayMode(id_plane4,1)
-gg.setTransparency(id_plane4,0.5)
-gg.setDisplayMode(id_plane5,1)
-gg.setTransparency(id_plane5,0.5)
-\endcode
+\include basic_geom_objs_ex08.py
+<a href="../../examples/GEOM/basic_geom_objs_ex08.py">Download this script</a>
 
 \anchor tui_creation_lcs
 <br><h2>Creation of a Local Coordinate System</h2>
-\code
-import GEOM
-import geompy
-import math
-import SALOMEDS
-
-#Create vertexes, vectors and shapes to construct local CS
-Vertex_1 = geompy.MakeVertex(50, 50, 50)
-Vertex_2 = geompy.MakeVertex(70, 70, 70)
-Vertex_3 = geompy.MakeVertex(0, 0, 0)
-Vector_X = geompy.MakeVectorDXDYDZ(50, 0, 0)
-Vector_Y = geompy.MakeVectorDXDYDZ(0, 50, 0)
-Face_1 = geompy.MakeFaceHW(100, 100, 1)
-Box_1 = geompy.MakeBoxTwoPnt(Vertex_1, Vertex_2)
-
-#Construct local CS by manual definition
-LocalCS_1 = geompy.MakeMarker(0, 0, 0, 1, 0, 0, 0, 1, 0)
-
-#Construct local CS by center point and two vectors (X and Y directions)
-LocalCS_2 = geompy.MakeMarkerPntTwoVec(Vertex_3, Vector_X, Vector_Y)
-
-#Construct local CS from shape orientation
-LocalCS_FACE = geompy.MakeMarkerFromShape(Face_1)
-LocalCS_BOX = geompy.MakeMarkerFromShape(Box_1)
-
-#Add created object to study
-geompy.addToStudy( Face_1, "Face_1" )
-geompy.addToStudy( Vertex_1, "Vertex_1" )
-geompy.addToStudy( Vertex_2, "Vertex_2" )
-geompy.addToStudy( Box_1, "Box_1" )
-geompy.addToStudy( Vertex_3, "Vertex_3" )
-geompy.addToStudy( Vector_X, "Vector_X" )
-geompy.addToStudy( Vector_Y, "Vector_Y" )
-geompy.addToStudy( LocalCS_1, "LocalCS_1" )
-geompy.addToStudy( LocalCS_2, "LocalCS_3" )
-geompy.addToStudy( LocalCS_FACE, "LocalCS_FACE" )
-geompy.addToStudy( LocalCS_BOX, "LocalCS_BOX" )
-\endcode
+\include basic_geom_objs_ex09.py
+<a href="../../examples/GEOM/basic_geom_objs_ex09.py">Download this script</a>
 
 */

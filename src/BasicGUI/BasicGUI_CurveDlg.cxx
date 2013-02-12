@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CurveDlg.cxx
@@ -59,65 +58,100 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* pare
                                       bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POLYLINE" ) ) );
-  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SPLINE" ) ) );
-  QPixmap image3( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BEZIER" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_POLYLINE")));
+  QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_SPLINE")));
+  QPixmap image3 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BEZIER")));
+  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle( tr( "GEOM_CURVE_TITLE" ) );
+  setWindowTitle(tr("GEOM_CURVE_TITLE"));
 
   /***************************************************************/
-  mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setIcon( image3 );
-  mainFrame()->RadioButton3->setIcon( image2 );
+  mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setIcon(image3);
+  mainFrame()->RadioButton3->setIcon(image2);
 
-  QGroupBox* creationModeCroup = new QGroupBox(this);
-  QButtonGroup* bg = new QButtonGroup(this);
+  // Creation mode
+  QGroupBox* creationModeGroup = new QGroupBox (this);
+  QButtonGroup* bg = new QButtonGroup (this);
 
-  creationModeCroup->setTitle( tr( "GEOM_CURVE_CRMODE" ) );  
-  QHBoxLayout * creationModeLayout = new QHBoxLayout(creationModeCroup);
-  myBySelectionBtn = new QRadioButton(  tr( "GEOM_CURVE_SELECTION" ) ,creationModeCroup );
-  myAnaliticalBtn = new QRadioButton(  tr( "GEOM_CURVE_ANALITICAL" ) ,creationModeCroup );
+  creationModeGroup->setTitle(tr("GEOM_CURVE_CRMODE"));
+  QHBoxLayout * creationModeLayout = new QHBoxLayout (creationModeGroup);
+  myBySelectionBtn = new QRadioButton (tr("GEOM_CURVE_SELECTION") ,creationModeGroup);
+  myAnaliticalBtn = new QRadioButton (tr("GEOM_CURVE_ANALITICAL") ,creationModeGroup);
 
   bg->addButton(myBySelectionBtn);
   bg->addButton(myAnaliticalBtn);
-  
+
   creationModeLayout->addWidget(myBySelectionBtn);
   creationModeLayout->addWidget(myAnaliticalBtn);
 
-  GroupPoints = new DlgRef_1Sel3Check( centralWidget() );
+  // Points and flags
+  myGroupPoints = new DlgRef_1Sel3Check (centralWidget());
 
-  GroupPoints->GroupBox1->setTitle( tr( "GEOM_NODES" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_POINTS" ) );
-  GroupPoints->PushButton1->setIcon( image1 );
-  GroupPoints->PushButton1->setDown( true );
+  myGroupPoints->GroupBox1->setTitle(tr("GEOM_NODES"));
+  myGroupPoints->TextLabel1->setText(tr("GEOM_POINTS"));
+  myGroupPoints->PushButton1->setIcon(image1);
+  myGroupPoints->PushButton1->setDown(true);
 
-  GroupPoints->LineEdit1->setReadOnly( true );
+  myGroupPoints->LineEdit1->setReadOnly( true );
 
-  GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
-  GroupPoints->CheckButton1->setChecked(false);
-  //GroupPoints->CheckButton1->hide();
+  myGroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
+  myGroupPoints->CheckButton1->setChecked(false);
+  //myGroupPoints->CheckButton1->hide();
 
-  GroupPoints->CheckButton2->setText( tr( "GEOM_IS_REORDER" ) );
-  GroupPoints->CheckButton2->setChecked(false);
-  GroupPoints->CheckButton2->hide();
+  myGroupPoints->CheckButton2->setText( tr( "GEOM_IS_REORDER" ) );
+  myGroupPoints->CheckButton2->setChecked(false);
+  myGroupPoints->CheckButton2->hide();
 
-  GroupPoints->CheckButton3->hide();
+  myGroupPoints->CheckButton3->hide();
 
-  myParams = new BasicGUI_ParamCurveWidget( centralWidget() );
+  // Parametrical mode
+  myGroupParams = new BasicGUI_ParamCurveWidget( centralWidget() );
 
-  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
-  layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( creationModeCroup );
-  layout->addWidget( GroupPoints );
-  layout->addWidget( myParams );
+  // Tangents (only for Interpolation constructor and only not closed and no reordering)
+  myGroupTangents = new QGroupBox (this);
+  myGroupTangents->setCheckable(true);
+  myGroupTangents->setChecked(false);
+  myGroupTangents->setTitle(tr("GEOM_INTERPOL_TANGENTS"));
+
+  QGridLayout* tangentsLayout = new QGridLayout (myGroupTangents);
+
+  myPushBtnV1 = new QPushButton (myGroupTangents);
+  myPushBtnV2 = new QPushButton (myGroupTangents);
+  myPushBtnV1->setIcon(image1);
+  myPushBtnV2->setIcon(image1);
+
+  myLineEditV1 = new QLineEdit (myGroupTangents);
+  myLineEditV2 = new QLineEdit (myGroupTangents);
+  myLineEditV1->setReadOnly(true);
+  myLineEditV2->setReadOnly(true);
+
+  QLabel* aTextLabelV1 = new QLabel (myGroupTangents);
+  QLabel* aTextLabelV2 = new QLabel (myGroupTangents);
+  aTextLabelV1->setText(tr("GEOM_INTERPOL_FIRST_VEC"));
+  aTextLabelV2->setText(tr("GEOM_INTERPOL_LAST_VEC"));
+
+  tangentsLayout->addWidget(aTextLabelV1, 0, 0);
+  tangentsLayout->addWidget(myPushBtnV1 , 0, 1);
+  tangentsLayout->addWidget(myLineEditV1, 0, 2);
+  tangentsLayout->addWidget(aTextLabelV2, 1, 0);
+  tangentsLayout->addWidget(myPushBtnV2 , 1, 1);
+  tangentsLayout->addWidget(myLineEditV2, 1, 2);
+
+  // Layout
+  QVBoxLayout* layout = new QVBoxLayout (centralWidget());
+  layout->setMargin(0);
+  layout->setSpacing(6);
+  layout->addWidget(creationModeGroup);
+  layout->addWidget(myGroupPoints);
+  layout->addWidget(myGroupParams);
+  layout->addWidget(myGroupTangents);
   /***************************************************************/
 
-  setHelpFileName( "create_curve_page.html" );
+  setHelpFileName("create_curve_page.html");
 
   Init();
 }
-
 
 //=================================================================================
 // function : ~BasicGUI_CurveDlg()
@@ -127,7 +161,6 @@ BasicGUI_CurveDlg::~BasicGUI_CurveDlg()
 {
 }
 
-
 //=================================================================================
 // function : Init()
 // purpose  :
@@ -135,13 +168,6 @@ BasicGUI_CurveDlg::~BasicGUI_CurveDlg()
 void BasicGUI_CurveDlg::Init()
 {
   /* init variables */
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-
-  myPoints.clear();
-
-  globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-
   showOnlyPreviewControl();
   myBySelectionBtn->setChecked(true);
 
@@ -152,87 +178,95 @@ void BasicGUI_CurveDlg::Init()
   double aMax( 100. ), aMin( 0.0 );
 
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( myParams->myPMin, COORD_MIN, COORD_MAX, step, "length_precision" );
-  initSpinBox( myParams->myPMax, COORD_MIN, COORD_MAX, step, "length_precision" );
-  myParams->myPStep->setValue( 10 );
-  myParams->myPStep->setMaximum( 999 );
-  myParams->myPStep->setSingleStep( 10 );
-  myParams->myPMin->setValue( aMin );
-  myParams->myPMax->setValue( aMax );
-  myParams->myPStep->setValue( step );
-  myParams->myXExpr->setText("t");
-  myParams->myYExpr->setText("t");
-  myParams->myZExpr->setText("t");
-  
-  myParams->hide();
+  initSpinBox( myGroupParams->myPMin, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( myGroupParams->myPMax, COORD_MIN, COORD_MAX, step, "length_precision" );
+  myGroupParams->myPStep->setValue( 10 );
+  myGroupParams->myPStep->setMaximum( 999 );
+  myGroupParams->myPStep->setSingleStep( 10 );
+  myGroupParams->myPMin->setValue( aMin );
+  myGroupParams->myPMax->setValue( aMax );
+  myGroupParams->myPStep->setValue( step );
+  myGroupParams->myXExpr->setText("t");
+  myGroupParams->myYExpr->setText("t");
+  myGroupParams->myZExpr->setText("t");
+
+  myGroupParams->hide();
 
   /* signals and slots connections */
-  connect( myGeomGUI,        SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog( ) ) );
-  connect( myGeomGUI,        SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
+  connect(myGeomGUI,     SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI,     SIGNAL(SignalCloseAllDialogs()),        this, SLOT(ClickOnCancel()));
 
-  connect( buttonOk(),       SIGNAL( clicked() ),                      this, SLOT( ClickOnOk() ) );
-  connect( buttonApply(),    SIGNAL( clicked() ),                      this, SLOT( ClickOnApply() ) );
+  connect(buttonOk(),    SIGNAL(clicked()),                      this, SLOT(ClickOnOk()));
+  connect(buttonApply(), SIGNAL(clicked()),                      this, SLOT(ClickOnApply()));
 
-  connect( this,             SIGNAL( constructorsClicked( int ) ),     this, SLOT( ConstructorsClicked( int ) ) );
+  connect(this,          SIGNAL(constructorsClicked(int)),       this, SLOT(ConstructorsClicked(int)));
 
-  connect( GroupPoints->PushButton1,  SIGNAL( clicked() ),             this, SLOT( SetEditCurrentArgument() ) );
+  connect(myGroupPoints->PushButton1,  SIGNAL(clicked()),        this, SLOT(SetEditCurrentArgument()));
+  connect(myPushBtnV1,                 SIGNAL(clicked()),        this, SLOT(SetEditCurrentArgument()));
+  connect(myPushBtnV2,                 SIGNAL(clicked()),        this, SLOT(SetEditCurrentArgument()));
 
-  connect( GroupPoints->CheckButton1, SIGNAL( toggled(bool) ),         this, SLOT( CheckButtonToggled() ) );
-  connect( GroupPoints->CheckButton2, SIGNAL( toggled(bool) ),         this, SLOT( CheckButtonToggled() ) );
+  connect(myGroupPoints->CheckButton1, SIGNAL(toggled(bool)),    this, SLOT(CheckButtonToggled()));
+  connect(myGroupPoints->CheckButton2, SIGNAL(toggled(bool)),    this, SLOT(CheckButtonToggled()));
+  connect(myGroupTangents,             SIGNAL(toggled(bool)),    this, SLOT(CheckButtonToggled()));
 
-  connect( myGeomGUI->getApp()->selectionMgr(),
-           SIGNAL( currentSelectionChanged() ),                        this, SLOT( SelectionIntoArgument() ) );
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
-  connect( myBySelectionBtn, SIGNAL( clicked() ),                      this, SLOT( CreationModeChanged() ) );
-  connect( myAnaliticalBtn,  SIGNAL( clicked() ),                      this, SLOT( CreationModeChanged() ) );
+  connect(myBySelectionBtn,       SIGNAL(clicked()),             this, SLOT(CreationModeChanged()));
+  connect(myAnaliticalBtn,        SIGNAL(clicked()),             this, SLOT(CreationModeChanged()));
 
-  connect(myParams->myPMin,  SIGNAL(valueChanged(double)),             this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myParams->myPMax,  SIGNAL(valueChanged(double)),             this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myParams->myPStep, SIGNAL(valueChanged(int)),                this, SLOT(ValueChangedInSpinBox(int)));
+  connect(myGroupParams->myPMin,  SIGNAL(valueChanged(double)),  this, SLOT(ValueChangedInSpinBox(double)));
+  connect(myGroupParams->myPMax,  SIGNAL(valueChanged(double)),  this, SLOT(ValueChangedInSpinBox(double)));
+  connect(myGroupParams->myPStep, SIGNAL(valueChanged(int)),     this, SLOT(ValueChangedInSpinBox(int)));
 
-  connect(myParams->myXExpr, SIGNAL(editingFinished()),                this, SLOT(OnEditingFinished()));
-  connect(myParams->myYExpr, SIGNAL(editingFinished()),                this, SLOT(OnEditingFinished()));
-  connect(myParams->myZExpr, SIGNAL(editingFinished()),                this, SLOT(OnEditingFinished()));
+  connect(myGroupParams->myXExpr, SIGNAL(editingFinished()),     this, SLOT(OnEditingFinished()));
+  connect(myGroupParams->myYExpr, SIGNAL(editingFinished()),     this, SLOT(OnEditingFinished()));
+  connect(myGroupParams->myZExpr, SIGNAL(editingFinished()),     this, SLOT(OnEditingFinished()));
 
-  initName( tr( "GEOM_CURVE" ) );
-  resize(100,100);
-  ConstructorsClicked( 0 );  
+  initName(tr("GEOM_CURVE"));
+  //resize(100, 100);
+  ConstructorsClicked(0);
 }
 
 //=================================================================================
 // function : ConstructorsClicked()
 // purpose  :
 //=================================================================================
-void BasicGUI_CurveDlg::ConstructorsClicked( int id )
+void BasicGUI_CurveDlg::ConstructorsClicked (int id)
 {
-  QString aTitle = tr( id == 0 ? "GEOM_POLYLINE" : id == 1 ? "GEOM_BEZIER" : "GEOM_INTERPOL" );
-  mainFrame()->GroupConstructors->setTitle( aTitle );
+  QString aTitle = tr(id == 0 ? "GEOM_POLYLINE" : id == 1 ? "GEOM_BEZIER" : "GEOM_INTERPOL");
+  mainFrame()->GroupConstructors->setTitle(aTitle);
 
   if (id == 0) { // polyline (wire)
-    //GroupPoints->CheckButton1->hide();
-    GroupPoints->CheckButton1->setText( tr( "GEOM_BUILD_CLOSED_WIRE" ) );
-    GroupPoints->CheckButton2->hide();
+    myGroupPoints->CheckButton1->setText( tr( "GEOM_BUILD_CLOSED_WIRE" ) );
+    myGroupPoints->CheckButton2->hide();
+    myGroupTangents->hide();
   }
   else if (id == 1) { // bezier
-    //GroupPoints->CheckButton1->hide();
-    GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
-    GroupPoints->CheckButton2->hide();
+    myGroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
+    myGroupPoints->CheckButton2->hide();
+    myGroupTangents->hide();
   }
   else { // b-spline
-    //GroupPoints->CheckButton1->show();
-    GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
-    GroupPoints->CheckButton2->show();
+    myGroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
+    myGroupPoints->CheckButton2->show();
+    myGroupTangents->setVisible(myBySelectionBtn->isChecked());
   }
 
   myPoints.clear();
+  myVec1.nullify();
+  myVec2.nullify();
 
-  myEditCurrentArgument->setText( "" );
+  myGroupPoints->LineEdit1->setText("");
+  myLineEditV1->setText("");
+  myLineEditV2->setText("");
+
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSizeHint() );
-  SelectionIntoArgument();
-}
+  resize(minimumSizeHint());
 
+  myGroupPoints->PushButton1->click();
+}
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -240,9 +274,28 @@ void BasicGUI_CurveDlg::ConstructorsClicked( int id )
 //=================================================================================
 void BasicGUI_CurveDlg::SetEditCurrentArgument()
 {
-  if ( sender() == GroupPoints->PushButton1 )
-    myEditCurrentArgument = GroupPoints->LineEdit1;
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+
+  globalSelection(); // close local contexts, if any
+
+  if (sender() == myGroupPoints->PushButton1) {
+    myEditCurrentArgument = myGroupPoints->LineEdit1;
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  }
+  else if (sender() == myPushBtnV1) {
+    myEditCurrentArgument = myLineEditV1;
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+  }
+  else if (sender() == myPushBtnV2) {
+    myEditCurrentArgument = myLineEditV2;
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+  }
+
   myEditCurrentArgument->setFocus();
+
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
   SelectionIntoArgument();
 }
 
@@ -252,7 +305,20 @@ void BasicGUI_CurveDlg::SetEditCurrentArgument()
 //=================================================================================
 void BasicGUI_CurveDlg::CheckButtonToggled()
 {
-  processPreview();
+  if (sender() == myGroupTangents) {
+    if (myGroupTangents->isChecked())
+      myPushBtnV1->click();
+    else
+      myGroupPoints->PushButton1->click();
+  }
+  else {
+    if (getConstructorId() == 2) { // Interpolation
+      bool disableTangents = (myGroupPoints->CheckButton1->isChecked() ||
+                              myGroupPoints->CheckButton2->isChecked());
+      myGroupTangents->setEnabled(!disableTangents);
+    }
+    processPreview();
+  }
 }
 
 //=================================================================================
@@ -261,8 +327,8 @@ void BasicGUI_CurveDlg::CheckButtonToggled()
 //=================================================================================
 void BasicGUI_CurveDlg::ClickOnOk()
 {
-  setIsApplyAndClose( true );
-  if ( ClickOnApply() )
+  setIsApplyAndClose(true);
+  if (ClickOnApply())
     ClickOnCancel();
 }
 
@@ -272,20 +338,23 @@ void BasicGUI_CurveDlg::ClickOnOk()
 //=================================================================================
 bool BasicGUI_CurveDlg::ClickOnApply()
 {
-  if ( !onAccept() )
+  if (!onAccept())
     return false;
 
   initName();
-  globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  ConstructorsClicked(getConstructorId());
   return true;
 }
 
-static void synchronize( QList<GEOM::GeomObjPtr>& left, QList<GEOM::GeomObjPtr>& right )
+//=================================================================================
+// function : SelectionIntoArgument()
+// purpose  : Called when selection as changed or other case
+//=================================================================================
+static void synchronize (QList<GEOM::GeomObjPtr>& left, QList<GEOM::GeomObjPtr>& right)
 {
   // 1. remove items from the "left" list that are not in the "right" list
-  QMutableListIterator<GEOM::GeomObjPtr> it1( left );
-  while ( it1.hasNext() ) {
+  QMutableListIterator<GEOM::GeomObjPtr> it1 (left);
+  while (it1.hasNext()) {
     GEOM::GeomObjPtr o1 = it1.next();
     bool found = false;
     QMutableListIterator<GEOM::GeomObjPtr> it2( right );
@@ -307,21 +376,37 @@ static void synchronize( QList<GEOM::GeomObjPtr>& left, QList<GEOM::GeomObjPtr>&
   }
 }
 
-//=================================================================================
-// function : SelectionIntoArgument()
-// purpose  : Called when selection as changed or other case
-//=================================================================================
 void BasicGUI_CurveDlg::SelectionIntoArgument()
 {
-  QList<GEOM::GeomObjPtr> points = getSelected( TopAbs_VERTEX, -1 );
-  synchronize( myPoints, points );
-  if ( !myPoints.isEmpty()  )
-    GroupPoints->LineEdit1->setText( QString::number( myPoints.count() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
-  else
-    GroupPoints->LineEdit1->setText( "" );
+  myEditCurrentArgument->setText("");
+
+  if (myEditCurrentArgument == myGroupPoints->LineEdit1) {
+    QList<GEOM::GeomObjPtr> points = getSelected(TopAbs_VERTEX, -1);
+    synchronize(myPoints, points);
+    if (!myPoints.isEmpty())
+      myGroupPoints->LineEdit1->setText(QString::number(myPoints.count()) + "_" +
+                                        tr("GEOM_POINT") + tr("_S_"));
+  }
+  else {
+    QList<GEOM::GeomObjPtr> vecs = getSelected(TopAbs_EDGE, -1);
+    if (vecs.count() != 1) {
+      if      (myEditCurrentArgument == myLineEditV1) myVec1.nullify();
+      else if (myEditCurrentArgument == myLineEditV2) myVec2.nullify();
+    }
+    else {
+      if (myEditCurrentArgument == myLineEditV1) {
+        myVec1 = vecs.first();
+      }
+      else if (myEditCurrentArgument == myLineEditV2) {
+        myVec2 = vecs.first();
+      }
+      QString aName = GEOMBase::GetName(vecs.first().get());
+      myEditCurrentArgument->setText(aName);
+    }
+  }
+
   processPreview();
 }
-
 
 //=================================================================================
 // function : ActivateThisDialog()
@@ -330,13 +415,11 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 void BasicGUI_CurveDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-           this, SLOT( SelectionIntoArgument() ) );
 
-  globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+           this, SLOT(SelectionIntoArgument()));
 
-  ConstructorsClicked( getConstructorId() );
+  ConstructorsClicked(getConstructorId());
 }
 
 //=================================================================================
@@ -353,9 +436,9 @@ void BasicGUI_CurveDlg::DeactivateActiveDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BasicGUI_CurveDlg::enterEvent( QEvent* )
+void BasicGUI_CurveDlg::enterEvent (QEvent*)
 {
-  if ( !mainFrame()->GroupConstructors->isEnabled() )
+  if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
 }
 
@@ -365,24 +448,34 @@ void BasicGUI_CurveDlg::enterEvent( QEvent* )
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BasicGUI_CurveDlg::createOperation()
 {
-  return myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+  return myGeomGUI->GetGeomGen()->GetICurvesOperations(getStudyId());
 }
 
 //=================================================================================
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BasicGUI_CurveDlg::isValid( QString& msg )
+bool BasicGUI_CurveDlg::isValid (QString& msg)
 {
-  if( myBySelectionBtn->isChecked() )
-    return myPoints.count() > 1;
+  if (myBySelectionBtn->isChecked()) {
+    bool ok = true;
+    if (getConstructorId() == 2) { // Interpolation
+      bool disableTangents = (myGroupPoints->CheckButton1->isChecked() ||
+                              myGroupPoints->CheckButton2->isChecked());
+      if (!disableTangents && myGroupTangents->isChecked()) {
+        ok = (myVec1 && myVec2);
+        if (!ok) msg = tr("GEOM_BOTH_TANGENTS_REQUIRED");
+      }
+    }
+    return ok && myPoints.count() > 1;
+  }
   else {
-    bool ok = myParams->myPMin->isValid( msg, !IsPreview() ) &&
-              myParams->myPMax->isValid( msg, !IsPreview() ) &&
-              myParams->myPStep->isValid( msg, !IsPreview() );
-    ok &= !myParams->myXExpr->text().isEmpty();
-    ok &= !myParams->myYExpr->text().isEmpty();
-    ok &= !myParams->myZExpr->text().isEmpty();
+    bool ok = myGroupParams->myPMin->isValid( msg, !IsPreview() ) &&
+              myGroupParams->myPMax->isValid( msg, !IsPreview() ) &&
+              myGroupParams->myPStep->isValid( msg, !IsPreview() );
+    ok &= !myGroupParams->myXExpr->text().isEmpty();
+    ok &= !myGroupParams->myYExpr->text().isEmpty();
+    ok &= !myGroupParams->myZExpr->text().isEmpty();
     return ok;
   }
 }
@@ -391,79 +484,85 @@ bool BasicGUI_CurveDlg::isValid( QString& msg )
 // function : execute
 // purpose  :
 //=================================================================================
-bool BasicGUI_CurveDlg::execute( ObjectList& objects )
+bool BasicGUI_CurveDlg::execute (ObjectList& objects)
 {
   bool res = false;
 
   GEOM::GEOM_Object_var anObj;
 
-  GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
+  GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow(getOperation());
 
   GEOM::ListOfGO_var points = new GEOM::ListOfGO();
-  points->length( myPoints.count() );
-  for ( int i = 0; i < myPoints.count(); i++ )
+  points->length(myPoints.count());
+  for (int i = 0; i < myPoints.count(); i++)
     points[i] = myPoints[i].copy();
 
-  switch ( getConstructorId() ) {
+  switch (getConstructorId()) {
   case 0 :
-    if( myBySelectionBtn->isChecked() )
-      anObj = anOper->MakePolyline( points.in(), GroupPoints->CheckButton1->isChecked() );
+    if (myBySelectionBtn->isChecked())
+      anObj = anOper->MakePolyline(points.in(), myGroupPoints->CheckButton1->isChecked());
     else
-      anObj = anOper->MakeCurveParametricNew(qPrintable(myParams->myXExpr->text()),
-					  qPrintable(myParams->myYExpr->text()),
-					  qPrintable(myParams->myZExpr->text()),
-					  myParams->myPMin->value(),
-					  myParams->myPMax->value(),
-					  myParams->myPStep->value(),
-					  GEOM::Polyline);
+      anObj = anOper->MakeCurveParametricNew(qPrintable(myGroupParams->myXExpr->text()),
+                                             qPrintable(myGroupParams->myYExpr->text()),
+                                             qPrintable(myGroupParams->myZExpr->text()),
+                                             myGroupParams->myPMin->value(),
+                                             myGroupParams->myPMax->value(),
+                                             myGroupParams->myPStep->value(),
+                                             GEOM::Polyline);
     res = true;
     break;
   case 1 :
-    if( myBySelectionBtn->isChecked() )
-      anObj = anOper->MakeSplineBezier( points.in(), GroupPoints->CheckButton1->isChecked() );
+    if (myBySelectionBtn->isChecked())
+      anObj = anOper->MakeSplineBezier(points.in(), myGroupPoints->CheckButton1->isChecked());
     else
-      anObj = anOper->MakeCurveParametricNew(qPrintable(myParams->myXExpr->text()),
-					  qPrintable(myParams->myYExpr->text()),
-					  qPrintable(myParams->myZExpr->text()),
-					  myParams->myPMin->value(),
-					  myParams->myPMax->value(),
-					  myParams->myPStep->value(),
-					  GEOM::Bezier);
-
+      anObj = anOper->MakeCurveParametricNew(qPrintable(myGroupParams->myXExpr->text()),
+                                             qPrintable(myGroupParams->myYExpr->text()),
+                                             qPrintable(myGroupParams->myZExpr->text()),
+                                             myGroupParams->myPMin->value(),
+                                             myGroupParams->myPMax->value(),
+                                             myGroupParams->myPStep->value(),
+                                             GEOM::Bezier);
     res = true;
     break;
   case 2 :
-    if( myBySelectionBtn->isChecked() )
-      anObj = anOper->MakeSplineInterpolation( points.in(), GroupPoints->CheckButton1->isChecked(),
-					       GroupPoints->CheckButton2->isChecked() );
+    if (myBySelectionBtn->isChecked()) {
+      bool disableTangents = (myGroupPoints->CheckButton1->isChecked() ||
+                              myGroupPoints->CheckButton2->isChecked());
+      if (!disableTangents && myGroupTangents->isChecked()) {
+        anObj = anOper->MakeSplineInterpolWithTangents(points.in(), myVec1.get(), myVec2.get());
+      }
+      else
+        anObj = anOper->MakeSplineInterpolation(points.in(), myGroupPoints->CheckButton1->isChecked(),
+                                                myGroupPoints->CheckButton2->isChecked());
+    }
     else
-      anObj = anOper->MakeCurveParametricNew(qPrintable(myParams->myXExpr->text()),
-					  qPrintable(myParams->myYExpr->text()),
-					  qPrintable(myParams->myZExpr->text()),
-					  myParams->myPMin->value(),
-					  myParams->myPMax->value(),
-					  myParams->myPStep->value(),
-					  GEOM::Interpolation);
+      anObj = anOper->MakeCurveParametricNew(qPrintable(myGroupParams->myXExpr->text()),
+                                             qPrintable(myGroupParams->myYExpr->text()),
+                                             qPrintable(myGroupParams->myZExpr->text()),
+                                             myGroupParams->myPMin->value(),
+                                             myGroupParams->myPMax->value(),
+                                             myGroupParams->myPStep->value(),
+                                             GEOM::Interpolation);
     res = true;
     break;
   }
 
-  if ( !anObj->_is_nil() ) {
-    if(myAnaliticalBtn->isChecked() && !IsPreview()) {
+  if (!anObj->_is_nil()) {
+    if (myAnaliticalBtn->isChecked() && !IsPreview()) {
       QStringList aParameters;
-      aParameters<<myParams->myPMin->text();
-      aParameters<<myParams->myPMax->text();
-      aParameters<<myParams->myPStep->text();
+      aParameters<<myGroupParams->myPMin->text();
+      aParameters<<myGroupParams->myPMax->text();
+      aParameters<<myGroupParams->myPStep->text();
       anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
-    objects.push_back( anObj._retn() );
+    objects.push_back(anObj._retn());
   }
-  
+
   return res;
 }
 
 //=================================================================================
-// function : addSubshapeToStudy
+// function : addSubshapesToStudy
 // purpose  : virtual method to add new SubObjects if local selection
 //=================================================================================
 void BasicGUI_CurveDlg::addSubshapesToStudy()
@@ -476,19 +575,20 @@ void BasicGUI_CurveDlg::addSubshapesToStudy()
 // function : CreationModeChanged
 // purpose  :
 //=================================================================================
-void BasicGUI_CurveDlg::CreationModeChanged() {
+void BasicGUI_CurveDlg::CreationModeChanged()
+{
   const QObject* s = sender();
-  GroupPoints->setVisible(myBySelectionBtn == s);
-  myParams->setVisible(myBySelectionBtn != s);
-  
-  ConstructorsClicked( getConstructorId() );
+  myGroupPoints->setVisible(myBySelectionBtn == s);
+  myGroupParams->setVisible(myBySelectionBtn != s);
+
+  ConstructorsClicked(getConstructorId());
 }
 
 //=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_CurveDlg::ValueChangedInSpinBox(double/*theValue*/)
+void BasicGUI_CurveDlg::ValueChangedInSpinBox (double/*theValue*/)
 {
   processPreview();
 }
@@ -497,15 +597,16 @@ void BasicGUI_CurveDlg::ValueChangedInSpinBox(double/*theValue*/)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BasicGUI_CurveDlg::ValueChangedInSpinBox(int/*theValue*/)
+void BasicGUI_CurveDlg::ValueChangedInSpinBox (int/*theValue*/)
 {
   processPreview();
 }
 
 //=================================================================================
-// function : ValueChangedInSpinBox()
+// function : OnEditingFinished()
 // purpose  :
 //=================================================================================
-void BasicGUI_CurveDlg::OnEditingFinished() {
+void BasicGUI_CurveDlg::OnEditingFinished()
+{
   processPreview();
 }

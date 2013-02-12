@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 def TestMeasureOperations (geompy, math):
 
@@ -98,6 +97,8 @@ def TestMeasureOperations (geompy, math):
   print " Xmin = ", BB[0], ", Xmax = ", BB[1]
   print " Ymin = ", BB[2], ", Ymax = ", BB[3]
   print " Zmin = ", BB[4], ", Zmax = ", BB[5]
+  BB = geompy.MakeBoundingBox(box)
+  geompy.addToStudy(BB, "BoundingBox")
 
   ####### Inertia #######
 
@@ -162,6 +163,16 @@ def TestMeasureOperations (geompy, math):
   MinDistComps = geompy.MinDistanceComponents(box, cube)
   print "\nMinimal distance between Box and Cube = ", MinDistComps[0]
   print "Its components are  (", MinDistComps[1], ", ", MinDistComps[2], ", ", MinDistComps[3], ")"
+
+  # Get all closest points
+  [nbSols, listCoords] = geompy.ClosestPoints(box, cube)
+  for i in range(nbSols):
+    v1 = geompy.MakeVertex(listCoords[i*6 + 0], listCoords[i*6 + 1], listCoords[i*6 + 2])
+    v2 = geompy.MakeVertex(listCoords[i*6 + 3], listCoords[i*6 + 4], listCoords[i*6 + 5])
+
+    geompy.addToStudy(v1, 'MinDist_%d_on_Box'%(i+1))
+    geompy.addToStudy(v2, 'MinDist_%d_on_Cube'%(i+1))
+    pass
 
   ####### Angle #######
 

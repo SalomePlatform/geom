@@ -15,11 +15,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File   : MeasureGUI_Widgets.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #include "MeasureGUI_Widgets.h"
 
 //////////////////////////////////////////
@@ -118,20 +117,6 @@ MeasureGUI_2Sel1LineEdit::MeasureGUI_2Sel1LineEdit( QWidget* parent, Qt::WindowF
 }
 
 MeasureGUI_2Sel1LineEdit::~MeasureGUI_2Sel1LineEdit()
-{
-}
-
-//////////////////////////////////////////
-// MeasureGUI_2Sel4LineEdit
-//////////////////////////////////////////
-
-MeasureGUI_2Sel4LineEdit::MeasureGUI_2Sel4LineEdit( QWidget* parent, Qt::WindowFlags f )
-: QWidget( parent, f )
-{
-  setupUi( this );
-}
-
-MeasureGUI_2Sel4LineEdit::~MeasureGUI_2Sel4LineEdit()
 {
 }
 

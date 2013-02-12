@@ -18,17 +18,19 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-#include <Standard_Stream.hxx>
 
 #include <GEOMImpl_CircleDriver.hxx>
+
 #include <GEOMImpl_ICircle.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>
+
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
@@ -48,29 +50,29 @@
 //=======================================================================
 //function : GetID
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Standard_GUID& GEOMImpl_CircleDriver::GetID()
 {
   static Standard_GUID aCircleDriver("FF1BBB32-5D14-4df2-980B-3A668264EA16");
-  return aCircleDriver; 
+  return aCircleDriver;
 }
 
 
 //=======================================================================
 //function : GEOMImpl_CircleDriver
-//purpose  : 
+//purpose  :
 //=======================================================================
-GEOMImpl_CircleDriver::GEOMImpl_CircleDriver() 
+GEOMImpl_CircleDriver::GEOMImpl_CircleDriver()
 {
 }
 
 //=======================================================================
 //function : Execute
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_Integer GEOMImpl_CircleDriver::Execute(TFunction_Logbook& log) const
 {
-  if (Label().IsNull()) return 0;    
+  if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
   GEOMImpl_ICircle aCI (aFunction);
@@ -95,20 +97,7 @@ Standard_Integer GEOMImpl_CircleDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) aRefVector = aCI.GetVector();
     if (!aRefVector.IsNull()) {
       TopoDS_Shape aShapeVec = aRefVector->GetValue();
-      if (aShapeVec.ShapeType() != TopAbs_EDGE) {
-        Standard_ConstructionError::Raise
-          ("Circle creation aborted: invalid vector argument, must be a vector or an edge");
-      }
-      TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
-      TopoDS_Vertex V1, V2;
-      TopExp::Vertices(anE, V1, V2, Standard_True);
-      if (!V1.IsNull() && !V2.IsNull()) {
-        aV = gp_Vec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-        if (aV.Magnitude() < gp::Resolution()) {
-          Standard_ConstructionError::Raise
-            ("Circle creation aborted: vector of zero length is given");
-        }
-      }
+      aV = GEOMUtils::GetVector(aShapeVec);
     }
     // Axes
     gp_Ax2 anAxes (aP, aV);
@@ -163,7 +152,7 @@ Standard_Integer GEOMImpl_CircleDriver::Execute(TFunction_Logbook& log) const
       //Make Circle
       gp_Ax2 anAxes (aP1, aDir);
       gp_Circ aCirc (anAxes, aRadius);
-      aShape = BRepBuilderAPI_MakeEdge(aCirc).Edge();  
+      aShape = BRepBuilderAPI_MakeEdge(aCirc).Edge();
     }
   }
   else if (aType == CIRCLE_THREE_PNT) {
@@ -187,7 +176,7 @@ Standard_Integer GEOMImpl_CircleDriver::Execute(TFunction_Logbook& log) const
         Standard_ConstructionError::Raise("Circle creation aborted: points lay on one line");
       Handle(Geom_Circle) aCirc = GC_MakeCircle(aP1, aP2, aP3).Value();
       aShape = BRepBuilderAPI_MakeEdge(aCirc).Edge();
-    }  
+    }
   }
   else {
   }
@@ -196,26 +185,26 @@ Standard_Integer GEOMImpl_CircleDriver::Execute(TFunction_Logbook& log) const
 
   aFunction->SetValue(aShape);
 
-  log.SetTouched(Label()); 
+  log.SetTouched(Label());
 
-  return 1;    
+  return 1;
 }
 
 
 //=======================================================================
 //function :  GEOMImpl_CircleDriver_Type_
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_CircleDriver_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared); 
+  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_CircleDriver",
@@ -230,7 +219,7 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_CircleDriver_Type_()
 //=======================================================================
 //function : DownCast
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Handle(GEOMImpl_CircleDriver) Handle(GEOMImpl_CircleDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
 {
   Handle(GEOMImpl_CircleDriver) _anOtherObject;

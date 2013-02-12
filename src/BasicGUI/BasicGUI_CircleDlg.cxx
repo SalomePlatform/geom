@@ -280,7 +280,6 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
   qApp->processEvents();
   updateGeometry();
   resize( minimumSizeHint() );
-  SelectionIntoArgument();
 
   myEditCurrentArgument->setFocus();
   globalSelection(); // close local contexts, if any
@@ -289,7 +288,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
 
-  displayPreview(true);
+  SelectionIntoArgument();
 }
 
 //=================================================================================

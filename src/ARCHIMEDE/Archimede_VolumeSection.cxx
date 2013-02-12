@@ -24,7 +24,6 @@
 //  File   : Archimede_VolumeSection.cxx
 //  Author : Nicolas REJNERI
 //  Module : GEOM
-//  $Header$
 //
 #include "Archimede_VolumeSection.hxx"
 #include "utilities.h"

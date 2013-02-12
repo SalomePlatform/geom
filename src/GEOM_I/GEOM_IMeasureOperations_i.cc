@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -275,6 +274,31 @@ void GEOM_IMeasureOperations_i::GetBoundingBox (GEOM::GEOM_Object_ptr theShape,
 
 //=============================================================================
 /*!
+ *  MakeBoundingBox
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::MakeBoundingBox
+                                              (GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  // Make Box - bounding box of theShape
+  Handle(GEOM_Object) anObject = GetOperations()->GetBoundingBox(aShape);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  GetTolerance
  */
 //=============================================================================
@@ -492,6 +516,41 @@ CORBA::Double GEOM_IMeasureOperations_i::GetMinDistance
 
   // Get shape parameters
   return GetOperations()->GetMinDistance(aShape1, aShape2, X1, Y1, Z1, X2, Y2, Z2);
+}
+
+//=============================================================================
+/*!
+ *  ClosestPoints
+ */
+//=============================================================================
+CORBA::Long GEOM_IMeasureOperations_i::ClosestPoints
+  (GEOM::GEOM_Object_ptr theShape1, GEOM::GEOM_Object_ptr theShape2,
+   GEOM::ListOfDouble_out theCoords)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // allocate the CORBA array
+  int nbSols = 0;
+  GEOM::ListOfDouble_var aDoublesArray = new GEOM::ListOfDouble();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+
+  if (!aShape1.IsNull() && !aShape2.IsNull()) {
+    Handle(TColStd_HSequenceOfReal) aDoubles = new TColStd_HSequenceOfReal;
+    // Get shape parameters
+    nbSols = GetOperations()->ClosestPoints(aShape1, aShape2, aDoubles);
+    int nbDbls = aDoubles->Length();
+    aDoublesArray->length(nbDbls);
+    for (int id = 0; id < nbDbls; id++) {
+      aDoublesArray[id] = aDoubles->Value(id + 1);
+    }
+  }
+
+  theCoords = aDoublesArray._retn();
+  return nbSols;
 }
 
 //=============================================================================

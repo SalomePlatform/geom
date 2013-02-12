@@ -43,6 +43,7 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Compound.hxx>
+#include <TopoDS_Iterator.hxx>
 
 #include <GCPnts_AbscissaPoint.hxx>
 #include <IntTools.hxx>
@@ -142,8 +143,27 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     }
     Standard_Real aFP, aLP, aP;
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(aRefShape), aFP, aLP);
-    aP = aFP + (aLP - aFP) * aPI.GetParameter();
-    aPnt = aCurve->Value(aP);
+    if ( !aCurve.IsNull() ) {
+      aP = aFP + (aLP - aFP) * aPI.GetParameter();
+      aPnt = aCurve->Value(aP);
+    }
+    else {
+      // null curve, e.g. degenerated edge
+      TopoDS_Iterator It(aRefShape, Standard_False, Standard_False);
+      TopoDS_Vertex aVertex;
+      if ( It.More() ) {
+	TopoDS_Shape aShape = It.Value();
+	if ( !aShape.IsNull() )
+	  aVertex = TopoDS::Vertex( aShape );
+      }
+      if ( !aVertex.IsNull() ) {
+	aPnt = BRep_Tool::Pnt( aVertex );
+      }
+      else {
+	Standard_TypeMismatch::Raise
+	  ("Point On Curve creation aborted : null curve");
+      }
+    }
   }
   else if (aType == POINT_CURVE_COORD) {
     Handle(GEOM_Function) aRefFunc = aPI.GetCurve();
@@ -201,25 +221,45 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     // Check orientation
     Standard_Real UFirst, ULast;
     Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(aRefEdge, UFirst, ULast);
-    Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
 
-    Standard_Real dU = ULast - UFirst;
-    Standard_Real par1 = UFirst + 0.1 * dU;
-    Standard_Real par2 = ULast  - 0.1 * dU;
+    if ( !EdgeCurve.IsNull() ) {
+      Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
 
-    gp_Pnt P1 = EdgeCurve->Value(par1);
-    gp_Pnt P2 = EdgeCurve->Value(par2);
-
-    if (aRefPnt.SquareDistance(P2) < aRefPnt.SquareDistance(P1)) {
-      ReOrientedCurve = EdgeCurve->Reversed();
-      UFirst = EdgeCurve->ReversedParameter(ULast);
+      Standard_Real dU = ULast - UFirst;
+      Standard_Real par1 = UFirst + 0.1 * dU;
+      Standard_Real par2 = ULast  - 0.1 * dU;
+      
+      gp_Pnt P1 = EdgeCurve->Value(par1);
+      gp_Pnt P2 = EdgeCurve->Value(par2);
+      
+      if (aRefPnt.SquareDistance(P2) < aRefPnt.SquareDistance(P1)) {
+	ReOrientedCurve = EdgeCurve->Reversed();
+	UFirst = EdgeCurve->ReversedParameter(ULast);
+      }
+      
+      // Get the point by length
+      GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
+      GCPnts_AbscissaPoint anAbsPnt (AdapCurve, aLength, UFirst); 
+      Standard_Real aParam = anAbsPnt.Parameter();
+      aPnt = AdapCurve.Value(aParam);
     }
-
-    // Get the point by length
-    GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
-    GCPnts_AbscissaPoint anAbsPnt (AdapCurve, aLength, UFirst); 
-    Standard_Real aParam = anAbsPnt.Parameter();
-    aPnt = AdapCurve.Value(aParam);
+    else {
+      // null curve, e.g. degenerated edge
+      TopoDS_Iterator It(aRefEdge, Standard_False, Standard_False);
+      TopoDS_Vertex aVertex;
+      if ( It.More() ) {
+	TopoDS_Shape aShape = It.Value();
+	if ( !aShape.IsNull() )
+	  aVertex = TopoDS::Vertex( aShape );
+      }
+      if ( !aVertex.IsNull() ) {
+	aPnt = BRep_Tool::Pnt( aVertex );
+      }
+      else {
+	Standard_TypeMismatch::Raise
+	  ("Point On Curve creation aborted : null curve");
+      }
+    }
   }
   else if (aType == POINT_SURFACE_PAR) {
     Handle(GEOM_Function) aRefFunc = aPI.GetSurface();

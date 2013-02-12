@@ -24,7 +24,6 @@
 //  File   : GEOM_VTKTrihedron.h
 //  Author : Sergey LITONIN
 //  Module : SALOME
-//  $Header: 
 //
 #ifndef GEOM_VTKTrihedron_H
 #define GEOM_VTKTrihedron_H

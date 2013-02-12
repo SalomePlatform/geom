@@ -286,7 +286,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
     SUIT_OverrideCursor();
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       aView->SetTransparency( It.Value(), newValue );
-      aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), TRANSPARENCY_PROP , newValue );
+      aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), GEOM::propertyName( GEOM::Transparency ) , newValue );
     }
     GeometryGUI::Modified();
     aView->Repaint();
@@ -317,7 +317,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       if ( !aisShape.IsNull() ) {
         ic->SetTransparency( aisShape, newValue, false );
         ic->Redisplay( aisShape, Standard_False, Standard_True );
-	aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), TRANSPARENCY_PROP , newValue );
+	aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), GEOM::propertyName( GEOM::Transparency ) , newValue );
       }
     } // for...
     ic->UpdateCurrentViewer();

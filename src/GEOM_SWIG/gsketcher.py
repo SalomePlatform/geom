@@ -253,10 +253,19 @@ class Sketcher3D:
         pass
 
     ## Obtain the sketcher result.
+    #  @param theName Object name; when specified, this parameter is used
+    #         for result publication in the study. Otherwise, if automatic
+    #         publication is switched on, default value is used for result name.
+    #
     #  @return New GEOM_Object, containing the created wire
-    def wire (self):
+    def wire (self, theName=None):
         """
         Obtain the sketcher result.
+
+        Parameters:
+            theName Object name; when specified, this parameter is used
+                    for result publication in the study. Otherwise, if automatic
+                    publication is switched on, default value is used for result name.
 
         Returns:
             New GEOM_Object, containing the created wire.
@@ -272,4 +281,5 @@ class Sketcher3D:
         self.myCommand = "3DSketcher"
         RaiseIfFailed("Sketcher3D", self.geompyD.CurvesOp)
         wire.SetParameters(Parameters)
+        self.geompyD._autoPublish(wire, theName, "wire")
         return wire

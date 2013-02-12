@@ -126,6 +126,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Angle</translation>
     </message>
     <message>
+        <source>GEOM_ANGLE_STEP</source>
+        <translation>Angular step :</translation>
+    </message>
+    <message>
         <source>GEOM_ARC_ELLIPSE</source>
         <translation>Arc of ellipse</translation>
     </message>
@@ -1071,6 +1075,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Min :</translation>
     </message>
     <message>
+        <source>GEOM_MINDIST_NAME</source>
+        <translation>MinDist</translation>
+    </message>
+    <message>
+        <source>GEOM_MINDIST_NO_SOL</source>
+        <translation>No solution found</translation>
+    </message>
+    <message>
         <source>GEOM_MINDIST_OBJ</source>
         <translation>Objects And Results</translation>
     </message>
@@ -1197,6 +1209,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SOURCE_OBJECT</source>
         <translation>Source vertex, edge or wire</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLUTION</source>
+        <translation>Solution :</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLUTION_I</source>
+        <translation>Solution %1</translation>
     </message>
     <message>
         <source>GEOM_TARGET_OBJECT</source>
@@ -1949,6 +1969,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_STEP</source>
         <translation>Step :</translation>
+    </message>
+    <message>
+        <source>GEOM_STEP_R</source>
+        <translation>Radial step :</translation>
     </message>
     <message>
         <source>GEOM_STEP_TITLE</source>
@@ -2967,6 +2991,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Tools</translation>
     </message>
     <message>
+        <source>MEN_MATERIALS_LIBRARY</source>
+        <translation>Materials library</translation>
+    </message>
+    <message>
         <source>MEN_TORUS</source>
         <translation>Torus</translation>
     </message>
@@ -3025,6 +3053,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_POP_MATERIAL_PROPERTIES</source>
         <translation>Material Properties</translation>
+    </message>
+    <message>
+        <source>MEN_POP_PREDEF_MATER_CUSTOM</source>
+        <translation>Custom...</translation>
     </message>
     <message>
         <source>NAME_LBL</source>
@@ -3171,6 +3203,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Default material</translation>
     </message>
     <message>
+        <source>PREF_PREDEF_MATERIALS</source>
+        <translation>Show predefined materials in popup menu</translation>
+    </message>
+    <message>
+        <source>PREF_EDITGROUP_COLOR</source>
+        <translation>Subshapes color for editing a group</translation>
+    </message>
+    <message>
         <source>PREF_EDGE_WIDTH</source>
         <translation>Edges width</translation>
     </message>
@@ -3187,8 +3227,24 @@ Please, select face, shell or solid and try again</translation>
         <translation>Measures lines width</translation>
     </message>
     <message>
+        <source>PREF_ISOS</source>
+        <translation>Number of isolines</translation>
+    </message>
+    <message>
+        <source>PREF_ISOS_U</source>
+        <translation>Along U</translation>
+    </message>
+    <message>
+        <source>PREF_ISOS_V</source>
+        <translation>Along V</translation>
+    </message>
+    <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
         <translation>ProcessShape</translation>
+    </message>
+    <message>
+        <source>MATERIAL_LIBRARY_TLT</source>
+        <translation>Materials Library</translation>
     </message>
     <message>
         <source>REMOVE_HOLES_NEW_OBJ_NAME</source>
@@ -3601,6 +3657,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_POP_WIREFRAME</source>
         <translation>Wireframe</translation>
+    </message>
+    <message>
+        <source>STB_MATERIALS_LIBRARY</source>
+        <translation>Displays content of Materials library</translation>
+    </message>
+    <message>
+        <source>STB_POP_PREDEF_MATER_CUSTOM</source>
+        <translation>Custom...</translation>
     </message>
     <message>
         <source>STB_PROPAGATE</source>
@@ -4872,6 +4936,22 @@ be specified in meters).</translation>
         <translation>Reorder vertices taking into account distances</translation>
     </message>
     <message>
+        <source>GEOM_INTERPOL_TANGENTS</source>
+        <translation>Tangents</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERPOL_FIRST_VEC</source>
+        <translation>First tangent vector</translation>
+    </message>
+    <message>
+        <source>GEOM_INTERPOL_LAST_VEC</source>
+        <translation>Last tangent vector</translation>
+    </message>
+    <message>
+        <source>GEOM_BOTH_TANGENTS_REQUIRED</source>
+        <translation>Both tangent vectors must be defined</translation>
+    </message>
+    <message>
         <source>GEOM_CURVE_CRMODE</source>
         <translation>Creation Mode</translation>
     </message>
@@ -5386,6 +5466,14 @@ Number of sketch points too small</translation>
         <source>NUMBER_OPEN</source>
         <translation>Number of open free boundaries: </translation>
     </message>
+    <message>
+        <source>NAME_CLOSED</source>
+        <translation>Closed_Free_Boundary_%1</translation>
+    </message>
+    <message>
+        <source>NAME_OPEN</source>
+        <translation>Open_Free_Boundary_%1</translation>
+    </message>
 </context>
 <context>
     <name>RepairGUI_GlueDlg</name>
@@ -5531,6 +5619,14 @@ Would you like to continue?</translation>
         <translation>Color and Material Properties</translation>
     </message>
     <message>
+        <source>FRONT_FACE</source>
+        <translation>Front face</translation>
+    </message>
+    <message>
+        <source>BACK_FACE</source>
+        <translation>Back face</translation>
+    </message>
+    <message>
         <source>REFLECTION_0</source>
         <translation>Ambient</translation>
     </message>
@@ -5545,10 +5641,6 @@ Would you like to continue?</translation>
     <message>
         <source>REFLECTION_3</source>
         <translation>Emissive</translation>
-    </message>
-    <message>
-        <source>ENABLED</source>
-        <translation>Enabled</translation>
     </message>
     <message>
         <source>SHININESS</source>

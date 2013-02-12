@@ -15,7 +15,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 # GEOM GEOMAlgo : tools for Glue Faces algorithm
 # File   : Makefile.am
@@ -28,13 +27,6 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 lib_LTLIBRARIES = libGEOMAlgo.la
 
 dist_libGEOMAlgo_la_SOURCES =			\
-	BlockFix_BlockFixAPI.cxx		\
-	BlockFix_CheckTool.cxx			\
-	BlockFix.cxx				\
-	BlockFix_PeriodicSurfaceModifier.cxx	\
-	BlockFix_SphereSpaceModifier.cxx	\
-	BlockFix_UnionEdges.cxx			\
-	BlockFix_UnionFaces.cxx			\
 	GEOMAlgo_Algo.cxx			\
 	GEOMAlgo_Builder_0.cxx			\
 	GEOMAlgo_Builder_1.cxx			\
@@ -96,31 +88,6 @@ dist_libGEOMAlgo_la_SOURCES =			\
 
 # header files
 salomeinclude_HEADERS =					\
-	BlockFix.hxx					\
-	BlockFix.ixx					\
-	BlockFix.jxx					\
-	BlockFix_BlockFixAPI.hxx			\
-	BlockFix_BlockFixAPI.ixx			\
-	BlockFix_BlockFixAPI.jxx			\
-	BlockFix_BlockFixAPI.lxx			\
-	BlockFix_CheckTool.hxx				\
-	BlockFix_CheckTool.ixx				\
-	BlockFix_CheckTool.jxx				\
-	BlockFix_PeriodicSurfaceModifier.hxx		\
-	BlockFix_PeriodicSurfaceModifier.ixx		\
-	BlockFix_PeriodicSurfaceModifier.jxx		\
-	BlockFix_SphereSpaceModifier.hxx		\
-	BlockFix_SphereSpaceModifier.ixx		\
-	BlockFix_SphereSpaceModifier.jxx		\
-	BlockFix_UnionEdges.hxx				\
-	BlockFix_UnionEdges.ixx				\
-	BlockFix_UnionEdges.jxx				\
-	BlockFix_UnionFaces.hxx				\
-	BlockFix_UnionFaces.ixx				\
-	BlockFix_UnionFaces.jxx				\
-	Handle_BlockFix_BlockFixAPI.hxx 		\
-	Handle_BlockFix_SphereSpaceModifier.hxx		\
-	Handle_BlockFix_PeriodicSurfaceModifier.hxx	\
 	GEOMAlgo_Algo.hxx				\
 	GEOMAlgo_BuilderArea.hxx			\
 	GEOMAlgo_BuilderFace.hxx			\
@@ -211,15 +178,7 @@ libGEOMAlgo_la_LDFLAGS  =		\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace
 
 # extra distributed files
-CDL_FILES =					\
-	BlockFix.cdl				\
-	BlockFix_BlockFixAPI.cdl		\
-	BlockFix_CheckTool.cdl			\
-	BlockFix_PeriodicSurfaceModifier.cdl	\
-	BlockFix_SphereSpaceModifier.cdl	\
-	BlockFix_UnionEdges.cdl			\
-	BlockFix_UnionFaces.cdl			\
-	GEOMAlgo.cdl
+CDL_FILES = GEOMAlgo.cdl
 
 EXTRA_DIST +=		\
 	$(CDL_FILES)	\

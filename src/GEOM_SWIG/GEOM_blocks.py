@@ -25,7 +25,6 @@
 #  File   : GEOM_blocks.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
-#  $Header$
 #
 import salome
 import geompy

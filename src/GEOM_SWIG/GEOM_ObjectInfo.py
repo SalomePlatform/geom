@@ -22,7 +22,6 @@
 #  File   : GEOM_ObjectInfo.py
 #  Author : Michael ZORIN
 #  Module : GEOM
-#  $Header: 
 #
 import salome
 import geompy

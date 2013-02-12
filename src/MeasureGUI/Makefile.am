@@ -15,7 +15,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 # GEOM MEASUREGUI : 
 # File    : Makefile.am
@@ -95,7 +94,6 @@ UIC_FILES =						\
 	ui_MeasureGUI_1Sel3LineEdit_QTD.h		\
 	ui_MeasureGUI_1Sel6LineEdit_QTD.h		\
 	ui_MeasureGUI_2Sel1LineEdit_QTD.h		\
-	ui_MeasureGUI_2Sel4LineEdit_QTD.h		\
 	ui_MeasureGUI_SkeletonBox_QTD.h
 
 BUILT_SOURCES = $(UIC_FILES)

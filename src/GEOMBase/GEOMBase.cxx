@@ -512,7 +512,7 @@ TopoDS_Shape GEOMBase::CreateArrowForLinearEdge( const TopoDS_Shape& shape )
     try {
       Standard_Real first, last;
       Handle(Geom_Curve) curv = BRep_Tool::Curve( TopoDS::Edge( shape ), first, last );
-      if ( curv->IsCN(1) ) {
+      if ( !curv.IsNull() && curv->IsCN(1) ) {
         const Standard_Real param = ( first+last ) / 2.0;
         gp_Pnt middleParamPoint;
         gp_Vec V1;

@@ -66,12 +66,14 @@ _libGEOM_Swig_la_CPPFLAGS =		\
 	-I$(srcdir)/../OBJECT		\
 	-I$(srcdir)/../GEOMGUI		\
 	-I$(srcdir)/../GEOMToolsGUI	\
+	-I$(srcdir)/../Material		\
 	-I$(top_builddir)/idl
 
 _libGEOM_Swig_la_LDFLAGS = -module
 _libGEOM_Swig_la_LIBADD  =		\
 	../GEOMGUI/libGEOM.la		\
 	../GEOMToolsGUI/libGEOMToolsGUI.la	\
+	../Material/libMaterial.la	\
 	$(PYTHON_LIBS)
 
 swig_wrap.cpp : $(SWIG_SOURCES)

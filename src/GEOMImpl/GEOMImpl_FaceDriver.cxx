@@ -15,16 +15,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-#include <Standard_Stream.hxx>
 
 #include <GEOMImpl_FaceDriver.hxx>
+
 #include <GEOMImpl_IFace.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
 
-#include <GEOMImpl_IMeasureOperations.hxx>
+#include <GEOMUtils.hxx>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Tool.hxx>
@@ -89,7 +88,7 @@ Standard_Integer GEOMImpl_FaceDriver::Execute(TFunction_Logbook& log) const
     } else if (aRefShape.ShapeType() == TopAbs_FACE) {
       double aH = aFI.GetH() / 2.0;
       double aW = aFI.GetW() / 2.0;
-      gp_Ax3 anAx = GEOMImpl_IMeasureOperations::GetPosition(aRefShape);
+      gp_Ax3 anAx = GEOMUtils::GetPosition(aRefShape);
       gp_Pln aPln (anAx);
       aShape = BRepBuilderAPI_MakeFace(aPln, -aH, +aH, -aW, +aW).Shape();
     }

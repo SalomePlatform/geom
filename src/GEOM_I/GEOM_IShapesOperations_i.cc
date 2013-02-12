@@ -833,6 +833,49 @@ CORBA::Long GEOM_IShapesOperations_i::GetSubShapeIndex
 
 //=============================================================================
 /*!
+ *  GetSubShapesIndices
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetSubShapesIndices
+  (GEOM::GEOM_Object_ptr theMainShape, const GEOM::ListOfGO& theSubShapes)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+  
+  //Get the reference main shape
+  Handle(GEOM_Object) aMainShapeRef = GetObjectImpl(theMainShape); 
+  if (aMainShapeRef.IsNull()) return aSeq._retn();
+      
+  //Get the subshapes
+  std::list<Handle(GEOM_Object)> aShapes;
+  int aLen = theSubShapes.length();
+  for (int ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aSh = GetObjectImpl(theSubShapes[ind]);
+    if (aSh.IsNull())
+    {
+      MESSAGE("NULL shape")
+      return aSeq._retn();
+    }
+    aShapes.push_back(aSh);
+  }
+
+  //Get the IDs of <theSubShapes> inside <theMainShape>
+  Handle(TColStd_HSequenceOfInteger) aHSeq = 
+  GetOperations()->GetSubShapesIndices(aMainShapeRef, aShapes);
+  
+  if (!GetOperations()->IsDone() || aHSeq.IsNull()) return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+
+//=============================================================================
+/*!
  *  GetTopologyIndex
  */
 //=============================================================================

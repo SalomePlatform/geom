@@ -25,7 +25,6 @@
 #  File   : GEOM_Sketcher.py
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
-#  $Header$
 #
 import geompy
 

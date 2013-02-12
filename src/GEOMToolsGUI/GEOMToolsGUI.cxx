@@ -325,7 +325,7 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpColor:          // POPUP - COLOR
     OnColor();
     break;
-  case GEOMOp::OpSetTexture:        // POPUP - TEXTURE
+  case GEOMOp::OpSetTexture:     // POPUP - TEXTURE
     OnTexture();
     break;
   case GEOMOp::OpTransparency:   // POPUP - TRANSPARENCY
@@ -348,6 +348,12 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     break;
   case GEOMOp::OpMaterialProperties: // POPUP - MATERIAL PROPERTIES
     OnMaterialProperties();
+    break;
+  case GEOMOp::OpPredefMaterCustom:  // POPUP  - MATERIAL PROPERTIES - CUSTOM...
+    OnMaterialProperties();
+    break;
+  case GEOMOp::OpMaterialsLibrary:    // POPUP MENU - MATERIAL PROPERTIES
+    OnMaterialsLibrary();
     break;
   case GEOMOp::OpAutoColor:      // POPUP - AUTO COLOR
     OnAutoColor();
@@ -380,6 +386,25 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpClsBringToFront:
     OnClsBringToFront();
      break;
+  default:
+    SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+    break;
+  }
+  return true;
+}
+
+//=======================================================================
+// function : OnGUIEvent()
+// purpose  :
+//=======================================================================
+bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent, const QVariant& theParam )
+{
+  getGeometryGUI()->EmitSignalDeactivateDialog();
+
+  switch ( theCommandID ) {
+  case GEOMOp::OpPredefMaterial:         // POPUP MENU - MATERIAL PROPERTIES - <SOME MATERIAL>
+    OnSetMaterial( theParam );
+    break;
   default:
     SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;

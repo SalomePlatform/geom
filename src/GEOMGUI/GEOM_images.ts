@@ -260,6 +260,10 @@
             <translation>free_faces.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_FREE_BOUNDS</source>
+            <translation>free_bound.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_FUSE</source>
             <translation>fuse.png</translation>
         </message>

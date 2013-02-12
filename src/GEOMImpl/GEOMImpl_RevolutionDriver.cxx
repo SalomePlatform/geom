@@ -18,16 +18,17 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_RevolutionDriver.hxx>
 
-#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_IRevolution.hxx>
 #include <GEOMImpl_Types.hxx>
+
 #include <GEOM_Function.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <BRepPrimAPI_MakeRevol.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
@@ -128,7 +129,7 @@ Standard_Integer GEOMImpl_RevolutionDriver::Execute(TFunction_Logbook& log) cons
 
   if (aShape.IsNull()) return 0;
 
-  TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
+  TopoDS_Shape aRes = GEOMUtils::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);
 
   log.SetTouched(Label());

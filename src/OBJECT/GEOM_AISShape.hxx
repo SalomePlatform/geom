@@ -116,7 +116,6 @@ public:
         void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
         ~GEOM_AISShape();
 
-        void SetTransparency(const Standard_Real aValue);
         void SetShadingColor(const Quantity_Color &aCol);
         void SetEdgesInShadingColor(const Quantity_Color &aCol);
         void SetDisplayVectors(bool isShow);
@@ -172,7 +171,6 @@ private:
   TCollection_AsciiString  myName;
   bool                     myDisplayVectors;
   Standard_Boolean         myTopLevel;
-  Graphic3d_MaterialAspect myCurrentMaterial;
   Standard_Integer         myPrevDisplayMode;
 
   static TopLevelDispMode myTopLevelDm;

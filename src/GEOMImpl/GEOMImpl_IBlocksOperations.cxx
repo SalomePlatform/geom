@@ -34,7 +34,8 @@
 #include <GEOMImpl_IBlockTrsf.hxx>
 #include <GEOMImpl_CopyDriver.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
-#include <GEOMImpl_IShapesOperations.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
@@ -3492,13 +3493,13 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
     } // while (listPrevEdges.Extent() > 0)
 
     // Sort shapes in current chain (Mantis issue 21053)
-    GEOMImpl_IShapesOperations::SortShapes(currentChain, Standard_False);
+    GEOMUtils::SortShapes(currentChain, Standard_False);
     aFirstInChains.Append(currentChain.First());
     aMapChains.Bind(currentChain.First(), currentChain);
   }
 
   // Sort chains (Mantis issue 21053)
-  GEOMImpl_IShapesOperations::SortShapes(aFirstInChains, Standard_False);
+  GEOMUtils::SortShapes(aFirstInChains, Standard_False);
 
   // Store sorted chains in the document
   TopTools_ListIteratorOfListOfShape aChainsIt (aFirstInChains);

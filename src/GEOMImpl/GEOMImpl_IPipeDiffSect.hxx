@@ -18,14 +18,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //NOTE: This is an intreface to a function for the Pipe creation.
-//
+
 #ifndef _GEOMImpl_IPIPEDIFFSECT_HXX_
 #define _GEOMImpl_IPIPEDIFFSECT_HXX_
 
 #include "GEOM_Function.hxx"
+
+#include <TColStd_HSequenceOfTransient.hxx>
 
 #ifndef _GEOMImpl_IPIPE_HXX_
 #include "GEOMImpl_IPipe.hxx"

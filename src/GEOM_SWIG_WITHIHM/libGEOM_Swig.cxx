@@ -19,705 +19,474 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// GEOM GEOMGUI : GUI for Geometry component
 // File   : libGEOM_Swig.cxx
 // Author : Nicolas REJNERI, Paul RASCLE
-//
+
 #include "libGEOM_Swig.h"
 
 #include "GeometryGUI.h"
-#include "GEOMToolsGUI.h"
-
-#include "SUIT_Desktop.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "SalomeApp_Study.h"
-
-#include "OB_Browser.h"
-
-#include "OCCViewer_ViewWindow.h"
-#include "OCCViewer_ViewManager.h"
-#include "SOCC_ViewModel.h"
-#include <SOCC_Prs.h>
-
-#include "SVTK_ViewModel.h"
-#include "SVTK_ViewWindow.h"
-#include "SVTK_View.h"
-#include "SVTK_Renderer.h"
-#include <SVTK_Prs.h>
-
-#include "GEOM_Actor.h"
-#include "GEOM_Client.hxx"
-#include "GEOM_AISShape.hxx"
-#include "GEOM_InteractiveObject.hxx"
 #include "GEOM_Displayer.h"
 #include "GEOM_Constants.h"
+#include "Material_Model.h"
 
-#include "SALOME_Event.h"
+#include <SUIT_Desktop.h>
+#include <SUIT_Session.h>
+#include <SUIT_ViewManager.h>
+#include <SUIT_ViewModel.h>
+#include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
+#include <OCCViewer_ViewFrame.h>
+#include <SVTK_ViewWindow.h>
 
-// OCCT Includes
-#include <TopAbs.hxx>
-#include <TopoDS_Shape.hxx>
-#include <AIS_ListOfInteractive.hxx>
-#include <AIS_ListIteratorOfListOfInteractive.hxx>
-#include <AIS_Drawer.hxx>
-#include <Prs3d_IsoAspect.hxx>
-#include <BRepTools.hxx>
+#include <SALOME_Event.h>
 
 // IDL Headers
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
-#include <vtkRenderer.h>
-
-static SHAPE_READER(ShapeReader);
-
-inline OCCViewer_Viewer* GetOCCViewer(SUIT_Application* theApp){
-  SUIT_ViewWindow* window = theApp->desktop()->activeWindow();
-  if(window && window->getViewManager()->getType() == OCCViewer_Viewer::Type()){
-    OCCViewer_ViewWindow* vw = dynamic_cast<OCCViewer_ViewWindow*>( window );
-    if ( vw ) {
-      OCCViewer_ViewManager* vm = dynamic_cast<OCCViewer_ViewManager*>( vw->getViewManager() );
-      if ( vm )
-        return vm->getOCCViewer();
-    }
-  }
-
-  return 0;
-}
-
-inline SVTK_ViewWindow* GetSVTKViewWindow(SUIT_Application* theApp){
-  SUIT_ViewWindow* window = theApp->desktop()->activeWindow();
-  if(window && window->getViewManager()->getType() == SVTK_Viewer::Type())
-    return dynamic_cast<SVTK_ViewWindow*>( window );
-
-  return 0;
-}
-
+/*!
+  \brief Constructor
+*/
 GEOM_Swig::GEOM_Swig()
 {
-  // MESSAGE("Constructeur");
+  init();
 }
 
+/*!
+  \brief Destructor
+*/
 GEOM_Swig::~GEOM_Swig()
 {
-  // MESSAGE("Destructeur");
 }
 
-void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
+/*!
+  \brief Internal initialization
+*/
+void GEOM_Swig::init()
+{
+  class TEvent: public SALOME_Event
+  {
+  public:
+    TEvent()
+    {}
+    virtual void Execute()
+    {
+      // check active study
+      SUIT_Application* app = SUIT_Session::session()->activeApplication();
+      if (!app) return;
+      
+      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+      if ( !study ) return;
+
+      _PTR(Study) studyDS( study->studyDS() );
+      _PTR(StudyBuilder) builder = studyDS->NewBuilder();
+
+      // get/init GEOM engine
+      GEOM::GEOM_Gen_var engine = GeometryGUI::GetGeomGen();
+      if ( CORBA::is_nil( engine ) )
+        return;
+
+      // find GEOM component in the study
+      _PTR(SComponent) component = studyDS->FindComponent( "GEOM" );
+      if ( !component )
+        return;
+
+      // load GEOM data (if it is not done yet)
+      std::string ior;
+      if ( !component->ComponentIOR( ior ) ) {
+        CORBA::String_var engineIOR = SalomeApp_Application::orb()->object_to_string( engine );
+        builder->LoadWith( component, engineIOR.in() );
+      }
+
+      // update Object browser
+      if ( dynamic_cast<SalomeApp_Application*>( app ) )
+	dynamic_cast<SalomeApp_Application*>( app )->updateObjectBrowser( true );
+    }
+  };
+
+  ProcessVoidEvent( new TEvent() );
+}
+
+/*!
+  \brief Display the presenation in the currently active view
+  \param theEntry geometry object's entry
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::createAndDisplayGO( const char* theEntry, bool theUpdateViewer )
 {
   class TEvent: public SALOME_Event
   {
     std::string myEntry;
     bool        myUpdateViewer;
   public:
-    TEvent(const char* theEntry, bool toUpdateViewer):
-      myEntry(theEntry),
-      myUpdateViewer(toUpdateViewer)
+    TEvent( const char* _entry, bool _update ):
+      myEntry( _entry ), myUpdateViewer( _update )
     {}
     virtual void Execute()
     {
       SUIT_Application* app = SUIT_Session::session()->activeApplication();
-      if (!app) return;
+      if ( !app ) return;
+      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+      if ( !study ) return;
 
-      SalomeApp_Study* ActiveStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-      if (!ActiveStudy) return;
+      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( myEntry.c_str(), "GEOM", "" );
 
-      _PTR(Study) aStudy(ActiveStudy->studyDS());
-      _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
-
-      GEOM::GEOM_Gen_var Geom = GeometryGUI::GetGeomGen();
-      if (CORBA::is_nil(Geom)) {
-        GeometryGUI::InitGeomGen();
-        Geom = GeometryGUI::GetGeomGen();
-      }
-      if (CORBA::is_nil(Geom))
-        return;
-
-      std::string aFatherIOR;
-      _PTR(SComponent) father = aStudy->FindComponent("GEOM");
-      if (!father)
-        return;
-      if (!father->ComponentIOR(aFatherIOR)) {
-        CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string(Geom);
-        aStudyBuilder->LoadWith(father, objStr.in());
-        father->ComponentIOR(aFatherIOR);
-      }
-
-      _PTR(SObject) obj = aStudy->FindObjectID(myEntry);
-      if (!obj)
-        return;
-
-      // Create new actor
-      _PTR(GenericAttribute) anAttr;
-      if (!obj->FindAttribute(anAttr, "AttributeIOR"))
-        return;
-      _PTR(AttributeIOR) anIOR(anAttr);
-      std::string anIORValue = anIOR->Value();
-
-      GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(anIORValue.c_str());
-      TopoDS_Shape Shape = ShapeReader.GetShape(Geom,aShape);
-      if (!Shape.IsNull()) {
-        if (obj->FindAttribute(anAttr, "AttributeName")) {
-          _PTR(AttributeName) aName (anAttr);
-          std::string aNameValue = aName->Value();
-          // open transaction
-          /*SUIT_Operation* op = new SalomeApp_ImportOperation (app);
-          op->start();
-
-          _PTR(SObject) newObj1 = aStudyBuilder->NewObject(father);
-          aStudyBuilder->Addreference(newObj1, obj);
-          // commit transaction
-          op->commit();*/
-          Handle(GEOM_InteractiveObject) anIO =
-            new GEOM_InteractiveObject (const_cast<char*>(anIORValue.c_str()),
-                                        const_cast<char*>(aFatherIOR.c_str()),
-                                        "GEOM",
-                                        const_cast<char*>( obj->GetID().c_str()));
-
-          GEOM_Displayer(ActiveStudy).Display(anIO, myUpdateViewer);
-          /*if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
-            SVTK_View* aView = aViewWindow->getView();
-            int aMode = aView->GetDisplayMode();
-
-            vtkActorCollection* theActors =
-              GEOM_AssemblyBuilder::BuildActors(Shape,0,aMode,true);
-            theActors->InitTraversal();
-            while (vtkActor* anActor = theActors->GetNextActor()) {
-              GEOM_Actor* GActor = GEOM_Actor::SafeDownCast(anActor);
-              GActor->setName(const_cast<char*>(aNameValue.c_str()));
-              GActor->setIO(anIO);
-              aView->Display(GActor);
-            }
-            aView->Repaint();
-          } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(app)) {
-            Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
-            Handle(GEOM_AISShape) aSh =
-              new GEOM_AISShape (Shape,const_cast<char*>(aNameValue.c_str()));
-            aSh->setName(const_cast<char*>(aNameValue.c_str()));
-            aSh->setIO(anIO);
-            ic->Display(aSh);
-            ic->AddOrRemoveCurrentObject(aSh,true);
-            }*/
-          // update object browser
-          SalomeApp_Application* app = NULL; //dynamic_cast<SalomeApp_Application*>(app);
-          if (app) {
-            CAM_Module* module = app->module("Geometry");
-            SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>(module);
-            if (appMod)
-              appMod->updateObjBrowser(true);
-          }
-        }
-      }
+      GEOM_Displayer( study ).Display( io, myUpdateViewer );
     }
   };
 
-  // MESSAGE("createAndDisplayGO");
-  ProcessVoidEvent(new TEvent (Entry, isUpdated));
-
-  class TEventUpdateBrowser: public SALOME_Event
-    {
-      public:
-        TEventUpdateBrowser() {}
-        virtual void Execute() {
-          SalomeApp_Application* app =
-            dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
-          if (app) {
-            CAM_Module* module = app->module("Geometry");
-            SalomeApp_Module* appMod = dynamic_cast<SalomeApp_Module*>(module);
-            if (appMod) appMod->updateObjBrowser(true);
-          }
-        }
-    };
-
-  if (isUpdated)
-    ProcessVoidEvent(new TEventUpdateBrowser ());
+  ProcessVoidEvent( new TEvent( theEntry, theUpdateViewer ) );
 }
 
-void GEOM_Swig::createAndDisplayFitAllGO (const char* Entry)
+/*!
+  \brief Same as createAndDisplayGO, but also fits the active view to the contents
+  \param theEntry geometry object's entry
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::createAndDisplayFitAllGO( const char* theEntry )
 {
+  // display object
+  createAndDisplayGO( theEntry );
+
+  // fit all the view
   class TEventFitAll: public SALOME_Event
   {
-    public:
-      TEventFitAll() {}
-      virtual void Execute() {
-        SUIT_Application* app = SUIT_Session::session()->activeApplication();
-        if (!app) return;
-        
-        if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app))
-          {
-            SVTK_View* aView = aViewWindow->getView();
-            aView->GetRenderer()->OnFitAll();
-          }
-        else if (OCCViewer_Viewer* occViewer = GetOCCViewer(app))
-          {  
-            Handle(V3d_Viewer) aViewer3d = occViewer->getViewer3d();
-            aViewer3d->InitActiveViews();
-            
-            if (aViewer3d->MoreActiveViews())
-              aViewer3d->ActiveView()->FitAll();
-          }
+  public:
+    TEventFitAll() {}
+    virtual void Execute()
+    {
+      SUIT_Application* app = SUIT_Session::session()->activeApplication();
+      if ( app ) {
+	SUIT_ViewWindow* window = app->desktop()->activeWindow();
+	if ( dynamic_cast<SVTK_ViewWindow*>( window ) )
+	  dynamic_cast<SVTK_ViewWindow*>( window )->onFitAll();
+        else if ( dynamic_cast<OCCViewer_ViewFrame*>( window ) )
+	  dynamic_cast<OCCViewer_ViewFrame*>( window )->onViewFitAll();
       }
+    }
   };
-
-  createAndDisplayGO(Entry);
-  ProcessVoidEvent(new TEventFitAll());
+    
+  ProcessVoidEvent( new TEventFitAll() );
 }
 
+/*!
+  \brief Erase presentation in the currently active viewer
+  \param theEntry geometry object's entry
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::eraseGO( const char* theEntry, bool theUpdateViewer )
+{
+  class TEvent: public SALOME_Event
+  {
+    std::string myEntry;
+    bool        myUpdateViewer;
+  public:
+    TEvent( const char* _entry, bool _update ):
+      myEntry( _entry ), myUpdateViewer( _update )
+    {}
+    virtual void Execute()
+    {
+      SUIT_Application* app = SUIT_Session::session()->activeApplication();
+      if ( !app ) return;
+      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+      if ( !study ) return;
+
+      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( myEntry.c_str(), "GEOM", "" );
+
+      GEOM_Displayer( study ).Erase( io, true, myUpdateViewer );
+    }
+  };
+
+  ProcessVoidEvent( new TEvent( theEntry, theUpdateViewer ) );
+}
+
+/*!
+  \brief Update active viewer contents
+*/
 void GEOM_Swig::UpdateViewer()
 {
   class TEventUpdateViewer: public SALOME_Event
   {
-    public:
-      TEventUpdateViewer() {}
-      virtual void Execute() {
-        SUIT_Application* app = SUIT_Session::session()->activeApplication();
-        if (!app) return;
-        SalomeApp_Study* ActiveStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-        if (!ActiveStudy) return;
-        
-        GEOM_Displayer(ActiveStudy).UpdateViewer();
-      }
+  public:
+    TEventUpdateViewer()
+    {}
+    virtual void Execute()
+    {
+      SUIT_Application* app = SUIT_Session::session()->activeApplication();
+      if ( !app ) return;
+
+      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+      if ( !study ) return;
+      
+      GEOM_Displayer( study ).UpdateViewer();
+    }
   };
   
   ProcessVoidEvent(new TEventUpdateViewer());
 }
 
-int GEOM_Swig::getIndexTopology(const char* SubIOR, const char* IOR)
+/*!
+  \brief Get sub-shape index inside main shape
+  \param theSubIOR sub-shape geometry object's IOR
+  \param theMainIOR main shape geometry object's IOR
+  \return sub-shape index (-1 in case of error)
+*/
+int GEOM_Swig::getIndexTopology( const char* theSubIOR, const char* theMainIOR )
 {
+  int index = -1;
+
+  // get geom engine
   GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
-  if (CORBA::is_nil(aGeomGen))
-    return -1;
 
-  GEOM::GEOM_Object_var aMainShape = aGeomGen->GetIORFromString(IOR);
-  GEOM::GEOM_Object_var aSubShape  = aGeomGen->GetIORFromString(SubIOR);
-  if (CORBA::is_nil(aMainShape) || CORBA::is_nil(aSubShape))
-    return -1;
+  // get main shape's geom object by IOR
+  CORBA::Object_var anObject = SalomeApp_Application::orb()->string_to_object( theMainIOR );
+  GEOM::GEOM_Object_var aMainShape = GEOM::GEOM_Object::_narrow( anObject.in() );
+  // get sub-shape's geom object by IOR
+  anObject = SalomeApp_Application::orb()->string_to_object( theSubIOR );
+  GEOM::GEOM_Object_var aSubShape = GEOM::GEOM_Object::_narrow( anObject.in() );
 
-  GEOM::GEOM_IShapesOperations_var anIShapesOperations =
-    aGeomGen->GetIShapesOperations(aMainShape->GetStudyID());
-  if (CORBA::is_nil(anIShapesOperations))
-    return -1;
+  if ( !CORBA::is_nil( aGeomGen ) && !CORBA::is_nil( aMainShape ) && !CORBA::is_nil( aSubShape ) ) {
+    // get shapes operations interface
+    GEOM::GEOM_IShapesOperations_var anIShapesOperations =
+      aGeomGen->GetIShapesOperations( aMainShape->GetStudyID() );
+    if ( !CORBA::is_nil( anIShapesOperations ) )
+      index = anIShapesOperations->GetTopologyIndex( aMainShape, aSubShape );
+  }
 
-  return anIShapesOperations->GetTopologyIndex(aMainShape, aSubShape);
+  return index;
 }
 
-const char* GEOM_Swig::getShapeTypeString(const char* IOR)
+/*!
+  \brief Get shape type name
+  \param theIOR geometry object's IOR
+  \return shape type name ("Shape of unknown type" in case of error)
+*/
+const char* GEOM_Swig::getShapeTypeString( const char* theIOR )
 {
-  TCollection_AsciiString aTypeName ("Shape of unknown type");
+  QString aTypeName = "Shape of unknown type";
 
+  // get geom engine
   GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
-  if (!CORBA::is_nil(aGeomGen))
-  {
-    GEOM::GEOM_Object_var aShape = aGeomGen->GetIORFromString(IOR);
-    if (!CORBA::is_nil(aShape))
-    {
-      GEOM::GEOM_IShapesOperations_var anIShapesOperations =
-        aGeomGen->GetIShapesOperations(aShape->GetStudyID());
-      if (!CORBA::is_nil(anIShapesOperations))
-      {
-        aTypeName = anIShapesOperations->GetShapeTypeString(aShape);
+
+  // get shape's geom object by IOR
+  CORBA::Object_var anObject = SalomeApp_Application::orb()->string_to_object( theIOR );
+  GEOM::GEOM_Object_var aShape = GEOM::GEOM_Object::_narrow( anObject.in() );
+
+  if ( !CORBA::is_nil( aGeomGen ) && !CORBA::is_nil( aShape ) ) {
+    // get shapes operations interface
+    GEOM::GEOM_IShapesOperations_var anIShapesOperations =
+      aGeomGen->GetIShapesOperations( aShape->GetStudyID() );
+    if ( !CORBA::is_nil( anIShapesOperations ) )
+      aTypeName = anIShapesOperations->GetShapeTypeString( aShape );
+  }
+
+  return strdup( qPrintable( aTypeName ) );
+}
+
+/*!
+  \brief Get shape's icon ID (specified by its type)
+  \param theIOR geometry object's IOR
+  \return icon ID ("None" in case of error)
+*/
+const char* GEOM_Swig::getShapeTypeIcon( const char* theIOR )
+{
+  static const char* icons[] = {
+    "ICON_OBJBROWSER_COMPOUND",
+    "ICON_OBJBROWSER_COMPSOLID",
+    "ICON_OBJBROWSER_SOLID",
+    "ICON_OBJBROWSER_SHELL",
+    "ICON_OBJBROWSER_FACE",
+    "ICON_OBJBROWSER_WIRE",
+    "ICON_OBJBROWSER_EDGE",
+    "ICON_OBJBROWSER_VERTEX"
+  };
+
+  const char* anIcon = "None";
+
+  try {
+    CORBA::Object_var anObject = SalomeApp_Application::orb()->string_to_object( theIOR );
+    if ( !CORBA::is_nil( anObject ) ) {
+      GEOM::GEOM_Object_var aShape = GEOM::GEOM_Object::_narrow( anObject.in() );
+      if ( !CORBA::is_nil( aShape ) ) {
+	GEOM::shape_type aType = aShape->GetShapeType();
+	if ( aType >= GEOM::COMPOUND && aType < GEOM::SHAPE )
+	  anIcon = icons[ (int)aType ];
       }
     }
   }
-
-  return CORBA::string_dup(aTypeName.ToCString());
-}
-
-
-const char* GEOM_Swig::getShapeTypeIcon(const char* IOR)
-{
-  GEOM::GEOM_Gen_var Geom = GeometryGUI::GetGeomGen();
-  if ( CORBA::is_nil( Geom ) )
-    return "None";
-
-  GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(IOR);
-  TopoDS_Shape shape = ShapeReader.GetShape(Geom, aShape);
-
-  if( shape.IsNull() ) {
-    return "None" ;
+  catch ( CORBA::Exception& ) {
   }
 
-  switch (shape.ShapeType() )
-    {
-    case TopAbs_COMPOUND:
-      { return "ICON_OBJBROWSER_COMPOUND" ;}
-    case  TopAbs_COMPSOLID:
-      { return "ICON_OBJBROWSER_COMPSOLID" ;}
-    case TopAbs_SOLID:
-      { return "ICON_OBJBROWSER_SOLID" ;}
-    case TopAbs_SHELL:
-      { return "ICON_OBJBROWSER_SHELL" ;}
-    case TopAbs_FACE:
-      { return "ICON_OBJBROWSER_FACE" ;}
-    case TopAbs_WIRE:
-      { return "ICON_OBJBROWSER_WIRE" ;}
-    case TopAbs_EDGE:
-      { return "ICON_OBJBROWSER_EDGE" ;}
-    case TopAbs_VERTEX:
-      { return "ICON_OBJBROWSER_VERTEX" ;}
-    }
-
-  return "None";
+  return anIcon;
 }
 
-void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode, bool isUpdated)
+class TSetPropertyEvent: public SALOME_Event
 {
-  class TEvent: public SALOME_Event {
-    std::string myEntry;
-    int myMode;
-    bool myUpdateViewer;
-  public:
-    TEvent(const char* theEntryArg, int theModeArg, bool theUpdated):
-      myEntry(theEntryArg), myMode(theModeArg), myUpdateViewer(theUpdated)
-    {}
-    virtual void Execute() {
-      SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
-      if (!anApp) return;
-
-      Handle(SALOME_InteractiveObject) anIO =
-        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
-
-      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
-        SVTK_View* aView = aViewWindow->getView();
-        aView->SetDisplayMode(anIO, myMode);
-        if (myUpdateViewer)
-          aView->Repaint();
-      }
-      else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
-        SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
-        if (soccViewer)
-          soccViewer->switchRepresentation(anIO, myMode, myUpdateViewer);
-      }
-    }
-  };
-
-  ProcessVoidEvent(new TEvent (theEntry, theMode, isUpdated));
-}
-
-void GEOM_Swig::setVectorsMode(const char* theEntry, bool isOn, bool isUpdated)
+  QString  myEntry;
+  QString  myProperty;
+  QVariant myValue;
+  bool     myUpdateViewer;
+  
+public:
+  TSetPropertyEvent( const QString& _entry,
+		     const QString& _property,
+		     const QVariant& _value,
+		     bool _update = true );
+  virtual void Execute();
+};
+  
+TSetPropertyEvent::TSetPropertyEvent( const QString& _entry,
+				      const QString& _property,
+				      const QVariant& _value,
+				      bool _update ):
+  myEntry( _entry ),
+  myProperty( _property ),
+  myValue( _value ),
+  myUpdateViewer( _update )
 {
-  class TEvent: public SALOME_Event {
-    std::string myEntry;
-    bool myOn;
-    bool myUpdateViewer;
-  public:
-    TEvent(const char* theEntryArg, bool theOn, bool theUpdated):
-      myEntry(theEntryArg), myOn(theOn), myUpdateViewer(theUpdated)
-    {}
-    virtual void Execute() {
-      SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
-      if (!anApp) return;
-
-      Handle(SALOME_InteractiveObject) anIO =
-        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
-
-      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
-        SVTK_View* aView = aViewWindow->getView();
-        SVTK_Viewer* stvkViewer = dynamic_cast<SVTK_Viewer*>(aViewWindow->getViewManager()->getViewModel());
-        SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( myEntry.c_str()  ) );
-        vtkActorCollection* anActors = vtkPrs->GetObjects();
-        anActors->InitTraversal();
-        while (vtkActor* anAct = anActors->GetNextActor()) {
-          GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(anAct);
-          aGeomActor->SetVectorMode(!aGeomActor->GetVectorMode());
-        }
-        if (myUpdateViewer)
-          aView->Repaint();
-      }
-      else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
-        Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
-        SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
-        if (soccViewer) {
-          SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( soccViewer->CreatePrs( myEntry.c_str() ) );
-          if ( occPrs && !occPrs->IsNull() ) {
-            AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
-            AIS_ListIteratorOfListOfInteractive interIter( shapes );
-            for ( ; interIter.More(); interIter.Next() ) {
-              Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
-              aSh->SetDisplayVectors(myOn);
-              ic->RecomputePrsOnly(interIter.Value());
-            }
-          }
-        }
-      }
-    }
-  };
-
-  ProcessVoidEvent(new TEvent (theEntry, isOn, isUpdated));
 }
 
-void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, bool isUpdated)
+void TSetPropertyEvent::Execute()
 {
-  class TEvent: public SALOME_Event {
-    QString myEntry;
-    int myRed;
-    int myGreen;
-    int myBlue;
-    bool myUpdateViewer;
-  public:
-    TEvent(const char* theEntryArg, int theR, int theG, int theB, bool theUpdated):
-      myEntry(theEntryArg), myRed(theR), myGreen(theG), myBlue(theB), myUpdateViewer(theUpdated)
-    {}
-    virtual void Execute() {
-      SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
-      if (!anApp) return;
-      GEOMToolsGUI::SetColor( myEntry, QColor( myRed, myGreen, myBlue), myUpdateViewer );
-    }
-  };
-  ProcessVoidEvent(new TEvent(theEntry, red, green, blue, isUpdated));
+  SUIT_Application* app = SUIT_Session::session()->activeApplication();
+  if ( !app ) return;
+  
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !study ) return;
+  
+  GEOM_Displayer displayer( study );
+  
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+  
+  int mgrId = dynamic_cast<SUIT_ViewModel*>( window )->getViewManager()->getGlobalId();
+
+  study->setObjectProperty( mgrId, myEntry, myProperty, myValue );
+  
+  Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( myEntry.toLatin1().data(), "GEOM" );
+  if ( window->isVisible( io ) ) displayer.Redisplay( io, myUpdateViewer );
 }
 
-void GEOM_Swig::setIsos(const char* Entry, int nbU, int nbV, bool isUpdated )
+/*!
+  \brief Set display mode to the presentation
+  \param theEntry geometry object's entry
+  \param theMode display mode: 0 - wireframe, 1 - shading, 2 - shading+edges, 3-textured
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setDisplayMode( const char* theEntry, int theMode, bool theUpdateViewer )
 {
-  class TEvent: public SALOME_Event {
-    std::string myEntry;
-    int myNbU, myNbV;
-    bool myUpdateViewer;
-  public:
-    TEvent(const char* theEntry, int theNbU, int theNbV, bool theUpdated):
-      myEntry(theEntry), myNbU(theNbU), myNbV(theNbV), myUpdateViewer(theUpdated)
-    {}
-    virtual void Execute() {
-      SUIT_Application* app = SUIT_Session::session()->activeApplication();
-      if (!app) return;
-      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-      if (!study) return;
-
-      Handle(SALOME_InteractiveObject) anIO =
-        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
-
-      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(app)) {
-        SVTK_Viewer* aView = dynamic_cast<SVTK_Viewer*>(aViewWindow->getViewManager()->getViewModel());
-	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( aView->CreatePrs( myEntry.c_str() ) );
-	if ( vtkPrs ) {
-	  vtkActorCollection* anActors = vtkPrs->GetObjects();
-	  anActors->InitTraversal();
-	  GEOM_Actor* anActor = GEOM_Actor::SafeDownCast( anActors->GetNextActor() );
-	  if ( anActor ) {
-	    int aIsos[2]={myNbU,myNbV};
-	    anActor->SetNbIsos(aIsos);
-	    anActor->StoreIsoNumbers();
-	    QString anIsos = QString("%1%2%3").arg(myNbU).arg(DIGIT_SEPARATOR).arg(myNbV);
-	    int aMgrId = aView->getViewManager()->getGlobalId();
-	    study->setObjectProperty(aMgrId, myEntry.c_str(), ISOS_PROP, anIsos);
-	  }
-	}
-	
-	if (myUpdateViewer)
-          aView->Repaint();
-      }
-      else if (OCCViewer_Viewer* occViewer = GetOCCViewer(app)) {
-        Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
-        SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
-        if (soccViewer) {
-	  int aMgrId = soccViewer->getViewManager()->getGlobalId();
-          SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( soccViewer->CreatePrs( myEntry.c_str() ) );
-          if ( occPrs && !occPrs->IsNull() ) {
-            AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
-            AIS_ListIteratorOfListOfInteractive interIter( shapes );
-            for ( ; interIter.More(); interIter.Next() ) {
-              Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
-	      if ( !aSh.IsNull() ) {
-		Handle(AIS_Drawer) drawer = aSh->Attributes();
-		QVariant v = study->getObjectProperty( aMgrId, myEntry.c_str(), EDGE_WIDTH_PROP, QVariant() );
-		int width = v.isValid() ? v.toInt() : 1;
-		drawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, width, myNbU) );
-		drawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, width, myNbV) );
-		aSh->storeIsoNumbers();
-                ic->SetLocalAttributes(aSh, drawer);
-		ic->Redisplay(aSh);
-		QString anIsos = QString("%1%2%3").arg(myNbU).arg(DIGIT_SEPARATOR).arg(myNbV);
-		study->setObjectProperty(aMgrId, myEntry.c_str(), ISOS_PROP, anIsos);
-	      }
-            }
-          }
-        }
-      }
-    }
-  };
-
-  ProcessVoidEvent(new TEvent (Entry, nbU, nbV, isUpdated));
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::DisplayMode ), 
+					   theMode, theUpdateViewer ) );
 }
 
-void GEOM_Swig::setTransparency(const char* theEntry, float transp, bool isUpdated)
+/*!
+  \brief Show / hide edges direction vectors for the presentation
+  \param theEntry geometry object's entry
+  \param theOn \c true to show edges direction vectors or \c false otherwise
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setVectorsMode( const char* theEntry, bool theOn, bool theUpdateViewer )
 {
-  class TEvent: public SALOME_Event {
-    std::string myEntry;
-    float myParam;
-    bool myUpdateViewer;
-  public:
-    TEvent(const char* theEntryArg, float theParam, bool theUpdated):
-      myEntry(theEntryArg), myParam(theParam), myUpdateViewer(theUpdated)
-    {}
-    virtual void Execute() {
-      SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
-      if (!anApp) return;
-
-      Handle(SALOME_InteractiveObject) anIO =
-        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
-
-      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
-        SVTK_View* aView = aViewWindow->getView();
-        aView->SetTransparency(anIO, myParam);
-        if (myUpdateViewer)
-          aView->Repaint();
-      } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
-        SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
-        if (soccViewer)
-          soccViewer->setTransparency(anIO, myParam, myUpdateViewer);
-      }
-    }
-  };
-
-  ProcessVoidEvent(new TEvent (theEntry, transp, isUpdated));
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::EdgesDirection ), 
+					   theOn, theUpdateViewer ) );
 }
 
+/*!
+  \brief Change color of the presentation
+  \param theEntry geometry object's entry
+  \param theRed red component of the component (0-255)
+  \param theGreen green component of the component (0-255)
+  \param theBlue blue component of the component (0-255)
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setColor( const char* theEntry, int theRed, int theGreen, int theBlue, bool theUpdateViewer )
+{
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Color ), 
+					   QColor( theRed, theGreen, theBlue ), theUpdateViewer ) );
+}
 
-class TInitGeomGenEvent: public SALOME_Event {
+/*!
+  \brief Set number of iso-lines to the presentation
+  \param theEntry geometry object's entry
+  \param theNbU number of iso-lines along U axis (interger value >= 0)
+  \param theNbV number of iso-lines along V axis (interger value >= 0)
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setIsos( const char* theEntry, int theNbU, int theNbV, bool theUpdateViewer )
+{
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::NbIsos ), 
+					   QString( "%1%2%3" ).arg( theNbU ).arg( GEOM::subSectionSeparator() ).arg( theNbV ), 
+					   theUpdateViewer ) );
+}
+
+/*!
+  \brief Set transparency of the presentation
+  \param theEntry geometry object's entry
+  \param theTransparency transparency (floating point value between 0 and 1)
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setTransparency( const char* theEntry, float theTransparency, bool theUpdateViewer )
+{
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Transparency ), 
+					   theTransparency, theUpdateViewer ) );
+}
+
+/*!
+  \brief Set deflection coefficient of the presentation
+  \param theEntry geometry object's entry
+  \param theDeflection deflection coefficient (floating point value)
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setDeflection( const char* theEntry, float theDeflection, bool theUpdateViewer )
+{
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Deflection ), 
+					   theDeflection, theUpdateViewer ) );
+}
+
+/*!
+  \brief Set material to the presentation
+  \param theEntry geometry object's entry
+  \param theMaterial material name (string)
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setMaterial( const char* theEntry, const char* theMaterial, bool theUpdateViewer )
+{
+  Material_Model material;
+  material.fromResources( theMaterial );
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Material ), 
+					   material.toProperties(), theUpdateViewer ) );
+}
+
+/*!
+  \brief Set material property to the presentation
+  \param theEntry geometry object's entry
+  \param theMaterial material property string
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setMaterialProperty( const char* theEntry, const char* theMaterial, bool theUpdateViewer )
+{
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Material ), 
+					   theMaterial, theUpdateViewer ) );
+}
+
+class TInitGeomGenEvent: public SALOME_Event
+{
 public:
   typedef bool TResult;
   TResult myResult;
-  TInitGeomGenEvent() : myResult(false) {}
-  virtual void Execute() {
+  TInitGeomGenEvent() : myResult(false)
+  {}
+  virtual void Execute()
+  {
     myResult = GeometryGUI::InitGeomGen();
   }
 };
+
+/*!
+  \brief Initialize GEOM module's engine
+  \return \c true if initialization succeedes or \c false otherwise
+*/
 bool GEOM_Swig::initGeomGen()
 {
-  return ProcessEvent(new TInitGeomGenEvent());
+  return ProcessEvent( new TInitGeomGenEvent() );
 }
-
-
-
-void GEOM_Swig::eraseGO (const char* Entry, bool allWindows)
-{
-  class TEvent: public SALOME_Event
-  {
-    std::string myEntry;
-    bool myFromAllWindows;
-  public:
-    TEvent(const char* theEntry, bool fromAllWindows):
-      myEntry(theEntry), myFromAllWindows(fromAllWindows)
-    {}
-    virtual void Execute()
-    {
-      SUIT_Application* app = SUIT_Session::session()->activeApplication();
-      if (!app) return;
-      SalomeApp_Study* ActiveStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-      if (!ActiveStudy) return;
-
-      Handle (SALOME_InteractiveObject) aIO = new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
-
-      GEOM_Displayer(ActiveStudy).Erase(aIO, true);
-      /*      if (myFromAllWindows) {
-        QPtrList<SUIT_ViewWindow> aWindows = app->desktop()->windows();
-        SUIT_ViewWindow* aWin = 0;
-        for (aWin = aWindows.first(); aWin; aWin = aWindows.next()) {
-          EraseObject(aWin, aIO);
-        }
-      } else {
-        SUIT_ViewWindow* aWin = app->desktop()->activeWindow();
-        if (aWin)
-          EraseObject(aWin, aIO);
-          }*/
-    }
-
-    /*  private:
-    void EraseObject(SUIT_ViewWindow* theWin, Handle (SALOME_InteractiveObject) theIO)
-    {
-      if (theWin->getViewManager()->getType() == OCCViewer_Viewer::Type()){
-        OCCViewer_ViewWindow* vw = dynamic_cast<OCCViewer_ViewWindow*>( theWin );
-        if ( vw ) {
-          OCCViewer_ViewManager* vm = dynamic_cast<OCCViewer_ViewManager*>( vw->getViewManager() );
-          if ( vm ) {
-            SOCC_Viewer* aViewer = dynamic_cast<SOCC_Viewer*>(vm->getOCCViewer());
-            if (aViewer) {
-              SALOME_Prs* aPrs = aViewer->CreatePrs(myEntry.c_str());
-              if (aPrs) {
-                SALOME_OCCPrs* aOccPrs =  dynamic_cast<SALOME_OCCPrs*>(aPrs);
-                if (aOccPrs) {
-                  aViewer->Erase(aOccPrs);
-                  aViewer->Repaint();
-                }
-              }
-            }
-          }
-        }
-      } else if (theWin->getViewManager()->getType() == SVTK_Viewer::Type()){
-        SVTK_ViewWindow* aViewWindow = dynamic_cast<SVTK_ViewWindow*>( theWin );
-        if (aViewWindow) {
-          aViewWindow->Erase(theIO);
-        }
-      }
-      }*/
-
-  };
-  ProcessVoidEvent(new TEvent(Entry, allWindows));
-}
-
-
-
-void GEOM_Swig::setDeflection(const char* theEntry, float theDeflect)
-{
-  class TEvent: public SALOME_Event {
-    std::string myEntry;
-    float myParam;
-  public:
-    TEvent(const char* theEntryArg, float theParam):
-      myEntry(theEntryArg), myParam(theParam)
-    {}
-    virtual void Execute() {
-      SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
-      if (!anApp) return;
-
-      Handle(SALOME_InteractiveObject) anIO =
-        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
-
-      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
-        vtkActorCollection* aActors = aViewWindow->getRenderer()->GetActors();
-        aActors->InitTraversal();
-        while (vtkActor* aAct = aActors->GetNextActor()) {
-          if (GEOM_Actor* aGeomActor = dynamic_cast<GEOM_Actor*>(aAct)) {
-            if (aGeomActor->hasIO()) {
-              Handle(SALOME_InteractiveObject) aNextIO = aGeomActor->getIO();
-              if (aNextIO->isSame(anIO)) {
-                aGeomActor->setDeflection(myParam);
-                aViewWindow->Repaint();
-                return;
-              }
-            }
-          }
-        }
-        //      aView->SetTransparency(anIO, myParam);
-        //aView->Repaint();
-      } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
-        Handle(AIS_InteractiveContext) aContext = occViewer->getAISContext();
-        AIS_ListOfInteractive aAISList;
-        aContext->DisplayedObjects(aAISList);
-        AIS_ListIteratorOfListOfInteractive it(aAISList);
-        for (; it.More(); it.Next()) {
-          Handle(SALOME_InteractiveObject) aObj = 
-            Handle(SALOME_InteractiveObject)::DownCast(it.Value()->GetOwner());
-          if ((!aObj.IsNull()) && aObj->hasEntry() && aObj->isSame(anIO)) {
-            Handle(AIS_Shape) aShape = Handle(AIS_Shape)::DownCast(it.Value());
-            if (!aShape.IsNull()) {
-              TopoDS_Shape aSh = aShape->Shape();
-              if (!aSh.IsNull())
-                BRepTools::Clean(aSh);
-
-              aShape->SetOwnDeviationCoefficient( myParam );
-              aShape->SetOwnHLRDeviationAngle( 1.57 );
-              aContext->Redisplay(aShape);
-              return;
-            }
-          }
-        }
-      }
-    }
-  };
-
-  ProcessVoidEvent(new TEvent (theEntry, theDeflect));
-}
-

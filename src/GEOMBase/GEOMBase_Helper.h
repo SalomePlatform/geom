@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMBase_Helper.h
 // Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+
 #ifndef GEOMBASE_HELPER_H
 #define GEOMBASE_HELPER_H
 
@@ -51,7 +50,7 @@ class TColStd_MapOfInteger;
 
 //================================================================
 // Class       : GEOMBase_Helper
-// Description : Helper class for dialog box development, can be used as 
+// Description : Helper class for dialog box development, can be used as
 //               the second base class for dialog boxes. Contains convenient methods
 //               performing common operations (display/erase, selection activation,
 //               publication in a study, transaction management)
@@ -73,24 +72,24 @@ protected:
   void redisplay       ( GEOM::GEOM_Object_ptr, const bool = true, const bool = true );
 
   virtual void displayPreview ( const bool   display,
-                                const bool   activate = false, 
+                                const bool   activate = false,
                                 const bool   update = true,
                                 const bool   toRemoveFromEngine = true,
-                                const double lineWidth = -1, 
+                                const double lineWidth = -1,
                                 const int    displayMode = -1,
                                 const int    color  = -1 );
   // This is the easiest way to show preview. It is based on execute() method.
   // It removes temporary GEOM::GEOM_Objects automatically.
 
-  virtual void displayPreview  ( GEOM::GEOM_Object_ptr obj, 
-                                 const bool   append = false, 
-                                 const bool   activate = false, 
+  virtual void displayPreview  ( GEOM::GEOM_Object_ptr obj,
+                                 const bool   append = false,
+                                 const bool   activate = false,
                                  const bool   update = true,
-                                 const double lineWidth = -1, 
+                                 const double lineWidth = -1,
                                  const int    displayMode = -1,
                                  const int    color  = -1 );
-  void displayPreview  ( const SALOME_Prs* prs, 
-                         const bool append = false, 
+  void displayPreview  ( const SALOME_Prs* prs,
+                         const bool append = false,
                          const bool = true );
   void erasePreview    ( const bool = true );
 
@@ -105,7 +104,7 @@ protected:
   void prepareSelection( const ObjectList&, const int );
   void prepareSelection( GEOM::GEOM_Object_ptr, const int );
 
-  QString addInStudy   ( GEOM::GEOM_Object_ptr, const char* theName ); 
+  QString addInStudy   ( GEOM::GEOM_Object_ptr, const char* theName );
 
   bool openCommand     ();
   bool abortCommand    ();
@@ -119,7 +118,7 @@ protected:
 
   bool onAccept( const bool publish = true, const bool useTransaction = true, bool erasePreviewFlag = true);
   // This method should be called from "OK" button handler.
-  // <publish> == true means that objects returned by execute() 
+  // <publish> == true means that objects returned by execute()
   // should be published in a study.
 
   void showError();
@@ -134,16 +133,16 @@ protected:
 
   inline void setPrefix( const QString& prefix ) { myPrefix = prefix; }
   QString getPrefix( GEOM::GEOM_Object_ptr = GEOM::GEOM_Object::_nil() ) const;
-  
+
   bool selectObjects( ObjectList& objects );
-  // Selects list of objects 
+  // Selects list of objects
 
   ////////////////////////////////////////////////////////////////////////////
   // Virtual methods, to be redefined in dialog classes
   ////////////////////////////////////////////////////////////////////////////
 
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  // This method should be redefined in dialog boxes so as to return 
+  // This method should be redefined in dialog boxes so as to return
   // proper GEOM_IOperation interface.
   // Returns nil reference by default
 
@@ -151,9 +150,9 @@ protected:
   // Called by onAccept(). Redefine this method to check validity of user input in dialog boxes.
 
   virtual bool execute( ObjectList& objects );
-  // This method is called by onAccept(). 
-  // It should perform the required operation and put all new or modified objects into 
-  // <objects> argument.Should return <false> if some error occurs during its execution. 
+  // This method is called by onAccept().
+  // It should perform the required operation and put all new or modified objects into
+  // <objects> argument.Should return <false> if some error occurs during its execution.
 
   virtual void restoreSubShapes( SALOMEDS::Study_ptr theStudy, SALOMEDS::SObject_ptr theSObject );
   // This method is called by addInStudy().
@@ -163,7 +162,7 @@ protected:
   // for <theObj> or a nil reference if <theObj> should be published
   // as a top-level object.
 
-  virtual QString getNewObjectName() const; 
+  virtual QString getNewObjectName (int CurrObj = -1) const;
   virtual bool extractPrefix() const;
   virtual void addSubshapesToStudy();
 
@@ -187,12 +186,13 @@ protected:
 
   virtual void                setIsOptimizedBrowsing( const bool theFlag );
   virtual bool                isOptimizedBrowsing() const;
-  
+
   virtual void                setIsWaitCursorEnabled( const bool theFlag ) {myIsWaitCursorEnabled = theFlag;}
   virtual bool                isWaitCursorEnabled() const {return myIsWaitCursorEnabled ;}
   virtual void                setIsDisableBrowsing( const bool theFlag ) { myIsDisableBrowsing = theFlag; }
   virtual bool                isDisableBrowsing() const { return myIsDisableBrowsing; }
-  
+  virtual void                setIsDisplayResult( const bool theFlag ) {myIsDisplayResult = theFlag; }
+  virtual bool                isDisplayResult() const { return myIsDisplayResult; }
 
 private:
   QString                     getEntry( GEOM::GEOM_Object_ptr ) const;
@@ -213,9 +213,9 @@ private:
   bool                        myIsApplyAndClose;
   bool                        myIsOptimizedBrowsing;
   bool                        myIsWaitCursorEnabled;
-  bool                        myIsDisableBrowsing;  //This flag enable/disable selection 
+  bool                        myIsDisableBrowsing;  //This flag enable/disable selection
                                                     //in the Object Browser newly created objects.
-
+  bool                        myIsDisplayResult;    //This flag display/hide newly created objects.
 };
 
 #endif // GEOMBASE_HELPER_H

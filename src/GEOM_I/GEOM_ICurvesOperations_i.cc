@@ -429,6 +429,46 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
 
 //=============================================================================
 /*!
+ *  MakeSplineInterpolWithTangents
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolWithTangents
+                                              (const GEOM::ListOfGO& thePoints,
+                                               GEOM::GEOM_Object_ptr theFirstVec,
+                                               GEOM::GEOM_Object_ptr theLastVec)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference points
+  int ind = 0;
+  int aLen = thePoints.length();
+  std::list<Handle(GEOM_Object)> aPoints;
+  for (; ind < aLen; ind++) {
+    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
+    if (aPnt.IsNull()) return aGEOMObject._retn();
+    aPoints.push_back(aPnt);
+  }
+
+  //Get the reference vectors
+  Handle(GEOM_Object) aVec1 = GetObjectImpl(theFirstVec);
+  Handle(GEOM_Object) aVec2 = GetObjectImpl(theLastVec);
+
+  if (aVec1.IsNull() || aVec2.IsNull()) return aGEOMObject._retn();
+
+  // Make Polyline
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeSplineInterpolWithTangents(aPoints, aVec1, aVec2);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeCurveParametric
  */
 //=============================================================================

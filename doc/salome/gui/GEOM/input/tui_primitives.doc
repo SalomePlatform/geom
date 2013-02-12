@@ -4,230 +4,37 @@
 
 \anchor tui_creation_box
 <br><h2>Creation of a Box</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p0 = geompy.MakeVertex(15, 25, 35)
-p70 = geompy.MakeVertex(70, 70, 70)
-
-# create boxes
-box1 = geompy.MakeBoxDXDYDZ(10, 20, 30)
-box2 = geompy.MakeBox(10,20,30, 15,25,35)
-box3 = geompy.MakeBoxTwoPnt(p0, p70)
-
-# add objects in the study
-id_box1 = geompy.addToStudy(box1,"Box1")
-id_box2 = geompy.addToStudy(box2,"Box2")
-id_box3 = geompy.addToStudy(box3,"Box3")
-
-# display the boxes
-gg.createAndDisplayGO(id_box1)
-gg.setDisplayMode(id_box1,1)
-gg.createAndDisplayGO(id_box2)
-gg.setDisplayMode(id_box2,1)
-gg.createAndDisplayGO(id_box3)
-gg.setDisplayMode(id_box3,1)
-\endcode
+\include primitives_ex01.py
+<a href="../../examples/GEOM/primitives_ex01.py">Download this script</a>
 
 \anchor tui_creation_cylinder
 <br><h2>Creation of a Cylinder</h2>
-
-\code
-import geompy
-import salome
-
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p1 = geompy.MakeVertex(25, 35, 45)
-p2 = geompy.MakeVertex(70, 70, 70)
-v = geompy.MakeVector(p1, p2)
-
-# create cylinders
-height = 40
-
-radius1 = 15
-cylinder1 = geompy.MakeCylinder(p1, v, radius1, height)
-
-radius2 = 30
-cylinder2 = geompy.MakeCylinderRH(radius2, height)
-
-# add objects in the study
-id_cylinder1 = geompy.addToStudy(cylinder1,"Cylinder1")
-id_cylinder2 = geompy.addToStudy(cylinder2,"Cylinder2")
-
-# display the cylinders
-gg.createAndDisplayGO(id_cylinder1)
-gg.setDisplayMode(id_cylinder1,1)
-gg.createAndDisplayGO(id_cylinder2)
-gg.setDisplayMode(id_cylinder2,1)
-\endcode
+\include primitives_ex02.py
+<a href="../../examples/GEOM/primitives_ex02.py">Download this script</a>
 
 \anchor tui_creation_sphere
 <br><h2>Creation of a Sphere</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex
-p = geompy.MakeVertex(55, 45, 25)
-
-# create spheres
-radius1 = 20
-sphere1 = geompy.MakeSpherePntR(p, radius1)
-radius2 = 15
-sphere2 = geompy.MakeSphere(0, 0, 45, radius2)
-radius3 = 30
-sphere3 = geompy.MakeSphereR(radius3)
-
-# add objects in the study
-id_sphere1 = geompy.addToStudy(sphere1,"Sphere1")
-id_sphere2 = geompy.addToStudy(sphere2,"Sphere2")
-id_sphere3 = geompy.addToStudy(sphere3,"Sphere3")
-
-# display spheres
-gg.createAndDisplayGO(id_sphere1)
-gg.setDisplayMode(id_sphere1,1)
-gg.createAndDisplayGO(id_sphere2)
-gg.setDisplayMode(id_sphere2,1)
-gg.createAndDisplayGO(id_sphere3)
-gg.setDisplayMode(id_sphere3,1)
-\endcode
+\include primitives_ex03.py
+<a href="../../examples/GEOM/primitives_ex03.py">Download this script</a>
 
 \anchor tui_creation_torus
 <br><h2>Creation of a Torus</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p1 = geompy.MakeVertex(35, 40, 45)
-p2 = geompy.MakeVertex(35, 45, 70)
-v = geompy.MakeVector(p1, p2)
-
-# create toruses
-torus1 = geompy.MakeTorus(p1, v, 20, 10)
-torus2 = geompy.MakeTorusRR(30, 15)
-
-# add objects in the study
-id_torus1 = geompy.addToStudy(torus1,"Torus1")
-id_torus2 = geompy.addToStudy(torus2,"Torus2")
-
-# display toruses
-gg.createAndDisplayGO(id_torus1)
-gg.setDisplayMode(id_torus1,1)
-gg.createAndDisplayGO(id_torus2)
-gg.setDisplayMode(id_torus2,1)
-\endcode
+\include primitives_ex04.py
+<a href="../../examples/GEOM/primitives_ex04.py">Download this script</a>
 
 \anchor tui_creation_cone
 <br><h2>Creation of a Cone</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p1 = geompy.MakeVertex(35, 35, 0)
-p2 = geompy.MakeVertex(35, 35, 70)
-v = geompy.MakeVector(p1, p2)
-
-# create cones
-cone1 = geompy.MakeCone(p1, v, 17, 1, 20)
-cone2 = geompy.MakeConeR1R2H(30, 10, 30)
-
-# add objects in the study
-id_cone1 = geompy.addToStudy(cone1,"Cone1")
-id_cone2 = geompy.addToStudy(cone2,"Cone2")
-
-# display cones
-gg.createAndDisplayGO(id_cone1)
-gg.setDisplayMode(id_cone1,1)
-gg.createAndDisplayGO(id_cone2)
-gg.setDisplayMode(id_cone2,1)
-\endcode
+\include primitives_ex05.py
+<a href="../../examples/GEOM/primitives_ex05.py">Download this script</a>
 
 \anchor tui_creation_disk
 <br><h2>Creation of a Disk</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-p0 = geompy.MakeVertex(0., 0., 0.)
-px = geompy.MakeVertex(100., 0.  , 0.  )
-py = geompy.MakeVertex(0.  , 100., 0.  )
-pz = geompy.MakeVertex(0.  , 0.  , 100.)
-
-# create a vector on two points
-vxy  = geompy.MakeVector(px, py)
-
-# create a disk in OXY plane
-disk1 = geompy.MakeDiskR(100, 1)
-
-# create a disk from a point, a vector and a radius
-disk2 = geompy.MakeDiskPntVecR(pz, vxy, 30)
-
-#create a circle from three points
-disk3 = geompy.MakeDiskThreePnt(p0, px, py)
-
-# add objects in the study
-id_vxy    = geompy.addToStudy(vxy,  "Vector")
-id_disk1  = geompy.addToStudy(disk1,"Disk1")
-id_disk2  = geompy.addToStudy(disk2,"Disk2")
-id_disk3  = geompy.addToStudy(disk3,"Disk3")
-
-# display disks
-gg.createAndDisplayGO(id_vxy)
-gg.createAndDisplayGO(id_disk1)
-gg.createAndDisplayGO(id_diks2)
-gg.createAndDisplayGO(id_diks3)
-\endcode
+\include primitives_ex06.py
+<a href="../../examples/GEOM/primitives_ex06.py">Download this script</a>
 
 \anchor tui_creation_squareface
 <br><h2>Creation of a Rectangle</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices
-px = geompy.MakeVertex(100., 0.  , 0.  )
-py = geompy.MakeVertex(0.  , 100., 0.  )
-
-# create a vector on two points
-vxy  = geompy.MakeVector(px, py)
-
-# create a rectangle in OXY plane
-face1 = geompy.MakeFaceHW(100, 100, 1)
-
-# create a rectangle using normal vector
-face2 = geompy.MakeFaceObjHW(vxy, 50, 150)
-
-# create a rectangle from other face
-face3 = geompy.MakeFaceObjHW(face2, 150, 50)
-
-# add objects in the study
-id_face1  = geompy.addToStudy(face1,"Face1")
-id_face2  = geompy.addToStudy(face2,"Face2")
-id_face3  = geompy.addToStudy(face3,"Face3")
-
-# display rectangles
-gg.createAndDisplayGO(id_face1)
-gg.createAndDisplayGO(id_face2)
-gg.createAndDisplayGO(id_face3)
-\endcode
+\include primitives_ex07.py
+<a href="../../examples/GEOM/primitives_ex07.py">Download this script</a>
 
 */

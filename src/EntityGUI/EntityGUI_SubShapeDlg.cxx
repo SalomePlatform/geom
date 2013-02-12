@@ -831,7 +831,7 @@ GEOM::GEOM_Object_ptr EntityGUI_SubShapeDlg::getFather(GEOM::GEOM_Object_ptr)
 // Function : getNewObjectName
 // Purpose  :
 //================================================================
-QString EntityGUI_SubShapeDlg::getNewObjectName() const
+QString EntityGUI_SubShapeDlg::getNewObjectName (int) const
 {
   return QString::null;
 }

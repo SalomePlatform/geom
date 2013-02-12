@@ -4,138 +4,17 @@
 
 \anchor tui_partition
 <br><h2>Partition</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p0   = geompy.MakeVertex(  0.,   0.,   0.)
-p200 = geompy.MakeVertex(200., 200., 200.)
-pz   = geompy.MakeVertex(  0.,   0., 100.)
-
-# create a vector
-vxyz = geompy.MakeVectorDXDYDZ(100., 100., 100.)
-
-# create a box from two points
-box = geompy.MakeBoxTwoPnt(p0, p200)
-
-# create a plane
-trimsize  = 500.
-plane = geompy.MakePlane(pz, vxyz, trimsize)
-
-# create partition objects
-partition1 = geompy.MakePartition([box], [plane])
-partition2 = geompy.Partition([box], [plane])
-partition3 = geompy.MakeHalfPartition(box, plane)
-
-# add objects in the study
-id_box = geompy.addToStudy(box,"Box")
-id_plane = geompy.addToStudy(plane,"Plane")
-id_partition1 = geompy.addToStudy(partition1,"MakePartition")
-id_partition2 = geompy.addToStudy(partition2,"Partition")
-id_partition3 = geompy.addToStudy(partition3,"MakeHalfPartition")
-
-# display the partition objects and the plane
-gg.createAndDisplayGO(id_box)
-gg.setDisplayMode(id_box,1)
-gg.createAndDisplayGO(id_plane)
-gg.setDisplayMode(id_plane,1)
-gg.createAndDisplayGO(id_partition1)
-gg.createAndDisplayGO(id_partition2)
-gg.createAndDisplayGO(id_partition3)
-\endcode
+\include basic_operations_ex01.py
+<a href="../../examples/GEOM/basic_operations_ex01.py">Download this script</a>
 
 \anchor tui_archimede
 <br><h2>Archimede</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p0   = geompy.MakeVertex(  0.,   0.,   0.)
-p200 = geompy.MakeVertex(200., 200., 200.)
-
-# create a box from two points
-box = geompy.MakeBoxTwoPnt(p0, p200)
-
-# perform an Archimede operation on the selected shape with selected parameters
-weight  = 1000000.
-waterdensity = 1.
-meshingdeflection = 0.01
-archimede  = geompy.Archimede(box, weight, waterdensity, meshingdeflection)
-
-# add objects in the study
-id_box = geompy.addToStudy(box,"Box")
-id_archimede = geompy.addToStudy(archimede,"Archimede")
-
-# display the box and the result of Archimede operation
-gg.createAndDisplayGO(id_box)
-gg.setDisplayMode(id_box,1)
-gg.createAndDisplayGO(id_archimede)
-gg.setDisplayMode(id_archimede,1) 
-\endcode
+\include basic_operations_ex02.py
+<a href="../../examples/GEOM/basic_operations_ex02.py">Download this script</a>
 
 \anchor tui_restore_prs_params
 <br><h2>Restore presentation parameters and sub-shapes</h2>
-
-\code
-import geompy
-import GEOM
-import SALOMEDS
-
-# create a box and a cylinder
-box = geompy.MakeBoxDXDYDZ(200, 200, 200)
-cyl = geompy.MakeCylinderRH(100, 300)
-
-# create translated box
-vec = geompy.MakeVectorDXDYDZ(100, 50, 0)
-tra = geompy.MakeTranslationVector(box, vec)
-
-# create partition objects
-partition1 = geompy.MakePartition([box, cyl])
-partition2 = geompy.MakePartition([box], [cyl])
-partition3 = geompy.MakePartition([box], [tra])
-
-# set colours
-box.SetColor(SALOMEDS.Color(1,0,0))
-cyl.SetColor(SALOMEDS.Color(0,1,0))
-
-# add objects in the study
-geompy.addToStudy(box, "Box")
-geompy.addToStudy(cyl, "Cylinder")
-geompy.addToStudy(vec, "Vector")
-geompy.addToStudy(tra, "Translation")
-geompy.addToStudy(partition1, "Partition_1")
-geompy.addToStudy(partition2, "Partition_2")
-geompy.addToStudy(partition3, "Partition_3")
-
-# Restore presentation parameters and sub-shapes
-# different methods can be used to find the sub-shapes in the result:
-# GetInPlace, GetSame, GetInPlaceByHistory, GetShapesOnShape.
-# By default, GetInPlace method is used (GEOM.FSM_GetInPlace)
-geompy.RestoreSubShapes(partition1)
-
-geompy.RestoreSubShapes(partition2, [], GEOM.FSM_GetInPlace)
-
-# The list of arguments can be used to avoid restoring all arguments,
-# but restore only the passed.
-geompy.RestoreSubShapes(partition3, [tra], GEOM.FSM_GetInPlaceByHistory)
-
-# To find sub-shapes in a transformed shape only one method could be
-# used: pass GEOM.FSM_Transformed for that.
-# True passed for the last argument, means that the transformed shape
-# will inherit colour and sub-shapes from its first argument (see above
-# MakeTranslation).
-geompy.RestoreSubShapes(tra, [], GEOM.FSM_Transformed, True)
-
-# Also we could do this directly with method addToStudy:
-partition4 = geompy.MakePartition([box, tra])
-geompy.addToStudy(partition4, "Partition_4", True, [],
-                  GEOM.FSM_GetInPlaceByHistory, False)
-\endcode
+\include basic_operations_ex03.py
+<a href="../../examples/GEOM/basic_operations_ex03.py">Download this script</a>
 
 */

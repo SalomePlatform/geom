@@ -804,7 +804,7 @@ module GEOM
     /*!
      *  \brief Translate the given object along the given vector a given number times
      *  \param theObject The object to be translated.
-     *  \param theVector Direction of the translation.
+     *  \param theVector Direction of the translation. DX if None.
      *  \param theStep Distance to translate on.
      *  \param theNbTimes Quantity of translations to be done.
      *  \return New GEOM_Object, containing compound of all
@@ -818,10 +818,10 @@ module GEOM
     /*!
      *  \brief Conseqently apply two specified translations to theObject specified number of times.
      *  \param theObject The object to be translated.
-     *  \param theVector1 Direction of the first translation.
+     *  \param theVector1 Direction of the first translation. DX if None.
      *  \param theStep1 Step of the first translation.
      *  \param theNbTimes1 Quantity of translations to be done along theVector1.
-     *  \param theVector2 Direction of the second translation.
+     *  \param theVector2 Direction of the second translation. DY if None.
      *  \param theStep2 Step of the second translation.
      *  \param theNbTimes2 Quantity of translations to be done along theVector2.
      *  \return New GEOM_Object, containing compound of all
@@ -888,20 +888,56 @@ module GEOM
                             in GEOM_Object theAxis,
                             in double theAngle);
 
-
     /*!
      *  \brief Rotate the given object around the given axis a given number times.
      *
-     *  Rotation angle will be 2*PI/theNbTimes.
+     *  Rotation angle will be 2*PI/theNbObjects.
      *  \param theObject The object to be rotated.
-     *  \param theAxis The rotation axis.
-     *  \param theNbTimes Quantity of rotations to be done.
+     *  \param theAxis The rotation axis. DZ if None.
+     *  \param theNbObjects Quantity of rotations to be done.
      *  \return New GEOM_Object, containing compound of all the
      *          shapes, obtained after each rotation.
      */
     GEOM_Object MultiRotate1D (in GEOM_Object theObject,
                                in GEOM_Object theAxis,
-                               in long theNbTimes);
+                               in long theNbObjects);
+
+    /*!
+     *  \brief Rotate the given object around the given axis
+     *         a given number times on the given angle.
+     *
+     *  \param theObject The object to be rotated.
+     *  \param theAxis The rotation axis. DZ if None.
+     *  \param theAngleStep Rotation angle in radians.
+     *  \param theNbSteps Quantity of rotations to be done.
+     *  \return New GEOM_Object, containing compound of all the
+     *          shapes, obtained after each rotation.
+     */
+    GEOM_Object MultiRotate1DByStep (in GEOM_Object theObject,
+                                     in GEOM_Object theAxis,
+                                     in double theAngleStep,
+                                     in long theNbSteps);
+
+    /*!
+     *  \brief Rotate the given object around the given axis
+     *  a given number times and multi-translate each rotation result.
+     *
+     *  Rotation angle will be 2*PI/theNbObjects.
+     *  Translation direction passes through center of gravity
+     *  of rotated shape and its projection on the rotation axis.
+     *  \param theObject The object to be rotated.
+     *  \param theAxis Rotation axis. DZ if None.
+     *  \param theNbObjects Quantity of rotations to be done.
+     *  \param theRadialStep Translation distance.
+     *  \param theNbSteps Quantity of translations to be done.
+     *  \return New GEOM_Object, containing compound of all the
+     *          shapes, obtained after each transformation.
+     */
+    GEOM_Object MultiRotate2DNbTimes (in GEOM_Object theObject,
+                                      in GEOM_Object theAxis,
+                                      in long theNbObjects,
+                                      in double theRadialStep,
+                                      in long theNbSteps);
 
     /*!
      *  \brief Rotate the given object around the
@@ -911,20 +947,43 @@ module GEOM
      *  Translation direction passes through center of gravity
      *  of rotated shape and its projection on the rotation axis.
      *  \param theObject The object to be rotated.
-     *  \param theAxis Rotation axis.
-     *  \param theAngle Rotation angle in graduces.
-     *  \param theNbTimes1 Quantity of rotations to be done.
-     *  \param theStep Translation distance.
-     *  \param theNbTimes2 Quantity of translations to be done.
+     *  \param theAxis Rotation axis. DZ if None.
+     *  \param theAngleStep Rotation angle in radians.
+     *  \param theNbSteps1 Quantity of rotations to be done.
+     *  \param theRadialStep Translation distance.
+     *  \param theNbSteps2 Quantity of translations to be done.
+     *  \return New GEOM_Object, containing compound of all the
+     *          shapes, obtained after each transformation.
+     */
+    GEOM_Object MultiRotate2DByStep (in GEOM_Object theObject,
+                                     in GEOM_Object theAxis,
+                                     in double theAngleStep,
+                                     in long theNbSteps1,
+                                     in double theRadialStep,
+                                     in long theNbSteps2);
+
+    /*!
+     *  \brief Rotate the given object around the
+     *  given axis on the given angle a given number
+     *  times and multi-translate each rotation result.
+     *
+     *  Translation direction passes through center of gravity
+     *  of rotated shape and its projection on the rotation axis.
+     *  \param theObject The object to be rotated.
+     *  \param theAxis Rotation axis. DZ if None.
+     *  \param theAngleStep Rotation angle in degrees.
+     *  \param theNbSteps1 Quantity of rotations to be done.
+     *  \param theRadialStep Translation distance.
+     *  \param theNbSteps2 Quantity of translations to be done.
      *  \return New GEOM_Object, containing compound of all the
      *          shapes, obtained after each transformation.
      */
     GEOM_Object MultiRotate2D (in GEOM_Object theObject,
                                in GEOM_Object theAxis,
-                               in double theAngle,
-                               in long theNbTimes1,
-                               in double theStep,
-                               in long theNbTimes2);
+                               in double theAngleStep,
+                               in long theNbSteps1,
+                               in double theRadialStep,
+                               in long theNbSteps2);
 
     /*!
      *  \brief Replace the given object by an object,
@@ -1094,17 +1153,6 @@ module GEOM
                                    in double theDistance,
                                    in boolean theCopy,
                                    in boolean theReverse);
-
-    /*!
-     *  \brief Transform the shape in the same way what was used for the sample shape creation.
-     *  \param theObject The object to be transformed.
-     *  \param theSample The object containing information about required transformation.
-     *  \note Implementation of this method is limited by multi-transformations now.
-     *  \note Internal method.
-     *  \return New GEOM_Object, containing the transformed shape.
-     */
-    GEOM_Object TransformLikeOtherCopy (in GEOM_Object theObject,
-                                        in GEOM_Object theSample);
 
     /*!
      *  \brief Recompute the shape from its arguments.
@@ -1792,6 +1840,14 @@ module GEOM
      *  \return global index of \a theSubShape in \a theMainShape.
      */
     long GetSubShapeIndex (in GEOM_Object theMainShape, in GEOM_Object theSubShape);
+
+    /*!
+     *  Get global indices of \a theSubShapes in \a theMainShape.
+     *  \param theMainShape Main shape.
+     *  \param theSubShapes List of sub-shapes of the main shape.
+     *  \return list of global indices of \a theSubShapes in \a theMainShape.
+     */
+    ListOfLong GetSubShapesIndices (in GEOM_Object theMainShape, in ListOfGO theSubShapes);
 
     /*!
      *  \brief Get index of \a theSubShape in \a theMainShape, unique among sub-shapes of the same type.
@@ -2805,6 +2861,17 @@ module GEOM
                                          in boolean  theDoReordering);
 
     /*!
+     *  \brief Create B-Spline curve on the set of points.
+     *  \param thePoints Sequence of points for the B-Spline curve.
+     *  \param theFirstVec Vector object, defining the curve direction at its first point.
+     *  \param theLastVec Vector object, defining the curve direction at its last point.
+     *  \return New GEOM_Object, containing the created B-Spline curve.
+     */
+    GEOM_Object MakeSplineInterpolWithTangents (in ListOfGO    thePoints,
+                                                in GEOM_Object theFirstVec,
+                                                in GEOM_Object theLastVec);
+
+    /*!
      *  \brief Creates a curve using the parametric definition of the basic points.
      *  \param thexExpr parametric equation of the coordinates X.
      *  \param theyExpr parametric equation of the coordinates Y.
@@ -3548,6 +3615,13 @@ module GEOM
                          out double Zmin, out double Zmax);
 
     /*!
+     *  \brief Get bounding box of the given shape
+     *  \param theShape Shape to obtain bounding box of.
+     *  \return New GEOM_Object, containing the created bounding box.
+     */
+    GEOM_Object MakeBoundingBox (in GEOM_Object theShape);
+
+    /*!
      *  \brief Get min and max tolerances of sub-shapes of theShape
      *  \param theShape Shape, to get tolerances of.
      *  \param FaceMin,FaceMax Output. Min and max tolerances of the faces.
@@ -3621,6 +3695,16 @@ module GEOM
     double GetMinDistance (in GEOM_Object theShape1, in GEOM_Object theShape2,
                            out double X1, out double Y1, out double Z1,
                            out double X2, out double Y2, out double Z2);
+
+    /*!
+     *  \brief Get closest points of the given shapes.
+     *  \param theShape1,theShape2 Shapes to find closest points of.
+     *  \param theCoords Output. List of (X, Y, Z) coordinates for all couples of points.
+     *  \return The number of found solutions (-1 in case of infinite number of solutions).
+     */
+    long ClosestPoints (in GEOM_Object theShape1,
+                        in GEOM_Object theShape2,
+                        out ListOfDouble theCoords);
 
     /*!
      *  \brief Get angle between the given lines or linear edges.

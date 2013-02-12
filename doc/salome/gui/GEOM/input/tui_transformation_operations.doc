@@ -4,552 +4,67 @@
 
 \anchor tui_translation
 <br><h2>Translation</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p1 = geompy.MakeVertex(10, 40, 0)
-p2 = geompy.MakeVertex( 0,  0, 50)
-p3 = geompy.MakeVertex(50, 80, 0)
-v = geompy.MakeVector(p1, p2)
-vt = geompy.MakeVector(p1, p3)
-
-# create a cylinder
-height = 35
-radius1 = 20
-cylinder = geompy.MakeCylinder(p1, v, radius1, height)
-
-# translate the given object along the vector, specified by its end points
-# (all three functions produce the same result)
-translation1 = geompy.MakeTranslationTwoPoints(cylinder, p1, p3)
-translation2 = geompy.MakeTranslation(cylinder, 40, 40, 0)
-translation3 = geompy.MakeTranslationVector(cylinder, vt)
-translation4 = geompy.MakeTranslationVectorDistance(cylinder, vt, 200)
-
-# add objects in the study
-id_cylinder = geompy.addToStudy(cylinder, "Cylinder")
-id_translation1 = geompy.addToStudy(translation1, "Translation1")
-id_translation2 = geompy.addToStudy(translation2, "Translation2")
-id_translation3 = geompy.addToStudy(translation3, "Translation3")
-id_translation4 = geompy.addToStudy(translation4, "Translation4")
-
-# display the results
-gg.createAndDisplayGO(id_cylinder)
-gg.setDisplayMode(id_cylinder,1)
-gg.createAndDisplayGO(id_translation1)
-gg.setDisplayMode(id_translation1,1)
-gg.createAndDisplayGO(id_translation2)
-gg.setDisplayMode(id_translation2,1)
-gg.createAndDisplayGO(id_translation3)
-gg.setDisplayMode(id_translation3,1) 
-gg.createAndDisplayGO(id_translation4)
-gg.setDisplayMode(id_translation4,1) 
-\endcode
+\include transformation_operations_ex01.py
+<a href="../../examples/GEOM/transformation_operations_ex01.py">Download this script</a>
 
 \anchor tui_rotation
 <br><h2>Rotation</h2>
-
-\code
-import geompy
-import salome
-import math
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p1 = geompy.MakeVertex(10, 40,  0)
-p2 = geompy.MakeVertex( 0,  0, 50)
-p3 = geompy.MakeVertex(10, 50,-20)
-p4 = geompy.MakeVertex(10, 50, 60)
-v = geompy.MakeVector(p1, p2)
-vr = geompy.MakeVector(p3, p4)
-
-# create a cylinder
-height = 35
-radius1 = 20
-cylinder = geompy.MakeCylinder(p1, v, radius1, height)
-
-# rotate the given object around the given axis by the given angle
-rotation1 = geompy.MakeRotation(cylinder, vr, math.pi)
-rotation2 = geompy.MakeRotationThreePoints(cylinder, p4, p1, p2)
-
-# add objects in the study
-id_vr = geompy.addToStudy(vr, "Rotation 1 axis")
-id_p4 = geompy.addToStudy(p4, "Rotation 2 center")
-id_p1 = geompy.addToStudy(p1, "Rotation 2 point 1")
-id_p2 = geompy.addToStudy(p2, "Rotation 2 point 2")
-id_cylinder = geompy.addToStudy(cylinder, "Cylinder")
-id_rotation1 = geompy.addToStudy(rotation1, "Rotation 1")
-id_rotation2 = geompy.addToStudy(rotation2, "Rotation 2")
-
-# display the results
-gg.createAndDisplayGO(id_vr)
-gg.createAndDisplayGO(id_p4)
-gg.createAndDisplayGO(id_p1)
-gg.createAndDisplayGO(id_p2)
-gg.createAndDisplayGO(id_cylinder)
-gg.setDisplayMode(id_cylinder,1)
-gg.createAndDisplayGO(id_rotation1)
-gg.createAndDisplayGO(id_rotation2)
-gg.setDisplayMode(id_rotation1,1)
-gg.setDisplayMode(id_rotation2,1)
-\endcode
+\include transformation_operations_ex02.py
+<a href="../../examples/GEOM/transformation_operations_ex02.py">Download this script</a>
 
 \anchor tui_modify_location 
 <br><h2>Modify Location</h2>
-
-\code
-import geompy
-import salome
-import math
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a vertex and a vector
-p1 = geompy.MakeVertex(10, 40, 0)
-p2 = geompy.MakeVertex( 0,  0, 50)
-v = geompy.MakeVector(p1, p2)
-
-# create a cylinder
-height = 35
-radius1 = 20
-cylinder = geompy.MakeCylinder(p1, v, radius1, height)
-circle   = geompy.MakeCircle(p2, v, radius1)
-
-# create local coordinate systems
-cs1 = geompy.MakeMarker( 0, 0, 0, 1,0,0, 0,1,0)
-cs2 = geompy.MakeMarker(30,40,40, 1,0,0, 0,1,0)
-
-# modify the location of the given object
-position = geompy.MakePosition(cylinder, cs1, cs2)
-position2 = geompy.PositionAlongPath(position, circle, 0.75, 1, 1)
-
-# add objects in the study
-id_cs1 = geompy.addToStudy(cs1, "Coordinate system 1")
-id_cs2 = geompy.addToStudy(cs2, "Coordinate system 2")
-id_cylinder = geompy.addToStudy(cylinder, "Cylinder")
-id_circle = geompy.addToStudy(circle, "Circle")
-id_position = geompy.addToStudy(position, "Position")
-id_position2 = geompy.addToStudy(position2, "PositionAlongPath")
-
-# display the results
-gg.createAndDisplayGO(id_cylinder)
-gg.setDisplayMode(id_cylinder,1)
-gg.createAndDisplayGO(id_position)
-gg.setDisplayMode(id_position,1)
-gg.createAndDisplayGO(id_circle)
-gg.setDisplayMode(id_circle,1)
-gg.createAndDisplayGO(id_position2)
-gg.setDisplayMode(id_position2,1)
-\endcode
+\include transformation_operations_ex03.py
+<a href="../../examples/GEOM/transformation_operations_ex03.py">Download this script</a>
 
 \anchor tui_mirror
 <br><h2>Mirror Image</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a box
-box = geompy.MakeBoxDXDYDZ(200, 200, 200)
-
-# create an object, symmetrical to another object through the given plane
-p1 = geompy.MakeVertex( 0, 25,  0)
-p2 = geompy.MakeVertex( 5, 25,  0)
-p3 = geompy.MakeVertex( 0,-30, 40)
-plane = geompy.MakePlaneThreePnt(p1, p2, p3, 1000.)
-mirror1 = geompy.MakeMirrorByPlane(box, plane)
-
-# create an object, symmetrical to another object through the given axis
-p4 = geompy.MakeVertex( 210, 210, -20)
-p5 = geompy.MakeVertex( 210, 210, 220)
-axis = geompy.MakeVector(p4, p5)
-mirror2 = geompy.MakeMirrorByAxis(box, axis)
-
-# create an object, symmetrical to another object through the given point
-mirror3 = geompy.MakeMirrorByPoint(box, p4)
-
-# add objects in the study
-id_box = geompy.addToStudy(box, "Box")
-id_plane = geompy.addToStudy(plane, "Plane")
-id_mirror1 = geompy.addToStudy(mirror1, "Mirror plane")
-id_axis = geompy.addToStudy(axis, "Axis")
-id_mirror2 = geompy.addToStudy(mirror2, "Mirror axis")
-id_p4 = geompy.addToStudy(p4, "Point")
-id_mirror3 = geompy.addToStudy(mirror3, "Mirror point")
-
-# display the results
-gg.createAndDisplayGO(id_box)
-gg.setDisplayMode(id_box,1)
-gg.createAndDisplayGO(id_plane)
-gg.createAndDisplayGO(id_mirror1)
-gg.setDisplayMode(id_mirror1,1)
-gg.createAndDisplayGO(id_axis)
-gg.createAndDisplayGO(id_mirror2)
-gg.setDisplayMode(id_mirror2,1)
-gg.createAndDisplayGO(id_p4)
-gg.createAndDisplayGO(id_mirror3)
-gg.setDisplayMode(id_mirror3,1) 
-\endcode
+\include transformation_operations_ex04.py
+<a href="../../examples/GEOM/transformation_operations_ex04.py">Download this script</a>
 
 \anchor tui_scale
 <br><h2>Scale Transform</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a box and a sphere
-box = geompy.MakeBoxDXDYDZ(200, 200, 200)
-
-# scale the given object by the factor
-p0 = geompy.MakeVertex(100, 100, 100)
-factor = 0.5
-scale = geompy.MakeScaleTransform(box, p0, factor)
-
-# add objects in the study
-id_box = geompy.addToStudy(box, "Box")
-id_scale = geompy.addToStudy(scale, "Scale")
-
-# display the results
-gg.createAndDisplayGO(id_box)
-gg.setDisplayMode(id_box,1)
-gg.setTransparency(id_box,0.5)
-gg.createAndDisplayGO(id_scale)
-gg.setDisplayMode(id_scale,1)
-\endcode
+\include transformation_operations_ex05.py
+<a href="../../examples/GEOM/transformation_operations_ex05.py">Download this script</a>
 
 \anchor tui_offset 
 <br><h2>Offset Surface</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a box and a sphere
-box = geompy.MakeBox(20, 20, 20, 200, 200, 200)
-
-# create a new object as offset of the given object
-offset = geompy.MakeOffset(box, 70.)
-
-# add objects in the study
-id_box = geompy.addToStudy(box, "Box")
-id_offset = geompy.addToStudy(offset, "Offset")
-
-# display the results
-gg.createAndDisplayGO(id_box)
-gg.setDisplayMode(id_box,1)
-gg.createAndDisplayGO(id_offset) 
-\endcode
+\include transformation_operations_ex06.py
+<a href="../../examples/GEOM/transformation_operations_ex06.py">Download this script</a>
 
 \anchor tui_projection
 <br><h2>Projection</h2>
-
-\code
-import geompy
-import salome
-
-# create a cylindric face and a curve(edge)
-cylinder = geompy.MakeCylinderRH(100, 300)
-[face_cyl] = geompy.SubShapes(cylinder, [3])
-
-p1 = geompy.MakeVertex(200, 0, 100)
-p2 = geompy.MakeVertex(200, 80, 100)
-p3 = geompy.MakeVertex(200, 80, 180)
-p4 = geompy.MakeVertex(130, 80, 180)
-p5 = geompy.MakeVertex(90, 80, 240)
-
-curve = geompy.MakeInterpol([p1, p2, p3, p4, p5], False, False)
-
-# create a new object as projection of the
-# given curve on the given cylindric face
-projection = geompy.MakeProjection(curve, face_cyl)
-
-# add objects in the study
-geompy.addToStudy(cylinder, "cylinder")
-geompy.addToStudyInFather(cylinder, face_cyl, "face_cyl")
-geompy.addToStudy(p1, "p1")
-geompy.addToStudy(p2, "p2")
-geompy.addToStudy(p3, "p3")
-geompy.addToStudy(p4, "p4")
-geompy.addToStudy(p5, "p5")
-geompy.addToStudy(curve, "curve")
-geompy.addToStudy(projection, "projection")
-\endcode
+\include transformation_operations_ex07.py
+<a href="../../examples/GEOM/transformation_operations_ex07.py">Download this script</a>
 
 \anchor tui_multi_translation 
 <br><h2>Multi Translation</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices and vectors
-p0  = geompy.MakeVertex( 0.,  0.,  0.)
-px  = geompy.MakeVertex(20.,  0.,  0.)
-py  = geompy.MakeVertex( 0., 20.,  0.)
-pz  = geompy.MakeVertex( 0.,  0., 20.)
-pxy = geompy.MakeVertex( 50., 0., 0.)
-pxyz = geompy.MakeVertex( 50., 50., 50.)
-vz  = geompy.MakeVector(p0, pz)
-vxy = geompy.MakeVector(px, py)
-vtr1d = geompy.MakeVector(p0, pxyz)
-vtr2d = geompy.MakeVector(p0, pxy)
-
-# create an arc
-arc = geompy.MakeArc(py, pz, px)
-
-# create a wire
-wire = geompy.MakeWire([vxy, arc])
-
-# create a planar face
-face = geompy.MakeFace(wire, 1)
-
-# create a prism
-prism = geompy.MakePrismVecH(face, vz, 20.0)
-
-# translate the given object along the given vector a given number of times
-tr1d = geompy.MakeMultiTranslation1D(prism, vtr1d, 20, 4)
-
-# consequently apply two specified translations to the object a given number of times
-tr2d = geompy.MakeMultiTranslation2D(prism, vtr1d, 20, 4, vtr2d, 80, 3)
-
-# add objects in the study
-id_prism = geompy.addToStudy(prism,"Prism")
-id_tr1d = geompy.addToStudy(tr1d,"Translation 1D")
-id_tr2d = geompy.addToStudy(tr2d,"Translation 2D")
-
-# display the prism and the results of fillet operation
-gg.createAndDisplayGO(id_prism)
-gg.setDisplayMode(id_prism,1)
-gg.createAndDisplayGO(id_tr1d)
-gg.setDisplayMode(id_tr1d,1)
-gg.createAndDisplayGO(id_tr2d)
-gg.setDisplayMode(id_tr2d,1) 
-\endcode
+\include transformation_operations_ex08.py
+<a href="../../examples/GEOM/transformation_operations_ex08.py">Download this script</a>
 
 \anchor tui_multi_rotation
 <br><h2>Multi Rotation</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create vertices and vectors
-p0  = geompy.MakeVertex( 0.,  0.,  0.)
-px  = geompy.MakeVertex(20.,  0.,  0.)
-py  = geompy.MakeVertex( 0., 20.,  0.)
-pz  = geompy.MakeVertex( 0.,  0., 20.)
-pxyz = geompy.MakeVertex( 50., 50., 10.)
-vz  = geompy.MakeVector(p0, pz)
-vxy = geompy.MakeVector(px, py)
-vrot1d = geompy.MakeVector(p0, pxyz)
-
-# create an arc
-arc = geompy.MakeArc(py, pz, px)
-
-# create a wire
-wire = geompy.MakeWire([vxy, arc])
-
-# create a planar face
-face = geompy.MakeFace(wire, 1)
-
-# create a prism
-prism = geompy.MakePrismVecH(face, vz, 20.0)
-
-# rotate the given object around the given axis by the given angle a given number of times
-rot1d = geompy.MultiRotate1D(prism, vrot1d, 4)
-
-# rotate the given object around the given axis by the given angle a given number of times
-# and multi-translate the result of each rotation
-rot2d = geompy.MultiRotate2D(prism, vrot1d, 60, 4, 50, 5)
-
-# add objects in the study
-id_prism = geompy.addToStudy(prism,"Prism")
-id_rot1d = geompy.addToStudy(rot1d,"Rotation 1D")
-id_rot2d = geompy.addToStudy(rot2d,"Rotation 2D")
-
-# display the prism and the results of fillet operation
-gg.createAndDisplayGO(id_prism)
-gg.setDisplayMode(id_prism,1)
-gg.createAndDisplayGO(id_rot1d)
-gg.setDisplayMode(id_rot1d,1)
-gg.createAndDisplayGO(id_rot2d)
-gg.setDisplayMode(id_rot2d,1) 
-\endcode
+\include transformation_operations_ex09.py
+<a href="../../examples/GEOM/transformation_operations_ex09.py">Download this script</a>
 
 \anchor tui_fillet2d
 <br><h2>Fillet 2D</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create a face in OXY plane
-face = geompy.MakeFaceHW(100, 100, 1)
-fillet2d = geompy.MakeFillet2D(face, 30, [7, 9])
-
-# add objects in the study
-id_face  = geompy.addToStudy(face,"Face_1")
-id_fillet2d  = geompy.addToStudy(fillet2d,"Fillet 2D_1")
-
-# display disks
-gg.createAndDisplayGO(id_face)
-gg.createAndDisplayGO(id_fillet2d)
-\endcode
+\include transformation_operations_ex10.py
+<a href="../../examples/GEOM/transformation_operations_ex10.py">Download this script</a>
 
 \anchor tui_fillet1d
 <br><h2>Fillet 1D</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-
-# create box
-Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)
-# take box edges to create custom complex wire
-[Edge_1,Edge_2,Edge_3,Edge_4,Edge_5,Edge_6,Edge_7,Edge_8,Edge_9,Edge_10,Edge_11,Edge_12] = geompy.SubShapeAllSortedCentres(Box_1, geompy.ShapeType["EDGE"])
-# create wire
-Wire_1 = geompy.MakeWire([Edge_12, Edge_7, Edge_11, Edge_6, Edge_1,Edge_4])
-# make fillet at given wire vertices with giver radius
-Fillet_1D_1 = geompy.MakeFillet1D(Wire_1, 55, [3, 4, 6, 8, 10])
-
-
-# display disks
-gg.createAndDisplayGO(Wire_1)
-gg.createAndDisplayGO(Fillet_1D_1)
-\endcode
+\include transformation_operations_ex11.py
+<a href="../../examples/GEOM/transformation_operations_ex11.py">Download this script</a>
 
 \anchor tui_fillet
 <br><h2>Fillet</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-radius  = 10.
-ShapeTypeEdge = geompy.ShapeType["EDGE"]
-
-# create vertices and vectors
-p0  = geompy.MakeVertex(  0.,   0.,   0.)
-px  = geompy.MakeVertex(100.,   0.,   0.)
-py  = geompy.MakeVertex(  0., 100.,   0.)
-pz  = geompy.MakeVertex(  0.,   0., 100.)
-vz  = geompy.MakeVector(p0, pz)
-vxy = geompy.MakeVector(px, py)
-
-# create an arc
-arc = geompy.MakeArc(py, pz, px)
-
-# create a wire
-wire = geompy.MakeWire([vxy, arc])
-
-# create a planar face
-face = geompy.MakeFace(wire, 1)
-
-# create a prism
-prism = geompy.MakePrismVecH(face, vz, 100.0)
-
-# get the list of IDs (IDList) for the fillet
-prism_edges = geompy.SubShapeAllSortedCentres(prism, ShapeTypeEdge)
-IDlist_e = []
-IDlist_e.append(geompy.GetSubShapeID(prism, prism_edges[0]))
-IDlist_e.append(geompy.GetSubShapeID(prism, prism_edges[1]))
-IDlist_e.append(geompy.GetSubShapeID(prism, prism_edges[2]))
-
-# make a fillet on the specified edges of the given shape
-fillet = geompy.MakeFillet(prism, radius, ShapeTypeEdge, IDlist_e)
-
-# make a fillet on all edges of the given shape
-filletall = geompy.MakeFilletAll(prism, radius)
-
-# add objects in the study
-id_prism = geompy.addToStudy(prism,"Prism")
-id_fillet = geompy.addToStudy(fillet,"Fillet")
-id_filletall = geompy.addToStudy(filletall,"Fillet all")
-
-# display the prism and the results of fillet operation
-gg.createAndDisplayGO(id_prism)
-gg.setDisplayMode(id_prism,1)
-gg.createAndDisplayGO(id_fillet)
-gg.setDisplayMode(id_fillet,1)
-gg.createAndDisplayGO(id_filletall)
-gg.setDisplayMode(id_filletall,1) 
-\endcode
+\include transformation_operations_ex12.py
+<a href="../../examples/GEOM/transformation_operations_ex12.py">Download this script</a>
 
 \anchor tui_chamfer
 <br><h2>Chamfer</h2>
-
-\code
-import geompy
-import salome
-gg = salome.ImportComponentGUI("GEOM")
-d1 = 10.
-d2 = 10.
-ShapeTypeFace = geompy.ShapeType["FACE"]
-
-# create vertices and vectors
-p0  = geompy.MakeVertex(  0.,   0.,   0.)
-px  = geompy.MakeVertex(100.,   0.,   0.)
-py  = geompy.MakeVertex(  0., 100.,   0.)
-pz  = geompy.MakeVertex(  0.,   0., 100.)
-vz  = geompy.MakeVector(p0, pz)
-vxy = geompy.MakeVector(px, py)
-
-# create an arc
-arc = geompy.MakeArc(py, pz, px)
-
-# create a wire
-wire = geompy.MakeWire([vxy, arc])
-
-# create a planar face
-face = geompy.MakeFace(wire, 1)
-
-# create a prism
-prism = geompy.MakePrismVecH(face, vz, 100.0)
-
-# get the list of IDs (IDList) for the chamfer
-prism_faces = geompy.SubShapeAllSortedCentres(prism, ShapeTypeFace)
-f_ind_1 = geompy.GetSubShapeID(prism, prism_faces[0])
-f_ind_2 = geompy.GetSubShapeID(prism, prism_faces[1])
-IDlist_f = [f_ind_1, f_ind_2]
-
-# perform a chamfer on the edges common to the specified faces
-chamfer_e = geompy.MakeChamferEdge(prism, d1, d2, f_ind_1, f_ind_2)
-
-# perform a chamfer on all edges of the specified faces
-chamfer_f = geompy.MakeChamferFaces(prism, d1, d2, IDlist_f)
-chamfer_f1 = geompy.MakeChamfer(prism, d1, d2, ShapeTypeFace, IDlist_f)
-
-# perform a symmetric chamfer on all edges of the given shape
-chamfer_all = geompy.MakeChamferAll(prism, d1)
-
-# add objects in the study
-id_prism = geompy.addToStudy(prism,"Prism")
-id_chamfer_e = geompy.addToStudy(chamfer_e,"Chamfer edge")
-id_chamfer_f = geompy.addToStudy(chamfer_f,"Chamfer faces")
-id_chamfer_f1 = geompy.addToStudy(chamfer_f1,"Chamfer faces 1")
-id_chamfer_all = geompy.addToStudy(chamfer_all,"Chamfer all")
-
-# display the prism and the results of chamfer operation
-gg.createAndDisplayGO(id_prism)
-gg.setDisplayMode(id_prism,1)
-gg.createAndDisplayGO(id_chamfer_e)
-gg.setDisplayMode(id_chamfer_e,1)
-gg.createAndDisplayGO(id_chamfer_f)
-gg.setDisplayMode(id_chamfer_f,1)
-gg.createAndDisplayGO(id_chamfer_f1)
-gg.setDisplayMode(id_chamfer_f1,1)
-gg.createAndDisplayGO(id_chamfer_all)
-gg.setDisplayMode(id_chamfer_all,1) 
-\endcode
+\include transformation_operations_ex13.py
+<a href="../../examples/GEOM/transformation_operations_ex13.py">Download this script</a>
 
 */

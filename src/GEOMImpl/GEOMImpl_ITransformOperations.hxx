@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_ITransformOperations_HXX_
 #define _GEOMImpl_ITransformOperations_HXX_
@@ -153,6 +152,17 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) Rotate1D (Handle(GEOM_Object) theObject,
                                                 Handle(GEOM_Object) theAxis,
                                                 Standard_Integer theNbTimes);
+
+  Standard_EXPORT Handle(GEOM_Object) Rotate1D (Handle(GEOM_Object) theObject,
+                                                Handle(GEOM_Object) theAxis,
+                                                double theAngleStep,
+                                                Standard_Integer theNbSteps);
+
+  Standard_EXPORT Handle(GEOM_Object) Rotate2D (Handle(GEOM_Object) theObject,
+                                                Handle(GEOM_Object) theAxis,
+                                                Standard_Integer theNbObjects,
+                                                double theRadialStep,
+                                                Standard_Integer theNbSteps);
 
   Standard_EXPORT Handle(GEOM_Object) Rotate2D (Handle(GEOM_Object) theObject,
                                                 Handle(GEOM_Object) theAxis,

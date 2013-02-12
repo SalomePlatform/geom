@@ -24,7 +24,6 @@
 //  File   : Archimede_VolumeSection.hxx
 //  Author : Nicolas REJNERI
 //  Module : GEOM
-//  $Header$
 //
 #ifndef ARCHIMEDE_VOLUMESECTION_HXX
 #define ARCHIMEDE_VOLUMESECTION_HXX

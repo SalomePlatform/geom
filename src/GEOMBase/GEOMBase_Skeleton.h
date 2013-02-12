@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMBase_Skeleton.h
 // Author : Damine COQUERET, Open CASCADE S.A.S.
-//
+
 #ifndef GEOMBASE_SKELETON_H
 #define GEOMBASE_SKELETON_H
 
@@ -74,7 +73,7 @@ protected:
 
     /*! returns contents of "Name" field
      */
-    virtual QString getNewObjectName() const;
+    virtual QString getNewObjectName (int CurrObj = -1) const;
 
     /*! returns id of a selected "constructor" radio button or '-1' in case of error
      */

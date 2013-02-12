@@ -22,7 +22,6 @@
 #  Author : Patrick GOLDBRONN (CEA)
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
-#  $Header$
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
@@ -47,7 +46,8 @@ salomeinclude_HEADERS =			\
 	GEOM_IGroupOperations_i.hh	\
 	GEOM_IAdvancedOperations_i.hh	\
 	GEOM_Gen_i.hh			\
-	GEOM_GEOM_I.hxx
+	GEOM_GEOM_I.hxx                 \
+	GEOM_wrap.hxx
 
 dist_libGEOMEngine_la_SOURCES =		\
 	GEOM_Object_i.cc		\

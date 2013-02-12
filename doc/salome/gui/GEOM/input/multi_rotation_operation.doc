@@ -5,24 +5,28 @@
 \n To produce a <b>Multi Rotation</b> in the <b>Main Menu</b> select
 <b>Operations - > Transformation - > Multi Rotation</b>
 
-\n This operation creates several geometrical objects rotated in one
-or two dimensions basing on the initial geometrical object.
-\n The \b Result will be one or several \b GEOM_Objects (compound).
+\n This operation creates a compound of several shapes rotated in one
+or two dimensions basing on the initial shape.
+\n The \b Result will be one \b GEOM_Object (compound).
 
 \n To produce a <b>Simple Multi Rotation</b> (in one dimension) you
-need to define a \b Shape to be rotated, an \b Axis of rotation and a
-<b>Number of Times</b> the shape must be rotated. <b>Rotation Angle</b> will
-be 2 * \a PI / \a NbTimes. Number of shapes in the resulting compound will be equal
-to \a NbTimes (if \a NbTimes = 1, the result will contain only the initial
-non-transformed shape).
-\n <b>TUI Command:</b> <em>geompy.MultiRotate1D(Shape, Axis, NbTimes)</em>
-\n <b>Arguments:</b> Name + 1 shape + 1 vector for direction + 1 value
-(repetition).
+need to define a \b Shape to be rotated, an \b Axis of rotation (DZ by
+default), Angle of rotation (optionally) and a <b>Number of Times</b>
+the shape must be rotated. If <b>Angular step</b> is not defined
+(checkbox is not checked), it will be 2 * \a PI / \a NbTimes. Number
+of shape's copies in the resulting compound will be equal to
+\a NbTimes (if \a NbTimes = 1, the result will contain only the
+initial non-transformed shape).
+
+\n <b>TUI Commands:</b>
+\n <em>geompy.MultiRotate1DNbTimes(Shape, Axis, NbTimes)</em>
+\n <em>geompy.MultiRotate1DByStep(Shape, Axis, AngleStep, NbTimes)</em>
 
 \b <b>NB!</b> There is another way to execute a Multi-rotation
 operation, which is currently accessible only via TUI commands:
-<em>geompy.MakeMultiRotation1D(Shape, Dir, Point, NbTimes)</em> which works in
-the same way, but the Axis is defined  by direction and point.
+<em>geompy.MakeMultiRotation1DNbTimes(Shape, Dir, Point, NbTimes)</em>,
+<em>geompy.MakeMultiRotation1DByStep(Shape, Dir, Point, AngleStep, NbTimes)</em>,
+which works in the same way, but the Axis is defined by direction and point.
 
 \image html neo-mrot1.png
 
@@ -31,23 +35,27 @@ the same way, but the Axis is defined  by direction and point.
 \image html multi_rotation1d2.png "The result of a simple multi-rotation"
 
 \n <b>Double Multi Rotation</b> (in two dimensions) rotates the given
-\b Object around the given \b Axis on the given \b Angle a given
-<b>Number of Times</b> and multi-translates each rotation
-result. Translation direction passes through the center of gravity of
-the rotated shape and its projection on the rotation axis. Number of
-shapes in the resulting compound will be equal to \a NbTimes1 x \a NbTimes2 (if
-both \a NbTimes1 and \a NbTimes2 are equal to 1, the result will contain
+\b Object around the given \b Axis (DZ by default) on the given
+\b Angle (optional) a given <b>Number of Times</b> and
+multi-translates each rotation result.
+If <b>Angular step</b> is not defined (checkbox is not checked), it
+will be 2 * \a PI / \a NbTimes.
+Translation direction passes through the center of gravity of the
+initial shape and its projection on the rotation axis. Number of
+shape's copies in the resulting compound will be equal to \a NbTimes1 x \a NbTimes2
+(if both \a NbTimes1 and \a NbTimes2 are equal to 1, the result will contain
 only the initial non-transformed shape).
 \b Reverse checkbox allows to set the direction of rotation.
-\n <b>TUI Command:</b> <em>geompy.MultiRotate2D(Shape, Axis, Angle, NbTimes1, Step, NbTimes2)</em>
-\n <b>Arguments:</b> Name + 1 shape + 1 vector for direction + 1 angle
-+ 1 value (repetition) + 1 step value + 1 value (repetition).
+
+\n <b>TUI Commands:</b>
+\n <em>geompy.MultiRotate2DNbTimes(Shape, Axis, NbTimes1, RadialStep, NbTimes2)</em>
+\n <em>geompy.MultiRotate2DByStep(Shape, Axis, AngleStep, NbTimes1, RadialStep, NbTimes2)</em>
 
 <b>NB!</b> There is another way to execute a Double Multi-rotation
 operation, which is currently accessible only via TUI commands: 
-<em>geompy.MakeMultiRotation2D(Shape, Dir, Point, Angle, nbtimes1, Step,nbtimes2)</em>
-which works in the same way,
-but the Axis is defined  by direction and point.
+<em>geompy.MakeMultiRotation2DNbTimes(Shape, Dir, Point, NbTimes1, RadialStep, NbTimes2)</em>,
+<em>geompy.MakeMultiRotation2DByStep(Shape, Dir, Point, AngleStep, NbTimes1, RadialStep, NbTimes2)</em>,
+which works in the same way, but the Axis is defined by direction and point.
 
 \image html neo-mrot2.png
 

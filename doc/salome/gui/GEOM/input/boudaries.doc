@@ -2,8 +2,10 @@
 
 \page boundaries_page Check Free Boundaries
 
-Detects and highlights  wires and edges that are not shared between
+Detects and highlights wires and edges that are not shared between
 two faces and are considered a shape's boundary.
+<br>Creates corresponding objects and publishes them into the study on
+"Apply" or "Apply and Close".
 
 <b>TUI Command:</b> <em>(NoError, ClosedWires, OpenWires) =
 geompy.GetFreeBoundary(Shape),</em> where \em Shape is a shape to be

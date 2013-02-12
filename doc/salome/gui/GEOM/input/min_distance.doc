@@ -3,10 +3,29 @@
 \page min_distance_page Min. Distance
 
 Returns the minimum distance between two geometrical objects and
-the coordinates of the vector of distance and shows the vector in the viewer.
+the coordinates of the vector of distance and shows the distance in
+the viewer.
 
-<b>TUI Command:</b> <em>geompy.MinDistance(Shape1, Shape2),</em>
-where \em Shape1 and \em Shape2 are shapes between which the minimal
+\note The minimal distance searching task can have one or more
+solutions, and also it can have an infinite set of solutions. All
+found solutions are listed in dedicated combobox. When the user
+selects any one of found solutions, presentation is displayed in the
+OCC viewer and fields "Length", "DX", "DY" and "DZ" are filled with
+corresponding values. If there are no solutions found, text "No
+solution found" will be shown instead of solutions list; this could
+mean what the task has an infinite number of solutions.
+
+\n \note Currently used OCCT functionality finds finite number of
+solutions even in cases, where an infinite set of solutions exists.
+
+\n On \b Apply or <b>Apply and Close</b> it creates a set of closest
+points of the shapes, corresponding to all found solutions.
+
+<b>TUI Commands:</b>
+\n<em>aDist = geompy.MinDistance(Shape1, Shape2),</em>
+\n<em>[aDist, DX, DY, DZ] = geompy.MinDistanceComponents(Shape1, Shape2),</em>
+\n<em>[nbSols, (x11, y11, z11, x21, y21, z21, ...)] = geompy.ClosestPoints(Shape1, Shape2),</em>
+\n where \em Shape1 and \em Shape2 are shapes between which the minimal
 distance is computed.
 
 See also a \ref tui_min_distance_page "TUI example".

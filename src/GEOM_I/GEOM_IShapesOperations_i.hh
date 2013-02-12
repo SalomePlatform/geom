@@ -128,6 +128,9 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   CORBA::Long GetSubShapeIndex (GEOM::GEOM_Object_ptr theMainShape,
                                 GEOM::GEOM_Object_ptr theSubShape);
+  
+  GEOM::ListOfLong* GetSubShapesIndices (GEOM::GEOM_Object_ptr theMainShape,
+                                         const GEOM::ListOfGO& theSubShapes);
 
   CORBA::Long GetTopologyIndex (GEOM::GEOM_Object_ptr theMainShape,
                                 GEOM::GEOM_Object_ptr theSubShape);
