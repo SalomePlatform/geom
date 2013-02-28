@@ -1,7 +1,6 @@
 /*!
 
 \page tui_import_export_page Import/Export
-\include import_export.py
-<a href="../../examples/GEOM/import_export.py">Download this script</a>
+\tui_script{import_export.py}
 
 */

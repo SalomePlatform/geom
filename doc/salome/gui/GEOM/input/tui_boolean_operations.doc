@@ -4,22 +4,18 @@
 
 \anchor tui_fuse
 <br><h2>Fuse</h2>
-\include boolean_operations_ex01.py
-<a href="../../examples/GEOM/boolean_operations_ex01.py">Download this script</a>
+\tui_script{boolean_operations_ex01.py}
 
 \anchor tui_common
 <br><h2>Common</h2>
-\include boolean_operations_ex02.py
-<a href="../../examples/GEOM/boolean_operations_ex02.py">Download this script</a>
+\tui_script{boolean_operations_ex02.py}
 
 \anchor tui_cut
 <br><h2>Cut</h2>
-\include boolean_operations_ex03.py
-<a href="../../examples/GEOM/boolean_operations_ex03.py">Download this script</a>
+\tui_script{boolean_operations_ex03.py}
 
 \anchor tui_section
 <br><h2>Section</h2>
-\include boolean_operations_ex04.py
-<a href="../../examples/GEOM/boolean_operations_ex04.py">Download this script</a>
+\tui_script{boolean_operations_ex04.py}
 
 */

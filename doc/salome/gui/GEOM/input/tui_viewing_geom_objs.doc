@@ -4,22 +4,18 @@
 
 \anchor tui_change_disp_mode
 <br><h2>Changing Display Mode</h2>
-\include viewing_geom_objs_ex01.py
-<a href="../../examples/GEOM/viewing_geom_objs_ex01.py">Download this script</a>
+\tui_script{viewing_geom_objs_ex01.py}
 
 \anchor tui_change_color 
 <br><h2> Changing Color</h2>
-\include viewing_geom_objs_ex02.py
-<a href="../../examples/GEOM/viewing_geom_objs_ex02.py">Download this script</a>
+\tui_script{viewing_geom_objs_ex02.py}
 
 \anchor tui_change_transparency
 <br><h2>Changing Transparency</h2>
-\include viewing_geom_objs_ex03.py
-<a href="../../examples/GEOM/viewing_geom_objs_ex03.py">Download this script</a>
+\tui_script{viewing_geom_objs_ex03.py}
 
 \anchor tui_point_marker
 <br><h2>Set Point Marker</h2>
-\include viewing_geom_objs_ex04.py
-<a href="../../examples/GEOM/viewing_geom_objs_ex04.py">Download this script</a>
+\tui_script{viewing_geom_objs_ex04.py}
 
 */

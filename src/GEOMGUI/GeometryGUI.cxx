@@ -2327,6 +2327,118 @@ QAction* GeometryGUI::getAction(const int id) {
 }
 
 /*!
+  \brief GEOM module message handler
+
+  This method can be re-implemented in the subclasses.
+  This is a GEOM module message handler.
+
+  \param msg the message received.
+*/
+void GeometryGUI::message(const QString& msg)
+{
+  // dispatch message
+  QStringList data = msg.split("/");
+  const int nbStrings = data.count();
+
+  if (nbStrings > 0) {
+    if (data[0] == "modified") {
+      // get mesh entry
+      QString anIOR = nbStrings > 1 ? data[1] : QString();
+
+      if ( anIOR.isEmpty() ) {
+        return;
+      }
+
+      // Get the geom object.
+      GEOM::GEOM_Object_ptr anObj = GeometryGUI::GetObjectFromIOR (anIOR);
+
+      // Clear the shape buffer
+      GeometryGUI::ClearShapeBuffer (anObj);
+    }
+  }
+}
+
+/*!
+  \brief Clears the shape buffer.
+
+  This is a static method. It clears the shape buffer.
+
+  \param theObj the object
+*/
+void GeometryGUI::ClearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
+{
+  if ( CORBA::is_nil( theObj ) )
+    return;
+
+  CORBA::String_var IOR = SalomeApp_Application::orb()->object_to_string( theObj );
+  TCollection_AsciiString asciiIOR( (char *)IOR.in() );
+  GEOM_Client::get_client().RemoveShapeFromBuffer( asciiIOR );
+
+  SALOMEDSClient_StudyManager *aManager = SalomeApp_Application::studyMgr();
+
+  if (!aManager)
+    return;
+
+  _PTR(Study) aStudy = aManager->GetStudyByID(theObj->GetStudyID());
+
+  if ( !aStudy )
+    return;
+
+  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( std::string( IOR ) ) );
+  if ( !aSObj )
+    return;
+
+  _PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
+  for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
+    _PTR(GenericAttribute) anAttr;
+    if ( anIt->Value()->FindAttribute(anAttr, "AttributeIOR") ) {
+      _PTR(AttributeIOR) anIOR ( anAttr );
+      TCollection_AsciiString asciiIOR( (char*)anIOR->Value().c_str() );
+      GEOM_Client::get_client().RemoveShapeFromBuffer( asciiIOR );
+    }
+  }
+}
+
+/*!
+  \brief Returns the object from IOR.
+
+  This is a static method. It returns the object from its IOR.
+
+  \param IOR object IOR
+  \return GEOM object.
+*/
+GEOM::GEOM_Object_ptr GeometryGUI::GetObjectFromIOR( const QString& IOR )
+{
+  GEOM::GEOM_Object_var geomObj;
+  if ( !IOR.isEmpty() ) {
+    CORBA::Object_var corbaObj = SalomeApp_Application::orb()->string_to_object
+      ( IOR.toLatin1().constData() );
+    if ( !CORBA::is_nil( corbaObj ) )
+      geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+  }
+  return geomObj._retn();
+}
+
+/*!
+  \brief Returns IOR of the object.
+
+  This is a static method. It returns the object's IOR.
+
+  \param object the GEOM object.
+  \return object's IOR.
+*/
+QString GeometryGUI::GetIORFromObject( GEOM::GEOM_Object_ptr object )
+{
+  QString IOR;
+  if ( !CORBA::is_nil( object ) ) {
+    CORBA::String_var anIOR =
+      SalomeApp_Application::orb()->object_to_string( object );
+    IOR = anIOR.in();
+  }
+  return IOR;
+}
+
+/*!
   \brief Check if this object is can't be renamed in place
 
   This method can be re-implemented in the subclasses.

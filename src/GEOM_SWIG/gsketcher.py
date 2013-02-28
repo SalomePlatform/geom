@@ -45,8 +45,8 @@ class Sketcher3D:
         sk = geompy.Sketcher3D()
         sk.addPointsAbsolute(0,0,0, 70,0,0)
         sk.addPointsRelative(0, 0, 130)
-        sk.addPointAnglesLength("OXY", 50, 0, 100)
-        sk.addPointAnglesLength("OXZ", 30, 80, 130)
+        sk.addPointRadiusAnglesRelative(50, 0, 100, 'OXY')
+        sk.addPointRadiusAnglesRelative(30, 80, 130, 'OXZ')
         sk.close()
         a3D_Sketcher_1 = sk.wire()
     """

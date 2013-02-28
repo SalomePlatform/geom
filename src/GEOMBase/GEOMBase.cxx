@@ -728,13 +728,7 @@ void GEOMBase::ShowErrorMessage( const QString& errorCode, const QString& commen
 //=======================================================================
 GEOM::GEOM_Object_ptr GEOMBase::GetObjectFromIOR( const QString& IOR )
 {
-  GEOM::GEOM_Object_var geomObj;
-  if ( !IOR.isEmpty() ) {
-    CORBA::Object_var corbaObj = SalomeApp_Application::orb()->string_to_object( IOR.toLatin1().constData() );
-    if ( !CORBA::is_nil( corbaObj ) )
-      geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-  }
-  return geomObj._retn();
+  return GeometryGUI::GetObjectFromIOR (IOR);
 }
 
 //=======================================================================
@@ -743,12 +737,7 @@ GEOM::GEOM_Object_ptr GEOMBase::GetObjectFromIOR( const QString& IOR )
 //=======================================================================
 QString GEOMBase::GetIORFromObject( GEOM::GEOM_Object_ptr object )
 {
-  QString IOR;
-  if ( !CORBA::is_nil( object ) ) {
-    CORBA::String_var anIOR = SalomeApp_Application::orb()->object_to_string( object );
-    IOR = anIOR.in();
-  }
-  return IOR;
+  return GeometryGUI::GetIORFromObject (object);
 }
 
 //=======================================================================

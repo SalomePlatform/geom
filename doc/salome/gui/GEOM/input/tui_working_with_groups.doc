@@ -5,35 +5,29 @@
 <br>
 \anchor tui_create_groups_anchor
 <h2>Creation of a group</h2>
-\include working_with_groups_ex01.py
-<a href="../../examples/GEOM/working_with_groups_ex01.py">Download this script</a>
+\tui_script{working_with_groups_ex01.py}
 
 \anchor tui_edit_groups_anchor
 
 <br><h2>Adding an object to the group</h2>
-\include working_with_groups_ex02.py
-<a href="../../examples/GEOM/working_with_groups_ex02.py">Download this script</a>
+\tui_script{working_with_groups_ex02.py}
 
 <br><h2>Removing an object from the group</h2>
-\include working_with_groups_ex03.py
-<a href="../../examples/GEOM/working_with_groups_ex03.py">Download this script</a>
+\tui_script{working_with_groups_ex03.py}
 
 <br>
 \anchor tui_union_groups_anchor
 <h2>Union Groups</h2>
-\include working_with_groups_ex04.py
-<a href="../../examples/GEOM/working_with_groups_ex04.py">Download this script</a>
+\tui_script{working_with_groups_ex04.py}
 
 <br>
 \anchor tui_intersect_groups_anchor
 <h2>Intersect Groups</h2>
-\include working_with_groups_ex05.py
-<a href="../../examples/GEOM/working_with_groups_ex05.py">Download this script</a>
+\tui_script{working_with_groups_ex05.py}
 
 <br>
 \anchor tui_cut_groups_anchor
 <h2>Cut Groups</h2>
-\include working_with_groups_ex06.py
-<a href="../../examples/GEOM/working_with_groups_ex06.py">Download this script</a>
+\tui_script{working_with_groups_ex06.py}
 
 */

@@ -22,6 +22,20 @@
 #include "DlgRef.h"
 
 //////////////////////////////////////////
+// DlgRef_1Check1Spin1Check
+//////////////////////////////////////////
+
+DlgRef_1Check1Spin1Check::DlgRef_1Check1Spin1Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_1Check1Spin1Check::~DlgRef_1Check1Spin1Check()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_1List1Spin1Btn
 //////////////////////////////////////////
 

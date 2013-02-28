@@ -4,7 +4,7 @@ import geompy
 import salome
 
 # create a box
-box = geompy.MakeBoxDXDYDZ(200, 200, 200)
+check_box = geompy.MakeBoxDXDYDZ(200, 200, 200)
 
 # build all possible propagation groups
 listChains = geompy.Propagate(check_box)

@@ -4,67 +4,54 @@
 
 \anchor tui_translation
 <br><h2>Translation</h2>
-\include transformation_operations_ex01.py
-<a href="../../examples/GEOM/transformation_operations_ex01.py">Download this script</a>
+\tui_script{transformation_operations_ex01.py}
 
 \anchor tui_rotation
 <br><h2>Rotation</h2>
-\include transformation_operations_ex02.py
-<a href="../../examples/GEOM/transformation_operations_ex02.py">Download this script</a>
+\tui_script{transformation_operations_ex02.py}
 
 \anchor tui_modify_location 
 <br><h2>Modify Location</h2>
-\include transformation_operations_ex03.py
-<a href="../../examples/GEOM/transformation_operations_ex03.py">Download this script</a>
+\tui_script{transformation_operations_ex03.py}
 
 \anchor tui_mirror
 <br><h2>Mirror Image</h2>
-\include transformation_operations_ex04.py
-<a href="../../examples/GEOM/transformation_operations_ex04.py">Download this script</a>
+\tui_script{transformation_operations_ex04.py}
 
 \anchor tui_scale
 <br><h2>Scale Transform</h2>
-\include transformation_operations_ex05.py
-<a href="../../examples/GEOM/transformation_operations_ex05.py">Download this script</a>
+\tui_script{transformation_operations_ex05.py}
 
 \anchor tui_offset 
 <br><h2>Offset Surface</h2>
-\include transformation_operations_ex06.py
-<a href="../../examples/GEOM/transformation_operations_ex06.py">Download this script</a>
+\tui_script{transformation_operations_ex06.py}
 
 \anchor tui_projection
 <br><h2>Projection</h2>
-\include transformation_operations_ex07.py
-<a href="../../examples/GEOM/transformation_operations_ex07.py">Download this script</a>
+\tui_script{transformation_operations_ex07.py}
 
 \anchor tui_multi_translation 
 <br><h2>Multi Translation</h2>
-\include transformation_operations_ex08.py
-<a href="../../examples/GEOM/transformation_operations_ex08.py">Download this script</a>
+\tui_script{transformation_operations_ex08.py}
 
 \anchor tui_multi_rotation
 <br><h2>Multi Rotation</h2>
-\include transformation_operations_ex09.py
-<a href="../../examples/GEOM/transformation_operations_ex09.py">Download this script</a>
+\tui_script{transformation_operations_ex09.py}
 
 \anchor tui_fillet2d
 <br><h2>Fillet 2D</h2>
-\include transformation_operations_ex10.py
-<a href="../../examples/GEOM/transformation_operations_ex10.py">Download this script</a>
+\tui_script{transformation_operations_ex10.py}
 
 \anchor tui_fillet1d
 <br><h2>Fillet 1D</h2>
-\include transformation_operations_ex11.py
-<a href="../../examples/GEOM/transformation_operations_ex11.py">Download this script</a>
+\tui_script{transformation_operations_ex11.py}
 
 \anchor tui_fillet
 <br><h2>Fillet</h2>
-\include transformation_operations_ex12.py
-<a href="../../examples/GEOM/transformation_operations_ex12.py">Download this script</a>
+\tui_script{transformation_operations_ex12.py}
 
 \anchor tui_chamfer
 <br><h2>Chamfer</h2>
-\include transformation_operations_ex13.py
-<a href="../../examples/GEOM/transformation_operations_ex13.py">Download this script</a>
+\tui_script{transformation_operations_ex13.py}
 
 */

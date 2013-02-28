@@ -1,7 +1,6 @@
 /*!
 
 \page tui_bounding_box_page Bounding Box
-\include bounding_box.py
-<a href="../../examples/GEOM/bounding_box.py">Download this script</a>
+\tui_script{bounding_box.py}
 
 */

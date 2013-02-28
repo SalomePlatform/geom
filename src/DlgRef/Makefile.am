@@ -34,6 +34,7 @@ MOC_FILES =			\
 	DlgRef_moc.cxx
 
 UIC_FILES =					\
+	ui_DlgRef_1Check1Spin1Check_QTD.h	\
 	ui_DlgRef_1List1Spin1Btn_QTD.h		\
 	ui_DlgRef_1Sel1Check1List_QTD.h		\
 	ui_DlgRef_1Sel1Check1Sel_QTD.h		\

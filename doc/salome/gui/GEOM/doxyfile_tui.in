@@ -41,7 +41,7 @@ WARNINGS          = YES
 INPUT             = @srcdir@/input		  
 FILE_PATTERNS     = tui_*.doc
 IMAGE_PATH        = @srcdir@/images
-EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG
+EXAMPLE_PATH      = @top_srcdir@/doc/salome/examples @top_srcdir@/src/GEOM_SWIG
 
 #---------------------------------------------------------------------------
 #HTML related options
@@ -71,3 +71,8 @@ GENERATE_RTF      = NO
 #---------------------------------------------------------------------------
 GENERATE_TAGFILE  = tui_examples.tag
 SEARCHENGINE      = YES
+
+#---------------------------------------------------------------------------
+#Custom commands
+#---------------------------------------------------------------------------
+ALIASES += tui_script{1}="\include \1 <a href=\"../../examples/GEOM/\1\">Download this script</a>"

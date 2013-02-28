@@ -1,7 +1,6 @@
 /*!
 
 \page tui_check_self_intersections_page Detect Self-intersections
-\include check_self_intersections.py
-<a href="../../examples/GEOM/check_self_intersections.py">Download this script</a>
+\tui_script{check_self_intersections.py}
 
 */

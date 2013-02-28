@@ -4,37 +4,30 @@
 
 \anchor tui_creation_box
 <br><h2>Creation of a Box</h2>
-\include primitives_ex01.py
-<a href="../../examples/GEOM/primitives_ex01.py">Download this script</a>
+\tui_script{primitives_ex01.py}
 
 \anchor tui_creation_cylinder
 <br><h2>Creation of a Cylinder</h2>
-\include primitives_ex02.py
-<a href="../../examples/GEOM/primitives_ex02.py">Download this script</a>
+\tui_script{primitives_ex02.py}
 
 \anchor tui_creation_sphere
 <br><h2>Creation of a Sphere</h2>
-\include primitives_ex03.py
-<a href="../../examples/GEOM/primitives_ex03.py">Download this script</a>
+\tui_script{primitives_ex03.py}
 
 \anchor tui_creation_torus
 <br><h2>Creation of a Torus</h2>
-\include primitives_ex04.py
-<a href="../../examples/GEOM/primitives_ex04.py">Download this script</a>
+\tui_script{primitives_ex04.py}
 
 \anchor tui_creation_cone
 <br><h2>Creation of a Cone</h2>
-\include primitives_ex05.py
-<a href="../../examples/GEOM/primitives_ex05.py">Download this script</a>
+\tui_script{primitives_ex05.py}
 
 \anchor tui_creation_disk
 <br><h2>Creation of a Disk</h2>
-\include primitives_ex06.py
-<a href="../../examples/GEOM/primitives_ex06.py">Download this script</a>
+\tui_script{primitives_ex06.py}
 
 \anchor tui_creation_squareface
 <br><h2>Creation of a Rectangle</h2>
-\include primitives_ex07.py
-<a href="../../examples/GEOM/primitives_ex07.py">Download this script</a>
+\tui_script{primitives_ex07.py}
 
 */

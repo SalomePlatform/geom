@@ -97,12 +97,6 @@
 
 #include "utilities.h"
 
-//////////////////////////////////////////////////////////////////////////
-// Uncomment below macro to perform gluing in the end of MakePipe operation
-// as fix of issue 0020207.
-//////////////////////////////////////////////////////////////////////////
-//#define GLUE_0020207
-
 
 //=======================================================================
 //function : GetID
@@ -2483,23 +2477,22 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
       Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
 
-  // Glue (for bug 0020207)
-  // No gluing is needed as the bug 0020207 is fixed in OCCT.
-#ifdef GLUE_0020207
-  TopExp_Explorer anExpV (aShape, TopAbs_VERTEX);
-  if (anExpV.More()) {
-    Standard_Real aVertMaxTol = -RealLast();
-    for (; anExpV.More(); anExpV.Next()) {
-      TopoDS_Vertex aVertex = TopoDS::Vertex(anExpV.Current());
-      Standard_Real aTol = BRep_Tool::Tolerance(aVertex);
-      if (aTol > aVertMaxTol)
-        aVertMaxTol = aTol;
+  if (aType != PIPE_BASE_PATH &&
+      aType != PIPE_SHELLS_WITHOUT_PATH) {
+    TopExp_Explorer anExpV (aShape, TopAbs_VERTEX);
+    if (anExpV.More()) {
+      Standard_Real aVertMaxTol = -RealLast();
+      for (; anExpV.More(); anExpV.Next()) {
+        TopoDS_Vertex aVertex = TopoDS::Vertex(anExpV.Current());
+        Standard_Real aTol = BRep_Tool::Tolerance(aVertex);
+        if (aTol > aVertMaxTol)
+          aVertMaxTol = aTol;
+      }
+      aVertMaxTol += Precision::Confusion();
+      aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, aVertMaxTol, Standard_True);
+      //aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, Precision::Confusion(), Standard_True);
     }
-    aVertMaxTol += Precision::Confusion();
-    aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, aVertMaxTol, Standard_True);
-    //aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, Precision::Confusion(), Standard_True);
   }
-#endif
 
   TopoDS_Shape aRes = GEOMUtils::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);

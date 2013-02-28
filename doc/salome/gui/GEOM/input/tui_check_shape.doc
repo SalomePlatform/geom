@@ -1,7 +1,6 @@
 /*!
 
 \page tui_check_shape_page Check Shape
-\include check_shape.py
-<a href="../../examples/GEOM/check_shape.py">Download this script</a>
+\tui_script{check_shape.py}
 
 */

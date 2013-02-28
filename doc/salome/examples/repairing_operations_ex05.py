@@ -2,6 +2,7 @@
 
 import geompy
 import salome
+import GEOM
 gg = salome.ImportComponentGUI("GEOM")
 
 # create a vertex and a vector
@@ -21,20 +22,19 @@ cone = geompy.MakeCone(p1, v, 70, 0, 80)
 cut = geompy.MakeCut(cone, cylinder)
 
 # get faces as sub-shapes
-faces = []
 faces = geompy.SubShapeAllSortedCentres(cut, geompy.ShapeType["FACE"])
 f_2 = geompy.GetSubShapeID(cut, faces[2])
 
 # remove one face from the shape
 cut_without_f_2 = geompy.SuppressFaces(cut, [f_2])
 
-# get wires as sub-shapes
-wires = []
-wires = geompy.SubShapeAllSortedCentres(cut_without_f_2, geompy.ShapeType["WIRE"])
-w_0 = geompy.GetSubShapeID(cut_without_f_2, wires[0])
+# get edges as sub-shapes
+edges = geompy.SubShapeAllSortedCentres(faces[2], geompy.ShapeType["EDGE"])
+edge  = geompy.GetInPlace(cut_without_f_2, edges[0], True)
+e_2 = geompy.GetSubShapeID(cut_without_f_2, edge)
 
-# suppress the selected wire
-result = geompy.SuppressHoles(cut_without_f_2, [w_0])
+# suppress a hole using the selected edge
+result = geompy.SuppressHoles(cut_without_f_2, [e_2])
 
 # add objects in the study
 id_cut = geompy.addToStudy(cut, "Cut")

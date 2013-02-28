@@ -102,6 +102,8 @@
 
 #define GEOM_PIPE_PATH 48
 
+#define GEOM_THICKENING 49
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -164,6 +166,8 @@
 
 #define OFFSET_SHAPE      1
 #define OFFSET_SHAPE_COPY 2
+#define OFFSET_THICKENING 3
+#define OFFSET_THICKENING_COPY 4
 
 #define PROJECTION_COPY 1
 

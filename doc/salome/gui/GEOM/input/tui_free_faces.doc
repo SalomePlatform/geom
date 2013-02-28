@@ -1,7 +1,6 @@
 /*!
 
 \page tui_free_faces_page Check Free Faces
-\include free_faces.py
-<a href="../../examples/GEOM/free_faces.py">Download this script</a>
+\tui_script{free_faces.py}
 
 */

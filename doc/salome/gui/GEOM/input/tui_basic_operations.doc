@@ -4,17 +4,14 @@
 
 \anchor tui_partition
 <br><h2>Partition</h2>
-\include basic_operations_ex01.py
-<a href="../../examples/GEOM/basic_operations_ex01.py">Download this script</a>
+\tui_script{basic_operations_ex01.py}
 
 \anchor tui_archimede
 <br><h2>Archimede</h2>
-\include basic_operations_ex02.py
-<a href="../../examples/GEOM/basic_operations_ex02.py">Download this script</a>
+\tui_script{basic_operations_ex02.py}
 
 \anchor tui_restore_prs_params
 <br><h2>Restore presentation parameters and sub-shapes</h2>
-\include basic_operations_ex03.py
-<a href="../../examples/GEOM/basic_operations_ex03.py">Download this script</a>
+\tui_script{basic_operations_ex03.py}
 
 */

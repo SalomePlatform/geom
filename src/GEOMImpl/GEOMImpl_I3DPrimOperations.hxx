@@ -68,7 +68,8 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismVecH (Handle(GEOM_Object) theBase,
                                                      Handle(GEOM_Object) theVec,
-                                                     double theH, double theScaleFactor = -1.0);
+                                                     double theH, 
+                                                     double theScaleFactor = -1.0);
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismVecH2Ways (Handle(GEOM_Object) theBase,
                                                           Handle(GEOM_Object) theVec, double theH);
@@ -137,6 +138,10 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakePipeBiNormalAlongVector (Handle(GEOM_Object) theBase,
                                                                    Handle(GEOM_Object) thePath,
                                                                    Handle(GEOM_Object) theVec);
+  
+  Standard_EXPORT Handle(GEOM_Object) MakeThickening (Handle(GEOM_Object) theObject, 
+                                                      double theOffset,
+                                                      bool isCopy);
 
   Standard_EXPORT Handle(GEOM_Object) RestorePath (Handle(GEOM_Object) theShape,
                                                    Handle(GEOM_Object) theBase1,

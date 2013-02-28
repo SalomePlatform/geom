@@ -3,11 +3,9 @@
 \page tui_building_by_blocks_page Building by Blocks
 
 <br><h2>Quadrangle Face</h2>
-\include building_by_blocks_ex01.py
-<a href="../../examples/GEOM/building_by_blocks_ex01.py">Download this script</a>
+\tui_script{building_by_blocks_ex01.py}
 
 <br><h2>Hexagonal Solid</h2>
-\include building_by_blocks_ex02.py
-<a href="../../examples/GEOM/building_by_blocks_ex02.py">Download this script</a>
+\tui_script{building_by_blocks_ex02.py}
 
 */

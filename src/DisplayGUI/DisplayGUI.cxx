@@ -204,7 +204,7 @@ void DisplayGUI::EraseAll()
       SUIT_ViewManager* vman = vw->getViewManager();
       if ( vman->getType() == OCCViewer_Viewer::Type() || 
            vman->getType() == SVTK_Viewer::Type() ) {
-        GEOM_Displayer( appStudy ).EraseAll();
+        GEOM_Displayer( appStudy ).EraseAll(true);
       }
     }
   }
@@ -406,59 +406,29 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 {
   SUIT_OverrideCursor();
 
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return;
+
   if ( !viewWindow ) 
-    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
-  if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
-    SVTK_View* aView = ((SVTK_ViewWindow*)viewWindow)->getView();
-    aView->SetDisplayMode( mode );
-    GeometryGUI::Modified();
-  } 
-  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
-    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
-    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
+    viewWindow = app->desktop()->activeWindow();
 
-    AIS_DisplayMode newmode;
-    switch (mode) {
-    case 0:
-      newmode = AIS_WireFrame;
-      break;
-    case 1:
-      newmode = AIS_Shaded;
-      break;
-    case 2:
-      newmode = AIS_DisplayMode( GEOM_AISShape::ShadingWithEdges );
-      break;
-    case 3:
-      newmode = AIS_DisplayMode( GEOM_AISShape::TexturedShape );
-      break;
-    default:
-      break;
-    }
+  SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  if ( !aStudy ) return;
 
-    AIS_ListOfInteractive List;
-    ic->DisplayedObjects( List );
-    AIS_ListOfInteractive List1;
-    ic->ObjectsInCollector( List1 );
-    List.Append( List1 );
-    
-    AIS_ListIteratorOfListOfInteractive ite( List );
-    while( ite.More() ) {
-      if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
-        if(aSh->isTopLevel()) {
-           aSh->setPrevDisplayMode(Standard_Integer( newmode ));
-        }
-        else {
-      	   ic->SetDisplayMode( aSh, Standard_Integer( newmode ),true );
-        }
-      }
-      ite.Next();
-    }
-      
-    ic->SetDisplayMode( newmode, Standard_False );
+  GEOM_Displayer displayer( aStudy );
 
-    GeometryGUI::Modified();
+  int mgrId = viewWindow->getViewManager()->getGlobalId();
+
+  SALOME_ListIO anIOlst;
+  displayer.GetActiveView()->GetVisible( anIOlst );
+
+  for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    aStudy->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::DisplayMode ), mode );
+    displayer.Redisplay( io, false );
   }
+  displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
 
 //=====================================================================================
@@ -469,46 +439,31 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
 {
   SUIT_OverrideCursor();
 
-  if ( !viewWindow ) 
-    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
-  if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
-    viewWindow->setProperty( "VectorsMode", mode );
-    SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
-    vtkActorCollection* allActors = vw->getRenderer()->GetActors();
-    allActors->InitTraversal();
-    while (vtkActor* actor = allActors->GetNextActor()) {
-      if (actor->GetVisibility()) { // only for visible actors
-        GEOM_Actor* aGeomActor = 0;
-        if ( actor->IsA( "GEOM_Actor" ) ) {
-          aGeomActor = GEOM_Actor::SafeDownCast( actor );
-          if ( aGeomActor )
-            aGeomActor->SetVectorMode( mode );
-        }
-      }
-    }
-    GeometryGUI::Modified();
-  }
-  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
-    viewWindow->setProperty( "VectorsMode", mode );
-    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
-    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-    AIS_ListOfInteractive List;
-    ic->DisplayedObjects( List );
-    AIS_ListOfInteractive List1;
-    ic->ObjectsInCollector( List1 );
-    List.Append( List1 );
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return;
 
-    AIS_ListIteratorOfListOfInteractive ite( List );
-    while( ite.More() ) {
-      if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-        Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
-        aSh->SetDisplayVectors(mode);
-        ic->RecomputePrsOnly(ite.Value());
-      }
-      ite.Next();
-    }
-    GeometryGUI::Modified();
+  SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  if ( !aStudy ) return;
+
+  if ( !viewWindow ) 
+    viewWindow = app->desktop()->activeWindow();
+
+  GEOM_Displayer displayer( aStudy );
+
+  viewWindow->setProperty( "VectorsMode", mode );
+
+  int aMgrId = viewWindow->getViewManager()->getGlobalId();
+
+  SALOME_ListIO anIOlst;
+  displayer.GetActiveView()->GetVisible( anIOlst );
+
+  for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    aStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::EdgesDirection ), mode );
+    displayer.Redisplay( io, false );
   }
+  displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
 
 //=====================================================================================
@@ -538,103 +493,34 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
 
-  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-  
-  if(!aStudy)
-    return;
+  SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  if ( !aStudy ) return;
 
   SUIT_OverrideCursor();
 
-  SALOME_ListIO aList;
+  SALOME_ListIO selected;
+  aSelMgr->selectedObjects( selected );
+  if ( selected.IsEmpty() ) return;
 
-  if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
-    SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
-    SVTK_View* aView = vw->getView();
-    int mgrId = viewWindow->getViewManager()->getGlobalId();
-    bool vectorMode = false;
+  GEOM_Displayer displayer( aStudy );
 
-    aSelMgr->selectedObjects( aList );
-    SALOME_ListIteratorOfListIO It( aList );
+  int mgrId = viewWindow->getViewManager()->getGlobalId();
 
-    for( ;It.More(); It.Next() ) {
-      SVTK_Viewer* stvkViewer = dynamic_cast<SVTK_Viewer*>(vw->getViewManager()->getViewModel());
-      SVTK_Prs* vtkPrs =
-        stvkViewer ? dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( It.Value()->getEntry() ) ) : 0;
-      if ( vtkPrs && !vtkPrs->IsNull() ) {
-	if (mode == 0 )
-          aView->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
-	else if ( mode == 1 )
-          aView->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
-	else if ( mode == 2 )
-	  aView->ChangeRepresentationToSurfaceWithEdges( vtkPrs->GetObjects() );
-	else if ( mode == 4 ) {
-          vtkActorCollection* anActors = vtkPrs->GetObjects();
-          anActors->InitTraversal();
-          while (vtkActor* anAct = anActors->GetNextActor()) {
-            GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(anAct);
-            vectorMode = !aGeomActor->GetVectorMode();
-            aGeomActor->SetVectorMode(vectorMode);
-          }
-        }
-	if(mode == 0 || mode == 1 || mode == 2) {
-	  aStudy->setObjectProperty(mgrId,It.Value()->getEntry(),GEOM::propertyName( GEOM::DisplayMode ), mode);
-	}
-	else if (mode == 4) {
-	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),GEOM::propertyName( GEOM::EdgesDirection ), vectorMode);	
-	}
-      }
+  QVariant v = aStudy->getObjectProperty( mgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::EdgesDirection ), QVariant() );
+  bool vectorMode =  v.isValid() ? !v.toBool() : false;
+
+  for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    if ( mode == 0 || mode == 1 || mode == 2 || mode == 3 ) {
+      aStudy->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::DisplayMode ), mode );
     }
-    aView->Repaint();
-    GeometryGUI::Modified();
-  }
-  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
-    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
-    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-
-    aSelMgr->selectedObjects( aList );
-    SALOME_ListIteratorOfListIO It( aList );
-    int mgrId = viewWindow->getViewManager()->getGlobalId();
-    bool vectorMode = 0;
-
-    for( ;It.More(); It.Next() ) {
-      SOCC_Viewer* soccViewer = (SOCC_Viewer*)(viewWindow->getViewManager()->getViewModel());
-      SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( soccViewer->CreatePrs( It.Value()->getEntry() ) );
-      if ( occPrs && !occPrs->IsNull() ) {
-        AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
-        AIS_ListIteratorOfListOfInteractive interIter( shapes );
-        for ( ; interIter.More(); interIter.Next() ) {
-          Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
-          if ( !aSh.IsNull() ) {
-            if(!aSh->isTopLevel()) {
-	            if ( mode == 0 )
-                ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
-	            else if ( mode == 1 )
-                ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
-	            else if ( mode == 2 )
-	              ic->SetDisplayMode( interIter.Value(), GEOM_AISShape::ShadingWithEdges, false );
-	            else if ( mode == 3 )
-                ic->SetDisplayMode( interIter.Value(), AIS_ExactHLR, false );
-            } else {
-              aSh->setPrevDisplayMode(mode);
-            }
-	        if (mode == 4 ) {	    
-              vectorMode = !aSh->isShowVectors();      
-              aSh->SetDisplayVectors(vectorMode);
-              ic->RecomputePrsOnly(interIter.Value());
-            }
-          }
-        }
-	if(mode == 0 || mode == 1 || mode == 2 || mode == 3) {
-	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),GEOM::propertyName( GEOM::DisplayMode ), mode);
-	}
-	else if (mode == 4) {
-	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),GEOM::propertyName( GEOM::EdgesDirection ), vectorMode);
-	}
-      }
+    else if ( mode == 4 ) {
+      aStudy->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::EdgesDirection ), vectorMode );
     }
-    ic->UpdateCurrentViewer();
-    GeometryGUI::Modified();
+    displayer.Redisplay( io, false );
   }
+  displayer.UpdateViewer();
+  GeometryGUI::Modified();
 }
 
 //=====================================================================================

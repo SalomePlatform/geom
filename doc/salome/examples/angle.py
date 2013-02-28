@@ -53,8 +53,11 @@ pnt1 = geompy.MakeVertex(0, 0, 0)
 pnt2 = geompy.MakeVertex(10, 0, 0)
 pnt3 = geompy.MakeVertex(20, 10, 0)
 arc  = geompy.MakeArc(pnt1, pnt2, pnt3)
-Angle = geompy.GetAngle(OX, arc)
-
-if (math.fabs(Angle + 1.0) > 1e-6 or geompy.MeasuOp.IsDone()):
-    print "Error. Angle must not be computed on curvilinear edges"
+try:
+    Angle = geompy.GetAngle(OX, arc)
     pass
+except:
+    # It is a correct case, because GetAngle() must not be computed on curvilinear edges.
+    pass
+
+assert (not geompy.MeasuOp.IsDone() ), 'Angle must not be computed on curvilinear edges.'

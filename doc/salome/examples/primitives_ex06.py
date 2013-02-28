@@ -31,5 +31,5 @@ id_disk3  = geompy.addToStudy(disk3,"Disk3")
 # display disks
 gg.createAndDisplayGO(id_vxy)
 gg.createAndDisplayGO(id_disk1)
-gg.createAndDisplayGO(id_diks2)
-gg.createAndDisplayGO(id_diks3)
+gg.createAndDisplayGO(id_disk2)
+gg.createAndDisplayGO(id_disk3)

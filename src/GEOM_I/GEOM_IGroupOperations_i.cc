@@ -99,6 +99,9 @@ void GEOM_IGroupOperations_i::AddObject(GEOM::GEOM_Object_ptr theGroup, CORBA::L
   if (aGroupRef.IsNull()) return;
 
   GetOperations()->AddObject(aGroupRef, theSubShapeId);
+
+  // Update GUI.
+  UpdateGUIForObject(theGroup);
 }
 
 //=============================================================================
@@ -116,6 +119,9 @@ void GEOM_IGroupOperations_i::RemoveObject(GEOM::GEOM_Object_ptr theGroup, CORBA
   if (aGroupRef.IsNull()) return;
 
   GetOperations()->RemoveObject(aGroupRef, theSubShapeId);
+
+  // Update GUI.
+  UpdateGUIForObject(theGroup);
 }
 
 //=============================================================================

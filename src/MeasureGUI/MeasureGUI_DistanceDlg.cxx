@@ -36,6 +36,7 @@
 #include <SUIT_ViewWindow.h>
 #include <SUIT_ViewManager.h>
 #include <SUIT_OverrideCursor.h>
+#include <SUIT_MessageBox.h>
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
 #include <SalomeApp_Tools.h>
@@ -433,9 +434,37 @@ bool MeasureGUI_DistanceDlg::execute (ObjectList& objects)
   int nbSols = anOper->ClosestPoints(myObj1, myObj2, aDbls);
 
   if (anOper->IsDone()) {
-    for (int i = 0; i < nbSols; i++) {
-      GEOM::GEOM_Object_var anObj1 = aBasicOper->MakePointXYZ(aDbls[i*6 + 0], aDbls[i*6 + 1], aDbls[i*6 + 2]);
-      GEOM::GEOM_Object_var anObj2 = aBasicOper->MakePointXYZ(aDbls[i*6 + 3], aDbls[i*6 + 4], aDbls[i*6 + 5]);
+    bool doPublishAll = true;
+    if (nbSols > 1) {
+      QMessageBox::StandardButton anAnswer =
+        SUIT_MessageBox::question(this, tr("GEOM_MINDIST_PUBLISH_TITLE"),
+                                  tr("GEOM_MINDIST_PUBLISH_TEXT"),
+                                  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+                                  QMessageBox::No);
+      if (anAnswer == QMessageBox::No)
+        doPublishAll = false;
+      else if (anAnswer != QMessageBox::Yes)
+        return true;
+    }
+    if (doPublishAll) {
+      for (int i = 0; i < nbSols; i++) {
+        GEOM::GEOM_Object_var anObj1 =
+          aBasicOper->MakePointXYZ(aDbls[i*6 + 0], aDbls[i*6 + 1], aDbls[i*6 + 2]);
+        GEOM::GEOM_Object_var anObj2 =
+          aBasicOper->MakePointXYZ(aDbls[i*6 + 3], aDbls[i*6 + 4], aDbls[i*6 + 5]);
+
+        if (!anObj1->_is_nil() && !anObj2->_is_nil()) {
+          objects.push_back(anObj1._retn());
+          objects.push_back(anObj2._retn());
+        }
+      }
+    }
+    else {
+      int i = myGrp->ComboBox1->currentIndex();
+      GEOM::GEOM_Object_var anObj1 =
+        aBasicOper->MakePointXYZ(aDbls[i*6 + 0], aDbls[i*6 + 1], aDbls[i*6 + 2]);
+      GEOM::GEOM_Object_var anObj2 =
+        aBasicOper->MakePointXYZ(aDbls[i*6 + 3], aDbls[i*6 + 4], aDbls[i*6 + 5]);
 
       if (!anObj1->_is_nil() && !anObj2->_is_nil()) {
         objects.push_back(anObj1._retn());

@@ -1,7 +1,6 @@
 /*!
 
 \page tui_sketcher_page 2D Sketcher
-\include sketcher.py
-<a href="../../examples/GEOM/sketcher.py">Download this script</a>
+\tui_script{sketcher.py}
 
 */

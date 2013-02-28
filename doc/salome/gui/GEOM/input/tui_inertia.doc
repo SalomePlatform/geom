@@ -1,7 +1,6 @@
 /*!
 
 \page tui_inertia_page Inertia
-\include inertia.py
-<a href="../../examples/GEOM/inertia.py">Download this script</a>
+\tui_script{inertia.py}
 
 */

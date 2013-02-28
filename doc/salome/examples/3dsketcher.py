@@ -5,7 +5,7 @@ import salome
 gg = salome.ImportComponentGUI("GEOM")
 
 # Create a 3D sketcher (wire) on the given points coordinates
-sketcher1 = geompy.Make3DSketcher([ 0,0,0, 50,50,50, 0,50,0, 50,0,50, 10,20,100, 0,0,0 ])
+sketcher1 = geompy.Make3DSketcher([ 0,0,0, 50,50,50, 0,50,0, 50,0,25, 10,20,100, 0,0,0 ])
 
 # add object in the study
 id_sketcher1 = geompy.addToStudy(sketcher1, "Sketcher1")
@@ -24,7 +24,7 @@ sk = geompy.Sketcher3D()
 sk.addPointsAbsolute(1,2,3, 7,0,0, 10,-3.5,-11)
 
 # add one segment, defined by two angles in "OXY" coordinate system and length
-sk.addPointAnglesLength("OXY", 45, 0, 100)
+sk.addPointRadiusAnglesRelative(45, 0, 100, "OXY")
 
 # add three points with relative coordinates
 # three segments will be added by this command

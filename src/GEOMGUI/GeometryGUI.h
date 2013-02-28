@@ -135,6 +135,14 @@ public:
 
   QAction*                    getAction(const int id);
 
+  virtual void                message( const QString& msg);
+  static void                 ClearShapeBuffer( GEOM::GEOM_Object_ptr );
+  static GEOM::GEOM_Object_ptr
+                              GetObjectFromIOR( const QString& IOR );
+
+  static QString              GetIORFromObject( GEOM::GEOM_Object_ptr object );
+
+
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
   virtual bool                activateModule( SUIT_Study* );

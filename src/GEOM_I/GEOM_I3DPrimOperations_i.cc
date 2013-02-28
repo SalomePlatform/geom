@@ -30,6 +30,8 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#define SUBSHAPE_ERROR "Sub shape cannot be transformed"
+
 //=============================================================================
 /*!
  *   constructor:
@@ -1124,6 +1126,56 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
     return aGEOMObject._retn();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeThickening
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThickening
+                 (GEOM::GEOM_Object_ptr theObject,
+                  CORBA::Double theOffset,
+                  CORBA::Boolean doCopy)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
+
+  //check if the object is a sub-shape
+  if (!theObject->IsMainShape() && !doCopy) {
+    GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
+    return aGEOMObject._retn();
+  }
+  
+  if (!doCopy)
+    aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
+
+  //Get the basic object
+  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
+  
+  //Create the thickened shape
+  if (doCopy)
+  {
+    Handle(GEOM_Object) anObject = GetOperations()->MakeThickening(
+      aBasicObject, theOffset, doCopy);
+    if (!GetOperations()->IsDone() || anObject.IsNull())
+      return aGEOMObject._retn();
+    
+    return GetObject(anObject);
+  }
+  else
+  {
+    GetOperations()->MakeThickening(aBasicObject, theOffset, doCopy);
+    
+    // Update GUI.
+    UpdateGUIForObject(theObject);
+    
+    return aGEOMObject._retn();
+  }
 }
 
 //=============================================================================

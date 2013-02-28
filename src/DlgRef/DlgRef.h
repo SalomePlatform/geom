@@ -33,6 +33,23 @@
 #endif
 
 //////////////////////////////////////////
+// DlgRef_1Check1Spin1Check
+//////////////////////////////////////////
+
+#include "ui_DlgRef_1Check1Spin1Check_QTD.h"
+
+class DLGREF_EXPORT DlgRef_1Check1Spin1Check : public QWidget, 
+                                            public Ui::DlgRef_1Check1Spin1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_1Check1Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_1Check1Spin1Check();
+};
+
+
+//////////////////////////////////////////
 // DlgRef_1List1Spin1Btn
 //////////////////////////////////////////
 

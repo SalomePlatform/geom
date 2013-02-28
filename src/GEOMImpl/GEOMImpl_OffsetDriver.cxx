@@ -77,20 +77,20 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
-
-  if (aType == OFFSET_SHAPE || aType == OFFSET_SHAPE_COPY) {
-    Handle(GEOM_Function) aRefShape = aCI.GetShape();
-    TopoDS_Shape aShapeBase = aRefShape->GetValue();
-    Standard_Real anOffset = aCI.GetValue();
-    Standard_Real aTol = Precision::Confusion();
-
-    if (Abs(anOffset) < aTol) {
+  
+  Handle(GEOM_Function) aRefShape = aCI.GetShape();
+  TopoDS_Shape aShapeBase = aRefShape->GetValue();
+  Standard_Real anOffset = aCI.GetValue();
+  Standard_Real aTol = Precision::Confusion();
+  
+  if (Abs(anOffset) < aTol) {
       TCollection_AsciiString aMsg ("Absolute value of offset can not be less than the tolerance value (");
       aMsg += TCollection_AsciiString(aTol);
       aMsg += ")";
       StdFail_NotDone::Raise(aMsg.ToCString());
-    }
+  }
 
+  if (aType == OFFSET_SHAPE || aType == OFFSET_SHAPE_COPY) {  
     BRepOffsetAPI_MakeOffsetShape MO (aShapeBase,
                                       aCI.GetValue(),
                                       aTol);
@@ -114,7 +114,17 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(TFunction_Logbook& log) const
     else {
       StdFail_NotDone::Raise("Offset construction failed");
     }
-  } else {
+  } 
+  else if (aType == OFFSET_THICKENING || aType == OFFSET_THICKENING_COPY)
+  {
+    BRepOffset_MakeOffset myOffsetShape(aShapeBase, anOffset, aTol, BRepOffset_Skin,
+                                        Standard_False, Standard_False, GeomAbs_Intersection, Standard_True);
+  
+    if (!myOffsetShape.IsDone())
+    {
+      StdFail_NotDone::Raise("Thickening construction failed");
+    }
+    aShape = myOffsetShape.Shape();
   }
 
   if (aShape.IsNull()) return 0;

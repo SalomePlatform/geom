@@ -1,7 +1,6 @@
 /*!
 
 \page tui_angle_page Angle
-\include angle.py
-<a href="../../examples/GEOM/angle.py">Download this script</a>
+\tui_script{angle.py}
 
 */

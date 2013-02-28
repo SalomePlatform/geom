@@ -1,7 +1,6 @@
 /*!
 
 \page tui_tolerance_page Tolerance
-\include tolerance.py
-<a href="../../examples/GEOM/tolerance.py">Download this script</a>
+\tui_script{tolerance.py}
 
 */

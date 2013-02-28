@@ -109,12 +109,19 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWi
   GroupDXDYDZ->TextLabel5->setText(tr("GEOM_SCALE_FACTOR"));
   GroupDXDYDZ->CheckBox1->setText(tr("GEOM_BOTHWAY"));
   GroupDXDYDZ->CheckBox2->setText(tr("GEOM_SCALE_PRISM"));
+  
+  GroupThickening = new DlgRef_1Check1Spin1Check(centralWidget());
+  GroupThickening->GroupBox1->setTitle("Thickening");
+  GroupThickening->checkButton1->setText("Add thickness (edges or wires only)");
+  GroupThickening->checkButton2->setText("Thicken towards outside");
+  GroupThickening->TextLabel1->setText("Thickness");
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
   layout->addWidget(GroupVecH);
   layout->addWidget(Group2Points);
   layout->addWidget(GroupDXDYDZ);
+  layout->addWidget(GroupThickening);
   /***************************************************************/
 
   setHelpFileName("create_extrusion_page.html");
@@ -145,6 +152,9 @@ void GenerationGUI_PrismDlg::Init()
   double aScaleFactor = 2.0;
   double aScaleStep = 0.5;
   double aScaleMin = Precision::Confusion() * 10.0;
+  
+  double aThickness = 10;
+  double aThicknessMin = Precision::Confusion() * 10.0;
 
   initSpinBox(GroupVecH->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
   GroupVecH->SpinBox_DX->setValue(100.0);
@@ -163,6 +173,9 @@ void GenerationGUI_PrismDlg::Init()
   GroupVecH->SpinBox_DY->setValue(aScaleFactor);
   Group2Points->SpinBox1->setValue(aScaleFactor);
   GroupDXDYDZ->SpinBox_SC->setValue(aScaleFactor);
+  
+  initSpinBox(GroupThickening->SpinBox_DX, aThicknessMin, COORD_MAX, step, "length_precision" );
+  GroupThickening->SpinBox_DX->setValue(aThickness);
 
   // hide not used controls
   Group2Points->TextLabel5->hide();
@@ -190,6 +203,19 @@ void GenerationGUI_PrismDlg::Init()
   Group2Points->LineEdit3->setText("");
 
   GroupDXDYDZ->LineEdit1->setText("");
+  
+  GroupThickening->SpinBox_DX->hide();
+  GroupThickening->checkButton2->hide();
+  GroupThickening->TextLabel1->hide();
+  
+  GroupVecH->TextLabel4->hide();
+  GroupVecH->SpinBox_DY->hide();
+
+  Group2Points->TextLabel4->hide();
+  Group2Points->SpinBox1->hide();
+
+  GroupDXDYDZ->TextLabel5->hide();
+  GroupDXDYDZ->SpinBox_SC->hide();
 
   myBaseObjects.clear();
   myPoint1.nullify();
@@ -212,14 +238,14 @@ void GenerationGUI_PrismDlg::Init()
 
   connect(GroupVecH->CheckBox1,  SIGNAL(toggled(bool)), this, SLOT(onBothway()));
   connect(GroupVecH->CheckBox2,  SIGNAL(toggled(bool)), this, SLOT(onReverse()));
-  connect(GroupVecH->CheckBox3,  SIGNAL(toggled(bool)), this, SLOT(onScalePrism()));
+  connect(GroupVecH->CheckBox3,  SIGNAL(toggled(bool)), this, SLOT(onScalePrism(bool)));
   connect(GroupVecH->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   connect(Group2Points->PushButton1, SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
   connect(Group2Points->PushButton2, SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
   connect(Group2Points->PushButton3, SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
   connect(Group2Points->CheckBox1,   SIGNAL(toggled(bool)),   this, SLOT(onBothway()));
-  connect(Group2Points->CheckBox2,   SIGNAL(toggled(bool)),   this, SLOT(onScalePrism()));
+  connect(Group2Points->CheckBox2,   SIGNAL(toggled(bool)),   this, SLOT(onScalePrism(bool)));
   connect(Group2Points->SpinBox1,    SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   connect(GroupDXDYDZ->PushButton1, SIGNAL(clicked()),            this, SLOT(SetEditCurrentArgument()));
@@ -228,7 +254,11 @@ void GenerationGUI_PrismDlg::Init()
   connect(GroupDXDYDZ->SpinBox_DZ,  SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupDXDYDZ->SpinBox_SC,  SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupDXDYDZ->CheckBox1,   SIGNAL(toggled(bool)),        this, SLOT(onBothway()));
-  connect(GroupDXDYDZ->CheckBox2,   SIGNAL(toggled(bool)),        this, SLOT(onScalePrism()));
+  connect(GroupDXDYDZ->CheckBox2,   SIGNAL(toggled(bool)),        this, SLOT(onScalePrism(bool)));
+  
+  connect(GroupThickening->SpinBox_DX,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupThickening->checkButton1, SIGNAL(toggled(bool)),        this, SLOT(onAddThickening(bool)));
+  connect(GroupThickening->checkButton2, SIGNAL(toggled(bool)),        this, SLOT(onChangeDirection(bool)));
 
   initName(tr("GEOM_EXTRUSION"));
 
@@ -335,11 +365,19 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
        myEditCurrentArgument == Group2Points->LineEdit1 ||
        myEditCurrentArgument == GroupDXDYDZ->LineEdit1 ) {
     myBaseObjects.clear();
+    GroupThickening->checkButton1->setEnabled(true);
+  
     QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_SHAPE, -1 );
     for ( int i = 0; i < objects.count(); i++ ) {
       GEOM::shape_type stype = objects[i]->GetMaxShapeType();
       if ( stype < GEOM::SHELL || stype > GEOM::VERTEX )
         continue;
+      if ( stype > GEOM::EDGE || stype < GEOM::WIRE )
+      {
+        GroupThickening->checkButton1->setChecked(false);
+        GroupThickening->checkButton1->setEnabled(false);
+      }
+        
       myBaseObjects << objects[i];
     }
     if ( !myBaseObjects.isEmpty() ) {
@@ -561,17 +599,50 @@ void GenerationGUI_PrismDlg::onBothway()
 // function : onScalePrism()
 // purpose  :
 //=================================================================================
-void GenerationGUI_PrismDlg::onScalePrism()
+void GenerationGUI_PrismDlg::onScalePrism(bool isChecked)
 {
-  GroupVecH->TextLabel4->setEnabled(GroupVecH->CheckBox3->isChecked());
-  GroupVecH->SpinBox_DY->setEnabled(GroupVecH->CheckBox3->isChecked());
+  GroupVecH->TextLabel4->setVisible(isChecked);
+  GroupVecH->SpinBox_DY->setVisible(isChecked);
 
-  Group2Points->TextLabel4->setEnabled(Group2Points->CheckBox2->isChecked());
-  Group2Points->SpinBox1->setEnabled(Group2Points->CheckBox2->isChecked());
+  Group2Points->TextLabel4->setVisible(isChecked);
+  Group2Points->SpinBox1->setVisible(isChecked);
 
-  GroupDXDYDZ->TextLabel5->setEnabled(GroupDXDYDZ->CheckBox2->isChecked());
-  GroupDXDYDZ->SpinBox_SC->setEnabled(GroupDXDYDZ->CheckBox2->isChecked());
+  GroupDXDYDZ->TextLabel5->setVisible(isChecked);
+  GroupDXDYDZ->SpinBox_SC->setVisible(isChecked);
+  
+  GroupVecH->TextLabel4->setEnabled(isChecked);
+  GroupVecH->SpinBox_DY->setEnabled(isChecked);
 
+  Group2Points->TextLabel4->setEnabled(isChecked);
+  Group2Points->SpinBox1->setEnabled(isChecked);
+
+  GroupDXDYDZ->TextLabel5->setEnabled(isChecked);
+  GroupDXDYDZ->SpinBox_SC->setEnabled(isChecked);
+
+  processPreview();
+}
+
+//=================================================================================
+// function : onAddThickening(bool)
+// purpose  :
+//=================================================================================
+void GenerationGUI_PrismDlg::onAddThickening(bool isChecked)
+{
+  GroupThickening->SpinBox_DX->setVisible(isChecked);
+  GroupThickening->checkButton2->setVisible(isChecked);
+  GroupThickening->TextLabel1->setVisible(isChecked);
+ 
+  updateGeometry();
+  resize(minimumSizeHint());
+  processPreview();
+}
+
+//=================================================================================
+// function : onChangeDirection(bool)
+// purpose  :
+//=================================================================================
+void GenerationGUI_PrismDlg::onChangeDirection(bool isChecked)
+{
   processPreview();
 }
 
@@ -585,6 +656,7 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+  GEOM::GEOM_I3DPrimOperations_var anotherOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
 
   for (int i = 0; i < myBaseObjects.count(); i++) {
     switch (getConstructorId()) {
@@ -641,7 +713,19 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
       }
       break;
     }
-
+    
+    if(GroupThickening->checkButton1->isChecked())
+    { 
+      double aThickness = 0.0;
+      
+      if(GroupThickening->checkButton2->isChecked() ^ GroupVecH->CheckBox2->isChecked()) // if "towards outside" XOR "reversed" is checked
+        aThickness = -1.0*(GroupThickening->SpinBox_DX->value());                        // change the offset sign to negative
+      else
+        aThickness = GroupThickening->SpinBox_DX->value();                          
+      
+      anObj = anotherOper->MakeThickening(anObj, aThickness, /*copy=*/false);    
+    }
+    
     if (!anObj->_is_nil())
       objects.push_back(anObj._retn());
   }

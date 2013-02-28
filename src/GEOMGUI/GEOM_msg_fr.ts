@@ -1071,8 +1071,24 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Min :</translation>
     </message>
     <message>
+        <source>GEOM_MINDIST_NAME</source>
+        <translation type="unfinished">MinDist</translation>
+    </message>
+    <message>
+        <source>GEOM_MINDIST_NO_SOL</source>
+        <translation type="unfinished">No solution found</translation>
+    </message>
+    <message>
         <source>GEOM_MINDIST_OBJ</source>
         <translation>Objets et résultats</translation>
+    </message>
+    <message>
+        <source>GEOM_MINDIST_PUBLISH_TITLE</source>
+        <translation type="unfinished">Multiple solutions found</translation>
+    </message>
+    <message>
+        <source>GEOM_MINDIST_PUBLISH_TEXT</source>
+        <translation type="unfinished">Do you want to publish in the study all found solutions? If No, only the currently selected solution will be published.</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_TITLE</source>

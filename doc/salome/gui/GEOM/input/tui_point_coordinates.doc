@@ -1,7 +1,6 @@
 /*!
 
 \page tui_point_coordinates_page Point Coordinates
-\include point_coordinates.py
-<a href="../../examples/GEOM/point_coordinates.py">Download this script</a>
+\tui_script{point_coordinates.py}
 
 */

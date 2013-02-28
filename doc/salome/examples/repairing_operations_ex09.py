@@ -1,9 +1,10 @@
 # Limit Tolerance
 
 import geompy
+import salome
 gg = salome.ImportComponentGUI("GEOM")
 
-# import initial topology
+# import initial topology with bad tolerances (more than 1e-07)
 shape1 = geompy.ImportBREP("my_shape_1.brep")
 shape2 = geompy.ImportBREP("my_shape_2.brep")
 

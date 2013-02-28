@@ -33,6 +33,7 @@
 class DlgRef_2Sel1Spin3Check1Spin;
 class DlgRef_3Sel2Check3Spin;
 class DlgRef_1Sel3Spin2Check1Spin;
+class DlgRef_1Check1Spin1Check;
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg
@@ -66,6 +67,7 @@ private:
   DlgRef_2Sel1Spin3Check1Spin*       GroupVecH;
   DlgRef_3Sel2Check3Spin*            Group2Points;
   DlgRef_1Sel3Spin2Check1Spin*       GroupDXDYDZ;
+  DlgRef_1Check1Spin1Check*          GroupThickening;
   
 private slots:
   void                               ClickOnOk();
@@ -78,7 +80,9 @@ private slots:
   void                               SetDoubleSpinBoxStep( double );
   void                               onReverse();
   void                               onBothway();
-  void                               onScalePrism();
+  void                               onScalePrism(bool);
+  void                               onAddThickening( bool );
+  void                               onChangeDirection( bool );
 };
 
 #endif // GENERATIONGUI_PRISMDLG_H

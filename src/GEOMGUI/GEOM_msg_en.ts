@@ -1080,11 +1080,19 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_NO_SOL</source>
-        <translation>No solution found</translation>
+        <translation type="unfinished">No solution found</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_OBJ</source>
         <translation>Objects And Results</translation>
+    </message>
+    <message>
+        <source>GEOM_MINDIST_PUBLISH_TITLE</source>
+        <translation type="unfinished">Multiple solutions found</translation>
+    </message>
+    <message>
+        <source>GEOM_MINDIST_PUBLISH_TEXT</source>
+        <translation type="unfinished">Do you want to publish in the study all found solutions? If No, only the currently selected solution will be published.</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_TITLE</source>

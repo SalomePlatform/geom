@@ -1,7 +1,6 @@
 /*!
 
 \page tui_3dsketcher_page 3D Sketcher
-\include 3dsketcher.py
-<a href="../../examples/GEOM/3dsketcher.py">Download this script</a>
+\tui_script{3dsketcher.py}
 
 */

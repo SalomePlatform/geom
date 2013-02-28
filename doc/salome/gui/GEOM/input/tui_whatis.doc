@@ -1,7 +1,6 @@
 /*!
 
 \page tui_whatis_page What Is
-\include whatis.py
-<a href="../../examples/GEOM/whatis.py">Download this script</a>
+\tui_script{whatis.py}
 
 */

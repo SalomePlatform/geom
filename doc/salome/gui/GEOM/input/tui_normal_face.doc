@@ -1,7 +1,6 @@
 /*!
 
 \page tui_normal_face_page Normal to a Face
-\include normal_face.py
-<a href="../../examples/GEOM/normal_face.py">Download this script</a>
+\tui_script{normal_face.py}
 
 */

@@ -1,7 +1,6 @@
 /*!
 
 \page tui_min_distance_page Minimal Distance
-\include min_distance.py
-<a href="../../examples/GEOM/min_distance.py">Download this script</a>
+\tui_script{min_distance.py}
 
 */

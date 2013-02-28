@@ -1,7 +1,6 @@
 /*!
 
 \page tui_free_boundaries_page Check Free Boundaries
-\include free_boundaries.py
-<a href="../../examples/GEOM/free_boundaries.py">Download this script</a>
+\tui_script{free_boundaries.py}
 
 */

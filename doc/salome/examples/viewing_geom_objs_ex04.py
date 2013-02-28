@@ -2,8 +2,9 @@
 
 import salome
 import geompy
+import GEOM
 
-texture = geompy.LoadTexture("/users/user/mytexture.dat")
+texture = geompy.LoadTexture(os.getenv("DATA_DIR")+"/Textures/texture1.dat")
 
 v1 = geompy.MakeVertex(0, 0, 0)
 v2 = geompy.MakeVertex(100, 0, 0)

@@ -4,18 +4,15 @@
 
 \anchor tui_creation_pipetshape
 <br><h2>Creation of PipeTShape</h2>
-\include advanced_geom_objs_ex01.py
-<a href="../../examples/GEOM/advanced_geom_objs_ex01.py">Download this script</a>
+\tui_script{advanced_geom_objs_ex01.py}
 
 \anchor tui_creation_divideddisk
 <br><h2>Creation of DividedDisk</h2>
-\include advanced_geom_objs_ex02.py
-<a href="../../examples/GEOM/advanced_geom_objs_ex02.py">Download this script</a>
+\tui_script{advanced_geom_objs_ex02.py}
 
 \anchor tui_creation_dividedcylinder
 <br><h2>Creation of DividedCylinder</h2>
-\include advanced_geom_objs_ex03.py
-<a href="../../examples/GEOM/advanced_geom_objs_ex03.py">Download this script</a>
+\tui_script{advanced_geom_objs_ex03.py}
 
 <!--@@ insert new functions before this line @@ do not remove this line @@-->
 */

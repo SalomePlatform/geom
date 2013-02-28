@@ -1,7 +1,6 @@
 /*!
 
 \page tui_center_of_mass_page Center of masses
-\include center_of_mass.py
-<a href="../../examples/GEOM/center_of_mass.py">Download this script</a>
+\tui_script{center_of_mass.py}
 
 */

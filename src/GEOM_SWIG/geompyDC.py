@@ -3714,6 +3714,61 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePipeBiNormalAlongVector", self.PrimOp)
             self._autoPublish(anObj, theName, "pipe")
             return anObj
+              
+        ## Makes a thick solid from a face or a shell
+        #  @param theShape Face or Shell to be thicken
+        #  @param theThickness Thickness of the resulting solid
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created solid
+        #
+        def MakeThickSolid(self, theShape, theThickness, theName=None):
+            """
+            Make a thick solid from a face or a shell
+
+            Parameters:
+                 theShape Face or Shell to be thicken
+                 theThickness Thickness of the resulting solid
+                 theName Object name; when specified, this parameter is used
+                 for result publication in the study. Otherwise, if automatic
+                 publication is switched on, default value is used for result name.
+                 
+            Returns:
+                New GEOM.GEOM_Object, containing the created solid
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakeThickening(theShape, theThickness, True)
+            RaiseIfFailed("MakeThickening", self.PrimOp)
+            self._autoPublish(anObj, theName, "pipe")
+            return anObj
+            
+
+        ## Modifies a face or a shell to make it a thick solid
+        #  @param theShape Face or Shell to be thicken
+        #  @param theThickness Thickness of the resulting solid
+        #
+        #  @return The modified shape
+        #
+        def Thicken(self, theShape, theThickness):
+            """
+            Modifies a face or a shell to make it a thick solid
+
+            Parameters:
+                theBase Base shape to be extruded.
+                thePath Path shape to extrude the base shape along it.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                The modified shape
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakeThickening(theShape, theThickness, False)
+            RaiseIfFailed("MakeThickening", self.PrimOp)
+            return anObj
 
         ## Build a middle path of a pipe-like shape.
         #  The path shape can be a wire or an edge.

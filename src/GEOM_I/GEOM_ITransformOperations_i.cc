@@ -100,6 +100,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPoints
   //Perform the translation
   GetOperations()->TranslateTwoPoints(anObject, aPoint1, aPoint2);
 
+  // Update GUI.
+  UpdateGUIForObject(theObject);
+
   return aGEOMObject._retn();
 }
 
@@ -169,6 +172,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ
   //Perform the translation
   GetOperations()->TranslateDXDYDZ(anObject, theDX, theDY, theDZ);
 
+  // Update GUI.
+  UpdateGUIForObject(theObject);
+
   return aGEOMObject._retn();
 }
 
@@ -232,6 +238,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVector
 
   //Perform the translation
   GetOperations()->TranslateVector(anObject, aVector);
+
+  // Update GUI.
+  UpdateGUIForObject(theObject);
 
   return aGEOMObject._retn();
 }
@@ -310,6 +319,10 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorDistance
   }
 
   GetOperations()->TranslateVectorDistance(aBasicObject, aVector, theDistance, theCopy);
+
+  // Update GUI.
+  UpdateGUIForObject(theObject);
+
   return aGEOMObject._retn();
 }
 
@@ -346,6 +359,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::Rotate (GEOM::GEOM_Object_ptr
 
   //Perform the rotation
   GetOperations()->Rotate(anObject, anAxis, theAngle);
+
+  // Update GUI.
+  UpdateGUIForObject(theObject);
 
   return aGEOMObject._retn();
 }
@@ -413,6 +429,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlane
   //Perform the mirror
   GetOperations()->MirrorPlane(anObject, aPlane);
 
+  // Update GUI.
+  UpdateGUIForObject(theObject);
+
   return aGEOMObject._retn();
 }
 
@@ -478,6 +497,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxis
 
   //Perform the mirror
   GetOperations()->MirrorAxis(anObject, aAxis);
+
+  // Update GUI.
+  UpdateGUIForObject(theObject);
 
   return aGEOMObject._retn();
 }
@@ -545,6 +567,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPoint
   //Perform the mirror
   GetOperations()->MirrorPoint(anObject, aPoint);
 
+  // Update GUI.
+  UpdateGUIForObject(theObject);
+
   return aGEOMObject._retn();
 }
 
@@ -606,6 +631,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShape
 
   //Create the offset shape
   GetOperations()->OffsetShape(aBasicObject, theOffset);
+
+  // Update GUI.
+  UpdateGUIForObject(theObject);
 
   return aGEOMObject._retn();
 }
@@ -700,6 +728,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShape
   //Perform the scale
   GetOperations()->ScaleShape(anObject, aPoint, theFactor);
 
+  // Update GUI.
+  UpdateGUIForObject(theObject);
+
   return  aGEOMObject._retn();
 }
 
@@ -777,6 +808,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeAlongAxes
   //Perform the scale
   GetOperations()->ScaleShapeAlongAxes
     (anObject, aPoint, theFactorX, theFactorY, theFactorZ, /*doCopy*/false);
+
+  // Update GUI.
+  UpdateGUIForObject(theObject);
 
   return  aGEOMObject._retn();
 }
@@ -860,6 +894,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShape
   //Perform the Position
   GetOperations()->PositionShape(anObject, aStartLCS, aEndLCS);
 
+  // Update GUI.
+  UpdateGUIForObject(theObject);
+
   return  aGEOMObject._retn();
 }
 
@@ -932,6 +969,11 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionAlongPath
     GetOperations()->PositionAlongPath(aBasicObject, aPathObject, theDistance, theCopy, theReverse);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
+
+  if (!theCopy) {
+    // Update GUI.
+    UpdateGUIForObject(theObject);
+  }
 
   return GetObject(anObject);
 }
@@ -1208,6 +1250,9 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePoints
 
   //Perform the translation
   GetOperations()->RotateThreePoints(anObject, aCentPoint, aPoint1, aPoint2);
+
+  // Update GUI.
+  UpdateGUIForObject(theObject);
 
   return aGEOMObject._retn();
 }

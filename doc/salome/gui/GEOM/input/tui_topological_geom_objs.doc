@@ -4,32 +4,26 @@
 
 \anchor tui_creation_edge
 <br><h2>Creation of an Edge</h2>
-\include topological_geom_objs_ex01.py
-<a href="../../examples/GEOM/topological_geom_objs_ex01.py">Download this script</a>
+\tui_script{topological_geom_objs_ex01.py}
 
 \anchor tui_creation_wire
 <br><h2>Creation of a Wire</h2>
-\include topological_geom_objs_ex02.py
-<a href="../../examples/GEOM/topological_geom_objs_ex02.py">Download this script</a>
+\tui_script{topological_geom_objs_ex02.py}
 
 \anchor tui_creation_face
 <br><h2>Creation of a Face</h2>
-\include topological_geom_objs_ex03.py
-<a href="../../examples/GEOM/topological_geom_objs_ex03.py">Download this script</a>
+\tui_script{topological_geom_objs_ex03.py}
 
 \anchor tui_creation_shell
 <br><h2>Creation of a Shell</h2>
-\include topological_geom_objs_ex04.py
-<a href="../../examples/GEOM/topological_geom_objs_ex04.py">Download this script</a>
+\tui_script{topological_geom_objs_ex04.py}
 
 \anchor tui_creation_solid
 <br><h2>Creation of a Solid</h2>
-\include topological_geom_objs_ex05.py
-<a href="../../examples/GEOM/topological_geom_objs_ex05.py">Download this script</a>
+\tui_script{topological_geom_objs_ex05.py}
 
 \anchor tui_creation_compound
 <br><h2>Creation of a Compound</h2>
-\include topological_geom_objs_ex06.py
-<a href="../../examples/GEOM/topological_geom_objs_ex06.py">Download this script</a>
+\tui_script{topological_geom_objs_ex06.py}
 
 */

@@ -1,7 +1,6 @@
 /*!
 
 \page tui_basic_properties_page Basic Properties
-\include basic_properties.py
-<a href="../../examples/GEOM/basic_properties.py">Download this script</a>
+\tui_script{basic_properties.py}
 
 */

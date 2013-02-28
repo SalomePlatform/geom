@@ -3,7 +3,6 @@
 \page tui_notebook_geom_page Using SALOME NoteBook
 
 \anchor tui_notebook_geom
-\include notebook_geom.py
-<a href="../../examples/GEOM/notebook_geom.py">Download this script</a>
+\tui_script{notebook_geom.py}
 
 */

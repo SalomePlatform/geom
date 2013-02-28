@@ -26,7 +26,8 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 pyexamplesdir = $(docdir)/examples/GEOM
 
-BAD_TESTS = 
+BAD_TESTS = \
+	repairing_operations_ex09.py 
 
 GOOD_TESTS = \
 	3dsketcher.py \
@@ -95,7 +96,6 @@ GOOD_TESTS = \
 	repairing_operations_ex06.py \
 	repairing_operations_ex07.py \
 	repairing_operations_ex08.py \
-	repairing_operations_ex09.py \
 	repairing_operations_ex10.py \
 	repairing_operations_ex11.py \
 	sketcher.py \
@@ -135,7 +135,7 @@ pyexamples_SCRIPTS = $(BAD_TESTS) $(GOOD_TESTS)
 
 EXTRA_DIST += $(pyexamples_SCRIPTS) testme.py
 
-check-local:
+installcheck-local:
 	@for f in $(GOOD_TESTS) ; do \
-	  python $(top_srcdir)/doc/salome/examples/testme.py $(top_srcdir)/doc/salome/examples/$$f || exit 1; \
+	  env GEOM_ROOT_DIR=$(prefix) python -B $(top_srcdir)/doc/salome/examples/testme.py $(top_srcdir)/doc/salome/examples/$$f || exit 1; \
 	done

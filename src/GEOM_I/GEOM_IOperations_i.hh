@@ -59,6 +59,8 @@ class GEOM_I_EXPORT GEOM_IOperations_i : public virtual POA_GEOM::GEOM_IOperatio
 
    ::GEOM_IOperations* GetImpl() { return _impl; }
 
+  virtual void UpdateGUIForObject(GEOM::GEOM_Object_ptr theObj);
+
  private:
  
   ::GEOM_IOperations* _impl;

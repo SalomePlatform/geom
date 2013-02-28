@@ -80,6 +80,12 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CreateGroup
 {
   SetErrorCode(KO);
 
+  if ( theShapeType != TopAbs_VERTEX && theShapeType != TopAbs_EDGE &&
+       theShapeType != TopAbs_FACE && theShapeType != TopAbs_SOLID ) {
+    SetErrorCode( "Error: You could create group only next type: vertex, edge, face or solid" );
+    return NULL;
+  }
+
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
   anArray->SetValue(1, -1);
 
@@ -113,6 +119,11 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
   SetErrorCode(KO);
   if(theGroup.IsNull()) return;
 
+  if ( theGroup->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return;
+  }
+
   Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if(aFunction.IsNull()) return;
 
@@ -128,6 +139,13 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
 
   TopTools_IndexedMapOfShape aMapOfShapes;
   TopExp::MapShapes(aMainShape, aMapOfShapes);
+
+  TopAbs_ShapeEnum aGroupType = GetType(theGroup);
+  TopAbs_ShapeEnum aShapeType = aMapOfShapes.FindKey(theSubShapeID).ShapeType();
+  if ( aGroupType != aShapeType ) {
+    SetErrorCode( "Error: You could perform this operation only with object the same type as the type of group." );
+    return;
+  }
 
   if (theSubShapeID < 1 || aMapOfShapes.Extent() < theSubShapeID) {
     SetErrorCode("Invalid sub-shape index: out of range");
@@ -183,6 +201,11 @@ void GEOMImpl_IGroupOperations::RemoveObject (Handle(GEOM_Object) theGroup, int 
 {
   SetErrorCode(KO);
   if(theGroup.IsNull()) return;
+
+  if ( theGroup->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return;
+  }
 
   Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if(aFunction.IsNull()) return;
@@ -262,6 +285,11 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
 {
   SetErrorCode(KO);
   if (theGroup.IsNull()) return;
+
+  if ( theGroup->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return;
+  }
 
   Standard_Integer aLen = theSubShapes->Length();
   if (aLen < 1) {
@@ -413,6 +441,11 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
   SetErrorCode(KO);
   if (theGroup.IsNull()) return;
 
+  if ( theGroup->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return;
+  }
+
   Standard_Integer aLen = theSubShapes->Length();
   if (aLen < 1) {
     //SetErrorCode("The list is empty");
@@ -558,6 +591,11 @@ void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
   SetErrorCode(KO);
   if (theGroup.IsNull()) return;
 
+  if ( theGroup->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return;
+  }
+
   Standard_Integer aLen = theSubShapes->Length();
   if (aLen < 1) {
     //SetErrorCode("The list is empty");
@@ -656,6 +694,11 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
 {
   SetErrorCode(KO);
   if (theGroup.IsNull()) return;
+
+  if ( theGroup->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return;
+  }
 
   Standard_Integer aLen = theSubShapes->Length();
   if (aLen < 1) {
@@ -759,6 +802,11 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::UnionGroups (Handle(GEOM_Object) 
 {
   SetErrorCode(KO);
   if (theGroup1.IsNull() || theGroup2.IsNull()) return NULL;
+
+  if ( theGroup1->GetType() != GEOM_GROUP || theGroup2->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return NULL;
+  }
 
   // Get group type
   TopAbs_ShapeEnum aType1 = GetType(theGroup1);
@@ -866,6 +914,11 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::IntersectGroups (Handle(GEOM_Obje
   SetErrorCode(KO);
   if (theGroup1.IsNull() || theGroup2.IsNull()) return NULL;
 
+  if ( theGroup1->GetType() != GEOM_GROUP || theGroup2->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return NULL;
+  }
+
   // Get group type
   TopAbs_ShapeEnum aType1 = GetType(theGroup1);
   TopAbs_ShapeEnum aType2 = GetType(theGroup2);
@@ -971,6 +1024,11 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CutGroups (Handle(GEOM_Object) th
 {
   SetErrorCode(KO);
   if (theGroup1.IsNull() || theGroup2.IsNull()) return NULL;
+
+  if ( theGroup1->GetType() != GEOM_GROUP || theGroup2->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return NULL;
+  }
 
   // Get group type
   TopAbs_ShapeEnum aType1 = GetType(theGroup1);
@@ -1092,7 +1150,10 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::UnionListOfGroups
   // Iterate on the initial groups
   for (i = 1; i <= aLen; i++) {
     Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList->Value(i));
-
+    if ( aGr_i->GetType() != GEOM_GROUP ) {
+  	  SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+  	  return NULL;
+    }
     // Get group type
     aType_i = GetType(aGr_i);
     if (i == 1)
@@ -1204,7 +1265,10 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::IntersectListOfGroups
   // Iterate on the initial groups
   for (i = 1; i <= aLen; i++) {
     Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList->Value(i));
-
+    if ( aGr_i->GetType() != GEOM_GROUP ) {
+      SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+      return NULL;
+    }
     // Get group type
     aType_i = GetType(aGr_i);
     if (i == 1)
@@ -1342,7 +1406,10 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CutListOfGroups
   // 1. Collect indices to be excluded (from theGList2) into the mapIDs
   for (i = 1; i <= aLen2; i++) {
     Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList2->Value(i));
-
+    if ( aGr_i->GetType() != GEOM_GROUP ) {
+      SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+      return NULL;
+    }
     // Get group type
     aType_i = GetType(aGr_i);
     if (i == 1)
@@ -1393,7 +1460,10 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CutListOfGroups
   // 2. Collect indices from theGList1, avoiding indices from theGList2 (mapIDs)
   for (i = 1; i <= aLen1; i++) {
     Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList1->Value(i));
-
+    if ( aGr_i->GetType() != GEOM_GROUP ) {
+      SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+      return NULL;
+    }
     // Get group type
     aType_i = GetType(aGr_i);
     if (i == 1 && aLen2 < 1)
@@ -1513,7 +1583,10 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::GetMainShape (Handle(GEOM_Object)
   SetErrorCode(KO);
 
   if(theGroup.IsNull()) return NULL;
-
+  if ( theGroup->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return NULL;
+  }
   Handle(GEOM_Function) aGroupFunction = theGroup->GetFunction(1);
   if (aGroupFunction.IsNull()) return NULL;
 
@@ -1543,7 +1616,10 @@ Handle(TColStd_HArray1OfInteger) GEOMImpl_IGroupOperations::GetObjects(Handle(GE
   SetErrorCode(KO);
 
   if(theGroup.IsNull()) return NULL;
-
+  if ( theGroup->GetType() != GEOM_GROUP ) {
+    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+    return NULL;
+  }
   Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if(aFunction.IsNull()) return NULL;
 

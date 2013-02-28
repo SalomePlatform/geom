@@ -1,7 +1,6 @@
 /*!
 
 \page tui_get_non_blocks_page Get Non Blocks
-\include get_non_blocks.py
-<a href="../../examples/GEOM/get_non_blocks.py">Download this script</a>
+\tui_script{get_non_blocks.py}
 
 */

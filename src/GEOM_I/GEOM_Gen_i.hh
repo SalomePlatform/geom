@@ -85,6 +85,11 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   // generic method to be put in a super class
   void register_name(char * name);
 
+  // Get ORB object
+  CORBA::ORB_ptr GetORB() { return CORBA::ORB::_duplicate(_orb); }
+
+  // Get Naming Service object
+  SALOME_NamingService* GetNS() { return name_service; }
 
   //-----------------------------------------------------------------------//
   // Inherited methods from SALOMEDS::Driver                               //

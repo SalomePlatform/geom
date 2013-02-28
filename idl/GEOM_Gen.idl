@@ -1541,6 +1541,19 @@ module GEOM
                                              in GEOM_Object thePath,
                                              in GEOM_Object theVec);
 
+
+     /*!
+     *  \brief Make a thick solid from a surface shape (face or shell)
+     *  \param theObject Surface from which the thick solid is made
+     *  \param theThickness Value of the thickness
+     *  \return New GEOM_Object, containing the created pipe if isCopy = true
+     *          or the modified object if isCopy = false
+     */
+    GEOM_Object MakeThickening (in GEOM_Object theObject,
+                                in double theThickness,
+                                in boolean isCopy);
+
+    
     /*!
      *  \brief Build a middle path of a pipe-like shape.
      *

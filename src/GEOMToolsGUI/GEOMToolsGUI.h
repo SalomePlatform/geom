@@ -60,8 +60,6 @@ public:
 
   enum ActionType { SHOWDLG, INCR, DECR };
 
-  static void  SetColor( const QString&, const QColor&, bool );
-
 private:
   // Import and export topology methods
   bool         Import();
@@ -99,18 +97,6 @@ private:
                                          _PTR(Study),
                                          QList<SALOME_View*>,
                                          GEOM_Displayer* );
-
-  static void setVtkColor( SalomeApp_Study* study,
-			   int mgrId,
-			   SVTK_View* view,
-			   const Handle_SALOME_InteractiveObject& IO,
-			   const QColor& color );
-
-  static void setOccColor( SalomeApp_Study* study,
-			   int mgrId,
-			   const Handle_AIS_InteractiveContext& ic,
-			   const Handle_SALOME_InteractiveObject& IO,
-			   const QColor& color );
 };
 
 #endif // GEOMTOOLSGUI_H

@@ -676,30 +676,7 @@ GEOM_Displayer* GEOMBase_Helper::getDisplayer()
 //================================================================
 void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
 {
-  if ( CORBA::is_nil( theObj ) )
-    return;
-
-  CORBA::String_var IOR = SalomeApp_Application::orb()->object_to_string( theObj );
-  TCollection_AsciiString asciiIOR( (char *)IOR.in() );
-  GEOM_Client::get_client().RemoveShapeFromBuffer( asciiIOR );
-
-  if ( !getStudy() || !getStudy()->studyDS() )
-    return;
-
-  _PTR(Study) aStudy = getStudy()->studyDS();
-  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( std::string( IOR ) ) );
-  if ( !aSObj )
-    return;
-
-  _PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
-  for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
-    _PTR(GenericAttribute) anAttr;
-    if ( anIt->Value()->FindAttribute(anAttr, "AttributeIOR") ) {
-      _PTR(AttributeIOR) anIOR ( anAttr );
-      TCollection_AsciiString asciiIOR( (char*)anIOR->Value().c_str() );
-      GEOM_Client::get_client().RemoveShapeFromBuffer( asciiIOR );
-    }
-  }
+  GeometryGUI::ClearShapeBuffer(theObj);
 }
 
 //================================================================

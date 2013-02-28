@@ -23,6 +23,8 @@
 #include "GEOM_IOperations_i.hh"
 
 #include "GEOM_Engine.hxx"
+#include "GEOM_Gen_i.hh"
+#include <SALOME_NamingService.hxx>
 
 #include "utilities.h"
 #include "OpUtil.hxx"
@@ -31,6 +33,8 @@
 #include <Standard_Stream.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TDF_Tool.hxx>
+
+#include CORBA_SERVER_HEADER(SALOME_Session)
 
 //=============================================================================
 /*!
@@ -154,4 +158,33 @@ Handle(GEOM_Object) GEOM_IOperations_i::GetObjectImpl(GEOM::GEOM_Object_ptr theO
       (theObject->GetStudyID(), anEntry);
   }
   return anImpl;
+}
+
+//=============================================================================
+/*!
+ *  UpdateGUIForObject
+ */
+//=============================================================================
+void GEOM_IOperations_i::UpdateGUIForObject(GEOM::GEOM_Object_ptr theObj)
+{
+  if (!CORBA::is_nil (theObj)) {
+    // Cast _engine to GEOM_Gen_i type.
+    PortableServer::Servant aServant = myPOA->reference_to_servant(_engine.in());
+    GEOM_Gen_i *anEngine = dynamic_cast<GEOM_Gen_i *>(aServant);
+
+    if (anEngine) {
+      SALOME_NamingService *aNameService = anEngine->GetNS();
+      CORBA::Object_var aSessionObj = aNameService->Resolve("/Kernel/Session");
+      SALOME::Session_var aSession = SALOME::Session::_narrow(aSessionObj);
+  
+      if (!aSession->_is_nil())
+      {
+        std::string aMsg("GEOM/modified/");
+        CORBA::String_var anIOR = anEngine->GetORB()->object_to_string(theObj);
+  
+        aMsg += anIOR.in();
+        aSession->emitMessageOneWay(aMsg.c_str());
+      }
+    }
+  }
 }

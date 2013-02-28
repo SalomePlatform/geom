@@ -53,6 +53,7 @@
 #include <GEOMImpl_ShapeDriver.hxx>
 #include <GEOMImpl_FillingDriver.hxx>
 #include <GEOMImpl_ThruSectionsDriver.hxx>
+#include <GEOMImpl_OffsetDriver.hxx>
 
 #include <GEOMImpl_IBox.hxx>
 #include <GEOMImpl_IFace.hxx>
@@ -69,6 +70,7 @@
 #include <GEOMImpl_IPipeDiffSect.hxx>
 #include <GEOMImpl_IPipeShellSect.hxx>
 #include <GEOMImpl_IPipeBiNormal.hxx>
+#include <GEOMImpl_IOffset.hxx>
 #include <GEOMImpl_IPipePath.hxx>
 
 #include <Precision.hxx>
@@ -1489,7 +1491,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolution("
     << theBase << ", " << theAxis << ", " << theAngle * 180.0 / M_PI << "*math.pi/180.0)";
-
+  
   SetErrorCode(OK);
   return aRevolution;
 }
@@ -2235,6 +2237,76 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeBiNormalAlongVector (Han
 
   SetErrorCode(OK);
   return aPipe;
+}
+
+//=============================================================================
+/*!
+ *  MakeThickening
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening(Handle(GEOM_Object) theObject,
+                                                              double theOffset,
+                                                              bool copy = true)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
+  if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be offset
+
+  //Add a new Offset function
+  Handle(GEOM_Function) aFunction;
+  Handle(GEOM_Object) aCopy; 
+  if (copy)
+  { 
+    //Add a new Copy object
+    aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+    aFunction = aCopy->AddFunction(GEOMImpl_OffsetDriver::GetID(), OFFSET_THICKENING_COPY);
+  }
+  else
+    aFunction = theObject->AddFunction(GEOMImpl_OffsetDriver::GetID(), OFFSET_THICKENING);
+  
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_OffsetDriver::GetID()) return NULL;
+
+  GEOMImpl_IOffset aTI (aFunction);
+  aTI.SetShape(anOriginal);
+  aTI.SetValue(theOffset);
+
+  //Compute the offset
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Offset driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  if(copy)
+  {
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeThickSolid("
+                               << theObject << ", " << theOffset << ")";
+    SetErrorCode(OK);
+    return aCopy;
+  }
+  else
+  {
+    GEOM::TPythonDump(aFunction) << "geompy.Thicken("
+                               << theObject << ", " << theOffset << ")";
+    SetErrorCode(OK);
+    return theObject;
+  }
 }
 
 //=============================================================================
