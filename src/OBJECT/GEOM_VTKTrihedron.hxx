@@ -55,7 +55,7 @@ public:
                                     vtkTypeMacro( GEOM_VTKTrihedron, SALOME_Actor );
   static GEOM_VTKTrihedron*         New();
 
-  virtual vtkFloatingPointType      GetSize() { return mySize;}
+  virtual double      GetSize() { return mySize;}
 
   virtual void                      SetVisibility( int theVisibility );
   virtual void                      SetVisibility( VTKViewer_Trihedron::TVisibility theVis );
@@ -74,11 +74,11 @@ public:
   virtual void                      Render(vtkRenderer *, vtkMapper *);
   virtual bool                      IsSetCamera() const;
   virtual bool                      IsResizable() const;
-  virtual void                      SetSize( vtkFloatingPointType );
+  virtual void                      SetSize( double );
   virtual void                      SetCamera( vtkCamera* );
 
-  void                              SetColor( vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b );
-  void                              GetColor( vtkFloatingPointType& r, vtkFloatingPointType& g, vtkFloatingPointType& b );
+  void                              SetColor( double r, double g, double b );
+  void                              GetColor( double& r, double& g, double& b );
 
   virtual bool                      hasHighlight() { return true; } 
 
@@ -89,18 +89,18 @@ public:
 
 protected:
   virtual void                      ResetAxesColors();
-  virtual void                      SetAxesColors( vtkFloatingPointType theColor[3], bool theIsDiffuse = false );
+  virtual void                      SetAxesColors( double theColor[3], bool theIsDiffuse = false );
 
 protected:
   VTKViewer_Axis*                   myAxis[3];
   vtkPolyDataMapper*                myMapper;
-  vtkFloatingPointType              mySize;
+  double              mySize;
   gp_Pnt                            myLocation;
   gp_Dir                            myDirX, myDirY, myDirZ;
-  vtkFloatingPointType              myColor[ 3 ];
-  vtkFloatingPointType              myDefaultColor[ 3 ];
-  vtkFloatingPointType              myPreHighlightColor[ 3 ];
-  vtkFloatingPointType              myHighlightColor[ 3 ];
+  double              myColor[ 3 ];
+  double              myDefaultColor[ 3 ];
+  double              myPreHighlightColor[ 3 ];
+  double              myHighlightColor[ 3 ];
 };
 
 #endif

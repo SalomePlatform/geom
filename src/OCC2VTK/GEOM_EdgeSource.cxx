@@ -34,12 +34,15 @@
  
 #include <vtkStripper.h>  
 #include <vtkPolyData.h>  
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 
 vtkStandardNewMacro(GEOM_EdgeSource);
  
 GEOM_EdgeSource::GEOM_EdgeSource() :
   myIsVector(false)
 { 
+  this->SetNumberOfInputPorts(0);
 } 
  
 GEOM_EdgeSource::~GEOM_EdgeSource() 
@@ -53,11 +56,14 @@ void GEOM_EdgeSource::AddEdge (const TopoDS_Edge& theEdge,
   myIsVector = theIsVector;
 }
 
-void
-GEOM_EdgeSource:: 
-Execute()
+int GEOM_EdgeSource::RequestData(vtkInformation *vtkNotUsed(request),
+                                 vtkInformationVector **vtkNotUsed(inputVector),
+                                 vtkInformationVector *outputVector)
 {
-  vtkPolyData* aPolyData = GetOutput();
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkPolyData *aPolyData = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   aPolyData->Allocate();
   vtkPoints* aPts = vtkPoints::New();
   aPolyData->SetPoints(aPts);
@@ -71,6 +77,7 @@ Execute()
       anEdge.Orientation( TopAbs_FORWARD );
     OCC2VTK(anEdge,aPolyData,aPts,myIsVector||myIsVectorMode);
   }
+  return 1;
 }
 
 void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,  

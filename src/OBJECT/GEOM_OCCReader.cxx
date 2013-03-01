@@ -33,6 +33,8 @@
 
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 
 // OpenCASCADE Includes
 #include <TopExp_Explorer.hxx>
@@ -114,14 +116,18 @@ GEOM_OCCReader::~GEOM_OCCReader()
 
 
 //=======================================================================
-// Function : Execute
+// Function : RequestData
 // Purpose  : 
 //=======================================================================
 
+int GEOM_OCCReader::RequestData(vtkInformation *vtkNotUsed(request),
+                                vtkInformationVector **inputVector,
+                                vtkInformationVector *outputVector)
+{
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkPolyData *output = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-void GEOM_OCCReader::Execute() {
-
-  vtkPolyData* output = this->GetOutput();
   vtkPoints* Pts = NULL;
   vtkCellArray* Cells = NULL;
   TopLoc_Location aLoc;
@@ -143,7 +149,7 @@ void GEOM_OCCReader::Execute() {
       if(aPoly.IsNull()) {
         Pts->Delete();
         Cells->Delete();
-        return;
+        return 0;
       }
 
       nbpts = aPoly->NbNodes();
@@ -155,7 +161,7 @@ void GEOM_OCCReader::Execute() {
     else { 
         Cells->Delete();
         Pts->Delete();
-        return; 
+        return 0; 
     }
   }
 
@@ -177,7 +183,7 @@ void GEOM_OCCReader::Execute() {
   }
   Pts->Delete();
   Cells->Delete();
-  
+  return 1;
 }
 
 //=======================================================================

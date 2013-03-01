@@ -81,12 +81,12 @@ extern "C"
       GEOM_ShadingFace* myShadingFaceSource = GEOM_ShadingFace::New();
 
       vtkAppendPolyData* myAppendFilter = vtkAppendPolyData::New();
-      myAppendFilter->AddInput( myVertexSource->GetOutput() );
-      myAppendFilter->AddInput( myIsolatedEdgeSource->GetOutput() );
-      myAppendFilter->AddInput( myOneFaceEdgeSource->GetOutput() );
-      myAppendFilter->AddInput( mySharedEdgeSource->GetOutput() );
-      //myAppendFilter->AddInput( myWireframeFaceSource->GetOutput() ); // iso-lines are unnecessary
-      myAppendFilter->AddInput( myShadingFaceSource->GetOutput() );
+      myAppendFilter->AddInputConnection( myVertexSource->GetOutputPort() );
+      myAppendFilter->AddInputConnection( myIsolatedEdgeSource->GetOutputPort() );
+      myAppendFilter->AddInputConnection( myOneFaceEdgeSource->GetOutputPort() );
+      myAppendFilter->AddInputConnection( mySharedEdgeSource->GetOutputPort() );
+      //myAppendFilter->AddInputConnection( myWireframeFaceSource->GetOutputPort() ); // iso-lines are unnecessary
+      myAppendFilter->AddInputConnection( myShadingFaceSource->GetOutputPort() );
 
       float aDeflection = 0.001;
       bool anIsVector = false;
@@ -131,7 +131,7 @@ extern "C"
       Kernel_Utils::Localizer loc;
 
       vtkPolyDataWriter* aWriter = vtkPolyDataWriter::New(); 
-      aWriter->SetInput( myAppendFilter->GetOutput() );
+      aWriter->SetInputConnection( myAppendFilter->GetOutputPort() );
       aWriter->SetFileName( theFileName.ToCString() );
       aWriter->Write();
       aWriter->Delete();

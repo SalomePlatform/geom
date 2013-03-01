@@ -154,7 +154,7 @@ void OperationGUI_ClippingDlg::Init()
     double  position[3];
     anActiveCamera->GetPosition( position );
 
-    vtkFloatingPointType bounds[6];
+    double bounds[6];
     aRenderer->ComputeVisiblePropBounds( bounds );
 
     double center[3];
@@ -170,7 +170,7 @@ void OperationGUI_ClippingDlg::Init()
                             ( position[1]-center[1] ) * ( position[1]-center[1] ) +
                             ( position[2]-center[2] ) * ( position[2]-center[2] ) );
 
-    vtkFloatingPointType range[2] = { distance - width/2.0, distance + width/2.0 };
+    double range[2] = { distance - width/2.0, distance + width/2.0 };
 
     SpinBox_Near->setValue( range[0] );
     SpinBox_Far->setValue( range[1] );
@@ -220,7 +220,7 @@ bool OperationGUI_ClippingDlg::ClickOnApply()
       return false;
     }
 
-    vtkFloatingPointType range[2] = { SpinBox_Near->value(), SpinBox_Far->value() };
+    double range[2] = { SpinBox_Near->value(), SpinBox_Far->value() };
     if ( range[0] < 0.0 ) range[0] = 0.0;
     anActiveCamera->SetClippingRange( range );
 
@@ -302,7 +302,7 @@ void OperationGUI_ClippingDlg::onReset()
     double  position[3];
     anActiveCamera->GetPosition( position );
 
-    vtkFloatingPointType bounds[6];
+    double bounds[6];
     aRenderer->ComputeVisiblePropBounds( bounds );
 
     double center[3];
@@ -318,7 +318,7 @@ void OperationGUI_ClippingDlg::onReset()
                             ( position[1]-center[1] ) * ( position[1]-center[1] ) +
                             ( position[2]-center[2] ) * ( position[2]-center[2] ) );
 
-    vtkFloatingPointType range[2] = { distance - width/2.0, distance + width/2.0 };
+    double range[2] = { distance - width/2.0, distance + width/2.0 };
 
     SpinBox_Near->setValue( range[0] );
     SpinBox_Far->setValue( range[1] );

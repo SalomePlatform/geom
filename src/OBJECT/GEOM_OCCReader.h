@@ -35,7 +35,7 @@
 
 #include "GEOM_OBJECT_defs.hxx"
 
-#include <vtkPolyDataSource.h>
+#include <vtkAlgorithm.h>
 
 class vtkPoints;
 class vtkCellArray;
@@ -46,7 +46,7 @@ class vtkCellArray;
 #include <GeomAbs_IsoType.hxx>
 #include <BRepAdaptor_Surface.hxx>
 
-class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
+class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkAlgorithm {
 
   // methods    
 
@@ -67,7 +67,8 @@ class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
 
   GEOM_OCCReader();
   ~GEOM_OCCReader();
-  void Execute();       
+
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   void ComputeShading(vtkPoints* Pts,vtkCellArray* Cells);
   void ComputeWireframe(vtkPoints* Pts,vtkCellArray* Cells);

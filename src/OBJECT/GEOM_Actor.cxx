@@ -119,7 +119,7 @@ GEOM_Actor::GEOM_Actor():
   MESSAGE (this<< " GEOM_Actor::GEOM_Actor");
 #endif
 
-  myPolyDataMapper->SetInput(myAppendFilter->GetOutput()); 
+  myPolyDataMapper->SetInputConnection(myAppendFilter->GetOutputPort()); 
   vtkProperty* aProperty; 
 
   myHighlightProp->SetAmbient(0.5);
@@ -132,48 +132,48 @@ GEOM_Actor::GEOM_Actor():
   myHighlightProp->SetPointSize(SALOME_POINT_SIZE);
   myHighlightActor->SetProperty(myHighlightProp.GetPointer());
 
-  this->myHighlightActor->SetInput(myAppendFilter->GetOutput(),false);
+  this->myHighlightActor->SetInput(myAppendFilter->GetOutputPort(),false);
 
   myPreHighlightProp->SetColor(0,1,1);
   myPreHighlightProp->SetPointSize(SALOME_POINT_SIZE+2);
   myPreHighlightProp->SetLineWidth(SALOME_LINE_WIDTH+1);
   myPreHighlightProp->SetRepresentationToWireframe();
 
-  myAppendFilter->AddInput(myVertexSource->GetOutput()); 
-  myVertexActor->SetInput(myVertexSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(myVertexSource->GetOutputPort()); 
+  myVertexActor->SetInput(myVertexSource->GetOutputPort(),false); 
   aProperty = myVertexActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_POINTS); 
   aProperty->SetPointSize(3); 
   aProperty->SetColor(1, 1, 0);
  
-  myAppendFilter->AddInput(myIsolatedEdgeSource->GetOutput());
-  myIsolatedEdgeActor->SetInput(myIsolatedEdgeSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(myIsolatedEdgeSource->GetOutputPort());
+  myIsolatedEdgeActor->SetInput(myIsolatedEdgeSource->GetOutputPort(),false); 
   aProperty = myIsolatedEdgeActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
   myIsolatedEdgeColor[0] = 1; myIsolatedEdgeColor[1] = 0; myIsolatedEdgeColor[2] = 0;
   aProperty->SetColor(myIsolatedEdgeColor[0], myIsolatedEdgeColor[1], myIsolatedEdgeColor[2]);
  
-  myAppendFilter->AddInput(myOneFaceEdgeSource->GetOutput());
-  myOneFaceEdgeActor->SetInput(myOneFaceEdgeSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(myOneFaceEdgeSource->GetOutputPort());
+  myOneFaceEdgeActor->SetInput(myOneFaceEdgeSource->GetOutputPort(),false); 
   aProperty = myOneFaceEdgeActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
   myOneFaceEdgeColor[0] = 0; myOneFaceEdgeColor[1] = 1; myOneFaceEdgeColor[2] = 0;
   aProperty->SetColor(myOneFaceEdgeColor[0], myOneFaceEdgeColor[1], myOneFaceEdgeColor[2]);
  
-  myAppendFilter->AddInput(mySharedEdgeSource->GetOutput()); 
-  mySharedEdgeActor->SetInput(mySharedEdgeSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(mySharedEdgeSource->GetOutputPort()); 
+  mySharedEdgeActor->SetInput(mySharedEdgeSource->GetOutputPort(),false); 
   aProperty = mySharedEdgeActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
   mySharedEdgeColor[0] = 1; mySharedEdgeColor[1] = 1; mySharedEdgeColor[2] = 0;
   aProperty->SetColor(mySharedEdgeColor[0], mySharedEdgeColor[1], mySharedEdgeColor[2]);
  
-  myAppendFilter->AddInput(myWireframeFaceSource->GetOutput()); 
-  myWireframeFaceActor->SetInput(myWireframeFaceSource->GetOutput(),false); 
+  myAppendFilter->AddInputConnection(myWireframeFaceSource->GetOutputPort()); 
+  myWireframeFaceActor->SetInput(myWireframeFaceSource->GetOutputPort(),false); 
   aProperty = myWireframeFaceActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_WIREFRAME); 
   aProperty->SetColor(0.5, 0.5, 0.5);
 
-  myShadingFaceActor->SetInput(myShadingFaceSource->GetOutput(),true); 
+  myShadingFaceActor->SetInput(myShadingFaceSource->GetOutputPort(),true); 
 
   myShadingFaceProp->SetRepresentation(VTKViewer::Representation::Surface); 
   myShadingFaceProp->SetInterpolationToGouraud(); 
@@ -219,7 +219,7 @@ New()
 void Write(vtkPolyData* theDataSet, const char* theFileName){ 
   vtkPolyDataWriter* aWriter = vtkPolyDataWriter::New(); 
   MESSAGE ("Write - "<<theFileName<<"' : "<<theDataSet->GetNumberOfPoints()<<"; "<<theDataSet->GetNumberOfCells()); 
-  aWriter->SetInput(theDataSet); 
+  aWriter->SetInputData(theDataSet); 
   aWriter->SetFileName(theFileName); 
   //aWriter->Write(); 
   aWriter->Delete(); 
@@ -601,10 +601,10 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
   /*  if(myShape.ShapeType() == TopAbs_VERTEX) {
     if(ren){
       //The parameter determine size of vertex actor relate to diagonal of RendererWindow
-      static vtkFloatingPointType delta = 0.01;
-      vtkFloatingPointType X1 = -1, Y1 = -1, Z1 = 0;
+      static double delta = 0.01;
+      double X1 = -1, Y1 = -1, Z1 = 0;
       ren->ViewToWorld(X1,Y1,Z1);
-      vtkFloatingPointType X2 = +1, Y2 = +1, Z2 = 0;
+      double X2 = +1, Y2 = +1, Z2 = 0;
       ren->ViewToWorld(X2,Y2,Z2);
       Z2 = sqrt((X2-X1)*(X2-X1) + (Y2-Y1)*(Y2-Y1) + (Z2-Z1)*(Z2-Z1));
       this->SetScale(Z2*delta);
@@ -696,7 +696,7 @@ void GEOM_Actor::highlight(bool highlight)
   SALOME_Actor::highlight(highlight);  
 }
 
-void GEOM_Actor::SetOpacity(vtkFloatingPointType opa)
+void GEOM_Actor::SetOpacity(double opa)
 {
   // enk:tested OK
   myShadingFaceProp->SetOpacity(opa);
@@ -706,13 +706,13 @@ void GEOM_Actor::SetOpacity(vtkFloatingPointType opa)
   myVertexActor->GetProperty()->SetOpacity(opa);
 }
 
-vtkFloatingPointType GEOM_Actor::GetOpacity()
+double GEOM_Actor::GetOpacity()
 {
   // enk:tested OK
   return myShadingFaceProp->GetOpacity(); 
 }
 
-void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b)
+void GEOM_Actor::SetColor(double r,double g,double b)
 {
   // set the same color to all sub-actors:
   // - points
@@ -728,9 +728,9 @@ void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloat
   myShadingBackFaceProp->SetColor(r,g,b); // back face shading color
 }
 
-void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b)
+void GEOM_Actor::GetColor(double& r,double& g,double& b)
 {
-  vtkFloatingPointType aRGB[3];
+  double aRGB[3];
   myShadingFaceProp->GetColor(aRGB);
   r = aRGB[0];
   g = aRGB[1];
@@ -741,7 +741,7 @@ void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFlo
   \brief Set color of points
   Points actor is shown in Wireframe mode only, see SetVisibility()
 */
-void GEOM_Actor::SetPointColor(vtkFloatingPointType r,  vtkFloatingPointType g,  vtkFloatingPointType b)
+void GEOM_Actor::SetPointColor(double r,  double g,  double b)
 {
   myVertexActor->GetProperty()->SetColor(r, g, b);
 }
@@ -751,7 +751,7 @@ void GEOM_Actor::SetPointColor(vtkFloatingPointType r,  vtkFloatingPointType g, 
   This actor is shown in all display mode, see SetVisibility()
   TODO: check - this color seems to be used not only for standalone edges
 */
-void GEOM_Actor::SetIsolatedEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g,  vtkFloatingPointType b)
+void GEOM_Actor::SetIsolatedEdgeColor(double r, double g,  double b)
 {
   myIsolatedEdgeColor[0] = r; myIsolatedEdgeColor[1] = g; myIsolatedEdgeColor[2] = b;
   if ( myDisplayMode != (int)eShadingWithEdges )
@@ -763,7 +763,7 @@ void GEOM_Actor::SetIsolatedEdgeColor(vtkFloatingPointType r, vtkFloatingPointTy
   This actor is shown only in wireframe and shading+edges display modes, see SetVisibility()
   TODO: check - this seems to be not working currently
 */
-void GEOM_Actor::SetSharedEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b)
+void GEOM_Actor::SetSharedEdgeColor(double r, double g, double b)
 {
   mySharedEdgeColor[0] = r; mySharedEdgeColor[1] = g; mySharedEdgeColor[2] = b;
   if ( myDisplayMode != (int)eShadingWithEdges )
@@ -775,7 +775,7 @@ void GEOM_Actor::SetSharedEdgeColor(vtkFloatingPointType r, vtkFloatingPointType
   This actor is shown only in wireframe and shading+edges display modes, see SetVisibility()
   TODO: this color should be used not only for faces
 */
-void GEOM_Actor::SetFreeEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b)
+void GEOM_Actor::SetFreeEdgeColor(double r, double g, double b)
 {
   myOneFaceEdgeColor[0] = r; myOneFaceEdgeColor[1] = g; myOneFaceEdgeColor[2] = b;
   if ( myDisplayMode != (int)eShadingWithEdges )
@@ -786,7 +786,7 @@ void GEOM_Actor::SetFreeEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g
   \brief Set color of iso-lines
   This actor is shown only in wireframe display mode, see SetVisibility()
 */
-void GEOM_Actor::SetIsosColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b)
+void GEOM_Actor::SetIsosColor(double r, double g, double b)
 {
   myWireframeFaceActor->GetProperty()->SetColor(r, g, b);
 }
@@ -1072,7 +1072,7 @@ void GEOM_Actor::GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result)
   this->Transform->Pop();  
 }  
 
-void GEOM_Actor::SetEdgesInShadingColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b)
+void GEOM_Actor::SetEdgesInShadingColor(double r,double g,double b)
 {
   myEdgesInShadingColor[0] = r;
   myEdgesInShadingColor[1] = g;

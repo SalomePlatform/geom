@@ -66,15 +66,15 @@ public:
                                 vtkTypeMacro( GEOM_VTKTrihedronAxis, VTKViewer_Axis );
   static GEOM_VTKTrihedronAxis* New();
 
-  void                          SetAxis( const gp_Ax1& theAxis, const int theRot, vtkFloatingPointType theColor[ 3 ] );
+  void                          SetAxis( const gp_Ax1& theAxis, const int theRot, double theColor[ 3 ] );
   virtual void                  Render( vtkRenderer* theRenderer );
-  virtual void                  SetSize( vtkFloatingPointType theSize );
+  virtual void                  SetSize( double theSize );
   gp_Pnt                        GetOri() const;
-  void                          SetColor( const vtkFloatingPointType theColor[ 3 ] );
+  void                          SetColor( const double theColor[ 3 ] );
 
 private:
 
-  vtkFloatingPointType          myOri[ 3 ];
+  double          myOri[ 3 ];
   vtkMatrix4x4*                 myMatrix;
   vtkTransform*                 myTrsf;
 };
@@ -94,9 +94,9 @@ GEOM_VTKTrihedronAxis::~GEOM_VTKTrihedronAxis()
   myTrsf->Delete();
 }
 
-void GEOM_VTKTrihedronAxis::SetSize( vtkFloatingPointType theSize )
+void GEOM_VTKTrihedronAxis::SetSize( double theSize )
 {
-  vtkFloatingPointType aPosition[ 3 ] = { myOri[ 0 ] + myDir[ 0 ] * theSize,
+  double aPosition[ 3 ] = { myOri[ 0 ] + myDir[ 0 ] * theSize,
                                           myOri[ 1 ] + myDir[ 1 ] * theSize,
                                           myOri[ 2 ] + myDir[ 2 ] * theSize };
                            
@@ -154,7 +154,7 @@ gp_Pnt GEOM_VTKTrihedronAxis::GetOri() const
 
 void GEOM_VTKTrihedronAxis::SetAxis( const gp_Ax1& theAxis,
                                      const int     theRot,
-                                     vtkFloatingPointType theColor[ 3 ] )
+                                     double theColor[ 3 ] )
 {
   gp_Pnt aLoc = theAxis.Location();
   gp_Dir aDir = theAxis.Direction();
@@ -167,7 +167,7 @@ void GEOM_VTKTrihedronAxis::SetAxis( const gp_Ax1& theAxis,
   myDir[ 1 ] = aDir.Y();
   myDir[ 2 ] = aDir.Z();
 
-  vtkFloatingPointType aColor[ 3 ] = { 0, 0, 0 };
+  double aColor[ 3 ] = { 0, 0, 0 };
   aColor[ theRot ] = 1;
   if ( theColor[ 0 ] == -1 )
     VTKViewer_Axis::SetColor( aColor[ 0 ], aColor[ 1 ], aColor[ 2 ] );
@@ -185,7 +185,7 @@ void GEOM_VTKTrihedronAxis::SetAxis( const gp_Ax1& theAxis,
 #endif
 }
 
-void GEOM_VTKTrihedronAxis::SetColor( const vtkFloatingPointType theColor[ 3 ] )
+void GEOM_VTKTrihedronAxis::SetColor( const double theColor[ 3 ] )
 {
   VTKViewer_Axis::SetColor( theColor[ 0 ], theColor[ 1 ], theColor[ 2 ] );
 }
@@ -227,7 +227,7 @@ GEOM_VTKTrihedron::~GEOM_VTKTrihedron()
     myMapper->Delete();
 }
 
-void GEOM_VTKTrihedron::SetSize( vtkFloatingPointType theSize )
+void GEOM_VTKTrihedron::SetSize( double theSize )
 {
   mySize = theSize;
   for ( int i = 0; i < 3; i++ )
@@ -254,11 +254,11 @@ void GEOM_VTKTrihedron::SetSize( vtkFloatingPointType theSize )
   aSrcZ->SetPoint2( aEndZ.X(), aEndZ.Y(), aEndZ.Z() );
 
   vtkAppendPolyData* aRes = vtkAppendPolyData::New();
-  aRes->AddInput( aSrcX->GetOutput() );
-  aRes->AddInput( aSrcY->GetOutput() );
-  aRes->AddInput( aSrcZ->GetOutput() );
+  aRes->AddInputConnection( aSrcX->GetOutputPort() );
+  aRes->AddInputConnection( aSrcY->GetOutputPort() );
+  aRes->AddInputConnection( aSrcZ->GetOutputPort() );
   
-  myMapper->SetInput( aRes->GetOutput() );
+  myMapper->SetInputConnection( aRes->GetOutputPort() );
   SALOME_Actor::SetMapper( myMapper );
 
   aSrcX->Delete();
@@ -362,7 +362,7 @@ void GEOM_VTKTrihedron::Render(vtkRenderer* r, vtkMapper *)
   ( (GEOM_VTKTrihedronAxis*)myAxis[ 2 ] )->Render( r );
 }
 
-void GEOM_VTKTrihedron::SetColor( vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b )
+void GEOM_VTKTrihedron::SetColor( double r, double g, double b )
 {
   myColor[ 0 ] = r;
   myColor[ 1 ] = g;
@@ -373,7 +373,7 @@ void GEOM_VTKTrihedron::SetColor( vtkFloatingPointType r, vtkFloatingPointType g
   if ( myAxis[ 2 ] ) ( (GEOM_VTKTrihedronAxis*)myAxis[ 2 ] )->SetColor( myColor );
 }
 
-void GEOM_VTKTrihedron::GetColor( vtkFloatingPointType& r, vtkFloatingPointType& g, vtkFloatingPointType& b )
+void GEOM_VTKTrihedron::GetColor( double& r, double& g, double& b )
 {
   r = myColor[ 0 ];
   g = myColor[ 1 ];
@@ -426,7 +426,7 @@ void GEOM_VTKTrihedron::ResetAxesColors()
     SetAxesColors( myDefaultColor, true );
 }
 
-void GEOM_VTKTrihedron::SetAxesColors( vtkFloatingPointType theColor[3], bool theIsDiffuse )
+void GEOM_VTKTrihedron::SetAxesColors( double theColor[3], bool theIsDiffuse )
 {
   myAxis[ 0 ]->SetColor( theColor[0], theIsDiffuse ? 0.0 : theColor[1], theIsDiffuse ? 0.0 : theColor[2] );
   myAxis[ 1 ]->SetColor( theIsDiffuse ? 0.0 : theColor[0], theColor[1], theIsDiffuse ? 0.0 : theColor[2] );

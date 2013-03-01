@@ -38,8 +38,8 @@ GEOM_DeviceActor::GEOM_DeviceActor():
   myPolyDataNormals(vtkPolyDataNormals::New(),true), 
   myActor(VTKViewer_Actor::New(),true) 
 { 
-  myStripper->SetInput(myPolyDataNormals->GetOutput()); 
-  myPolyDataMapper->SetInput(myStripper->GetOutput()); 
+  myStripper->SetInputConnection(myPolyDataNormals->GetOutputPort()); 
+  myPolyDataMapper->SetInputConnection(myStripper->GetOutputPort()); 
  
   myActor->SetMapper(myPolyDataMapper.Get()); 
   myActor->PickableOff(); 
@@ -51,12 +51,16 @@ GEOM_DeviceActor::~GEOM_DeviceActor()
  
 void 
 GEOM_DeviceActor:: 
-SetInput(vtkPolyData* thePolyData, bool theUseStripper)
+SetInput(vtkAlgorithmOutput* thePolyData, bool theUseStripper)
 { 
   if(theUseStripper)
-    myPolyDataNormals->SetInput(thePolyData); 
+  {
+    myPolyDataNormals->SetInputConnection(thePolyData); 
+    myStripper->SetInputConnection(myPolyDataNormals->GetOutputPort()); 
+    myPolyDataMapper->SetInputConnection(myStripper->GetOutputPort()); 
+  }
   else 
-    myPolyDataMapper->SetInput(thePolyData); 
+    myPolyDataMapper->SetInputConnection(thePolyData); 
 }
  
 void 
@@ -72,16 +76,16 @@ GetProperty()
 {
   return myActor->GetProperty();
 }
-
-void 
-GEOM_DeviceActor:: 
+ 
+void
+GEOM_DeviceActor::
 SetBackfaceProperty(vtkProperty* theProperty)
 {
   myActor->SetBackfaceProperty(theProperty);
 }
  
-vtkProperty* 
-GEOM_DeviceActor:: 
+vtkProperty*
+GEOM_DeviceActor::
 GetBackfaceProperty()
 {
   return myActor->GetBackfaceProperty();

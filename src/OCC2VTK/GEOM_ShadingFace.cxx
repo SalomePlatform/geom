@@ -26,26 +26,32 @@
 
 #include <vtkPolyDataMapper.h>  
 #include <vtkPolyData.h>  
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 
 #include <BRep_Tool.hxx>
 #include <Poly_Triangulation.hxx>
- 
+
 
 vtkStandardNewMacro(GEOM_ShadingFace);
  
 GEOM_ShadingFace::GEOM_ShadingFace() 
 { 
+  this->SetNumberOfInputPorts(0);
 } 
  
 GEOM_ShadingFace::~GEOM_ShadingFace() 
 { 
 } 
  
-void
-GEOM_ShadingFace:: 
-Execute()
+int GEOM_ShadingFace::RequestData(vtkInformation *vtkNotUsed(request),
+                                  vtkInformationVector **vtkNotUsed(inputVector),
+                                  vtkInformationVector *outputVector)
 {
-  vtkPolyData* aPolyData = GetOutput();
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkPolyData *aPolyData = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   aPolyData->Allocate();
   vtkPoints* aPts = vtkPoints::New();
   aPolyData->SetPoints(aPts);
@@ -56,6 +62,7 @@ Execute()
     const TopoDS_Face& aFace = anIter.Value();
     OCC2VTK(aFace,aPolyData,aPts);
   }
+  return 1;
 }
 
 void  

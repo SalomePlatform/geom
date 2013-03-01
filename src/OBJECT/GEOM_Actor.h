@@ -121,24 +121,24 @@ public:
   void ShallowCopy(vtkProp *prop);
 
   // Opacity
-  void SetOpacity(vtkFloatingPointType opa);
-  vtkFloatingPointType GetOpacity();
+  void SetOpacity(double opa);
+  double GetOpacity();
 
   // Color (same to all sub-actors/display modes)
-  void SetColor(vtkFloatingPointType r,  vtkFloatingPointType g,  vtkFloatingPointType b);
-  void GetColor(vtkFloatingPointType& r, vtkFloatingPointType& g, vtkFloatingPointType& b);
+  void SetColor(double r,  double g,  double b);
+  void GetColor(double& r, double& g, double& b);
   // Color of points
-  void SetPointColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  void SetPointColor(double r, double g, double b);
   // Color of standalone edges, wires, vectors
-  void SetIsolatedEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  void SetIsolatedEdgeColor(double r, double g, double b);
   // Color of shared edges
-  void SetSharedEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  void SetSharedEdgeColor(double r, double g, double b);
   // Color of free edges
-  void SetFreeEdgeColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  void SetFreeEdgeColor(double r, double g, double b);
   // Color of edges in shading+edges display mode
-  void SetEdgesInShadingColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  void SetEdgesInShadingColor(double r, double g, double b);
   // Color of iso-lines
-  void SetIsosColor(vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b);
+  void SetIsosColor(double r, double g, double b);
 
 
   // Material
@@ -263,11 +263,11 @@ private:
   GEOM_Actor(const GEOM_Actor&);
   void operator=(const GEOM_Actor&);
 
-  vtkFloatingPointType myEdgesInWireframeColor[3];
-  vtkFloatingPointType myEdgesInShadingColor[3];
-  vtkFloatingPointType myIsolatedEdgeColor[3];
-  vtkFloatingPointType mySharedEdgeColor[3];
-  vtkFloatingPointType myOneFaceEdgeColor[3];
+  double myEdgesInWireframeColor[3];
+  double myEdgesInShadingColor[3];
+  double myIsolatedEdgeColor[3];
+  double mySharedEdgeColor[3];
+  double myOneFaceEdgeColor[3];
 };
 
 #endif //GEOM_ACTOR_H

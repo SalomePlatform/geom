@@ -35,7 +35,7 @@ public:
                vtkPoints* thePts); 
  
 protected: 
-  void Execute(); 
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
  
   GEOM_ShadingFace(); 
   ~GEOM_ShadingFace(); 

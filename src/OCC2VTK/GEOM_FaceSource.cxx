@@ -29,6 +29,7 @@
  
 GEOM_FaceSource::GEOM_FaceSource() 
 { 
+  this->SetNumberOfInputPorts(0);
 } 
  
 GEOM_FaceSource::~GEOM_FaceSource() 

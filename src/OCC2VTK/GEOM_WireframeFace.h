@@ -26,7 +26,7 @@
 #include <GeomAbs_IsoType.hxx>
 #include <BRepAdaptor_Surface.hxx>
  
-#include <vtkPolyDataSource.h> 
+class vtkPolyData;
 
 class OCC2VTK_EXPORT GEOM_WireframeFace: public GEOM_FaceSource 
 { 
@@ -85,7 +85,7 @@ protected:
               vtkPolyData* thePolyData,
               vtkPoints* thePts);
 
-  void Execute(); 
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
  
   GEOM_WireframeFace(); 
   ~GEOM_WireframeFace(); 

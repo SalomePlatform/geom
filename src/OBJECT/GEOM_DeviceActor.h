@@ -43,6 +43,7 @@ class vtkRenderer;
  
 #include <vtkObject.h> 
  
+class vtkAlgorithmOutput;
  
 class VTK_EXPORT GEOM_DeviceActor: public vtkObject 
 {  
@@ -52,14 +53,14 @@ public:
 
   void SetProperty(vtkProperty* theProperty);
   vtkProperty* GetProperty();
- 
+
   void SetBackfaceProperty(vtkProperty* theProperty);
   vtkProperty* GetBackfaceProperty();
 
   void SetVisibility(int theVisibility); 
   int GetVisibility(); 
  
-  void SetInput(vtkPolyData* thePolyData, bool theUseStripper); 
+  void SetInput(vtkAlgorithmOutput* thePolyData, bool theUseStripper); 
 
   void AddToRender(vtkRenderer* theRenderer); 
   void RemoveFromRender(vtkRenderer* theRenderer);

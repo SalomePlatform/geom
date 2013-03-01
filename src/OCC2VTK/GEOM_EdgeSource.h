@@ -28,12 +28,14 @@
 typedef NCollection_Set<TopoDS_Edge> TEdgeSet; 
  
 #include <vtkPoints.h> 
-#include <vtkPolyDataSource.h> 
+#include <vtkPolyDataAlgorithm.h> 
 
-class OCC2VTK_EXPORT GEOM_EdgeSource: public vtkPolyDataSource 
+class vtkPolyData;
+
+class OCC2VTK_EXPORT GEOM_EdgeSource: public vtkPolyDataAlgorithm 
 { 
 public: 
-  vtkTypeMacro(GEOM_EdgeSource,vtkPolyDataSource); 
+  vtkTypeMacro(GEOM_EdgeSource,vtkPolyDataAlgorithm); 
   static GEOM_EdgeSource* New(); 
  
   void AddEdge (const TopoDS_Edge& theEdge,
@@ -59,7 +61,7 @@ protected:
   // representing a vector, can have only one edge.
   bool myIsVector, myIsVectorMode;
  
-  void Execute(); 
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
  
   GEOM_EdgeSource(); 
   ~GEOM_EdgeSource(); 
