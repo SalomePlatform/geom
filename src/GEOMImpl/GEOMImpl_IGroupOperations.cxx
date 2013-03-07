@@ -1151,8 +1151,8 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::UnionListOfGroups
   for (i = 1; i <= aLen; i++) {
     Handle(GEOM_Object) aGr_i = Handle(GEOM_Object)::DownCast(theGList->Value(i));
     if ( aGr_i->GetType() != GEOM_GROUP ) {
-  	  SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
-  	  return NULL;
+      SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+      return NULL;
     }
     // Get group type
     aType_i = GetType(aGr_i);
@@ -1582,11 +1582,13 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::GetMainShape (Handle(GEOM_Object)
 {
   SetErrorCode(KO);
 
-  if(theGroup.IsNull()) return NULL;
-  if ( theGroup->GetType() != GEOM_GROUP ) {
-    SetErrorCode( "Error: You could perform this operation only with group. Please select a group." );
+  if (theGroup.IsNull()) return NULL;
+  if (theGroup->GetType() != GEOM_GROUP &&
+      theGroup->GetType() != GEOM_SUBSHAPE) {
+    SetErrorCode("Error: You could perform this operation only with a group or a sub-shape.");
     return NULL;
   }
+
   Handle(GEOM_Function) aGroupFunction = theGroup->GetFunction(1);
   if (aGroupFunction.IsNull()) return NULL;
 
