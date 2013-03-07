@@ -53,8 +53,7 @@ OMNIORB_IDLPYFLAGS  = @OMNIORB_IDLPYFLAGS@ -I$(top_builddir)/idl/salome -I$(KERN
 IDLCXXFLAGS = -bcxx @IDLCXXFLAGS@ -I$(top_builddir)/idl/salome -I$(KERNEL_ROOT_DIR)/idl/salome
 IDLPYFLAGS  = @IDLPYFLAGS@ -I$(KERNEL_ROOT_DIR)/idl/salome
 
-SUFFIXES = .idl .hh SK.cc
-%SK.cc %.hh :: %.idl
+%SK.cc %.hh : %.idl
 	$(OMNIORB_IDL) $(IDLCXXFLAGS) $(OMNIORB_IDLCXXFLAGS) $<
 
 install-exec-local: $(BASEIDL_FILES:%=$(top_srcdir)/idl/%)
