@@ -18,13 +18,13 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMImpl_BooleanDriver.hxx>
 #include <GEOMImpl_IBoolean.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOM_Function.hxx>
+#include <GEOMUtils.hxx>
 
 #include <TNaming_CopyShape.hxx>
 
@@ -72,30 +72,6 @@ GEOMImpl_BooleanDriver::GEOMImpl_BooleanDriver()
 {
 }
 
-void AddSimpleShapes(TopoDS_Shape theShape, TopTools_ListOfShape& theList)
-{
-  if (theShape.ShapeType() != TopAbs_COMPOUND &&
-      theShape.ShapeType() != TopAbs_COMPSOLID) {
-    theList.Append(theShape);
-    return;
-  }
-
-  TopTools_MapOfShape mapShape;
-  TopoDS_Iterator It (theShape, Standard_True, Standard_True);
-
-  for (; It.More(); It.Next()) {
-    TopoDS_Shape aShape_i = It.Value();
-    if (mapShape.Add(aShape_i)) {
-      if (aShape_i.ShapeType() == TopAbs_COMPOUND ||
-          aShape_i.ShapeType() == TopAbs_COMPSOLID) {
-        AddSimpleShapes(aShape_i, theList);
-      } else {
-        theList.Append(aShape_i);
-      }
-    }
-  }
-}
-
 //=======================================================================
 //function : Execute
 //purpose  :
@@ -131,8 +107,8 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
       B.MakeCompound(C);
 
       TopTools_ListOfShape listShape1, listShape2;
-      AddSimpleShapes(aShape1, listShape1);
-      AddSimpleShapes(aShape2, listShape2);
+      GEOMUtils::AddSimpleShapes(aShape1, listShape1);
+      GEOMUtils::AddSimpleShapes(aShape2, listShape2);
 
       Standard_Boolean isCompound =
         (listShape1.Extent() > 1 || listShape2.Extent() > 1);
@@ -174,7 +150,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
       if (isCompound) {
         /*
         TopTools_ListOfShape listShapeC;
-        AddSimpleShapes(C, listShapeC);
+        GEOMUtils::AddSimpleShapes(C, listShapeC);
         TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
         bool isOnlySolids = true;
         for (; itSubC.More(); itSubC.Next()) {
@@ -203,8 +179,8 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
       B.MakeCompound(C);
 
       TopTools_ListOfShape listShapes, listTools;
-      AddSimpleShapes(aShape1, listShapes);
-      AddSimpleShapes(aShape2, listTools);
+      GEOMUtils::AddSimpleShapes(aShape1, listShapes);
+      GEOMUtils::AddSimpleShapes(aShape2, listTools);
 
       Standard_Boolean isCompound = (listShapes.Extent() > 1);
 
@@ -245,7 +221,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
       if (isCompound) {
         /*
         TopTools_ListOfShape listShapeC;
-        AddSimpleShapes(C, listShapeC);
+        GEOMUtils::AddSimpleShapes(C, listShapeC);
         TopTools_ListIteratorOfListOfShape itSubC (listShapeC);
         bool isOnlySolids = true;
         for (; itSubC.More(); itSubC.Next()) {
@@ -272,8 +248,8 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
       /* Fix for NPAL15379: refused
       // Check arguments
       TopTools_ListOfShape listShape1, listShape2;
-      AddSimpleShapes(aShape1, listShape1);
-      AddSimpleShapes(aShape2, listShape2);
+      GEOMUtils::AddSimpleShapes(aShape1, listShape1);
+      GEOMUtils::AddSimpleShapes(aShape2, listShape2);
 
       Standard_Boolean isIntersect = Standard_False;
 
@@ -360,8 +336,8 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
       B.MakeCompound(C);
 
       TopTools_ListOfShape listShape1, listShape2;
-      AddSimpleShapes(aShape1, listShape1);
-      AddSimpleShapes(aShape2, listShape2);
+      GEOMUtils::AddSimpleShapes(aShape1, listShape1);
+      GEOMUtils::AddSimpleShapes(aShape2, listShape2);
 
       Standard_Boolean isCompound =
         (listShape1.Extent() > 1 || listShape2.Extent() > 1);
@@ -433,7 +409,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
   // as boolean operations always produce compound, lets simplify it
   // for the case, if it contains only one sub-shape
   TopTools_ListOfShape listShapeRes;
-  AddSimpleShapes(aShape, listShapeRes);
+  GEOMUtils::AddSimpleShapes(aShape, listShapeRes);
   if (listShapeRes.Extent() == 1) {
     aShape = listShapeRes.First();
     if (aShape.IsNull()) return 0;

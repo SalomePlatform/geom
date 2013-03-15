@@ -244,7 +244,7 @@ coordsys.png			\
 translation.png
 
 ADVANCED_RESOURCES  =
-ADVANCED_RESOURCES += pipetshape.png tree_pipetshape.png pipetshape_import_icon.png
+ADVANCED_RESOURCES += pipetshape.png tree_pipetshape.png pipetshape_import_icon.png pipetshape_section.png
 ADVANCED_RESOURCES += dlg_pipetshape.png dlg_pipetshapechamfer.png dlg_pipetshapefillet.png
 ADVANCED_RESOURCES += dlg_pipetshapel1.png dlg_pipetshaper1.png dlg_pipetshapew1.png
 ADVANCED_RESOURCES += dlg_pipetshapel2.png dlg_pipetshaper2.png dlg_pipetshapew2.png

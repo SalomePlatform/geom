@@ -23,6 +23,7 @@
 #define _GEOMUtils_HXX_
 
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Vertex.hxx>
 
 #include <TopTools_ListOfShape.hxx>
 
@@ -90,6 +91,17 @@ class GEOMUtils {
   Standard_EXPORT static TopoDS_Shape CompsolidToCompound (const TopoDS_Shape& theCompsolid);
 
   /*!
+   * \brief Recursively extract all shapes from compounds and compsolids of the given shape into theList.
+   *
+   * If theShape is not compound or compsolid, theList will contain only theShape itself.
+   *
+   * \param theShape The shape to be exploded.
+   * \param theList Output parameter.
+   */
+  Standard_EXPORT static void AddSimpleShapes (const TopoDS_Shape& theShape,
+                                               TopTools_ListOfShape& theList);
+
+  /*!
    * \brief Build a triangulation on \a theShape if it is absent.
    * \param theShape The shape to check/build triangulation on.
    * \retval bool Returns false if the shape has no faces, i.e. impossible to build triangulation.
@@ -102,6 +114,16 @@ class GEOMUtils {
    * \retval TopAbs_ShapeEnum Return type of shape for explode.
    */
   Standard_EXPORT static TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape);
+
+  /*!
+   * \brief Find an edge of theShape, closest to thePoint.
+   *
+   * \param theShape The shape to explore.
+   * \param thePoint The point near the required edge.
+   * \retval TopoDS_Shape Returns the found edge or an empty shape if multiple edges found.
+   */
+  Standard_EXPORT static TopoDS_Shape GetEdgeNearPoint (const TopoDS_Shape&  theShape,
+                                                        const TopoDS_Vertex& thePoint);
 
 };
 

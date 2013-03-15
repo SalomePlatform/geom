@@ -11514,16 +11514,34 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  The extremity of the incident pipe is located on junction point P3.
         #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
         #  the main plane of the T-shape is XOY.
+        #
         #  @param theR1 Internal radius of main pipe
         #  @param theW1 Width of main pipe
         #  @param theL1 Half-length of main pipe
         #  @param theR2 Internal radius of incident pipe (R2 < R1)
         #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
         #  @param theL2 Half-length of incident pipe
+        #
         #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
+        #
+        #  @param theRL Internal radius of left thickness reduction
+        #  @param theWL Width of left thickness reduction
+        #  @param theLtransL Length of left transition part
+        #  @param theLthinL Length of left thin part
+        #
+        #  @param theRR Internal radius of right thickness reduction
+        #  @param theWR Width of right thickness reduction
+        #  @param theLtransR Length of right transition part
+        #  @param theLthinR Length of right thin part
+        #
+        #  @param theRI Internal radius of incident thickness reduction
+        #  @param theWI Width of incident thickness reduction
+        #  @param theLtransI Length of incident transition part
+        #  @param theLthinI Length of incident thin part
+        #
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -11531,7 +11549,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
         #
         #  @ref tui_creation_pipetshape "Example"
-        def MakePipeTShape(self, theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh=True, theP1=None, theP2=None, theP3=None, theName=None):
+        def MakePipeTShape (self, theR1, theW1, theL1, theR2, theW2, theL2,
+                            theHexMesh=True, theP1=None, theP2=None, theP3=None,
+                            theRL=0, theWL=0, theLtransL=0, theLthinL=0,
+                            theRR=0, theWR=0, theLtransR=0, theLthinR=0,
+                            theRI=0, theWI=0, theLtransI=0, theLthinI=0,
+                            theName=None):
             """
             Create a T-shape object with specified caracteristics for the main
             and the incident pipes (radius, width, half-length).
@@ -11540,7 +11563,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
             the main plane of the T-shape is XOY.
 
-            Paremeters:
+            Parameters:
                 theR1 Internal radius of main pipe
                 theW1 Width of main pipe
                 theL1 Half-length of main pipe
@@ -11551,6 +11574,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theP1 1st junction point of main pipe
                 theP2 2nd junction point of main pipe
                 theP3 Junction point of incident pipe
+
+                theRL Internal radius of left thickness reduction
+                theWL Width of left thickness reduction
+                theLtransL Length of left transition part
+                theLthinL Length of left thin part
+
+                theRR Internal radius of right thickness reduction
+                theWR Width of right thickness reduction
+                theLtransR Length of right transition part
+                theLthinR Length of right thin part
+
+                theRI Internal radius of incident thickness reduction
+                theWI Width of incident thickness reduction
+                theLtransI Length of incident transition part
+                theLthinI Length of incident thin part
+
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -11563,12 +11602,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 pipetshape = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0)
                 # create PipeTShape object with position
                 pipetshape_position = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, True, P1, P2, P3)
+                # create PipeTShape object with left thickness reduction
+                pipetshape_thr = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, theRL=60, theWL=20, theLtransL=40, theLthinL=20)
             """
-            theR1, theW1, theL1, theR2, theW2, theL2, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2)        
+            theR1, theW1, theL1, theR2, theW2, theL2, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI)
             if (theP1 and theP2 and theP3):
-                anObj = self.AdvOp.MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh, theP1, theP2, theP3)
+                anObj = self.AdvOp.MakePipeTShapeTRWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                                theRL, theWL, theLtransL, theLthinL,
+                                                                theRR, theWR, theLtransR, theLthinR,
+                                                                theRI, theWI, theLtransI, theLthinI,
+                                                                theHexMesh, theP1, theP2, theP3)
             else:
-                anObj = self.AdvOp.MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh)
+                anObj = self.AdvOp.MakePipeTShapeTR(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                    theRL, theWL, theLtransL, theLthinL,
+                                                    theRR, theWR, theLtransR, theLthinR,
+                                                    theRI, theWI, theLtransI, theLthinI,
+                                                    theHexMesh)
             RaiseIfFailed("MakePipeTShape", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
             def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
@@ -11594,6 +11643,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
+        #
+        #  @param theRL Internal radius of left thickness reduction
+        #  @param theWL Width of left thickness reduction
+        #  @param theLtransL Length of left transition part
+        #  @param theLthinL Length of left thin part
+        #
+        #  @param theRR Internal radius of right thickness reduction
+        #  @param theWR Width of right thickness reduction
+        #  @param theLtransR Length of right transition part
+        #  @param theLthinR Length of right thin part
+        #
+        #  @param theRI Internal radius of incident thickness reduction
+        #  @param theWI Width of incident thickness reduction
+        #  @param theLtransI Length of incident transition part
+        #  @param theLthinI Length of incident thin part
+        #
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -11601,7 +11666,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
         #
         #  @ref tui_creation_pipetshape "Example"
-        def MakePipeTShapeChamfer(self, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None, theName=None):
+        def MakePipeTShapeChamfer (self, theR1, theW1, theL1, theR2, theW2, theL2,
+                                   theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None,
+                                   theRL=0, theWL=0, theLtransL=0, theLthinL=0,
+                                   theRR=0, theWR=0, theLtransR=0, theLthinR=0,
+                                   theRI=0, theWI=0, theLtransI=0, theLthinI=0,
+                                   theName=None):
             """
             Create a T-shape object with chamfer and with specified caracteristics for the main
             and the incident pipes (radius, width, half-length). The chamfer is
@@ -11611,7 +11681,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
             the main plane of the T-shape is XOY.
 
-            Paremeters:
+            Parameters:
                 theR1 Internal radius of main pipe
                 theW1 Width of main pipe
                 theL1 Half-length of main pipe
@@ -11624,6 +11694,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theP1 1st junction point of main pipe
                 theP2 2nd junction point of main pipe
                 theP3 Junction point of incident pipe
+
+                theRL Internal radius of left thickness reduction
+                theWL Width of left thickness reduction
+                theLtransL Length of left transition part
+                theLthinL Length of left thin part
+
+                theRR Internal radius of right thickness reduction
+                theWR Width of right thickness reduction
+                theLtransR Length of right transition part
+                theLthinR Length of right thin part
+
+                theRI Internal radius of incident thickness reduction
+                theWI Width of incident thickness reduction
+                theLtransI Length of incident transition part
+                theLthinI Length of incident thin part
+
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -11636,12 +11722,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 pipetshapechamfer = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0)
                 # create PipeTShape with chamfer object with position
                 pipetshapechamfer_position = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0, True, P1, P2, P3)
+                # create PipeTShape with chamfer object with left thickness reduction
+                pipetshapechamfer_thr = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0, theRL=60, theWL=20, theLtransL=40, theLthinL=20)
             """
-            theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW)
+            theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI)
             if (theP1 and theP2 and theP3):
-              anObj = self.AdvOp.MakePipeTShapeChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh, theP1, theP2, theP3)
+              anObj = self.AdvOp.MakePipeTShapeTRChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                                     theRL, theWL, theLtransL, theLthinL,
+                                                                     theRR, theWR, theLtransR, theLthinR,
+                                                                     theRI, theWI, theLtransI, theLthinI,
+                                                                     theH, theW, theHexMesh, theP1, theP2, theP3)
             else:
-              anObj = self.AdvOp.MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh)
+              anObj = self.AdvOp.MakePipeTShapeTRChamfer(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                         theRL, theWL, theLtransL, theLthinL,
+                                                         theRR, theWR, theLtransR, theLthinR,
+                                                         theRI, theWI, theLtransI, theLthinI,
+                                                         theH, theW, theHexMesh)
             RaiseIfFailed("MakePipeTShapeChamfer", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
             def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
@@ -11666,6 +11762,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
+        #
+        #  @param theRL Internal radius of left thickness reduction
+        #  @param theWL Width of left thickness reduction
+        #  @param theLtransL Length of left transition part
+        #  @param theLthinL Length of left thin part
+        #
+        #  @param theRR Internal radius of right thickness reduction
+        #  @param theWR Width of right thickness reduction
+        #  @param theLtransR Length of right transition part
+        #  @param theLthinR Length of right thin part
+        #
+        #  @param theRI Internal radius of incident thickness reduction
+        #  @param theWI Width of incident thickness reduction
+        #  @param theLtransI Length of incident transition part
+        #  @param theLthinI Length of incident thin part
+        #
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -11673,7 +11785,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
         #
         #  @ref tui_creation_pipetshape "Example"
-        def MakePipeTShapeFillet(self, theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None, theName=None):
+        def MakePipeTShapeFillet (self, theR1, theW1, theL1, theR2, theW2, theL2,
+                                  theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None,
+                                  theRL=0, theWL=0, theLtransL=0, theLthinL=0,
+                                  theRR=0, theWR=0, theLtransR=0, theLthinR=0,
+                                  theRI=0, theWI=0, theLtransI=0, theLthinI=0,
+                                  theName=None):
             """
             Create a T-shape object with fillet and with specified caracteristics for the main
             and the incident pipes (radius, width, half-length). The fillet is
@@ -11681,7 +11798,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             The extremities of the main pipe are located on junctions points P1 and P2.
             The extremity of the incident pipe is located on junction point P3.
 
-            Paremeters:
+            Parameters:
                 If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
                 the main plane of the T-shape is XOY.
                 theR1 Internal radius of main pipe
@@ -11695,6 +11812,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theP1 1st junction point of main pipe
                 theP2 2nd junction point of main pipe
                 theP3 Junction point of incident pipe
+
+                theRL Internal radius of left thickness reduction
+                theWL Width of left thickness reduction
+                theLtransL Length of left transition part
+                theLthinL Length of left thin part
+
+                theRR Internal radius of right thickness reduction
+                theWR Width of right thickness reduction
+                theLtransR Length of right transition part
+                theLthinR Length of right thin part
+
+                theRI Internal radius of incident thickness reduction
+                theWI Width of incident thickness reduction
+                theLtransI Length of incident transition part
+                theLthinI Length of incident thin part
+
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -11707,13 +11840,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 pipetshapefillet = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0)
                 # create PipeTShape with fillet object with position
                 pipetshapefillet_position = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0, True, P1, P2, P3)
-        
+                # create PipeTShape with fillet object with left thickness reduction
+                pipetshapefillet_thr = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0, theRL=60, theWL=20, theLtransL=40, theLthinL=20)
             """
-            theR1, theW1, theL1, theR2, theW2, theL2, theRF, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRF)
+            theR1, theW1, theL1, theR2, theW2, theL2, theRF, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI)
             if (theP1 and theP2 and theP3):
-              anObj = self.AdvOp.MakePipeTShapeFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh, theP1, theP2, theP3)
+              anObj = self.AdvOp.MakePipeTShapeTRFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                                    theRL, theWL, theLtransL, theLthinL,
+                                                                    theRR, theWR, theLtransR, theLthinR,
+                                                                    theRI, theWI, theLtransI, theLthinI,
+                                                                    theRF, theHexMesh, theP1, theP2, theP3)
             else:
-              anObj = self.AdvOp.MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh)
+              anObj = self.AdvOp.MakePipeTShapeTRFillet(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                        theRL, theWL, theLtransL, theLthinL,
+                                                        theRR, theWR, theLtransR, theLthinR,
+                                                        theRI, theWI, theLtransI, theLthinI,
+                                                        theRF, theHexMesh)
             RaiseIfFailed("MakePipeTShapeFillet", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
             def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
@@ -11847,7 +11989,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             Create a copy of the given object
 
-            Paremeters:
+            Parameters:
                 theOriginal geometry object for copy
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic

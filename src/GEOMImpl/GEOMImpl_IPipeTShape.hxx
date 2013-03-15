@@ -15,34 +15,13 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IPipeTShape_HXX_
 #define _GEOMImpl_IPipeTShape_HXX_
 
 #include "GEOM_Function.hxx"
 
-#define TSHAPE_ARG_R1   1
-#define TSHAPE_ARG_W1   2
-#define TSHAPE_ARG_L1   3
-#define TSHAPE_ARG_R2   4
-#define TSHAPE_ARG_W2   5
-#define TSHAPE_ARG_L2   6
-
-// chamfer
-#define TSHAPE_ARG_H    7
-#define TSHAPE_ARG_W    8
-
-// fillet
-#define TSHAPE_ARG_RF   9
-
-// partition
-#define TSHAPE_ARG_HEXMESH 10
-
-// junction points
-#define TSHAPE_ARG_P1 11
-#define TSHAPE_ARG_P2 12
-#define TSHAPE_ARG_P3 13
+#include <TColStd_HArray1OfReal.hxx>
 
 class GEOMImpl_IPipeTShape
 {
@@ -87,6 +66,34 @@ public:
 
   void SetP3(const Handle(GEOM_Function)& theP3){_func->SetReference(TSHAPE_ARG_P3, theP3); }
   Handle(GEOM_Function) GetP3() { return _func->GetReference(TSHAPE_ARG_P3); }
+
+private:
+  enum {
+    // main pipe
+    TSHAPE_ARG_R1 = 1,
+    TSHAPE_ARG_W1 = 2,
+    TSHAPE_ARG_L1 = 3,
+
+    // incident pipe
+    TSHAPE_ARG_R2 = 4,
+    TSHAPE_ARG_W2 = 5,
+    TSHAPE_ARG_L2 = 6,
+
+    // chamfer
+    TSHAPE_ARG_H  = 7,
+    TSHAPE_ARG_W  = 8,
+
+    // fillet
+    TSHAPE_ARG_RF = 9,
+
+    // partition
+    TSHAPE_ARG_HEXMESH = 10,
+
+    // junction points
+    TSHAPE_ARG_P1 = 11,
+    TSHAPE_ARG_P2 = 12,
+    TSHAPE_ARG_P3 = 13
+  };
 
 private:
   Handle(GEOM_Function) _func;

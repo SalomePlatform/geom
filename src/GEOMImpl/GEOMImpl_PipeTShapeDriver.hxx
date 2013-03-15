@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_PipeTShapeDriver_HXX
 #define _GEOMImpl_PipeTShapeDriver_HXX
@@ -24,11 +23,12 @@
 
 #include "GEOMAlgo_State.hxx"
 
+#include <TopAbs_ShapeEnum.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-#include <TopAbs_ShapeEnum.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
+#include <gp_Ax2.hxx>
 
 #include <Handle_Geom_Surface.hxx>
 
@@ -125,32 +125,33 @@ public:
     return (STANDARD_TYPE(GEOMImpl_PipeTShapeDriver) == AType || TFunction_Driver::IsKind(AType));
   }
 private:
+
   /*!
    * \brief Create a T-Shape based on pipes
    * \param r1 - the internal radius of main pipe
-   * \param w1 - the thickness main pipe
+   * \param w1 - the thickness of main pipe
    * \param l1 - the half-length of main pipe
    * \param r2 - the internal radius of incident pipe
-   * \param w2 - the thickness incident pipe
+   * \param w2 - the thickness of incident pipe
    * \param l2 - the half-length of main pipe
    * \retval TopoDS_Shape - Resulting shape
    */
-  TopoDS_Shape MakePipeTShape(double r1, double w1, double l1, double r2, double w2, double l2) const;
+  TopoDS_Shape MakePipeTShape(double r1, double w1, double l1,
+                              double r2, double w2, double l2) const;
 
   /*!
    * \brief Create a quarter of a T-Shape based on pipes
    * \param r1 - the internal radius of main pipe
-   * \param w1 - the thickness main pipe
+   * \param w1 - the thickness of main pipe
    * \param l1 - the half-length of main pipe
    * \param r2 - the internal radius of incident pipe
-   * \param w2 - the thickness incident pipe
+   * \param w2 - the thickness of incident pipe
    * \param l2 - the half-length of main pipe
    * \retval TopoDS_Shape - Resulting shape
    */
-  TopoDS_Shape MakeQuarterPipeTShape(double r1, double w1, double l1, double r2, double w2, double l2) const;
+  TopoDS_Shape MakeQuarterPipeTShape(double r1, double w1, double l1,
+                                     double r2, double w2, double l2) const;
 
-//=======================================================================
-//function : GetShapesOnSurfaceIDs
   /*!
    * \brief Find IDs of sub-shapes complying with given status about surface
    * \param theSurface - the surface to check state of sub-shapes against
@@ -164,8 +165,7 @@ private:
                           const TopoDS_Shape&         theShape,
                           TopAbs_ShapeEnum            theShapeType,
                           GEOMAlgo_State              theState) const;
-//=======================================================================
-//function : getShapesOnBoxIDs
+
   /*!
    * \brief Find IDs of sub-shapes complying with given status about surface
     * \param theBox - the box to check state of sub-shapes against
@@ -174,7 +174,6 @@ private:
     * \param theState - required state
     * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
-//=======================================================================
   Handle(TColStd_HSequenceOfInteger)
   GetShapesOnBoxIDs(const TopoDS_Shape& aBox,
                  const TopoDS_Shape& aShape,
@@ -188,7 +187,7 @@ private:
   //=======================================================================
   void GetCommonShapesOnCylinders(const TopoDS_Shape& theShape,
 				  TopAbs_ShapeEnum theShapeType,
-                  double r, double r2,
+                                  double r, double r2,
 				  Handle(TopTools_HSequenceOfShape)& commonShapes) const;
 
 };

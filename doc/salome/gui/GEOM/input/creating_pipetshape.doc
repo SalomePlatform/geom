@@ -8,6 +8,16 @@ Specify the parameters of the PipeTShape object in the opened dialog
 box and press "Apply" or "Apply & Close" button.
 The <b>result</b> of the operation will be a <b>GEOM_Object</b>.
 
+\n <b>Main parameters</b>:
+
+\image html pipetshape_dlg.png
+
+\n <b>Position parameters</b>:
+
+\image html pipetshape_pos_dlg.png
+
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
+
 <b>TUI Command:</b> <em>geompy.MakePipeTShape(R1, W1, L1, R2, W2, L2, HexMesh=True, P1=None, P2=None, P3=None)</em>
 
 <b>Arguments:</b>
@@ -18,19 +28,17 @@ The <b>result</b> of the operation will be a <b>GEOM_Object</b>.
 - \b W2 - Thickness of the incident T-shape pipe.
 - \b L2 - Length of the incident T-shape pipe.
 - \b HexMesh - If True, the shape is splitted into blocks (suitable for hexaedral mesh).
+
+<b>Position arguments:</b>
 - \b P1 - First junction point of the main pipe (GEOM Vertex).
 - \b P2 - Second junction point of the main pipe (GEOM Vertex).
 - \b P3 - Junction point of the incident pipe (GEOM Vertex).
-
-\n <b>Advanced options</b> \ref preview_anchor "Preview"
-
-\image html pipetshape_dlg.png
 
 Example:
 
 \image html pipetshape.png
 
-A Pipe T-Shape can be created with a chamfer at the junction of the main and the incident pipes:
+<h2>A Pipe T-Shape can be created with a chamfer at the junction of the main and the incident pipes:</h2>
 
 <b>TUI Command:</b> <em>geompy.MakePipeTShapeChamfer(R1, W1, L1, R2, W2, L2, H, W, HexMesh=True, P1=None, P2=None, P3=None)</em>
 
@@ -42,7 +50,7 @@ Example:
 
 \image html pipetshapechamfer.png
 
-A Pipe T-Shape can be created with a fillet at the junction of the main and the incident pipes:
+<h2>A Pipe T-Shape can be created with a fillet at the junction of the main and the incident pipes:</h2>
 
 <b>TUI Command:</b> <em>geompy.MakePipeTShapeFillet(R1, W1, L1, R2, W2, L2, RF, HexMesh=True, P1=None, P2=None, P3=None)</em>
 
@@ -52,6 +60,35 @@ A Pipe T-Shape can be created with a fillet at the junction of the main and the 
 Example:
 
 \image html pipetshapefillet.png
+
+<h2>All three types of T-Shape (basic, with chamfer and with fillet) can
+have thickness reductions at its open ends (two ends of the main pipe
+and one end of the incident pipe):</h2>
+
+\image html pipetshape_thr_dlg.png
+
+<b>TUI Commands:</b>
+\n<em>geompy.MakePipeTShape(R1, W1, L1, R2, W2, L2, HexMesh=True, P1=None, P2=None, P3=None, theRL=0, theWL=0, theLtransL=0, theLthinL=0, theRR=0, theWR=0, theLtransR=0, theLthinR=0, theRI=0, theWI=0, theLtransI=0, theLthinI=0)</em>
+\n<em>geompy.MakePipeTShapeChamfer(R1, W1, L1, R2, W2, L2, H, W, HexMesh=True, P1=None, P2=None, P3=None, theRL=0, theWL=0, theLtransL=0, theLthinL=0, theRR=0, theWR=0, theLtransR=0, theLthinR=0, theRI=0, theWI=0, theLtransI=0, theLthinI=0)</em>
+\n<em>geompy.MakePipeTShapeFillet(R1, W1, L1, R2, W2, L2, RF, HexMesh=True, P1=None, P2=None, P3=None, theRL=0, theWL=0, theLtransL=0, theLthinL=0, theRR=0, theWR=0, theLtransR=0, theLthinR=0, theRI=0, theWI=0, theLtransI=0, theLthinI=0)</em>
+
+<b>The additional arguments are:</b>
+- \b theRL - Internal radius of left thickness reduction.
+- \b theWL - Width of left thickness reduction.
+- \b theLtransL - Length of left transition part.
+- \b theLthinL - Length of left thin part.
+- \b theRR - Internal radius of right thickness reduction.
+- \b theWR - Width of right thickness reduction.
+- \b theLtransR - Length of right transition part.
+- \b theLthinR - Length of right thin part.
+- \b theRI - Internal radius of incident thickness reduction.
+- \b theWI - Width of incident thickness reduction.
+- \b theLtransI - Length of incident transition part.
+- \b theLthinI - Length of incident thin part.
+
+Example:
+
+\image html pipetshapethr.png
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_pipetshape "Advanced objects".

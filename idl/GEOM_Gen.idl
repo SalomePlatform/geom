@@ -3935,6 +3935,8 @@ module GEOM
    */
   interface GEOM_IAdvancedOperations : GEOM_IOperations
   {
+    // T-Shape WITHOUT Thickness reduction
+
     /*!
      *  \brief Create a T-shape object with specified caracteristics for the main and
      *  the incident pipes (radius, width, half-length).
@@ -4062,6 +4064,256 @@ module GEOM
                                                in double theR2, in double theW2, in double theL2,
                                                in double theRF, in boolean theHexMesh,
                                                in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+
+    // T-Shape WITH Thickness reduction
+
+    /*!
+     *  \brief Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length).
+     *
+     *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *
+     *  \param theRL Internal radius of left thickness reduction
+     *  \param theWL Width of left thickness reduction
+     *  \param theLtransL Length of left transition part
+     *  \param theLthinL Length of left thin part
+     *
+     *  \param theRR Internal radius of right thickness reduction
+     *  \param theWR Width of right thickness reduction
+     *  \param theLtransR Length of right transition part
+     *  \param theLthinR Length of right thin part
+     *
+     *  \param theRI Internal radius of incident thickness reduction
+     *  \param theWI Width of incident thickness reduction
+     *  \param theLtransI Length of incident transition part
+     *  \param theLthinI Length of incident thin part
+     *
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \return List of GEOM_Object, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeTR (in double theR1, in double theW1, in double theL1,
+                               in double theR2, in double theW2, in double theL2,
+                               in double theRL, in double theWL, in double theLtransL, in double theLthinL,
+                               in double theRR, in double theWR, in double theLtransR, in double theLthinR,
+                               in double theRI, in double theWI, in double theLtransI, in double theLthinI,
+                               in boolean theHexMesh);
+    /*!
+     *  \brief Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length).
+     *
+     *  The extremities of the main pipe are located on junctions points P1 and P2.
+     *  The extremity of the incident pipe is located on junction point P3.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *
+     *  \param theRL Internal radius of left thickness reduction
+     *  \param theWL Width of left thickness reduction
+     *  \param theLtransL Length of left transition part
+     *  \param theLthinL Length of left thin part
+     *
+     *  \param theRR Internal radius of right thickness reduction
+     *  \param theWR Width of right thickness reduction
+     *  \param theLtransR Length of right transition part
+     *  \param theLthinR Length of right thin part
+     *
+     *  \param theRI Internal radius of incident thickness reduction
+     *  \param theWI Width of incident thickness reduction
+     *  \param theLtransI Length of incident transition part
+     *  \param theLthinI Length of incident thin part
+     *
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \param theP1 1st junction point of main pipe
+     *  \param theP2 2nd junction point of main pipe
+     *  \param theP3 Junction point of incident pipe
+     *  \return List of GEOM_Object, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeTRWithPosition
+                 (in double theR1, in double theW1, in double theL1,
+                  in double theR2, in double theW2, in double theL2,
+                  in double theRL, in double theWL, in double theLtransL, in double theLthinL,
+                  in double theRR, in double theWR, in double theLtransR, in double theLthinR,
+                  in double theRI, in double theWI, in double theLtransI, in double theLthinI,
+                  in boolean theHexMesh,
+                  in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+    /*!
+     *  \brief Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length). A chamfer is created
+     *  on the junction of the pipes.
+     *  
+     *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *
+     *  \param theRL Internal radius of left thickness reduction
+     *  \param theWL Width of left thickness reduction
+     *  \param theLtransL Length of left transition part
+     *  \param theLthinL Length of left thin part
+     *
+     *  \param theRR Internal radius of right thickness reduction
+     *  \param theWR Width of right thickness reduction
+     *  \param theLtransR Length of right transition part
+     *  \param theLthinR Length of right thin part
+     *
+     *  \param theRI Internal radius of incident thickness reduction
+     *  \param theWI Width of incident thickness reduction
+     *  \param theLtransI Length of incident transition part
+     *  \param theLthinI Length of incident thin part
+     *
+     *  \param theH Height of the chamfer.
+     *  \param theW Width of the chamfer.
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \return List of GEOM_Object, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeTRChamfer
+                 (in double theR1, in double theW1, in double theL1,
+                  in double theR2, in double theW2, in double theL2,
+                  in double theRL, in double theWL, in double theLtransL, in double theLthinL,
+                  in double theRR, in double theWR, in double theLtransR, in double theLthinR,
+                  in double theRI, in double theWI, in double theLtransI, in double theLthinI,
+                  in double theH, in double theW, in boolean theHexMesh);
+    /*!
+     *  \brief Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length). 
+     * 
+     *  A chamfer is created on the junction of the pipes.
+     *  The extremities of the main pipe are located on junctions points P1 and P2.
+     *  The extremity of the incident pipe is located on junction point P3.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *
+     *  \param theRL Internal radius of left thickness reduction
+     *  \param theWL Width of left thickness reduction
+     *  \param theLtransL Length of left transition part
+     *  \param theLthinL Length of left thin part
+     *
+     *  \param theRR Internal radius of right thickness reduction
+     *  \param theWR Width of right thickness reduction
+     *  \param theLtransR Length of right transition part
+     *  \param theLthinR Length of right thin part
+     *
+     *  \param theRI Internal radius of incident thickness reduction
+     *  \param theWI Width of incident thickness reduction
+     *  \param theLtransI Length of incident transition part
+     *  \param theLthinI Length of incident thin part
+     *
+     *  \param theH Height of the chamfer.
+     *  \param theW Width of the chamfer.
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \param theP1 1st junction point of main pipe
+     *  \param theP2 2nd junction point of main pipe
+     *  \param theP3 Junction point of incident pipe
+     *  \return List of GEOM_Object, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeTRChamferWithPosition
+                 (in double theR1, in double theW1, in double theL1,
+                  in double theR2, in double theW2, in double theL2,
+                  in double theRL, in double theWL, in double theLtransL, in double theLthinL,
+                  in double theRR, in double theWR, in double theLtransR, in double theLthinR,
+                  in double theRI, in double theWI, in double theLtransI, in double theLthinI,
+                  in double theH, in double theW, in boolean theHexMesh,
+                  in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+    /*!
+     *  \brief Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length). 
+     *
+     *  A fillet is created on the junction of the pipes.
+     *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *
+     *  \param theRL Internal radius of left thickness reduction
+     *  \param theWL Width of left thickness reduction
+     *  \param theLtransL Length of left transition part
+     *  \param theLthinL Length of left thin part
+     *
+     *  \param theRR Internal radius of right thickness reduction
+     *  \param theWR Width of right thickness reduction
+     *  \param theLtransR Length of right transition part
+     *  \param theLthinR Length of right thin part
+     *
+     *  \param theRI Internal radius of incident thickness reduction
+     *  \param theWI Width of incident thickness reduction
+     *  \param theLtransI Length of incident transition part
+     *  \param theLthinI Length of incident thin part
+     *
+     *  \param theRF Radius of curvature of fillet.
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \return List of GEOM_Object, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeTRFillet
+                 (in double theR1, in double theW1, in double theL1,
+                  in double theR2, in double theW2, in double theL2,
+                  in double theRL, in double theWL, in double theLtransL, in double theLthinL,
+                  in double theRR, in double theWR, in double theLtransR, in double theLthinR,
+                  in double theRI, in double theWI, in double theLtransI, in double theLthinI,
+                  in double theRF, in boolean theHexMesh);
+    /*!
+     *  \brief Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length).
+     *
+     *  A fillet is created on the junction of the pipes.
+     *  The extremities of the main pipe are located on junctions points P1 and P2.
+     *  The extremity of the incident pipe is located on junction point P3.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *
+     *  \param theRL Internal radius of left thickness reduction
+     *  \param theWL Width of left thickness reduction
+     *  \param theLtransL Length of left transition part
+     *  \param theLthinL Length of left thin part
+     *
+     *  \param theRR Internal radius of right thickness reduction
+     *  \param theWR Width of right thickness reduction
+     *  \param theLtransR Length of right transition part
+     *  \param theLthinR Length of right thin part
+     *
+     *  \param theRI Internal radius of incident thickness reduction
+     *  \param theWI Width of incident thickness reduction
+     *  \param theLtransI Length of incident transition part
+     *  \param theLthinI Length of incident thin part
+     *
+     *  \param theRF Radius of curvature of fillet.
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \param theP1 1st junction point of main pipe
+     *  \param theP2 2nd junction point of main pipe
+     *  \param theP3 Junction point of incident pipe
+     *  \return List of GEOM_Object, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeTRFilletWithPosition
+                 (in double theR1, in double theW1, in double theL1,
+                  in double theR2, in double theW2, in double theL2,
+                  in double theRL, in double theWL, in double theLtransL, in double theLthinL,
+                  in double theRR, in double theWR, in double theLtransR, in double theLthinR,
+                  in double theRI, in double theWI, in double theLtransI, in double theLthinI,
+                  in double theRF, in boolean theHexMesh,
+                  in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+
     /*!
      *  This function allows to create a disk already divided into blocks. It
      *  can be use to create divided pipes for later meshing in hexaedra.

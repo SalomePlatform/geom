@@ -1208,6 +1208,10 @@
             <translation>dlg_pipetshape.png</translation>
         </message>
         <message>
+            <source>IMG_PIPETSHAPE_SECT</source>
+            <translation>pipetshape_section.png</translation>
+        </message>
+        <message>
             <source>DLG_PIPETSHAPE_L1</source>
             <translation>dlg_pipetshapel1.png</translation>
         </message>

@@ -32,6 +32,8 @@
 // OCCT Includes
 #include <BRepMesh_IncrementalMesh.hxx>
 
+#include <BRepExtrema_DistShapeShape.hxx>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBndLib.hxx>
@@ -53,6 +55,7 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_Array1OfShape.hxx>
 
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
@@ -62,6 +65,8 @@
 
 #include <GProp_GProps.hxx>
 #include <GProp_PrincipalProps.hxx>
+
+#include <TColStd_Array1OfReal.hxx>
 
 #include <gp_Pln.hxx>
 #include <gp_Lin.hxx>
@@ -428,6 +433,34 @@ TopoDS_Shape GEOMUtils::CompsolidToCompound (const TopoDS_Shape& theCompsolid)
 }
 
 //=======================================================================
+//function : AddSimpleShapes
+//purpose  :
+//=======================================================================
+void GEOMUtils::AddSimpleShapes (const TopoDS_Shape& theShape, TopTools_ListOfShape& theList)
+{
+  if (theShape.ShapeType() != TopAbs_COMPOUND &&
+      theShape.ShapeType() != TopAbs_COMPSOLID) {
+    theList.Append(theShape);
+    return;
+  }
+
+  TopTools_MapOfShape mapShape;
+  TopoDS_Iterator It (theShape, Standard_True, Standard_True);
+
+  for (; It.More(); It.Next()) {
+    TopoDS_Shape aShape_i = It.Value();
+    if (mapShape.Add(aShape_i)) {
+      if (aShape_i.ShapeType() == TopAbs_COMPOUND ||
+          aShape_i.ShapeType() == TopAbs_COMPSOLID) {
+        AddSimpleShapes(aShape_i, theList);
+      } else {
+        theList.Append(aShape_i);
+      }
+    }
+  }
+}
+
+//=======================================================================
 //function : CheckTriangulation
 //purpose  :
 //=======================================================================
@@ -496,4 +529,72 @@ TopAbs_ShapeEnum GEOMUtils::GetTypeOfSimplePart (const TopoDS_Shape& theShape)
     }
   }
   return TopAbs_SHAPE;
+}
+
+//=======================================================================
+//function : GetEdgeNearPoint
+//purpose  :
+//=======================================================================
+TopoDS_Shape GEOMUtils::GetEdgeNearPoint (const TopoDS_Shape& theShape,
+                                          const TopoDS_Vertex& thePoint)
+{
+  TopoDS_Shape aResult;
+
+  // 1. Explode the shape on edges
+  TopTools_MapOfShape mapShape;
+  Standard_Integer nbEdges = 0;
+  TopExp_Explorer exp (theShape, TopAbs_EDGE);
+  for (; exp.More(); exp.Next()) {
+    if (mapShape.Add(exp.Current())) {
+      nbEdges++;
+    }
+  }
+
+  if (nbEdges == 0)
+    Standard_NullObject::Raise("Given shape contains no edges");
+
+  mapShape.Clear();
+  Standard_Integer ind = 1;
+  TopTools_Array1OfShape anEdges (1, nbEdges);
+  TColStd_Array1OfReal aDistances (1, nbEdges);
+  for (exp.Init(theShape, TopAbs_EDGE); exp.More(); exp.Next()) {
+    if (mapShape.Add(exp.Current())) {
+      TopoDS_Shape anEdge = exp.Current();
+      anEdges(ind) = anEdge;
+
+      // 2. Classify the point relatively each edge
+      BRepExtrema_DistShapeShape aDistTool (thePoint, anEdges(ind));
+      if (!aDistTool.IsDone())
+        Standard_ConstructionError::Raise("Cannot find a distance from the given point to one of edges");
+
+      aDistances(ind) = aDistTool.Value();
+      ind++;
+    }
+  }
+
+  // 3. Define edge, having minimum distance to the point
+  Standard_Real nearest = RealLast(), nbFound = 0;
+  Standard_Real prec = Precision::Confusion();
+  for (ind = 1; ind <= nbEdges; ind++) {
+    if (Abs(aDistances(ind) - nearest) < prec) {
+      nbFound++;
+    }
+    else if (aDistances(ind) < nearest) {
+      nearest = aDistances(ind);
+      aResult = anEdges(ind);
+      nbFound = 1;
+    }
+    else {
+    }
+  }
+  if (nbFound > 1) {
+    Standard_ConstructionError::Raise("Multiple edges near the given point are found");
+  }
+  else if (nbFound == 0) {
+    Standard_ConstructionError::Raise("There are no edges near the given point");
+  }
+  else {
+  }
+
+  return aResult;
 }

@@ -27,6 +27,8 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#include <gp_Ax2.hxx>
+
 class GEOMImpl_IBasicOperations;
 class GEOMImpl_IBooleanOperations;
 class GEOMImpl_IShapesOperations;
@@ -43,23 +45,36 @@ private:
                                double theR2, double theW2, double theL2,
                                double theH = 0, double theW = 0,
                                double theRF = 0, bool isNormal = true);
+
   bool MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object) theShape,
                                    double theR1, double theW1, double theL1,
                                    double theR2, double theW2, double theL2);
+
+  bool MakePipeTShapeThicknessReduction (Handle(GEOM_Object) theShape,
+                                         double theR1, double theW1, double theL1,
+                                         double theR2, double theW2, double theL2,
+                                         double theRL, double theWL, double theLtransL, double theLthinL,
+                                         double theRR, double theWR, double theLtransR, double theLthinR,
+                                         double theRI, double theWI, double theLtransI, double theLthinI);
+
   bool MakeGroups(Handle(GEOM_Object) theShape, int shapType,
                   double theR1, double theW1, double theL1,
                   double theR2, double theW2, double theL2,
+                  double theH, double theW, double theRF,
                   Handle(TColStd_HSequenceOfTransient) theSeq,
                   gp_Trsf aTrsf);
+
   gp_Trsf GetPositionTrsf(double theL1, double theL2,
                           Handle(GEOM_Object) P1 = 0,
                           Handle(GEOM_Object) P2 = 0,
                           Handle(GEOM_Object) P3 = 0);
+
   bool CheckCompatiblePosition(double& theL1, double& theL2, 
                                Handle(GEOM_Object) theP1, 
                                Handle(GEOM_Object) theP2,
                                Handle(GEOM_Object) theP3,
                                double theTolerance);
+
 private:
   GEOMImpl_IBasicOperations*     myBasicOperations;
   GEOMImpl_IBooleanOperations*   myBooleanOperations;
@@ -71,40 +86,114 @@ private:
   GEOMImpl_IHealingOperations*   myHealingOperations;
 
 public:
+
+  /*!
+   * \brief Add three thickness reductions at the open ends of the pipe T-Shape
+   *
+   * \param theShape - the pipe T-Shape
+   * \param r1 - the internal radius of main pipe
+   * \param w1 - the thickness of main pipe
+   * \param l1 - the half-length of main pipe
+   * \param r2 - the internal radius of incident pipe
+   * \param w2 - the thickness of incident pipe
+   * \param l2 - the half-length of main pipe
+   * \param r*, w*, ltrans* and lthin* - internal radius, thickness, length of transition part
+   *                                     and length of thin part of left(L), right(R) and
+   *                                     incident(I) thickness reduction correspondingly
+   * \param fuseReductions - boolean flag (use true to generate single solid,
+   *                         false to obtain parts, useful for hexameshing)
+   * \retval TopoDS_Shape - Resulting shape
+   */
+  Standard_EXPORT static TopoDS_Shape MakePipeTShapeThicknessReduction
+                                     (TopoDS_Shape theShape,
+                                      double r1, double w1, double l1,
+                                      double r2, double w2, double l2,
+                                      double rL, double wL, double ltransL, double lthinL,
+                                      double rR, double wR, double ltransR, double lthinR,
+                                      double rI, double wI, double ltransI, double lthinI,
+                                      bool fuseReductions);
+
+  /*!
+   * \brief Create one thickness reduction element
+   *
+   * This method is called three times from MakePipeTShapeThicknessReduction
+   * to create three thickness reductions (one per each open end of a pipe T-Shape)
+   *
+   * \param theAxes - the position
+   * \param R - the internal radius of main pipe
+   * \param W - the thickness of main pipe
+   * \param Rthin - the internal radius of thin part
+   * \param Wthin - the thickness of thin part
+   * \param Ltrans - the length of transition part
+   * \param Lthin - the length of thin part
+   * \param fuse - boolean flag (use true to generate single solid,
+   *               false to obtain parts, useful for hexameshing)
+   * \retval TopoDS_Shape - Resulting shape
+   */
+  Standard_EXPORT static TopoDS_Shape MakeThicknessReduction (gp_Ax2 theAxes,
+                                                              const double R, const double W,
+                                                              const double Rthin, const double Wthin,
+                                                              const double Ltrans, const double Lthin,
+                                                              bool fuse);
+
+public:
   Standard_EXPORT GEOMImpl_IAdvancedOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_IAdvancedOperations();
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) 
                   MakePipeTShape(double theR1, double theW1, double theL1,
                                  double theR2, double theW2, double theL2,
+                                 double theRL, double theWL, double theLtransL, double theLthinL,
+                                 double theRR, double theWR, double theLtransR, double theLthinR,
+                                 double theRI, double theWI, double theLtransI, double theLthinI,
                                  bool theHexMesh = true);
+
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeWithPosition(double theR1, double theW1, double theL1,
                                              double theR2, double theW2, double theL2,
+                                             double theRL, double theWL, double theLtransL, double theLthinL,
+                                             double theRR, double theWR, double theLtransR, double theLthinR,
+                                             double theRI, double theWI, double theLtransI, double theLthinI,
                                              bool theHexMesh = true,
                                              Handle(GEOM_Object) P1 = 0,
                                              Handle(GEOM_Object) P2 = 0,
                                              Handle(GEOM_Object) P3 = 0);
+
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeChamfer(double theR1, double theW1, double theL1,
                                         double theR2, double theW2, double theL2,
+                                        double theRL, double theWL, double theLtransL, double theLthinL,
+                                        double theRR, double theWR, double theLtransR, double theLthinR,
+                                        double theRI, double theWI, double theLtransI, double theLthinI,
                                         double theH,  double theW, 
                                         bool theHexMesh = true);
+
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeChamferWithPosition(double theR1, double theW1, double theL1,
                                                     double theR2, double theW2, double theL2,
                                                     double theH, double theW,
+                                                    double theRL, double theWL, double theLtransL, double theLthinL,
+                                                    double theRR, double theWR, double theLtransR, double theLthinR,
+                                                    double theRI, double theWI, double theLtransI, double theLthinI,
                                                     bool theHexMesh = true,
                                                     Handle(GEOM_Object) P1 = 0,
                                                     Handle(GEOM_Object) P2 = 0,
                                                     Handle(GEOM_Object) P3 = 0);
+
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeFillet(double theR1, double theW1, double theL1,
                                        double theR2, double theW2, double theL2,
+                                       double theRL, double theWL, double theLtransL, double theLthinL,
+                                       double theRR, double theWR, double theLtransR, double theLthinR,
+                                       double theRI, double theWI, double theLtransI, double theLthinI,
                                        double theRF, bool theHexMesh = true);
+
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeFilletWithPosition(double theR1, double theW1, double theL1,
                                                    double theR2, double theW2, double theL2,
+                                                   double theRL, double theWL, double theLtransL, double theLthinL,
+                                                   double theRR, double theWR, double theLtransR, double theLthinR,
+                                                   double theRI, double theWI, double theLtransI, double theLthinI,
                                                    double theRF, bool theHexMesh = true,
                                                    Handle(GEOM_Object) P1 = 0,
                                                    Handle(GEOM_Object) P2 = 0,

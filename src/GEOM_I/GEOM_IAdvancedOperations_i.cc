@@ -15,11 +15,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOM_IAdvancedOperations.cc
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IAdvancedOperations_i.hh"
@@ -68,8 +67,10 @@ GEOM_IAdvancedOperations_i::~GEOM_IAdvancedOperations_i()
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShape (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-							      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, CORBA::Boolean theHexMesh)
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShape
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Boolean theHexMesh)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
@@ -77,10 +78,13 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShape (CORBA::Double theR1,
   GetOperations()->SetNotDone();
 
   //Create the TShape
-  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh);
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2,
+                                    0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                                    theHexMesh);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
-  
+
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
@@ -109,9 +113,11 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShape (CORBA::Double theR1,
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-									      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, CORBA::Boolean theHexMesh,
-									      GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeWithPosition
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Boolean theHexMesh,
+                      GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
@@ -125,10 +131,13 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeWithPosition (CORBA::D
   if (aP1.IsNull() || aP2.IsNull() || aP3.IsNull())return aSeq._retn();
 
   //Create the TShape
-  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh, aP1, aP2, aP3);
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                                                theHexMesh, aP1, aP2, aP3);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
-  
+
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
@@ -156,9 +165,10 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeWithPosition (CORBA::D
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamfer(CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-									CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
-									CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh)
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamfer
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
@@ -166,10 +176,13 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamfer(CORBA::Double 
   GetOperations()->SetNotDone();
 
   //Create the TShape
-  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh);
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2,
+                                           0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                                           theH, theW, theHexMesh);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
-  
+
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
@@ -201,10 +214,11 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamfer(CORBA::Double 
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamferWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-										     CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
-										     CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh,
-										     GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamferWithPosition
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh,
+                      GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
@@ -217,11 +231,13 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamferWithPosition (C
   Handle(GEOM_Object) aP3 = GetObjectImpl(theP3);
 
   //Create the TShape
-  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakePipeTShapeChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW,
-										    theHexMesh, aP1, aP2, aP3);
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                                                       theH, theW, theHexMesh, aP1, aP2, aP3);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
-  
+
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
@@ -248,9 +264,10 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamferWithPosition (C
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFillet (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
-									CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
-									CORBA::Double theRF, CORBA::Boolean theHexMesh)
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFillet
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theRF, CORBA::Boolean theHexMesh)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
@@ -258,10 +275,13 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFillet (CORBA::Double 
   GetOperations()->SetNotDone();
 
   //Create the TShape
-  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh);
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2,
+                                          0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                                          theRF, theHexMesh);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
-  
+
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
@@ -292,10 +312,11 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFillet (CORBA::Double 
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFilletWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
-										    CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
-										    CORBA::Double theRF, CORBA::Boolean theHexMesh,
-										    GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFilletWithPosition
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theRF, CORBA::Boolean theHexMesh,
+                      GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
@@ -308,11 +329,336 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFilletWithPosition (CO
   Handle(GEOM_Object) aP3 = GetObjectImpl(theP3);
 
   //Create the TShape
-  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakePipeTShapeFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theRF, 
-										   theHexMesh, aP1, aP2, aP3);
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                      0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                                                      theRF, theHexMesh, aP1, aP2, aP3);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
-  
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakePipeTShapeTR
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length).
+ *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+ *  \param theR1 Internal radius of main pipe
+ *  \param theW1 Width of main pipe
+ *  \param theL1 Half-length of main pipe
+ *  \param theR2 Internal radius of incident pipe (R2 < R1)
+ *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+ *  \param theL2 Half-length of incident pipe
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
+ *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeTR
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theRL, CORBA::Double theWL, CORBA::Double theLtransL, CORBA::Double theLthinL,
+                      CORBA::Double theRR, CORBA::Double theWR, CORBA::Double theLtransR, CORBA::Double theLthinR,
+                      CORBA::Double theRI, CORBA::Double theWI, CORBA::Double theLtransI, CORBA::Double theLthinI,
+                      CORBA::Boolean theHexMesh)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Create the TShape
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2,
+                                    theRL, theWL, theLtransL, theLthinL,
+                                    theRR, theWR, theLtransR, theLthinR,
+                                    theRI, theWI, theLtransI, theLthinI,
+                                    theHexMesh);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakePipeTShapeTRWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length).
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
+ *  \param theR1 Internal radius of main pipe
+ *  \param theW1 Width of main pipe
+ *  \param theL1 Half-length of main pipe
+ *  \param theR2 Internal radius of incident pipe (R2 < R1)
+ *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+ *  \param theL2 Half-length of incident pipe
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
+ *  \param theP1 1st junction point of main pipe
+ *  \param theP2 2nd junction point of main pipe
+ *  \param theP3 Junction point of incident pipe
+ *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeTRWithPosition
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theRL, CORBA::Double theWL, CORBA::Double theLtransL, CORBA::Double theLthinL,
+                      CORBA::Double theRR, CORBA::Double theWR, CORBA::Double theLtransR, CORBA::Double theLthinR,
+                      CORBA::Double theRI, CORBA::Double theWI, CORBA::Double theLtransI, CORBA::Double theLthinI,
+                      CORBA::Boolean theHexMesh,
+                      GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference vertices
+  Handle(GEOM_Object) aP1 = GetObjectImpl(theP1);
+  Handle(GEOM_Object) aP2 = GetObjectImpl(theP2);
+  Handle(GEOM_Object) aP3 = GetObjectImpl(theP3);
+  if (aP1.IsNull() || aP2.IsNull() || aP3.IsNull()) return aSeq._retn();
+
+  //Create the TShape
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                theRL, theWL, theLtransL, theLthinL,
+                                                theRR, theWR, theLtransR, theLthinR,
+                                                theRI, theWI, theLtransI, theLthinI,
+                                                theHexMesh, aP1, aP2, aP3);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakePipeTShapeTRChamfer
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A chamfer is created
+ *  on the junction of the pipes.
+ *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+ *  \param theR1 Internal radius of main pipe
+ *  \param theW1 Width of main pipe
+ *  \param theL1 Half-length of main pipe
+ *  \param theR2 Internal radius of incident pipe (R2 < R1)
+ *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+ *  \param theL2 Half-length of incident pipe
+ *  \param theH Height of chamfer.
+ *  \param theW Width of chamfer.
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
+ *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeTRChamfer
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theRL, CORBA::Double theWL, CORBA::Double theLtransL, CORBA::Double theLthinL,
+                      CORBA::Double theRR, CORBA::Double theWR, CORBA::Double theLtransR, CORBA::Double theLthinR,
+                      CORBA::Double theRI, CORBA::Double theWI, CORBA::Double theLtransI, CORBA::Double theLthinI,
+                      CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Create the TShape
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2,
+                                           theRL, theWL, theLtransL, theLthinL,
+                                           theRR, theWR, theLtransR, theLthinR,
+                                           theRI, theWI, theLtransI, theLthinI,
+                                           theH, theW, theHexMesh);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakePipeTShapeTRChamferWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A chamfer is created
+ *  on the junction of the pipes.
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
+ *  \param theR1 Internal radius of main pipe
+ *  \param theW1 Width of main pipe
+ *  \param theL1 Half-length of main pipe
+ *  \param theR2 Internal radius of incident pipe (R2 < R1)
+ *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+ *  \param theL2 Half-length of incident pipe
+ *  \param theH Height of the chamfer.
+ *  \param theW Width of the chamfer.
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
+ *  \param theP1 1st junction point of main pipe
+ *  \param theP2 2nd junction point of main pipe
+ *  \param theP3 Junction point of incident pipe
+ *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeTRChamferWithPosition
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theRL, CORBA::Double theWL, CORBA::Double theLtransL, CORBA::Double theLthinL,
+                      CORBA::Double theRR, CORBA::Double theWR, CORBA::Double theLtransR, CORBA::Double theLthinR,
+                      CORBA::Double theRI, CORBA::Double theWI, CORBA::Double theLtransI, CORBA::Double theLthinI,
+                      CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh,
+                      GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference vertices
+  Handle(GEOM_Object) aP1 = GetObjectImpl(theP1);
+  Handle(GEOM_Object) aP2 = GetObjectImpl(theP2);
+  Handle(GEOM_Object) aP3 = GetObjectImpl(theP3);
+
+  //Create the TShape
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                       theRL, theWL, theLtransL, theLthinL,
+                                                       theRR, theWR, theLtransR, theLthinR,
+                                                       theRI, theWI, theLtransI, theLthinI,
+                                                       theH, theW, theHexMesh, aP1, aP2, aP3);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakePipeTShapeTRFillet
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A fillet is created
+ *  on the junction of the pipes.
+ *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+ *  \param theR1 Internal radius of main pipe
+ *  \param theW1 Width of main pipe
+ *  \param theL1 Half-length of main pipe
+ *  \param theR2 Internal radius of incident pipe (R2 < R1)
+ *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+ *  \param theL2 Half-length of incident pipe
+ *  \param theRF Radius of curvature of fillet.
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
+ *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeTRFillet
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theRL, CORBA::Double theWL, CORBA::Double theLtransL, CORBA::Double theLthinL,
+                      CORBA::Double theRR, CORBA::Double theWR, CORBA::Double theLtransR, CORBA::Double theLthinR,
+                      CORBA::Double theRI, CORBA::Double theWI, CORBA::Double theLtransI, CORBA::Double theLthinI,
+                      CORBA::Double theRF, CORBA::Boolean theHexMesh)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Create the TShape
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2,
+                                          theRL, theWL, theLtransL, theLthinL,
+                                          theRR, theWR, theLtransR, theLthinR,
+                                          theRI, theWI, theLtransI, theLthinI,
+                                          theRF, theHexMesh);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakePipeTShapeTRFilletWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A fillet is created
+ *  on the junction of the pipes.
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
+ *  \param theR1 Internal radius of main pipe
+ *  \param theW1 Width of main pipe
+ *  \param theL1 Half-length of main pipe
+ *  \param theR2 Internal radius of incident pipe (R2 < R1)
+ *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+ *  \param theL2 Half-length of incident pipe
+ *  \param theRF Radius of curvature of fillet
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
+ *  \param theP1 1st junction point of main pipe
+ *  \param theP2 2nd junction point of main pipe
+ *  \param theP3 Junction point of incident pipe
+ *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeTRFilletWithPosition
+                     (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                      CORBA::Double theRL, CORBA::Double theWL, CORBA::Double theLtransL, CORBA::Double theLthinL,
+                      CORBA::Double theRR, CORBA::Double theWR, CORBA::Double theLtransR, CORBA::Double theLthinR,
+                      CORBA::Double theRI, CORBA::Double theWI, CORBA::Double theLtransI, CORBA::Double theLthinI,
+                      CORBA::Double theRF, CORBA::Boolean theHexMesh,
+                      GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference vertices
+  Handle(GEOM_Object) aP1 = GetObjectImpl(theP1);
+  Handle(GEOM_Object) aP2 = GetObjectImpl(theP2);
+  Handle(GEOM_Object) aP3 = GetObjectImpl(theP3);
+
+  //Create the TShape
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeTShapeFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
+                                                      theRL, theWL, theLtransL, theLthinL,
+                                                      theRR, theWR, theLtransR, theLthinR,
+                                                      theRI, theWI, theLtransI, theLthinI,
+                                                      theRF, theHexMesh, aP1, aP2, aP3);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
   Standard_Integer aLength = aHSeq->Length();
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
@@ -330,8 +676,8 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFilletWithPosition (CO
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double theR, 
-                                                                   CORBA::Double theRatio, 
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double theR,
+                                                                   CORBA::Double theRatio,
                                                                    CORBA::Short theOrientation,
                                                                    GEOM::pattern thePattern)
 {
@@ -353,7 +699,7 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double
  *  MakeDividedDiskPntVecR
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDiskPntVecR (GEOM::GEOM_Object_ptr thePnt, 
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDiskPntVecR (GEOM::GEOM_Object_ptr thePnt,
                                                                           GEOM::GEOM_Object_ptr theVec,
                                                                           CORBA::Double theR,
                                                                           CORBA::Double theRatio,
@@ -387,7 +733,7 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDiskPntVecR (GEOM::
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedCylinder (CORBA::Double theR, 
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedCylinder (CORBA::Double theR,
                                                                        CORBA::Double theH,
                                                                        GEOM::pattern thePattern)
 {

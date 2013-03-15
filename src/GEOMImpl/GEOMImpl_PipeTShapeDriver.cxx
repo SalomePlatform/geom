@@ -21,6 +21,7 @@
 #include <GEOMImpl_IPipeTShape.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
+#include <GEOMImpl_IAdvancedOperations.hxx>
 
 #include <GEOM_Function.hxx>
 #include <GEOM_IOperations.hxx>
@@ -45,6 +46,7 @@
 #include <gp_Dir.hxx>
 #include <gp_Trsf.hxx>
 
+#include <BRepPrimAPI_MakeCone.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
@@ -251,19 +253,19 @@ Handle(TColStd_HSequenceOfInteger)
 //           along OX and OZ
 //=======================================================================
 void GEOMImpl_PipeTShapeDriver::GetCommonShapesOnCylinders(const TopoDS_Shape& theShape,
-						       TopAbs_ShapeEnum theShapeType,
-						       double r1, 
-						       double r2,
-						       Handle(TopTools_HSequenceOfShape)& commonShapes) const
+                                                           TopAbs_ShapeEnum theShapeType,
+                                                           double r1,
+                                                           double r2,
+                                                           Handle(TopTools_HSequenceOfShape)& commonShapes) const
 {
   gp_Pnt aP0 (0, 0, 0);
   gp_Vec aVX = gp::DX(), aVZ = gp::DZ();
-  gp_Ax3 anAxis1 (aP0, aVX), anAxis2 (aP0, aVZ);
+  gp_Ax3 anAxis1 (aP0, aVX, aVZ), anAxis2 (aP0, aVZ, aVX);
 
   TopTools_IndexedMapOfShape aMapOfShapes;
   aMapOfShapes.Clear();
   TopExp::MapShapes(theShape, aMapOfShapes);
-  
+
   commonShapes->Clear();
 
   int myID;
@@ -289,9 +291,9 @@ void GEOMImpl_PipeTShapeDriver::GetCommonShapesOnCylinders(const TopoDS_Shape& t
     for (int j=1; j<=aSeqExt1->Length();j++) {
 //      std::cerr << "aSeqExt1->Value(j): " << aSeqExt1->Value(j) << std::endl;
       if (aSeqExt1->Value(j) == aSeqExt2->Value(i)) {
-	myID = aSeqExt1->Value(j);
-	commonShapes->Append(aMapOfShapes.FindKey(myID));
-	found = true;
+        myID = aSeqExt1->Value(j);
+        commonShapes->Append(aMapOfShapes.FindKey(myID));
+        found = true;
       }
     }
   }
@@ -303,8 +305,8 @@ void GEOMImpl_PipeTShapeDriver::GetCommonShapesOnCylinders(const TopoDS_Shape& t
 //function : MakePipeTShape
 //purpose  :
 //=======================================================================
-TopoDS_Shape GEOMImpl_PipeTShapeDriver::MakePipeTShape(const double r1, const double w1, const double l1,
-						       const double r2, const double w2, const double l2) const
+TopoDS_Shape GEOMImpl_PipeTShapeDriver::MakePipeTShape (const double r1, const double w1, const double l1,
+                                                        const double r2, const double w2, const double l2) const
 {
   double r1Ext = r1 + w1;
   double r2Ext = r2 + w2;
@@ -312,8 +314,8 @@ TopoDS_Shape GEOMImpl_PipeTShapeDriver::MakePipeTShape(const double r1, const do
   gp_Pnt aP0 (0, 0, 0);
   gp_Pnt aP1 (-l1, 0, 0);
   gp_Vec aVX = gp::DX(), aVY = gp::DY(), aVZ = gp::DZ();
-  gp_Ax2 anAxes1 (aP1, aVX);
-  gp_Ax2 anAxes2 (aP0, aVZ);
+  gp_Ax2 anAxes1 (aP1, aVX, aVZ);
+  gp_Ax2 anAxes2 (aP0, aVZ, aVX);
 
   // Build the initial pipes
   BRepPrimAPI_MakeCylinder C1Int (anAxes1, r1, Abs(2 * l1));
@@ -325,13 +327,13 @@ TopoDS_Shape GEOMImpl_PipeTShapeDriver::MakePipeTShape(const double r1, const do
   C2Int.Build();
   C2Ext.Build();
   if (!C1Int.IsDone() || !C1Ext.IsDone() || !C2Int.IsDone() || !C2Ext.IsDone()) {
-    StdFail_NotDone::Raise("Couldn't build cylinders");
+    StdFail_NotDone::Raise("Cannot build cylinders");
   }
 
   // Fuse the 2 pipes
   BRepAlgoAPI_Fuse fuse1 (C1Ext.Shape(), C2Ext.Shape());
   if (!fuse1.IsDone()) {
-    StdFail_NotDone::Raise("Couldn't fuse cylinders");
+    StdFail_NotDone::Raise("Cannot fuse cylinders");
   }
 
   // Remove small radius main pipe
@@ -353,17 +355,17 @@ TopoDS_Shape GEOMImpl_PipeTShapeDriver::MakePipeTShape(const double r1, const do
 //function : MakeQuarterPipeTShape
 //purpose  :
 //=======================================================================
-TopoDS_Shape GEOMImpl_PipeTShapeDriver::MakeQuarterPipeTShape(const double r1, const double w1, const double l1,
-						      const double r2, const double w2, const double l2) const
+TopoDS_Shape GEOMImpl_PipeTShapeDriver::MakeQuarterPipeTShape (const double r1, const double w1, const double l1,
+                                                               const double r2, const double w2, const double l2) const
 {
-  double r1Ext = r1 + w1;
   TopoDS_Shape Te = MakePipeTShape(r1, w1, l1, r2, w2, l2);
   if (Te.IsNull())
     StdFail_NotDone::Raise("Couldn't build Pipe TShape");
 
   // Get a quarter of shape => Te2
-  BRepPrimAPI_MakeBox box1 (gp_Pnt(0,-2*r1Ext,-2*r1Ext),gp_Pnt(Abs(2 * l1), 2*r1Ext, Abs(2*l2)));
-  BRepPrimAPI_MakeBox box2 (gp_Pnt(0,2*r1Ext,-2*r1Ext),gp_Pnt(-Abs(2 * l1), 0, Abs(2*l2)));
+  double r1Ext = r1 + w1;
+  BRepPrimAPI_MakeBox box1 (gp_Pnt(0, -2*r1Ext, -2*r1Ext), gp_Pnt( Abs(2 * l1), 2*r1Ext, Abs(2*l2)));
+  BRepPrimAPI_MakeBox box2 (gp_Pnt(0,  2*r1Ext, -2*r1Ext), gp_Pnt(-Abs(2 * l1), 0,       Abs(2*l2)));
   box1.Build();
   box2.Build();
   if (!box1.IsDone() || !box2.IsDone()) {
@@ -385,7 +387,7 @@ TopoDS_Shape GEOMImpl_PipeTShapeDriver::MakeQuarterPipeTShape(const double r1, c
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_PipeTShapeDriver::Execute (TFunction_Logbook& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -394,20 +396,20 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape, Te4, Te4Part;
-//   TopoDS_Edge arete_intersect_int;
-//   Handle(TopTools_HSequenceOfShape) edges_e = new TopTools_HSequenceOfShape;
+  //TopoDS_Edge arete_intersect_int;
+  //Handle(TopTools_HSequenceOfShape) edges_e = new TopTools_HSequenceOfShape;
   Handle(TColStd_HSequenceOfInteger) edges_e;
-//   Handle(TopTools_HSequenceOfShape) edges_i = new TopTools_HSequenceOfShape;
-//   gp_Pnt aP0 (0, 0, 0);
-//   gp_Vec aVX = gp::DX(), aVY = gp::DY(), aVZ = gp::DZ();
+  //Handle(TopTools_HSequenceOfShape) edges_i = new TopTools_HSequenceOfShape;
+  //gp_Pnt aP0 (0, 0, 0);
+  //gp_Vec aVX = gp::DX(), aVY = gp::DY(), aVZ = gp::DZ();
   bool hexMesh = (bool) aData.GetHexMesh();
 
   // Useful values
-//   double aSize = 2*(aData.GetL1() + aData.GetL2());
+  //double aSize = 2*(aData.GetL1() + aData.GetL2());
   double epsilon = Precision::Approximation();
   double aR1Ext = aData.GetR1() + aData.GetW1();
   double aR2Ext = aData.GetR2() + aData.GetW2();
-  
+
   if (aData.GetR2() > aData.GetR1() + epsilon) {
     StdFail_NotDone::Raise("TShape cannot be computed if R2 > R1");
   }
@@ -415,7 +417,7 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
   if (aR2Ext > aR1Ext + epsilon) {
     StdFail_NotDone::Raise("TShape cannot be computed if R2+W2 > R1+W1");
   }
-  
+
   // external radius are equal
   if (fabs(aR2Ext - aR1Ext) < epsilon) {
     if (aType == TSHAPE_CHAMFER)
@@ -428,11 +430,10 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
     }
   }
 
-
   if (aR1Ext >= aData.GetL2() + epsilon) {
     StdFail_NotDone::Raise("TShape cannot be computed if R1+W1 >= L2");
   }
-  if (aR2Ext >=  aData.GetL1() + epsilon) {
+  if (aR2Ext >= aData.GetL1() + epsilon) {
     StdFail_NotDone::Raise("TShape cannot be computed if R2+W2 >= L1");
   }
 
@@ -446,22 +447,22 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
   }
 
   if (aType == TSHAPE_FILLET) {
-    if (aData.GetRF() >= (aData.GetL2() - aR1Ext + epsilon) || 
-      aData.GetRF() >= (aData.GetL1() - aR2Ext + epsilon))
+    if (aData.GetRF() >= (aData.GetL2() - aR1Ext + epsilon) ||
+        aData.GetRF() >= (aData.GetL1() - aR2Ext + epsilon))
       StdFail_NotDone::Raise("TShape cannot be computed: radius of fillet is too high");
   }
 
   if (hexMesh) {
     // Create a quarter of a basic T-Shape pipe
-//    std::cerr << "Create a quarter of a basic T-Shape pipe" << std::endl;
+    //std::cerr << "Create a quarter of a basic T-Shape pipe" << std::endl;
     Te4 = MakeQuarterPipeTShape(aData.GetR1(), aData.GetW1(), aData.GetL1(),
-      aData.GetR2(), aData.GetW2(), aData.GetL2());
+                                aData.GetR2(), aData.GetW2(), aData.GetL2());
   }
   else {
     // No need to cut pipe t-shape
-//    std::cerr << "Create a basic T-Shape pipe" << std::endl;
+    //std::cerr << "Create a basic T-Shape pipe" << std::endl;
     Te4 = MakePipeTShape(aData.GetR1(), aData.GetW1(), aData.GetL1(),
-      aData.GetR2(), aData.GetW2(), aData.GetL2());
+                         aData.GetR2(), aData.GetW2(), aData.GetL2());
   }
   aShape = Te4;
 /*
@@ -502,7 +503,6 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
     if (edges_e.IsNull() || edges_e->Length() == 0) {
       StdFail_NotDone::Raise("Common edges not found");
     }
-  
 
     TopTools_IndexedDataMapOfShapeListOfShape M;
     GEOMImpl_Block6Explorer::MapShapesAndAncestors(Te4, TopAbs_EDGE, TopAbs_FACE, M);
@@ -547,10 +547,9 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
     if (!chamfer.IsDone()) {
       StdFail_NotDone::Raise("Chamfer can not be computed on the given shape with the given parameters");
     }
-    
+
 //     BB.Add(CC, chamfer.Shape());
-    
-    
+
 //     aShape = CC;
     aShape = chamfer.Shape();
   }
@@ -558,10 +557,10 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
     // TShape with fillet
     // Create fillet on the edge arete_intersect_ext
     BRepFilletAPI_MakeFillet fill (Te4);
-    
+
     TopTools_IndexedMapOfShape anIndices;
     TopExp::MapShapes(Te4, anIndices);
-    
+
     TopoDS_Shape theBox;
     if (hexMesh) {
       BRepPrimAPI_MakeBox aBox (gp_Pnt(0,0,0),gp_Pnt(-aR2Ext, -aR2Ext, aR1Ext));
@@ -584,7 +583,7 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
     if (edges_e.IsNull() || edges_e->Length() == 0) {
       StdFail_NotDone::Raise("Common edges not found");
     }
-    
+
 //     fill.Add(TopoDS::Edge(edges_e->Value(1)));
 //     if (!hexMesh) {
     for (int i=1;i<=edges_e->Length();i++) {

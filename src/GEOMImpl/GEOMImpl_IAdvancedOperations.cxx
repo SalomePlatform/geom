@@ -19,20 +19,7 @@
 //  File   : GEOMImpl_IAdvancedOperations.cxx
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
-#include <Standard_Stream.hxx>
-
-#include "GEOMImpl_Types.hxx"
 #include "GEOMImpl_IAdvancedOperations.hxx"
-#include "GEOMImpl_IBasicOperations.hxx"
-#include "GEOMImpl_IBooleanOperations.hxx"
-#include "GEOMImpl_IShapesOperations.hxx"
-#include "GEOMImpl_ITransformOperations.hxx"
-#include "GEOMImpl_IBlocksOperations.hxx"
-#include "GEOMImpl_I3DPrimOperations.hxx"
-#include "GEOMImpl_ILocalOperations.hxx"
-#include "GEOMImpl_IHealingOperations.hxx"
-
-#include "GEOMImpl_Gen.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -42,37 +29,65 @@
 
 #include "GEOM_Function.hxx"
 #include "GEOM_PythonDump.hxx"
+#include "GEOMUtils.hxx"
+#include "GEOMAlgo_Splitter.hxx"
 
+#include "GEOMImpl_Gen.hxx"
+#include "GEOMImpl_Types.hxx"
+
+#include "GEOMImpl_IBasicOperations.hxx"
+#include "GEOMImpl_IBooleanOperations.hxx"
+#include "GEOMImpl_IShapesOperations.hxx"
+#include "GEOMImpl_ITransformOperations.hxx"
+#include "GEOMImpl_IBlocksOperations.hxx"
+#include "GEOMImpl_I3DPrimOperations.hxx"
+#include "GEOMImpl_ILocalOperations.hxx"
+#include "GEOMImpl_IHealingOperations.hxx"
+
+#include "GEOMImpl_GlueDriver.hxx"
 #include "GEOMImpl_PipeTShapeDriver.hxx"
 #include "GEOMImpl_IPipeTShape.hxx"
-#include <GEOMImpl_DividedDiskDriver.hxx>
-#include <GEOMImpl_IDividedDisk.hxx>
-// #include <GEOMImpl_DividedCylinderDriver.hxx>
-// #include <GEOMImpl_IDividedCylinder.hxx>
+#include "GEOMImpl_DividedDiskDriver.hxx"
+#include "GEOMImpl_IDividedDisk.hxx"
+// #include "GEOMImpl_DividedCylinderDriver.hxx"
+// #include "GEOMImpl_IDividedCylinder.hxx"
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
+
+#include <TDF_Tool.hxx>
+#include <TFunction_DriverTable.hxx>
+#include <TFunction_Driver.hxx>
+#include <TFunction_Logbook.hxx>
+#include <TNaming_CopyShape.hxx>
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TColStd_IndexedDataMapOfTransientTransient.hxx>
 
+#include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
+
+#include <BRepAlgoAPI_Cut.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_Transform.hxx>
+#include <BRepPrimAPI_MakeCone.hxx>
+#include <BRepPrimAPI_MakeCylinder.hxx>
+
+#include <gp_Ax3.hxx>
+#include <gp_Pln.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
-#include <gp_Ax3.hxx>
-
-#include <BRepBuilderAPI_Transform.hxx>
-#include <BRep_Tool.hxx>
 
 #include <cmath>
 
-#include <TFunction_DriverTable.hxx>
-#include <TFunction_Driver.hxx>
-#include <TFunction_Logbook.hxx>
-#include <TDF_Tool.hxx>
-#include <TNaming_CopyShape.hxx>
+#include <Standard_Stream.hxx>
 #include <Standard_Failure.hxx>
+#include <StdFail_NotDone.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #define HALF_LENGTH_MAIN_PIPE     "Main pipe half length" //"Tuyau principal - demi longueur"
@@ -84,6 +99,8 @@
 #define JUNCTION_FACE_1           "Junction 1" //"Face de jonction 1"
 #define JUNCTION_FACE_2           "Junction 2" //"Face de jonction 2"
 #define JUNCTION_FACE_3           "Junction 3" //"Face de jonction 3"
+
+#define FIND_GROUPS_BY_POINTS 1
 
 //=============================================================================
 /*!
@@ -242,6 +259,7 @@ bool GEOMImpl_IAdvancedOperations::CheckCompatiblePosition(double& theL1, double
 bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int shapeType,
                                               double theR1, double theW1, double theL1,
                                               double theR2, double theW2, double theL2,
+                                              double theH, double theW, double theRF,
                                               Handle(TColStd_HSequenceOfTransient) theSeq,
                                               gp_Trsf aTrsf)
 {
@@ -411,6 +429,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
   // == BEGIN
   }
   //     == END
+
   /////////////////////////
   //// Groups of Edges ////
   /////////////////////////
@@ -424,10 +443,153 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
     SetErrorCode("Propagation groups not found");
     return false;
   }
-  Standard_Integer nbEdges, aNbGroups = aSeqPropagate->Length();
+  Standard_Integer aNbGroups = aSeqPropagate->Length();
   // Recover previous description to get rid of Propagate dump
   aFunction->SetDescription(theDesc);
 
+#ifdef FIND_GROUPS_BY_POINTS
+  // BEGIN: new groups search
+
+  //              W2  R2
+  //            .----.-----.----.
+  //           e|    |  |  |    |
+  //            |    |  |  |    |
+  //            .    |  |  |    .
+  //         g / ''..|  |  |..'' \
+  //       f  /      '''''''      \
+  //  .---.--'..     |  |  |     ..'--.---.
+  //  |a    \   '''...........'''   /     |
+  //  |-------\------'  |  '------/-------.
+  //  |         \       |       /         |
+  // c|           \     |     /           |
+  //  |    R1       \   |   /             |
+  //  |               \ | /               |
+  //  ._________________|_________________.
+  //  |       L1        |                 |
+  //  |                 |                 |
+  //  |                 |                 |
+  // b|                 |                 |
+  //  |                 |                 |
+  //  |-----------------|-----------------|
+  //  |    W1           |                 |
+  //  '-----------------'-----------------'
+  //          d
+
+  // "Thickness" group (a)
+  gp_Pnt aPntA (-theL1, 0, theR1 + theW1/2.);
+  aPntA.Transform(aTrsf);
+  BRepBuilderAPI_MakeVertex mkVertexA (aPntA);
+  TopoDS_Vertex aVertA = TopoDS::Vertex(mkVertexA.Shape());
+  TopoDS_Shape anEdgeA = GEOMUtils::GetEdgeNearPoint(aShape, aVertA);
+
+  // "Circular quarter of pipe" group (b)
+  gp_Pnt aPntB (-theL1, -aR1Ext * sin(M_PI/4.), -aR1Ext * sin(M_PI/4.));
+  aPntB.Transform(aTrsf);
+  BRepBuilderAPI_MakeVertex mkVertexB (aPntB);
+  TopoDS_Vertex aVertB = TopoDS::Vertex(mkVertexB.Shape());
+  TopoDS_Shape anEdgeB = GEOMUtils::GetEdgeNearPoint(aShape, aVertB);
+
+  // "Circular quarter of pipe" group (c)
+  gp_Pnt aPntC (-theL1, -aR1Ext * sin(M_PI/4.), aR1Ext * sin(M_PI/4.));
+  aPntC.Transform(aTrsf);
+  BRepBuilderAPI_MakeVertex mkVertexC (aPntC);
+  TopoDS_Vertex aVertC = TopoDS::Vertex(mkVertexC.Shape());
+  TopoDS_Shape anEdgeC = GEOMUtils::GetEdgeNearPoint(aShape, aVertC);
+
+  // "Main pipe half length" group (d)
+  gp_Pnt aPntD (-theL1/2., 0, -aR1Ext);
+  aPntD.Transform(aTrsf);
+  BRepBuilderAPI_MakeVertex mkVertexD (aPntD);
+  TopoDS_Vertex aVertD = TopoDS::Vertex(mkVertexD.Shape());
+  TopoDS_Shape anEdgeD = GEOMUtils::GetEdgeNearPoint(aShape, aVertD);
+
+  // "Incident pipe half length" group (e)
+  double aTol10 = Precision::Confusion() * 10.;
+  gp_Pnt aPntE (-aR2Ext, 0, theL2 - aTol10);
+  aPntE.Transform(aTrsf);
+  BRepBuilderAPI_MakeVertex mkVertexE (aPntE);
+  TopoDS_Vertex aVertE = TopoDS::Vertex(mkVertexE.Shape());
+  TopoDS_Shape anEdgeE = GEOMUtils::GetEdgeNearPoint(aShape, aVertE);
+
+  // "Flange" group (f)
+  double aFx = - aR2Ext - aTol10;
+  if (shapeType == TSHAPE_CHAMFER)
+    aFx -= theW;
+  else if (shapeType == TSHAPE_FILLET)
+    aFx -= theRF;
+  gp_Pnt aPntF (aFx, 0, aR1Ext);
+  aPntF.Transform(aTrsf);
+  BRepBuilderAPI_MakeVertex mkVertexF (aPntF);
+  TopoDS_Vertex aVertF = TopoDS::Vertex(mkVertexF.Shape());
+  TopoDS_Shape anEdgeF = GEOMUtils::GetEdgeNearPoint(aShape, aVertF);
+
+  // "Chamfer or Fillet" group (g)
+  TopoDS_Shape anEdgeG;
+  if (shapeType == TSHAPE_CHAMFER) {
+    gp_Pnt aPntG (-aR2Ext - theW/2., 0, aR1Ext + theH/2.);
+    aPntG.Transform(aTrsf);
+    BRepBuilderAPI_MakeVertex mkVertexG (aPntG);
+    TopoDS_Vertex aVertG = TopoDS::Vertex(mkVertexG.Shape());
+    anEdgeG = GEOMUtils::GetEdgeNearPoint(aShape, aVertG);
+  }
+  else if (shapeType == TSHAPE_FILLET) {
+    gp_Pnt aPntG (-aR2Ext - theRF/2., 0, aR1Ext + theRF/2.);
+    aPntG.Transform(aTrsf);
+    BRepBuilderAPI_MakeVertex mkVertexG (aPntG);
+    TopoDS_Vertex aVertG = TopoDS::Vertex(mkVertexG.Shape());
+    anEdgeG = GEOMUtils::GetEdgeNearPoint(aShape, aVertG);
+  }
+
+  for (int i = 1 ; i <= aNbGroups; i++) {
+    Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(i));
+    if (aGroup.IsNull())
+      continue;
+
+    TopoDS_Shape aGroupShape = aGroup->GetValue();
+    TopTools_IndexedMapOfShape anEdgesMap;
+    TopExp::MapShapes(aGroupShape, TopAbs_EDGE, anEdgesMap);
+
+    if (anEdgesMap.Contains(anEdgeA)) { // a
+      aGroup->SetName("THICKNESS");
+      theSeq->Append(aGroup);
+    }
+    else if (anEdgesMap.Contains(anEdgeB)) { // b
+      aGroup->SetName("CIRCULAR_QUARTER_PIPE");
+      theSeq->Append(aGroup);
+    }
+    else if (anEdgesMap.Contains(anEdgeC)) { // c
+      aGroup->SetName("CIRCULAR_QUARTER_PIPE");
+      theSeq->Append(aGroup);
+    }
+    else if (anEdgesMap.Contains(anEdgeD)) { // d
+      aGroup->SetName("HALF_LENGTH_MAIN_PIPE");
+      theSeq->Append(aGroup);
+    }
+    else if (anEdgesMap.Contains(anEdgeE)) { // e
+      aGroup->SetName("HALF_LENGTH_INCIDENT_PIPE");
+      theSeq->Append(aGroup);
+    }
+    else if (anEdgesMap.Contains(anEdgeF)) { // f
+      aGroup->SetName("FLANGE");
+      theSeq->Append(aGroup);
+    }
+    else if (shapeType == TSHAPE_CHAMFER) { // g
+      if (anEdgesMap.Contains(anEdgeG)) {
+        aGroup->SetName("CHAMFER");
+        theSeq->Append(aGroup);
+      }
+    }
+    else if (shapeType == TSHAPE_FILLET) { // g
+      if (anEdgesMap.Contains(anEdgeG)) {
+        aGroup->SetName("FILLET");
+        theSeq->Append(aGroup);
+      }
+    }
+    else {
+    }
+  }
+  // END: new groups search
+#else
   bool addGroup;
   bool circularFoundAndAdded = false;
   bool circularFound10 = false;
@@ -439,23 +601,23 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
   bool flangeFoundAndAdded = false;
   bool chamferOrFilletFound = false;
 
-  for (int i=1 ; i<= aNbGroups; i++) {
+  for (int i = 1 ; i <= aNbGroups; i++) {
     addGroup = false;
 
     Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(i));
-    if(aGroup.IsNull())
+    if (aGroup.IsNull())
       continue;
 
     TopoDS_Shape aGroupShape = aGroup->GetValue();
-    BRepBuilderAPI_Transform aTransformationShapeInv(aGroupShape, aTrsfInv, Standard_False);
+    BRepBuilderAPI_Transform aTransformationShapeInv (aGroupShape, aTrsfInv, Standard_False);
     TopoDS_Shape aGroupShapeTrsfInv = aTransformationShapeInv.Shape();
 
     TopTools_IndexedMapOfShape anEdgesMap;
     TopExp::MapShapes(aGroupShapeTrsfInv,TopAbs_EDGE, anEdgesMap);
-    nbEdges = anEdgesMap.Extent();
+    Standard_Integer nbEdges = anEdgesMap.Extent();
 
     if (shapeType == TSHAPE_BASIC) {
-      if ((nbEdges == 21) || /*R1Ext = R2Ext*/(nbEdges == 17)){
+      if ((nbEdges >= 21) || /*R1Ext = R2Ext*/(nbEdges == 17)) { // 17, 17+8*{1,2,3}, 21, 21+8*{1,2,3}
         addGroup = true;
         aGroup->SetName("THICKNESS");
       }
@@ -469,7 +631,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
       else if (nbEdges == 8) {
         incidentPipeFound = true;
         mainPipeFound = false;
-        radialFound =false;
+        radialFound = false;
         flangeFound = false;
 
         TopExp_Explorer Ex(aGroupShapeTrsfInv,TopAbs_VERTEX);
@@ -522,7 +684,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
         continue;
     }
     else if (shapeType == TSHAPE_CHAMFER || shapeType == TSHAPE_FILLET) {
-      if (nbEdges == 25) {
+      if (nbEdges >= 25) { // 25, 25+8, 25+16, 25+24
         addGroup = true;
         aGroup->SetName("THICKNESS");
       }
@@ -622,6 +784,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
     if (addGroup)
       theSeq->Append(aGroup);
   }
+#endif
 
   SetErrorCode(OK);
   return true;
@@ -1078,7 +1241,8 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
 
     TopoDS_Shape aShape = Te3->GetValue();
     theShape->GetLastFunction()->SetValue(aShape);
-  } catch (Standard_Failure) {
+  }
+  catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return false;
@@ -1193,6 +1357,224 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Objec
   return true;
 }
 
+//=======================================================================
+//function : MakePipeTShapeThicknessReduction
+//purpose  : Static method. Add thiskness reduction elements at the three
+//                          open ends of the T-Shape.
+//=======================================================================
+TopoDS_Shape GEOMImpl_IAdvancedOperations::MakePipeTShapeThicknessReduction
+                                  (TopoDS_Shape theShape,
+                                   double r1, double w1, double l1,
+                                   double r2, double w2, double l2,
+                                   double rL, double wL, double ltransL, double lthinL,
+                                   double rR, double wR, double ltransR, double lthinR,
+                                   double rI, double wI, double ltransI, double lthinI,
+                                   bool fuseReductions)
+{
+  // Add thickness reduction elements
+  // at the three extremities: Left, Right and Incident
+  //
+  // ---------------------.
+  //   W                   \
+  // ---------------------. \
+  //   ^                   \ '-----------------.
+  //   |R                   \        Wthin     |
+  //   |                     '-----------------'
+  //   v                             Rthin
+  // --.--.--.--.--.--.--.--.--.--.--.--.--.--.--
+  //                     Ltrans    Lthin
+
+  TopoDS_Shape aResult = theShape;
+  double aTol = Precision::Confusion();
+
+  gp_Vec aVX = gp::DX(), aVZ = gp::DZ();
+
+  // Left reduction (rL, wL, ltransL, lthinL)
+  if (rL > aTol && wL > aTol && ltransL > aTol) {
+    gp_Pnt aPLeft (-l1, 0, 0);
+    gp_Ax2 anAxesLeft (aPLeft, -aVX, aVZ);
+    TopoDS_Shape aReductionLeft = GEOMImpl_IAdvancedOperations::MakeThicknessReduction
+      (anAxesLeft, r1, w1, rL, wL, ltransL, lthinL, fuseReductions);
+
+    if (fuseReductions) {
+      BRepAlgoAPI_Fuse fuseL (aResult, aReductionLeft);
+      if (!fuseL.IsDone())
+        StdFail_NotDone::Raise("Cannot fuse Te with left reduction");
+      aResult = fuseL.Shape();
+    }
+    else {
+      BRep_Builder B;
+      TopoDS_Compound C;
+      B.MakeCompound(C);
+      B.Add(C, aResult);
+      B.Add(C, aReductionLeft);
+      aResult = C;
+    }
+  }
+
+  // Right reduction
+  if (rR > aTol && wR > aTol && ltransR > aTol) {
+    gp_Pnt aPRight (l1, 0, 0);
+    gp_Ax2 anAxesRight (aPRight, aVX, aVZ);
+    TopoDS_Shape aReductionRight = GEOMImpl_IAdvancedOperations::MakeThicknessReduction
+      (anAxesRight, r1, w1, rR, wR, ltransR, lthinR, fuseReductions);
+
+    if (fuseReductions) {
+      BRepAlgoAPI_Fuse fuseR (aResult, aReductionRight);
+      if (!fuseR.IsDone())
+        StdFail_NotDone::Raise("Cannot fuse Te with right reduction");
+      aResult = fuseR.Shape();
+    }
+    else {
+      BRep_Builder B;
+      TopoDS_Compound C;
+      B.MakeCompound(C);
+      B.Add(C, aResult);
+      B.Add(C, aReductionRight);
+      aResult = C;
+    }
+  }
+
+  // Incident reduction
+  if (rI > aTol && wI > aTol && ltransI > aTol) {
+    gp_Pnt aPInci (0, 0, l2);
+    gp_Ax2 anAxesInci (aPInci, aVZ, aVX);
+    TopoDS_Shape aReductionInci = GEOMImpl_IAdvancedOperations::MakeThicknessReduction
+      (anAxesInci, r2, w2, rI, wI, ltransI, lthinI, fuseReductions);
+
+    if (fuseReductions) {
+      BRepAlgoAPI_Fuse fuseInci (aResult, aReductionInci);
+      if (!fuseInci.IsDone())
+        StdFail_NotDone::Raise("Cannot fuse Te with incident reduction");
+      aResult = fuseInci.Shape();
+    }
+    else {
+      BRep_Builder B;
+      TopoDS_Compound C;
+      B.MakeCompound(C);
+      B.Add(C, aResult);
+      B.Add(C, aReductionInci);
+      aResult = C;
+    }
+  }
+
+  // Get rid of extra compounds
+  TopTools_ListOfShape listShapeRes;
+  GEOMUtils::AddSimpleShapes(aResult, listShapeRes);
+  aResult = listShapeRes.First(); // useful for the case "fuseReductions == true"
+
+  if (!fuseReductions && listShapeRes.Extent() > 1) {
+    // Simplify T-Shape compound (get rid of sub-compounds) and glue duplicated faces
+    BRep_Builder B;
+    TopoDS_Compound C;
+    B.MakeCompound(C);
+
+    TopTools_ListIteratorOfListOfShape itSub (listShapeRes);
+    for (; itSub.More(); itSub.Next())
+      B.Add(C, itSub.Value());
+
+    // GlueFaces
+    aResult = GEOMImpl_GlueDriver::GlueFaces(C, Precision::Confusion(), Standard_True);
+  }
+
+  return aResult;
+}
+
+//=======================================================================
+//function : MakeThicknessReduction
+//purpose  : Static method. Create one thickness reduction element.
+//=======================================================================
+TopoDS_Shape GEOMImpl_IAdvancedOperations::MakeThicknessReduction (gp_Ax2 theAxes,
+                                                                   const double R, const double W,
+                                                                   const double Rthin, const double Wthin,
+                                                                   const double Ltrans, const double Lthin,
+                                                                   bool fuse)
+{
+  double aTol = Precision::Confusion();
+  if (Rthin < aTol || Wthin < aTol || Ltrans < aTol) {
+    StdFail_NotDone::Raise("Cannot build thickness reduction: too small values");
+  }
+  bool isThinPart = (Lthin > aTol);
+
+  //     .
+  //   W |\
+  //     . \
+  //   ^  \ '-----------------.
+  //   |R  \|                 | Wthin
+  //   |    '-----------------'
+  //   v                        Rthin
+  // --.--.--.--.--.--.--.--.--.--.--.--.--> theAxes.Direction()
+  //     Ltrans     Lthin
+
+  double RExt = R + W;
+  double RthinExt = Rthin + Wthin;
+
+  gp_Dir aNormal = theAxes.Direction();
+  gp_Dir anXDir  = theAxes.XDirection();
+  gp_Pnt aPntCyl (theAxes.Location().XYZ() + aNormal.XYZ()*Ltrans);
+  gp_Ax2 anAxesCyl (aPntCyl, aNormal, anXDir);
+
+  // Build the transition part
+  BRepPrimAPI_MakeCone ConeExt (theAxes, RExt, RthinExt, Ltrans);
+  BRepPrimAPI_MakeCone ConeInt (theAxes, R, Rthin, Ltrans);
+  ConeExt.Build();
+  ConeInt.Build();
+  if (!ConeExt.IsDone() || !ConeInt.IsDone())
+    StdFail_NotDone::Raise("Cannot build cones of thickness reduction");
+  BRepAlgoAPI_Cut cut1 (ConeExt.Shape(), ConeInt.Shape());
+  if (!cut1.IsDone())
+    StdFail_NotDone::Raise("Coudn't build transition part of thickness reduction");
+  TopoDS_Shape aReduction = cut1.Shape();
+
+  // Build the thin part, if required
+  TopoDS_Shape aThinPart;
+  if (isThinPart) {
+    BRepPrimAPI_MakeCylinder CExt (anAxesCyl, RthinExt, Lthin);
+    BRepPrimAPI_MakeCylinder CInt (anAxesCyl, Rthin, Lthin);
+    CExt.Build();
+    CInt.Build();
+    if (!CExt.IsDone() || !CInt.IsDone())
+      StdFail_NotDone::Raise("Cannot build cylinders of thickness reduction");
+    BRepAlgoAPI_Cut cut2 (CExt.Shape(), CInt.Shape());
+    if (!cut2.IsDone())
+      StdFail_NotDone::Raise("Coudn't build thin part of thickness reduction");
+    aThinPart = cut2.Shape();
+  }
+
+  // Join parts
+  if (fuse) {
+    if (isThinPart) {
+      BRepAlgoAPI_Fuse fuse1 (aReduction, aThinPart);
+      if (!fuse1.IsDone())
+        StdFail_NotDone::Raise("Cannot fuse parts of thickness reduction");
+      aReduction = fuse1.Shape();
+    }
+  }
+  else {
+    // Partition the reduction on blocks
+    gp_Ax3 anAxesPln1 (aPntCyl, theAxes.XDirection(), aNormal);
+    gp_Ax3 anAxesPln2 (aPntCyl, theAxes.YDirection(), aNormal);
+    gp_Pln aPln1 (anAxesPln1);
+    gp_Pln aPln2 (anAxesPln2);
+    double aSize = Ltrans + Lthin + R + Rthin + Wthin; // to guarantee enough size in all directions
+    TopoDS_Shape aTool1 = BRepBuilderAPI_MakeFace(aPln1, -aSize, +aSize, -aSize, +aSize).Shape();
+    TopoDS_Shape aTool2 = BRepBuilderAPI_MakeFace(aPln2, -aSize, +aSize, -aSize, +aSize).Shape();
+
+    GEOMAlgo_Splitter PS;
+    PS.AddShape(aReduction);
+    if (isThinPart)
+      PS.AddShape(aThinPart);
+    PS.AddTool(aTool1);
+    PS.AddTool(aTool2);
+    PS.SetLimit(TopAbs_SOLID);
+    PS.Perform();
+
+    aReduction = PS.Shape();
+  }
+
+  return aReduction;
+}
+
 //=============================================================================
 /*!
  *  MakePipeTShape
@@ -1212,6 +1594,9 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Objec
 Handle(TColStd_HSequenceOfTransient)
   GEOMImpl_IAdvancedOperations::MakePipeTShape(double theR1, double theW1, double theL1,
                                                double theR2, double theW2, double theL2,
+                                               double theRL, double theWL, double theLtransL, double theLthinL,
+                                               double theRR, double theWR, double theLtransR, double theLthinR,
+                                               double theRI, double theWI, double theLtransI, double theLthinI,
                                                bool theHexMesh)
 {
   MESSAGE("GEOMImpl_IAdvancedOperations::MakePipeTShape");
@@ -1226,7 +1611,7 @@ Handle(TColStd_HSequenceOfTransient)
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_PipeTShapeDriver::GetID()) return NULL;
 
-  GEOMImpl_IPipeTShape aData(aFunction);
+  GEOMImpl_IPipeTShape aData (aFunction);
 
   aData.SetR1(theR1);
   aData.SetW1(theW1);
@@ -1235,6 +1620,10 @@ Handle(TColStd_HSequenceOfTransient)
   aData.SetW2(theW2);
   aData.SetL2(theL2);
   aData.SetHexMesh(theHexMesh);
+
+  bool isTRL = (theRL + theWL + theLtransL + theLthinL) > Precision::Confusion();
+  bool isTRR = (theRR + theWR + theLtransR + theLthinR) > Precision::Confusion();
+  bool isTRI = (theRI + theWI + theLtransI + theLthinI) > Precision::Confusion();
 
   //Compute the resulting value
   try {
@@ -1245,28 +1634,40 @@ Handle(TColStd_HSequenceOfTransient)
       SetErrorCode("TShape driver failed");
       return NULL;
     }
+
     if (theHexMesh) {
       if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
         return NULL;
       if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
         return NULL;
     }
-  } catch (Standard_Failure) {
+
+    if (isTRL || isTRR || isTRI) {
+      // Add thickness reduction elements
+      // at the three extremities: Left, Right and Incident
+      TopoDS_Shape aResShape =
+        MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
+                                         theRL, theWL, theLtransL, theLthinL,
+                                         theRR, theWR, theLtransR, theLthinR,
+                                         theRI, theWI, theLtransI, theLthinI,
+                                         !theHexMesh);
+      aFunction->SetValue(aResShape);
+    }
+  }
+  catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
 
-
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
 
   if (theHexMesh) {
-    /*
-     * Get the groups: BEGIN
-     */
+    // Get the groups
     try {
-      if (!MakeGroups(aShape, TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+      if (!MakeGroups(aShape, TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2,
+                      0., 0., 0., aSeq, gp_Trsf()))
         return NULL;
     }
     catch (Standard_Failure) {
@@ -1274,38 +1675,43 @@ Handle(TColStd_HSequenceOfTransient)
       SetErrorCode(aFail->GetMessageString());
       return NULL;
     }
-
-    TCollection_AsciiString aListRes, anEntry;
-    // Iterate over the sequence aSeq
-    Standard_Integer aNbGroups = aSeq->Length();
-    Standard_Integer i = 2;
-    for (; i <= aNbGroups; i++) {
-      Handle(Standard_Transient) anItem = aSeq->Value(i);
-      if (anItem.IsNull()) continue;
-      Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
-      if (aGroup.IsNull()) continue;
-      //Make a Python command
-      TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
-      aListRes += anEntry + ", ";
-    }
-
-    aListRes.Trunc(aListRes.Length() - 2);
-
-    //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << ", " << aListRes.ToCString() << "] = geompy.MakePipeTShape("
-      << theR1 << ", " << theW1 << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", "
-      << theHexMesh << ")";
   }
-  /*
-   * Get the groups: END
-   */
-  else {
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aListRes("[");
+  // Iterate over the sequence aSeq
+  Standard_Integer aNbGroups = aSeq->Length();
+  Standard_Integer i = 1;
+  for (; i <= aNbGroups; i++) {
+    Handle(Standard_Transient) anItem = aSeq->Value(i);
+    if (anItem.IsNull()) continue;
+    Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
+    if (aGroup.IsNull()) continue;
     //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << "] = geompy.MakePipeTShape(" << theR1 << ", " << theW1 << ", "
-      << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theHexMesh << ")";
+    TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
+    aListRes += anEntry + ", ";
   }
+  aListRes.Trunc(aListRes.Length() - 2);
+
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aListRes.ToCString() << "] = geompy.MakePipeTShape("
+     << theR1 << ", " << theW1 << ", " << theL1 << ", "
+     << theR2 << ", " << theW2 << ", " << theL2 << ", "
+     << theHexMesh;
+
+  // thickness reduction
+  if (isTRL)
+    pd << ", theRL=" << theRL << ", theWL=" << theWL
+       << ", theLtransL=" << theLtransL << ", theLthinL=" << theLthinL;
+  if (isTRR)
+    pd << ", theRR=" << theRR << ", theWR=" << theWR
+       << ", theLtransR=" << theLtransR << ", theLthinR=" << theLthinR;
+  if (isTRI)
+    pd << ", theRI=" << theRI << ", theWI=" << theWI
+       << ", theLtransI=" << theLtransI << ", theLthinI=" << theLthinI;
+
+  pd << ")";
 
   SetErrorCode(OK);
 
@@ -1333,12 +1739,16 @@ Handle(TColStd_HSequenceOfTransient)
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition(double theR1, double theW1, double theL1,
-                                                         double theR2, double theW2, double theL2,
-                                                         bool theHexMesh,
-                                                         Handle(GEOM_Object) theP1,
-                                                         Handle(GEOM_Object) theP2,
-                                                         Handle(GEOM_Object) theP3)
+GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition
+                             (double theR1, double theW1, double theL1,
+                              double theR2, double theW2, double theL2,
+                              double theRL, double theWL, double theLtransL, double theLthinL,
+                              double theRR, double theWR, double theLtransR, double theLthinR,
+                              double theRI, double theWI, double theLtransI, double theLthinI,
+                              bool theHexMesh,
+                              Handle(GEOM_Object) theP1,
+                              Handle(GEOM_Object) theP2,
+                              Handle(GEOM_Object) theP3)
 {
   SetErrorCode(KO);
   //Add a new object
@@ -1368,6 +1778,10 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition(double theR1, double th
   aData.SetL2(theL2);
   aData.SetHexMesh(theHexMesh);
 
+  bool isTRL = (theRL + theWL + theLtransL + theLthinL) > Precision::Confusion();
+  bool isTRR = (theRR + theWR + theLtransR + theLthinR) > Precision::Confusion();
+  bool isTRI = (theRI + theWI + theLtransI + theLthinI) > Precision::Confusion();
+
   //Compute the resulting value
   try {
 #if OCC_VERSION_LARGE > 0x06010000
@@ -1377,17 +1791,30 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition(double theR1, double th
       SetErrorCode("TShape driver failed");
       return NULL;
     }
-  } catch (Standard_Failure) {
+
+    if (theHexMesh) {
+      if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        return NULL;
+      if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        return NULL;
+    }
+
+    if (isTRL || isTRR || isTRI) {
+      // Add thickness reduction elements
+      // at the three extremities: Left, Right and Incident
+      TopoDS_Shape aResShape =
+        MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
+                                         theRL, theWL, theLtransL, theLthinL,
+                                         theRR, theWR, theLtransR, theLthinR,
+                                         theRI, theWI, theLtransI, theLthinI,
+                                         !theHexMesh);
+      aFunction->SetValue(aResShape);
+    }
+  }
+  catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
-  }
-
-  if (theHexMesh) {
-    if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
-      return NULL;
-    if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
-      return NULL;
   }
 
   TopoDS_Shape Te = aShape->GetValue();
@@ -1397,15 +1824,15 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition(double theR1, double th
   BRepBuilderAPI_Transform aTransformation(Te, aTrsf, Standard_False);
   TopoDS_Shape aTrsf_Shape = aTransformation.Shape();
   aFunction->SetValue(aTrsf_Shape);
+
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
 
   if (theHexMesh) {
-    //
-    // Get the groups: BEGIN
-    //
+    // Get the groups
     try {
-      if (!MakeGroups(aShape,TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf)) {
+      if (!MakeGroups(aShape,TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2,
+                      0., 0., 0., aSeq, aTrsf)) {
         return NULL;
       }
     }
@@ -1414,40 +1841,43 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition(double theR1, double th
       SetErrorCode(aFail->GetMessageString());
       return NULL;
     }
-
-    TCollection_AsciiString aListRes, anEntry;
-    // Iterate over the sequence aSeq
-    Standard_Integer aNbGroups = aSeq->Length();
-    Standard_Integer i = 2;
-    for (; i <= aNbGroups; i++) {
-      Handle(Standard_Transient) anItem = aSeq->Value(i);
-      if (anItem.IsNull()) continue;
-      Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
-      if (aGroup.IsNull()) continue;
-      //Make a Python command
-      TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
-      aListRes += anEntry + ", ";
-    }
-
-    aListRes.Trunc(aListRes.Length() - 2);
-
-    //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << ", " << aListRes.ToCString() << "] = geompy.MakePipeTShape("
-      << theR1 << ", " << theW1 << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", "
-      << theHexMesh << ", " << theP1 << ", " << theP2 << ", " << theP3 << ")";
   }
-  //
-  // Get the groups: END
-  //
 
-  else {
+  //Make a Python command
+  TCollection_AsciiString anEntry, aListRes("[");
+  // Iterate over the sequence aSeq
+  Standard_Integer aNbGroups = aSeq->Length();
+  Standard_Integer i = 1;
+  for (; i <= aNbGroups; i++) {
+    Handle(Standard_Transient) anItem = aSeq->Value(i);
+    if (anItem.IsNull()) continue;
+    Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
+    if (aGroup.IsNull()) continue;
     //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << "] = geompy.MakePipeTShape(" << theR1 << ", " << theW1 << ", "
-      << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theHexMesh << ", " << theP1
-      << ", " << theP2 << ", " << theP3 << ")";
+    TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
+    aListRes += anEntry + ", ";
   }
+  aListRes.Trunc(aListRes.Length() - 2);
+
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aListRes.ToCString() << "] = geompy.MakePipeTShape("
+     << theR1 << ", " << theW1 << ", " << theL1 << ", "
+     << theR2 << ", " << theW2 << ", " << theL2 << ", "
+     << theHexMesh << ", " << theP1 << ", " << theP2 << ", " << theP3;
+
+  // thickness reduction
+  if (isTRL)
+    pd << ", theRL=" << theRL << ", theWL=" << theWL
+       << ", theLtransL=" << theLtransL << ", theLthinL=" << theLthinL;
+  if (isTRR)
+    pd << ", theRR=" << theRR << ", theWR=" << theWR
+       << ", theLtransR=" << theLtransR << ", theLthinR=" << theLthinR;
+  if (isTRI)
+    pd << ", theRI=" << theRI << ", theWI=" << theWI
+       << ", theLtransI=" << theLtransI << ", theLthinI=" << theLthinI;
+
+  pd << ")";
 
   SetErrorCode(OK);
 
@@ -1474,10 +1904,14 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition(double theR1, double th
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer(double theR1, double theW1, double theL1,
-                                                    double theR2, double theW2, double theL2,
-                                                    double theH, double theW,
-                                                    bool theHexMesh)
+GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer
+                             (double theR1, double theW1, double theL1,
+                              double theR2, double theW2, double theL2,
+                              double theRL, double theWL, double theLtransL, double theLthinL,
+                              double theRR, double theWR, double theLtransR, double theLthinR,
+                              double theRI, double theWI, double theLtransI, double theLthinI,
+                              double theH, double theW,
+                              bool theHexMesh)
 {
   SetErrorCode(KO);
   //Add a new object
@@ -1501,6 +1935,10 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer(double theR1, double theW1, 
   aData.SetW(theW);
   aData.SetHexMesh(theHexMesh);
 
+  bool isTRL = (theRL + theWL + theLtransL + theLthinL) > Precision::Confusion();
+  bool isTRR = (theRR + theWR + theLtransR + theLthinR) > Precision::Confusion();
+  bool isTRI = (theRI + theWI + theLtransI + theLthinI) > Precision::Confusion();
+
   //Compute the resulting value
   try {
 #if OCC_VERSION_LARGE > 0x06010000
@@ -1510,7 +1948,8 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer(double theR1, double theW1, 
       SetErrorCode("TShape driver failed");
       return NULL;
     }
-  } catch (Standard_Failure) {
+  }
+  catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
@@ -1578,39 +2017,43 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer(double theR1, double theW1, 
   aFunction->SetValue(aChamferShape);
   // END of chamfer
 
-  //   bool doMesh = false;
   if (theHexMesh) {
-    //        doMesh = true;
-    if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, 0, false)) {
-      MESSAGE("PipeTShape partition failed");
-      //            doMesh = false;
+    if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, 0, false))
       return NULL;
-    }
-    if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2)) {
-      MESSAGE("PipeTShape mirrors and glue failed");
-      //          doMesh = false;
+    if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
       return NULL;
+  }
+
+  // Add thickness reduction elements
+  // at the three extremities: Left, Right and Incident
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (isTRL || isTRR || isTRI) {
+      TopoDS_Shape aResShape =
+        MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
+                                         theRL, theWL, theLtransL, theLthinL,
+                                         theRR, theWR, theLtransR, theLthinR,
+                                         theRI, theWI, theLtransI, theLthinI,
+                                         !theHexMesh);
+      aFunction->SetValue(aResShape);
     }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
   }
 
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
 
-  //    if (doMesh) {
   if (theHexMesh) {
-    //
-    //         Get the groups: BEGIN
-    //
-    //if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf())) {
-    //  //Make a Python command
-    //  GEOM::TPythonDump(aFunction)
-    //    << "[" << aShape << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1
-    //    << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW
-    //    << ", " << theHexMesh << ")";
-    //}
-    //else {
+    // Get the groups
     try {
-      if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+      if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2,
+                      theH, theW, 0., aSeq, gp_Trsf()))
         return NULL;
     }
     catch (Standard_Failure) {
@@ -1618,40 +2061,43 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer(double theR1, double theW1, 
       SetErrorCode(aFail->GetMessageString());
       return NULL;
     }
-
-    TCollection_AsciiString aListRes, anEntry;
-    // Iterate over the sequence aSeq
-    Standard_Integer aNbGroups = aSeq->Length();
-    Standard_Integer i = 2;
-    for (; i <= aNbGroups; i++) {
-      Handle(Standard_Transient) anItem = aSeq->Value(i);
-      if (anItem.IsNull()) continue;
-      Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
-      if (aGroup.IsNull()) continue;
-      //Make a Python command
-      TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
-      aListRes += anEntry + ", ";
-    }
-
-    aListRes.Trunc(aListRes.Length() - 2);
-
-    //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << ", " << aListRes.ToCString()
-      << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1 << ", " << theL1 << ", " << theR2
-      << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW << ", " << theHexMesh << ")";
-    //}
   }
-  //
-  //     Get the groups: END
-  //
-  else {
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aListRes("[");
+  // Iterate over the sequence aSeq
+  Standard_Integer aNbGroups = aSeq->Length();
+  Standard_Integer i = 1;
+  for (; i <= aNbGroups; i++) {
+    Handle(Standard_Transient) anItem = aSeq->Value(i);
+    if (anItem.IsNull()) continue;
+    Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
+    if (aGroup.IsNull()) continue;
     //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1
-      << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW
-      << ", " << theHexMesh << ")";
+    TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
+    aListRes += anEntry + ", ";
   }
+  aListRes.Trunc(aListRes.Length() - 2);
+
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aListRes.ToCString() << "] = geompy.MakePipeTShapeChamfer("
+     << theR1 << ", " << theW1 << ", " << theL1 << ", "
+     << theR2 << ", " << theW2 << ", " << theL2 << ", "
+     << theH << ", " << theW << ", " << theHexMesh;
+
+  // thickness reduction
+  if (isTRL)
+    pd << ", theRL=" << theRL << ", theWL=" << theWL
+       << ", theLtransL=" << theLtransL << ", theLthinL=" << theLthinL;
+  if (isTRR)
+    pd << ", theRR=" << theRR << ", theWR=" << theWR
+       << ", theLtransR=" << theLtransR << ", theLthinR=" << theLthinR;
+  if (isTRI)
+    pd << ", theRI=" << theRI << ", theWI=" << theWI
+       << ", theLtransI=" << theLtransI << ", theLthinI=" << theLthinI;
+
+  pd << ")";
 
   SetErrorCode(OK);
 
@@ -1682,13 +2128,17 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer(double theR1, double theW1, 
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition(double theR1, double theW1, double theL1,
-                                                                double theR2, double theW2, double theL2,
-                                                                double theH, double theW,
-                                                                bool theHexMesh,
-                                                                Handle(GEOM_Object) theP1,
-                                                                Handle(GEOM_Object) theP2,
-                                                                Handle(GEOM_Object) theP3)
+GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition
+                             (double theR1, double theW1, double theL1,
+                              double theR2, double theW2, double theL2,
+                              double theRL, double theWL, double theLtransL, double theLthinL,
+                              double theRR, double theWR, double theLtransR, double theLthinR,
+                              double theRI, double theWI, double theLtransI, double theLthinI,
+                              double theH, double theW,
+                              bool theHexMesh,
+                              Handle(GEOM_Object) theP1,
+                              Handle(GEOM_Object) theP2,
+                              Handle(GEOM_Object) theP3)
 {
   SetErrorCode(KO);
   //Add a new object
@@ -1717,6 +2167,10 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition(double theR1, do
   aData.SetW(theW);
   aData.SetHexMesh(theHexMesh);
 
+  bool isTRL = (theRL + theWL + theLtransL + theLthinL) > Precision::Confusion();
+  bool isTRR = (theRR + theWR + theLtransR + theLthinR) > Precision::Confusion();
+  bool isTRI = (theRI + theWI + theLtransI + theLthinI) > Precision::Confusion();
+
   //Compute the resulting value
   try {
 #if OCC_VERSION_LARGE > 0x06010000
@@ -1726,7 +2180,8 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition(double theR1, do
       SetErrorCode("TShape driver failed");
       return NULL;
     }
-  } catch (Standard_Failure) {
+  }
+  catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
@@ -1799,21 +2254,42 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition(double theR1, do
       return NULL;
   }
 
-  TopoDS_Shape Te = aShape->GetValue();
+  // Add thickness reduction elements
+  // at the three extremities: Left, Right and Incident
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (isTRL || isTRR || isTRI) {
+      TopoDS_Shape aResShape =
+        MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
+                                         theRL, theWL, theLtransL, theLthinL,
+                                         theRR, theWR, theLtransR, theLthinR,
+                                         theRI, theWI, theLtransI, theLthinI,
+                                         !theHexMesh);
+      aFunction->SetValue(aResShape);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
 
   // Set Position
   gp_Trsf aTrsf = GetPositionTrsf(theL1, theL2, theP1, theP2, theP3);
-  BRepBuilderAPI_Transform aTransformation(Te, aTrsf, Standard_False);
+  BRepBuilderAPI_Transform aTransformation (aShape->GetValue(), aTrsf, Standard_False);
   TopoDS_Shape aTrsf_Shape = aTransformation.Shape();
   aFunction->SetValue(aTrsf_Shape);
+
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
+
   if (theHexMesh) {
-    /*
-     * Get the groups: BEGIN
-     */
+    // Get the groups
     try {
-      if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
+      if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2,
+                      theH, theW, 0., aSeq, aTrsf))
         return NULL;
     }
     catch (Standard_Failure) {
@@ -1821,40 +2297,44 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition(double theR1, do
       SetErrorCode(aFail->GetMessageString());
       return NULL;
     }
-
-    TCollection_AsciiString aListRes, anEntry;
-    // Iterate over the sequence aSeq
-    Standard_Integer aNbGroups = aSeq->Length();
-    Standard_Integer i = 2;
-    for (; i <= aNbGroups; i++) {
-      Handle(Standard_Transient) anItem = aSeq->Value(i);
-      if (anItem.IsNull()) continue;
-      Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
-      if (aGroup.IsNull()) continue;
-      //Make a Python command
-      TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
-      aListRes += anEntry + ", ";
-    }
-
-    aListRes.Trunc(aListRes.Length() - 2);
-
-    //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << ", " << aListRes.ToCString()
-      << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1 << ", " << theL1 << ", " << theR2
-      << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW << ", " << theHexMesh << ", "
-      << theP1 << ", " << theP2 << ", " << theP3 << ")";
   }
-  /*
-   * Get the groups: END
-   */
-  else {
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aListRes("[");
+  // Iterate over the sequence aSeq
+  Standard_Integer aNbGroups = aSeq->Length();
+  Standard_Integer i = 1;
+  for (; i <= aNbGroups; i++) {
+    Handle(Standard_Transient) anItem = aSeq->Value(i);
+    if (anItem.IsNull()) continue;
+    Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
+    if (aGroup.IsNull()) continue;
     //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1
-      << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW
-      << ", " << theHexMesh << ", " << theP1 << ", " << theP2 << ", " << theP3 << ")";
+    TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
+    aListRes += anEntry + ", ";
   }
+  aListRes.Trunc(aListRes.Length() - 2);
+
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aListRes.ToCString() << "] = geompy.MakePipeTShapeChamfer("
+     << theR1 << ", " << theW1 << ", " << theL1 << ", "
+     << theR2 << ", " << theW2 << ", " << theL2 << ", "
+     << theH << ", " << theW << ", " << theHexMesh << ", "
+     << theP1 << ", " << theP2 << ", " << theP3;
+
+  // thickness reduction
+  if (isTRL)
+    pd << ", theRL=" << theRL << ", theWL=" << theWL
+       << ", theLtransL=" << theLtransL << ", theLthinL=" << theLthinL;
+  if (isTRR)
+    pd << ", theRR=" << theRR << ", theWR=" << theWR
+       << ", theLtransR=" << theLtransR << ", theLthinR=" << theLthinR;
+  if (isTRI)
+    pd << ", theRI=" << theRI << ", theWI=" << theWI
+       << ", theLtransI=" << theLtransI << ", theLthinI=" << theLthinI;
+
+  pd << ")";
 
   SetErrorCode(OK);
 
@@ -1880,9 +2360,13 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition(double theR1, do
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, double theL1,
-                                                   double theR2, double theW2, double theL2,
-                                                   double theRF, bool theHexMesh)
+GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet
+                             (double theR1, double theW1, double theL1,
+                              double theR2, double theW2, double theL2,
+                              double theRL, double theWL, double theLtransL, double theLthinL,
+                              double theRR, double theWR, double theLtransR, double theLthinR,
+                              double theRI, double theWI, double theLtransI, double theLthinI,
+                              double theRF, bool theHexMesh)
 {
   SetErrorCode(KO);
   //Add a new object
@@ -1905,6 +2389,10 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
   aData.SetRF(theRF);
   aData.SetHexMesh(theHexMesh);
 
+  bool isTRL = (theRL + theWL + theLtransL + theLthinL) > Precision::Confusion();
+  bool isTRR = (theRR + theWR + theLtransR + theLthinR) > Precision::Confusion();
+  bool isTRI = (theRI + theWI + theLtransI + theLthinI) > Precision::Confusion();
+
   //Compute the resulting value
   try {
 #if OCC_VERSION_LARGE > 0x06010000
@@ -1914,7 +2402,8 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
       SetErrorCode("TShape driver failed");
       return NULL;
     }
-  } catch (Standard_Failure) {
+  }
+  catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
@@ -2003,14 +2492,36 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
       return NULL;
   }
 
+  // Add thickness reduction elements
+  // at the three extremities: Left, Right and Incident
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (isTRL || isTRR || isTRI) {
+      TopoDS_Shape aResShape =
+        MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
+                                         theRL, theWL, theLtransL, theLthinL,
+                                         theRR, theWR, theLtransR, theLthinR,
+                                         theRI, theWI, theLtransI, theLthinI,
+                                         !theHexMesh);
+      aFunction->SetValue(aResShape);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
+
   if (theHexMesh) {
-    /*
-     * Get the groups: BEGIN
-     */
+    // Get the groups
     try {
-      if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+      if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2,
+                      0., 0., theRF, aSeq, gp_Trsf()))
         return NULL;
     }
     catch (Standard_Failure) {
@@ -2018,39 +2529,43 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
       SetErrorCode(aFail->GetMessageString());
       return NULL;
     }
-
-    TCollection_AsciiString aListRes, anEntry;
-    // Iterate over the sequence aSeq
-    Standard_Integer aNbGroups = aSeq->Length();
-    Standard_Integer i = 2;
-    for (; i <= aNbGroups; i++) {
-      Handle(Standard_Transient) anItem = aSeq->Value(i);
-      if (anItem.IsNull()) continue;
-      Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
-      if (aGroup.IsNull()) continue;
-      //Make a Python command
-      TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
-      aListRes += anEntry + ", ";
-    }
-
-    aListRes.Trunc(aListRes.Length() - 2);
-
-    //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << ", " << aListRes.ToCString()
-      << "] = geompy.MakePipeTShapeFillet(" << theR1 << ", " << theW1 << ", " << theL1 << ", " << theR2
-      << ", " << theW2 << ", " << theL2 << ", " << theRF << ", " << theHexMesh << ")";
   }
-  /*
-   * Get the groups: END
-   */
-  else {
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aListRes("[");
+  // Iterate over the sequence aSeq
+  Standard_Integer aNbGroups = aSeq->Length();
+  Standard_Integer i = 1;
+  for (; i <= aNbGroups; i++) {
+    Handle(Standard_Transient) anItem = aSeq->Value(i);
+    if (anItem.IsNull()) continue;
+    Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
+    if (aGroup.IsNull()) continue;
     //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << "] = geompy.MakePipeTShapeFillet(" << theR1 << ", " << theW1
-      << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theRF << ", "
-      << theHexMesh << ")";
+    TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
+    aListRes += anEntry + ", ";
   }
+  aListRes.Trunc(aListRes.Length() - 2);
+
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aListRes.ToCString() << "] = geompy.MakePipeTShapeFillet("
+     << theR1 << ", " << theW1 << ", " << theL1 << ", "
+     << theR2 << ", " << theW2 << ", " << theL2 << ", "
+     << theRF << ", " << theHexMesh;
+
+  // thickness reduction
+  if (isTRL)
+    pd << ", theRL=" << theRL << ", theWL=" << theWL
+       << ", theLtransL=" << theLtransL << ", theLthinL=" << theLthinL;
+  if (isTRR)
+    pd << ", theRR=" << theRR << ", theWR=" << theWR
+       << ", theLtransR=" << theLtransR << ", theLthinR=" << theLthinR;
+  if (isTRI)
+    pd << ", theRI=" << theRI << ", theWI=" << theWI
+       << ", theLtransI=" << theLtransI << ", theLthinI=" << theLthinI;
+
+  pd << ")";
 
   SetErrorCode(OK);
 
@@ -2080,12 +2595,16 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, double theW1, double theL1,
-                                                               double theR2, double theW2, double theL2,
-                                                               double theRF, bool theHexMesh,
-                                                               Handle(GEOM_Object) theP1,
-                                                               Handle(GEOM_Object) theP2,
-                                                               Handle(GEOM_Object) theP3)
+GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition
+                             (double theR1, double theW1, double theL1,
+                              double theR2, double theW2, double theL2,
+                              double theRL, double theWL, double theLtransL, double theLthinL,
+                              double theRR, double theWR, double theLtransR, double theLthinR,
+                              double theRI, double theWI, double theLtransI, double theLthinI,
+                              double theRF, bool theHexMesh,
+                              Handle(GEOM_Object) theP1,
+                              Handle(GEOM_Object) theP2,
+                              Handle(GEOM_Object) theP3)
 {
   SetErrorCode(KO);
   //Add a new object
@@ -2113,6 +2632,10 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
   aData.SetRF(theRF);
   aData.SetHexMesh(theHexMesh);
 
+  bool isTRL = (theRL + theWL + theLtransL + theLthinL) > Precision::Confusion();
+  bool isTRR = (theRR + theWR + theLtransR + theLthinR) > Precision::Confusion();
+  bool isTRI = (theRI + theWI + theLtransI + theLthinI) > Precision::Confusion();
+
   //Compute the resulting value
   try {
 #if OCC_VERSION_LARGE > 0x06010000
@@ -2122,7 +2645,8 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
       SetErrorCode("TShape driver failed");
       return NULL;
     }
-  } catch (Standard_Failure) {
+  }
+  catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
@@ -2210,21 +2734,42 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
       return NULL;
   }
 
-  TopoDS_Shape Te = aShape->GetValue();
+  // Add thickness reduction elements
+  // at the three extremities: Left, Right and Incident
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (isTRL || isTRR || isTRI) {
+      TopoDS_Shape aResShape =
+        MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
+                                         theRL, theWL, theLtransL, theLthinL,
+                                         theRR, theWR, theLtransR, theLthinR,
+                                         theRI, theWI, theLtransI, theLthinI,
+                                         !theHexMesh);
+      aFunction->SetValue(aResShape);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
 
   // Set Position
   gp_Trsf aTrsf = GetPositionTrsf(theL1, theL2, theP1, theP2, theP3);
-  BRepBuilderAPI_Transform aTransformation(Te, aTrsf, Standard_False);
+  BRepBuilderAPI_Transform aTransformation (aShape->GetValue(), aTrsf, Standard_False);
   TopoDS_Shape aTrsf_Shape = aTransformation.Shape();
   aFunction->SetValue(aTrsf_Shape);
+
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
+
   if (theHexMesh) {
-    /*
-     * Get the groups: BEGIN
-     */
+    // Get the groups
     try {
-      if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
+      if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2,
+                      0., 0., theRF, aSeq, aTrsf))
         return NULL;
     }
     catch (Standard_Failure) {
@@ -2232,40 +2777,44 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
       SetErrorCode(aFail->GetMessageString());
       return NULL;
     }
-
-    TCollection_AsciiString aListRes, anEntry;
-    // Iterate over the sequence aSeq
-    Standard_Integer aNbGroups = aSeq->Length();
-    Standard_Integer i = 2;
-    for (; i <= aNbGroups; i++) {
-      Handle(Standard_Transient) anItem = aSeq->Value(i);
-      if (anItem.IsNull()) continue;
-      Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
-      if (aGroup.IsNull()) continue;
-      //Make a Python command
-      TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
-      aListRes += anEntry + ", ";
-    }
-
-    aListRes.Trunc(aListRes.Length() - 2);
-
-    //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << ", " << aListRes.ToCString()
-      << "] = geompy.MakePipeTShapeFillet(" << theR1 << ", " << theW1 << ", " << theL1 << ", " << theR2
-      << ", " << theW2 << ", " << theL2 << ", " << theRF << ", " << theHexMesh << ", " << theP1 << ", "
-      << theP2 << ", " << theP3 << ")";
   }
-  /*
-   * Get the groups: END
-   */
-  else {
+
+  //Make a Python command
+  TCollection_AsciiString anEntry, aListRes("[");
+  // Iterate over the sequence aSeq
+  Standard_Integer aNbGroups = aSeq->Length();
+  Standard_Integer i = 1;
+  for (; i <= aNbGroups; i++) {
+    Handle(Standard_Transient) anItem = aSeq->Value(i);
+    if (anItem.IsNull()) continue;
+    Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
+    if (aGroup.IsNull()) continue;
     //Make a Python command
-    GEOM::TPythonDump(aFunction)
-      << "[" << aShape << "] = geompy.MakePipeTShapeFillet(" << theR1 << ", " << theW1
-      << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theRF << ", "
-      << theHexMesh << ", " << theP1 << ", " << theP2 << ", " << theP3 << ")";
+    TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
+    aListRes += anEntry + ", ";
   }
+  aListRes.Trunc(aListRes.Length() - 2);
+
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aListRes.ToCString() << "] = geompy.MakePipeTShapeFillet("
+     << theR1 << ", " << theW1 << ", " << theL1 << ", "
+     << theR2  << ", " << theW2 << ", " << theL2 << ", "
+     << theRF << ", " << theHexMesh << ", "
+     << theP1 << ", " << theP2 << ", " << theP3;
+
+  // thickness reduction
+  if (isTRL)
+    pd << ", theRL=" << theRL << ", theWL=" << theWL
+       << ", theLtransL=" << theLtransL << ", theLthinL=" << theLthinL;
+  if (isTRR)
+    pd << ", theRR=" << theRR << ", theWR=" << theWR
+       << ", theLtransR=" << theLtransR << ", theLthinR=" << theLthinR;
+  if (isTRI)
+    pd << ", theRI=" << theRI << ", theWI=" << theWI
+       << ", theLtransI=" << theLtransI << ", theLthinI=" << theLthinI;
+
+  pd << ")";
 
   SetErrorCode(OK);
 

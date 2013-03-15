@@ -794,71 +794,14 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetEdgeNearPoint
 #if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
-    TopoDS_Shape aShape;
-
     TopoDS_Vertex aVert = TopoDS::Vertex(anArg);
+    TopoDS_Shape aShape = GEOMUtils::GetEdgeNearPoint(aBlockOrComp, aVert);
 
-    // 1. Explode blocks on edges
-    TopTools_MapOfShape mapShape;
-    Standard_Integer nbEdges = 0;
-    TopExp_Explorer exp (aBlockOrComp, TopAbs_EDGE);
-    for (; exp.More(); exp.Next()) {
-      if (mapShape.Add(exp.Current())) {
-        nbEdges++;
-      }
-    }
-
-    if (nbEdges == 0) {
-      SetErrorCode("Given shape contains no edges");
-      return NULL;
-    }
-
-    mapShape.Clear();
-    Standard_Integer ind = 1;
-    TopTools_Array1OfShape anEdges (1, nbEdges);
-    TColStd_Array1OfReal aDistances (1, nbEdges);
-    for (exp.Init(aBlockOrComp, TopAbs_EDGE); exp.More(); exp.Next()) {
-      if (mapShape.Add(exp.Current())) {
-        TopoDS_Shape anEdge = exp.Current();
-        anEdges(ind) = anEdge;
-
-        // 2. Classify the point relatively each edge
-        BRepExtrema_DistShapeShape aDistTool (aVert, anEdges(ind));
-        if (!aDistTool.IsDone()) {
-          SetErrorCode("Can not find a distance from the given point to one of edges");
-          return NULL;
-        }
-        aDistances(ind) = aDistTool.Value();
-        ind++;
-      }
-    }
-
-    // 3. Define edge, having minimum distance to the point
-    Standard_Real nearest = RealLast(), nbFound = 0;
-    Standard_Real prec = Precision::Confusion();
-    for (ind = 1; ind <= nbEdges; ind++) {
-      if (Abs(aDistances(ind) - nearest) < prec) {
-        nbFound++;
-      } else if (aDistances(ind) < nearest) {
-        nearest = aDistances(ind);
-        aShape = anEdges(ind);
-        nbFound = 1;
-      } else {
-      }
-    }
-    if (nbFound > 1) {
-      SetErrorCode("Multiple edges near the given point are found");
-      return NULL;
-    } else if (nbFound == 0) {
-      SetErrorCode("There are no edges near the given point");
-      return NULL;
-    } else {
-      TopTools_IndexedMapOfShape anIndices;
-      TopExp::MapShapes(aBlockOrComp, anIndices);
-      Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
-      anArray->SetValue(1, anIndices.FindIndex(aShape));
-      aResult = GetEngine()->AddSubShape(theShape, anArray);
-    }
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes(aBlockOrComp, anIndices);
+    Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
+    anArray->SetValue(1, anIndices.FindIndex(aShape));
+    aResult = GetEngine()->AddSubShape(theShape, anArray);
   }
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();

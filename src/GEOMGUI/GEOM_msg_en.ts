@@ -5801,6 +5801,46 @@ Do you want to create new material?</translation>
         <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L2</source>
         <translation>New L2</translation>
     </message>
+    <message>
+        <source>GEOM_PIPE_TSHAPE_LEFT_TR</source>
+        <translation type="unfinished">Left thickness reduction</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_TSHAPE_RIGHT_TR</source>
+        <translation type="unfinished">Right thickness reduction</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_TSHAPE_INCI_TR</source>
+        <translation type="unfinished">Incident thickness reduction</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_TSHAPE_TR_R</source>
+        <translation type="unfinished">Radius (r%1)</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_TSHAPE_TR_W</source>
+        <translation type="unfinished">Width (w%1)</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_TSHAPE_TR_L_TRANS</source>
+        <translation type="unfinished">Transition length (ltrans%1)</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPE_TSHAPE_TR_L_THIN</source>
+        <translation type="unfinished">Thin part length (lthin%1)</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_GROUPMAIN</source>
+        <translation type="unfinished">Main parameters</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_GROUPREDUCT</source>
+        <translation type="unfinished">Thickness reduction</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_GROUPPOS</source>
+        <translation type="unfinished">Position</translation>
+    </message>
 </context>
 <context>
     <name>GEOMToolsGUI_PublishDlg</name>
