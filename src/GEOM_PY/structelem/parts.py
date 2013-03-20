@@ -137,7 +137,7 @@ class StructuralElementPart:
         self.name = name
         self.geom = getGeompy(studyId)
         self.baseShapesSet = set()
-        self.isMainShape = groupGeomObj.IsMainShape()
+        self.isMainShape = (groupGeomObj.GetType() != 37) # See geompyDC.ShapeIdToType for type codes
         if not self.isMainShape:
             mainShape = self.geom.GetMainShape(groupGeomObj)
             listIDs = self.geom.GetObjectIDs(groupGeomObj)
