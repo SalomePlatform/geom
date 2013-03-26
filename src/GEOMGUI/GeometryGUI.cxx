@@ -1255,7 +1255,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpDelete ), -1, -1 );  // delete
   mgr->setRule( action( GEOMOp::OpDelete ), QString("$type in {'Shape' 'Group'} and selcount>0"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpGroupCreatePopup ), -1, -1 ); // create group
-  mgr->setRule( action( GEOMOp::OpGroupCreatePopup ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpGroupCreatePopup ), QString("type='Shape' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDiscloseChildren ), -1, -1 ); // disclose child items
   mgr->setRule( action( GEOMOp::OpDiscloseChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasConcealedChildren=true"), QtxPopupMgr::VisibleRule );
 
