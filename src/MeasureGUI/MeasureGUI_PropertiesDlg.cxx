@@ -179,8 +179,9 @@ SALOME_Prs* MeasureGUI_PropertiesDlg::buildPrs()
 {
   SALOME_Prs* prs = 0;
   TopoDS_Shape shape;
-  
-  if ( GEOMBase::GetShape( myObj, shape, TopAbs_EDGE ) ) {
+
+  if ( GEOMBase::GetShape( myObj, shape, TopAbs_EDGE ) &&
+       getDisplayer()->IsDisplayed( GEOMBase::GetEntry(myObj) ) ) {
     shape = GEOMBase::CreateArrowForLinearEdge( shape );
     if ( !shape.IsNull() )
       prs = getDisplayer()->BuildPrs( shape );
