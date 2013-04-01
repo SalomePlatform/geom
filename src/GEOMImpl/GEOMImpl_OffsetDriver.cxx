@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -35,6 +35,8 @@
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
 
+#include <BRepClass3d_SolidClassifier.hxx>
+
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
 
@@ -44,6 +46,8 @@
 
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
+
+#include "utilities.h"
 
 //=======================================================================
 //function : GetID
@@ -117,6 +121,15 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(TFunction_Logbook& log) const
   } 
   else if (aType == OFFSET_THICKENING || aType == OFFSET_THICKENING_COPY)
   {
+    BRepClass3d_SolidClassifier aClassifier = BRepClass3d_SolidClassifier(aShapeBase);
+    aClassifier.PerformInfinitePoint(Precision::Confusion());
+    if (aClassifier.State()==TopAbs_IN)
+    {
+      // If the generated pipe faces normals are oriented towards the inside, the offset is negative
+      // so that the thickening is still towards outside
+      anOffset=-anOffset;
+    }
+
     BRepOffset_MakeOffset myOffsetShape(aShapeBase, anOffset, aTol, BRepOffset_Skin,
                                         Standard_False, Standard_False, GeomAbs_Intersection, Standard_True);
   
@@ -125,6 +138,15 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(TFunction_Logbook& log) const
       StdFail_NotDone::Raise("Thickening construction failed");
     }
     aShape = myOffsetShape.Shape();
+    
+    // Control the solid orientation. This is mostly done to fix a bug in case of extrusion
+    // of a circle. The built solid is then badly oriented
+    BRepClass3d_SolidClassifier anotherClassifier = BRepClass3d_SolidClassifier(aShape);
+    anotherClassifier.PerformInfinitePoint(Precision::Confusion());
+    if (anotherClassifier.State()==TopAbs_IN)
+    {
+      aShape.Reverse();
+    }
   }
 
   if (aShape.IsNull()) return 0;

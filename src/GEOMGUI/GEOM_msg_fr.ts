@@ -2091,6 +2091,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Séparer continuité</translation>
     </message>
     <message>
+        <source>GEOM_THICKNESS</source>
+        <translation>Epaisseur</translation>
+    </message>
+    <message>
         <source>GEOM_TOLERANCE</source>
         <translation>Tolérance</translation>
     </message>
@@ -5248,6 +5252,21 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>NO_SUBSHAPES_SELECTED</source>
         <translation>Choisissez un ou plusieurs sous-objets</translation>
+    </message>
+</context>
+<context>
+    <name>GenerationGUI_PrismDlg</name>
+    <message>
+        <source>GEOM_THICKENING</source>
+        <translation>Epaississement</translation>
+    </message>
+    <message>
+        <source>GEOM_ADD_THICKNESS</source>
+        <translation>Epaissir (arêtes ou contours uniquement)</translation>
+    </message>
+    <message>
+        <source>GEOM_TOWARDS_INSIDE</source>
+        <translation>Epaissir vers l'intérieur</translation>
     </message>
 </context>
 <context>

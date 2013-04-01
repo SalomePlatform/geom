@@ -2107,6 +2107,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>SplitContinuity</translation>
     </message>
     <message>
+        <source>GEOM_THICKNESS</source>
+        <translation>Thickness</translation>
+    </message>
+    <message>
         <source>GEOM_TOLERANCE</source>
         <translation>Tolerance</translation>
     </message>
@@ -5265,6 +5269,21 @@ Number of sketch points too small</translation>
     <message>
         <source>NO_SUBSHAPES_SELECTED</source>
         <translation>Please, select one or more sub-shapes</translation>
+    </message>
+</context>
+<context>
+    <name>GenerationGUI_PrismDlg</name>
+    <message>
+        <source>GEOM_THICKENING</source>
+        <translation>Thickening</translation>
+    </message>
+    <message>
+        <source>GEOM_ADD_THICKNESS</source>
+        <translation>Add thickness (edges or wires only)</translation>
+    </message>
+    <message>
+        <source>GEOM_TOWARDS_INSIDE</source>
+        <translation>Thicken towards the inside</translation>
     </message>
 </context>
 <context>

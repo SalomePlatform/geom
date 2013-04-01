@@ -5,6 +5,14 @@
 \n To generate an \b Extrusion on an object in the <b>Main Menu</b>
 select <b>New Entity - > Generation  - > Extrusion</b>
 
+<b>Examples:</b>
+
+\image html prisms_basessn.png
+Base Shape
+
+\image html prismssn.png
+Prisms
+
 \n There are 3 algorithms for creation of an \b Extrusion (Prism).
 \n The \b Result of the operation will be a GEOM_Object (edge, face, shell
 solid or compsolid).
@@ -56,13 +64,20 @@ the opposite base).
 
 \image html extrusion3.png
 
-<b>Examples:</b>
+<b> Add thickness </b>
 
-\image html prisms_basessn.png
-<center>Base Shape</center>
+\n For all three ways of creation of a prism it is possible to add a thickness 
+to the created prism (only when extruding an edge or wire).
 
-\image html prismssn.png
-<center>Prisms</center>
+\image html prism_with_thickness.png
+
+You can choose the \b Thickness and the direction of the thickening. By default the material is added on
+the outside of the generated pipe.
+
+\image html extrusion4.png
+
+\n <b>TUI Command:</b> <em>geompy.Thicken(Shape, Thickness)</em>
+\n <b>Arguments:</b> A shape (shell or face only) and a thickness
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_prism "Complex Geometric Objects".

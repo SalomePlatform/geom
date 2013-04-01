@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 //  File      : GEOMImpl_IShapesOperations.cxx
 //  Created   :
@@ -1177,7 +1178,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
   for (; anIt.More(); anIt.Next()) {
     TCollection_ExtendedString anEntry = anIt.Value();
     Standard_Integer aStrLen = anEntry.LengthOfCString();
-    char* anEntryStr = new char[aStrLen];
+    char* anEntryStr = new char[aStrLen+1];
     anEntry.ToUTF8CString(anEntryStr);
     Handle(GEOM_Object) anObj = GetEngine()->GetObject(GetDocID(), anEntryStr, false);
     if (!anObj.IsNull()) {

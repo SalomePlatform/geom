@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -139,6 +139,11 @@ QStringList Material_ResourceMgr::materials( MaterialType theType, bool theSort 
   if ( theSort ) {
     qSort( slglobal );
     qSort( sluser );
+  }
+  // special processing for default material (to make it first in the list)
+  if ( slglobal.contains( "[ Default ]" ) ) {
+    slglobal.removeAll( "[ Default ]" );
+    slglobal.prepend( "[ Default ]" );
   }
 
   // combine the materials to obtain result list

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <GEOMImpl_SplineDriver.hxx>
 
@@ -241,8 +242,9 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
         TopoDS_Shape aVec1Sh = aVec1Ref->GetValue();
         TopoDS_Shape aVec2Sh = aVec2Ref->GetValue();
 
-        gp_Vec aV1 = GEOMUtils::GetVector(aVec1Sh);
-        gp_Vec aV2 = GEOMUtils::GetVector(aVec2Sh);
+        // take orientation of edge into account to avoid regressions, as it was implemented so
+        gp_Vec aV1 = GEOMUtils::GetVector(aVec1Sh, Standard_True);
+        gp_Vec aV2 = GEOMUtils::GetVector(aVec2Sh, Standard_True);
 
         GBC.Load(aV1, aV2, /*Scale*/Standard_True);
       }

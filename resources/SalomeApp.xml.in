@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+  Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 
   Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
   CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -41,31 +41,31 @@
   <section name="Geometry" >
     <!-- Other module preferences -->
     <parameter name="SettingsGeomStep"    value="10" />
-    <parameter name="display_mode"        value="0"  />
-    <parameter name="shading_color"       value="255, 255, 0" />
-    <parameter name="edges_in_shading_color" value="180, 180, 180" />
+    <parameter name="display_mode"        value="2"  />
+    <parameter name="shading_color"       value="#a7a7a7" />
+    <parameter name="edges_in_shading_color" value="#000000" />
     <parameter name="wireframe_color"     value="255, 255, 0" />
     <parameter name="free_bound_color"    value="0, 255, 0" />
     <parameter name="line_color"          value="255, 0, 0" />
-    <parameter name="point_color"         value="255, 255, 0" />
+    <parameter name="point_color"         value="#ff7700" />
     <parameter name="isos_color"          value="200, 200, 200" />
     <parameter name="toplevel_color"      value="170, 85, 0" />
     <parameter name="toplevel_dm"         value="0" />
     <parameter name="editgroup_color"     value="170, 85, 0" />
-    <parameter name="type_of_marker"      value="1"  />
+    <parameter name="type_of_marker"      value="6"  />
     <parameter name="deflection_coeff"    value="0.001"  />
-    <parameter name="auto_create_base_objects" value="false"  />
+    <parameter name="auto_create_base_objects" value="true"  />
     <parameter name="base_vectors_length" value="1"  />
-    <parameter name="marker_scale"        value="1"  />
-    <parameter name="geom_preview"        value="false"  />
-    <parameter name="material"            value="Plastic" />
+    <parameter name="marker_scale"        value="3"  />
+    <parameter name="geom_preview"        value="true"  />
+    <parameter name="material"            value="[ Default ]" />
     <parameter name="predef_materials"    value="true" />
     <parameter name="edge_width"          value="1" />
     <parameter name="isolines_width"      value="1" />
     <parameter name="preview_edge_width"  value="1" />
     <parameter name="measures_line_width" value="1" />
-    <parameter name="iso_number_u"        value="1" />
-    <parameter name="iso_number_v"        value="1" />
+    <parameter name="iso_number_u"        value="0" />
+    <parameter name="iso_number_v"        value="0" />
 
     <!-- Input field precisions -->
     <parameter name="def_precision"       value="3"  />

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <GEOMImpl_CircleDriver.hxx>
 
@@ -97,7 +98,8 @@ Standard_Integer GEOMImpl_CircleDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) aRefVector = aCI.GetVector();
     if (!aRefVector.IsNull()) {
       TopoDS_Shape aShapeVec = aRefVector->GetValue();
-      aV = GEOMUtils::GetVector(aShapeVec);
+      // take orientation of edge into account to avoid regressions, as it was implemented so
+      aV = GEOMUtils::GetVector(aShapeVec, Standard_True);
     }
     // Axes
     gp_Ax2 anAxes (aP, aV);

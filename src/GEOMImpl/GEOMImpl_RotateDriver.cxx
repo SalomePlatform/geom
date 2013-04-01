@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -98,7 +99,8 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) anAxis = RI.GetAxis();
     if (anAxis.IsNull()) return 0;
     TopoDS_Shape A = anAxis->GetValue();
-    gp_Vec aV = GEOMUtils::GetVector(A);
+    // do not take into account edge orientation (it is correct)
+    gp_Vec aV = GEOMUtils::GetVector(A, Standard_False);
     TopoDS_Edge anEdge = TopoDS::Edge(A);
     gp_Pnt aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
     gp_Dir aDir (aV);
@@ -160,7 +162,8 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) anAxis = RI.GetAxis();
     if (!anAxis.IsNull()) {
       TopoDS_Shape A = anAxis->GetValue();
-      gp_Vec aV = GEOMUtils::GetVector(A);
+      // do not take into account edge orientation (it is correct)
+      gp_Vec aV = GEOMUtils::GetVector(A, Standard_False);
       TopoDS_Edge anEdge = TopoDS::Edge(A);
       aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
       D = gp_Dir(aV);
@@ -206,7 +209,8 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) anAxis = RI.GetAxis();
     if (!anAxis.IsNull()) {
       TopoDS_Shape A = anAxis->GetValue();
-      gp_Vec aV = GEOMUtils::GetVector(A);
+      // do not take into account edge orientation (it is correct)
+      gp_Vec aV = GEOMUtils::GetVector(A, Standard_False);
       TopoDS_Edge anEdge = TopoDS::Edge(A);
       aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
       D = gp_Dir(aV);

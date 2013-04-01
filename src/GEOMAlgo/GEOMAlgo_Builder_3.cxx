@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -282,9 +282,7 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
       else {
         //aMS.Add(aShell);
         TopExp::MapShapes(aShell, TopAbs_FACE, aMS);
-        //modified by NIZNHY-PKV Fri Dec 03 11:18:45 2010f
         TopExp::MapShapes(aShell, TopAbs_EDGE, aMS);
-        //modified by NIZNHY-PKV Fri Dec 03 11:18:51 2010t
         TopExp::MapShapesAndAncestors(aShell, TopAbs_EDGE, TopAbs_FACE, aMEF);
       }
     }
@@ -513,11 +511,9 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
     }
     const TopTools_ListOfShape& aSFS1=aSSi.GetSet();
     aNbSFS=aSFS1.Extent();
-    //modified by NIZNHY-PKV Wed Oct 27 09:53:15 2010f
     if (!aNbSFS) {
       continue;
     }
-    //modified by NIZNHY-PKV Wed Oct 27 09:53:18 2010t
     //
     // 1.3 Build new solids
     aSB.SetContext(aCtx);
@@ -695,7 +691,12 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
       const TopTools_ListOfShape &aLSx=aMSx.FindFromKey(aSI);
       aNbSx=aLSx.Extent();
       if (aNbSx) {
-        aMSI.Remove(aSI);
+	//modified by NIZNHY-PKV Wed Mar 27 11:39:15 2013f
+	//aMSI.Remove(aSI);
+        if (aMSI.Remove(aSI)) {
+	  aItM.Initialize(aMSI);
+	}
+	//modified by NIZNHY-PKV Wed Mar 27 11:39:18 2013t
       }
     }
   }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -111,10 +111,10 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWi
   GroupDXDYDZ->CheckBox2->setText(tr("GEOM_SCALE_PRISM"));
   
   GroupThickening = new DlgRef_1Check1Spin1Check(centralWidget());
-  GroupThickening->GroupBox1->setTitle("Thickening");
-  GroupThickening->checkButton1->setText("Add thickness (edges or wires only)");
-  GroupThickening->checkButton2->setText("Thicken towards outside");
-  GroupThickening->TextLabel1->setText("Thickness");
+  GroupThickening->GroupBox1->setTitle(tr("GEOM_THICKENING"));
+  GroupThickening->checkButton1->setText(tr("GEOM_ADD_THICKNESS")); // "Add thickness (edges or wires only)"
+  GroupThickening->checkButton2->setText(tr("GEOM_TOWARDS_INSIDE")); // "Thicken towards the inside"
+  GroupThickening->TextLabel1->setText(tr("GEOM_THICKNESS"));
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -716,12 +716,11 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
     
     if(GroupThickening->checkButton1->isChecked())
     { 
-      double aThickness = 0.0;
-      
-      if(GroupThickening->checkButton2->isChecked() ^ GroupVecH->CheckBox2->isChecked()) // if "towards outside" XOR "reversed" is checked
-        aThickness = -1.0*(GroupThickening->SpinBox_DX->value());                        // change the offset sign to negative
-      else
-        aThickness = GroupThickening->SpinBox_DX->value();                          
+      double aThickness = GroupThickening->SpinBox_DX->value();
+      if (GroupThickening->checkButton2->isChecked())
+      {
+        aThickness = -aThickness;  
+      }
       
       anObj = anotherOper->MakeThickening(anObj, aThickness, /*copy=*/false);    
     }
