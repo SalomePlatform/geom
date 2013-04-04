@@ -1,7 +1,10 @@
 # Creation of a PipeWithShellSections
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 import math
 gg = salome.ImportComponentGUI("GEOM")
 

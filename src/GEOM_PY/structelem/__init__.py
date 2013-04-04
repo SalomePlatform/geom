@@ -414,7 +414,11 @@ class StructuralElement:
 
 
 def TEST_CreateGeometry():
-    import geompy
+    import salome
+    salome.salome_init()
+    import GEOM
+    from salome.geom import geomBuilder
+    geompy = geomBuilder.New(salome.myStudy)
     import SALOMEDS
     geompy.init_geom(salome.myStudy)
     Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)

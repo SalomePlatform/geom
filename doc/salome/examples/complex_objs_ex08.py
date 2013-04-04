@@ -1,4 +1,9 @@
 # Creation of a PipeBiNormalAlongVector
+import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 def MakeHelix(radius, height, rotation, direction):
     #  - create a helix -
@@ -14,7 +19,6 @@ def MakeHelix(radius, height, rotation, direction):
     length_z  = height
     length_xy = radius*rotation
     length = sqrt(length_z*length_z + length_xy*length_xy)
-    import geompy
     nb_steps = 1
     epsilon = 1.0e-6
     while 1:
@@ -48,7 +52,6 @@ def MakeSpring(radius, height, rotation, direction, thread_radius, base_rotation
     # create a helix
     helix = MakeHelix(radius, height, rotation, direction)
     # base in the (Ox, Oz) plane
-    import geompy
     p0 = geompy.MakeVertex(radius-3*thread_radius, 0.0, -thread_radius)
     p1 = geompy.MakeVertex(radius+3*thread_radius, 0.0, -thread_radius)
     p2 = geompy.MakeVertex(radius+3*thread_radius, 0.0, +thread_radius)

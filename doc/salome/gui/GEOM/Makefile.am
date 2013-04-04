@@ -31,10 +31,6 @@ guidoc_DATA = images/head.png static/SALOME_BOA_PA.pdf
 
 usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "===========================================" ;			\
-	echo "Replacing geompyDC by geompy" ;					\
-	echo "===========================================" ;			\
-	$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py geompy.py $(top_srcdir)/src/GEOM_SWIG/geompyDC.py geompy ;	\
-	echo "===========================================" ;			\
 	echo "Generating examples documentation" ;				\
 	echo "===========================================" ;			\
 	$(DOXYGEN) doxyfile_tui ;						\

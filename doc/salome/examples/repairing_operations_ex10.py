@@ -1,7 +1,10 @@
 # Add Point on Edge
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # create vertices
 p1 = geompy.MakeVertex(0,0,50)

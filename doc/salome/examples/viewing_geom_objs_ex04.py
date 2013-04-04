@@ -1,8 +1,10 @@
 # Set Point Marker
 
 import salome
-import geompy
+salome.salome_init()
 import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 texture = geompy.LoadTexture(os.getenv("DATA_DIR")+"/Textures/texture1.dat")
 

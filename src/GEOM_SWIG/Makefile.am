@@ -34,9 +34,6 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # Scripts to be installed.
 dist_salomescript_DATA =		\
 	geompy.py			\
-	geompyDC.py			\
-	gsketcher.py			\
-	batchmode_geompy.py		\
 	GEOM_Spanner.py			\
 	GEOM_blocks.py			\
 	GEOM_example.py			\
@@ -69,6 +66,11 @@ dist_salomescript_DATA =		\
 	PAL_MESH_030_geometry.py	\
 	PAL_MESH_033_geometry.py	\
 	PAL_MESH_035_geometry.py
+
+mypkgpythondir = $(salomepythondir)/salome/geom
+mypkgpython_PYTHON = \
+	geomBuilder.py			\
+	gsketcher.py
 
 sharedpkgpython_PYTHON =		\
 	GEOM_shared_modules.py

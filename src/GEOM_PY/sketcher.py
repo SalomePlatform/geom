@@ -38,7 +38,8 @@ Example::
     wire = mysketcher.getGeomWire()
 
     # Put it in the study
-    import geompy
+    from salome.geom import geomBuilder
+    geompy = geomBuilder.New(salome.myStudy)
     geompy.addToStudy( wire, 'mysketch' )
 
 Additionnal examples can be found as unit tests in the source code.
@@ -46,7 +47,11 @@ Additionnal examples can be found as unit tests in the source code.
 
 geompyEnable = True
 try:
-    import geompy
+    import salome
+    salome.salome_init()
+    import GEOM
+    from salome.geom import geomBuilder
+    geompy = geomBuilder.New(salome.myStudy)
 except:
     geompyEnable = False
     

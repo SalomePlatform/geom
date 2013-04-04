@@ -1,7 +1,10 @@
 # Creation of a PipeWithDifferentSections
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 gg = salome.ImportComponentGUI("GEOM")
 
 Wire_1 = geompy.MakeSketcher("Sketcher:F 0 0:TT 100 0:R 0:C 100 90:T 0 200", [0, 0, 0, 0, 0, 1, 1, 0, -0])

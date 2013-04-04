@@ -28,8 +28,11 @@
 # reload(gallery_01_GEOM)
 # -- Import geompy pour piloter GEOM par script
 #
-import geompy
-geom = geompy.geom
+import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # -- Dimensions de la boite entiˆre
 

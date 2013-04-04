@@ -49,8 +49,11 @@ gmDz = 100.0
 
 # --
 
-import geompy
-geom = geompy.geom
+import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # -- Construction de backfill
 

@@ -1,7 +1,10 @@
 # Creation of a Curve
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 gg = salome.ImportComponentGUI("GEOM")
 
 # create vertices and vectors
@@ -27,13 +30,13 @@ interpol = geompy.MakeInterpol([p0, p1, p2, p3, p4], False)
 interpol_tangents = geompy.MakeInterpolWithTangents([p0, p1, p2, p3, p4], v1, v2)
 
 #create a polyline using parametric definition of the basic points
-param_polyline = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, geompy.GEOM.Polyline, theNewMethod=True)
+param_polyline = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, GEOM.Polyline, theNewMethod=True)
 
 # create a bezier curve using parametric definition of the basic points
-param_bezier = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 20, geompy.GEOM.Bezier, theNewMethod=True)
+param_bezier = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 20, GEOM.Bezier, theNewMethod=True)
 
 #create a b-spline curve using parametric definition of the basic points
-param_interpol = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, geompy.GEOM.Interpolation, theNewMethod=True)
+param_interpol = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, GEOM.Interpolation, theNewMethod=True)
 
 
 # add objects in the study

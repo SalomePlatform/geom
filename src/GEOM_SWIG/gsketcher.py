@@ -275,7 +275,7 @@ class Sketcher3D:
             sk.addPointsRelative(0,0,130, 70,0,-130)
             a3D_Sketcher_1 = sk.wire()
         """
-        from geompyDC import ParseSketcherCommand, RaiseIfFailed
+        from salome.geom.geomBuilder import ParseSketcherCommand, RaiseIfFailed
         Command,Parameters = ParseSketcherCommand(self.myCommand)
         wire = self.geompyD.CurvesOp.Make3DSketcherCommand(Command)
         self.myCommand = "3DSketcher"

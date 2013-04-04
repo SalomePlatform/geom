@@ -32,17 +32,16 @@
 # -------
 #
 import salome
-import SALOMEDS
-
-import geompy
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # Interface with geometry
 # -----------------------
 
 #geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
 geomgui = salome.ImportComponentGUI("GEOM")
-
-geom = geompy
 
 # Interface with study
 # --------------------
@@ -58,23 +57,23 @@ def setName(obj):
 
 
 def MakeVertex(x, y, z):
-    v = geom.MakeVertex(x, y, z)
+    v = geompy.MakeVertex(x, y, z)
     setName(v)
     return v
 
 def MakeEdge(v1, v2):
-    e = geom.MakeEdge(v1, v2)
+    e = geompy.MakeEdge(v1, v2)
     setName(e)
     return e
 
 def MakeArc(f, p, t):
-    e = geom.MakeArc(f, p, t)
+    e = geompy.MakeArc(f, p, t)
     setName(e)
     return e
 
 def MakeArcCenter(c, f, t):
     p = fkl(c, f, t)
-    e = geom.MakeArc(f, p, t)
+    e = geompy.MakeArc(f, p, t)
     setName(e)
     return e
 
@@ -89,8 +88,8 @@ def MakeQuadFace(e1, e2, e3, e4):
     l.append(e2)
     l.append(e3)
     l.append(e4)
-    w = geom.MakeWire(l)
-    f = geom.MakeFace(w, 1)
+    w = geompy.MakeWire(l)
+    f = geompy.MakeFace(w, 1)
     setName(f)
     return f
 
@@ -112,8 +111,8 @@ def MakeQuadFaceVertex(v1, v2, v3, v4):
     l.append(e)
     e = MakeEdge(v4, v1)
     l.append(e)
-    w = geom.MakeWire(l)
-    f = geom.MakeFace(w, 1)
+    w = geompy.MakeWire(l)
+    f = geompy.MakeFace(w, 1)
     setName(f)
     return f
 
@@ -131,11 +130,11 @@ def MakeHexaSolid(f1, f2, f3, f4, f5, f6):
     l.append(f4)
     l.append(f5)
     l.append(f6)
-    s = geom.MakeShell(l)
+    s = geompy.MakeShell(l)
 # FKL: bad shell
     l = []
     l.append(s)
-    s = geom.MakeSolid(l)
+    s = geompy.MakeSolid(l)
 # FKL: MakeSolid crash
     setName(s)
     return s
@@ -155,8 +154,8 @@ def MakeRevolution(g, pt, ve, angle):
     Creates a face  by rotation of an edge with an angle around an axis defined by a point and a vector or
     creates a solid by rotation of a  face with an angle around an axis defined by a point and a vector
     """
-    axis = geom.MakeAxisStruct(pt.x, pt.y, pt.z, ve.x, ve.y, ve.z)
-    s = geom.MakeRevolution(g, axis, angle)
+    axis = geompy.MakeAxisStruct(pt.x, pt.y, pt.z, ve.x, ve.y, ve.z)
+    s = geompy.MakeRevolution(g, axis, angle)
     setName(s)
     return s
 
@@ -167,7 +166,7 @@ def MakeSewing(ls):
     Creates a face  by sewing common edges between a list of faces or
     Creates a solid by sewing common faces between a list of solids
     """
-    s = geom.MakeSewing(ls)
+    s = geompy.MakeSewing(ls)
     setName(s)
     return s
 
@@ -178,7 +177,7 @@ def MakeCommon(s1, s2):
     Creates the common face  between 2 faces or
     Creates the common solid between 2 solids
     """
-    s = geom.MakeBoolean(s1, s2, 1)
+    s = geompy.MakeBoolean(s1, s2, 1)
     setName(s)
     return s
 
@@ -188,7 +187,7 @@ def MakeFuse(s1, s2):
     """
     Fuses 2 faces or 2 solids
     """
-    s = geom.MakeBoolean(s1, s2, 3)
+    s = geompy.MakeBoolean(s1, s2, 3)
     setName(s)
     return s
 
@@ -198,7 +197,7 @@ def MakeCut(s1, s2):
     """
     Cuts 2 faces or 2 solids
     """
-    s = geom.MakeBoolean(s1, s2, 2)
+    s = geompy.MakeBoolean(s1, s2, 2)
     setName(s)
     return s
 
@@ -214,7 +213,7 @@ def MakePrism(s, v):
     Creates a face  defined by a edge   and along a vector
     Creates a solid defined by a face   and along a vector
     """
-    r = geom.MakePrism(s, point(0, 0, 0), v)
+    r = geompy.MakePrism(s, point(0, 0, 0), v)
     setName(r)
     return r
 
@@ -224,7 +223,7 @@ def MakeScaleTransform(s, center, factor):
     """
     Creates a homothety of a geometric object
     """
-    r = geom.MakeScaleTransform(s, center, factor)
+    r = geompy.MakeScaleTransform(s, center, factor)
     setName(r)
     return r
 
@@ -237,7 +236,7 @@ def MakeTranslation(s, vx, vy, vz):
     """
     Translates a vertex, an edge, a face or a solid
     """
-    r = geom.MakeTranslation(s, vx, vy, vz)
+    r = geompy.MakeTranslation(s, vx, vy, vz)
     setName(r)
     return r
 
@@ -247,8 +246,8 @@ def MakeRotation(g, pt, ve, angle):
     """
     Creates a rotation of the geometric object with an angle around an axis defined by a point and a vector
     """
-    axis = geom.MakeAxisStruct(pt.x, pt.y, pt.z, ve.x, ve.y, ve.z)
-    s = geom.MakeRotation(g, axis, angle)
+    axis = geompy.MakeAxisStruct(pt.x, pt.y, pt.z, ve.x, ve.y, ve.z)
+    s = geompy.MakeRotation(g, axis, angle)
     setName(s)
     return s
 
@@ -275,7 +274,7 @@ def MakeMirrorByPlane(s, pt, ve):
     Creates a symmetric object by plane symetry defined by a point and a normal vector
     """
     p = plane(pt, ve)
-    r = geom.MakeMirrorByplane(s, p)
+    r = geompy.MakeMirrorByplane(s, p)
     setName(r)
     return r
 
@@ -349,37 +348,35 @@ def CheckHexaSolid(s):
 # ------------------
 
 def point(x, y, z):
-    p = geom.MakeVertex(x, y, z)
+    p = geompy.MakeVertex(x, y, z)
     return p
 
 def plane(pt, dir):
-    p = geom.MakePlane(pt, d, 100)
+    p = geompy.MakePlane(pt, d, 100)
     return p
 
 # Solid
 # -----
 
 def MakeCylinder(center, dir, radius, height):
-    s = geom.MakeCylinder(center, dir, radius, height)
+    s = geompy.MakeCylinder(center, dir, radius, height)
     setName(s)
     return s
 
 def MakeBox(p1, p2):
-    s = geom.MakeBoxTwoPnt(p1, p2)
+    s = geompy.MakeBoxTwoPnt(p1, p2)
     setName(s)
     return s
 
 # Compound
 # --------
 
-ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
-
 def MakePartitionList(solids, tools):
     """
     Creates a list of shape by a partition of a list of solids by a list of tools
     """
-    p = geom.Partition(solids, tools, [], [], ShapeType["SHAPE"]);
-    l = geom.SubShapeAll(p, ShapeType["SHAPE"])
+    p = geompy.Partition(solids, tools, [], [], geompy.ShapeType["SHAPE"]);
+    l = geompy.SubShapeAll(p, geompy.ShapeType["SHAPE"])
     return l
 
 def MakePartition(solids, tools):
@@ -392,25 +389,25 @@ def MakePartition(solids, tools):
     return c
 
 def BlockMakeMultiTranslation1D(shape, dir, step, times):
-    m = geom.MakeMultiTranslation1D(shape, dir, step, times)
+    m = geompy.MakeMultiTranslation1D(shape, dir, step, times)
     c  = MakeGlueFaces(m, 1.e-5)
     setName(c)
     return c
 
 def BlockMakeMultiTranslation2D(shape, dir1, step1, times1, dir2, step2, times2):
-    m  = geom.MakeMultiTranslation2D(shape, dir1, step1, times1, dir2, step2, times2)
+    m  = geompy.MakeMultiTranslation2D(shape, dir1, step1, times1, dir2, step2, times2)
     c  = MakeGlueFaces(m, 1.e-5)
     setName(c)
     return c
 
 def BlockMakeMultiRotation1D(shape, dir, point, times):
-    m = geom.MakeMultiRotation1D(shape, dir, point, times)
+    m = geompy.MakeMultiRotation1D(shape, dir, point, times)
     c  = MakeGlueFaces(m, 1.e-5)
     setName(c)
     return c
 
 def BlockMakeMultiRotation2D(shape, dir, point, angle, times1, step, times2):
-    m = geom.MakeMultiRotation2D(shape, dir, point, angle, times1, step, times2)
+    m = geompy.MakeMultiRotation2D(shape, dir, point, angle, times1, step, times2)
     c  = MakeGlueFaces(m, 1.e-5)
     setName(c)
     return c
@@ -422,21 +419,21 @@ def MakeCompound(ls):
     """
     Creates a compound defined by a list
     """
-    c = geom.MakeCompound(ls)
+    c = geompy.MakeCompound(ls)
     return c
 
 def MakeSewingShape(s, eps):
     """
     Creates a shape fully sewed
     """
-    r = geom.MakeSewingShape(s, eps)
+    r = geompy.MakeSewingShape(s, eps)
     return r
 
 def MakeGlueFaces(s, eps):
     """
     Touched faces are replaced by one
     """
-    r = geom.MakeGlueFaces(s, eps)
+    r = geompy.MakeGlueFaces(s, eps)
     return r
 
 
@@ -697,4 +694,4 @@ piece = MakeCompound(l)
 # ------------
 
 idpiece = addToStudy(piece, "Cubes2pyGibi")
-#geom.InsertOp.Export(piece,"piece.brep", "BREP")
+#geompy.InsertOp.Export(piece,"piece.brep", "BREP")

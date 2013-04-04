@@ -27,8 +27,11 @@
 #GUI test scenario      :PAL-MESH-035 (geometry part)
 #####################################################################
 #
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 #Box creation (2.2)
 Box_1 = geompy.MakeBoxDXDYDZ(200, 400, 300)

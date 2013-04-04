@@ -1,6 +1,10 @@
 # Minimal Distance
 
-import geompy
+import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # Create two curves with three closest points
 Vertex_1 = geompy.MakeVertex(0, 0, 0)

@@ -1,15 +1,20 @@
 /*!
 
-\page geompy_page Python Interface geompy.py
+\page geompy_page Python Interface geomBuilder.py
 
 \n Please, see
-<a href="geompy_doc/modules.html">structured documentation for geompy.py</a>,
+<a href="geompy_doc/modules.html">structured documentation for geomBuilder.py</a>,
 where all package functionality is separated in groups by purpose.
 
-\n Also you can find any function in the \ref geompy
-"linear documentation for geompy.py".
+\n Also you can find any function in the \ref GEOM_SWIG.geomBuilder
+"linear documentation for geomBuilder.py".
 
-By the links below you can find sample scripts for all operations
+\n
+\anchor tui_sample_geom_script
+<br><h2>GEOM Python script example</h2>
+\tui_script{GEOM_box.py}
+
+\n By the links below you can find sample scripts for all operations
 provided by Geometry module.
 
 <ul>

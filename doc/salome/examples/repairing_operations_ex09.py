@@ -1,7 +1,10 @@
 # Limit Tolerance
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 gg = salome.ImportComponentGUI("GEOM")
 
 # import initial topology with bad tolerances (more than 1e-07)

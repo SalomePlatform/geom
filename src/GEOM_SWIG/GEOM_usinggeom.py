@@ -26,7 +26,10 @@
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
 #
-import geompy
+import salome
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
 import math
 
 import GEOM_TestAll

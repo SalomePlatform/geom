@@ -30,6 +30,7 @@
 # ! documentation generation to identify certain places of this file
 
 import os
+import GEOM
 
 def TestExportImport (geompy, shape):
 
@@ -598,13 +599,13 @@ def TestOtherOperations (geompy, math):
 
   # GetShapesOnPlane
   faces_on_pln = geompy.GetShapesOnPlane(blocksComp, geompy.ShapeType["FACE"],
-                                         v_0pp, geompy.GEOM.ST_ONIN)
+                                         v_0pp, GEOM.ST_ONIN)
   for face_i in faces_on_pln:
     geompy.addToStudy(face_i, "Face on Plane (N = (0, 1, 1)) or below it")
 
   # GetShapesOnPlaneIDs
   faces_above_pln_ids = geompy.GetShapesOnPlaneIDs(blocksComp, geompy.ShapeType["FACE"],
-                                                   v_0pp, geompy.GEOM.ST_OUT)
+                                                   v_0pp, GEOM.ST_OUT)
   faces_above = geompy.CreateGroup(blocksComp, geompy.ShapeType["FACE"])
   geompy.UnionIDs(faces_above, faces_above_pln_ids)
   geompy.addToStudy(faces_above, "Group of faces above Plane (N = (0, 1, 1))")
@@ -612,13 +613,13 @@ def TestOtherOperations (geompy, math):
   # GetShapesOnPlaneWithLocation
   Loc = geompy.MakeVertex(0, -50, 0)
   edges_on_pln = geompy.GetShapesOnPlaneWithLocation(blocksComp, geompy.ShapeType["EDGE"],
-                                                     v_y, Loc, geompy.GEOM.ST_ON)
+                                                     v_y, Loc, GEOM.ST_ON)
   for edge_i in edges_on_pln:
     geompy.addToStudy(edge_i, "Edge on Plane (N = (0, -1, 0) & Location = (0, -50, 0)")
 
   # GetShapesOnPlaneWithLocationIDs
   edges_on_pln_ids = geompy.GetShapesOnPlaneWithLocationIDs(
-           blocksComp, geompy.ShapeType["EDGE"], v_y, Loc, geompy.GEOM.ST_ON)
+           blocksComp, geompy.ShapeType["EDGE"], v_y, Loc, GEOM.ST_ON)
   group_edges_on_pln = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(group_edges_on_pln, edges_on_pln_ids)
   grname = "Group of edges on Plane (N = (0, -1, 0) & Location = (0, -50, 0))"
@@ -626,39 +627,39 @@ def TestOtherOperations (geompy, math):
 
   # GetShapesOnCylinder
   edges_out_cyl = geompy.GetShapesOnCylinder(blocksComp, geompy.ShapeType["EDGE"],
-                                             vy, 55, geompy.GEOM.ST_OUT)
+                                             vy, 55, GEOM.ST_OUT)
   for edge_i in edges_out_cyl:
     geompy.addToStudy(edge_i, "Edge out of Cylinder (axis = (0, 1, 0), r = 55)")
 
   # GetShapesOnCylinderIDs
   edges_in_cyl_ids = geompy.GetShapesOnCylinderIDs(blocksComp, geompy.ShapeType["EDGE"],
-                                                   vy, 80, geompy.GEOM.ST_IN)
+                                                   vy, 80, GEOM.ST_IN)
   edges_in = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(edges_in, edges_in_cyl_ids)
   geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), r = 55)")
 
   # GetShapesOnCylinderWithLocation
   edges_out_cyl = geompy.GetShapesOnCylinderWithLocation(blocksComp, geompy.ShapeType["EDGE"],
-                                                         vy, p11, 55, geompy.GEOM.ST_OUT)
+                                                         vy, p11, 55, GEOM.ST_OUT)
   for edge_i in edges_out_cyl:
     geompy.addToStudy(edge_i, "Edge out of Cylinder (axis = (0, 1, 0),  loc = (0, 0, 0), r = 55)")
 
   # GetShapesOnCylinderWithLocationIDs
   edges_in_cyl_ids = geompy.GetShapesOnCylinderWithLocationIDs(blocksComp, geompy.ShapeType["EDGE"],
-                                                               vy, p11, 80, geompy.GEOM.ST_IN)
+                                                               vy, p11, 80, GEOM.ST_IN)
   edges_in = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(edges_in, edges_in_cyl_ids)
   geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), loc = (0, 0, 0), r = 80)")
 
   # GetShapesOnSphere
   vertices_on_sph = geompy.GetShapesOnSphere(blocksComp, geompy.ShapeType["VERTEX"],
-                                             p0, 100, geompy.GEOM.ST_ON)
+                                             p0, 100, GEOM.ST_ON)
   for vertex_i in vertices_on_sph:
     geompy.addToStudy(vertex_i, "Vertex on Sphere (center = (0, 0, 0), r = 100)")
 
   # GetShapesOnSphereIDs
   vertices_on_sph_ids = geompy.GetShapesOnSphereIDs(blocksComp, geompy.ShapeType["VERTEX"],
-                                                    p0, 100, geompy.GEOM.ST_ON)
+                                                    p0, 100, GEOM.ST_ON)
   vertices_on = geompy.CreateGroup(blocksComp, geompy.ShapeType["VERTEX"])
   geompy.UnionIDs(vertices_on, vertices_on_sph_ids)
   geompy.addToStudy(vertices_on, "Group of vertices on Sphere (center = (0, 0, 0), r = 100)")
@@ -679,7 +680,7 @@ def TestOtherOperations (geompy, math):
   geompy.addToStudy(quadrangle, "Quadrangle")
 
   edges_onin_quad = geompy.GetShapesOnQuadrangle(f12, geompy.ShapeType["EDGE"],
-                                                 tl, tr, bl, br, geompy.GEOM.ST_ONIN)
+                                                 tl, tr, bl, br, GEOM.ST_ONIN)
   comp = geompy.MakeCompound(edges_onin_quad)
   geompy.addToStudy(comp, "Edges of F12 ONIN Quadrangle")
   if len( edges_onin_quad ) != 4:
@@ -687,14 +688,14 @@ def TestOtherOperations (geompy, math):
 
   # GetShapesOnQuadrangleIDs
   vertices_on_quad_ids = geompy.GetShapesOnQuadrangleIDs(f12, geompy.ShapeType["VERTEX"],
-                                                         tl, tr, bl, br, geompy.GEOM.ST_ON)
+                                                         tl, tr, bl, br, GEOM.ST_ON)
   vertices_on_quad = geompy.CreateGroup(f12, geompy.ShapeType["VERTEX"])
   geompy.UnionIDs(vertices_on_quad, vertices_on_quad_ids)
   geompy.addToStudy(vertices_on_quad, "Group of vertices on Quadrangle F12")
 
   # GetShapesOnBox
   edges_on_box = geompy.GetShapesOnBox(b0, part, geompy.ShapeType["EDGE"],
-                                       geompy.GEOM.ST_ON)
+                                       GEOM.ST_ON)
   comp = geompy.MakeCompound(edges_on_box)
   geompy.addToStudy(comp, "Edges of part ON box b0")
   if len( edges_on_box ) != 12:
@@ -702,7 +703,7 @@ def TestOtherOperations (geompy, math):
 
   # GetShapesOnBoxIDs
   faces_on_box_ids = geompy.GetShapesOnBoxIDs(b0, part, geompy.ShapeType["FACE"],
-                                              geompy.GEOM.ST_ON)
+                                              GEOM.ST_ON)
   faces_on_box = geompy.CreateGroup(part, geompy.ShapeType["FACE"])
   geompy.UnionIDs(faces_on_box, faces_on_box_ids)
   geompy.addToStudyInFather(part, faces_on_box, "Group of faces on box b0")
@@ -721,7 +722,7 @@ def TestOtherOperations (geompy, math):
 
   # GetShapesOnShape
   faces_in_sh = geompy.GetShapesOnShape(sh_1, part, geompy.ShapeType["FACE"],
-                                        geompy.GEOM.ST_IN)
+                                        GEOM.ST_IN)
   comp = geompy.MakeCompound(faces_in_sh)
   geompy.addToStudy(comp, "Faces of part IN shape sh_1")
   if len(faces_in_sh) != 11:
@@ -729,12 +730,12 @@ def TestOtherOperations (geompy, math):
 
   # GetShapesOnShapeAsCompound
   faces_in_sh_c = geompy.GetShapesOnShapeAsCompound(sh_1, part, geompy.ShapeType["FACE"],
-                                                    geompy.GEOM.ST_IN)
+                                                    GEOM.ST_IN)
   geompy.addToStudy(faces_in_sh_c, "Faces of part IN shape sh_1 (as compound)")
 
   # GetShapesOnShapeIDs
   edges_in_sh_ids = geompy.GetShapesOnShapeIDs(sh_1, part, geompy.ShapeType["EDGE"],
-                                               geompy.GEOM.ST_IN)
+                                               GEOM.ST_IN)
   edges_in_sh = geompy.CreateGroup(part, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(edges_in_sh, edges_in_sh_ids)
   geompy.addToStudyInFather(part, edges_in_sh, "Group of edges in shape sh_1")

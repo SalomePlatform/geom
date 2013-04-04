@@ -24,7 +24,10 @@
 #  Module : GEOM
 #
 import salome
-import geompy
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 ind = 1
 circlelist = []

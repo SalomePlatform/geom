@@ -27,9 +27,12 @@
 #  Module : GEOM
 #
 import salome
-import geompy
-import math
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
+import math
 import GEOM_Spanner
 
 isBlocksTest = 0 # False

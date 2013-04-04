@@ -1,7 +1,10 @@
 # Creation of Tangent Plane On Face
 
 import salome
-import geompy
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # Create Vertexes for curve
 Vertex_1 = geompy.MakeVertex(0, 0, 0)

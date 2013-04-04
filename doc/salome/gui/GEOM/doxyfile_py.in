@@ -60,7 +60,7 @@ HIDE_FRIEND_COMPOUNDS  = NO
 HIDE_IN_BODY_DOCS      = NO
 INTERNAL_DOCS          = YES
 CASE_SENSE_NAMES       = YES
-HIDE_SCOPE_NAMES       = NO
+HIDE_SCOPE_NAMES       = YES
 SHOW_INCLUDE_FILES     = YES
 INLINE_INFO            = YES
 SORT_MEMBER_DOCS       = NO
@@ -99,7 +99,7 @@ EXAMPLE_RECURSIVE      = NO
 #---------------------------------------------------------------------------
 #Input related options
 #---------------------------------------------------------------------------
-INPUT             = geompy.py @top_srcdir@/src/GEOM_SWIG/gsketcher.py @top_srcdir@/idl/GEOM_Gen.idl
+INPUT             = @top_srcdir@/src/GEOM_SWIG/geomBuilder.py @top_srcdir@/src/GEOM_SWIG/gsketcher.py @top_srcdir@/idl/GEOM_Gen.idl
 FILE_PATTERNS     = 
 IMAGE_PATH        = @srcdir@/images
 EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG

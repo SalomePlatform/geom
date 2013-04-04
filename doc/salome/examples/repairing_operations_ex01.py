@@ -1,7 +1,10 @@
 # Shape Processing
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 gg = salome.ImportComponentGUI("GEOM")
 
 # create vertices, an edge, an arc, a wire, a face and a prism

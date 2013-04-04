@@ -74,6 +74,7 @@ GOOD_TESTS = \
 	complex_objs_ex10.py \
 	free_boundaries.py \
 	free_faces.py \
+	GEOM_box.py \
 	get_non_blocks.py \
 	import_export.py \
 	inertia.py \

@@ -27,12 +27,15 @@
 #GUI test scenario      :PAL-MESH-028 (geometry part)
 #####################################################################
 #
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
 import os
 
 #Initialization
-salome.salome_init(1)
 
 #Points construction (2.1)
 Vertices = [geompy.MakeVertex(0, 0, 0), geompy.MakeVertex(200, 0, 0), geompy.MakeVertex(200, 200, 0), geompy.MakeVertex(0, 200, 0), geompy.MakeVertex(50, 50, 200), geompy.MakeVertex(150, 50, 200), geompy.MakeVertex(150, 150, 200), geompy.MakeVertex(50, 150, 200)]

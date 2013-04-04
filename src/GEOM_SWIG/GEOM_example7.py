@@ -22,10 +22,12 @@
 #  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 # ---
 #
-import salome
-import geompy
 import os
+import salome
+salome.salome_init()
 import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 data_dir = os.getenv('DATA_DIR')
 if data_dir:

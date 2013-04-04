@@ -1,7 +1,10 @@
 # Projection
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # create a cylindric face and a curve(edge)
 cylinder = geompy.MakeCylinderRH(100, 300)

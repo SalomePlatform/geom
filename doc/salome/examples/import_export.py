@@ -1,7 +1,10 @@
 # Import/Export
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # Example of import from IGES using various formats
 

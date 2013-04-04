@@ -1,7 +1,10 @@
 # Intersect Groups
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # create a box and some groups of faces on it
 Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)

@@ -73,7 +73,12 @@ that allows converting the geometrical object id value to its string representat
 
 For example, the output of the following code:
 \code
-import geompy
+import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
 box = geompy.MakeBoxDXDYDZ(10,10,10)
 type = geompy.ShapeIdToType(box.GetType())
 print type
@@ -94,8 +99,12 @@ of the \b GEOM_Object interface.
 
 For example:
 \code
-import geompy
+import salome
+salome.salome_init()
 import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
 box = geompy.MakeBoxDXDYDZ(10,10,10)
 type = box.GetShapeType()
 print type == GEOM.SOLID

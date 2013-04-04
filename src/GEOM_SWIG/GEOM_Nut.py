@@ -26,10 +26,14 @@
 #Auhtor                 :MASLOV Eugeny, KOVALTCHUK Alexey 
 #####################################################################
 #
-import geompy
-import salome
 import os
 import math
+
+import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 #Sketcher_1 creation
 Sketcher_1 = geompy.MakeSketcher("Sketcher:F 100 -57.7:TT 100 57.7:TT 0 115.47:TT -100 57.7:TT -100 -57.7:TT 0 -115.47:WW") 

@@ -1,7 +1,10 @@
 # Creation of a PipeShellsWithoutPath
 
-import geompy
-import math
+import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 import salome
 gg = salome.ImportComponentGUI("GEOM")
 

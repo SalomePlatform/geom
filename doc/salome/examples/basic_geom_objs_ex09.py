@@ -1,7 +1,10 @@
 # Creation of a Local Coordinate System
 
+import salome
+salome.salome_init()
 import GEOM
-import geompy
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 import math
 import SALOMEDS
 

@@ -24,29 +24,14 @@
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : GEOM_example4.py
 #  Module : GEOM
-#import SMESH
-#import smeshpy
 #
 import salome
-from salome import sg
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
 import math
-
-import geompy
-
-geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
-myBuilder = salome.myStudy.NewBuilder()
-#from geompy import gg
-
-#smeshgui = salome.ImportComponentGUI("SMESH")
-#smeshgui.Init(salome.myStudyId);
-
-ShapeTypeCompSolid = 1
-ShapeTypeSolid = 2
-ShapeTypeShell = 3
-ShapeTypeFace = 4
-ShapeTypeWire = 5
-ShapeTypeEdge = 6
-ShapeTypeVertex = 7
 
 pi=math.pi
 

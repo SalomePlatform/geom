@@ -1,7 +1,10 @@
 # Restore presentation parameters and sub-shapes
 
-import geompy
+import salome
+salome.salome_init()
 import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 import SALOMEDS
 
 # create a box and a cylinder

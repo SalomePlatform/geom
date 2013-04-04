@@ -2,10 +2,10 @@
 
 import salome
 salome.salome_init()
-
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 import math
-import geompy
-geompy.init_geom(salome.myStudy)
 
 OX  = geompy.MakeVectorDXDYDZ(10, 0,0)
 OXY = geompy.MakeVectorDXDYDZ(10,10,0)

@@ -17,13 +17,15 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#  File   : geompy.py
+
+#  GEOM GEOM_SWIG : binding of C++ implementation with Python
+#  File   : geomBuilder.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
 
 """
-    \namespace geompy
-    \brief Module geompy
+    \namespace geomBuilder
+    \brief Module geomBuilder
 """
 
 ##
@@ -134,7 +136,7 @@
 
 ## @defgroup l1_geompy_auxiliary Auxiliary data structures and methods
 
-## @defgroup l1_geompy_purpose   All package methods, grouped by their purpose
+## @defgroup l1_geomBuilder_purpose   All package methods, grouped by their purpose
 ## @{
 ##   @defgroup l2_import_export Importing/exporting geometrical objects
 ##   @defgroup l2_creating      Creating geometrical objects
@@ -195,12 +197,7 @@ import GEOM
 import math
 import os
 
-from gsketcher import Sketcher3D
-
-## Enumeration ShapeType as a dictionary. \n
-## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
-#  @ingroup l1_geompy_auxiliary
-ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
+from salome.geom.gsketcher import Sketcher3D
 
 # service function
 def _toListOfNames(_names, _size=-1):
@@ -215,13 +212,13 @@ def _toListOfNames(_names, _size=-1):
     return l
 
 ## Raise an Error, containing the Method_name, if Operation is Failed
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geomBuilder_auxiliary
 def RaiseIfFailed (Method_name, Operation):
     if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
 
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geomBuilder_auxiliary
 def ParseParameters(*parameters):
     Result = []
     StringResult = []
@@ -253,7 +250,7 @@ def ParseParameters(*parameters):
     return Result
 
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geomBuilder_auxiliary
 def ParseList(list):
     Result = []
     StringResult = ""
@@ -272,7 +269,7 @@ def ParseList(list):
     return Result, StringResult
 
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geomBuilder_auxiliary
 def ParseSketcherCommand(command):
     Result = ""
     StringResult = ""
@@ -314,7 +311,7 @@ def ParseSketcherCommand(command):
 ## \endcode
 ## @param data unpacked data - a string containing '1' and '0' symbols
 ## @return data packed to the byte stream
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geomBuilder_auxiliary
 def PackData(data):
     """
     Helper function which can be used to pack the passed string to the byte data.
@@ -356,18 +353,18 @@ def PackData(data):
 ## texture bitmap itself.
 ##
 ## This function can be used to read the texture to the byte stream in order to pass it to
-## the AddTexture() function of geompy class.
+## the AddTexture() function of geomBuilder class.
 ## For example,
 ## \code
-## import geompy
-## geompy.init_geom(salome.myStudy)
+## from salome.geom import geomBuilder
+## geompy = geomBuilder.New(salome.myStudy)
 ## texture = geompy.readtexture('mytexture.dat')
 ## texture = geompy.AddTexture(*texture)
 ## obj.SetMarkerTexture(texture)
 ## \endcode
 ## @param fname texture file name
 ## @return sequence of tree values: texture's width, height in pixels and its byte stream
-## @ingroup l1_geompy_auxiliary
+## @ingroup l1_geomBuilder_auxiliary
 def ReadTexture(fname):
     """
     Read bitmap texture from the text file.
@@ -376,7 +373,7 @@ def ReadTexture(fname):
     The function returns width and height of the pixmap in pixels and byte stream representing
     texture bitmap itself.
     This function can be used to read the texture to the byte stream in order to pass it to
-    the AddTexture() function of geompy class.
+    the AddTexture() function of geomBuilder class.
     
     Parameters:
         fname texture file name
@@ -385,8 +382,8 @@ def ReadTexture(fname):
         sequence of tree values: texture's width, height in pixels and its byte stream
     
     Example of usage:
-        import geompy
-        geompy.init_geom(salome.myStudy)
+        from salome.geom import geomBuilder
+        geompy = geomBuilder.New(salome.myStudy)
         texture = geompy.readtexture('mytexture.dat')
         texture = geompy.AddTexture(*texture)
         obj.SetMarkerTexture(texture)
@@ -426,11 +423,11 @@ def ReadTexture(fname):
 ## Returns a long value from enumeration type
 #  Can be used for CORBA enumerator types like GEOM.shape_type
 #  @param theItem enumeration type
-#  @ingroup l1_geompy_auxiliary
+#  @ingroup l1_geomBuilder_auxiliary
 def EnumToLong(theItem):
     """
     Returns a long value from enumeration type
-    Can be used for CORBA enumerator types like geompy.ShapeType
+    Can be used for CORBA enumerator types like geomBuilder.ShapeType
 
     Parameters:
         theItem enumeration type
@@ -439,50 +436,8 @@ def EnumToLong(theItem):
     if hasattr(theItem, "_v"): ret = theItem._v
     return ret
 
-## Kinds of shape in terms of <VAR>GEOM.GEOM_IKindOfShape.shape_kind</VAR> enumeration
-#  and a list of parameters, describing the shape.
-#  List of parameters, describing the shape:
-#  - COMPOUND:            [nb_solids  nb_faces  nb_edges  nb_vertices]
-#  - COMPSOLID:           [nb_solids  nb_faces  nb_edges  nb_vertices]
-#
-#  - SHELL:       [info.CLOSED / info.UNCLOSED  nb_faces  nb_edges  nb_vertices]
-#
-#  - WIRE:        [info.CLOSED / info.UNCLOSED nb_edges  nb_vertices]
-#
-#  - SPHERE:       [xc yc zc            R]
-#  - CYLINDER:     [xb yb zb  dx dy dz  R         H]
-#  - BOX:          [xc yc zc                      ax ay az]
-#  - ROTATED_BOX:  [xc yc zc  zx zy zz  xx xy xz  ax ay az]
-#  - TORUS:        [xc yc zc  dx dy dz  R_1  R_2]
-#  - CONE:         [xb yb zb  dx dy dz  R_1  R_2  H]
-#  - POLYHEDRON:                       [nb_faces  nb_edges  nb_vertices]
-#  - SOLID:                            [nb_faces  nb_edges  nb_vertices]
-#
-#  - SPHERE2D:     [xc yc zc            R]
-#  - CYLINDER2D:   [xb yb zb  dx dy dz  R         H]
-#  - TORUS2D:      [xc yc zc  dx dy dz  R_1  R_2]
-#  - CONE2D:       [xc yc zc  dx dy dz  R_1  R_2  H]
-#  - DISK_CIRCLE:  [xc yc zc  dx dy dz  R]
-#  - DISK_ELLIPSE: [xc yc zc  dx dy dz  R_1  R_2]
-#  - POLYGON:      [xo yo zo  dx dy dz            nb_edges  nb_vertices]
-#  - PLANE:        [xo yo zo  dx dy dz]
-#  - PLANAR:       [xo yo zo  dx dy dz            nb_edges  nb_vertices]
-#  - FACE:                                       [nb_edges  nb_vertices]
-#
-#  - CIRCLE:       [xc yc zc  dx dy dz  R]
-#  - ARC_CIRCLE:   [xc yc zc  dx dy dz  R         x1 y1 z1  x2 y2 z2]
-#  - ELLIPSE:      [xc yc zc  dx dy dz  R_1  R_2]
-#  - ARC_ELLIPSE:  [xc yc zc  dx dy dz  R_1  R_2  x1 y1 z1  x2 y2 z2]
-#  - LINE:         [xo yo zo  dx dy dz]
-#  - SEGMENT:      [x1 y1 z1  x2 y2 z2]
-#  - EDGE:                                                 [nb_vertices]
-#
-#  - VERTEX:       [x  y  z]
-#  @ingroup l1_geompy_auxiliary
-kind = GEOM.GEOM_IKindOfShape
-
 ## Information about closed/unclosed state of shell or wire
-#  @ingroup l1_geompy_auxiliary
+#  @ingroup l1_geomBuilder_auxiliary
 class info:
     """
     Information about closed/unclosed state of shell or wire
@@ -491,9 +446,102 @@ class info:
     CLOSED   = 1
     UNCLOSED = 2
 
-class geompyDC(GEOM._objref_GEOM_Gen):
+# Warning: geom is a singleton
+geom = None
+engine = None
+doLcc = False
+created = False
+
+class geomBuilder(object, GEOM._objref_GEOM_Gen):
+
+        ## Enumeration ShapeType as a dictionary. \n
+        ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
+        #  @ingroup l1_geomBuilder_auxiliary
+        ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
+
+        ## Kinds of shape in terms of <VAR>GEOM.GEOM_IKindOfShape.shape_kind</VAR> enumeration
+        #  and a list of parameters, describing the shape.
+        #  List of parameters, describing the shape:
+        #  - COMPOUND:            [nb_solids  nb_faces  nb_edges  nb_vertices]
+        #  - COMPSOLID:           [nb_solids  nb_faces  nb_edges  nb_vertices]
+        #
+        #  - SHELL:       [info.CLOSED / info.UNCLOSED  nb_faces  nb_edges  nb_vertices]
+        #
+        #  - WIRE:        [info.CLOSED / info.UNCLOSED nb_edges  nb_vertices]
+        #
+        #  - SPHERE:       [xc yc zc            R]
+        #  - CYLINDER:     [xb yb zb  dx dy dz  R         H]
+        #  - BOX:          [xc yc zc                      ax ay az]
+        #  - ROTATED_BOX:  [xc yc zc  zx zy zz  xx xy xz  ax ay az]
+        #  - TORUS:        [xc yc zc  dx dy dz  R_1  R_2]
+        #  - CONE:         [xb yb zb  dx dy dz  R_1  R_2  H]
+        #  - POLYHEDRON:                       [nb_faces  nb_edges  nb_vertices]
+        #  - SOLID:                            [nb_faces  nb_edges  nb_vertices]
+        #
+        #  - SPHERE2D:     [xc yc zc            R]
+        #  - CYLINDER2D:   [xb yb zb  dx dy dz  R         H]
+        #  - TORUS2D:      [xc yc zc  dx dy dz  R_1  R_2]
+        #  - CONE2D:       [xc yc zc  dx dy dz  R_1  R_2  H]
+        #  - DISK_CIRCLE:  [xc yc zc  dx dy dz  R]
+        #  - DISK_ELLIPSE: [xc yc zc  dx dy dz  R_1  R_2]
+        #  - POLYGON:      [xo yo zo  dx dy dz            nb_edges  nb_vertices]
+        #  - PLANE:        [xo yo zo  dx dy dz]
+        #  - PLANAR:       [xo yo zo  dx dy dz            nb_edges  nb_vertices]
+        #  - FACE:                                       [nb_edges  nb_vertices]
+        #
+        #  - CIRCLE:       [xc yc zc  dx dy dz  R]
+        #  - ARC_CIRCLE:   [xc yc zc  dx dy dz  R         x1 y1 z1  x2 y2 z2]
+        #  - ELLIPSE:      [xc yc zc  dx dy dz  R_1  R_2]
+        #  - ARC_ELLIPSE:  [xc yc zc  dx dy dz  R_1  R_2  x1 y1 z1  x2 y2 z2]
+        #  - LINE:         [xo yo zo  dx dy dz]
+        #  - SEGMENT:      [x1 y1 z1  x2 y2 z2]
+        #  - EDGE:                                                 [nb_vertices]
+        #
+        #  - VERTEX:       [x  y  z]
+        #  @ingroup l1_geomBuilder_auxiliary
+        kind = GEOM.GEOM_IKindOfShape
+
+        def __new__(cls):
+            global engine
+            global geom
+            global doLcc
+            global created
+            #print "__new__ ", engine, geom, doLcc, created
+            if geom is None:
+                # geom engine is either retrieved from engine, or created
+                geom = engine
+                # Following test avoids a recursive loop
+                if doLcc:
+                    if geom is not None:
+                        # geom engine not created: existing engine found
+                        doLcc = False
+                    if doLcc and not created:
+                        doLcc = False
+                        created = True
+                        # FindOrLoadComponent called:
+                        # 1. CORBA resolution of server
+                        # 2. the __new__ method is called again
+                        #print "FindOrLoadComponent ", engine, geom, doLcc, created
+                        geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
+                else:
+                    # FindOrLoadComponent not called
+                    if geom is None:
+                        # geomBuilder instance is created from lcc.FindOrLoadComponent
+                        created = True
+                        #print "super ", engine, geom, doLcc, created
+                        geom = super(geomBuilder,cls).__new__(cls)
+                    else:
+                        # geom engine not created: existing engine found
+                        #print "existing ", engine, geom, doLcc, created
+                        pass
+
+                return geom
+
+            return geom
 
         def __init__(self):
+            #global created
+            #print "-------- geomBuilder __init__ --- ", created, self
             GEOM._objref_GEOM_Gen.__init__(self)
             self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
             self.myBuilder = None
@@ -4265,7 +4313,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 Quantity of solids.
             """
             # Example: see GEOM_TestOthers.py
-            nb_solids = self.ShapesOp.NumberOfSubShapes(theShape, ShapeType["SOLID"])
+            nb_solids = self.ShapesOp.NumberOfSubShapes(theShape, self.ShapeType["SOLID"])
             RaiseIfFailed("NumberOfSolids", self.ShapesOp)
             return nb_solids
 
@@ -5373,7 +5421,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Explode a shape on sub-shapes of a given type.
 
             Parameters:
-                aShape Shape to be exploded (see geompy.ShapeType) 
+                aShape Shape to be exploded (see geompy.ShapeType)
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
 
             Returns:
@@ -6650,7 +6698,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the result shapes.
             """
             # Example: see GEOM_TestAll.py
-            if Limit == ShapeType["AUTO"]:
+            if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
                 lim = GEOM.SHAPE
                 for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
@@ -6698,7 +6746,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Returns:   
                 New GEOM.GEOM_Object, containing the result shapes.
             """
-            if Limit == ShapeType["AUTO"]:
+            if Limit == self.ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
                 lim = GEOM.SHAPE
                 for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
@@ -8182,7 +8230,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage: 
-               filletall = geompy.MakeFilletAll(prism, 10.) 
+               filletall = geompy.MakeFilletAll(prism, 10.)
             """
             # Example: see GEOM_TestOthers.py
             theR,Parameters = ParseParameters(theR)
@@ -8238,7 +8286,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             theR,Parameters = ParseParameters(theR)
             anObj = None
-            if theShapeType == ShapeType["EDGE"]:
+            if theShapeType == self.ShapeType["EDGE"]:
                 anObj = self.LocalOp.MakeFilletEdges(theShape, theR, theListShapes)
                 RaiseIfFailed("MakeFilletEdges", self.LocalOp)
             else:
@@ -8265,7 +8313,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             theR1,theR2,Parameters = ParseParameters(theR1,theR2)
             anObj = None
-            if theShapeType == ShapeType["EDGE"]:
+            if theShapeType == self.ShapeType["EDGE"]:
                 anObj = self.LocalOp.MakeFilletEdgesR1R2(theShape, theR1, theR2, theListShapes)
                 RaiseIfFailed("MakeFilletEdgesR1R2", self.LocalOp)
             else:
@@ -8642,7 +8690,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             anObj = None
             # note: auto-publishing is done in self.MakeChamferEdge() or self.MakeChamferFaces()
-            if aShapeType == ShapeType["EDGE"]:
+            if aShapeType == self.ShapeType["EDGE"]:
                 anObj = self.MakeChamferEdge(aShape,d1,d2,ListShape[0],ListShape[1],theName)
             else:
                 anObj = self.MakeChamferFaces(aShape,d1,d2,ListShape,theName)
@@ -9367,11 +9415,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestMeasures.py
             aDict = {}
-            for typeSh in ShapeType:
+            for typeSh in self.ShapeType:
                 if typeSh in ( "AUTO", "SHAPE" ): continue
-                listSh = self.SubShapeAllIDs(theShape, ShapeType[typeSh])
+                listSh = self.SubShapeAllIDs(theShape, self.ShapeType[typeSh])
                 Nb = len(listSh)
-                if EnumToLong(theShape.GetShapeType()) == ShapeType[typeSh]:
+                if EnumToLong(theShape.GetShapeType()) == self.ShapeType[typeSh]:
                     Nb = Nb + 1
                     pass
                 aDict[typeSh] = Nb
@@ -9487,7 +9535,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created vertex.
             """
             # Example: see GEOM_TestMeasures.py
-            nb_vert =  self.ShapesOp.NumberOfSubShapes(theShape, ShapeType["VERTEX"])
+            nb_vert =  self.ShapesOp.NumberOfSubShapes(theShape, self.ShapeType["VERTEX"])
             # note: auto-publishing is done in self.GetVertexByIndex()
             anObj = self.GetVertexByIndex(theShape, (nb_vert-1), theName)
             RaiseIfFailed("GetLastVertex", self.MeasuOp)
@@ -11432,7 +11480,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
              Returns:
                 a newly created GEOM group of edges.
             """
-            edges = self.SubShapeAll(theShape, ShapeType["EDGE"])
+            edges = self.SubShapeAll(theShape, self.ShapeType["EDGE"])
             edges_in_range = []
             for edge in edges:
                 Props = self.BasicProperties(edge)
@@ -11450,7 +11498,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 return None
 
             # note: auto-publishing is done in self.CreateGroup()
-            group_edges = self.CreateGroup(theShape, ShapeType["EDGE"], theName)
+            group_edges = self.CreateGroup(theShape, self.ShapeType["EDGE"], theName)
             self.UnionList(group_edges, edges_in_range)
 
             return group_edges
@@ -12008,7 +12056,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Add Path to load python scripts from
         #  @param Path a path to load python scripts from
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geomBuilder_auxiliary
         def addPath(self,Path):
             """
             Add Path to load python scripts from
@@ -12024,7 +12072,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Load marker texture from the file
         #  @param Path a path to the texture file
         #  @return unique texture identifier
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geomBuilder_auxiliary
         def LoadTexture(self, Path):
             """
             Load marker texture from the file
@@ -12046,7 +12094,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  appropriate reason (e.g. for identification of geometry object).
         #  @param obj geometry object
         #  @return unique object identifier
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geomBuilder_auxiliary
         def getObjectID(self, obj):
             """
             Get internal name of the object based on its study entry.
@@ -12083,7 +12131,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param Texture texture data
         #  @param RowData if @c True, @a Texture data are packed in the byte stream
         #  @return unique texture identifier
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geomBuilder_auxiliary
         def AddTexture(self, Width, Height, Texture, RowData=False):
             """
             Add marker texture. Width and Height parameters
@@ -12108,5 +12156,47 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return ID
 
 import omniORB
-#Register the new proxy for GEOM_Gen
-omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geompyDC)
+# Register the new proxy for GEOM_Gen
+omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geomBuilder)
+
+## Create a new geomBuilder instance.The geomBuilder class provides the Python
+#  interface to GEOM operations.
+#
+#  Typical use is:
+#  \code
+#    import salome
+#    salome.salome_init()
+#    from salome.geom import geomBuilder
+#    geompy = geomBuilder.New(salome.myStudy)
+#  \endcode
+#  @param  study     SALOME study, generally obtained by salome.myStudy.
+#  @param  instance  CORBA proxy of GEOM Engine. If None, the default Engine is used.
+#  @return geomBuilder instance
+def New( study, instance=None):
+    """
+    Create a new geomBuilder instance.The geomBuilder class provides the Python
+    interface to GEOM operations.
+
+    Typical use is:
+        import salome
+        salome.salome_init()
+        from salome.geom import geomBuilder
+        geompy = geomBuilder.New(salome.myStudy)
+
+    Parameters:
+        study     SALOME study, generally obtained by salome.myStudy.
+        instance  CORBA proxy of GEOM Engine. If None, the default Engine is used.
+    Returns:
+        geomBuilder instance
+    """
+    #print "New geomBuilder ", study, instance
+    global engine
+    global geom
+    global doLcc
+    engine = instance
+    if engine is None:
+      doLcc = True
+    geom = geomBuilder()
+    assert isinstance(geom,geomBuilder), "Geom engine class is %s but should be geomBuilder.geomBuilder. Import geomBuilder before creating the instance."%geom.__class__
+    geom.init_geom(study)
+    return geom

@@ -27,11 +27,11 @@
 #  Module : GEOM
 #
 import salome
-import geompy
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 import math
-
-geom = salome.lcc.FindOrLoadComponent("FactoryServer", "GEOM")
-myBuilder = salome.myStudy.NewBuilder()
 
 #Variables modifiables
 PosX = 0          #Position du cylindre dans l'espace
@@ -56,7 +56,7 @@ PosCour = PosZ + HauteurT * 4 / 7
 PosRot = PosZ + 0.9 * HauteurT
 
 #Points
-BasicOp = geom.GetIBasicOperations(salome.myStudyId)
+BasicOp = geompy.GetIBasicOperations(salome.myStudyId)
 OO = BasicOp.MakePointXYZ(0, 0, 0)
 P0 = BasicOp.MakePointXYZ(0, 0, 1)
 P1 = BasicOp.MakePointXYZ(PosX, PosY, PosZ)

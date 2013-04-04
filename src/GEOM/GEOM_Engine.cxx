@@ -602,13 +602,13 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   }
 
   aScript  = "import GEOM\n";
-  aScript += "import geompy\n";
+  aScript += "from salome.geom import geomBuilder\n";
   aScript += "import math\n";
   aScript += "import SALOMEDS\n\n";
   if( isMultiFile )
     aScript += "def RebuildData(theStudy):";
 
-  aScript += "\n\tgeompy.init_geom(theStudy)\n";
+  aScript += "\n\tgeompy = geomBuilder.New(theStudy)\n";
 
   AddTextures(theDocID, aScript);
 

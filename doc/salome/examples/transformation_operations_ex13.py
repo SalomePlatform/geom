@@ -1,7 +1,10 @@
 # Chamfer
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 gg = salome.ImportComponentGUI("GEOM")
 d1 = 10.
 d2 = 10.

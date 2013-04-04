@@ -27,8 +27,11 @@
 #GUI test scenario      :PAL-MESH-033 (geometry part)
 #####################################################################
 #
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 #Points creation (2.2)
 Vertex_1 = geompy.MakeVertex(0, 0, 0)

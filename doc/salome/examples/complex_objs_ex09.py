@@ -1,7 +1,10 @@
 # Creation of a Middle Path
 
 import salome
-import geompy
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 # Create a box
 Box_1 = geompy.MakeBoxDXDYDZ(200, 200, 200)

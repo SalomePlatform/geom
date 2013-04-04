@@ -1,7 +1,10 @@
 # Using SALOME NoteBook
 
-import geompy
 import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 import salome_notebook
 gg = salome.ImportComponentGUI("GEOM")
 

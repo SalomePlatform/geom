@@ -26,7 +26,11 @@
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
 #
-import geompy
+import salome
+salome.salome_init()
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
 
 #SKETCHER INFOS
 #Init Sketcher
