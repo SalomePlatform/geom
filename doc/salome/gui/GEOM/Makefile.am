@@ -30,23 +30,12 @@ guidocdir = $(docdir)/gui/GEOM
 guidoc_DATA = images/head.png static/SALOME_BOA_PA.pdf
 
 usr_docs: doxyfile_tui doxyfile_py doxyfile
-	echo "===========================================" ;			\
-	echo "Process geomBuilder.py for documentation generation" ;		\
-	echo "===========================================" ;			\
-	$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py $(top_srcdir)/src/GEOM_SWIG/geomBuilder.py ;\
-	echo "===========================================" ;			\
-	echo "Generating examples documentation" ;				\
-	echo "===========================================" ;			\
+	@$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py $(top_srcdir)/src/GEOM_SWIG/geomBuilder.py ; \
+	$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py $(top_srcdir)/src/GEOM_SWIG/gsketcher.py ; \
 	$(DOXYGEN) doxyfile_tui ;						\
-	echo "===========================================" ;			\
-	echo "Generating Python interface documentation";			\
-	echo "===========================================" ;			\
 	$(DOXYGEN) doxyfile_py ;						\
-	echo "===========================================" ;			\
-	echo "Generating GUI documentation" ;					\
-	echo "===========================================" ;			\
 	$(DOXYGEN) doxyfile ; 							\
-	rm -f ./geomBuilder.py
+	rm -f ./geomBuilder.py ./gsketcher.py
 
 docs: usr_docs
 
