@@ -31,6 +31,10 @@ guidoc_DATA = images/head.png static/SALOME_BOA_PA.pdf
 
 usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "===========================================" ;			\
+	echo "Process geomBuilder.py for documentation generation" ;		\
+	echo "===========================================" ;			\
+	$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py $(top_srcdir)/src/GEOM_SWIG/geomBuilder.py ;\
+	echo "===========================================" ;			\
 	echo "Generating examples documentation" ;				\
 	echo "===========================================" ;			\
 	$(DOXYGEN) doxyfile_tui ;						\
@@ -42,7 +46,7 @@ usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "Generating GUI documentation" ;					\
 	echo "===========================================" ;			\
 	$(DOXYGEN) doxyfile ; 							\
-	rm -f ./geompy.py
+	rm -f ./geomBuilder.py
 
 docs: usr_docs
 

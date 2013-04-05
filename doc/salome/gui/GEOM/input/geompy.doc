@@ -6,7 +6,7 @@
 <a href="geompy_doc/modules.html">structured documentation for geomBuilder.py</a>,
 where all package functionality is separated in groups by purpose.
 
-\n Also you can find any function in the \ref GEOM_SWIG.geomBuilder
+\n Also you can find any function in the \ref geomBuilder
 "linear documentation for geomBuilder.py".
 
 \n
