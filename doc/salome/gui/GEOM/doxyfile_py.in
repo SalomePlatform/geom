@@ -99,7 +99,7 @@ EXAMPLE_RECURSIVE      = NO
 #---------------------------------------------------------------------------
 #Input related options
 #---------------------------------------------------------------------------
-INPUT             = geomBuilder.py gsketcher.py @top_srcdir@/idl/GEOM_Gen.idl
+INPUT             = tmp/geomBuilder.py tmp/gsketcher.py @top_srcdir@/idl/GEOM_Gen.idl
 FILE_PATTERNS     = 
 IMAGE_PATH        = @srcdir@/images
 EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG

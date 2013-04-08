@@ -29,13 +29,17 @@ EXTRA_DIST += images input static/footer.html static/doxygen.css static/SALOME_B
 guidocdir = $(docdir)/gui/GEOM
 guidoc_DATA = images/head.png static/SALOME_BOA_PA.pdf
 
-usr_docs: doxyfile_tui doxyfile_py doxyfile
-	@$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py $(top_srcdir)/src/GEOM_SWIG/geomBuilder.py ; \
-	$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py $(top_srcdir)/src/GEOM_SWIG/gsketcher.py ; \
+tmp/geomBuilder.py: $(top_srcdir)/src/GEOM_SWIG/geomBuilder.py
+	mkdir -p tmp && $(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py -o $@ $<
+
+tmp/gsketcher.py: $(top_srcdir)/src/GEOM_SWIG/gsketcher.py
+	mkdir -p tmp && $(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py -o $@ $<
+
+usr_docs: doxyfile_tui doxyfile_py doxyfile tmp/geomBuilder.py tmp/gsketcher.py
+	@echo "Generating user documentation" ;                                 \
 	$(DOXYGEN) doxyfile_tui ;						\
 	$(DOXYGEN) doxyfile_py ;						\
-	$(DOXYGEN) doxyfile ; 							\
-	rm -f ./geomBuilder.py ./gsketcher.py
+	$(DOXYGEN) doxyfile
 
 docs: usr_docs
 
