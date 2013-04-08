@@ -57,8 +57,7 @@ install-data-local: usr_docs
 	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/GEOM ; \
 	for filen in `find . -maxdepth 1` ; do							\
 	  case $${filen} in									\
-	    ./Makefile* | ./doxyfile* ) ;;			\
-	    . | .. | ./static ) ;;										\
+	    . | .. | ./static | ./tmp | ./Makefile* | ./doxyfile* ) ;;				\
 	    *) echo "Installing $${filen}" ; cp -rp $${filen} $(DESTDIR)$(docdir)/gui/GEOM ;;	\
 	  esac ;										\
 	done ; \
