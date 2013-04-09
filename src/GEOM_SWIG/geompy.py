@@ -29,6 +29,8 @@
 import salome
 from salome.geom import geomBuilder
 from salome import *
+import GEOM
+from salome.geom.geomBuilder import info, PackData, ReadTexture, EnumToLong
 
 # retrieve GEOM engine in try/except block
 # to avoid problems in some cases, e.g. when generating documentation
@@ -43,9 +45,11 @@ try:
 	globals()[k] = getattr( geom, k )
         pass
     del k
-    from geomBuilder import ShapeType, GEOM, kind, info, PackData, ReadTexture, EnumToLong
+    ShapeType = geom.ShapeType
+    kind      = geom.kind
     pass
 except:
+    print "exception in geompy.py"
     geom = None
     pass
 
