@@ -55,23 +55,23 @@ except:
 
 print """
 ===============================================================================
-WARNING:                                                                      |
-Usage of geompy.py is deprecated after SALOME V7.2!                           |
-geompy.py will be removed in a future version!                                |
-TODO:                                                                         |
-The following changes in your scripts are required to avoid this message:     |
-                                                                              |
-replace                                                                       |
--------                                                                       |
-                                                                              |
-import geompy                                                                 |
-geompy.init_geom(theStudy)                                                    |
-                                                                              |
-with                                                                          |
-----                                                                          |
-                                                                              |
-from salome.geom import geomBuilder                                           |
-geompy = geomBuilder.New(theStudy)                                            |
-                                                                              |
+WARNING:
+Usage of geompy.py is deprecated after SALOME V7.2!
+geompy.py will be removed in a future version!
+TODO:
+The following changes in your scripts are required to avoid this message:
+
+replace
+-------
+
+import geompy
+geompy.init_geom(theStudy)
+
+with
+----
+
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(theStudy)
+
 ===============================================================================
 """

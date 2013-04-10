@@ -506,7 +506,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             global geom
             global doLcc
             global created
-            #print "__new__ ", engine, geom, doLcc, created
+            #print "==== __new__ ", engine, geom, doLcc, created
             if geom is None:
                 # geom engine is either retrieved from engine, or created
                 geom = engine
@@ -517,50 +517,53 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         doLcc = False
                     if doLcc and not created:
                         doLcc = False
-                        created = True
                         # FindOrLoadComponent called:
                         # 1. CORBA resolution of server
                         # 2. the __new__ method is called again
-                        #print "FindOrLoadComponent ", engine, geom, doLcc, created
+                        #print "==== FindOrLoadComponent ", engine, geom, doLcc, created
                         geom = lcc.FindOrLoadComponent( "FactoryServer", "GEOM" )
+                        #print "====1 ",geom
                 else:
                     # FindOrLoadComponent not called
                     if geom is None:
                         # geomBuilder instance is created from lcc.FindOrLoadComponent
-                        created = True
-                        #print "super ", engine, geom, doLcc, created
+                        #print "==== super ", engine, geom, doLcc, created
                         geom = super(geomBuilder,cls).__new__(cls)
+                        #print "====2 ",geom
                     else:
                         # geom engine not created: existing engine found
-                        #print "existing ", engine, geom, doLcc, created
+                        #print "==== existing ", engine, geom, doLcc, created
                         pass
-
+                #print "return geom 1 ", geom
                 return geom
 
+            #print "return geom 2 ", geom
             return geom
 
         def __init__(self):
-            #global created
+            global created
             #print "-------- geomBuilder __init__ --- ", created, self
-            GEOM._objref_GEOM_Gen.__init__(self)
-            self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
-            self.myBuilder = None
-            self.myStudyId = 0
-            self.father    = None
+            if not created:
+              created = True
+              GEOM._objref_GEOM_Gen.__init__(self)
+              self.myMaxNbSubShapesAllowed = 0 # auto-publishing is disabled by default
+              self.myBuilder = None
+              self.myStudyId = 0
+              self.father    = None
 
-            self.BasicOp  = None
-            self.CurvesOp = None
-            self.PrimOp   = None
-            self.ShapesOp = None
-            self.HealOp   = None
-            self.InsertOp = None
-            self.BoolOp   = None
-            self.TrsfOp   = None
-            self.LocalOp  = None
-            self.MeasuOp  = None
-            self.BlocksOp = None
-            self.GroupOp  = None
-            self.AdvOp    = None
+              self.BasicOp  = None
+              self.CurvesOp = None
+              self.PrimOp   = None
+              self.ShapesOp = None
+              self.HealOp   = None
+              self.InsertOp = None
+              self.BoolOp   = None
+              self.TrsfOp   = None
+              self.LocalOp  = None
+              self.MeasuOp  = None
+              self.BlocksOp = None
+              self.GroupOp  = None
+              self.AdvOp    = None
             pass
 
         ## Process object publication in the study, as follows:
