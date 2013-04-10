@@ -45,7 +45,7 @@ ADD_CUSTOM_TARGET(usr_docs mkdir -p tmp
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile_py
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile
   COMMAND ${PYTHON_EXECUTABLE} -c "import shutil; shutil.rmtree(r'''tmp''')"
-  COMMAND ${PYTHON_EXECUTABLE} -c "import shutil, sys; shutil.rmtree(r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM''', True); shutil.copytree(r'''${CMAKE_CURRENT_BINARY_DIR}''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM''', ignore=shutil.ignore_patterns('*usr_docs*', '*CMakeFiles*', '*.cmake', 'doxyfile*', '*.vcproj', 'static', 'Makefile*')); shutil.copy(r'''${CMAKE_CURRENT_SOURCE_DIR}/images/head.png''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM'''); shutil.copy(r'''${CMAKE_CURRENT_SOURCE_DIR}/static/SALOME_BOA_PA.pdf''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM''')"
+  COMMAND ${PYTHON_EXECUTABLE} -c "import shutil, sys; shutil.rmtree(r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM''', True); shutil.copytree(r'''${CMAKE_CURRENT_BINARY_DIR}''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM''', ignore=shutil.ignore_patterns('*usr_docs*', '*CMakeFiles*', '*.cmake', 'doxyfile*', '*.vcproj', 'static', 'Makefile*')); shutil.copy(r'''${CMAKE_CURRENT_SOURCE_DIR}/images/head.png''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM'''); shutil.copy(r'''${CMAKE_CURRENT_SOURCE_DIR}/images/head.png''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM/geompy_doc'''); shutil.copy(r'''${CMAKE_CURRENT_SOURCE_DIR}/static/SALOME_BOA_PA.pdf''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM''')"
   VERBATIM 
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}             
 )

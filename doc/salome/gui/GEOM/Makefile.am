@@ -24,7 +24,7 @@
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-EXTRA_DIST += images input static/footer.html static/doxygen.css static/SALOME_BOA_PA.pdf
+EXTRA_DIST += images input static/footer.html static/salome_extra.css static/SALOME_BOA_PA.pdf
 
 guidocdir = $(docdir)/gui/GEOM
 guidoc_DATA = images/head.png static/SALOME_BOA_PA.pdf

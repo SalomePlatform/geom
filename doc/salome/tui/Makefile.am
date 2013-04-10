@@ -23,21 +23,21 @@
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-EXTRA_DIST += images input static/footer.html static/doxygen.css
+EXTRA_DIST += images input static/footer.html static/salome_extra.css
 
 tuidocdir = $(docdir)/tui/GEOM
 tuidoc_DATA = images/head.png images/geomscreen.png
 
 dev_docs: doxyfile
 	echo "===========================================" ;			\
-	echo "Replacing geompyDC by geompy" ;					\
+	echo "Process geomBuilder.py for documentation generation" ;		\
 	echo "===========================================" ;			\
-	$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py geompy.py $(top_srcdir)/src/GEOM_SWIG/geompyDC.py geompy ;	\
+	$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py $(top_srcdir)/src/GEOM_SWIG/geomBuilder.py ;	\
 	echo "===========================================" ;			\
 	echo "Generating TUI documentation" ;					\
 	echo "===========================================" ;			\
 	$(DOXYGEN) doxyfile ; 							\
-	rm -f ./geompy.py
+	rm -f ./geomBuilder.py
 
 clean-local:
 	-rm -fr GEOM doxygen.bak

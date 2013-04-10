@@ -98,15 +98,13 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = @top_srcdir@/src \
-			 ./geompy.py \
+			 ./geomBuilder.py \
 			 @top_srcdir@/bin \
 			 @top_srcdir@/idl \
 			 @top_builddir@/bin \
 			 @srcdir@/input
 FILE_PATTERNS          = *.idl *.hxx *.cxx *.h *.c *.hh *.cc @DOXYGEN_PYTHON_EXTENSION@ *.doc
 RECURSIVE              = YES
-EXCLUDE                = @top_srcdir@/src/GEOM_SWIG/geompy.py \
-			 @top_srcdir@/src/GEOM_SWIG/geompyDC.py
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXAMPLE_PATH           = 
@@ -143,7 +141,7 @@ HTML_OUTPUT            = .
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            = @builddir@/static/header.html
 HTML_FOOTER            = @srcdir@/static/footer.html
-HTML_STYLESHEET        = @srcdir@/static/doxygen.css
+HTML_EXTRA_STYLESHEET  = @srcdir@/static/salome_extra.css
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
 CHM_FILE               = 
@@ -153,7 +151,7 @@ BINARY_TOC             = YES
 TOC_EXPAND             = YES
 DISABLE_INDEX          = NO
 ENUM_VALUES_PER_LINE   = 4
-GENERATE_TREEVIEW      = NO
+GENERATE_TREEVIEW      = YES
 TREEVIEW_WIDTH         = 250
 
 #---------------------------------------------------------------------------
