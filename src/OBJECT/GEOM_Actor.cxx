@@ -465,6 +465,9 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
     myVertexActor->GetDeviceActor()->SetInfinitive(true);
     myHighlightActor->GetDeviceActor()->SetInfinitive(true);
   }
+
+  // 0051777: TC7.2.0: Element could not be selected in Hypothesis Construction
+  myAppendFilter->Update();
 }
 
 // OLD METHODS
