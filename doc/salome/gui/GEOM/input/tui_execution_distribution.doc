@@ -1,0 +1,46 @@
+/*!
+
+\page tui_execution_distribution_page Distribute Geometry script execution.
+
+\n Several kinds of studies require distributed geometry and mesh calculations.
+For instance, in some parametric studies, we need to compute a lot of geometries
+and associated meshes in parallel on a cluster.
+
+These studies are defined with a YACS Schema in which geometry and meshing
+are done in distributed Python nodes running on distributed SALOME Containers.
+We need to instantiate GEOM and SMESH Engines on these containers.
+
+The standard way of geometry initialization in a Python script is:
+\code
+import salome
+salome.salome_init()
+
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(theStudy)
+\endcode
+
+With this initialization, the geometry engine runs in the default container,
+embedded in the SALOME Graphical User Interface process
+(see YACS documentation for concepts).
+
+To select another engine than the default “FactoryServer”,
+the CORBA engine can be given as an optional parameter of the method New.
+For instance:
+\code
+from salome.geom import geomBuilder
+lcc = salome.lcc
+engineGeom = lcc.FindOrLoadComponent("myServer", "GEOM")
+geompy = geomBuilder.New(theStudy, engineGeom)
+\endcode
+
+Or, within a Distributed Python Node of a YACS Schema, where the container
+is already provided in the Python context of the node, with <em>my_container</em>:
+\code
+from salome.geom import geomBuilder
+my_container.load_component_Library("GEOM")
+engineGeom = my_container.create_component_instance("GEOM", 0)
+geompy = geomBuilder.New(theStudy, engineGeom)
+\endcode
+
+
+*/

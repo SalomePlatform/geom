@@ -1,0 +1,51 @@
+/*!
+
+\page geompy_migration_page Modifing Python scripts from SALOME 6 and before
+
+\n With SALOME 7.2, the Python interface for Geometry has been slightly modified to offer new functionality:
+
+<ul>
+  <li>\subpage tui_execution_distribution_page</li>
+  <li>\subpage tui_auto_completion_documentation_page</li>
+</ul>
+
+\n Scripts generated for SALOME 6 and older versions must be adapted to work in SALOME 7.2 with all functionality.
+\n A compatibility mode allows old scripts to work in almost all cases, but with a warning.
+
+<b>Salome initialisation must always be done as shown below</b>
+\n (<em>salome_init()</em> can be invoked safely several times):
+\code
+import salome
+salome.salome_init()
+\endcode
+
+<b>Geometry initialisation is modified.</b>
+\n old mode:
+\code
+import geompy
+geompy.init_geom(theStudy)
+\endcode
+new mode:
+\code
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+\endcode
+
+
+<b> Of course, <em>from geompy import *</em> is no more possible.</b>
+\n You have to explicitely write <em>geompy.some_method()</em>.
+
+\n <b>Some variables are no longer in namespace <em>geompy.GEOM</em> but in namespace <em>GEOM</em>.</b>
+\n All the occurences of <em>geompy.GEOM.</em> can be replaced by  <em>GEOM.</em>.
+\n For instance:
+\code
+param_polyline = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, geompy.GEOM.Polyline, theNewMethod=True)
+\endcode
+is replaced by:
+\code
+param_polyline = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, GEOM.Polyline, theNewMethod=True)
+\endcode
+
+
+*/

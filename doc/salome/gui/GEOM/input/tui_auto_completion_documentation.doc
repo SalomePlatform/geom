@@ -1,0 +1,24 @@
+/*!
+
+\page tui_auto_completion_documentation_page Auto completion and interactive documentation in edition.
+
+Some IDE (Integrated Development Environment) provide automatic completion and documentation 
+while editing a Python Script.
+\n
+For instance, with PyDev in Eclipse, we can have:
+
+\n
+\image html eclipse1.png
+\n
+<center><b>auto documentation under cursor</b></center>
+
+
+\n
+\image html eclipse2.png
+\n
+<center><b>auto completion with documentation</b></center>
+
+\n
+TODO: provide example of SALOME and eclipse configuration
+
+*/
