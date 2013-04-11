@@ -1101,7 +1101,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
     aCI.SetConstructorType(COORD_CONSTRUCTOR);
     aCI.SetIsClosed(false);
     aCI.SetCoordinates(aCoordsArray);
-    aCurveType = "geompy.GEOM.Polyline";
+    aCurveType = "GEOM.Polyline";
     break;
   }
   case Bezier: {
@@ -1120,7 +1120,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
     aCI.SetConstructorType(COORD_CONSTRUCTOR);
     aCI.SetIsClosed(false);
     aCI.SetCoordinates(aCoordsArray);
-    aCurveType = "geompy.GEOM.Bezier";
+    aCurveType = "GEOM.Bezier";
     break;
   }
   case Interpolation: {
@@ -1139,7 +1139,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
     aCI.SetIsClosed(false);
     aCI.SetDoReordering(false);
     aCI.SetCoordinates(aCoordsArray);
-    aCurveType = "geompy.GEOM.Interpolation";
+    aCurveType = "GEOM.Interpolation";
     break;
   }
   }

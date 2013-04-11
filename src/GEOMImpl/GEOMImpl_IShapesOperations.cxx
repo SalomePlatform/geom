@@ -2140,22 +2140,22 @@ static GEOM::TPythonDump& operator<< (GEOM::TPythonDump&   theDump,
 {
   switch (theState) {
   case GEOMAlgo_ST_IN:
-    theDump << "geompy.GEOM.ST_IN";
+    theDump << "GEOM.ST_IN";
     break;
   case GEOMAlgo_ST_OUT:
-    theDump << "geompy.GEOM.ST_OUT";
+    theDump << "GEOM.ST_OUT";
     break;
   case GEOMAlgo_ST_ON:
-    theDump << "geompy.GEOM.ST_ON";
+    theDump << "GEOM.ST_ON";
     break;
   case GEOMAlgo_ST_ONIN:
-    theDump << "geompy.GEOM.ST_ONIN";
+    theDump << "GEOM.ST_ONIN";
     break;
   case GEOMAlgo_ST_ONOUT:
-    theDump << "geompy.GEOM.ST_ONOUT";
+    theDump << "GEOM.ST_ONOUT";
     break;
   default:
-    theDump << "geompy.GEOM.ST_UNKNOWN";
+    theDump << "GEOM.ST_UNKNOWN";
     break;
   }
   return theDump;

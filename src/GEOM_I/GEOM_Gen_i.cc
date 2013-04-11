@@ -1236,7 +1236,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
       pd << aGeomObj;
       j++;
     }
-    pd <<"]" << ", " <<"geompy.GEOM.";
+    pd <<"]" << ", " <<"GEOM.";
     switch (theFindMethod) {
     case GEOM::FSM_GetInPlace:
       pd << "FSM_GetInPlace"; break;
@@ -1780,7 +1780,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
       pd << aGeomObj;
       j++;
     }
-    pd <<"]" << ", " <<"geompy.GEOM.";
+    pd <<"]" << ", " <<"GEOM.";
     switch (theFindMethod) {
     case GEOM::FSM_GetInPlace:
       pd << "FSM_GetInPlace"; break;
