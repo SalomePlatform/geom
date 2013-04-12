@@ -56,6 +56,29 @@ void RemoveTabulation( TCollection_AsciiString& theScript )
 }
 
 //=======================================================================
+//function : ConvertV6toV7
+//purpose  : dump elements are stored when study is saved,
+//           and kept when study is reloaded.
+//           When a study from an older version is loaded,
+//           the dump must be post processed in case of syntax modification.
+//           In V7.2, geompy.GEOM --> GEOM
+//=======================================================================
+void ConvertV6toV7( TCollection_AsciiString& theScript )
+{
+  std::string aString( theScript.ToCString() );
+  std::string::size_type aPos = 0;
+  while( aPos < aString.length() )
+  {
+    aPos = aString.find( "geompy.GEOM", aPos );
+    if( aPos == std::string::npos )
+      break;
+    aString.replace( aPos, 11, "GEOM" );
+    aPos++;
+  }
+  theScript = aString.c_str();
+}
+
+//=======================================================================
 //function : DumpPython
 //purpose  : 
 //=======================================================================
@@ -177,6 +200,8 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
   if( !isMultiFile ) // remove unnecessary tabulation
     RemoveTabulation( aScript );
 
+  ConvertV6toV7( aScript ); //convert scripts related to studies saved in SALOME V6 and older
+  
   int aLen = aScript.Length(); 
   unsigned char* aBuffer = new unsigned char[aLen+1];
   strcpy((char*)aBuffer, aScript.ToCString());
