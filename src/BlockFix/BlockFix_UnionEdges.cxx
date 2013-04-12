@@ -264,11 +264,54 @@ static TopoDS_Edge GlueEdgesWithPCurves(const TopTools_SequenceOfShape& aChain,
 }
 
 //=======================================================================
+//function : IsFixed
+//purpose  : Returns true if this vertex should be kept in the result.
+//=======================================================================
+static Standard_Boolean IsFixed
+         (const TopoDS_Vertex &theVtx,
+          const TopoDS_Face   &theFace,
+          const TopTools_IndexedDataMapOfShapeListOfShape &theMapVtxEdgeOnFace)
+{
+  Standard_Boolean aResult = Standard_False;
+
+  if (theMapVtxEdgeOnFace.Contains(theVtx)) {
+    const TopTools_ListOfShape& aList = theMapVtxEdgeOnFace.FindFromKey(theVtx);
+    TopTools_ListIteratorOfListOfShape anIter(aList);
+    Standard_Boolean isFirst = Standard_True;
+    Standard_Boolean isSeam  = Standard_False;
+        
+    for ( ; anIter.More(); anIter.Next()) {
+      TopoDS_Edge anEdge = TopoDS::Edge(anIter.Value());
+
+      if (isFirst) {
+        // This is the first treated edge.
+        isFirst = Standard_False;
+        isSeam  = BRep_Tool::IsClosed(anEdge, theFace);
+      } else if (BRep_Tool::IsClosed(anEdge, theFace)) {
+        // Seam edge.
+        if (!isSeam) {
+          // The previous one was not seam.
+          aResult = Standard_True;
+          break;
+        }
+      } else if (isSeam) {
+        // This is not a seam edge however the previous one was seam.
+        aResult = Standard_True;
+        break;
+      }
+    }
+  }
+
+  return aResult;
+}
+
+//=======================================================================
 //function : MergeEdges
 //purpose  : auxilary
 //=======================================================================
 static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
-                                   const TopoDS_Face& aFace,
+                                   const TopoDS_Face& theFace1,
+                                   const TopoDS_Face& theFace2,
                                    const Standard_Real Tol,
                                    TopoDS_Edge& anEdge)
 {
@@ -308,6 +351,50 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
     MESSAGE ("can not create correct chain...");
     return Standard_False;
   }
+
+  // Check if there are vertices that should be kept in the result.
+  const Standard_Boolean isClosed = VF.IsSame(VL);
+  TopTools_IndexedDataMapOfShapeListOfShape theMapVtxEdge1;
+  TopTools_IndexedDataMapOfShapeListOfShape theMapVtxEdge2;
+  Standard_Integer jSplit = -1;
+
+  TopExp::MapShapesAndAncestors(theFace1, TopAbs_VERTEX, TopAbs_EDGE, theMapVtxEdge1);
+  TopExp::MapShapesAndAncestors(theFace2, TopAbs_VERTEX, TopAbs_EDGE, theMapVtxEdge2);
+
+  // Check if intermediate vertices should be in the result.
+  for(j = 1; j < aChain.Length(); j++) {
+    TopoDS_Edge   anEdge = TopoDS::Edge(aChain.Value(j));
+    TopoDS_Vertex aVtx   = sae.LastVertex(anEdge);
+
+    if (IsFixed(aVtx, theFace1, theMapVtxEdge1) ||
+        IsFixed(aVtx, theFace2, theMapVtxEdge2)) {
+      // This vertex should be kept.
+      if (jSplit > 0) {
+        // There is already split vertex detected.
+        // It means that these edges can't be merged.
+        MESSAGE ("Two edges on closed contour can't be merged.");
+        return Standard_False;
+      } else if (isClosed) {
+        // This is a closed contour.
+        // It is possible to merge it starting from the next edge.
+        jSplit = j;
+      } else {
+        // The contour is not closed, this vertex sould be kept.
+        // It means that these edges can't be merged.
+        MESSAGE ("Two edges on not closed contour can't be merged.");
+        return Standard_False;
+      }
+    }
+  }
+
+  if (jSplit > 0) {
+    // Reorder edges in the sequence to have jSplit-th edge last.
+    for(j = 1; j <= jSplit; j++) {
+      aChain.Append(aChain.First());
+      aChain.Remove(1);
+    }
+  }
+
   // union edges in chain
   // first step: union lines and circles
   TopLoc_Location Loc;
@@ -376,13 +463,23 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       TopoDS_Vertex VM = sae.LastVertex(edge1);
       gp_Pnt PVM = BRep_Tool::Pnt(VM);
       GC_MakeCircle MC (PV1,PVM,PV2);
-      Handle(Geom_Circle) C = MC.Value();
+      Handle(Geom_Circle) C;
       TopoDS_Edge E;
-      if (!MC.IsDone() || C.IsNull()) {
+
+      if (MC.IsDone()) {
+        C = MC.Value();
+      }
+
+      if (C.IsNull()) {
         // jfa for Mantis issue 0020228
         if (PV1.Distance(PV2) > Precision::Confusion()) continue;
         // closed chain
-        C = C1;
+        if (edge1.Orientation() == TopAbs_FORWARD) {
+          C = C1;
+        } else {
+          C = Handle(Geom_Circle)::DownCast(C1->Reversed());
+        }
+
         B.MakeEdge (E,C,Precision::Confusion());
         B.Add(E,V1);
         B.Add(E,V2);
@@ -540,8 +637,11 @@ TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
           SeqEdges.Append(anIter.Value());
         }
         if (SeqEdges.Length()==1) continue;
+
+        TopoDS_Face aFace2 =
+          TopoDS::Face(aContext->Apply(aMapFacesEdges.FindKey(i)));
         TopoDS_Edge E;
-        if ( MergeEdges(SeqEdges,aFace,Tol,E) ) {
+        if ( MergeEdges(SeqEdges,aFace,aFace2,Tol,E) ) {
           // now we have only one edge - aChain.Value(1)
           // we have to replace old ListEdges with this new edge
           aContext->Replace(SeqEdges(1),E);

@@ -187,7 +187,7 @@ void GEOMToolsGUI::OnAutoColor()
     SUIT_OverrideCursor();
     
     appStudy->setObjectProperty( aMgrId, aChildObject->GetEntry(), GEOM::propertyName( GEOM::Color ), c );
-    Handle( SALOME_InteractiveObject ) io = new SALOME_InteractiveObject( aChildObject->GetEntry(), "GEOM", "" );
+    Handle( SALOME_InteractiveObject ) io = new SALOME_InteractiveObject( aChildObject->GetStudyEntry(), "GEOM", "" );
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
   displayer.UpdateViewer();

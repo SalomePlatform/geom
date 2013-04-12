@@ -1558,15 +1558,25 @@ std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Objec
     if (!aRefShape.IsNull()) {
       TopoDS_Shape aShape = aRefShape->GetValue();
       if (!aShape.IsNull()) {
-        BRepClass3d_SolidClassifier SC(aShape);
         unsigned int nb_points = coords.size()/3;
         for (int i = 0; i < nb_points; i++) {
           double x = coords[3*i];
           double y = coords[3*i+1];
           double z = coords[3*i+2];
           gp_Pnt aPnt(x, y, z);
-          SC.Perform(aPnt, tolerance);
-          res.push_back( ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON ) );
+          if ( aShape.ShapeType() == TopAbs_COMPOUND || aShape.ShapeType() == TopAbs_COMPSOLID ||
+               aShape.ShapeType() == TopAbs_SOLID ) {
+            TopExp_Explorer anExp;
+            bool isFound = false;
+            for ( anExp.Init( aShape, TopAbs_SOLID ); anExp.More() && !isFound; anExp.Next() ) {
+              BRepClass3d_SolidClassifier SC( anExp.Current() );
+              SC.Perform( aPnt, tolerance );
+              isFound = ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON );
+            }
+            res.push_back( isFound );
+          }
+          else
+            res.push_back( false );
         }
       }
     }
