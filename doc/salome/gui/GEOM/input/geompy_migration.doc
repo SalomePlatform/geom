@@ -1,6 +1,6 @@
 /*!
 
-\page geompy_migration_page Modifing Python scripts from SALOME 6 and before
+\page geompy_migration_page Modifing Geometry Python scripts from SALOME 6 and before
 
 \n With SALOME 7.2, the Python interface for Geometry has been slightly modified to offer new functionality:
 

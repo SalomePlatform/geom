@@ -62,6 +62,10 @@ install-data-local: usr_docs
 	  esac ;										\
 	done ; \
 	cp -rp $(srcdir)/images/head.png $(DESTDIR)$(docdir)/gui/GEOM/geompy_doc ;              \
+	mkdir $(DESTDIR)$(docdir)/gui/GEOM/input ; \
+	cp -rp $(srcdir)/input/geompy_migration.doc $(DESTDIR)$(docdir)/gui/GEOM/input ; \
+	cp -rp $(srcdir)/input/tui_auto_completion_documentation.doc $(DESTDIR)$(docdir)/gui/GEOM/input ; \
+	cp -rp $(srcdir)/input/tui_execution_distribution.doc $(DESTDIR)$(docdir)/gui/GEOM/input ; \
 	fi
 
 
