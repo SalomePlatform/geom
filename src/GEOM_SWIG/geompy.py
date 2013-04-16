@@ -71,7 +71,9 @@ with
 ----
 
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(theStudy)
+geompy = geomBuilder.New(salome.myStudy)
+
+See also GEOM User's Guide for more details
 
 ===============================================================================
 """
