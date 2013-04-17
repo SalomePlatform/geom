@@ -2,21 +2,21 @@
 
 \page bounding_box_page Bounding Box
 
-Shows the dimensions of the bounding box for the selected
-geometrical object. Creates corresponding shape (box) on "Apply".
+Displays the bounding box dimensions for the selected
+geometrical object and creates the corresponding box shape on "Apply".
 
 \image html measures5.png
 
 \note To take into account any possible shape distortion  
 that affects the resulting bounding box, the algorithm enlarges 
-the bounding box to the maximum deflection value of 
+the bounding box   to the maximum deflection value of 
 faces (by iterating through all faces of a shape).
 This functionallity is implemented in such a way to have 
 a satisfactory performance.
 
 \n <b>TUI Commands:</b> <em>[Xmin,Xmax, Ymin,Ymax, Zmin,Zmax] = geompy.BoundingBox(Shape)</em>,
 <em>BBox = geompy.MakeBoundingBox(Shape)</em>, where \em Shape
-is the shape for which a bounding box is computed.
+is the shape for which the bounding box is computed.
 
 See also a \ref tui_bounding_box_page "TUI example".
 

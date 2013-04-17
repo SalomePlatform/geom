@@ -70,9 +70,9 @@ closed edge.</li>
 <li> If <b>Reorder vertices taking into account distances</b> is
 checked, the interpolation algorithm does not follow the order of
 vertices but searches for the closest vertex.</li>
-<li><b>Tangents</b> are two vectors, defining direction of curve at
-its ends. Both or none vectors must be set. This option available only
-if two above check boxes are not checked.
+<li><b>Tangents</b> are two vectors, defining the direction at the ends of the
+curve. It is necessary to set both vectors or none. This option is available only
+if both above check boxes are not checked.
 </li>
 </ul>
 
