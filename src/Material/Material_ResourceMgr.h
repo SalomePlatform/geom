@@ -57,6 +57,7 @@ signals:
 
 private:
   void watchUserFile( bool );
+  void saved();
 
 private slots:
   void update();

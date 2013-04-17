@@ -22,6 +22,7 @@
 
 #include "Material_ResourceMgr.h"
 
+#include <QFileInfo>
 #include <QFileSystemWatcher>
 #include <QThread>
 
@@ -175,7 +176,10 @@ void Material_ResourceMgr::watchUserFile( bool on )
   if ( on ) {
     if ( !myWatcher ) {
       myWatcher = new QFileSystemWatcher( this );
-      myWatcher->addPath( userFileName( appName() ) );
+      QFileInfo ufile = userFileName( appName() );
+      if ( ufile.exists() ) {
+	myWatcher->addPath( ufile.filePath() );
+      }
       connect( myWatcher, SIGNAL( fileChanged( QString ) ), this, SLOT( update() ) );
     }
   }
@@ -183,6 +187,25 @@ void Material_ResourceMgr::watchUserFile( bool on )
     if ( myWatcher ) {
       delete myWatcher;
       myWatcher = 0;
+    }
+  }
+}
+
+/*!
+  \brief This function is called after user configuration file is saved.
+  \internal
+*/
+void Material_ResourceMgr::saved()
+{
+  if ( resourceMgr() != this ) {
+    resourceMgr()->saved();
+  }
+  else if ( myWatcher ) {
+    QStringList files = myWatcher->files();
+    QFileInfo ufile = userFileName( appName() );
+    if ( ufile.exists() && !files.contains( ufile.filePath() ) ) {
+      myWatcher->addPath( ufile.filePath() );
+      update();
     }
   }
 }
