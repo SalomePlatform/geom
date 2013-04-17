@@ -34,25 +34,30 @@
 ##
 ## @details
 ##
-## By default, all functions of geompy.py Python interface do not publish
+## By default, all functions of geomBuilder Python module do not publish
 ## resulting geometrical objects. This can be done in the Python script
-## by means of geompy.addToStudy() or geompy.addToStudyInFather()
+## by means of \ref geomBuilder.geomBuilder.addToStudy() "addToStudy()"
+## or \ref geomBuilder.geomBuilder.addToStudyInFather() "addToStudyInFather()"
 ## functions.
 ## 
 ## However, it is possible to publish result data in the study
-## automatically. For this, almost each function of geompy.py module has
+## automatically. For this, almost each function of
+## \ref geomBuilder.geomBuilder "geomBuilder" class has
 ## an additional @a theName parameter (@c None by default).
 ## As soon as non-empty string value is passed to this parameter,
 ## the result object is published in the study automatically.
 ## 
-## For example,
+## For example, consider the following Python script:
 ## 
 ## @code
+## import salome
+## from salome.geom import geomBuilder
+## geompy = geomBuilder.New(salome.myStudy)
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100) # box is not published in the study yet
 ## geompy.addToStudy(box, "box")             # explicit publishing
 ## @endcode
 ## 
-## can be replaced by one-line instruction
+## Last two lines can be replaced by one-line instruction:
 ## 
 ## @code
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100, theName="box") # box is published in the study with "box" name
@@ -65,8 +70,9 @@
 ## @endcode
 ##
 ## Note, that some functions produce more than one geometrical objects. For example,
-## geompy.GetNonBlocks() function returns two objects: group of all non-hexa solids and group of
-## all non-quad faces. For such functions it is possible to specify separate names for results.
+## \ref geomBuilder.geomBuilder.GetNonBlocks() "GetNonBlocks()" function returns two objects:
+## group of all non-hexa solids and group of all non-quad faces.
+## For such functions it is possible to specify separate names for results.
 ##
 ## For example
 ##
@@ -88,8 +94,8 @@
 ## ... the first compound will be published with "nonhexa" name, and second will be named "nonquad".
 ##
 ## Automatic publication of all results can be also enabled/disabled by means of the function
-## geompy.addToStudyAuto(). The automatic publishing is managed by the numeric parameter passed
-## to this function:
+## \ref geomBuilder.geomBuilder.addToStudyAuto() "addToStudyAuto()". The automatic publishing
+## is managed by the numeric parameter passed to this function:
 ## - if @a maxNbSubShapes = 0, automatic publishing is disabled.
 ## - if @a maxNbSubShapes = -1 (default), automatic publishing is enabled and
 ##   maximum number of sub-shapes allowed for publishing is unlimited; any negative
@@ -107,11 +113,14 @@
 ## For example:
 ##
 ## @code
+## import salome
+## from salome.geom import geomBuilder
+## geompy = geomBuilder.New(salome.myStudy)
 ## geompy.addToStudyAuto() # enable automatic publication
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100) 
 ## # the box is created and published in the study with default name
 ## geompy.addToStudyAuto(5) # set max allowed number of sub-shapes to 5
-## vertices = geompy.SubShapeAll(box, geompy.ShapeType['VERTEX'])
+## vertices = geompy.SubShapeAll(box, geomBuilder.ShapeType['VERTEX'])
 ## # only 5 first vertices will be published, with default names
 ## print len(vertices)
 ## # note, that result value still containes all 8 vertices
@@ -121,20 +130,24 @@
 ## This feature can be used, for example, for debugging purposes.
 ##
 ## @note
-## - Use automatic publication feature with caution. When it is enabled, any function of geompy.py module
-##   publishes the results in the study, that can lead to the huge size of the study data tree.
-##   For example, repeating call of geompy.SubShapeAll() command on the same main shape each time will
-##   publish all child objects, that will lead to a lot of duplicated items in the study.
+## - Use automatic publication feature with caution. When it is enabled, any function of
+##   \ref geomBuilder.geomBuilder "geomBuilder" class publishes the results in the study,
+##   that can lead to the huge size of the study data tree.
+##   For example, repeating call of \ref geomBuilder.geomBuilder.SubShapeAll() "SubShapeAll()"
+##   command on the same main shape each time will publish all child objects, that will lead
+##   to a lot of duplicated items in the study.
 ## - Sub-shapes are automatically published as child items of the parent main shape in the study if main
 ##   shape was also published before. Otherwise, sub-shapes are published as top-level objects.
-## - Not that some functions of geompy.py module do not have @theName parameter (and, thus, do not support
-##   automatic publication). For example, some transformation operations like geompy.TranslateDXDYDZ().
+## - Not that some functions of \ref geomBuilder.geomBuilder "geomBuilder" class do not have
+##   @theName parameter (and, thus, do not support automatic publication).
+##   For example, some transformation operations like
+##   \ref geomBuilder.geomBuilder.TranslateDXDYDZ() "TranslateDXDYDZ()".
 ##   Refer to the documentation to check if some function has such possibility.
 ##
 ## @}
 
 
-## @defgroup l1_geompy_auxiliary Auxiliary data structures and methods
+## @defgroup l1_geomBuilder_auxiliary Auxiliary data structures and methods
 
 ## @defgroup l1_geomBuilder_purpose   All package methods, grouped by their purpose
 ## @{
@@ -642,7 +655,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 pass
             pass
 
-        ## @addtogroup l1_geompy_auxiliary
+        ## @addtogroup l1_geomBuilder_auxiliary
         ## @{
         def init_geom(self,theStudy):
             self.myStudy = theStudy
@@ -828,7 +841,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 drwAttribute.SetDrawable(False)
                 pass
 
-        # end of l1_geompy_auxiliary
+        # end of l1_geomBuilder_auxiliary
         ## @}
 
         ## @addtogroup l3_restore_ss
@@ -12034,7 +12047,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM_Object, containing the copied shape.
         #
-        #  @ingroup l1_geompy_auxiliary
+        #  @ingroup l1_geomBuilder_auxiliary
         #  @ref swig_MakeCopy "Example"
         def MakeCopy(self, theOriginal, theName=None):
             """
