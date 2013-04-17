@@ -669,7 +669,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   // Find the current Study and StudyBuilder
   SALOMEDS::Study_var aStudy = theObject->GetStudy();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
-
+  SALOMEDS::SObject_var aNewSO;
   // Retrieve a TopoDS_Shape from byte stream
   TopoDS_Shape aTopology;
   std::istringstream aStreamedBrep((char*) &theStream[0]);
@@ -677,11 +677,10 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   try {
     BRepTools::Read(aTopology, aStreamedBrep, aBuilder);
   } catch (Standard_Failure) {
-    return false;
+    return aNewSO._retn();
   }
 
   // SObject of the created shape is theObject or new Child of Component if theObject == geom component
-  SALOMEDS::SObject_var aNewSO;
   if (strcmp(theObject->GetFatherComponent()->GetID(),theObject->GetID()) == 0) {
     aNewSO = aStudyBuilder->NewObject(theObject);
   } else aNewSO = SALOMEDS::SObject::_duplicate(theObject);
