@@ -7,8 +7,7 @@
 
 \n This operation makes normal projection of a <b>Source vertex, edge
    or wire</b> on a given <b>Target face</b>.
-\n <b>Arguments:</b> Name + 2 Objects.
-\n The \b Result will be an \b Object.
+\ref restore_presentation_parameters_page "Advanced options".
 
 \image html projection_dlg.png
 

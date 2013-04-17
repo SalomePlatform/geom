@@ -49,12 +49,12 @@ viewer. TUI Command : <em>sg.EraseOnly(ID)</em></li>
 
 \image html image18.png
 
-<li><b>Hide all</b> - allows to hide all objects from the viewer. TUI
+<li><b>Hide all</b> - hides all objects from the viewer. TUI
 Command: <em>sg.EraseAll()</em></li>
 
 \image html image26.png
 
-<li><b>Show Only</b> - allows to display only the selected
+<li><b>Show Only</b> - displays only the selected
 geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em></li>
 
 \image html image33.png
@@ -87,11 +87,11 @@ sub-objects in the Object Browser, if the selected geometric object has
 child objects. When some child objects are hidden, the name of the
 parent object is hilghlighted with bold font.</li>
 
-<li><b>Show Only Children</b> - erase in current viewer all objects
-and then display only children of the selected object(s).
+<li><b>Show Only Children</b> - erases from the current viewer all objects
+and then displays only the children of the selected object(s).
 </li>
 
-<li><b>Unpublish</b> - unpublish the selected geometric object from the Object Browser 
+<li><b>Unpublish</b> - unpublishes the selected geometric object from the Object Browser 
 and erase it from all viewers. To publish unpublished geometric objects select in the 
 context menu of the <b>Geometry</b> root object <b>Publish...</b> item. 
 The following dialog box will appear</li>

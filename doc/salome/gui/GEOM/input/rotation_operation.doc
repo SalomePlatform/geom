@@ -9,30 +9,31 @@
 
 \n The first \b Rotation algorithm needs you to define an \b Object to
 be rotated, an \b Axis of rotation and an \b Angle of rotation.
-\n <b>TUI Command:</b> <em>geompy.MakeRotation(Shape, Axis, Angle)</em>
-\n <b>Arguments:</b> Name + one or several objects + 1 vector for direction of rotation + 1
-angle.
-\n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+\n \b Reverse checkbox allows to specify the direction of rotation.
+\n <b>Create a copy</b> checkbox allows to keep the initial object,
+otherwise it will be removed.
+\n \ref restore_presentation_parameters_page "Advanced options".
 
 \image html transformation4.png
 
-\b Reverse checkbox allows to specify the direction of rotation.
-\n <b>Create a copy</b> checkbox allows to keep the initial object,
-otherwise it will be removed.
-\n The \b Result will be any \b GEOM_Object.
+\n <b>TUI Command:</b> <em>geompy.MakeRotation(Shape, Axis, Angle)</em>
+\n <b>Arguments:</b> Name + one or several objects + 1 vector for direction of rotation + 1 angle.
 
 \n The second algorithm allows to define the rotated \b Object by
 three points. Rotation axis will pass through the <b>Central Point</b>
 and will be will be orthogonal to a plane defned by three points. In
 this case rotation \b Angle is the angle between two vectors directed
-from the first point to the second and to the third.
-\n <b>TUI Command:</b> <em>geompy.MakeRotationThreePoints(Shape, CentralPoint, Point1, Point2)</em>
-\n <b>Arguments:</b> 1 shape + 3 points.
-\n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+from the  <b>Central Point</b> to \b Point1 and \b Point2.
+\n \b Reverse checkbox allows to specify the direction of rotation.
+\n <b>Create a copy</b> checkbox allows to keep the initial object,
+otherwise it will be removed.
+\n \ref restore_presentation_parameters_page "Advanced options".
 
 \image html transformation4a.png
+
+\n <b>TUI Command:</b> <em>geompy.MakeRotationThreePoints(Shape, CentralPoint, Point1, Point2)</em>
+\n <b>Arguments:</b> 1 shape + 3 points.
+
 
 \n <b>Example:</b>
 

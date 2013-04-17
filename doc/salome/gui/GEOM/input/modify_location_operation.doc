@@ -7,13 +7,12 @@
 
 \n This operation modifies the \b Location of \b Objects.
 
-\n The first algorithm places the object(s) so that its center coincides
-with the origin of the Local Coordinate System. 
+\n The first algorithm places the \b Object(s) so that its center coincides
+with the origin of the <b>Local Coordinate System</b>. 
 \n <b>Create a copy</b> checkbox allows to keep the initial objects, otherwise they
 will be removed.
 \n <b>Arguments:</b> Name + one or several objects + End Coordinate System.
-\n <b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+\n \ref restore_presentation_parameters_page "Advanced options".
 
 \image html transformation5.png
 
@@ -23,18 +22,17 @@ System in the center of it is to the left .
 
 \image html image30.png
 
-\n The second algorithm  modifies the location of an object using Start
-and End LSC, although the final position of the object will not
+\n The second algorithm  modifies the location of the \b Object(s) using \b Start
+and \b End \b LCS, although the final position of the object will not
 coincide with the center of  either of the two systems. In this method
 the object is shifted from its initial position by the value of the
-remainder after subtraction of the coordinates of the Start LSC from
-the coordinates of the End LSC.
+remainder after subtraction of the coordinates of the <b>Start LCS</b> from
+the coordinates of the <b>End LCS</b>.
 \n <b>Create a copy</b> checkbox allows to keep the initial object,
 otherwise it will be removed.
 \n <b>Arguments:</b> Name + one or several objects + Start Coordinate System + End
 Coordinate System.
-\n <b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+\n \ref restore_presentation_parameters_page "Advanced options".
 
 \image html transformation6.png
 
@@ -54,8 +52,8 @@ translated cube at the position (-100;0;0)
 
 \image html image4.png
 
-The third algorithm modifies the location of an object using the Path object (Wire or Edge)
-and the Distance parameter (ranging from 0 to 1) defining  how far the object will move along the path.
+The third algorithm modifies the location of the \b Object(s) using the <b>Path object</b> (Wire or Edge)
+and the \b Distance parameter (ranging from 0 to 1) defining  how far the object will move along the path.
 \n <b>Create a copy</b> checkbox allows to keep the initial object,
 otherwise it will be removed.
 \n <b>Select Unpublished edges</b> checkbox allows to select sub-shape edges on
@@ -63,8 +61,7 @@ the other objects.
 \n <b>Reverse Direction</b> checkbox allows to REVERSE the direction of the object movement along its path.
 
 <b>Arguments:</b> Name + one or several objects + Translation path.
-\n <b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+\n \ref restore_presentation_parameters_page "Advanced options".
    
 \image html transformation13.png
 

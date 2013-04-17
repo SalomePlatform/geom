@@ -6,27 +6,39 @@
 <b>Operations - > Transformation - > Scale Transform</b>
 
 \n This operation creates a scaled shape basing on the initial
-shape. For this, you need to define the \b Shape to be scaled, the
-<b>Central Point</b> of scale and the Scale Factor(s).
-\n The \b Result will be a \b GEOM_Object.
-\n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+shape. 
 
+\n <b>Simple scale</b> scales the entire object (i.e. its dimensions change evenly in all three orthogonal directions). It does not modify the
+geometry of the shape.
+ 
 \image html transformation10.png
+
+The following parameters and options can be defined in this dialog:
+- <b>Result Name</b>;
+- One or several <b> Objects </b> to be scaled;
+- <b>Central Point</b> (optional) - relatively to which the object is scaled. If the <b>Central Point</b> is not defined, the scaling will be
+performed relatively the origin of the global coordinate system.
+- <b>Scale Factor</b> - the multiplier of axial dimensions. If <b>Scale Factor</b> is negative, the object is mirrored through the <b>Central Point</b>. 
+- \ref restore_presentation_parameters_page "Advanced options".
+
 \n <b>TUI Command:</b> <em>geompy.MakeScaleTransform(Shape, CenterOfScale, Factor)</em>
 \n <b>Arguments:</b> Name + 1 shape(s) + 1 vertex + 1 Scale Factor.
 
+\n <b>Multiple scale</b> allows scaling by different factors along axes. This is a general transformation, which can modify the geometry, for example, a
+circle can be transformed into an ellipse. 
+
 \image html transformation10a.png
+
+The following parameters and options can be defined in this dialog:
+- <b>Result Name</b>;
+- One or several <b> Objects </b> to be scaled;
+- <b>Central Point</b> (optional) - relatively to which the object is scaled. 
+- <b>Scale Factor X/Y/Z</b> -  the multipliers of axial dimensions.  
+- \ref restore_presentation_parameters_page "Advanced options".
+
 \n <b>TUI Command:</b> <em>geompy.MakeScaleAlongAxes(Shape, CenterOfScale, FactorX, FactorY, FactorZ)</em>
 \n <b>Arguments:</b> Name + 1 shape(s) + 1 vertex + 3 Scale Factors.
 
-\note If the <b>Central Point</b> is not defined, the scaling will be
-performed relatively the origin of the global coordinate system.
-
-\note Scaling by one factor is a simple transformation, it does not modify the
-geometry of the shape, while scaling by several different factors along axes
-is a general transformation, which can modify the geometry, for example, a
-circle can be transformed into an ellipse.
 
 \n <b>Example of simple scaling:</b>
 

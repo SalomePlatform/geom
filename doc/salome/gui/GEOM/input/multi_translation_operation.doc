@@ -9,7 +9,7 @@ select <b>Operations - > Transformation - > Multi Translation</b>
 two directions.
 \n The \b Result will be one \b GEOM_Object (compound). The total
 number of shape copies in the resulting compound will be equal to:
-- in case of \ref single_multi_translation "Single multi translation":
+- in case of \ref single_multi_translation "Simple multi translation":
 \a NbTimes (if \a NbTimes parameter is equal to 1, the result will
 contain only the initial non-translated shape). 
 - in case of \ref double_multi_translation "Double multi translation":
@@ -18,15 +18,22 @@ are both equal to 1, the result will contain a single non-translated
 initial shape). 
 
 \anchor single_multi_translation
-\n To produce a <b>Simple Multi Translation</b> (in one direction) you
-need to indicate an \b Object to be translated, a \b Vector of
-translation (DX by default), a \b Step of translation and a <b>Number
-of Times</b> the Object should be duplicated. If a curve has been
-selected instead of the Vector, only its first and last vertices will
-be used to get the vector direction and the dialog preview will
-display the vector along which the object will be translated.
+
+In case of  <b>Simple Multi Translation</b> the object is translated in one direction. 
 
 \image html mtrans1.png
+
+The following parameters and options can be defined in this dialog:
+- <b>Result Name</b>;
+- <b> Main Object </b> to be translated;
+- \b Vector of translation (DX by default). If a curve has been
+selected instead of the Vector, only its first and last vertices will
+be used to get the vector direction and the dialog preview will
+display the vector along which the object will be translated;
+- <b>Step</b> is the distance between the shape copies;
+- <b>Nb. Times</b> is the number of shape copies;
+- <b>Reverse Direction </b> checkbox allows changing the direction of translation;
+- \ref restore_presentation_parameters_page "Advanced options".
 
 \image html multi_translation_initialsn.png "The initial object"
 
@@ -38,16 +45,22 @@ Step, NbTimes)</em>
 step value + 1 value (repetition).
 
 \anchor double_multi_translation
-\n To produce a <b>Double Multi Translation</b> (in two directions) you need to
-indicate an \b Object to be translated, and, for both axes, a \b
-Vector of translation (DX and DY by default), a \b Step of translation
-and a <b>Number of Times</b> the shape must be duplicated.
-If a curve has been selected instead of the Vector, only its first and
-last vertices will be used to get the vector direction and the dialog
-preview will display the vector along which the object will be
-translated.
+
+In case of  <b>Double Multi Translation</b> the object is translated in two directions. 
 
 \image html mtrans2.png
+
+The following parameters and options can be defined in this dialog:
+- <b>Result Name</b>;
+- <b> Main Object </b> to be translated;
+- <b> Vector U/V</b> of translation (DX and DY by default). If a curve has been
+selected instead of the Vector, only its first and last vertices will
+be used to get the vector direction and the dialog preview will
+display the vector along which the object will be translated;
+- <b>Step U/V</b> is the distance between the shape copies;
+- <b>Nb. Times U/V</b> is the number of shape copies;
+- <b>Reverse U/V </b> checkbox allows changing the direction of translation;
+- \ref restore_presentation_parameters_page "Advanced options".
 
 \image html multi_translation_initialsn.png "The initial object"
 

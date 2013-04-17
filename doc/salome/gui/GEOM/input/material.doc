@@ -2,58 +2,53 @@
 
 \page material_page Material properties
 
-\tableofcontents
+<ul>
+<li>\ref material_general_description_anchor "General Description"</li>
+<li>\ref material_opengl_model_anchor "OpenGL ligthing model" </li>
+<li>\ref material_lib_anchor "Materials library"</li>
+<li>\ref material_anchor "Material properties"</li>
+</ul>
 
-\section material_general_description General description
+\anchor material_general_description_anchor <h2>General description</h2>
 
 \note The functionality related to the material properties is
-\b experimental, so it might work not as expected. The behaviour might
+\b experimental, so it might work not as expected. The behavior might
 be changed in the future versions of SALOME Geometry module.
 
-\n You can change the material properties of the selected shape(s) in
+You can change the material properties of the selected shape(s) in
 the dedicated dialog box. This dialog box can be invoked from the
-context popup menu. 
-
-\n Appearance of popup menu can be customizable via 
-"Show predefined materials in popup menu" option from preferences.
+context popup menu. The layout of context menu can be customized via
+"Show predefined materials in popup menu" preferences option.
 If this option is switched off, only "Material properties" item will 
-be shown in popup menu. If this option is on (by default), "Material 
-properties" item in popup menu will open submenu listing predefined 
-materials and additionally "Custom..." item.
+be shown in the popup menu. If this option is on (by default), "Material 
+properties" item in the popup menu will open a submenu with list of predefined 
+materials:
 
-\n "Show predefined materials in popup menu" option is switched off:
-\image html hide_predef_material.PNG
-\n "Show predefined materials in popup menu" option is switched on  
-\image html show_predef_material.PNG
+\image html hide_predef_material.png
+<center><em>"Show predefined materials in popup menu" option is switched off</em></center>
 
-\n"Custom..." or "Material properties" item will open dialog box:
+\n\image html show_predef_material.png
+<center><em>"Show predefined materials in popup menu" option is switched on</em></center>
 
-\image html material.png
+The \b Custom item from this list allows defining \ref material_anchor "Material properties",
+including the creation of a custom material. 
 
-In this dialog box you can:
-- modify the properties of the material model currenly assigned to the
-shape presentation;
-- assign one of predefined global materials to the shape;
-- create a custom material model and apply it to the shape.
+It is also possible to define custom materials in the
+\ref material_lib_anchor "Materials library" dialog 
+available from the main menu via <b>Tools > Materials library </b>. 
 
-\n You also can work with custom materials in the "Materials library" dialog box. 
-This dialog box can be invoked from the "Tools" main menu using 
-"Materials library" item:
-
-\image html materials_library.png
-
-\note This functionality is available in both OCC and VTK 3D
-viewers. However, note that due to the differencies between underlying API
-of OCC and VTK libraries the behaviour of the functionality related to
+\note This functionality works in both OCC and VTK 3D
+viewers. However, due to the differences between underlying API
+of OCC and VTK libraries, the behavior of the functionality related to
 the materials is different:
-- presentation of the shape in OCC and VTK viewers is not fully identical;
-- some material attributes can affect presentation in a different way.
+- shape presentation in OCC and VTK viewers is not fully identical;
+- some material attributes can affect the presentation in a different way.
 
-\section material_opengl_model OpenGL ligthing model
+\anchor material_opengl_model_anchor <h2>OpenGL ligthing model</h2>
 
 The material is specifed by several attributes of the lighting
 model. More details can be found in the documentation related to the
-OpenGL programming, for example here: http://www.glprogramming.com/red/chapter05.html.
+OpenGL programming, for example, here: http://www.glprogramming.com/red/chapter05.html.
 
 In the OpenGL lighting model, the light in a scene comes from several
 light sources; the light sources have an effect only when there are
@@ -69,7 +64,7 @@ four independent components: emissive, ambient, diffuse, and
 specular. All four components are computed independently and then
 added together. 
 
-Ambient illumination is the light that has been scattered so much by the
+- The \b Ambient illumination is the light that has been scattered so much by the
 environment that its direction is impossible to determine - it seems
 to come from all directions. Backlighting in a room has a large
 ambient component, since most of the light that reaches your eye has
@@ -79,19 +74,25 @@ and since you're outdoors, very little of the light reaches your eye
 after bouncing off other objects. When ambient light strikes a
 surface, it is scattered equally in all directions.
 
-The diffuse component is the light that comes from one direction, so
+- The \b Diffuse component is the light that comes from one direction, so
 it is brighter if it comes squarely down on a surface than if it barely
 glances off the surface. Once it hits a surface, however, it's
 scattered equally in all directions, so it appears equally bright, no
 matter where the eye is located. Any light coming from a particular
 position or direction probably has a diffuse component.
 
-Finally, the specular light comes from a particular direction, and it
+- The \b Specular light comes from a particular direction, and it
 tends to bounce off the surface in a preferred direction. A
 well-collimated laser beam bouncing off a high-quality mirror produces
 specular reflection by almost 100 percent. Shiny metal or plastic has a
 high specular component, and chalk or carpet has almost none. You can
 think of specularity as shininess.
+
+- The \b Emissive color simulates light originating from an object. 
+In the OpenGL lighting model, the emissive color of a surface adds
+intensity to the object, but is unaffected by any light sources. Also,
+the emissive color does not introduce any additional light into the
+overall scene.
 
 Although a light source delivers a single distribution of frequencies,
 the ambient, diffuse, and specular components might be different. For
@@ -100,25 +101,15 @@ scattered light tends to be red, although the light directly striking
 objects is white. OpenGL allows you to set the red, green, and blue
 values for each component of light independently.  
 
-\section material_lib Materials library dialog box
-The dialog box consists of two parts:
-- The list box at the left shows all available material models, both
-predefined by the application and custom one specified by the user.
-- The widgets in the right part of the dialog box allows modifyng of
-different properties of the material model.
+\anchor material_lib_anchor <h2>Materials library</h2>
 
-The following properties of the material model can be specified:
-- \b Ambient color and coefficient (floating point value between 0 and 1)
-- \b Diffuse color and coefficient (floating point value between 0 and 1)
-- \b Specular color and coefficient (floating point value between 0 and 1)
-- \b Emissive color and coefficient (floating point value between 0
-and 1). Note: this attribute is applicable only for the OCC viewer;
-it simulates light originating from an object.
-- \b Shininess
-- \b Type of material model: \em physical or \em artificial.
+\image html materials_library.png
 
-All available predefined material models are shown in the list box of
-the <b>Materials dialog</b> dialog:
+The dialog consists of two parts:
+
+<ul>
+<li>The list to the left shows all available material models, both
+predefined and custom.
 - <b>[Current]</b> item in the list corresponds to the material model
   currently assigned to the selected shape(s). This model can be
   freely modified by the user.
@@ -127,30 +118,42 @@ the <b>Materials dialog</b> dialog:
   is not allowed to modify the global models.
 - <b>User</b> materials are shown in black color in the list. These
   models are specified by the user and can be modified at any moment.
+</li>
 
-The buttons "Add material" and "Remove material" in the lower part of
-the dialog box can be used to create or remove custom material
-models. The same commands are also available via the popup menu that
-is shown if the user presses right mouse button in the materials list
-box. An additional "Rename material" command, available in popup menu,
-can be used to change the name of material model.
+<li>The widgets to the right allow modifyng different properties of the material model:
+- \b Ambient color and coefficient (floating point value between 0 and 1)
+- \b Diffuse color and coefficient (floating point value between 0 and 1)
+- \b Specular color and coefficient (floating point value between 0 and 1)
+- \b Emissive color and coefficient (floating point value between 0
+and 1). Note: this attribute is applicable only for the OCC viewer;
+it simulates light originating from an object.
+- \b Shininess
+- \b Type of material model: \em physical or \em artificial.
+</li>
 
-\section material Material properties dialog box
+<li>The buttons <b>Add material</b> and <b>Remove material</b> in the
+lower part of the dialog box can be used to create or remove custom
+material models. The same commands are also available via the context
+menu in the materials list. <b>Rename material</b> command can be used
+to change the name of material model.</li>
+</ul>
 
-The dialog box looks like "Materials library" dialog box but has 
-some additions in the form of selection objects mechanizm and "Color"
-property.
+\anchor material_anchor <h2>Material properties</h2>
 
-If the material model is specified as a \em physical one (like \em Gold,
-for instance), this means that the color of the shape (more precisely
-its \em ambient color) can not be modified. If you assign a physical
-material model to the shape, the "Color" menu item will not be
-available in the popup menu.
+\image html material.png
+
+In addition to the functionality of <b>Materials library</b>, this
+dialog provides objects selection mechanizm and \b Color property.
+
+If the material model is specified as a \em physical (\em Gold,
+for example), the shape color (more precisely its \em ambient color)
+cannot be modified. If you assign a physical material model to the
+shape, the "Color" menu item will not be available in the popup menu.
 
 If the model is non-physical (\em artificial), the color can be changed
 to any appopriate one, only other attributes will be constant. In the
 dialog box you will be able to modify the color of the shape via the
-"Color" button. "Ambient color" button becomes disabled to signalize
+"Color" button. "Ambient color" button will be disabled to signalize
 that this attribute of the model is ignored. Also, it will be possible
 to modify the color of the shape via the
 \ref color_page "corresponding popup menu command".
@@ -158,10 +161,10 @@ to modify the color of the shape via the
 <b>Examples:</b>
 
 \image html material_OCC.png
-<em>Different materials in OCC viewer</em>
+<center><em>Various materials in OCC viewer</em></center>
 
-\image html material_VTK.png
-<em>Different materials in VTK viewer</em>
+\n\image html material_VTK.png
+<center><em>Various materials in VTK viewer</em></center>
 
 The default material model is specified via the preferences of Geometry
 module.
