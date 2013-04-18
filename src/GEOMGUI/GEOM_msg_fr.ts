@@ -126,6 +126,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Angle</translation>
     </message>
     <message>
+        <source>GEOM_ANGLE_STEP</source>
+        <translation>Pas angulaire :</translation>
+    </message>
+    <message>
         <source>GEOM_ARC_ELLIPSE</source>
         <translation>Arc d&apos;ellipse</translation>
     </message>
@@ -1072,11 +1076,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_NAME</source>
-        <translation type="unfinished">MinDist</translation>
+        <translation>DistMin</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_NO_SOL</source>
-        <translation type="unfinished">No solution found</translation>
+        <translation>Aucune solution trouvée</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_OBJ</source>
@@ -1084,11 +1088,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_PUBLISH_TITLE</source>
-        <translation type="unfinished">Multiple solutions found</translation>
+        <translation>Plusieurs solutions trouvées</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_PUBLISH_TEXT</source>
-        <translation type="unfinished">Do you want to publish in the study all found solutions? If No, only the currently selected solution will be published.</translation>
+        <translation>Voulez-vous publier dans l&apos;étude toutes les solutions trouvées ? Si non, seule la solution actuellement sélectionnées sera publiée.</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_TITLE</source>
@@ -1213,6 +1217,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_SOURCE_OBJECT</source>
         <translation>Point, arête ou contour de source</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLUTION</source>
+        <translation>Solution :</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLUTION_I</source>
+        <translation>Solution %1</translation>
     </message>
     <message>
         <source>GEOM_TARGET_OBJECT</source>
@@ -1692,7 +1704,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SHOW_ANGLE</source>
-        <translation>Afficher les cotes d'angle</translation>
+        <translation>Afficher les côtes d&apos;angle</translation>
     </message>
     <message>
         <source>GEOM_SHOW_POINTS_COORD</source>
@@ -1965,6 +1977,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_STEP</source>
         <translation>Pas :</translation>
+    </message>
+    <message>
+        <source>GEOM_STEP_R</source>
+        <translation>Pas radial :</translation>
     </message>
     <message>
         <source>GEOM_STEP_TITLE</source>
@@ -2988,7 +3004,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_MATERIALS_LIBRARY</source>
-        <translation type="unfinished">Materials library</translation>
+        <translation>Librairie de materiaux</translation>
     </message>
     <message>
         <source>MEN_TORUS</source>
@@ -3052,7 +3068,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_PREDEF_MATER_CUSTOM</source>
-        <translation type="unfinished">Custom...</translation>
+        <translation>Personnalisé...</translation>
     </message>
     <message>
         <source>NAME_LBL</source>
@@ -3144,11 +3160,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_TOPLEVEL_DM</source>
-        <translation>Mode d'affichage des objets mis au premier plan</translation>
+        <translation>Mode d&apos;affichage des objets mis au premier plan</translation>
     </message>
     <message>
         <source>MEN_KEEP_CURRENT_DM</source>
-        <translation>Conserver le mode d'affichage en cours</translation>
+        <translation>Conserver le mode d&apos;affichage en cours</translation>
     </message>
     <message>
         <source>MEN_SHOW_ADD_WACTOR</source>
@@ -3200,11 +3216,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_PREDEF_MATERIALS</source>
-        <translation type="unfinished">Show predefined materials in popup menu</translation>
+        <translation>Affichier les matériaux prédéfinis dans le menu contextuel</translation>
     </message>
     <message>
         <source>PREF_EDITGROUP_COLOR</source>
-        <translation type="unfinished">Subshapes color for editing a group</translation>
+        <translation>Couleur des sous-shapes pendant la modification d&apos;un groupe</translation>
     </message>
     <message>
         <source>PREF_EDGE_WIDTH</source>
@@ -3240,7 +3256,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MATERIAL_LIBRARY_TLT</source>
-        <translation type="unfinished">Materials Library</translation>
+        <translation>Librairie de materiaux</translation>
     </message>
     <message>
         <source>REMOVE_HOLES_NEW_OBJ_NAME</source>
@@ -3572,7 +3588,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_PIPE_PATH</source>
-        <translation>Retrouver le chemin à partir d'un objet de type tuyau</translation>
+        <translation>Retrouver le chemin à partir d&apos;un objet de type tuyau</translation>
     </message>
     <message>
         <source>STB_PLANE</source>
@@ -3656,11 +3672,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_MATERIALS_LIBRARY</source>
-        <translation type="unfinished">Displays content of Materials library</translation>
+        <translation>Affichier le contenu de la librarie des matériaux</translation>
     </message>
     <message>
         <source>STB_POP_PREDEF_MATER_CUSTOM</source>
-        <translation type="unfinished">Custom...</translation>
+        <translation>Personnalisé...</translation>
     </message>
     <message>
         <source>STB_PROPAGATE</source>
@@ -4520,7 +4536,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FUSE_EDGES_TITLE</source>
-        <translation>Fusionner les arêtes collinéaires au sein d'un contour</translation>
+        <translation>Fusionner les arêtes collinéaires au sein d&apos;un contour</translation>
     </message>
     <message>
         <source>GEOM_FUSE_EDGES</source>
@@ -4532,15 +4548,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_FUSE_EDGES</source>
-        <translation>Fusionner les arêtes collinéaires au sein d'un contour</translation>
+        <translation>Fusionner les arêtes collinéaires au sein d&apos;un contour</translation>
     </message>
     <message>
         <source>MEN_FUSE_EDGES</source>
-        <translation>Fusionner les arêtes collinéaires au sein d'un contour</translation>
+        <translation>Fusionner les arêtes collinéaires au sein d&apos;un contour</translation>
     </message>
     <message>
         <source>STB_FUSE_EDGES</source>
-        <translation>Fusionner les arêtes collinéaires au sein d'un contour</translation>
+        <translation>Fusionner les arêtes collinéaires au sein d&apos;un contour</translation>
     </message>
     <message>
         <source>TOP_NORMALE</source>
@@ -4815,8 +4831,8 @@ les coques et solides d&apos;un autre.</translation>
     </message>
     <message>
         <source>GEOM_SCALE_DIMENSIONS</source>
-        <translation>Voulez-vous prendre les unités en considération?
-Sinon le modèle sera mis à l'échèlle GEOM (unités interprétées comme des mètres).</translation>
+        <translation>Voulez-vous prendre les unités du fichier (%1) en considération?
+Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme des mètres).</translation>
     </message>
     <message>
         <source>GEOM_ADVANCED</source>
@@ -4932,19 +4948,19 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>GEOM_INTERPOL_TANGENTS</source>
-        <translation type="unfinished">Tangents</translation>
+        <translation>Tangentes</translation>
     </message>
     <message>
         <source>GEOM_INTERPOL_FIRST_VEC</source>
-        <translation type="unfinished">First tangent vector</translation>
+        <translation>Premier vecteur tangent</translation>
     </message>
     <message>
         <source>GEOM_INTERPOL_LAST_VEC</source>
-        <translation type="unfinished">Last tangent vector</translation>
+        <translation>Dernier vecteur tangent</translation>
     </message>
     <message>
         <source>GEOM_BOTH_TANGENTS_REQUIRED</source>
-        <translation type="unfinished">Both tangent vectors must be defined</translation>
+        <translation>Les deux vecteurs tangents doivent être définis</translation>
     </message>
     <message>
         <source>GEOM_CURVE_CRMODE</source>
@@ -5266,7 +5282,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>GEOM_TOWARDS_INSIDE</source>
-        <translation>Epaissir vers l'intérieur</translation>
+        <translation>Epaissir vers l&apos;intérieur</translation>
     </message>
 </context>
 <context>
@@ -5478,11 +5494,11 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>NAME_CLOSED</source>
-        <translation type="unfinished">Closed_Free_Boundary_%1</translation>
+        <translation>Frontiere_Libre_Lermee_%1</translation>
     </message>
     <message>
         <source>NAME_OPEN</source>
-        <translation type="unfinished">Open_Free_Boundary_%1</translation>
+        <translation>Frontiere_Libre_Ouverte_%1</translation>
     </message>
 </context>
 <context>
@@ -5630,11 +5646,11 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>FRONT_FACE</source>
-        <translation type="unfinished">Front face</translation>
+        <translation>Face avant</translation>
     </message>
     <message>
         <source>BACK_FACE</source>
-        <translation type="unfinished">Back face</translation>
+        <translation>Face arrière</translation>
     </message>
     <message>
         <source>REFLECTION_0</source>
@@ -5805,43 +5821,43 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_LEFT_TR</source>
-        <translation type="unfinished">Left thickness reduction</translation>
+        <translation>Réduction d&apos;épaisseur à gauche</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_RIGHT_TR</source>
-        <translation type="unfinished">Right thickness reduction</translation>
+        <translation>Réduction d&apos;épaisseur à droite</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_INCI_TR</source>
-        <translation type="unfinished">Incident thickness reduction</translation>
+        <translation>Réduction d&apos;épaisseur du tuyau incident</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_R</source>
-        <translation type="unfinished">Radius (r%1)</translation>
+        <translation>Rayon (r%1)</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_W</source>
-        <translation type="unfinished">Width (w%1)</translation>
+        <translation>Epaisseur (w%1)</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_L_TRANS</source>
-        <translation type="unfinished">Transition length (ltrans%1)</translation>
+        <translation>Longueur de transition (ltrans%1)</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_L_THIN</source>
-        <translation type="unfinished">Thin part length (lthin%1)</translation>
+        <translation>Longueur de la partie étroite (lthin%1)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPMAIN</source>
-        <translation type="unfinished">Main parameters</translation>
+        <translation>Paramètres principaux</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPREDUCT</source>
-        <translation type="unfinished">Thickness reduction</translation>
+        <translation>Réduction d&apos;épaisseur</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPPOS</source>
-        <translation type="unfinished">Position</translation>
+        <translation>Position</translation>
     </message>
 </context>
 <context>

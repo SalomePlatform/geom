@@ -1080,7 +1080,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_NO_SOL</source>
-        <translation type="unfinished">No solution found</translation>
+        <translation>No solution found</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_OBJ</source>
@@ -1088,11 +1088,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_PUBLISH_TITLE</source>
-        <translation type="unfinished">Multiple solutions found</translation>
+        <translation>Multiple solutions found</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_PUBLISH_TEXT</source>
-        <translation type="unfinished">Do you want to publish in the study all found solutions? If No, only the currently selected solution will be published.</translation>
+        <translation>Do you want to publish in the study all found solutions? If No, only the currently selected solution will be published.</translation>
     </message>
     <message>
         <source>GEOM_MINDIST_TITLE</source>
@@ -4832,8 +4832,7 @@ shells and solids on the other hand.</translation>
     <message>
         <source>GEOM_SCALE_DIMENSIONS</source>
         <translation>Take into account the units (%1) embedded to the file?
-Ignoring units will cause model scaling (as dimensions are supposed to
-be specified in meters).</translation>
+Ignoring units will cause model scaling (as dimensions are supposed to be specified in meters).</translation>
     </message>
     <message>
         <source>GEOM_ADVANCED</source>
@@ -5822,43 +5821,43 @@ Do you want to create new material?</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_LEFT_TR</source>
-        <translation type="unfinished">Left thickness reduction</translation>
+        <translation>Left thickness reduction</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_RIGHT_TR</source>
-        <translation type="unfinished">Right thickness reduction</translation>
+        <translation>Right thickness reduction</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_INCI_TR</source>
-        <translation type="unfinished">Incident thickness reduction</translation>
+        <translation>Incident pipe thickness reduction</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_R</source>
-        <translation type="unfinished">Radius (r%1)</translation>
+        <translation>Radius (r%1)</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_W</source>
-        <translation type="unfinished">Width (w%1)</translation>
+        <translation>Width (w%1)</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_L_TRANS</source>
-        <translation type="unfinished">Transition length (ltrans%1)</translation>
+        <translation>Transition length (ltrans%1)</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_TR_L_THIN</source>
-        <translation type="unfinished">Thin part length (lthin%1)</translation>
+        <translation>Thin part length (lthin%1)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPMAIN</source>
-        <translation type="unfinished">Main parameters</translation>
+        <translation>Main parameters</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPREDUCT</source>
-        <translation type="unfinished">Thickness reduction</translation>
+        <translation>Thickness reduction</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPPOS</source>
-        <translation type="unfinished">Position</translation>
+        <translation>Position</translation>
     </message>
 </context>
 <context>
