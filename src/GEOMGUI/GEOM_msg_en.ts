@@ -155,7 +155,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_AXE_MIRROR</source>
-        <translation>Axe Mirror</translation>
+        <translation>Axis Mirror</translation>
     </message>
     <message>
         <source>GEOM_AXIS</source>
