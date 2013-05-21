@@ -320,8 +320,25 @@ void AdvancedGUI_PipeTShapeDlg::Init()
   // ChamferOrFillet
   connect(ChamferGroupParams->GroupBox1, SIGNAL(toggled(bool)), this, SLOT(ChamferOrFillet(bool)));
   connect(FilletGroupParams->GroupBox1, SIGNAL(toggled(bool)), this, SLOT(ChamferOrFillet(bool)));
-  // Preview
-  //connect(PreviewPushButton, SIGNAL(clicked()), this, SLOT(DisplayPreview()));
+  // Thickness reduction:
+  //   Left
+  connect(LReductionGroupParams->GroupBox1, SIGNAL(toggled(bool)), this, SLOT(processPreview()));
+  connect(LReductionGroupParams->SpinBox1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(LReductionGroupParams->SpinBox2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(LReductionGroupParams->SpinBox3, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(LReductionGroupParams->SpinBox4, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  //   Right
+  connect(RReductionGroupParams->GroupBox1, SIGNAL(toggled(bool)), this, SLOT(processPreview()));
+  connect(RReductionGroupParams->SpinBox1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(RReductionGroupParams->SpinBox2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(RReductionGroupParams->SpinBox3, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(RReductionGroupParams->SpinBox4, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  //   Incident pipe
+  connect(IReductionGroupParams->GroupBox1, SIGNAL(toggled(bool)), this, SLOT(processPreview()));
+  connect(IReductionGroupParams->SpinBox1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(IReductionGroupParams->SpinBox2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(IReductionGroupParams->SpinBox3, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(IReductionGroupParams->SpinBox4, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   // Position
   connect(JunctionPointsSel->GroupBox1, SIGNAL(toggled(bool)), this, SLOT(SetPosition(bool)));
   connect(JunctionPointsSel->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -681,6 +698,8 @@ bool AdvancedGUI_PipeTShapeDlg::ClickOnApply()
 
   initName();
 
+  if (!isApplyAndClose())
+    processPreview();
   return true;
 }
 
