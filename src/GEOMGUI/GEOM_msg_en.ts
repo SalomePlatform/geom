@@ -4908,6 +4908,10 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Junction 3</translation>
     </message>
     <message>
+        <source>INTERNAL_FACES</source>
+        <translation>Internal faces</translation>
+    </message>
+    <message>
         <source>GEOM_PLUGINS_OTHER</source>
         <translation>Other</translation>
     </message>

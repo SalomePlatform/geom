@@ -37,6 +37,9 @@ class GEOMImpl_IBlocksOperations;
 class GEOMImpl_I3DPrimOperations;
 class GEOMImpl_ILocalOperations;
 class GEOMImpl_IHealingOperations;
+class GEOMImpl_IGroupOperations;
+class Handle_Geom_Surface;
+class TopTools_ListOfShape;
 
 class GEOMImpl_IAdvancedOperations: public GEOM_IOperations {
 private:
@@ -64,6 +67,26 @@ private:
                   Handle(TColStd_HSequenceOfTransient) theSeq,
                   gp_Trsf aTrsf);
 
+  bool GetFacesOnSurf(const TopoDS_Shape &theShape,
+                      const Handle_Geom_Surface& theSurface,
+                      const Standard_Real theTolerance,
+                      TopTools_ListOfShape &theFaces);
+
+  TopoDS_Shape MakeConicalFace(const gp_Ax2 &theAxis,
+                               const double theRadius,
+                               const double theRadiusThin,
+                               const double theHeight,
+                               const gp_Trsf &theTrsf);
+
+  bool MakeInternalGroup(const Handle(GEOM_Object) &theShape,
+                         const double theR1, const double theLen1,
+                         const double theR2, const double theLen2,
+                         const double theRL, const double theTransLenL,
+                         const double theRR, const double theTransLenR,
+                         const double theRI, const double theTransLenI,
+                         const Handle(TColStd_HSequenceOfTransient) &theSeq,
+                         const gp_Trsf &theTrsf);
+
   gp_Trsf GetPositionTrsf(double theL1, double theL2,
                           Handle(GEOM_Object) P1 = 0,
                           Handle(GEOM_Object) P2 = 0,
@@ -84,6 +107,7 @@ private:
   GEOMImpl_I3DPrimOperations*    my3DPrimOperations;
   GEOMImpl_ILocalOperations*     myLocalOperations;
   GEOMImpl_IHealingOperations*   myHealingOperations;
+  GEOMImpl_IGroupOperations*     myGroupOperations;
 
 public:
 

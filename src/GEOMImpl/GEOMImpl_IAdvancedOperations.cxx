@@ -31,6 +31,7 @@
 #include "GEOM_PythonDump.hxx"
 #include "GEOMUtils.hxx"
 #include "GEOMAlgo_Splitter.hxx"
+#include "GEOMAlgo_FinderShapeOn1.hxx"
 
 #include "GEOMImpl_Gen.hxx"
 #include "GEOMImpl_Types.hxx"
@@ -43,6 +44,7 @@
 #include "GEOMImpl_I3DPrimOperations.hxx"
 #include "GEOMImpl_ILocalOperations.hxx"
 #include "GEOMImpl_IHealingOperations.hxx"
+#include "GEOMImpl_IGroupOperations.hxx"
 
 #include "GEOMImpl_GlueDriver.hxx"
 #include "GEOMImpl_PipeTShapeDriver.hxx"
@@ -70,6 +72,7 @@
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 
+#include <BRepAdaptor_Surface.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -82,6 +85,8 @@
 #include <gp_Pln.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
+#include <GC_MakeConicalSurface.hxx>
+#include <Geom_CylindricalSurface.hxx>
 
 #include <cmath>
 
@@ -119,6 +124,7 @@ GEOMImpl_IAdvancedOperations::GEOMImpl_IAdvancedOperations(GEOM_Engine* theEngin
   my3DPrimOperations    = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
   myLocalOperations     = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
   myHealingOperations   = new GEOMImpl_IHealingOperations(GetEngine(), GetDocID());
+  myGroupOperations     = new GEOMImpl_IGroupOperations(GetEngine(), GetDocID());
 }
 
 //=============================================================================
@@ -137,6 +143,7 @@ GEOMImpl_IAdvancedOperations::~GEOMImpl_IAdvancedOperations()
   delete my3DPrimOperations;
   delete myLocalOperations;
   delete myHealingOperations;
+  delete myGroupOperations;
 }
 
 //=============================================================================
@@ -787,6 +794,337 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
 #endif
 
   SetErrorCode(OK);
+  return true;
+}
+
+//=============================================================================
+/*!
+ *  Return faces that are laying on surface.
+ */
+//=============================================================================
+bool GEOMImpl_IAdvancedOperations::GetFacesOnSurf
+                     (const TopoDS_Shape &theShape,
+                      const Handle_Geom_Surface& theSurface,
+                      const Standard_Real theTolerance,
+                      TopTools_ListOfShape &theFaces)
+{
+  GEOMAlgo_FinderShapeOn1 aFinder;
+
+  aFinder.SetShape(theShape);
+  aFinder.SetTolerance(theTolerance);
+  aFinder.SetSurface(theSurface);
+  aFinder.SetShapeType(TopAbs_FACE);
+  aFinder.SetState(GEOMAlgo_ST_ON);
+
+  // Sets the minimal number of inner points for the faces that do not have own
+  // inner points at all (for e.g. rectangular planar faces have just 2 triangles).
+  // Default value=3
+  aFinder.SetNbPntsMin(3);
+  // Sets the maximal number of inner points for edges or faces.
+  // It is usefull for the cases when this number is very big (e.g =2000) to improve
+  // the performance. If this value =0, all inner points will be taken into account.
+  // Default value=0
+  aFinder.SetNbPntsMax(100);
+  aFinder.Perform();
+
+  // Interprete results
+  Standard_Integer iErr = aFinder.ErrorStatus();
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iErr) {
+    MESSAGE(" iErr : " << iErr);
+    TCollection_AsciiString aMsg (" iErr : ");
+    aMsg += TCollection_AsciiString(iErr);
+    SetErrorCode(aMsg);
+    return false;
+  }
+  Standard_Integer iWrn = aFinder.WarningStatus();
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  if (iWrn) {
+    MESSAGE(" *** iWrn : " << iWrn);
+  }
+
+  const TopTools_ListOfShape &aListRes = aFinder.Shapes(); // the result
+  TopTools_ListIteratorOfListOfShape anIter (aListRes);
+
+  for (; anIter.More(); anIter.Next()) {
+    theFaces.Append(anIter.Value());
+  }
+
+  return true;
+}
+
+//=============================================================================
+/*!
+ *  Creates and returns conical face.
+ */
+//=============================================================================
+TopoDS_Shape GEOMImpl_IAdvancedOperations::MakeConicalFace
+                                  (const gp_Ax2 &theAxis,
+                                   const double theRadius,
+                                   const double theRadiusThin,
+                                   const double theHeight,
+                                   const gp_Trsf &theTrsf)
+{
+  BRepPrimAPI_MakeCone aMkCone (theAxis, theRadius, theRadiusThin, theHeight);
+  TopoDS_Shape aResult;
+  
+  aMkCone.Build();
+  if (aMkCone.IsDone()) {
+    TopExp_Explorer anExp(aMkCone.Shape(), TopAbs_FACE);
+
+    for (; anExp.More(); anExp.Next()) {
+      TopoDS_Face aFace = TopoDS::Face(anExp.Current());
+
+      if (aFace.IsNull() == Standard_False) {
+        BRepAdaptor_Surface anAdaptor(aFace, Standard_False);
+
+        if (anAdaptor.GetType() == GeomAbs_Cone) {
+          // This is a conical face. Transform and return it.
+          BRepBuilderAPI_Transform aTransf(aFace, theTrsf, Standard_False);
+          
+          aResult = aTransf.Shape();
+          break;
+        }
+      }
+    }
+  }
+
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ *  Generate the internal group of a Pipe T-Shape
+ */
+//=============================================================================
+bool GEOMImpl_IAdvancedOperations::MakeInternalGroup
+                      (const Handle(GEOM_Object) &theShape,
+                       const double theR1, const double theLen1,
+                       const double theR2, const double theLen2,
+                       const double theRL, double theTransLenL,
+                       const double theRR, double theTransLenR,
+                       const double theRI, double theTransLenI,
+                       const Handle(TColStd_HSequenceOfTransient) &theSeq,
+                       const gp_Trsf &theTrsf)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) {
+    return false;
+  }
+
+  TopoDS_Shape aShape = theShape->GetValue();
+
+  if (aShape.IsNull()) {
+    SetErrorCode("Shape is not defined");
+    return false;
+  }
+
+  // Compute tolerance
+  Standard_Real aMaxTol = -RealLast();
+  TopExp_Explorer anExp(aShape, TopAbs_VERTEX);
+
+  for (; anExp.More(); anExp.Next()) {
+    TopoDS_Vertex aVertex = TopoDS::Vertex(anExp.Current());
+
+    if (aVertex.IsNull() == Standard_False) {
+      const Standard_Real aTol = BRep_Tool::Tolerance(aVertex);
+
+      if (aTol > aMaxTol) {
+        aMaxTol = aTol;
+      }
+    }
+  }
+
+  // Construct internal surfaces.
+  Standard_Integer i = 0;
+  const Standard_Integer aMaxNbSurf = 5;
+  Handle(Geom_Surface) aSurface[aMaxNbSurf];
+  TopTools_ListOfShape aConicalFaces;
+  Standard_Real aTolConf = Precision::Confusion();
+
+  // 1. Construct the internal surface of main pipe.
+  gp_Ax2 anAxis1 (gp::Origin(), gp::DX(), gp::DZ());
+  gp_Ax2 anAxis2 (gp::Origin(), gp::DZ(), gp::DX());
+
+  aSurface[i++] = new Geom_CylindricalSurface(anAxis1, theR1);
+
+  // 2. Construct the internal surface of incident pipe.
+  aSurface[i++] = new Geom_CylindricalSurface(anAxis2, theR2);
+
+  // 3. Construct the internal surface of left reduction pipe.
+  if (theRL > aTolConf) {
+    aSurface[i++] = new Geom_CylindricalSurface(anAxis1, theRL);
+
+    if (theTransLenL > aTolConf) {
+      // 3.1. Construct the internal surface of left transition pipe.
+      gp_Pnt aPLeft (-theLen1, 0., 0.);
+      gp_Ax2 anAxisLeft (aPLeft, -gp::DX(), gp::DZ());
+      TopoDS_Shape aConeLeft =
+        MakeConicalFace(anAxisLeft, theR1, theRL, theTransLenL, theTrsf);
+
+      if (aConeLeft.IsNull() == Standard_False) {
+        aConicalFaces.Append(aConeLeft);
+      }
+    }
+  }
+
+  // 4. Construct the internal surface of right reduction pipe.
+  if (theRR > aTolConf) {
+    // There is no need to construct another cylinder of the same radius. Skip it.
+    if (Abs(theRR - theRL) > aTolConf) {
+      aSurface[i++] = new Geom_CylindricalSurface(anAxis1, theRR);
+    }
+
+    if (theTransLenL > aTolConf) {
+      // 4.1. Construct the internal surface of right transition pipe.
+      gp_Pnt aPRight (theLen1, 0., 0.);
+      gp_Ax2 anAxisRight (aPRight, gp::DX(), gp::DZ());
+      TopoDS_Shape aConeRight =
+        MakeConicalFace(anAxisRight, theR1, theRR, theTransLenR, theTrsf);
+
+      if (aConeRight.IsNull() == Standard_False) {
+        aConicalFaces.Append(aConeRight);
+      }
+    }
+  }
+
+  // 5. Construct the internal surface of incident reduction pipe.
+  if (theRI > aTolConf) {
+    aSurface[i++] = new Geom_CylindricalSurface(anAxis2, theRI);
+
+    if (theTransLenI > aTolConf) {
+      // 5.1. Construct the internal surface of incident transition pipe.
+      gp_Pnt aPInci (0., 0., theLen2);
+      gp_Ax2 anAxisInci (aPInci, gp::DZ(), gp::DX());
+      TopoDS_Shape aConeInci =
+        MakeConicalFace(anAxisInci, theR2, theRI, theTransLenI, theTrsf);
+
+      if (aConeInci.IsNull() == Standard_False) {
+        aConicalFaces.Append(aConeInci);
+      }
+    }
+  }
+
+  // Get faces that are laying on cylindrical surfaces.
+  TopTools_ListOfShape aFaces;
+  gp_Trsf anInvTrsf = theTrsf.Inverted();
+
+  for (i = 0; i < aMaxNbSurf; i++) {
+    if (aSurface[i].IsNull()) {
+      break;
+    }
+
+    aSurface[i]->Transform(theTrsf);
+
+    TopTools_ListOfShape aLocalFaces;
+
+    if (!GetFacesOnSurf(aShape, aSurface[i], aMaxTol, aLocalFaces)) {
+      return false;
+    }
+
+    if (i < 2) {
+      // Check if the result contains outer cylinders.
+      // It is required for main and incident pipes.
+      TopTools_ListIteratorOfListOfShape anIter(aLocalFaces);
+
+      while (anIter.More()) {
+        TopExp_Explorer anExp(anIter.Value(), TopAbs_VERTEX);
+        Standard_Boolean isInside = Standard_False;
+
+        // Get a vertex from this shape
+        if (anExp.More()) {
+          TopoDS_Vertex aVtx = TopoDS::Vertex(anExp.Current());
+
+          if (aVtx.IsNull() == Standard_False) {
+            gp_Pnt aPnt = BRep_Tool::Pnt(aVtx);
+
+            aPnt.Transform(anInvTrsf);
+
+            if (i == 0) {
+              // Check if the point is inside the main pipe.
+              isInside = (Abs(aPnt.X()) <= theLen1);
+            } else { // i == 1
+              // Check if the point is inside the incident pipe.
+              isInside = (aPnt.Z() <= theLen2);
+            }
+          }
+        }
+
+        if (isInside) {
+          // Keep this face.
+          anIter.Next();
+        } else {
+          // Remove this face.
+          aLocalFaces.Remove(anIter);
+        }
+      }
+    }
+
+    aFaces.Append(aLocalFaces);
+  }
+
+  // Get faces that are laying on conical faces.
+  if (aConicalFaces.IsEmpty() == Standard_False) {
+    Handle(GEOM_Object) aCone =
+      GetEngine()->AddObject(GetDocID(), GEOM_TSHAPE);
+    Handle(GEOM_Function) aFunction =
+      aCone->AddFunction(GEOMImpl_PipeTShapeDriver::GetID(), TSHAPE_BASIC);
+    TopTools_ListIteratorOfListOfShape aFIter(aConicalFaces);
+    Handle(GEOM_Object) aConeFromShape;
+
+    for (; aFIter.More(); aFIter.Next()) {
+      aFunction->SetValue(aFIter.Value());
+      aConeFromShape = myShapesOperations->GetInPlace(theShape, aCone);
+
+      if (aConeFromShape.IsNull() == Standard_False) {
+        aConeFromShape->GetLastFunction()->SetDescription("");
+        TopoDS_Shape aConeFaces = aConeFromShape->GetValue();
+        TopExp_Explorer anExp(aConeFaces, TopAbs_FACE);
+
+        for (; anExp.More(); anExp.Next()) {
+          TopoDS_Face aConeFace = TopoDS::Face(anExp.Current());
+
+          if (aConeFace.IsNull() == Standard_False) {
+            aFaces.Append(aConeFace);
+          }
+        }
+      }
+    }
+  }
+
+  // Create a group of internal faces.
+  if (aFaces.IsEmpty() == Standard_False) {
+    Handle(GEOM_Object) aGroup = myGroupOperations->CreateGroup(theShape, TopAbs_FACE);
+
+    if (aGroup.IsNull() == Standard_False) {
+      aGroup->GetLastFunction()->SetDescription("");
+      aGroup->SetName("INTERNAL_FACES");
+
+      TopTools_IndexedMapOfShape anIndices;
+      Handle(TColStd_HSequenceOfInteger) aSeqIDs = new TColStd_HSequenceOfInteger;
+
+      TopExp::MapShapes(aShape, anIndices);
+
+      TopTools_ListIteratorOfListOfShape anIter(aFaces);
+
+      for (; anIter.More(); anIter.Next()) {
+        const TopoDS_Shape &aFace = anIter.Value();
+        const Standard_Integer anIndex = anIndices.FindIndex(aFace);
+
+        if (anIndex > 0) {
+          aSeqIDs->Append(anIndex);
+        }
+      }
+
+      myGroupOperations->UnionIDs(aGroup, aSeqIDs);
+      aGroup->GetLastFunction()->SetDescription("");
+      theSeq->Append(aGroup);
+    }
+  }
+
+  SetErrorCode(OK);
+
   return true;
 }
 
@@ -1663,18 +2001,25 @@ Handle(TColStd_HSequenceOfTransient)
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
 
-  if (theHexMesh) {
-    // Get the groups
-    try {
+  try {
+    if (theHexMesh) {
+      // Get the groups
       if (!MakeGroups(aShape, TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2,
                       0., 0., 0., aSeq, gp_Trsf()))
         return NULL;
     }
-    catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      SetErrorCode(aFail->GetMessageString());
+
+    // Get internal group.
+    if (!MakeInternalGroup(aShape, theR1, theL1, theR2, theL2, theRL, theLtransL,
+                           theRR, theLtransR, theRI, theLtransI,
+                           aSeq, gp_Trsf())) {
       return NULL;
     }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
   }
 
   //Make a Python command
@@ -1828,19 +2173,26 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
 
-  if (theHexMesh) {
-    // Get the groups
-    try {
+  try {
+    if (theHexMesh) {
+      // Get the groups
       if (!MakeGroups(aShape,TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2,
                       0., 0., 0., aSeq, aTrsf)) {
         return NULL;
       }
     }
-    catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      SetErrorCode(aFail->GetMessageString());
+
+    // Get internal group.
+    if (!MakeInternalGroup(aShape, theR1, theL1, theR2, theL2, theRL, theLtransL,
+                           theRR, theLtransR, theRI, theLtransI,
+                           aSeq, aTrsf)) {
       return NULL;
     }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
   }
 
   //Make a Python command
@@ -2049,18 +2401,25 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
 
-  if (theHexMesh) {
-    // Get the groups
-    try {
+  try {
+    if (theHexMesh) {
+      // Get the groups
       if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2,
                       theH, theW, 0., aSeq, gp_Trsf()))
         return NULL;
     }
-    catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      SetErrorCode(aFail->GetMessageString());
+
+    // Get internal group.
+    if (!MakeInternalGroup(aShape, theR1, theL1, theR2, theL2, theRL, theLtransL,
+                           theRR, theLtransR, theRI, theLtransI,
+                           aSeq, gp_Trsf())) {
       return NULL;
     }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
   }
 
   //Make a Python command
@@ -2285,18 +2644,25 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
 
-  if (theHexMesh) {
-    // Get the groups
-    try {
+  try {
+    if (theHexMesh) {
+      // Get the groups
       if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2,
                       theH, theW, 0., aSeq, aTrsf))
         return NULL;
     }
-    catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      SetErrorCode(aFail->GetMessageString());
+
+    // Get internal group.
+    if (!MakeInternalGroup(aShape, theR1, theL1, theR2, theL2, theRL, theLtransL,
+                           theRR, theLtransR, theRI, theLtransI,
+                           aSeq, aTrsf)) {
       return NULL;
     }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
   }
 
   //Make a Python command
@@ -2517,18 +2883,25 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
 
-  if (theHexMesh) {
-    // Get the groups
-    try {
+  try {
+    if (theHexMesh) {
+      // Get the groups
       if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2,
                       0., 0., theRF, aSeq, gp_Trsf()))
         return NULL;
     }
-    catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      SetErrorCode(aFail->GetMessageString());
+
+    // Get internal group.
+    if (!MakeInternalGroup(aShape, theR1, theL1, theR2, theL2, theRL, theLtransL,
+                           theRR, theLtransR, theRI, theLtransI,
+                           aSeq, gp_Trsf())) {
       return NULL;
     }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
   }
 
   //Make a Python command
@@ -2765,18 +3138,25 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
 
-  if (theHexMesh) {
-    // Get the groups
-    try {
+  try {
+    if (theHexMesh) {
+      // Get the groups
       if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2,
                       0., 0., theRF, aSeq, aTrsf))
         return NULL;
     }
-    catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      SetErrorCode(aFail->GetMessageString());
+
+    // Get internal group.
+    if (!MakeInternalGroup(aShape, theR1, theL1, theR2, theL2, theRL, theLtransL,
+                           theRR, theLtransR, theRI, theLtransI,
+                           aSeq, aTrsf)) {
       return NULL;
     }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
   }
 
   //Make a Python command
