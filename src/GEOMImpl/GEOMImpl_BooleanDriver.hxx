@@ -51,6 +51,11 @@
 #include <Handle_TFunction_Driver.hxx>
 #endif
 
+#ifndef _TopoDS_Shape_HeaderFile
+#include <TopoDS_Shape.hxx>
+#endif
+
+
 class Standard_Transient;
 class Handle_Standard_Type;
 class Handle(TFunction_Driver);
@@ -155,6 +160,12 @@ Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_BooleanDriver_Type_();
 Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_BooleanDriver) ; }
 Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_BooleanDriver) == AType || TFunction_Driver::IsKind(AType)); } 
 
+
+private:
+
+  TopoDS_Shape performOperation(const TopoDS_Shape theShape1,
+                                const TopoDS_Shape theShape2,
+                                const Standard_Integer theType) const;
 
 };
 

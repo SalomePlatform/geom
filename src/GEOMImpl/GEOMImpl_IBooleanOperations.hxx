@@ -40,6 +40,16 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
                                                    Handle(GEOM_Object) theShape2,
                                                    Standard_Integer    theOp);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeFuseList
+                  (const Handle(TColStd_HSequenceOfTransient)& theShapes);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeCommonList
+                  (const Handle(TColStd_HSequenceOfTransient)& theShapes);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeCutList
+                  (Handle(GEOM_Object) theMainShape,
+                   const Handle(TColStd_HSequenceOfTransient)& theShapes);
+
   Standard_EXPORT Handle(GEOM_Object) MakePartition
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,
                    const Handle(TColStd_HSequenceOfTransient)& theTools,
@@ -53,6 +63,13 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakeHalfPartition (Handle(GEOM_Object) theShape,
                                                          Handle(GEOM_Object) thePlane);
+
+private:
+
+  Handle(TColStd_HSequenceOfTransient) getShapeFunctions
+                  (const Handle(TColStd_HSequenceOfTransient)& theObjects,
+                         TCollection_AsciiString &theDescription);
+
 };
 
 #endif

@@ -439,7 +439,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_COMMON_TITLE</source>
-        <translation>Intersection de deux objets</translation>
+        <translation>Intersection des objets</translation>
     </message>
     <message>
         <source>GEOM_COMPOUND</source>
@@ -507,7 +507,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CUT_TITLE</source>
-        <translation>Découpe de deux objets</translation>
+        <translation>Découpe des objets</translation>
     </message>
     <message>
         <source>GEOM_CYLINDER</source>
@@ -836,7 +836,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FUSE_TITLE</source>
-        <translation>Réunir deux objets</translation>
+        <translation>Réunir des objets</translation>
     </message>
     <message>
         <source>GEOM_FixFaceSize</source>
@@ -2141,10 +2141,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_TOLERANCE_VERTEX</source>
         <translation>Point:</translation>
-    </message>
-    <message>
-        <source>GEOM_TOOL_OBJECT</source>
-        <translation>Objet outil </translation>
     </message>
     <message>
         <source>GEOM_TOOL_OBJECTS</source>

@@ -5,21 +5,27 @@
 To produce a \b Fuse operation in the <b>Main Menu</b> select
 <b>Operations - > Boolean - > Fuse</b>. 
 
-This operation creates one shape from two shapes.
-The \b Result will be any \b GEOM_Object.
+This operation creates one shape from a list of shapes.
+
+The \b Result will be a \b GEOM_Object.
+
+<b>TUI Command:</b> <em>geompy.MakeFuseList(theShapesList)</em>\n
+<b>Arguments:</b> Name + a list of shapes.\n
+<b>Advanced option:</b>
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+
+\image html bool1.png "Fuse dialog"
+
+For a particular case with two shapes to be fused there is the following TUI command:
+
+<b>TUI Command:</b> <em>geompy.MakeFuse(s1, s2)</em>\n
+<b>Arguments:</b> Name + 2 shapes.
 
 <b>Example:</b>
 
 \image html fusesn1.png "The initial shapes"
 
 \image html fusesn2.png "The resulting fuse"
-
-<b>TUI Command:</b> <em>geompy.MakeFuse(s1, s2)</em>\n
-<b>Arguments:</b> Name + 2 shapes.\n
-<b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
-
-\image html bool1.png
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_fuse "Boolean Operations".

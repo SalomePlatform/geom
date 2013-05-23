@@ -35,6 +35,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 // VSR 22/08/2012: issue 0021787: remove "Preview" button from BOP and Partition operations
 // Comment next line to enable preview in BOP dialog box
@@ -95,19 +96,27 @@ BooleanGUI_Dialog::BooleanGUI_Dialog (const int theOperation, GeometryGUI* theGe
   myGroup = new DlgRef_2Sel(centralWidget());
 
   myGroup->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  if (myOperation != BooleanGUI::CUT) {
+  if (myOperation == BooleanGUI::CUT) {
+    myGroup->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
+    myGroup->TextLabel2->setText(tr("GEOM_TOOL_OBJECTS"));
+  }
+  else if (myOperation == BooleanGUI::SECTION) {
     myGroup->TextLabel1->setText(tr("GEOM_OBJECT_I").arg(1));
     myGroup->TextLabel2->setText(tr("GEOM_OBJECT_I").arg(2));
-  }
-  else {
-    myGroup->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
-    myGroup->TextLabel2->setText(tr("GEOM_TOOL_OBJECT"));
+  } else { // Fuse or Common
+    myGroup->TextLabel1->setText(tr( "GEOM_SELECTED_OBJECTS" ));
+    myGroup->TextLabel2->hide();
+    myGroup->PushButton2->hide();
+    myGroup->LineEdit2->hide();
   }
 
   myGroup->PushButton1->setIcon(image1);
-  myGroup->PushButton2->setIcon(image1);
   myGroup->LineEdit1->setReadOnly(true);
-  myGroup->LineEdit2->setReadOnly(true);
+
+  if (myOperation != BooleanGUI::FUSE && myOperation != BooleanGUI::COMMON) {
+    myGroup->PushButton2->setIcon(image1);
+    myGroup->LineEdit2->setReadOnly(true);
+  }
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -144,14 +153,17 @@ void BooleanGUI_Dialog::Init()
   myGroup->LineEdit1->setText("");
   myGroup->LineEdit2->setText("");
   myObject1.nullify();
-  myObject2.nullify();
+  reset();
  
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
   connect(myGroup->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(myGroup->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+
+  if (!myGroup->PushButton2->isHidden()) {
+    connect(myGroup->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  }
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
            SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
@@ -198,10 +210,20 @@ bool BooleanGUI_Dialog::ClickOnApply()
 }
 
 //=================================================================================
-// function : SelectionIntoArgument()
-// purpose  : Called when selection is changed or on dialog initialization or activation
+// function : reset()
+// purpose  : 
 //=================================================================================
-void BooleanGUI_Dialog::SelectionIntoArgument()
+void BooleanGUI_Dialog::reset()
+{
+  myObjects = new GEOM::ListOfGO;
+  myObjects->length( 0 );       
+}
+
+//=================================================================================
+// function : singleSelection
+// purpose  : Performs single selection. Called from SelectionIntoArgument()
+//=================================================================================
+void BooleanGUI_Dialog::singleSelection()
 {
   myEditCurrentArgument->setText("");
 
@@ -219,19 +241,67 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 
     if (myEditCurrentArgument == myGroup->LineEdit1) {
       myObject1 = aSelectedObject;
-      if (!myObject2)
+      if (!myGroup->PushButton2->isHidden() && !myObjects->length())
         myGroup->PushButton2->click();
     }
     else if (myEditCurrentArgument == myGroup->LineEdit2) {
-      myObject2 = aSelectedObject;
+      myObjects->length(1);
+      myObjects[0] = aSelectedObject.get();
       if (!myObject1)
         myGroup->PushButton1->click();
     }
   }
   else {
     if      (myEditCurrentArgument == myGroup->LineEdit1) myObject1.nullify();
-    else if (myEditCurrentArgument == myGroup->LineEdit2) myObject2.nullify();
+    else if (myEditCurrentArgument == myGroup->LineEdit2) reset();
   }
+}
+
+//=================================================================================
+// function : multipleSelection
+// purpose  : Performs multiple selection. Called from SelectionIntoArgument()
+//=================================================================================
+void BooleanGUI_Dialog::multipleSelection()
+{
+  myEditCurrentArgument->setText( "" );
+  reset();
+        
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+  myObjects->length(aSelList.Extent());
+
+  int i = 0;
+  for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value() );
+
+    if ( !CORBA::is_nil( aSelectedObject ) ) {
+      myObjects[i++] = aSelectedObject;
+    }
+  }
+
+  myObjects->length( i );
+  if ( i == 1 ) {
+    myEditCurrentArgument->setText( GEOMBase::GetName( myObjects[0] ) );
+  } else if ( i > 0 ) {
+    myEditCurrentArgument->setText( QString::number( i ) + "_" + tr( "GEOM_OBJECTS" ) );
+  }
+}
+
+//=================================================================================
+// function : SelectionIntoArgument()
+// purpose  : Called when selection is changed or on dialog initialization or activation
+//=================================================================================
+void BooleanGUI_Dialog::SelectionIntoArgument()
+{
+  if ( myOperation == BooleanGUI::SECTION ||
+      (myOperation == BooleanGUI::CUT &&
+       myEditCurrentArgument == myGroup->LineEdit1)) {
+    singleSelection();
+  } else {
+    multipleSelection();
+  }
+
   processPreview();
 }
 
@@ -246,8 +316,10 @@ void BooleanGUI_Dialog::SetEditCurrentArgument()
   if (send == myGroup->PushButton1) {
     myEditCurrentArgument = myGroup->LineEdit1;
 
-    myGroup->PushButton2->setDown(false);
-    myGroup->LineEdit2->setEnabled(false);
+    if (!myGroup->PushButton2->isHidden()) {
+      myGroup->PushButton2->setDown(false);
+      myGroup->LineEdit2->setEnabled(false);
+    }
   }
   else if (send == myGroup->PushButton2) {
     myEditCurrentArgument = myGroup->LineEdit2;
@@ -301,7 +373,24 @@ GEOM::GEOM_IOperations_ptr BooleanGUI_Dialog::createOperation()
 //=================================================================================
 bool BooleanGUI_Dialog::isValid (QString&)
 {
-  return myObject1 && myObject2;
+  bool isOK = false;
+
+  switch (myOperation) {
+    case BooleanGUI::FUSE:
+    case BooleanGUI::COMMON:
+      isOK = myObjects->length() > 1;
+    break;
+  case BooleanGUI::CUT:
+      isOK = myObject1 && myObjects->length();
+    break;
+  case BooleanGUI::SECTION:
+      isOK = myObject1 && (myObjects->length() == 1);
+    break;
+  default:
+    break;
+  }
+
+  return isOK;
 }
 
 //=================================================================================
@@ -313,7 +402,24 @@ bool BooleanGUI_Dialog::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
-  anObj = anOper->MakeBoolean(myObject1.get(), myObject2.get(), myOperation);
+
+  switch (myOperation) {
+    case BooleanGUI::FUSE:
+      anObj = anOper->MakeFuseList(myObjects);
+    break;
+    case BooleanGUI::COMMON:
+      anObj = anOper->MakeCommonList(myObjects);
+    break;
+  case BooleanGUI::CUT:
+      anObj = anOper->MakeCutList(myObject1.get(), myObjects);
+    break;
+  case BooleanGUI::SECTION:
+      anObj = anOper->MakeBoolean(myObject1.get(), myObjects[0], myOperation);
+    break;
+  default:
+    break;
+  }
+
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
 

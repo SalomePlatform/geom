@@ -2,24 +2,19 @@
 
 \page section_opeartion_page Section
 
-For detail description of the Boolean operations please refer to
-<a href="SALOME_BOA_PA.pdf">this document</a>. 
-It provides a general review of the Partition and Boolean
-operations algorithms, describes the usage methodology and highlighs
-major limitations of these operations.
-
 To produce a \b Section operation in the <b>Main Menu</b> select
 <b>Operations - > Boolean - > Section</b>
 
 This operation creates the section between 2 shapes.
 
 The \b Result will be any \b GEOM_Object (EDGE or WIRE).
-<b>TUI Command:</b> <em>geompy.MakeSection(s1, s2)</em>
-<b>Arguments:</b> Name + 2 shapes.
+
+<b>TUI Command:</b> <em>geompy.MakeSection(s1, s2)</em>\n
+<b>Arguments:</b> Name + 2 shapes.\n
 <b>Advanced option:</b>
 \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
-\image html neo-section.png
+\image html neo-section.png "Section dialog"
 
 <b>Example:</b>
 
@@ -29,5 +24,13 @@ The \b Result will be any \b GEOM_Object (EDGE or WIRE).
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_section "Boolean Operations".
+
+<b> More details </b>
+
+For a detailed description of the Boolean operations please refer to
+<a href="SALOME_BOA_PA.pdf">this document</a>. 
+It provides a general review of the Partition and Boolean
+operations algorithms, describes the usage methodology and highlights
+major limitations of these operations.
 
 */

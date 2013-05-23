@@ -55,12 +55,15 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  void                               reset();
+  void                               singleSelection();
+  void                               multipleSelection();
   
 private:
   int                                myOperation;
   
   GEOM::GeomObjPtr                   myObject1;
-  GEOM::GeomObjPtr                   myObject2;
+  GEOM::ListOfGO_var                 myObjects;
   
   DlgRef_2Sel*                       myGroup;
 

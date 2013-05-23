@@ -439,7 +439,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_COMMON_TITLE</source>
-        <translation>Common Of Two Objects</translation>
+        <translation>Common Of Objects</translation>
     </message>
     <message>
         <source>GEOM_COMPOUND</source>
@@ -507,7 +507,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CUT_TITLE</source>
-        <translation>Cut Of Two Objects</translation>
+        <translation>Cut Of Objects</translation>
     </message>
     <message>
         <source>GEOM_CYLINDER</source>
@@ -836,7 +836,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_FUSE_TITLE</source>
-        <translation>Fuse Two Objects</translation>
+        <translation>Fuse Objects</translation>
     </message>
     <message>
         <source>GEOM_FixFaceSize</source>
@@ -2141,10 +2141,6 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_TOLERANCE_VERTEX</source>
         <translation>Vertex :</translation>
-    </message>
-    <message>
-        <source>GEOM_TOOL_OBJECT</source>
-        <translation>Tool Object</translation>
     </message>
     <message>
         <source>GEOM_TOOL_OBJECTS</source>

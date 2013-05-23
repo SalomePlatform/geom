@@ -2,23 +2,23 @@
 
 \page common_operation_page Common
 
-For detail description of the Boolean operations please refer to
-<a href="SALOME_BOA_PA.pdf">this document</a>. 
-It provides a general review of the Partition and Boolean
-operations algorithms, describes the usage methodology and highlighs
-major limitations of these operations.
-
 To produce a \b Common operation in the <b>Main Menu</b> select <b>Operations - > Boolean - > Common</b>
 
-This operation cuts the common part of two shapes and transforms it into an independent geometrical object.
+This operation cuts the common part of a list of shapes and transforms it into an independent geometrical object.
 
-The \b Result will be any \b GEOM_Object.
-<b>TUI Command:</b> <em>geompy.MakeCommon(s1, s2)</em>
-<b>Arguments:</b> Name + 2 shapes.
+The \b Result will be a \b GEOM_Object.
+
+<b>TUI Command:</b> <em>geompy.MakeCommonList(theShapesList)</em>\n
+<b>Arguments:</b> Name + a list of shapes.\n
 <b>Advanced option:</b>
 \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
-\image html bool2.png
+\image html bool2.png "Common dialog"
+
+For a particular case with two shapes for the Common operation there is the following TUI command:
+
+<b>TUI Command:</b> <em>geompy.MakeCommon(s1, s2)</em>\n
+<b>Arguments:</b> Name + 2 shapes.
 
 <b>Example:</b>
 
@@ -28,5 +28,13 @@ The \b Result will be any \b GEOM_Object.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_common "Boolean Operations".
+
+<b> More details </b>
+
+For a detailed description of the Boolean operations please refer to
+<a href="SALOME_BOA_PA.pdf">this document</a>. 
+It provides a general review of the Partition and Boolean
+operations algorithms, describes the usage methodology and highlights
+major limitations of these operations.
 
 */

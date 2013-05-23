@@ -50,6 +50,9 @@ class GEOM_I_EXPORT GEOM_IOperations_i : public virtual POA_GEOM::GEOM_IOperatio
   virtual GEOM::GEOM_Object_ptr GetObject(Handle(GEOM_Object) theObject);
   virtual Handle(GEOM_Object) GetObjectImpl(GEOM::GEOM_Object_ptr theObject);
 
+  virtual Handle(TColStd_HSequenceOfTransient)
+               GetListOfObjectsImpl(const GEOM::ListOfGO& theObjects);
+
   virtual void StartOperation();
 
   virtual void FinishOperation();

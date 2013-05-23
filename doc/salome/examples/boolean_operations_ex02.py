@@ -20,12 +20,28 @@ cylinder = geompy.MakeCylinder(p1, v, radius1, height)
 # create a sphere
 sphere = geompy.MakeSphereR(40)
 
+# create a box
+box = geompy.MakeBoxDXDYDZ(80, 80, 80)
+
 # make common
-common = geompy.MakeCommon(cylinder, sphere)
+common1 = geompy.MakeCommon(cylinder, sphere)
+common2 = geompy.MakeCommonList([cylinder, sphere, box])
 
 # add objects in the study
-id_common = geompy.addToStudy(common, "Common")
+id_cylinder = geompy.addToStudy(cylinder, "Cylinder")
+id_sphere = geompy.addToStudy(sphere, "Sphere")
+id_box = geompy.addToStudy(box, "Box")
+id_common1 = geompy.addToStudy(common1, "Common_1")
+id_common2 = geompy.addToStudy(common2, "Common_2")
 
 # display the results
-gg.createAndDisplayGO(id_common)
-gg.setDisplayMode(id_common,1)
+gg.createAndDisplayGO(id_cylinder)
+gg.setDisplayMode(id_cylinder,1)
+gg.createAndDisplayGO(id_sphere)
+gg.setDisplayMode(id_sphere,1)
+gg.createAndDisplayGO(id_box)
+gg.setDisplayMode(id_box,1)
+gg.createAndDisplayGO(id_common1)
+gg.setDisplayMode(id_common1,1)
+gg.createAndDisplayGO(id_common2)
+gg.setDisplayMode(id_common2,1)

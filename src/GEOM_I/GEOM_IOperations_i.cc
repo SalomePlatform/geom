@@ -162,6 +162,34 @@ Handle(GEOM_Object) GEOM_IOperations_i::GetObjectImpl(GEOM::GEOM_Object_ptr theO
 
 //=============================================================================
 /*!
+ *  GetListOfObjectsImpl
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOM_IOperations_i::GetListOfObjectsImpl
+              (const GEOM::ListOfGO& theObjects)
+{
+  Handle(TColStd_HSequenceOfTransient) aResult =
+    new TColStd_HSequenceOfTransient;
+
+  int i;
+  int aNbObj = theObjects.length();
+
+  for (i = 0; i < aNbObj; i++) {
+    Handle(GEOM_Object) anObj = GetObjectImpl(theObjects[i]);
+
+    if (anObj.IsNull()) {
+      aResult.Nullify();
+      break;
+    }
+
+    aResult->Append(anObj);
+  }
+
+  return aResult;
+}
+
+//=============================================================================
+/*!
  *  UpdateGUIForObject
  */
 //=============================================================================

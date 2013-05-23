@@ -23,9 +23,11 @@
 //NOTE: This is an intreface to a function for the Common, Cut and Fuse creation.
 //
 #include "GEOM_Function.hxx"
+#include "TColStd_HSequenceOfTransient.hxx"
 
 #define BOOL_ARG_SHAPE1  1
 #define BOOL_ARG_SHAPE2  2
+#define BOOL_ARG_SHAPES  3
 
 class GEOMImpl_IBoolean
 {
@@ -35,9 +37,13 @@ class GEOMImpl_IBoolean
 
   void SetShape1(Handle(GEOM_Function) theRef) { _func->SetReference(BOOL_ARG_SHAPE1, theRef); }
   void SetShape2(Handle(GEOM_Function) theRef) { _func->SetReference(BOOL_ARG_SHAPE2, theRef); }
+  void SetShapes(const Handle(TColStd_HSequenceOfTransient)& theShapes)
+  { _func->SetReferenceList(BOOL_ARG_SHAPES, theShapes); }
 
   Handle(GEOM_Function) GetShape1() { return _func->GetReference(BOOL_ARG_SHAPE1); }
   Handle(GEOM_Function) GetShape2() { return _func->GetReference(BOOL_ARG_SHAPE2); }
+  Handle(TColStd_HSequenceOfTransient) GetShapes()
+  { return _func->GetReferenceList(BOOL_ARG_SHAPES); }
 
  private:
 

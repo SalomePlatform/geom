@@ -12,16 +12,35 @@ You can use the following boolean operations for construction of more
 complex geometrical objects (2D & 3D elements):
 
 <ul>
-<li>\subpage fuse_operation_page "Fuse" - creates a shape from two shapes.</li>
+<li>\subpage fuse_operation_page "Fuse" - creates a shape from a list of shapes.</li>
 <li>\subpage common_operation_page "Common" - transforms the common part
-of two objects into an independent object.</li>
+of a list of objects into an independent object.</li>
 <li>\subpage cut_operation_page "Cut" - cuts one shape with
-another. </li>
+a list of others. </li>
 <li>\subpage section_opeartion_page "Section" - creates a section between two shapes.</li>
 </ul>
 
-There is a general TUI command covering all these operations, which
-can be used alongside with separate commands for each operation.
+You can use advanced TUI commands performing these operations
+independently from each other:
+\par
+<em>geompy.MakeFuseList(theShapesList)</em>, where \em theShapesList is
+the list of shapes for Fuse operation; 
+\par
+<em>geompy.MakeCommonList(theShapesList)</em>, where \em theShapesList is
+the list of shapes for Common operation;
+\par
+<em>geompy.MakeCutList(theMainShape, theShapesList)</em>, where \em
+theMainShape is the object of the operation and \em theShapesList is
+the list of tools for Cut operation;
+\par
+<em>geompy.MakeSection(Shape1, Shape2)</em>, where \em Shape1 is the first
+argument and \em Shape2 is the second argument of Section operation;
+
+
+There are several TUI commands that can be used to perform boolean operations
+with only two arguments. There is a general TUI command covering these
+operations, which can be used alongside with separate commands for each
+operation.
 \par
 <em>geompy.MakeBoolean(Shape1, Shape2, Operation),</em> where \em
 Shape1 is the first argument and \em Shape2 is the second argument of
@@ -32,17 +51,14 @@ Boolean operation, \em Operation is a type of the Boolean operation (1
 Besides, you can use advanced TUI commands performing these operations
 independently from each other:
 \par
-<em>geompy.MakeFuse(Shape1, Shape2)</em>, where \em Shape1 and \em
-Shape2 is the second argument of Fuse operation; 
+<em>geompy.MakeFuse(Shape1, Shape2)</em>, where \em Shape1 is the first
+argument and \em Shape2 is the second argument of Fuse operation; 
 \par
-<em>geompy.MakeCommon(Shape1, Shape2)</em>, where \em Shape1 and \em
-Shape2 is the second argument of Common operation;
+<em>geompy.MakeCommon(Shape1, Shape2)</em>, where \em Shape1 is the first
+argument and \em Shape2 is the second argument of Common operation;
 \par
-<em>geompy.MakeCut(Shape1, Shape2)</em>, where \em Shape1 and \em
-Shape2 is the second argument of Cut operation;
-\par
-<em>geompy.MakeSection(Shape1, Shape2)</em>, where \em Shape1 and \em
-Shape2 is the second argument of Section operation;
+<em>geompy.MakeCut(Shape1, Shape2)</em>, where \em Shape1 is the first
+argument and \em Shape2 is the second argument of Cut operation;
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_boolean_operations_page "Boolean Operations".

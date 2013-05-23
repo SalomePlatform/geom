@@ -6637,6 +6637,98 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # note: auto-publishing is done in self.MakeBoolean()
             return self.MakeBoolean(theShape1, theShape2, 4, theName)
 
+        ## Perform Fuse boolean operation on the list of shapes.
+        #  @param theShapesList Shapes to be fused.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the result shape.
+        #
+        #  @ref tui_fuse "Example 1"
+        #  \n @ref swig_MakeCommon "Example 2"
+        def MakeFuseList(self, theShapesList, theName=None):
+            """
+            Perform Fuse boolean operation on the list of shapes.
+
+            Parameters: 
+                theShapesList Shapes to be fused.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:   
+                New GEOM.GEOM_Object, containing the result shape.
+            
+            """
+            # Example: see GEOM_TestOthers.py
+            anObj = self.BoolOp.MakeFuseList(theShapesList)
+            RaiseIfFailed("MakeFuseList", self.BoolOp)
+            self._autoPublish(anObj, theName, "fuse")
+            return anObj
+
+        ## Perform Common boolean operation on the list of shapes.
+        #  @param theShapesList Shapes for Common operation.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the result shape.
+        #
+        #  @ref tui_common "Example 1"
+        #  \n @ref swig_MakeCommon "Example 2"
+        def MakeCommonList(self, theShapesList, theName=None):
+            """
+            Perform Common boolean operation on the list of shapes.
+
+            Parameters: 
+                theShapesList Shapes for Common operation.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:   
+                New GEOM.GEOM_Object, containing the result shape.
+            
+            """
+            # Example: see GEOM_TestOthers.py
+            anObj = self.BoolOp.MakeCommonList(theShapesList)
+            RaiseIfFailed("MakeCommonList", self.BoolOp)
+            self._autoPublish(anObj, theName, "common")
+            return anObj
+
+        ## Perform Cut boolean operation on one object and the list of tools.
+        #  @param theMainShape The object of the operation.
+        #  @param theShapesList The list of tools of the operation.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the result shape.
+        #
+        #  @ref tui_cut "Example 1"
+        #  \n @ref swig_MakeCommon "Example 2"
+        def MakeCutList(self, theMainShape, theShapesList, theName=None):
+            """
+            Perform Cut boolean operation on one object and the list of tools.
+
+            Parameters: 
+                theMainShape The object of the operation.
+                theShapesList The list of tools of the operation.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:   
+                New GEOM.GEOM_Object, containing the result shape.
+            
+            """
+            # Example: see GEOM_TestOthers.py
+            anObj = self.BoolOp.MakeCutList(theMainShape, theShapesList)
+            RaiseIfFailed("MakeCutList", self.BoolOp)
+            self._autoPublish(anObj, theName, "cut")
+            return anObj
+
         # end of l3_boolean
         ## @}
 

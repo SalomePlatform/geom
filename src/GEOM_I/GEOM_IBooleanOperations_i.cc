@@ -87,6 +87,100 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
 
 //=============================================================================
 /*!
+ *  MakeFuseList
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
+                                    (const GEOM::ListOfGO& theShapes)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  Handle(TColStd_HSequenceOfTransient) aShapes =
+    GetListOfObjectsImpl(theShapes);
+
+  if (aShapes.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  // Make fusion
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFuseList(aShapes);
+
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeCommonList
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonList
+                                    (const GEOM::ListOfGO& theShapes)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  Handle(TColStd_HSequenceOfTransient) aShapes =
+    GetListOfObjectsImpl(theShapes);
+
+  if (aShapes.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  // Make fusion
+  Handle(GEOM_Object) anObject = GetOperations()->MakeCommonList(aShapes);
+
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeCutList
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutList
+                                    (GEOM::GEOM_Object_ptr theMainShape,
+                                     const GEOM::ListOfGO& theShapes)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  Handle(GEOM_Object) aMainShape = GetObjectImpl(theMainShape);
+
+  if (aMainShape.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  Handle(TColStd_HSequenceOfTransient) aShapes =
+    GetListOfObjectsImpl(theShapes);
+
+  if (aShapes.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  // Make fusion
+  Handle(GEOM_Object) anObject = GetOperations()->MakeCutList(aMainShape, aShapes);
+
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakePartition
  */
 //=============================================================================
@@ -105,47 +199,20 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  int ind, aLen;
-  Handle(TColStd_HSequenceOfTransient) aShapes  = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) aTools   = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) aKeepIns = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) aRemIns  = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aShapes  = GetListOfObjectsImpl(theShapes);
+  Handle(TColStd_HSequenceOfTransient) aTools   = GetListOfObjectsImpl(theTools);
+  Handle(TColStd_HSequenceOfTransient) aKeepIns = GetListOfObjectsImpl(theKeepIns);
+  Handle(TColStd_HSequenceOfTransient) aRemIns  = GetListOfObjectsImpl(theRemoveIns);
   Handle(TColStd_HArray1OfInteger) aMaterials;
 
-  //Get the shapes
-  aLen = theShapes.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theShapes[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    aShapes->Append(aSh);
-  }
-
-  //Get the tools
-  aLen = theTools.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theTools[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    aTools->Append(aSh);
-  }
-
-  //Get the keep inside shapes
-  aLen = theKeepIns.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theKeepIns[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    aKeepIns->Append(aSh);
-  }
-
-  //Get the remove inside shapes
-  aLen = theRemoveIns.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theRemoveIns[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    aRemIns->Append(aSh);
+  if (aShapes.IsNull() || aTools.IsNull() ||
+      aKeepIns.IsNull() || aRemIns.IsNull()) {
+    return aGEOMObject._retn();
   }
 
   //Get the materials
-  aLen = theMaterials.length();
+  int ind;
+  int aLen = theMaterials.length();
   if ( aLen ) {
     aMaterials = new TColStd_HArray1OfInteger (1, aLen);
     for (ind = 0; ind < aLen; ind++) {
@@ -185,47 +252,20 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  int ind, aLen;
-  Handle(TColStd_HSequenceOfTransient) aShapes  = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) aTools   = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) aKeepIns = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) aRemIns  = new TColStd_HSequenceOfTransient;
+  Handle(TColStd_HSequenceOfTransient) aShapes  = GetListOfObjectsImpl(theShapes);
+  Handle(TColStd_HSequenceOfTransient) aTools   = GetListOfObjectsImpl(theTools);
+  Handle(TColStd_HSequenceOfTransient) aKeepIns = GetListOfObjectsImpl(theKeepIns);
+  Handle(TColStd_HSequenceOfTransient) aRemIns  = GetListOfObjectsImpl(theRemoveIns);
   Handle(TColStd_HArray1OfInteger) aMaterials;
 
-  //Get the shapes
-  aLen = theShapes.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theShapes[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    aShapes->Append(aSh);
-  }
-
-  //Get the tools
-  aLen = theTools.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theTools[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    aTools->Append(aSh);
-  }
-
-  //Get the keep inside shapes
-  aLen = theKeepIns.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theKeepIns[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    aKeepIns->Append(aSh);
-  }
-
-  //Get the remove inside shapes
-  aLen = theRemoveIns.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theRemoveIns[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    aRemIns->Append(aSh);
+  if (aShapes.IsNull() || aTools.IsNull() ||
+      aKeepIns.IsNull() || aRemIns.IsNull()) {
+    return aGEOMObject._retn();
   }
 
   //Get the materials
-  aLen = theMaterials.length();
+  int ind;
+  int aLen = theMaterials.length();
   if ( aLen ) {
     aMaterials = new TColStd_HArray1OfInteger (1, aLen);
     for (ind = 0; ind < aLen; ind++) {

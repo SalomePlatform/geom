@@ -229,10 +229,13 @@
 #define THRUSECTIONS_RULED 1
 #define THRUSECTIONS_SMOOTHED 2
 
-#define BOOLEAN_COMMON  1
-#define BOOLEAN_CUT     2
-#define BOOLEAN_FUSE    3
-#define BOOLEAN_SECTION 4
+#define BOOLEAN_COMMON      1
+#define BOOLEAN_CUT         2
+#define BOOLEAN_FUSE        3
+#define BOOLEAN_SECTION     4
+#define BOOLEAN_COMMON_LIST 5
+#define BOOLEAN_CUT_LIST    6
+#define BOOLEAN_FUSE_LIST   7
 
 #define PARTITION_PARTITION 1
 #define PARTITION_HALF      2

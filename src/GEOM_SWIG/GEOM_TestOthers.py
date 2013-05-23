@@ -163,17 +163,29 @@ def TestOtherOperations (geompy, math):
   id_Orientation = geompy.addToStudy(Orientation, "OrientationChange")
 
   # MakeCommon, MakeCut, MakeFuse, MakeSection
+  p1 = geompy.MakeVertex(60, 120, 0)
+  p2 = geompy.MakeVertex( 0,  0, 0)
+  v = geompy.MakeVector(p1, p2)
+  height = 90
+  radius1 = 50
+  cylinder = geompy.MakeCylinder(p1, v, radius1, height)
   Sphere = geompy.MakeSphereR(100)
 
-  Common  = geompy.MakeCommon (Box, Sphere)
-  Cut     = geompy.MakeCut    (Box, Sphere)
-  Fuse    = geompy.MakeFuse   (Box, Sphere)
-  Section = geompy.MakeSection(Box, Sphere)
+  Common1 = geompy.MakeCommon    (Box, Sphere)
+  Cut1    = geompy.MakeCut       (Box, Sphere)
+  Fuse1   = geompy.MakeFuse      (Box, Sphere)
+  Section = geompy.MakeSection   (Box, Sphere)
+  Common2 = geompy.MakeCommonList([Box, Sphere, cylinder])
+  Cut2    = geompy.MakeCutList   (Box, [Sphere, cylinder])
+  Fuse2   = geompy.MakeFuseList  ([Box, Sphere, cylinder])
 
-  id_Common  = geompy.addToStudy(Common,  "Common")
-  id_Cut     = geompy.addToStudy(Cut,     "Cut")
-  id_Fuse    = geompy.addToStudy(Fuse,    "Fuse")
+  id_Common1 = geompy.addToStudy(Common1,  "Common_1")
+  id_Cut1    = geompy.addToStudy(Cut1,     "Cut_1")
+  id_Fuse1   = geompy.addToStudy(Fuse1,    "Fuse_1")
   id_Section = geompy.addToStudy(Section, "Section")
+  id_Common2 = geompy.addToStudy(Common2,  "Common_2")
+  id_Cut2    = geompy.addToStudy(Cut2,     "Cut_2")
+  id_Fuse2   = geompy.addToStudy(Fuse2,    "Fuse_2")
 
   # Partition
   p100 = geompy.MakeVertex(100, 100, 100)
@@ -713,10 +725,9 @@ def TestOtherOperations (geompy, math):
   sph2 = geompy.MakeSphere(50, 50, -50, 40)
   pcyl = geompy.MakeVertex(50, 50, -50)
   cyli = geompy.MakeCylinder(pcyl, vz, 40, 100)
-  fuse = geompy.MakeFuse(sph1, cyli)
-  sh_1 = geompy.MakeFuse(fuse, sph2)
+  sh_1 = geompy.MakeFuseList([sph1, cyli, sph2])
   # As after Fuse we have a compound, we need to obtain a solid from it
-  #shsh = geompy.SubShapeAll(fuse, geompy.ShapeType["SOLID"])
+  #shsh = geompy.SubShapeAll(sh_1, geompy.ShapeType["SOLID"])
   #sh_1 = shsh[0]
   geompy.addToStudy(sh_1, "sh_1")
 

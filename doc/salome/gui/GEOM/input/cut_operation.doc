@@ -2,23 +2,23 @@
 
 \page cut_operation_page Cut
 
-For detail description of the Boolean operations please refer to
-<a href="SALOME_BOA_PA.pdf">this document</a>. 
-It provides a general review of the Partition and Boolean
-operations algorithms, describes the usage methodology and highlighs
-major limitations of these operations.
-
 To produce a \b Cut operation in the <b>Main Menu</b> select <b>Operations - > Boolean - > Cut</b>
 
-This operation cuts a shape with another one.
-The \b Result will be any \b GEOM_Object.
-<b>Arguments:</b> Name + 2 shapes.
+This operation cuts a shape with a list of other shapes.
+
+The \b Result will be a \b GEOM_Object.
+
+<b>TUI Command:</b> <em>geompy.MakeCutList(theMainShape, theShapesList)</em>\n
+<b>Arguments:</b> Name + a main shape + a list of other shapes.\n
 <b>Advanced option:</b>
 \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
-<b>Dialog Box:</b>
+\image html bool3.png "Cut dialog"
 
-\image html bool3.png
+For a particular case with two shapes (object and tool) for the Cut operation there is the following TUI command:
+
+<b>TUI Command:</b> <em>geompy.MakeCut(s1, s2)</em>\n
+<b>Arguments:</b> Name + the object + the tool.
 
 <b>Example:</b>
 
@@ -28,5 +28,13 @@ The \b Result will be any \b GEOM_Object.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_cut "Boolean Operations".
+
+<b> More details </b>
+
+For a detailed description of the Boolean operations please refer to
+<a href="SALOME_BOA_PA.pdf">this document</a>. 
+It provides a general review of the Partition and Boolean
+operations algorithms, describes the usage methodology and highlights
+major limitations of these operations.
 
 */

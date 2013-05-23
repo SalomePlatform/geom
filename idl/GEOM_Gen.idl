@@ -2676,6 +2676,29 @@ module GEOM
                              in long theOperation);
 
     /*!
+     *  \brief Perform fusion boolean operation on list of objects.
+     *  \param theShapes Shapes to be fused.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFuseList (in ListOfGO theShapes);
+
+    /*!
+     *  \brief Perform common boolean operation on list of objects.
+     *  \param theShapes Shapes for common operation.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeCommonList (in ListOfGO theShapes);
+
+    /*!
+     *  \brief Perform cutting of list of objects from theMainShape.
+     *  \param theMainShape the object for cut operation.
+     *  \param theShapes Shapes to be cut from theMainShape (tools).
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeCutList (in GEOM_Object theMainShape,
+                             in ListOfGO theShapes);
+
+    /*!
      *  \brief Perform partition operation.
      *
      *  \param theShapes Shapes to be intersected.

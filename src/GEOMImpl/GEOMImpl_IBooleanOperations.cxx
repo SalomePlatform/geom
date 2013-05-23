@@ -141,6 +141,185 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
 
 //=============================================================================
 /*!
+ *  MakeFuseList
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
+                  (const Handle(TColStd_HSequenceOfTransient)& theShapes)
+{
+  SetErrorCode(KO);
+
+  if (theShapes.IsNull()) return NULL;
+
+  //Add a new Boolean object
+  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
+
+  //Add a new Boolean function
+  Handle(GEOM_Function) aFunction =
+    aBool->AddFunction(GEOMImpl_BooleanDriver::GetID(), BOOLEAN_FUSE_LIST);
+
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BooleanDriver::GetID()) return NULL;
+
+  GEOMImpl_IBoolean aCI (aFunction);
+
+  TCollection_AsciiString aDescription;
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq =
+    getShapeFunctions(theShapes, aDescription);
+
+  if (aShapesSeq.IsNull()) return NULL;
+
+  aCI.SetShapes(aShapesSeq);
+
+  //Compute the Boolean value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Boolean driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aBool <<
+    " = geompy.MakeFuseList([" << aDescription.ToCString() << "])";
+
+  SetErrorCode(OK);
+  return aBool;
+}
+
+//=============================================================================
+/*!
+ *  MakeCommonList
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
+                  (const Handle(TColStd_HSequenceOfTransient)& theShapes)
+{
+  SetErrorCode(KO);
+
+  if (theShapes.IsNull()) return NULL;
+
+  //Add a new Boolean object
+  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
+
+  //Add a new Boolean function
+  Handle(GEOM_Function) aFunction =
+    aBool->AddFunction(GEOMImpl_BooleanDriver::GetID(), BOOLEAN_COMMON_LIST);
+
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BooleanDriver::GetID()) return NULL;
+
+  GEOMImpl_IBoolean aCI (aFunction);
+
+  TCollection_AsciiString aDescription;
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq =
+    getShapeFunctions(theShapes, aDescription);
+
+  if (aShapesSeq.IsNull()) return NULL;
+
+  aCI.SetShapes(aShapesSeq);
+
+  //Compute the Boolean value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Boolean driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aBool <<
+    " = geompy.MakeCommonList([" << aDescription.ToCString() << "])";
+
+  SetErrorCode(OK);
+  return aBool;
+}
+
+//=============================================================================
+/*!
+ *  MakeCutList
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCutList
+                  (Handle(GEOM_Object) theMainShape,
+                   const Handle(TColStd_HSequenceOfTransient)& theShapes)
+{
+  SetErrorCode(KO);
+
+  if (theShapes.IsNull()) return NULL;
+
+  //Add a new Boolean object
+  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
+
+  //Add a new Boolean function
+  Handle(GEOM_Function) aFunction =
+    aBool->AddFunction(GEOMImpl_BooleanDriver::GetID(), BOOLEAN_CUT_LIST);
+
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BooleanDriver::GetID()) return NULL;
+
+  GEOMImpl_IBoolean aCI (aFunction);
+  Handle(GEOM_Function) aMainRef = theMainShape->GetLastFunction();
+
+  if (aMainRef.IsNull()) return NULL;
+
+  TCollection_AsciiString aDescription;
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq =
+    getShapeFunctions(theShapes, aDescription);
+
+  if (aShapesSeq.IsNull()) return NULL;
+
+  aCI.SetShape1(aMainRef);
+  aCI.SetShapes(aShapesSeq);
+
+  //Compute the Boolean value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Boolean driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aBool << " = geompy.MakeCutList("
+    << theMainShape << ", [" << aDescription.ToCString() << "])";
+
+  SetErrorCode(OK);
+  return aBool;
+}
+
+//=============================================================================
+/*!
  *  MakePartition
  */
 //=============================================================================
@@ -173,85 +352,47 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
 
   GEOMImpl_IPartition aCI (aFunction);
 
-  Handle(TColStd_HSequenceOfTransient) aShapesSeq  = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) aToolsSeq   = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) aKeepInsSeq = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) aRemInsSeq  = new TColStd_HSequenceOfTransient;
-
-  Standard_Integer ind, aLen;
-  TCollection_AsciiString anEntry;
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq;
+  Handle(TColStd_HSequenceOfTransient) aToolsSeq;
+  Handle(TColStd_HSequenceOfTransient) aKeepInsSeq;
+  Handle(TColStd_HSequenceOfTransient) aRemInsSeq;
   TCollection_AsciiString aShapesDescr, aToolsDescr, aKeepInsDescr, aRemoveInsDescr;
 
   // Shapes
-  aLen = theShapes->Length();
-  for (ind = 1; ind <= aLen; ind++) {
-    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(theShapes->Value(ind));
-    Handle(GEOM_Function) aRefSh = anObj->GetLastFunction();
-    if (aRefSh.IsNull()) {
-      SetErrorCode("NULL shape for Partition");
-      return NULL;
-    }
-    aShapesSeq->Append(aRefSh);
+  aShapesSeq = getShapeFunctions(theShapes, aShapesDescr);
 
-    // For Python command
-    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    if (ind > 1) aShapesDescr += ", ";
-    aShapesDescr += anEntry;
+  if (aShapesSeq.IsNull()) {
+    SetErrorCode("NULL shape for Partition");
+    return NULL;
   }
-  aCI.SetShapes(aShapesSeq);
 
   // Tools
-  aLen = theTools->Length();
-  for (ind = 1; ind <= aLen; ind++) {
-    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(theTools->Value(ind));
-    Handle(GEOM_Function) aRefSh = anObj->GetLastFunction();
-    if (aRefSh.IsNull()) {
-      SetErrorCode("NULL tool shape for Partition");
-      return NULL;
-    }
-    aToolsSeq->Append(aRefSh);
+  aToolsSeq = getShapeFunctions(theTools, aToolsDescr);
 
-    // For Python command
-    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    if (ind > 1) aToolsDescr += ", ";
-    aToolsDescr += anEntry;
+  if (aToolsSeq.IsNull()) {
+    SetErrorCode("NULL tool shape for Partition");
+    return NULL;
   }
-  aCI.SetTools(aToolsSeq);
 
   // Keep Inside
-  aLen = theKeepIns->Length();
-  for (ind = 1; ind <= aLen; ind++) {
-    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(theKeepIns->Value(ind));
-    Handle(GEOM_Function) aRefSh = anObj->GetLastFunction();
-    if (aRefSh.IsNull()) {
-      SetErrorCode("NULL <keep inside> shape for Partition");
-      return NULL;
-    }
-    aKeepInsSeq->Append(aRefSh);
+  aKeepInsSeq = getShapeFunctions(theKeepIns, aKeepInsDescr);
 
-    // For Python command
-    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    if (ind > 1) aKeepInsDescr += ", ";
-    aKeepInsDescr += anEntry;
+  if (aKeepInsSeq.IsNull()) {
+    SetErrorCode("NULL <keep inside> shape for Partition");
+    return NULL;
   }
-  aCI.SetKeepIns(aKeepInsSeq);
 
   // Remove Inside
-  aLen = theRemoveIns->Length();
-  for (ind = 1; ind <= aLen; ind++) {
-    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(theRemoveIns->Value(ind));
-    Handle(GEOM_Function) aRefSh = anObj->GetLastFunction();
-    if (aRefSh.IsNull()) {
-      SetErrorCode("NULL <remove inside> shape for Partition");
-      return NULL;
-    }
-    aRemInsSeq->Append(aRefSh);
+  aRemInsSeq  = getShapeFunctions(theRemoveIns, aRemoveInsDescr);
 
-    // For Python command
-    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    if (ind > 1) aRemoveInsDescr += ", ";
-    aRemoveInsDescr += anEntry;
+  if (aRemInsSeq.IsNull()) {
+    SetErrorCode("NULL <remove inside> shape for Partition");
+    return NULL;
   }
+
+  aCI.SetShapes(aShapesSeq);
+  aCI.SetTools(aToolsSeq);
+  aCI.SetKeepIns(aKeepInsSeq);
   aCI.SetRemoveIns(aRemInsSeq);
 
   // Limit
@@ -369,4 +510,47 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
 
   SetErrorCode(OK);
   return aPart;
+}
+
+//=============================================================================
+/*!
+ *  getShapeFunctions
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient)
+  GEOMImpl_IBooleanOperations::getShapeFunctions
+                  (const Handle(TColStd_HSequenceOfTransient)& theObjects,
+                         TCollection_AsciiString &theDescription)
+{
+  Handle(TColStd_HSequenceOfTransient) aResult =
+    new TColStd_HSequenceOfTransient;
+  Standard_Integer aNbObjects = theObjects->Length();
+  Standard_Integer i;
+  TCollection_AsciiString anEntry;
+  Handle(GEOM_Object) anObj;
+  Handle(GEOM_Function) aRefObj;
+
+  // Shapes
+  for (i = 1; i <= aNbObjects; i++) {
+    anObj = Handle(GEOM_Object)::DownCast(theObjects->Value(i));
+    aRefObj = anObj->GetLastFunction();
+
+    if (aRefObj.IsNull()) {
+      aResult.Nullify();
+      break;
+    }
+
+    aResult->Append(aRefObj);
+
+    // For Python command
+    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+
+    if (i > 1) {
+      theDescription += ", ";
+    }
+
+    theDescription += anEntry;
+  }
+
+  return aResult;
 }
