@@ -41,6 +41,10 @@
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
 
+#include <BRepClass3d_SolidClassifier.hxx>
+
+#include <BRepBuilderAPI_MakeFace.hxx>
+
 #include <Bnd_Box.hxx>
 
 #include <TopAbs.hxx>
@@ -58,8 +62,12 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_Array1OfShape.hxx>
 
+#include <Geom_Circle.hxx>
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
+#include <Geom_SphericalSurface.hxx>
+#include <Geom_ToroidalSurface.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
 
 #include <GeomLProp_CLProps.hxx>
 #include <GeomLProp_SLProps.hxx>
@@ -71,6 +79,9 @@
 
 #include <gp_Pln.hxx>
 #include <gp_Lin.hxx>
+
+#include <ShapeAnalysis.hxx>
+#include <ShapeFix_Shape.hxx>
 
 #include <vector>
 
@@ -596,6 +607,346 @@ TopoDS_Shape GEOMUtils::GetEdgeNearPoint (const TopoDS_Shape& theShape,
     Standard_ConstructionError::Raise("There are no edges near the given point");
   }
   else {
+  }
+
+  return aResult;
+}
+
+//=======================================================================
+//function : PreciseBoundingBox
+//purpose  : 
+//=======================================================================
+Standard_Boolean GEOMUtils::PreciseBoundingBox
+                          (const TopoDS_Shape &theShape, Bnd_Box &theBox)
+{
+  Standard_Real aBound[6];
+
+  theBox.Get(aBound[0], aBound[2], aBound[4], aBound[1], aBound[3], aBound[5]);
+
+  Standard_Integer i;
+  const gp_Pnt aMid(0.5*(aBound[1] + aBound[0]),  // XMid
+                    0.5*(aBound[3] + aBound[2]),  // YMid
+                    0.5*(aBound[5] + aBound[4])); // ZMid
+  const gp_XYZ aSize(aBound[1] - aBound[0],       // DX
+                     aBound[3] - aBound[2],       // DY
+                     aBound[5] - aBound[4]);      // DZ
+  const gp_Pnt aPnt[6] =
+    {
+      gp_Pnt(aBound[0] - (aBound[1] - aBound[0]), aMid.Y(), aMid.Z()), // XMin
+      gp_Pnt(aBound[1] + (aBound[1] - aBound[0]), aMid.Y(), aMid.Z()), // XMax
+      gp_Pnt(aMid.X(), aBound[2] - (aBound[3] - aBound[2]), aMid.Z()), // YMin
+      gp_Pnt(aMid.X(), aBound[3] + (aBound[3] - aBound[2]), aMid.Z()), // YMax
+      gp_Pnt(aMid.X(), aMid.Y(), aBound[4] - (aBound[5] - aBound[4])), // ZMin
+      gp_Pnt(aMid.X(), aMid.Y(), aBound[5] + (aBound[5] - aBound[4]))  // ZMax
+    };
+  const gp_Dir aDir[3] = { gp::DX(), gp::DY(), gp::DZ() };
+  const Standard_Real aPlnSize[3] =
+    {
+      0.5*Max(aSize.Y(), aSize.Z()), // XMin, XMax planes
+      0.5*Max(aSize.X(), aSize.Z()), // YMin, YMax planes
+      0.5*Max(aSize.X(), aSize.Y())  // ZMin, ZMax planes
+    };
+  gp_Pnt aPMin[2];
+
+  for (i = 0; i < 6; i++) {
+    const Standard_Integer iHalf = i/2;
+    const gp_Pln aPln(aPnt[i], aDir[iHalf]);
+    BRepBuilderAPI_MakeFace aMkFace(aPln, -aPlnSize[iHalf], aPlnSize[iHalf],
+                                          -aPlnSize[iHalf], aPlnSize[iHalf]);
+
+    if (!aMkFace.IsDone()) {
+      return Standard_False;
+    }
+
+    TopoDS_Shape aFace = aMkFace.Shape();
+
+    // Get minimal distance between planar face and shape.
+    Standard_Real aMinDist =
+      GEOMUtils::GetMinDistance(aFace, theShape, aPMin[0], aPMin[1]);
+
+    if (aMinDist < 0.) {
+      return Standard_False;
+    }
+
+    aBound[i] = aPMin[1].Coord(iHalf + 1);
+  }
+
+  // Update Bounding box with the new values.
+  theBox.SetVoid();
+  theBox.Update(aBound[0], aBound[2], aBound[4], aBound[1], aBound[3], aBound[5]);
+
+  return Standard_True;
+}
+
+//=======================================================================
+//function : GetMinDistanceSingular
+//purpose  : 
+//=======================================================================
+double GEOMUtils::GetMinDistanceSingular(const TopoDS_Shape& aSh1,
+                                         const TopoDS_Shape& aSh2,
+                                         gp_Pnt& Ptmp1, gp_Pnt& Ptmp2)
+{
+  bool IsChange1 = false;
+  double AddDist1 = 0.0;
+  TopExp_Explorer anExp;
+  TopoDS_Shape tmpSh1, tmpSh2;
+  int nbf = 0;
+  for ( anExp.Init( aSh1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh1 = anExp.Current();
+  }
+  if(nbf==1) {
+    TopoDS_Shape sh = aSh1;
+    while(sh.ShapeType()==TopAbs_COMPOUND) {
+      TopoDS_Iterator it(sh);
+      sh = it.Value();
+    }
+    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(tmpSh1));
+    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      if( sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE ) {
+        // non solid case
+        double U1,U2,V1,V2;
+        // changes for 0020677: EDF 1219 GEOM: MinDistance gives 0 instead of 20.88
+        //S->Bounds(U1,U2,V1,V2); changed by
+        ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(tmpSh1),U1,U2,V1,V2);
+        // end of changes for 020677 (dmv)
+        Handle(Geom_RectangularTrimmedSurface) TrS1 =
+          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS2 =
+          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+        BRep_Builder B;
+        TopoDS_Face F1,F2;
+        TopoDS_Compound Comp;
+        B.MakeCompound(Comp);
+        B.MakeFace(F1,TrS1,1.e-7);
+        B.Add(Comp,F1);
+        B.MakeFace(F2,TrS2,1.e-7);
+        B.Add(Comp,F2);
+        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+        sfs->Init(Comp);
+        sfs->SetPrecision(1.e-6);
+        sfs->SetMaxTolerance(1.0);
+        sfs->Perform();
+        tmpSh1 = sfs->Shape();
+        IsChange1 = true;
+      }
+      else {
+        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
+          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+          gp_Pnt PC = SS->Location();
+          BRep_Builder B;
+          TopoDS_Vertex V;
+          B.MakeVertex(V,PC,1.e-7);
+          tmpSh1 = V;
+          AddDist1 = SS->Radius();
+          IsChange1 = true;
+        }
+        else {
+          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+          gp_Ax3 ax3 = TS->Position();
+          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
+          BRep_Builder B;
+          TopoDS_Edge E;
+          B.MakeEdge(E,C,1.e-7);
+          tmpSh1 = E;
+          AddDist1 = TS->MinorRadius();
+          IsChange1 = true;
+        }
+      }
+    }
+    else
+      tmpSh1 = aSh1;
+  }
+  else
+    tmpSh1 = aSh1;
+  bool IsChange2 = false;
+  double AddDist2 = 0.0;
+  nbf = 0;
+  for ( anExp.Init( aSh2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    tmpSh2 = anExp.Current();
+  }
+  if(nbf==1) {
+    TopoDS_Shape sh = aSh2;
+    while(sh.ShapeType()==TopAbs_COMPOUND) {
+      TopoDS_Iterator it(sh);
+      sh = it.Value();
+    }
+    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(tmpSh2));
+    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+      if( sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE ) {
+        // non solid case
+        double U1,U2,V1,V2;
+        //S->Bounds(U1,U2,V1,V2);
+        ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(tmpSh2),U1,U2,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS1 =
+          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS2 =
+          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+        BRep_Builder B;
+        TopoDS_Face F1,F2;
+        TopoDS_Compound Comp;
+        B.MakeCompound(Comp);
+        B.MakeFace(F1,TrS1,1.e-7);
+        B.Add(Comp,F1);
+        B.MakeFace(F2,TrS2,1.e-7);
+        B.Add(Comp,F2);
+        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+        sfs->Init(Comp);
+        sfs->SetPrecision(1.e-6);
+        sfs->SetMaxTolerance(1.0);
+        sfs->Perform();
+        tmpSh2 = sfs->Shape();
+        IsChange2 = true;
+      }
+      else {
+        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
+          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+          gp_Pnt PC = SS->Location();
+          BRep_Builder B;
+          TopoDS_Vertex V;
+          B.MakeVertex(V,PC,1.e-7);
+          tmpSh2 = V;
+          AddDist2 = SS->Radius();
+          IsChange2 = true;
+        }
+        else if( S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+          gp_Ax3 ax3 = TS->Position();
+          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
+          BRep_Builder B;
+          TopoDS_Edge E;
+          B.MakeEdge(E,C,1.e-7);
+          tmpSh2 = E;
+          AddDist2 = TS->MinorRadius();
+          IsChange2 = true;
+        }
+      }
+    }
+    else
+      tmpSh2 = aSh2;
+  }
+  else
+    tmpSh2 = aSh2;
+
+  if( !IsChange1 && !IsChange2 )
+    return -2.0;
+
+  BRepExtrema_DistShapeShape dst(tmpSh1,tmpSh2);
+  if (dst.IsDone()) {
+    double MinDist = 1.e9;
+    gp_Pnt PMin1, PMin2, P1, P2;
+    for (int i = 1; i <= dst.NbSolution(); i++) {
+      P1 = dst.PointOnShape1(i);
+      P2 = dst.PointOnShape2(i);
+      Standard_Real Dist = P1.Distance(P2);
+      if (MinDist > Dist) {
+        MinDist = Dist;
+        PMin1 = P1;
+        PMin2 = P2;
+      }
+    }
+    if(MinDist<1.e-7) {
+      Ptmp1 = PMin1;
+      Ptmp2 = PMin2;
+    }
+    else {
+      gp_Dir aDir(gp_Vec(PMin1,PMin2));
+      if( MinDist > (AddDist1+AddDist2) ) {
+        Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
+                        PMin1.Y() + aDir.Y()*AddDist1,
+                        PMin1.Z() + aDir.Z()*AddDist1 );
+        Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
+                        PMin2.Y() - aDir.Y()*AddDist2,
+                        PMin2.Z() - aDir.Z()*AddDist2 );
+        return (MinDist - AddDist1 - AddDist2);
+      }
+      else {
+        if( AddDist1 > 0 ) {
+          Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
+                          PMin1.Y() + aDir.Y()*AddDist1,
+                          PMin1.Z() + aDir.Z()*AddDist1 );
+          Ptmp2 = Ptmp1;
+        }
+        else {
+          Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
+                          PMin2.Y() - aDir.Y()*AddDist2,
+                          PMin2.Z() - aDir.Z()*AddDist2 );
+          Ptmp1 = Ptmp2;
+        }
+      }
+    }
+    double res = MinDist - AddDist1 - AddDist2;
+    if(res<0.) res = 0.0;
+    return res;
+  }
+  return -2.0;
+}
+
+//=======================================================================
+//function : GetMinDistance
+//purpose  : 
+//=======================================================================
+Standard_Real GEOMUtils::GetMinDistance
+                               (const TopoDS_Shape& theShape1,
+                                const TopoDS_Shape& theShape2,
+                                gp_Pnt& thePnt1, gp_Pnt& thePnt2)
+{
+  Standard_Real aResult = 1.e9;
+
+  // Issue 0020231: A min distance bug with torus and vertex.
+  // Make GetMinDistance() return zero if a sole VERTEX is inside any of SOLIDs
+
+  // which of shapes consists of only one vertex?
+  TopExp_Explorer exp1(theShape1,TopAbs_VERTEX), exp2(theShape2,TopAbs_VERTEX);
+  TopoDS_Shape V1 = exp1.More() ? exp1.Current() : TopoDS_Shape();
+  TopoDS_Shape V2 = exp2.More() ? exp2.Current() : TopoDS_Shape();
+  exp1.Next(); exp2.Next();
+  if ( exp1.More() ) V1.Nullify();
+  if ( exp2.More() ) V2.Nullify();
+  // vertex and container of solids
+  TopoDS_Shape V = V1.IsNull() ? V2 : V1;
+  TopoDS_Shape S = V1.IsNull() ? theShape1 : theShape2;
+  if ( !V.IsNull() ) {
+    // classify vertex against solids
+    gp_Pnt p = BRep_Tool::Pnt( TopoDS::Vertex( V ) );
+    for ( exp1.Init( S, TopAbs_SOLID ); exp1.More(); exp1.Next() ) {
+      BRepClass3d_SolidClassifier classifier( exp1.Current(), p, 1e-6);
+      if ( classifier.State() == TopAbs_IN ) {
+        thePnt1 = p;
+        thePnt2 = p;
+        return 0.0;
+      }
+    }
+  }
+  // End Issue 0020231
+
+  // skl 30.06.2008
+  // additional workaround for bugs 19899, 19908 and 19910 from Mantis
+  double dist = GEOMUtils::GetMinDistanceSingular
+      (theShape1, theShape2, thePnt1, thePnt2);
+
+  if (dist > -1.0) {
+    return dist;
+  }
+
+  BRepExtrema_DistShapeShape dst (theShape1, theShape2);
+  if (dst.IsDone()) {
+    gp_Pnt P1, P2;
+
+    for (int i = 1; i <= dst.NbSolution(); i++) {
+      P1 = dst.PointOnShape1(i);
+      P2 = dst.PointOnShape2(i);
+
+      Standard_Real Dist = P1.Distance(P2);
+      if (aResult > Dist) {
+        aResult = Dist;
+        thePnt1 = P1;
+        thePnt2 = P2;
+      }
+    }
   }
 
   return aResult;

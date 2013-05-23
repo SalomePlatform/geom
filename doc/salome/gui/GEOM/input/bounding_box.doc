@@ -14,9 +14,10 @@ faces (by iterating through all faces of a shape).
 This functionallity is implemented in such a way to have 
 a satisfactory performance.
 
-\n <b>TUI Commands:</b> <em>[Xmin,Xmax, Ymin,Ymax, Zmin,Zmax] = geompy.BoundingBox(Shape)</em>,
-<em>BBox = geompy.MakeBoundingBox(Shape)</em>, where \em Shape
-is the shape for which the bounding box is computed.
+\n <b>TUI Commands:</b> <em>[Xmin,Xmax, Ymin,Ymax, Zmin,Zmax] = geompy.BoundingBox(Shape, precise)</em>,
+<em>BBox = geompy.MakeBoundingBox(Shape, precise)</em>, where \em Shape
+is the shape for which the bounding box is computed. \em precise TRUE
+ for precise computation; FALSE for fast one. Default value is False.
 
 See also a \ref tui_bounding_box_page "TUI example".
 

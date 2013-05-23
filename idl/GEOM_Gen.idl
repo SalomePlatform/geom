@@ -3640,12 +3640,14 @@ module GEOM
     /*!
      *  \brief Get parameters of bounding box of the given shape
      *  \param theShape Shape to obtain bounding box of.
+     *  \param precise TRUE for precise computation; FALSE for fast one.
      *  \param Xmin,Xmax Output. Limits of shape along OX axis.
      *  \param Ymin,Ymax Output. Limits of shape along OY axis.
      *  \param Zmin,Zmax Output. Limits of shape along OZ axis.
      *  \return Returns parameters of bounding box through the last six arguments.
      */
     void GetBoundingBox (in GEOM_Object theShape,
+                         in boolean precise,
                          out double Xmin, out double Xmax,
                          out double Ymin, out double Ymax,
                          out double Zmin, out double Zmax);
@@ -3653,9 +3655,11 @@ module GEOM
     /*!
      *  \brief Get bounding box of the given shape
      *  \param theShape Shape to obtain bounding box of.
+     *  \param precise TRUE for precise computation; FALSE for fast one.
      *  \return New GEOM_Object, containing the created bounding box.
      */
-    GEOM_Object MakeBoundingBox (in GEOM_Object theShape);
+    GEOM_Object MakeBoundingBox (in GEOM_Object theShape,
+                                 in boolean precise);
 
     /*!
      *  \brief Get min and max tolerances of sub-shapes of theShape

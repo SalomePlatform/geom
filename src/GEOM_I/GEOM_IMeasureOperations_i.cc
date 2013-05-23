@@ -258,6 +258,7 @@ void GEOM_IMeasureOperations_i::GetInertia
  */
 //=============================================================================
 void GEOM_IMeasureOperations_i::GetBoundingBox (GEOM::GEOM_Object_ptr theShape,
+                                                CORBA::Boolean precise,
                                                 CORBA::Double& Xmin, CORBA::Double& Xmax,
                                                 CORBA::Double& Ymin, CORBA::Double& Ymax,
                                                 CORBA::Double& Zmin, CORBA::Double& Zmax)
@@ -270,7 +271,8 @@ void GEOM_IMeasureOperations_i::GetBoundingBox (GEOM::GEOM_Object_ptr theShape,
   if (aShape.IsNull()) return;
 
   // Get shape parameters
-  GetOperations()->GetBoundingBox(aShape, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+  GetOperations()->GetBoundingBox
+    (aShape, precise, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
 }
 
 //=============================================================================
@@ -279,7 +281,8 @@ void GEOM_IMeasureOperations_i::GetBoundingBox (GEOM::GEOM_Object_ptr theShape,
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::MakeBoundingBox
-                                              (GEOM::GEOM_Object_ptr theShape)
+                                              (GEOM::GEOM_Object_ptr theShape,
+                                               CORBA::Boolean precise)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -291,7 +294,8 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::MakeBoundingBox
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   // Make Box - bounding box of theShape
-  Handle(GEOM_Object) anObject = GetOperations()->GetBoundingBox(aShape);
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetBoundingBox(aShape, precise);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

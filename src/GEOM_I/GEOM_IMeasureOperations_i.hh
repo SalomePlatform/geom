@@ -71,11 +71,13 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                    CORBA::Double& Ix , CORBA::Double& Iy , CORBA::Double& Iz);
 
   void GetBoundingBox (GEOM::GEOM_Object_ptr theShape,
+                       CORBA::Boolean precise,
                        CORBA::Double& Xmin, CORBA::Double& Xmax,
                        CORBA::Double& Ymin, CORBA::Double& Ymax,
                        CORBA::Double& Zmin, CORBA::Double& Zmax);
 
-  GEOM::GEOM_Object_ptr MakeBoundingBox (GEOM::GEOM_Object_ptr theShape);
+  GEOM::GEOM_Object_ptr MakeBoundingBox (GEOM::GEOM_Object_ptr theShape,
+                                         CORBA::Boolean precise);
 
   void GetTolerance (GEOM::GEOM_Object_ptr theShape,
                      CORBA::Double& FaceMin, CORBA::Double& FaceMax,

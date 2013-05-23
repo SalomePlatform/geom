@@ -220,7 +220,7 @@ bool MeasureGUI_BndBoxDlg::getParameters (double& theXmin, double& theXmax,
     return false;
 
   GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
-  anOper->GetBoundingBox(myObj, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax);
+  anOper->GetBoundingBox(myObj, true, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax);
 
   return anOper->IsDone();
 }
@@ -300,7 +300,7 @@ bool MeasureGUI_BndBoxDlg::isValid (QString&)
 bool MeasureGUI_BndBoxDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow(getOperation());
-  GEOM::GEOM_Object_var anObj = anOper->MakeBoundingBox(myObj);
+  GEOM::GEOM_Object_var anObj = anOper->MakeBoundingBox(myObj, true);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

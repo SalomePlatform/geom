@@ -37,6 +37,8 @@
 
 #include <functional>
 
+class Bnd_Box;
+
 inline Standard_Boolean IsEqual (const TopoDS_Shape& S1, const TopoDS_Shape& S2)
 {
   return S1.IsSame(S2);
@@ -131,6 +133,45 @@ class GEOMUtils {
    */
   Standard_EXPORT static TopoDS_Shape GetEdgeNearPoint (const TopoDS_Shape&  theShape,
                                                         const TopoDS_Vertex& thePoint);
+
+  /*!
+   * \brief Compute precise bounding box of the shape based on the rough bounding box.
+   *
+   * \param theShape the shape.
+   * \param theBox rough bounding box on input; precise bounding box on output.
+   * \retval Standard_True in case of success; Standard_False otherwise.
+   */
+  Standard_EXPORT static Standard_Boolean PreciseBoundingBox
+                          (const TopoDS_Shape &theShape, Bnd_Box &theBox);
+
+  /*!
+   * \brief Computes minumal distance between two shapes for singular cases
+   *        (workaround for bugs 19899, 19908 and 19910 from Mantis).
+   *
+   * \param aSh1 the first shape
+   * \param aSh2 the second shape
+   * \param Ptmp1 the output result point on the first shape
+   * \param Ptmp2 the output result point on the second shape
+   * \retval negative value if it is not a singular case; actual distance for singular case.
+   */
+  Standard_EXPORT static Standard_Real GetMinDistanceSingular
+                               (const TopoDS_Shape& aSh1,
+                                const TopoDS_Shape& aSh2,
+                                gp_Pnt& Ptmp1, gp_Pnt& Ptmp2);
+
+  /*!
+   * \brief Computes minumal distance between two shapes.
+   *
+   * \param theShape1 the first shape
+   * \param theShape2 the second shape
+   * \param thePnt1 the output result point on the first shape
+   * \param thePnt2 the output result point on the second shape
+   * \retval negative value in case of failure; otherwise the real distance.
+   */
+  Standard_EXPORT static Standard_Real GetMinDistance
+                               (const TopoDS_Shape& theShape1,
+                                const TopoDS_Shape& theShape2,
+                                gp_Pnt& thePnt1, gp_Pnt& thePnt2);
 
 };
 

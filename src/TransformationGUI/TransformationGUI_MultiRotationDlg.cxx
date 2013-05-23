@@ -270,7 +270,7 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
       // recompute myAng and myStep (Mantis issue 0021718)
       GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations(getStudyId());
       double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
-      anOper->GetBoundingBox(myBase.get(), Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+      anOper->GetBoundingBox(myBase.get(), true, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
       if (anOper->IsDone()) {
         // angular step
         double diag = sqrt((Xmax-Xmin)*(Xmax-Xmin) + (Ymax-Ymin)*(Ymax-Ymin));

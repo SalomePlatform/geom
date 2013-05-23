@@ -9031,18 +9031,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Get parameters of bounding box of the given shape
         #  @param theShape Shape to obtain bounding box of.
+        #  @param precise TRUE for precise computation; FALSE for fast one.
         #  @return [Xmin,Xmax, Ymin,Ymax, Zmin,Zmax]
         #  Xmin,Xmax: Limits of shape along OX axis.
         #  Ymin,Ymax: Limits of shape along OY axis.
         #  Zmin,Zmax: Limits of shape along OZ axis.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def BoundingBox (self, theShape):
+        def BoundingBox (self, theShape, precise=False):
             """
             Get parameters of bounding box of the given shape
 
             Parameters: 
                 theShape Shape to obtain bounding box of.
+                precise TRUE for precise computation; FALSE for fast one.
 
             Returns:
                 [Xmin,Xmax, Ymin,Ymax, Zmin,Zmax]
@@ -9051,12 +9053,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                  Zmin,Zmax: Limits of shape along OZ axis.
             """
             # Example: see GEOM_TestMeasures.py
-            aTuple = self.MeasuOp.GetBoundingBox(theShape)
+            aTuple = self.MeasuOp.GetBoundingBox(theShape, precise)
             RaiseIfFailed("GetBoundingBox", self.MeasuOp)
             return aTuple
 
         ## Get bounding box of the given shape
         #  @param theShape Shape to obtain bounding box of.
+        #  @param precise TRUE for precise computation; FALSE for fast one.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -9064,12 +9067,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created box.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def MakeBoundingBox (self, theShape, theName=None):
+        def MakeBoundingBox (self, theShape, precise=False, theName=None):
             """
             Get bounding box of the given shape
 
             Parameters: 
                 theShape Shape to obtain bounding box of.
+                precise TRUE for precise computation; FALSE for fast one.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -9078,7 +9082,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created box.
             """
             # Example: see GEOM_TestMeasures.py
-            anObj = self.MeasuOp.MakeBoundingBox(theShape)
+            anObj = self.MeasuOp.MakeBoundingBox(theShape, precise)
             RaiseIfFailed("MakeBoundingBox", self.MeasuOp)
             self._autoPublish(anObj, theName, "bndbox")
             return anObj

@@ -335,7 +335,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
       // recompute myStepU (Mantis issue 0021718)
       GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations(getStudyId());
       double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
-      anOper->GetBoundingBox(myBase.get(), Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+      anOper->GetBoundingBox(myBase.get(), true, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
       if (anOper->IsDone()) {
         myStepU = floor(1.5 * (Xmax - Xmin));
         GroupPoints->SpinBox_DX->setValue(myStepU);
@@ -355,7 +355,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
       // recompute myStepU and myStepV (Mantis issue 0021718)
       GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations(getStudyId());
       double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
-      anOper->GetBoundingBox(myBase.get(), Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+      anOper->GetBoundingBox(myBase.get(), true, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
       if (anOper->IsDone()) {
         myStepU = floor(1.5 * (Xmax - Xmin));
         myStepV = floor(1.5 * (Ymax - Ymin));

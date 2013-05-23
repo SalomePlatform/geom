@@ -105,7 +105,7 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
     gp_Pnt aCenterMass = aPos.Location();
     aShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
   }
-  else if (aType == BND_BOX_MEASURE)
+  else if (aType == BND_BOX_MEASURE || aType == BND_BOX_MEASURE_PRECISE)
   {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
@@ -123,6 +123,12 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
 
     Bnd_Box B;
     BRepBndLib::Add(aShapeBase, B);
+
+    if (aType == BND_BOX_MEASURE_PRECISE) {
+      if (!GEOMUtils::PreciseBoundingBox(aShapeBase, B)) {
+        Standard_NullObject::Raise("Bounding box cannot be precised");
+      }
+    }
 
     Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
     B.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
