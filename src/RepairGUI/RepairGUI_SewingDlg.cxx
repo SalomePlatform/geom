@@ -76,15 +76,17 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* 
 
   QGridLayout* aLay = new QGridLayout( GroupPoints->Box );
   aLay->setMargin( 0 ); aLay->setSpacing( 6 );
+  myAllowNonManifoldChk = new QCheckBox (tr("GEOM_ALLOW_NON_MANIFOLD"), GroupPoints->Box);
   myTolEdt = new SalomeApp_DoubleSpinBox( GroupPoints->Box );
   initSpinBox( myTolEdt, 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, "len_tol_precision" );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
   myFreeBoundBtn = new QPushButton( tr( "GEOM_DETECT" ) + QString( " [%1]" ).arg( tr( "GEOM_FREE_BOUNDARIES" ) ), 
                                     GroupPoints->Box );
-  aLay->addWidget( aLbl1,          0, 0 );
-  aLay->addWidget( myTolEdt,       0, 1 );
-  aLay->addWidget( myFreeBoundBtn, 1, 0, 1, 2 );
+  aLay->addWidget( myAllowNonManifoldChk, 0, 0 );
+  aLay->addWidget( aLbl1,          1, 0 );
+  aLay->addWidget( myTolEdt,       1, 1 );
+  aLay->addWidget( myFreeBoundBtn, 2, 0, 1, 2 );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -301,7 +303,14 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
       myClosed = -1;
   }
   else {
-    GEOM::GEOM_Object_var anObj = anOper->Sew( myObject, myTolEdt->value() );
+    GEOM::GEOM_Object_var anObj;
+
+    if (myAllowNonManifoldChk->isChecked()) {
+      anObj = anOper->SewAllowNonManifold( myObject, myTolEdt->value() );
+    } else {
+      anObj = anOper->Sew( myObject, myTolEdt->value() );
+    }
+
     aResult = !anObj->_is_nil();
     if ( aResult )
     {

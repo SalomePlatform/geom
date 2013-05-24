@@ -1675,6 +1675,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Topological sewing</translation>
     </message>
     <message>
+        <source>GEOM_ALLOW_NON_MANIFOLD</source>
+        <translation>Allow Non Manifold</translation>
+    </message>
+    <message>
         <source>GEOM_SHAPE</source>
         <translation>Shape</translation>
     </message>

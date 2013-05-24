@@ -8,9 +8,9 @@
 
 \n The \b Result will be a \b GEOM_Object. 
 
-\n <b>TUI Command:</b> <em>geompy.MakeSewing(ListOfShape, Precision),</em>
+\n <b>TUI Command:</b> <em>geompy.MakeSewing(ListOfShape, Precision, AllowNonManifold=False),</em>
  where \em ListOfShape is list of faces or shells to be sewed, \em Precision is a
-precision for sewing.
+precision for sewing, \em AllowNonManifold flag that allows non-manifold sewing.
 
 \image html repair6.png
 

@@ -5912,6 +5912,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Sewing of some shapes into single shape.
         #  @param ListShape Shapes to be processed.
         #  @param theTolerance Required tolerance value.
+        #  @param AllowNonManifold Flag that allows non-manifold sewing.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -5919,13 +5920,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_sewing "Example"
-        def MakeSewing(self, ListShape, theTolerance, theName=None):
+        def MakeSewing(self, ListShape, theTolerance, AllowNonManifold=False, theName=None):
             """
             Sewing of some shapes into single shape.
 
             Parameters:
                 ListShape Shapes to be processed.
                 theTolerance Required tolerance value.
+                AllowNonManifold Flag that allows non-manifold sewing.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -5936,24 +5938,26 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             comp = self.MakeCompound(ListShape)
             # note: auto-publishing is done in self.Sew()
-            anObj = self.Sew(comp, theTolerance, theName)
+            anObj = self.Sew(comp, theTolerance, AllowNonManifold, theName)
             return anObj
 
         ## Sewing of the given object.
         #  @param theObject Shape to be processed.
         #  @param theTolerance Required tolerance value.
+        #  @param AllowNonManifold Flag that allows non-manifold sewing.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing processed shape.
-        def Sew(self, theObject, theTolerance, theName=None):
+        def Sew(self, theObject, theTolerance, AllowNonManifold=False, theName=None):
             """
             Sewing of the given object.
 
             Parameters:
                 theObject Shape to be processed.
                 theTolerance Required tolerance value.
+                AllowNonManifold Flag that allows non-manifold sewing.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -5963,7 +5967,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see MakeSewing() above
             theTolerance,Parameters = ParseParameters(theTolerance)
-            anObj = self.HealOp.Sew(theObject, theTolerance)
+            if AllowNonManifold:
+                anObj = self.HealOp.SewAllowNonManifold(theObject, theTolerance)
+            else:
+                anObj = self.HealOp.Sew(theObject, theTolerance)
             RaiseIfFailed("Sew", self.HealOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "sewed")

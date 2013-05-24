@@ -133,7 +133,10 @@ Standard_Integer GEOMImpl_HealingDriver::Execute(TFunction_Logbook& log) const
     RemoveHoles(&HI, anOriginalShape, aShape);
     break;
   case SEWING:
-    Sew(&HI, anOriginalShape, aShape);
+    Sew(&HI, anOriginalShape, aShape, false);
+    break;
+  case SEWING_NON_MANIFOLD:
+    Sew(&HI, anOriginalShape, aShape, true);
     break;
   case DIVIDE_EDGE:
     AddPointOnEdge(&HI, anOriginalShape, aShape);
@@ -418,11 +421,15 @@ Standard_Boolean GEOMImpl_HealingDriver::RemoveHoles (GEOMImpl_IHealing* theHI,
 //=======================================================================
 Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing* theHI,
                                               const TopoDS_Shape& theOriginalShape,
-                                              TopoDS_Shape& theOutShape) const
+                                              TopoDS_Shape& theOutShape,
+                                              Standard_Boolean isAllowNonManifold) const
 {
   Standard_Real aTol = theHI->GetTolerance();
 
   ShHealOper_Sewing aHealer (theOriginalShape, aTol);
+
+  // Set non-manifold mode.
+  aHealer.SetNonManifoldMode(isAllowNonManifold);
 
   Standard_Boolean aResult = aHealer.Perform();
 

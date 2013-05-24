@@ -71,7 +71,8 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                                  const Handle(TColStd_HArray1OfInteger)& theWires);
 
   Standard_EXPORT Handle(GEOM_Object) Sew( Handle(GEOM_Object) theObject,
-                           double theTolerance );
+                           double theTolerance,
+                           bool isAllowNonManifold);
 
   Standard_EXPORT Handle(GEOM_Object) DivideEdge( Handle(GEOM_Object) theObject,
                                                   int theIndex,

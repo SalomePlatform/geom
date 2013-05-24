@@ -75,6 +75,9 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
    GEOM::GEOM_Object_ptr Sew (GEOM::GEOM_Object_ptr theObject,
                               CORBA::Double theTolerance);
 
+   GEOM::GEOM_Object_ptr SewAllowNonManifold (GEOM::GEOM_Object_ptr theObject,
+                                              CORBA::Double theTolerance);
+
    GEOM::GEOM_Object_ptr DivideEdge (GEOM::GEOM_Object_ptr theObject,
                                      CORBA::Short theIndex,
                                      CORBA::Double theValue,

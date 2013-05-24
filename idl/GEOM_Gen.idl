@@ -3324,6 +3324,14 @@ module GEOM
     GEOM_Object Sew (in GEOM_Object theObject, in double theTolerance);
 
     /*!
+     *  Sewing of the given object. Allows non-manifold sewing.
+     *  \param theObject Shape to be processed.
+     *  \param theTolerance Required tolerance value.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object SewAllowNonManifold(in GEOM_Object theObject, in double theTolerance);
+
+    /*!
      *  \brief Addition of a point to a given edge object.
      *  \param theObject Shape to be processed.
      *  \param theEdgeIndex Index of edge to be divided within theObject's shape,

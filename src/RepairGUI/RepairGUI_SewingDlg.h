@@ -30,6 +30,7 @@
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_1SelExt;
+class QCheckBox;
 class SalomeApp_DoubleSpinBox;
 class QPushButton;
 
@@ -60,6 +61,7 @@ private:
   GEOM::GEOM_Object_var              myObject;
 
   DlgRef_1SelExt*                    GroupPoints;
+  QCheckBox*                         myAllowNonManifoldChk;
   SalomeApp_DoubleSpinBox*           myTolEdt;
   QPushButton*                       myFreeBoundBtn;
   

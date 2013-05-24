@@ -596,7 +596,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObject,
-                                                      double theTolerance)
+                                                      double theTolerance,
+                                                      bool isAllowNonManifold)
 {
   // set error code, check parameters
   SetErrorCode(KO);
@@ -611,7 +612,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
 
   //Add the function
-  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), SEWING);
+  int aFunctionType = (isAllowNonManifold ? SEWING_NON_MANIFOLD : SEWING);
+
+  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), aFunctionType);
 
   if (aFunction.IsNull()) return NULL;
 
@@ -642,8 +645,15 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.Sew("
-                               << theObject << ", " << theTolerance << ")";
+  GEOM::TPythonDump pd(aFunction);
+  
+  pd << aNewObject << " = geompy.Sew(" << theObject << ", " << theTolerance;
+
+  if (isAllowNonManifold) {
+    pd << ", true";
+  }
+
+  pd << ")";
 
   SetErrorCode(OK);
   return aNewObject;

@@ -356,7 +356,38 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theO
 
   // Perform
   Handle(GEOM_Object) aNewObject =
-    GetOperations()->Sew( anObject, theTolerance );
+    GetOperations()->Sew( anObject, theTolerance, false );
+  if (!GetOperations()->IsDone() || aNewObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(aNewObject);
+}
+
+//=============================================================================
+/*!
+ *  SewAllowNonManifold
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::SewAllowNonManifold (GEOM::GEOM_Object_ptr theObject,
+                                                                      CORBA::Double theTolerance)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Check parameters
+  if (theTolerance < 0)
+    return aGEOMObject._retn();
+
+  // Get the object itself
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  // Perform
+  Handle(GEOM_Object) aNewObject =
+    GetOperations()->Sew( anObject, theTolerance, true );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
