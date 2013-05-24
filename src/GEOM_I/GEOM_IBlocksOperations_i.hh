@@ -127,6 +127,8 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
   GEOM::GEOM_Object_ptr RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape,
                                           CORBA::Long           theOptimumNbFaces);
 
+  GEOM::GEOM_Object_ptr UnionFaces (GEOM::GEOM_Object_ptr theShape);
+
   GEOM::GEOM_Object_ptr CheckAndImprove (GEOM::GEOM_Object_ptr theCompound);
 
   // Extract blocks from blocks compounds

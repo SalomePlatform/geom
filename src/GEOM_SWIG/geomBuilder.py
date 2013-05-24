@@ -10740,6 +10740,40 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "removeExtraEdges")
             return anObj
 
+        ## Performs union faces of \a theShape
+        #  Unite faces sharing one surface. It means that
+        #  these faces must have references to one C++ surface object (handle).
+        #  @param theShape The compound or single solid that contains faces
+        #         to perform union.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return Improved shape.
+        #
+        #  @ref swig_UnionFaces "Example"
+        def UnionFaces(self, theShape, theName=None):
+            """
+            Performs union faces of theShape.
+            Unite faces sharing one surface. It means that
+            these faces must have references to one C++ surface object (handle).
+
+            Parameters:
+                theShape The compound or single solid that contains faces
+                         to perform union.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns: 
+                Improved shape.
+            """
+            # Example: see GEOM_TestOthers.py
+            anObj = self.BlocksOp.UnionFaces(theShape)
+            RaiseIfFailed("UnionFaces", self.BlocksOp)
+            self._autoPublish(anObj, theName, "unionFaces")
+            return anObj
+
         ## Check, if the given shape is a blocks compound.
         #  Fix all detected errors.
         #    \note Single block can be also fixed by this method.

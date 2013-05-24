@@ -160,6 +160,10 @@
             <translation>fuse_collinear_edges.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_UNION_FACES</source>
+            <translation>union_faces.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_CHECKSHAPE</source>
             <translation>check.png</translation>
         </message>
@@ -1018,6 +1022,10 @@
         <message>
             <source>ICO_FUSE_EDGES</source>
             <translation>fuse_collinear_edges.png</translation>
+        </message>
+        <message>
+            <source>ICO_UNION_FACES</source>
+            <translation>union_faces.png</translation>
         </message>
         <message>
             <source>ICO_NORMALE</source>

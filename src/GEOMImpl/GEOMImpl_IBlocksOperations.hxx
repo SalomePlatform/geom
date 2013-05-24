@@ -140,6 +140,8 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) RemoveExtraEdges (Handle(GEOM_Object) theShape,
                                                         const Standard_Integer theOptimumNbFaces = 6);
 
+  Standard_EXPORT Handle(GEOM_Object) UnionFaces (Handle(GEOM_Object) theShape);
+
   Standard_EXPORT Handle(GEOM_Object) CheckAndImprove (Handle(GEOM_Object) theCompound);
 
   Standard_EXPORT static void AddBlocksFrom (const TopoDS_Shape&   theShape,

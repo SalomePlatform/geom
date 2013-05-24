@@ -2656,6 +2656,58 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
 
 //=============================================================================
 /*!
+ *  UnionFaces
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::UnionFaces
+                                     (Handle(GEOM_Object) theObject)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be fixed
+
+  //Add a new Copy object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+
+  //Add a function
+  Handle(GEOM_Function) aFunction =
+    aCopy->AddFunction(GEOMImpl_BlockDriver::GetID(), BLOCK_UNION_FACES);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BlockDriver::GetID()) return NULL;
+
+  GEOMImpl_IBlockTrsf aTI (aFunction);
+  aTI.SetOriginal(aLastFunction);
+
+  //Compute the fixed shape
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Block driver failed to remove extra edges of the given shape");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.UnionFaces("
+                               << theObject << ")";
+
+  SetErrorCode(OK);
+  return aCopy;
+}
+
+//=============================================================================
+/*!
  *  CheckAndImprove
  */
 //=============================================================================

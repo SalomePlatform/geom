@@ -90,6 +90,9 @@
 \anchor swig_RemoveExtraEdges
 \until "freeFacesWithoutExtra"
 
+\anchor swig_UnionFaces
+\until "unitedFaces"
+
 \anchor swig_GetSharedShapes
 \until "sharedEdge_"
 

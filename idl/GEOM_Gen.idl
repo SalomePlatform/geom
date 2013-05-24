@@ -2557,6 +2557,15 @@ module GEOM
                                   in long        theOptimumNbFaces);
 
     /*!
+     *  \brief Performs union faces of \a theShape.
+     *
+     *  Unite faces sharing one surface.
+     *  \param theShape The compound or single solid that contains faces to perform union.
+     *  \return Improved shape.
+     */
+    GEOM_Object UnionFaces (in GEOM_Object theShape);
+
+    /*!
      *  \brief Check, if the given shape is a blocks compound.
      *
      *  Fix all detected errors.

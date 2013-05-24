@@ -342,6 +342,7 @@
 #define BLOCK_COMPOUND_GLUE       8
 #define BLOCK_REMOVE_EXTRA        9
 #define BLOCK_COMPOUND_IMPROVE    10
+#define BLOCK_UNION_FACES         11
 
 // Marker
 #define MARKER_CS      1

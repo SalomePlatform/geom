@@ -240,6 +240,7 @@ redo.png			\
 undo.png			\
 glue2.png			\
 remove_extra_edges.png		\
+union_faces.png		\
 coordsys.png			\
 translation.png
 

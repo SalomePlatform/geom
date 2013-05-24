@@ -803,6 +803,31 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::RemoveExtraEdges
 
 //=============================================================================
 /*!
+ *  UnionFaces
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::UnionFaces
+                                      (GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference Objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  //Get the result
+  Handle(GEOM_Object) anObject = GetOperations()->UnionFaces(aShape);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  CheckAndImprove
  */
 //=============================================================================

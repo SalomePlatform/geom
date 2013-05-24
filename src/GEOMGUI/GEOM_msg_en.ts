@@ -4555,6 +4555,30 @@ Please, select face, shell or solid and try again</translation>
         <translation>Fuse collinear edges within a wire</translation>
     </message>
     <message>
+        <source>GEOM_UNION_FACES_TITLE</source>
+        <translation>Union faces</translation>
+    </message>
+    <message>
+        <source>GEOM_UNION_FACES</source>
+        <translation>Object to unite faces</translation>
+    </message>
+    <message>
+        <source>UNION_FACES_NEW_OBJ_NAME</source>
+        <translation>UnionFaces</translation>
+    </message>
+    <message>
+        <source>TOP_UNION_FACES</source>
+        <translation>Union faces</translation>
+    </message>
+    <message>
+        <source>MEN_UNION_FACES</source>
+        <translation>Union Faces</translation>
+    </message>
+    <message>
+        <source>STB_UNION_FACES</source>
+        <translation>Union faces</translation>
+    </message>
+    <message>
         <source>TOP_NORMALE</source>
         <translation>Normal to a face</translation>
     </message>

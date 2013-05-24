@@ -30,6 +30,8 @@ removes seam and degenerated edges from the given shape.</li>
 <li>\subpage fuse_edges_operation_page "Fuse Collinear Edges within a Wire" -
 removes selected vertices from a given wire in case if adjacent edges
 are C1 continuous.</li>
+<li>\subpage union_faces_operation_page "Union faces" -
+unites all faces sharing one surface on a given shape.</li>
 </ul>
 
 */

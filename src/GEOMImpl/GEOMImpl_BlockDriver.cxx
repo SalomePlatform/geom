@@ -39,6 +39,7 @@
 #include <ShHealOper_ShapeProcess.hxx>
 //#include <GEOMAlgo_Gluer.hxx>
 #include <BlockFix_BlockFixAPI.hxx>
+#include <BlockFix_UnionFaces.hxx>
 
 #include "utilities.h"
 
@@ -733,6 +734,18 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       // Glue faces of the multi-block
       aShape = GEOMImpl_GlueDriver::GlueFaces(aMulti, aTol, Standard_False);
 
+    } else if (aType == BLOCK_UNION_FACES) {
+      GEOMImpl_IBlockTrsf aCI (aFunction);
+      Handle(GEOM_Function) aRefShape = aCI.GetOriginal();
+      TopoDS_Shape aBlockOrComp = aRefShape->GetValue();
+      if (aBlockOrComp.IsNull()) {
+        Standard_NullObject::Raise("Null Shape given");
+      }
+
+      BlockFix_UnionFaces aFaceUnifier;
+  
+      aFaceUnifier.GetOptimumNbFaces() = 0; // To force union faces.
+      aShape = aFaceUnifier.Perform(aBlockOrComp);
     } else { // unknown function type
       return 0;
     }

@@ -45,6 +45,7 @@
 #include "RepairGUI_ChangeOrientationDlg.h" // Method CHANGE ORIENTATION
 #include "RepairGUI_RemoveExtraEdgesDlg.h"  // Method REMOVE EXTRA EDGES
 #include "RepairGUI_FuseEdgesDlg.h"         // Method FUSE COLLINEAR EDGES
+#include "RepairGUI_UnionFacesDlg.h"        // Method UNION FACES
 
 //=======================================================================
 // function : RepairGUI()
@@ -92,6 +93,7 @@ bool RepairGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpOrientation:      aDlg = new RepairGUI_ChangeOrientationDlg (getGeometryGUI(), parent); break;
   case GEOMOp::OpRemoveExtraEdges: aDlg = new RepairGUI_RemoveExtraEdgesDlg  (getGeometryGUI(), parent); break;
   case GEOMOp::OpFuseEdges:        aDlg = new RepairGUI_FuseEdgesDlg         (getGeometryGUI(), parent); break;
+  case GEOMOp::OpUnionFaces:       aDlg = new RepairGUI_UnionFacesDlg        (getGeometryGUI(), parent); break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;

@@ -161,6 +161,7 @@ namespace GEOMOp {
     OpLimitTolerance      = 4012,   // MENU REPAIR - LIMIT TOLERANCE
     OpGlueEdges           = 4013,   // MENU REPAIR - GLUE EDGES
     OpFuseEdges           = 4014,   // MENU REPAIR - FUSE COLLINEAR EDGES
+    OpUnionFaces          = 4015,   // MENU REPAIR - UNION FACES
     // MeasureGUI ------------------//--------------------------------
     OpProperties          = 5000,   // MENU MEASURES - PROPERTIES
     OpCenterMass          = 5001,   // MENU MEASURES - CENTRE OF MASS

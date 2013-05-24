@@ -208,7 +208,7 @@ def TestOtherOperations (geompy, math):
   geompy.addToStudy(MultiRot1Dt, "MakeMultiRotation1DNbTimes")
   geompy.addToStudy(MultiRot1Ds, "MakeMultiRotation1DByStep")
   geompy.addToStudy(MultiRot2Dt, "MakeMultiRotation2DNbTimes")
-  geompy.addToStudy(MultiRot2Ds, "MakeMultiRotation2DByStep")
+  id_MultiRot2D = geompy.addToStudy(MultiRot2Ds, "MakeMultiRotation2DByStep")
 
   # MakeFilletAll
   radius_fillet = 10.
@@ -539,6 +539,11 @@ def TestOtherOperations (geompy, math):
   freeFacesWithoutExtra = geompy.RemoveExtraEdges(freeFaces)
 
   geompy.addToStudy(freeFacesWithoutExtra, "freeFacesWithoutExtra")
+
+  # UnionFaces
+  unitedFaces = geompy.UnionFaces(freeFaces)
+
+  geompy.addToStudy(unitedFaces, "unitedFaces")
 
   # GetSharedShapes
   sharedFaces = geompy.GetSharedShapes(part, freeFaces,
