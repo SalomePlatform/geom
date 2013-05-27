@@ -1675,6 +1675,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Couture topologique</translation>
     </message>
     <message>
+        <source>GEOM_ALLOW_NON_MANIFOLD</source>
+        <translation type="unfinished">Allow Non Manifold</translation>
+    </message>
+    <message>
         <source>GEOM_SHAPE</source>
         <translation>Forme</translation>
     </message>
@@ -4555,6 +4559,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Fusionner les arêtes collinéaires au sein d&apos;un contour</translation>
     </message>
     <message>
+        <source>TOP_UNION_FACES</source>
+        <translation type="unfinished">Union faces</translation>
+    </message>
+    <message>
+        <source>MEN_UNION_FACES</source>
+        <translation type="unfinished">Union Faces</translation>
+    </message>
+    <message>
+        <source>STB_UNION_FACES</source>
+        <translation type="unfinished">Union faces</translation>
+    </message>
+    <message>
         <source>TOP_NORMALE</source>
         <translation>Vecteur normal à une face</translation>
     </message>
@@ -4906,6 +4922,10 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>JUNCTION_FACE_3</source>
         <translation>Jonction 3</translation>
+    </message>
+    <message>
+        <source>INTERNAL_FACES</source>
+        <translation type="unfinished">Internal faces</translation>
     </message>
     <message>
         <source>GEOM_PLUGINS_OTHER</source>
@@ -5885,6 +5905,21 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_PUBLISH_CLOSE_BTN</source>
         <translation>P&amp;ublier et fermer</translation>
+    </message>
+</context>
+<context>
+    <name>RepairGUI_UnionFacesDlg</name>
+    <message>
+        <source>GEOM_UNION_FACES_TITLE</source>
+        <translation type="unfinished">Union faces</translation>
+    </message>
+    <message>
+        <source>GEOM_UNION_FACES</source>
+        <translation type="unfinished">Object to unite faces</translation>
+    </message>
+    <message>
+        <source>UNION_FACES_NEW_OBJ_NAME</source>
+        <translation type="unfinished">UnionFaces</translation>
     </message>
 </context>
 </TS>

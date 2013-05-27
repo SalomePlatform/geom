@@ -4559,18 +4559,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Fuse collinear edges within a wire</translation>
     </message>
     <message>
-        <source>GEOM_UNION_FACES_TITLE</source>
-        <translation>Union faces</translation>
-    </message>
-    <message>
-        <source>GEOM_UNION_FACES</source>
-        <translation>Object to unite faces</translation>
-    </message>
-    <message>
-        <source>UNION_FACES_NEW_OBJ_NAME</source>
-        <translation>UnionFaces</translation>
-    </message>
-    <message>
         <source>TOP_UNION_FACES</source>
         <translation>Union faces</translation>
     </message>
@@ -5917,6 +5905,21 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_PUBLISH_CLOSE_BTN</source>
         <translation>P&amp;ublish And Close</translation>
+    </message>
+</context>
+<context>
+    <name>RepairGUI_UnionFacesDlg</name>
+    <message>
+        <source>GEOM_UNION_FACES_TITLE</source>
+        <translation>Union faces</translation>
+    </message>
+    <message>
+        <source>GEOM_UNION_FACES</source>
+        <translation>Object to unite faces</translation>
+    </message>
+    <message>
+        <source>UNION_FACES_NEW_OBJ_NAME</source>
+        <translation>UnionFaces</translation>
     </message>
 </context>
 </TS>
