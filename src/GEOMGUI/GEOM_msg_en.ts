@@ -29,8 +29,10 @@
     </message>
     <message>
         <source>DEP_OBJECT</source>
-        <translation>Selected object has been used to create another one.
-It can&apos;t be deleted </translation>
+        <translation>One or more selected objects are used to create another ones or referenced from other modules.
+Removal of these objects can result in valid Python dump.
+
+Do you still want to delete these objects?</translation>
     </message>
     <message>
         <source>DEVIDE_EDGE_NEW_OBJECT_NAME</source>

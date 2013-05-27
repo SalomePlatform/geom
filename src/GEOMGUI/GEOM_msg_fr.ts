@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>DEP_OBJECT</source>
-        <translation>L&apos;objet choisi a été utilisé pour créer un autre objet.
+        <translation type="unfinished">L&apos;objet choisi a été utilisé pour créer un autre objet.
 Il n&apos;est pas possible de le supprimer </translation>
     </message>
     <message>
