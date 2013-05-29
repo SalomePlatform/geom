@@ -210,7 +210,7 @@ import GEOM
 import math
 import os
 
-from salome.geom.gsketcher import Sketcher3D
+from salome.geom.gsketcher import Sketcher3D, Sketcher2D
 
 # service function
 def _toListOfNames(_names, _size=-1):
@@ -2405,6 +2405,26 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "wire")
             return anObj
 
+        ## Obtain a 2D sketcher interface
+        #  @return An instance of @ref gsketcher.Sketcher2D "Sketcher2D" interface      
+        def Sketcher2D (self):
+            """
+            Obtain a 2D sketcher interface.
+
+            Example of usage:
+               sk = geompy.Sketcher2D()
+               sk.addPoint(20, 20)
+               sk.addSegmentRelative(15, 70)
+               sk.addSegmentPerpY(50)
+               sk.addArcRadiusRelative(25, 15, 14.5, 0)
+               sk.addArcCenterAbsolute(1, 1, 50, 50, 0, 0)
+               sk.addArcDirectionRadiusLength(20, 20, 101, 162.13)
+               sk.close()
+               Sketch_1 = sk.wire(geomObj_1)
+            """
+            sk = Sketcher2D (self)
+            return sk
+        
         ## Create a sketcher wire, following the numerical description,
         #  passed through <VAR>theCoordinates</VAR> argument. \n
         #  @param theCoordinates double values, defining points to create a wire,

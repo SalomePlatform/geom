@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -26,8 +25,8 @@
 #include <GEOMImpl_ISketcher.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
-
 #include <GEOMUtils.hxx>
+#include <Sketcher_Profile.hxx>
 
 #include <Basics_Utils.hxx>
 
@@ -38,9 +37,6 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <gp_Pln.hxx>
-
-#include <Sketcher_Profile.hxx>
-
 #include <Standard_ConstructionError.hxx>
 
 //=======================================================================
@@ -79,19 +75,18 @@ Standard_Integer GEOMImpl_SketcherDriver::Execute(TFunction_Logbook& log) const
   if (aCommand.IsEmpty())
     return 0;
 
-  TopoDS_Shape aShape;
-
   // Set "C" numeric locale to save numbers correctly
   Kernel_Utils::Localizer loc;
 
   // create sketcher
-  Sketcher_Profile aProfile (aCommand.ToCString());
+  Sketcher_Profile aProfile( aCommand.ToCString() );
+  bool isDone = false;
+  TopoDS_Shape aShape = aProfile.GetShape( &isDone );
 
-  if (!aProfile.IsDone()) {
+  if ( !isDone ) {
     Standard_ConstructionError::Raise("Sketcher creation failed");
   }
 
-  aShape = aProfile.GetShape();
   if (aShape.IsNull())
     return 0;
 

@@ -1141,18 +1141,14 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
       return;
     }
 
-    QString Parameters;
-    QString Command = myCommand.join( "" ) + GetNewCommand( Parameters );
-    Sketcher_Profile aProfile( Command.toAscii() );
-
-    Command = myCommand.join( "" );
-    aProfile = Sketcher_Profile( Command.toAscii() );
-    TopoDS_Shape myShape;
-    if ( aProfile.IsDone() )
-      myShape = aProfile.GetShape();
-
-    if ( myShape.ShapeType() != TopAbs_VERTEX )
-      myCommand.append( ":WW" );
+    QString Command = myCommand.join( "" );
+    Sketcher_Profile aProfile = Sketcher_Profile( Command.toAscii() );
+    bool isDone = false;
+    TopoDS_Shape myShape = aProfile.GetShape( &isDone );
+    if ( isDone ) {
+      if ( myShape.ShapeType() != TopAbs_VERTEX )
+	myCommand.append( ":WW" );
+    }
   }
   else {
     /*// PAL16008 (Sketcher Validation should be equal to Apply&Close)
@@ -2336,6 +2332,8 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   else {
     //Test if the current point is the same as the last one
     TopoDS_Shape myShape1, myShape2;
+    bool isDone = false;
+    double error = 0.;
 
     // Set "C" numeric locale
     Kernel_Utils::Localizer loc;
@@ -2343,18 +2341,18 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     //Last Shape
     QString Command1 = myCommand.join( "" );
     Sketcher_Profile aProfile1( Command1.toAscii() );
-    if ( aProfile1.IsDone() )
-      myShape1 = aProfile1.GetShape();
+    myShape1 = aProfile1.GetShape();
 
     //Current Shape
     QString Command2 = Command1 + GetNewCommand( aParameters );
     Sketcher_Profile aProfile2( Command2.toAscii() );
+    myShape2 = aProfile2.GetShape( &isDone, &error );
 
     //Error Message
     if ( mySketchType == PT_ABS_CENTER || mySketchType == PT_REL_CENTER  ){
-      if (aProfile2.Error() > Precision::Confusion()){
+      if (error > Precision::Confusion()){
         Group4Spin->label->show();
-        Group4Spin->label->setText( tr("GEOM_SKETCHER_WARNING") + QString::number( aProfile2.Error(), Format, DigNum));
+        Group4Spin->label->setText( tr("GEOM_SKETCHER_WARNING") + QString::number( error, Format, DigNum));
       }
       else{
         Group4Spin->label->hide();
@@ -2363,9 +2361,9 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     else 
       Group4Spin->label->hide();
     if ( mySketchType == PT_SEL_CENTER ){
-      if (aProfile2.Error() > Precision::Confusion()){
+      if (error > Precision::Confusion()){
         Group2Sel->label->show();
-        Group2Sel->label->setText( tr("GEOM_SKETCHER_WARNING") + QString::number( aProfile2.Error(), Format, DigNum));
+        Group2Sel->label->setText( tr("GEOM_SKETCHER_WARNING") + QString::number( error, Format, DigNum));
       }
       else{
         Group2Sel->label->hide();
@@ -2373,9 +2371,6 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     }
     else 
       Group2Sel->label->hide();
-
-    if ( aProfile2.IsDone() )
-      myShape2 = aProfile2.GetShape();
 
     if ( myShape2.IsNull() ) {
       //the current point is the same as the last one

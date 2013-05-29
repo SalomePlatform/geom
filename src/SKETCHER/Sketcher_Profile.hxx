@@ -20,39 +20,46 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  GEOM SKETCHER : basic sketcher
 //  File   : Sketcher_Profile.h
 //  Author : Damien COQUERET
-//  Module : GEOM
-//
-#include <gp_Pnt.hxx>
-#include <gp_Dir.hxx>
+
+#if defined WIN32
+#  if defined SKETCHER_SALOME_EXPORTS || defined SKETCHER_EXPORTS
+#    define SKETCHER_SALOME_EXPORT _declspec( dllexport )
+#  else
+#    define SKETCHER_SALOME_EXPORT _declspec( dllimport )
+#  endif
+#else
+#  define SKETCHER_SALOME_EXPORT
+#endif
+
 #include <TopoDS_Shape.hxx>
+#include <TCollection_AsciiString.hxx>
+#include <TColStd_Array1OfAsciiString.hxx>
+
 #include <string>
 
-class Sketcher_Profile
+class SKETCHER_SALOME_EXPORT Sketcher_Profile
 {
+  class Functor;
+  class ShapeFunctor;
+  class DumpFunctor;
 
 public:
-  Standard_EXPORT Sketcher_Profile();
-  Standard_EXPORT Sketcher_Profile(const char* aCmd);
+  Sketcher_Profile();
+  Sketcher_Profile( const char* );
+
+  void                    SetCommand( const char* );
+
+  TopoDS_Shape            GetShape( bool* = 0, double* = 0 );
+  TCollection_AsciiString GetDump( bool* = 0 );
 
 private:
-  gp_Pnt myLastPoint;
-  gp_Dir myLastDir;
+  void parse( const TCollection_AsciiString&, Functor* );
+  void badArgs();
+  void findNextCommand( const TColStd_Array1OfAsciiString&, TColStd_Array1OfAsciiString&, int, int& );
+  TCollection_AsciiString extractCommand( const TCollection_AsciiString& );
 
-  TopoDS_Shape myShape;
-  bool myOK;
-  std::string myErrMsg;
-  double myError;
-
-public:
-  Standard_EXPORT gp_Pnt GetLastPoint(){return myLastPoint;};
-  Standard_EXPORT gp_Dir GetLastDir(){return myLastDir;};
-
-  Standard_EXPORT const TopoDS_Shape& GetShape(){return myShape;};
-  Standard_EXPORT bool IsDone(){return myOK;};
-  Standard_EXPORT std::string ErrMsg(){return myErrMsg;};
-  Standard_EXPORT double Error(){return myError;};
-
+private:
+  TCollection_AsciiString myCommand;
 };

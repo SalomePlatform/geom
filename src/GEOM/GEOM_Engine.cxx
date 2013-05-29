@@ -32,6 +32,7 @@
 #include "GEOM_SubShapeDriver.hxx"
 #include "GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx"
 #include "GEOM_PythonDump.hxx"
+#include "Sketcher_Profile.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -154,6 +155,7 @@ void PublishObject (TObjectData&                              theObjectData,
 
 namespace
 {
+
   //================================================================================
   /*!
    * \brief Fix up the name of python variable
@@ -961,6 +963,107 @@ std::list<int> GEOM_Engine::getAllTextures(int theDocID)
 
 //=============================================================================
 /*!
+ *  MakeCommandfor3DSketcher: Make new command for 3DSketcher
+ */
+//=============================================================================
+TCollection_AsciiString MakeCommandfor3DSketcher (const TCollection_AsciiString& theDescr )
+{
+    TCollection_AsciiString aNewDescr;
+    int i = 1;
+    TCollection_AsciiString aSubStr = theDescr.Token("\n\t", i);
+    for (; !aSubStr.IsEmpty(); aSubStr = theDescr.Token("\n\t", i)) {
+      if (aSubStr.Search( "Make3DSketcherCommand" ) != -1) {
+        TCollection_AsciiString aResult = aSubStr.Token(" ", 1);
+        // "3DSketcher:CMD[:CMD[:CMD...]]"
+        TCollection_AsciiString aCommand = aSubStr.Token("\"", 2);
+
+        // Split the command string to separate CMDs
+        int icmd = 2;
+        TColStd_SequenceOfAsciiString aSequence;
+        if (aCommand.Length()) {
+          TCollection_AsciiString aToken = aCommand.Token(":", icmd);
+          while (aToken.Length() > 0) {
+            aSequence.Append(aToken);
+            aToken = aCommand.Token(":", ++icmd);
+          }
+        }
+
+        if (aSequence.Length() > 0) {
+          if (i > 1)
+            aNewDescr += "\n\t";
+
+          aNewDescr += "\nsk = geompy.Sketcher3D()";
+          int nbCMDs = aSequence.Length();
+          for (icmd = 1; icmd <= nbCMDs; icmd++) {
+            aNewDescr += "\n\t";
+
+            TCollection_AsciiString aCMD = aSequence.Value(icmd);
+
+            // Split the CMD into string values
+            TColStd_SequenceOfAsciiString aStrVals;
+            int ival = 1;
+            TCollection_AsciiString aToken = aCMD.Token(" ", ival);
+            while (aToken.Length() > 0) {
+              aStrVals.Append(aToken);
+              aToken = aCMD.Token(" ", ++ival);
+            }
+
+            TCollection_AsciiString aCMDpref = aStrVals.Value(1);
+            if (aCMDpref == "TT") {
+              aNewDescr += "sk.addPointsAbsolute(";
+              aNewDescr += aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + aStrVals.Value(4) + ")";
+            }
+            else if (aCMDpref == "T") {
+              aNewDescr += "sk.addPointsRelative(";
+              aNewDescr += aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + aStrVals.Value(4) + ")";
+            }
+            else if (aCMDpref == "WW") {
+              aNewDescr += "sk.close()";
+            }
+            else if (aCMDpref.Value(1) == 'O'){
+              TCollection_AsciiString aCMDtrunc = aStrVals.Value(1);
+              aCMDtrunc.Trunc(3);
+              if (aCMDpref.Value(4) == 'C')
+                aNewDescr += "sk.addPointRadiusAngleH";
+              else
+                aNewDescr += "sk.addPointRadiusAngles";
+              if (aCMDpref.Value(5) == 'A')
+                aNewDescr += "Absolute(";
+              else
+                aNewDescr += "Relative(";
+              aNewDescr +=  aStrVals.Value(4) + ", " +
+                aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + "\""+aCMDtrunc+"\"" + ")";
+            }
+          }
+          aNewDescr += "\n\t";
+          aNewDescr += aResult + " = sk.wire()";
+        }
+      } // Make3DSketcherCommand
+      else if (aSubStr.Search( "Make3DSketcher" ) != -1) {
+        TCollection_AsciiString aResult = aSubStr.Token(" ", 1);
+        TCollection_AsciiString aCommand = aSubStr.Token("[", 2);
+        aCommand = aCommand.Token("]", 1);
+        if (i > 1)
+          aNewDescr += "\n\t";
+        aNewDescr += "\nsk = geompy.Sketcher3D()";
+        aNewDescr += "\n\t";
+        aNewDescr += "sk.addPointsAbsolute(";
+        aNewDescr += aCommand + ")";
+        aNewDescr += "\n\t";
+        aNewDescr += aResult + " = sk.wire()";
+      }
+      else {
+        if (i > 1)
+          aNewDescr += "\n\t";
+        aNewDescr += aSubStr;
+      }
+      i++;
+    }
+    return aNewDescr;
+}
+
+//=============================================================================
+/*!
  *  ProcessFunction: Dump function description into script
  */
 //=============================================================================
@@ -1048,100 +1151,13 @@ bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
   ReplaceVariables(aDescr,theVariables);
 
   //Process sketcher functions, replacing string command by calls to Sketcher interface
+  if ( ( aDescr.Search( "MakeSketcherOnPlane" ) != -1 ) || ( aDescr.Search( "MakeSketcher" ) != -1 ) ) {
+    Sketcher_Profile aProfile( aDescr.ToCString());
+    // Make new command for SketcherOnPlane and for Sketcher
+    aDescr = aProfile.GetDump();
+  }
   if (aDescr.Search( "Make3DSketcher" ) != -1) {
-    TCollection_AsciiString aNewDescr;
-    int i = 1;
-    TCollection_AsciiString aSubStr = aDescr.Token("\n\t", i);
-    for (; !aSubStr.IsEmpty(); aSubStr = aDescr.Token("\n\t", i)) {
-      if (aSubStr.Search( "Make3DSketcherCommand" ) != -1) {
-        TCollection_AsciiString aResult = aSubStr.Token(" ", 1);
-        // "3DSketcher:CMD[:CMD[:CMD...]]"
-        TCollection_AsciiString aCommand = aSubStr.Token("\"", 2);
-
-        // Split the command string to separate CMDs
-        int icmd = 2;
-        TColStd_SequenceOfAsciiString aSequence;
-        if (aCommand.Length()) {
-          TCollection_AsciiString aToken = aCommand.Token(":", icmd);
-          while (aToken.Length() > 0) {
-            aSequence.Append(aToken);
-            aToken = aCommand.Token(":", ++icmd);
-          }
-        }
-
-        if (aSequence.Length() > 0) {
-          if (i > 1)
-            aNewDescr += "\n\t";
-
-          aNewDescr += "sk = geompy.Sketcher3D()";
-          int nbCMDs = aSequence.Length();
-          for (icmd = 1; icmd <= nbCMDs; icmd++) {
-            aNewDescr += "\n\t";
-
-            TCollection_AsciiString aCMD = aSequence.Value(icmd);
-
-            // Split the CMD into string values
-            TColStd_SequenceOfAsciiString aStrVals;
-            int ival = 1;
-            TCollection_AsciiString aToken = aCMD.Token(" ", ival);
-            while (aToken.Length() > 0) {
-              aStrVals.Append(aToken);
-              aToken = aCMD.Token(" ", ++ival);
-            }
-
-            TCollection_AsciiString aCMDpref = aStrVals.Value(1);
-            if (aCMDpref == "TT") {
-              aNewDescr += "sk.addPointsAbsolute(";
-              aNewDescr += aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + aStrVals.Value(4) + ")";
-            }
-            else if (aCMDpref == "T") {
-              aNewDescr += "sk.addPointsRelative(";
-              aNewDescr += aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + aStrVals.Value(4) + ")";
-            }
-            else if (aCMDpref == "WW") {
-              aNewDescr += "sk.close()";
-            }
-            else if (aCMDpref.Value(1) == 'O'){
-              TCollection_AsciiString aCMDtrunc = aStrVals.Value(1);
-              aCMDtrunc.Trunc(3);
-              if (aCMDpref.Value(4) == 'C')
-                aNewDescr += "sk.addPointRadiusAngleH";
-              else
-                aNewDescr += "sk.addPointRadiusAngles";
-              if (aCMDpref.Value(5) == 'A')
-                aNewDescr += "Absolute(";
-              else
-                aNewDescr += "Relative(";
-              aNewDescr +=  aStrVals.Value(4) + ", " +
-                aStrVals.Value(2) + ", " + aStrVals.Value(3) + ", " + "\""+aCMDtrunc+"\"" + ")";
-            }
-          }
-          aNewDescr += "\n\t";
-          aNewDescr += aResult + " = sk.wire()";
-        }
-      } // Make3DSketcherCommand
-      else if (aSubStr.Search( "Make3DSketcher" ) != -1) {
-        TCollection_AsciiString aResult = aSubStr.Token(" ", 1);
-        TCollection_AsciiString aCommand = aSubStr.Token("[", 2);
-        aCommand = aCommand.Token("]", 1);
-        if (i > 1)
-          aNewDescr += "\n\t";
-        aNewDescr += "sk = geompy.Sketcher3D()";
-        aNewDescr += "\n\t";
-        aNewDescr += "sk.addPointsAbsolute(";
-        aNewDescr += aCommand + ")";
-        aNewDescr += "\n\t";
-        aNewDescr += aResult + " = sk.wire()";
-      }
-      else {
-        if (i > 1)
-          aNewDescr += "\n\t";
-        aNewDescr += aSubStr;
-      }
-
-      i++;
-    }
-    aDescr = aNewDescr;
+    aDescr = MakeCommandfor3DSketcher ( aDescr );
   }
 
   if ( theIsDumpCollected ) {

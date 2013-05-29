@@ -66,9 +66,11 @@ libGEOMbasic_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)	\
 	$(BOOST_CPPFLAGS)	\
+	-I$(srcdir)/../SKETCHER	\
 	-I$(top_builddir)/idl
 
 libGEOMbasic_la_LDFLAGS  =			\
+	../SKETCHER/libGEOMSketcher.la		\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
 	$(CAS_LDPATH) -lTKXSBase -lTKG3d  	\

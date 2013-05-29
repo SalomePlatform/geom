@@ -155,12 +155,16 @@ segments.
 points in the current LCS.
 \n <em>WorkingPlane</em> can be a Local CS, a plane, or a planar face.
 
+\n Another way to create the 2D Sketcher in TUI is using Sketcher2D
+interface.
+
+<b>TUI Command:</b> <em>sk = geompy.Sketcher2D()</em>
+
+Returns an instance of Sketcher2D interface <i>sk</i>.
+
+Use the below examples and see the \ref gsketcher.Sketcher2D "Sketcher2D"
+interface documentation for more information.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
-\ref tui_sketcher_page "Sketcher".
-
-There is also a wrapper that can help in the construction of a sketcher using simple commands.
-The description of this wrapper can be found in the <a class="el" target="_new" href="../../tui/GEOM/docutils/docapi.html#module-salome.geom.sketcher">
-dedicated page</a> of the <a class="el" target="_new" href="../../tui/GEOM/docutils/index.html">salome.geom python package</a>.
-
+\ref tui_sketcher_page "2D Sketcher".
 */
