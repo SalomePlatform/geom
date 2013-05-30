@@ -65,6 +65,7 @@
 EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
                                               bool modal, Qt::WindowFlags fl)
   : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
+    myDmMode( -1 ),
     myWithShape(true),
     myIsHiddenMain(false)
 {
@@ -118,6 +119,7 @@ EntityGUI_SubShapeDlg::~EntityGUI_SubShapeDlg()
     aDisplayer->Display(myObject);
     myIsHiddenMain = false;
   }
+  myDmMode = -1;
 }
 
 //=================================================================================
@@ -127,6 +129,7 @@ EntityGUI_SubShapeDlg::~EntityGUI_SubShapeDlg()
 void EntityGUI_SubShapeDlg::Init()
 {
   /* init variables */
+  myDmMode = -1;
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myObject = GEOM::GEOM_Object::_nil();
 
@@ -679,27 +682,36 @@ void EntityGUI_SubShapeDlg::activateSelection()
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
 
-    // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
-    if ((TopAbs_ShapeEnum)shapeType() == TopAbs_VERTEX) {
-      if (myIsHiddenMain)
-        aDisplayer->Display(myObject);
-    }
-    else {
+    //display mode for main shape
+    if ( myDmMode == -1 ) {
       SALOME_View* view = GEOM_Displayer::GetActiveView();
       if (view) {
         CORBA::String_var aMainEntry = myObject->GetStudyEntry();
         Handle(SALOME_InteractiveObject) io =
           new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
-        if (view->isVisible(io)) {
-          aDisplayer->Erase(myObject, false, false);
-          myIsHiddenMain = true;
+        if ( view->isVisible( io ) ) {
+          Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIOinGEOMAISShape( io, true );
+          if(!aSh.IsNull()) {
+            myDmMode = aSh->isTopLevel() ? aSh->prevDisplayMode() : aSh->DisplayMode();
+          }
+          // Hide main shape, if explode on VERTEX
+          if (shapeType() != TopAbs_VERTEX) {
+            aDisplayer->Erase(myObject, false, false);
+            myIsHiddenMain = true;
+          }
         }
+        else
+          myDmMode = SUIT_Session::session()->resourceMgr()->integerValue( "Geometry", "display_mode" );
       }
     }
+    // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
+    if (shapeType() == TopAbs_VERTEX) {
+      if (myIsHiddenMain)
+        aDisplayer->Display(myObject);
+    }
+    aDisplayer->SetDisplayMode(myDmMode);
 
     if(!isApply) {
-      int prevDisplayMode = aDisplayer->SetDisplayMode(0);
-
       SUIT_ViewWindow* aViewWindow = 0;
       SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
       if (activeStudy)
@@ -727,15 +739,15 @@ void EntityGUI_SubShapeDlg::activateSelection()
       {
         TopoDS_Shape aSubShape = anExp.Current();
         int index = aSubShapesMap.FindIndex(aSubShape);
-        QString anEntry = anEntryBase + QString("_%1").arg(index);
+	QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
 
         SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
         if (aPrs) {
           displayPreview(aPrs, true, false); // append, do not update
         }
       }
+      aDisplayer->UnsetDisplayMode();
       aDisplayer->UpdateViewer();
-      aDisplayer->SetDisplayMode(prevDisplayMode);
     }
   }
 

@@ -85,6 +85,7 @@ private:
 private:
   TopoDS_Shape                        myShape;
   GEOM::GEOM_Object_var               myObject;
+  int                                 myDmMode;
 
   bool                                myWithShape;
 
