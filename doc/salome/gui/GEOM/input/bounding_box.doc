@@ -7,12 +7,7 @@ geometrical object and creates the corresponding box shape on "Apply".
 
 \image html measures5.png
 
-\note To take into account any possible shape distortion  
-that affects the resulting bounding box, the algorithm enlarges 
-the bounding box   to the maximum deflection value of 
-faces (by iterating through all faces of a shape).
-This functionallity is implemented in such a way to have 
-a satisfactory performance.
+\note This functionallity performs precise computation of bounding box.
 
 \n <b>TUI Commands:</b> <em>[Xmin,Xmax, Ymin,Ymax, Zmin,Zmax] = geompy.BoundingBox(Shape, precise)</em>,
 <em>BBox = geompy.MakeBoundingBox(Shape, precise)</em>, where \em Shape
