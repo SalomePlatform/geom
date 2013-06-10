@@ -4946,6 +4946,18 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Show all sub-shapes</translation>
     </message>
     <message>
+        <source>TOP_SMOOTHINGSURFACE</source>
+        <translation type="unfinished">Smoothing Surface</translation>
+    </message>
+    <message>
+        <source>MEN_SMOOTHINGSURFACE</source>
+        <translation type="unfinished">Smoothing Surface</translation>
+    </message>
+    <message>
+        <source>STB_SMOOTHINGSURFACE</source>
+        <translation type="unfinished">Smoothing Surface</translation>
+    </message>
+    <message>
         <source>GEOM_SELECT_IMAGE</source>
         <translation>Select image...</translation>
     </message>
@@ -5427,6 +5439,10 @@ Number of sketch points too small</translation>
         <source>SECOND_SHAPE</source>
         <translation>Second Shape</translation>
     </message>
+    <message>
+        <source>WRN_NOT_SUBSHAPE</source>
+        <translation type="unfinished">The selected shape is not a sub-shape of the main shape. Hide all extra shapes in the viewer for more suitable selection.</translation>
+    </message>
 </context>
 <context>
     <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
@@ -5876,6 +5892,29 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_PIPETSHAPE_GROUPPOS</source>
         <translation>Position</translation>
+    </message>
+</context>
+<context>
+    <name>AdvancedGUI_SmoothingSurfaceDlg</name>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_TITLE</source>
+        <translation>Smoothing surface Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE</source>
+        <translation>Smoothing surface</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_RESULT</source>
+        <translation>Result name</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_ARG</source>
+        <translation>Nodes</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_ARG_POINTS</source>
+        <translation>Points</translation>
     </message>
 </context>
 <context>
