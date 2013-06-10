@@ -114,6 +114,9 @@ GEOMAlgo_Clsf.cxx
 GEOMAlgo_HAlgo.hxx
 GEOMAlgo_HAlgo.cxx
 
+GEOMAlgo_RemoverWebs.hxx
+GEOMAlgo_RemoverWebs.cxx
+
 GEOMAlgo_ListOfCoupleOfShapes.hxx
 GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx
 GEOMAlgo_ListOfPnt.hxx
