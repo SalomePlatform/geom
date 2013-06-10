@@ -27,6 +27,7 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#include <list>
 #include <gp_Ax2.hxx>
 
 class GEOMImpl_IBasicOperations;
@@ -235,6 +236,7 @@ public:
                                                            double theH,
                                                            int thePattern);
   
+  Standard_EXPORT Handle(GEOM_Object) MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thelPoints);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 };
 #endif

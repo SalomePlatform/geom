@@ -126,6 +126,7 @@ class GEOM_I_EXPORT GEOM_IAdvancedOperations_i :
   GEOM::GEOM_Object_ptr MakeDividedCylinder (CORBA::Double theR,
                                              CORBA::Double theH,
                                              GEOM::pattern thePattern);
+  GEOM::GEOM_Object_ptr MakeSmoothingSurface (const GEOM::ListOfGO& thelPoints);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 
   ::GEOMImpl_IAdvancedOperations* GetOperations()

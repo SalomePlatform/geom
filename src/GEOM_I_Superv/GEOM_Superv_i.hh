@@ -711,6 +711,7 @@ public:
   GEOM::GEOM_Object_ptr MakeDividedCylinder (CORBA::Double theR, 
                                              CORBA::Double theH,
                                              GEOM::pattern thePattern);
+  GEOM::GEOM_Object_ptr MakeSmoothingSurface (GEOM::GEOM_List_ptr thelPoints);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 private:

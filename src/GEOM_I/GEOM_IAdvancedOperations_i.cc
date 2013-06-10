@@ -751,4 +751,35 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedCylinder (CORBA::Do
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  
+ *  \param thelPoints list of  points
+ *  \return New GEOM_Object, containing the created shape.
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeSmoothingSurface (const GEOM::ListOfGO& thelPoints)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference point
+  int ind = 0;
+  int aLen = thelPoints.length();
+  std::list<Handle(GEOM_Object)> aPoints;
+  for (; ind < aLen; ind++) {
+    Handle(GEOM_Object) aPnt = GetObjectImpl(thelPoints[ind]);
+    if (aPnt.IsNull()) return aGEOMObject._retn();
+    aPoints.push_back(aPnt);
+  }
+  //Create the SmoothingSurface
+  Handle(GEOM_Object) anObject = GetOperations()->MakeSmoothingSurface(aPoints);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
 /*@@ insert new functions before this line @@ do not remove this line @@*/

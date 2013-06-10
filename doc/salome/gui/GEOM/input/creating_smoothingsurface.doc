@@ -1,0 +1,26 @@
+/*!
+
+\page create_smoothingsurface_page SmoothingSurface
+
+To create a \b SmoothingSurface in the <b>Main Menu</b> select <b>New Entity - >
+Advanced - > SmoothingSurface </b>
+
+Specify the parameters of the SmoothingSurface object creation in the opened dialog
+box and press "Apply" or "Apply & Close" button.
+Result of each operation will be a GEOM_Object.
+
+<b>TUI Command:</b> <em>geompy.MakeSmoothingSurface(lPoints)</em>
+
+<b>Arguments:</b>
+- \b lPoints - list of  points
+
+\image html smoothingsurface_dlg.png
+
+Example:
+
+\image html smoothingsurface.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_smoothingsurface "Advanced objects".
+
+*/

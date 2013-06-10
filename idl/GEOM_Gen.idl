@@ -4395,6 +4395,14 @@ module GEOM
                                      in double theH,
                                      in pattern thePattern );
 
+    /*!
+     *  
+     *  Create a smoothing surface from a set of points
+     *  \param thelPoints list of points
+     *  \return New GEOM_Object, containing the created shape.
+     */
+    GEOM_Object MakeSmoothingSurface (in ListOfGO thelPoints);
+
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };
 

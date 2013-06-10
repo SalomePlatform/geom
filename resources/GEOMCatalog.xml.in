@@ -5279,6 +5279,28 @@
                         </outParameter-list>
                         <DataStream-list></DataStream-list>
                     </component-service>
+                    <component-service>
+                        <service-name>MakeSmoothingSurface</service-name>
+                        <service-author></service-author>
+                        <service-version></service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-name>thelPoints</inParameter-name>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-comment>list of  points</inParameter-comment>
+                            </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>return</outParameter-name>
+                                <outParameter-type>GEOM_Object</outParameter-type>
+                                <outParameter-comment>Result object</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
                     <!-- @@ insert new functions before this line @@ do not remove this line @@ -->
                 </component-service-list>
             </component-interface-list>

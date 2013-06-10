@@ -196,6 +196,7 @@ namespace GEOMOp {
     //OpPipeTShapeGroups  = 10002,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
     OpDividedDisk         = 10003,  // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
     OpDividedCylinder     = 10004,  // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
+    OpSmoothingSurface            = 10005,  // MENU NEW ENTITY - ADVANCED - SMOOTHINGSURFACE
     //@@ insert new functions before this line @@ do not remove this line @@//
   };
 }

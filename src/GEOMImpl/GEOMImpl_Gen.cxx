@@ -86,6 +86,7 @@
 #include <GEOMImpl_PipeTShapeDriver.hxx>
 #include <GEOMImpl_DividedDiskDriver.hxx>
 // #include <GEOMImpl_DividedCylinderDriver.hxx>
+#include <GEOMImpl_SmoothingSurfaceDriver.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 //=============================================================================
@@ -172,6 +173,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PipeTShapeDriver::GetID(), new GEOMImpl_PipeTShapeDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_DividedDiskDriver::GetID(), new GEOMImpl_DividedDiskDriver());
 //    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_DividedCylinderDriver::GetID(), new GEOMImpl_DividedCylinderDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_SmoothingSurfaceDriver::GetID(), new GEOMImpl_SmoothingSurfaceDriver());
    /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
    SetEngine(this);

@@ -14,5 +14,23 @@
 <br><h2>Creation of DividedCylinder</h2>
 \tui_script{advanced_geom_objs_ex03.py}
 
+\anchor tui_creation_smoothingsurface
+<br><h2>Creation of SmoothingSurface</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create SmoothingSurface object
+smoothingsurface = geompy.MakeSmoothingSurface([value])
+
+# add object in the study
+id_smoothingsurface = geompy.addToStudy(smoothingsurface,"SmoothingSurface")
+
+# display smoothingsurface
+gg.createAndDisplayGO(id_smoothingsurface) 
+\endcode
+
 <!--@@ insert new functions before this line @@ do not remove this line @@-->
 */

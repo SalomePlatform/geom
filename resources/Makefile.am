@@ -258,6 +258,7 @@ ADVANCED_RESOURCES += dlg_pipetshapefilletrf.png
 # ADVANCED_RESOURCES += divideddisk.png divideddisk_r_ratio.png tree_divideddisk.png
 ADVANCED_RESOURCES += dividedcylinder.png dividedcylinder_r_h.png
 # tree_dividedcylinder.png
+ADVANCED_RESOURCES += smoothingsurface.png smoothingsurface_lpoints.png tree_smoothingsurface.png
 ##@@ insert new functions before this line @@ do not remove this line @@##
 
 dist_salomeres_DATA += $(ADVANCED_RESOURCES)

@@ -3433,6 +3433,25 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDividedCylinder (CORBA::Double theR,
   return anObj;
 }
 
+//=============================================================================
+//  MakeSmoothingSurface
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSmoothingSurface (GEOM::GEOM_List_ptr thelPoints)
+{
+  beginService( " GEOM_Superv_i::MakeSmoothingSurface" );
+  MESSAGE("GEOM_Superv_i::MakeSmoothingSurface");
+  getAdvancedOp();
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thelPoints, myPOA).in())) {
+    getCurvesOp();
+    GEOM::GEOM_Object_ptr anObj = myAdvancedOp->MakeSmoothingSurface(aListImplP->GetList());
+    endService( " GEOM_Superv_i::MakeSmoothingSurface" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeSmoothingSurface" );
+  return NULL;
+}
+
 /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 //=====================================================================================

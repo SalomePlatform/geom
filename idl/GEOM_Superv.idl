@@ -623,6 +623,8 @@ module GEOM
     GEOM_Object MakeDividedCylinder (in double theR, in double theH,
                                      in pattern thePattern);
 
+    GEOM_Object MakeSmoothingSurface (in GEOM_List thelPoints);
+
     /*@@ insert new functions before this line @@ do not remove this line @@*/
  };
 };

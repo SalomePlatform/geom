@@ -53,6 +53,8 @@
 #include "GEOMImpl_IDividedDisk.hxx"
 // #include "GEOMImpl_DividedCylinderDriver.hxx"
 // #include "GEOMImpl_IDividedCylinder.hxx"
+#include <GEOMImpl_SmoothingSurfaceDriver.hxx>
+#include <GEOMImpl_ISmoothingSurface.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 #include <TDF_Tool.hxx>
@@ -3395,6 +3397,73 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double th
   
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedCylinder(" << theR << ", " << theH << ", " << aPatternStr.c_str() << ")";
+
+  SetErrorCode(OK);
+
+  return aShape;
+}
+//=============================================================================
+/*!
+ *  Create a smoothing surface from a set of points
+ *  \param thelPoints list of points
+ *  \return New GEOM_Object, containing the created shape.
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thelPoints)
+{
+  SetErrorCode(KO);
+
+  //Add a new object
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_SMOOTHINGSURFACE);
+
+  //Add a new shape function with parameters
+  Handle(GEOM_Function) aFunction = aShape->AddFunction(GEOMImpl_SmoothingSurfaceDriver::GetID(), SMOOTHINGSURFACE_LPOINTS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_SmoothingSurfaceDriver::GetID()) return NULL;
+
+  GEOMImpl_ISmoothingSurface aData (aFunction);
+
+  int aLen = thelPoints.size();
+  aData.SetLength(aLen);
+  int ind = 1;
+  std::list<Handle(GEOM_Object)>::iterator it = thelPoints.begin();
+  for (; it != thelPoints.end(); it++, ind++) {
+    Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
+    if (aRefPnt.IsNull()) {
+      SetErrorCode("NULL point for bSplineFaceShape");
+      return NULL;
+    }
+    aData.SetPoint(ind, aRefPnt);
+  }
+
+
+  //Compute the resulting value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("SmoothingSurface driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aShape << " = geompy.MakeSmoothingSurface([";
+  it = thelPoints.begin();
+  pd << (*it++);
+  while (it != thelPoints.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
 
   SetErrorCode(OK);
 

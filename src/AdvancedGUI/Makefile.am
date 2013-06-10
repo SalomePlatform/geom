@@ -30,6 +30,7 @@ ADVANCED_INCLUDES  =
 ADVANCED_INCLUDES += AdvancedGUI_PipeTShapeDlg.h
 ADVANCED_INCLUDES += AdvancedGUI_DividedDiskDlg.h
 ADVANCED_INCLUDES += AdvancedGUI_DividedCylinderDlg.h
+ADVANCED_INCLUDES += AdvancedGUI_SmoothingSurfaceDlg.h
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
 salomeinclude_HEADERS += $(ADVANCED_INCLUDES)
@@ -45,6 +46,7 @@ ADVANCED_SOURCES  =
 ADVANCED_SOURCES += AdvancedGUI_PipeTShapeDlg.h AdvancedGUI_PipeTShapeDlg.cxx
 ADVANCED_SOURCES += AdvancedGUI_DividedDiskDlg.h AdvancedGUI_DividedDiskDlg.cxx
 ADVANCED_SOURCES += AdvancedGUI_DividedCylinderDlg.h AdvancedGUI_DividedCylinderDlg.cxx
+ADVANCED_SOURCES += AdvancedGUI_SmoothingSurfaceDlg.h AdvancedGUI_SmoothingSurfaceDlg.cxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
 dist_libAdvancedGUI_la_SOURCES += $(ADVANCED_SOURCES)
@@ -55,6 +57,7 @@ ADVANCED_MOC_FILES  =
 ADVANCED_MOC_FILES += AdvancedGUI_PipeTShapeDlg_moc.cxx
 ADVANCED_MOC_FILES += AdvancedGUI_DividedDiskDlg_moc.cxx
 ADVANCED_MOC_FILES += AdvancedGUI_DividedCylinderDlg_moc.cxx
+ADVANCED_MOC_FILES += AdvancedGUI_SmoothingSurfaceDlg_moc.cxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
 MOC_FILES += $(ADVANCED_MOC_FILES)
@@ -86,4 +89,7 @@ libAdvancedGUI_la_CPPFLAGS =			\
 
 libAdvancedGUI_la_LDFLAGS = 					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
-	../GEOMBase/libGEOMBase.la
+	../GEOMBase/libGEOMBase.la				\
+	../GEOMGUI/libGEOM.la					\
+	$(CAS_LDFLAGS) -lTKGeomBase                             \
+	$(GUI_LDFLAGS) -lsuit

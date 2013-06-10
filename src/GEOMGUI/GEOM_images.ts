@@ -1352,6 +1352,18 @@
             <source>ICON_OBJBROWSER_ADVANCED_203</source>
             <translation>dividedcylinder.png</translation>
         </message>
+        <message>
+            <source>ICON_DLG_SMOOTHINGSURFACE_LPOINTS</source>
+            <translation>smoothingsurface_lpoints.png</translation>
+        </message>
+        <message>
+            <source>ICO_SMOOTHINGSURFACE</source>
+            <translation>smoothingsurface.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_ADVANCED_204</source>
+            <translation>tree_smoothingsurface.png</translation>
+        </message>
 	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>
 </TS>

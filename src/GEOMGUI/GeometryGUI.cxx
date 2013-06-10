@@ -583,6 +583,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
 //   case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
   case GEOMOp::OpDividedDisk:           // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
   case GEOMOp::OpDividedCylinder:           // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
+  case GEOMOp::OpSmoothingSurface:           // MENU NEW ENTITY - ADVANCED - SMOOTHINGSURFACE
     //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
     libName = "AdvancedGUI";
     break;
@@ -908,6 +909,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
   createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
   createGeomAction( GEOMOp::OpDividedCylinder, "DIVIDEDCYLINDER" );
+  createGeomAction( GEOMOp::OpSmoothingSurface, "SMOOTHINGSURFACE" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create menus --------------------------
@@ -957,9 +959,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpPipePath,   genId, -1 );
 #endif
 
-//   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
-
-  //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
+   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
+   createMenu( GEOMOp::OpSmoothingSurface, advId, -1 );
+   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   createMenu( separator(), newEntId, -1 );
 
@@ -1234,8 +1236,8 @@ void GeometryGUI::initialize( CAM_Application* app )
     createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
   #endif
 
-//   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
-
+  int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
+  createTool( GEOMOp::OpSmoothingSurface, advancedTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------
