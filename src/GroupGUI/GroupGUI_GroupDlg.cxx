@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GroupGUI_GroupDlg.cxx
@@ -43,9 +42,10 @@
 #include <SALOME_Prs.h>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
-#include <SUIT_ResourceMgr.h>
 #include <SUIT_Desktop.h>
+#include <SUIT_MessageBox.h>
 #include <SUIT_OverrideCursor.h>
+#include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_ViewManager.h>
@@ -720,7 +720,7 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
         anEntry.remove(0, index+1);
         int anIndex = anEntry.toInt();
         if (anIndex)
-        theMapIndex.Add(anIndex);
+          theMapIndex.Add(anIndex);
       }
       else // selection among published shapes
       {
@@ -742,7 +742,11 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
             for (; anExp.More(); anExp.Next()) {
               TopoDS_Shape aSubShape = anExp.Current();
               int anIndex = aMainMap.FindIndex(aSubShape);
-              if (anIndex >= 0) {
+              if (anIndex == 0) {
+                SUIT_MessageBox::warning(app->desktop(), QObject::tr("WRN_WARNING"),
+                                         tr("WRN_NOT_SUBSHAPE"));
+              }
+              else {
                 if (subSelectionWay() != ALL_SUBSHAPES &&
                     !myMain2InPlaceIndices.IsBound(anIndex))
                   continue;
