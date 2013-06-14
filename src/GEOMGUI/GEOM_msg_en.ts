@@ -30,7 +30,7 @@
     <message>
         <source>DEP_OBJECT</source>
         <translation>One or more selected objects are used to create another ones or referenced from other modules.
-Removal of these objects can result in valid Python dump.
+Removal of these objects can result in invalid Python dump.
 
 Do you still want to delete these objects?</translation>
     </message>
