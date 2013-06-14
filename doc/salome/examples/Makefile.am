@@ -99,6 +99,7 @@ GOOD_TESTS = \
 	repairing_operations_ex08.py \
 	repairing_operations_ex10.py \
 	repairing_operations_ex11.py \
+	repairing_operations_ex12.py \
 	sketcher.py \
 	tolerance.py \
 	topological_geom_objs_ex01.py \

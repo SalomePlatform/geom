@@ -542,6 +542,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpGlueFaces:          // MENU REPAIR - GLUE FACES
   case GEOMOp::OpGlueEdges:          // MENU REPAIR - GLUE EDGES
   case GEOMOp::OpLimitTolerance:     // MENU REPAIR - LIMIT TOLERANCE
+  case GEOMOp::OpRemoveWebs:         // MENU REPAIR - REMOVE INTERNAL FACES
   case GEOMOp::OpRemoveExtraEdges:   // MENU REPAIR - REMOVE EXTRA EDGES
   case GEOMOp::OpFuseEdges:          // MENU REPAIR - FUSE COLLINEAR EDGES
   case GEOMOp::OpUnionFaces:         // MENU REPAIR - UNION FACES
@@ -823,6 +824,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpFreeBoundaries,   "CHECK_FREE_BNDS" );
   createGeomAction( GEOMOp::OpFreeFaces,        "CHECK_FREE_FACES" );
   createGeomAction( GEOMOp::OpOrientation,      "CHANGE_ORIENTATION" );
+  createGeomAction( GEOMOp::OpRemoveWebs,       "REMOVE_WEBS" );
   createGeomAction( GEOMOp::OpRemoveExtraEdges, "REMOVE_EXTRA_EDGES" );
   createGeomAction( GEOMOp::OpFuseEdges,        "FUSE_EDGES" );
   createGeomAction( GEOMOp::OpUnionFaces,       "UNION_FACES" );
@@ -1055,6 +1057,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   //createMenu( GEOMOp::OpFreeBoundaries,  repairId, -1 );
   //createMenu( GEOMOp::OpFreeFaces,       repairId, -1 );
   createMenu( GEOMOp::OpOrientation,      repairId, -1 );
+  createMenu( GEOMOp::OpRemoveWebs,       repairId, -1 );
   createMenu( GEOMOp::OpRemoveExtraEdges, repairId, -1 );
   createMenu( GEOMOp::OpFuseEdges,        repairId, -1 );
   createMenu( GEOMOp::OpUnionFaces,       repairId, -1 );

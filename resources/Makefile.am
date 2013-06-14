@@ -239,8 +239,9 @@ propagate.png			\
 redo.png			\
 undo.png			\
 glue2.png			\
+remove_webs.png			\
 remove_extra_edges.png		\
-union_faces.png		\
+union_faces.png			\
 coordsys.png			\
 translation.png
 

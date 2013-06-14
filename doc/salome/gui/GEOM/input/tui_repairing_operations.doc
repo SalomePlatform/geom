@@ -46,4 +46,8 @@
 <br><h2>Fuse Collinear Edges within a Wire</h2>
 \tui_script{repairing_operations_ex11.py}
 
+\anchor tui_remove_webs
+<br><h2>Remove internal(shared) faces</h2>
+\tui_script{repairing_operations_ex12.py}
+
 */

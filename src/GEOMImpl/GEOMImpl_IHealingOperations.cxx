@@ -626,7 +626,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   HI.SetTolerance( theTolerance );
   HI.SetOriginal( aLastFunction );
 
-  //Compute the translation
+  //Compute the result
   try {
 #if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
@@ -637,9 +637,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
       return NULL;
     }
   }
-  catch (Standard_Failure)
-  {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -654,6 +653,60 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   }
 
   pd << ")";
+
+  SetErrorCode(OK);
+  return aNewObject;
+}
+
+//=============================================================================
+/*!
+ *  RemoveInternalFaces
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveInternalFaces (Handle(GEOM_Object) theObject)
+{
+  // set error code, check parameters
+  SetErrorCode(KO);
+
+  if (theObject.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
+
+  // Add a new object
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
+
+  //Add the function
+  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), REMOVE_INTERNAL_FACES);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+  // prepare "data container" class IHealing
+  GEOMImpl_IHealing HI (aFunction);
+  HI.SetOriginal(aLastFunction);
+
+  //Compute the result
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction))
+    {
+      SetErrorCode("Healing driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.RemoveInternalFaces(" << theObject << ")";
 
   SetErrorCode(OK);
   return aNewObject;

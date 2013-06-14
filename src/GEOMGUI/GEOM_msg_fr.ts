@@ -1575,10 +1575,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Supprimer les contours internes</translation>
     </message>
     <message>
-        <source>GEOM_REMOVE_WEBS</source>
-        <translation>Supprimer les toiles</translation>
-    </message>
-    <message>
         <source>GEOM_REQUIRED_DEGREE</source>
         <translation>Degré nécessaire</translation>
     </message>
@@ -4505,6 +4501,30 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_CENTER_2POINTS</source>
         <translation>Centre et deux points</translation>
+    </message>
+    <message>
+        <source>GEOM_REMOVE_WEBS_TITLE</source>
+        <translation type="unfinished">Remove internal faces</translation>
+    </message>
+    <message>
+        <source>GEOM_REMOVE_WEBS</source>
+        <translation type="unfinished">Compound of solids</translation>
+    </message>
+    <message>
+        <source>REMOVE_WEBS_NEW_OBJ_NAME</source>
+        <translation type="unfinished">NoInternalFaces</translation>
+    </message>
+    <message>
+        <source>TOP_REMOVE_WEBS</source>
+        <translation type="unfinished">Remove internal faces</translation>
+    </message>
+    <message>
+        <source>MEN_REMOVE_WEBS</source>
+        <translation type="unfinished">Remove Internal Faces</translation>
+    </message>
+    <message>
+        <source>STB_REMOVE_WEBS</source>
+        <translation type="unfinished">Remove internal faces</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_EXTRA_EDGES_TITLE</source>

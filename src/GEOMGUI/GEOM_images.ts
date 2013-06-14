@@ -152,6 +152,10 @@
             <translation>change_direction.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_REMOVE_WEBS</source>
+            <translation>remove_webs.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_REMOVE_EXTRA_EDGES</source>
             <translation>remove_extra_edges.png</translation>
         </message>
@@ -1014,6 +1018,10 @@
         <message>
             <source>ICO_PLANE</source>
             <translation>plane.png</translation>
+        </message>
+        <message>
+            <source>ICO_REMOVE_WEBS</source>
+            <translation>remove_webs.png</translation>
         </message>
         <message>
             <source>ICO_REMOVE_EXTRA_EDGES</source>

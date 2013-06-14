@@ -38,6 +38,7 @@ salomeinclude_HEADERS =				\
 	RepairGUI_ChangeOrientationDlg.h	\
 	RepairGUI_GlueDlg.h			\
 	RepairGUI_LimitToleranceDlg.h		\
+	RepairGUI_RemoveWebsDlg.h		\
 	RepairGUI_RemoveExtraEdgesDlg.h		\
 	RepairGUI_UnionFacesDlg.h		\
 	RepairGUI_FuseEdgesDlg.h
@@ -59,6 +60,7 @@ dist_libRepairGUI_la_SOURCES =			\
 	RepairGUI_ChangeOrientationDlg.h	\
 	RepairGUI_GlueDlg.h			\
 	RepairGUI_LimitToleranceDlg.h		\
+	RepairGUI_RemoveWebsDlg.h		\
 	RepairGUI_RemoveExtraEdgesDlg.h		\
 	RepairGUI_UnionFacesDlg.h		\
 	RepairGUI_FuseEdgesDlg.h		\
@@ -76,6 +78,7 @@ dist_libRepairGUI_la_SOURCES =			\
 	RepairGUI_ChangeOrientationDlg.cxx	\
 	RepairGUI_GlueDlg.cxx			\
 	RepairGUI_LimitToleranceDlg.cxx		\
+	RepairGUI_RemoveWebsDlg.cxx		\
 	RepairGUI_RemoveExtraEdgesDlg.cxx	\
 	RepairGUI_UnionFacesDlg.cxx	        \
 	RepairGUI_FuseEdgesDlg.cxx
@@ -93,8 +96,9 @@ MOC_FILES = 					\
 	RepairGUI_ChangeOrientationDlg_moc.cxx	\
 	RepairGUI_GlueDlg_moc.cxx     		\
 	RepairGUI_LimitToleranceDlg_moc.cxx	\
+	RepairGUI_RemoveWebsDlg_moc.cxx		\
 	RepairGUI_RemoveExtraEdgesDlg_moc.cxx	\
-	RepairGUI_UnionFacesDlg_moc.cxx	    \
+	RepairGUI_UnionFacesDlg_moc.cxx		\
 	RepairGUI_FuseEdgesDlg_moc.cxx
 
 nodist_libRepairGUI_la_SOURCES =		\

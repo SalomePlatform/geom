@@ -74,6 +74,8 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                            double theTolerance,
                            bool isAllowNonManifold);
 
+  Standard_EXPORT Handle(GEOM_Object) RemoveInternalFaces (Handle(GEOM_Object) theObject);
+
   Standard_EXPORT Handle(GEOM_Object) DivideEdge( Handle(GEOM_Object) theObject,
                                                   int theIndex,
                                                   double theValue,

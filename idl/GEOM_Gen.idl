@@ -3332,6 +3332,14 @@ module GEOM
     GEOM_Object SewAllowNonManifold(in GEOM_Object theObject, in double theTolerance);
 
     /*!
+     *  Rebuild the topology of theCompound of solids by removing
+     *  of the faces that are shared by several solids.
+     *  \param theCompound Shape to be processed.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object RemoveInternalFaces (in GEOM_Object theCompound);
+
+    /*!
      *  \brief Addition of a point to a given edge object.
      *  \param theObject Shape to be processed.
      *  \param theEdgeIndex Index of edge to be divided within theObject's shape,

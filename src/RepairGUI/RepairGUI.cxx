@@ -43,6 +43,7 @@
 #include "RepairGUI_GlueDlg.h"          // Method GLUE FACES
 #include "RepairGUI_LimitToleranceDlg.h"    // Method LIMIT TOLERANCE
 #include "RepairGUI_ChangeOrientationDlg.h" // Method CHANGE ORIENTATION
+#include "RepairGUI_RemoveWebsDlg.h"        // Method REMOVE INTERNAL FACES
 #include "RepairGUI_RemoveExtraEdgesDlg.h"  // Method REMOVE EXTRA EDGES
 #include "RepairGUI_FuseEdgesDlg.h"         // Method FUSE COLLINEAR EDGES
 #include "RepairGUI_UnionFacesDlg.h"        // Method UNION FACES
@@ -91,6 +92,7 @@ bool RepairGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpFreeBoundaries:   aDlg = new RepairGUI_FreeBoundDlg         (getGeometryGUI(), parent); break;
   case GEOMOp::OpFreeFaces:        aDlg = new RepairGUI_FreeFacesDlg         (getGeometryGUI(), parent); break;
   case GEOMOp::OpOrientation:      aDlg = new RepairGUI_ChangeOrientationDlg (getGeometryGUI(), parent); break;
+  case GEOMOp::OpRemoveWebs:       aDlg = new RepairGUI_RemoveWebsDlg        (getGeometryGUI(), parent); break;
   case GEOMOp::OpRemoveExtraEdges: aDlg = new RepairGUI_RemoveExtraEdgesDlg  (getGeometryGUI(), parent); break;
   case GEOMOp::OpFuseEdges:        aDlg = new RepairGUI_FuseEdgesDlg         (getGeometryGUI(), parent); break;
   case GEOMOp::OpUnionFaces:       aDlg = new RepairGUI_UnionFacesDlg        (getGeometryGUI(), parent); break;

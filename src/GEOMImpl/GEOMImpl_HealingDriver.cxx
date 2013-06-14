@@ -30,6 +30,9 @@
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_ShapeDriver.hxx>
 
+#include <GEOMUtils.hxx>
+#include <GEOMAlgo_RemoverWebs.hxx>
+
 #include <ShHealOper_ShapeProcess.hxx>
 #include <ShHealOper_RemoveFace.hxx>
 #include <ShHealOper_CloseContour.hxx>
@@ -137,6 +140,9 @@ Standard_Integer GEOMImpl_HealingDriver::Execute(TFunction_Logbook& log) const
     break;
   case SEWING_NON_MANIFOLD:
     Sew(&HI, anOriginalShape, aShape, true);
+    break;
+  case REMOVE_INTERNAL_FACES:
+    RemoveInternalFaces(anOriginalShape, aShape);
     break;
   case DIVIDE_EDGE:
     AddPointOnEdge(&HI, anOriginalShape, aShape);
@@ -439,6 +445,33 @@ Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing* theHI,
     raiseNotDoneExeption( aHealer.GetErrorStatus() );
 
   return aResult;
+}
+
+//=======================================================================
+//function : RemoveInternalFaces
+//purpose  :
+//=======================================================================
+Standard_Boolean GEOMImpl_HealingDriver::RemoveInternalFaces (const TopoDS_Shape& theOriginalShape,
+                                                              TopoDS_Shape& theOutShape) const
+{
+  GEOMAlgo_RemoverWebs aTool;
+  aTool.SetShape(theOriginalShape);
+  aTool.Perform();
+
+  if (aTool.ErrorStatus() != 0)
+    StdFail_NotDone::Raise("GEOMAlgo_RemoverWebs failed!");
+
+  theOutShape = aTool.Result();
+
+  // as GEOMAlgo_RemoverWebs always produces compound, lets simplify it
+  // for the case, if it contains only one sub-shape
+  TopTools_ListOfShape listShapeRes;
+  GEOMUtils::AddSimpleShapes(theOutShape, listShapeRes);
+  if (listShapeRes.Extent() == 1) {
+    theOutShape = listShapeRes.First();
+  }
+
+  return Standard_True;
 }
 
 //=======================================================================

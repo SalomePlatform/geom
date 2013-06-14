@@ -5996,6 +5996,36 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "sewed")
             return anObj
 
+        ## Rebuild the topology of theCompound of solids by removing
+        #  of the faces that are shared by several solids.
+        #  @param theCompound Shape to be processed.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing processed shape.
+        #
+        #  @ref tui_remove_webs "Example"
+        def RemoveInternalFaces (self, theCompound, theName=None):
+            """
+            Rebuild the topology of theCompound of solids by removing
+            of the faces that are shared by several solids.
+
+            Parameters:
+                theCompound Shape to be processed.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing processed shape.
+            """
+            # Example: see GEOM_TestHealing.py
+            anObj = self.HealOp.RemoveInternalFaces(theCompound)
+            RaiseIfFailed("RemoveInternalFaces", self.HealOp)
+            self._autoPublish(anObj, theName, "removeWebs")
+            return anObj
+
         ## Remove internal wires and edges from the given object (face).
         #  @param theObject Shape to be processed.
         #  @param theWires Indices of wires to be removed, if EMPTY then the method
