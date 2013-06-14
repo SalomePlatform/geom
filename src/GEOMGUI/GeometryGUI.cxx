@@ -707,7 +707,7 @@ void GeometryGUI::createOriginAndBaseVectors()
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOY, "OY" );
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOZ, "OZ" );
 
-        getApp()->updateObjectBrowser( false );
+        getApp()->updateObjectBrowser( true );
       }
     }
   }
