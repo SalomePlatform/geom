@@ -288,6 +288,8 @@
 //#define REVERSE_ORIENTATION 10
 #define EDGE_WIRE           11
 #define EDGE_CURVE_LENGTH   12
+#define SHAPES_ON_SHAPE     13
+
 
 #define ARCHIMEDE_TYPE 1
 
@@ -326,8 +328,6 @@
 #define VERTEX_BY_INDEX 5
 
 #define GROUP_FUNCTION 1
-
-#define SHAPES_ON_SHAPE 1
 
 // Curve constructor type
 #define POINT_CONSTRUCTOR 0
