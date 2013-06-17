@@ -535,7 +535,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
   if (aSelList.Extent() == 0 && !myShape->_is_nil()) {
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     ObjectList list;
-	list.push_back(myShape);
+        list.push_back(myShape);
     selectObjects(list);
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
             this, SLOT(SelectionIntoArgument()));

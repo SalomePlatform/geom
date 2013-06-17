@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_ListIteratorOfListOfCoupleOfShape.hxx
-// Created:	Mon Feb 20 11:25:23 2012
+// File:        NMTDS_ListIteratorOfListOfCoupleOfShape.hxx
+// Created:     Mon Feb 20 11:25:23 2012
 // Author:
-//		<pkv@BDEURI37616>
+//              <pkv@BDEURI37616>
 
 #ifndef NMTDS_ListIteratorOfListOfCoupleOfShape_HeaderFile
 #define NMTDS_ListIteratorOfListOfCoupleOfShape_HeaderFile

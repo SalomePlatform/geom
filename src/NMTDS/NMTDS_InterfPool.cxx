@@ -52,7 +52,7 @@ NMTDS_InterfPool::NMTDS_InterfPool()
 //purpose  : 
 //=======================================================================
 Standard_Boolean NMTDS_InterfPool::Add (const NMTDS_PairBoolean& aPKB,
-					const NMTDS_InterfType aType)
+                                        const NMTDS_InterfType aType)
 {
   Standard_Boolean bRet;
   Standard_Integer iType;
@@ -70,8 +70,8 @@ Standard_Boolean NMTDS_InterfPool::Add (const NMTDS_PairBoolean& aPKB,
 //purpose  : 
 //=======================================================================
 Standard_Boolean NMTDS_InterfPool::Add (const Standard_Integer aInd1,
-					const Standard_Integer aInd2,
-					const NMTDS_InterfType aType)
+                                        const Standard_Integer aInd2,
+                                        const NMTDS_InterfType aType)
 {
   NMTDS_PairBoolean aPKB;
   //
@@ -83,9 +83,9 @@ Standard_Boolean NMTDS_InterfPool::Add (const Standard_Integer aInd1,
 //purpose  : 
 //=======================================================================
 Standard_Boolean NMTDS_InterfPool::Add (const Standard_Integer aInd1,
-					const Standard_Integer aInd2,
-					const Standard_Boolean bFlag,
-					const NMTDS_InterfType aType)
+                                        const Standard_Integer aInd2,
+                                        const Standard_Boolean bFlag,
+                                        const NMTDS_InterfType aType)
 {
   NMTDS_PairBoolean aPKB;
   //

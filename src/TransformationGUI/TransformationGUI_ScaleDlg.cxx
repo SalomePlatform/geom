@@ -294,7 +294,7 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
       myEditCurrentArgument->setText( aName );
       myPoint = aSelectedObject;
       if ( myObjects.isEmpty() )
-	PushButton1->click();
+        PushButton1->click();
     }
     else {
       myPoint.nullify();

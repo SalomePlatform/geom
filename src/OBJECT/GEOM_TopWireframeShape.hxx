@@ -85,7 +85,7 @@ public:
     Standard_Boolean             IsKind(const Handle(Standard_Type)&) const;
 
 
-	void setIO(const Handle(SALOME_InteractiveObject)& io);
+        void setIO(const Handle(SALOME_InteractiveObject)& io);
 
 protected:
 

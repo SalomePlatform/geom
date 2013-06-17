@@ -17,10 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:	NMTDS_BndSphere.hxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_BndSphere.hxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 
 #ifndef _NMTDS_CArray1OfIndexRange_HeaderFile
 #define _NMTDS_CArray1OfIndexRange_HeaderFile
@@ -46,7 +46,7 @@ class NMTDS_CArray1OfIndexRange  {
 
   Standard_EXPORT
     NMTDS_CArray1OfIndexRange(const Standard_Integer Length = 0,
-			      const Standard_Integer BlockLength = 5);
+                              const Standard_Integer BlockLength = 5);
   
   Standard_EXPORT   
     void Resize(const Standard_Integer theNewLength) ;

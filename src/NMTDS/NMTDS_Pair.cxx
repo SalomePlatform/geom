@@ -86,7 +86,7 @@ NMTDS_Pair::NMTDS_Pair(const NMTDS_Pair& aOther)
 //purpose  : 
 //=======================================================================
   void NMTDS_Pair::SetIds(const Standard_Integer aId1,
-			  const Standard_Integer aId2)
+                          const Standard_Integer aId2)
 {
   Clear();
   myId1=aId1;
@@ -101,7 +101,7 @@ NMTDS_Pair::NMTDS_Pair(const NMTDS_Pair& aOther)
 //purpose  : 
 //=======================================================================
   void NMTDS_Pair::Ids(Standard_Integer& aId1,
-		       Standard_Integer& aId2) const
+                       Standard_Integer& aId2) const
 {
   aId1=myId1;
   aId2=myId2;

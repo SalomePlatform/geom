@@ -320,8 +320,8 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
   erasePreview();
 
   TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupPoints->LineEdit2 ||
-				 myEditCurrentArgument == GroupDimensions->LineEdit2 ||
-				 myEditCurrentArgument == GroupDimensions->LineEdit3 ) ?
+                                 myEditCurrentArgument == GroupDimensions->LineEdit2 ||
+                                 myEditCurrentArgument == GroupDimensions->LineEdit3 ) ?
     TopAbs_EDGE : TopAbs_SHAPE;
   GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
   TopoDS_Shape aShape;
@@ -342,12 +342,12 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
       }
 
       if (!myVectorU)
-	GroupPoints->PushButton2->click();
+        GroupPoints->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
       myVectorU = aSelectedObject;
       if ( !myBase )
-	GroupPoints->PushButton1->click();
+        GroupPoints->PushButton1->click();
     }
     else if ( myEditCurrentArgument == GroupDimensions->LineEdit1 ) {
       myBase = aSelectedObject;
@@ -364,37 +364,37 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
       }
 
       if ( !myVectorU )
-	GroupDimensions->PushButton2->click();
+        GroupDimensions->PushButton2->click();
       else if ( !myVectorV )
-	GroupDimensions->PushButton3->click();
+        GroupDimensions->PushButton3->click();
     }
     else if ( myEditCurrentArgument == GroupDimensions->LineEdit2 ) {
       myVectorU = aSelectedObject;
       if ( !myVectorV )
-	GroupDimensions->PushButton3->click();
+        GroupDimensions->PushButton3->click();
       else if ( !myBase )
-	GroupDimensions->PushButton1->click();
+        GroupDimensions->PushButton1->click();
     }
     else if ( myEditCurrentArgument == GroupDimensions->LineEdit3 ) {
       myVectorV = aSelectedObject;
       if ( !myBase )
-	GroupDimensions->PushButton1->click();
+        GroupDimensions->PushButton1->click();
       else if ( !myVectorU )
-	GroupDimensions->PushButton2->click();
+        GroupDimensions->PushButton2->click();
     }
 
     // clear selection
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     myGeomGUI->getApp()->selectionMgr()->clearSelected();
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-	    this, SLOT(SelectionIntoArgument()));
+            this, SLOT(SelectionIntoArgument()));
   }
   else {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ||
-	 myEditCurrentArgument == GroupDimensions->LineEdit1 )
+         myEditCurrentArgument == GroupDimensions->LineEdit1 )
       myBase.nullify();
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ||
-	      myEditCurrentArgument == GroupDimensions->LineEdit2 )
+              myEditCurrentArgument == GroupDimensions->LineEdit2 )
       myVectorU.nullify();
     else if ( myEditCurrentArgument == GroupDimensions->LineEdit3 )
       myVectorV.nullify();

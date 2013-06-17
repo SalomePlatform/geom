@@ -96,12 +96,12 @@ extern "C"
       TopExp_Explorer ex;
       TopLoc_Location aLoc;
       for (ex.Init(theShape, TopAbs_FACE); ex.More(); ex.Next()) {
-	const TopoDS_Face& aFace = TopoDS::Face(ex.Current());
-	Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
-	if(aPoly.IsNull()) { 
-	  wasMeshed = false;
-	  break; 
-	}
+        const TopoDS_Face& aFace = TopoDS::Face(ex.Current());
+        Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
+        if(aPoly.IsNull()) { 
+          wasMeshed = false;
+          break; 
+        }
       }
 
       GEOM::MeshShape( theShape, aDeflection );
@@ -146,7 +146,7 @@ extern "C"
       myAppendFilter->Delete();
 
       if(!wasMeshed)
-	BRepTools::Clean(theShape);
+        BRepTools::Clean(theShape);
 
       return 1;
     }

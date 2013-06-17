@@ -19,9 +19,9 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_GetInPlace_2.cxx
+// File:        GEOMAlgo_GetInPlace_2.cxx
 // Created:
-// Author:	Peter KURNEV
+// Author:      Peter KURNEV
 
 #include <GEOMAlgo_GetInPlace.hxx>
 
@@ -51,7 +51,7 @@ static
   Standard_Integer Dimension(const TopAbs_ShapeEnum aType);
 static
   void PointProperties(const TopoDS_Shape& aS,
-		       GProp_GProps& aGProps);
+                       GProp_GProps& aGProps);
 
 //=======================================================================
 //function : CheckGProps
@@ -87,7 +87,7 @@ void GEOMAlgo_GetInPlace::CheckGProps(const TopoDS_Shape& aS1)
       const TopoDS_Shape& aS1x=aIt.Value();
       CheckGProps(aS1x);
       if (!myFound) {
-	return;
+        return;
       }
     }
   }

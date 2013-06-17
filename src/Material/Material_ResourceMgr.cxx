@@ -178,7 +178,7 @@ void Material_ResourceMgr::watchUserFile( bool on )
       myWatcher = new QFileSystemWatcher( this );
       QFileInfo ufile = userFileName( appName() );
       if ( ufile.exists() ) {
-	myWatcher->addPath( ufile.filePath() );
+        myWatcher->addPath( ufile.filePath() );
       }
       connect( myWatcher, SIGNAL( fileChanged( QString ) ), this, SLOT( update() ) );
     }

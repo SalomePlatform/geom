@@ -123,8 +123,8 @@ extern "C"
         TColStd_SequenceOfAsciiString anUnitSolidAngleNames;
         aReader.FileUnits(anUnitLengthNames, anUnitAngleNames, anUnitSolidAngleNames);
         if (anUnitLengthNames.Length() > 0) {
-	  aValue = new TCollection_HAsciiString( anUnitLengthNames.First() );
-	  /*
+          aValue = new TCollection_HAsciiString( anUnitLengthNames.First() );
+          /*
           TCollection_AsciiString aLenUnits = anUnitLengthNames.First();
           if (aLenUnits == "millimetre")
             aValue = new TCollection_HAsciiString ("MM");
@@ -144,7 +144,7 @@ extern "C"
           //  std::cout << ", " << anUnitLengthNames.Value(ii);
           //std::cout << std::endl;
           // tmp end
-	  */
+          */
         }
       }
       else {

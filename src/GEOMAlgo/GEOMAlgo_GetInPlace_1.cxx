@@ -20,8 +20,8 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:	GEOMAlgo_GetInPlace_1.cxx
-// Author:	Peter KURNEV
+// File:        GEOMAlgo_GetInPlace_1.cxx
+// Author:      Peter KURNEV
 
 #include <GEOMAlgo_GetInPlace.hxx>
 
@@ -66,22 +66,22 @@
 
 static
   Standard_Integer PntInEdge(const TopoDS_Edge& aF,
-			     gp_Pnt& aP);
+                             gp_Pnt& aP);
 static
   Standard_Integer PntInEdge(const TopoDS_Edge& aF,
-			     gp_Pnt& aP,
-			     Standard_Real& aT);
+                             gp_Pnt& aP,
+                             Standard_Real& aT);
 static
   Standard_Integer PntInFace(const TopoDS_Face& aF,
-			     gp_Pnt& aP);
+                             gp_Pnt& aP);
 static
   Standard_Integer PntInFace(const TopoDS_Face& aF,
-			     gp_Pnt& aP,
-			     gp_Pnt2d& theP2D);
+                             gp_Pnt& aP,
+                             gp_Pnt2d& theP2D);
 static
   Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
-			      const Standard_Real aTol,
-			      gp_Pnt& aP);
+                              const Standard_Real aTol,
+                              gp_Pnt& aP);
 
 
 //=======================================================================
@@ -89,7 +89,7 @@ static
 //purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
-						       const TopoDS_Shape& aS2)
+                                                       const TopoDS_Shape& aS2)
 {
   Standard_Boolean bOk;
   Standard_Integer iErr;
@@ -157,11 +157,11 @@ Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
       aDmin=aPPC.LowerDistance();
       aT=aPPC.LowerDistanceParameter();
       if (aDmin < myTolerance) {
-	dT=1.e-12;
-	BRep_Tool::Curve(aE1, aT1, aT2);
+        dT=1.e-12;
+        BRep_Tool::Curve(aE1, aT1, aT2);
         if(aT > (aT1-dT) && aT < (aT2+dT)) {
-	  bOk=Standard_True;
-	}
+          bOk=Standard_True;
+        }
       }
     }
     //else {
@@ -197,7 +197,7 @@ Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
 //purpose  :
 //=======================================================================
 Standard_Integer PntInEdge(const TopoDS_Edge& aE,
-			   gp_Pnt& aP)
+                           gp_Pnt& aP)
 
 {
   Standard_Integer iErr;
@@ -212,8 +212,8 @@ Standard_Integer PntInEdge(const TopoDS_Edge& aE,
 //purpose  :
 //=======================================================================
 Standard_Integer PntInEdge(const TopoDS_Edge& aE,
-			   gp_Pnt& aP,
-			   Standard_Real& aT)
+                           gp_Pnt& aP,
+                           Standard_Real& aT)
 {
   Standard_Integer iErr;
   Standard_Real aT1, aT2;
@@ -232,8 +232,8 @@ Standard_Integer PntInEdge(const TopoDS_Edge& aE,
 //purpose  :
 //=======================================================================
 Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
-			    const Standard_Real aTol,
-			    gp_Pnt& aP)
+                            const Standard_Real aTol,
+                            gp_Pnt& aP)
 {
   Standard_Integer iErr;
   Standard_Real aUx, aVx, aCoef;
@@ -271,7 +271,7 @@ Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
 //purpose  :
 //=======================================================================
 Standard_Integer PntInFace(const TopoDS_Face& aF,
-			   gp_Pnt& aP)
+                           gp_Pnt& aP)
 {
   Standard_Integer iErr;
   //
@@ -286,8 +286,8 @@ Standard_Integer PntInFace(const TopoDS_Face& aF,
 //purpose  :
 //=======================================================================
 Standard_Integer PntInFace(const TopoDS_Face& aF,
-			   gp_Pnt& theP,
-			   gp_Pnt2d& theP2D)
+                           gp_Pnt& theP,
+                           gp_Pnt2d& theP2D)
 {
   Standard_Boolean bIsDone, bHasFirstPoint, bHasSecondPoint;
   Standard_Integer iErr, aIx, aNbDomains, i;
@@ -312,8 +312,8 @@ Standard_Integer PntInFace(const TopoDS_Face& aF,
   //
   Geom2dHatch_Intersector aIntr(aTotArcIntr, aTolTangfIntr);
   Geom2dHatch_Hatcher aHatcher(aIntr,
-			       aTolHatch2D, aTolHatch3D,
-			       Standard_True, Standard_False);
+                               aTolHatch2D, aTolHatch3D,
+                               Standard_True, Standard_False);
   //
   iErr=0;
   aEpsT=1.e-12;

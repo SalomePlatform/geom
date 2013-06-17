@@ -56,54 +56,54 @@ public:
 
   Standard_EXPORT
     static  Standard_Integer RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape& aMSD,
-					    const Standard_Real aTol,
-					    const Handle(IntTools_Context)& aCtx) ;
+                                            const Standard_Real aTol,
+                                            const Handle(IntTools_Context)& aCtx) ;
 
   Standard_EXPORT
     static  Standard_Integer FindSDShapes(const TopTools_ListOfShape& aLE,
-					  const Standard_Real aTol,
-					  TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
-					  const Handle(IntTools_Context)& aCtx) ;
+                                          const Standard_Real aTol,
+                                          TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
+                                          const Handle(IntTools_Context)& aCtx) ;
 
   Standard_EXPORT
     static  Standard_Integer FindSDShapes(const TopoDS_Shape& aE1,
-					  const TopTools_ListOfShape& aLE,
-					  const Standard_Real aTol,
-					  TopTools_ListOfShape& aLESD,
-					  const Handle(IntTools_Context)& aCtx) ;
+                                          const TopTools_ListOfShape& aLE,
+                                          const Standard_Real aTol,
+                                          TopTools_ListOfShape& aLESD,
+                                          const Handle(IntTools_Context)& aCtx) ;
 
   Standard_EXPORT
     static  Standard_Boolean ProjectPointOnShape(const gp_Pnt& aP1,
-						 const TopoDS_Shape& aS,gp_Pnt& aP2,
-						 const Handle(IntTools_Context)& aCtx) ;
+                                                 const TopoDS_Shape& aS,gp_Pnt& aP2,
+                                                 const Handle(IntTools_Context)& aCtx) ;
 
   Standard_EXPORT
     static  void PointOnShape(const TopoDS_Shape& aS,
-			      gp_Pnt& aP3D) ;
+                              gp_Pnt& aP3D) ;
 
   Standard_EXPORT
     static  void PointOnEdge(const TopoDS_Edge& aE,
-			     gp_Pnt& aP3D) ;
+                             gp_Pnt& aP3D) ;
 
   Standard_EXPORT
     static  void PointOnEdge(const TopoDS_Edge& aE,
-			     const Standard_Real aT,gp_Pnt& aP3D) ;
+                             const Standard_Real aT,gp_Pnt& aP3D) ;
 
   Standard_EXPORT
     static  void PointOnFace(const TopoDS_Face& aF,
-			     gp_Pnt& aP3D) ;
+                             gp_Pnt& aP3D) ;
 
   Standard_EXPORT
     static  void PointOnFace(const TopoDS_Face& aF,
-			     const Standard_Real aU,
-			     const Standard_Real aV,
-			     gp_Pnt& aP3D) ;
+                             const Standard_Real aU,
+                             const Standard_Real aV,
+                             gp_Pnt& aP3D) ;
 
   Standard_EXPORT
     static  void RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
-					   const TopoDS_Face& aF,
-					   const Standard_Real aU1,
-					   const Standard_Real aU2) ;
+                                           const TopoDS_Face& aF,
+                                           const Standard_Real aU1,
+                                           const Standard_Real aU2) ;
 
   Standard_EXPORT
     static  Standard_Boolean IsUPeriodic(const Handle(Geom_Surface)& aS) ;
@@ -113,9 +113,9 @@ public:
 
   Standard_EXPORT
     static  Standard_Integer BuildPCurveForEdgeOnFace(const TopoDS_Edge& aE,
-						      const TopoDS_Edge& aEold,
-						      const TopoDS_Face& aF,
-						      const Handle(IntTools_Context)& aCtx) ;
+                                                      const TopoDS_Edge& aEold,
+                                                      const TopoDS_Face& aF,
+                                                      const Handle(IntTools_Context)& aCtx) ;
 
 };
 #endif

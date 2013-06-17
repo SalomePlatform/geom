@@ -321,34 +321,34 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
       QString aName = GEOMBase::GetName( aSelectedObject.get() );
       myEditCurrentArgument->setText( aName );
       if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-	if ( getConstructorId() == 1 ) {
-	  myPoint1 = aSelectedObject;
-	  if ( !myPoint2 )
-	    GroupPoints->PushButton3->click();
-	  else if ( myObjects.isEmpty() )
-	    GroupPoints->PushButton1->click();
-	}
-	else if ( getConstructorId() == 2 ) {
-	  myVector = aSelectedObject;
-	  if ( myObjects.isEmpty() )
-	    GroupPoints->PushButton1->click();
-	}
+        if ( getConstructorId() == 1 ) {
+          myPoint1 = aSelectedObject;
+          if ( !myPoint2 )
+            GroupPoints->PushButton3->click();
+          else if ( myObjects.isEmpty() )
+            GroupPoints->PushButton1->click();
+        }
+        else if ( getConstructorId() == 2 ) {
+          myVector = aSelectedObject;
+          if ( myObjects.isEmpty() )
+            GroupPoints->PushButton1->click();
+        }
       }
       else if ( myEditCurrentArgument == GroupPoints->LineEdit3 ) {
-	myPoint2 = aSelectedObject;
-	if ( myObjects.isEmpty() )
-	  GroupPoints->PushButton1->click();
-	else if ( !myPoint1 )
-	  GroupPoints->PushButton2->click();
+        myPoint2 = aSelectedObject;
+        if ( myObjects.isEmpty() )
+          GroupPoints->PushButton1->click();
+        else if ( !myPoint1 )
+          GroupPoints->PushButton2->click();
       }
     }
     else {
       if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-	if ( getConstructorId() == 1 ) myPoint1.nullify();
-	else myVector.nullify();
+        if ( getConstructorId() == 1 ) myPoint1.nullify();
+        else myVector.nullify();
       }
       else if ( myEditCurrentArgument == GroupPoints->LineEdit3 ) {
-	myPoint2.nullify();
+        myPoint2.nullify();
       }
       myEditCurrentArgument->setText("");
     }
@@ -472,7 +472,7 @@ bool TransformationGUI_TranslationDlg::isValid (QString& msg)
     break;
   case 2:
       ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) &&
-	   myVector && !myObjects.isEmpty();
+           myVector && !myObjects.isEmpty();
     break;
   default:
     break;

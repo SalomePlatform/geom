@@ -60,18 +60,18 @@ class NMTDS_PassKeyShape  {
   
   Standard_EXPORT
     void SetShapes(const TopoDS_Shape& aS1,
-		   const TopoDS_Shape& aS2) ;
+                   const TopoDS_Shape& aS2) ;
   
   Standard_EXPORT
     void SetShapes(const TopoDS_Shape& aS1,
-		   const TopoDS_Shape& aS2,
-		   const TopoDS_Shape& aS3) ;
+                   const TopoDS_Shape& aS2,
+                   const TopoDS_Shape& aS3) ;
   
   Standard_EXPORT
     void SetShapes(const TopoDS_Shape& aS1,
-		   const TopoDS_Shape& aS2,
-		   const TopoDS_Shape& aS3,
-		   const TopoDS_Shape& aS4) ;
+                   const TopoDS_Shape& aS2,
+                   const TopoDS_Shape& aS3,
+                   const TopoDS_Shape& aS4) ;
   
   Standard_EXPORT
     void SetShapes(const TopTools_ListOfShape& aLS) ;

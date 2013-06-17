@@ -112,16 +112,16 @@ protected:
 
   Standard_EXPORT
     void InnerPoints(const TopoDS_Face& aF,
-		     GEOMAlgo_ListOfPnt& aLP) ;
+                     GEOMAlgo_ListOfPnt& aLP) ;
 
   Standard_EXPORT
     void InnerPoints(const TopoDS_Edge& aE,
-		     GEOMAlgo_ListOfPnt& aLP) ;
+                     GEOMAlgo_ListOfPnt& aLP) ;
 
   Standard_EXPORT
     void InnerPoints(const TopoDS_Edge& aE,
-		     const Standard_Integer aNbPnts,
-		     GEOMAlgo_ListOfPnt& aLP) ;
+                     const Standard_Integer aNbPnts,
+                     GEOMAlgo_ListOfPnt& aLP) ;
 
 
   TopAbs_ShapeEnum myShapeType;

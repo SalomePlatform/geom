@@ -40,7 +40,7 @@ class GEOMAlgo_BuilderTools
  public:
   Standard_EXPORT
     static  Standard_Boolean IsHole(const TopoDS_Shape& aW,
-				    const TopoDS_Shape& aF) ;
+                                    const TopoDS_Shape& aF) ;
 
   Standard_EXPORT
     static  Standard_Boolean IsHole(const TopoDS_Shape& aShell) ;

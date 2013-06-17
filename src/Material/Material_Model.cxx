@@ -425,10 +425,12 @@ double Material_Model::reflection( ReflectionType type, bool theIsFront ) const
 {
   double value = 0.0;
   if ( type >= 0 && type < 4 )
+  {
     if ( theIsFront )
       value = myReflection[ type ].front_coef;
     else
       value = myReflection[ type ].back_coef;
+  }
   return value;
 }
 
@@ -442,10 +444,12 @@ double Material_Model::reflection( ReflectionType type, bool theIsFront ) const
 void Material_Model::setReflection( ReflectionType type, double value, bool theIsFront )
 {
   if ( type >= 0 && type < 4 )
+  {
     if ( theIsFront )
       myReflection[ type ].front_coef = value;
     else
       myReflection[ type ].back_coef = value;
+  }
 }
 
 /*!

@@ -715,33 +715,33 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Face& aF,
       aHatcher.Trim(aIx);
       bIsDone=aHatcher.TrimDone(aIx);
       if (!bIsDone) {
-	myErrorStatus=42;
-	return;
+        myErrorStatus=42;
+        return;
       }
       //
       aHatcher.ComputeDomains(aIx);
       bIsDone=aHatcher.IsDone(aIx);
       if (!bIsDone) {
-	continue;
+        continue;
       }
       //
       aNbDomains=aHatcher.NbDomains(aIx);
       for (j=1; j<=aNbDomains; ++j) {
-	const HatchGen_Domain& aDomain=aHatcher.Domain (aIx, j) ; 
-	// 1
-	bHasFirstPoint=aDomain.HasFirstPoint();
-	bHasSecondPoint=aDomain.HasSecondPoint();
-	if (!bHasFirstPoint || !bHasSecondPoint) {
-	  continue;
-	}
-	// 2
-	aV1=aDomain.FirstPoint().Parameter();
-	aV2=aDomain.SecondPoint().Parameter();
-	aVx=IntTools_Tools::IntermediatePoint(aV1, aV2);
-	// 3
-	aS->D0(aUx, aVx, aPx);
-	aLP.Append(aPx);
-	break;
+        const HatchGen_Domain& aDomain=aHatcher.Domain (aIx, j) ; 
+        // 1
+        bHasFirstPoint=aDomain.HasFirstPoint();
+        bHasSecondPoint=aDomain.HasSecondPoint();
+        if (!bHasFirstPoint || !bHasSecondPoint) {
+          continue;
+        }
+        // 2
+        aV1=aDomain.FirstPoint().Parameter();
+        aV2=aDomain.SecondPoint().Parameter();
+        aVx=IntTools_Tools::IntermediatePoint(aV1, aV2);
+        // 3
+        aS->D0(aUx, aVx, aPx);
+        aLP.Append(aPx);
+        break;
       }
     }// for (i=1; i<aNb; ++i) {
   }// if (!aNb && myNbPntsMin) {
@@ -877,7 +877,7 @@ if (!aNb && myNbPntsMin) {
           //
           aN1=(Standard_Integer)aPK.Id(1);
           aN2=(Standard_Integer)aPK.Id(2);
-	  //
+          //
           aP1=aNodes(aN1).Transformed(aTrsf);
           aP2=aNodes(aN2).Transformed(aTrsf);
           //

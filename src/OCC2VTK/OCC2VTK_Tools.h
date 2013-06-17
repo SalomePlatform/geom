@@ -34,7 +34,7 @@ namespace GEOM
   // moved from GEOM_AssemblyBuilder
   OCC2VTK_EXPORT void MeshShape(const TopoDS_Shape theShape,
                                 float& theDeflection,
-				bool theForced = true);
+                                bool theForced = true);
   
   // moved from GEOM_Actor
   OCC2VTK_EXPORT void SetShape(const TopoDS_Shape& theShape,

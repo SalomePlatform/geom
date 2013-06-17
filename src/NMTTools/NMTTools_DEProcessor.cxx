@@ -484,18 +484,18 @@
       aC2D=BRep_Tool::CurveOnSurface(aDE, aDF, aT1, aT2);
       dT1=aT1-t1;
       if (dT1<0.) {
-	dT1=-dT1;
+        dT1=-dT1;
       }
       //
       dT2=aT2-t2;
       if (dT2<0.) {
-	dT2=-dT2;
+        dT2=-dT2;
       }
       aDT=Precision::PConfusion();
       if(dT1<aDT && dT2<aDT) {
-	BOPTools_ListOfPaveBlock* pLPB=(BOPTools_ListOfPaveBlock*)&aSplitEdges;
-	pLPB->Clear();
-	return;
+        BOPTools_ListOfPaveBlock* pLPB=(BOPTools_ListOfPaveBlock*)&aSplitEdges;
+        pLPB->Clear();
+        return;
       }
     }
   }

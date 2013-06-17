@@ -43,10 +43,10 @@ class NMTDS_PassKeyMapHasher  {
  public:
   Standard_EXPORT
     static  Standard_Integer HashCode(const NMTDS_PassKey& aPKey,
-				      const Standard_Integer Upper) ;
+                                      const Standard_Integer Upper) ;
   
   Standard_EXPORT   
     static  Standard_Boolean IsEqual(const NMTDS_PassKey& aPKey1,
-				     const NMTDS_PassKey& aPKey2) ;
+                                     const NMTDS_PassKey& aPKey2) ;
 };
 #endif

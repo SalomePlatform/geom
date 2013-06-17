@@ -30,7 +30,7 @@
 //purpose  : 
 //=======================================================================
 Standard_Integer NMTDS_PairMapHasher::HashCode(const NMTDS_Pair& aPK,
-					       const Standard_Integer Upper)
+                                               const Standard_Integer Upper)
 {
   return aPK.HashCode(Upper);
 }
@@ -39,7 +39,7 @@ Standard_Integer NMTDS_PairMapHasher::HashCode(const NMTDS_Pair& aPK,
 //purpose  : 
 //=======================================================================
 Standard_Boolean NMTDS_PairMapHasher::IsEqual(const NMTDS_Pair& aPK1,
-					      const NMTDS_Pair& aPK2)
+                                              const NMTDS_Pair& aPK2)
 {
   return aPK1.IsEqual(aPK2);
 }

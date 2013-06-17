@@ -595,8 +595,8 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
     {
       QString strid = QString( "GEOM_ADVANCED_%1" ).arg( myObj->GetType() ); 
       aKindStr = tr( strid.toLatin1().constData() ) == strid ? 
-	tr( "GEOM_ADVANCED" ).arg( myObj->GetType() ) :
-	tr( strid.toLatin1().constData() );
+        tr( "GEOM_ADVANCED" ).arg( myObj->GetType() ) :
+        tr( strid.toLatin1().constData() );
       break;
     }
   default:

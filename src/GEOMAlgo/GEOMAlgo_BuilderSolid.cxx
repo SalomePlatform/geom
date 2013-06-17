@@ -100,7 +100,7 @@ static
 
 static
   Standard_Boolean RefineShell(const TopoDS_Shell& ,
-			       TopoDS_Shell& );
+                               TopoDS_Shell& );
 
 //=======================================================================
 //function :
@@ -189,7 +189,7 @@ void GEOMAlgo_BuilderSolid::PerformShapesToAvoid()
       }
       /*
       else {
-	int a=0;
+        int a=0;
       }
       */
     }
@@ -396,7 +396,7 @@ void GEOMAlgo_BuilderSolid::PerformLoops()
       //
       bRefine=RefineShell(aShell, aShx);
       if (bRefine) {
-	myLoops.Append(aShx);
+        myLoops.Append(aShx);
       }
     }
   } // for (; aItF.More(); aItF.Next()) {
@@ -640,8 +640,8 @@ void GEOMAlgo_BuilderSolid::PerformInternalShapes()
     {
       TopExp_Explorer aExp(aSolid, TopAbs_FACE);
       while (aExp.More()) {
-	aMFS.Add(aExp.Current());
-	aExp.Next();
+        aMFS.Add(aExp.Current());
+        aExp.Next();
       }
     }
     //modified by NIZNHY-PKV Wed Mar 07 08:52:20 2012t
@@ -655,10 +655,10 @@ void GEOMAlgo_BuilderSolid::PerformInternalShapes()
       const TopoDS_Face& aF=*((TopoDS_Face*)(&aItMF.Key()));
       //modified by NIZNHY-PKV Wed Mar 07 08:54:56 2012f
       if (!aMFS.Contains(aF)) {
-	bFlag=GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext);
-	if (bFlag) {
-	  aMFP.Add(aF);
-	}
+        bFlag=GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext);
+        if (bFlag) {
+          aMFP.Add(aF);
+        }
       }
       //if (GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext)) {
       //  aMFP.Add(aF);
@@ -850,7 +850,7 @@ Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell)
 //purpose  :
 //=======================================================================
 Standard_Boolean RefineShell(const TopoDS_Shell& aShell,
-			     TopoDS_Shell& aShx)
+                             TopoDS_Shell& aShx)
 
 {
   Standard_Boolean bRet;
@@ -881,7 +881,7 @@ Standard_Boolean RefineShell(const TopoDS_Shell& aShell,
     const TopoDS_Face& aF1=*((TopoDS_Face*)(&aLF.First()));
     if (aNbF==1) {
       if (aOrE==TopAbs_INTERNAL) {
-	continue;
+        continue;
       }
       aMFx.Add(aF1);
     }
@@ -889,14 +889,14 @@ Standard_Boolean RefineShell(const TopoDS_Shell& aShell,
     else if (aNbF==2) {
       const TopoDS_Face& aF2=*((TopoDS_Face*)(&aLF.Last()));
       if (aF2.IsSame(aF1)) {
-	if (BRep_Tool::IsClosed(aE, aF1)) {
-	  continue;
-	}
-	if (aOrE==TopAbs_INTERNAL) {
-	  continue;
-	}
-	aMFx.Add(aF1);
-	aMFx.Add(aF2);
+        if (BRep_Tool::IsClosed(aE, aF1)) {
+          continue;
+        }
+        if (aOrE==TopAbs_INTERNAL) {
+          continue;
+        }
+        aMFx.Add(aF1);
+        aMFx.Add(aF2);
       }
     }
   }

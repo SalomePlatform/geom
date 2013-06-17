@@ -193,26 +193,26 @@ QTreeWidgetItem* GEOMToolsGUI_PublishDlg::findParentItem(_PTR(Study) theStudy, S
     QString targetEntry = aParrent->entry();
     if( !(aResult = myEntryToItem.value(targetEntry)) ) {
       if( aParrent != myGeomRoot ) {
-	QString aName;
-	_PTR(SObject) aSO ( theStudy->FindObjectID(qPrintable(aParrent->entry())));
-	_PTR(GenericAttribute) anAttr;
-	if ( aSO->FindAttribute(anAttr, "AttributeName") ) {
-	  _PTR(AttributeName) anAttrName (anAttr);
-	  aName = anAttrName->Value().c_str();
-	}
-	theList.push_front(qMakePair(targetEntry, aName));
-	aResult = findParentItem(theStudy,aParrent,theList);
+        QString aName;
+        _PTR(SObject) aSO ( theStudy->FindObjectID(qPrintable(aParrent->entry())));
+        _PTR(GenericAttribute) anAttr;
+        if ( aSO->FindAttribute(anAttr, "AttributeName") ) {
+          _PTR(AttributeName) anAttrName (anAttr);
+          aName = anAttrName->Value().c_str();
+        }
+        theList.push_front(qMakePair(targetEntry, aName));
+        aResult = findParentItem(theStudy,aParrent,theList);
       } else {
-	//Publish List
-	for(int i = 0; i < theList.size(); i++ ) {
-	  aResult = createItem(aResult, theList[i], false);
-	}
-	theList.clear();
+        //Publish List
+        for(int i = 0; i < theList.size(); i++ ) {
+          aResult = createItem(aResult, theList[i], false);
+        }
+        theList.clear();
       }
     } else {
       //Publish List
       for(int i = 0; i < theList.size(); i++ ) {
-	aResult = createItem(aResult, theList[i], false);
+        aResult = createItem(aResult, theList[i], false);
       }
       theList.clear();
     }
@@ -242,8 +242,8 @@ void GEOMToolsGUI_PublishDlg::buildTree(_PTR(Study) theStudy, SalomeApp_DataObje
     if(!isDrawable) {
       QString aName;
       if ( SO->FindAttribute(anAttr, "AttributeName") ) {
-	_PTR(AttributeName) aAttrName (anAttr);
-	aName = aAttrName->Value().c_str();
+        _PTR(AttributeName) aAttrName (anAttr);
+        aName = aAttrName->Value().c_str();
       }
       BufferedList aList;
       QTreeWidgetItem* parentItem = findParentItem(theStudy, theItem, aList);
@@ -291,12 +291,12 @@ void GEOMToolsGUI_PublishDlg::clickOnApply() {
       aDrw->SetDrawable( true );
       //Remove or change item
       if( item != myTreeWidget->invisibleRootItem() ){
-	if( item->data(0,Qt::UserRole).toBool() ) {
-	  delete item;
-	} else {
-	  item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
-	  item->setData(0,Qt::CheckStateRole,QVariant());
-	}
+        if( item->data(0,Qt::UserRole).toBool() ) {
+          delete item;
+        } else {
+          item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
+          item->setData(0,Qt::CheckStateRole,QVariant());
+        }
       }
     }
   }

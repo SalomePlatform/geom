@@ -150,10 +150,10 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
       const TopTools_ListOfShape& aLSx=aMFS(i);
       aNbSx=aLSx.Extent();
       if (aNbSx==1) {
-	aSFS.Append(aFx);
+        aSFS.Append(aFx);
       }
       else if (aNbSx==2) {
-	++aNbF2;
+        ++aNbF2;
       }
     }
   }
@@ -172,10 +172,10 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
     for (; aIt2.More(); aIt2.Next()) {
       const TopoDS_Shape& aSi=aIt2.Value(); 
       if (aSi.ShapeType()!=TopAbs_SHELL) {
-	aOr=aSi.Orientation();
-	if (aOr==TopAbs_INTERNAL) {
-	  aMSI.Add(aSi);
-	}
+        aOr=aSi.Orientation();
+        if (aOr==TopAbs_INTERNAL) {
+          aMSI.Add(aSi);
+        }
       }
     }
   }
@@ -212,7 +212,7 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_RemoverWebs::AddInternalShapes(const TopTools_ListOfShape& aLSR,
-					     const TopTools_IndexedMapOfShape& aMSI)
+                                             const TopTools_IndexedMapOfShape& aMSI)
 {
   Standard_Integer i, aNbSI;
   TopAbs_State aState;  
@@ -233,10 +233,10 @@ void GEOMAlgo_RemoverWebs::AddInternalShapes(const TopTools_ListOfShape& aLSR,
       //
       aState=GEOMAlgo_Tools3D::ComputeStateByOnePoint(aSI, aSd, 1.e-11, aCtx);
       if (aState==TopAbs_IN) {
-	aBB.Add(aSd, aSI);
-	//
-	BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSd);
-	aSC.Load(aSd);
+        aBB.Add(aSd, aSI);
+        //
+        BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSd);
+        aSC.Load(aSd);
       }
     }
   }

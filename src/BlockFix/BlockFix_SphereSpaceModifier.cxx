@@ -114,7 +114,7 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
       Standard_Real anArea = Properties.Mass();
       Standard_Real AreaTol = Radius*Radius*1.e-6;
       if (anArea > HalfArea - AreaTol) //no chance to avoid singularity
-	return Standard_False;
+        return Standard_False;
       ///////////////////////////////////////////////
       gp_Ax3 ax3 = sp.Position();
       if(Abs(Vmax-Vmin) < PI2) {

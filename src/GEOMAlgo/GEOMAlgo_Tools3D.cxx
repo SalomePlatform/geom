@@ -1185,8 +1185,8 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
 //purpose  :
 //=======================================================================
 Standard_Integer GEOMAlgo_Tools3D::PntInFace(const TopoDS_Face& aF,
-					     gp_Pnt& theP,
-					     gp_Pnt2d& theP2D)
+                                             gp_Pnt& theP,
+                                             gp_Pnt2d& theP2D)
 {
   Standard_Boolean bIsDone, bHasFirstPoint, bHasSecondPoint;
   Standard_Integer iErr, aIx, aNbDomains, i;
@@ -1211,8 +1211,8 @@ Standard_Integer GEOMAlgo_Tools3D::PntInFace(const TopoDS_Face& aF,
   //
   Geom2dHatch_Intersector aIntr(aTotArcIntr, aTolTangfIntr);
   Geom2dHatch_Hatcher aHatcher(aIntr,
-			       aTolHatch2D, aTolHatch3D,
-			       Standard_True, Standard_False);
+                               aTolHatch2D, aTolHatch3D,
+                               Standard_True, Standard_False);
   //
   iErr=0;
   aEpsT=1.e-12;

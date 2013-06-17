@@ -125,8 +125,8 @@ public:
                                       const Standard_Integer aMode = 0) ;
 
         virtual  bool isShowVectors () { return myDisplayVectors; }
-		virtual  Standard_Boolean switchTopLevel();
-		virtual  Standard_Boolean toActivate();
+                virtual  Standard_Boolean switchTopLevel();
+                virtual  Standard_Boolean toActivate();
         
  // Type management
  //
@@ -140,7 +140,7 @@ public:
 
         void storeBoundaryColors();
 
-	static Quantity_Color topLevelColor();
+        static Quantity_Color topLevelColor();
   static void           setTopLevelColor(const Quantity_Color c);
 
   static TopLevelDispMode topLevelDisplayMode();
@@ -152,8 +152,8 @@ public:
 
 protected: 
   void shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
-		   const Handle(Prs3d_Presentation)& aPrs,
-		   const Standard_Integer aMode);
+                   const Handle(Prs3d_Presentation)& aPrs,
+                   const Standard_Integer aMode);
 
   void restoreBoundaryColors();
 

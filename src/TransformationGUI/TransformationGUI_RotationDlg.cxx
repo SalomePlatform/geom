@@ -275,52 +275,52 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
       QString aName = GEOMBase::GetName( aSelectedObject.get() );
       myEditCurrentArgument->setText( aName );
       if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-	if ( getConstructorId() == 0 ) {
-	  myAxis = aSelectedObject;
-	  if ( myObjects.isEmpty() )
-	    GroupPoints->PushButton1->click();
-	}
-	else if ( getConstructorId() == 1 ) {
-	  myCentPoint = aSelectedObject;
-	  if ( !myPoint1 )
-	    GroupPoints->PushButton4->click();
-	  else if ( !myPoint2 )
-	    GroupPoints->PushButton5->click();
-	  else if ( myObjects.isEmpty() )
-	    GroupPoints->PushButton1->click();
-	}
+        if ( getConstructorId() == 0 ) {
+          myAxis = aSelectedObject;
+          if ( myObjects.isEmpty() )
+            GroupPoints->PushButton1->click();
+        }
+        else if ( getConstructorId() == 1 ) {
+          myCentPoint = aSelectedObject;
+          if ( !myPoint1 )
+            GroupPoints->PushButton4->click();
+          else if ( !myPoint2 )
+            GroupPoints->PushButton5->click();
+          else if ( myObjects.isEmpty() )
+            GroupPoints->PushButton1->click();
+        }
       }
       else if ( myEditCurrentArgument == GroupPoints->LineEdit4 ) {
-	myPoint1 = aSelectedObject;
-	if ( !myPoint2 )
-	  GroupPoints->PushButton5->click();
-	else if ( myObjects.isEmpty() )
-	  GroupPoints->PushButton1->click();
-	else if ( !myCentPoint )
-	  GroupPoints->PushButton2->click();
+        myPoint1 = aSelectedObject;
+        if ( !myPoint2 )
+          GroupPoints->PushButton5->click();
+        else if ( myObjects.isEmpty() )
+          GroupPoints->PushButton1->click();
+        else if ( !myCentPoint )
+          GroupPoints->PushButton2->click();
       }
       else if ( myEditCurrentArgument == GroupPoints->LineEdit5 ) {
-	myPoint2 = aSelectedObject;
-	if ( myObjects.isEmpty() )
-	  GroupPoints->PushButton1->click();
-	else if ( !myCentPoint )
-	  GroupPoints->PushButton2->click();
-	else if ( !myPoint1 )
-	  GroupPoints->PushButton4->click();
+        myPoint2 = aSelectedObject;
+        if ( myObjects.isEmpty() )
+          GroupPoints->PushButton1->click();
+        else if ( !myCentPoint )
+          GroupPoints->PushButton2->click();
+        else if ( !myPoint1 )
+          GroupPoints->PushButton4->click();
       }
     }
     else {
       if (myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-	if ( getConstructorId() == 0 )
-	  myAxis.nullify();
-	else if ( getConstructorId() == 1 )
-	  myCentPoint.nullify();
+        if ( getConstructorId() == 0 )
+          myAxis.nullify();
+        else if ( getConstructorId() == 1 )
+          myCentPoint.nullify();
       }
       else if ( myEditCurrentArgument == GroupPoints->LineEdit4 ) {
-	myPoint1.nullify();
+        myPoint1.nullify();
       }
       else if ( myEditCurrentArgument == GroupPoints->LineEdit5 ) {
-	myPoint2.nullify();
+        myPoint2.nullify();
       }
       myEditCurrentArgument->setText("");
     }

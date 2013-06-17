@@ -81,9 +81,9 @@ class GEOMAlgo_FinderShapeOn  : public GEOMAlgo_ShapeAlgo
 
   Standard_EXPORT
     static  void CopySource(const TopoDS_Shape& aS,
-			    TopTools_DataMapOfShapeShape& aImages,
-			    TopTools_DataMapOfShapeShape& aOriginals,
-			    TopoDS_Shape& aSC) ;
+                            TopTools_DataMapOfShapeShape& aImages,
+                            TopTools_DataMapOfShapeShape& aOriginals,
+                            TopoDS_Shape& aSC) ;
 
   Standard_EXPORT
     static  Standard_Boolean BuildTriangulation(const TopoDS_Shape& aS) ;

@@ -17,10 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:	NMTDS_MapOfPairBoolean.hxx
-// Created:	Mon Feb 20 08:19:07 2012
-// Author:	
-//		<pkv@BDEURI37616>
+// File:        NMTDS_MapOfPairBoolean.hxx
+// Created:     Mon Feb 20 08:19:07 2012
+// Author:      
+//              <pkv@BDEURI37616>
 
 
 #ifndef NMTDS_MapOfPairBoolean_HeaderFile

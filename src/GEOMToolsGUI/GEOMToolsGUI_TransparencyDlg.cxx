@@ -317,7 +317,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       if ( !aisShape.IsNull() ) {
         ic->SetTransparency( aisShape, newValue, false );
         ic->Redisplay( aisShape, Standard_False, Standard_True );
-	aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), GEOM::propertyName( GEOM::Transparency ) , newValue );
+        aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), GEOM::propertyName( GEOM::Transparency ) , newValue );
       }
     } // for...
     ic->UpdateCurrentViewer();

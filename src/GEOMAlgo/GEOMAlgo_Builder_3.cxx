@@ -691,12 +691,12 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
       const TopTools_ListOfShape &aLSx=aMSx.FindFromKey(aSI);
       aNbSx=aLSx.Extent();
       if (aNbSx) {
-	//modified by NIZNHY-PKV Wed Mar 27 11:39:15 2013f
-	//aMSI.Remove(aSI);
+        //modified by NIZNHY-PKV Wed Mar 27 11:39:15 2013f
+        //aMSI.Remove(aSI);
         if (aMSI.Remove(aSI)) {
-	  aItM.Initialize(aMSI);
-	}
-	//modified by NIZNHY-PKV Wed Mar 27 11:39:18 2013t
+          aItM.Initialize(aMSI);
+        }
+        //modified by NIZNHY-PKV Wed Mar 27 11:39:18 2013t
       }
     }
   }

@@ -332,7 +332,7 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
       myEditCurrentArgument->setText( aName );
       myPath = aSelectedObject;
       if ( myObjects.isEmpty() )
-	Group1->PushButton1->click();
+        Group1->PushButton1->click();
     }
     else {
       myPath.nullify();
@@ -345,25 +345,25 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
       QString aName = GEOMBase::GetName( aSelectedObject.get() );
       myEditCurrentArgument->setText( aName );
       if ( myEditCurrentArgument == Group1->LineEdit2 ) {
-	myStartLCS = aSelectedObject;
-	if ( !myEndLCS )
-	  Group1->PushButton4->click();
-	else if ( myObjects.isEmpty() )
-	  Group1->PushButton1->click();
+        myStartLCS = aSelectedObject;
+        if ( !myEndLCS )
+          Group1->PushButton4->click();
+        else if ( myObjects.isEmpty() )
+          Group1->PushButton1->click();
       }
       else if ( myEditCurrentArgument == Group1->LineEdit4 ) {
-	myEndLCS = aSelectedObject;
-	if ( myObjects.isEmpty() )
-	  Group1->PushButton1->click();
-	else if ( getConstructorId() == 1 && !myStartLCS )
-	  Group1->PushButton2->click();
+        myEndLCS = aSelectedObject;
+        if ( myObjects.isEmpty() )
+          Group1->PushButton1->click();
+        else if ( getConstructorId() == 1 && !myStartLCS )
+          Group1->PushButton2->click();
       }
     }
     else {
       if ( myEditCurrentArgument == Group1->LineEdit2 )
-	myStartLCS.nullify();
+        myStartLCS.nullify();
       else if ( myEditCurrentArgument == Group1->LineEdit4 )
-	myEndLCS.nullify();
+        myEndLCS.nullify();
     }
   }
 

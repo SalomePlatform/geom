@@ -58,7 +58,7 @@ class NMTDS_Iterator  {
   
   Standard_EXPORT 
     void Initialize(const TopAbs_ShapeEnum aType1,
-		    const TopAbs_ShapeEnum aType2) ;
+                    const TopAbs_ShapeEnum aType2) ;
   
   Standard_EXPORT 
     Standard_Boolean More() const;
@@ -68,8 +68,8 @@ class NMTDS_Iterator  {
   
   Standard_EXPORT
     void Current(Standard_Integer& aIndex1,
-		 Standard_Integer& aIndex2,
-		 Standard_Boolean& aWithSubShape) const;
+                 Standard_Integer& aIndex2,
+                 Standard_Boolean& aWithSubShape) const;
   
   Standard_EXPORT
     virtual  void Prepare() ;
@@ -85,7 +85,7 @@ class NMTDS_Iterator  {
   
   Standard_EXPORT 
     static  void FillMVSD(const TColStd_DataMapOfIntegerListOfInteger& aMVSD1,
-			  TColStd_DataMapOfIntegerListOfInteger& aMVSD2) ;
+                          TColStd_DataMapOfIntegerListOfInteger& aMVSD2) ;
 
 protected:
   Standard_EXPORT  

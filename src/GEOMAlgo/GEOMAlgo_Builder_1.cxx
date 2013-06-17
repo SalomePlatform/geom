@@ -153,7 +153,7 @@ static
       //modified by NIZNHY-PKV Wed Oct 27 11:19:30 2010f
       aNbLB=aLB.Extent();
       if (aIsCB && aNbLB<2) {
-	aIsCB=0;
+        aIsCB=0;
       }
       //modified by NIZNHY-PKV Wed Oct 27 11:19:34 2010t
       //

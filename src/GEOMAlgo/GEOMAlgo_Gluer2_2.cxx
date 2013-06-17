@@ -19,10 +19,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Gluer2_2.cxx
+// File:        GEOMAlgo_Gluer2_2.cxx
 // Created:
-// Author:	Peter KURNEV
-//		<peter@PREFEX>
+// Author:      Peter KURNEV
+//              <peter@PREFEX>
 //
 #include <GEOMAlgo_Gluer2.hxx>
 
@@ -75,7 +75,7 @@ const TopTools_ListOfShape& GEOMAlgo_Gluer2::Modified(const TopoDS_Shape& theS)
   //
   aType=theS.ShapeType();
   if (!(aType==TopAbs_VERTEX || aType==TopAbs_EDGE ||
-	aType==TopAbs_FACE || aType==TopAbs_SOLID)) {
+        aType==TopAbs_FACE || aType==TopAbs_SOLID)) {
     return myHistShapes;
   }
   //
@@ -143,7 +143,7 @@ Standard_Boolean GEOMAlgo_Gluer2::IsDeleted(const TopoDS_Shape& theS)
 //purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::MapShapes(const TopoDS_Shape& theS,
-				TopTools_MapOfShape& theM)
+                                TopTools_MapOfShape& theM)
 {
   TopoDS_Iterator aIt;
   //

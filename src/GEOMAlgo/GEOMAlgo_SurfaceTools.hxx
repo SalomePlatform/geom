@@ -56,36 +56,36 @@ class GEOMAlgo_SurfaceTools
 
   Standard_EXPORT
     static  Standard_Boolean IsCoaxial(const gp_Pnt& aP1,
-				       const gp_Pnt& aP2,
-				       const gp_Cylinder& aCyl,
-				       const Standard_Real aTol) ;
+                                       const gp_Pnt& aP2,
+                                       const gp_Cylinder& aCyl,
+                                       const Standard_Real aTol) ;
 
   Standard_EXPORT
     static  Standard_Boolean IsConformState(const TopAbs_State aST1,
-					    const GEOMAlgo_State aST2) ;
+                                            const GEOMAlgo_State aST2) ;
 
   Standard_EXPORT
     static  Standard_Integer GetState(const gp_Pnt& aP,
-				      const GeomAdaptor_Surface& aS,
-				      const Standard_Real aTol,TopAbs_State& aSt) ;
+                                      const GeomAdaptor_Surface& aS,
+                                      const Standard_Real aTol,TopAbs_State& aSt) ;
 
   Standard_EXPORT
     static  Standard_Integer GetState(const gp_Pnt& aP,
-				      const Handle(Geom_Surface)& aS,
-				      const Standard_Real aTol,
-				      TopAbs_State& aSt) ;
+                                      const Handle(Geom_Surface)& aS,
+                                      const Standard_Real aTol,
+                                      TopAbs_State& aSt) ;
 
   Standard_EXPORT
     static  Standard_Real Distance(const gp_Pnt& aP,
-				   const gp_Pln& aPln) ;
+                                   const gp_Pln& aPln) ;
 
   Standard_EXPORT
     static  Standard_Real Distance(const gp_Pnt& aP,
-				   const gp_Cylinder& aCyl) ;
+                                   const gp_Cylinder& aCyl) ;
 
   Standard_EXPORT
     static  Standard_Real Distance(const gp_Pnt& aP,
-				   const gp_Sphere& aSph) ;
+                                   const gp_Sphere& aSph) ;
 
   Standard_EXPORT
     static  TopAbs_State ReverseState(const TopAbs_State aSt) ;

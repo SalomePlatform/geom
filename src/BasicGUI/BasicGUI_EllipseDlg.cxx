@@ -238,7 +238,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
   }
 
   TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupPoints->LineEdit2 || 
-				 myEditCurrentArgument == GroupPoints->LineEdit3 ) ?
+                                 myEditCurrentArgument == GroupPoints->LineEdit3 ) ?
     TopAbs_EDGE : TopAbs_VERTEX;
   GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
   TopoDS_Shape aShape;
@@ -300,7 +300,7 @@ void BasicGUI_EllipseDlg::SetEditCurrentArgument()
   }
 
   TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupPoints->LineEdit2 || 
-				 myEditCurrentArgument == GroupPoints->LineEdit3 ) ? 
+                                 myEditCurrentArgument == GroupPoints->LineEdit3 ) ? 
     TopAbs_EDGE : TopAbs_VERTEX;
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), aNeedType );

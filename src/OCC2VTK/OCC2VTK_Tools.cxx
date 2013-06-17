@@ -61,8 +61,8 @@ namespace GEOM
       const TopoDS_Face& aFace = TopoDS::Face(ex.Current());
       Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
       if(aPoly.IsNull()) { 
-	alreadymeshed = Standard_False; 
-	break; 
+        alreadymeshed = Standard_False; 
+        break; 
       }
     }
 
@@ -70,7 +70,7 @@ namespace GEOM
       Bnd_Box B;
       BRepBndLib::Add(theShape, B);
       if ( B.IsVoid() )
-	return; // NPAL15983 (Bug when displaying empty groups) 
+        return; // NPAL15983 (Bug when displaying empty groups) 
       Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
       B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
 

@@ -157,14 +157,14 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   myTopLevel = Standard_False;
   Graphic3d_MaterialAspect aMatAspect;
   if ( !HasMaterial() ) {
-  	aMatAspect.SetAmbient( 0.5 );
-  	aMatAspect.SetDiffuse( 0.5 );
-  	aMatAspect.SetEmissive( 0.5 );
-  	aMatAspect.SetShininess(0.5 );
-  	aMatAspect.SetSpecular( 0.5 );
-	
-  	myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
-  	myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
+        aMatAspect.SetAmbient( 0.5 );
+        aMatAspect.SetDiffuse( 0.5 );
+        aMatAspect.SetEmissive( 0.5 );
+        aMatAspect.SetShininess(0.5 );
+        aMatAspect.SetSpecular( 0.5 );
+        
+        myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
+        myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
   }
 }
 
@@ -213,10 +213,10 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       // Restore wireframe edges colors
       restoreBoundaryColors();
       if(isTopLev) {
-	      SetColor(topLevelColor());
-	      Handle(Prs3d_LineAspect) anAspect = Attributes()->WireAspect();
-	      anAspect->SetColor( topLevelColor() );
-	      Attributes()->SetWireAspect( anAspect );
+              SetColor(topLevelColor());
+              Handle(Prs3d_LineAspect) anAspect = Attributes()->WireAspect();
+              anAspect->SetColor( topLevelColor() );
+              Attributes()->SetWireAspect( anAspect );
       }
      StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);      
       break;
@@ -232,9 +232,9 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     case 3: //StdSelect_DM_HLR:
     {
       if(!isTopLev)
-	      AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+              AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
       else 
-	      shadingMode(aPresentationManager, aPrs, AIS_Shaded);
+              shadingMode(aPresentationManager, aPrs, AIS_Shaded);
       break;
     }
   }
@@ -362,8 +362,8 @@ void GEOM_AISShape::SetDisplayVectors(bool isDisplayed)
 }
 
 void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
-				const Handle(Prs3d_Presentation)& aPrs,
-				const Standard_Integer aMode)
+                                const Handle(Prs3d_Presentation)& aPrs,
+                                const Standard_Integer aMode)
 {
   myDrawer->ShadingAspect()->Aspect()->SetDistinguishOn();
 
@@ -486,9 +486,9 @@ void GEOM_AISShape::setTopLevelDisplayMode(const GEOM_AISShape::TopLevelDispMode
 }
 
 Standard_Boolean GEOM_AISShape::switchTopLevel() {
-	return myTopLevelDm != TopShowAdditionalWActor;
+        return myTopLevelDm != TopShowAdditionalWActor;
 }
 
 Standard_Boolean GEOM_AISShape::toActivate() {
-	return Standard_True;
+        return Standard_True;
 }

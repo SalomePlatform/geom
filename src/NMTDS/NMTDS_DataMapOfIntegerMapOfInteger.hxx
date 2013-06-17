@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_DataMapOfIntegerMapOfInteger.hxx
-// Created:	Mon Feb 20 09:27:40 2012
-// Author:	
-//		<pkv@BDEURI37616>
+// File:        NMTDS_DataMapOfIntegerMapOfInteger.hxx
+// Created:     Mon Feb 20 09:27:40 2012
+// Author:      
+//              <pkv@BDEURI37616>
 
 
 #ifndef NMTDS_DataMapOfIntegerMapOfInteger_HeaderFile

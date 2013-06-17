@@ -115,8 +115,8 @@ TopoDS_Shape GEOMBase::GetTopoFromSelection( const SALOME_ListIO& IObjects )
       _PTR(SObject) obj( studyDS->FindObjectID( IO->getEntry() ) );
       _PTR(GenericAttribute) anAttr;
       if ( obj && obj->FindAttribute( anAttr, "AttributeIOR" ) ) {
-	_PTR(AttributeIOR) anIOR( anAttr );
-	shape = GetShapeFromIOR( anIOR->Value().c_str() );
+        _PTR(AttributeIOR) anIOR( anAttr );
+        shape = GetShapeFromIOR( anIOR->Value().c_str() );
       }
     }
   }
@@ -140,13 +140,13 @@ int GEOMBase::GetNameOfSelectedIObjects( const SALOME_ListIO& IObjects,
       Handle(SALOME_InteractiveObject) anIObj = IObjects.First();
       SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
       if ( anIObj->hasEntry() && study ) {
-	_PTR(Study) studyDS = study->studyDS();
-	_PTR(SObject) obj( studyDS->FindObjectID( anIObj->getEntry() ) );
-	_PTR(GenericAttribute) anAttr;
-	if ( obj && obj->FindAttribute( anAttr, "AttributeName" ) ) {
-	  _PTR(AttributeName) aNameAttr ( anAttr );
-	  name = aNameAttr->Value().c_str();
-	}
+        _PTR(Study) studyDS = study->studyDS();
+        _PTR(SObject) obj( studyDS->FindObjectID( anIObj->getEntry() ) );
+        _PTR(GenericAttribute) anAttr;
+        if ( obj && obj->FindAttribute( anAttr, "AttributeName" ) ) {
+          _PTR(AttributeName) aNameAttr ( anAttr );
+          name = aNameAttr->Value().c_str();
+        }
       }
     }
   }
@@ -176,88 +176,88 @@ QString GEOMBase::GetShapeTypeString(const TopoDS_Shape& shape)
     switch ( shape.ShapeType() ) {
     case TopAbs_COMPOUND:
       {
-	aTypeString = QObject::tr( "GEOM_COMPOUND" );
-	break;
+        aTypeString = QObject::tr( "GEOM_COMPOUND" );
+        break;
       }
     case TopAbs_COMPSOLID:
       {
-	aTypeString = QObject::tr( "GEOM_COMPOUNDSOLID" );
-	break;
+        aTypeString = QObject::tr( "GEOM_COMPOUNDSOLID" );
+        break;
       }
     case TopAbs_SOLID:
       {
-	aTypeString = QObject::tr( "GEOM_SOLID" );
-	break;
+        aTypeString = QObject::tr( "GEOM_SOLID" );
+        break;
       }
     case TopAbs_SHELL:
       {
-	aTypeString = QObject::tr( "GEOM_SHELL" );
-	break;
+        aTypeString = QObject::tr( "GEOM_SHELL" );
+        break;
       }
     case TopAbs_FACE:
       {
         BRepAdaptor_Surface surf( TopoDS::Face( shape ) );
-	switch ( surf.GetType() ) {
-	case GeomAbs_Plane:
-	  {
-	    aTypeString = QObject::tr( "GEOM_PLANE" );
-	    break;
-	  }
-	case GeomAbs_Cylinder:
-	  {
-	    aTypeString = QObject::tr( "GEOM_SURFCYLINDER" );
-	    break;
-	  }
-	case GeomAbs_Sphere:
-	  {
-	    aTypeString = QObject::tr( "GEOM_SURFSPHERE" );
-	    break;
-	  }
-	case GeomAbs_Torus:
-	  {
-	    aTypeString = QObject::tr( "GEOM_SURFTORUS" );
-	    break;
-	  }
-	case GeomAbs_Cone:
-	  {
-	    aTypeString = QObject::tr( "GEOM_SURFCONE" );
-	    break;
-	  }
-	default:
-	  {
-	    aTypeString = QObject::tr( "GEOM_FACE" );
-	    break;
-	  }
-	}
-	break;
+        switch ( surf.GetType() ) {
+        case GeomAbs_Plane:
+          {
+            aTypeString = QObject::tr( "GEOM_PLANE" );
+            break;
+          }
+        case GeomAbs_Cylinder:
+          {
+            aTypeString = QObject::tr( "GEOM_SURFCYLINDER" );
+            break;
+          }
+        case GeomAbs_Sphere:
+          {
+            aTypeString = QObject::tr( "GEOM_SURFSPHERE" );
+            break;
+          }
+        case GeomAbs_Torus:
+          {
+            aTypeString = QObject::tr( "GEOM_SURFTORUS" );
+            break;
+          }
+        case GeomAbs_Cone:
+          {
+            aTypeString = QObject::tr( "GEOM_SURFCONE" );
+            break;
+          }
+        default:
+          {
+            aTypeString = QObject::tr( "GEOM_FACE" );
+            break;
+          }
+        }
+        break;
       }
     case TopAbs_WIRE:
       {
         aTypeString = QObject::tr( "GEOM_WIRE" );
-	break;
+        break;
       }
     case TopAbs_EDGE:
       {
         BRepAdaptor_Curve curv( TopoDS::Edge( shape ) );
-	switch ( curv.GetType() ) {
-	case GeomAbs_Line:
-	  {
-	    aTypeString = ( qAbs( curv.FirstParameter() ) >= 1E6 || qAbs( curv.LastParameter() ) >= 1E6 ) ?
-	      QObject::tr( "GEOM_LINE" ) : QObject::tr( "GEOM_EDGE" );
-	    break;
-	  }
-	case GeomAbs_Circle:
-	  {
-	    aTypeString = curv.IsClosed() ? QObject::tr( "GEOM_CIRCLE" ) : QObject::tr( "GEOM_ARC" );
-	    break;
-	  }
-	default:
-	  {
-	    aTypeString = QObject::tr( "GEOM_EDGE" );
-	    break;
-	  }
-	}
-	break;
+        switch ( curv.GetType() ) {
+        case GeomAbs_Line:
+          {
+            aTypeString = ( qAbs( curv.FirstParameter() ) >= 1E6 || qAbs( curv.LastParameter() ) >= 1E6 ) ?
+              QObject::tr( "GEOM_LINE" ) : QObject::tr( "GEOM_EDGE" );
+            break;
+          }
+        case GeomAbs_Circle:
+          {
+            aTypeString = curv.IsClosed() ? QObject::tr( "GEOM_CIRCLE" ) : QObject::tr( "GEOM_ARC" );
+            break;
+          }
+        default:
+          {
+            aTypeString = QObject::tr( "GEOM_EDGE" );
+            break;
+          }
+        }
+        break;
       }
     case TopAbs_VERTEX:
       {
@@ -271,7 +271,7 @@ QString GEOMBase::GetShapeTypeString(const TopoDS_Shape& shape)
       }
     default:
       {
-	break;
+        break;
       }
     }
   }
@@ -294,31 +294,31 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIORinGEOMAISShape(const QString& IOR, boo
     if ( obj ) {
       QList<SUIT_ViewWindow*> views;
       if ( onlyInActiveView ) 
-	views.append( SUIT_Session::session()->activeApplication()->desktop()->activeWindow() );
+        views.append( SUIT_Session::session()->activeApplication()->desktop()->activeWindow() );
       else 
-	views = SUIT_Session::session()->activeApplication()->desktop()->windows();
+        views = SUIT_Session::session()->activeApplication()->desktop()->windows();
       foreach ( SUIT_ViewWindow* view, views ) {
-	if ( view && view->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
-	  Handle(AIS_InteractiveContext) ic = ((OCCViewer_Viewer*)view->getViewManager()->getViewModel())->getAISContext();
+        if ( view && view->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
+          Handle(AIS_InteractiveContext) ic = ((OCCViewer_Viewer*)view->getViewManager()->getViewModel())->getAISContext();
 
-	  AIS_ListOfInteractive displayed;
-	  ic->DisplayedObjects( displayed );
-	  ic->ObjectsInCollector( displayed );
+          AIS_ListOfInteractive displayed;
+          ic->DisplayedObjects( displayed );
+          ic->ObjectsInCollector( displayed );
 
-	  AIS_ListIteratorOfListOfInteractive it( displayed );
-	  while ( it.More() && shape.IsNull() ) {
-	    if ( it.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-	      Handle(GEOM_AISShape) sh = Handle(GEOM_AISShape)::DownCast( it.Value() );
-	      if ( !sh.IsNull() && sh->hasIO() ) {
-		Handle(SALOME_InteractiveObject) IO = Handle(SALOME_InteractiveObject)::DownCast( sh->getIO() );
-		if ( !IO.IsNull() && IO->hasEntry() && obj->GetID() == IO->getEntry() )
-		  shape = sh;
-	      }
-	    }
-	    it.Next();
-	  }
-	}
-	if ( !shape.IsNull() ) break;
+          AIS_ListIteratorOfListOfInteractive it( displayed );
+          while ( it.More() && shape.IsNull() ) {
+            if ( it.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
+              Handle(GEOM_AISShape) sh = Handle(GEOM_AISShape)::DownCast( it.Value() );
+              if ( !sh.IsNull() && sh->hasIO() ) {
+                Handle(SALOME_InteractiveObject) IO = Handle(SALOME_InteractiveObject)::DownCast( sh->getIO() );
+                if ( !IO.IsNull() && IO->hasEntry() && obj->GetID() == IO->getEntry() )
+                  shape = sh;
+              }
+            }
+            it.Next();
+          }
+        }
+        if ( !shape.IsNull() ) break;
       }
     }
   }
@@ -341,31 +341,31 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const QString& IOR, bool onlyInActiv
     if ( obj ) {
       QList<SUIT_ViewWindow*> views;
       if ( onlyInActiveView ) 
-	views.append( SUIT_Session::session()->activeApplication()->desktop()->activeWindow() );
+        views.append( SUIT_Session::session()->activeApplication()->desktop()->activeWindow() );
       else 
-	views = SUIT_Session::session()->activeApplication()->desktop()->windows();
+        views = SUIT_Session::session()->activeApplication()->desktop()->windows();
       foreach ( SUIT_ViewWindow* view, views ) {
-	if ( view && view->getViewManager()->getType() == SVTK_Viewer::Type() ) {
-	  SVTK_ViewWindow* aVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>( view );
-	  if( !aVTKViewWindow )
-	    continue;
-	  vtkRenderer* Renderer = aVTKViewWindow->getRenderer();
-	  vtkActorCollection* theActors = Renderer->GetActors();
-	  theActors->InitTraversal();
-	  vtkActor* a = theActors->GetNextActor();
-	  while( a && !actor ) {
-	    if ( a->IsA( "GEOM_Actor" ) ) {
-	      GEOM_Actor* ga = GEOM_Actor::SafeDownCast( a );
-	      if ( ga && ga->hasIO() ) {
-		Handle(SALOME_InteractiveObject) IO = Handle(SALOME_InteractiveObject)::DownCast( ga->getIO() );
-		if ( !IO.IsNull() && IO->hasEntry() && obj->GetID() == IO->getEntry() )
-		  actor = ga;
-	      }
-	    }
-	    a = theActors->GetNextActor();
-	  }
-	}
-	if ( actor ) break;
+        if ( view && view->getViewManager()->getType() == SVTK_Viewer::Type() ) {
+          SVTK_ViewWindow* aVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>( view );
+          if( !aVTKViewWindow )
+            continue;
+          vtkRenderer* Renderer = aVTKViewWindow->getRenderer();
+          vtkActorCollection* theActors = Renderer->GetActors();
+          theActors->InitTraversal();
+          vtkActor* a = theActors->GetNextActor();
+          while( a && !actor ) {
+            if ( a->IsA( "GEOM_Actor" ) ) {
+              GEOM_Actor* ga = GEOM_Actor::SafeDownCast( a );
+              if ( ga && ga->hasIO() ) {
+                Handle(SALOME_InteractiveObject) IO = Handle(SALOME_InteractiveObject)::DownCast( ga->getIO() );
+                if ( !IO.IsNull() && IO->hasEntry() && obj->GetID() == IO->getEntry() )
+                  actor = ga;
+              }
+            }
+            a = theActors->GetNextActor();
+          }
+        }
+        if ( actor ) break;
       }
     }
   }
@@ -611,25 +611,25 @@ bool GEOMBase::SelectionByNameInDialogs( QWidget* widget, const QString& objectU
 
   if ( listSO.size() < 1 ) {
     SUIT_MessageBox::critical( widget, 
-			       QObject::tr( "GEOM_WRN_WARNING" ),
-			       QObject::tr( "GEOM_NAME_INCORRECT" ),
-			       QObject::tr( "GEOM_BUT_OK" ) );
+                               QObject::tr( "GEOM_WRN_WARNING" ),
+                               QObject::tr( "GEOM_NAME_INCORRECT" ),
+                               QObject::tr( "GEOM_BUT_OK" ) );
     return false;
   }
 
   /* More than one object with same name */
   if ( listSO.size() > 1 ) {
     SUIT_MessageBox::critical( widget,
-			       QObject::tr("GEOM_WRN_WARNING"),
-			       QObject::tr("GEOM_IDENTICAL_NAMES_SELECT_BY_MOUSE"),
-			       QObject::tr("GEOM_BUT_OK") );
+                               QObject::tr("GEOM_WRN_WARNING"),
+                               QObject::tr("GEOM_IDENTICAL_NAMES_SELECT_BY_MOUSE"),
+                               QObject::tr("GEOM_BUT_OK") );
     return false;
   }
 
   /* Create a SALOME_InteractiveObject with a SALOME::SObject */
   Handle(SALOME_InteractiveObject) IO = new SALOME_InteractiveObject( listSO[0]->GetID().c_str(),
-								      "GEOM",
-								      objectUserName.toLatin1().constData() );
+                                                                      "GEOM",
+                                                                      objectUserName.toLatin1().constData() );
 
   /* Add as a selected object       */
   /* Clear any previous selection : */
@@ -671,7 +671,7 @@ QString GEOMBase::GetDefaultName( const QString& operation, bool extractPrefix )
     if ( component ) {
       _PTR(ChildIterator) it( studyDS->NewChildIterator( component ) );
       for ( it->InitEx( true ); it->More(); it->Next() ) {
-	names.insert( it->Value()->GetName() );
+        names.insert( it->Value()->GetName() );
       }
     }
 
@@ -683,13 +683,13 @@ QString GEOMBase::GetDefaultName( const QString& operation, bool extractPrefix )
     if ( extractPrefix ) {
       QStringList parts = prefix.split( "_", QString::KeepEmptyParts );
       if ( parts.count() > 1 ) {
-	bool ok;
-	aNumber = parts.last().toLong( &ok );
-	if ( ok ) {
-	  parts.removeLast();
-	  prefix = parts.join( "_" );
-	  aNumber--;
-	}
+        bool ok;
+        aNumber = parts.last().toLong( &ok );
+        if ( ok ) {
+          parts.removeLast();
+          prefix = parts.join( "_" );
+          aNumber--;
+        }
       }
     }
     
@@ -716,9 +716,9 @@ void GEOMBase::ShowErrorMessage( const QString& errorCode, const QString& commen
     text << QObject::tr( comment.toLatin1().constData() );
 
   SUIT_MessageBox::critical( SUIT_Session::session()->activeApplication()->desktop(),
-			     QObject::tr( "GEOM_ERROR" ),
+                             QObject::tr( "GEOM_ERROR" ),
                              text.join( "\n" ),
-			     QObject::tr( "GEOM_BUT_OK" ) );
+                             QObject::tr( "GEOM_BUT_OK" ) );
 }
 
 
@@ -771,26 +771,26 @@ QString GEOMBase::GetName( GEOM::GEOM_Object_ptr object )
       _PTR(SObject) aSObj( study->studyDS()->FindObjectIOR( std::string( IOR.in() ) ) );
       _PTR(GenericAttribute) anAttr;
       if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") ) {
-	_PTR(AttributeName) aNameAttr( anAttr );
-	name = aNameAttr->Value().c_str();
+        _PTR(AttributeName) aNameAttr( anAttr );
+        name = aNameAttr->Value().c_str();
       }
     }
     
     // 2. if object is not found in the study, try default name
     if ( name.isEmpty() ) {
       if ( object->IsMainShape() ) {
-	name = GetDefaultName( "geomObj" );
+        name = GetDefaultName( "geomObj" );
       }
       else {
-	GEOM::GEOM_Object_var mainShape = object->GetMainShape();
-	if ( !CORBA::is_nil( mainShape  ) ) { 
-	  GEOM::ListOfLong_var indices = object->GetSubShapeIndices();
-	  if ( indices->length() > 0 ) {
-	    TopAbs_ShapeEnum type = (TopAbs_ShapeEnum)( object->GetShapeType() );
-	    name = QString( "%1:%2_%3" ).arg( GetName( mainShape.in() ) )
-	      .arg( TypeName( type ) ).arg( indices[0] );
-	  }
-	}
+        GEOM::GEOM_Object_var mainShape = object->GetMainShape();
+        if ( !CORBA::is_nil( mainShape  ) ) { 
+          GEOM::ListOfLong_var indices = object->GetSubShapeIndices();
+          if ( indices->length() > 0 ) {
+            TopAbs_ShapeEnum type = (TopAbs_ShapeEnum)( object->GetShapeType() );
+            name = QString( "%1:%2_%3" ).arg( GetName( mainShape.in() ) )
+              .arg( TypeName( type ) ).arg( indices[0] );
+          }
+        }
       }
     }
   }
@@ -871,7 +871,7 @@ void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object )
     if ( entry.isEmpty() && !CORBA::is_nil( father ) && !fatherEntry.isEmpty() ) {
       QString name = GetName( object );
       GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( studyDS ),
-					     object, name.toLatin1().data(), father.in() );
+                                             object, name.toLatin1().data(), father.in() );
     }
   }
 }

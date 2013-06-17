@@ -57,8 +57,8 @@ private:
   void                  toModel( Material_Model& ) const;
   void                  fromModel( const Material_Model& );
   QString               findUniqueName( const QString&,
- 					QListWidgetItem* = 0,
- 					bool = false );
+                                        QListWidgetItem* = 0,
+                                        bool = false );
 
 signals:
   void                  changed();

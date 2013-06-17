@@ -60,8 +60,8 @@ class GEOMAlgo_Tools3D  {
   //!          theContext - cashed geometrical tools <br>
   Standard_EXPORT
     static  Standard_Boolean IsSplitToReverse(const TopoDS_Shape& theSplit,
-					      const TopoDS_Shape& theShape,
-					      const Handle(IntTools_Context)& theContext) ;
+                                              const TopoDS_Shape& theShape,
+                                              const Handle(IntTools_Context)& theContext) ;
 
   //! Returns True if normal direction of the face <br>
   //!          theShape is not the same as for the face <br>
@@ -69,8 +69,8 @@ class GEOMAlgo_Tools3D  {
   //!          theContext - cashed geometrical tools <br>
   Standard_EXPORT
     static  Standard_Boolean IsSplitToReverse(const TopoDS_Face& theSplit,
-					      const TopoDS_Face& theShape,
-					      const Handle(IntTools_Context)& theContext) ;
+                                              const TopoDS_Face& theShape,
+                                              const Handle(IntTools_Context)& theContext) ;
 
   //! Returns True if tangent direction of the edge <br>
   //!          theEdge is not the same as for the edge <br>
@@ -78,8 +78,8 @@ class GEOMAlgo_Tools3D  {
   //!          theContext - cashed geometrical tools <br>
   Standard_EXPORT
     static  Standard_Boolean IsSplitToReverse(const TopoDS_Edge& theEdge,
-					      const TopoDS_Edge& theSplit,
-					      const Handle(IntTools_Context)& theContext) ;
+                                              const TopoDS_Edge& theSplit,
+                                              const Handle(IntTools_Context)& theContext) ;
 
   //! For the couple of faces theF1, theF2 <br>
   //!          computes sense value <br>
@@ -88,18 +88,18 @@ class GEOMAlgo_Tools3D  {
   //!          Returns 2 if the faces have opposite sense <br>
   Standard_EXPORT
     static  Standard_Integer Sense(const TopoDS_Face& theF1,
-				   const TopoDS_Face& theF2) ;
+                                   const TopoDS_Face& theF2) ;
 
   //! Makes new face theF2 from surface and wires <br>
   //!          of the face theF1 <br>
   Standard_EXPORT
     static  void CopyFace(const TopoDS_Face& theF1,
-			  TopoDS_Face& theF2) ;
+                          TopoDS_Face& theF2) ;
 
   //! Makes empty shape theShape of the type theType <br>
   Standard_EXPORT
     static  void MakeContainer(const TopAbs_ShapeEnum theType,
-			       TopoDS_Shape& theShape) ;
+                               TopoDS_Shape& theShape) ;
 
   //! For the list of faces theLS build block <br>
   //!          theLSCB in terms of connexity by edges <br>
@@ -107,8 +107,8 @@ class GEOMAlgo_Tools3D  {
   //!          the treatment <br>
   Standard_EXPORT
     static  void MakeConnexityBlock(const TopTools_ListOfShape& theLS,
-				    const TopTools_IndexedMapOfShape& theMapAvoid,
-				    TopTools_ListOfShape& theLSCB) ;
+                                    const TopTools_IndexedMapOfShape& theMapAvoid,
+                                    TopTools_ListOfShape& theLSCB) ;
 
   //! Computes the 3-D state of the shape theShape <br>
   //!          toward solid theSolid. <br>
@@ -117,9 +117,9 @@ class GEOMAlgo_Tools3D  {
   //!          Returns 3-D state. <br>
   Standard_EXPORT
     static  TopAbs_State ComputeStateByOnePoint(const TopoDS_Shape& theShape,
-						const TopoDS_Solid& theSolid,
-						const Standard_Real theTol,
-						const Handle(IntTools_Context)& theContext) ;
+                                                const TopoDS_Solid& theSolid,
+                                                const Standard_Real theTol,
+                                                const Handle(IntTools_Context)& theContext) ;
 
   //! Computes the 3-D state of the point thePoint <br>
   //!          toward solid theSolid. <br>
@@ -128,9 +128,9 @@ class GEOMAlgo_Tools3D  {
   //!          Returns 3-D state. <br>
   Standard_EXPORT
     static  TopAbs_State ComputeState(const gp_Pnt& thePoint,
-				      const TopoDS_Solid& theSolid,
-				      const Standard_Real theTol,
-				      const Handle(IntTools_Context)& theContext) ;
+                                      const TopoDS_Solid& theSolid,
+                                      const Standard_Real theTol,
+                                      const Handle(IntTools_Context)& theContext) ;
 
   //! Computes the 3-D state of the vertex theVertex <br>
   //!          toward solid theSolid. <br>
@@ -139,9 +139,9 @@ class GEOMAlgo_Tools3D  {
   //!          Returns 3-D state. <br>
   Standard_EXPORT
     static  TopAbs_State ComputeState(const TopoDS_Vertex& theVertex,
-				      const TopoDS_Solid& theSolid,
-				      const Standard_Real theTol,
-				      const Handle(IntTools_Context)& theContext) ;
+                                      const TopoDS_Solid& theSolid,
+                                      const Standard_Real theTol,
+                                      const Handle(IntTools_Context)& theContext) ;
 
   //! Computes the 3-D state of the edge theEdge <br>
   //!          toward solid theSolid. <br>
@@ -150,9 +150,9 @@ class GEOMAlgo_Tools3D  {
   //!          Returns 3-D state. <br>
   Standard_EXPORT
     static  TopAbs_State ComputeState(const TopoDS_Edge& theEdge,
-				      const TopoDS_Solid& theSolid,
-				      const Standard_Real theTol,
-				      const Handle(IntTools_Context)& theContext) ;
+                                      const TopoDS_Solid& theSolid,
+                                      const Standard_Real theTol,
+                                      const Handle(IntTools_Context)& theContext) ;
 
   //! Computes the 3-D state of the face theFace <br>
   //!          toward solid theSolid. <br>
@@ -162,10 +162,10 @@ class GEOMAlgo_Tools3D  {
   //!          Returns 3-D state. <br>
   Standard_EXPORT
     static  TopAbs_State ComputeState(const TopoDS_Face& theFace,
-				      const TopoDS_Solid& theSolid,
-				      const Standard_Real theTol,
-				      const TopTools_IndexedMapOfShape& theBounds,
-				      const Handle(IntTools_Context)& theContext) ;
+                                      const TopoDS_Solid& theSolid,
+                                      const Standard_Real theTol,
+                                      const TopTools_IndexedMapOfShape& theBounds,
+                                      const Handle(IntTools_Context)& theContext) ;
 
   //! Returns True if the face theFace is inside of the <br>
   //!          couple of faces theFace1, theFace2. <br>
@@ -173,10 +173,10 @@ class GEOMAlgo_Tools3D  {
   //!          share the edge theEdge <br>
   Standard_EXPORT
     static  Standard_Boolean IsInternalFace(const TopoDS_Face& theFace,
-					    const TopoDS_Edge& theEdge,
-					    const TopoDS_Face& theFace1,
-					    const TopoDS_Face& theFace2,
-					    const Handle(IntTools_Context)& theContext) ;
+                                            const TopoDS_Edge& theEdge,
+                                            const TopoDS_Face& theFace1,
+                                            const TopoDS_Face& theFace2,
+                                            const Handle(IntTools_Context)& theContext) ;
 
   //! Returns True if the face theFace is inside of the <br>
   //!          appropriate couple of faces (from the set theLF)    . <br>
@@ -184,9 +184,9 @@ class GEOMAlgo_Tools3D  {
   //!          share the edge theEdge <br>
   Standard_EXPORT
     static  Standard_Boolean IsInternalFace(const TopoDS_Face& theFace,
-					    const TopoDS_Edge& theEdge,
-					    const TopTools_ListOfShape& theLF,
-					    const Handle(IntTools_Context)& theContext) ;
+                                            const TopoDS_Edge& theEdge,
+                                            const TopTools_ListOfShape& theLF,
+                                            const Handle(IntTools_Context)& theContext) ;
 
   //! Returns True if the face theFace is inside the <br>
   //!          solid theSolid. <br>
@@ -195,10 +195,10 @@ class GEOMAlgo_Tools3D  {
   //!          theContext- cahed geometrical tools <br>
   Standard_EXPORT
     static  Standard_Boolean IsInternalFace(const TopoDS_Face& theFace,
-					    const TopoDS_Solid& theSolid,
-					    const TopTools_IndexedDataMapOfShapeListOfShape& theMEF,
-					    const Standard_Real theTol,
-					    const Handle(IntTools_Context)& theContext) ;
+                                            const TopoDS_Solid& theSolid,
+                                            const TopTools_IndexedDataMapOfShapeListOfShape& theMEF,
+                                            const Standard_Real theTol,
+                                            const Handle(IntTools_Context)& theContext) ;
 
   //!  For the face theFace and its edge theEdge <br>
   //!           finds the face suitable to produce shell. <br>
@@ -206,9 +206,9 @@ class GEOMAlgo_Tools3D  {
   //!           from theLCEF must share edge theEdge <br>
   Standard_EXPORT
     static  void GetFaceOff(const TopoDS_Edge& theEdge,
-			    const TopoDS_Face& theFace,
-			    const NMTTools_ListOfCoupleOfShape& theLCEF,
-			    TopoDS_Face& theFaceOff) ;
+                            const TopoDS_Face& theFace,
+                            const NMTTools_ListOfCoupleOfShape& theLCEF,
+                            TopoDS_Face& theFaceOff) ;
 
   //! For the face theFace gets the edge theEdgeOnF <br>
   //!          that is the same as theEdge <br>
@@ -216,8 +216,8 @@ class GEOMAlgo_Tools3D  {
   //!          Returns False if there is no such edge <br>
   Standard_EXPORT
     static  Standard_Boolean GetEdgeOnFace(const TopoDS_Edge& theEdge,
-					   const TopoDS_Face& theFace,
-					   TopoDS_Edge& theEdgeOnF) ;
+                                           const TopoDS_Face& theFace,
+                                           TopoDS_Edge& theEdgeOnF) ;
 
   //! Returns True if the face theFace contains <br>
   //!          the edge theEdge but with opposite orientation. <br>
@@ -225,8 +225,8 @@ class GEOMAlgo_Tools3D  {
   //!          edge founded <br>
   Standard_EXPORT
     static  Standard_Boolean GetEdgeOff(const TopoDS_Edge& theEdge,
-					const TopoDS_Face& theFace,
-					TopoDS_Edge& theEdgeOff) ;
+                                        const TopoDS_Face& theFace,
+                                        TopoDS_Edge& theEdgeOff) ;
 
   //! Computes a point <theP> inside the face <theF>. <br>
   //!          <theP2D> -  2D  representation of <theP> <br>
@@ -234,7 +234,7 @@ class GEOMAlgo_Tools3D  {
   //!          Returns 0 in case of success. <br>
   Standard_EXPORT
     static  Standard_Integer PntInFace(const TopoDS_Face& theF,
-				       gp_Pnt& theP,
-				       gp_Pnt2d& theP2D) ;
+                                       gp_Pnt& theP,
+                                       gp_Pnt2d& theP2D) ;
 };
 #endif

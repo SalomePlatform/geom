@@ -21,10 +21,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:	GEOMAlgo_Gluer.hxx
-// Created:	Sat Dec 04 12:45:53 2004
-// Author:	Peter KURNEV
-//		<peter@PREFEX>
+// File:        GEOMAlgo_Gluer.hxx
+// Created:     Sat Dec 04 12:45:53 2004
+// Author:      Peter KURNEV
+//              <peter@PREFEX>
 //
 #ifndef _GEOMAlgo_Gluer_HeaderFile
 #define _GEOMAlgo_Gluer_HeaderFile
@@ -122,35 +122,35 @@ public:
 
   Standard_EXPORT
     void EdgePassKey(const TopoDS_Edge& aE,
-		     GEOMAlgo_PassKeyShape& aPK) ;
+                     GEOMAlgo_PassKeyShape& aPK) ;
 
   Standard_EXPORT
     void FacePassKey(const TopoDS_Face& aF,
-		     GEOMAlgo_PassKeyShape& aPK) ;
+                     GEOMAlgo_PassKeyShape& aPK) ;
 
   Standard_EXPORT
     void MakeVertex(const TopTools_ListOfShape& aLV,
-		    TopoDS_Vertex& aNewV) ;
+                    TopoDS_Vertex& aNewV) ;
 
   Standard_EXPORT
     void MakeEdge(const TopoDS_Edge& aEdge,
-		  TopoDS_Edge& aNewEdge) ;
+                  TopoDS_Edge& aNewEdge) ;
 
   Standard_EXPORT
     void MakeFace(const TopoDS_Face& aFace,
-		  TopoDS_Face& aNewEdge) ;
+                  TopoDS_Face& aNewEdge) ;
 
   Standard_EXPORT
     Standard_Boolean IsToReverse(const TopoDS_Face& aFR,
-				 const TopoDS_Face& aF) ;
+                                 const TopoDS_Face& aF) ;
 
   Standard_EXPORT
     Standard_Boolean HasNewSubShape(const TopoDS_Shape& aS) const;
 
   Standard_EXPORT
     void MakeSubShapes(const TopoDS_Shape& aS,
-		       TopTools_MapOfShape& aM,
-		       TopoDS_Compound& aC) ;
+                       TopTools_MapOfShape& aM,
+                       TopoDS_Compound& aC) ;
 
 
   Standard_Boolean myCheckGeometry;

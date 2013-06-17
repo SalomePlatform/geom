@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_WESScaler.cxx
+// File:        GEOMAlgo_WESScaler.cxx
 // Created:
 // Author:
-//		<pkv@VORTEX>
+//              <pkv@VORTEX>
 
 
 #include <GEOMAlgo_WESScaler.hxx>

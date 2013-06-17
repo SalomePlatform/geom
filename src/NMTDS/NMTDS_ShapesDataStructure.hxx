@@ -67,25 +67,25 @@ class NMTDS_ShapesDataStructure  : public BooleanOperations_ShapesDataStructure
   
   Standard_EXPORT
     virtual  Standard_Integer ShapeIndex(const TopoDS_Shape& aS,
-					 const Standard_Integer iRank) const;
+                                         const Standard_Integer iRank) const;
   
   Standard_EXPORT     
     void FillMap(const TopoDS_Shape& aS,
-		 BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMSA,
-		 BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMS) const;
+                 BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMSA,
+                 BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMS) const;
   
   Standard_EXPORT
     void FillSubshapes(const TopoDS_Shape& aS,
-		       BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMSA,
-		       BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMS) const;
+                       BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMSA,
+                       BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors& aMS) const;
   
   Standard_EXPORT     
     void GetAllSuccessors(const Standard_Integer anIndex,
-			  TColStd_IndexedMapOfInteger& aScrs) const;
+                          TColStd_IndexedMapOfInteger& aScrs) const;
   
   Standard_EXPORT     
     void ComputeBoxEx(const Standard_Integer anIndex,
-		      Bnd_Box& aBox) const;
+                      Bnd_Box& aBox) const;
 
 
  protected:

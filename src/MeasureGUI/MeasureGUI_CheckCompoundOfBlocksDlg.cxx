@@ -371,7 +371,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
       TopoDS_Shape aSubShape = anIndices.FindKey( aObjLst[i] );
       QString aType = GEOMBase::GetShapeTypeString( aSubShape );
       if ( !aType.isEmpty() )
-	aSubShapeList.append( QString( "%1_%2" ).arg( aType ).arg( aObjLst[i] ) );
+        aSubShapeList.append( QString( "%1_%2" ).arg( aType ).arg( aObjLst[i] ) );
     }
   }
   myGrp->ListBox2->clear();

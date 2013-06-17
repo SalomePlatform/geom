@@ -17,10 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:	NMTDS_InterfType.hxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_InterfType.hxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 
 
 #ifndef _NMTDS_InterfType_HeaderFile

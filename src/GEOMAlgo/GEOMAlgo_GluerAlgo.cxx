@@ -19,10 +19,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_GluerAlgo.cxx
+// File:        GEOMAlgo_GluerAlgo.cxx
 // Created:
-// Author:	Peter KURNEV
-//		<peter@PREFEX>
+// Author:      Peter KURNEV
+//              <peter@PREFEX>
 //
 #include <GEOMAlgo_GluerAlgo.hxx>
 #include <IntTools_Context.hxx>

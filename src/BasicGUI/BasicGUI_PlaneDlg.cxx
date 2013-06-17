@@ -695,15 +695,15 @@ bool BasicGUI_PlaneDlg::isValid( QString& msg )
       break;
     case 1:
       ok = Group3Pnts->SpinBox_DX->isValid( msg, !IsPreview() ) &&
-	   myPoint1 && myPoint2 && myPoint3 &&
-	   myPoint1 != myPoint2 && myPoint1 != myPoint3 && myPoint2 != myPoint3;
+           myPoint1 && myPoint2 && myPoint3 &&
+           myPoint1 != myPoint2 && myPoint1 != myPoint3 && myPoint2 != myPoint3;
       break;
     case 2:
       ok = GroupFace->SpinBox_DX->isValid( msg, !IsPreview() ) && myFace;
       break;
     case 3:
       ok = Group2Vec->SpinBox_DX->isValid( msg, !IsPreview() ) &&
-	   myVec1 && myVec2 && myVec1 != myVec2;
+           myVec1 && myVec2 && myVec1 != myVec2;
       break;
     case 4:
       ok = GroupLCS->SpinBox_DX->isValid( msg, !IsPreview() );

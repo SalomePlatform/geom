@@ -310,14 +310,14 @@ setDisplayMode(int theMode)
   if ( theMode == (int)eShadingWithEdges ) {
     // Coloring edges
     myIsolatedEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
-						 myEdgesInShadingColor[1],
-						 myEdgesInShadingColor[2]);
+                                                 myEdgesInShadingColor[1],
+                                                 myEdgesInShadingColor[2]);
     myOneFaceEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
-						myEdgesInShadingColor[1],
-						myEdgesInShadingColor[2]);
+                                                myEdgesInShadingColor[1],
+                                                myEdgesInShadingColor[2]);
     mySharedEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
-					       myEdgesInShadingColor[1],
-					       myEdgesInShadingColor[2]);
+                                               myEdgesInShadingColor[1],
+                                               myEdgesInShadingColor[2]);
   }
   else {
     // Restore number of iso-lines
@@ -325,14 +325,14 @@ setDisplayMode(int theMode)
 
     // Coloring edges
     myIsolatedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
-						 myIsolatedEdgeColor[1],
-						 myIsolatedEdgeColor[2]);
+                                                 myIsolatedEdgeColor[1],
+                                                 myIsolatedEdgeColor[2]);
     mySharedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
-					       myIsolatedEdgeColor[1],
-					       myIsolatedEdgeColor[2]);
+                                               myIsolatedEdgeColor[1],
+                                               myIsolatedEdgeColor[2]);
     myOneFaceEdgeActor->GetProperty()->SetColor(myOneFaceEdgeColor[0],
-					       myOneFaceEdgeColor[1],
-					       myOneFaceEdgeColor[2]);
+                                               myOneFaceEdgeColor[1],
+                                               myOneFaceEdgeColor[2]);
   }
 
   VTKViewer_Actor::setDisplayMode(theMode);
@@ -423,7 +423,7 @@ SetDeflection(float theDeflection)
 
 void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
                            float theDeflection,
-			   bool theIsVector)
+                           bool theIsVector)
 {
   myShape = theShape;
 

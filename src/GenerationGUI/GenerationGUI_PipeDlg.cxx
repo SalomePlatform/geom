@@ -245,7 +245,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       GEOM::shape_type maxallowed = getConstructorId() == 1 ? GEOM::FACE : GEOM::SHELL;
       GEOM::shape_type minallowed = getConstructorId() == 1 ? GEOM::EDGE : GEOM::VERTEX;
       if ( stype < maxallowed || stype > minallowed )
-	continue;
+        continue;
       myBaseObjects << objects[i];
     }
     if ( !myBaseObjects.isEmpty() ) {
@@ -261,9 +261,9 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       QString aName = GEOMBase::GetName( myPath.get() );
       myEditCurrentArgument->setText( aName );
       if ( getConstructorId() == 1 && !myVec )
-	GroupPoints->PushButton3->click();
+        GroupPoints->PushButton3->click();
       else if ( myBaseObjects.isEmpty() )
-	GroupPoints->PushButton1->click();
+        GroupPoints->PushButton1->click();
     }
   }
   else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
@@ -272,9 +272,9 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       QString aName = GEOMBase::GetName( myVec.get() );
       myEditCurrentArgument->setText( aName );
       if ( myBaseObjects.isEmpty() )
-	GroupPoints->PushButton1->click();
+        GroupPoints->PushButton1->click();
       else if ( !myPath )
-	GroupPoints->PushButton2->click();
+        GroupPoints->PushButton2->click();
     }
   }
 

@@ -117,7 +117,7 @@ static
 //modified by NIZNHY-PKV Thu Apr 19 09:04:59 2012f
 static
   Standard_Integer NbWaysOut(const TopoDS_Edge& aEOuta,
-			     const BOP_ListOfEdgeInfo& aLEInfo);
+                             const BOP_ListOfEdgeInfo& aLEInfo);
 //static
 //  Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& );
 //modified by NIZNHY-PKV Thu Apr 19 09:04:53 2012t
@@ -578,7 +578,7 @@ static
     //
     if (anIsOut && anIsNotPassed) {
       if (aE.IsSame(aEOuta)) {
-	continue;
+        continue;
       }
       //
       if (iCnt==1) {
@@ -852,7 +852,7 @@ Standard_Real Angle (const gp_Dir2d& aDir2D)
 // purpose:
 //=======================================================================
 Standard_Integer NbWaysOut(const TopoDS_Edge& aEOuta,
-			   const BOP_ListOfEdgeInfo& aLEInfo)
+                           const BOP_ListOfEdgeInfo& aLEInfo)
 {
   Standard_Boolean bIsOut, bIsNotPassed;
   Standard_Integer iCnt=0;
@@ -866,7 +866,7 @@ Standard_Integer NbWaysOut(const TopoDS_Edge& aEOuta,
     bIsNotPassed=!aEI.Passed();
     if (bIsOut && bIsNotPassed) {
       if (!aE.IsSame(aEOuta)) {
-	iCnt++;
+        iCnt++;
       }
     }
   }

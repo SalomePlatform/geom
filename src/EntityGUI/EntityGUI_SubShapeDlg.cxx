@@ -739,7 +739,7 @@ void EntityGUI_SubShapeDlg::activateSelection()
       {
         TopoDS_Shape aSubShape = anExp.Current();
         int index = aSubShapesMap.FindIndex(aSubShape);
-	QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
+        QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
 
         SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
         if (aPrs) {

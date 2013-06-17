@@ -42,22 +42,22 @@ class NMTDS_Tools
  public:
   Standard_EXPORT
     static  Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aT1,
-					   const TopAbs_ShapeEnum aT2) ;
+                                           const TopAbs_ShapeEnum aT2) ;
   
   Standard_EXPORT
     static  Standard_Boolean HasBRep(const TopAbs_ShapeEnum aT) ;
   
   Standard_EXPORT
     static  Standard_Integer ComputeVV(const TopoDS_Vertex& aV1,
-				       const TopoDS_Vertex& aV2) ;
+                                       const TopoDS_Vertex& aV2) ;
   
   Standard_EXPORT
     static  void CopyShape(const TopoDS_Shape& aS,
-			   TopoDS_Shape& aSC) ;
+                           TopoDS_Shape& aSC) ;
   
   Standard_EXPORT
     static  void CopyShape(const TopoDS_Shape& aS,
-			   TopoDS_Shape& aSC,
-			   TopTools_IndexedDataMapOfShapeShape& aMSS) ;
+                           TopoDS_Shape& aSC,
+                           TopTools_IndexedDataMapOfShapeShape& aMSS) ;
 };
 #endif

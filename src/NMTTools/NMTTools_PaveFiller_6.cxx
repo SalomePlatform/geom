@@ -287,10 +287,10 @@ void NMTTools_PaveFiller::MakeBlocks()
       const TColStd_MapOfInteger& aMV1=(!j) ? aMVOn1 :aMVIn1;
       aItMI.Initialize(aMV1);
       for (; aItMI.More(); aItMI.Next()) {
-	nV1=aItMI.Key();
-	if (aMVOn2.Contains(nV1) || aMVIn2.Contains(nV1)) {
-	  aMVStick.Add(nV1);
-	}
+        nV1=aItMI.Key();
+        if (aMVOn2.Contains(nV1) || aMVIn2.Contains(nV1)) {
+          aMVStick.Add(nV1);
+        }
       }
     }
     //
@@ -305,32 +305,32 @@ void NMTTools_PaveFiller::MakeBlocks()
       NMTTools_MapOfPaveBlock *pMPB;
       //
       if (!j) {
-	pMPB=((NMTTools_MapOfPaveBlock*)&aMPBIn1);
+        pMPB=((NMTTools_MapOfPaveBlock*)&aMPBIn1);
       }
       else if (j==1) {
-	pMPB=((NMTTools_MapOfPaveBlock*)&aMPBOn1);
+        pMPB=((NMTTools_MapOfPaveBlock*)&aMPBOn1);
       }
       else if (j==2) {
-	pMPB=((NMTTools_MapOfPaveBlock*)&aMPBIn2);
+        pMPB=((NMTTools_MapOfPaveBlock*)&aMPBIn2);
       }
       else if (j==3) {
-	pMPB=((NMTTools_MapOfPaveBlock*)&aMPBOn2);
+        pMPB=((NMTTools_MapOfPaveBlock*)&aMPBOn2);
       }
       //
       const NMTTools_MapOfPaveBlock& aMPB=*pMPB;
       aItMPB.Initialize(aMPB);
       for (; aItMPB.More(); aItMPB.Next()) {
-	const BOPTools_PaveBlock& aPB=aItMPB.Key();
-	if (aMPBX.Add(aPB)) {
-	  aLPB.Append(aPB);
-	}
-	//
-	else {
-	  if (j>1) {
-	    aFFi.AppendBlock(aPB);
-	  }
-	}
-	//
+        const BOPTools_PaveBlock& aPB=aItMPB.Key();
+        if (aMPBX.Add(aPB)) {
+          aLPB.Append(aPB);
+        }
+        //
+        else {
+          if (j>1) {
+            aFFi.AppendBlock(aPB);
+          }
+        }
+        //
       }
     }
     //
@@ -412,7 +412,7 @@ void NMTTools_PaveFiller::MakeBlocks()
         if (bIsExistingPaveBlock) {
           continue;
         }
-	//
+        //
         // Checking of validity in 2D
         //
         bIsValidIn2D=myContext->IsValidBlockForFaces(aT1, aT2, aIC, aF1, aF2, aTol2D);
@@ -1331,34 +1331,34 @@ void NMTTools_PaveFiller::FillFaceInfo()
       const NMTTools_ListOfCommonBlock& aLCB=myCommonBlockPool(myDS->RefEdge(i));
       aItCB.Initialize(aLCB);
       for (; aItCB.More(); aItCB.Next()) {
-	const NMTTools_CommonBlock& aCB=aItCB.Value();
-	const BOPTools_PaveBlock &aPB1=aCB.PaveBlock1();
-	const TColStd_ListOfInteger& aLF=aCB.Faces();
-	aNbF=aLF.Extent();
-	if (!aNbF) {
-	  continue;
-	}
-	//
-	aItF.Initialize(aLF);
-	for (; aItF.More(); aItF.Next()) {
-	  nF=aItF.Value();
-	  if (!myFaceInfo.IsBound(nF)) {
-	    continue;
-	  }
-	  //
-	  NMTTools_FaceInfo& aFI=myFaceInfo.ChangeFind(nF);
-	  aFI.ChangePaveBlocksIn().Add(aPB1);
-	  //
-	  n1=aPB1.Pave1().Index();
-	  n2=aPB1.Pave2().Index();
-	  aFI.ChangeVerticesIn().Add(n1);
-	  aFI.ChangeVerticesIn().Add(n2);
-	}
+        const NMTTools_CommonBlock& aCB=aItCB.Value();
+        const BOPTools_PaveBlock &aPB1=aCB.PaveBlock1();
+        const TColStd_ListOfInteger& aLF=aCB.Faces();
+        aNbF=aLF.Extent();
+        if (!aNbF) {
+          continue;
+        }
+        //
+        aItF.Initialize(aLF);
+        for (; aItF.More(); aItF.Next()) {
+          nF=aItF.Value();
+          if (!myFaceInfo.IsBound(nF)) {
+            continue;
+          }
+          //
+          NMTTools_FaceInfo& aFI=myFaceInfo.ChangeFind(nF);
+          aFI.ChangePaveBlocksIn().Add(aPB1);
+          //
+          n1=aPB1.Pave1().Index();
+          n2=aPB1.Pave2().Index();
+          aFI.ChangeVerticesIn().Add(n1);
+          aFI.ChangeVerticesIn().Add(n2);
+        }
       }
     }// if (aType==TopAbs_EDGE) {
     else if (aType==TopAbs_FACE) {
       if (!myFaceInfo.IsBound(i)) {
-	continue;
+        continue;
       }
       //
       BOPTools_ListOfPaveBlock aLPBOn;
@@ -1370,13 +1370,13 @@ void NMTTools_PaveFiller::FillFaceInfo()
       //
       anItPB.Initialize(aLPBOn);
       for (; anItPB.More(); anItPB.Next()) {
-	const BOPTools_PaveBlock &aPB=anItPB.Value();
-	aFI.ChangePaveBlocksOn().Add(aPB);
-	//
-	n1=aPB.Pave1().Index();
-	n2=aPB.Pave2().Index();
-	aFI.ChangeVerticesOn().Add(n1);
-	aFI.ChangeVerticesOn().Add(n2);
+        const BOPTools_PaveBlock &aPB=anItPB.Value();
+        aFI.ChangePaveBlocksOn().Add(aPB);
+        //
+        n1=aPB.Pave1().Index();
+        n2=aPB.Pave2().Index();
+        aFI.ChangeVerticesOn().Add(n1);
+        aFI.ChangeVerticesOn().Add(n2);
       }
       //
     }// else if (aType==TopAbs_FACE) {
@@ -1397,10 +1397,10 @@ void NMTTools_PaveFiller::FillFaceInfo()
       BOPTools_VSInterference& aVFj=aVFs(j);
       aVFj.Indices(n1, n2);
       if (nF==n1) {
-	aFI.ChangeVerticesIn().Add(n2);
+        aFI.ChangeVerticesIn().Add(n2);
       }
       else if (nF==n2){
-	aFI.ChangeVerticesIn().Add(n1);
+        aFI.ChangeVerticesIn().Add(n1);
       }
     }//  for (j=1; j<=aNbVFs; ++j) {
     //
@@ -1410,18 +1410,18 @@ void NMTTools_PaveFiller::FillFaceInfo()
       BOPTools_ESInterference& aEFj=aEFs(j);
       aEFj.Indices(n1, n2);
       if (!(nF==n1 || nF==n2)) {
-	continue;
+        continue;
       }
       //
       nX=aEFj.NewShape();
       if (nX<1) {
-	continue;
+        continue;
       }
       //
       aS=myDS->Shape(nX);
       aType=aS.ShapeType();
       if (aType!=TopAbs_VERTEX) {
-	continue;
+        continue;
       }
       //
       aFI.ChangeVerticesIn().Add(nX);
@@ -1447,8 +1447,8 @@ void NMTTools_PaveFiller::FillFaceInfo()
 //
 //=======================================================================
 void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
-					const TColStd_MapOfInteger& aMVStick,
-					Standard_Real& aTolR3D)
+                                        const TColStd_MapOfInteger& aMVStick,
+                                        Standard_Real& aTolR3D)
 
 {
   Standard_Boolean bHasBounds;
@@ -1545,7 +1545,7 @@ void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
 // purpose:
 //=======================================================================
 void NMTTools_PaveFiller::PutClosingPaveOnCurve(BOPTools_Curve& aBC,
-						BOPTools_SSInterference& aFFi)
+                                                BOPTools_SSInterference& aFFi)
 {
   Standard_Boolean bIsClosed, bHasBounds, bAdded;
   Standard_Integer nVC, j;
@@ -1588,15 +1588,15 @@ void NMTTools_PaveFiller::PutClosingPaveOnCurve(BOPTools_Curve& aBC,
     //
     for (j=0; j<2; ++j) {
       if (fabs(aTC-aT[j]) < dT) {
-	aTx=(!j) ? aT[1] : aT[0];
-	aPVx.SetIndex(nVC);
-	aPVx.SetParam(aTx);
-	//
-	aCPS.Append(aPVx);
-	aFFiPS.Append(aPVx);
-	//
-	bAdded=Standard_True;
-	break;
+        aTx=(!j) ? aT[1] : aT[0];
+        aPVx.SetIndex(nVC);
+        aPVx.SetParam(aTx);
+        //
+        aCPS.Append(aPVx);
+        aFFiPS.Append(aPVx);
+        //
+        bAdded=Standard_True;
+        break;
       }
     }
   }

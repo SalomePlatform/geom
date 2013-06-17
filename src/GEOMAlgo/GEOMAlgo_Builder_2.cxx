@@ -103,8 +103,8 @@ static
 
 static
   Standard_Boolean IsClosed(const TopoDS_Edge& ,
-			    const TopoDS_Face&,
-			    Standard_Boolean&  );
+                            const TopoDS_Face&,
+                            Standard_Boolean&  );
 
 //=======================================================================
 //function : FillImagesFaces
@@ -347,15 +347,15 @@ void GEOMAlgo_Builder::BuildSplitFaces()
           }
           continue;
         }//  if (bIsClosed){
-	//
-	//modified by NIZNHY-PKV Wed Nov 28 13:50:34 2012f
-	if (!bIsClosed && bFlagClosed) {
-	  if (!BRep_Tool::IsClosed(aSp, aF)){
-	    BOPTools_Tools3D::DoSplitSEAMOnFace(aSp, aF);
-	  }
-	}
-	//modified by NIZNHY-PKV Wed Nov 28 13:50:36 2012t
-	//
+        //
+        //modified by NIZNHY-PKV Wed Nov 28 13:50:34 2012f
+        if (!bIsClosed && bFlagClosed) {
+          if (!BRep_Tool::IsClosed(aSp, aF)){
+            BOPTools_Tools3D::DoSplitSEAMOnFace(aSp, aF);
+          }
+        }
+        //modified by NIZNHY-PKV Wed Nov 28 13:50:36 2012t
+        //
         //
         aSp.Orientation(anOriE);
         bToReverse=BOPTools_Tools3D::IsSplitToReverse1(aSp, aE, aCtx);
@@ -612,7 +612,7 @@ void GEOMAlgo_Builder::FillSameDomainFaces()
     for (k=1; k<=aNbMFj; ++k) {
       const TopoDS_Shape& aFk=aMFj(k);
       if (!aDMSI.IsBound(aFk)) {
-	aDMSI.Bind(aFk, j);
+        aDMSI.Bind(aFk, j);
       }
     }
   }
@@ -629,20 +629,20 @@ void GEOMAlgo_Builder::FillSameDomainFaces()
       bIsImage=mySplitFaces.IsImage(aFSD);
       aFOld=aFSD;
       if (bIsImage) {
-	aFOld=mySplitFaces.ImageFrom(aFSD);
+        aFOld=mySplitFaces.ImageFrom(aFSD);
       }
       //
       aIx=aDMSI.Find(aFOld);
       if (j==1) {
-	aIxMin=aIx;
-	aFSDmin=aFSD;
-	continue;
+        aIxMin=aIx;
+        aFSDmin=aFSD;
+        continue;
       }
       else {
-	if (aIx<aIxMin) {
-	  aIxMin=aIx;
-	  aFSDmin=aFSD;
-	}
+        if (aIx<aIxMin) {
+          aIxMin=aIx;
+          aFSDmin=aFSD;
+        }
       }
     }
     //
@@ -948,8 +948,8 @@ void UpdateCandidates(const Standard_Integer theNF,
 //purpose  :
 //=======================================================================
 Standard_Boolean IsClosed(const TopoDS_Edge& aE,
-			  const TopoDS_Face& aF,
-			  Standard_Boolean& bFlag)
+                          const TopoDS_Face& aF,
+                          Standard_Boolean& bFlag)
 {
   Standard_Boolean bRet;
   //
@@ -966,15 +966,15 @@ Standard_Boolean IsClosed(const TopoDS_Edge& aE,
       const TopoDS_Shape& aEx=aExp.Current();
       //
       if (aEx.IsSame(aE)) {
-	++iCnt;
-	if (iCnt==1) {
-	  aE1=aEx;
-	}
-	else if (iCnt==2){
-	  aE1.Reverse();
-	  bRet=(aE1==aEx);
-	  break;
-	}
+        ++iCnt;
+        if (iCnt==1) {
+          aE1=aEx;
+        }
+        else if (iCnt==2){
+          aE1.Reverse();
+          bRet=(aE1==aEx);
+          break;
+        }
       }
     }
   }

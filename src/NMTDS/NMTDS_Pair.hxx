@@ -54,11 +54,11 @@ class NMTDS_Pair  {
   
   Standard_EXPORT
     void SetIds(const Standard_Integer aI1,
-		const Standard_Integer aI2) ;
+                const Standard_Integer aI2) ;
   
   Standard_EXPORT
     void Ids(Standard_Integer& aI1,
-	     Standard_Integer& aI2) const;
+             Standard_Integer& aI2) const;
   
   Standard_EXPORT
     Standard_Boolean IsEqual(const NMTDS_Pair& aOther) const;

@@ -203,9 +203,9 @@ void GenerationGUI_PipePathDlg::SelectionIntoArgument()
       QString aName = GEOMBase::GetName(myShape.get());
       myEditCurrentArgument->setText(aName);
       if (myBase1Objects.isEmpty())
-	GroupPoints->PushButton2->click();
+        GroupPoints->PushButton2->click();
       else if (myBase2Objects.isEmpty())
-	GroupPoints->PushButton3->click();
+        GroupPoints->PushButton3->click();
     }
   }
   else if (myEditCurrentArgument == GroupPoints->LineEdit2) {

@@ -17,10 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:	NMTDS_BndSphere.lxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_BndSphere.lxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //=======================================================================
 //function : SetCenter
 //purpose  : 

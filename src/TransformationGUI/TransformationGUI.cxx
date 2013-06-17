@@ -139,7 +139,7 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
                 if (SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel)) {
                   if (view->isVisible(io)) {
                     aDisp.Erase(io, true, false, view);
-		    getGeometryGUI()->GetShapeReader().RemoveShapeFromBuffer( getGeometryGUI()->getApp()->orb()->object_to_string( aGeomObj.in() ) );
+                    getGeometryGUI()->GetShapeReader().RemoveShapeFromBuffer( getGeometryGUI()->getApp()->orb()->object_to_string( aGeomObj.in() ) );
                     aDisp.Display(io, true, view);
                   }
                   // ? Redisplay subshapes ?

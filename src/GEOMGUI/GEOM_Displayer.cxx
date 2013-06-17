@@ -625,25 +625,25 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   // - wireframe color
   Handle(Prs3d_LineAspect) anAspect = AISShape->Attributes()->LineAspect();
   anAspect->SetColor( HasColor() ? (Quantity_NameOfColor)GetColor() : 
-		      SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::WireframeColor ) ).value<QColor>() ) );
+                      SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::WireframeColor ) ).value<QColor>() ) );
   AISShape->Attributes()->SetLineAspect( anAspect );
   
   // - unfree boundaries color
   anAspect = AISShape->Attributes()->UnFreeBoundaryAspect();
   anAspect->SetColor( HasColor() ? (Quantity_NameOfColor)GetColor() : 
-		      SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::WireframeColor ) ).value<QColor>() ) );
+                      SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::WireframeColor ) ).value<QColor>() ) );
   AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
   
   // - free boundaries color
   anAspect = AISShape->Attributes()->FreeBoundaryAspect();
   anAspect->SetColor( HasColor() ? (Quantity_NameOfColor)GetColor() : 
-		      SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::FreeBndColor ) ).value<QColor>() ) );
+                      SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::FreeBndColor ) ).value<QColor>() ) );
   AISShape->Attributes()->SetFreeBoundaryAspect( anAspect );
   
   // - standalone edges color
   anAspect = AISShape->Attributes()->WireAspect();
   anAspect->SetColor( HasColor() ? (Quantity_NameOfColor)GetColor() : 
-		      SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::LineColor ) ).value<QColor>() ) );
+                      SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::LineColor ) ).value<QColor>() ) );
   AISShape->Attributes()->SetWireAspect( anAspect );
   
   // - color for edges in shading+edges mode
@@ -654,10 +654,10 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
 
   // set display mode
   AISShape->SetDisplayMode( HasDisplayMode() ? 
-			    // predefined display mode, manually set to displayer via GEOM_Displayer::SetDisplayMode() function 
-			    GetDisplayMode() :
-			    // display mode from properties
-			    propMap.value( GEOM::propertyName( GEOM::DisplayMode ) ).toInt() );
+                            // predefined display mode, manually set to displayer via GEOM_Displayer::SetDisplayMode() function 
+                            GetDisplayMode() :
+                            // display mode from properties
+                            propMap.value( GEOM::propertyName( GEOM::DisplayMode ) ).toInt() );
 
   // set display vectors flag
   AISShape->SetDisplayVectors( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
@@ -697,10 +697,10 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
 
   // set line width
   AISShape->SetWidth( HasWidth() ?
-		      // predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
-		      GetWidth() :
-		      // libe width from properties
-		      propMap.value( GEOM::propertyName( GEOM::LineWidth ) ).toInt() );
+                      // predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
+                      GetWidth() :
+                      // libe width from properties
+                      propMap.value( GEOM::propertyName( GEOM::LineWidth ) ).toInt() );
 
   // set top-level flag
   AISShape->setTopLevel( propMap.value( GEOM::propertyName( GEOM::TopLevel ) ).toBool() );
@@ -716,10 +716,10 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
       anAspect->SetScale( aScaleOfMarker );
       anAspect->SetTypeOfMarker( (Aspect_TypeOfMarker)( aTypeOfMarker-1 ) );
       anAspect->SetColor( HasColor() ? 
-			  // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
-			  (Quantity_NameOfColor)GetColor() : 
-			  // color from properties
-			  SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ) );
+                          // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
+                          (Quantity_NameOfColor)GetColor() : 
+                          // color from properties
+                          SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ) );
       AISShape->Attributes()->SetPointAspect( anAspect );
     }
     else if ( aList.size() == 1 ) {
@@ -729,21 +729,21 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
 #if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
       Handle(TColStd_HArray1OfByte) aTexture =
 #else
-	Handle(Graphic3d_HArray1OfBytes) aTexture =
+        Handle(Graphic3d_HArray1OfBytes) aTexture =
 #endif
-	GeometryGUI::getTexture( study, textureId, aWidth, aHeight );
+        GeometryGUI::getTexture( study, textureId, aWidth, aHeight );
       if ( !aTexture.IsNull() ) {
-	static int TextureId = 0;
-	Handle(Prs3d_PointAspect) aTextureAspect =
-	  new Prs3d_PointAspect( HasColor() ? 
-				 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
-				 (Quantity_NameOfColor)GetColor() : 
-				 // color from properties
-				 SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ),
-				 ++TextureId,
-				 aWidth, aHeight,
-				 aTexture );
-	AISShape->Attributes()->SetPointAspect( aTextureAspect );
+        static int TextureId = 0;
+        Handle(Prs3d_PointAspect) aTextureAspect =
+          new Prs3d_PointAspect( HasColor() ? 
+                                 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
+                                 (Quantity_NameOfColor)GetColor() : 
+                                 // color from properties
+                                 SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ),
+                                 ++TextureId,
+                                 aWidth, aHeight,
+                                 aTexture );
+        AISShape->Attributes()->SetPointAspect( aTextureAspect );
       }
     }
   }
@@ -864,10 +864,10 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
 
   // set line width
   actor->SetWidth( HasWidth() ?
-		   // predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
-		   GetWidth() :
-		   // libe width from properties
-		   propMap.value( GEOM::propertyName( GEOM::LineWidth ) ).toInt() );
+                   // predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
+                   GetWidth() :
+                   // libe width from properties
+                   propMap.value( GEOM::propertyName( GEOM::LineWidth ) ).toInt() );
   
   // set display vectors flag
   actor->SetVectorMode( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
@@ -967,36 +967,36 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 
       if ( occPrs->IsNull() )
       {
-	// new presentation is being created
+        // new presentation is being created
         aTrh = new GEOM_AISTrihedron( aPlc );
         occPrs->AddObject( aTrh );
       }
       else
       {
-	// presentation is being updated
+        // presentation is being updated
         AIS_ListOfInteractive aList;
         occPrs->GetObjects( aList );
         AIS_ListIteratorOfListOfInteractive anIter( aList );
         for ( ; anIter.More() && aTrh.IsNull(); anIter.Next() ) {
           aTrh = Handle(GEOM_AISTrihedron)::DownCast( anIter.Value() );
-	}
+        }
       }
-	
+        
       if ( !aTrh.IsNull() ) {
-	// predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
+        // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
         if ( HasColor() )
           aTrh->SetColor( (Quantity_NameOfColor)GetColor() );
-	// predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
+        // predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
         if ( HasWidth() )
           aTrh->SetWidth( GetWidth() );
-	
+        
         if ( !myIO.IsNull() )
         {
           aTrh->setIO( myIO );
           aTrh->SetOwner( myIO );
         }
-	aTrh->SetComponent( aPlc );
-	aTrh->SetToUpdate();
+        aTrh->SetComponent( aPlc );
+        aTrh->SetToUpdate();
       }
       occPrs->SetToActivate( ToActivate() );
     }
@@ -1012,7 +1012,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
     {
       // create presentation (specific for vectors)
       Handle(GEOM_AISShape) AISShape = ( myType == GEOM_VECTOR ) ? new GEOM_AISVector( myShape, "" )
-	                                                         : new GEOM_AISShape ( myShape, "" );
+                                                                 : new GEOM_AISShape ( myShape, "" );
       // update shape properties
       updateShapeProperties( AISShape, true );
 
@@ -1024,18 +1024,18 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
       occPrs->SetToActivate( ToActivate() );
 
       if ( AISShape->isTopLevel() && GEOM_AISShape::topLevelDisplayMode() == GEOM_AISShape::TopShowAdditionalWActor ) {
-	// 21671: EDF 1829 GEOM : Bring to front selected objects (continuation):
+        // 21671: EDF 1829 GEOM : Bring to front selected objects (continuation):
 
-	// create additional wireframe shape
-	Handle(GEOM_TopWireframeShape) aWirePrs = new GEOM_TopWireframeShape(myShape);
-	aWirePrs->SetWidth(AISShape->Width());
-	if ( !myIO.IsNull() ) {
-	  aWirePrs->setIO( myIO );
-	  aWirePrs->SetOwner( myIO );
-	}
+        // create additional wireframe shape
+        Handle(GEOM_TopWireframeShape) aWirePrs = new GEOM_TopWireframeShape(myShape);
+        aWirePrs->SetWidth(AISShape->Width());
+        if ( !myIO.IsNull() ) {
+          aWirePrs->setIO( myIO );
+          aWirePrs->SetOwner( myIO );
+        }
 
-	// add shape to the presentation
-	occPrs->AddObject( aWirePrs );
+        // add shape to the presentation
+        occPrs->AddObject( aWirePrs );
       }
     }
     // if presentation is found -> set again shape for it
@@ -1046,20 +1046,20 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
       AIS_ListIteratorOfListOfInteractive Iter( IOList );
       for ( ; Iter.More(); Iter.Next() )
       {
-	Handle(GEOM_AISShape) AISShape = Handle(GEOM_AISShape)::DownCast( Iter.Value() );
-	if ( AISShape.IsNull() )
-	  continue;
+        Handle(GEOM_AISShape) AISShape = Handle(GEOM_AISShape)::DownCast( Iter.Value() );
+        if ( AISShape.IsNull() )
+          continue;
 
-	// re-set shape (it might be changed)
-	if ( AISShape->Shape() != myShape )
-	  AISShape->Set( myShape );
+        // re-set shape (it might be changed)
+        if ( AISShape->Shape() != myShape )
+          AISShape->Set( myShape );
 
-	// update shape properties
-	updateShapeProperties( AISShape, false );
+        // update shape properties
+        updateShapeProperties( AISShape, false );
 
-	// force updating
-	AISShape->UpdateSelection();
-	AISShape->SetToUpdate();
+        // force updating
+        AISShape->UpdateSelection();
+        AISShape->SetToUpdate();
       }
     }
   }
@@ -1095,42 +1095,42 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
       GEOM_VTKTrihedron* aTrh = 0;
 
       if ( vtkPrs->IsNull() ) {
-	// new presentation is being created
-	aTrh = GEOM_VTKTrihedron::New();
-	vtkPrs->AddObject( aTrh );
+        // new presentation is being created
+        aTrh = GEOM_VTKTrihedron::New();
+        vtkPrs->AddObject( aTrh );
       }
       else {
-	// presentation is being updated
-	vtkActorCollection* actors = vtkPrs->GetObjects();
-	if ( actors ) {
-	  actors->InitTraversal();
-	  vtkActor* a = actors->GetNextActor();
-	  while ( a && !aTrh ) {
-	    aTrh = GEOM_VTKTrihedron::SafeDownCast( a );
-	    a = actors->GetNextActor();
-	  }
-	}
+        // presentation is being updated
+        vtkActorCollection* actors = vtkPrs->GetObjects();
+        if ( actors ) {
+          actors->InitTraversal();
+          vtkActor* a = actors->GetNextActor();
+          while ( a && !aTrh ) {
+            aTrh = GEOM_VTKTrihedron::SafeDownCast( a );
+            a = actors->GetNextActor();
+          }
+        }
       }
       
       if ( aTrh ) {
-	// predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
-	if ( HasColor() ) {
-	  Quantity_Color aColor( (Quantity_NameOfColor)GetColor() );
-	  aTrh->SetColor( aColor.Red(), aColor.Green(), aColor.Blue() );
-	}
+        // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
+        if ( HasColor() ) {
+          Quantity_Color aColor( (Quantity_NameOfColor)GetColor() );
+          aTrh->SetColor( aColor.Red(), aColor.Green(), aColor.Blue() );
+        }
 #ifdef VTK_TRIHEDRON_WIDTH
-	// 
-	// VSR: currently isn't supported
-	//
-	// predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
+        // 
+        // VSR: currently isn't supported
+        //
+        // predefined line width, manually set to displayer via GEOM_Displayer::SetLineWidth() function 
         if ( HasWidth() )
           aTrh->SetWidth( GetWidth() );
 #endif
 
         if ( !myIO.IsNull() )
-	  aTrh->setIO( myIO );
+          aTrh->setIO( myIO );
 
-	aTrh->SetPlacement( aPlc );
+        aTrh->SetPlacement( aPlc );
       }
     }
   }
@@ -1154,16 +1154,16 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
       // presentation is being updated
       vtkActorCollection* actors = vtkPrs->GetObjects();
       if ( actors ) {
-	actors->InitTraversal();
-	vtkActor* a = actors->GetNextActor();
-	while ( a ) {
-	  GEOM_Actor* actor = GEOM_Actor::SafeDownCast( a );
-	  if ( actor ) {
-	    // update actor properties
-	    updateActorProperties( actor, false );
-	    a = actors->GetNextActor();
-	  }
-	}
+        actors->InitTraversal();
+        vtkActor* a = actors->GetNextActor();
+        while ( a ) {
+          GEOM_Actor* actor = GEOM_Actor::SafeDownCast( a );
+          if ( actor ) {
+            // update actor properties
+            updateActorProperties( actor, false );
+            a = actors->GetNextActor();
+          }
+        }
       }
     }
   }
@@ -1824,8 +1824,8 @@ SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& th
 }
 
 PropMap GEOM_Displayer::getObjectProperties( SalomeApp_Study* study,
-					     const QString& entry,
-					     SALOME_View* view )
+                                             const QString& entry,
+                                             SALOME_View* view )
 {
   // get default properties for the explicitly specified default view type
   PropMap propMap = GEOM_Displayer::getDefaultPropertyMap();
@@ -1840,62 +1840,62 @@ PropMap GEOM_Displayer::getObjectProperties( SalomeApp_Study* study,
       PropMap storedMap = study->getObjectPropMap( viewId, entry );
       // overwrite default properties from stored ones (that are specified)
       for ( int prop = GEOM::Visibility; prop <= GEOM::LastProperty; prop++ ) {
-	if ( storedMap.contains( GEOM::propertyName( (GEOM::Property)prop ) ) )
-	  propMap.insert( GEOM::propertyName( (GEOM::Property)prop ), 
-			  storedMap.value( GEOM::propertyName( (GEOM::Property)prop ) ) );
+        if ( storedMap.contains( GEOM::propertyName( (GEOM::Property)prop ) ) )
+          propMap.insert( GEOM::propertyName( (GEOM::Property)prop ), 
+                          storedMap.value( GEOM::propertyName( (GEOM::Property)prop ) ) );
       }
       // ... specific processing for color
       // ... current implementation is to use same stored color for all aspects
       // ... (TODO) possible future improvements about free boundaries, standalone edges etc colors can be here
       if ( storedMap.contains( GEOM::propertyName( GEOM::Color ) ) ) {
-	propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),   storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
-	propMap.insert( GEOM::propertyName( GEOM::WireframeColor ), storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
-	propMap.insert( GEOM::propertyName( GEOM::LineColor ),      storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
-	propMap.insert( GEOM::propertyName( GEOM::FreeBndColor ),   storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
-	propMap.insert( GEOM::propertyName( GEOM::PointColor ),     storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
+        propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),   storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
+        propMap.insert( GEOM::propertyName( GEOM::WireframeColor ), storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
+        propMap.insert( GEOM::propertyName( GEOM::LineColor ),      storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
+        propMap.insert( GEOM::propertyName( GEOM::FreeBndColor ),   storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
+        propMap.insert( GEOM::propertyName( GEOM::PointColor ),     storedMap.value( GEOM::propertyName( GEOM::Color ) ) );
       }
 
       if ( !entry.isEmpty() ) {
-	// get CORBA reference to geom object
-	_PTR(SObject) SO( study->studyDS()->FindObjectID( entry.toStdString() ) );
-	if ( SO ) {
-	  CORBA::Object_var object = GeometryGUI::ClientSObjectToObject( SO );
-	  if ( !CORBA::is_nil( object ) ) {
-	    GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_narrow( object );
-	    // check that geom object has color properly set
-	    bool hasColor = false;
-	    SALOMEDS::Color aSColor = getColor( geomObject, hasColor );
-	    // set color from geometry object (only once, if it is not yet set in GUI)
-	    // current implementation is to use same color for all aspects
-	    // (TODO) possible future improvements about free boundaries, standalone edges etc colors can be here
-	    if ( hasColor && !storedMap.contains( GEOM::propertyName( GEOM::Color ) ) ) {
-	      QColor objColor = QColor::fromRgbF( aSColor.R, aSColor.G, aSColor.B );
-	      propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),   objColor );
-	      propMap.insert( GEOM::propertyName( GEOM::WireframeColor ), objColor );
-	      propMap.insert( GEOM::propertyName( GEOM::LineColor ),      objColor );
-	      propMap.insert( GEOM::propertyName( GEOM::FreeBndColor ),   objColor );
-	      propMap.insert( GEOM::propertyName( GEOM::PointColor ),     objColor );
-	    }
-	    // check that object has point marker properly set
-	    GEOM::marker_type mType = geomObject->GetMarkerType();
-	    GEOM::marker_size mSize = geomObject->GetMarkerSize();
-	    int mTextureId = geomObject->GetMarkerTexture();
-	    bool hasMarker = ( mType > GEOM::MT_NONE && mType < GEOM::MT_USER && mSize > GEOM::MS_NONE && mSize <= GEOM::MS_70 ) || 
-	                     ( mType == GEOM::MT_USER && mTextureId > 0 );
-	    // set point marker from geometry object (only once, if it is not yet set in GUI)
-	    if ( hasMarker && !storedMap.contains( GEOM::propertyName( GEOM::PointMarker ) ) ) {
-	      if ( mType > GEOM::MT_NONE && mType < GEOM::MT_USER ) {
-		// standard type
-		propMap.insert( GEOM::propertyName( GEOM::PointMarker ),
-				QString( "%1%2%3" ).arg( (int)mType ).arg( GEOM::subSectionSeparator() ).arg( (int)mSize ) );
-	      }
-	      else if ( mType == GEOM::MT_USER ) {
-		// custom texture
-		propMap.insert( GEOM::propertyName( GEOM::PointMarker ), QString::number( mTextureId ) );
-	      }
-	    }
-	  }
-	}
+        // get CORBA reference to geom object
+        _PTR(SObject) SO( study->studyDS()->FindObjectID( entry.toStdString() ) );
+        if ( SO ) {
+          CORBA::Object_var object = GeometryGUI::ClientSObjectToObject( SO );
+          if ( !CORBA::is_nil( object ) ) {
+            GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_narrow( object );
+            // check that geom object has color properly set
+            bool hasColor = false;
+            SALOMEDS::Color aSColor = getColor( geomObject, hasColor );
+            // set color from geometry object (only once, if it is not yet set in GUI)
+            // current implementation is to use same color for all aspects
+            // (TODO) possible future improvements about free boundaries, standalone edges etc colors can be here
+            if ( hasColor && !storedMap.contains( GEOM::propertyName( GEOM::Color ) ) ) {
+              QColor objColor = QColor::fromRgbF( aSColor.R, aSColor.G, aSColor.B );
+              propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),   objColor );
+              propMap.insert( GEOM::propertyName( GEOM::WireframeColor ), objColor );
+              propMap.insert( GEOM::propertyName( GEOM::LineColor ),      objColor );
+              propMap.insert( GEOM::propertyName( GEOM::FreeBndColor ),   objColor );
+              propMap.insert( GEOM::propertyName( GEOM::PointColor ),     objColor );
+            }
+            // check that object has point marker properly set
+            GEOM::marker_type mType = geomObject->GetMarkerType();
+            GEOM::marker_size mSize = geomObject->GetMarkerSize();
+            int mTextureId = geomObject->GetMarkerTexture();
+            bool hasMarker = ( mType > GEOM::MT_NONE && mType < GEOM::MT_USER && mSize > GEOM::MS_NONE && mSize <= GEOM::MS_70 ) || 
+                             ( mType == GEOM::MT_USER && mTextureId > 0 );
+            // set point marker from geometry object (only once, if it is not yet set in GUI)
+            if ( hasMarker && !storedMap.contains( GEOM::propertyName( GEOM::PointMarker ) ) ) {
+              if ( mType > GEOM::MT_NONE && mType < GEOM::MT_USER ) {
+                // standard type
+                propMap.insert( GEOM::propertyName( GEOM::PointMarker ),
+                                QString( "%1%2%3" ).arg( (int)mType ).arg( GEOM::subSectionSeparator() ).arg( (int)mSize ) );
+              }
+              else if ( mType == GEOM::MT_USER ) {
+                // custom texture
+                propMap.insert( GEOM::propertyName( GEOM::PointMarker ), QString::number( mTextureId ) );
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -1916,52 +1916,52 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
 
   // - nb isos (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::NbIsos ),
-		  QString( "%1%2%3" ).
-		  arg( resMgr->integerValue( "Geometry", "iso_number_u", 1 ) ).
-		  arg( GEOM::subSectionSeparator() ).
-		  arg( resMgr->integerValue( "Geometry", "iso_number_v", 1 ) ) );
+                  QString( "%1%2%3" ).
+                  arg( resMgr->integerValue( "Geometry", "iso_number_u", 1 ) ).
+                  arg( GEOM::subSectionSeparator() ).
+                  arg( resMgr->integerValue( "Geometry", "iso_number_v", 1 ) ) );
 
   // - transparency (opacity = 1-transparency)
   propMap.insert( GEOM::propertyName( GEOM::Transparency ), 0.0 );
 
   // - display mode (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::DisplayMode ),
-		  resMgr->integerValue( "Geometry", "display_mode", 0 ) );
+                  resMgr->integerValue( "Geometry", "display_mode", 0 ) );
 
   // - show edges direction flag (false by default)
   propMap.insert( GEOM::propertyName( GEOM::EdgesDirection ), false );
 
   // - shading color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),
-		  colorFromResources( "shading_color", QColor( 255, 255, 0 ) ) );
+                  colorFromResources( "shading_color", QColor( 255, 255, 0 ) ) );
 
   // - wireframe color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::WireframeColor ),
-		  colorFromResources( "wireframe_color", QColor( 255, 255, 0 ) ) );
+                  colorFromResources( "wireframe_color", QColor( 255, 255, 0 ) ) );
 
   // - standalone edges color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::LineColor ),
-		  colorFromResources( "line_color", QColor( 255, 0, 0 ) ) );
+                  colorFromResources( "line_color", QColor( 255, 0, 0 ) ) );
 
   // - free boundaries color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::FreeBndColor ),
-		  colorFromResources( "free_bound_color", QColor( 0, 255, 0 ) ) );
+                  colorFromResources( "free_bound_color", QColor( 0, 255, 0 ) ) );
 
   // - points color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::PointColor ),
-		  colorFromResources( "point_color", QColor( 255, 255, 0 ) ) );
+                  colorFromResources( "point_color", QColor( 255, 255, 0 ) ) );
 
   // - isos color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::IsosColor ),
-		  colorFromResources( "isos_color", QColor( 200, 200, 200 ) ) );
+                  colorFromResources( "isos_color", QColor( 200, 200, 200 ) ) );
 
   // - outlines color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::OutlineColor ),
-		  colorFromResources( "edges_in_shading_color", QColor( 180, 180, 180 ) ) );
+                  colorFromResources( "edges_in_shading_color", QColor( 180, 180, 180 ) ) );
 
   // - deflection coefficient (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::Deflection ),
-		  resMgr->doubleValue( "Geometry", "deflection_coeff", 0.001 ) );
+                  resMgr->doubleValue( "Geometry", "deflection_coeff", 0.001 ) );
 
   // - material (take default value from preferences)
   Material_Model material;
@@ -1970,18 +1970,18 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
 
   // - edge width (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::LineWidth ),
-		  resMgr->integerValue( "Geometry", "edge_width", 1 ) );
+                  resMgr->integerValue( "Geometry", "edge_width", 1 ) );
 
   // - isos width (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::IsosWidth ),
-		  resMgr->integerValue( "Geometry", "isolines_width", 1 ) );
+                  resMgr->integerValue( "Geometry", "isolines_width", 1 ) );
 
   // - point marker (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::PointMarker ),
-		  QString( "%1%2%3" ).
-		  arg( resMgr->integerValue( "Geometry", "type_of_marker", 1 ) + 1 ).
-		  arg( GEOM::subSectionSeparator() ).
-		  arg( resMgr->integerValue( "Geometry", "marker_scale", 1 ) ) );
+                  QString( "%1%2%3" ).
+                  arg( resMgr->integerValue( "Geometry", "type_of_marker", 1 ) + 1 ).
+                  arg( GEOM::subSectionSeparator() ).
+                  arg( resMgr->integerValue( "Geometry", "marker_scale", 1 ) ) );
 
   // - top-level flag (false by default)
   propMap.insert( GEOM::propertyName( GEOM::TopLevel ), false );
@@ -2005,39 +2005,39 @@ SALOMEDS::Color GEOM_Displayer::getColor(GEOM::GEOM_Object_var theGeomObject, bo
       hasColor = aSColor.R >= 0 && aSColor.G >= 0 && aSColor.B >= 0;
       if ( !hasColor ) {
 #ifdef GENERAL_AUTOCOLOR // auto-color for all sub-shapes
-	bool general_autocolor = true;
+        bool general_autocolor = true;
 #else                    // auto-color for groups only
-	bool general_autocolor = false;
+        bool general_autocolor = false;
 #endif                   // GENERAL_AUTOCOLOR
-	if ( general_autocolor || theGeomObject->GetType() == GEOM_GROUP ) {
-	  GEOM::GEOM_Object_var aMainObject = theGeomObject->GetMainShape();
-	  if ( !CORBA::is_nil( aMainObject ) && aMainObject->GetAutoColor() ) {
+        if ( general_autocolor || theGeomObject->GetType() == GEOM_GROUP ) {
+          GEOM::GEOM_Object_var aMainObject = theGeomObject->GetMainShape();
+          if ( !CORBA::is_nil( aMainObject ) && aMainObject->GetAutoColor() ) {
 #ifdef SIMPLE_AUTOCOLOR  // simplified algorithm for auto-colors
-	    aSColor = getPredefinedUniqueColor();
-	    hasColor = true;
+            aSColor = getPredefinedUniqueColor();
+            hasColor = true;
 #else                    // old algorithm  for auto-colors
-	    QList<SALOMEDS::Color> aReservedColors;
-	    CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
-	    _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( IOR.in() ) );
-	    if ( aMainSObject ) {
-	      _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
-	      for ( ; it->More(); it->Next() ) {
-		_PTR(SObject) aChildSObject( it->Value() );
-		GEOM::GEOM_Object_var aChildObject =
-		  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
-		if ( CORBA::is_nil( aChildObject ) )
-		  continue;
+            QList<SALOMEDS::Color> aReservedColors;
+            CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
+            _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( IOR.in() ) );
+            if ( aMainSObject ) {
+              _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
+              for ( ; it->More(); it->Next() ) {
+                _PTR(SObject) aChildSObject( it->Value() );
+                GEOM::GEOM_Object_var aChildObject =
+                  GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
+                if ( CORBA::is_nil( aChildObject ) )
+                  continue;
 
-		SALOMEDS::Color aReservedColor = aChildObject->GetColor();
-		if ( aReservedColor.R >= 0 && aReservedColor.G >= 0 && aReservedColor.B >= 0 )
-		  aReservedColors.append( aReservedColor );
-	      }
-	    }
-	    aSColor = getUniqueColor( aReservedColors );
-	    hasColor = true;
+                SALOMEDS::Color aReservedColor = aChildObject->GetColor();
+                if ( aReservedColor.R >= 0 && aReservedColor.G >= 0 && aReservedColor.B >= 0 )
+                  aReservedColors.append( aReservedColor );
+              }
+            }
+            aSColor = getUniqueColor( aReservedColors );
+            hasColor = true;
 #endif                   // SIMPLE_AUTOCOLOR
-	  }
-	}
+          }
+        }
       }
     }
   }

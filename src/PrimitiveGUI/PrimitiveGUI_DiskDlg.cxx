@@ -317,32 +317,32 @@ void PrimitiveGUI_DiskDlg::SelectionIntoArgument()
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     myGeomGUI->getApp()->selectionMgr()->clearSelected();
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-	    this, SLOT(SelectionIntoArgument()));
+            this, SLOT(SelectionIntoArgument()));
     
     if (myEditCurrentArgument == GroupPntVecR->LineEdit1) {
       myPoint = aSelectedObject;
       if (myPoint && !myDir)
-	GroupPntVecR->PushButton2->click();
+        GroupPntVecR->PushButton2->click();
     }
     else if (myEditCurrentArgument == GroupPntVecR->LineEdit2) {
       myDir = aSelectedObject;
       if (myDir && !myPoint)
-	GroupPntVecR->PushButton1->click();
+        GroupPntVecR->PushButton1->click();
     }
     else if (myEditCurrentArgument == Group3Pnts->LineEdit1) {
       myPoint1 = aSelectedObject;
       if (myPoint1 && !myPoint2)
-	Group3Pnts->PushButton2->click();
+        Group3Pnts->PushButton2->click();
     }
     else if (myEditCurrentArgument == Group3Pnts->LineEdit2) {
       myPoint2 = aSelectedObject;
       if (myPoint2 && !myPoint3)
-	Group3Pnts->PushButton3->click();
+        Group3Pnts->PushButton3->click();
     }
     else if (myEditCurrentArgument == Group3Pnts->LineEdit3) {
       myPoint3 = aSelectedObject;
       if (myPoint3 && !myPoint1)
-	Group3Pnts->PushButton1->click();
+        Group3Pnts->PushButton1->click();
     }
   }
 

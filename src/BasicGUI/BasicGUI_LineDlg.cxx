@@ -217,7 +217,7 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
   }
 
   TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
-				 myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
+                                 myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
     TopAbs_FACE : TopAbs_VERTEX;
   globalSelection(); // close local selection to clear it
   localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
@@ -250,7 +250,7 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
   }
 
   TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
-				 myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
+                                 myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
     TopAbs_FACE : TopAbs_VERTEX;
   GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
   TopoDS_Shape aShape;
@@ -315,7 +315,7 @@ void BasicGUI_LineDlg::SetEditCurrentArgument()
   }
 
   TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
-				 myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
+                                 myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
     TopAbs_FACE : TopAbs_VERTEX;
   globalSelection(); // close local selection to clear it
   localSelection( GEOM::GEOM_Object::_nil(), aNeedType );

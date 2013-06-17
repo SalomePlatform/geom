@@ -204,8 +204,8 @@ protected:
   //!           theSolid are in the list: theInternalFaces <br>
   Standard_EXPORT
     void BuildDraftSolid(const TopoDS_Shape& theSolid,
-			 TopoDS_Shape& theDraftSolid,
-			 TopTools_ListOfShape& theInternalFaces) ;
+                         TopoDS_Shape& theDraftSolid,
+                         TopTools_ListOfShape& theInternalFaces) ;
 
 
   NMTTools_PPaveFiller myPaveFiller;

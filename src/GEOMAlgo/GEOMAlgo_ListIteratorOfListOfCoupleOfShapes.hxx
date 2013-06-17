@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx
-// Created:	Wed Feb 22 08:26:34 2012
+// File:        GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx
+// Created:     Wed Feb 22 08:26:34 2012
 // Author:
-//		<pkv@BDEURI37616>
+//              <pkv@BDEURI37616>
 
 #ifndef GEOMAlgo_ListIteratorOfListOfCoupleOfShapes_HeaderFile
 #define GEOMAlgo_ListIteratorOfListOfCoupleOfShapes_HeaderFile

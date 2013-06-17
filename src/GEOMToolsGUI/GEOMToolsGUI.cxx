@@ -544,11 +544,11 @@ void GEOMToolsGUI::OnEditDelete()
   else {
     // GEOM component is not selected: check if selected objects are in use
     if ( inUse( aStudy, geomComp, allDeleted ) && 
-	 SUIT_MessageBox::question( app->desktop(),
-				    QObject::tr("WRN_WARNING"),
-				    QObject::tr("DEP_OBJECT"),
-				    SUIT_MessageBox::Yes | SUIT_MessageBox::No,
-				    SUIT_MessageBox::No ) != SUIT_MessageBox::Yes ) {
+         SUIT_MessageBox::question( app->desktop(),
+                                    QObject::tr("WRN_WARNING"),
+                                    QObject::tr("DEP_OBJECT"),
+                                    SUIT_MessageBox::Yes | SUIT_MessageBox::No,
+                                    SUIT_MessageBox::No ) != SUIT_MessageBox::Yes ) {
       return; // object(s) in use
     }
     // ... and then delete all objects

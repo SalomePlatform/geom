@@ -911,7 +911,7 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
   // remove trailing zeroes
 
   QRegExp expre( QString( "(%1|%2)[+-]?[0-9]+$" ).arg( QLocale().exponential().toLower(), 
-						       QLocale().exponential().toUpper() ) );
+                                                       QLocale().exponential().toUpper() ) );
 
   int idx = aRes.indexOf( expre );
   QString aResExp = "";

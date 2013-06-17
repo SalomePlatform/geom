@@ -232,11 +232,11 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
       myEditCurrentArgument->setText( aName );
       myArgument = aSelectedObject;
       if ( myObjects.isEmpty() )
-	GroupPoints->PushButton1->click();
+        GroupPoints->PushButton1->click();
     }
     else {
       if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
-	myArgument.nullify();
+        myArgument.nullify();
       myEditCurrentArgument->setText("");
     }
   }

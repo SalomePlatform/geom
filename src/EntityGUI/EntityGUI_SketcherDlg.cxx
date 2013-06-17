@@ -1073,10 +1073,10 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
         Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_VY2" ) );
         Group4Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
         Group4Spin->TextLabel4->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
-	initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
-	initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
-	initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
-	initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., "length_precision" );
+        initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
+        initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
+        initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
+        initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., "length_precision" );
         Group4Spin->SpinBox_DX->setValue( myDX );
         Group4Spin->SpinBox_DY->setValue( myDY );
 //         myRadius = 100.0;
@@ -1147,7 +1147,7 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
     TopoDS_Shape myShape = aProfile.GetShape( &isDone );
     if ( isDone ) {
       if ( myShape.ShapeType() != TopAbs_VERTEX )
-	myCommand.append( ":WW" );
+        myCommand.append( ":WW" );
     }
   }
   else {

@@ -46,13 +46,13 @@
 GEOM_TopWireframeShape::GEOM_TopWireframeShape(const TopoDS_Shape& shape)
   : SALOME_AISShape(shape)
 {
-      SetDisplayMode(AIS_WireFrame);			
-	  Handle(Prs3d_IsoAspect) anAspect = Attributes()->UIsoAspect();
-	  anAspect->SetNumber( 0 );
-	  Attributes()->SetUIsoAspect( anAspect );
-	  anAspect = Attributes()->VIsoAspect();
-	  anAspect->SetNumber( 0 );
-	  Attributes()->SetVIsoAspect( anAspect ); 
+      SetDisplayMode(AIS_WireFrame);                    
+          Handle(Prs3d_IsoAspect) anAspect = Attributes()->UIsoAspect();
+          anAspect->SetNumber( 0 );
+          Attributes()->SetUIsoAspect( anAspect );
+          anAspect = Attributes()->VIsoAspect();
+          anAspect->SetNumber( 0 );
+          Attributes()->SetVIsoAspect( anAspect ); 
       SetColor(GEOM_AISShape::topLevelColor());
 }
 
@@ -94,11 +94,11 @@ void GEOM_TopWireframeShape::setTopLevel(Standard_Boolean /*f*/) {
 }
 
 Standard_Boolean GEOM_TopWireframeShape::toActivate() {
-	return Standard_False;
+        return Standard_False;
 }
 
 Standard_Boolean GEOM_TopWireframeShape::switchTopLevel() {
-	return Standard_True;
+        return Standard_True;
 }
 
 void GEOM_TopWireframeShape::setIO(const Handle(SALOME_InteractiveObject)& io){

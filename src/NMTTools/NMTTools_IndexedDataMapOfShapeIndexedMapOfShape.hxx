@@ -16,14 +16,14 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx
-// Created:	Mon Feb 20 09:20:07 2012
+// File:        NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx
+// Created:     Mon Feb 20 09:20:07 2012
 // Author:
-//		<pkv@BDEURI37616>
-// File:	NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx
-// Created:	Mon Feb 20 11:59:23 2012
+//              <pkv@BDEURI37616>
+// File:        NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx
+// Created:     Mon Feb 20 11:59:23 2012
 // Author:
-//		<pkv@BDEURI37616>
+//              <pkv@BDEURI37616>
 
 
 #ifndef NMTTools_IndexedDataMapOfShapeIndexedMapOfShape_HeaderFile

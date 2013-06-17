@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_DataMapOfRealListOfShape.hxx
-// Created:	Wed Feb 22 10:51:48 2012
+// File:        GEOMAlgo_DataMapOfRealListOfShape.hxx
+// Created:     Wed Feb 22 10:51:48 2012
 // Author:
-//		<pkv@BDEURI37616>
+//              <pkv@BDEURI37616>
 
 
 #ifndef GEOMAlgo_DataMapOfRealListOfShape_HeaderFile

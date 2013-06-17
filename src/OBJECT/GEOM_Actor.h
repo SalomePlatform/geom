@@ -62,8 +62,8 @@ public:
   static GEOM_Actor* New();
 
   void SetShape(const TopoDS_Shape& theShape,
-		float theDeflection,
-		bool theIsVector = false);
+                float theDeflection,
+                bool theIsVector = false);
 
   void SetDeflection(float theDeflection);
   float GetDeflection() const{ return myDeflection;}

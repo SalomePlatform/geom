@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock.hxx
-// Created:	Mon Feb 20 12:04:52 2012
+// File:        NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock.hxx
+// Created:     Mon Feb 20 12:04:52 2012
 // Author:
-//		<pkv@BDEURI37616>
+//              <pkv@BDEURI37616>
 
 
 #ifndef NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock_HeaderFile

@@ -17,10 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:	GEOMAlgo_ListOfCoupleOfShapes.hxx
-// Created:	Wed Feb 22 08:23:27 2012
+// File:        GEOMAlgo_ListOfCoupleOfShapes.hxx
+// Created:     Wed Feb 22 08:23:27 2012
 // Author:
-//		<pkv@BDEURI37616>
+//              <pkv@BDEURI37616>
 
 #ifndef GEOMAlgo_ListOfCoupleOfShapes_HeaderFile
 #define GEOMAlgo_ListOfCoupleOfShapes_HeaderFile

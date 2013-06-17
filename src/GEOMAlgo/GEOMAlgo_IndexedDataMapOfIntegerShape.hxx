@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_IndexedDataMapOfIntegerShape.hxx
-// Created:	Wed Feb 22 11:22:18 2012
+// File:        GEOMAlgo_IndexedDataMapOfIntegerShape.hxx
+// Created:     Wed Feb 22 11:22:18 2012
 // Author:
-//		<pkv@BDEURI37616>
+//              <pkv@BDEURI37616>
 
 
 #ifndef GEOMAlgo_IndexedDataMapOfIntegerShape_HeaderFile

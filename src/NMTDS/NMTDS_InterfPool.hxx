@@ -53,25 +53,25 @@ class NMTDS_InterfPool  {
   
   Standard_EXPORT
     Standard_Boolean Add(const NMTDS_PairBoolean& aPKB,
-			 const NMTDS_InterfType aType) ;
+                         const NMTDS_InterfType aType) ;
   
   Standard_EXPORT
     Standard_Boolean Add(const Standard_Integer aInd1,
-			 const Standard_Integer aInd2,
-			 const NMTDS_InterfType aType) ;
+                         const Standard_Integer aInd2,
+                         const NMTDS_InterfType aType) ;
   
   Standard_EXPORT
     Standard_Boolean Add(const Standard_Integer aInd1,
-			 const Standard_Integer aInd2,
-			 const Standard_Boolean bFlag,
-			 const NMTDS_InterfType aType) ;
+                         const Standard_Integer aInd2,
+                         const Standard_Boolean bFlag,
+                         const NMTDS_InterfType aType) ;
   
   Standard_EXPORT
     Standard_Boolean Contains(const NMTDS_PairBoolean& aPKB) const;
   
   Standard_EXPORT
     Standard_Boolean Contains(const Standard_Integer aInd1,
-			      const Standard_Integer aInd2) const;
+                              const Standard_Integer aInd2) const;
   
   Standard_EXPORT
     const NMTDS_ListOfPairBoolean& Get() const;
@@ -84,7 +84,7 @@ class NMTDS_InterfPool  {
   
   Standard_EXPORT
     const NMTDS_ListOfPairBoolean& Get(const Standard_Integer aInd,
-				       const NMTDS_InterfType aType) const;
+                                       const NMTDS_InterfType aType) const;
   
   //! Returns the reference to array Of F/F interferences <br>
   Standard_EXPORT     BOPTools_CArray1OfSSInterference& SSInterferences() ;

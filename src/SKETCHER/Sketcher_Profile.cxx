@@ -59,77 +59,77 @@ public:
 
   virtual void initCommand() = 0;
   virtual void addPoint( const TCollection_AsciiString& x,
-			 const TCollection_AsciiString& y ) = 0;
+                         const TCollection_AsciiString& y ) = 0;
   virtual void addAngle( const TCollection_AsciiString& angle ) = 0;
   virtual void addSegmentParalX( const TCollection_AsciiString& x ) = 0;
   virtual void addSegmentParalXToZero() = 0;
   virtual void addSegmentParalY( const TCollection_AsciiString& y ) = 0;
   virtual void addSegmentParalYToZero() = 0;
   virtual void addSegmentAbsolute( const TCollection_AsciiString& x,
-				   const TCollection_AsciiString& y ) = 0;
+                                   const TCollection_AsciiString& y ) = 0;
   virtual void addSegmentRelative( const TCollection_AsciiString& dx,
-				   const TCollection_AsciiString& dy ) = 0;
+                                   const TCollection_AsciiString& dy ) = 0;
   virtual void addSegmentLength( const TCollection_AsciiString& length ) = 0;
   virtual void addSegmentX( const TCollection_AsciiString& x,
-			    int CurrentIndex ) = 0;
+                            int CurrentIndex ) = 0;
   virtual void addSegmentY( const TCollection_AsciiString& y,
-			    int CurrentIndex ) = 0;
+                            int CurrentIndex ) = 0;
   virtual void addSegmentAngleLength( const TCollection_AsciiString& angle,
-				      const TCollection_AsciiString& length,
-				      int& CurrentIndex ) = 0;
+                                      const TCollection_AsciiString& length,
+                                      int& CurrentIndex ) = 0;
   virtual void addSegmentAngleX( const TCollection_AsciiString& angle,
-				 const TCollection_AsciiString& x,
-				 int& CurrentIndex ) = 0;
+                                 const TCollection_AsciiString& x,
+                                 int& CurrentIndex ) = 0;
   virtual void addSegmentAngleY( const TCollection_AsciiString& angle,
-				 const TCollection_AsciiString& y,
-				 int& CurrentIndex ) = 0;
+                                 const TCollection_AsciiString& y,
+                                 int& CurrentIndex ) = 0;
   virtual void addSegmentDirectionLength( const TCollection_AsciiString& dx,
-					  const TCollection_AsciiString& dy,
-					  const TCollection_AsciiString& length,
-					  int& CurrentIndex ) = 0;
+                                          const TCollection_AsciiString& dy,
+                                          const TCollection_AsciiString& length,
+                                          int& CurrentIndex ) = 0;
   virtual void addSegmentDirectionX( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& x,
-				     int& CurrentIndex ) = 0;
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& x,
+                                     int& CurrentIndex ) = 0;
   virtual void addSegmentDirectionY( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& y,
-				     int& CurrentIndex ) = 0;
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& y,
+                                     int& CurrentIndex ) = 0;
   virtual void addArcAbsolute( const TCollection_AsciiString& x,
-			       const TCollection_AsciiString& y ) = 0;
+                               const TCollection_AsciiString& y ) = 0;
   virtual void addArcRelative( const TCollection_AsciiString& dx,
-			       const TCollection_AsciiString& dy ) = 0;
+                               const TCollection_AsciiString& dy ) = 0;
   virtual void addArcRadiusAbsolute( const TCollection_AsciiString& x,
-				     const TCollection_AsciiString& y,
-				     const TCollection_AsciiString& radius,
-				     const TCollection_AsciiString& flag ) = 0;
+                                     const TCollection_AsciiString& y,
+                                     const TCollection_AsciiString& radius,
+                                     const TCollection_AsciiString& flag ) = 0;
   virtual void addArcRadiusRelative( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& radius,
-				     const TCollection_AsciiString& flag ) = 0;
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& radius,
+                                     const TCollection_AsciiString& flag ) = 0;
   virtual void addArcCenterAbsolute( const TCollection_AsciiString& x,
-				     const TCollection_AsciiString& y,
-				     const TCollection_AsciiString& xc,
-				     const TCollection_AsciiString& yc,
-				     const TCollection_AsciiString& flag1,
-				     const TCollection_AsciiString& flag2 ) = 0;
+                                     const TCollection_AsciiString& y,
+                                     const TCollection_AsciiString& xc,
+                                     const TCollection_AsciiString& yc,
+                                     const TCollection_AsciiString& flag1,
+                                     const TCollection_AsciiString& flag2 ) = 0;
   virtual void addArcCenterRelative( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& xc,
-				     const TCollection_AsciiString& yc,
-				     const TCollection_AsciiString& flag1,
-				     const TCollection_AsciiString& flag2 ) = 0;
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& xc,
+                                     const TCollection_AsciiString& yc,
+                                     const TCollection_AsciiString& flag1,
+                                     const TCollection_AsciiString& flag2 ) = 0;
   virtual void addArcRadiusLength( const TCollection_AsciiString& radius,
-				   const TCollection_AsciiString& length ) = 0;
+                                   const TCollection_AsciiString& length ) = 0;
   virtual void addArcAngleRadiusLength( const TCollection_AsciiString& angle,
-					const TCollection_AsciiString& radius,
-					const TCollection_AsciiString& length ,
-					int& CurrentIndex ) = 0;
+                                        const TCollection_AsciiString& radius,
+                                        const TCollection_AsciiString& length ,
+                                        int& CurrentIndex ) = 0;
   virtual void addArcDirectionRadiusLength( const TCollection_AsciiString& dx,
-					    const TCollection_AsciiString& dy,
-					    const TCollection_AsciiString& radius,
-					    const TCollection_AsciiString& length ,
-					    int& CurrentIndex ) = 0;
+                                            const TCollection_AsciiString& dy,
+                                            const TCollection_AsciiString& radius,
+                                            const TCollection_AsciiString& length ,
+                                            int& CurrentIndex ) = 0;
   virtual void closeWire() = 0;
   virtual void closeWireAndBuildFace() = 0;
 
@@ -159,7 +159,7 @@ public:
 
   virtual void initCommand();
   virtual void addPoint( const TCollection_AsciiString& x,
-			 const TCollection_AsciiString& y );
+                         const TCollection_AsciiString& y );
   virtual void addAngle( const TCollection_AsciiString& angle );
   virtual void addSegmentParalX( const TCollection_AsciiString& x );
   virtual void addSegmentParalXToZero();
@@ -167,72 +167,72 @@ public:
   virtual void addSegmentParalYToZero();
   virtual void setAngle( const TCollection_AsciiString& angle );
   virtual void setDirection( const TCollection_AsciiString& dx,
-			     const TCollection_AsciiString& dy );
+                             const TCollection_AsciiString& dy );
   virtual void addSegmentAbsolute( const TCollection_AsciiString& x,
-				   const TCollection_AsciiString& y );
+                                   const TCollection_AsciiString& y );
   virtual void addSegmentRelative( const TCollection_AsciiString& dx,
-				   const TCollection_AsciiString& dy );
+                                   const TCollection_AsciiString& dy );
   virtual void addSegmentLength( const TCollection_AsciiString& length );
   virtual void addSegmentX( const TCollection_AsciiString& x,
-			    int CurrentIndex );
+                            int CurrentIndex );
   virtual void addSegmentY( const TCollection_AsciiString& y,
-			    int CurrentIndex );
+                            int CurrentIndex );
   virtual void addSegmentAngleLength( const TCollection_AsciiString& angle,
-				      const TCollection_AsciiString& length,
-				      int& CurrentIndex );
+                                      const TCollection_AsciiString& length,
+                                      int& CurrentIndex );
   virtual void addSegmentAngleX( const TCollection_AsciiString& angle,
-				 const TCollection_AsciiString& x,
-				 int& CurrentIndex );
+                                 const TCollection_AsciiString& x,
+                                 int& CurrentIndex );
   virtual void addSegmentAngleY( const TCollection_AsciiString& angle,
-				 const TCollection_AsciiString& y,
-				 int& CurrentIndex );
+                                 const TCollection_AsciiString& y,
+                                 int& CurrentIndex );
   virtual void addSegmentDirectionLength( const TCollection_AsciiString& dx,
-					  const TCollection_AsciiString& dy,
-					  const TCollection_AsciiString& length,
-					  int& CurrentIndex );
+                                          const TCollection_AsciiString& dy,
+                                          const TCollection_AsciiString& length,
+                                          int& CurrentIndex );
   virtual void addSegmentDirectionX( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& x,
-				     int& CurrentIndex );
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& x,
+                                     int& CurrentIndex );
   virtual void addSegmentDirectionY( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& y,
-				     int& CurrentIndex );
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& y,
+                                     int& CurrentIndex );
   virtual void addArcAbsolute( const TCollection_AsciiString& x,
-			       const TCollection_AsciiString& y );
+                               const TCollection_AsciiString& y );
   virtual void addArcRelative( const TCollection_AsciiString& dx,
-			       const TCollection_AsciiString& dy );
+                               const TCollection_AsciiString& dy );
   virtual void addArcRadiusAbsolute( const TCollection_AsciiString& x,
-				     const TCollection_AsciiString& y,
-				     const TCollection_AsciiString& radius,
-				     const TCollection_AsciiString& flag );
+                                     const TCollection_AsciiString& y,
+                                     const TCollection_AsciiString& radius,
+                                     const TCollection_AsciiString& flag );
   virtual void addArcRadiusRelative( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& radius,
-				     const TCollection_AsciiString& flag );
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& radius,
+                                     const TCollection_AsciiString& flag );
   virtual void addArcCenterAbsolute( const TCollection_AsciiString& x,
-				     const TCollection_AsciiString& y,
-				     const TCollection_AsciiString& xc,
-				     const TCollection_AsciiString& yc,
-				     const TCollection_AsciiString& flag1,
-				     const TCollection_AsciiString& flag2 );
+                                     const TCollection_AsciiString& y,
+                                     const TCollection_AsciiString& xc,
+                                     const TCollection_AsciiString& yc,
+                                     const TCollection_AsciiString& flag1,
+                                     const TCollection_AsciiString& flag2 );
   virtual void addArcCenterRelative( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& xc,
-				     const TCollection_AsciiString& yc,
-				     const TCollection_AsciiString& flag1,
-				     const TCollection_AsciiString& flag2 );
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& xc,
+                                     const TCollection_AsciiString& yc,
+                                     const TCollection_AsciiString& flag1,
+                                     const TCollection_AsciiString& flag2 );
   virtual void addArcRadiusLength( const TCollection_AsciiString& radius,
-				   const TCollection_AsciiString& length );
+                                   const TCollection_AsciiString& length );
   virtual void addArcAngleRadiusLength( const TCollection_AsciiString& angle,
-					const TCollection_AsciiString& radius,
-					const TCollection_AsciiString& length ,
-					int& CurrentIndex );
+                                        const TCollection_AsciiString& radius,
+                                        const TCollection_AsciiString& length ,
+                                        int& CurrentIndex );
   virtual void addArcDirectionRadiusLength( const TCollection_AsciiString& dx,
-					    const TCollection_AsciiString& dy,
-					    const TCollection_AsciiString& radius,
-					    const TCollection_AsciiString& length ,
-					    int& CurrentIndex );
+                                            const TCollection_AsciiString& dy,
+                                            const TCollection_AsciiString& radius,
+                                            const TCollection_AsciiString& length ,
+                                            int& CurrentIndex );
   virtual void closeWire();
   virtual void closeWireAndBuildFace();
 
@@ -274,77 +274,77 @@ public:
 
   virtual void initCommand();
   virtual void addPoint( const TCollection_AsciiString& x,
-			 const TCollection_AsciiString& y );
+                         const TCollection_AsciiString& y );
   virtual void addAngle( const TCollection_AsciiString& angle );
   virtual void addSegmentParalX( const TCollection_AsciiString& x );
   virtual void addSegmentParalXToZero();
   virtual void addSegmentParalY( const TCollection_AsciiString& y );
   virtual void addSegmentParalYToZero();
   virtual void addSegmentAbsolute( const TCollection_AsciiString& x,
-				   const TCollection_AsciiString& y );
+                                   const TCollection_AsciiString& y );
   virtual void addSegmentRelative( const TCollection_AsciiString& dx,
-				   const TCollection_AsciiString& dy );
+                                   const TCollection_AsciiString& dy );
   virtual void addSegmentLength( const TCollection_AsciiString& length );
   virtual void addSegmentX( const TCollection_AsciiString& x,
-			    int CurrentIndex );
+                            int CurrentIndex );
   virtual void addSegmentY( const TCollection_AsciiString& y,
-			    int CurrentIndex );
+                            int CurrentIndex );
   virtual void addSegmentAngleLength( const TCollection_AsciiString& angle,
-				      const TCollection_AsciiString& length,
-				      int& CurrentIndex );
+                                      const TCollection_AsciiString& length,
+                                      int& CurrentIndex );
   virtual void addSegmentAngleX( const TCollection_AsciiString& angle,
-				 const TCollection_AsciiString& x,
-				 int& CurrentIndex );
+                                 const TCollection_AsciiString& x,
+                                 int& CurrentIndex );
   virtual void addSegmentAngleY( const TCollection_AsciiString& angle,
-				 const TCollection_AsciiString& y,
-				 int& CurrentIndex );
+                                 const TCollection_AsciiString& y,
+                                 int& CurrentIndex );
   virtual void addSegmentDirectionLength( const TCollection_AsciiString& dx,
-					  const TCollection_AsciiString& dy,
-					  const TCollection_AsciiString& length,
-					  int& CurrentIndex );
+                                          const TCollection_AsciiString& dy,
+                                          const TCollection_AsciiString& length,
+                                          int& CurrentIndex );
   virtual void addSegmentDirectionX( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& x,
-				     int& CurrentIndex );
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& x,
+                                     int& CurrentIndex );
   virtual void addSegmentDirectionY( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& y,
-				     int& CurrentIndex );
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& y,
+                                     int& CurrentIndex );
   virtual void addArcAbsolute( const TCollection_AsciiString& x,
-			       const TCollection_AsciiString& y );
+                               const TCollection_AsciiString& y );
   virtual void addArcRelative( const TCollection_AsciiString& dx,
-			       const TCollection_AsciiString& dy );
+                               const TCollection_AsciiString& dy );
   virtual void addArcRadiusAbsolute( const TCollection_AsciiString& x,
-				     const TCollection_AsciiString& y,
-				     const TCollection_AsciiString& radius,
-				     const TCollection_AsciiString& flag );
+                                     const TCollection_AsciiString& y,
+                                     const TCollection_AsciiString& radius,
+                                     const TCollection_AsciiString& flag );
   virtual void addArcRadiusRelative( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& radius,
-				     const TCollection_AsciiString& flag );
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& radius,
+                                     const TCollection_AsciiString& flag );
   virtual void addArcCenterAbsolute( const TCollection_AsciiString& x,
-				     const TCollection_AsciiString& y,
-				     const TCollection_AsciiString& xc,
-				     const TCollection_AsciiString& yc,
-				     const TCollection_AsciiString& flag1,
-				     const TCollection_AsciiString& flag2 );
+                                     const TCollection_AsciiString& y,
+                                     const TCollection_AsciiString& xc,
+                                     const TCollection_AsciiString& yc,
+                                     const TCollection_AsciiString& flag1,
+                                     const TCollection_AsciiString& flag2 );
   virtual void addArcCenterRelative( const TCollection_AsciiString& dx,
-				     const TCollection_AsciiString& dy,
-				     const TCollection_AsciiString& xc,
-				     const TCollection_AsciiString& yc,
-				     const TCollection_AsciiString& flag1,
-				     const TCollection_AsciiString& flag2 );
+                                     const TCollection_AsciiString& dy,
+                                     const TCollection_AsciiString& xc,
+                                     const TCollection_AsciiString& yc,
+                                     const TCollection_AsciiString& flag1,
+                                     const TCollection_AsciiString& flag2 );
   virtual void addArcRadiusLength( const TCollection_AsciiString& radius,
-				   const TCollection_AsciiString& length );
+                                   const TCollection_AsciiString& length );
   virtual void addArcAngleRadiusLength( const TCollection_AsciiString& angle,
-					const TCollection_AsciiString& radius,
-					const TCollection_AsciiString& length ,
-					int& CurrentIndex );
+                                        const TCollection_AsciiString& radius,
+                                        const TCollection_AsciiString& length ,
+                                        int& CurrentIndex );
   virtual void addArcDirectionRadiusLength( const TCollection_AsciiString& dx,
-					    const TCollection_AsciiString& dy,
-					    const TCollection_AsciiString& radius,
-					    const TCollection_AsciiString& length ,
-					    int& CurrentIndex );
+                                            const TCollection_AsciiString& dy,
+                                            const TCollection_AsciiString& radius,
+                                            const TCollection_AsciiString& length ,
+                                            int& CurrentIndex );
   virtual void closeWire();
   virtual void closeWireAndBuildFace();
 
@@ -462,7 +462,7 @@ void Sketcher_Profile::ShapeFunctor::initCommand()
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addPoint( const TCollection_AsciiString& x,
-					       const TCollection_AsciiString& y )
+                                               const TCollection_AsciiString& y )
 {
   if ( !myFirst ) {
     MESSAGE("profile : The addPoint instruction must precede all moves");
@@ -558,7 +558,7 @@ void Sketcher_Profile::ShapeFunctor::setAngle( const TCollection_AsciiString& an
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::setDirection( const TCollection_AsciiString& dx,
-						   const TCollection_AsciiString& dy )
+                                                   const TCollection_AsciiString& dy )
 {
   Standard_Real vx = dx.RealValue();
   Standard_Real vy = dy.RealValue();
@@ -578,7 +578,7 @@ void Sketcher_Profile::ShapeFunctor::setDirection( const TCollection_AsciiString
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentAbsolute( const TCollection_AsciiString& x,
-							 const TCollection_AsciiString& y )
+                                                         const TCollection_AsciiString& y )
 {
   Standard_Real vx = x.RealValue() - myX;
   Standard_Real vy = y.RealValue() - myY;
@@ -599,7 +599,7 @@ void Sketcher_Profile::ShapeFunctor::addSegmentAbsolute( const TCollection_Ascii
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentRelative( const TCollection_AsciiString& dx,
-							 const TCollection_AsciiString& dy )
+                                                         const TCollection_AsciiString& dy )
 {
   Standard_Real vx = dx.RealValue();
   Standard_Real vy = dy.RealValue();
@@ -634,7 +634,7 @@ void Sketcher_Profile::ShapeFunctor::addSegmentLength( const TCollection_AsciiSt
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentX( const TCollection_AsciiString& x,
-						  int CurrentIndex )
+                                                  int CurrentIndex )
 {
   myLength = x.RealValue();
   if ( Abs( myDx ) < Precision::Confusion() ) {
@@ -655,7 +655,7 @@ void Sketcher_Profile::ShapeFunctor::addSegmentX( const TCollection_AsciiString&
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentY( const TCollection_AsciiString& y,
-						  int CurrentIndex )
+                                                  int CurrentIndex )
 {
   myLength = y.RealValue();
   if ( Abs( myDy ) < Precision::Confusion() ) {
@@ -677,8 +677,8 @@ void Sketcher_Profile::ShapeFunctor::addSegmentY( const TCollection_AsciiString&
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentAngleLength( const TCollection_AsciiString& angle,
-							    const TCollection_AsciiString& length,
-							    int& CurrentIndex )
+                                                            const TCollection_AsciiString& length,
+                                                            int& CurrentIndex )
 {
   setAngle( angle );
   setMove( CurrentIndex );
@@ -693,8 +693,8 @@ void Sketcher_Profile::ShapeFunctor::addSegmentAngleLength( const TCollection_As
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentAngleX( const TCollection_AsciiString& angle,
-						       const TCollection_AsciiString& x,
-						       int& CurrentIndex )
+                                                       const TCollection_AsciiString& x,
+                                                       int& CurrentIndex )
 {
   setAngle( angle );
   setMove( CurrentIndex );
@@ -709,8 +709,8 @@ void Sketcher_Profile::ShapeFunctor::addSegmentAngleX( const TCollection_AsciiSt
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentAngleY( const TCollection_AsciiString& angle,
-						       const TCollection_AsciiString& y,
-						       int& CurrentIndex )
+                                                       const TCollection_AsciiString& y,
+                                                       int& CurrentIndex )
 {
   setAngle( angle );
   setMove( CurrentIndex );
@@ -726,9 +726,9 @@ void Sketcher_Profile::ShapeFunctor::addSegmentAngleY( const TCollection_AsciiSt
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentDirectionLength( const TCollection_AsciiString& dx,
-								const TCollection_AsciiString& dy,
-								const TCollection_AsciiString& length,
-								int& CurrentIndex )
+                                                                const TCollection_AsciiString& dy,
+                                                                const TCollection_AsciiString& length,
+                                                                int& CurrentIndex )
 {
   setDirection( dx, dy );
   setMove( CurrentIndex );
@@ -744,9 +744,9 @@ void Sketcher_Profile::ShapeFunctor::addSegmentDirectionLength( const TCollectio
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentDirectionX( const TCollection_AsciiString& dx,
-							   const TCollection_AsciiString& dy,
-							   const TCollection_AsciiString& x,
-							   int& CurrentIndex )
+                                                           const TCollection_AsciiString& dy,
+                                                           const TCollection_AsciiString& x,
+                                                           int& CurrentIndex )
 {
   setDirection( dx, dy );
   setMove( CurrentIndex );
@@ -762,9 +762,9 @@ void Sketcher_Profile::ShapeFunctor::addSegmentDirectionX( const TCollection_Asc
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addSegmentDirectionY( const TCollection_AsciiString& dx,
-							   const TCollection_AsciiString& dy,
-							   const TCollection_AsciiString& y,
-							   int& CurrentIndex )
+                                                           const TCollection_AsciiString& dy,
+                                                           const TCollection_AsciiString& y,
+                                                           int& CurrentIndex )
 {
   setDirection( dx, dy );
   setMove( CurrentIndex );
@@ -778,7 +778,7 @@ void Sketcher_Profile::ShapeFunctor::addSegmentDirectionY( const TCollection_Asc
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcAbsolute( const TCollection_AsciiString& x,
-						     const TCollection_AsciiString& y )
+                                                     const TCollection_AsciiString& y )
 {
   Standard_Real vx = x.RealValue() - myX;
   Standard_Real vy = y.RealValue() - myY;
@@ -808,7 +808,7 @@ void Sketcher_Profile::ShapeFunctor::addArcAbsolute( const TCollection_AsciiStri
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcRelative( const TCollection_AsciiString& dx,
-						     const TCollection_AsciiString& dy )
+                                                     const TCollection_AsciiString& dy )
 {
   Standard_Real vx = dx.RealValue();
   Standard_Real vy = dy.RealValue();
@@ -840,9 +840,9 @@ void Sketcher_Profile::ShapeFunctor::addArcRelative( const TCollection_AsciiStri
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcRadiusAbsolute( const TCollection_AsciiString& x,
-							   const TCollection_AsciiString& y,
-							   const TCollection_AsciiString& radius,
-							   const TCollection_AsciiString& flag )
+                                                           const TCollection_AsciiString& y,
+                                                           const TCollection_AsciiString& radius,
+                                                           const TCollection_AsciiString& flag )
 {
   Standard_Real vx = x.RealValue() - myX;
   Standard_Real vy = y.RealValue() - myY;
@@ -857,9 +857,9 @@ void Sketcher_Profile::ShapeFunctor::addArcRadiusAbsolute( const TCollection_Asc
     if ( reversed == 2 )
       myAngle = myAngle - 2 * M_PI;
     myDx =  0.5 * ( vy * 1.0 / myRadius
-		    + vx * Sqrt( 4.0 / ( vx * vx + vy * vy ) - 1.0 / ( myRadius * myRadius ) ) );
+                    + vx * Sqrt( 4.0 / ( vx * vx + vy * vy ) - 1.0 / ( myRadius * myRadius ) ) );
     myDy = -0.5 * ( vx * 1.0 / myRadius
-		    - vy * Sqrt( 4.0 / ( vx * vx + vy * vy ) - 1.0 / ( myRadius * myRadius ) ) );
+                    - vy * Sqrt( 4.0 / ( vx * vx + vy * vy ) - 1.0 / ( myRadius * myRadius ) ) );
     myMove = circle;
   }
   else {
@@ -876,9 +876,9 @@ void Sketcher_Profile::ShapeFunctor::addArcRadiusAbsolute( const TCollection_Asc
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcRadiusRelative( const TCollection_AsciiString& dx,
-							   const TCollection_AsciiString& dy,
-							   const TCollection_AsciiString& radius,
-							   const TCollection_AsciiString& flag )
+                                                           const TCollection_AsciiString& dy,
+                                                           const TCollection_AsciiString& radius,
+                                                           const TCollection_AsciiString& flag )
 {
   Standard_Real vx = dx.RealValue();
   Standard_Real vy = dy.RealValue();
@@ -893,9 +893,9 @@ void Sketcher_Profile::ShapeFunctor::addArcRadiusRelative( const TCollection_Asc
     if ( reversed == 2 )
       myAngle = myAngle - 2 * M_PI;
     myDx =  0.5 * ( vy * 1.0 / myRadius
-		    + vx * Sqrt( 4.0  / ( vx * vx + vy * vy ) - 1.0 / ( myRadius * myRadius ) ) );
+                    + vx * Sqrt( 4.0  / ( vx * vx + vy * vy ) - 1.0 / ( myRadius * myRadius ) ) );
     myDy = -0.5 * ( vx * 1.0 / myRadius
-		    - vy * Sqrt( 4.0  / ( vx * vx + vy * vy ) - 1.0 / ( myRadius * myRadius ) ) );
+                    - vy * Sqrt( 4.0  / ( vx * vx + vy * vy ) - 1.0 / ( myRadius * myRadius ) ) );
     myMove = circle;
   }
   else {
@@ -914,11 +914,11 @@ void Sketcher_Profile::ShapeFunctor::addArcRadiusRelative( const TCollection_Asc
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcCenterAbsolute( const TCollection_AsciiString& x,
-							   const TCollection_AsciiString& y,
-							   const TCollection_AsciiString& xc,
-							   const TCollection_AsciiString& yc,
-							   const TCollection_AsciiString& flag1,
-							   const TCollection_AsciiString& flag2 )
+                                                           const TCollection_AsciiString& y,
+                                                           const TCollection_AsciiString& xc,
+                                                           const TCollection_AsciiString& yc,
+                                                           const TCollection_AsciiString& flag1,
+                                                           const TCollection_AsciiString& flag2 )
 {
   Standard_Real vx = x.RealValue() - myX;
   Standard_Real vy = y.RealValue() - myY;
@@ -940,8 +940,8 @@ void Sketcher_Profile::ShapeFunctor::addArcCenterAbsolute( const TCollection_Asc
   if ( error > Precision::Confusion() && control_Tolerance == 1 ) // Don't create the arc if the end point
     myMove = none;                                                // is too far from it
   else if ( ( length  > Precision::Confusion() ) &&
-	    ( length2 > Precision::Confusion() ) &&
-	    ( length3 > Precision::Confusion() ) ) {
+            ( length2 > Precision::Confusion() ) &&
+            ( length3 > Precision::Confusion() ) ) {
     Standard_Real c = ( myRadius * myRadius - ( vx * vxc + vy * vyc ) )
       / ( myRadius * Sqrt( ( vx - vxc ) * ( vx - vxc ) + ( vy - vyc ) * ( vy - vyc ) ) ) ;  // Cosine of arc angle
     myAngle = acos(c);                                                                      // angle in [0,Pi]
@@ -969,11 +969,11 @@ void Sketcher_Profile::ShapeFunctor::addArcCenterAbsolute( const TCollection_Asc
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcCenterRelative( const TCollection_AsciiString& dx,
-							   const TCollection_AsciiString& dy,
-							   const TCollection_AsciiString& xc,
-							   const TCollection_AsciiString& yc,
-							   const TCollection_AsciiString& flag1,
-							   const TCollection_AsciiString& flag2 )
+                                                           const TCollection_AsciiString& dy,
+                                                           const TCollection_AsciiString& xc,
+                                                           const TCollection_AsciiString& yc,
+                                                           const TCollection_AsciiString& flag1,
+                                                           const TCollection_AsciiString& flag2 )
 {
   Standard_Real vx = dx.RealValue();
   Standard_Real vy = dy.RealValue();
@@ -994,8 +994,8 @@ void Sketcher_Profile::ShapeFunctor::addArcCenterRelative( const TCollection_Asc
   if ( error > Precision::Confusion() && control_Tolerance == 1 ) // Don't create the arc if the end point
     myMove = none;                                                // is too far from it
   else if ( ( length  > Precision::Confusion() ) &&
-	    ( length2 > Precision::Confusion() ) &&
-	    ( length3 > Precision::Confusion() ) ) {
+            ( length2 > Precision::Confusion() ) &&
+            ( length3 > Precision::Confusion() ) ) {
     Standard_Real c = ( myRadius * myRadius - ( vx * vxc + vy * vyc ) )
       / ( myRadius * Sqrt( ( vx - vxc ) * ( vx - vxc ) + ( vy - vyc ) * ( vy - vyc ) ) ) ;  // Cosine of arc angle
     myAngle = acos( c );                                                                    // angle in [0,Pi]
@@ -1019,7 +1019,7 @@ void Sketcher_Profile::ShapeFunctor::addArcCenterRelative( const TCollection_Asc
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcRadiusLength( const TCollection_AsciiString& radius,
-							 const TCollection_AsciiString& length )
+                                                         const TCollection_AsciiString& length )
 {
   myRadius = radius.RealValue();
   if ( Abs( myRadius ) > Precision::Confusion() ) {
@@ -1039,9 +1039,9 @@ void Sketcher_Profile::ShapeFunctor::addArcRadiusLength( const TCollection_Ascii
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcAngleRadiusLength( const TCollection_AsciiString& angle,
-							      const TCollection_AsciiString& radius,
-							      const TCollection_AsciiString& length ,
-							      int& CurrentIndex )
+                                                              const TCollection_AsciiString& radius,
+                                                              const TCollection_AsciiString& length ,
+                                                              int& CurrentIndex )
 {
   setAngle( angle );
   setMove( CurrentIndex );
@@ -1058,10 +1058,10 @@ void Sketcher_Profile::ShapeFunctor::addArcAngleRadiusLength( const TCollection_
   \internal
 */
 void Sketcher_Profile::ShapeFunctor::addArcDirectionRadiusLength( const TCollection_AsciiString& dx,
-								  const TCollection_AsciiString& dy,
-								  const TCollection_AsciiString& radius,
-								  const TCollection_AsciiString& length ,
-								  int& CurrentIndex )
+                                                                  const TCollection_AsciiString& dy,
+                                                                  const TCollection_AsciiString& radius,
+                                                                  const TCollection_AsciiString& length ,
+                                                                  int& CurrentIndex )
 {
   setDirection( dx, dy );
   setMove( CurrentIndex );
@@ -1099,14 +1099,14 @@ void Sketcher_Profile::ShapeFunctor::setMove( int& CurrentIndex )
   case line :
     {
       if ( myLength < 0 ) {
-	myLength = -myLength;
-	myDx = -myDx;
-	myDy = -myDy;
+        myLength = -myLength;
+        myDx = -myDx;
+        myDy = -myDy;
       }
       Handle(Geom2d_Line) l = new Geom2d_Line( gp_Pnt2d( myX, myY ),gp_Dir2d( myDx, myDy ) );
       BRepBuilderAPI_MakeEdge ME( GeomAPI::To3d( l, myPlane ), 0, myLength );
       if ( !ME.IsDone() )
-	return;
+        return;
       myMakeWire.Add( ME );
       myX += myLength * myDx;
       myY += myLength * myDy;
@@ -1116,20 +1116,20 @@ void Sketcher_Profile::ShapeFunctor::setMove( int& CurrentIndex )
     {
       Standard_Boolean sense = Standard_True;
       if ( myRadius < 0 ) {
-	myRadius = -myRadius;
-	sense = !sense;
-	myDx = -myDx;
-	myDy = -myDy;
+        myRadius = -myRadius;
+        sense = !sense;
+        myDx = -myDx;
+        myDy = -myDy;
       }
       gp_Ax2d ax( gp_Pnt2d( myX - myRadius * myDy, myY + myRadius * myDx ), gp_Dir2d( myDy, -myDx ) );
       if ( myAngle < 0 ) {
-	myAngle = -myAngle;
-	sense = !sense;
+        myAngle = -myAngle;
+        sense = !sense;
       }
       Handle(Geom2d_Circle) c = new Geom2d_Circle( ax, myRadius, sense );
       BRepBuilderAPI_MakeEdge ME( GeomAPI::To3d( c, myPlane ), 0, myAngle );
       if ( !ME.IsDone() )
-	return;
+        return;
       myMakeWire.Add( ME );
       gp_Pnt2d p;
       gp_Vec2d v;
@@ -1281,7 +1281,7 @@ void Sketcher_Profile::DumpFunctor::initCommand()
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addPoint( const TCollection_AsciiString& x,
-					      const TCollection_AsciiString& y )
+                                              const TCollection_AsciiString& y )
 {
   myDescr += "sk.addPoint(";
   myDescr += x + ", " + y + ")";
@@ -1345,7 +1345,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentParalYToZero()
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentAbsolute( const TCollection_AsciiString& x,
-							const TCollection_AsciiString& y )
+                                                        const TCollection_AsciiString& y )
 {
   myDescr += "sk.addSegmentAbsolute(";
   myDescr += x + ", " + y + ")";
@@ -1358,7 +1358,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentAbsolute( const TCollection_AsciiS
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentRelative( const TCollection_AsciiString& dx,
-							const TCollection_AsciiString& dy )
+                                                        const TCollection_AsciiString& dy )
 {
   myDescr += "sk.addSegmentRelative(";
   myDescr += dx + ", " + dy + ")";
@@ -1382,7 +1382,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentLength( const TCollection_AsciiStr
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentX( const TCollection_AsciiString& x,
-						 int CurrentIndex )
+                                                 int CurrentIndex )
 {
   myDescr += "sk.addSegmentX(";
   myDescr += x + ")";
@@ -1395,7 +1395,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentX( const TCollection_AsciiString& 
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentY( const TCollection_AsciiString& y,
-						 int CurrentIndex  )
+                                                 int CurrentIndex  )
 {
   myDescr += "sk.addSegmentY(";
   myDescr += y + ")";
@@ -1409,8 +1409,8 @@ void Sketcher_Profile::DumpFunctor::addSegmentY( const TCollection_AsciiString& 
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentAngleLength( const TCollection_AsciiString& angle,
-							   const TCollection_AsciiString& length,
-							   int& CurrentIndex )
+                                                           const TCollection_AsciiString& length,
+                                                           int& CurrentIndex )
 {
   double aAngle = angle.RealValue();
   if ( aAngle == 90 ) {
@@ -1431,8 +1431,8 @@ void Sketcher_Profile::DumpFunctor::addSegmentAngleLength( const TCollection_Asc
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentAngleX( const TCollection_AsciiString& angle,
-						      const TCollection_AsciiString& x,
-						      int& CurrentIndex )
+                                                      const TCollection_AsciiString& x,
+                                                      int& CurrentIndex )
 {
   double aAngle = angle.RealValue();
   if ( aAngle == 90 ) {
@@ -1453,8 +1453,8 @@ void Sketcher_Profile::DumpFunctor::addSegmentAngleX( const TCollection_AsciiStr
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentAngleY( const TCollection_AsciiString& angle,
-						      const TCollection_AsciiString& y,
-						      int& CurrentIndex )
+                                                      const TCollection_AsciiString& y,
+                                                      int& CurrentIndex )
 {
   double aAngle = angle.RealValue();
   if ( aAngle == 90 ) {
@@ -1476,9 +1476,9 @@ void Sketcher_Profile::DumpFunctor::addSegmentAngleY( const TCollection_AsciiStr
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentDirectionLength( const TCollection_AsciiString& dx,
-							       const TCollection_AsciiString& dy,
-							       const TCollection_AsciiString& length,
-							       int& CurrentIndex )
+                                                               const TCollection_AsciiString& dy,
+                                                               const TCollection_AsciiString& length,
+                                                               int& CurrentIndex )
 {
   myDescr += "sk.addSegmentDirectionLength(";
   myDescr += dx + ", " + dy + ", " + length + ")";
@@ -1493,9 +1493,9 @@ void Sketcher_Profile::DumpFunctor::addSegmentDirectionLength( const TCollection
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentDirectionX( const TCollection_AsciiString& dx,
-							  const TCollection_AsciiString& dy,
-							  const TCollection_AsciiString& x,
-							  int& CurrentIndex )
+                                                          const TCollection_AsciiString& dy,
+                                                          const TCollection_AsciiString& x,
+                                                          int& CurrentIndex )
 {
   myDescr += "sk.addSegmentDirectionX(";
   myDescr += dx + ", " + dy + ", " + x + ")";
@@ -1510,9 +1510,9 @@ void Sketcher_Profile::DumpFunctor::addSegmentDirectionX( const TCollection_Asci
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addSegmentDirectionY( const TCollection_AsciiString& dx,
-							  const TCollection_AsciiString& dy,
-							  const TCollection_AsciiString& y,
-							  int& CurrentIndex )
+                                                          const TCollection_AsciiString& dy,
+                                                          const TCollection_AsciiString& y,
+                                                          int& CurrentIndex )
 {
   myDescr += "sk.addSegmentDirectionY(";
   myDescr += dx + ", " + dy + ", " + y + ")";
@@ -1525,7 +1525,7 @@ void Sketcher_Profile::DumpFunctor::addSegmentDirectionY( const TCollection_Asci
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcAbsolute( const TCollection_AsciiString& x,
-						    const TCollection_AsciiString& y )
+                                                    const TCollection_AsciiString& y )
 {
   myDescr += "sk.addArcAbsolute(";
   myDescr += x + ", " + y + ")";
@@ -1538,7 +1538,7 @@ void Sketcher_Profile::DumpFunctor::addArcAbsolute( const TCollection_AsciiStrin
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcRelative( const TCollection_AsciiString& dx,
-						    const TCollection_AsciiString& dy )
+                                                    const TCollection_AsciiString& dy )
 {
   myDescr += "sk.addArcRelative(";
   myDescr += dx + ", " + dy + ")";
@@ -1553,9 +1553,9 @@ void Sketcher_Profile::DumpFunctor::addArcRelative( const TCollection_AsciiStrin
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcRadiusAbsolute( const TCollection_AsciiString& x,
-							  const TCollection_AsciiString& y,
-							  const TCollection_AsciiString& radius,
-							  const TCollection_AsciiString& flag )
+                                                          const TCollection_AsciiString& y,
+                                                          const TCollection_AsciiString& radius,
+                                                          const TCollection_AsciiString& flag )
 {
   myDescr += "sk.addArcRadiusAbsolute(";
   myDescr += x + ", " + y + ", " + radius + ", " + flag + ")";
@@ -1570,9 +1570,9 @@ void Sketcher_Profile::DumpFunctor::addArcRadiusAbsolute( const TCollection_Asci
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcRadiusRelative( const TCollection_AsciiString& dx,
-							  const TCollection_AsciiString& dy,
-							  const TCollection_AsciiString& radius,
-							  const TCollection_AsciiString& flag )
+                                                          const TCollection_AsciiString& dy,
+                                                          const TCollection_AsciiString& radius,
+                                                          const TCollection_AsciiString& flag )
 {
   myDescr += "sk.addArcRadiusRelative(";
   myDescr += dx + ", " + dy + ", " + radius + ", " + flag + ")";
@@ -1589,11 +1589,11 @@ void Sketcher_Profile::DumpFunctor::addArcRadiusRelative( const TCollection_Asci
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcCenterAbsolute( const TCollection_AsciiString& x,
-							  const TCollection_AsciiString& y,
-							  const TCollection_AsciiString& xc,
-							  const TCollection_AsciiString& yc,
-							  const TCollection_AsciiString& flag1,
-							  const TCollection_AsciiString& flag2 )
+                                                          const TCollection_AsciiString& y,
+                                                          const TCollection_AsciiString& xc,
+                                                          const TCollection_AsciiString& yc,
+                                                          const TCollection_AsciiString& flag1,
+                                                          const TCollection_AsciiString& flag2 )
 {
   myDescr += "sk.addArcCenterAbsolute(";
   myDescr += xc + ", " + yc + ", " + x + ", " + y + ", " + flag1 + ", " + flag2 + ")";
@@ -1610,11 +1610,11 @@ void Sketcher_Profile::DumpFunctor::addArcCenterAbsolute( const TCollection_Asci
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcCenterRelative( const TCollection_AsciiString& dx,
-							  const TCollection_AsciiString& dy,
-							  const TCollection_AsciiString& xc,
-							  const TCollection_AsciiString& yc,
-							  const TCollection_AsciiString& flag1,
-							  const TCollection_AsciiString& flag2 )
+                                                          const TCollection_AsciiString& dy,
+                                                          const TCollection_AsciiString& xc,
+                                                          const TCollection_AsciiString& yc,
+                                                          const TCollection_AsciiString& flag1,
+                                                          const TCollection_AsciiString& flag2 )
 {
   myDescr += "sk.addArcCenterRelative(";
   myDescr += xc + ", " + yc + ", " + dx + ", " + dy + ", " + flag1 + ", " + flag2 + ")";
@@ -1627,7 +1627,7 @@ void Sketcher_Profile::DumpFunctor::addArcCenterRelative( const TCollection_Asci
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcRadiusLength( const TCollection_AsciiString& radius,
-							const TCollection_AsciiString& length )
+                                                        const TCollection_AsciiString& length )
 {
   myDescr += "sk.addArcRadiusLength(";
   myDescr += radius + ", " + length + ")";
@@ -1642,9 +1642,9 @@ void Sketcher_Profile::DumpFunctor::addArcRadiusLength( const TCollection_AsciiS
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcAngleRadiusLength( const TCollection_AsciiString& angle,
-							     const TCollection_AsciiString& radius,
-							     const TCollection_AsciiString& length ,
-							     int& CurrentIndex )
+                                                             const TCollection_AsciiString& radius,
+                                                             const TCollection_AsciiString& length ,
+                                                             int& CurrentIndex )
 {
   double aAngle = angle.RealValue();
   if ( aAngle == 90 ) {
@@ -1667,10 +1667,10 @@ void Sketcher_Profile::DumpFunctor::addArcAngleRadiusLength( const TCollection_A
   \internal
 */
 void Sketcher_Profile::DumpFunctor::addArcDirectionRadiusLength( const TCollection_AsciiString& dx,
-								 const TCollection_AsciiString& dy,
-								 const TCollection_AsciiString& radius,
-								 const TCollection_AsciiString& length ,
-								 int& CurrentIndex )
+                                                                 const TCollection_AsciiString& dy,
+                                                                 const TCollection_AsciiString& radius,
+                                                                 const TCollection_AsciiString& length ,
+                                                                 int& CurrentIndex )
 {
   myDescr += "sk.addArcDirectionRadiusLength(";
   myDescr += dx + ", " + dy + ", " + radius + ", " + length + ")";
@@ -1817,7 +1817,7 @@ void Sketcher_Profile::parse( const TCollection_AsciiString& cmd, Functor* funct
     while ( aToken.Length() != 0 ) {
       TCollection_AsciiString aNewToken = command.Token( ":", NumberOfCommand + 1 );
       if ( aNewToken.Length() > 0 )
-	aTab( NumberOfCommand ) = aNewToken;
+        aTab( NumberOfCommand ) = aNewToken;
       aToken = command.Token( ":", ++NumberOfCommand );
     }
     --NumberOfCommand;
@@ -1830,132 +1830,132 @@ void Sketcher_Profile::parse( const TCollection_AsciiString& cmd, Functor* funct
       TColStd_Array1OfAsciiString a( 0, aTab( 0 ).Length() );
       findNextCommand( aTab, a, CurrentIndex, NumberOfArg );
       if ( a( 0 ) == "F" ) {
-	if ( NumberOfArg != 3 ) badArgs();
-	functor->addPoint( a.Value( 1 ), a.Value( 2 ) );
+        if ( NumberOfArg != 3 ) badArgs();
+        functor->addPoint( a.Value( 1 ), a.Value( 2 ) );
       }
       else if ( a( 0 ) == "X" ) {
-	if ( NumberOfArg != 2 ) badArgs();
-	functor->addSegmentParalX( a.Value( 1 ) );
+        if ( NumberOfArg != 2 ) badArgs();
+        functor->addSegmentParalX( a.Value( 1 ) );
       }
       else if ( a( 0 ) == "XX" ) {
-	if ( NumberOfArg != 2 ) badArgs();
-	functor->addSegmentParalXToZero();
+        if ( NumberOfArg != 2 ) badArgs();
+        functor->addSegmentParalXToZero();
       }
       else if ( a( 0 ) == "Y" ) {
-	if ( NumberOfArg != 2 ) badArgs();
-	functor->addSegmentParalY( a.Value( 1 ) );
+        if ( NumberOfArg != 2 ) badArgs();
+        functor->addSegmentParalY( a.Value( 1 ) );
       }
       else if ( a( 0 ) == "YY" ) {
-	if ( NumberOfArg != 2 ) badArgs();
-	functor->addSegmentParalYToZero();
+        if ( NumberOfArg != 2 ) badArgs();
+        functor->addSegmentParalYToZero();
       }
       else if ( a( 0 ) == "RR" ) {
-	if ( NumberOfArg != 2 ) badArgs();
-	functor->addAngle( a.Value( 1 ) );
+        if ( NumberOfArg != 2 ) badArgs();
+        functor->addAngle( a.Value( 1 ) );
       }
       else if ( a( 0 ) == "TT" ) {
-	if ( NumberOfArg != 3 ) badArgs();
-	functor->addSegmentAbsolute( a.Value( 1 ), a.Value( 2 ) );
+        if ( NumberOfArg != 3 ) badArgs();
+        functor->addSegmentAbsolute( a.Value( 1 ), a.Value( 2 ) );
       }
       else if ( a( 0 ) == "T" ) {
-	if ( NumberOfArg != 3 ) badArgs();
-	functor->addSegmentRelative( a.Value( 1 ), a.Value( 2 ) );
+        if ( NumberOfArg != 3 ) badArgs();
+        functor->addSegmentRelative( a.Value( 1 ), a.Value( 2 ) );
       }
       else if ( a( 0 ) == "L" ) {
-	if ( NumberOfArg != 2 ) badArgs();
-	functor->addSegmentLength( a.Value( 1 ) );
+        if ( NumberOfArg != 2 ) badArgs();
+        functor->addSegmentLength( a.Value( 1 ) );
       }
       else if ( a( 0 ) == "IX" ) {
-	if ( NumberOfArg != 2 ) badArgs();
-	functor->addSegmentX( a.Value( 1 ), CurrentIndex );
+        if ( NumberOfArg != 2 ) badArgs();
+        functor->addSegmentX( a.Value( 1 ), CurrentIndex );
       }
       else if ( a( 0 ) == "IY" ) {
-	if ( NumberOfArg != 2 ) badArgs();
-	functor->addSegmentY( a.Value( 1 ), CurrentIndex );
+        if ( NumberOfArg != 2 ) badArgs();
+        functor->addSegmentY( a.Value( 1 ), CurrentIndex );
       }
-      else if ( a( 0 ) == "R" )	{
-	if ( NumberOfArg != 2) badArgs();
-	CurrentIndex++;
-	TColStd_Array1OfAsciiString aNew( 0, aTab( 0 ).Length() );
-	findNextCommand( aTab, aNew, CurrentIndex, NumberOfArg );
-	if ( aNew( 0 ) == "L" ) {
-	  if ( NumberOfArg != 2 ) badArgs();
-	  functor->addSegmentAngleLength( a.Value( 1 ), aNew.Value( 1 ), CurrentIndex );
-	}
-	else if ( aNew( 0 ) == "IX" ) {
-	  if ( NumberOfArg != 2 ) badArgs();
-	  functor->addSegmentAngleX( a.Value( 1 ), aNew.Value( 1 ), CurrentIndex );
-	}
-	else if ( aNew( 0 ) == "IY" ) {
-	  if ( NumberOfArg != 2 ) badArgs();
-	  functor->addSegmentAngleY( a.Value( 1 ), aNew.Value( 1 ), CurrentIndex );
-	}
-	else if ( aNew( 0 ) == "C" ) {
-	  if ( NumberOfArg != 3 ) badArgs();
-	  functor->addArcAngleRadiusLength( a.Value( 1 ), aNew.Value( 1 ), aNew.Value( 2 ), CurrentIndex );
-	}
+      else if ( a( 0 ) == "R" ) {
+        if ( NumberOfArg != 2) badArgs();
+        CurrentIndex++;
+        TColStd_Array1OfAsciiString aNew( 0, aTab( 0 ).Length() );
+        findNextCommand( aTab, aNew, CurrentIndex, NumberOfArg );
+        if ( aNew( 0 ) == "L" ) {
+          if ( NumberOfArg != 2 ) badArgs();
+          functor->addSegmentAngleLength( a.Value( 1 ), aNew.Value( 1 ), CurrentIndex );
+        }
+        else if ( aNew( 0 ) == "IX" ) {
+          if ( NumberOfArg != 2 ) badArgs();
+          functor->addSegmentAngleX( a.Value( 1 ), aNew.Value( 1 ), CurrentIndex );
+        }
+        else if ( aNew( 0 ) == "IY" ) {
+          if ( NumberOfArg != 2 ) badArgs();
+          functor->addSegmentAngleY( a.Value( 1 ), aNew.Value( 1 ), CurrentIndex );
+        }
+        else if ( aNew( 0 ) == "C" ) {
+          if ( NumberOfArg != 3 ) badArgs();
+          functor->addArcAngleRadiusLength( a.Value( 1 ), aNew.Value( 1 ), aNew.Value( 2 ), CurrentIndex );
+        }
       }
-      else if ( a( 0 ) == "D" )	{
-	if ( NumberOfArg != 3 ) badArgs();
-	CurrentIndex++;
-	TColStd_Array1OfAsciiString aNew ( 0, aTab( 0 ).Length() );
-	findNextCommand( aTab, aNew, CurrentIndex, NumberOfArg );
-	if ( aNew( 0 ) == "L" ) {
-	  if ( NumberOfArg != 2 ) badArgs();
-	  functor->addSegmentDirectionLength( a.Value( 1 ), a.Value( 2 ), aNew.Value( 1 ), CurrentIndex );
-	}
-	else if ( aNew( 0 ) == "IX" ) {
-	  if ( NumberOfArg != 2 ) badArgs();
-	  functor->addSegmentDirectionX( a.Value( 1 ), a.Value( 2 ), aNew.Value( 1 ), CurrentIndex );
-	}
-	else if ( aNew( 0 ) == "IY" ) {
-	  if ( NumberOfArg != 2 ) badArgs();
-	  functor->addSegmentDirectionY( a.Value( 1 ), a.Value( 2 ), aNew.Value( 1 ), CurrentIndex );
-	}
-	else if ( aNew( 0 ) == "C" ) {
-	  if ( NumberOfArg != 3 ) badArgs();
-	  functor->addArcDirectionRadiusLength( a.Value( 1 ), a.Value( 2 ), aNew.Value( 1 ), aNew.Value( 2 ), CurrentIndex );
-	}
+      else if ( a( 0 ) == "D" ) {
+        if ( NumberOfArg != 3 ) badArgs();
+        CurrentIndex++;
+        TColStd_Array1OfAsciiString aNew ( 0, aTab( 0 ).Length() );
+        findNextCommand( aTab, aNew, CurrentIndex, NumberOfArg );
+        if ( aNew( 0 ) == "L" ) {
+          if ( NumberOfArg != 2 ) badArgs();
+          functor->addSegmentDirectionLength( a.Value( 1 ), a.Value( 2 ), aNew.Value( 1 ), CurrentIndex );
+        }
+        else if ( aNew( 0 ) == "IX" ) {
+          if ( NumberOfArg != 2 ) badArgs();
+          functor->addSegmentDirectionX( a.Value( 1 ), a.Value( 2 ), aNew.Value( 1 ), CurrentIndex );
+        }
+        else if ( aNew( 0 ) == "IY" ) {
+          if ( NumberOfArg != 2 ) badArgs();
+          functor->addSegmentDirectionY( a.Value( 1 ), a.Value( 2 ), aNew.Value( 1 ), CurrentIndex );
+        }
+        else if ( aNew( 0 ) == "C" ) {
+          if ( NumberOfArg != 3 ) badArgs();
+          functor->addArcDirectionRadiusLength( a.Value( 1 ), a.Value( 2 ), aNew.Value( 1 ), aNew.Value( 2 ), CurrentIndex );
+        }
       }
       else if ( a( 0 ) == "AA" ) {
-	if ( NumberOfArg != 3 ) badArgs();
-	functor->addArcAbsolute( a.Value( 1 ), a.Value( 2 ) );
+        if ( NumberOfArg != 3 ) badArgs();
+        functor->addArcAbsolute( a.Value( 1 ), a.Value( 2 ) );
       }
       else if ( a( 0 ) == "A" ) {
-	if ( NumberOfArg != 3 ) badArgs();
-	functor->addArcRelative( a.Value( 1 ), a.Value( 2 ) );
+        if ( NumberOfArg != 3 ) badArgs();
+        functor->addArcRelative( a.Value( 1 ), a.Value( 2 ) );
       }
       else if ( a( 0 ) == "UU" ) {
-	if ( NumberOfArg != 5 ) badArgs();
-	functor->addArcRadiusAbsolute( a.Value( 1 ), a.Value( 2 ), a.Value( 3 ), a.Value( 4 ) );
+        if ( NumberOfArg != 5 ) badArgs();
+        functor->addArcRadiusAbsolute( a.Value( 1 ), a.Value( 2 ), a.Value( 3 ), a.Value( 4 ) );
       }
       else if ( a( 0 ) == "U" ) {
-	if ( NumberOfArg != 5 ) badArgs();
-	functor->addArcRadiusRelative( a.Value( 1 ), a.Value( 2 ), a.Value( 3 ), a.Value( 4 ) );
+        if ( NumberOfArg != 5 ) badArgs();
+        functor->addArcRadiusRelative( a.Value( 1 ), a.Value( 2 ), a.Value( 3 ), a.Value( 4 ) );
       }
       else if ( a( 0 ) == "EE" ) {
-	if ( NumberOfArg != 7 ) badArgs();
-	functor->addArcCenterAbsolute( a.Value( 1 ), a.Value( 2 ), a.Value( 3 ), a.Value( 4 ), a.Value( 5 ), a.Value( 6 ) );
+        if ( NumberOfArg != 7 ) badArgs();
+        functor->addArcCenterAbsolute( a.Value( 1 ), a.Value( 2 ), a.Value( 3 ), a.Value( 4 ), a.Value( 5 ), a.Value( 6 ) );
       }
       else if ( a( 0 ) == "E" ) {
-	if ( NumberOfArg != 7 ) badArgs();
-	functor->addArcCenterRelative( a.Value( 1 ), a.Value( 2 ), a.Value( 3 ), a.Value( 4 ), a.Value( 5 ), a.Value( 6 ) );
+        if ( NumberOfArg != 7 ) badArgs();
+        functor->addArcCenterRelative( a.Value( 1 ), a.Value( 2 ), a.Value( 3 ), a.Value( 4 ), a.Value( 5 ), a.Value( 6 ) );
       }
       else if ( a( 0 ) == "C" ) {
-	if ( NumberOfArg != 3 ) badArgs();
-	functor->addArcRadiusLength( a.Value( 1 ), a.Value( 2 ) );
+        if ( NumberOfArg != 3 ) badArgs();
+        functor->addArcRadiusLength( a.Value( 1 ), a.Value( 2 ) );
       }
       else if ( a( 0 ) == "WW" ) {
-	functor->closeWire();
-	CurrentIndex = NumberOfCommand - 1;
+        functor->closeWire();
+        CurrentIndex = NumberOfCommand - 1;
       }
       else if ( a( 0 ) == "WF" ) {
-	functor->closeWireAndBuildFace();
-	CurrentIndex = NumberOfCommand - 1;
+        functor->closeWireAndBuildFace();
+        CurrentIndex = NumberOfCommand - 1;
       }
       else {
-	MESSAGE("profile : unknown code " << a(CurrentIndex));
-	return;
+        MESSAGE("profile : unknown code " << a(CurrentIndex));
+        return;
       }
       functor->nextCommand( CurrentIndex );
     }
@@ -1995,8 +1995,8 @@ void Sketcher_Profile::badArgs()
   \internal
 */
 void Sketcher_Profile::findNextCommand( const TColStd_Array1OfAsciiString& aTab,
-					TColStd_Array1OfAsciiString& a, int CurrentIndex,
-					int& NumberOfArg)
+                                        TColStd_Array1OfAsciiString& a, int CurrentIndex,
+                                        int& NumberOfArg)
 {
   int n1 = 0;
   TCollection_AsciiString aToken = aTab(CurrentIndex).Token(" ", 1);

@@ -195,7 +195,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
     for ( int i = 0; i < objects.count(); i++ ) {
       GEOM::shape_type stype = objects[i]->GetMaxShapeType();
       if ( stype < GEOM::SHELL || stype > GEOM::VERTEX )
-	continue;
+        continue;
       myBaseObjects << objects[i];
     }
     if ( !myBaseObjects.isEmpty() ) {
@@ -209,7 +209,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
       QString aName = GEOMBase::GetName( myAxis.get() );
       myEditCurrentArgument->setText( aName );
       if ( myBaseObjects.isEmpty() )
-	GroupPoints->PushButton1->click();
+        GroupPoints->PushButton1->click();
     }
   }
   processPreview();

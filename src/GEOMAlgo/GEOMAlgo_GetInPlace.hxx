@@ -92,7 +92,7 @@ class GEOMAlgo_GetInPlaceIterator  {
    */
   //Standard_EXPORT
     void Initialize(const TopAbs_ShapeEnum theT1,
-		    const TopAbs_ShapeEnum theT2) ;
+                    const TopAbs_ShapeEnum theT2) ;
   /**
    * Check the existence of pairs to iterare.
    * @return
@@ -296,15 +296,15 @@ protected:
 
   Standard_EXPORT
     void FillShapesIn(const TopoDS_Shape& theS1,
-		      const TopoDS_Shape& theS2) ;
+                      const TopoDS_Shape& theS2) ;
 
   Standard_EXPORT
     void FillShapesOn(const TopoDS_Shape& theS1,
-		      const TopoDS_Shape& theS2) ;
+                      const TopoDS_Shape& theS2) ;
 
   Standard_EXPORT
     Standard_Boolean CheckCoincidence(const TopoDS_Shape& theS1,
-				      const TopoDS_Shape& theS2);
+                                      const TopoDS_Shape& theS2);
 
 
   TopoDS_Shape myShapeWhere;

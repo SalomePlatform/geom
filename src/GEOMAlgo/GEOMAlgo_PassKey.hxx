@@ -65,18 +65,18 @@ class GEOMAlgo_PassKey  {
 
   Standard_EXPORT
     void SetIds(const Standard_Integer aI1,
-		const Standard_Integer aI2) ;
+                const Standard_Integer aI2) ;
 
   Standard_EXPORT
     void SetIds(const Standard_Integer aI1,
-		const Standard_Integer aI2,
-		const Standard_Integer aI3) ;
+                const Standard_Integer aI2,
+                const Standard_Integer aI3) ;
 
   Standard_EXPORT
     void SetIds(const Standard_Integer aI1,
-		const Standard_Integer aI2,
-		const Standard_Integer aI3,
-		const Standard_Integer aI4) ;
+                const Standard_Integer aI2,
+                const Standard_Integer aI3,
+                const Standard_Integer aI4) ;
 
   Standard_EXPORT
     void SetIds(const TColStd_ListOfInteger& aLS) ;

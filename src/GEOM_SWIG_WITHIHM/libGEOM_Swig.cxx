@@ -100,7 +100,7 @@ void GEOM_Swig::init()
 
       // update Object browser
       if ( dynamic_cast<SalomeApp_Application*>( app ) )
-	dynamic_cast<SalomeApp_Application*>( app )->updateObjectBrowser( true );
+        dynamic_cast<SalomeApp_Application*>( app )->updateObjectBrowser( true );
     }
   };
 
@@ -157,11 +157,11 @@ void GEOM_Swig::createAndDisplayFitAllGO( const char* theEntry )
     {
       SUIT_Application* app = SUIT_Session::session()->activeApplication();
       if ( app ) {
-	SUIT_ViewWindow* window = app->desktop()->activeWindow();
-	if ( dynamic_cast<SVTK_ViewWindow*>( window ) )
-	  dynamic_cast<SVTK_ViewWindow*>( window )->onFitAll();
+        SUIT_ViewWindow* window = app->desktop()->activeWindow();
+        if ( dynamic_cast<SVTK_ViewWindow*>( window ) )
+          dynamic_cast<SVTK_ViewWindow*>( window )->onFitAll();
         else if ( dynamic_cast<OCCViewer_ViewFrame*>( window ) )
-	  dynamic_cast<OCCViewer_ViewFrame*>( window )->onViewFitAll();
+          dynamic_cast<OCCViewer_ViewFrame*>( window )->onViewFitAll();
       }
     }
   };
@@ -308,9 +308,9 @@ const char* GEOM_Swig::getShapeTypeIcon( const char* theIOR )
     if ( !CORBA::is_nil( anObject ) ) {
       GEOM::GEOM_Object_var aShape = GEOM::GEOM_Object::_narrow( anObject.in() );
       if ( !CORBA::is_nil( aShape ) ) {
-	GEOM::shape_type aType = aShape->GetShapeType();
-	if ( aType >= GEOM::COMPOUND && aType < GEOM::SHAPE )
-	  anIcon = icons[ (int)aType ];
+        GEOM::shape_type aType = aShape->GetShapeType();
+        if ( aType >= GEOM::COMPOUND && aType < GEOM::SHAPE )
+          anIcon = icons[ (int)aType ];
       }
     }
   }
@@ -329,16 +329,16 @@ class TSetPropertyEvent: public SALOME_Event
   
 public:
   TSetPropertyEvent( const QString& _entry,
-		     const QString& _property,
-		     const QVariant& _value,
-		     bool _update = true );
+                     const QString& _property,
+                     const QVariant& _value,
+                     bool _update = true );
   virtual void Execute();
 };
   
 TSetPropertyEvent::TSetPropertyEvent( const QString& _entry,
-				      const QString& _property,
-				      const QVariant& _value,
-				      bool _update ):
+                                      const QString& _property,
+                                      const QVariant& _value,
+                                      bool _update ):
   myEntry( _entry ),
   myProperty( _property ),
   myValue( _value ),
@@ -376,7 +376,7 @@ void TSetPropertyEvent::Execute()
 void GEOM_Swig::setDisplayMode( const char* theEntry, int theMode, bool theUpdateViewer )
 {
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::DisplayMode ), 
-					   theMode, theUpdateViewer ) );
+                                           theMode, theUpdateViewer ) );
 }
 
 /*!
@@ -388,7 +388,7 @@ void GEOM_Swig::setDisplayMode( const char* theEntry, int theMode, bool theUpdat
 void GEOM_Swig::setVectorsMode( const char* theEntry, bool theOn, bool theUpdateViewer )
 {
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::EdgesDirection ), 
-					   theOn, theUpdateViewer ) );
+                                           theOn, theUpdateViewer ) );
 }
 
 /*!
@@ -402,7 +402,7 @@ void GEOM_Swig::setVectorsMode( const char* theEntry, bool theOn, bool theUpdate
 void GEOM_Swig::setColor( const char* theEntry, int theRed, int theGreen, int theBlue, bool theUpdateViewer )
 {
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Color ), 
-					   QColor( theRed, theGreen, theBlue ), theUpdateViewer ) );
+                                           QColor( theRed, theGreen, theBlue ), theUpdateViewer ) );
 }
 
 /*!
@@ -415,8 +415,8 @@ void GEOM_Swig::setColor( const char* theEntry, int theRed, int theGreen, int th
 void GEOM_Swig::setIsos( const char* theEntry, int theNbU, int theNbV, bool theUpdateViewer )
 {
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::NbIsos ), 
-					   QString( "%1%2%3" ).arg( theNbU ).arg( GEOM::subSectionSeparator() ).arg( theNbV ), 
-					   theUpdateViewer ) );
+                                           QString( "%1%2%3" ).arg( theNbU ).arg( GEOM::subSectionSeparator() ).arg( theNbV ), 
+                                           theUpdateViewer ) );
 }
 
 /*!
@@ -428,7 +428,7 @@ void GEOM_Swig::setIsos( const char* theEntry, int theNbU, int theNbV, bool theU
 void GEOM_Swig::setTransparency( const char* theEntry, float theTransparency, bool theUpdateViewer )
 {
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Transparency ), 
-					   theTransparency, theUpdateViewer ) );
+                                           theTransparency, theUpdateViewer ) );
 }
 
 /*!
@@ -440,7 +440,7 @@ void GEOM_Swig::setTransparency( const char* theEntry, float theTransparency, bo
 void GEOM_Swig::setDeflection( const char* theEntry, float theDeflection, bool theUpdateViewer )
 {
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Deflection ), 
-					   theDeflection, theUpdateViewer ) );
+                                           theDeflection, theUpdateViewer ) );
 }
 
 /*!
@@ -454,7 +454,7 @@ void GEOM_Swig::setMaterial( const char* theEntry, const char* theMaterial, bool
   Material_Model material;
   material.fromResources( theMaterial );
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Material ), 
-					   material.toProperties(), theUpdateViewer ) );
+                                           material.toProperties(), theUpdateViewer ) );
 }
 
 /*!
@@ -466,7 +466,7 @@ void GEOM_Swig::setMaterial( const char* theEntry, const char* theMaterial, bool
 void GEOM_Swig::setMaterialProperty( const char* theEntry, const char* theMaterial, bool theUpdateViewer )
 {
   ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Material ), 
-					   theMaterial, theUpdateViewer ) );
+                                           theMaterial, theUpdateViewer ) );
 }
 
 class TInitGeomGenEvent: public SALOME_Event

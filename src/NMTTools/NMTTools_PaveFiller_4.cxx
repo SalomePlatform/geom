@@ -1374,15 +1374,15 @@ void NMTTools_PaveFiller::SplitCommonBlock(const NMTTools_CommonBlock& aCB,
         n21=aPB2.Pave1().Index();
         n22=aPB2.Pave2().Index();
         if ((n21==n11 && n22==n12) || (n21==n12 && n22==n11)) {
-	  //modified by NIZNHY-PKV Thu Nov 11 08:13:24 2010f
-	  bIsCoincided=CheckCoincidence(aPB2, aPB1);
-	  if (bIsCoincided) {
-	    aCBx.AddPaveBlock(aPB2);
-	    break;
-	  }
-	  //aCBx.AddPaveBlock(aPB2);
-	  //break;
-	  //modified by NIZNHY-PKV Thu Nov 11 08:13:31 2010t
+          //modified by NIZNHY-PKV Thu Nov 11 08:13:24 2010f
+          bIsCoincided=CheckCoincidence(aPB2, aPB1);
+          if (bIsCoincided) {
+            aCBx.AddPaveBlock(aPB2);
+            break;
+          }
+          //aCBx.AddPaveBlock(aPB2);
+          //break;
+          //modified by NIZNHY-PKV Thu Nov 11 08:13:31 2010t
         }
       }
     }
@@ -1574,7 +1574,7 @@ void ProcessBlock(const BOPTools_PaveBlock& aPB,
 // purpose:
 //=======================================================================
 Standard_Boolean NMTTools_PaveFiller::CheckCoincidence(const BOPTools_PaveBlock& aPB1,
-						       const BOPTools_PaveBlock& aPB2)
+                                                       const BOPTools_PaveBlock& aPB2)
 {
   Standard_Boolean bRet;
   Standard_Integer nE1, nE2, aNbPoints;
@@ -1606,7 +1606,7 @@ Standard_Boolean NMTTools_PaveFiller::CheckCoincidence(const BOPTools_PaveBlock&
     if (aD<aTol) {
       aT2x=aPPC.LowerDistanceParameter();
       if (aT2x>aT21 && aT2x<aT22) {
-	return !bRet;
+        return !bRet;
       }
     }
   }

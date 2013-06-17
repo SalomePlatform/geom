@@ -42,10 +42,10 @@ class GEOMAlgo_PassKeyMapHasher  {
  public:
   Standard_EXPORT
     static  Standard_Integer HashCode(const GEOMAlgo_PassKey& aPKey,
-				      const Standard_Integer Upper) ;
+                                      const Standard_Integer Upper) ;
 
   Standard_EXPORT
     static  Standard_Boolean IsEqual(const GEOMAlgo_PassKey& aPKey1,
-				     const GEOMAlgo_PassKey& aPKey2) ;
+                                     const GEOMAlgo_PassKey& aPKey2) ;
 };
 #endif

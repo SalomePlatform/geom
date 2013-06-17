@@ -43,10 +43,10 @@ class GEOMAlgo_PassKeyShapeMapHasher
  public:
   Standard_EXPORT
     static  Standard_Integer HashCode(const GEOMAlgo_PassKeyShape& aPKey,
-				      const Standard_Integer Upper) ;
+                                      const Standard_Integer Upper) ;
 
   Standard_EXPORT
     static  Standard_Boolean IsEqual(const GEOMAlgo_PassKeyShape& aPKey1,
-				     const GEOMAlgo_PassKeyShape& aPKey2) ;
+                                     const GEOMAlgo_PassKeyShape& aPKey2) ;
 };
 #endif

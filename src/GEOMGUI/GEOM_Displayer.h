@@ -101,7 +101,7 @@ public:
                             const bool updateViewer = true );
 
   void          EraseWithChildren(const Handle(SALOME_InteractiveObject)& theIO,
-				  const bool eraseOnlyChildren = false);
+                                  const bool eraseOnlyChildren = false);
 
   /* Display/Erase list of objects methods */
 

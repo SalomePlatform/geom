@@ -19,9 +19,9 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_GetInPlaceIterator.cxx
+// File:        GEOMAlgo_GetInPlaceIterator.cxx
 // Created:
-// Author:	Peter KURNEV
+// Author:      Peter KURNEV
 
 #include <GEOMAlgo_GetInPlace.hxx>
 
@@ -29,7 +29,7 @@
 
 static
   Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType1,
-				 const TopAbs_ShapeEnum aType2);
+                                 const TopAbs_ShapeEnum aType2);
 
 //=======================================================================
 //function :
@@ -82,7 +82,7 @@ void GEOMAlgo_GetInPlaceIterator::AppendPair(const NMTTools_CoupleOfShape& theCS
 //purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlaceIterator::Initialize(const TopAbs_ShapeEnum aType1,
-					     const TopAbs_ShapeEnum aType2)
+                                             const TopAbs_ShapeEnum aType2)
 {
   Standard_Integer iX;
   //
@@ -123,7 +123,7 @@ const NMTTools_CoupleOfShape& GEOMAlgo_GetInPlaceIterator::Value()const
 //purpose  :
 //=======================================================================
 Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType1,
-			       const TopAbs_ShapeEnum aType2)
+                               const TopAbs_ShapeEnum aType2)
 {
   Standard_Integer iRet;
   //

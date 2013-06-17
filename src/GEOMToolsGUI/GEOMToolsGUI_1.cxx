@@ -543,8 +543,8 @@ void GEOMToolsGUI::OnMaterialProperties()
 
 void GEOMToolsGUI::OnMaterialsLibrary()
 {
-	GEOMToolsGUI_MaterialPropertiesDlg dlg( SUIT_Session::session()->activeApplication()->desktop(), false, true, QtxDialog::Standard );
-	dlg.setWindowTitle( tr( "MATERIAL_LIBRARY_TLT" ) );
+        GEOMToolsGUI_MaterialPropertiesDlg dlg( SUIT_Session::session()->activeApplication()->desktop(), false, true, QtxDialog::Standard );
+        dlg.setWindowTitle( tr( "MATERIAL_LIBRARY_TLT" ) );
   dlg.exec();
 }
 

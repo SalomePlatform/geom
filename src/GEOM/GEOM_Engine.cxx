@@ -773,7 +773,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     {
       TObjectData* data = aStEntry2ObjDataPtrIt->second;      
       if ( data->_unpublished && !data->_pyName.IsEmpty() ) {
-	aScript +=  unpublishCmd + data->_pyName + ")";
+        aScript +=  unpublishCmd + data->_pyName + ")";
       }
     }    
   
@@ -1397,8 +1397,8 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
             if(MYDEBUG)
               cout<<"aParamIndex: "<<aParamIndex<<" aStartParamPos: " <<aStartParamPos<<" aEndParamPos: "<<aEndParamPos<<endl;
 
-	    if ( aStartParamPos == aEndParamPos)
-	      continue;
+            if ( aStartParamPos == aEndParamPos)
+              continue;
 
             aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
             if(MYDEBUG)

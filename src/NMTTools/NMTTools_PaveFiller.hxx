@@ -160,157 +160,157 @@ class NMTTools_PaveFiller  {
 
   Standard_EXPORT
     Standard_Integer SplitsInFace(const Standard_Integer aBid,
-				  const Standard_Integer nF1,
-				  const Standard_Integer nF2,
-				  TColStd_ListOfInteger& aLs) ;
+                                  const Standard_Integer nF1,
+                                  const Standard_Integer nF2,
+                                  TColStd_ListOfInteger& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsInFace(const Standard_Integer nE1,
-				  const Standard_Integer nF2,
-				  TColStd_ListOfInteger& aLs) ;
+                                  const Standard_Integer nF2,
+                                  TColStd_ListOfInteger& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsOnEdge(const Standard_Integer nE1,
-				  const Standard_Integer nE2,
-				  TColStd_ListOfInteger& aLs) ;
+                                  const Standard_Integer nE2,
+                                  TColStd_ListOfInteger& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsOnFace(const Standard_Integer nE1,
-				  const Standard_Integer nF2,
-				  TColStd_ListOfInteger& aLs) ;
+                                  const Standard_Integer nF2,
+                                  TColStd_ListOfInteger& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsOnFace(const Standard_Integer aBid,
-				  const Standard_Integer nF1,
-				  const Standard_Integer nF2,
-				  TColStd_ListOfInteger& aLs) ;
+                                  const Standard_Integer nF1,
+                                  const Standard_Integer nF2,
+                                  TColStd_ListOfInteger& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsInFace(const Standard_Integer aBid,
-				  const Standard_Integer nF1,
-				  const Standard_Integer nF2,
-				  BOPTools_ListOfPaveBlock& aLs) ;
+                                  const Standard_Integer nF1,
+                                  const Standard_Integer nF2,
+                                  BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsInFace(const Standard_Integer nE1,
-				  const Standard_Integer nF2,
-				  BOPTools_ListOfPaveBlock& aLs) ;
+                                  const Standard_Integer nF2,
+                                  BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsOnEdge(const Standard_Integer nE1,
-				  const Standard_Integer nE2,
-				  BOPTools_ListOfPaveBlock& aLs) ;
+                                  const Standard_Integer nE2,
+                                  BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsOnFace(const Standard_Integer nE1,
-				  const Standard_Integer nF2,
-				  BOPTools_ListOfPaveBlock& aLs) ;
+                                  const Standard_Integer nF2,
+                                  BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsOnFace(const Standard_Integer aBid,
-				  const Standard_Integer nF1,
-				  const Standard_Integer nF2,
-				  BOPTools_ListOfPaveBlock& aLs) ;
+                                  const Standard_Integer nF1,
+                                  const Standard_Integer nF2,
+                                  BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsFace(const Standard_Integer nF2,
-				BOPTools_ListOfPaveBlock& aLs) ;
+                                BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     Standard_Integer SplitsFace(const Standard_Integer nF2,
-				TColStd_ListOfInteger& aLs) ;
+                                TColStd_ListOfInteger& aLs) ;
 
   Standard_EXPORT
     Standard_Integer CommonBlocksFace(const Standard_Integer nF,
-				      NMTTools_ListOfCommonBlock& aLCB) ;
+                                      NMTTools_ListOfCommonBlock& aLCB) ;
 
   Standard_EXPORT
     void PrepareFace(const Standard_Integer nF,
-		     TopoDS_Face& aF) ;
+                     TopoDS_Face& aF) ;
 
   Standard_EXPORT
     const BOPTools_PaveBlock& RealPaveBlock(const BOPTools_PaveBlock& aPB) ;
 
   Standard_EXPORT
     const BOPTools_PaveBlock& RealPaveBlock(const BOPTools_PaveBlock& aPB,
-					    TColStd_ListOfInteger& aLB,
-					    Standard_Integer& aIsCommonBlock) ;
+                                            TColStd_ListOfInteger& aLB,
+                                            Standard_Integer& aIsCommonBlock) ;
 
   Standard_EXPORT
     void RealSplitsFace(const Standard_Integer nF2,
-			BOPTools_ListOfPaveBlock& aLs) ;
+                        BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     Standard_Boolean HasRealSplitsInOnFace(const Standard_Integer nF1,
-					   const Standard_Integer nF2) ;
+                                           const Standard_Integer nF2) ;
 
   Standard_EXPORT
     void RealSplitsInFace(const Standard_Integer aBid,
-			  const Standard_Integer nF1,
-			  const Standard_Integer nF2,
-			  BOPTools_ListOfPaveBlock& aLs) ;
+                          const Standard_Integer nF1,
+                          const Standard_Integer nF2,
+                          BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     void RealSplitsInFace(const Standard_Integer nE1,
-			  const Standard_Integer nF2,
-			  BOPTools_ListOfPaveBlock& aLs) ;
+                          const Standard_Integer nF2,
+                          BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     void RealSplitsInFace(const Standard_Integer nF1,
-			  BOPTools_ListOfPaveBlock& aLPB) ;
+                          BOPTools_ListOfPaveBlock& aLPB) ;
 
   Standard_EXPORT
     void RealSplitsOnEdge(const Standard_Integer nE1,
-			  const Standard_Integer nE2,
-			  BOPTools_ListOfPaveBlock& aLs) ;
+                          const Standard_Integer nE2,
+                          BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     void RealSplitsOnFace(const Standard_Integer nE1,
-			  const Standard_Integer nF2,
-			  BOPTools_ListOfPaveBlock& aLs) ;
+                          const Standard_Integer nF2,
+                          BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     void RealSplitsOnFace(const Standard_Integer aBid,
-			  const Standard_Integer nF1,
-			  const Standard_Integer nF2,
-			  BOPTools_ListOfPaveBlock& aLs) ;
+                          const Standard_Integer nF1,
+                          const Standard_Integer nF2,
+                          BOPTools_ListOfPaveBlock& aLs) ;
 
   Standard_EXPORT
     void PrepareSetForFace(const Standard_Integer nF1,
-			   const Standard_Integer nF2,
-			   const BOPTools_ListOfPaveBlock& aLPB,
-			   BOPTools_PaveSet& aPSF) ;
+                           const Standard_Integer nF2,
+                           const BOPTools_ListOfPaveBlock& aLPB,
+                           BOPTools_PaveSet& aPSF) ;
 
   Standard_EXPORT
     void PutPaveOnCurve(const BOPTools_PaveSet& aPSF,
-			const Standard_Real aTol,
-			BOPTools_Curve& aBC) ;
+                        const Standard_Real aTol,
+                        BOPTools_Curve& aBC) ;
 
   Standard_EXPORT
     void PutBoundPaveOnCurve(BOPTools_Curve& aBC,
-			     BOPTools_SSInterference& aFF) ;
+                             BOPTools_SSInterference& aFF) ;
 
   Standard_EXPORT
     void PutBoundPaveOnCurve(const gp_Pnt& aP,
-			     const Standard_Real aT,
-			     BOPTools_Curve& aBC,
-			     BOPTools_SSInterference& aFF) ;
+                             const Standard_Real aT,
+                             BOPTools_Curve& aBC,
+                             BOPTools_SSInterference& aFF) ;
 
   Standard_EXPORT
     Standard_Boolean FindPave(const gp_Pnt& aP,
-			      const Standard_Real aTpV,
-			      const BOPTools_PaveSet& aPS,
-			      BOPTools_Pave& aPV) ;
+                              const Standard_Real aTpV,
+                              const BOPTools_PaveSet& aPS,
+                              BOPTools_Pave& aPV) ;
 
   Standard_EXPORT
     Standard_Integer CheckIntermediatePoint(const BOPTools_PaveBlock& aPB,
-					    const BOPTools_PaveBlock& aPBR,
-					    const Standard_Real aTol) ;
+                                            const BOPTools_PaveBlock& aPBR,
+                                            const Standard_Real aTol) ;
 
   Standard_EXPORT
     Standard_Boolean IsExistingPaveBlock(const BOPTools_PaveBlock& aPB,
-					 const BOPTools_ListOfPaveBlock& aLPB,
-					 const Standard_Real aTol) ;
+                                         const BOPTools_ListOfPaveBlock& aLPB,
+                                         const Standard_Real aTol) ;
 
   Standard_EXPORT
     void MakePCurves() ;
@@ -320,27 +320,27 @@ class NMTTools_PaveFiller  {
 
   Standard_EXPORT
     Standard_Boolean IsExistingPaveBlock(const BOPTools_PaveBlock& aPB,
-					 const TopTools_ListOfShape& aLPB,
-					 const Standard_Real aTol) ;
+                                         const TopTools_ListOfShape& aLPB,
+                                         const Standard_Real aTol) ;
 
   Standard_EXPORT
     Standard_Boolean CheckCoincidence(const BOPTools_PaveBlock& aPB,
-				      const BOPTools_ListOfPaveBlock& aLPB) ;
+                                      const BOPTools_ListOfPaveBlock& aLPB) ;
 
   Standard_EXPORT
     Standard_Integer CheckIntermediatePoint(const BOPTools_PaveBlock& aPB,
-					    const TopoDS_Edge& aE,
-					    const Standard_Real aTol) ;
+                                            const TopoDS_Edge& aE,
+                                            const Standard_Real aTol) ;
 
   Standard_EXPORT
     void SharedEdges(const Standard_Integer nF1,
-		     const Standard_Integer nF2,
-		     TColStd_ListOfInteger& aLNE,
-		     TopTools_ListOfShape& aLSE) ;
+                     const Standard_Integer nF2,
+                     TColStd_ListOfInteger& aLNE,
+                     TopTools_ListOfShape& aLSE) ;
 
   Standard_EXPORT
     void FuseVertices(const TopoDS_Shape& aC,
-		      TopTools_DataMapOfShapeShape& aDMVV) const;
+                      TopTools_DataMapOfShapeShape& aDMVV) const;
 
   Standard_EXPORT
     void TreatPaveBlocks(NMTTools_ListOfCommonBlock& theLCB) ;
@@ -350,11 +350,11 @@ class NMTTools_PaveFiller  {
 
   Standard_EXPORT
     Standard_Boolean CheckCoincidence(const BOPTools_PaveBlock& aPB1,
-				      const BOPTools_PaveBlock& aPB2) ;
+                                      const BOPTools_PaveBlock& aPB2) ;
 
   Standard_EXPORT
     void PutClosingPaveOnCurve(BOPTools_Curve& aBC,
-			       BOPTools_SSInterference& aFF) ;
+                               BOPTools_SSInterference& aFF) ;
 
  protected:
   Standard_EXPORT
@@ -386,12 +386,12 @@ class NMTTools_PaveFiller  {
 
   Standard_EXPORT
     virtual  void PreparePaveBlocks(const TopAbs_ShapeEnum aType1,
-				    const TopAbs_ShapeEnum aType2) ;
+                                    const TopAbs_ShapeEnum aType2) ;
 
   Standard_EXPORT
     void CorrectShrunkRanges(const Standard_Integer aSide,
-			     const BOPTools_Pave& aPave,
-			     IntTools_ShrunkRange& aSR) ;
+                             const BOPTools_Pave& aPave,
+                             IntTools_ShrunkRange& aSR) ;
 
   Standard_EXPORT
     virtual  void PreparePaveBlocks(const Standard_Integer anE) ;
@@ -401,18 +401,18 @@ class NMTTools_PaveFiller  {
 
   Standard_EXPORT
     Standard_Boolean IsSuccessorsComputed(const Standard_Integer iF1,
-					  const Standard_Integer iF2) const;
+                                          const Standard_Integer iF2) const;
 
   Standard_EXPORT
     Standard_Boolean IsBlocksCoinside(const BOPTools_PaveBlock& aPB1,
-				      const BOPTools_PaveBlock& aPB2) const;
+                                      const BOPTools_PaveBlock& aPB2) const;
 
   Standard_EXPORT
     void RefinePavePool() ;
 
   Standard_EXPORT
     Standard_Integer CheckFacePaves(const TopoDS_Vertex& aV,
-				    const Standard_Integer nF) ;
+                                    const Standard_Integer nF) ;
 
   Standard_EXPORT
     void ReplaceCommonBlocks(const NMTTools_ListOfCommonBlock& aLCB) ;
@@ -437,14 +437,14 @@ class NMTTools_PaveFiller  {
 
   Standard_EXPORT
     void EENewVertices(const TopoDS_Vertex& aV,
-		       const BooleanOperations_IndexedDataMapOfShapeInteger& aM) ;
+                       const BooleanOperations_IndexedDataMapOfShapeInteger& aM) ;
 
   Standard_EXPORT
     void EFNewVertices(const BooleanOperations_IndexedDataMapOfShapeInteger& aM) ;
 
   Standard_EXPORT
      void EFNewVertices(const TopoDS_Vertex& aV,
-			const BooleanOperations_IndexedDataMapOfShapeInteger& aM) ;
+                        const BooleanOperations_IndexedDataMapOfShapeInteger& aM) ;
 
   Standard_EXPORT
     void UpdateCommonBlocks() ;
@@ -472,8 +472,8 @@ class NMTTools_PaveFiller  {
 
   Standard_EXPORT
     void CorrectTolR3D(const BOPTools_SSInterference& aFF,
-		       const TColStd_MapOfInteger& aMVStick,
-		       Standard_Real& aTolR3D) ;
+                       const TColStd_MapOfInteger& aMVStick,
+                       Standard_Real& aTolR3D) ;
 
 
   NMTDS_PShapesDataStructure myDS;

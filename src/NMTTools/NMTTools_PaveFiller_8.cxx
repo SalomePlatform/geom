@@ -694,10 +694,10 @@ static
   void SortPaveBlocks(BOPTools_ListOfPaveBlock &);
 static
   void SortShell(const Standard_Integer,
-		 BOPTools_PaveBlock *);
+                 BOPTools_PaveBlock *);
 static
   Standard_Boolean Less(const BOPTools_PaveBlock &,
-			const BOPTools_PaveBlock &);
+                        const BOPTools_PaveBlock &);
 
 //=======================================================================
 // function: RealSplitsInFace
@@ -721,11 +721,11 @@ static
     for (; aItCB.More(); aItCB.Next()) {
       NMTTools_CommonBlock& aCB=aItCB.ChangeValue();
       if (aCB.IsPaveBlockOnFace(nF)) {
-	const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1();
-	nSpIn=aPB1.Edge();
-	if (aMFence.Add(nSpIn)){
-	  aLPB.Append(aPB1);
-	}
+        const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1();
+        nSpIn=aPB1.Edge();
+        if (aMFence.Add(nSpIn)){
+          aLPB.Append(aPB1);
+        }
       }
     }
   }
@@ -775,7 +775,7 @@ void SortPaveBlocks(BOPTools_ListOfPaveBlock &aLPBIn)
 //purpose  :
 //=======================================================================
 void SortShell(const Standard_Integer n,
-	       BOPTools_PaveBlock *a)
+               BOPTools_PaveBlock *a)
 {
   Standard_Integer nd, i, j, l, d=1;
   BOPTools_PaveBlock x;
@@ -794,11 +794,11 @@ void SortShell(const Standard_Integer n,
       l=j+d;
       if (Less(a[l], a[j])) {
       //if (a[l] < a[j]){
-	x=a[j];
-	a[j]=a[l];
-	a[l]=x;
-	j-=d;
-	if (j > -1) goto m30;
+        x=a[j];
+        a[j]=a[l];
+        a[l]=x;
+        j-=d;
+        if (j > -1) goto m30;
       }//if (a[l] < a[j]){
     }//for (i=0; i<nd; ++i)
   }//while (1)
@@ -809,7 +809,7 @@ void SortShell(const Standard_Integer n,
 //purpose  :
 //=======================================================================
 Standard_Boolean Less(const BOPTools_PaveBlock &aPB1,
-		      const BOPTools_PaveBlock &aPB2)
+                      const BOPTools_PaveBlock &aPB2)
 {
   Standard_Boolean bRet;
   Standard_Integer iE1, iE2;

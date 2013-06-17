@@ -278,7 +278,7 @@ void PrimitiveGUI_CylinderDlg::SelectionIntoArgument()
       disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
       myGeomGUI->getApp()->selectionMgr()->clearSelected();
       connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-	      this, SLOT(SelectionIntoArgument()));
+              this, SLOT(SelectionIntoArgument()));
     }
   }
 

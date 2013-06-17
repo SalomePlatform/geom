@@ -491,9 +491,10 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
   }
 
   // Retrieve default parameters for ALL operators
-  for ( int i = 0; i < myOpList->count(); i++ ) {
-    CORBA::String_var anOperator = CORBA::string_dup( myOpList->item( i )->text().toLatin1().constData() );
-    anOp->GetOperatorParameters( anOperator.in(), aParams, aValues );
+  for ( int i = 0; i < myOpList->count(); i++ )
+  {
+    QString anOperator = myOpList->item( i )->text();
+    anOp->GetOperatorParameters( anOperator.toLatin1().constData(), aParams, aValues );
 
     // set default values of parameters
     if ( aParams->length() != aValues->length() )
@@ -680,8 +681,8 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getActiveOperators()
   anOperators->length( aCheckedList.count() );
 
   for ( int i = 0; i < aCheckedList.count(); i++ )
-    anOperators[i] = CORBA::string_dup( aCheckedList[i].toLatin1().constData() );
-                 
+    anOperators[i] = aCheckedList[i].toLatin1().constData();
+
   return anOperators._retn();
 }
 

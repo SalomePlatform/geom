@@ -17,10 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:	NMRCol_MapIteratorOfMapOfPassKeyBoolean.hxx
-// Created:	Mon Feb 20 08:22:39 2012
-// Author:	
-//		<pkv@BDEURI37616>
+// File:        NMRCol_MapIteratorOfMapOfPassKeyBoolean.hxx
+// Created:     Mon Feb 20 08:22:39 2012
+// Author:      
+//              <pkv@BDEURI37616>
 
 
 #ifndef NMRCol_MapIteratorOfMapOfPassKeyBoolean_HeaderFile

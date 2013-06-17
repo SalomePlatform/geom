@@ -101,7 +101,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   myShowSelWidget = showSelWidget;
   // Set title
   setWindowTitle( tr( "MATERIAL_PROPERTIES_TLT" ) );
-	
+        
   // main layout
   QVBoxLayout* main = new QVBoxLayout( mainFrame() );
   main->setMargin( 0 );
@@ -329,7 +329,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
         if ( window ) {
           int mgrId = window->getViewManager()->getGlobalId();
           PropMap propMap = study->getObjectPropMap( mgrId, io->getEntry() );
-          QString matProp = propMap.value(GEOM::propertyName( GEOM::Material )).toString();	    
+          QString matProp = propMap.value(GEOM::propertyName( GEOM::Material )).toString();         
           if ( !matProp.isEmpty() )
             myCurrentModel.fromProperties( matProp );
           QColor c = propMap.value(GEOM::propertyName( GEOM::Color )).value<QColor>();
@@ -625,10 +625,10 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onChanged()
     // it is no allowed to change global material
     // user is asked about creating of a new user material model based on the currently selected one
     if ( SUIT_MessageBox::question( this,
-				    tr( "GEOM_WRN_WARNING" ),
-				    tr( "QUE_CREATE_NEW_MATERIAL" ),
-				    QMessageBox::Yes | QMessageBox::No,
-				    QMessageBox::Yes ) == QMessageBox::Yes ) {
+                                    tr( "GEOM_WRN_WARNING" ),
+                                    tr( "QUE_CREATE_NEW_MATERIAL" ),
+                                    QMessageBox::Yes | QMessageBox::No,
+                                    QMessageBox::Yes ) == QMessageBox::Yes ) {
       // user has chosen creation of new user model
       onAddMaterial();
     }
@@ -708,10 +708,10 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onDeleteMaterial()
   QListWidgetItem* item = myMaterials->currentItem();
   if ( item && item->data( TypeRole ).toInt() == User ) {
     if ( SUIT_MessageBox::question( this,
-				    tr( "GEOM_WRN_WARNING" ),
-				    tr( "QUE_REMOVE_MATERIAL" ).arg( item->text() ),
-				    QMessageBox::Yes | QMessageBox::No,
-				    QMessageBox::Yes ) == QMessageBox::Yes ) {
+                                    tr( "GEOM_WRN_WARNING" ),
+                                    tr( "QUE_REMOVE_MATERIAL" ).arg( item->text() ),
+                                    QMessageBox::Yes | QMessageBox::No,
+                                    QMessageBox::Yes ) == QMessageBox::Yes ) {
       myResourceMgr.remove( item->data( NameRole ).toString() );
       delete item;
     }
@@ -758,7 +758,7 @@ void GEOMToolsGUI_MaterialPropertiesDlg::SetEditCurrentArgument()
   // enable line edit
   myLineEditCurArg->setEnabled(true);
   myLineEditCurArg->setFocus();
-	SelectionIntoArgument();
+        SelectionIntoArgument();
   // after setFocus(), because it will be setDown(false) when loses focus
   send->setDown(true);
   }
@@ -778,7 +778,7 @@ void GEOMToolsGUI_MaterialPropertiesDlg::SelectionIntoArgument()
   if ( study ) {
     SALOME_ListIO aSelList;
     aSelMgr->selectedObjects(aSelList);
-		int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
-	}
+                int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
+        }
   myLineEditCurArg->setText( aString );
 }

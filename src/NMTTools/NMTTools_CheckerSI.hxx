@@ -61,7 +61,7 @@ class NMTTools_CheckerSI  : public NMTTools_PaveFiller
 
   Standard_EXPORT
     virtual  void PreparePaveBlocks(const TopAbs_ShapeEnum aType1,
-				    const TopAbs_ShapeEnum aType2) ;
+                                    const TopAbs_ShapeEnum aType2) ;
 
 
   Standard_Integer myStopStatus;

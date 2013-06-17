@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_ListOfPair.hxx
-// Created:	Mon Feb 20 07:27:34 2012
-// Author:	
-//		<pkv@BDEURI37616>
+// File:        NMTDS_ListOfPair.hxx
+// Created:     Mon Feb 20 07:27:34 2012
+// Author:      
+//              <pkv@BDEURI37616>
 
 
 #ifndef NMTDS_ListOfPair_HeaderFile

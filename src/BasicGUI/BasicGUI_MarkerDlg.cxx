@@ -394,19 +394,19 @@ void BasicGUI_MarkerDlg::onSelectionDone()
     }
     else if ( getConstructorId() == 2 ) { // by point and two vectors
       if ( myEditCurrentArgument == Group2->LineEdit1 ) {
-	myPoint = aSelectedObject;
-	if (myPoint && !myVectorX)
-	  Group2->PushButton2->click();
+        myPoint = aSelectedObject;
+        if (myPoint && !myVectorX)
+          Group2->PushButton2->click();
       }
       else if (myEditCurrentArgument == Group2->LineEdit2) {
-	myVectorX = aSelectedObject;
-	if (myVectorX && !myVectorY)
-	  Group2->PushButton3->click();
+        myVectorX = aSelectedObject;
+        if (myVectorX && !myVectorY)
+          Group2->PushButton3->click();
       }
       else if ( myEditCurrentArgument == Group2->LineEdit3 ) {
-	myVectorY = aSelectedObject;
-	if (myVectorY && !myPoint)
-	  Group2->PushButton1->click();
+        myVectorY = aSelectedObject;
+        if (myVectorY && !myPoint)
+          Group2->PushButton1->click();
       }
     }
   }
@@ -531,7 +531,7 @@ bool BasicGUI_MarkerDlg::isValid( QString& msg )
     if ( v1.Magnitude() > gp::Resolution() && v2.Magnitude() > gp::Resolution() ) {
       ok = !v1.IsParallel( v2, Precision::Angular() );
       if ( !ok )
-	msg += tr( "VEC_PARALLEL" );
+        msg += tr( "VEC_PARALLEL" );
     }
     for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end() && ok; ++anIter )
       ok = anIter.value()->isValid( msg, !IsPreview()) && ok;

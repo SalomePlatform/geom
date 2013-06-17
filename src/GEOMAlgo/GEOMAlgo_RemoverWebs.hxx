@@ -68,7 +68,7 @@ protected:
 
   Standard_EXPORT
     static void AddInternalShapes(const TopTools_ListOfShape& ,
-				  const TopTools_IndexedMapOfShape& );
+                                  const TopTools_IndexedMapOfShape& );
   //
 };
 

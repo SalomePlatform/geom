@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_MapIteratorOfMapOfPaveBlock.hxx
-// Created:	Mon Feb 20 11:47:30 2012
+// File:        NMTTools_MapIteratorOfMapOfPaveBlock.hxx
+// Created:     Mon Feb 20 11:47:30 2012
 // Author:
-//		<pkv@BDEURI37616>
+//              <pkv@BDEURI37616>
 
 
 #ifndef NMTTools_MapIteratorOfMapOfPaveBlock_HeaderFile

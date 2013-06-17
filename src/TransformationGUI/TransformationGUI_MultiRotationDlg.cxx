@@ -284,19 +284,19 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
       }
 
       if ( !myVector )
-	GroupArgs->PushButton2->click();
+        GroupArgs->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupArgs->LineEdit2 ) {
       myVector = aSelectedObject;
       if ( !myBase )
-	GroupArgs->PushButton1->click();
+        GroupArgs->PushButton1->click();
     }
     
     // clear selection
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     myGeomGUI->getApp()->selectionMgr()->clearSelected();
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-	    this, SLOT(SelectionIntoArgument()));
+            this, SLOT(SelectionIntoArgument()));
   }
   else {
     if ( myEditCurrentArgument == GroupArgs->LineEdit1 )

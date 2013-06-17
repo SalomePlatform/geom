@@ -125,7 +125,7 @@ Standard_Integer NMTDS_Iterator::BlockLength() const
 // purpose: 
 //=======================================================================
 void NMTDS_Iterator::Initialize(const TopAbs_ShapeEnum aType1,
-				const TopAbs_ShapeEnum aType2)
+                                const TopAbs_ShapeEnum aType2)
 {
   Standard_Integer iX;
   //
@@ -160,8 +160,8 @@ void NMTDS_Iterator::Next()
 // purpose: 
 //=======================================================================
 void NMTDS_Iterator::Current(Standard_Integer& aIndex1,
-			     Standard_Integer& aIndex2,
-			     Standard_Boolean& aWithSubShape) const
+                             Standard_Integer& aIndex2,
+                             Standard_Boolean& aWithSubShape) const
 {
   const NMTDS_PairBoolean& aPKB=myIterator.Value();
   aPKB.Ids(aIndex1, aIndex2);
@@ -323,11 +323,11 @@ void NMTDS_Iterator::Intersect()
             aMPKXB.Remove(aPKXB);
           }
         }
-	//
-	aNbLV1=aLV1.Extent();
-	if (aNbLV1) {
-	  aMVSD.Bind(i, aLV1);
-	}
+        //
+        aNbLV1=aLV1.Extent();
+        if (aNbLV1) {
+          aMVSD.Bind(i, aLV1);
+        }
       }
     }//for (i=i1; i<=i2; ++i) {
   }//for (iR=1; iR<aNbR; ++iR) {
@@ -348,7 +348,7 @@ void NMTDS_Iterator::Intersect()
 //purpose  : 
 //=======================================================================
 void NMTDS_Iterator::FillMVSD(const TColStd_DataMapOfIntegerListOfInteger& aMVSD,
-			      TColStd_DataMapOfIntegerListOfInteger& bMVSD)
+                              TColStd_DataMapOfIntegerListOfInteger& bMVSD)
 {
   Standard_Boolean bFound;
   Standard_Integer aNbVSD, iCnt, i, j, k;

@@ -82,31 +82,31 @@ protected:
 
   Standard_EXPORT
     void FindPaveBlocks(const Standard_Integer nED,
-			const Standard_Integer nVD,
-			const Standard_Integer nFD,
-			BOPTools_ListOfPaveBlock& aLPB) ;
+                        const Standard_Integer nVD,
+                        const Standard_Integer nFD,
+                        BOPTools_ListOfPaveBlock& aLPB) ;
 
   Standard_EXPORT
     void FillPaveSet(const Standard_Integer nED,
-		     const Standard_Integer nVD,
-		     const Standard_Integer nFD,
-		     const BOPTools_ListOfPaveBlock& aLPB) ;
+                     const Standard_Integer nVD,
+                     const Standard_Integer nFD,
+                     const BOPTools_ListOfPaveBlock& aLPB) ;
 
   Standard_EXPORT
     void FillSplitEdgesPool(const Standard_Integer nED) ;
 
   Standard_EXPORT
     void MakeSplitEdges(const Standard_Integer nED,
-			const Standard_Integer nFD) ;
+                        const Standard_Integer nFD) ;
 
   Standard_EXPORT
     void MakeSplitEdge(const TopoDS_Edge& aS1,
-		       const TopoDS_Face& aF,
-		       const TopoDS_Vertex& aV1,
-		       const Standard_Real aP1,
-		       const TopoDS_Vertex& aV2,
-		       const Standard_Real aP2,
-		       TopoDS_Edge& aNewEdge) ;
+                       const TopoDS_Face& aF,
+                       const TopoDS_Vertex& aV1,
+                       const Standard_Real aP1,
+                       const TopoDS_Vertex& aV2,
+                       const Standard_Real aP2,
+                       TopoDS_Edge& aNewEdge) ;
 
 
   NMTTools_PPaveFiller myFiller;

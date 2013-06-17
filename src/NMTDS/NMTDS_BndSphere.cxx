@@ -17,10 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:	NMTDS_BndSphere.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_BndSphere.cxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTDS_BndSphere.hxx>
 

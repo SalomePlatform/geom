@@ -16,10 +16,10 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx
-// Created:	Wed Feb 22 11:16:54 2012
+// File:        GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx
+// Created:     Wed Feb 22 11:16:54 2012
 // Author:
-//		<pkv@BDEURI37616>
+//              <pkv@BDEURI37616>
 
 
 #ifndef GEOMAlgo_IndexedDataMapOfShapeShapeInfo_HeaderFile

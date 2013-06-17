@@ -46,7 +46,7 @@ public:
   static GEOM_VTKPropertyMaterial*  New();
 
 protected:
-  bool   		            Physical;
+  bool                              Physical;
 };
 
 #endif

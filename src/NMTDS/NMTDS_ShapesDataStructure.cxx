@@ -372,8 +372,8 @@ void GetAllSuccessorsS(const Standard_Integer nS,
 // purpose: 
 //=======================================================================
 void ComputeBoxExS(const Standard_Integer aIx,
-		   const NMTDS_ShapesDataStructure* pDS,
-		   Bnd_Box& aBoxEx)
+                   const NMTDS_ShapesDataStructure* pDS,
+                   Bnd_Box& aBoxEx)
 {
   Standard_Integer i, aNbS, iS;
   //
