@@ -60,7 +60,7 @@ class Sketcher3D:
     #  Coordinates are considered as absolute.
     #  If the first point of sketcher is not yet defined, the first point
     #  from the listCoords will become the first sketcher point.
-    #  @param X1, Y1, Z1, X2, Y2, Z2, ... Coordinates of points
+    #  @param listCoords X1, Y1, Z1, X2, Y2, Z2, ... Coordinates of points
     def addPointsAbsolute (self, *listCoords):
         """
         Add one or more points, sequentially connected with straight segments.
@@ -91,7 +91,7 @@ class Sketcher3D:
     #  Coordinates are considered relative to the previous point.
     #  If the first point of sketcher is not yet defined, the
     #  origin (0, 0, 0) will become the first sketcher point.
-    #  @param X1, Y1, Z1, X2, Y2, Z2, ... Coordinates of points
+    #  @param listCoords X1, Y1, Z1, X2, Y2, Z2, ... Coordinates of points
     def addPointsRelative (self, *listCoords):
         """
         Add one or more points, sequentially connected with straight segments.
@@ -187,7 +187,7 @@ class Sketcher3D:
     #  @param axes can be: "OXY", "OYZ" or "OXZ"
     #  @param angle angle in a plane, defined by the \a axes
     #  @param height height from the plane, defined by the \a axes
-    #  @param radius distance to the coordinate system origin
+    #  @param length distance to the coordinate system origin
     def addPointRadiusAngleHRelative (self, length, angle, height, axes="OXY"):
         """
         Add one straight segment, defined by two angles and length.

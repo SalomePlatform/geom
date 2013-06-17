@@ -139,7 +139,7 @@
 ## - Sub-shapes are automatically published as child items of the parent main shape in the study if main
 ##   shape was also published before. Otherwise, sub-shapes are published as top-level objects.
 ## - Not that some functions of \ref geomBuilder.geomBuilder "geomBuilder" class do not have
-##   @theName parameter (and, thus, do not support automatic publication).
+##   \a theName parameter (and, thus, do not support automatic publication).
 ##   For example, some transformation operations like
 ##   \ref geomBuilder.geomBuilder.TranslateDXDYDZ() "TranslateDXDYDZ()".
 ##   Refer to the documentation to check if some function has such possibility.
@@ -9595,6 +9595,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 pass
             return aDict
 
+        def GetCreationInformation(self, theShape):
+            info = theShape.GetCreationInformation()
+            # operationName
+            opName = info.operationName
+            if not opName: opName = "no info available"
+            res = "Operation: " + opName
+            # parameters
+            for parVal in info.params:
+                res += " \n %s = %s" % ( parVal.name, parVal.value )
+            return res
+
         ## Get a point, situated at the centre of mass of theShape.
         #  @param theShape Shape to define centre of mass of.
         #  @param theName Object name; when specified, this parameter is used
@@ -11415,10 +11426,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Cut of lists of groups.
         #  New group is created. It will contain only entities
-        #  which are present in groups listed in theGList1 but 
-        #  are not present in groups from theGList2.
-        #  @param theGList1 is a list of GEOM groups to include elements of.
-        #  @param theGList2 is a list of GEOM groups to exclude elements of.
+        #  which are present in groups listed in theGList.
+        #  @param theGList is a list of GEOM groups to include elements of.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -11430,12 +11439,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Cut of lists of groups.
             New group is created. It will contain only entities
-            which are present in groups listed in theGList1 but 
-            are not present in groups from theGList2.
+            which are present in groups listed in theGList.
 
             Parameters:
-                theGList1 is a list of GEOM groups to include elements of.
-                theGList2 is a list of GEOM groups to exclude elements of.
+                theGList is a list of GEOM groups to include elements of.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -12218,18 +12225,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeDividedCylinder", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "dividedCylinder")
-            return anObj
-
-        ## 
-        #  @param thelPoints list of  points
-        #  @return New GEOM_Object, containing the created shape.
-        #
-        #  @ref tui_creation_smoothingsurface "Example"
-        def MakeSmoothingSurface(self, thelPoints):
-            thelPoints, Parameters = ParseParameters(thelPoints)
-            anObj = self.AdvOp.MakeSmoothingSurface(thelPoints)
-            RaiseIfFailed("MakeSmoothingSurface", self.AdvOp)
-            if Parameters: anObj.SetParameters(Parameters)
             return anObj
 
         #@@ insert new functions before this line @@ do not remove this line @@#
