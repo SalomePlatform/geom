@@ -20,26 +20,30 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#include "GEOM_Object_i.hh"
+
+#include "GEOM_ISubShape.hxx"
+#include "GEOMImpl_Types.hxx"
+#include "GEOM_BaseDriver.hxx"
+
+#include <utilities.h>
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
+
+#include <BRepTools.hxx>
+#include <BRepTools_ShapeSet.hxx>
 #include <Standard_OStream.hxx>
+#include <TCollection_AsciiString.hxx>
+#include <TDF_Label.hxx>
+#include <TDF_Tool.hxx>
+#include <TopAbs.hxx>
+#include <TopoDS_Iterator.hxx>
 
-#include <GEOM_Object_i.hh>
-#include <GEOM_ISubShape.hxx>
-#include <GEOMImpl_Types.hxx>
-
-#include "utilities.h"
 #include <fstream>
 #include <sstream>
 
-#include <OpUtil.hxx>
-#include <Utils_ExceptHandlers.hxx>
-#include <TDF_Tool.hxx>
-#include <TDF_Label.hxx>
-#include <TCollection_AsciiString.hxx>
-
-#include <BRepTools_ShapeSet.hxx>
-#include <BRepTools.hxx>
-#include <TopAbs.hxx>
-#include <TopoDS_Iterator.hxx>
+#include <Standard_Failure.hxx>
+#include <Standard_ErrorHandler.hxx>
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -521,3 +525,36 @@ char* GEOM_Object_i::GetParameters()
   return CORBA::string_dup(_impl->GetParameters().ToCString());
 }
 
+GEOM::CreationInformation* GEOM_Object_i::GetCreationInformation()
+{
+  GEOM::CreationInformation_var info = new GEOM::CreationInformation;
+
+  Handle(GEOM_BaseDriver) driver =
+    Handle(GEOM_BaseDriver)::DownCast( _impl->GetCreationDriver() );
+  if ( !driver.IsNull() )
+  {
+    std::vector<GEOM_Param> params;
+    std::string             operationName;
+    try
+    {
+      OCC_CATCH_SIGNALS;
+      if ( driver->GetCreationInformation( operationName, params ))
+      {
+        info->operationName = operationName.c_str();
+        info->params.length( params.size() );
+        for ( size_t i = 0; i < params.size(); ++i )
+        {
+          info->params[i].name  = params[i].name.c_str();
+          info->params[i].value = params[i].value.c_str();
+        }
+      }
+    }
+    catch(...)
+    {
+#ifdef _DEBUG_
+      cout << "Ecxeption in GEOM_Object_i::GetCreationInformation()" << endl;
+#endif
+    }
+  }
+  return info._retn();
+}

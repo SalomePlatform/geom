@@ -69,16 +69,16 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual CORBA::Boolean GetAutoColor();
 
-  void SetMarkerStd(GEOM::marker_type theType, GEOM::marker_size theSize);
-  
-  void SetMarkerTexture(CORBA::Long theTextureId);
-  
-  GEOM::marker_type GetMarkerType();
+  virtual void SetMarkerStd(GEOM::marker_type theType, GEOM::marker_size theSize);
 
-  GEOM::marker_size GetMarkerSize();
+  virtual void SetMarkerTexture(CORBA::Long theTextureId);
 
-  CORBA::Long GetMarkerTexture();
-  
+  virtual GEOM::marker_type GetMarkerType();
+
+  virtual GEOM::marker_size GetMarkerSize();
+
+  virtual CORBA::Long GetMarkerTexture();
+
   virtual void SetStudyEntry(const char* theEntry);
 
   virtual char* GetStudyEntry();
@@ -104,6 +104,8 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
   virtual void SetParameters(const char* theParameters);
 
   virtual char* GetParameters();
+
+  virtual GEOM::CreationInformation* GetCreationInformation();
 
   Handle(GEOM_Object) GetImpl() { return _impl; }
 
