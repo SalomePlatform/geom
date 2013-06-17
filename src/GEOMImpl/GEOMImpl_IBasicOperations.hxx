@@ -44,8 +44,8 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                                         double theParameter);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByLength (Handle(GEOM_Object) theCurve,
-								double              theLength,
-								Handle(GEOM_Object) theStartPoint);
+                                                                double              theLength,
+                                                                Handle(GEOM_Object) theStartPoint);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByCoord (Handle(GEOM_Object) theCurve,
                                                                double theXParam,
@@ -107,7 +107,7 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeMarker (double theOX,  double theOY,  double theOZ,
                                   double theXDX, double theXDY, double theXDZ,
                                   double theYDX, double theYDY, double theYDZ);
-				  
+                                  
   Standard_EXPORT Handle(GEOM_Object) MakeMarkerFromShape (const Handle(GEOM_Object)& theShape);
   
   Standard_EXPORT Handle(GEOM_Object) MakeMarkerPntTwoVec (const Handle(GEOM_Object)& theOrigin,
@@ -139,7 +139,7 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                        double theParam2,
                                        double theParam3,
                                        const PointLocation theLocation,
-				       Handle(GEOM_Object) theRefPoint = 0);
+                                       Handle(GEOM_Object) theRefPoint = 0);
 };
 
 #endif

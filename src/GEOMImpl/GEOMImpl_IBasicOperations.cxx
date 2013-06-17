@@ -194,7 +194,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
                      double theParam2,
                      double theParam3,
                      const PointLocation theLocation,
-		     Handle(GEOM_Object) theRefPoint)
+                     Handle(GEOM_Object) theRefPoint)
 {
   SetErrorCode(KO);
 
@@ -208,7 +208,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
   switch( theLocation )
     {
     case PointOn_CurveByParam:   fType = POINT_CURVE_PAR; break;
-    case PointOn_CurveByLength:  fType = POINT_CURVE_LENGTH; break; 				 
+    case PointOn_CurveByLength:  fType = POINT_CURVE_LENGTH; break;                              
     case PointOn_CurveByCoord:   fType = POINT_CURVE_COORD; break;
     case PointOn_SurfaceByParam: fType = POINT_SURFACE_PAR; break;
     case PointOn_SurfaceByCoord: fType = POINT_SURFACE_COORD; break;
@@ -347,8 +347,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByCoord
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByLength
                     (Handle(GEOM_Object) theCurve, 
-		     double              theLength, 
-		     Handle(GEOM_Object) theStartPoint)
+                     double              theLength, 
+                     Handle(GEOM_Object) theStartPoint)
 {
   return makePointOnGeom(theCurve, theLength, 0.0, 0.0, PointOn_CurveByLength, theStartPoint);
 }
