@@ -49,7 +49,7 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                                                   std::list<std::string>& theValues );
 
   // Retrieve default Shape Process parameters for given operator
-  Standard_EXPORT bool GetOperatorParameters( const std::string theOperation,
+  Standard_EXPORT bool GetOperatorParameters( const std::string&      theOperation,
                                               std::list<std::string>& theParams,
                                               std::list<std::string>& theValues );
 

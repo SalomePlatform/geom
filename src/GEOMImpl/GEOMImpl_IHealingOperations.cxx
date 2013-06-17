@@ -227,7 +227,7 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (std::list<std::stri
  *  GetOperatorParameters
  */
 //=============================================================================
-bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOperation,
+bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string &     theOperation,
                                                          std::list<std::string>& theParams,
                                                          std::list<std::string>& theValues )
 {
