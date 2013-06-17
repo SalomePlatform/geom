@@ -24,6 +24,7 @@
 // Author:      Peter KURNEV
 
 #include <NMTTools_PaveFiller.hxx>
+#include <NMTTools_Tools.hxx>
 
 #include <Bnd_HArray1OfBox.hxx>
 #include <Bnd_BoundSortBox.hxx>
@@ -108,7 +109,7 @@ void NMTTools_PaveFiller::MakeSplitEdges()
     //
     // Original Edge
     aE=TopoDS::Edge(myDS->Shape(i));
-    if (BRep_Tool::Degenerated(aE)){
+    if (NMTTools_Tools::IsDegenerated(aE)){
       continue;
     }
     //
@@ -198,7 +199,7 @@ void NMTTools_PaveFiller::UpdateCommonBlocks(const Standard_Integer)
     }
     //
     const TopoDS_Edge& aE=*((TopoDS_Edge*)&myDS->Shape(nE));
-    if (BRep_Tool::Degenerated(aE)){
+    if (NMTTools_Tools::IsDegenerated(aE)){
       continue;
     }
     //
@@ -371,7 +372,7 @@ void NMTTools_PaveFiller::UpdateCommonBlocks()
     if (myDS->GetShapeType(nE)!=TopAbs_EDGE){
       continue;
     }
-    if (BRep_Tool::Degenerated(TopoDS::Edge(myDS->Shape(nE)))){
+    if (NMTTools_Tools::IsDegenerated(TopoDS::Edge(myDS->Shape(nE)))){
       continue;
     }
     //
@@ -489,7 +490,7 @@ void NMTTools_PaveFiller::UpdatePaveBlocks()
     for(; aExp.More();  aExp.Next()) {
       aE=TopoDS::Edge(aExp.Current());
       //
-      if (BRep_Tool::Degenerated(aE)) {
+      if (NMTTools_Tools::IsDegenerated(aE)) {
         continue;
       }
       //

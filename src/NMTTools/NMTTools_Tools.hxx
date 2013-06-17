@@ -95,5 +95,8 @@ class NMTTools_Tools  {
     static  void UpdateEdge(const TopoDS_Edge& aE,
 			    const Standard_Real aTol) ;
 
+  Standard_EXPORT
+    static Standard_Boolean IsDegenerated(const TopoDS_Edge &theEdge);
+
 };
 #endif

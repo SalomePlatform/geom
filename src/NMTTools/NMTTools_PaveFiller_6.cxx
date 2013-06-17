@@ -782,7 +782,7 @@ void NMTTools_PaveFiller::MakePCurves()
     }
     const TopoDS_Edge& aE=TopoDS::Edge(aS);
     //
-    if (BRep_Tool::Degenerated(aE)) {
+    if (NMTTools_Tools::IsDegenerated(aE)) {
       continue;
     }
     //

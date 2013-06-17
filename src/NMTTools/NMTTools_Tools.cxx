@@ -73,6 +73,7 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <Precision.hxx>
 
 static
   void ProcessBlock(const Standard_Integer iV,
@@ -611,4 +612,40 @@ void ProcessBlock(const TopoDS_Shape& aF,
     const TopoDS_Shape& aFx=aMV(j);
     ProcessBlock(aFx, aMCV, aProcessed, aChain);
   }
+}
+
+//=======================================================================
+// function: IsDegenerated
+// purpose :
+//=======================================================================
+Standard_Boolean NMTTools_Tools::IsDegenerated(const TopoDS_Edge &theEdge)
+{
+  Standard_Boolean aResult = BRep_Tool::Degenerated(theEdge);
+
+  if (!aResult) {
+    // Check if there is a null-length 3d curve.
+    Standard_Real aF;
+    Standard_Real aL;
+    Handle(Geom_Curve) aCrv = BRep_Tool::Curve(theEdge, aF, aL);
+
+    aResult = aCrv.IsNull();
+
+    if (!aResult) {
+      const Standard_Real aTolConf2 =
+          Precision::Confusion()*Precision::Confusion();
+      gp_Pnt aPnt[2] = { aCrv->Value(aF), aCrv->Value(aL) };
+
+      if (aPnt[0].SquareDistance(aPnt[1]) <= aTolConf2) {
+        // Check the middle point.
+        const gp_Pnt aPMid = aCrv->Value(0.5*(aF + aL));
+
+        if (aPnt[0].SquareDistance(aPMid) <= aTolConf2) {
+          // 3D curve is degenerated.
+          aResult = Standard_True;
+        }
+      }
+    }
+  }
+
+  return aResult;
 }

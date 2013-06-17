@@ -24,6 +24,7 @@
 //  Author:      Peter KURNEV
 
 #include <NMTTools_PaveFiller.hxx>
+#include <NMTTools_Tools.hxx>
 
 #include <stdio.h>
 #include <Precision.hxx>
@@ -184,7 +185,8 @@ void NMTTools_PaveFiller::PerformEE()
     const TopoDS_Edge aE1=TopoDS::Edge(myDS->Shape(nE1));//mpv
     const TopoDS_Edge aE2=TopoDS::Edge(myDS->Shape(nE2));//mpv
     //
-    if (BRep_Tool::Degenerated(aE1) || BRep_Tool::Degenerated(aE2)){
+    if (NMTTools_Tools::IsDegenerated(aE1) ||
+        NMTTools_Tools::IsDegenerated(aE2)){
       continue;
     }
     //
@@ -955,7 +957,7 @@ void NMTTools_PaveFiller::PreparePaveBlocks(const Standard_Integer nE)
   BOPTools_ListOfPaveBlock& aLPB=mySplitShapesPool(myDS->RefEdge(nE));
   // Edge
   aE=TopoDS::Edge(myDS->Shape(nE));
-  if (BRep_Tool::Degenerated(aE)) {
+  if (NMTTools_Tools::IsDegenerated(aE)) {
     myIsDone=Standard_True;
     return;
   }

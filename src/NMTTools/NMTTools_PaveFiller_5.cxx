@@ -74,6 +74,7 @@
 #include <BOPTools_ESInterference.hxx>
 #include <BOPTools_IDMapOfPaveBlockIMapOfInteger.hxx>
 #include <BOPTools_IMapOfPaveBlock.hxx>
+#include <BRepTools.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_Iterator.hxx>
@@ -84,6 +85,7 @@
 #include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
 #include <NMTTools_CommonBlockAPI.hxx>
 #include <NMTTools_ListOfCommonBlock.hxx>
+#include <NMTTools_Tools.hxx>
 
 
 static
@@ -146,7 +148,7 @@ static
     //
     // Edge
     const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));
-    if (BRep_Tool::Degenerated(aE)){
+    if (NMTTools_Tools::IsDegenerated(aE)){
       continue;
     }
     //
@@ -199,6 +201,8 @@ static
       BOPTools_Tools::CorrectRange(aE, aF, aSR, anewSR);
       aEF.SetRange (anewSR);
       //
+      BRepTools::Write(aE, "/dn20/salome/skv/SALOME/scripts/Dumps/edge");
+      BRepTools::Write(aF, "/dn20/salome/skv/SALOME/scripts/Dumps/face");
       aEF.Perform();
       //
       if (aEF.IsDone()) {

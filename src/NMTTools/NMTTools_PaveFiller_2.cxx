@@ -27,6 +27,7 @@
 #include <Standard_Version.hxx>
 
 #include <NMTTools_PaveFiller.hxx>
+#include <NMTTools_Tools.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -117,7 +118,7 @@ void NMTTools_PaveFiller::PerformVE()
       }
       // Edge
       aE2=TopoDS::Edge(myDS->Shape(aWith));
-      if (BRep_Tool::Degenerated(aE2)){
+      if (NMTTools_Tools::IsDegenerated(aE2)){
         continue;
       }
       // Vertex
@@ -221,7 +222,7 @@ void NMTTools_PaveFiller::PrepareEdges()
     if (myDS->GetShapeType(i)==TopAbs_EDGE) {
       aE=TopoDS::Edge(myDS->Shape(i));
       //
-      if (BRep_Tool::Degenerated(aE)){
+      if (NMTTools_Tools::IsDegenerated(aE)){
         continue;
       }
       //
