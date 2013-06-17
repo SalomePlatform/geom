@@ -190,6 +190,25 @@ module GEOM
     HEXAGON
   };
 
+ /*!
+   * \brief Object creation parameters
+   *
+   * Is returned by GEOM_Object::GetCreationInformation()
+   */
+  struct Parameter
+  {
+    string name;
+    //any value;
+    string value;
+  };
+  typedef sequence<Parameter> Parameters;
+
+  struct CreationInformation
+  {
+    string     operationName;
+    Parameters params;
+  };
+
 
   typedef sequence<string>      string_array;
   typedef sequence<short>       short_array;
@@ -410,9 +429,14 @@ module GEOM
      *  \brief Return list of notebook variables used for object creation separated by ":" symbol
      */
     string GetParameters();
+
+    /*!
+     * \brief Return name of operation and values of parameters used for object creation
+     */
+    CreationInformation GetCreationInformation();
   };
 
- // # GEOM_IOperations:
+  // # GEOM_IOperations:
   /*!
    *  \brief Basic methods of all geometric operations
    */
@@ -1546,6 +1570,7 @@ module GEOM
      *  \brief Make a thick solid from a surface shape (face or shell)
      *  \param theObject Surface from which the thick solid is made
      *  \param theThickness Value of the thickness
+     *  \param isCopy To make a copy of \a theObject ot to modify \a theObject.
      *  \return New GEOM_Object, containing the created pipe if isCopy = true
      *          or the modified object if isCopy = false
      */
@@ -4372,6 +4397,7 @@ module GEOM
      *  \param theR Radius of the disk
      *  \param theRatio Relative size of the central square diagonal against the disk diameter
      *  \param theOrientation Plane on which the disk will be built
+     *  \param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
      *  \return New GEOM_Object, containing the created shape.
      */
     GEOM_Object MakeDividedDisk (in double theR, 
@@ -4385,6 +4411,7 @@ module GEOM
      *  \param theVec Vector, normal to the plane of the disk.
      *  \param theR Disk radius.
      *  \param theRatio Relative size of the central square diagonal against the disk diameter
+     *  \param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
      *  \return New GEOM_Object, containing the created disk.
      */
     GEOM_Object MakeDividedDiskPntVecR ( in GEOM_Object thePnt,
@@ -4397,12 +4424,12 @@ module GEOM
      *  Builds a cylinder prepared for hexa meshes
      *  \param theR Radius of the cylinder
      *  \param theH Height of the cylinder
+     *  \param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
      *  \return New GEOM_Object, containing the created shape.
      */
     GEOM_Object MakeDividedCylinder (in double theR, 
                                      in double theH,
                                      in pattern thePattern );
-
     /*!
      *  
      *  Create a smoothing surface from a set of points
