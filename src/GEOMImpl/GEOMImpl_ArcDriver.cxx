@@ -162,45 +162,48 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_ArcDriver_Type_
-//purpose  :
-//======================================================================= 
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_ArcDriver_Type_()
+bool GEOMImpl_ArcDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared); 
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+  GEOMImpl_IArc aCI( function );
+  Standard_Integer aType = function->GetType();
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_ArcDriver",
-                                                         sizeof(GEOMImpl_ArcDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
+  theOperationName = "ARC";
 
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//======================================================================= 
-const Handle(GEOMImpl_ArcDriver) Handle(GEOMImpl_ArcDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_ArcDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_ArcDriver))) {
-       _anOtherObject = Handle(GEOMImpl_ArcDriver)((Handle(GEOMImpl_ArcDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case CIRC_ARC_THREE_PNT:
+    AddParam( theParams, "Point 1", aCI.GetPoint1() );
+    AddParam( theParams, "Point 2", aCI.GetPoint2() );
+    AddParam( theParams, "Point 3", aCI.GetPoint3() );
+    break;
+  case CIRC_ARC_CENTER:
+    AddParam( theParams, "Center Point", aCI.GetPoint1() );
+    AddParam( theParams, "Point Start", aCI.GetPoint2() );
+    AddParam( theParams, "Point End", aCI.GetPoint3() );
+    AddParam( theParams, "Reverse", aCI.GetSense() );
+    break;
+  case ELLIPSE_ARC_CENTER_TWO_PNT:
+    AddParam( theParams, "Center Point", aCI.GetPoint1() );
+    AddParam( theParams, "Point 1", aCI.GetPoint2() );
+    AddParam( theParams, "Point 2", aCI.GetPoint3() );
+    break;
+  default:
+    return false;
   }
-
-  return _anOtherObject ;
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_ArcDriver,GEOM_BaseDriver);
+
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ArcDriver,GEOM_BaseDriver);

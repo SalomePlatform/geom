@@ -202,42 +202,41 @@ Standard_Integer GEOMImpl_PipePathDriver::Execute (TFunction_Logbook& log) const
   return 1;
 }
 
-//=======================================================================
-//function :  GEOMImpl_PipePathDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_PipePathDriver_Type_()
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
+
+bool GEOMImpl_PipePathDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if (aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if (aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if (aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PipePathDriver",
-                                                         sizeof(GEOMImpl_PipePathDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
+  GEOMImpl_IPipePath aCI( function );
+  Standard_Integer aType = function->GetType();
 
-  return _aType;
-}
+  theOperationName = "PIPE_PATH";
 
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_PipePathDriver) Handle(GEOMImpl_PipePathDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_PipePathDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_PipePathDriver))) {
-       _anOtherObject = Handle(GEOMImpl_PipePathDriver)((Handle(GEOMImpl_PipePathDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case PIPE_PATH_TWO_BASES:
+    AddParam( theParams, "Pipe-like object", aCI.GetShape() );
+    AddParam( theParams, "First base", aCI.GetBase1() );
+    AddParam( theParams, "Second base", aCI.GetBase2() );
+    break;
+  case PIPE_PATH_TWO_SEQS:
+    AddParam( theParams, "Pipe-like object", aCI.GetShape() );
+    AddParam( theParams, "First bases", aCI.GetBaseSeq1() );
+    AddParam( theParams, "Second bases", aCI.GetBaseSeq2() );
+    break;
+  default:
+    return false;
   }
-
-  return _anOtherObject;
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PipePathDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PipePathDriver,GEOM_BaseDriver);

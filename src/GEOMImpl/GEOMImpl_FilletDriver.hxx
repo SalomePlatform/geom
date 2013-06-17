@@ -47,68 +47,6 @@
 #include <Standard_GUID.hxx>
 #endif 
 
-#ifndef _Handle_TFunction_Driver_HeaderFile
-#include <Handle_TFunction_Driver.hxx>
-#endif
-
-class Standard_Transient;
-class Handle_Standard_Type;
-class Handle(TFunction_Driver);
-class GEOMImpl_FilletDriver;
-
-Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_FilletDriver);
-
-class Handle(GEOMImpl_FilletDriver) : public Handle(TFunction_Driver) {
-  public:
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
-
-    Handle(GEOMImpl_FilletDriver)():Handle(TFunction_Driver)() {} 
-    Handle(GEOMImpl_FilletDriver)(const Handle(GEOMImpl_FilletDriver)& aHandle) : Handle(TFunction_Driver)(aHandle) 
-     {
-     }
-
-    Handle(GEOMImpl_FilletDriver)(const GEOMImpl_FilletDriver* anItem) : Handle(TFunction_Driver)((TFunction_Driver *)anItem) 
-     {
-     }
-
-    Handle(GEOMImpl_FilletDriver)& operator=(const Handle(GEOMImpl_FilletDriver)& aHandle)
-     {
-      Assign(aHandle.Access());
-      return *this;
-     }
-
-    Handle(GEOMImpl_FilletDriver)& operator=(const GEOMImpl_FilletDriver* anItem)
-     {
-      Assign((Standard_Transient *)anItem);
-      return *this;
-     }
-
-    GEOMImpl_FilletDriver* operator->() 
-     {
-      return (GEOMImpl_FilletDriver *)ControlAccess();
-     }
-
-    GEOMImpl_FilletDriver* operator->() const 
-     {
-      return (GEOMImpl_FilletDriver *)ControlAccess();
-     }
-
-   Standard_EXPORT ~Handle(GEOMImpl_FilletDriver)() {};
- 
-   Standard_EXPORT static const Handle(GEOMImpl_FilletDriver) DownCast(const Handle(Standard_Transient)& AnObject);
-};
-
 #ifndef _TFunction_Driver_HeaderFile
 #include <TFunction_Driver.hxx>
 #endif
@@ -122,22 +60,13 @@ class Handle(GEOMImpl_FilletDriver) : public Handle(TFunction_Driver) {
 class TColStd_SequenceOfExtendedString;
 
 
-class GEOMImpl_FilletDriver : public TFunction_Driver {
+#include "GEOM_BaseDriver.hxx"
+
+DEFINE_STANDARD_HANDLE( GEOMImpl_FilletDriver, GEOM_BaseDriver );
+
+class GEOMImpl_FilletDriver : public GEOM_BaseDriver {
 
 public:
-
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
 
  // Methods PUBLIC
  // 
@@ -148,14 +77,11 @@ Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { r
 Standard_EXPORT static const Standard_GUID& GetID();
 Standard_EXPORT ~GEOMImpl_FilletDriver() {};
 
+  Standard_EXPORT virtual
+  bool GetCreationInformation(std::string&             theOperationName,
+                              std::vector<GEOM_Param>& params);
 
- // Type management
- //
-Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_FilletDriver_Type_();
-Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_FilletDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_FilletDriver) == AType || TFunction_Driver::IsKind(AType)); } 
-
-
+DEFINE_STANDARD_RTTI( GEOMImpl_FilletDriver )
 };
 
 #endif

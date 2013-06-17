@@ -495,44 +495,63 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeDraftPrism ( const TopoDS_Shape& theInitS
     return aShape;
 }
                                                    
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function : GEOMImpl_PrismDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_PrismDriver_Type_()
+bool GEOMImpl_PrismDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if (aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if (aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if (aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_IPrism aCI( function );
+  Standard_Integer aType = function->GetType();
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PrismDriver",
-                                                         sizeof(GEOMImpl_PrismDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
+  theOperationName = "EXTRUSION";
 
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_PrismDriver) Handle(GEOMImpl_PrismDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_PrismDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_PrismDriver))) {
-       _anOtherObject = Handle(GEOMImpl_PrismDriver)((Handle(GEOMImpl_PrismDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case PRISM_BASE_VEC_H:
+  case PRISM_BASE_VEC_H_2WAYS:
+    AddParam( theParams, "Base", aCI.GetBase() );
+    AddParam( theParams, "Vector", aCI.GetVector() );
+    AddParam( theParams, "Height", aCI.GetH() );
+    AddParam( theParams, "Both Directions", aType == PRISM_BASE_VEC_H_2WAYS );
+    AddParam( theParams, "Scale base-opposite face", aCI.GetScale() );
+    break;
+  case PRISM_BASE_TWO_PNT:
+  case PRISM_BASE_TWO_PNT_2WAYS:
+    AddParam( theParams, "Base", aCI.GetBase() );
+    AddParam( theParams, "Point 1", aCI.GetFirstPoint() );
+    AddParam( theParams, "Point 2", aCI.GetLastPoint() );
+    AddParam( theParams, "Both Directions", aType == PRISM_BASE_VEC_H_2WAYS );
+    AddParam( theParams, "Scale base-opposite face", aCI.GetScale() );
+    break;
+  case PRISM_BASE_DXDYDZ:
+  case PRISM_BASE_DXDYDZ_2WAYS:
+    AddParam( theParams, "Base", aCI.GetBase() );
+    AddParam( theParams, "Dx", aCI.GetDX() );
+    AddParam( theParams, "Dy", aCI.GetDY() );
+    AddParam( theParams, "Dz", aCI.GetDZ() );
+    AddParam( theParams, "Both Directions", aType == PRISM_BASE_VEC_H_2WAYS );
+    AddParam( theParams, "Scale base-opposite face", aCI.GetScale() );
+    break;
+  case DRAFT_PRISM_FEATURE:
+    theOperationName = aCI.GetFuseFlag() ? "EXTRUDED_BOSS" : "EXTRUDED_CUT";
+    AddParam( theParams, "Initial shape", aCI.GetInitShape() );
+    AddParam( theParams, "Profile", aCI.GetBase() );
+    AddParam( theParams, "Height", aCI.GetH() );
+    AddParam( theParams, "Draft angle", aCI.GetDraftAngle() );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PrismDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PrismDriver,GEOM_BaseDriver);

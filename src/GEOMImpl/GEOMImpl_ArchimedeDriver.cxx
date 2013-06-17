@@ -147,46 +147,33 @@ Standard_Integer GEOMImpl_ArchimedeDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_ArchimedeDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_ArchimedeDriver_Type_()
+bool GEOMImpl_ArchimedeDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_IArchimede IA (function);
+  Standard_Integer aType = function->GetType();
+  if (aType != ARCHIMEDE_TYPE) return 0;
 
+  theOperationName = "ARCHIMEDE";
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_ArchimedeDriver",
-                                                         sizeof(GEOMImpl_ArchimedeDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
+  AddParam( theParams, "Objects", IA.GetBasicShape() );
+  AddParam( theParams, "Weight", IA.GetWeight() );
+  AddParam( theParams, "Water Density", IA.GetDensity() );
+  AddParam( theParams, "Meshing Deflect.", IA.GetDeflection() );
+  
+  return true;
 }
 
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_ArchimedeDriver,GEOM_BaseDriver);
 
-const Handle(GEOMImpl_ArchimedeDriver) Handle(GEOMImpl_ArchimedeDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_ArchimedeDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_ArchimedeDriver))) {
-       _anOtherObject = Handle(GEOMImpl_ArchimedeDriver)((Handle(GEOMImpl_ArchimedeDriver)&)AnObject);
-     }
-  }
-
-  return _anOtherObject;
-}
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_ArchimedeDriver,GEOM_BaseDriver);

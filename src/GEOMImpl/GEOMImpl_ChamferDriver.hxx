@@ -47,68 +47,6 @@
 #include <Standard_GUID.hxx>
 #endif 
 
-#ifndef _Handle_TFunction_Driver_HeaderFile
-#include <Handle_TFunction_Driver.hxx>
-#endif
-
-class Standard_Transient;
-class Handle_Standard_Type;
-class Handle(TFunction_Driver);
-class GEOMImpl_ChamferDriver;
-
-Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_ChamferDriver);
-
-class Handle(GEOMImpl_ChamferDriver) : public Handle(TFunction_Driver) {
-  public:
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
-
-    Handle(GEOMImpl_ChamferDriver)():Handle(TFunction_Driver)() {} 
-    Handle(GEOMImpl_ChamferDriver)(const Handle(GEOMImpl_ChamferDriver)& aHandle) : Handle(TFunction_Driver)(aHandle) 
-     {
-     }
-
-    Handle(GEOMImpl_ChamferDriver)(const GEOMImpl_ChamferDriver* anItem) : Handle(TFunction_Driver)((TFunction_Driver *)anItem) 
-     {
-     }
-
-    Handle(GEOMImpl_ChamferDriver)& operator=(const Handle(GEOMImpl_ChamferDriver)& aHandle)
-     {
-      Assign(aHandle.Access());
-      return *this;
-     }
-
-    Handle(GEOMImpl_ChamferDriver)& operator=(const GEOMImpl_ChamferDriver* anItem)
-     {
-      Assign((Standard_Transient *)anItem);
-      return *this;
-     }
-
-    GEOMImpl_ChamferDriver* operator->() 
-     {
-      return (GEOMImpl_ChamferDriver *)ControlAccess();
-     }
-
-    GEOMImpl_ChamferDriver* operator->() const 
-     {
-      return (GEOMImpl_ChamferDriver *)ControlAccess();
-     }
-
-   Standard_EXPORT ~Handle(GEOMImpl_ChamferDriver)() {};
- 
-   Standard_EXPORT static const Handle(GEOMImpl_ChamferDriver) DownCast(const Handle(Standard_Transient)& AnObject);
-};
-
 #ifndef _TFunction_Driver_HeaderFile
 #include <TFunction_Driver.hxx>
 #endif
@@ -122,22 +60,13 @@ class Handle(GEOMImpl_ChamferDriver) : public Handle(TFunction_Driver) {
 class TColStd_SequenceOfExtendedString;
 
 
-class GEOMImpl_ChamferDriver : public TFunction_Driver {
+#include "GEOM_BaseDriver.hxx"
+
+DEFINE_STANDARD_HANDLE( GEOMImpl_ChamferDriver, GEOM_BaseDriver );
+
+class GEOMImpl_ChamferDriver : public GEOM_BaseDriver {
 
 public:
-
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
 
  // Methods PUBLIC
  // 
@@ -148,14 +77,11 @@ Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { r
 Standard_EXPORT static const Standard_GUID& GetID();
 Standard_EXPORT ~GEOMImpl_ChamferDriver() {};
 
+  Standard_EXPORT virtual
+  bool GetCreationInformation(std::string&             theOperationName,
+                              std::vector<GEOM_Param>& params);
 
- // Type management
- //
-Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_ChamferDriver_Type_();
-Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_ChamferDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_ChamferDriver) == AType || TFunction_Driver::IsKind(AType)); } 
-
-
+DEFINE_STANDARD_RTTI( GEOMImpl_ChamferDriver )
 };
 
 #endif

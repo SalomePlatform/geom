@@ -157,45 +157,67 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_FilletDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_FilletDriver_Type_()
+bool GEOMImpl_FilletDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_IFillet aCI( function );
+  Standard_Integer aType = function->GetType();
 
+  theOperationName = "FILLET";
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_FilletDriver",
-                                                         sizeof(GEOMImpl_FilletDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_FilletDriver) Handle(GEOMImpl_FilletDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_FilletDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_FilletDriver))) {
-       _anOtherObject = Handle(GEOMImpl_FilletDriver)((Handle(GEOMImpl_FilletDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case FILLET_SHAPE_ALL:
+    AddParam( theParams, "Main Object", aCI.GetShape() );
+    AddParam( theParams, "Selected edges", "all" );
+    break;
+  case FILLET_SHAPE_EDGES:
+  case FILLET_SHAPE_EDGES_2R:
+    AddParam( theParams, "Main Object", aCI.GetShape() );
+    AddParam( theParams, "Selected edges" );
+    if ( aCI.GetLength() > 1 )
+      theParams[1] << aCI.GetLength() << " edges: ";
+    for (int i = 1; i <= aCI.GetLength(); ++i )
+      theParams[1] << aCI.GetEdge( i ) << " ";
+    if ( aType == FILLET_SHAPE_EDGES ) {
+      AddParam( theParams, "Radius", aCI.GetR() );
+    }
+    else {
+      AddParam( theParams, "R1", aCI.GetR1() );
+      AddParam( theParams, "R2", aCI.GetR2() );
+    }
+    break;
+  case FILLET_SHAPE_FACES:
+  case FILLET_SHAPE_FACES_2R:
+    AddParam( theParams, "Main Object", aCI.GetShape() );
+    AddParam( theParams, "Selected faces" );
+    if ( aCI.GetLength() > 1 )
+      theParams[1] << aCI.GetLength() << " faces: ";
+    for (int i = 1; i <= aCI.GetLength(); ++i )
+      theParams[1] << aCI.GetFace( i ) << " ";
+    if ( aType == FILLET_SHAPE_FACES ) {
+      AddParam( theParams, "Radius", aCI.GetR() );
+    }
+    else {
+      AddParam( theParams, "R1", aCI.GetR1() );
+      AddParam( theParams, "R2", aCI.GetR2() );
+    }
+    break;
+  default:
+    return false;
   }
-
-  return _anOtherObject ;
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_FilletDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_FilletDriver,GEOM_BaseDriver);

@@ -2502,42 +2502,75 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
   return 1;
 }
 
-//=======================================================================
-//function :  GEOMImpl_PipeDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_PipeDriver_Type_()
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
+
+bool GEOMImpl_PipeDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if (aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if (aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if (aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
+  Standard_Integer aType = function->GetType();
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PipeDriver",
-                                                         sizeof(GEOMImpl_PipeDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_PipeDriver) Handle(GEOMImpl_PipeDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_PipeDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_PipeDriver))) {
-       _anOtherObject = Handle(GEOMImpl_PipeDriver)((Handle(GEOMImpl_PipeDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case PIPE_BASE_PATH:
+  {
+    theOperationName = "PIPE";
+    GEOMImpl_IPipe aCI( function );
+    AddParam( theParams, "Base Object", aCI.GetBase() );
+    AddParam( theParams, "Path Object", aCI.GetPath() );
+    break;
   }
-
-  return _anOtherObject;
+  case PIPE_BI_NORMAL_ALONG_VECTOR:
+  {
+    theOperationName = "PIPE";
+    GEOMImpl_IPipeBiNormal aCI( function );
+    AddParam( theParams, "Base Object", aCI.GetBase() );
+    AddParam( theParams, "Path Object", aCI.GetPath() );
+    AddParam( theParams, "BiNormal", aCI.GetVector() );
+    break;
+  }
+  case PIPE_DIFFERENT_SECTIONS:
+  {
+    theOperationName = "PIPE";
+    GEOMImpl_IPipeDiffSect aCI( function );
+    AddParam( theParams, "Bases", aCI.GetBases() );
+    AddParam( theParams, "Locations", aCI.GetLocations() );
+    AddParam( theParams, "Path", aCI.GetPath() );
+    AddParam( theParams, "With contact", aCI.GetWithContactMode() );
+    AddParam( theParams, "With correction", aCI.GetWithCorrectionMode() );
+    break;
+  }
+  case PIPE_SHELL_SECTIONS:
+  {
+    theOperationName = "PIPE";
+    GEOMImpl_IPipeShellSect aCI( function );
+    AddParam( theParams, "Bases", aCI.GetBases() );
+    AddParam( theParams, "Sub-Bases", aCI.GetSubBases() );
+    AddParam( theParams, "Locations", aCI.GetLocations() );
+    AddParam( theParams, "Path", aCI.GetPath() );
+    AddParam( theParams, "With contact", aCI.GetWithContactMode() );
+    AddParam( theParams, "With correction", aCI.GetWithCorrectionMode() );
+    break;
+  }
+  case PIPE_SHELLS_WITHOUT_PATH:
+  {
+    theOperationName = "PIPE"; // MakePipeShellsWithoutPath
+    GEOMImpl_IPipeShellSect aCI( function );
+    AddParam( theParams, "Bases", aCI.GetBases() );
+    AddParam( theParams, "Locations", aCI.GetLocations() );
+    break;
+  }
+  default:
+    return false;
+  }
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PipeDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PipeDriver,GEOM_BaseDriver);

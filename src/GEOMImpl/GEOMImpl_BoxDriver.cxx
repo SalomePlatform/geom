@@ -121,45 +121,42 @@ Standard_Integer GEOMImpl_BoxDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_BoxDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_BoxDriver_Type_()
+bool GEOMImpl_BoxDriver::GetCreationInformation(std::string&             theOperationName,
+                                                std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_IBox aBI (aFunction);
+  Standard_Integer aType = aFunction->GetType();
 
+  theOperationName = "BOX";
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_BoxDriver",
-                                                         sizeof(GEOMImpl_BoxDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_BoxDriver) Handle(GEOMImpl_BoxDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_BoxDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_BoxDriver))) {
-       _anOtherObject = Handle(GEOMImpl_BoxDriver)((Handle(GEOMImpl_BoxDriver)&)AnObject);
-     }
+  if (aType == BOX_DX_DY_DZ)
+  {
+    AddParam( theParams, "Dx", aBI.GetDX() );
+    AddParam( theParams, "Dy", aBI.GetDY() );
+    AddParam( theParams, "Dz", aBI.GetDZ() );
   }
-
-  return _anOtherObject ;
+  else if (aType == BOX_TWO_PNT) 
+  {
+    AddParam( theParams, "Point 1", aBI.GetRef1() );
+    AddParam( theParams, "Point 2", aBI.GetRef2() );
+  }
+  else {
+    return false;
+  }
+  
+  return true;
 }
+
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_BoxDriver,GEOM_BaseDriver);
+
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_BoxDriver,GEOM_BaseDriver);

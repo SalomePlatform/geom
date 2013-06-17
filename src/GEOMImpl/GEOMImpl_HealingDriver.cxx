@@ -812,45 +812,105 @@ Standard_Boolean GEOMImpl_HealingDriver::AreEdgesC1 (const TopoDS_Edge& E1, cons
   return Standard_False;
 }
 
-//=======================================================================
-//function :  GEOMImpl_HealingDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_HealingDriver_Type_()
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
+
+bool GEOMImpl_HealingDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_IHealing aCI( function );
+  Standard_Integer aType = function->GetType();
 
-
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_HealingDriver",
-                                                         sizeof(GEOMImpl_HealingDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-
-const Handle(GEOMImpl_HealingDriver) Handle(GEOMImpl_HealingDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_HealingDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_HealingDriver))) {
-       _anOtherObject = Handle(GEOMImpl_HealingDriver)((Handle(GEOMImpl_HealingDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case SHAPE_PROCESS:
+  {
+    theOperationName = "SHAPE_PROCESS";
+    AddParam( theParams, "Object", aCI.GetOriginal() );
+    Handle(TColStd_HArray1OfExtendedString) anOperators = aCI.GetOperators();
+    Handle(TColStd_HArray1OfExtendedString) aParams     = aCI.GetParameters();
+    Handle(TColStd_HArray1OfExtendedString) aValues     = aCI.GetValues();
+    for ( int i = anOperators->Lower(), nb = anOperators->Upper(); i <= nb; ++i )
+    {
+      const TCollection_ExtendedString& op = anOperators->Value(i);
+      AddParam( theParams, "Operation", op );
+      for ( int iP = aParams->Lower(), nbP = aParams->Upper(); iP <= nbP; ++iP )
+      {
+        const TCollection_ExtendedString& par = aParams->Value(i);
+        TCollection_AsciiString parAscii( par );
+        if ( par.Search( op ) == 1 && parAscii.Value( op.Length() + 1 ) == '.' )
+        {
+          GEOM_Param& p = AddParam( theParams, parAscii.ToCString() );
+          if ( iP <= aValues->Upper() )
+            p << aValues->Value( iP );
+        }
+      }
+    }
+    break;
   }
-
-  return _anOtherObject;
+  case SUPPRESS_FACES:
+    theOperationName = "SUPPRESS_FACES";
+    AddParam( theParams, "Selected Shape", aCI.GetOriginal() );
+    AddParam( theParams, "Faces to remove", aCI.GetFaces() );
+    break;
+  case CLOSE_CONTOUR:
+    theOperationName = "CLOSE_CONTOUR";
+    AddParam( theParams, "Selected Shape", aCI.GetOriginal() );
+    AddParam( theParams, "Contour to close", aCI.GetWires() );
+    AddParam( theParams, "Close by common vertex", aCI.GetIsCommonVertex() );
+    break;
+  case REMOVE_INT_WIRES:
+    theOperationName = "SUPPRESS_INT_WIRES";
+    AddParam( theParams, "Selected face", aCI.GetOriginal() );
+    AddParam( theParams, "Wires to remove", aCI.GetWires(), "all" );
+    break;
+  case FILL_HOLES:
+    theOperationName = "SUPPERSS_HOLES";
+    AddParam( theParams, "Selected shape", aCI.GetOriginal() );
+    AddParam( theParams, "Wires to remove", aCI.GetWires(), "all" );
+    break;
+  case SEWING:
+  case SEWING_NON_MANIFOLD:
+    theOperationName = "SEWING";
+    AddParam( theParams, "Selected shape", aCI.GetOriginal() );
+    AddParam( theParams, "Allow Non Manifold", ( aType == SEWING_NON_MANIFOLD ));
+    AddParam( theParams, "Tolerance", aCI.GetTolerance() );
+    break;
+  case DIVIDE_EDGE:
+    theOperationName = "POINT_ON_EDGE";
+    if ( aCI.GetIndex() > 0 )
+      AddParam( theParams, "Edge", "#" ) << aCI.GetIndex() << " of " << aCI.GetOriginal();
+    else
+      AddParam( theParams, "Edge", aCI.GetOriginal() );
+    AddParam( theParams, "By parameter", aCI.GetIsByParameter() );
+    AddParam( theParams, "Value", aCI.GetDevideEdgeValue() );
+    break;
+  case CHANGE_ORIENTATION:
+    theOperationName = "CHANGE_ORIENTATION";
+    AddParam( theParams, "Selected shape", aCI.GetOriginal() );
+    break;
+  case LIMIT_TOLERANCE:
+    theOperationName = "LIMIT_TOLERANCE";
+    AddParam( theParams, "Selected shape", aCI.GetOriginal() );
+    AddParam( theParams, "Tolerance", aCI.GetTolerance() );
+    break;
+  case FUSE_COLLINEAR_EDGES:
+    theOperationName = "FUSE_EDGES";
+    AddParam( theParams, "Wire", aCI.GetOriginal() );
+    AddParam( theParams, "Vertexes", aCI.GetShapes() );
+    break;
+  default:
+    return false;
+  }
+  
+  return true;
 }
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_HealingDriver,GEOM_BaseDriver);
+
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_HealingDriver,GEOM_BaseDriver);

@@ -153,16 +153,16 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Iterator It(aRefShape, Standard_False, Standard_False);
       TopoDS_Vertex aVertex;
       if ( It.More() ) {
-	TopoDS_Shape aShape = It.Value();
-	if ( !aShape.IsNull() )
-	  aVertex = TopoDS::Vertex( aShape );
+        TopoDS_Shape aShape = It.Value();
+        if ( !aShape.IsNull() )
+          aVertex = TopoDS::Vertex( aShape );
       }
       if ( !aVertex.IsNull() ) {
-	aPnt = BRep_Tool::Pnt( aVertex );
+        aPnt = BRep_Tool::Pnt( aVertex );
       }
       else {
-	Standard_TypeMismatch::Raise
-	  ("Point On Curve creation aborted : null curve");
+        Standard_TypeMismatch::Raise
+          ("Point On Curve creation aborted : null curve");
       }
     }
   }
@@ -234,8 +234,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
       gp_Pnt P2 = EdgeCurve->Value(par2);
       
       if (aRefPnt.SquareDistance(P2) < aRefPnt.SquareDistance(P1)) {
-	ReOrientedCurve = EdgeCurve->Reversed();
-	UFirst = EdgeCurve->ReversedParameter(ULast);
+        ReOrientedCurve = EdgeCurve->Reversed();
+        UFirst = EdgeCurve->ReversedParameter(ULast);
       }
       
       // Get the point by length
@@ -249,16 +249,16 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Iterator It(aRefEdge, Standard_False, Standard_False);
       TopoDS_Vertex aVertex;
       if ( It.More() ) {
-	TopoDS_Shape aShape = It.Value();
-	if ( !aShape.IsNull() )
-	  aVertex = TopoDS::Vertex( aShape );
+        TopoDS_Shape aShape = It.Value();
+        if ( !aShape.IsNull() )
+          aVertex = TopoDS::Vertex( aShape );
       }
       if ( !aVertex.IsNull() ) {
-	aPnt = BRep_Tool::Pnt( aVertex );
+        aPnt = BRep_Tool::Pnt( aVertex );
       }
       else {
-	Standard_TypeMismatch::Raise
-	  ("Point On Curve creation aborted : null curve");
+        Standard_TypeMismatch::Raise
+          ("Point On Curve creation aborted : null curve");
       }
     }
   }
@@ -360,46 +360,75 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_PointDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_PointDriver_Type_()
+bool GEOMImpl_PointDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_IPoint aCI( function );
+  Standard_Integer aType = function->GetType();
 
+  theOperationName = "POINT";
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PointDriver",
-                                                         sizeof(GEOMImpl_PointDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-
-const Handle(GEOMImpl_PointDriver) Handle(GEOMImpl_PointDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_PointDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_PointDriver))) {
-       _anOtherObject = Handle(GEOMImpl_PointDriver)((Handle(GEOMImpl_PointDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case POINT_XYZ:
+    AddParam( theParams, "X", aCI.GetX() );
+    AddParam( theParams, "Y", aCI.GetY() );
+    AddParam( theParams, "Z", aCI.GetZ() );
+    break;
+  case POINT_XYZ_REF:
+    AddParam( theParams, "Point", aCI.GetRef() );
+    AddParam( theParams, "Dx", aCI.GetX() );
+    AddParam( theParams, "Dy", aCI.GetY() );
+    AddParam( theParams, "Dz", aCI.GetZ() );
+    break;
+  case POINT_CURVE_PAR:
+    AddParam( theParams, "Edge", aCI.GetCurve() );
+    AddParam( theParams, "Parameter", aCI.GetParameter() );
+    break;
+  case POINT_CURVE_COORD:
+    AddParam( theParams, "X", aCI.GetX() );
+    AddParam( theParams, "Y", aCI.GetY() );
+    AddParam( theParams, "Z", aCI.GetZ() );
+    AddParam( theParams, "Edge", aCI.GetCurve() );
+    break;
+  case POINT_CURVE_LENGTH:
+    AddParam( theParams, "Edge", aCI.GetCurve() );
+    AddParam( theParams, "Start Point", aCI.GetRef(), "First Vertex" );
+    AddParam( theParams, "Length", aCI.GetLength() );
+    break;
+  case POINT_SURFACE_PAR:
+    AddParam( theParams, "Face", aCI.GetSurface() );
+    AddParam( theParams, "U-Parameter", aCI.GetParameter() );
+    AddParam( theParams, "V-Parameter", aCI.GetParameter2() );
+    break;
+  case POINT_SURFACE_COORD:
+    AddParam( theParams, "X", aCI.GetX() );
+    AddParam( theParams, "Y", aCI.GetY() );
+    AddParam( theParams, "Z", aCI.GetZ() );
+    AddParam( theParams, "Face", aCI.GetSurface() );
+    break;
+  case POINT_FACE_ANY:
+    AddParam( theParams, "Face", aCI.GetSurface() );
+    break;
+  case POINT_LINES_INTERSECTION:
+    AddParam( theParams, "Line 1", aCI.GetLine1() );
+    AddParam( theParams, "Line 2", aCI.GetLine2() );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject ;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PointDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PointDriver,GEOM_BaseDriver);

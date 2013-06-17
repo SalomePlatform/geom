@@ -20,28 +20,27 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
+#include "GEOMImpl_VectorDriver.hxx"
 
-#include <GEOMImpl_VectorDriver.hxx>
-#include <GEOMImpl_IVector.hxx>
-#include <GEOMImpl_Types.hxx>
-#include <GEOM_Function.hxx>
+#include "GEOMImpl_IVector.hxx"
+#include "GEOMImpl_Types.hxx"
+#include "GEOM_Function.hxx"
+#include "GEOM_Object.hxx"
 
-#include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
-
+#include <BRep_Tool.hxx>
+#include <Geom_Curve.hxx>
+#include <Precision.hxx>
+#include <TCollection_AsciiString.hxx>
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
-
 #include <gp_Pnt.hxx>
-#include <Precision.hxx>
-#include <Geom_Curve.hxx>
 #include <gp_Vec.hxx>
-#include <TCollection_AsciiString.hxx>
+
 #include <Standard_ConstructionError.hxx>
 
 //=======================================================================
@@ -156,46 +155,55 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_VectorDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_VectorDriver_Type_()
+bool GEOMImpl_VectorDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_IVector aCI( function );
+  Standard_Integer aType = function->GetType();
 
-
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_VectorDriver",
-                                                         sizeof(GEOMImpl_VectorDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_VectorDriver) Handle(GEOMImpl_VectorDriver)::DownCast
-       (const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_VectorDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_VectorDriver))) {
-       _anOtherObject = Handle(GEOMImpl_VectorDriver)((Handle(GEOMImpl_VectorDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case VECTOR_DX_DY_DZ:
+    theOperationName = "VECTOR";
+    AddParam( theParams, "Dx", aCI.GetDX() );
+    AddParam( theParams, "Dy", aCI.GetDY() );
+    AddParam( theParams, "Dz", aCI.GetDZ() );
+    break;
+  case VECTOR_TWO_PNT: {
+    TDF_Label label = Label();
+    Handle(GEOM_Object) obj = GEOM_Object::GetObject( label );
+    if ( !obj.IsNull() && obj->GetType() == GEOM_EDGE )
+      theOperationName = "EDGE";
+    else
+      theOperationName = "VECTOR";
+    AddParam( theParams, "Point 1", aCI.GetPoint1() );
+    AddParam( theParams, "Point 2", aCI.GetPoint2() );
+    break;
+  }
+  case VECTOR_TANGENT_CURVE_PAR:
+    theOperationName = "MakeTangentOnCurve";
+    AddParam( theParams, "Curve", aCI.GetCurve() );
+    AddParam( theParams, "Parameter", aCI.GetParameter() );
+    break;
+  case VECTOR_REVERSE:
+    theOperationName = "CHANGE_ORIENTATION";
+    AddParam( theParams, "Vector", aCI.GetCurve() );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_VectorDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_VectorDriver,GEOM_BaseDriver);

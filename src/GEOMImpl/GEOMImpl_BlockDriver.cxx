@@ -1063,45 +1063,99 @@ void GEOMImpl_BlockDriver::MultiTransformate2D (const TopoDS_Shape&    theBlock,
   theResult = aCompound;
 }
 
-//=======================================================================
-//function :  GEOMImpl_BlockDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_BlockDriver_Type_()
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
+
+bool GEOMImpl_BlockDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  Standard_Integer aType = function->GetType();
+  GEOMImpl_IBlocks    aCI1 (function);
+  GEOMImpl_IBlockTrsf aCI2 (function);
+  Handle(TColStd_HSequenceOfTransient) aShapes = aCI1.GetShapes();
 
-
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_BlockDriver",
-                                                         sizeof(GEOMImpl_BlockDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_BlockDriver) Handle(GEOMImpl_BlockDriver)::DownCast
-  (const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_BlockDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_BlockDriver))) {
-       _anOtherObject = Handle(GEOMImpl_BlockDriver)((Handle(GEOMImpl_BlockDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case BLOCK_FACE_FOUR_EDGES:
+    theOperationName = "Q_FACE";
+    AddParam( theParams, "Edge 1", aShapes->Value(1) );
+    AddParam( theParams, "Edge 2", aShapes->Value(2) );
+    AddParam( theParams, "Edge 3", aShapes->Value(3) );
+    AddParam( theParams, "Edge 4", aShapes->Value(4) );
+    break;
+  case BLOCK_FACE_TWO_EDGES:
+    theOperationName = "Q_FACE";
+    AddParam( theParams, "Edge 1", aShapes->Value(1) );
+    AddParam( theParams, "Edge 2", aShapes->Value(2) );
+    break;
+  case BLOCK_FACE_FOUR_PNT:
+    theOperationName = "Q_FACE";
+    AddParam( theParams, "Point 1", aShapes->Value(1) );
+    AddParam( theParams, "Point 2", aShapes->Value(2) );
+    AddParam( theParams, "Point 3", aShapes->Value(3) );
+    AddParam( theParams, "Point 4", aShapes->Value(4) );
+    break;
+  case BLOCK_SIX_FACES:
+    theOperationName = "HEX_SOLID";
+    AddParam( theParams, "Face 1", aShapes->Value(1) );
+    AddParam( theParams, "Face 2", aShapes->Value(2) );
+    AddParam( theParams, "Face 3", aShapes->Value(3) );
+    AddParam( theParams, "Face 4", aShapes->Value(4) );
+    AddParam( theParams, "Face 5", aShapes->Value(5) );
+    AddParam( theParams, "Face 6", aShapes->Value(6) );
+    break;
+  case BLOCK_TWO_FACES:
+    theOperationName = "HEX_SOLID";
+    AddParam( theParams, "Face 1", aShapes->Value(1) );
+    AddParam( theParams, "Face 2", aShapes->Value(2) );
+    break;
+  case BLOCK_COMPOUND_GLUE:
+    theOperationName = "MakeBlockCompound";
+    AddParam( theParams, "Compound", aShapes->Value(1) );
+    break;
+  case BLOCK_REMOVE_EXTRA:
+    theOperationName = "REMOVE_EXTRA_EDGES";
+    AddParam( theParams, "Selected shape", aCI2.GetOriginal() );
+    AddParam( theParams, "Union faces", aCI2.GetOptimumNbFaces() == 0);
+    break;
+  case BLOCK_COMPOUND_IMPROVE:
+    theOperationName = "CHECK_COMPOUND";
+    AddParam( theParams, "Selected shape", aCI2.GetOriginal() );
+    break;
+  case BLOCK_MULTI_TRANSFORM_1D:
+    theOperationName = "MUL_TRANSFORM";
+    AddParam( theParams, "Main Object", aCI2.GetOriginal() );
+    AddParam( theParams, "Face 1", aCI2.GetFace1U() );
+    AddParam( theParams, "Face 2", aCI2.GetFace2U() );
+    AddParam( theParams, "Nb. Times", aCI2.GetNbIterU() );
+    break;
+  case BLOCK_MULTI_TRANSFORM_2D:
+    theOperationName = "MUL_TRANSFORM";
+    AddParam( theParams, "Main Object", aCI2.GetOriginal() );
+    AddParam( theParams, "Face 1 U", aCI2.GetFace1U() );
+    AddParam( theParams, "Face 2 U", aCI2.GetFace2U() );
+    AddParam( theParams, "Nb. Times V", aCI2.GetNbIterV() );
+    AddParam( theParams, "Face 1 V", aCI2.GetFace1V() );
+    AddParam( theParams, "Face 2 V", aCI2.GetFace2V() );
+    AddParam( theParams, "Nb. Times V", aCI2.GetNbIterV() );
+    break;
+  case BLOCK_UNION_FACES:
+    theOperationName = "UNION_FACES";
+    AddParam( theParams, "Selected shape", aCI2.GetOriginal() );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_BlockDriver,GEOM_BaseDriver);
+
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_BlockDriver,GEOM_BaseDriver);

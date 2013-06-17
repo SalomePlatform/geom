@@ -478,41 +478,54 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_PartitionDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_PartitionDriver_Type_()
+bool GEOMImpl_PartitionDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if (aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if (aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if (aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Transient _Ancestors[] = {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType =
-    new Standard_Type ("GEOMImpl_PartitionDriver", sizeof(GEOMImpl_PartitionDriver),
-                       1, (Standard_Address)_Ancestors, (Standard_Address)NULL);
+  GEOMImpl_IPartition aCI( function );
+  Standard_Integer aType = function->GetType();
 
-  return _aType;
-}
+  theOperationName = "PARTITION";
 
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_PartitionDriver) Handle(GEOMImpl_PartitionDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_PartitionDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_PartitionDriver))) {
-       _anOtherObject = Handle(GEOMImpl_PartitionDriver)((Handle(GEOMImpl_PartitionDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case PARTITION_PARTITION:
+  case PARTITION_NO_SELF_INTERSECTIONS:
+    AddParam( theParams, "Objects", aCI.GetShapes() );
+    AddParam( theParams, "Tool objects", aCI.GetTools() );
+    {
+      Handle(TColStd_HSequenceOfTransient) objSeq = aCI.GetKeepIns();
+      if ( !objSeq.IsNull() && objSeq->Length() > 0 )
+        AddParam( theParams, "Objects to keep inside", objSeq );
+      objSeq = aCI.GetRemoveIns();
+      if ( !objSeq.IsNull() && objSeq->Length() > 0 )
+        AddParam( theParams, "Objects to remove inside", objSeq );
+      Handle(TColStd_HArray1OfInteger) intSeq = aCI.GetMaterials();
+      if ( !intSeq.IsNull() && intSeq->Length() > 0 )
+        AddParam( theParams, "Materials", aCI.GetMaterials() );
+    }
+    AddParam( theParams, "Resulting type", (TopAbs_ShapeEnum) aCI.GetLimit());
+    AddParam( theParams, "Keep shapes of lower type", aCI.GetKeepNonlimitShapes());
+    AddParam( theParams, "No object intersections", ( aType == PARTITION_NO_SELF_INTERSECTIONS ));
+    break;
+  case PARTITION_HALF:
+    AddParam( theParams, "Object", aCI.GetShape() );
+    AddParam( theParams, "Plane", aCI.GetPlane() );
+    break;
+  default:
+    return false;
   }
-
-  return _anOtherObject;
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PartitionDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PartitionDriver,GEOM_BaseDriver);

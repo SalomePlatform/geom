@@ -485,41 +485,43 @@ TopoDS_Shape GEOMImpl_DividedDiskDriver::WPlaneTransform(TopoDS_Shape theShape, 
   return aTransformation.Shape();
 }
 
-//=======================================================================
-//function :  GEOMImpl_DividedDiskDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_DividedDiskDriver_Type_()
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
+
+bool GEOMImpl_DividedDiskDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_DividedDiskDriver",
-                                                         sizeof(GEOMImpl_DividedDiskDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-  return _aType;
-}
+  GEOMImpl_IDividedDisk aCI( function );
+  Standard_Integer aType = function->GetType();
 
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_DividedDiskDriver) Handle(GEOMImpl_DividedDiskDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_DividedDiskDriver) _anOtherObject;
+  theOperationName = "DIVIDEDDISK";
 
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_DividedDiskDriver))) {
-       _anOtherObject = Handle(GEOMImpl_DividedDiskDriver)((Handle(GEOMImpl_DividedDiskDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case DIVIDEDDISK_R_RATIO:
+    AddParam( theParams, "Radius", aCI.GetR() );
+    AddParam( theParams, "Ratio", aCI.GetRatio() );
+    AddParam( theParams, "Orientation", aCI.GetOrientation() );
+    AddParam( theParams, "Division pattern", aCI.GetType() );
+    break;
+  case DIVIDEDDISK_R_VECTOR_PNT:
+    AddParam( theParams, "Center Point", aCI.GetCenter() );
+    AddParam( theParams, "Vector", aCI.GetVector() );
+    AddParam( theParams, "Radius", aCI.GetR() );
+    AddParam( theParams, "Division pattern", aCI.GetType() );
+    break;
+  default:
+    return false;
   }
-
-  return _anOtherObject;
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_DividedDiskDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_DividedDiskDriver,GEOM_BaseDriver);

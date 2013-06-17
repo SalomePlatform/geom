@@ -46,72 +46,10 @@
 #include <Standard_GUID.hxx>
 #endif
 
-#ifndef _Handle_TFunction_Driver_HeaderFile
-#include <Handle_TFunction_Driver.hxx>
-#endif
-
-class Standard_Transient;
-class Handle_Standard_Type;
-class Handle(TFunction_Driver);
-class GEOMImpl_HealingDriver;
-
-class GEOMImpl_IHealing;
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 
-Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_HealingDriver);
-
-class Handle(GEOMImpl_HealingDriver) : public Handle(TFunction_Driver) {
-  public:
-    inline void* operator new(size_t,void* anAddress)
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size)
-      {
-        return Standard::Allocate(size);
-      }
-    inline void  operator delete(void *anAddress)
-      {
-        if (anAddress) Standard::Free((Standard_Address&)anAddress);
-      }
-
-    Handle(GEOMImpl_HealingDriver)():Handle(TFunction_Driver)() {}
-    Handle(GEOMImpl_HealingDriver)(const Handle(GEOMImpl_HealingDriver)& aHandle) : Handle(TFunction_Driver)(aHandle)
-     {
-     }
-
-    Handle(GEOMImpl_HealingDriver)(const GEOMImpl_HealingDriver* anItem) : Handle(TFunction_Driver)((TFunction_Driver *)anItem)
-     {
-     }
-
-    Handle(GEOMImpl_HealingDriver)& operator=(const Handle(GEOMImpl_HealingDriver)& aHandle)
-     {
-      Assign(aHandle.Access());
-      return *this;
-     }
-
-    Handle(GEOMImpl_HealingDriver)& operator=(const GEOMImpl_HealingDriver* anItem)
-     {
-      Assign((Standard_Transient *)anItem);
-      return *this;
-     }
-
-    GEOMImpl_HealingDriver* operator->()
-     {
-      return (GEOMImpl_HealingDriver *)ControlAccess();
-     }
-
-    GEOMImpl_HealingDriver* operator->() const
-     {
-      return (GEOMImpl_HealingDriver *)ControlAccess();
-     }
-
-   Standard_EXPORT ~Handle(GEOMImpl_HealingDriver)() {};
-
-   Standard_EXPORT static const Handle(GEOMImpl_HealingDriver) DownCast(const Handle(Standard_Transient)& AnObject);
-};
 
 #ifndef _TFunction_Driver_HeaderFile
 #include <TFunction_Driver.hxx>
@@ -123,27 +61,18 @@ class Handle(GEOMImpl_HealingDriver) : public Handle(TFunction_Driver) {
 #include <Standard_CString.hxx>
 #endif
 
-class TColStd_SequenceOfExtendedString;
+class GEOMImpl_IHealing;
 
 
-class GEOMImpl_HealingDriver : public TFunction_Driver {
+#include "GEOM_BaseDriver.hxx"
+
+DEFINE_STANDARD_HANDLE( GEOMImpl_HealingDriver, GEOM_BaseDriver );
+
+class GEOMImpl_HealingDriver : public GEOM_BaseDriver {
 
 public:
 
-  inline void* operator new(size_t,void* anAddress)
-  {
-    return anAddress;
-  }
-  inline void* operator new(size_t size)
-  {
-    return Standard::Allocate(size);
-  }
-  inline void  operator delete(void *anAddress)
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress);
-  }
-
-  // Methods PUBLIC
+ // Methods PUBLIC
   //
   Standard_EXPORT GEOMImpl_HealingDriver();
   Standard_EXPORT ~GEOMImpl_HealingDriver() {};
@@ -158,12 +87,14 @@ public:
   Standard_EXPORT static void FuseCollinearEdges (const TopoDS_Shape&,
                                                   const Handle(TColStd_HSequenceOfTransient)&,
                                                   TopoDS_Shape&);
+  Standard_EXPORT virtual
+  bool GetCreationInformation(std::string&             theOperationName,
+                              std::vector<GEOM_Param>& params);
 
   // Type management
   //
-  Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_HealingDriver_Type_();
-  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_HealingDriver) ; }
-  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_HealingDriver) == AType || TFunction_Driver::IsKind(AType)); }
+DEFINE_STANDARD_RTTI( GEOMImpl_HealingDriver )
+
 
 private:
   Standard_Boolean ShapeProcess  ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;

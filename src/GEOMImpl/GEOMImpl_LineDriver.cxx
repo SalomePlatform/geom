@@ -182,46 +182,43 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_LineDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_LineDriver_Type_()
+bool GEOMImpl_LineDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_ILine aCI( function );
+  Standard_Integer aType = function->GetType();
 
+  theOperationName = "LINE";
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_LineDriver",
-                                                         sizeof(GEOMImpl_LineDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_LineDriver) Handle(GEOMImpl_LineDriver)::DownCast
-       (const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_LineDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_LineDriver))) {
-       _anOtherObject = Handle(GEOMImpl_LineDriver)((Handle(GEOMImpl_LineDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case LINE_TWO_PNT:
+    AddParam( theParams, "Point 1", aCI.GetPoint1() );
+    AddParam( theParams, "Point 2", aCI.GetPoint2() );
+    break;
+  case LINE_TWO_FACES:
+    AddParam( theParams, "Face 1", aCI.GetFace1() );
+    AddParam( theParams, "Face 2", aCI.GetFace2() );
+    break;
+  case LINE_PNT_DIR:
+    AddParam( theParams, "Point 1", aCI.GetPoint1() );
+    AddParam( theParams, "Vector", aCI.GetPoint2() );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject ;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_LineDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_LineDriver,GEOM_BaseDriver);

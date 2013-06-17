@@ -131,45 +131,50 @@ Standard_Integer GEOMImpl_SketcherDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_SketcherDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_SketcherDriver_Type_()
+bool GEOMImpl_SketcherDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_ISketcher aCI( function );
+  Standard_Integer aType = function->GetType();
 
+  theOperationName = "SKETCH";
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_SketcherDriver",
-                                                         sizeof(GEOMImpl_SketcherDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_SketcherDriver) Handle(GEOMImpl_SketcherDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_SketcherDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_SketcherDriver))) {
-       _anOtherObject = Handle(GEOMImpl_SketcherDriver)((Handle(GEOMImpl_SketcherDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case SKETCHER_NINE_DOUBLS:
+    AddParam( theParams, "Command", aCI.GetCommand() );
+    AddParam( theParams, "Origin")
+      << aCI.GetWorkingPlane(1) << " "
+      << aCI.GetWorkingPlane(2) << " "
+      << aCI.GetWorkingPlane(3);
+    AddParam( theParams, "OZ")
+      << aCI.GetWorkingPlane(4) << " "
+      << aCI.GetWorkingPlane(5) << " "
+      << aCI.GetWorkingPlane(6);
+    AddParam( theParams, "OX")
+      << aCI.GetWorkingPlane(7) << " "
+      << aCI.GetWorkingPlane(8) << " "
+      << aCI.GetWorkingPlane(9);
+    break;
+  case SKETCHER_PLANE:
+    AddParam( theParams, "Command", aCI.GetCommand() );
+    AddParam( theParams, "Working plane", aCI.GetWorkingPlane(), "XOY" );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject ;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_SketcherDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_SketcherDriver,GEOM_BaseDriver);

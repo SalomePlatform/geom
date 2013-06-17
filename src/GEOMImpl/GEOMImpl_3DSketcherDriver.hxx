@@ -44,70 +44,12 @@
 #include <Standard_GUID.hxx>
 #endif 
 
-#ifndef _Handle_TFunction_Driver_HeaderFile
-#include <Handle_TFunction_Driver.hxx>
-#endif
+#include <GEOM_BaseDriver.hxx>
 
-class Standard_Transient;
-class Handle_Standard_Type;
-class Handle(TFunction_Driver);
-class GEOMImpl_3DSketcherDriver;
+DEFINE_STANDARD_HANDLE( GEOMImpl_3DSketcherDriver, GEOM_BaseDriver );
 
-Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_3DSketcherDriver);
-
-class Handle(GEOMImpl_3DSketcherDriver) : public Handle(TFunction_Driver) {
-  public:
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
-
-    Handle(GEOMImpl_3DSketcherDriver)():Handle(TFunction_Driver)() {} 
-    Handle(GEOMImpl_3DSketcherDriver)(const Handle(GEOMImpl_3DSketcherDriver)& aHandle) : Handle(TFunction_Driver)(aHandle) 
-     {
-     }
-
-    Handle(GEOMImpl_3DSketcherDriver)(const GEOMImpl_3DSketcherDriver* anItem) : Handle(TFunction_Driver)((TFunction_Driver *)anItem) 
-     {
-     }
-
-    Handle(GEOMImpl_3DSketcherDriver)& operator=(const Handle(GEOMImpl_3DSketcherDriver)& aHandle)
-     {
-      Assign(aHandle.Access());
-      return *this;
-     }
-
-    Handle(GEOMImpl_3DSketcherDriver)& operator=(const GEOMImpl_3DSketcherDriver* anItem)
-     {
-      Assign((Standard_Transient *)anItem);
-      return *this;
-     }
-
-    GEOMImpl_3DSketcherDriver* operator->() 
-     {
-      return (GEOMImpl_3DSketcherDriver *)ControlAccess();
-     }
-
-    GEOMImpl_3DSketcherDriver* operator->() const 
-     {
-      return (GEOMImpl_3DSketcherDriver *)ControlAccess();
-     }
-
-   Standard_EXPORT ~Handle(GEOMImpl_3DSketcherDriver)() {};
- 
-   Standard_EXPORT static const Handle(GEOMImpl_3DSketcherDriver) DownCast(const Handle(Standard_Transient)& AnObject);
-};
-
-#ifndef _TFunction_Driver_HeaderFile
-#include <TFunction_Driver.hxx>
+#ifndef _GEOM_BaseDriver_HeaderFile
+#include <GEOM_BaseDriver.hxx>
 #endif
 #ifndef _TFunction_Logbook_HeaderFile
 #include <TFunction_Logbook.hxx>
@@ -116,25 +58,10 @@ class Handle(GEOMImpl_3DSketcherDriver) : public Handle(TFunction_Driver) {
 #include <Standard_CString.hxx>
 #endif
 
-class TColStd_SequenceOfExtendedString;
 
-
-class GEOMImpl_3DSketcherDriver : public TFunction_Driver {
+class GEOMImpl_3DSketcherDriver : public GEOM_BaseDriver {
 
 public:
-
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
 
  // Methods PUBLIC
  // 
@@ -145,14 +72,12 @@ Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { r
 Standard_EXPORT static const Standard_GUID& GetID();
 Standard_EXPORT ~GEOMImpl_3DSketcherDriver() {};
 
+Standard_EXPORT virtual bool GetCreationInformation(std::string&             theOperationName,
+                                                    std::vector<GEOM_Param>& params);
 
  // Type management
  //
-Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_3DSketcherDriver_Type_();
-Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_3DSketcherDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_3DSketcherDriver) == AType || TFunction_Driver::IsKind(AType)); } 
-
-
+  DEFINE_STANDARD_RTTI( GEOMImpl_3DSketcherDriver )
 };
 
 #endif

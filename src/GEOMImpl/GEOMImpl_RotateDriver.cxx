@@ -316,43 +316,66 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_RotateDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_RotateDriver_Type_()
+bool GEOMImpl_RotateDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_RotateDriver",
-                                                         sizeof(GEOMImpl_RotateDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
+  GEOMImpl_IRotate aCI( function );
+  Standard_Integer aType = function->GetType();
 
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_RotateDriver) Handle(GEOMImpl_RotateDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_RotateDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_RotateDriver))) {
-       _anOtherObject = Handle(GEOMImpl_RotateDriver)((Handle(GEOMImpl_RotateDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case ROTATE:
+  case ROTATE_COPY:
+    theOperationName = "ROTATION";
+    AddParam( theParams, "Object", aCI.GetOriginal() );
+    AddParam( theParams, "Axis", aCI.GetAxis() );
+    AddParam( theParams, "Angle", aCI.GetAngle() );
+    break;
+  case ROTATE_THREE_POINTS:
+  case ROTATE_THREE_POINTS_COPY:
+    theOperationName = "ROTATION";
+    AddParam( theParams, "Object", aCI.GetOriginal() );
+    AddParam( theParams, "Central Point", aCI.GetCentPoint() );
+    AddParam( theParams, "Point 1", aCI.GetPoint1() );
+    AddParam( theParams, "Point 2", aCI.GetPoint2() );
+    break;
+  case ROTATE_1D:
+    theOperationName = "MUL_ROTATION";
+    AddParam( theParams, "Main Object", aCI.GetOriginal() );
+    AddParam( theParams, "Axis", aCI.GetAxis(), "DZ" );
+    AddParam( theParams, "Nb. Times", aCI.GetNbIter1() );
+    break;
+  case ROTATE_1D_STEP:
+    theOperationName = "MUL_ROTATION";
+    AddParam( theParams, "Main Object", aCI.GetOriginal() );
+    AddParam( theParams, "Axis", aCI.GetAxis(), "DZ" );
+    AddParam( theParams, "Angular step", aCI.GetAngle() );
+    AddParam( theParams, "Nb. Times", aCI.GetNbIter1() );
+    break;
+  case ROTATE_2D:
+    theOperationName = "MUL_ROTATION";
+    AddParam( theParams, "Main Object", aCI.GetOriginal() );
+    AddParam( theParams, "Axis", aCI.GetAxis(), "DZ" );
+    AddParam( theParams, "Angular step", aCI.GetAngle() );
+    AddParam( theParams, "Angular Nb. Times", aCI.GetNbIter1() );
+    AddParam( theParams, "Radial step", aCI.GetStep() );
+    AddParam( theParams, "Radial Nb. Times", aCI.GetNbIter2() );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_RotateDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_RotateDriver,GEOM_BaseDriver);

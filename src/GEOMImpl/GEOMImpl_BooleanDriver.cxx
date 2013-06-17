@@ -510,42 +510,63 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
   return aShape;
 }
 
-//=======================================================================
-//function :  GEOMImpl_BooleanDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_BooleanDriver_Type_()
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
+
+bool GEOMImpl_BooleanDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_BooleanDriver",
-                                                         sizeof(GEOMImpl_BooleanDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
+  GEOMImpl_IBoolean aCI (function);
+  Standard_Integer aType = function->GetType();
 
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_BooleanDriver) Handle(GEOMImpl_BooleanDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_BooleanDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-    if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_BooleanDriver))) {
-      _anOtherObject = Handle(GEOMImpl_BooleanDriver)((Handle(GEOMImpl_BooleanDriver)&)AnObject);
-    }
+  switch ( aType ) {
+  case BOOLEAN_COMMON:
+    theOperationName = "COMMON";
+    AddParam( theParams, "Object 1", aCI.GetShape1() );
+    AddParam( theParams, "Object 2", aCI.GetShape2() );
+    break;
+  case BOOLEAN_CUT:
+    theOperationName = "CUT";
+    AddParam( theParams, "Main Object", aCI.GetShape1() );
+    AddParam( theParams, "Tool Object", aCI.GetShape2() );
+    break;
+  case BOOLEAN_FUSE:
+    theOperationName = "FUSE";
+    AddParam( theParams, "Object 1", aCI.GetShape1() );
+    AddParam( theParams, "Object 2", aCI.GetShape2() );
+    break;
+  case BOOLEAN_SECTION:
+    theOperationName = "SECTION";
+    AddParam( theParams, "Object 1", aCI.GetShape1() );
+    AddParam( theParams, "Object 2", aCI.GetShape2() );
+    break;
+  case BOOLEAN_COMMON_LIST:
+    theOperationName = "COMMON";
+    AddParam( theParams, "Selected objects", aCI.GetShapes() );
+    break;
+  case BOOLEAN_FUSE_LIST:
+    theOperationName = "FUSE";
+    AddParam( theParams, "Selected objects", aCI.GetShapes() );
+    break;
+  case BOOLEAN_CUT_LIST:
+    theOperationName = "CUT";
+    AddParam( theParams, "Main Object", aCI.GetShape1() );
+    AddParam( theParams, "Tool Objects", aCI.GetShapes() );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_BooleanDriver,GEOM_BaseDriver);
+
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_BooleanDriver,GEOM_BaseDriver);

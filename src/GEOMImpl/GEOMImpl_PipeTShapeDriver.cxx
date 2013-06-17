@@ -616,41 +616,61 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute (TFunction_Logbook& log) con
   return 1;
 }
 
-//=======================================================================
-//function :  GEOMImpl_PipeTShapeDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_PipeTShapeDriver_Type_()
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
+
+bool GEOMImpl_PipeTShapeDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PipeTShapeDriver",
-                                                         sizeof(GEOMImpl_PipeTShapeDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-  return _aType;
-}
+  GEOMImpl_IPipeTShape aCI( function );
+  Standard_Integer aType = function->GetType();
 
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_PipeTShapeDriver) Handle(GEOMImpl_PipeTShapeDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_PipeTShapeDriver) _anOtherObject;
+  theOperationName = "PIPETSHAPE";
 
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_PipeTShapeDriver))) {
-       _anOtherObject = Handle(GEOMImpl_PipeTShapeDriver)((Handle(GEOMImpl_PipeTShapeDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case TSHAPE_BASIC:
+    AddParam( theParams, "Main radius", aCI.GetR1() );
+    AddParam( theParams, "Main width", aCI.GetW1() );
+    AddParam( theParams, "Main half-length", aCI.GetL1() );
+    AddParam( theParams, "Incident pipe radius", aCI.GetR2() );
+    AddParam( theParams, "Incident pipe width", aCI.GetW2() );
+    AddParam( theParams, "Incident pipe half-length", aCI.GetL2() );
+    AddParam( theParams, "For hex mesh", aCI.GetHexMesh() );
+    break;
+  case TSHAPE_CHAMFER:
+    AddParam( theParams, "Main radius", aCI.GetR1() );
+    AddParam( theParams, "Main width", aCI.GetW1() );
+    AddParam( theParams, "Main half-length", aCI.GetL1() );
+    AddParam( theParams, "Incident pipe radius", aCI.GetR2() );
+    AddParam( theParams, "Incident pipe width", aCI.GetW2() );
+    AddParam( theParams, "Incident pipe half-length", aCI.GetL2() );
+    AddParam( theParams, "Chamfer height", aCI.GetH() );
+    AddParam( theParams, "Chamfer width", aCI.GetW() );
+    AddParam( theParams, "For hex mesh", aCI.GetHexMesh() );
+    break;
+  case TSHAPE_FILLET:
+    AddParam( theParams, "Main radius", aCI.GetR1() );
+    AddParam( theParams, "Main width", aCI.GetW1() );
+    AddParam( theParams, "Main half-length", aCI.GetL1() );
+    AddParam( theParams, "Incident pipe radius", aCI.GetR2() );
+    AddParam( theParams, "Incident pipe width", aCI.GetW2() );
+    AddParam( theParams, "Incident pipe half-length", aCI.GetL2() );
+    AddParam( theParams, "Fillet radius", aCI.GetRF() );
+    AddParam( theParams, "For hex mesh", aCI.GetHexMesh() );
+    break;
+  default:
+    return false;
   }
-
-  return _anOtherObject;
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PipeTShapeDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PipeTShapeDriver,GEOM_BaseDriver);

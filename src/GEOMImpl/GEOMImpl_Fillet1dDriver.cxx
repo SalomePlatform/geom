@@ -367,44 +367,41 @@ bool GEOMImpl_Fillet1dDriver::MakeFillet(const TopoDS_Wire& aWire,
 
   return isAllStepsOk;
 }
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-
-//=======================================================================
-//function :  GEOMImpl_Fillet1dDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_Fillet1dDriver_Type_()
+bool GEOMImpl_Fillet1dDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_Fillet1dDriver",
-                                                         sizeof(GEOMImpl_Fillet1dDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
+  GEOMImpl_IFillet1d aCI( function );
+  Standard_Integer aType = function->GetType();
 
-  return _aType;
-}
+  theOperationName = "FILLET_1D";
 
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_Fillet1dDriver) Handle(GEOMImpl_Fillet1dDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_Fillet1dDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_Fillet1dDriver))) {
-       _anOtherObject = Handle(GEOMImpl_Fillet1dDriver)((Handle(GEOMImpl_Fillet1dDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case GEOM_FILLET_1D:
+    AddParam( theParams, "Wire", aCI.GetShape() );
+    AddParam( theParams, "Vertexes");
+    if ( aCI.GetLength() > 1 )
+      theParams[1] << aCI.GetLength() << " vertexes: ";
+    for (int i = 1; i <= aCI.GetLength(); ++i )
+      theParams[1] << aCI.GetVertex( i ) << " ";
+    AddParam( theParams, "Radius", aCI.GetR() );
+    AddParam( theParams, "Fuse collinear edges", aCI.GetFlag() );
+    break;
+  default:
+    return false;
   }
-
-  return _anOtherObject;
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_Fillet1dDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_Fillet1dDriver,GEOM_BaseDriver);

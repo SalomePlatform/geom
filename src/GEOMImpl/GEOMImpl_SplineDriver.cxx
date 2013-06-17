@@ -20,13 +20,14 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <GEOMImpl_SplineDriver.hxx>
+#include "GEOMImpl_SplineDriver.hxx"
 
-#include <GEOMImpl_ISpline.hxx>
-#include <GEOMImpl_Types.hxx>
+#include "GEOMImpl_ISpline.hxx"
+#include "GEOMImpl_Types.hxx"
+#include "GEOMImpl_ICurveParametric.hxx"
 
-#include <GEOM_Function.hxx>
-#include <GEOMUtils.hxx>
+#include "GEOM_Function.hxx"
+#include "GEOMUtils.hxx"
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -40,7 +41,6 @@
 #include <TopoDS_Vertex.hxx>
 
 #include <Geom_BezierCurve.hxx>
-//#include <GeomAPI_PointsToBSpline.hxx>
 #include <GeomAPI_Interpolate.hxx>
 
 #include <gp.hxx>
@@ -49,8 +49,6 @@
 #include <Precision.hxx>
 #include <TColgp_Array1OfPnt.hxx>
 #include <TColgp_HArray1OfPnt.hxx>
-
-#include <Standard_Stream.hxx>
 
 #include <Standard_NullObject.hxx>
 
@@ -112,9 +110,9 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
     if (useCoords) {
       int anArrayLength = aCoordsArray->Length();
       for (int i = 0, j = 1; i <= (anArrayLength-3); i += 3) {
-	gp_Pnt aPnt = gp_Pnt(aCoordsArray->Value(i+1), aCoordsArray->Value(i+2), aCoordsArray->Value(i+3));
-	points.SetValue(j, aPnt);
-	j++;
+        gp_Pnt aPnt = gp_Pnt(aCoordsArray->Value(i+1), aCoordsArray->Value(i+2), aCoordsArray->Value(i+3));
+        points.SetValue(j, aPnt);
+        j++;
       }
     }
 
@@ -123,22 +121,22 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
     if (aType == SPLINE_BEZIER && aCI.GetIsClosed()) {
       TopoDS_Vertex aV1;
       if (useCoords) {
-	aV1 = BRepBuilderAPI_MakeVertex(points.Value(1));
+        aV1 = BRepBuilderAPI_MakeVertex(points.Value(1));
       }
       else {
-	Handle(GEOM_Function) aFPoint = Handle(GEOM_Function)::DownCast(aPoints->Value(1));
-	TopoDS_Shape aFirstPnt = aFPoint->GetValue();
-	aV1 = TopoDS::Vertex(aFirstPnt);
+        Handle(GEOM_Function) aFPoint = Handle(GEOM_Function)::DownCast(aPoints->Value(1));
+        TopoDS_Shape aFirstPnt = aFPoint->GetValue();
+        aV1 = TopoDS::Vertex(aFirstPnt);
       }
 
       TopoDS_Vertex aV2;
       if (useCoords) {
-	aV2 = BRepBuilderAPI_MakeVertex(points.Value(aLen));
+        aV2 = BRepBuilderAPI_MakeVertex(points.Value(aLen));
       }
       else {
-	Handle(GEOM_Function) aLPoint = Handle(GEOM_Function)::DownCast(aPoints->Value(aLen));
-	TopoDS_Shape aLastPnt = aLPoint->GetValue();
-	aV2 = TopoDS::Vertex(aLastPnt);
+        Handle(GEOM_Function) aLPoint = Handle(GEOM_Function)::DownCast(aPoints->Value(aLen));
+        TopoDS_Shape aLastPnt = aLPoint->GetValue();
+        aV2 = TopoDS::Vertex(aLastPnt);
       }
 
       if (!aV1.IsNull() && !aV2.IsNull() && !aV1.IsSame(aV2)) {
@@ -154,7 +152,7 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
     for (ind = 1; ind <= aLen; ind++) {
       gp_Pnt aP;
       if (useCoords) {
-	aP = points.Value(ind);
+        aP = points.Value(ind);
         if (!isSeveral && ind > 1) {
           if (aP.Distance(aPrevP) > Precision::Confusion()) {
             isSeveral = Standard_True;
@@ -164,18 +162,18 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
         aPrevP = aP;
       }
       else {
-	Handle(GEOM_Function) aRefPoint = Handle(GEOM_Function)::DownCast(aPoints->Value(ind));
-	TopoDS_Shape aShapePnt = aRefPoint->GetValue();
-	if (aShapePnt.ShapeType() == TopAbs_VERTEX) {
-	  aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
-	  if (!isSeveral && ind > 1) {
-	    if (aP.Distance(aPrevP) > Precision::Confusion()) {
-	      isSeveral = Standard_True;
-	    }
-	  }
-	  CurvePoints.SetValue(ind, aP);
-	  aPrevP = aP;
-	}
+        Handle(GEOM_Function) aRefPoint = Handle(GEOM_Function)::DownCast(aPoints->Value(ind));
+        TopoDS_Shape aShapePnt = aRefPoint->GetValue();
+        if (aShapePnt.ShapeType() == TopAbs_VERTEX) {
+          aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+          if (!isSeveral && ind > 1) {
+            if (aP.Distance(aPrevP) > Precision::Confusion()) {
+              isSeveral = Standard_True;
+            }
+          }
+          CurvePoints.SetValue(ind, aP);
+          aPrevP = aP;
+        }
       }
     }
 
@@ -268,45 +266,72 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_SplineDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_SplineDriver_Type_()
+bool GEOMImpl_SplineDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_ISpline          aCI( function );
+  GEOMImpl_ICurveParametric aPI( function );
+  Standard_Integer aType = function->GetType();
 
+  theOperationName = "CURVE";
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_SplineDriver",
-                                                         sizeof(GEOMImpl_SplineDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
+  switch ( aType ) {
+  case SPLINE_BEZIER:
+  case SPLINE_INTERPOLATION:
+  case SPLINE_INTERPOL_TANGENTS:
 
-  return _aType;
-}
+    AddParam( theParams, "Type", ( aType == SPLINE_BEZIER ? "Bezier" : "Interpolation"));
 
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_SplineDriver) Handle(GEOMImpl_SplineDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_SplineDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_SplineDriver))) {
-       _anOtherObject = Handle(GEOMImpl_SplineDriver)((Handle(GEOMImpl_SplineDriver)&)AnObject);
-     }
+    if ( aPI.HasData() )
+    {
+      AddParam( theParams, "X(t) equation", aPI.GetExprX() );
+      AddParam( theParams, "Y(t) equation", aPI.GetExprY() );
+      AddParam( theParams, "Z(t) equation", aPI.GetExprZ() );
+      AddParam( theParams, "Min t", aPI.GetParamMin() );
+      AddParam( theParams, "Max t", aPI.GetParamMax() );
+      if ( aPI.GetParamNbStep() )
+        AddParam( theParams, "Number of steps", aPI.GetParamNbStep() );
+      else
+        AddParam( theParams, "t step", aPI.GetParamStep() );
+    }
+    else
+    {
+      if ( aCI.GetConstructorType() == COORD_CONSTRUCTOR )
+      {
+        Handle(TColStd_HArray1OfReal) coords = aCI.GetCoordinates();
+        GEOM_Param& pntParam = AddParam( theParams, "Points");
+        pntParam << ( coords->Length() ) / 3 << " points: ";
+        for ( int i = coords->Lower(), nb = coords->Upper(); i <= nb; )
+          pntParam << "( " << coords->Value( i++ )
+                   << ", " << coords->Value( i++ )
+                   << ", " << coords->Value( i++ ) << " ) ";
+      }
+      else
+      {
+        AddParam( theParams, "Points", aCI.GetPoints() );
+      }
+      Handle(GEOM_Function) v1 = aCI.GetFirstVector();
+      Handle(GEOM_Function) v2 = aCI.GetLastVector();
+      if ( !v1.IsNull() ) AddParam( theParams, "First tangent vector", v1 );
+      if ( !v2.IsNull() ) AddParam( theParams, "Last tangent vector", v2 );
+    }
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject ;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_SplineDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_SplineDriver,GEOM_BaseDriver);

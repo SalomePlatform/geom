@@ -277,44 +277,73 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_TranslateDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_TranslateDriver_Type_()
+bool GEOMImpl_TranslateDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_ITranslate aCI( function );
+  Standard_Integer aType = function->GetType();
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_TranslateDriver",
-                                                         sizeof(GEOMImpl_TranslateDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_TranslateDriver) Handle(GEOMImpl_TranslateDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_TranslateDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_TranslateDriver))) {
-       _anOtherObject = Handle(GEOMImpl_TranslateDriver)((Handle(GEOMImpl_TranslateDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case TRANSLATE_TWO_POINTS:
+  case TRANSLATE_TWO_POINTS_COPY:
+    theOperationName = "TRANSLATION";
+    AddParam( theParams, "Object", aCI.GetOriginal() );
+    AddParam( theParams, "Point 1", aCI.GetPoint1() );
+    AddParam( theParams, "Point 2", aCI.GetPoint2() );
+    break;
+  case TRANSLATE_VECTOR:
+  case TRANSLATE_VECTOR_COPY:
+    theOperationName = "TRANSLATION";
+    AddParam( theParams, "Object", aCI.GetOriginal() );
+    AddParam( theParams, "Vector", aCI.GetVector() );
+    break;
+  case TRANSLATE_VECTOR_DISTANCE:
+    theOperationName = "TRANSLATION";
+    AddParam( theParams, "Object", aCI.GetOriginal() );
+    AddParam( theParams, "Vector", aCI.GetVector() );
+    AddParam( theParams, "Distance", aCI.GetDistance() );
+    break;
+  case TRANSLATE_XYZ:
+  case TRANSLATE_XYZ_COPY:
+    theOperationName = "TRANSLATION";
+    AddParam( theParams, "Object", aCI.GetOriginal() );
+    AddParam( theParams, "Dx", aCI.GetDX() );
+    AddParam( theParams, "Dy", aCI.GetDY() );
+    AddParam( theParams, "Dz", aCI.GetDZ() );
+    break;
+  case TRANSLATE_1D:
+    theOperationName = "MUL_TRANSLATION";
+    AddParam( theParams, "Main Object", aCI.GetOriginal() );
+    AddParam( theParams, "Vector", aCI.GetVector(), "DX" );
+    AddParam( theParams, "Step", aCI.GetStep1() );
+    AddParam( theParams, "Nb. Times", aCI.GetNbIter1() );
+    break;
+  case TRANSLATE_2D:
+    theOperationName = "MUL_TRANSLATION";
+    AddParam( theParams, "Main Object", aCI.GetOriginal() );
+    AddParam( theParams, "Vector U", aCI.GetVector(), "DX" );
+    AddParam( theParams, "Vector V", aCI.GetVector2(), "DY" );
+    AddParam( theParams, "Step U", aCI.GetStep1() );
+    AddParam( theParams, "Nb. Times U", aCI.GetNbIter1() );
+    AddParam( theParams, "Step V", aCI.GetStep2() );
+    AddParam( theParams, "Nb. Times V", aCI.GetNbIter2() );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_TranslateDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_TranslateDriver,GEOM_BaseDriver);

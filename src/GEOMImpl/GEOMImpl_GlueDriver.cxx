@@ -456,7 +456,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
       const TopTools_ListOfShape& aLSS = aIDMSS.FindFromIndex(i);
       aItLS.Initialize(aLSS);
       for (; aItLS.More(); aItLS.Next()) {
-	const TopoDS_Shape& aSs = aItLS.Value();
+        const TopoDS_Shape& aSs = aItLS.Value();
       }
     }
     */
@@ -756,8 +756,7 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aFace = aRefSh->GetValue();
       if (aFace.IsNull())
         continue;
-      if (!aFaces.Contains(aFace))
-        aFaces.Add(aFace);
+      aFaces.Add(aFace);
     }
 
     Standard_Boolean aGlueAllEdges = Standard_False;
@@ -781,44 +780,54 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
-//=======================================================================
-//function :  GEOMImpl_GlueDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_GlueDriver_Type_()
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
+
+bool GEOMImpl_GlueDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if (aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if (aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if (aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_IGlue aCI( function );
+  Standard_Integer aType = function->GetType();
 
-
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_GlueDriver",
-                                                         sizeof(GEOMImpl_GlueDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_GlueDriver) Handle(GEOMImpl_GlueDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_GlueDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_GlueDriver))) {
-       _anOtherObject = Handle(GEOMImpl_GlueDriver)((Handle(GEOMImpl_GlueDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case GLUE_FACES:
+    theOperationName = "GLUE_FACES";
+    AddParam( theParams, "Selected shape", aCI.GetBase() );
+    AddParam( theParams, "Tolerance", aCI.GetTolerance() );
+    AddParam( theParams, "To keep non solids", aCI.GetKeepNonSolids() );
+    break;
+  case GLUE_EDGES:
+    theOperationName = "GLUE_EDGES";
+    AddParam( theParams, "Selected shape", aCI.GetBase() );
+    AddParam( theParams, "Tolerance", aCI.GetTolerance() );
+    break;
+  case GLUE_FACES_BY_LIST:
+    theOperationName = "GLUE_FACES";
+    AddParam( theParams, "Selected shape", aCI.GetBase() );
+    AddParam( theParams, "Tolerance", aCI.GetTolerance() );
+    AddParam( theParams, "Faces", aCI.GetFaces() );
+    AddParam( theParams, "To keep non solids", aCI.GetKeepNonSolids() );
+    AddParam( theParams, "To glue all edges", aCI.GetGlueAllEdges() );
+    break;
+  case GLUE_EDGES_BY_LIST:
+    theOperationName = "GLUE_EDGES";
+    AddParam( theParams, "Selected shape", aCI.GetBase() );
+    AddParam( theParams, "Tolerance", aCI.GetTolerance() );
+    AddParam( theParams, "Edges", aCI.GetFaces() );
+    break;
+  default:
+    return false;
   }
-
-  return _anOtherObject;
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_GlueDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_GlueDriver,GEOM_BaseDriver);

@@ -47,10 +47,6 @@
 #include <Standard_GUID.hxx>
 #endif 
 
-#ifndef _Handle_TFunction_Driver_HeaderFile
-#include <Handle_TFunction_Driver.hxx>
-#endif
-
 #ifndef _TopoDS_Shape_HeaderFile
 #include <TopoDS_Shape.hxx>
 #endif
@@ -61,58 +57,7 @@ class Handle_Standard_Type;
 class Handle(TFunction_Driver);
 class GEOMImpl_BooleanDriver;
 
-Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_BooleanDriver);
 
-class Handle(GEOMImpl_BooleanDriver) : public Handle(TFunction_Driver) {
-  public:
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
-
-    Handle(GEOMImpl_BooleanDriver)():Handle(TFunction_Driver)() {} 
-    Handle(GEOMImpl_BooleanDriver)(const Handle(GEOMImpl_BooleanDriver)& aHandle) : Handle(TFunction_Driver)(aHandle) 
-     {
-     }
-
-    Handle(GEOMImpl_BooleanDriver)(const GEOMImpl_BooleanDriver* anItem) : Handle(TFunction_Driver)((TFunction_Driver *)anItem) 
-     {
-     }
-
-    Handle(GEOMImpl_BooleanDriver)& operator=(const Handle(GEOMImpl_BooleanDriver)& aHandle)
-     {
-      Assign(aHandle.Access());
-      return *this;
-     }
-
-    Handle(GEOMImpl_BooleanDriver)& operator=(const GEOMImpl_BooleanDriver* anItem)
-     {
-      Assign((Standard_Transient *)anItem);
-      return *this;
-     }
-
-    GEOMImpl_BooleanDriver* operator->() 
-     {
-      return (GEOMImpl_BooleanDriver *)ControlAccess();
-     }
-
-    GEOMImpl_BooleanDriver* operator->() const 
-     {
-      return (GEOMImpl_BooleanDriver *)ControlAccess();
-     }
-
-   Standard_EXPORT ~Handle(GEOMImpl_BooleanDriver)() {};
- 
-   Standard_EXPORT static const Handle(GEOMImpl_BooleanDriver) DownCast(const Handle(Standard_Transient)& AnObject);
-};
 
 #ifndef _TFunction_Driver_HeaderFile
 #include <TFunction_Driver.hxx>
@@ -127,22 +72,13 @@ class Handle(GEOMImpl_BooleanDriver) : public Handle(TFunction_Driver) {
 class TColStd_SequenceOfExtendedString;
 
 
-class GEOMImpl_BooleanDriver : public TFunction_Driver {
+#include "GEOM_BaseDriver.hxx"
+
+DEFINE_STANDARD_HANDLE( GEOMImpl_BooleanDriver, GEOM_BaseDriver );
+
+class GEOMImpl_BooleanDriver : public GEOM_BaseDriver {
 
 public:
-
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
 
  // Methods PUBLIC
  // 
@@ -153,13 +89,8 @@ Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { r
 Standard_EXPORT static const Standard_GUID& GetID();
 Standard_EXPORT ~GEOMImpl_BooleanDriver() {};
 
-
- // Type management
- //
-Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_BooleanDriver_Type_();
-Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_BooleanDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_BooleanDriver) == AType || TFunction_Driver::IsKind(AType)); } 
-
+Standard_EXPORT virtual bool GetCreationInformation(std::string&             theOperationName,
+                                                    std::vector<GEOM_Param>& params);
 
 private:
 
@@ -167,6 +98,7 @@ private:
                                 const TopoDS_Shape theShape2,
                                 const Standard_Integer theType) const;
 
+DEFINE_STANDARD_RTTI( GEOMImpl_BooleanDriver )
 };
 
 #endif

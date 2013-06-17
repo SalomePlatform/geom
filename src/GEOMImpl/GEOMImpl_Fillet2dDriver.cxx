@@ -179,44 +179,40 @@ Standard_Integer GEOMImpl_Fillet2dDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_Fillet2dDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_Fillet2dDriver_Type_()
+bool GEOMImpl_Fillet2dDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_Fillet2dDriver",
-                                                         sizeof(GEOMImpl_Fillet2dDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
+  GEOMImpl_IFillet2d aCI( function );
+  Standard_Integer aType = function->GetType();
 
-  return _aType;
-}
+  theOperationName = "FILLET_2D";
 
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_Fillet2dDriver) Handle(GEOMImpl_Fillet2dDriver)::DownCast
-                                   (const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_Fillet2dDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_Fillet2dDriver))) {
-       _anOtherObject = Handle(GEOMImpl_Fillet2dDriver)((Handle(GEOMImpl_Fillet2dDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case FILLET_2D_SHAPE_VERTEXES:
+    AddParam( theParams, "Face", aCI.GetShape() );
+    AddParam( theParams, "Vertexes");
+    if ( aCI.GetLength() > 1 )
+      theParams[1] << aCI.GetLength() << " vertexes: ";
+    for (int i = 1; i <= aCI.GetLength(); ++i )
+      theParams[1] << aCI.GetVertex( i ) << " ";
+    AddParam( theParams, "Radius", aCI.GetR() );
+    break;
+  default:
+    return false;
   }
-
-  return _anOtherObject;
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_Fillet2dDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_Fillet2dDriver,GEOM_BaseDriver);

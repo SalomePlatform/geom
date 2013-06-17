@@ -322,45 +322,48 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_MeasureDriver_Type_
-//purpose  :
-//======================================================================= 
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_MeasureDriver_Type_()
+bool GEOMImpl_MeasureDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared); 
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+  GEOMImpl_IMeasure aCI( function );
+  Standard_Integer aType = function->GetType();
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_MeasureDriver",
-                                                         sizeof(GEOMImpl_MeasureDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//======================================================================= 
-const Handle(GEOMImpl_MeasureDriver) Handle(GEOMImpl_MeasureDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_MeasureDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_MeasureDriver))) {
-       _anOtherObject = Handle(GEOMImpl_MeasureDriver)((Handle(GEOMImpl_MeasureDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case CDG_MEASURE:
+    theOperationName = "MASS_CENTER";
+    AddParam( theParams, "Object", aCI.GetBase() );
+    break;
+  case BND_BOX_MEASURE:
+  case BND_BOX_MEASURE_PRECISE:
+    theOperationName = "BND_BOX";
+    AddParam( theParams, "Object", aCI.GetBase() );
+    break;
+  case VERTEX_BY_INDEX:
+    theOperationName = "GetVertexByIndex";
+    AddParam( theParams, "Object", aCI.GetBase() );
+    AddParam( theParams, "Index", aCI.GetIndex() );
+    break;
+  case VECTOR_FACE_NORMALE:
+    theOperationName = "NORMALE";
+    AddParam( theParams, "Face", aCI.GetBase() );
+    AddParam( theParams, "Point", aCI.GetPoint(), "face center" );
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject ;
+  return true;
 }
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_MeasureDriver,GEOM_BaseDriver);
+
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_MeasureDriver,GEOM_BaseDriver);

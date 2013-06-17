@@ -36,73 +36,15 @@
 class Handle_Standard_Type;
 class GEOMImpl_PipeTShapeDriver;
 
-Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_PipeTShapeDriver);
 
-class Handle(GEOMImpl_PipeTShapeDriver) : public Handle(TFunction_Driver) {
+
+#include "GEOM_BaseDriver.hxx"
+
+DEFINE_STANDARD_HANDLE( GEOMImpl_PipeTShapeDriver, GEOM_BaseDriver );
+
+class GEOMImpl_PipeTShapeDriver : public GEOM_BaseDriver {
 public:
-  inline void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  inline void* operator new(size_t size) 
-  { 
-    return Standard::Allocate(size); 
-  }
-  inline void  operator delete(void *anAddress) 
-  { 
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
-  
-  Handle(GEOMImpl_PipeTShapeDriver)():Handle(TFunction_Driver)() {} 
-  Handle(GEOMImpl_PipeTShapeDriver)(const Handle(GEOMImpl_PipeTShapeDriver)& aHandle) : Handle(TFunction_Driver)(aHandle) 
-  {}
-
-  Handle(GEOMImpl_PipeTShapeDriver)(const GEOMImpl_PipeTShapeDriver* anItem) : Handle(TFunction_Driver)((TFunction_Driver *)anItem) 
-  {}
-
-  Handle(GEOMImpl_PipeTShapeDriver)& operator=(const Handle(GEOMImpl_PipeTShapeDriver)& aHandle)
-  {
-    Assign(aHandle.Access());
-    return *this;
-  }
-  
-  Handle(GEOMImpl_PipeTShapeDriver)& operator=(const GEOMImpl_PipeTShapeDriver* anItem)
-  {
-    Assign((Standard_Transient *)anItem);
-    return *this;
-  }
-  
-  GEOMImpl_PipeTShapeDriver* operator->() 
-  {
-    return (GEOMImpl_PipeTShapeDriver *)ControlAccess();
-  }
-  
-  GEOMImpl_PipeTShapeDriver* operator->() const 
-  {
-    return (GEOMImpl_PipeTShapeDriver *)ControlAccess();
-  }
-  
-  Standard_EXPORT ~Handle(GEOMImpl_PipeTShapeDriver)() {};
-  
-  Standard_EXPORT static const Handle(GEOMImpl_PipeTShapeDriver) DownCast(const Handle(Standard_Transient)& AnObject);
-};
-
-class GEOMImpl_PipeTShapeDriver : public TFunction_Driver {
-public:
-  inline void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  inline void* operator new(size_t size) 
-  { 
-    return Standard::Allocate(size); 
-  }
-  inline void  operator delete(void *anAddress) 
-  { 
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
-  
-  // Methods PUBLIC
+ // Methods PUBLIC
   // 
   Standard_EXPORT GEOMImpl_PipeTShapeDriver();
   Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
@@ -114,17 +56,13 @@ public:
   Standard_EXPORT static const Standard_GUID& GetID();
   Standard_EXPORT ~GEOMImpl_PipeTShapeDriver() {};
   
+  Standard_EXPORT virtual
+  bool GetCreationInformation(std::string&             theOperationName,
+                              std::vector<GEOM_Param>& params);
   // Type management
   //
-  Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_PipeTShapeDriver_Type_();
-  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const
-  {
-    return STANDARD_TYPE(GEOMImpl_PipeTShapeDriver);
-  }
-  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const
-  {
-    return (STANDARD_TYPE(GEOMImpl_PipeTShapeDriver) == AType || TFunction_Driver::IsKind(AType));
-  }
+DEFINE_STANDARD_RTTI( GEOMImpl_PipeTShapeDriver )
+
 private:
 
   /*!
@@ -187,9 +125,9 @@ private:
   //           along OX and OZ
   //=======================================================================
   void GetCommonShapesOnCylinders(const TopoDS_Shape& theShape,
-				  TopAbs_ShapeEnum theShapeType,
+                                  TopAbs_ShapeEnum theShapeType,
                                   double r, double r2,
-				  Handle(TopTools_HSequenceOfShape)& commonShapes) const;
+                                  Handle(TopTools_HSequenceOfShape)& commonShapes) const;
 
 };
 

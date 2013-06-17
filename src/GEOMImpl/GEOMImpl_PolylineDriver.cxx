@@ -20,25 +20,24 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
+#include "GEOMImpl_PolylineDriver.hxx"
 
-#include <GEOMImpl_PolylineDriver.hxx>
-#include <GEOMImpl_IPolyline.hxx>
-#include <GEOMImpl_Types.hxx>
-#include <GEOM_Function.hxx>
+#include "GEOMImpl_ICurveParametric.hxx"
+#include "GEOMImpl_IPolyline.hxx"
+#include "GEOMImpl_Types.hxx"
+#include "GEOM_Function.hxx"
 
-#include <TColgp_Array1OfPnt.hxx>
-#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
+#include <Precision.hxx>
+#include <TColgp_Array1OfPnt.hxx>
+#include <TopAbs.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Wire.hxx>
-#include <TopAbs.hxx>
-#include <TopExp.hxx>
-
-#include <Precision.hxx>
 #include <gp_Pnt.hxx>
 
 //=======================================================================
@@ -82,9 +81,9 @@ Standard_Integer GEOMImpl_PolylineDriver::Execute(TFunction_Logbook& log) const
       Handle(TColStd_HArray1OfReal) aCoordsArray = aCI.GetCoordinates();
       int anArrayLength = aCoordsArray->Length();
       for (int i = 0, j = 1; i <= (anArrayLength-3); i += 3) {
-	gp_Pnt aPnt = gp_Pnt(aCoordsArray->Value(i+1), aCoordsArray->Value(i+2), aCoordsArray->Value(i+3));
-	points.SetValue(j,aPnt);
-	j++;
+        gp_Pnt aPnt = gp_Pnt(aCoordsArray->Value(i+1), aCoordsArray->Value(i+2), aCoordsArray->Value(i+3));
+        points.SetValue(j,aPnt);
+        j++;
       } 
     }
 
@@ -94,39 +93,39 @@ Standard_Integer GEOMImpl_PolylineDriver::Execute(TFunction_Logbook& log) const
     for (; ind <= aLen; ind++)
     {
       if(useCoords) {
-	aMakePoly.Add(BRepBuilderAPI_MakeVertex(points.Value(ind)));
+        aMakePoly.Add(BRepBuilderAPI_MakeVertex(points.Value(ind)));
       } else {
-	Handle(GEOM_Function) aRefPoint = aCI.GetPoint(ind);
-	TopoDS_Shape aShapePnt = aRefPoint->GetValue();
-	if (aShapePnt.ShapeType() != TopAbs_VERTEX) {
-	  Standard_TypeMismatch::Raise
-	    ("Polyline creation aborted : arguments are not a vertexes");
-	  return 0;
-	}
-	if (aShapePnt.ShapeType() == TopAbs_VERTEX) {
-	  aMakePoly.Add(TopoDS::Vertex(aShapePnt));
-	  //if (!aMakePoly.Added()) return 0;
-	}
+        Handle(GEOM_Function) aRefPoint = aCI.GetPoint(ind);
+        TopoDS_Shape aShapePnt = aRefPoint->GetValue();
+        if (aShapePnt.ShapeType() != TopAbs_VERTEX) {
+          Standard_TypeMismatch::Raise
+            ("Polyline creation aborted : arguments are not a vertexes");
+          return 0;
+        }
+        if (aShapePnt.ShapeType() == TopAbs_VERTEX) {
+          aMakePoly.Add(TopoDS::Vertex(aShapePnt));
+          //if (!aMakePoly.Added()) return 0;
+        }
       }
     }
     // Compare first and last point coordinates and close polyline if it's the same.
     if ( aLen > 2 ) {
       TopoDS_Vertex aV1;
       if( useCoords ) {
-	aV1 = BRepBuilderAPI_MakeVertex(points.Value(1));
+        aV1 = BRepBuilderAPI_MakeVertex(points.Value(1));
       } else {
-	Handle(GEOM_Function) aFPoint = aCI.GetPoint(1);
-	TopoDS_Shape aFirstPnt = aFPoint->GetValue();
-	aV1 = TopoDS::Vertex(aFirstPnt);
+        Handle(GEOM_Function) aFPoint = aCI.GetPoint(1);
+        TopoDS_Shape aFirstPnt = aFPoint->GetValue();
+        aV1 = TopoDS::Vertex(aFirstPnt);
       }
       
       TopoDS_Vertex aV2;
       if( useCoords ) {
-	aV2 = BRepBuilderAPI_MakeVertex(points.Value(aLen));
+        aV2 = BRepBuilderAPI_MakeVertex(points.Value(aLen));
       } else {
-	Handle(GEOM_Function) aLPoint = aCI.GetPoint(aLen);
-	TopoDS_Shape aLastPnt = aLPoint->GetValue();
-	aV2 = TopoDS::Vertex(aLastPnt);
+        Handle(GEOM_Function) aLPoint = aCI.GetPoint(aLen);
+        TopoDS_Shape aLastPnt = aLPoint->GetValue();
+        aV2 = TopoDS::Vertex(aLastPnt);
       }
       
       if ( (!aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2)) ||
@@ -150,45 +149,69 @@ Standard_Integer GEOMImpl_PolylineDriver::Execute(TFunction_Logbook& log) const
   return 1;    
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_PolylineDriver_Type_
-//purpose  :
-//======================================================================= 
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_PolylineDriver_Type_()
+bool GEOMImpl_PolylineDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared); 
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+  GEOMImpl_IPolyline        aCI( function );
+  GEOMImpl_ICurveParametric aIP( function );
+  Standard_Integer aType = function->GetType();
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PolylineDriver",
-                                                         sizeof(GEOMImpl_PolylineDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
+  theOperationName = "CURVE";
 
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//======================================================================= 
-const Handle(GEOMImpl_PolylineDriver) Handle(GEOMImpl_PolylineDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_PolylineDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_PolylineDriver))) {
-       _anOtherObject = Handle(GEOMImpl_PolylineDriver)((Handle(GEOMImpl_PolylineDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case POLYLINE_POINTS:
+    AddParam( theParams, "Type", "Polyline");
+    if ( aIP.HasData() )
+    {
+      AddParam( theParams, "X(t) equation", aIP.GetExprX() );
+      AddParam( theParams, "Y(t) equation", aIP.GetExprY() );
+      AddParam( theParams, "Z(t) equation", aIP.GetExprZ() );
+      AddParam( theParams, "Min t", aIP.GetParamMin() );
+      AddParam( theParams, "Max t", aIP.GetParamMax() );
+      if ( aIP.GetParamNbStep() )
+        AddParam( theParams, "Number of steps", aIP.GetParamNbStep() );
+      else
+        AddParam( theParams, "t step", aIP.GetParamStep() );
+    }
+    else
+    {
+      GEOM_Param& pntParam = AddParam( theParams, "Points");
+      if ( aCI.GetConstructorType() == COORD_CONSTRUCTOR )
+      {
+        Handle(TColStd_HArray1OfReal) coords = aCI.GetCoordinates();
+        if ( coords->Length() > 3 )
+          pntParam << ( coords->Length() ) / 3 << " points: ";
+        for ( int i = coords->Lower(), nb = coords->Upper(); i <= nb; )
+          pntParam << "( " << coords->Value( i++ )
+                   << ", " << coords->Value( i++ )
+                   << ", " << coords->Value( i++ ) << " ) ";
+      }
+      else
+      {
+        if ( aCI.GetLength() > 1 )
+          pntParam << aCI.GetLength() << " points: ";
+        for ( int i = 1, nb = aCI.GetLength(); i <= nb; ++i )
+          pntParam << aCI.GetPoint( i ) << " ";
+      }
+      AddParam( theParams, "Is closed", aCI.GetIsClosed() );
+    }
+    break;
+  default:
+    return false;
   }
 
-  return _anOtherObject ;
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_PolylineDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_PolylineDriver,GEOM_BaseDriver);

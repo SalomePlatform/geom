@@ -162,46 +162,50 @@ Standard_Integer GEOMImpl_MarkerDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
+//================================================================================
+/*!
+ * \brief Returns a name of creation operation and names and values of creation parameters
+ */
+//================================================================================
 
-//=======================================================================
-//function :  GEOMImpl_MarkerDriver_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOMImpl_MarkerDriver_Type_()
+bool GEOMImpl_MarkerDriver::
+GetCreationInformation(std::string&             theOperationName,
+                       std::vector<GEOM_Param>& theParams)
 {
+  if (Label().IsNull()) return 0;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  GEOMImpl_IMarker aCI( function );
+  Standard_Integer aType = function->GetType();
 
+  theOperationName = "LOCAL_CS";
 
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_MarkerDriver",
-                                                         sizeof(GEOMImpl_MarkerDriver),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-const Handle(GEOMImpl_MarkerDriver) Handle(GEOMImpl_MarkerDriver)::DownCast
-       (const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOMImpl_MarkerDriver) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_MarkerDriver))) {
-       _anOtherObject = Handle(GEOMImpl_MarkerDriver)((Handle(GEOMImpl_MarkerDriver)&)AnObject);
-     }
+  switch ( aType ) {
+  case MARKER_CS:
+  {
+    double OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ;
+    aCI.GetOrigin(OX, OY, OZ);
+    aCI.GetXDir(XDX, XDY, XDZ);
+    aCI.GetYDir(YDX, YDY, YDZ);
+    AddParam( theParams, "Coordinates of origin" ) << OX << ", " << OY << ", " << OZ;
+    AddParam( theParams, "X axis direction" ) << XDX << ", " << XDY << ", " << XDZ;
+    AddParam( theParams, "Y axis direction" ) << YDX << ", " << YDY << ", " << YDZ;
+    break;
   }
-
-  return _anOtherObject ;
+  case MARKER_SHAPE:
+    AddParam( theParams, "Object", aCI.GetShape() );
+    break;
+  case MARKER_PNT2VEC:
+    AddParam( theParams, "Point", aCI.GetOrigin() );
+    AddParam( theParams, "X axis direction", aCI.GetXVec() );
+    AddParam( theParams, "Y axis direction", aCI.GetYVec() );
+    break;
+  default:
+    return false;
+  }
+  
+  return true;
 }
+
+IMPLEMENT_STANDARD_HANDLE (GEOMImpl_MarkerDriver,GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_MarkerDriver,GEOM_BaseDriver);
