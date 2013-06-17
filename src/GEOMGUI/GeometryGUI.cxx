@@ -31,6 +31,7 @@
 #include "GeometryGUI_Operations.h"
 #include "GEOMGUI_OCCSelector.h"
 #include "GEOMGUI_Selection.h"
+#include "GEOMGUI_CreationInfoWdg.h"
 #include "GEOM_Constants.h"
 #include "GEOM_Displayer.h"
 #include "GEOM_AISShape.hxx"
@@ -107,9 +108,11 @@
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
 
-#include <GEOM_version.h>
+#include <Standard_Failure.hxx>
+#include <Standard_ErrorHandler.hxx>
 
-#include "GEOMImpl_Types.hxx"
+#include "GEOM_version.h"
+#include "GEOMImpl_Types.hxx" // dangerous hxx (defines short-name macros) - include after all
 
 extern "C" {
   Standard_EXPORT CAM_Module* createModule() {
@@ -207,6 +210,8 @@ GeometryGUI::GeometryGUI() :
 
   myDisplayer = 0;
   myLocalSelectionMode = GEOM_ALLOBJECTS;
+
+  myCreationInfoWdg = 0;
 
   connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
 }
@@ -611,6 +616,8 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   }
   else
     SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
+
+  updateCreationInfo();
 }
 
 //=================================================================================
@@ -1450,6 +1457,12 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   LightApp_SelectionMgr* sm = getApp()->selectionMgr();
 
+  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
+  if ( !myCreationInfoWdg )
+    myCreationInfoWdg = new GEOMGUI_CreationInfoWdg( getApp() );
+  getApp()->insertDockWindow( myCreationInfoWdg->getWinID(), myCreationInfoWdg );
+  getApp()->placeDockWindow( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
+
   SUIT_ViewManager* vm;
   ViewManagerList OCCViewManagers, VTKViewManagers;
 
@@ -1521,6 +1534,12 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
              this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
 
+  LightApp_SelectionMgr* selMrg = getApp()->selectionMgr();
+
+  disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
+  getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
+  myCreationInfoWdg = 0;
+
   EmitSignalCloseAllDialogs();
 
   GUIMap::Iterator it;
@@ -1534,11 +1553,11 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   qDeleteAll(myOCCSelectors);
   myOCCSelectors.clear();
-  getApp()->selectionMgr()->setEnabled( true, OCCViewer_Viewer::Type() );
+  selMrg->setEnabled( true, OCCViewer_Viewer::Type() );
 
   qDeleteAll(myVTKSelectors);
   myVTKSelectors.clear();
-  getApp()->selectionMgr()->setEnabled( true, SVTK_Viewer::Type() );
+  selMrg->setEnabled( true, SVTK_Viewer::Type() );
 
   return SalomeApp_Module::deactivateModule( study );
 }
@@ -1574,6 +1593,8 @@ void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
   mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::BottomDockWidgetArea );
+  if ( myCreationInfoWdg )
+    mappa.insert( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
 }
 
 void GeometryGUI::viewManagers( QStringList& lst ) const
@@ -1643,6 +1664,78 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
           /*delete*/ myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
           break;
         }
+  }
+}
+
+//================================================================================
+/*!
+ * \brief Slot called when selection changed. Shows creation info of a selected object 
+ */
+//================================================================================
+
+void GeometryGUI::updateCreationInfo()
+{
+  myCreationInfoWdg->clear();
+
+  // Code below is commented to have myCreationInfoWdg filled as soon as it is shown again
+  // if ( !myCreationInfoWdg->isVisible() )
+  //   return;
+
+  // look for a sole selected GEOM_Object
+  GEOM::GEOM_Object_var geomObj;
+
+  SALOME_ListIO selected;
+  getApp()->selectionMgr()->selectedObjects( selected );
+
+  _PTR(Study) study = dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() )->studyDS();
+  SALOME_ListIteratorOfListIO selIt( selected );
+  for ( ; selIt.More(); selIt.Next() )
+  {
+    Handle(SALOME_InteractiveObject) io = selIt.Value();
+    if ( !io->hasEntry() ) continue;
+    _PTR(SObject) sobj = study->FindObjectID( io->getEntry() );
+    if ( !sobj ) continue;
+    CORBA::Object_var      obj = GeometryGUI::ClientSObjectToObject( sobj );
+    GEOM::GEOM_Object_var gobj = GEOM::GEOM_Object::_narrow( obj );
+    if ( !gobj->_is_nil() )
+    {
+      if ( !geomObj->_is_nil() )
+        return; // several GEOM objects selected
+      geomObj = gobj;
+    }
+  }
+  if ( geomObj->_is_nil() ) return;
+
+  // pass creation info of geomObj to myCreationInfoWdg
+
+  QPixmap icon;
+  QString operationName;
+  myCreationInfoWdg->setOperation( icon, operationName );
+
+  try
+  {
+    OCC_CATCH_SIGNALS;
+    GEOM::CreationInformation_var info = geomObj->GetCreationInformation();
+    if ( &info.in() )
+    {
+      SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+      QString name = info->operationName.in();
+      if ( !name.isEmpty() )
+      {
+        icon = resMgr->loadPixmap( "GEOM", tr( ("ICO_"+name).toLatin1().constData() ), false );
+        operationName = tr( ("MEN_"+name).toLatin1().constData() );
+        if ( operationName.startsWith( "MEN_" ))
+          operationName = name; // no translation
+        myCreationInfoWdg->setOperation( icon, operationName );
+
+        for ( size_t i = 0; i < info->params.length(); ++i )
+          myCreationInfoWdg->addParam( info->params[i].name.in(),
+                                       info->params[i].value.in() );
+      }
+    }
+  }
+  catch (...)
+  {
   }
 }
 
@@ -1745,10 +1838,10 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
         // Set checked if this material is current 
         Material_Model aModel;
         aModel.fromResources( material );
-	if ( !found && aModel.toProperties() == curModel ) {
-	  menAct->setChecked( true );
-	  found = true;
-	}
+        if ( !found && aModel.toProperties() == curModel ) {
+          menAct->setChecked( true );
+          found = true;
+        }
       }
       matMenu->insertAction( matMenu->addSeparator(), action(  GEOMOp::OpPredefMaterCustom ) );
       matMenu->insertSeparator( action(  GEOMOp::OpPredefMaterCustom ) );
@@ -1822,11 +1915,11 @@ void GeometryGUI::createPreferences()
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
 
   addPreference( tr( "PREF_PREDEF_MATERIALS" ), genGroup,
-		 LightApp_Preferences::Bool, "Geometry", "predef_materials" );
+                 LightApp_Preferences::Bool, "Geometry", "predef_materials" );
 
   int material = addPreference( tr( "PREF_MATERIAL" ), genGroup,
-				LightApp_Preferences::Selector,
-				"Geometry", "material" );
+                                LightApp_Preferences::Selector,
+                                "Geometry", "material" );
 
   addPreference( tr( "PREF_EDITGROUP_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "editgroup_color" );
@@ -2103,10 +2196,10 @@ void GeometryGUI::storeVisualParameters (int savePoint)
 
         if (aProps.contains(GEOM::propertyName( GEOM::Color ))) {
           QColor c = aProps.value(GEOM::propertyName( GEOM::Color )).value<QColor>();
-	  QStringList val;
-	  val << QString::number(c.redF());
-	  val << QString::number(c.greenF());
-	  val << QString::number(c.blueF());
+          QStringList val;
+          val << QString::number(c.redF());
+          val << QString::number(c.greenF());
+          val << QString::number(c.blueF());
           param = occParam + GEOM::propertyName( GEOM::Color );
           ip->setParameter(entry, param.toStdString(), val.join( GEOM::subSectionSeparator()).toStdString());
         }
@@ -2249,7 +2342,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       } else if (paramNameStr == GEOM::propertyName( GEOM::Transparency )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Transparency ), val.toDouble() );
       } else if (paramNameStr == GEOM::propertyName( GEOM::TopLevel )) {
-	aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::TopLevel ), val == "true" || val == "1");
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::TopLevel ), val == "true" || val == "1");
       } else if (paramNameStr == GEOM::propertyName( GEOM::DisplayMode )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::DisplayMode ), val.toInt());
       } else if (paramNameStr == GEOM::propertyName( GEOM::NbIsos )) {
@@ -2522,7 +2615,7 @@ void GeometryGUI::updateMaterials()
     QtxPreferenceItem* prefItem = pref->rootItem()->findItem( tr( "PREF_MATERIAL" ), true );
     if ( prefItem ) {
       setPreferenceProperty( prefItem->id(),
-			     "strings", materials );
+                             "strings", materials );
       prefItem->retrieve();
     }
   }

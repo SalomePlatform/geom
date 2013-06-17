@@ -63,6 +63,7 @@ class LightApp_VTKSelector;
 class LightApp_Selection;
 class SUIT_ViewManager;
 class SalomeApp_Study;
+class GEOMGUI_CreationInfoWdg;
 
 //=================================================================================
 // class    : GeometryGUI
@@ -161,6 +162,7 @@ private slots:
   void                        onViewAboutToShow();
   void                        OnSetMaterial( const QString& );
   void                        updateMaterials();
+  void                        updateCreationInfo();
 
 signals :
   void                        SignalDeactivateActiveDialog();
@@ -175,7 +177,7 @@ private:
   void                        createGeomAction( const int id, const QString& po_id,
                                                 const QString& icon_id = QString(""),
                                                 const int key = 0, const bool toggle = false,
-						const QString& shortcutAction = QString() );
+                                                const QString& shortcutAction = QString() );
   void                        createPopupItem( const int, const QString& clients, const QString& types,
                                                const bool isSingle = false, const int isVisible = -1,
                                                const bool isExpandAll = false, const bool isOCC = false,
@@ -208,6 +210,8 @@ private:
 
   LightApp_Displayer*         myDisplayer;
   int                         myLocalSelectionMode; //Select Only
+
+  GEOMGUI_CreationInfoWdg*    myCreationInfoWdg;
 
   friend class DisplayGUI;
 };
