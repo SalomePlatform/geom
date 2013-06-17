@@ -34,29 +34,29 @@
 #ifdef HAVE_FINITE
 #undef HAVE_FINITE
 #endif
-#include <Standard_Stream.hxx>
 
-#include <GEOMImpl_ICurvesOperations.hxx>
-#include <GEOMImpl_Types.hxx>
+#include "GEOMImpl_ICurvesOperations.hxx"
+#include "GEOMImpl_Types.hxx"
 
-#include <GEOM_Function.hxx>
-#include <GEOM_PythonDump.hxx>
+#include "GEOM_Function.hxx"
+#include "GEOM_PythonDump.hxx"
 
-#include <GEOMImpl_PolylineDriver.hxx>
-#include <GEOMImpl_CircleDriver.hxx>
-#include <GEOMImpl_SplineDriver.hxx>
-#include <GEOMImpl_EllipseDriver.hxx>
-#include <GEOMImpl_ArcDriver.hxx>
-#include <GEOMImpl_SketcherDriver.hxx>
-#include <GEOMImpl_3DSketcherDriver.hxx>
+#include "GEOMImpl_PolylineDriver.hxx"
+#include "GEOMImpl_CircleDriver.hxx"
+#include "GEOMImpl_SplineDriver.hxx"
+#include "GEOMImpl_EllipseDriver.hxx"
+#include "GEOMImpl_ArcDriver.hxx"
+#include "GEOMImpl_SketcherDriver.hxx"
+#include "GEOMImpl_3DSketcherDriver.hxx"
 
-#include <GEOMImpl_IPolyline.hxx>
-#include <GEOMImpl_ICircle.hxx>
-#include <GEOMImpl_ISpline.hxx>
-#include <GEOMImpl_IEllipse.hxx>
-#include <GEOMImpl_IArc.hxx>
-#include <GEOMImpl_ISketcher.hxx>
-#include <GEOMImpl_I3DSketcher.hxx>
+#include "GEOMImpl_IPolyline.hxx"
+#include "GEOMImpl_ICircle.hxx"
+#include "GEOMImpl_ISpline.hxx"
+#include "GEOMImpl_IEllipse.hxx"
+#include "GEOMImpl_IArc.hxx"
+#include "GEOMImpl_ISketcher.hxx"
+#include "GEOMImpl_I3DSketcher.hxx"
+#include "GEOMImpl_ICurveParametric.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -1143,6 +1143,17 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
     break;
   }
   }
+
+  GEOMImpl_ICurveParametric aIP(aFunction);
+  aIP.SetExprX      (thexExpr);
+  aIP.SetExprY      (theyExpr);
+  aIP.SetExprZ      (thezExpr);
+  aIP.SetParamMin   (theParamMin);
+  aIP.SetParamMax   (theParamMax);
+  if ( theNewMethod )
+    aIP.SetParamNbStep(theParamNbStep);
+  else
+    aIP.SetParamStep  (theParamStep);
 
   //Compute the Curve value
   try {
