@@ -33,7 +33,6 @@
 
 #include "GEOMImpl_VectorDriver.hxx"
 #include "GEOMImpl_ShapeDriver.hxx"
-#include "GEOMImpl_CopyDriver.hxx"
 #include "GEOMImpl_GlueDriver.hxx"
 
 #include "GEOMImpl_IVector.hxx"
@@ -2620,6 +2619,15 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnShapeAsCompound
   Handle(GEOM_Function) aFunction =
     aRes->AddFunction(GEOMImpl_ShapeDriver::GetID(), SHAPES_ON_SHAPE);
   aFunction->SetValue(aCompound);
+
+  aSeq->Clear();
+  aSeq->Append( theCheckShape->GetLastFunction() );
+  aSeq->Append( theShape->GetLastFunction() );
+
+  GEOMImpl_IShapes aCI( aFunction );
+  aCI.SetShapes( aSeq );
+  aCI.SetSubShapeType( theShapeType );
+  aCI.SetTolerance( theState );
 
   GEOM::TPythonDump(aFunction)
     << aRes << " = geompy.GetShapesOnShapeAsCompound("
