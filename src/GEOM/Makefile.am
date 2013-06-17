@@ -35,6 +35,7 @@ dist_libGEOMbasic_la_SOURCES =		\
 	GEOM_Object.cxx			\
 	GEOM_IOperations.cxx		\
 	GEOM_Solver.cxx			\
+	GEOM_BaseDriver.cxx		\
 	GEOM_SubShapeDriver.cxx		\
 	GEOM_PythonDump.cxx		\
 	GEOM_DataMapNodeOfDataMapOfAsciiStringTransient_0.cxx		\
@@ -50,6 +51,7 @@ salomeinclude_HEADERS =			\
 	GEOM_Engine.hxx			\
 	GEOM_Function.hxx		\
 	GEOM_Object.hxx			\
+	GEOM_BaseDriver.hxx		\
 	GEOM_SubShapeDriver.hxx		\
 	GEOM_IOperations.hxx		\
 	GEOM_ISubShape.hxx		\
