@@ -35,16 +35,19 @@ salomeinclude_HEADERS = 	\
 	GEOM_Displayer.h	\
 	GEOMGUI_OCCSelector.h	\
 	GEOMGUI_Selection.h	\
-	GEOM_GEOMGUI.hxx
+	GEOM_GEOMGUI.hxx	\
+	GEOMGUI_CreationInfoWdg.h
 
 dist_libGEOM_la_SOURCES =	\
 	GeometryGUI.cxx		\
 	GEOMGUI.cxx		\
 	GEOM_Displayer.cxx	\
         GEOMGUI_OCCSelector.cxx	\
-	GEOMGUI_Selection.cxx
+	GEOMGUI_Selection.cxx	\
+	GEOMGUI_CreationInfoWdg.cxx
 
 MOC_FILES =			\
+	GEOMGUI_CreationInfoWdg_moc.cxx \
 	GeometryGUI_moc.cxx
 
 nodist_libGEOM_la_SOURCES =	\
