@@ -2658,11 +2658,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_GROUP_CREATE</source>
-        <translation>Create</translation>
+        <translation>Create Group</translation>
     </message>
     <message>
         <source>MEN_GROUP_EDIT</source>
-        <translation>Edit</translation>
+        <translation>Edit Group</translation>
     </message>
     <message>
         <source>MEN_GROUP_UNION</source>
@@ -5981,6 +5981,29 @@ Do you want to create new material?</translation>
     <message>
         <source>UNION_FACES_NEW_OBJ_NAME</source>
         <translation>UnionFaces</translation>
+    </message>
+</context>
+<context>
+    <name>GEOMGUI_CreationInfoWdg</name>
+    <message>
+        <source>CREATION_INFO_TITLE</source>
+        <translation>Information</translation>
+    </message>
+    <message>
+        <source>OPERATION</source>
+        <translation>Creation operation</translation>
+    </message>
+    <message>
+        <source>PARAMETER</source>
+        <translation>Parameter</translation>
+    </message>
+    <message>
+        <source>VALUE</source>
+        <translation>Value</translation>
+    </message>
+    <message>
+        <source>NO_INFO</source>
+        <translation>(No info available)</translation>
     </message>
 </context>
 </TS>
