@@ -33,7 +33,6 @@
 #include <GEOMImpl_BlockDriver.hxx>
 #include <GEOMImpl_IBlocks.hxx>
 #include <GEOMImpl_IBlockTrsf.hxx>
-#include <GEOMImpl_CopyDriver.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
 
 #include <GEOMUtils.hxx>
