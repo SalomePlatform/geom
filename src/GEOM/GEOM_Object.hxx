@@ -66,6 +66,7 @@ class Standard_Transient;
 class Handle_Standard_Type;
 class Handle(MMgt_TShared);
 class GEOM_Object;
+class Handle(TFunction_Driver);
 
 
 Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOM_Object);
@@ -297,6 +298,9 @@ class GEOM_Object : public MMgt_TShared
 
   //Returns the dependencies of the last function
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetLastDependency();
+
+  //Returns a driver creator of this object
+  Standard_EXPORT Handle(TFunction_Driver) GetCreationDriver();
 
   //###########################################################
   // Internal methods

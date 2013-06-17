@@ -20,32 +20,35 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#include "GEOM_Object.hxx"
+#include "GEOM_Engine.hxx"
+#include "GEOM_Solver.hxx"
+
 #include <Standard_Stream.hxx>
-
-#include "utilities.h"
-
-#include <GEOM_Object.hxx>
-#include <GEOM_Engine.hxx>
-#include <GEOM_Solver.hxx>
-#include <TDF_Tool.hxx>
-#include <TDF_Data.hxx>
-#include <TDF_Reference.hxx>
-#include <TDF_LabelSequence.hxx>
-#include <TDocStd_Owner.hxx>
-#include <TDocStd_Document.hxx>
-#include <TDataStd_Integer.hxx>
-#include <TDataStd_Real.hxx>
-#include <TDataStd_ChildNodeIterator.hxx>
-#include <TDataStd_UAttribute.hxx>
-#include <TDataStd_Name.hxx>
-#include <TDataStd_Comment.hxx>
-#include <TDataStd_RealArray.hxx>
-#include <TDataStd_ByteArray.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_ExtendedString.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
+#include <TDF_Data.hxx>
+#include <TDF_LabelSequence.hxx>
+#include <TDF_Reference.hxx>
+#include <TDF_Tool.hxx>
+#include <TDataStd_ByteArray.hxx>
+#include <TDataStd_ChildNodeIterator.hxx>
+#include <TDataStd_Comment.hxx>
+#include <TDataStd_Integer.hxx>
+#include <TDataStd_Name.hxx>
+#include <TDataStd_Real.hxx>
+#include <TDataStd_RealArray.hxx>
+#include <TDataStd_UAttribute.hxx>
+#include <TDocStd_Document.hxx>
+#include <TDocStd_Owner.hxx>
+#include <TFunction_Driver.hxx>
+#include <TFunction_DriverTable.hxx>
 #include <TopExp.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
+#include "utilities.h"
+
 
 #define FUNCTION_LABEL(theNb) (_label.FindChild(1).FindChild((theNb)))
 #define TYPE_LABEL       2
@@ -647,6 +650,26 @@ Handle(TColStd_HSequenceOfTransient) GEOM_Object::GetLastDependency()
   }
 
   return anArray;
+}
+
+//================================================================================
+/*!
+ * \brief Returns a driver creator of this object
+ */
+//================================================================================
+
+Handle(TFunction_Driver) GEOM_Object::GetCreationDriver()
+{
+  Handle(TFunction_Driver) aDriver;
+
+  Handle(GEOM_Function) function = GetFunction(1);
+  if ( !function.IsNull() )
+  {
+    Standard_GUID aGUID = function->GetDriverGUID();
+    if ( TFunction_DriverTable::Get()->FindDriver(aGUID, aDriver))
+      aDriver->Init( function->GetEntry() );
+  }
+  return aDriver;
 }
 
 //=============================================================================
