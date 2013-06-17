@@ -13,7 +13,7 @@ There are 3 algorithms to create a Quadrangle Face in the 3D space.
 The created blocks can be processed with  \ref blocks_operations_page "Operations on Blocks".
 
 Our <b>TUI Scripts</b> provide you with useful examples of
-\ref tui_building_by_blocks_p
+\ref tui_building_by_blocks_page
 
 The created blocks can be processed with  \ref blocks_operations_page "Operations on Blocks".
 
@@ -31,7 +31,7 @@ created automatically.
 \image html block1.png
 
 Secondly, you can define a Quadrangle Face by two edges, while the other two edges are created automatically.
-<b>TUI Command:</b> <em>geompy.MakeQuad2Edges(E1, E2)
+<b>TUI Command:</b> <em>geompy.MakeQuad2Edges(E1, E2)</em>
 <b>Arguments:</b> Name + 2 Edges.
 
 \image html block2.png

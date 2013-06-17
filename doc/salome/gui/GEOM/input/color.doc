@@ -7,7 +7,7 @@
 selecting \b Color in the pop-up menu box.               
 
 This functionality is avalible only if \em artificial
-\ref material "material model" is assigned to the selected shape.
+\ref material_page "material model" is assigned to the selected shape.
 
 \n <b>TUI Command:</b> <em>gg.setColor(ID, Short, Short, Short)</em>
 

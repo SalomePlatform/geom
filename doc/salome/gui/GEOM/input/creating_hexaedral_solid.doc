@@ -13,7 +13,7 @@ There are 2 algorithms to create a hexahedral solid in the 3D space.
 Firstly, you can define a Hexahedral Solid by two faces, other four faces are created automatically.
 
 <b>TUI Command:</b> <em>geompy.MakeHexa2Faces(F1, F2),</em> 
-<b>Arguments: Name + 2 Faces.
+<b>Arguments:</b> Name + 2 Faces.
 
 \image html block4.png
 

@@ -12,7 +12,7 @@ Result of each operation will be a GEOM_Object.
 <b>TUI Command:</b> <em>geompy.MakeSmoothingSurface(lPoints)</em>
 
 <b>Arguments:</b>
-- \b lPoints - list of  points
+- \b Points - list of points
 
 \image html smoothingsurface_dlg.png
 
