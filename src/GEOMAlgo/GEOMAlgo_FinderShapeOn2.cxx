@@ -684,7 +684,7 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Face& aF,
   //modified by NIZNHY-PKV Mon Sep 24 08:42:32 2012f
   if (!aNb && myNbPntsMin) {    // A
     Standard_Boolean bIsDone, bHasFirstPoint, bHasSecondPoint;
-    Standard_Integer i, aNb, aIx, iErr, aNbDomains;
+    Standard_Integer i, aNb, aIx, /*iErr, */aNbDomains;
     Standard_Real aUMin, aUMax, aVMin, aVMax, dU, aUx, aVx, aV1, aV2;
     gp_Pnt aPx;
     gp_Dir2d aD2D (0., 1.);
