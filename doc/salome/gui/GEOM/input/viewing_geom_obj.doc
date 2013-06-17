@@ -92,12 +92,26 @@ and then displays only the children of the selected object(s).
 </li>
 
 <li><b>Unpublish</b> - unpublishes the selected geometric object from the Object Browser 
-and erase it from all viewers. To publish unpublished geometric objects select in the 
-context menu of the <b>Geometry</b> root object <b>Publish...</b> item. 
-The following dialog box will appear</li>
+  and erase it from all viewers. To publish unpublished geometric objects select in the 
+  context menu of the <b>Geometry</b> root object <b>Publish...</b> item. 
+  The following dialog box will appear
+
+  \image html publish_dlg.png <br>
+
+  Switch the checkbox near the appropriate object and
+  click <b>Publish</b> or <b>Publish And Close</b> button. 
+</li>
 </ul>
 
-\image html publish_dlg.png <br>
+At the bottom of the Object Browser, there is \b Information
+window providing some information on a selected geometric object:
 
-Switch the checkbox near the appropriate object and click <b>Publish</b> or <b>Publish And Close</b> button.
+\image html creation_op_info.png Information window
+
+- <b>Creation operation</b> shows a name of the operation
+used to create the selected object.
+- In a table under <b>Creation operation</b>, \b Parameter and \b
+Value are a name and a value of a parameter used to create the
+selected object.
+
 */
