@@ -53,33 +53,33 @@
 struct GEOMImpl_ICurveParametric
 {
   enum {
-    ARG_EXPR_X = 1,
-    ARG_EXPR_Y = 2,
-    ARG_EXPR_Z = 3,
-    ARG_MIN    = 1,
-    ARG_MAX    = 2,
-    ARG_STEP   = 3,
-    ARG_NBSTEP = 4
+    CP_ARG_EXPR_X = 1,
+    CP_ARG_EXPR_Y = 2,
+    CP_ARG_EXPR_Z = 3,
+    CP_ARG_MIN    = 1,
+    CP_ARG_MAX    = 2,
+    CP_ARG_STEP   = 3,
+    CP_ARG_NBSTEP = 4
   };
   GEOMImpl_ICurveParametric(Handle(GEOM_Function) theFunction): _func(theFunction) {}
 
   bool HasData() const { return !GetExprZ().IsEmpty(); }
 
-  void SetExprX (const char* theExpr) { _func->SetString( ARG_EXPR_X, theExpr ) ; }
-  void SetExprY (const char* theExpr) { _func->SetString( ARG_EXPR_Y, theExpr ) ; }
-  void SetExprZ (const char* theExpr) { _func->SetString( ARG_EXPR_Z, theExpr ) ; }
-  void SetParamMin   (double theMin   ) { _func->SetReal( ARG_MIN   , theMin   ) ; }
-  void SetParamMax   (double theMax   ) { _func->SetReal( ARG_MAX   , theMax   ) ; }
-  void SetParamStep  (double theStep  ) { _func->SetReal( ARG_STEP  , theStep  ) ; }
-  void SetParamNbStep(double theNbStep) { _func->SetReal( ARG_NBSTEP, theNbStep) ; }
+  void SetExprX (const char* theExpr) { _func->SetString( CP_ARG_EXPR_X, theExpr ) ; }
+  void SetExprY (const char* theExpr) { _func->SetString( CP_ARG_EXPR_Y, theExpr ) ; }
+  void SetExprZ (const char* theExpr) { _func->SetString( CP_ARG_EXPR_Z, theExpr ) ; }
+  void SetParamMin   (double theMin   ) { _func->SetReal( CP_ARG_MIN   , theMin   ) ; }
+  void SetParamMax   (double theMax   ) { _func->SetReal( CP_ARG_MAX   , theMax   ) ; }
+  void SetParamStep  (double theStep  ) { _func->SetReal( CP_ARG_STEP  , theStep  ) ; }
+  void SetParamNbStep(double theNbStep) { _func->SetReal( CP_ARG_NBSTEP, theNbStep) ; }
 
-  TCollection_AsciiString GetExprX() const { return _func->GetString( ARG_EXPR_X ) ; }
-  TCollection_AsciiString GetExprY() const { return _func->GetString( ARG_EXPR_Y ) ; }
-  TCollection_AsciiString GetExprZ() const { return _func->GetString( ARG_EXPR_Z ) ; }
-  double GetParamMin   () const { return _func->GetReal( ARG_MIN    ) ; }
-  double GetParamMax   () const { return _func->GetReal( ARG_MAX    ) ; }
-  double GetParamStep  () const { return _func->GetReal( ARG_STEP   ) ; }
-  double GetParamNbStep() const { return _func->GetReal( ARG_NBSTEP ) ; }
+  TCollection_AsciiString GetExprX() const { return _func->GetString( CP_ARG_EXPR_X ) ; }
+  TCollection_AsciiString GetExprY() const { return _func->GetString( CP_ARG_EXPR_Y ) ; }
+  TCollection_AsciiString GetExprZ() const { return _func->GetString( CP_ARG_EXPR_Z ) ; }
+  double GetParamMin   () const { return _func->GetReal( CP_ARG_MIN    ) ; }
+  double GetParamMax   () const { return _func->GetReal( CP_ARG_MAX    ) ; }
+  double GetParamStep  () const { return _func->GetReal( CP_ARG_STEP   ) ; }
+  double GetParamNbStep() const { return _func->GetReal( CP_ARG_NBSTEP ) ; }
 
   Handle(GEOM_Function) _func;
 };
