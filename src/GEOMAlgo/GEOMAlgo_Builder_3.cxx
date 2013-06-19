@@ -714,8 +714,9 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
     TopoDS_Solid aSd=TopoDS::Solid(aIt.Value());
     //
     aItM.Initialize(aMSI);
-    for (; aItM.More(); aItM.Next()) {
+    for (; aItM.More(); /*aItM.Next()*/) {
       TopoDS_Shape aSI=aItM.Key();
+      aItM.Next(); // to safely call aMSI.Remove(aSI)
       aSI.Orientation(TopAbs_INTERNAL);
       //
       aState=GEOMAlgo_Tools3D::ComputeStateByOnePoint(aSI, aSd, 1.e-11, aCtx);
