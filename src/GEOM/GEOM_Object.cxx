@@ -314,16 +314,16 @@ void GEOM_Object::SetName(const char* theName)
  *  GetName
  */
 //=============================================================================
-char* GEOM_Object::GetName()
+TCollection_AsciiString GEOM_Object::GetName()
 {
+  TCollection_AsciiString aName;
   Handle(TDataStd_Name) aNameAttr;
-  if(!_label.FindAttribute(TDataStd_Name::GetID(), aNameAttr)) return NULL;
-
-  TCollection_AsciiString aName(aNameAttr->Get());
+  if(_label.FindAttribute(TDataStd_Name::GetID(), aNameAttr))
+    aName = aNameAttr->Get();
   // do not return pointer of local variable
   // return aName.ToCString();
   // the following code could lead to memory leak, so take care about recieved pointer
-  return strdup(aName.ToCString());
+  return aName;
 }
 
 //=============================================================================

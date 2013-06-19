@@ -213,7 +213,7 @@ class GEOM_Object : public MMgt_TShared
   Standard_EXPORT void SetName(const char* theName);
 
   //Returns a name of this GEOM_Object
-  Standard_EXPORT char* GetName();
+  Standard_EXPORT TCollection_AsciiString GetName();
 
   //Sets a color of this GEOM_Object
   Standard_EXPORT void SetColor(const Color& theColor);
