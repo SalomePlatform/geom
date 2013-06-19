@@ -207,10 +207,8 @@ void GEOM_Object_i::SetName(const char* theName)
 //=============================================================================
 char* GEOM_Object_i::GetName()
 {
-  char* aName = _impl->GetName();
-  if (aName)
-    return aName; // this is already copy of pointer (see implementation of _impl)
-  return CORBA::string_dup("");
+  TCollection_AsciiString aName = _impl->GetName();
+  return CORBA::string_dup( aName.ToCString() );
 }
 
 //=============================================================================
