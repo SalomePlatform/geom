@@ -49,6 +49,15 @@ predefined materials.</li>
 </ul>
 
 <ul>
+<li><b>Number of isolines</b></li> - this submenu allows to specify the 
+number of isolines along the axes of coordinates:
+<ul>
+<li><b>Along U</b>
+<li><b>Along V</b>
+</ul>
+</ul>
+
+<ul>
 <li><b>Input fields precision</b></li>
 <ul>
 <li><b>Length precision</b> - allows to ajust input precision of coordinates and dimensions.</li>
