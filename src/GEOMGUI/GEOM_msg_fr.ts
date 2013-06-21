@@ -5,11 +5,11 @@
     <name>@default</name>
     <message>
         <source>MEN_POP_CONCEAL_CHILDREN</source>
-        <translation type="unfinished">  </translation>
+        <translation type="unfinished">Conceal child items</translation>
     </message>
     <message>
         <source>MEN_POP_DISCLOSE_CHILDREN</source>
-        <translation type="unfinished">  </translation>
+        <translation type="unfinished">Disclose child items</translation>
     </message>
     <message>
         <source>BRep_API: command not done</source>
@@ -5993,23 +5993,25 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>GEOMGUI_CreationInfoWdg</name>
     <message>
         <source>NO_INFO</source>
-        <translation type="unfinished">  </translation>
+        <translation type="unfinished">(No info available)</translation>
     </message>
     <message>
         <source>VALUE</source>
-        <translation type="unfinished">  </translation>
+        <translation type="unfinished">Value</translation>
     </message>
     <message>
         <source>PARAMETER</source>
-        <translation type="unfinished">  </translation>
+        <translation type="unfinished">Parameter</translation>
     </message>
     <message>
         <source>OPERATION</source>
-        <translation type="unfinished">  </translation>
+        <translation type="unfinished">Creation operation</translation>
     </message>
     <message>
         <source>CREATION_INFO_TITLE</source>
-        <translation type="unfinished">  </translation>
+        <translation type="unfinished">Information</translation>
     </message>
 </context>
 </TS>
+
+
