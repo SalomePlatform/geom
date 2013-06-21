@@ -38,7 +38,7 @@
     <message>
         <source>DEP_OBJECT</source>
         <translation type="unfinished">L&apos;objet choisi a été utilisé pour créer un autre objet.
-Il n&apos;est pas possible de le supprimer </translation>
+La suppression de cet objet peut entrainer un export python invalide. </translation>
     </message>
     <message>
         <source>DEVIDE_EDGE_NEW_OBJECT_NAME</source>
