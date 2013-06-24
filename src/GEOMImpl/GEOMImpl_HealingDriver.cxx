@@ -458,18 +458,21 @@ Standard_Boolean GEOMImpl_HealingDriver::RemoveInternalFaces (const TopoDS_Shape
   aTool.SetShape(theOriginalShape);
   aTool.Perform();
 
-  if (aTool.ErrorStatus() != 0)
-    StdFail_NotDone::Raise("GEOMAlgo_RemoverWebs failed!");
+  if (aTool.ErrorStatus() == 0) { // OK
+    theOutShape = aTool.Result();
 
-  theOutShape = aTool.Result();
-
-  // as GEOMAlgo_RemoverWebs always produces compound, lets simplify it
-  // for the case, if it contains only one sub-shape
-  TopTools_ListOfShape listShapeRes;
-  GEOMUtils::AddSimpleShapes(theOutShape, listShapeRes);
-  if (listShapeRes.Extent() == 1) {
-    theOutShape = listShapeRes.First();
+    // as GEOMAlgo_RemoverWebs always produces compound, lets simplify it
+    // for the case, if it contains only one sub-shape
+    TopTools_ListOfShape listShapeRes;
+    GEOMUtils::AddSimpleShapes(theOutShape, listShapeRes);
+    if (listShapeRes.Extent() == 1) {
+      theOutShape = listShapeRes.First();
+    }
   }
+  else if (aTool.ErrorStatus() == 11) // invalid argument (contains non-solids), do nothing
+    theOutShape = theOriginalShape;
+  else // error
+    StdFail_NotDone::Raise("GEOMAlgo_RemoverWebs failed!");
 
   return Standard_True;
 }
