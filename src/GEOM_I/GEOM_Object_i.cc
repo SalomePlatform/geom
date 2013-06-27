@@ -45,6 +45,10 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx>
 
+#ifdef _DEBUG_
+#include <typeinfo>
+#endif
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -546,6 +550,20 @@ GEOM::CreationInformation* GEOM_Object_i::GetCreationInformation()
           info->params[i].value = params[i].value.c_str();
         }
       }
+#ifdef _DEBUG_
+      if ( operationName.empty() )
+      {
+        cout << endl << endl << endl << "Warning: " << endl << "Dear developer!!!" << endl
+             << "  Consider implementing "
+             <<    typeid(*(driver.operator->())).name() << "::GetCreationInformation() " << endl
+             << "  for the case of operation which has created '" << GetName() << "' object" << endl
+             << "PLEEEEEEEASE" << endl
+             << "\tPLEEEEEEEASE" << endl
+             << "\t\tPLEEEEEEEASE" << endl
+             << "\t\t\tPLEEEEEEEASE" << endl
+             << "\t\t\t\tPLEEEEEEEASE" << endl;
+      }
+#endif
     }
     catch(...)
     {
