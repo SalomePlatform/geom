@@ -908,6 +908,10 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam( theParams, "Wire", aCI.GetOriginal() );
     AddParam( theParams, "Vertexes", aCI.GetShapes() );
     break;
+  case REMOVE_INTERNAL_FACES:
+    theOperationName = "REMOVE_WEBS";
+    AddParam( theParams, "Selected shape", aCI.GetOriginal() );
+    break;
   default:
     return false;
   }
