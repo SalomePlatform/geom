@@ -59,6 +59,7 @@ namespace GEOMOp {
     OpPublishObject       = 1254,   // GEOM ROOT OBJECT - POPUP MENU - PUBLISH
     OpEdgeWidth           = 1260,   // POPUP MENU - LINE WIDTH - EDGE WIDTH
     OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
+    OpCreateFolder        = 1262,   // POPUP MENU - CREATE FOLDER
     // DisplayGUI ------------------//--------------------------------
     OpSwitchVectors       = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION
     OpShowAll             = 2002,   // MENU VIEW  - SHOW ALL

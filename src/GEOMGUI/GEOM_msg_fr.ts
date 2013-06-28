@@ -4647,6 +4647,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Désactiver la couleur automatique</translation>
     </message>
     <message>
+        <source>MEN_POP_CREATE_FOLDER</source>
+        <translation type="unfinished">Create folder</translation>
+    </message>
+    <message>
+        <source>STB_POP_CREATE_FOLDER</source>
+        <translation type="unfinished">Create a new folder</translation>
+    </message>
+    <message>
+        <source>NEW_FOLDER_NAME</source>
+        <translation type="unfinished">NewFolder</translation>
+    </message>
+    <message>
         <source>GEOM_RESULT_NAME_GRP</source>
         <translation>Nom du résultat</translation>
     </message>

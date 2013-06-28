@@ -74,6 +74,7 @@ private:
   bool                  isPhysicalMaterial( const int ) const;
 
   bool                  isComponent( const int ) const;
+  bool                  isFolder( const int ) const;
   GEOM::GEOM_Object_ptr getObject( const int ) const;
 
   bool                  hasImported() const;

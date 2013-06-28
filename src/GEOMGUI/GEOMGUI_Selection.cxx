@@ -171,6 +171,8 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = isImported( idx );
   else if ( p == "isPhysicalMaterial" )
     v = isPhysicalMaterial(idx);
+  else if ( p == "isFolder" )
+    v = isFolder(idx);
   else
     v = LightApp_Selection::parameter( idx, p );
 
@@ -187,6 +189,8 @@ QString GEOMGUI_Selection::typeName( const int index ) const
 {
   if ( isComponent( index ) )
     return "Component";
+  if ( isFolder( index ) )
+    return "Folder";
 
   static QString aGroup( "Group" );
   static QString aShape( "Shape" );
@@ -618,3 +622,25 @@ bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const
 
   return res;
 }
+
+bool GEOMGUI_Selection::isFolder( const int index ) const
+{
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );
+
+  if ( appStudy ) {
+    QString anEntry = entry( index );
+    _PTR(Study) study = appStudy->studyDS();
+    if ( study && !anEntry.isNull() ) {
+      _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
+      if ( aSO ) {
+	_PTR(GenericAttribute) anAttr;
+	if ( aSO->FindAttribute(anAttr, "AttributeLocalID") ) {
+	  _PTR(AttributeLocalID) aLocalID( anAttr );
+	  return aLocalID->Value() == 999;
+	}
+      }
+    }
+  }
+  return false;
+}
+

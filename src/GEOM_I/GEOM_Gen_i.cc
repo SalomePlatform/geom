@@ -176,6 +176,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
 
   SALOMEDS::GenericAttribute_var anAttr;
   SALOMEDS::StudyBuilder_var     aStudyBuilder = theStudy->NewBuilder();
+  SALOMEDS::UseCaseBuilder_var   useCaseBuilder = theStudy->GetUseCaseBuilder();
 
   SALOMEDS::SComponent_var       aFather = theStudy->FindComponent("GEOM");
   if (aFather->_is_nil()) {
@@ -189,6 +190,10 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aPixMap->SetPixMap("ICON_OBJBROWSER_Geometry");
     aPixMap->UnRegister();
     aStudyBuilder->DefineComponentInstance(aFather, (GEOM::GEOM_Gen_var)GEOM_Gen::_this());
+    // add component to the use case tree
+    // (to support tree representation customization and drag-n-drop)
+    useCaseBuilder->SetRootCurrent();
+    useCaseBuilder->Append( aFather ); // component object is added as the top level item
   }
   if (aFather->_is_nil()) return aResultSO;
 
@@ -347,6 +352,10 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
 
   //Set a name of the GEOM object
   aShape->SetName(aShapeName.ToCString());
+
+  // add object to the use case tree
+  // (to support tree representation customization and drag-n-drop)
+  useCaseBuilder->AppendTo( aResultSO->GetFather(), aResultSO );
 
   return aResultSO._retn();
 }
@@ -576,6 +585,18 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 
   // Remove the created file and tmp directory
   if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq.in(), true);
+
+  // creation of tree nodes for all data objects in the study
+  // to support tree representation customization and drag-n-drop:
+  SALOMEDS::UseCaseBuilder_var useCaseBuilder = theComponent->GetStudy()->GetUseCaseBuilder();
+  if ( !useCaseBuilder->IsUseCaseNode( theComponent ) ) {
+    useCaseBuilder->SetRootCurrent();
+    useCaseBuilder->Append( theComponent ); // component object is added as the top level item
+    SALOMEDS::ChildIterator_var it = theComponent->GetStudy()->NewChildIterator( theComponent ); 
+    for (it->Init(); it->More(); it->Next()) {
+      useCaseBuilder->AppendTo( theComponent, it->Value() );
+    }
+  }
 
   return true;
 }
@@ -2568,6 +2589,132 @@ char* GEOM_Gen_i::getVersion()
 #else
   return CORBA::string_dup(GEOM_VERSION_STR);
 #endif
+}
+
+//=================================================================================
+// function : CreateFolder()
+// purpose  : Creates and returns a new folder object
+//=================================================================================
+SALOMEDS::SObject_ptr GEOM_Gen_i::CreateFolder(const char* theName, 
+					       SALOMEDS::SObject_ptr theFather)
+{
+  SALOMEDS::SObject_var aFolderSO;
+
+  if ( CORBA::is_nil(theFather) ) return aFolderSO._retn();
+
+  SALOMEDS::GenericAttribute_var anAttr;
+  if ( strcmp(theFather->GetFatherComponent()->GetID(), theFather->GetID()) != 0 ) {
+    // not a GEOM component object was selected
+    if ( !theFather->FindAttribute(anAttr, "AttributeLocalID") ) return aFolderSO._retn();
+    SALOMEDS::AttributeLocalID_var aLocalID = SALOMEDS::AttributeLocalID::_narrow(anAttr);
+    if( aLocalID->Value() != 999 ) {
+      // not a Folder object was selected
+      GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow(theFather);
+      if ( CORBA::is_nil(aGeomObject) ) return aFolderSO._retn();
+      // another GEOM object was selected, so get GEOM component as father object
+      theFather = theFather->GetFatherComponent();
+    }
+    aLocalID->UnRegister();
+  }
+
+  SALOMEDS::Study_var aStudy = theFather->GetStudy();
+  SALOMEDS::StudyBuilder_var aStudyBuilder( aStudy->NewBuilder() );
+  aFolderSO = aStudyBuilder->NewObject( theFather );
+
+  anAttr = aStudyBuilder->FindOrCreateAttribute(aFolderSO, "AttributeLocalID");
+  SALOMEDS::AttributeLocalID_var aLocalID = SALOMEDS::AttributeLocalID::_narrow(anAttr);
+  aLocalID->SetValue( 999 ); // mark of the "Folder" object
+  aLocalID->UnRegister();
+
+  anAttr = aStudyBuilder->FindOrCreateAttribute(aFolderSO, "AttributeName");
+  SALOMEDS::AttributeName_var aName = SALOMEDS::AttributeName::_narrow(anAttr);
+  aName->SetValue( theName );
+  aName->UnRegister();
+
+  anAttr = aStudyBuilder->FindOrCreateAttribute(aFolderSO, "AttributePixMap");
+  SALOMEDS::AttributePixMap_var aPixMap = SALOMEDS::AttributePixMap::_narrow(anAttr);
+  aPixMap->SetPixMap("ICON_FOLDER");
+  aPixMap->UnRegister();
+
+  // add object to the use case tree
+  // (to support tree representation customization and drag-n-drop)
+  SALOMEDS::UseCaseBuilder_var useCaseBuilder = aStudy->GetUseCaseBuilder();
+  useCaseBuilder->AppendTo( theFather, aFolderSO );
+
+  return aFolderSO._retn();
+}
+
+//=================================================================================
+// function : MoveToFolder()
+// purpose  : Moves GEOM object to the specified folder
+//=================================================================================
+void GEOM_Gen_i::MoveToFolder(GEOM::GEOM_Object_ptr theObject, 
+			      SALOMEDS::SObject_ptr theFolder) {
+  GEOM::object_list_var objects = new GEOM::object_list();
+  objects->length( 1 );
+  SALOMEDS::SObject_var aSO = theFolder->GetStudy()->FindObjectID( theObject->GetStudyEntry() );
+  objects[0] = aSO;
+  Move( objects, theFolder, -1 );
+}
+
+//=================================================================================
+// function : MoveListToFolder()
+// purpose  : Moves list of GEOM objects to the specified folder
+//=================================================================================
+void GEOM_Gen_i::MoveListToFolder (const GEOM::ListOfGO& theListOfGO, 
+				   SALOMEDS::SObject_ptr theFolder) {
+  int aLen = theListOfGO.length();
+  GEOM::object_list_var objects = new GEOM::object_list();
+  objects->length( aLen );
+  GEOM::GEOM_Object_var aGO;
+  SALOMEDS::SObject_var aSO;
+  for (int i = 0; i < aLen; i++) {
+    aGO = GEOM::GEOM_Object::_duplicate( theListOfGO[i] );
+    aSO = theFolder->GetStudy()->FindObjectID( aGO->GetStudyEntry() );
+    objects[i] = aSO;
+  }
+  if ( objects->length() > 0 )
+    Move( objects, theFolder, -1 );
+}
+
+//=================================================================================
+// function : Move()
+// purpose  : Moves objects to the specified position. 
+//            Is used in the drag-n-drop functionality.
+//=================================================================================
+void GEOM_Gen_i::Move( const GEOM::object_list& what,
+		       SALOMEDS::SObject_ptr where,
+		       CORBA::Long row )
+{
+  if ( CORBA::is_nil( where ) ) return;
+
+  SALOMEDS::Study_var study = where->GetStudy();
+  SALOMEDS::StudyBuilder_var studyBuilder = study->NewBuilder();
+  SALOMEDS::UseCaseBuilder_var useCaseBuilder = study->GetUseCaseBuilder();
+  SALOMEDS::SComponent_var father = where->GetFatherComponent();
+  std::string dataType = father->ComponentDataType();
+  if ( dataType != "GEOM" ) return; // not a GEOM component
+  
+  SALOMEDS::SObject_var objAfter;
+  if ( row >= 0 && useCaseBuilder->HasChildren( where ) ) {
+    // insert at given row -> find insertion position
+    SALOMEDS::UseCaseIterator_var useCaseIt = useCaseBuilder->GetUseCaseIterator( where );
+    int i;
+    for ( i = 0; i < row && useCaseIt->More(); i++, useCaseIt->Next() );
+    if ( i == row && useCaseIt->More() ) {
+      objAfter = useCaseIt->Value();
+    }
+  }
+  
+  for ( int i = 0; i < what.length(); i++ ) {
+    SALOMEDS::SObject_var sobj = what[i];
+    if ( CORBA::is_nil( sobj ) ) continue; // skip bad object
+    // insert the object to the use case tree
+    if ( !CORBA::is_nil( objAfter ) )
+      useCaseBuilder->InsertBefore( sobj, objAfter ); // insert at given row
+    else
+      useCaseBuilder->AppendTo( where, sobj );        // append to the end of list
+  }
 }
 
 //=====================================================================================

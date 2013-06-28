@@ -1700,7 +1700,9 @@ void GEOM_Displayer::setShape( const TopoDS_Shape& theShape )
 
 bool GEOM_Displayer::canBeDisplayed( const QString& entry, const QString& viewer_type ) const
 {
-  return viewer_type == SOCC_Viewer::Type() || viewer_type == SVTK_Viewer::Type();
+  _PTR(SObject) anObj = getStudy()->studyDS()->FindObjectID( (const char*)entry.toLatin1() );
+  GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of GEOM objects only
+  return !CORBA::is_nil( aGeomObj ) && (viewer_type == SOCC_Viewer::Type() || viewer_type == SVTK_Viewer::Type());
 }
 
 int GEOM_Displayer::SetDisplayMode( const int theMode )

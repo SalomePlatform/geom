@@ -685,6 +685,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
             self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
+            # set GEOM as root in the use case tree
+            self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
+            self.myUseCaseBuilder.SetRootCurrent()
+            self.myUseCaseBuilder.Append(self.father)
             pass
 
         ## Enable / disable results auto-publishing
@@ -12364,6 +12368,54 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             ID = self.InsertOp.AddTexture(Width, Height, Texture)
             RaiseIfFailed("AddTexture", self.InsertOp)
             return ID
+
+        ## Creates a new folder object. It is a container for any GEOM objects.
+        #  @param Name name of the container
+        #  @param Father parent object. If None, 
+        #         folder under 'Geometry' root object will be created.
+        #  @return a new created folder
+        def NewFolder(self, Name, Father=None):
+            """
+            Create a new folder object. It is an auxiliary container for any GEOM objects.
+            
+            Parameters:
+                Name name of the container
+                Father parent object. If None, 
+                folder under 'Geometry' root object will be created.
+            
+            Returns:
+                a new created folder
+            """
+            if not Father: Father = self.father
+            return self.CreateFolder(Name, Father)
+
+        ## Move object to the specified folder
+        #  @param Object object to move
+        #  @param Folder target folder
+        def PutToFolder(self, Object, Folder):
+            """
+            Move object to the specified folder
+            
+            Parameters:
+                Object object to move
+                Folder target folder
+            """
+            self.MoveToFolder(Object, Folder)
+            pass
+
+        ## Move list of objects to the specified folder
+        #  @param ListOfSO list of objects to move
+        #  @param Folder target folder
+        def PutListToFolder(self, ListOfSO, Folder):
+            """
+            Move list of objects to the specified folder
+            
+            Parameters:
+                ListOfSO list of objects to move
+                Folder target folder
+            """
+            self.MoveListToFolder(ListOfSO, Folder)
+            pass
 
 import omniORB
 # Register the new proxy for GEOM_Gen

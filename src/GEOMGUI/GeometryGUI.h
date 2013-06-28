@@ -143,6 +143,11 @@ public:
 
   static QString              GetIORFromObject( GEOM::GEOM_Object_ptr object );
 
+  virtual bool                isDraggable( const SUIT_DataObject* what ) const;
+  virtual bool                isDropAccepted( const SUIT_DataObject* where ) const;
+  virtual void                dropObjects( const DataObjectList& what, 
+					   SUIT_DataObject* where,
+					   const int row, Qt::DropAction action );
 
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );

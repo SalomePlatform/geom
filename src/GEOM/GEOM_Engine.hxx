@@ -178,6 +178,10 @@ class GEOM_Engine
 
   static const Standard_GUID& GetTextureGUID();
 
+  Standard_EXPORT void healPyName( TCollection_AsciiString&                  pyName,
+				   const TCollection_AsciiString&            anEntry,
+				   Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
+
  protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
   

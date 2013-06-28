@@ -4,6 +4,10 @@
     <context>
         <name>@default</name>
         <message>
+            <source>ICON_FOLDER</source>
+            <translation>folder.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_ADD_POINT_ON_EDGE</source>
             <translation>pointonedge.png</translation>
         </message>

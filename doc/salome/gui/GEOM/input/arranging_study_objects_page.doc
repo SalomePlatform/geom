@@ -1,0 +1,27 @@
+/*!
+
+\page arranging_study_objects_page Arranging objects in study
+
+The possibility to classify the geometrical objects by moving it into early created container (folder) was introduced to Geometry module.
+
+\image html arranging1.png "Classified objects in folders"
+
+To create a folder select "Create folder" popup menu item for root "Geometry" object or another folder.
+
+\image html arranging2.png "Creation of folder"
+
+"Drag&Drop" mechanism was integrated to arrange objects.
+
+\image html arranging3.png "Moving object into folder"
+
+\note Only two categories of objects can be moved into folder:
+<ul> 
+<li> geometrical model(s) under root "Geometry" item or under any folder
+<li> folder(s)
+</ul>
+
+Our <b>TUI Scripts</b> provide you with useful examples of 
+\ref tui_arranging_study_objects "Arranging objects in study".
+
+*/
+

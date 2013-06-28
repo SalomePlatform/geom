@@ -35,6 +35,7 @@ GOOD_TESTS = \
 	advanced_geom_objs_ex02.py \
 	advanced_geom_objs_ex03.py \
 	angle.py \
+	arranging_study_objects.py \
 	basic_geom_objs_ex01.py \
 	basic_geom_objs_ex02.py \
 	basic_geom_objs_ex03.py \

@@ -21,16 +21,19 @@
 - easily setting parameters via the variables predefined in
   \subpage using_notebook_geom_page "SALOME notebook".
 
+The possibility to classify the created geometrical objects by moving it into early created container (folder) is detailed on
+\subpage arranging_study_objects_page section.
+
 Geometry module preferences are described in the
 \subpage geometry_preferences_page section of SALOME Geometry Help.
 
 Almost all geometry module functionalities are accessible via
 \subpage geompy_page "Geometry module Python Interface"
 
+Other functions are available in <a class="el" target="_new" href="../../tui/GEOM/docutils/index.html">salome.geom python package</a>.
+
 You can find the answer to some Frequently Asked Questions in this page:
 - \subpage faq "Frequently Asked Questions"
-
-Other functions are available in <a class="el" target="_new" href="../../tui/GEOM/docutils/index.html">salome.geom python package</a>.
 
 \image html image3.png "Example of Geometry module usage for engineering tasks"
 

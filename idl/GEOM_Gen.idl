@@ -219,6 +219,7 @@ module GEOM
   interface GEOM_Object;
 
   typedef sequence<GEOM_Object> ListOfGO;
+  typedef sequence<SALOMEDS::SObject> object_list;
 
   //# GEOM_Object
   /*!
@@ -4638,6 +4639,54 @@ module GEOM
     ListOfGO PublishNamedShapesInStudy(in SALOMEDS::Study theStudy,
                                        //in SObject theSObject,
                                        in Object theObject);
+
+    /*!
+     * \brief Creates a new folder
+     *
+     * Creates a new container (folder) for any GEOM objects.
+     * Folder will have name theName.
+     * If theFather is not NULL, the folder is placed under theFather object.
+     * Otherwise, the folder takes place under root 'Geometry' object.
+     * 
+     * \param theName name of the folder
+     * \param theFather parent object
+     * \return SObject represented the created folder.
+     */
+    SALOMEDS::SObject CreateFolder (in string theName,
+				    in SALOMEDS::SObject theFather);
+
+    /*!
+     * \brief Moves object to the specified folder
+     *
+     * The moved object should be first published in the study.
+     * \param theObject GEOM object to move
+     * \param theFolder target folder
+     */
+    void MoveToFolder (in GEOM_Object theObject,
+		       in SALOMEDS::SObject theFolder);
+
+    /*!
+     * \brief Moves list of objects to the specified folder
+     *
+     * The moved objects should be first published in the study.
+     * \param theListOfGO list of GEOM objects to move
+     * \param theFolder target folder
+     */
+    void MoveListToFolder (in ListOfGO theListOfGO,
+			   in SALOMEDS::SObject theFolder);
+
+    /*!
+     * \brief Moves objects to the specified position
+     *
+     * This function is used in the drag-n-drop functionality.
+     *
+     * \param what objects being moved
+     * \param where parent object where objects are moved to
+     * \param row position in the parent object's children list at which objects are moved
+     */
+    void Move( in object_list what, 
+	       in SALOMEDS::SObject where, 
+	       in long row );
   };
 };
 

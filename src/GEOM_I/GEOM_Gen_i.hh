@@ -272,6 +272,23 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   // Version information
   virtual char* getVersion();
 
+  // Create a new folder object
+  SALOMEDS::SObject_ptr CreateFolder(const char* theName, 
+				     SALOMEDS::SObject_ptr theFather);
+
+  // Move GEOM object to the specified folder
+  void MoveToFolder(GEOM::GEOM_Object_ptr theObject, 
+		    SALOMEDS::SObject_ptr theFolder);
+
+  // Move list of GEOM objects to the specified folder
+  void MoveListToFolder (const GEOM::ListOfGO& theListOfGO, 
+			 SALOMEDS::SObject_ptr theFolder);
+
+  // Move objects to the specified position
+  void Move( const GEOM::object_list& what,
+	     SALOMEDS::SObject_ptr where,
+	     CORBA::Long row );
+
   //-----------------------------------------------------------------------//
   // Internal methods                                                      //
   //-----------------------------------------------------------------------//

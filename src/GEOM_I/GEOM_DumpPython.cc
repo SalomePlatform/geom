@@ -183,6 +183,61 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	}	 
       }
     }
+
+    TCollection_AsciiString aDirScript, aNodeName, aNodeEntry, aFatherName, aFatherEntry;
+    aDirScript += "\n\t### Folders and it's content\n";
+    Resource_DataMapOfAsciiStringAsciiString aNameToEntry;
+    SALOMEDS::UseCaseBuilder_var useCaseBuilder = aStudy->GetUseCaseBuilder();
+    SALOMEDS::UseCaseIterator_var Itr = useCaseBuilder->GetUseCaseIterator(aSO);
+    SALOMEDS::SObject_var aNodeSO;
+    SALOMEDS::SObject_var aFatherSO;
+    SALOMEDS::GenericAttribute_var anIDAttr;
+    for(Itr->Init(true); Itr->More(); Itr->Next()) {
+      aFatherName.Clear();
+      aFatherEntry.Clear();
+      aNodeSO = Itr->Value();
+      // get father info
+      aFatherSO = useCaseBuilder->GetFather( aNodeSO );
+      if ( aFatherSO->FindAttribute(anIDAttr, "AttributeLocalID") ) {
+	SALOMEDS::AttributeLocalID_var aLocalID = SALOMEDS::AttributeLocalID::_narrow(anIDAttr);
+	if ( aLocalID->Value() == 999 ) {
+	  aFatherName = aFatherSO->GetName();
+	  aFatherEntry = aFatherSO->GetID();
+	  _impl->healPyName( aFatherName, aFatherEntry, aNameToEntry);
+	}
+	aLocalID->UnRegister();
+      }
+      // get node info
+      if ( aNodeSO->FindAttribute(anIDAttr, "AttributeLocalID") ) {
+	SALOMEDS::AttributeLocalID_var aLocalID = SALOMEDS::AttributeLocalID::_narrow(anIDAttr);
+	if ( aLocalID->Value() == 999 ) {
+	  // the node is folder
+	  aNodeName = aNodeSO->GetName();
+	  aNodeEntry = aNodeSO->GetID();
+	  _impl->healPyName( aNodeName, aNodeEntry, aNameToEntry);
+	  aDirScript += aNodeName;
+	  aDirScript += " = geompy.NewFolder('";
+	  aDirScript += aNodeSO->GetName();
+	  aDirScript += "'";
+	  if ( !aFatherName.IsEmpty() && !aFatherEntry.IsEmpty() ) {
+	    // the folder takes place under another folder
+	    aDirScript += ", ";
+	    aDirScript += aFatherName;
+	  }
+	  aDirScript += ")\n";
+	  aNameToEntry.Bind( aNodeName, aNodeEntry );
+	}
+	aLocalID->UnRegister();
+      } else if ( !aFatherName.IsEmpty() && !aFatherEntry.IsEmpty() ) {
+	// the node is Geom object under folder
+	aDirScript += "geompy.PutToFolder(";
+	aDirScript += GetDumpName( aNodeSO->GetID() );
+	aDirScript += ", ";
+	aDirScript += aFatherName;
+	aDirScript += ")\n";
+      }
+    }
+    aScript += aDirScript;
   
     //Output the script that sets up the visual parameters.
     char* script = aStudy->GetDefaultScript(ComponentDataType(), "\t");

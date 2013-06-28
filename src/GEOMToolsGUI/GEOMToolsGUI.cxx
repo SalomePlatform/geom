@@ -386,6 +386,9 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpClsBringToFront:
     OnClsBringToFront();
      break;
+  case GEOMOp::OpCreateFolder:
+    OnCreateFolder();
+     break;
   default:
     SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;

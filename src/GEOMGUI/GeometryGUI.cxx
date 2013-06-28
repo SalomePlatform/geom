@@ -77,6 +77,8 @@
 #include <SALOMEDSClient_ClientFactory.hxx>
 #include <SALOMEDSClient_IParameters.hxx>
 
+#include <SALOMEDS_SObject.hxx>
+
 #include <Basics_OCCTVersion.hxx>
 
 // External includes
@@ -388,7 +390,8 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
                              << GEOMOp::OpConcealChildren
                              << GEOMOp::OpUnpublishObject
                              << GEOMOp::OpPublishObject
-                             << GEOMOp::OpPointMarker;
+                             << GEOMOp::OpPointMarker
+                             << GEOMOp::OpCreateFolder;
   if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommands.contains( id ) )
       return;
 
@@ -440,6 +443,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpIsosWidth:          // POPUP MENU - LINE WIDTH - ISOS WIDTH
   case GEOMOp::OpBringToFront:       // POPUP MENU - BRING TO FRONT
   case GEOMOp::OpClsBringToFront:    //
+  case GEOMOp::OpCreateFolder:       // POPUP MENU - CREATE FOLDER
     libName = "GEOMToolsGUI";
     break;
   case GEOMOp::OpDMWireframe:        // MENU VIEW - WIREFRAME
@@ -900,6 +904,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
   createGeomAction( GEOMOp::OpMaterialProperties,   "POP_MATERIAL_PROPERTIES" );
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
+  createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
 
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
 
@@ -1268,7 +1273,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   QtxPopupMgr* mgr = popupMgr();
 
   mgr->insert( action(  GEOMOp::OpDelete ), -1, -1 );  // delete
-  mgr->setRule( action( GEOMOp::OpDelete ), QString("$type in {'Shape' 'Group'} and selcount>0"), QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpDelete ), QString("$type in {'Shape' 'Group' 'Folder'} and selcount>0"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpGroupCreatePopup ), -1, -1 ); // create group
   mgr->setRule( action( GEOMOp::OpGroupCreatePopup ), QString("type='Shape' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDiscloseChildren ), -1, -1 ); // disclose child items
@@ -1282,7 +1287,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
 #if OCC_VERSION_LARGE > 0x06050200
   //QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and (selcount>0) and isOCC=true and topLevel=false";
-  QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and (selcount>0) and isOCC=true";
+  QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and isFolder=false and (selcount>0) and isOCC=true";
   mgr->insert( action(GEOMOp::OpBringToFront ), -1, -1 ); // bring to front
   mgr->setRule(action(GEOMOp::OpBringToFront), bringRule, QtxPopupMgr::VisibleRule );
   mgr->setRule(action(GEOMOp::OpBringToFront), "topLevel=true", QtxPopupMgr::ToggleRule );
@@ -1399,6 +1404,10 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   mgr->insert( action(  GEOMOp::OpReimport ), -1, -1 );  // delete
   mgr->setRule( action( GEOMOp::OpReimport ), QString("$imported in {'true'} and selcount>0"), QtxPopupMgr::VisibleRule );
+
+  mgr->insert( separator(), -1, -1 );     // -----------
+  mgr->insert( action(  GEOMOp::OpCreateFolder ), -1, -1 ); // Create Folder
+  mgr->setRule( action( GEOMOp::OpCreateFolder ), QString("client='ObjectBrowser' and (isComponent=true or isFolder=true)"), QtxPopupMgr::VisibleRule );
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 
@@ -2591,12 +2600,12 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
     if ( obj->FindAttribute(anAttr, "AttributeName") ) {
       _PTR(AttributeName) aName (anAttr);
 
+      aName->SetValue( name.toLatin1().data() ); // rename the SObject
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
       if (!CORBA::is_nil(anObj)) {
-        aName->SetValue( name.toLatin1().data() ); // rename the SObject
         anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
-        result = true;
       }
+      result = true;
     }
   }
   return result;
@@ -2619,4 +2628,141 @@ void GeometryGUI::updateMaterials()
       prefItem->retrieve();
     }
   }
+}
+
+/*!
+  \brief Check if the module allows "drag" operation of its objects.
+
+  Overloaded from LightApp_Module class.
+  
+  This function is a part of the general drag-n-drop mechanism.
+  The goal of this function is to check data object passed as a parameter
+  and decide if it can be dragged or no.
+
+  \param what data object being tested for drag operation
+  \return \c true if module allows dragging of the specified object
+  \sa isDropAccepted(), dropObjects()
+*/
+bool GeometryGUI::isDraggable( const SUIT_DataObject* what ) const
+{
+  // we allow dragging object under root and object from folder
+  int aLevel = what->level();
+  bool anObjectInFolder = false;
+  if ( aLevel > 2 ) {
+    const SalomeApp_DataObject* dataObj = dynamic_cast<const SalomeApp_DataObject*>( what );
+    if ( dataObj ) {
+      _PTR(SObject) aSO = dataObj->object();
+      if ( aSO ) {
+	_PTR(GenericAttribute) anAttr;
+	_PTR(SObject) aFatherSO = aSO->GetStudy()->GetUseCaseBuilder()->GetFather( aSO );
+	if ( aFatherSO && aFatherSO->FindAttribute(anAttr, "AttributeLocalID") ) {
+	  _PTR(AttributeLocalID) aLocalID( anAttr );
+	  anObjectInFolder = aLocalID->Value() == 999;
+	}
+      }
+    }
+  }
+  return aLevel == 2 || anObjectInFolder;
+}
+
+/*!
+  \brief Check if the module allows "drop" operation on the given object.
+
+  Overloaded from LightApp_Module class.
+
+  This function is a part of the general drag-n-drop mechanism.
+  The goal of this function is to check data object passed as a parameter
+  and decide if it can be used as a target for the "drop" operation.
+  The processing of the drop operation itself is done in the dropObjects() function.
+
+  \param where target data object
+  \return \c true if module supports dropping on the \a where data object
+  \sa isDraggable(), dropObjects()
+*/
+bool GeometryGUI::isDropAccepted( const SUIT_DataObject* where ) const
+{
+  // we allow dropping into folder and top-level GEOM object
+  int aLevel = where->level();
+  bool isFolder = false;
+  if ( aLevel > 1 ) {
+    const SalomeApp_DataObject* dataObj = dynamic_cast<const SalomeApp_DataObject*>( where );
+    if ( dataObj ) {
+      _PTR(SObject) aSO = dataObj->object();
+      if ( aSO ) {
+	_PTR(GenericAttribute) anAttr;
+	if ( aSO->FindAttribute(anAttr, "AttributeLocalID") ) {
+	  _PTR(AttributeLocalID) aLocalID( anAttr );
+	  isFolder = aLocalID->Value() == 999;
+	}
+      }
+    }
+  }
+  return aLevel == 1 || isFolder;
+}
+
+/*!
+  \brief Complete drag-n-drop operation.
+  
+  Overloaded from LightApp_Module class.
+
+  This function is a part of the general drag-n-drop mechanism.
+  Its goal is to handle dropping of the objects being dragged according
+  to the chosen operation (move). The dropping is performed in the
+  context of the parent data object \a where and the \a row (position in the 
+  children index) at which the data should be dropped. If \a row is equal to -1,
+  this means that objects are added to the end of the children list.
+
+  \param what objects being dropped
+  \param where target data object
+  \param row child index at which the drop operation is performed
+  \param action drag-n-drop operation (Qt::DropAction) - move
+
+  \sa isDraggable(), isDropAccepted()
+*/
+void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* where,
+			       const int row, Qt::DropAction action )
+{
+  if (action != Qt::CopyAction && action != Qt::MoveAction)
+    return; // unsupported action
+
+  // get parent object
+  SalomeApp_DataObject* dataObj = dynamic_cast<SalomeApp_DataObject*>( where );
+  if ( !dataObj ) return; // wrong parent
+  _PTR(SObject) parentObj = dataObj->object();
+
+  // Find the current Study and StudyBuilder
+  _PTR(Study) aStudy = parentObj->GetStudy();
+  _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
+  // collect all parents of the target node
+  QStringList parentIDs;
+  _PTR(SObject) parent = parentObj;
+  while( !parent->IsNull() ) {
+    parentIDs << parent->GetID().c_str();
+    parent = aUseCaseBuilder->GetFather(parent);
+  }
+
+  // collect objects being dropped
+  GEOM::object_list_var objects = new GEOM::object_list();
+  objects->length( what.count() );
+  int count = 0;
+  for ( int i = 0; i < what.count(); i++ ) {
+    dataObj = dynamic_cast<SalomeApp_DataObject*>( what[i] );
+    if ( !dataObj ) continue;  // skip wrong objects
+    _PTR(SObject) sobj = dataObj->object();
+    // check that dropped object is not a parent of target object
+    if ( parentIDs.contains( sobj->GetID().c_str() ) ) {
+      return; // it's not allowed to move node into it's child 
+    }
+    objects[i] = _CAST(SObject, sobj)->GetSObject();
+    count++;
+  }
+  objects->length( count );
+
+  // call engine function
+  GetGeomGen()->Move( objects.in(),                              // what
+		      _CAST(SObject, parentObj)->GetSObject(),   // where
+		      row );                                     // row
+
+  // update Object browser
+  getApp()->updateObjectBrowser( false );
 }

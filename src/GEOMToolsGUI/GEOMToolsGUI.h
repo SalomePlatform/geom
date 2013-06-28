@@ -88,6 +88,7 @@ private:
   void         OnIsosWidth();
   void         OnBringToFront();
   void         OnClsBringToFront();
+  void         OnCreateFolder();
 
   // Shortcut commands
   void         OnChangeTransparency( bool );

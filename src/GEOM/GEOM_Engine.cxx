@@ -153,31 +153,28 @@ void PublishObject (TObjectData&                              theObjectData,
                     std::map< int, TCollection_AsciiString >& theEntryToCmdMap,
                     std::set<TCollection_AsciiString>&        theMapOfPublished);
 
-namespace
+//================================================================================
+/*!
+ * \brief Fix up the name of python variable
+ */
+//================================================================================
+
+void GEOM_Engine::healPyName( TCollection_AsciiString&                  pyName,
+			      const TCollection_AsciiString&            anEntry,
+			      Resource_DataMapOfAsciiStringAsciiString& aNameToEntry)
 {
+  const TCollection_AsciiString allowedChars
+    ("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0987654321_");
 
-  //================================================================================
-  /*!
-   * \brief Fix up the name of python variable
-   */
-  //================================================================================
-
-  void healPyName( TCollection_AsciiString&                  pyName,
-                   const TCollection_AsciiString&            anEntry,
-                   Resource_DataMapOfAsciiStringAsciiString& aNameToEntry)
-  {
-    const TCollection_AsciiString allowedChars
-      ("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0987654321_");
-
-    if ( pyName.IsIntegerValue() ) { // pyName must not start with a digit
-      pyName.Insert( 1, 'a' );
-    }
-    int p, p2=1; // replace not allowed chars
-    while ((p = pyName.FirstLocationNotInSet(allowedChars, p2, pyName.Length()))) {
-      pyName.SetValue(p, '_');
-      p2=p;
-    }
-    if ( aNameToEntry.IsBound( pyName ) && anEntry != aNameToEntry( pyName ))
+  if ( pyName.IsIntegerValue() ) { // pyName must not start with a digit
+    pyName.Insert( 1, 'a' );
+  }
+  int p, p2=1; // replace not allowed chars
+  while ((p = pyName.FirstLocationNotInSet(allowedChars, p2, pyName.Length()))) {
+    pyName.SetValue(p, '_');
+    p2=p;
+  }
+  if ( aNameToEntry.IsBound( pyName ) && anEntry != aNameToEntry( pyName ))
     {  // diff objects have same name - make a new name by appending a digit
       TCollection_AsciiString aName2;
       Standard_Integer i = 0;
@@ -186,7 +183,6 @@ namespace
       } while ( aNameToEntry.IsBound( aName2 ) && anEntry != aNameToEntry( aName2 ));
       pyName = aName2;
     }
-  }
 }
 
 //=======================================================================
@@ -777,6 +773,21 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       }
     }    
   
+  // // add commands of folders creation and putting objects into it
+  // TCollection_AsciiString createFolderCmd("\n");
+  // createFolderCmd += "\t";
+  // createFolderCmd += "geompy.CreateFolder(";
+  // for (aStEntry2ObjDataPtrIt  = aStEntry2ObjDataPtr.begin();
+  //      aStEntry2ObjDataPtrIt != aStEntry2ObjDataPtr.end();
+  //      ++aStEntry2ObjDataPtrIt)
+  // {
+  //   const TCollection_AsciiString& studyEntry = aStEntry2ObjDataPtrIt->first;
+  //   const TObjectData*                   data = aStEntry2ObjDataPtrIt->second;
+  //   if ( data->_unpublished && !data->_pyName.IsEmpty() ) {
+  //     aScript +=  createFolderCmd + data->_pyName + ")";
+  //   }
+  // }
+
   //aScript += "\n\tpass\n";
   aScript += "\n";
   aValidScript = true;
@@ -1491,6 +1502,7 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
                             Standard_Integer&                         objectCounter,
                             Resource_DataMapOfAsciiStringAsciiString& aNameToEntry)
 {
+  GEOM_Engine* engine = GEOM_Engine::GetEngine();
   Handle(TColStd_HSequenceOfInteger) aSeq = FindEntries(theScript);
   Standard_Integer aLen = aSeq->Length(), aStart = 1, aScriptLength = theScript.Length();
 
@@ -1508,7 +1520,7 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
     if ( data._pyName.IsEmpty() ) { // encounted for the 1st time
       if ( !data._name.IsEmpty() ) { // published object
         data._pyName = data._name;
-        healPyName( data._pyName, anEntry, aNameToEntry);
+        engine->healPyName( data._pyName, anEntry, aNameToEntry);
       }
       else {
         do {
@@ -1700,6 +1712,7 @@ void PublishObject (TObjectData&                              theObjectData,
                     std::map< int, TCollection_AsciiString >& theEntryToCmdMap,
                     std::set< TCollection_AsciiString>&       theIgnoreMap)
 {
+  GEOM_Engine* engine = GEOM_Engine::GetEngine();
   if ( theObjectData._studyEntry.IsEmpty() )
     return; // was not published
   if ( theIgnoreMap.count( theObjectData._entry ) )
@@ -1725,7 +1738,7 @@ void PublishObject (TObjectData&                              theObjectData,
     if ( data0._pyName.IsEmpty() ) return; // something wrong
 
     theObjectData._pyName = theObjectData._name;
-    healPyName( theObjectData._pyName, theObjectData._entry, theNameToEntry);
+    engine->healPyName( theObjectData._pyName, theObjectData._entry, theNameToEntry);
 
     TCollection_AsciiString aCreationCommand("\n\t");
     aCreationCommand += theObjectData._pyName + " = " + data0._pyName;

@@ -51,6 +51,8 @@
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
+#include <SALOMEDS_SObject.hxx>
+
 #include <SOCC_Prs.h>
 
 #include <SVTK_Prs.h>
@@ -805,4 +807,31 @@ void GEOMToolsGUI::OnSetMaterial( const QVariant& theParam )
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
   displayer.UpdateViewer();
+}
+
+void GEOMToolsGUI::OnCreateFolder()
+{
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+
+  SalomeApp_Study* appStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  if ( !appStudy ) return;
+
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if ( !aSelMgr ) return;
+
+  SALOME_ListIO selected;
+  aSelMgr->selectedObjects( selected );
+  if ( selected.IsEmpty() ) return;
+
+  Handle(SALOME_InteractiveObject) anIObject = selected.First();
+
+  _PTR(Study) aStudy = appStudy->studyDS();
+  if( !aStudy ) return;
+  _PTR(SObject) aFatherSO(aStudy->FindObjectID(anIObject->getEntry()));
+  if ( !aFatherSO ) return;
+
+  GeometryGUI::GetGeomGen()->CreateFolder( tr("NEW_FOLDER_NAME").toLatin1().constData(), 
+					   _CAST(SObject, aFatherSO)->GetSObject() );
+  app->updateObjectBrowser( false );
 }

@@ -97,6 +97,7 @@ filletedge.png			\
 filletwire.png			\
 filletface.png			\
 filling.png			\
+folder.png			\
 fuse.png			\
 fuse_collinear_edges.png	\
 geometry.png			\

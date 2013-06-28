@@ -4641,6 +4641,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Disable auto color</translation>
     </message>
     <message>
+        <source>MEN_POP_CREATE_FOLDER</source>
+        <translation>Create folder</translation>
+    </message>
+    <message>
+        <source>STB_POP_CREATE_FOLDER</source>
+        <translation>Create a new folder</translation>
+    </message>
+    <message>
+        <source>NEW_FOLDER_NAME</source>
+        <translation>NewFolder</translation>
+    </message>
+    <message>
         <source>GEOM_RESULT_NAME_GRP</source>
         <translation>Result name</translation>
     </message>
