@@ -635,13 +635,11 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetVertexNearPoint
   anArray->SetValue(1, anIndices.FindIndex(V));
   aResult = GetEngine()->AddSubShape(theShape, anArray);
 
-  // The GetPoint() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
 
   // Make a Python command
-  GEOM::TPythonDump(aFunction, /*append=*/true)
-    << aResult << " = geompy.GetVertexNearPoint("
-    << theShape << ", " << thePoint << ")";
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetVertexNearPoint("
+                               << theShape << ", " << thePoint << ")";
 
   SetErrorCode(OK);
   return aResult;
