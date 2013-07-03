@@ -105,7 +105,7 @@ TopoDS_Shape GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(Handl
   Handle(Geom_Plane) plane(gpbap.Plane());
   Standard_Real Umin, Umax, Vmin, Vmax;
   gpbap.MinMaxBox(Umin,Umax,Vmin,Vmax);
-  cout << "Vals : " << Umin << ", " << Umax << ", " << Vmin << ", " << Vmax << endl;
+  // cout << "Vals : " << Umin << ", " << Umax << ", " << Vmin << ", " << Vmax << endl;
   BRepBuilderAPI_MakeFace mf(plane,Umin,Umax,Vmin,Vmax,Precision::Confusion());
   aInitShape =  mf.Face();
   //return aInitShape;
@@ -117,7 +117,7 @@ TopoDS_Shape GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(Handl
   aBuilder.LoadInitSurface( BRep_Tool::Surface(HSI->ChangeSurface().Face()));
 
   Standard_Integer j, j1, j2;
-  cout << "Init surface" << endl;
+  // cout << "Init surface" << endl;
   j1 = myListOfPoints->Lower();
   j2 = myListOfPoints->Upper();
   for (j=j1; j<=j2 ; j++)
@@ -126,9 +126,9 @@ TopoDS_Shape GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(Handl
     Handle(GeomPlate_PointConstraint) PCont = new GeomPlate_PointConstraint(aPnt,0);
     aBuilder.Add(PCont);
   }
-  cout << "avant Perform surface" << endl;
+  // cout << "avant Perform surface" << endl;
   aBuilder.Perform();
-  cout << "Perform surface" << endl;
+  // cout << "Perform surface" << endl;
 
   // A ce niveau : surface algo
   Handle(GeomPlate_Surface) gpPlate = aBuilder.Surface();
@@ -138,7 +138,7 @@ TopoDS_Shape GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(Handl
   Standard_Real seuil;
   seuil = Max(0.0001,10*aBuilder.G0Error());
   GeomPlate_MakeApprox Mapp(gpPlate,0.0001,nbcarreau,degmax,seuil);
-  cout << "Approx surface" << endl;
+  // cout << "Approx surface" << endl;
 
   Handle (Geom_Surface) Surf (Mapp.Surface());
  
@@ -164,7 +164,7 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
   Standard_Integer aType = aFunction->GetType();
 
   if (aType != SMOOTHINGSURFACE_LPOINTS) return 0;
-  cout << "Youhou : " << aType << endl;
+  // cout << "Youhou : " << aType << endl;
 
   GEOMImpl_ISmoothingSurface aData (aFunction);
   
@@ -215,7 +215,7 @@ GetCreationInformation(std::string&             theOperationName,
   case SMOOTHINGSURFACE_LPOINTS:
     AddParam( theParams, "Points" );
     if ( aCI.GetLength() > 1 )
-      theParams[1] << aCI.GetLength() << " points: ";
+      theParams[0] << aCI.GetLength() << " points: ";
     for ( int i = 1, nb = aCI.GetLength(); i <= nb; ++i )
       theParams[0] << aCI.GetPoint( i ) << " ";
     break;
