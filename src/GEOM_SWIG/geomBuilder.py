@@ -12231,6 +12231,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "dividedCylinder")
             return anObj
 
+        ## Create a surface from a cloud of points
+        #  @param thelPoints list of points
+        #  @return New GEOM_Object, containing the created shape.
+        #
+        #  @ref tui_creation_smoothingsurface "Example"
+        def MakeSmoothingSurface(self, thelPoints):
+            anObj = self.AdvOp.MakeSmoothingSurface(thelPoints)
+            RaiseIfFailed("MakeSmoothingSurface", self.AdvOp)
+            return anObj
+
         #@@ insert new functions before this line @@ do not remove this line @@#
 
         # end of l4_advanced
