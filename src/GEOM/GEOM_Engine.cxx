@@ -773,21 +773,6 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       }
     }    
   
-  // // add commands of folders creation and putting objects into it
-  // TCollection_AsciiString createFolderCmd("\n");
-  // createFolderCmd += "\t";
-  // createFolderCmd += "geompy.CreateFolder(";
-  // for (aStEntry2ObjDataPtrIt  = aStEntry2ObjDataPtr.begin();
-  //      aStEntry2ObjDataPtrIt != aStEntry2ObjDataPtr.end();
-  //      ++aStEntry2ObjDataPtrIt)
-  // {
-  //   const TCollection_AsciiString& studyEntry = aStEntry2ObjDataPtrIt->first;
-  //   const TObjectData*                   data = aStEntry2ObjDataPtrIt->second;
-  //   if ( data->_unpublished && !data->_pyName.IsEmpty() ) {
-  //     aScript +=  createFolderCmd + data->_pyName + ")";
-  //   }
-  // }
-
   //aScript += "\n\tpass\n";
   aScript += "\n";
   aValidScript = true;
