@@ -89,6 +89,7 @@ private:
   void         OnBringToFront();
   void         OnClsBringToFront();
   void         OnCreateFolder();
+  void         OnSortChildren();
 
   // Shortcut commands
   void         OnChangeTransparency( bool );

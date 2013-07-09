@@ -60,6 +60,7 @@ namespace GEOMOp {
     OpEdgeWidth           = 1260,   // POPUP MENU - LINE WIDTH - EDGE WIDTH
     OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
     OpCreateFolder        = 1262,   // POPUP MENU - CREATE FOLDER
+    OpSortChildren        = 1263,   // POPUP MENU - SORT CHILD ITEMS
     // DisplayGUI ------------------//--------------------------------
     OpSwitchVectors       = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION
     OpShowAll             = 2002,   // MENU VIEW  - SHOW ALL

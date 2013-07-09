@@ -389,6 +389,9 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpCreateFolder:
     OnCreateFolder();
      break;
+  case GEOMOp::OpSortChildren:
+    OnSortChildren();
+     break;
   default:
     SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;

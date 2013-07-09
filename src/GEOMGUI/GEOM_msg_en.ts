@@ -4653,6 +4653,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>NewFolder</translation>
     </message>
     <message>
+        <source>MEN_POP_SORT_CHILD_ITEMS</source>
+        <translation>Sort children</translation>
+    </message>
+    <message>
+        <source>STB_POP_SORT_CHILD_ITEMS</source>
+        <translation>Sort child items</translation>
+    </message>
+    <message>
         <source>GEOM_RESULT_NAME_GRP</source>
         <translation>Result name</translation>
     </message>

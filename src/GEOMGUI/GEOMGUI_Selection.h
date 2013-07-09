@@ -52,6 +52,7 @@ public:
   static bool           hasChildren( const _PTR(SObject)& );
   static bool           expandable( const _PTR(SObject)& );
   static bool           isCompoundOfVertices( GEOM::GEOM_Object_ptr );
+  static bool           isFolder( const _PTR(SObject)& );
 
 protected:
   //  virtual QVariant      contextParameter( const QString& ) const;
@@ -67,6 +68,7 @@ private:
   QString               selectionMode() const;
   bool                  isVectorsMode( const int ) const;
   bool                  hasChildren( const int ) const;
+  int                   nbChildren( const int ) const;
   bool                  hasConcealedChildren( const int ) const;
   bool                  hasDisclosedChildren( const int ) const;
   bool                  compoundOfVertices( const int ) const;

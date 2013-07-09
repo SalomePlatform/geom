@@ -161,6 +161,8 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = topLevel( idx );
   else if ( p == "hasChildren" )
     v = hasChildren( idx );
+  else if ( p == "nbChildren" )
+    v = nbChildren(idx);
   else if ( p == "hasConcealedChildren" )
     v = hasConcealedChildren( idx );
   else if ( p == "hasDisclosedChildren" )
@@ -399,19 +401,8 @@ bool GEOMGUI_Selection::isVectorsMode( const int index ) const
 
 bool GEOMGUI_Selection::hasChildren( const _PTR(SObject)& obj )
 {
-  bool ok = false;
-  if ( obj ) {
-    _PTR(ChildIterator) it ( obj->GetStudy()->NewChildIterator( obj ) );
-    for ( ; it->More() && !ok; it->Next() ) {
-      _PTR(SObject) child = it->Value();
-      if ( child ) {
-        _PTR(SObject) refObj;
-        if ( child->ReferencedObject( refObj ) ) continue; // omit references
-        if ( child->GetName() != "" ) ok = true;
-      }
-    }
-  }
-  return ok;
+  // as soon as Use Case browser data tree was added
+  return obj->GetStudy()->GetUseCaseBuilder()->HasChildren( obj );
 }
 
 bool GEOMGUI_Selection::expandable( const _PTR(SObject)& obj )
@@ -436,6 +427,17 @@ bool GEOMGUI_Selection::isCompoundOfVertices( GEOM::GEOM_Object_ptr obj )
   return ret;
 }
 
+bool GEOMGUI_Selection::isFolder( const _PTR(SObject)& obj )
+{
+  bool ret = false;
+  _PTR(GenericAttribute) anAttr;
+  if ( obj->FindAttribute(anAttr, "AttributeLocalID") ) {
+    _PTR(AttributeLocalID) aLocalID( anAttr );
+    ret = aLocalID->Value() == 999;
+  }
+  return ret;
+}
+
 bool GEOMGUI_Selection::hasChildren( const int index ) const
 {
   bool ok = false;
@@ -450,6 +452,25 @@ bool GEOMGUI_Selection::hasChildren( const int index ) const
     }
   }
   return ok;
+}
+
+int GEOMGUI_Selection::nbChildren( const int index ) const
+{
+  int nb = 0;
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );
+
+  if ( appStudy ) {
+    QString anEntry = entry( index );
+    _PTR(Study) study = appStudy->studyDS();
+    if ( study && !anEntry.isEmpty() ) {
+      _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
+      if ( aSO->GetStudy()->GetUseCaseBuilder()->IsUseCaseNode(aSO) ) {
+	_PTR(UseCaseIterator) it = aSO->GetStudy()->GetUseCaseBuilder()->GetUseCaseIterator( aSO ); 
+	for (it->Init(false); it->More(); it->Next()) nb++;
+      }
+    }
+  }
+  return nb;
 }
 
 bool GEOMGUI_Selection::hasConcealedChildren( const int index ) const
@@ -625,6 +646,7 @@ bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const
 
 bool GEOMGUI_Selection::isFolder( const int index ) const
 {
+  bool res = false;
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );
 
   if ( appStudy ) {
@@ -632,15 +654,9 @@ bool GEOMGUI_Selection::isFolder( const int index ) const
     _PTR(Study) study = appStudy->studyDS();
     if ( study && !anEntry.isNull() ) {
       _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
-      if ( aSO ) {
-	_PTR(GenericAttribute) anAttr;
-	if ( aSO->FindAttribute(anAttr, "AttributeLocalID") ) {
-	  _PTR(AttributeLocalID) aLocalID( anAttr );
-	  return aLocalID->Value() == 999;
-	}
-      }
+      if ( aSO ) res = isFolder( aSO );
     }
   }
-  return false;
+  return res;
 }
 

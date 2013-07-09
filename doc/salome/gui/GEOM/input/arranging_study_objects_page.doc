@@ -20,6 +20,10 @@ To create a folder select "Create folder" popup menu item for root "Geometry" ob
 <li> folder(s)
 </ul>
 
+If geometrical object has more than one child sub-object, then there is a possibility to sort these children in ascending order. To use sort functionality select "Sort children" popup menu item for the parent object.
+
+\image html geom_sort.png "Sorting of sub-objects"
+
 Our <b>TUI Scripts</b> provide you with useful examples of 
 \ref tui_arranging_study_objects "Arranging objects in study".
 

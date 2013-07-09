@@ -391,7 +391,8 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
                              << GEOMOp::OpUnpublishObject
                              << GEOMOp::OpPublishObject
                              << GEOMOp::OpPointMarker
-                             << GEOMOp::OpCreateFolder;
+                             << GEOMOp::OpCreateFolder
+                             << GEOMOp::OpSortChildren;
   if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommands.contains( id ) )
       return;
 
@@ -444,6 +445,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpBringToFront:       // POPUP MENU - BRING TO FRONT
   case GEOMOp::OpClsBringToFront:    //
   case GEOMOp::OpCreateFolder:       // POPUP MENU - CREATE FOLDER
+  case GEOMOp::OpSortChildren:       // POPUP MENU - SORT CHILD ITEMS
     libName = "GEOMToolsGUI";
     break;
   case GEOMOp::OpDMWireframe:        // MENU VIEW - WIREFRAME
@@ -905,6 +907,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpMaterialProperties,   "POP_MATERIAL_PROPERTIES" );
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
+  createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
 
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
 
@@ -1407,7 +1410,11 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpCreateFolder ), -1, -1 ); // Create Folder
-  mgr->setRule( action( GEOMOp::OpCreateFolder ), QString("client='ObjectBrowser' and (isComponent=true or isFolder=true)"), QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpCreateFolder ), QString("client='ObjectBrowser' and $component={'GEOM'} and (isComponent=true or isFolder=true)"), QtxPopupMgr::VisibleRule );
+
+  mgr->insert( separator(), -1, -1 );     // -----------
+  mgr->insert( action(  GEOMOp::OpSortChildren ), -1, -1 ); // Sort child items
+  mgr->setRule( action( GEOMOp::OpSortChildren ), QString("client='ObjectBrowser' and $component={'GEOM'} and nbChildren>1"), QtxPopupMgr::VisibleRule );
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 

@@ -4659,6 +4659,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation type="unfinished">NewFolder</translation>
     </message>
     <message>
+        <source>MEN_POP_SORT_CHILD_ITEMS</source>
+        <translation type="unfinished">Sort children</translation>
+    </message>
+    <message>
+        <source>STB_POP_SORT_CHILD_ITEMS</source>
+        <translation type="unfinished">Sort child items</translation>
+    </message>
+    <message>
         <source>GEOM_RESULT_NAME_GRP</source>
         <translation>Nom du résultat</translation>
     </message>

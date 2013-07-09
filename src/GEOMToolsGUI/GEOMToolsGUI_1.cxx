@@ -835,3 +835,30 @@ void GEOMToolsGUI::OnCreateFolder()
 					   _CAST(SObject, aFatherSO)->GetSObject() );
   app->updateObjectBrowser( false );
 }
+
+void GEOMToolsGUI::OnSortChildren()
+{
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+
+  SalomeApp_Study* appStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  if ( !appStudy ) return;
+
+  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+  if ( !aSelMgr ) return;
+
+  SALOME_ListIO selected;
+  aSelMgr->selectedObjects( selected );
+  if ( selected.IsEmpty() ) return;
+
+  Handle(SALOME_InteractiveObject) anIObject = selected.First();
+
+  _PTR(Study) aStudy = appStudy->studyDS();
+  if( !aStudy ) return;
+  _PTR(SObject) aFatherSO(aStudy->FindObjectID(anIObject->getEntry()));
+  if ( !aFatherSO ) return;
+
+  aStudy->GetUseCaseBuilder()->SortChildren( aFatherSO, true/*AscendingOrder*/ );
+
+  app->updateObjectBrowser( true );
+}
