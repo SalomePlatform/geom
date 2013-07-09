@@ -593,8 +593,8 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
     useCaseBuilder->SetRootCurrent();
     useCaseBuilder->Append( theComponent ); // component object is added as the top level item
     SALOMEDS::ChildIterator_var it = theComponent->GetStudy()->NewChildIterator( theComponent ); 
-    for (it->Init(); it->More(); it->Next()) {
-      useCaseBuilder->AppendTo( theComponent, it->Value() );
+    for (it->InitEx(true); it->More(); it->Next()) {
+      useCaseBuilder->AppendTo( it->Value()->GetFather(), it->Value() );
     }
   }
 
