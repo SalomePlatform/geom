@@ -258,6 +258,37 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
 }
 
 //=======================================================================
+// function : getGeomChildrenAndFolders
+// purpose  : Get direct (1-level) GEOM objects under each folder, sub-folder, etc. and these folders itself
+//=======================================================================
+static void getGeomChildrenAndFolders( _PTR(SObject) theSO, 
+				       QMap<QString,QString>& geomObjList, 
+				       QMap<QString,QString>& folderList ) {
+  if ( !theSO ) return;
+  _PTR(Study) aStudy = theSO->GetStudy();
+  if ( !aStudy ) return;
+  _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
+
+  bool isFolder = false;
+  _PTR(GenericAttribute) anAttr;
+  if ( theSO->FindAttribute(anAttr, "AttributeLocalID") ) {
+    _PTR(AttributeLocalID) aLocalID( anAttr );
+    isFolder = aLocalID->Value() == 999;
+  }
+  QString anEntry = theSO->GetID().c_str();
+  QString aName = theSO->GetName().c_str();
+  if ( isFolder ) {
+    folderList.insert( anEntry, aName );
+    _PTR(UseCaseIterator) ucit ( aUseCaseBuilder->GetUseCaseIterator( theSO ) );
+    for ( ucit->Init( false ); ucit->More(); ucit->Next() ) {
+      getGeomChildrenAndFolders( ucit->Value(), geomObjList, folderList );
+    }
+  } else {
+    geomObjList.insert( anEntry, aName );
+  }
+}
+
+//=======================================================================
 // function : GEOMToolsGUI()
 // purpose  : Constructor
 //=======================================================================
@@ -441,6 +472,7 @@ void GEOMToolsGUI::OnEditDelete()
     return;
 
   _PTR(Study) aStudy = appStudy->studyDS();
+  _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
 
   // check if study is locked
   if ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() )->IsLocked() ) {
@@ -457,6 +489,7 @@ void GEOMToolsGUI::OnEditDelete()
   // check each selected object: if belongs to GEOM, if not reference...
   QMap<QString,QString> toBeDeleted;
   QMap<QString,QString> allDeleted;
+  QMap<QString,QString> toBeDelFolders;
   bool isComponentSelected = false;
 
   for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
@@ -494,11 +527,12 @@ void GEOMToolsGUI::OnEditDelete()
       isComponentSelected = true;
       continue;
     }
-    toBeDeleted.insert( entry, aName );
+    // all sub-objects of folder have to be deleted
+    getGeomChildrenAndFolders( obj, toBeDeleted, toBeDelFolders );
     allDeleted.insert( entry, aName ); // skip GEOM component
     // browse through all children recursively
-    _PTR(ChildIterator) it ( aStudy->NewChildIterator( obj ) );
-    for ( it->InitEx( true ); it->More(); it->Next() ) {
+    _PTR(UseCaseIterator) it ( aUseCaseBuilder->GetUseCaseIterator( obj ) );
+    for ( it->Init( true ); it->More(); it->Next() ) {
       _PTR(SObject) child( it->Value() );
       if ( child && child->ReferencedObject( refobj ) )
         continue; // skip references
@@ -545,6 +579,8 @@ void GEOMToolsGUI::OnEditDelete()
       removeObjectWithChildren( child, aStudy, views, disp );
       // remove object from study
       aStudyBuilder->RemoveObjectWithChildren( child );
+      // remove object from use case tree
+      aUseCaseBuilder->Remove( child );
     }
   }
   else {
@@ -565,6 +601,18 @@ void GEOMToolsGUI::OnEditDelete()
       removeObjectWithChildren( obj, aStudy, views, disp );
       // remove objects from study
       aStudyBuilder->RemoveObjectWithChildren( obj );
+      // remove object from use case tree
+      aUseCaseBuilder->Remove( obj );
+    }
+    // ... and then delete all folders
+    for ( it = toBeDelFolders.begin(); it != toBeDelFolders.end(); ++it ) {
+      _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toLatin1().data() ) );
+      // remove object from GEOM engine
+      removeObjectWithChildren( obj, aStudy, views, disp );
+      // remove objects from study
+      aStudyBuilder->RemoveObjectWithChildren( obj );
+      // remove object from use case tree
+      aUseCaseBuilder->Remove( obj );
     }
   }
 
@@ -936,6 +984,7 @@ void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
 {
   // iterate through all children of obj
   for (_PTR(ChildIterator) it (aStudy->NewChildIterator(obj)); it->More(); it->Next()) {
+  // for (_PTR(UseCaseIterator) it (aStudy->GetUseCaseBuilder()->GetUseCaseIterator(obj)); it->More(); it->Next()) {
     _PTR(SObject) child (it->Value());
     removeObjectWithChildren(child, aStudy, views, disp);
   }
