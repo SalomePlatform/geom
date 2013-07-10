@@ -388,6 +388,18 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
   }
 
   if (jSplit > 0) {
+    // This is closed contour. Check the last (it is first as well) vertex,
+    // as it becomes intermediate after reordering.
+    TopoDS_Edge   anEdge = TopoDS::Edge(aChain.Last());
+    TopoDS_Vertex aVtx   = sae.LastVertex(anEdge);
+
+    if (IsFixed(aVtx, theFace1, theMapVtxEdge1) ||
+        IsFixed(aVtx, theFace2, theMapVtxEdge2)) {
+      // This vertex should be kept. So we can't merge this contour.
+      MESSAGE ("Two edges on closed contour can't be merged.");
+      return Standard_False;
+    }
+
     // Reorder edges in the sequence to have jSplit-th edge last.
     for(j = 1; j <= jSplit; j++) {
       aChain.Append(aChain.First());
