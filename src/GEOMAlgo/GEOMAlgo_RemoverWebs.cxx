@@ -22,8 +22,7 @@
 // File:        GEOMAlgo_RemoverWebs.cxx
 // Created:     Thu Mar 28 07:40:32 2013
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_RemoverWebs.hxx>
 
 #include <TopoDS_Iterator.hxx>
@@ -35,6 +34,8 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
 
 #include <TopExp.hxx>
 
@@ -46,9 +47,8 @@
 #include <GEOMAlgo_BuilderSolid.hxx>
 #include <GEOMAlgo_Tools3D.hxx>
 
-
 //=======================================================================
-//function : 
+//function :
 //purpose  :
 //=======================================================================
 GEOMAlgo_RemoverWebs::GEOMAlgo_RemoverWebs()
@@ -118,20 +118,52 @@ void GEOMAlgo_RemoverWebs::Perform()
 //=======================================================================
 void GEOMAlgo_RemoverWebs::BuildSolid()
 {
-  Standard_Integer i, aNbF, aNbSx, iErr, aNbSI, aNbF2;  
+  Standard_Integer i, aNbF, aNbSx, iErr, aNbSI, aNbF2, aNbS, aNbR;
   TopAbs_Orientation aOr;
   TopoDS_Iterator aIt1, aIt2;
+  TopoDS_Shape aShape;
   BRep_Builder aBB;
+  TopTools_MapOfShape aMFence;
   TopTools_IndexedMapOfShape aMSI;
   TopTools_IndexedDataMapOfShapeListOfShape aMFS;
   TopTools_ListOfShape aSFS;
   TopTools_ListIteratorOfListOfShape aItLS;
   GEOMAlgo_BuilderSolid aSB;
   //
+  //modified by NIZNHY-PKV Fri Jul 12 07:22:58 2013f
+  //
+  // 0.
+  // The compound myShape may contain equal solids
+  // (itz.brep for e.g.). The block is to refine
+  // such data if it is necessary. The shape to treat
+  // will be aShape (not myShape).
+  //
+  aShape=myShape;
+  //
+  aIt1.Initialize(myShape);
+  for (aNbS=0; aIt1.More(); aIt1.Next(), ++aNbS) {
+    const TopoDS_Shape& aS=aIt1.Value();
+    aMFence.Add(aS);
+  }
+  //
+  aNbR=aMFence.Extent();
+  if (aNbS!=aNbR) {
+    TopTools_MapIteratorOfMapOfShape aItMS;
+    //
+    GEOMAlgo_Tools3D::MakeContainer(TopAbs_COMPOUND, aShape);
+    //
+    aItMS.Initialize(aMFence);
+    for (; aItMS.More(); aItMS.Next()) {
+      const TopoDS_Shape& aS=aItMS.Key();
+      aBB.Add(aShape, aS);
+    }
+  }
+  //modified by NIZNHY-PKV Fri Jul 12 07:23:02 2013t
+  //
   aNbF2=0;
   //
-  // 1. aSFS: Faces 
-  TopExp::MapShapesAndAncestors(myShape, TopAbs_FACE, TopAbs_SOLID, aMFS);
+  // 1. aSFS: Faces
+  TopExp::MapShapesAndAncestors(aShape, TopAbs_FACE, TopAbs_SOLID, aMFS);
   //
   aNbF=aMFS.Extent();
   for (i=1; i<=aNbF; ++i) {
@@ -159,18 +191,18 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   }
   //
   if (!aNbF2) { // nothing to do here
-    myResult=myShape;
+    myResult=aShape;
     return;
   }
   //
   // 2 Internal shapes: edges, vertices
-  aIt1.Initialize(myShape);
+  aIt1.Initialize(aShape);
   for (; aIt1.More(); aIt1.Next()) {
-    const TopoDS_Shape& aSD=aIt1.Value(); 
+    const TopoDS_Shape& aSD=aIt1.Value();
     //
     aIt2.Initialize(aSD);
     for (; aIt2.More(); aIt2.Next()) {
-      const TopoDS_Shape& aSi=aIt2.Value(); 
+      const TopoDS_Shape& aSi=aIt2.Value();
       if (aSi.ShapeType()!=TopAbs_SHELL) {
         aOr=aSi.Orientation();
         if (aOr==TopAbs_INTERNAL) {
@@ -182,7 +214,7 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   aNbSI=aMSI.Extent();
   //
   // 3 Solids without internals
-  GEOMAlgo_Tools3D::MakeContainer(TopAbs_COMPOUND, myResult);  
+  GEOMAlgo_Tools3D::MakeContainer(TopAbs_COMPOUND, myResult);
   //
   aSB.SetContext(myContext);
   aSB.SetShapes(aSFS);
@@ -194,7 +226,7 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   }
   //
   const TopTools_ListOfShape& aLSR=aSB.Areas();
-  // 
+  //
   // 4 Add the internals
   if (aNbSI) {
     AddInternalShapes(aLSR, aMSI);
@@ -209,13 +241,13 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
 
 //=======================================================================
 //function : AddInternalShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_RemoverWebs::AddInternalShapes(const TopTools_ListOfShape& aLSR,
                                              const TopTools_IndexedMapOfShape& aMSI)
 {
   Standard_Integer i, aNbSI;
-  TopAbs_State aState;  
+  TopAbs_State aState;
   TopoDS_Solid aSd;
   BRep_Builder aBB;
   TopTools_ListIteratorOfListOfShape aItLS;
