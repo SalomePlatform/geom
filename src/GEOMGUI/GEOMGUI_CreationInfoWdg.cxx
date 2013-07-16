@@ -49,6 +49,7 @@ GEOMGUI_CreationInfoWdg::GEOMGUI_CreationInfoWdg( SalomeApp_Application* app )
 
   myIconLbl      = new QLabel( operationGB );
   myOperaionLnEd = new QLineEdit( operationGB );
+  myOperaionLnEd->setReadOnly( true );
   myParamsTreeWd = new QTreeWidget( frame );
   myParamsTreeWd->setColumnCount( 2 );
   myParamsTreeWd->setHeaderLabels( QStringList() << tr( "PARAMETER" ) << tr( "VALUE" ) );
