@@ -84,7 +84,7 @@ void GEOMGUI_CreationInfoWdg::addParam (const QString& name, const QString& valu
 {
   QTreeWidgetItem* item = new QTreeWidgetItem( myParamsTreeWd );
 
-  item->setFlags( item->flags() | Qt::ItemIsEditable );
+  //item->setFlags( Qt::NoItemFlags );
   item->setExpanded( true );
 
   item->setText( 0, name );
@@ -100,5 +100,5 @@ void GEOMGUI_CreationInfoWdg::clear()
 
 GEOMGUI_CreationInfoWdg::~GEOMGUI_CreationInfoWdg()
 {
-  std::cout<<"~GEOMGUI_CreationInfoWdg"<<std::endl;
+  //std::cout<<"~GEOMGUI_CreationInfoWdg"<<std::endl;
 }
