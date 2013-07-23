@@ -57,7 +57,8 @@ nodist_libGEOM_la_SOURCES =	\
 nodist_salomeres_DATA =	\
 	GEOM_images.qm	\
 	GEOM_msg_en.qm	\
-	GEOM_msg_fr.qm
+	GEOM_msg_fr.qm  \
+	GEOM_msg_ja.qm
 
 # additional information to compile and link file
 
