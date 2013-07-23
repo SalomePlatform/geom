@@ -40,7 +40,7 @@
 #include <gp_Pnt.hxx>
 #include <gp_Dir.hxx>
 #include <gp_Pln.hxx>
-#include <gp_Ax1.hxx>
+#include <gp_Ax3.hxx>
 #include <Geom_Plane.hxx>
 
 IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
@@ -128,17 +128,22 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
     }
     //
     if(aOr==TopAbs_REVERSED) {
-      gp_Ax1 aAx1;
+      gp_Ax3 aPos;
       gp_Pln aPln;
       gp_Pnt aP;
       gp_Dir aD;
       Handle(Geom_Plane) aSR;
       //
       aPln=myGAS[i-1].Plane();
-      aAx1=aPln.Axis();
-      aP=aAx1.Location();
-      aD=aAx1.Direction();
-      aD.Reverse();
+      aPos=aPln.Position();
+      aP=aPos.Location();
+      aD=aPos.Direction();
+
+      // Is aPos is not direct, aD is already a reversed direction.
+      if (aPos.Direct()) {
+        aD.Reverse();
+      }
+
       aSR=new Geom_Plane(aP, aD);
       myGAS[i-1].Load(aSR);
     }

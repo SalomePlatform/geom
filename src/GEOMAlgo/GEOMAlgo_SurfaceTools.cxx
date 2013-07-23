@@ -41,6 +41,7 @@
 
 #include <GeomAbs_SurfaceType.hxx>
 #include <GeomAdaptor_Surface.hxx>
+#include <IntSurf_Quadric.hxx>
 
 
 //=======================================================================
@@ -52,34 +53,23 @@
                                                   const Standard_Real aTol,
                                                   TopAbs_State& aState)
 {
-  Standard_Integer iErr;
-  Standard_Real aDp, aR;
-  GeomAbs_SurfaceType aType;
-  gp_Sphere aSph;
-  gp_Cylinder aCyl;
-  gp_Pln aPln;
+  Standard_Integer    iErr  = 0;
+  GeomAbs_SurfaceType aType = aGAS.GetType();
+  IntSurf_Quadric     aQuad;
   //
-  iErr=0;
-  aState=TopAbs_UNKNOWN;
+  aState = TopAbs_UNKNOWN;
   //
-  aType=aGAS.GetType();
   switch (aType) {
   case GeomAbs_Plane:
-    aPln=aGAS.Plane();
-    aR=0.;
-    aDp=GEOMAlgo_SurfaceTools::Distance(aP, aPln);
+    aQuad.SetValue(aGAS.Plane());
     break;
 
   case GeomAbs_Cylinder:
-    aCyl=aGAS.Cylinder();
-    aR=aCyl.Radius();
-    aDp=GEOMAlgo_SurfaceTools::Distance(aP, aCyl);
+    aQuad.SetValue(aGAS.Cylinder());
     break;
 
   case GeomAbs_Sphere:
-    aSph=aGAS.Sphere();
-    aR=aSph.Radius();
-    aDp=GEOMAlgo_SurfaceTools::Distance(aP, aSph);
+    aQuad.SetValue(aGAS.Sphere());
     break;
 
   default:
@@ -88,12 +78,14 @@
   }
   //
   if (!iErr) {
-    aState=TopAbs_ON;
-    if (aDp>aR+aTol) {
-      aState=TopAbs_OUT;
-    }
-    else if (aDp<aR-aTol) {
-      aState=TopAbs_IN;
+    const Standard_Real aDp = aQuad.Distance(aP);
+    //
+    aState = TopAbs_ON;
+    //
+    if (aDp > aTol) {
+      aState = TopAbs_OUT;
+    } else if (aDp < -aTol) {
+      aState = TopAbs_IN;
     }
   }
   //
@@ -138,53 +130,6 @@
   }
   //
   return aRSt;
-}
-//=======================================================================
-//function : Distance
-//purpose  :
-//=======================================================================
-Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
-                                              const gp_Sphere& aSph)
-{
-  Standard_Real aD;
-  //
-  const gp_Pnt& aLoc=aSph.Location();
-  aD=aLoc.Distance(aP);
-  //
-  return aD;
-}
-//=======================================================================
-//function : Distance
-//purpose  :
-//=======================================================================
-Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
-                                              const gp_Cylinder& aCyl)
-{
-  Standard_Real aD;
-  //
-  const gp_Ax1& aAxis=aCyl.Axis();
-  gp_Lin aLin(aAxis);
-  aD=aLin.Distance(aP);
-  //
-  return aD;
-}
-//=======================================================================
-//function : Distance
-//purpose  :
-//=======================================================================
-Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
-                                              const gp_Pln& aPL)
-{
-  Standard_Real aD;
-  //
-  const gp_Ax3& aPos=aPL.Position();
-  const gp_Pnt& aLoc=aPos.Location ();
-  const gp_Dir& aDir=aPos.Direction();
-  //
-  aD= (aDir.X() * (aP.X() - aLoc.X()) +
-       aDir.Y() * (aP.Y() - aLoc.Y()) +
-       aDir.Z() * (aP.Z() - aLoc.Z()));
-  return aD;
 }
 //=======================================================================
 //function : IsCoaxial

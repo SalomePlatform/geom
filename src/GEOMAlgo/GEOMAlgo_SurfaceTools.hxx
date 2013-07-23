@@ -76,18 +76,6 @@ class GEOMAlgo_SurfaceTools
                                       TopAbs_State& aSt) ;
 
   Standard_EXPORT
-    static  Standard_Real Distance(const gp_Pnt& aP,
-                                   const gp_Pln& aPln) ;
-
-  Standard_EXPORT
-    static  Standard_Real Distance(const gp_Pnt& aP,
-                                   const gp_Cylinder& aCyl) ;
-
-  Standard_EXPORT
-    static  Standard_Real Distance(const gp_Pnt& aP,
-                                   const gp_Sphere& aSph) ;
-
-  Standard_EXPORT
     static  TopAbs_State ReverseState(const TopAbs_State aSt) ;
 
 };
