@@ -62,6 +62,7 @@
 #include <OSD.hxx>
 
 #include <SALOMEDS_Tool.hxx>
+#include <SALOMEDS_wrap.hxx>
 
 //============================================================================
 // function : GEOM_Gen_i()
@@ -574,25 +575,27 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
 
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
-  if (isMultiFile)
-    aNameWithExt = TCollection_AsciiString((char*)(SALOMEDS_Tool::GetNameFromPath
-                                                   (theComponent->GetStudy()->URL())).c_str());
-  aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
+  SALOMEDS::Study_var study = theComponent->GetStudy();
+  if (isMultiFile) {
+    CORBA::String_var url = study->URL();
+    aNameWithExt = (char*)SALOMEDS_Tool::GetNameFromPath(url.in()).c_str();
+  }
+  aNameWithExt += "_GEOM.sgd";
   TCollection_AsciiString aFullName = (TCollection_AsciiString((char*)aTmpDir.c_str()) + aNameWithExt);
 
   // Open document
-  if (!_impl->Load(theComponent->GetStudy()->StudyId(),(char*) aFullName.ToCString())) return false;
+  if (!_impl->Load(study->StudyId(),(char*) aFullName.ToCString())) return false;
 
   // Remove the created file and tmp directory
   if (!isMultiFile) SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir.c_str(), aSeq.in(), true);
 
   // creation of tree nodes for all data objects in the study
   // to support tree representation customization and drag-n-drop:
-  SALOMEDS::UseCaseBuilder_var useCaseBuilder = theComponent->GetStudy()->GetUseCaseBuilder();
+  SALOMEDS::UseCaseBuilder_wrap useCaseBuilder = study->GetUseCaseBuilder();
   if ( !useCaseBuilder->IsUseCaseNode( theComponent ) ) {
     useCaseBuilder->SetRootCurrent();
     useCaseBuilder->Append( theComponent ); // component object is added as the top level item
-    SALOMEDS::ChildIterator_var it = theComponent->GetStudy()->NewChildIterator( theComponent ); 
+    SALOMEDS::ChildIterator_wrap it = study->NewChildIterator( theComponent ); 
     for (it->InitEx(true); it->More(); it->Next()) {
       useCaseBuilder->AppendTo( it->Value()->GetFather(), it->Value() );
     }
@@ -756,10 +759,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
 
   if(!theFather->_is_nil()) {
     IOR = _orb->object_to_string(theFather);
-    SALOMEDS::SObject_var aFatherSO = theStudy->FindObjectIOR(IOR.in());
+    SALOMEDS::SObject_wrap aFatherSO = theStudy->FindObjectIOR(IOR.in());
     if(aFatherSO->_is_nil()) return aResultSO._retn();
     aResultSO = aStudyBuilder->NewObject(aFatherSO);
-    aFatherSO->UnRegister();
     //aStudyBuilder->Addreference(aResultSO, aResultSO);
   }
 
@@ -776,15 +778,13 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
     GEOM::GEOM_Object_var anObject = aList[i];
     if(anObject->_is_nil()) continue;
     IOR = _orb->object_to_string(anObject);
-    SALOMEDS::SObject_var aSO =  theStudy->FindObjectIOR(IOR.in());
+    SALOMEDS::SObject_wrap aSO =  theStudy->FindObjectIOR(IOR.in());
     if(aSO->_is_nil()) continue;
     CORBA::String_var anID = aSO->GetID();
     if ( aPrevID == anID.in() ) continue;
     aPrevID = anID.in();
-    SALOMEDS::SObject_var aSubSO = aStudyBuilder->NewObject(aResultSO);
+    SALOMEDS::SObject_wrap aSubSO = aStudyBuilder->NewObject(aResultSO);
     aStudyBuilder->Addreference(aSubSO, aSO);
-    aSO->UnRegister();
-    aSubSO->UnRegister();
   }
 
   return aResultSO._retn();
