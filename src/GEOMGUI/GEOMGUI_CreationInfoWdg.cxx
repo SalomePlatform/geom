@@ -69,6 +69,7 @@ GEOMGUI_CreationInfoWdg::GEOMGUI_CreationInfoWdg( SalomeApp_Application* app )
   myWindowID = 1;
   while( app->dockWindow( myWindowID ))
     ++myWindowID;
+  ++myWindowID; // pb when a GEOM is a sole module: CreationInfoWdg replaces Python console
 }
 
 void GEOMGUI_CreationInfoWdg::setOperation(const QPixmap& icon, const QString& name)
