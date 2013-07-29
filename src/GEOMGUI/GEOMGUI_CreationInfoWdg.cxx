@@ -66,7 +66,7 @@ GEOMGUI_CreationInfoWdg::GEOMGUI_CreationInfoWdg( SalomeApp_Application* app )
   aLayout->addWidget( myParamsTreeWd );
 
   // get a free dockable window id
-  myWindowID = 1;
+  myWindowID = 10;
   while( app->dockWindow( myWindowID ))
     ++myWindowID;
   ++myWindowID; // pb when a GEOM is a sole module: CreationInfoWdg replaces Python console
