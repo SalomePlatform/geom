@@ -939,6 +939,9 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
         Standard_ConstructionError::Raise("Invalid sections were specified for building pipe");
       }
       Standard_Integer ind =0;
+      Standard_Real aTolConf = Precision::Confusion();
+      Standard_Real aTolAng  = Precision::Angular();
+
       for (i = 1; i <= nbShapes && ind < nbShapes; i++) { //i+nbBases <= nbShapes
         TopTools_SequenceOfShape usedBases;
         Standard_Integer j = 1;
@@ -957,6 +960,9 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
         if (!aBuilder.IsReady()) {
           Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
         }
+      
+        aBuilder.SetTolerance(aTolConf, aTolConf, aTolAng);
+
         aBuilder.Build();
         aShape = aBuilder.Shape();
         aSeqFaces.Append(aShape);
