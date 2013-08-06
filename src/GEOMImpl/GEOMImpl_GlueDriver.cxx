@@ -439,30 +439,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
 #if OCC_VERSION_LARGE > 0x06050200
   Standard_Integer iWrnDetect = aGA.WarningStatus();
   if (iWrnDetect == 2) {
-    /*
-    TopTools_ListIteratorOfListOfShape aItLS;
-
-    // Sticked shapes are detected
-    const TopTools_IndexedDataMapOfShapeListOfShape& aIDMSS = pGluer2->StickedShapes();
-
-    Standard_Integer i, aNb = aIDMSS.Extent();
-    for (i = 1; i <= aNb; ++i) {
-      // ancestor aSa (edge, wire face,..)  
-      const TopoDS_Shape& aSa = aIDMSS.FindKey(i); 
-
-      // successors aSs (vertex, edge, ...)
-      // of the ancestor that are sticked 
-      // for given value of the tolerance
-      const TopTools_ListOfShape& aLSS = aIDMSS.FindFromIndex(i);
-      aItLS.Initialize(aLSS);
-      for (; aItLS.More(); aItLS.Next()) {
-        const TopoDS_Shape& aSs = aItLS.Value();
-      }
-    }
-    */
     Standard_Failure::Raise("GLUE_ERROR_STICKED_SHAPES");
-    //Standard_Failure::Raise("Sticked shapes are detected. The tolerance value is too big.");
-    //theWarning = "Sticked shapes are detected. The tolerance value is too big.";
   }
 #endif
   //modified by NIZNHY-PKV Tue Mar 13 14:07:14 2012t
@@ -617,6 +594,37 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueByList (const TopoDS_Shape& theShape,
 
   // 2. Detect interferred shapes
   aGA.Detect();
+
+  //modified by NIZNHY-PKV Tue Mar 13 14:07:12 2012f
+#if OCC_VERSION_LARGE > 0x06050200
+  Standard_Integer iWrnDetect = aGA.WarningStatus();
+  if (iWrnDetect == 2) {
+    /*
+    TopTools_ListIteratorOfListOfShape aItLS;
+
+    // Sticked shapes are detected
+    const TopTools_IndexedDataMapOfShapeListOfShape& aIDMSS = pGluer2->StickedShapes();
+
+    Standard_Integer i, aNb = aIDMSS.Extent();
+    for (i = 1; i <= aNb; ++i) {
+      // ancestor aSa (edge, wire face,..)  
+      const TopoDS_Shape& aSa = aIDMSS.FindKey(i); 
+
+      // successors aSs (vertex, edge, ...)
+      // of the ancestor that are sticked 
+      // for given value of the tolerance
+      const TopTools_ListOfShape& aLSS = aIDMSS.FindFromIndex(i);
+      aItLS.Initialize(aLSS);
+      for (; aItLS.More(); aItLS.Next()) {
+        const TopoDS_Shape& aSs = aItLS.Value();
+      }
+    }
+    */
+    Standard_Failure::Raise("GLUE_ERROR_STICKED_SHAPES");
+  }
+#endif
+  //modified by NIZNHY-PKV Tue Mar 13 14:07:14 2012t
+
   Standard_Integer iErr = aGA.ErrorStatus();
   if (iErr) {
     switch (iErr) {
