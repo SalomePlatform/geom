@@ -41,6 +41,7 @@
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_ViewManager.h>
+#include <SUIT_ResourceMgr.h>
 
 #include <SALOME_Prs.h>
 #include <SALOME_InteractiveObject.hxx>
@@ -159,6 +160,8 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = isVectorsMode( idx );
   else if ( p == "topLevel" )
     v = topLevel( idx );
+  else if ( p == "autoBringToFront" )
+    v = autoBringToFront( idx );
   else if ( p == "hasChildren" )
     v = hasChildren( idx );
   else if ( p == "nbChildren" )
@@ -350,6 +353,11 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
   }
 
   return res;
+}
+
+bool GEOMGUI_Selection::autoBringToFront( const int /*index*/ ) const
+{
+  return SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front" );
 }
 
 bool GEOMGUI_Selection::isVectorsMode( const int index ) const

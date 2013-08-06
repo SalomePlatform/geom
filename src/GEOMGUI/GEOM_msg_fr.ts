@@ -3243,6 +3243,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Epaisseur des traits de mesure</translation>
     </message>
     <message>
+        <source>PREF_AUTO_BRING_TO_FRONT</source>
+        <translation>Afficher au premier plan automatiquement</translation>
+    </message>
+    <message>
         <source>PREF_ISOS</source>
         <translation>Nombre d&apos;isolignes</translation>
     </message>

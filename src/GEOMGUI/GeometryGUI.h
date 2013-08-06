@@ -168,6 +168,7 @@ private slots:
   void                        OnSetMaterial( const QString& );
   void                        updateMaterials();
   void                        updateCreationInfo();
+  void                        onAutoBringToFront();
 
 signals :
   void                        SignalDeactivateActiveDialog();

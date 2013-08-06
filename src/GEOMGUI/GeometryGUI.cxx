@@ -1292,10 +1292,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   //QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and (selcount>0) and isOCC=true and topLevel=false";
   QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and isFolder=false and (selcount>0) and isOCC=true";
   mgr->insert( action(GEOMOp::OpBringToFront ), -1, -1 ); // bring to front
-  mgr->setRule(action(GEOMOp::OpBringToFront), bringRule, QtxPopupMgr::VisibleRule );
+  mgr->setRule(action(GEOMOp::OpBringToFront), bringRule + " and autoBringToFront = false", QtxPopupMgr::VisibleRule );
   mgr->setRule(action(GEOMOp::OpBringToFront), "topLevel=true", QtxPopupMgr::ToggleRule );
   mgr->insert( action(GEOMOp::OpClsBringToFront ), -1, -1 ); // clear bring to front
-  mgr->setRule( action(GEOMOp::OpClsBringToFront ), clientOCC, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action(GEOMOp::OpClsBringToFront ), clientOCC + " and autoBringToFront = false", QtxPopupMgr::VisibleRule );
 #endif
   mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
@@ -1474,6 +1474,8 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   LightApp_SelectionMgr* sm = getApp()->selectionMgr();
 
   connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
+  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( onAutoBringToFront() ));
+
   if ( !myCreationInfoWdg )
     myCreationInfoWdg = new GEOMGUI_CreationInfoWdg( getApp() );
   getApp()->insertDockWindow( myCreationInfoWdg->getWinID(), myCreationInfoWdg );
@@ -1755,6 +1757,54 @@ void GeometryGUI::updateCreationInfo()
   }
 }
 
+void GeometryGUI::onAutoBringToFront()
+{
+  bool isAutoBringToFront = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front" );
+  if( !isAutoBringToFront )
+    return;
+
+  SUIT_ViewWindow* SUIT_window = application()->desktop()->activeWindow();
+  if ( !SUIT_window || SUIT_window->getViewManager()->getType() != OCCViewer_Viewer::Type() )
+  	return;
+
+  SalomeApp_Study* appStudy = dynamic_cast< SalomeApp_Study* >( getApp()->activeStudy() );
+  if (!appStudy) return;
+
+  GEOM_Displayer displayer( appStudy );
+
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
+  int aMgrId = dynamic_cast< SUIT_ViewModel* >( window )->getViewManager()->getGlobalId();
+
+  SALOME_ListIO selected;
+  getApp()->selectionMgr()->selectedObjects( selected );
+  SALOME_ListIO allObjects;
+  window->GetVisible( allObjects );
+
+  for ( SALOME_ListIteratorOfListIO It( allObjects ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    bool isSelected = false;
+    for( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      Handle( SALOME_InteractiveObject ) ioSelected = It.Value();
+      if( io->isSame( ioSelected ) )
+        isSelected = true;
+    }
+    QVariant v = appStudy->getObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), QVariant() );
+    bool isTopLevel =  v.isValid() ? v.toBool() : false;
+    if( isSelected && !isTopLevel ) {
+      appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), true );
+      if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
+    }
+    else if( !isSelected ) {
+      appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), false );
+      if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
+    }
+  }
+  displayer.UpdateViewer();
+  GeometryGUI::Modified();
+}
+
 QString GeometryGUI::engineIOR() const
 {
   if ( !CORBA::is_nil( GetGeomGen() ) )
@@ -1960,6 +2010,9 @@ void GeometryGUI::createPreferences()
     setPreferenceProperty( wd[i], "min", 1 );
     setPreferenceProperty( wd[i], "max", 5 );
   }
+
+  addPreference( tr( "PREF_AUTO_BRING_TO_FRONT" ), genGroup,
+                 LightApp_Preferences::Bool, "Geometry", "auto_bring_to_front" );
  
   int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
   setPreferenceProperty( isoGroup, "columns", 2 );

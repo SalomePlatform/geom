@@ -73,6 +73,7 @@ private:
   bool                  hasDisclosedChildren( const int ) const;
   bool                  compoundOfVertices( const int ) const;
   bool                  topLevel( const int ) const;
+  bool                  autoBringToFront( const int ) const;
   bool                  isPhysicalMaterial( const int ) const;
 
   bool                  isComponent( const int ) const;

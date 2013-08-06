@@ -3237,6 +3237,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Measures lines width</translation>
     </message>
     <message>
+        <source>PREF_AUTO_BRING_TO_FRONT</source>
+        <translation>Automatic bring to front</translation>
+    </message>
+    <message>
         <source>PREF_ISOS</source>
         <translation>Number of isolines</translation>
     </message>

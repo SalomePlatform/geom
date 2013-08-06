@@ -44,6 +44,8 @@ predefined materials.</li>
 <li><b>Isolines width</b> - allows to define default width of the isolines.</li>
 <li><b>Preview edges width</b> - allows to define width of the edges for preview.</li>
 <li><b>Measures line width</b> - allows to define lines width of measurements tools.</li>
+<li><b>Automatic bring to front</b> - when option is ON: the objects selected by the user will be automatically 
+made "top-level".</li>
 
 </ul>
 </ul>
