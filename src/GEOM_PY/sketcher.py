@@ -47,14 +47,18 @@ Additionnal examples can be found as unit tests in the source code.
 
 geompyEnable = True
 try:
-    import salome
-    salome.salome_init()
-    import GEOM
-    from salome.geom import geomBuilder
-    geompy = geomBuilder.New(salome.myStudy)
+    from salome.kernel.deprecation import is_called_by_sphinx
+    if not is_called_by_sphinx():
+        import salome
+        salome.salome_init()
+        import GEOM
+        from salome.geom import geomBuilder
+        geompy = geomBuilder.New(salome.myStudy)
+        pass
+    pass
 except:
     geompyEnable = False
-    
+    pass
 
 class Sketcher:
 

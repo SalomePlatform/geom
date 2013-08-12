@@ -32,8 +32,13 @@ logger = Logger("salome.geom.geomtools", color = termcolor.RED)
 
 from salome.kernel.studyedit import getActiveStudyId, getStudyEditor
 from salome.kernel.services import IDToObject, IDToSObject
+from salome.kernel.deprecation import is_called_by_sphinx
+
 try:
-    from salome.gui import helper as guihelper
+    if not is_called_by_sphinx():
+        from salome.gui import helper as guihelper
+        pass
+    pass
 except:
     pass
 
