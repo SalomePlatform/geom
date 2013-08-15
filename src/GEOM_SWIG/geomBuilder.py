@@ -5472,7 +5472,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return ListObj
 
         ## Obtain a compound of sub-shapes of <VAR>aShape</VAR>,
-        #  selected by they indices in list of all sub-shapes of type <VAR>aType</VAR>.
+        #  selected by their indices in list of all sub-shapes of type <VAR>aType</VAR>.
         #  Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
         #  @param aShape Shape to get sub-shape of.
         #  @param ListOfInd List of sub-shapes indices.
@@ -5487,7 +5487,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def SubShape(self, aShape, aType, ListOfInd, theName=None):
             """
             Obtain a compound of sub-shapes of aShape,
-            selected by they indices in list of all sub-shapes of type aType.
+            selected by their indices in list of all sub-shapes of type aType.
             Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
             
             Parameters:
