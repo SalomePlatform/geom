@@ -27,7 +27,7 @@ class SalomeSession(object):
         sys.argv  = ["runSalome.py"]
         sys.argv += ["--terminal"]
         sys.argv += ["--modules=GEOM"]
-        sys.argv += ["--execute=%s" % script]
+        sys.argv += ["%s" % script]
         clt, d = runSalome.main()
         return
 
