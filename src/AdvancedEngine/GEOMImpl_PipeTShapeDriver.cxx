@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMImpl_PipeTShapeDriver.hxx>
 
@@ -70,6 +69,8 @@
 
 #include <vector>
 //@@ include required header files here @@//
+
+#include "AdvancedEngine_Types.hxx"
 
 //=======================================================================
 //function : GetID

@@ -398,8 +398,9 @@ void GEOM_Superv_i::getAdvancedOp()
   if (CORBA::is_nil(myAdvancedOp) || isNewStudy(myLastStudyID,myStudyID)) {
     //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
     //     Try to get id of the study from the SALOME Session
-    if(myStudyID < 0 ) SetStudyID(-1);    
-    myAdvancedOp = myGeomEngine->GetIAdvancedOperations(myStudyID);
+    if(myStudyID < 0 ) SetStudyID(-1);
+    //myAdvancedOp = myGeomEngine->GetIAdvancedOperations(myStudyID);
+    myAdvancedOp = GEOM::GEOM_IAdvancedOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "AdvancedEngine"));
   }
 }
 

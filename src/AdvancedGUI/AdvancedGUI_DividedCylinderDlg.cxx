@@ -217,7 +217,8 @@ void AdvancedGUI_DividedCylinderDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_DividedCylinderDlg::createOperation()
 {
-  return getGeomEngine()->GetIAdvancedOperations(getStudyId());
+  //return getGeomEngine()->GetIAdvancedOperations(getStudyId());
+  return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
 }
 
 //=================================================================================

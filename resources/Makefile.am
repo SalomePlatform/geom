@@ -25,6 +25,7 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 dist_salomeres_DATA =		\
+GEOMActions.xml			\
 GEOM_en.xml			\
 GEOM_fr.xml			\
 GEOM.config			\

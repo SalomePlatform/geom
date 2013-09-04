@@ -15,14 +15,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  File   : Makefile.am
 #  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-# header files 
+# header files
 salomeinclude_HEADERS =			\
 	AdvancedGUI.h
 
@@ -64,6 +63,13 @@ MOC_FILES += $(ADVANCED_MOC_FILES)
 
 nodist_libAdvancedGUI_la_SOURCES =	\
 	$(MOC_FILES)
+
+# resources files
+nodist_salomeres_DATA =		\
+	AdvancedGUI_images.qm	\
+	AdvancedGUI_msg_en.qm	\
+	AdvancedGUI_msg_fr.qm	\
+	AdvancedGUI_msg_ja.qm
 
 # additional information to compile and link file
 

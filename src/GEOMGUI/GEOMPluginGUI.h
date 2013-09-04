@@ -1,5 +1,8 @@
 // Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -15,28 +18,32 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//  File   : AdvancedGUI.h
-//  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
-#ifndef ADVANCEDGUI_H
-#define ADVANCEDGUI_H
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GEOMPluginGUI.h
 
-#include "GEOMPluginGUI.h"
-  
+#ifndef GEOMPLUGINGUI_H
+#define GEOMPLUGINGUI_H
+
+#include "GEOMGUI.h"
+
+#include <QObject>
+
 //=================================================================================
-// class    : AdvancedGUI
-// purpose  :
+// class    : GEOMPluginGUI
+// purpose  : Base class for all geometry Plugins
 //=================================================================================
-class AdvancedGUI : public GEOMPluginGUI
+class GEOMGUI_EXPORT GEOMPluginGUI : public GEOMGUI
 {
-public:
-  AdvancedGUI( GeometryGUI* );
-  ~AdvancedGUI();
+public :
+  // Constructor
+  GEOMPluginGUI (GeometryGUI* parent);
+  // Destructor
+  virtual ~GEOMPluginGUI();
 
-  bool OnGUIEvent( int, SUIT_Desktop* );
-  bool OnGUIEvent( const QString&, SUIT_Desktop* );
+  //! Parameter action specifies the operation ID
+  virtual bool OnGUIEvent (const QString& action, SUIT_Desktop* parent);
+  //virtual bool OnGUIEvent (const QString& action, SUIT_Desktop* parent, const QVariant& theParam);
 };
 
-#endif // ADVANCEDGUI_H
+#endif // GEOMPluginGUI_H

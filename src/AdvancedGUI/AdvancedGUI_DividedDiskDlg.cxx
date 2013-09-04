@@ -392,7 +392,8 @@ void AdvancedGUI_DividedDiskDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_DividedDiskDlg::createOperation()
 {
-  return getGeomEngine()->GetIAdvancedOperations(getStudyId());
+  //return getGeomEngine()->GetIAdvancedOperations(getStudyId());
+  return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
 }
 
 //=================================================================================

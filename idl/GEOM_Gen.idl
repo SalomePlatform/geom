@@ -4563,8 +4563,8 @@ module GEOM
                                  in boolean           theInheritFirstArg,
                                  in boolean           theAddPrefix);
 
-   // #  Methods to access interfaces for objects creation and transformation
-    
+    // #  Methods to access interfaces for objects creation and transformation
+
     GEOM_IBasicOperations     GetIBasicOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_ITransformOperations GetITransformOperations(in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_I3DPrimOperations    GetI3DPrimOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
@@ -4577,10 +4577,12 @@ module GEOM
     GEOM_IMeasureOperations   GetIMeasureOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IBlocksOperations    GetIBlocksOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IGroupOperations     GetIGroupOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
-    GEOM_IAdvancedOperations  GetIAdvancedOperations (in long theStudyID) raises (SALOME::SALOME_Exception);
 
-  //  # Objects Management
-     
+    GEOM_IOperations GetPluginOperations (in long   theStudyID,
+                                          in string theLibName) raises (SALOME::SALOME_Exception);
+
+    // # Objects Management
+
 
     /*!
      *  \brief Removes the object from the GEOM component

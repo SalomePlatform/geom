@@ -195,12 +195,13 @@ namespace GEOMOp {
     OpExplodeBlock        = 6104,   // MENU BLOCKS - EXPLODE ON BLOCKS
     // AdvancedGUI -----------------//--------------------------------
     OpAdvancedNoOp        = 10000,  // NO OPERATION (advanced operations base)
-    OpPipeTShape          = 10001,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
-    //OpPipeTShapeGroups  = 10002,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
-    OpDividedDisk         = 10003,  // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
-    OpDividedCylinder     = 10004,  // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
-    OpSmoothingSurface            = 10005,  // MENU NEW ENTITY - ADVANCED - SMOOTHINGSURFACE
+    //OpPipeTShape          = 10001,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
+    //OpPipeTShapeGroups    = 10002,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
+    //OpDividedDisk         = 10003,  // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
+    //OpDividedCylinder     = 10004,  // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
+    //OpSmoothingSurface    = 10005,  // MENU NEW ENTITY - ADVANCED - SMOOTHINGSURFACE
     //@@ insert new functions before this line @@ do not remove this line @@//
+    OpLastOperationID     = 20000   // DO NOT USE OPERATION IDs MORE THAN 20000 !!!
   };
 }
 

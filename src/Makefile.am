@@ -34,7 +34,8 @@ if GEOM_ENABLE_GUI
   SUBDIRS += OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI GEOMBase	\
              GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI	\
              EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI	\
-             RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI GEOM_SWIG_WITHIHM
+             RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI AdvancedEngine	\
+             GEOM_SWIG_WITHIHM
 endif
 
 DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools BlockFix GEOMAlgo SKETCHER		\
@@ -45,4 +46,4 @@ DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools BlockFix GEOMAlgo SKETCHER		\
                GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI	\
                EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI	\
                RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI		\
-               GEOM_SWIG_WITHIHM GEOM_PY ShapeRecognition
+               AdvancedEngine GEOM_SWIG_WITHIHM GEOM_PY ShapeRecognition

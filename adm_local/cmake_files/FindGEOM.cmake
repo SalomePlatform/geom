@@ -19,6 +19,7 @@
 
 SET(GEOM_CXXFLAGS -I${GEOM_ROOT_DIR}/include/salome)
 
+FIND_LIBRARY(AdvancedEngine AdvancedEngine ${GEOM_ROOT_DIR}/lib/salome)
 FIND_LIBRARY(AdvancedGUI AdvancedGUI ${GEOM_ROOT_DIR}/lib/salome)
 FIND_LIBRARY(BasicGUI BasicGUI ${GEOM_ROOT_DIR}/lib/salome)
 FIND_LIBRARY(BlocksGUI BlocksGUI ${GEOM_ROOT_DIR}/lib/salome)

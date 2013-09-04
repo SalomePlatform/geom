@@ -459,6 +459,18 @@ class info:
     CLOSED   = 1
     UNCLOSED = 2
 
+##! Private class used to bind calls of plugin operations to geomBuilder
+class PluginOperation:
+  def __init__(self, operation, function):
+    self.operation = operation
+    self.function = function
+    pass
+
+  def __call__(self, *args):
+    res = self.function(self.operation, *args)
+    RaiseIfFailed(self.function.__name__, self.operation)
+    return res
+
 # Warning: geom is a singleton
 geom = None
 engine = None
@@ -684,12 +696,27 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.MeasuOp  = self.GetIMeasureOperations  (self.myStudyId)
             self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
-            self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
+            #self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
+            self.AdvOp    = self.GetPluginOperations (self.myStudyId, "AdvancedEngine")
             # set GEOM as root in the use case tree
             self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
             self.myUseCaseBuilder.SetRootCurrent()
             self.myUseCaseBuilder.Append(self.father)
             pass
+
+        def GetPluginOperations(self, studyID, libraryName):
+            op = GEOM._objref_GEOM_Gen.GetPluginOperations(self, studyID, libraryName)
+            if op:
+                # bind methods of operations to self
+                methods = op.__class__.__dict__['__methods__']
+                avoid_methods = self.BasicOp.__class__.__dict__['__methods__']
+                for meth_name in methods:
+                    if not meth_name in avoid_methods: # avoid basic methods
+                        function = getattr(op.__class__, meth_name)
+                        if callable(function):
+                            #self.__dict__[meth_name] = self.__PluginOperation(op, function)
+                            self.__dict__[meth_name] = PluginOperation(op, function)
+            return op
 
         ## Enable / disable results auto-publishing
         # 

@@ -29,6 +29,8 @@
 #include "Python.h"
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
+#include "GEOMPluginGUI.h"
+#include "GEOMGUI_XmlHandler.h"
 #include "GEOMGUI_OCCSelector.h"
 #include "GEOMGUI_Selection.h"
 #include "GEOMGUI_CreationInfoWdg.h"
@@ -82,6 +84,7 @@
 #include <Basics_OCCTVersion.hxx>
 
 // External includes
+#include <QDir>
 #include <QMenu>
 #include <QTime>
 #include <QAction>
@@ -278,6 +281,50 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
 }
 
 //=======================================================================
+// function : GeometryGUI::getPluginLibrary()
+// purpose  : get or load GUI Plugin library by name [ internal ]
+//=======================================================================
+typedef GEOMPluginGUI* (*PluginLibraryGUI)( GeometryGUI* );
+GEOMPluginGUI* GeometryGUI::getPluginLibrary( const QString& libraryName )
+{
+  if ( !myGUIMap.contains( libraryName ) ) {
+    // try to load library if it is not loaded yet
+#ifndef WNT
+    QString dirs = getenv( "LD_LIBRARY_PATH" );
+    QString sep  = ":";
+#else
+    QString dirs = getenv( "PATH" );
+    QString sep  = ";";
+#endif
+    if ( !dirs.isEmpty() ) {
+      QStringList dirList = dirs.split(sep, QString::SkipEmptyParts ); // skip empty entries
+      QListIterator<QString> it( dirList ); it.toBack();
+      while ( it.hasPrevious() ) {
+        QFileInfo fi( Qtx::addSlash( it.previous() ) + libraryName );
+        if ( fi.exists() ) {
+          OSD_SharedLibrary aSharedLibrary( fi.fileName().toLatin1().constData() );
+          bool res = aSharedLibrary.DlOpen( OSD_RTLD_LAZY );
+          if ( !res ) {
+            MESSAGE( "Can't open library : " << aSharedLibrary.DlError() );
+            continue; // continue search further
+          }
+          OSD_Function osdF = aSharedLibrary.DlSymb( "GetLibGUI" );
+          if ( osdF != NULL ) {
+            PluginLibraryGUI func = (GEOMPluginGUI* (*) (GeometryGUI*))osdF;
+            GEOMPluginGUI* libGUI = (*func)( this );
+            if ( libGUI ) {
+              myGUIMap[ libraryName ] = libGUI;
+              break; // found and loaded!
+            }
+          }
+        }
+      }
+    }
+  }
+  return myGUIMap.contains( libraryName ) ? (GEOMPluginGUI*)myGUIMap[ libraryName ] : 0;
+}
+
+//=======================================================================
 // function : GeometryGUI::ActiveWorkingPlane()
 // purpose  : Activate Working Plane View
 //=======================================================================
@@ -393,8 +440,10 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
                              << GEOMOp::OpPointMarker
                              << GEOMOp::OpCreateFolder
                              << GEOMOp::OpSortChildren;
-  if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommands.contains( id ) )
-      return;
+  if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommands.contains( id ) ) {
+    // activate OCC viewer
+    getApp()->getViewManager(OCCViewer_Viewer::Type(), /*create=*/true);
+  }
 
   // fix for IPAL9103, point 2
   if ( CORBA::is_nil( GetGeomGen() ) ) {
@@ -590,16 +639,45 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpExplodeBlock:       // MENU BLOCKS - EXPLODE ON BLOCKS
     libName = "BlocksGUI";
     break;
-  case GEOMOp::OpAdvancedNoOp:       // NO OPERATION (advanced operations base)
-  case GEOMOp::OpPipeTShape:         // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
-//   case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
-  case GEOMOp::OpDividedDisk:           // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
-  case GEOMOp::OpDividedCylinder:           // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
-  case GEOMOp::OpSmoothingSurface:           // MENU NEW ENTITY - ADVANCED - SMOOTHINGSURFACE
-    //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
-    libName = "AdvancedGUI";
-    break;
+  //case GEOMOp::OpAdvancedNoOp:       // NO OPERATION (advanced operations base)
+  //case GEOMOp::OpPipeTShape:         // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
+  //case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
+  //case GEOMOp::OpDividedDisk:           // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
+  //case GEOMOp::OpDividedCylinder:           // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
+  //case GEOMOp::OpSmoothingSurface:           // MENU NEW ENTITY - ADVANCED - SMOOTHINGSURFACE
+    //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
+    //libName = "AdvancedGUI";
+    //break;
   default:
+    if (myPluginActions.contains(id)) {
+      libName = myPluginActions[id].first;
+
+      GEOMPluginGUI* library = 0;
+      if ( !libName.isEmpty() ) {
+#ifndef WNT
+        libName = QString( "lib" ) + libName + ".so";
+#else
+        libName = libName + ".dll";
+#endif
+        library = getPluginLibrary( libName );
+      }
+
+      // call method of corresponding GUI library
+      if ( library ) {
+        //QString action ("%1");
+        //action = action.arg(id);
+
+        //if( !theParam.isValid() )
+          library->OnGUIEvent( myPluginActions[id].second, desk );
+        //else
+        //  library->OnGUIEvent( id, desk, theParam);
+      }
+      else
+        SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
+
+      updateCreationInfo();
+      return;
+    }
     break;
   }
 
@@ -624,6 +702,57 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
     SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
 
   updateCreationInfo();
+}
+
+//=================================================================================
+// function : GeometryGUI::activateOperation()
+// purpose  :
+//=================================================================================
+bool GeometryGUI::activateOperation( int actionId )
+{
+  OnGUIEvent(actionId);
+  return true;
+}
+
+//=================================================================================
+// function : GeometryGUI::activateOperation()
+// purpose  :
+//=================================================================================
+bool GeometryGUI::activateOperation( const QString& actionId )
+{
+  bool isOk = false;
+
+  int id = actionId.toInt(&isOk);
+  if (isOk)
+    OnGUIEvent(id);
+
+  return isOk;
+}
+
+//=================================================================================
+// function : GeometryGUI::activateOperation()
+// purpose  :
+//=================================================================================
+bool GeometryGUI::activateOperation( const QString& actionId, const QString& plugin )
+{
+  bool isOk = false;
+
+  QString pluginLib = plugin;
+  // TODO: if <plugin> is a plugin name, find plugin library name
+  if (myPluginLibs.contains(plugin))
+    pluginLib = myPluginLibs[plugin];
+
+  QMap<int, PluginAction>::iterator actionsIter = myPluginActions.begin();
+  for (; actionsIter != myPluginActions.end(); ++actionsIter) {
+    const PluginAction& anAction = actionsIter.value();
+    if (anAction.first == pluginLib && anAction.second == actionId) {
+      // activate operation
+      OnGUIEvent(actionsIter.key());
+      isOk = true;
+    }
+  }
+
+  return isOk;
 }
 
 //=================================================================================
@@ -909,8 +1038,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
   createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
 
-  createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
-
   // Create actions for increase/decrease transparency shortcuts
   createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false,
                     "Geometry:Increase transparency");
@@ -923,10 +1050,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpDecrNbIsos, "", "", 0, false,
                     "Geometry:Decrease number of isolines");
 
-//   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
-  createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
-  createGeomAction( GEOMOp::OpDividedCylinder, "DIVIDEDCYLINDER" );
-  createGeomAction( GEOMOp::OpSmoothingSurface, "SMOOTHINGSURFACE" );
+  //createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
+  //createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
+  //createGeomAction( GEOMOp::OpDividedCylinder, "DIVIDEDCYLINDER" );
+  //createGeomAction( GEOMOp::OpSmoothingSurface, "SMOOTHINGSURFACE" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create menus --------------------------
@@ -965,7 +1092,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpCone,      primId, -1 );
   createMenu( GEOMOp::OpRectangle, primId, -1 );
   createMenu( GEOMOp::OpDisk,      primId, -1 );
-  createMenu( GEOMOp::OpPipeTShape,primId, -1 );
+  //createMenu( GEOMOp::OpPipeTShape,primId, -1 );
 
   int genId = createMenu( tr( "MEN_GENERATION" ), newEntId, -1 );
   createMenu( GEOMOp::OpPrism,      genId, -1 );
@@ -976,9 +1103,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpPipePath,   genId, -1 );
 #endif
 
-   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
-   createMenu( GEOMOp::OpSmoothingSurface, advId, -1 );
-   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
+  //int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
+  //createMenu( GEOMOp::OpSmoothingSurface, advId, -1 );
+  //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   createMenu( separator(), newEntId, -1 );
 
@@ -994,8 +1121,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   int blocksId = createMenu( tr( "MEN_BLOCKS" ), newEntId, -1 );
   createMenu( GEOMOp::OpQuadFace,        blocksId, -1 );
   createMenu( GEOMOp::OpHexaSolid,       blocksId, -1 );
-  createMenu( GEOMOp::OpDividedDisk,     blocksId, -1 );
-  createMenu( GEOMOp::OpDividedCylinder, blocksId, -1 );
+  //createMenu( GEOMOp::OpDividedDisk,     blocksId, -1 );
+  //createMenu( GEOMOp::OpDividedCylinder, blocksId, -1 );
 
   createMenu( separator(),          newEntId, -1 );
 
@@ -1108,7 +1235,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(),         toolsId, -1 );
   createMenu( GEOMOp::OpCheckGeom, toolsId, -1 );
 #endif
- 
+
   createMenu( separator(),         toolsId, -1 );
   createMenu( GEOMOp::OpMaterialsLibrary, toolsId, -1 );
   createMenu( separator(),         toolsId, -1 );
@@ -1168,14 +1295,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpCone,       primTbId );
   createTool( GEOMOp::OpRectangle,  primTbId );
   createTool( GEOMOp::OpDisk,       primTbId );
-  createTool( GEOMOp::OpPipeTShape, primTbId ); //rnc
+  //createTool( GEOMOp::OpPipeTShape, primTbId ); //rnc
 
-  int blocksTbId = createTool( tr( "TOOL_BLOCKS" ) );
-  createTool( GEOMOp::OpDividedDisk, blocksTbId );
-  createTool( GEOMOp::OpDividedCylinder, blocksTbId );
-
-//   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) ); //rnc
-//   createTool( GEOMOp::OpPipeTShape, advancedTbId );
+  //int blocksTbId = createTool( tr( "TOOL_BLOCKS" ) );
+  //createTool( GEOMOp::OpDividedDisk, blocksTbId );
+  //createTool( GEOMOp::OpDividedCylinder, blocksTbId );
 
   int boolTbId = createTool( tr( "TOOL_BOOLEAN" ) );
   createTool( GEOMOp::OpFuse,       boolTbId );
@@ -1250,12 +1374,12 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   int picturesTbId = createTool( tr( "TOOL_PICTURES" ) );
   createTool( GEOMOp::OpPictureImport,    picturesTbId );
-  #ifdef WITH_OPENCV
-    createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
-  #endif
+#ifdef WITH_OPENCV
+  createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
+#endif
 
-  int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
-  createTool( GEOMOp::OpSmoothingSurface, advancedTbId );
+  //int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
+  //createTool( GEOMOp::OpSmoothingSurface, advancedTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------
@@ -1316,7 +1440,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK + " and isVectorsMode", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
-  
+
   mgr->insert( action(  GEOMOp::OpColor ), -1, -1 ); // color
   mgr->setRule( action( GEOMOp::OpColor ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})" + "and isPhysicalMaterial=false", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpTransparency ), -1, -1 ); // transparency
@@ -1328,9 +1452,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpPointMarker ), -1, -1 ); // point marker
   //mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg(GEOM_POINT ), QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and ( $typeid in {%1} or compoundOfVertices=true ) " ).arg(GEOM::VERTEX).arg(GEOM::COMPOUND), QtxPopupMgr::VisibleRule );
-  
+
   // material properties
-  mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 ); 
+  mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 );
   mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
 
  // texture
@@ -1423,6 +1547,144 @@ void GeometryGUI::initialize( CAM_Application* app )
     GEOM_AISShape::setTopLevelDisplayMode((GEOM_AISShape::TopLevelDispMode)resMgr->integerValue("Geometry", "toplevel_dm", 0));
     QColor c = resMgr->colorValue( "Geometry", "toplevel_color", QColor( 170, 85, 0 ) );
     GEOM_AISShape::setTopLevelColor(SalomeApp_Tools::color(c));
+  }
+
+  // create plugin actions and menus
+  addPluginActions();
+}
+
+//=======================================================================
+// function : GeometryGUI::addPluginActions()
+// purpose  :
+//=======================================================================
+void GeometryGUI::addPluginActions()
+{
+  // Resource manager
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  if (!resMgr) return;
+
+  // Find names of a resource XML files ("GEOMActions.xml" and others);
+  QString PluginsXml;
+  char* cenv = getenv("GEOM_PluginsList");
+  if (cenv)
+    PluginsXml.sprintf("%s", cenv);
+
+  QStringList PluginsXmlList = PluginsXml.split(":", QString::SkipEmptyParts);
+  if (PluginsXmlList.count() == 0) return;
+
+  // get full names of xml files from PluginsXmlList
+  QStringList xmlFiles;
+  xmlFiles.append(QDir::home().filePath("CustomGeomPlugins.xml")); // may be inexistent
+  for (int i = 0; i < PluginsXmlList.count(); i++) {
+    PluginsXml = PluginsXmlList[ i ];
+
+    // Find full path to the resource XML file
+    QString xmlFile = resMgr->path("resources", "GEOM", PluginsXml + ".xml");
+    if ( xmlFile.isEmpty() ) // try PLUGIN resources
+      xmlFile = resMgr->path("resources", PluginsXml, PluginsXml + ".xml");
+    if ( !xmlFile.isEmpty() )
+      xmlFiles.append( xmlFile );
+  }
+
+  // create "Advanced Operations" menu and corresponding toolbar
+  //int advancedMenuId = createMenu(tr("MEN_ADVANCED"), -1, -1, 10);
+  //int advancedTbarId = createTool(tr("TOOL_ADVANCED"));
+  int id = GEOMOp::OpLastOperationID; // TODO?
+
+  // loop on xmlFiles
+  QString aNoAccessFiles;
+  for (int i = 0; i < xmlFiles.count(); i++) {
+    QString xmlFile = xmlFiles[ i ];
+
+    QFile file (xmlFile);
+    if (file.exists() && file.open(QIODevice::ReadOnly)) {
+      file.close();
+
+      GEOMGUI_XmlHandler* aXmlHandler = new GEOMGUI_XmlHandler();
+      ASSERT(aXmlHandler);
+
+      QXmlInputSource source (&file);
+      QXmlSimpleReader reader;
+      reader.setContentHandler(aXmlHandler);
+      reader.setErrorHandler(aXmlHandler);
+      bool ok = reader.parse(source);
+      file.close();
+
+      if (ok) {
+        // bind action lib and label to its ID for activateOperation() method proper work
+        myPluginLibs[aXmlHandler->myPluginData.myName] = aXmlHandler->myPluginData.myClientLib;
+
+        QListIterator<GEOMGUI_ActionData> anActionsIter (aXmlHandler->myPluginData.myListOfActions);
+        while (anActionsIter.hasNext()) {
+          GEOMGUI_ActionData anActionData = anActionsIter.next();
+
+          //QPixmap icon = resMgr->loadPixmap("GEOM", tr(anActionData.myIcon.toLatin1().constData()));
+          QPixmap icon = resMgr->loadPixmap(aXmlHandler->myPluginData.myName,
+                                            anActionData.myIcon.toLatin1().constData());
+
+          // path to action in menu
+          QStringList smenus = anActionData.myMenu.split( "/" );
+          QString actionName = smenus.last();
+          actionName = actionName.toUpper().prepend("MEN_");
+          smenus.removeLast();
+
+          // path to action in toolbar
+          QStringList stools = anActionData.myTooltip.split( "/" );
+          QString actionTool = stools.last();
+          actionTool = actionTool.toUpper().prepend("TOP_");
+          stools.removeLast();
+
+          createAction(id, // ~ anActionData.myLabel
+                       tr(actionTool.toLatin1().constData()),
+                       icon,
+                       tr(actionName.toLatin1().constData()),
+                       anActionData.myStatusBar.toLatin1().constData(),
+                       0 /*accel*/,
+                       application()->desktop(),
+                       false /*toggle*/,
+                       this, SLOT(OnGUIEvent()),
+                       QString() /*shortcutAction*/);
+
+          int menuId = -1;
+          foreach (QString subMenu, smenus) {
+            subMenu = subMenu.toUpper().prepend("MEN_");
+            menuId = createMenu(tr(subMenu.toLatin1().constData()), menuId, -1);
+          }
+          //createMenu(id, pluginMenuId, -1);
+          createMenu(id, menuId, -1);
+
+          QString subTool = stools[0];
+          subTool = subTool.toUpper().prepend("TOOL_");
+          int toolId = createTool(tr(subTool.toLatin1().constData()));
+          //createTool(id, advancedTbarId);
+          createTool(id, toolId);
+
+          // add action id to map
+          PluginAction anAction (aXmlHandler->myPluginData.myClientLib, anActionData.myLabel);
+          myPluginActions[id] = anAction;
+
+          id++;
+        }
+      }
+      else {
+        SUIT_MessageBox::critical(application()->desktop(),
+                                  tr("INF_PARSE_ERROR"),
+                                  tr(aXmlHandler->errorProtocol().toLatin1().data()));
+      }
+      delete aXmlHandler;
+    }
+    else if ( i > 0 ) { // 1st is ~/CustomGeomPlugins.xml
+      if (aNoAccessFiles.isEmpty())
+        aNoAccessFiles = xmlFile;
+      else
+        aNoAccessFiles += ", " + xmlFile;
+    }
+  } // end loop on xmlFiles
+
+  if (!aNoAccessFiles.isEmpty()) {
+    QString aMess = QObject::tr("PLUGIN_FILE_CANT_OPEN") + " " + aNoAccessFiles + "\n";
+    aMess += QObject::tr("PLUGIN_FILE_CHECK_VARIABLE");
+    SUIT_MessageBox::warning(application()->desktop(), tr("GEOM_WRN_WARNING"), aMess);
   }
 }
 
@@ -1687,13 +1949,14 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
 
 //================================================================================
 /*!
- * \brief Slot called when selection changed. Shows creation info of a selected object 
+ * \brief Slot called when selection changed. Shows creation info of a selected object
  */
 //================================================================================
 
 void GeometryGUI::updateCreationInfo()
 {
-  myCreationInfoWdg->clear();
+  if ( myCreationInfoWdg )
+    myCreationInfoWdg->clear();
 
   // Code below is commented to have myCreationInfoWdg filled as soon as it is shown again
   // if ( !myCreationInfoWdg->isVisible() )
@@ -1726,34 +1989,32 @@ void GeometryGUI::updateCreationInfo()
 
   // pass creation info of geomObj to myCreationInfoWdg
 
-  QPixmap icon;
-  QString operationName;
-  myCreationInfoWdg->setOperation( icon, operationName );
+  if ( myCreationInfoWdg ) {
+    QPixmap icon;
+    QString operationName;
+    myCreationInfoWdg->setOperation( icon, operationName );
 
-  try
-  {
-    OCC_CATCH_SIGNALS;
-    GEOM::CreationInformation_var info = geomObj->GetCreationInformation();
-    if ( &info.in() )
-    {
-      SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-      QString name = info->operationName.in();
-      if ( !name.isEmpty() )
-      {
-        icon = resMgr->loadPixmap( "GEOM", tr( ("ICO_"+name).toLatin1().constData() ), false );
-        operationName = tr( ("MEN_"+name).toLatin1().constData() );
-        if ( operationName.startsWith( "MEN_" ))
-          operationName = name; // no translation
-        myCreationInfoWdg->setOperation( icon, operationName );
+    try {
+      OCC_CATCH_SIGNALS;
+      GEOM::CreationInformation_var info = geomObj->GetCreationInformation();
+      if ( &info.in() ) {
+        SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+        QString name = info->operationName.in();
+        if ( !name.isEmpty() ) {
+          icon = resMgr->loadPixmap( "GEOM", tr( ("ICO_"+name).toLatin1().constData() ), false );
+          operationName = tr( ("MEN_"+name).toLatin1().constData() );
+          if ( operationName.startsWith( "MEN_" ))
+            operationName = name; // no translation
+          myCreationInfoWdg->setOperation( icon, operationName );
 
-        for ( size_t i = 0; i < info->params.length(); ++i )
-          myCreationInfoWdg->addParam( info->params[i].name.in(),
-                                       info->params[i].value.in() );
+          for ( size_t i = 0; i < info->params.length(); ++i )
+            myCreationInfoWdg->addParam( info->params[i].name.in(),
+                                         info->params[i].value.in() );
+        }
       }
     }
-  }
-  catch (...)
-  {
+    catch (...) {
+    }
   }
 }
 
@@ -1880,7 +2141,7 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
     if( isPredefMat ){
       QMenu* matMenu = new QMenu();
       QSignalMapper* signalMapper = new QSignalMapper( matMenu );
-      
+
       //Get current material model for the object
       QVariant v;
       LightApp_Application* anApp = dynamic_cast<LightApp_Application*>( getApp() );
@@ -1895,13 +2156,13 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
       // get list of all predefined materials
       QStringList materials = Material_ResourceMgr::resourceMgr()->materials();
       bool found = false;
-      foreach ( QString material, materials ) 
+      foreach ( QString material, materials )
       {
         QAction* menAct = matMenu->addAction( material );
         connect(menAct, SIGNAL( toggled( bool ) ), signalMapper, SLOT( map() ) );
         signalMapper->setMapping( menAct, material );
         menAct->setCheckable( true );
-        // Set checked if this material is current 
+        // Set checked if this material is current
         Material_Model aModel;
         aModel.fromResources( material );
         if ( !found && aModel.toProperties() == curModel ) {
@@ -2013,15 +2274,15 @@ void GeometryGUI::createPreferences()
 
   addPreference( tr( "PREF_AUTO_BRING_TO_FRONT" ), genGroup,
                  LightApp_Preferences::Bool, "Geometry", "auto_bring_to_front" );
- 
+
   int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
   setPreferenceProperty( isoGroup, "columns", 2 );
   int isoU = addPreference( tr( "PREF_ISOS_U" ), isoGroup,
-                                  LightApp_Preferences::IntSpin, "Geometry", "iso_number_u" );
+                            LightApp_Preferences::IntSpin, "Geometry", "iso_number_u" );
   setPreferenceProperty( isoU, "min", 0 );
   setPreferenceProperty( isoU, "max", 100000 );
   int isoV = addPreference( tr( "PREF_ISOS_V" ), isoGroup,
-                                 LightApp_Preferences::IntSpin, "Geometry", "iso_number_v" );
+                            LightApp_Preferences::IntSpin, "Geometry", "iso_number_v" );
   setPreferenceProperty( isoV, "min", 0 );
   setPreferenceProperty( isoV, "max", 100000 );
 
@@ -2109,7 +2370,7 @@ void GeometryGUI::createPreferences()
 
   // Set property for default material
   setPreferenceProperty( material, "strings", Material_ResourceMgr::resourceMgr()->materials() );
-  
+
   // Set property vertex marker type
   QList<QVariant> aMarkerTypeIndicesList;
   QList<QVariant> aMarkerTypeIconsList;

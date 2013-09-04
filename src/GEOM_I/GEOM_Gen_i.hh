@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef __GEOM_GEN_I_H__
 #define __GEOM_GEN_I_H__
@@ -50,15 +49,30 @@
 #include "GEOM_IInsertOperations_i.hh"
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
-#include "GEOM_IAdvancedOperations_i.hh"
 
 #include <TopTools_IndexedMapOfShape.hxx>
 
+#include <map>
 #include <set>
 #include <string>
 
 //#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+
+//=====================================================================
+// Generic operations creator (for plugins mechanism)
+//=====================================================================
+class GEOM_I_EXPORT GEOM_GenericOperationsCreator
+{
+public:
+  // Create operations
+  virtual GEOM_IOperations_i* Create (PortableServer::POA_ptr thePOA,
+                                      int                     theStudyId,
+                                      GEOM::GEOM_Gen_ptr      theEngine,
+                                      ::GEOMImpl_Gen*         theGenImpl) = 0;
+  // return the name of IDL module
+  //virtual std::string GetModuleName() = 0;
+};
 
 //=====================================================================
 // GEOM_Gen_i : class definition
@@ -242,8 +256,9 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual GEOM::GEOM_IGroupOperations_ptr GetIGroupOperations (CORBA::Long theStudyID)
     throw (SALOME::SALOME_Exception);
 
-  //Returns a pointer to AdvancedOperations interface
-  virtual GEOM::GEOM_IAdvancedOperations_ptr GetIAdvancedOperations (CORBA::Long theStudyID)
+  //Returns a pointer to corresponding plugin operations interface
+  virtual GEOM::GEOM_IOperations_ptr GetPluginOperations (CORBA::Long theStudyID,
+                                                          const char* theLibName)
     throw (SALOME::SALOME_Exception);
 
   //Adds a new sub-shape
@@ -342,6 +357,9 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
    ::GEOMImpl_Gen* _impl;
    SALOME_NamingService * name_service;
    char * _name;
+
+   // plugin operations managing
+   std::map<std::string, GEOM_GenericOperationsCreator*> myOpCreatorMap;
 };
 
 #endif

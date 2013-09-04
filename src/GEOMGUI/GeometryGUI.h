@@ -38,9 +38,11 @@
 #include <SALOMEDSClient.hxx>
 
 #include "GEOMGUI.h"
+#include "GEOMPluginGUI.h"
 
 // QT Includes
 #include <QMap>
+#include <QPair>
 
 // OCCT Includes
 #include <gp_Ax3.hxx>
@@ -113,6 +115,9 @@ public:
 
   // Process action
   void                        OnGUIEvent( int id, const QVariant& theParam =  QVariant( QVariant::Invalid ) );
+  virtual bool                activateOperation( int actionId );
+  virtual bool                activateOperation( const QString& actionId );
+  virtual bool                activateOperation( const QString& actionId, const QString& plugin );
 
   // The Working Plane management
   void                        SetWorkingPlane( gp_Ax3 wp ) { myWorkingPlane = wp;   }
@@ -180,6 +185,7 @@ protected:
 
 private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
+  GEOMPluginGUI*              getPluginLibrary( const QString& libraryName );
   void                        createGeomAction( const int id, const QString& po_id,
                                                 const QString& icon_id = QString(""),
                                                 const int key = 0, const bool toggle = false,
@@ -188,6 +194,7 @@ private:
                                                const bool isSingle = false, const int isVisible = -1,
                                                const bool isExpandAll = false, const bool isOCC = false,
                                                const int parentId = -1 );
+  void                        addPluginActions();
 
   void                        createOriginAndBaseVectors();
 
@@ -205,11 +212,16 @@ private:
   typedef QMap<long, TextureMap> StudyTextureMap;
   typedef QMap<QString, GEOMGUI*> GUIMap;
 
+  typedef QPair<QString, QString> PluginAction;
+
   GUIMap                      myGUIMap;          // GUI libraries map
   QDialog*                    myActiveDialogBox; // active dialog box
   gp_Ax3                      myWorkingPlane;
-  QMap<int,QString>           myRules;           // popup rules
+  //QMap<int,QString>           myRules;           // popup rules
   static StudyTextureMap      myTextureMap;      // texture map
+
+  QMap<int, PluginAction>      myPluginActions; // plugin actions
+  QMap<QString, QString>       myPluginLibs;    // plugin name to plugin client library
 
   QList<GEOMGUI_OCCSelector*>  myOCCSelectors;
   QList<LightApp_VTKSelector*> myVTKSelectors;

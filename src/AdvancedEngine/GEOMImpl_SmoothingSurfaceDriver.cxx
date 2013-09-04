@@ -21,6 +21,8 @@
 
 #include <Standard_Stream.hxx>
 
+#include "AdvancedEngine_Types.hxx"
+
 #include <GEOMImpl_SmoothingSurfaceDriver.hxx>
 #include <GEOMImpl_ISmoothingSurface.hxx>
 #include <GEOMImpl_Types.hxx>

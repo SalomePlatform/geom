@@ -552,22 +552,6 @@
       <translation>ポイントの追加</translation>
     </message>
     <message>
-      <source>GEOM_DIVIDEDDISK</source>
-      <translation>分割ディスク</translation>
-    </message>
-    <message>
-      <source>GEOM_DIVIDEDDISK_TITLE</source>
-      <translation>分割ディスク建設</translation>
-    </message>
-    <message>
-      <source>GEOM_DIVIDEDCYLINDER</source>
-      <translation>分割シリンダー</translation>
-    </message>
-    <message>
-      <source>GEOM_DIVIDEDCYLINDER_TITLE</source>
-      <translation>分割構造</translation>
-    </message>
-    <message>
       <source>GEOM_DX</source>
       <translation>Dx:</translation>
     </message>
@@ -2458,30 +2442,6 @@
     <message>
       <source>MEN_DISK</source>
       <translation>ディスク</translation>
-    </message>
-    <message>
-      <source>MEN_DIVIDEDDISK</source>
-      <translation>分割ディスク</translation>
-    </message>
-    <message>
-      <source>TOP_DIVIDEDDISK</source>
-      <translation>分割ディスク</translation>
-    </message>
-    <message>
-      <source>STB_DIVIDEDDISK</source>
-      <translation>分割ディスク</translation>
-    </message>
-    <message>
-      <source>MEN_DIVIDEDCYLINDER</source>
-      <translation>分割シリンダー</translation>
-    </message>
-    <message>
-      <source>TOP_DIVIDEDCYLINDER</source>
-      <translation>分割シリンダー</translation>
-    </message>
-    <message>
-      <source>STB_DIVIDEDCYLINDER</source>
-      <translation>分割シリンダー</translation>
     </message>
     <message>
       <source>MEN_DISPLAY_ALL</source>
@@ -4752,80 +4712,8 @@
       <translation>ユニット (%1) ファイルに埋め込まれたアカウントを考慮か？ユニットを無視することにより、モデルをスケーリング （メートル単位で指定するにはサイズを想定）。</translation>
     </message>
     <message>
-      <source>GEOM_ADVANCED</source>
-      <translation>形状を高度な:%1 入力</translation>
-    </message>
-    <message>
-      <source>GEOM_ADVANCED_202</source>
-      <translation>分割ディスク</translation>
-    </message>
-    <message>
-      <source>GEOM_ADVANCED_203</source>
-      <translation>分割シリンダー</translation>
-    </message>
-    <message>
       <source>GEOM_PRECISION_HINT</source>
       <translation>入力値の精度は、ジオメトリのモジュール設定に '%1' パラメーターを使用して調整できます。</translation>
-    </message>
-    <message>
-      <source>TOP_PIPETSHAPE</source>
-      <translation>TShape パイプを作成します。</translation>
-    </message>
-    <message>
-      <source>MEN_PIPETSHAPE</source>
-      <translation>TShape をパイプします。</translation>
-    </message>
-    <message>
-      <source>STB_PIPETSHAPE</source>
-      <translation>新しいパイプ TShape オブジェクトを作成します。</translation>
-    </message>
-    <message>
-      <source>GEOM_ADVANCED_201</source>
-      <translation>TShape をパイプします。</translation>
-    </message>
-    <message>
-      <source>HALF_LENGTH_MAIN_PIPE</source>
-      <translation>主配管の長さの半分</translation>
-    </message>
-    <message>
-      <source>HALF_LENGTH_INCIDENT_PIPE</source>
-      <translation>インシデント管長さの半分</translation>
-    </message>
-    <message>
-      <source>CIRCULAR_QUARTER_PIPE</source>
-      <translation>円形の四半期パイプの</translation>
-    </message>
-    <message>
-      <source>THICKNESS</source>
-      <translation>厚</translation>
-    </message>
-    <message>
-      <source>FLANGE</source>
-      <translation>フランジ</translation>
-    </message>
-    <message>
-      <source>CHAMFER_OR_FILLET</source>
-      <translation>面取りまたはフィレット</translation>
-    </message>
-    <message>
-      <source>CHAMFER</source>
-      <translation>面取り</translation>
-    </message>
-    <message>
-      <source>FILLET</source>
-      <translation>フィレット</translation>
-    </message>
-    <message>
-      <source>JUNCTION_FACE_1</source>
-      <translation>ジャンクション 1</translation>
-    </message>
-    <message>
-      <source>JUNCTION_FACE_2</source>
-      <translation>ジャンクション 2</translation>
-    </message>
-    <message>
-      <source>JUNCTION_FACE_3</source>
-      <translation>ジャンクション 3</translation>
     </message>
     <message>
       <source>GEOM_PLUGINS_OTHER</source>

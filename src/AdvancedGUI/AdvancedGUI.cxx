@@ -23,7 +23,7 @@
 #include "AdvancedGUI.h"
 
 #include "GeometryGUI.h"
-#include "GeometryGUI_Operations.h"
+//#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
@@ -36,11 +36,13 @@
 
 #include <QDialog>
 
+#include <iostream>
+
 //=======================================================================
 // function : AdvancedGUI()
 // purpose  : Constructor
 //=======================================================================
-AdvancedGUI::AdvancedGUI( GeometryGUI* parent ) : GEOMGUI( parent )
+AdvancedGUI::AdvancedGUI( GeometryGUI* parent ) : GEOMPluginGUI( parent )
 {
 }
 
@@ -58,6 +60,28 @@ AdvancedGUI::~AdvancedGUI()
 //=======================================================================
 bool AdvancedGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
+  switch ( theCommandID ) {
+  case 1:
+    return OnGUIEvent("TShape_Basic", parent);
+  case 2:
+    return OnGUIEvent("DividedDisk", parent);
+  case 3:
+    return OnGUIEvent("DividedCylinder", parent);
+  case 4:
+    return OnGUIEvent("SmoothingSurface", parent);
+  //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
+  default:
+    return OnGUIEvent("", parent);
+  }
+  return false;
+}
+
+//=======================================================================
+// function : OnGUIEvent()
+// purpose  : 
+//=======================================================================
+bool AdvancedGUI::OnGUIEvent( const QString& theCommandID, SUIT_Desktop* parent )
+{
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return false;
 
@@ -65,26 +89,24 @@ bool AdvancedGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   QDialog* aDlg = NULL;
 
-  switch ( theCommandID ) {
-  case GEOMOp::OpPipeTShape:
+  if (theCommandID == "TShape_Basic") {
     aDlg = new AdvancedGUI_PipeTShapeDlg( getGeometryGUI(), parent );
-    break;
-//   case GEOMOp::OpPipeTShapeGroups:
-//     aDlg = new AdvancedGUI_PipeTShapeGroupsDlg( getGeometryGUI(), parent );
-//     break;
-  case GEOMOp::OpDividedDisk:
+  }
+  //else if (theCommandID == "TShape_Groups") {
+  //  aDlg = new AdvancedGUI_PipeTShapeGroupsDlg( getGeometryGUI(), parent );
+  //}
+  else if (theCommandID == "DividedDisk") {
     aDlg = new AdvancedGUI_DividedDiskDlg( getGeometryGUI(), parent );
-    break;
-  case GEOMOp::OpDividedCylinder:
+  }
+  else if (theCommandID == "DividedCylinder") {
     aDlg = new AdvancedGUI_DividedCylinderDlg( getGeometryGUI(), parent );
-    break;
-  case GEOMOp::OpSmoothingSurface:
+  }
+  else if (theCommandID == "SmoothingSurface") {
     aDlg = new AdvancedGUI_SmoothingSurfaceDlg( getGeometryGUI(), parent );
-    break;
+  }
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
-  default:
+  else {
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
-    break;
   }
 
   if ( aDlg != NULL )
@@ -101,7 +123,7 @@ extern "C"
 #ifdef WIN32
   __declspec( dllexport )
 #endif
-  GEOMGUI* GetLibGUI( GeometryGUI* parent )
+  GEOMPluginGUI* GetLibGUI( GeometryGUI* parent )
   {
     return new AdvancedGUI( parent );
   }

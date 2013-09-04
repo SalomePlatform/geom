@@ -50,8 +50,6 @@
 #define GEOM_CIRC_ARC 19
 
 #define GEOM_FILLET    20
-#define GEOM_FILLET_2D 45
-#define GEOM_FILLET_1D 46
 #define GEOM_CHAMFER   21
 
 #define GEOM_EDGE  22
@@ -104,6 +102,9 @@
 #define GEOM_PIPE_PATH 48
 
 #define GEOM_THICKENING 49
+
+#define GEOM_FILLET_2D 50
+#define GEOM_FILLET_1D 51
 
 //GEOM_Function types
 
@@ -353,17 +354,3 @@
 
 // Advanced functions (base = 200)
 #define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)
-#define GEOM_TSHAPE 201
-#define GEOM_DIVIDEDDISK 202
-#define GEOM_DIVIDEDCYLINDER 203
-#define GEOM_SMOOTHINGSURFACE 204
-/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
-// Advanced functions sub-operations codes
-#define TSHAPE_BASIC 1
-#define TSHAPE_CHAMFER 2
-#define TSHAPE_FILLET 3
-#define DIVIDEDDISK_R_RATIO 1
-#define DIVIDEDDISK_R_VECTOR_PNT 2
-#define DIVIDEDCYLINDER_R_H 1
-#define SMOOTHINGSURFACE_LPOINTS 1
-/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

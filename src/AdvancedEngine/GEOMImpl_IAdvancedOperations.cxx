@@ -92,6 +92,8 @@
 
 #include <cmath>
 
+#include "AdvancedEngine_Types.hxx"
+
 #include <Standard_Stream.hxx>
 #include <Standard_Failure.hxx>
 #include <StdFail_NotDone.hxx>

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -63,6 +62,25 @@
 
 #include <SALOMEDS_Tool.hxx>
 #include <SALOMEDS_wrap.hxx>
+
+#ifdef WNT
+ #include <windows.h>
+ #include <process.h>
+#else
+ #include <dlfcn.h>
+#endif
+
+#ifdef WNT
+ #define LibHandle HMODULE
+ #define LoadLib( name ) LoadLibrary( name )
+ #define GetProc GetProcAddress
+ #define UnLoadLib( handle ) FreeLibrary( handle );
+#else
+ #define LibHandle void*
+ #define LoadLib( name ) dlopen( name, RTLD_LAZY )
+ #define GetProc dlsym
+ #define UnLoadLib( handle ) dlclose( handle );
+#endif
 
 //============================================================================
 // function : GEOM_Gen_i()
@@ -243,30 +261,30 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   } else {
     GEOM::shape_type myshapetype=aShape->GetShapeType();
     if ( myshapetype == GEOM::COMPOUND ) {
-    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPOUND" );
-    aShapeName = "Compound_";
-  } else if ( myshapetype == GEOM::COMPSOLID ) {
-    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPSOLID");
-    aShapeName = "Compsolid_";
-  } else if ( myshapetype == GEOM::SOLID ) {
-    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SOLID");
-    aShapeName = "Solid_";
-  } else if ( myshapetype == GEOM::SHELL ) {
-    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SHELL");
-    aShapeName = "Shell_";
-  } else if ( myshapetype == GEOM::FACE ) {
-    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FACE");
-    aShapeName = "Face_";
-  } else if ( myshapetype == GEOM::WIRE ) {
-    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_WIRE");
-    aShapeName = "Wire_";
-  } else if ( myshapetype == GEOM::EDGE ) {
-    aResultSO->SetAttrString("AttributePixMap", "ICON_OBJBROWSER_EDGE");
-    aShapeName = "Edge_";
-  } else if ( myshapetype == GEOM::VERTEX ) {
-    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_VERTEX" );
-    aShapeName = "Vertex_";
-  }
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPOUND" );
+      aShapeName = "Compound_";
+    } else if ( myshapetype == GEOM::COMPSOLID ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPSOLID");
+      aShapeName = "Compsolid_";
+    } else if ( myshapetype == GEOM::SOLID ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SOLID");
+      aShapeName = "Solid_";
+    } else if ( myshapetype == GEOM::SHELL ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SHELL");
+      aShapeName = "Shell_";
+    } else if ( myshapetype == GEOM::FACE ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FACE");
+      aShapeName = "Face_";
+    } else if ( myshapetype == GEOM::WIRE ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_WIRE");
+      aShapeName = "Wire_";
+    } else if ( myshapetype == GEOM::EDGE ) {
+      aResultSO->SetAttrString("AttributePixMap", "ICON_OBJBROWSER_EDGE");
+      aShapeName = "Edge_";
+    } else if ( myshapetype == GEOM::VERTEX ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_VERTEX" );
+      aShapeName = "Vertex_";
+    }
   }
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
   //else aShapeName = TCollection_AsciiString(CORBA::string_dup(theName));
@@ -2316,22 +2334,78 @@ GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations(CORBA::Long theS
 }
 
 //============================================================================
-// function : GetIAdvancedOperations
+// function : GetPluginOperations
 // purpose  :
 //============================================================================
-GEOM::GEOM_IAdvancedOperations_ptr GEOM_Gen_i::GetIAdvancedOperations(CORBA::Long theStudyID)
+GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(CORBA::Long theStudyID,
+                                                           const char* theLibName)
      throw ( SALOME::SALOME_Exception )
 {
+  std::string aPlatformLibName;
+#ifdef WNT
+  aPlatformLibName = theLibName;
+  aPlatformLibName += ".dll" ;
+#else
+  aPlatformLibName = "lib";
+  aPlatformLibName += theLibName;
+  aPlatformLibName += ".so";
+#endif
+
   Unexpect aCatch(SALOME_SalomeException);
-  MESSAGE( "GEOM_Gen_i::GetIAdvancedOperations" );
+  MESSAGE( "GEOM_Gen_i::GetPluginOperations" );
 
   GEOM::GEOM_Gen_ptr engine = _this();
 
-  GEOM_IAdvancedOperations_i* aServant =
-    new GEOM_IAdvancedOperations_i(_poa, engine, _impl->GetIAdvancedOperations(theStudyID));
+  GEOM_IOperations_i* aServant = 0;
+  GEOM::GEOM_IOperations_var operations;
+
+  try {
+    // check, if corresponding operations are already created
+    if (myOpCreatorMap.find(std::string(theLibName)) == myOpCreatorMap.end()) {
+      // load plugin library
+      LibHandle libHandle = LoadLib( aPlatformLibName.c_str()/*theLibName*/ );
+      if (!libHandle) {
+        // report any error, if occured
+#ifndef WNT
+        const char* anError = dlerror();
+        throw(SALOME_Exception(anError));
+#else
+        throw(SALOME_Exception(LOCALIZED( "Can't load server geometry plugin library" )));
+#endif
+      }
+
+      // get method, returning operations creator
+      typedef GEOM_GenericOperationsCreator* (*GetOperationsCreator)();
+      GetOperationsCreator procHandle =
+        (GetOperationsCreator)GetProc( libHandle, "GetOperationsCreator" );
+      if (!procHandle) {
+        throw(SALOME_Exception(LOCALIZED("bad geometry plugin library")));
+        UnLoadLib(libHandle);
+      }
+
+      // get operations creator
+      GEOM_GenericOperationsCreator* aCreator = procHandle();
+      if (!aCreator) {
+        throw(SALOME_Exception(LOCALIZED("bad geometry plugin library implementation")));
+      }
+
+      // map operations creator to a plugin name
+      myOpCreatorMap[std::string(theLibName)] = aCreator;
+    }
+
+    // create a new operations object, store its ref. in engine
+    aServant = myOpCreatorMap[std::string(theLibName)]->Create(_poa, theStudyID, engine, _impl);
+    //??? aServant->SetLibName(aPlatformLibName/*theLibName*/); // for persistency assurance
+  }
+  catch (SALOME_Exception& S_ex) {
+    THROW_SALOME_CORBA_EXCEPTION(S_ex.what(), SALOME::BAD_PARAM);
+  }
+
+  if (!aServant)
+    return operations._retn();
 
   // activate the CORBA servant
-  GEOM::GEOM_IAdvancedOperations_var operations = aServant->_this();
+  operations = GEOM::GEOM_IOperations::_narrow( aServant->_this() );
   return operations._retn();
 }
 

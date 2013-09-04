@@ -844,7 +844,8 @@ void AdvancedGUI_PipeTShapeDlg::DisplayPreview (const bool activate, const bool 
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_PipeTShapeDlg::createOperation()
 {
-  return getGeomEngine()->GetIAdvancedOperations(getStudyId());
+  //return getGeomEngine()->GetIAdvancedOperations(getStudyId());
+  return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
 }
 
 //=================================================================================

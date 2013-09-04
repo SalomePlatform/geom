@@ -19,14 +19,16 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-import os
+import os, sys
 from salome_utils import getTmpDir, generateFileName, uniteFiles
-from setenv import salome_subdir
+from setenv import add_path, get_lib_dir, salome_subdir
 
 # -----------------------------------------------------------------------------
 
 def set_env( args ):
     """Add to the PATH-variables modules specific paths"""
+    psep = os.pathsep
+    python_version="python%d.%d" % sys.version_info[0:2]
     
     tmp_dir = getTmpDir()
     env_dir = generateFileName( tmp_dir, prefix="env", with_port=True )
@@ -45,3 +47,49 @@ def set_env( args ):
             pass
         pass
 
+    # find plugins
+    plugin_list = []
+    resource_path_list = []
+    for env_var in os.environ.keys():
+        value = os.environ[env_var]
+        if env_var[-9:] == "_ROOT_DIR" and value:
+            plugin_root = value
+            plugin = env_var[:-9] # plugin name may have wrong case
+
+            # look for NAMEOFPlugin.xml file among resource files
+            resource_dir = os.path.join(plugin_root,"share",salome_subdir,"resources",plugin.lower())
+            if not os.access( resource_dir, os.F_OK ): continue
+            for resource_file in os.listdir( resource_dir ):
+                if not resource_file.endswith( ".xml") or \
+                   resource_file.lower() != plugin.lower() + ".xml":
+                    continue
+                # use "name" attribute of "geom-plugin" as name of plugin in a right case
+                from xml.dom.minidom import parse
+                xml_doc = parse( os.path.join( resource_dir, resource_file ))
+                plugin_nodes = xml_doc.getElementsByTagName("geom-plugin")
+                if not plugin_nodes or not plugin_nodes[0].hasAttribute("name"): continue
+                plugin = plugin_nodes[0].getAttribute("name")
+                if plugin in plugin_list: continue
+
+                # add paths of plugin
+		plugin_list.append(plugin)
+                if not os.environ.has_key("SALOME_"+plugin+"Resources"):
+                    resource_path = os.path.join(plugin_root,"share",salome_subdir,"resources",plugin.lower())
+                    os.environ["SALOME_"+plugin+"Resources"] = resource_path
+                    resource_path_list.append( resource_path )
+                    add_path(os.path.join(plugin_root,get_lib_dir(),python_version, "site-packages",salome_subdir), "PYTHONPATH")
+                    add_path(os.path.join(plugin_root,get_lib_dir(),salome_subdir), "PYTHONPATH")
+
+                    if sys.platform == "win32":
+                        add_path(os.path.join(plugin_root,get_lib_dir(),salome_subdir), "PATH")
+                        add_path(os.path.join(plugin_root,"bin",salome_subdir), "PYTHONPATH")
+                    else:
+                        add_path(os.path.join(plugin_root,get_lib_dir(),salome_subdir), "LD_LIBRARY_PATH")
+                        add_path(os.path.join(plugin_root,"bin",salome_subdir), "PYTHONPATH")
+                        add_path(os.path.join(plugin_root,"bin",salome_subdir), "PATH")
+                        pass
+                    pass
+                break
+    plugin_list.append("GEOMActions")
+    os.environ["GEOM_PluginsList"] = ":".join(plugin_list)
+    os.environ["SalomeAppConfig"] = os.environ["SalomeAppConfig"] + psep + psep.join(resource_path_list)
