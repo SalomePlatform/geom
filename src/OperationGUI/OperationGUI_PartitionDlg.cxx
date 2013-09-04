@@ -498,7 +498,7 @@ void OperationGUI_PartitionDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
                                          /*theFindMethod=*/GEOM::FSM_GetInPlaceByHistory,
-                                         /*theInheritFirstArg=*/myListShapes.length() == 1,
+                                         /*theInheritFirstArg=*/myListShapes.length() == 1 && myListTools.length() == 0,
                                          mainFrame()->CheckBoxAddPrefix->isChecked() ); // ? false
   }
 }
