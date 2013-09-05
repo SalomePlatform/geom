@@ -36,25 +36,25 @@
               icon="pipetshape.png"
               menu="NEW_ENTITY/PRIMITIVES/PIPETSHAPE"
               tooltip="PRIMITIVES/PIPETSHAPE"
-              status-bar="Create new Pipe TShape object">
+              status-bar="PIPETSHAPE">
       </action>
       <action label="DividedDisk"
               icon="divided_disk.png"
               menu="NEW_ENTITY/BLOCKS/DIVIDEDDISK"
               tooltip="BLOCKS/DIVIDEDDISK"
-              status-bar="Divided Disk">
+              status-bar="DIVIDEDDISK">
       </action>
       <action label="DividedCylinder"
               icon="dividedcylinder.png"
               menu="NEW_ENTITY/BLOCKS/DIVIDEDCYLINDER"
               tooltip="BLOCKS/DIVIDEDCYLINDER"
-              status-bar="Divided Cylinder">
+              status-bar="DIVIDEDCYLINDER">
       </action>
       <action label="SmoothingSurface"
               icon="smoothingsurface.png"
               menu="NEW_ENTITY/ADVANCED/SMOOTHINGSURFACE"
               tooltip="ADVANCED/SMOOTHINGSURFACE"
-              status-bar="Smoothing Surface">
+              status-bar="SMOOTHINGSURFACE">
       </action>
     </actions>
   </geom-plugin>

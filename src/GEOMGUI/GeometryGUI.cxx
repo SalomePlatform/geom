@@ -1634,11 +1634,14 @@ void GeometryGUI::addPluginActions()
           actionTool = actionTool.toUpper().prepend("TOP_");
           stools.removeLast();
 
+          QString actionStat = anActionData.myStatusBar;
+          actionStat = actionStat.toUpper().prepend("STB_");
+
           createAction(id, // ~ anActionData.myLabel
                        tr(actionTool.toLatin1().constData()),
                        icon,
                        tr(actionName.toLatin1().constData()),
-                       anActionData.myStatusBar.toLatin1().constData(),
+                       tr(actionStat.toLatin1().constData()),
                        0 /*accel*/,
                        application()->desktop(),
                        false /*toggle*/,
