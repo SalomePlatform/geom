@@ -36,7 +36,6 @@
 #include <GEOMBase.h>
 
 #include <DlgRef.h>
-#include <GEOM_Object.hxx>
 
 // OCCT Includes
 #include <TColStd_HSequenceOfTransient.hxx>
