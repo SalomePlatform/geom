@@ -1043,7 +1043,7 @@ GetCreationInformation(std::string&             theOperationName,
     if ( !shapes.IsNull() && shapes->Length() > 1 )
       AddParam( theParams, "Shape", shapes->Value(2) );
     AddParam( theParams, "Shape type", TopAbs_ShapeEnum( aCI.GetSubShapeType() ));
-    AddParam( theParams, "State", TopAbs_State( aCI.GetTolerance() ));
+    AddParam( theParams, "State", TopAbs_State((int) aCI.GetTolerance() ));
     break;
   }
   default:

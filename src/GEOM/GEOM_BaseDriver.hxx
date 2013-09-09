@@ -44,23 +44,23 @@ struct GEOM_Param
   std::string name;
   std::string value;
 
-  void Set(const char* nm) { name = nm; }
+  Standard_EXPORT void Set(const char* nm) { name = nm; }
   template <class T>
-  void Set(const char* nm, const T& value) { name = nm; (*this)<<value; }
+  Standard_EXPORT void Set(const char* nm, const T& value) { name = nm; (*this)<<value; }
 
-  template <class T> GEOM_Param & operator<<( const T &anything )
+  template <class T> Standard_EXPORT GEOM_Param & operator<<( const T &anything )
   {
     std::ostringstream str;
     str << anything;
     value += str.str() ;
     return *this ;
   }
-  GEOM_Param & operator<<( const Handle(GEOM_Function)& fun );
-  GEOM_Param & operator<<( const Handle(Standard_Transient)& fun );
-  GEOM_Param & operator<<( const Handle(TColStd_HSequenceOfTransient)& funs );
-  GEOM_Param & operator<<( const Handle(TColStd_HArray1OfInteger)& vals );
-  GEOM_Param & operator<<( TopAbs_ShapeEnum type );
-  GEOM_Param & operator<<( TopAbs_State state );
+  Standard_EXPORT GEOM_Param & operator<<( const Handle(GEOM_Function)& fun );
+  Standard_EXPORT GEOM_Param & operator<<( const Handle(Standard_Transient)& fun );
+  Standard_EXPORT GEOM_Param & operator<<( const Handle(TColStd_HSequenceOfTransient)& funs );
+  Standard_EXPORT GEOM_Param & operator<<( const Handle(TColStd_HArray1OfInteger)& vals );
+  Standard_EXPORT GEOM_Param & operator<<( TopAbs_ShapeEnum type );
+  Standard_EXPORT GEOM_Param & operator<<( TopAbs_State state );
 };
 
 
@@ -77,12 +77,12 @@ public:
 
   // Adds GEOM_Param to params and sets its name
   // This method is safer than resizing the params vector and accessing to its items
-  GEOM_Param& AddParam(std::vector<GEOM_Param>& params,
+  Standard_EXPORT GEOM_Param& AddParam(std::vector<GEOM_Param>& params,
                        const char*              name);
 
   // Adds GEOM_Param to params vector and sets its name and value
   // This method is safer than resizing the params vector and accessing to its items
-  template <class T> GEOM_Param& AddParam(std::vector<GEOM_Param>& params,
+  template <class T> Standard_EXPORT GEOM_Param& AddParam(std::vector<GEOM_Param>& params,
                                           const char*              name,
                                           const T&                 value,
                                           const char*              dfltValue = 0)

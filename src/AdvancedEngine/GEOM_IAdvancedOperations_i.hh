@@ -30,10 +30,11 @@
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #include "GEOM_IOperations_i.hh"
 #include "GEOM_Object_i.hh"
+#include "GEOM_AdvancedEngine.hxx"
 
 #include "GEOMImpl_IAdvancedOperations.hxx"
 
-class GEOM_I_EXPORT GEOM_IAdvancedOperations_i :
+class ADVANCEDENGINE_EXPORT GEOM_IAdvancedOperations_i :
     public virtual POA_GEOM::GEOM_IAdvancedOperations,
     public virtual GEOM_IOperations_i
 {

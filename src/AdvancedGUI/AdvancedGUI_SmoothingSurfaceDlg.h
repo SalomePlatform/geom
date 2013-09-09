@@ -61,9 +61,9 @@ private slots:
   bool                               ClickOnApply();
   
   void                               ActivateThisDialog();
-  void                               DeactivateActiveDialog();
+  //void                               DeactivateActiveDialog();
   
-  void                               CheckButtonToggled();
+  //void                               CheckButtonToggled();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   //void                               ValueChangedInSpinBox();

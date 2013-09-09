@@ -24,7 +24,7 @@
 //  Author : Damien COQUERET
 
 #if defined WIN32
-#  if defined SKETCHER_SALOME_EXPORTS || defined SKETCHER_EXPORTS
+#  if defined SKETCHER_SALOME_EXPORTS || defined SKETCHER_EXPORTS || defined GEOMSketcher_EXPORTS || defined GEOMSKETCHER_EXPORTS
 #    define SKETCHER_SALOME_EXPORT _declspec( dllexport )
 #  else
 #    define SKETCHER_SALOME_EXPORT _declspec( dllimport )

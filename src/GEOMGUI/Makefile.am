@@ -91,7 +91,7 @@ libGEOM_la_LDFLAGS =						\
 	../Material/libMaterial.la				\
 	../GEOMClient/libGEOMClient.la				\
 	../OBJECT/libGEOMObject.la				\
-	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA -lSalomeNS -lSalomeDSClient		\
+	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA -lSalomeNS -lSalomeDS -lSalomeDSClient		\
 	$(GUI_LDFLAGS) -lOCCViewer -lVTKViewer -lCAM -lSOCC -lSVTK -lEvent -lSalomePrs -lstd	\
 	$(OPENCV_LIBS)
 
