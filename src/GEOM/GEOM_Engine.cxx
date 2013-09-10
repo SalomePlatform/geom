@@ -160,8 +160,8 @@ void PublishObject (TObjectData&                              theObjectData,
 //================================================================================
 
 void GEOM_Engine::healPyName( TCollection_AsciiString&                  pyName,
-			      const TCollection_AsciiString&            anEntry,
-			      Resource_DataMapOfAsciiStringAsciiString& aNameToEntry)
+                              const TCollection_AsciiString&            anEntry,
+                              Resource_DataMapOfAsciiStringAsciiString& aNameToEntry)
 {
   const TCollection_AsciiString allowedChars
     ("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0987654321_");

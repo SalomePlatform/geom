@@ -1,0 +1,137 @@
+# - Config file for the @PROJECT_NAME@ package
+# It defines the following variables. 
+# Specific to the pacakge @PROJECT_NAME@ itself:
+#  @PROJECT_NAME_UC@_ROOT_DIR_EXP - the root path of the installation providing this CMake file
+#
+
+###############################################################
+#  Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
+#
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http://www.salome-platform.org/ or
+#  email : webmaster.salome@opencascade.com
+###############################################################
+
+### Initialisation performed by CONFIGURE_PACKAGE_CONFIG_FILE:
+@PACKAGE_INIT@
+
+# Load the dependencies for the libraries of @PROJECT_NAME@ 
+# (contains definitions for IMPORTED targets). This is only 
+# imported if we are not built as a subproject (in this case targets are already there)
+IF(NOT TARGET Event AND NOT @PROJECT_NAME@_BINARY_DIR)
+  INCLUDE("@PACKAGE_SALOME_INSTALL_CMAKE_LOCAL@/@PROJECT_NAME@Targets.cmake")
+ENDIF()   
+
+# Package root dir:
+SET_AND_CHECK(GEOM_ROOT_DIR_EXP "@PACKAGE_CMAKE_INSTALL_PREFIX@")
+
+# Include directories
+SET_AND_CHECK(GEOM_INCLUDE_DIRS "${GEOM_ROOT_DIR_EXP}/@SALOME_INSTALL_HEADERS@")
+
+#### Now the specificities
+
+# Options exported by the package:
+SET(SALOME_BUILD_DOC    @SALOME_BUILD_DOC@)
+SET(SALOME_BUILD_TESTS  @SALOME_BUILD_TESTS@)
+
+# Advanced options
+SET(SALOME_GEOM_USE_GUI    @SALOME_GEOM_USE_GUI@)
+SET(SALOME_GEOM_USE_OPENCV @SALOME_GEOM_USE_OPENCV@)
+
+# Level 1 prerequisites:
+SET_AND_CHECK(KERNEL_ROOT_DIR_EXP "@PACKAGE_KERNEL_ROOT_DIR@")
+SET_AND_CHECK(CAS_ROOT_DIR_EXP "@PACKAGE_CAS_ROOT_DIR@")
+
+# Optional level 1 prerequisites:
+IF(SALOME_GEOM_USE_GUI)
+  SET_AND_CHECK(GUI_ROOT_DIR_EXP "@PACKAGE_GUI_ROOT_DIR@")
+ENDIF()
+IF(SALOME_GEOM_USE_OPENCV)
+  SET_AND_CHECK(OPENCV_ROOT_DIR_EXP "@PACKAGE_OPENCV_ROOT_DIR@")
+ENDIF()
+
+# For all prerequisites, load the corresponding targets if the package was used 
+# in CONFIG mode. This ensures dependent projects link correctly
+# without having to set LD_LIBRARY_PATH:
+SET(_PREREQ CAS SalomeGUI OpenCV)
+SET(_PREREQ_CONFIG_DIR "@CAS_DIR@" "@SalomeGUI_DIR@" "@OpenCV_DIR@")
+LIST(LENGTH _PREREQ_CONFIG_DIR _list_len)
+# Another CMake stupidity - FOREACH(... RANGE r) generates r+1 numbers ...
+MATH(EXPR _range "${_list_len}-1")
+FOREACH(_p RANGE ${_range})
+  LIST(GET _PREREQ            ${_p} _pkg    )
+  LIST(GET _PREREQ_CONFIG_DIR ${_p} _pkg_dir)
+  IF(_pkg_dir)
+     MESSAGE(STATUS "===> Reloading targets from ${_pkg} ...")
+     FIND_PACKAGE(${_pkg} REQUIRED NO_MODULE 
+          PATHS "${_pkg_dir}" 
+          NO_DEFAULT_PATH)
+  ENDIF()
+ENDFOREACH()
+
+# Installation directories
+SET(SALOME_INSTALL_BINS "@SALOME_INSTALL_BINS@")
+SET(SALOME_INSTALL_LIBS "@SALOME_INSTALL_LIBS@")
+SET(SALOME_INSTALL_IDLS "@SALOME_INSTALL_IDLS@")
+SET(SALOME_INSTALL_HEADERS "@SALOME_INSTALL_HEADERS@")
+SET(SALOME_INSTALL_SCRIPT_SCRIPTS "@SALOME_INSTALL_SCRIPT_SCRIPTS@")
+SET(SALOME_INSTALL_SCRIPT_DATA "@SALOME_INSTALL_SCRIPT_DATA@")
+SET(SALOME_INSTALL_SCRIPT_PYTHON "@SALOME_INSTALL_SCRIPT_PYTHON@")
+SET(SALOME_INSTALL_CMAKE "@SALOME_INSTALL_CMAKE@")
+SET(SALOME_INSTALL_CMAKE_LOCAL "@SALOME_INSTALL_CMAKE_LOCAL@")
+SET(SALOME_INSTALL_PYTHON "@SALOME_INSTALL_PYTHON@")
+SET(SALOME_INSTALL_PYTHON_SHARED "@SALOME_INSTALL_PYTHON_SHARED@")
+SET(SALOME_INSTALL_RES "@SALOME_INSTALL_RES@")
+SET(SALOME_INSTALL_DOC "@SALOME_INSTALL_DOC@")
+SET(SALOME_INSTALL_AMCONFIG_LOCAL "@SALOME_INSTALL_AMCONFIG_LOCAL@")
+
+# Include KERNEL targets if they were not already loaded:
+IF(NOT (TARGET SALOMEBasics)) 
+  INCLUDE("${KERNEL_ROOT_DIR_EXP}/${SALOME_INSTALL_CMAKE}/SalomeKERNELTargets.cmake")
+ENDIF()
+
+# Exposed GEOM targets:
+SET(GEOM_GEOMArchimede GEOMArchimede)
+SET(GEOM_BREPExport BREPExport)
+SET(GEOM_BREPImport BREPImport)
+SET(GEOM_BlockFix BlockFix)
+SET(GEOM_GEOMbasic GEOMbasic)
+SET(GEOM_GEOMAlgo GEOMAlgo)
+SET(GEOM_GEOMClient GEOMClient)
+SET(GEOM_GEOMImpl GEOMImpl)
+SET(GEOM_GEOMUtils GEOMUtils)
+SET(GEOM_GEOMEngine GEOMEngine)
+SET(GEOM_GEOM_SupervEngine GEOM_SupervEngine)
+SET(GEOM_IGESExport IGESExport)
+SET(GEOM_IGESImport IGESImport)
+SET(GEOM_NMTDS NMTDS)
+SET(GEOM_NMTTools NMTTools)
+SET(GEOM_GEOMSketcher GEOMSketcher)
+SET(GEOM_SalomeIDLGeom SalomeIDLGeom)
+SET(GEOM_STEPExport STEPExport)
+SET(GEOM_STEPImport STEPImport)
+SET(GEOM_STLExport STLExport)
+SET(GEOM_ShHealOper ShHealOper)
+SET(GEOM_VTKExport VTKExport)
+SET(GEOM_DlgRef DlgRef)
+SET(GEOM_GEOM GEOM)
+SET(GEOM_GEOMBase GEOMBase)
+SET(GEOM_OCC2VTK OCC2VTK)
+SET(GEOM_GEOMShapeRec GEOMShapeRec)
+

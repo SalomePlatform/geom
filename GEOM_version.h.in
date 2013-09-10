@@ -31,8 +31,26 @@
   GEOM_VERSION is (major << 16) + (minor << 8) + patch.
 */
 
-#define GEOM_VERSION_STR "@VERSION@"
-#define GEOM_VERSION     @XVERSION@
-#define GEOM_DEVELOPMENT @VERSION_DEV@
+/* #define GEOM_VERSION_STR "@VERSION@" */
+/* #define GEOM_VERSION     @XVERSION@ */
+/* #define GEOM_DEVELOPMENT @VERSION_DEV@ */
+
+/*!
+  Specify version of SALOME GEOM module, as follows
+
+  GEOM_VERSION_MAJOR       : (integer) number identifying major version
+  GEOM_VERSION_MINOR       : (integer) number identifying minor version
+  GEOM_VERSION_MAINTENANCE : (integer) number identifying maintenance version
+  GEOM_VERSION_STR         : (string)  complete version number "major.minor.maintenance"
+  GEOM_VERSION             : (hex)     complete version number (major << 16) + (minor << 8) + maintenance
+  GEOM_DEVELOPMENT         : (integer) indicates development version when set to 1
+*/
+
+#define GEOM_VERSION_MAJOR       @SALOMEGEOM_MAJOR_VERSION@
+#define GEOM_VERSION_MINOR       @SALOMEGEOM_MINOR_VERSION@
+#define GEOM_VERSION_MAINTENANCE @SALOMEGEOM_PATCH_VERSION@
+#define GEOM_VERSION_STR         "@SALOMEGEOM_VERSION@"
+#define GEOM_VERSION             @SALOMEGEOM_XVERSION@
+#define GEOM_DEVELOPMENT         @SALOMEGEOM_VERSION_DEV@
 
 #endif // __GEOM_VERSION_H__
