@@ -806,6 +806,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
     aPrevID = anID.in();
     SALOMEDS::SObject_wrap aSubSO = aStudyBuilder->NewObject(aResultSO);
     aStudyBuilder->Addreference(aSubSO, aSO);
+    theStudy->GetUseCaseBuilder()->AppendTo( aResultSO, aSubSO );
   }
 
   return aResultSO._retn();
