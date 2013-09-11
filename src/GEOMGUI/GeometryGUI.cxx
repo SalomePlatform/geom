@@ -49,6 +49,8 @@
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
 
+#include <PyInterp_Interp.h>
+
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewModel.h>
@@ -1709,17 +1711,17 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
   PyGILState_STATE gstate = PyGILState_Ensure();
-  PyObject* pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
-  if (pluginsmanager == NULL)
+  PyObjWrapper pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
+  if ( !pluginsmanager ) {
     PyErr_Print();
+  }
   else {
-    PyObject* result =
+    PyObjWrapper result =
       PyObject_CallMethod(pluginsmanager, (char*)"initialize", (char*)"isss", 1, "geom",
                           tr("MEN_NEW_ENTITY").toStdString().c_str(),
                           tr("GEOM_PLUGINS_OTHER").toStdString().c_str());
-    if (result == NULL)
+    if ( !result )
       PyErr_Print();
-    Py_XDECREF(result);
   }
   PyGILState_Release(gstate);
   // end of GEOM plugins loading
