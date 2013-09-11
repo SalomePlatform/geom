@@ -38,6 +38,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
+  ${PROJECT_SOURCE_DIR}/src/ShapeRecognition
   ${PROJECT_SOURCE_DIR}/src/DlgRef
   ${PROJECT_BINARY_DIR}/src/DlgRef
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -64,7 +65,7 @@ SET(_link_LIBRARIES
 
 # optional sources
 IF(SALOME_GEOM_USE_OPENCV)
-  SET( FeatureDetectorDlg_Sources FeatureDetectorDlg.cxx )
+  SET( FeatureDetectorDlg_Sources EntityGUI_FeatureDetectorDlg.cxx )
   SET( FeatureDetectorDlg_moc_h   EntityGUI_FeatureDetectorDlg.h )
 ENDIF()
 

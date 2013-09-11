@@ -21,8 +21,8 @@
 # Common packages
 ##
 SET(SUBDIRS_COMMON
-  ARCHIMEDE NMTDS NMTTools BlockFix GEOMAlgo SKETCHER OCC2VTK GEOM BREPExport
-  BREPImport IGESExport IGESImport STEPExport STEPImport STLExport VTKExport
+  ARCHIMEDE NMTDS NMTTools BlockFix GEOMAlgo SKETCHER GEOM BREPExport
+  BREPImport IGESExport IGESImport STEPExport STEPImport STLExport
   ShHealOper GEOMUtils GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
   )
 
@@ -38,10 +38,10 @@ ENDIF()
 ##
 # GUI
 ##
-IF(SALOME_GEOM_USE_GUI)
+IF(SALOME_BUILD_GUI)
   SET(SUBDIRS_GUI
-    OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI GEOMBase
-    GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
+    OBJECT OCC2VTK VTKExport DlgRef GEOMFiltersSelection Material GEOMGUI
+    GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
     EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
     RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI AdvancedEngine
     GEOM_SWIG_WITHIHM

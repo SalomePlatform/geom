@@ -37,7 +37,6 @@
 #include <GeometryGUI.h>
 #include <EntityGUI.h>
 #include <GEOMBase.h>
-#include <GEOM_Object.hxx>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
