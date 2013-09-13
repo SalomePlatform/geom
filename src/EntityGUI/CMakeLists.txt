@@ -50,6 +50,7 @@ ADD_DEFINITIONS(
   ${CAS_DEFINITIONS}
   ${OMNIORB_DEFINITIONS}
   ${QT_DEFINITIONS}
+  ${OPENCV_DEFINITIONS}
   )
 
 # libraries to link to
@@ -67,6 +68,7 @@ SET(_link_LIBRARIES
 IF(SALOME_GEOM_USE_OPENCV)
   SET( FeatureDetectorDlg_Sources EntityGUI_FeatureDetectorDlg.cxx )
   SET( FeatureDetectorDlg_moc_h   EntityGUI_FeatureDetectorDlg.h )
+  LIST(APPEND _link_LIBRARIES GEOMShapeRec)
 ENDIF()
 
 # --- resources ---
