@@ -1,7 +1,4 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -20,71 +17,92 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_Algo.cxx
-// Created:     Sat Dec 04 12:39:47 2004
-// Author:      Peter KURNEV
-//              <peter@PREFEX>
+// File:	GEOMAlgo_BndSphere.lxx
+// Created:	
+// Author:	Peter KURNEV
+//		<pkv@irinox>
+//=======================================================================
+//function : SetCenter
+//purpose  : 
+//=======================================================================
+  inline void GEOMAlgo_BndSphere::SetCenter(const gp_Pnt& theP)
 //
-#include <GEOMAlgo_Algo.hxx>
-
-//=======================================================================
-// function:
-// purpose:
-//=======================================================================
-GEOMAlgo_Algo::GEOMAlgo_Algo()
-:
-  myErrorStatus(1),
-  myWarningStatus(0),
-  myComputeInternalShapes(Standard_True)
-{}
-//=======================================================================
-// function: ~
-// purpose:
-//=======================================================================
-GEOMAlgo_Algo::~GEOMAlgo_Algo()
 {
+  myCenter=theP;
 }
 //=======================================================================
-// function: CheckData
-// purpose:
+//function : Center
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_Algo::CheckData()
+  inline const gp_Pnt& GEOMAlgo_BndSphere::Center()const
 {
-  myErrorStatus=0;
+  return myCenter;
 }
 //=======================================================================
-// function: CheckResult
-// purpose:
+//function : SetRadius
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_Algo::CheckResult()
+  inline void GEOMAlgo_BndSphere::SetRadius(const Standard_Real theR)
 {
-  myErrorStatus=0;
+  myRadius=theR;
 }
 //=======================================================================
-// function: ErrorStatus
-// purpose:
+//function : Radius
+//purpose  : 
 //=======================================================================
-Standard_Integer GEOMAlgo_Algo::ErrorStatus()const
+  inline Standard_Real GEOMAlgo_BndSphere::Radius()const
 {
-  return myErrorStatus;
+  return myRadius;
 }
 //=======================================================================
-// function: WarningStatus
-// purpose:
+//function : SetGap
+//purpose  : 
 //=======================================================================
-Standard_Integer GEOMAlgo_Algo::WarningStatus()const
+  inline void GEOMAlgo_BndSphere::SetGap(const Standard_Real theGap)
 {
-  return myWarningStatus;
+  myGap=theGap;
 }
-//  myErrorStatus
-//
-// 1 - object is just initialized
-
 //=======================================================================
-//function : ComputeInternalShapes
-//purpose  :
+//function : Gap
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_Algo::ComputeInternalShapes(const Standard_Boolean theFlag)
+  inline Standard_Real GEOMAlgo_BndSphere::Gap()const
 {
-  myComputeInternalShapes = theFlag;
+  return myGap;
+}
+//=======================================================================
+//function : Add
+//purpose  : 
+//=======================================================================
+  inline void GEOMAlgo_BndSphere::Add(const GEOMAlgo_BndSphere& theOther)
+{
+  Standard_Real aTmax, aR, aT, aTOther;
+  gp_Pnt aPc;
+  //
+  aPc.SetXYZ(0.5*(myCenter.XYZ()+theOther.myCenter.XYZ()));
+  //
+  aR=aPc.Distance(myCenter);
+  //
+  aT=myRadius+myGap;
+  aTOther=theOther.myRadius+theOther.myGap;
+  aTmax=(aT>aTOther) ? aT: aTOther;
+  //
+  aR=aR+aTmax;
+  //
+  myCenter=aPc;
+  myRadius=aR;
+}
+//=======================================================================
+//function : SquareExtent
+//purpose  : 
+//=======================================================================
+  inline Standard_Real GEOMAlgo_BndSphere::SquareExtent()const
+{
+  Standard_Real aD;
+  //
+  aD=myRadius+myGap;
+  aD=aD+aD;
+  aD=aD*aD;
+  //
+  return aD;
 }

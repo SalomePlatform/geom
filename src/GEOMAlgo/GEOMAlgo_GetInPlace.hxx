@@ -35,9 +35,9 @@
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopoDS_Shape.hxx>
 
-#include <NMTTools_CoupleOfShape.hxx>
-#include <NMTTools_ListOfCoupleOfShape.hxx>
-#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
+#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
+#include <GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx>
 
 #include <GEOMAlgo_DataMapOfShapeMapOfShape.hxx>
 #include <GEOMAlgo_GluerAlgo.hxx>
@@ -81,7 +81,7 @@ class GEOMAlgo_GetInPlaceIterator  {
    *   The pair of intersected shapes.
    */
   //Standard_EXPORT
-    void AppendPair(const NMTTools_CoupleOfShape& theCS) ;
+    void AppendPair(const GEOMAlgo_CoupleOfShapes& theCS) ;
 
   /**
    * Initialize the iterator.
@@ -113,13 +113,13 @@ class GEOMAlgo_GetInPlaceIterator  {
    *   The pair of intersected shapes.
    */
   //Standard_EXPORT
-    const NMTTools_CoupleOfShape& Value() const;
+    const GEOMAlgo_CoupleOfShapes& Value() const;
 
 protected:
   Standard_Integer myDim;
-  NMTTools_ListOfCoupleOfShape myLists[10];
-  NMTTools_ListOfCoupleOfShape myEmptyList;
-  NMTTools_ListIteratorOfListOfCoupleOfShape myIterator;
+  GEOMAlgo_ListOfCoupleOfShapes myLists[10];
+  GEOMAlgo_ListOfCoupleOfShapes myEmptyList;
+  GEOMAlgo_ListIteratorOfListOfCoupleOfShapes myIterator;
 
 private:
 };

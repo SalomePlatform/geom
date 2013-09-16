@@ -733,16 +733,27 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
 #endif
         GeometryGUI::getTexture( study, textureId, aWidth, aHeight );
       if ( !aTexture.IsNull() ) {
-        static int TextureId = 0;
+#if OCC_VERSION_LARGE > 0x06060000 // Porting to OCCT higher 6.6.0 version
         Handle(Prs3d_PointAspect) aTextureAspect =
           new Prs3d_PointAspect( HasColor() ? 
-                                 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
-                                 (Quantity_NameOfColor)GetColor() : 
-                                 // color from properties
+				 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
+				 (Quantity_NameOfColor)GetColor() : 
+				 // color from properties 
                                  SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ),
-                                 ++TextureId,
                                  aWidth, aHeight,
                                  aTexture );
+#else
+	int TextureId = 0;
+        Handle(Prs3d_PointAspect) aTextureAspect =
+          new Prs3d_PointAspect( HasColor() ? 
+				 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
+				 (Quantity_NameOfColor)GetColor() : 
+				 // color from properties 
+                                 SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ), 
+				 ++TextureId,
+                                 aWidth, aHeight,
+                                 aTexture );
+#endif
         AISShape->Attributes()->SetPointAspect( aTextureAspect );
       }
     }

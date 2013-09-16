@@ -69,14 +69,13 @@
 #include <BRepLib_MakeEdge.hxx>
 
 #include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
-
 #include <GEOMAlgo_SurfaceTools.hxx>
 #include <GEOMAlgo_StateCollector.hxx>
-#include <GEOMAlgo_FinderShapeOn.hxx>
-
+#include <GEOMAlgo_AlgoTools.hxx>
 #include <GEOMAlgo_PassKey.hxx>
 #include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
 #include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
+
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn1
@@ -548,7 +547,7 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
   //
   aTRF=BRep_Tool::Triangulation(aF, aLoc);
   if (aTRF.IsNull()) {
-    if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aF)) {
+    if (!GEOMAlgo_AlgoTools::BuildTriangulation(aF)) {
       myWarningStatus=20; // no triangulation found
       return;
     }
@@ -793,63 +792,3 @@ TopAbs_State GEOMAlgo_FinderShapeOn1::GetPointState(const gp_Pnt& aP)
 // 20- no triangulation found
 // 30- can not obtain the line from the link
 
-//modified by NIZNHY-PKV Thu Jan 26 10:01:14 2012f
-/*
-//=======================================================================
-//function : InnerPoints
-//purpose  :
-//=======================================================================
-void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Edge& aE,
-                                          GEOMAlgo_ListOfPnt& aLP)
-{
-  myErrorStatus=0;
-  //
-  Standard_Integer j, aNbNodes, aIndex, aNb;
-  Handle(Poly_PolygonOnTriangulation) aPTE;
-  Handle(Poly_Triangulation) aTRE;
-  TopLoc_Location aLoc;
-  gp_Pnt aP;
-  //
-  aLP.Clear();
-  BRep_Tool::PolygonOnTriangulation(aE, aPTE, aTRE, aLoc);
-  if (aTRE.IsNull() || aPTE.IsNull()) {
-    Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(aE, aLoc);
-    if (aPE.IsNull()) {
-      if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aE)) {
-        myErrorStatus=20; // no triangulation found
-        return;
-      }
-      aPE = BRep_Tool::Polygon3D(aE, aLoc);
-    }
-    const gp_Trsf& aTrsf=aLoc.Transformation();
-    const TColgp_Array1OfPnt& aNodes=aPE->Nodes();
-    //
-    aNbNodes=aPE->NbNodes();
-    Standard_Integer low = aNodes.Lower(), up = aNodes.Upper();
-    for (j=low+1; j<up; ++j) {
-      aP=aNodes(j).Transformed(aTrsf);
-      aLP.Append(aP);
-    }
-  }
-  else {
-    const gp_Trsf& aTrsf=aLoc.Transformation();
-    const TColgp_Array1OfPnt& aNodes=aTRE->Nodes();
-    //
-    aNbNodes=aPTE->NbNodes();
-    const TColStd_Array1OfInteger& aInds=aPTE->Nodes();
-    for (j=2; j<aNbNodes; ++j) {
-      aIndex=aInds(j);
-      aP=aNodes(aIndex).Transformed(aTrsf);
-      aLP.Append(aP);
-    }
-  }
-  //
-  aNb=aLP.Extent();
-  if (!aNb && myNbPntsMin) {
-    // try to fill it yourself
-    InnerPoints(aE, myNbPntsMin, aLP);
-    aNb=aLP.Extent();
-  }
-}
-*/
-//modified by NIZNHY-PKV Thu Jan 26 10:01:17 2012t

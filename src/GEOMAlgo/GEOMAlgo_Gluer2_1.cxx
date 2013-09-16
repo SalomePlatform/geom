@@ -51,11 +51,9 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 
-#include <BOPTools_Tools.hxx>
-#include <BOPTools_Tools2D.hxx>
-#include <BOPTools_Tools3D.hxx>
-
-#include <GEOMAlgo_Tools.hxx>
+#include <BOPTools_AlgoTools.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
+#include <BOPTools_AlgoTools2D.hxx>
 
 //=======================================================================
 //function : MakeBRepShapes
@@ -117,7 +115,7 @@ void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF,
   //
   aTol=BRep_Tool::Tolerance(aFF);
   aS=BRep_Tool::Surface(aFF, aLoc);
-  bIsUPeriodic=GEOMAlgo_Tools::IsUPeriodic(aS);
+  bIsUPeriodic=GEOMAlgo_AlgoTools::IsUPeriodic(aS);
   BRepTools::UVBounds(aFF, aUMin, aUMax, aVMin, aVMax);
   //
   aBB.MakeFace (aFnew, aS, aLoc, aTol);
@@ -160,18 +158,17 @@ void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF,
       if (!BRep_Tool::Degenerated(aEx)) {
         aEx.Orientation(TopAbs_FORWARD);
         if (bIsUPeriodic) {
-          GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aEx, aFF, aUMin, aUMax);
+          GEOMAlgo_AlgoTools::RefinePCurveForEdgeOnFace(aEx, aFF, aUMin, aUMax);
         }
         //
         //modified by NIZNHY-PKV Fri Feb 03 11:18:17 2012f
-        iRet=GEOMAlgo_Tools::BuildPCurveForEdgeOnFace(aE, aEx, aFF, myContext);
+        iRet=GEOMAlgo_AlgoTools::BuildPCurveForEdgeOnFace(aE, aEx, aFF, myContext);
         if (iRet) {
           continue;
         }
-        //BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aEx, aFF);
         //modified by NIZNHY-PKV Fri Feb 03 11:18:20 2012t
         //
-        bIsToReverse=BOPTools_Tools3D::IsSplitToReverse1(aEx, aE, myContext);
+        bIsToReverse=GEOMAlgo_AlgoTools::IsSplitToReverse(aEx, aE, myContext);
         if (bIsToReverse) {
           aEx.Reverse();
         }
@@ -223,7 +220,7 @@ void GEOMAlgo_Gluer2::MakeEdge(const TopoDS_Edge& aE,
   aVR2.Orientation(TopAbs_REVERSED);
   //
   if (!bIsDE) {
-    BOPTools_Tools::MakeSplitEdge(aEx, aVR1, aT1, aVR2, aT2, aNewEdge);
+    BOPTools_AlgoTools::MakeSplitEdge(aEx, aVR1, aT1, aVR2, aT2, aNewEdge);
   }
   else {
     Standard_Real aTol;

@@ -59,8 +59,7 @@
 
 #include <IntTools_Tools.hxx>
 
-#include <BOPTools_Tools3D.hxx>
-#include <BOPTools_Tools2D.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
 
 
 
@@ -259,7 +258,7 @@ Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
   }
   //
   aP2Dx.Coord(aUx, aVx);
-  BOPTools_Tools2D::FaceNormal(aF, aUx, aVx, aDNx);
+  GEOMAlgo_AlgoTools::FaceNormal(aF, aUx, aVx, aDNx);
   aDNx.Reverse();
   //
   aP.SetXYZ(aPx.XYZ()+aCoef*aTol*aDNx.XYZ());

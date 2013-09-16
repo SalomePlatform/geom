@@ -31,9 +31,10 @@
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
 #include <Standard_Integer.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
 #include <Standard_Boolean.hxx>
+
 #include <TColStd_ListOfInteger.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
 
 //=======================================================================
 //class : GEOMAlgo_PassKey

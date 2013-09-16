@@ -52,21 +52,21 @@
 #include <BRep_Builder.hxx>
 #include <BRepBndLib.hxx>
 
-#include <NMTDS_BndSphereTree.hxx>
-#include <NMTDS_BndSphere.hxx>
-#include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
-
-#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
-#include <GEOMAlgo_Tools.hxx>
-//
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 
-//modified by NIZNHY-PKV Tue Mar 13 10:25:47 2012f
+#include <GEOMAlgo_BndSphereTree.hxx>
+#include <GEOMAlgo_BndSphere.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeBndSphere.hxx>
+
+#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
+
+//
 static
   Standard_Integer CheckAncesstors
   (const TopoDS_Shape& aVSD,
@@ -74,7 +74,6 @@ static
    const TopTools_IndexedDataMapOfShapeListOfShape& aMVE,
    const TopTools_IndexedDataMapOfShapeListOfShape& aMEV,
    TopTools_IndexedDataMapOfShapeListOfShape& aMEVZ);
-//modified by NIZNHY-PKV Tue Mar 13 10:25:50 2012t
 
 //=======================================================================
 //function :
@@ -159,10 +158,10 @@ void GEOMAlgo_GlueDetector::DetectVertices()
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItIm;
   TopTools_DataMapOfShapeListOfShape aMVV;
   GEOMAlgo_IndexedDataMapOfIntegerShape aMIS;
-  NMTDS_IndexedDataMapOfShapeBndSphere aMSB;
-  NMTDS_BndSphereTreeSelector aSelector;
-  NMTDS_BndSphereTree aBBTree;
-  NCollection_UBTreeFiller <Standard_Integer, NMTDS_BndSphere> aTreeFiller(aBBTree);
+  GEOMAlgo_IndexedDataMapOfShapeBndSphere aMSB;
+  GEOMAlgo_BndSphereTreeSelector aSelector;
+  GEOMAlgo_BndSphereTree aBBTree;
+  NCollection_UBTreeFiller <Standard_Integer, GEOMAlgo_BndSphere> aTreeFiller(aBBTree);
   //
   myErrorStatus=0;
   //
@@ -174,7 +173,7 @@ void GEOMAlgo_GlueDetector::DetectVertices()
   }
   //
   for (i=1; i<=aNbV; ++i) {
-    NMTDS_BndSphere aBox;
+    GEOMAlgo_BndSphere aBox;
     //
     const TopoDS_Vertex& aV=*((TopoDS_Vertex*)&aMV(i));
     aPV=BRep_Tool::Pnt(aV);
@@ -217,7 +216,7 @@ void GEOMAlgo_GlueDetector::DetectVertices()
         }
         //
         const TopoDS_Shape& aVP=aMIS.FindFromKey(aIP);
-        const NMTDS_BndSphere& aBoxVP=aMSB.FindFromKey(aVP);
+        const GEOMAlgo_BndSphere& aBoxVP=aMSB.FindFromKey(aVP);
         //
         aSelector.Clear();
         aSelector.SetBox(aBoxVP);
@@ -357,7 +356,7 @@ void GEOMAlgo_GlueDetector::DetectShapes(const TopAbs_ShapeEnum aType)
   }
   // check geometric coincidence
   if (myCheckGeometry) {
-    iErr=GEOMAlgo_Tools::RefineSDShapes(aMPKLF, myTolerance, myContext);
+    iErr=GEOMAlgo_AlgoTools::RefineSDShapes(aMPKLF, myTolerance, myContext);
     if (iErr) {
       myErrorStatus=200;
       return;

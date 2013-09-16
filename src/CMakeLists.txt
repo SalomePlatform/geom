@@ -21,7 +21,7 @@
 # Common packages
 ##
 SET(SUBDIRS_COMMON
-  ARCHIMEDE NMTDS NMTTools BlockFix GEOMAlgo SKETCHER GEOM BREPExport
+  ARCHIMEDE BlockFix GEOMAlgo SKETCHER GEOM BREPExport
   BREPImport IGESExport IGESImport STEPExport STEPImport STLExport
   ShHealOper GEOMUtils GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
   )

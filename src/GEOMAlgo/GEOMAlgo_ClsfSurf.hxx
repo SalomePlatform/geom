@@ -30,7 +30,6 @@
 
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
-//#include <Handle_GEOMAlgo_ClsfSurf.hxx>
 #include <Handle_Geom_Surface.hxx>
 #include <GeomAdaptor_Surface.hxx>
 #include <GEOMAlgo_Clsf.hxx>

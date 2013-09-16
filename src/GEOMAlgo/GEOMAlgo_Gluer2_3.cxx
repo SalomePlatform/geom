@@ -44,13 +44,13 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
-#include <NMTTools_CoupleOfShape.hxx>
-#include <NMTTools_ListOfCoupleOfShape.hxx>
-#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
-#include <NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx>
-#include <NMTTools_Tools.hxx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
+#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
+#include <GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx>
 
+#include <GEOMAlgo_AlgoTools.hxx>
 #include <GEOMAlgo_GlueDetector.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeIndexedMapOfShape.hxx>
 
 
 static
@@ -130,9 +130,9 @@ void GEOMAlgo_Gluer2::PerformShapesToWork()
   Standard_Integer aNbSG, i, j, k, aNbC, aNb, aNbSD;
   TopTools_ListIteratorOfListOfShape aItLS1, aItLS2;
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItDMSLS;
-  NMTTools_CoupleOfShape aCS;
-  NMTTools_ListOfCoupleOfShape aLCS;
-  NMTTools_ListIteratorOfListOfCoupleOfShape aItCS;
+  GEOMAlgo_CoupleOfShapes aCS;
+  GEOMAlgo_ListOfCoupleOfShapes aLCS;
+  GEOMAlgo_ListIteratorOfListOfCoupleOfShapes aItCS;
   //
   myErrorStatus=0;
   myWarningStatus=0;
@@ -186,9 +186,9 @@ void GEOMAlgo_Gluer2::PerformShapesToWork()
   //
   // 2. Find Chains
   TopTools_ListOfShape aLSX;
-  NMTTools_IndexedDataMapOfShapeIndexedMapOfShape aMC;
+  GEOMAlgo_IndexedDataMapOfShapeIndexedMapOfShape aMC;
   //
-  NMTTools_Tools::FindChains(aLCS, aMC);
+  GEOMAlgo_AlgoTools::FindChains(aLCS, aMC);
   //
   // 3. myImagesToWork, myOriginsToWork
   aNbC=aMC.Extent();
@@ -209,8 +209,8 @@ void GEOMAlgo_Gluer2::PerformShapesToWork()
 //function : TreatPair
 //purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer2::TreatPair(const NMTTools_CoupleOfShape& aCS,
-                                NMTTools_ListOfCoupleOfShape& aLCS)
+void GEOMAlgo_Gluer2::TreatPair(const GEOMAlgo_CoupleOfShapes& aCS,
+                                GEOMAlgo_ListOfCoupleOfShapes& aLCS)
 {
   if (myErrorStatus) {
     return;
@@ -222,7 +222,7 @@ void GEOMAlgo_Gluer2::TreatPair(const NMTTools_CoupleOfShape& aCS,
   TopTools_IndexedMapOfShape aMS1, aMS2;
   TopTools_DataMapOfShapeListOfShape aDMSLS;
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItDMSLS;
-  NMTTools_CoupleOfShape aCSS;
+  GEOMAlgo_CoupleOfShapes aCSS;
   //
   // 1. Checking the pair on whether it can be glued at all
   // 1.1

@@ -135,91 +135,16 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   for (; It.More(); It.Next()) {
     Scurrent = It.Value();
     if (Scurrent.ShapeType() != TopAbs_EDGE) {
-      Handle(Geom_BSplineCurve) newC;
-      if (Scurrent.ShapeType() == TopAbs_WIRE) {
-        TColgp_SequenceOfPnt PntSeq;
-        // collect points
-        for (Ex.Init(Scurrent, TopAbs_EDGE); Ex.More(); Ex.Next()) {
-          TopoDS_Edge E = TopoDS::Edge(Ex.Current());
-          if (BRep_Tool::Degenerated(E)) continue;
-          C = BRep_Tool::Curve(E, First, Last);
-          if( E.Orientation() == TopAbs_REVERSED ) {
-            C->Reverse();
-          }
-          Handle(Geom_TrimmedCurve) tc = Handle(Geom_TrimmedCurve)::DownCast(C);
-          while( !tc.IsNull() ) {
-            C = tc->BasisCurve();
-            tc = Handle(Geom_TrimmedCurve)::DownCast(C);
-          }
-          int nbp = 10;
-          if( C->IsKind(STANDARD_TYPE(Geom_Line)) ) {
-            nbp = 4;
-          }
-          else if( C->IsKind(STANDARD_TYPE(Geom_Circle)) || 
-                   C->IsKind(STANDARD_TYPE(Geom_Ellipse)) ) {
-            nbp = (int)25*fabs(Last-First)/(2.*M_PI);
-          }
-          else if( C->IsKind(STANDARD_TYPE(Geom_BezierCurve)) ) {
-            Handle(Geom_BezierCurve) C3d = Handle(Geom_BezierCurve)::DownCast(C);
-            nbp = C3d->NbPoles();
-          }
-          else if( C->IsKind(STANDARD_TYPE(Geom_BSplineCurve)) ) {
-            Handle(Geom_BSplineCurve) C3d = Handle(Geom_BSplineCurve)::DownCast(C);
-            nbp = C3d->NbPoles();
-          }
-          else {
-          }
-          if( nbp<4 ) nbp = 4;
-          double dp = (Last-First)/(nbp-1);
-          for(int i=1; i<nbp; i++) {
-            gp_Pnt P;
-            C->D0(First+dp*(i-1),P);
-            PntSeq.Append(P);
-          }
-        }
-        // add last point
-        gp_Pnt P;
-        C->D0(Last,P);
-        PntSeq.Append(P);
-        // create BSpline 
-        if(PntSeq.Length()>1) {
-          TColgp_Array1OfPnt Pnts(1,PntSeq.Length());
-          // check orientation of wire
-          if( Scurrent.Orientation() == TopAbs_REVERSED ) {
-            for(int i=1; i<=PntSeq.Length(); i++) {
-              Pnts.SetValue(PntSeq.Length()-i+1,PntSeq.Value(i));
-            }
-          }
-          else {
-            for(int i=1; i<=PntSeq.Length(); i++) {
-              Pnts.SetValue(i,PntSeq.Value(i));
-            }
-          }
-          GeomAPI_PointsToBSpline PTB (Pnts);
-          newC = Handle(Geom_BSplineCurve)::DownCast(PTB.Curve());
-          // set periodic flag if curve is closed
-          //if( newC->IsClosed() ) {
-          //  newC->SetPeriodic();
-          //}
-          // create edge
-          double fp = newC->FirstParameter();
-          double lp = newC->FirstParameter();
-          gp_Pnt PF,PL;
-          newC->D0(fp,PF);
-          newC->D0(lp,PL);
-          TopoDS_Vertex VF,VL;
-          B.MakeVertex(VF,PF,1.e-7);
-          B.MakeVertex(VL,PL,1.e-7);
-          TopoDS_Edge newE;
-          B.MakeEdge(newE,newC,1.e-7);
-          B.Add(newE,VF);
-          B.Add(newE,VL.Reversed());
-          Scurrent = newE;
-        }
+      TopoDS_Edge NewEdge;
+      if (Scurrent.ShapeType() == TopAbs_WIRE)
+      {
+        const TopoDS_Wire& CurWire = TopoDS::Wire(Scurrent);
+        NewEdge = BRepAlgo::ConcatenateWireC0(CurWire);
       }
-      if (newC.IsNull()) {
+      if (NewEdge.IsNull()) {
         Standard_ConstructionError::Raise("The argument compound must contain only edges");
       }
+      Scurrent = NewEdge;
     }
     B.Add(aComp,Scurrent);
   }

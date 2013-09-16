@@ -60,6 +60,8 @@
 #include <Standard_NullObject.hxx>
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
+#include <BOPCol_IndexedDataMapOfShapeListOfShape.hxx>
+#include <BOPCol_ListOfShape.hxx>
 
 //=======================================================================
 //function : GetID
@@ -118,7 +120,6 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
-  //sklNMTAlgo_Splitter1 PS;
   GEOMAlgo_Splitter PS;
 
   TopTools_DataMapOfShapeShape aCopyMap;
@@ -168,7 +169,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       for (; aSimpleIter.More(); aSimpleIter.Next()) {
         const TopoDS_Shape& aSimpleSh = aSimpleIter.Value();
         if (ShapesMap.Add(aSimpleSh)) {
-          PS.AddShape(aSimpleSh);
+          PS.AddArgument(aSimpleSh);
           //skl if (DoRemoveWebs) {
           //skl if (aMaterials->Length() >= ind)
           //skl PS.SetMaterial(aSimpleSh, aMaterials->Value(ind));
@@ -248,7 +249,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       for (; aSimpleIter.More(); aSimpleIter.Next()) {
         const TopoDS_Shape& aSimpleSh = aSimpleIter.Value();
         if (!ToolsMap.Contains(aSimpleSh) && ShapesMap.Add(aSimpleSh))
-          PS.AddShape(aSimpleSh);
+          PS.AddArgument(aSimpleSh);
       }
     }
 
@@ -285,7 +286,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       for (; aSimpleIter.More(); aSimpleIter.Next()) {
         const TopoDS_Shape& aSimpleSh = aSimpleIter.Value();
         if (!ToolsMap.Contains(aSimpleSh) && ShapesMap.Add(aSimpleSh))
-          PS.AddShape(aSimpleSh);
+          PS.AddArgument(aSimpleSh);
       }
     }
 
@@ -363,7 +364,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
     }
 
     // add object shapes that are in ListShapes;
-    PS.AddShape(aShapeArg_copy);
+    PS.AddArgument(aShapeArg_copy);
     //PS.AddShape(aShapeArg);
 
     // add tool shapes that are in ListTools and not in ListShapes;
@@ -381,8 +382,8 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   aShape = PS.Shape();
   if (aShape.IsNull()) {
     // Mantis issue 22009
-    if (PS.ErrorStatus() == 10 && PS.Tools().Extent() == 0 && PS.Shapes().Extent() == 1)
-      aShape = PS.Shapes().First();
+    if (PS.ErrorStatus() == 100 && PS.Tools().Extent() == 0 && PS.Arguments().Extent() == 1)
+      aShape = PS.Arguments().First();
     else
       return 0;
   }
@@ -415,7 +416,8 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   TopExp::MapShapes(aShape, aResIndices);
 
   // Map: source_shape/images of source_shape in Result
-  const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
+  const BOPCol_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
+  //const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
 
   // history for all argument shapes
   // be sure to use aCopyMap
@@ -446,12 +448,13 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       //
       if (!aMR.Contains(anEntity)) continue;
 
-      const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
+      const BOPCol_ListOfShape& aModified = aMR.FindFromKey(anEntity);
+      //const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
       Standard_Integer nbModified = aModified.Extent();
 
       if (nbModified > 0) { // Mantis issue 0021182
         int ih = 1;
-        TopTools_ListIteratorOfListOfShape itM (aModified);
+        BOPCol_ListIteratorOfListOfShape itM (aModified);
         for (; itM.More() && nbModified > 0; itM.Next(), ++ih) {
           if (!aResIndices.Contains(itM.Value())) {
             nbModified = 0;
@@ -464,7 +467,8 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
           TDataStd_IntegerArray::Set(aWhatHistoryLabel, 1, nbModified);
 
         int ih = 1;
-        TopTools_ListIteratorOfListOfShape itM (aModified);
+        BOPCol_ListIteratorOfListOfShape itM (aModified);
+        //TopTools_ListIteratorOfListOfShape itM (aModified);
         for (; itM.More(); itM.Next(), ++ih) {
           int id = aResIndices.FindIndex(itM.Value());
           anAttr->SetValue(ih, id);

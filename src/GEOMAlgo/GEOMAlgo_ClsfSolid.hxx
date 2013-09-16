@@ -27,7 +27,6 @@
 
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
-//#include <Handle_GEOMAlgo_ClsfSolid.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Standard_Address.hxx>
 #include <GEOMAlgo_Clsf.hxx>

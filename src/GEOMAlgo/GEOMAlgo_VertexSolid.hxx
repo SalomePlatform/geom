@@ -30,6 +30,7 @@
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
+
 #include <GEOMAlgo_ShapeSolid.hxx>
 
 //=======================================================================
@@ -49,9 +50,6 @@ class GEOMAlgo_VertexSolid  : public GEOMAlgo_ShapeSolid
     virtual  void Perform() ;
 
 protected:
-  Standard_EXPORT
-    virtual  void Prepare() ;
-
   Standard_EXPORT
     virtual  void BuildResult() ;
 };

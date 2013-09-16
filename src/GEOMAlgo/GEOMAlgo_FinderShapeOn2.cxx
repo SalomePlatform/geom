@@ -70,7 +70,6 @@
 #include <BRepLib_MakeEdge.hxx>
 
 #include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
-
 #include <GEOMAlgo_SurfaceTools.hxx>
 #include <GEOMAlgo_StateCollector.hxx>
 #include <GEOMAlgo_FinderShapeOn.hxx>
@@ -88,12 +87,12 @@
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <HatchGen_Domain.hxx>
 #include <Geom2dHatch_Hatcher.hxx>
-#include <IntTools_Context.hxx>
+#include <BOPInt_Context.hxx>
 #include <BRepTools.hxx>
 #include <IntTools_Tools.hxx>
 
 //=======================================================================
-//function : GEOMAlgo_FinderShapeOn1
+//function : 
 //purpose  :
 //=======================================================================
 GEOMAlgo_FinderShapeOn2::GEOMAlgo_FinderShapeOn2()

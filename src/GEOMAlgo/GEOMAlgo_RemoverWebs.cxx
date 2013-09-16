@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -24,31 +24,27 @@
 // Author:      Peter KURNEV
 
 #include <GEOMAlgo_RemoverWebs.hxx>
+#include <GEOMAlgo_ShapeAlgo.hxx>
 
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Solid.hxx>
 #include <BRep_Builder.hxx>
 
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_MapIteratorOfMapOfShape.hxx>
-
 #include <TopExp.hxx>
 
 #include <BRepClass3d_SolidClassifier.hxx>
 
-#include <IntTools_Context.hxx>
+#include <BOPInt_Context.hxx>
 
-#include <GEOMAlgo_ShapeAlgo.hxx>
-#include <GEOMAlgo_BuilderSolid.hxx>
-#include <GEOMAlgo_Tools3D.hxx>
+#include <BOPAlgo_BuilderSolid.hxx>
+
+#include <BOPTools.hxx>
+#include <BOPTools_AlgoTools.hxx>
+#include <BOPCol_MapOfShape.hxx>
 
 //=======================================================================
-//function :
+//function : 
 //purpose  :
 //=======================================================================
 GEOMAlgo_RemoverWebs::GEOMAlgo_RemoverWebs()
@@ -106,7 +102,7 @@ void GEOMAlgo_RemoverWebs::Perform()
   if (!myContext.IsNull()) {
     myContext.Nullify();
   }
-  myContext=new IntTools_Context;
+  myContext=new BOPInt_Context;
   //
   BuildSolid();
   //
@@ -118,24 +114,24 @@ void GEOMAlgo_RemoverWebs::Perform()
 //=======================================================================
 void GEOMAlgo_RemoverWebs::BuildSolid()
 {
-  Standard_Integer i, aNbF, aNbSx, iErr, aNbSI, aNbF2, aNbS, aNbR;
+  Standard_Integer i, aNbF, aNbSx, iErr, aNbSI, aNbF2, aNbS, aNbR;  
   TopAbs_Orientation aOr;
   TopoDS_Iterator aIt1, aIt2;
   TopoDS_Shape aShape;
   BRep_Builder aBB;
-  TopTools_MapOfShape aMFence;
-  TopTools_IndexedMapOfShape aMSI;
-  TopTools_IndexedDataMapOfShapeListOfShape aMFS;
-  TopTools_ListOfShape aSFS;
-  TopTools_ListIteratorOfListOfShape aItLS;
-  GEOMAlgo_BuilderSolid aSB;
+  BOPCol_MapOfShape aMFence;
+  BOPCol_IndexedMapOfShape aMSI;
+  BOPCol_IndexedDataMapOfShapeListOfShape aMFS;
+  BOPCol_ListOfShape aSFS;
+  BOPCol_ListIteratorOfListOfShape aItLS;
+  BOPAlgo_BuilderSolid aSB;
   //
-  //modified by NIZNHY-PKV Fri Jul 12 07:22:58 2013f
+  //modified by NIZNHY-PKV Thu Jul 11 06:54:51 2013f
   //
-  // 0.
-  // The compound myShape may contain equal solids
-  // (itz.brep for e.g.). The block is to refine
-  // such data if it is necessary. The shape to treat
+  // 0. 
+  // The compound myShape may contain equal solids 
+  // (itz.brep for e.g.). The block is to refine 
+  // such data if it is necessary. The shape to treat 
   // will be aShape (not myShape).
   //
   aShape=myShape;
@@ -148,9 +144,9 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   //
   aNbR=aMFence.Extent();
   if (aNbS!=aNbR) {
-    TopTools_MapIteratorOfMapOfShape aItMS;
+    BOPCol_MapIteratorOfMapOfShape aItMS;
     //
-    GEOMAlgo_Tools3D::MakeContainer(TopAbs_COMPOUND, aShape);
+    BOPTools_AlgoTools::MakeContainer(TopAbs_COMPOUND, aShape);  
     //
     aItMS.Initialize(aMFence);
     for (; aItMS.More(); aItMS.Next()) {
@@ -158,12 +154,12 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
       aBB.Add(aShape, aS);
     }
   }
-  //modified by NIZNHY-PKV Fri Jul 12 07:23:02 2013t
+  //modified by NIZNHY-PKV Thu Jul 11 06:54:54 2013t
   //
   aNbF2=0;
   //
-  // 1. aSFS: Faces
-  TopExp::MapShapesAndAncestors(aShape, TopAbs_FACE, TopAbs_SOLID, aMFS);
+  // 1. aSFS: Faces 
+  BOPTools::MapShapesAndAncestors(aShape, TopAbs_FACE, TopAbs_SOLID, aMFS);
   //
   aNbF=aMFS.Extent();
   for (i=1; i<=aNbF; ++i) {
@@ -179,7 +175,7 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
       aSFS.Append(aFi);
     }
     else {
-      const TopTools_ListOfShape& aLSx=aMFS(i);
+      const BOPCol_ListOfShape& aLSx=aMFS(i);
       aNbSx=aLSx.Extent();
       if (aNbSx==1) {
         aSFS.Append(aFx);
@@ -198,11 +194,11 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   // 2 Internal shapes: edges, vertices
   aIt1.Initialize(aShape);
   for (; aIt1.More(); aIt1.Next()) {
-    const TopoDS_Shape& aSD=aIt1.Value();
+    const TopoDS_Shape& aSD=aIt1.Value(); 
     //
     aIt2.Initialize(aSD);
     for (; aIt2.More(); aIt2.Next()) {
-      const TopoDS_Shape& aSi=aIt2.Value();
+      const TopoDS_Shape& aSi=aIt2.Value(); 
       if (aSi.ShapeType()!=TopAbs_SHELL) {
         aOr=aSi.Orientation();
         if (aOr==TopAbs_INTERNAL) {
@@ -214,7 +210,7 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
   aNbSI=aMSI.Extent();
   //
   // 3 Solids without internals
-  GEOMAlgo_Tools3D::MakeContainer(TopAbs_COMPOUND, myResult);
+  BOPTools_AlgoTools::MakeContainer(TopAbs_COMPOUND, myResult);  
   //
   aSB.SetContext(myContext);
   aSB.SetShapes(aSFS);
@@ -225,8 +221,8 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
     return;
   }
   //
-  const TopTools_ListOfShape& aLSR=aSB.Areas();
-  //
+  const BOPCol_ListOfShape& aLSR=aSB.Areas();
+  // 
   // 4 Add the internals
   if (aNbSI) {
     AddInternalShapes(aLSR, aMSI);
@@ -241,19 +237,19 @@ void GEOMAlgo_RemoverWebs::BuildSolid()
 
 //=======================================================================
 //function : AddInternalShapes
-//purpose  :
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_RemoverWebs::AddInternalShapes(const TopTools_ListOfShape& aLSR,
-                                             const TopTools_IndexedMapOfShape& aMSI)
+void GEOMAlgo_RemoverWebs::AddInternalShapes(const BOPCol_ListOfShape& aLSR,
+                                             const BOPCol_IndexedMapOfShape& aMSI)
 {
   Standard_Integer i, aNbSI;
-  TopAbs_State aState;
+  TopAbs_State aState;  
   TopoDS_Solid aSd;
   BRep_Builder aBB;
-  TopTools_ListIteratorOfListOfShape aItLS;
-  Handle(IntTools_Context) aCtx;
+  BOPCol_ListIteratorOfListOfShape aItLS;
+  Handle(BOPInt_Context) aCtx;
   //
-  aCtx=new IntTools_Context;
+  aCtx=new BOPInt_Context;
   //
   aNbSI=aMSI.Extent();
   for (i=1; i<=aNbSI; ++i) {
@@ -263,7 +259,7 @@ void GEOMAlgo_RemoverWebs::AddInternalShapes(const TopTools_ListOfShape& aLSR,
     for (; aItLS.More(); aItLS.Next()) {
       aSd=*((TopoDS_Solid*)&aItLS.Value());
       //
-      aState=GEOMAlgo_Tools3D::ComputeStateByOnePoint(aSI, aSd, 1.e-11, aCtx);
+      aState=BOPTools_AlgoTools::ComputeStateByOnePoint(aSI, aSd, 1.e-11, aCtx);
       if (aState==TopAbs_IN) {
         aBB.Add(aSd, aSI);
         //

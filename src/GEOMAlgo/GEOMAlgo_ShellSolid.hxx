@@ -50,12 +50,9 @@ class GEOMAlgo_ShellSolid  : public GEOMAlgo_ShapeSolid
 
  protected:
   Standard_EXPORT
-    virtual  void Prepare() ;
+    virtual  void BuildResult() {
+    };
 
-  Standard_EXPORT
-    virtual  void BuildResult() ;
 
-  Standard_EXPORT
-    void DetectSDFaces() ;
 };
 #endif

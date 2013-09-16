@@ -64,7 +64,7 @@
 #include <BRepLib_MakeFace.hxx>
 #include <BRepLib_FaceError.hxx>
 
-#include <BOPTools_DSFiller.hxx>
+//#include <BOPTools_DSFiller.hxx>
 
 #include <GEOMAlgo_WireSolid.hxx>
 #include <GEOMAlgo_ShellSolid.hxx>
@@ -72,7 +72,10 @@
 #include <GEOMAlgo_ShapeSolid.hxx>
 #include <GEOMAlgo_SolidSolid.hxx>
 #include <GEOMAlgo_SurfaceTools.hxx>
-#include <GEOMAlgo_Tools.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
+
+#include <BOPAlgo_PaveFiller.hxx>
+#include <BOPCol_ListOfShape.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn
@@ -267,7 +270,7 @@ void GEOMAlgo_FinderShapeOn::Find()
     return;
   }
   //
-  bICS=GEOMAlgo_Tools::IsCompositeShape(myArg2);
+  bICS=GEOMAlgo_AlgoTools::IsCompositeShape(myArg2);
   if (!bICS || myIsAnalytic) {
     TopoDS_Compound aCmp;
     BRep_Builder aBB;
@@ -303,19 +306,18 @@ void GEOMAlgo_FinderShapeOn::Find(const TopoDS_Shape& aS)
   Standard_Integer i, iErr;
   TopAbs_State aSts[]={TopAbs_IN, TopAbs_OUT, TopAbs_ON};
   TopTools_ListIteratorOfListOfShape aIt;
-  BOPTools_DSFiller aDF;
+  BOPCol_ListOfShape aLS;
+  BOPAlgo_PaveFiller aPF;
   //
   // 1. Prepare DSFiller
-  aDF.SetShapes (myArg1, aS);
-  bIsDone=aDF.IsDone();
-  if (!bIsDone) {
-    myErrorStatus=30; // wrong args are used for DSFiller
-    return;
-  }
-  aDF.Perform();
-  bIsDone=aDF.IsDone();
-  if (!bIsDone) {
-    myErrorStatus=31; // DSFiller failed
+  aLS.Append(myArg1);
+  aLS.Append(aS);
+  aPF.SetArguments(aLS);
+  //
+  aPF.Perform();
+  iErr=aPF.ErrorStatus();
+  if (iErr) {
+    myErrorStatus=31; //  PaveFiller is failed
     return;
   }
   //
@@ -347,7 +349,7 @@ void GEOMAlgo_FinderShapeOn::Find(const TopoDS_Shape& aS)
       return;
   }
   //
-  pSS->SetFiller(aDF);
+  pSS->SetFiller(aPF);
   pSS->Perform();
   iErr=pSS->ErrorStatus();
   if (iErr) {
@@ -396,6 +398,7 @@ void GEOMAlgo_FinderShapeOn::MakeArgument1()
 #else
     aMF.Init(mySurface, Standard_True);
 #endif
+
     aFErr=aMF.Error();
     if (aFErr!=BRepLib_FaceDone) {
       myErrorStatus=20; // can not build the face
@@ -409,6 +412,7 @@ void GEOMAlgo_FinderShapeOn::MakeArgument1()
     aM.Add(aF);
     TopExp::MapShapes(aF, TopAbs_VERTEX, aM);
     TopExp::MapShapes(aF, TopAbs_EDGE, aM);
+
     aNb=aM.Extent();
     for (i=1; i<=aNb; ++i) {
       const TopoDS_Shape& aS=aM(i);

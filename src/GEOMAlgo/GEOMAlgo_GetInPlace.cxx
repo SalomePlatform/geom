@@ -25,7 +25,7 @@
 
 #include <GEOMAlgo_GetInPlace.hxx>
 
-#include <NMTDS_BoxBndTree.hxx>
+
 #include <NCollection_UBTreeFiller.hxx>
 
 #include <Bnd_Box.hxx>
@@ -58,9 +58,8 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
 
-
-#include <NMTTools_CoupleOfShape.hxx>
-#include <GEOMAlgo_Tools.hxx>
+#include <GEOMAlgo_BoxBndTree.hxx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
 
 
 static
@@ -301,10 +300,10 @@ void GEOMAlgo_GetInPlace::Intersect()
   TopTools_DataMapOfShapeListOfShape aDMSLS;
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItDMSLS;
   TopTools_ListIteratorOfListOfShape aItLS;
-  NMTTools_CoupleOfShape aCS;
+  GEOMAlgo_CoupleOfShapes aCS;
   //
-  NMTDS_BoxBndTreeSelector aSelector;
-  NMTDS_BoxBndTree aBBTree;
+  GEOMAlgo_BoxBndTreeSelector aSelector;
+  GEOMAlgo_BoxBndTree aBBTree;
   NCollection_UBTreeFiller <Standard_Integer, Bnd_Box> aTreeFiller(aBBTree);
   //
   myErrorStatus=0;
@@ -391,7 +390,7 @@ void GEOMAlgo_GetInPlace::PerformVV()
   //
   myIterator.Initialize(TopAbs_VERTEX, TopAbs_VERTEX);
   for (; myIterator.More(); myIterator.Next()) {
-    const NMTTools_CoupleOfShape& aCS=myIterator.Value();
+    const GEOMAlgo_CoupleOfShapes& aCS=myIterator.Value();
     const TopoDS_Shape& aV1=aCS.Shape1();
     const TopoDS_Shape& aV2=aCS.Shape2();
     //
@@ -446,7 +445,7 @@ void GEOMAlgo_GetInPlace::PerformVE()
   // 2. Fill Shapes In
   myIterator.Initialize(TopAbs_EDGE, TopAbs_VERTEX);
   for (; myIterator.More(); myIterator.Next()) {
-    const NMTTools_CoupleOfShape& aCS=myIterator.Value();
+    const GEOMAlgo_CoupleOfShapes& aCS=myIterator.Value();
     const TopoDS_Shape& aE1=aCS.Shape1();
     const TopoDS_Shape& aV2=aCS.Shape2();
     //
@@ -481,7 +480,7 @@ void GEOMAlgo_GetInPlace::PerformEE()
   //
   myIterator.Initialize(TopAbs_EDGE, TopAbs_EDGE);
   for (; myIterator.More(); myIterator.Next()) {
-    const NMTTools_CoupleOfShape& aCS=myIterator.Value();
+    const GEOMAlgo_CoupleOfShapes& aCS=myIterator.Value();
     const TopoDS_Shape& aE1=aCS.Shape1();
     const TopoDS_Shape& aE2=aCS.Shape2();
     //
@@ -528,7 +527,7 @@ void GEOMAlgo_GetInPlace::PerformVF()
   //
   myIterator.Initialize(TopAbs_FACE, TopAbs_VERTEX);
   for (; myIterator.More(); myIterator.Next()) {
-    const NMTTools_CoupleOfShape& aCS=myIterator.Value();
+    const GEOMAlgo_CoupleOfShapes& aCS=myIterator.Value();
     const TopoDS_Shape& aF1=aCS.Shape1();
     const TopoDS_Shape& aV2=aCS.Shape2();
     //
@@ -626,7 +625,7 @@ void GEOMAlgo_GetInPlace::PerformEF()
   //
   myIterator.Initialize(TopAbs_FACE, TopAbs_EDGE);
   for (; myIterator.More(); myIterator.Next()) {
-    const NMTTools_CoupleOfShape& aCS=myIterator.Value();
+    const GEOMAlgo_CoupleOfShapes& aCS=myIterator.Value();
     const TopoDS_Shape& aF1=aCS.Shape1();
     const TopoDS_Shape& aE2=aCS.Shape2();
     //
@@ -679,7 +678,7 @@ void GEOMAlgo_GetInPlace::PerformFF()
   //
   myIterator.Initialize(TopAbs_FACE, TopAbs_FACE);
   for (; myIterator.More(); myIterator.Next()) {
-    const NMTTools_CoupleOfShape& aCS=myIterator.Value();
+    const GEOMAlgo_CoupleOfShapes& aCS=myIterator.Value();
     const TopoDS_Shape& aF1=aCS.Shape1();
     const TopoDS_Shape& aF2=aCS.Shape2();
     //
@@ -773,7 +772,7 @@ void GEOMAlgo_GetInPlace::PerformZF()
   //
   myIterator.Initialize(TopAbs_SOLID, TopAbs_FACE);
   for (; myIterator.More(); myIterator.Next()) {
-    const NMTTools_CoupleOfShape& aCS=myIterator.Value();
+    const GEOMAlgo_CoupleOfShapes& aCS=myIterator.Value();
     const TopoDS_Shape& aSo1=aCS.Shape1();
     const TopoDS_Shape& aF2=aCS.Shape2();
     //
@@ -809,7 +808,7 @@ void GEOMAlgo_GetInPlace::PerformZZ()
   //
   myIterator.Initialize(TopAbs_SOLID, TopAbs_SOLID);
   for (; myIterator.More(); myIterator.Next()) {
-    const NMTTools_CoupleOfShape& aCS=myIterator.Value();
+    const GEOMAlgo_CoupleOfShapes& aCS=myIterator.Value();
     const TopoDS_Shape& aSo1=aCS.Shape1();
     const TopoDS_Shape& aSo2=aCS.Shape2();
     //

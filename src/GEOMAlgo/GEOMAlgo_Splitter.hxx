@@ -22,76 +22,77 @@
 //  File:   GEOMAlgo_Splitter.hxx
 //
 //  Author: Peter KURNEV
-//
-#ifndef _GEOMAlgo_Splitter_HeaderFile
-#define _GEOMAlgo_Splitter_HeaderFile
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+
+#ifndef GEOMAlgo_Splitter_HeaderFile
+#define GEOMAlgo_Splitter_HeaderFile
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TopAbs_ShapeEnum.hxx>
+#include <Standard_Boolean.hxx>
 #include <Standard_Integer.hxx>
-#include <GEOMAlgo_Builder.hxx>
+
+#include <NCollection_BaseAllocator.hxx>
+
+#include <TopAbs_ShapeEnum.hxx>
+
 #include <TopoDS_Shape.hxx>
 
-//! Implementation of Gluing Operation Algorithm (GA) <br>
+#include <BOPCol_ListOfShape.hxx>
+#include <BOPCol_MapOfShape.hxx>
+
+#include <BOPAlgo_Builder.hxx>
+
 //=======================================================================
-//function : GEOMAlgo_Splitter
+//class    : GEOMAlgo_Splitter
 //purpose  :
 //=======================================================================
-class GEOMAlgo_Splitter  : public GEOMAlgo_Builder
+class GEOMAlgo_Splitter : public BOPAlgo_Builder
 {
  public:
-
-  //!  Empty constructor <br>
+  
   Standard_EXPORT
     GEOMAlgo_Splitter();
 
   Standard_EXPORT
+    GEOMAlgo_Splitter(const Handle(NCollection_BaseAllocator)& theAllocator);
+  
+  Standard_EXPORT
     virtual ~GEOMAlgo_Splitter();
 
-  //!  Clears internal fields and arguments <br>
   Standard_EXPORT
-    virtual  void Clear() ;
-
-  //!  Adds Tool argument theShape of the operation <br>
-  Standard_EXPORT
-    virtual  void AddTool(const TopoDS_Shape& theShape) ;
-
-  //!  Returns the arguments of the operation <br>
-  Standard_EXPORT
-    const TopTools_ListOfShape& Tools() const;
+    void AddTool(const TopoDS_Shape& theShape);
 
   Standard_EXPORT
-    void SetLimit(const TopAbs_ShapeEnum aLimit) ;
+    const BOPCol_ListOfShape& Tools()const;
 
   Standard_EXPORT
-    TopAbs_ShapeEnum Limit() const;
+    void SetLimit(const TopAbs_ShapeEnum aLimit);
 
   Standard_EXPORT
-    void SetLimitMode(const Standard_Integer aLimitMode) ;
+    TopAbs_ShapeEnum Limit()const;
 
   Standard_EXPORT
-    Standard_Integer LimitMode() const;
-  //!  Adds Tool arguments of the operation as <br>
-  //!           shapes of upper level of container shape theShape <br>
-  //! ===================================================== <br>
+    void SetLimitMode(const Standard_Integer aMode);
+
   Standard_EXPORT
-    void AddToolCompound(const TopoDS_Shape& theShape) ;
+    Standard_Integer LimitMode()const;
+
+  Standard_EXPORT
+    virtual void Clear();
 
  protected:
-  //! Build the resulting shapes of type theType <br>
   Standard_EXPORT
-    virtual  void BuildResult(const TopAbs_ShapeEnum theType) ;
-  //!  Provides post-tratment actions <br>
+    virtual void BuildResult(const TopAbs_ShapeEnum theType);
+
   Standard_EXPORT
-    virtual  void PostTreat() ;
-
-
-  TopTools_ListOfShape myTools;
-  TopTools_MapOfShape myMapTools;
-  TopAbs_ShapeEnum myLimit;
-  Standard_Integer myLimitMode;
+    virtual void PostTreat();
+  
+ protected:
+  BOPCol_ListOfShape myTools; 
+  BOPCol_MapOfShape myMapTools;        
+  TopAbs_ShapeEnum myLimit;   
+  Standard_Integer myLimitMode;  
 };
+
 #endif

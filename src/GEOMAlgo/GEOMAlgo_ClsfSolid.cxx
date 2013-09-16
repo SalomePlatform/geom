@@ -25,8 +25,10 @@
 #include <GEOMAlgo_ClsfSolid.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
+
 #include <TopoDS.hxx>
 #include <TopoDS_Solid.hxx>
+
 #include <BRep_Builder.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 

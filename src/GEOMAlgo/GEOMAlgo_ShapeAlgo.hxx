@@ -32,7 +32,7 @@
 #include <Standard_Macro.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Standard_Real.hxx>
-#include <Handle_IntTools_Context.hxx>
+#include <Handle_BOPInt_Context.hxx>
 #include <GEOMAlgo_Algo.hxx>
 
 //=======================================================================
@@ -45,11 +45,11 @@ class GEOMAlgo_ShapeAlgo  : public GEOMAlgo_Algo
 
   //! Sets cashed geometrical tools <br>
   Standard_EXPORT
-    void SetContext(const Handle(IntTools_Context)& theContext) ;
+    void SetContext(const Handle(BOPInt_Context)& theContext) ;
 
   //! Returns cashed geometrical tools <br>
   Standard_EXPORT
-    const Handle_IntTools_Context& Context() const;
+    const Handle_BOPInt_Context& Context() const;
 
   Standard_EXPORT
     void SetShape(const TopoDS_Shape& aS) ;
@@ -80,6 +80,6 @@ protected:
   TopoDS_Shape myShape;
   Standard_Real myTolerance;
   TopoDS_Shape myResult;
-  Handle_IntTools_Context myContext;
+  Handle_BOPInt_Context myContext;
 };
 #endif

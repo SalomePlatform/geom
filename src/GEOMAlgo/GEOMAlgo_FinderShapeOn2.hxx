@@ -29,18 +29,21 @@
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
+
 #include <TopAbs_ShapeEnum.hxx>
-#include <GEOMAlgo_State.hxx>
+
 #include <Standard_Integer.hxx>
-//#include <Handle_GEOMAlgo_Clsf.hxx>
-#include <GEOMAlgo_Clsf.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
-#include <GEOMAlgo_ShapeAlgo.hxx>
-#include <GEOMAlgo_Clsf.hxx>
+
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
+
+#include <TopTools_ListOfShape.hxx>
+
+#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
+#include <GEOMAlgo_State.hxx>
 #include <GEOMAlgo_ListOfPnt.hxx>
+#include <GEOMAlgo_Clsf.hxx>
+#include <GEOMAlgo_ShapeAlgo.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn2

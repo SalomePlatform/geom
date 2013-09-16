@@ -26,9 +26,11 @@
 //              <pkv@irinox>
 //
 #include <GEOMAlgo_ClsfSurf.hxx>
+
 #include <GeomAbs_SurfaceType.hxx>
-#include <GEOMAlgo_SurfaceTools.hxx>
 #include <GeomAdaptor_Curve.hxx>
+
+#include <GEOMAlgo_SurfaceTools.hxx>
 
 IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);

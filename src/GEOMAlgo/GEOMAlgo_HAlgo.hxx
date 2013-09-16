@@ -31,7 +31,6 @@
 
 #include <Standard.hxx>
 #include <Standard_DefineHandle.hxx>
-//#include <Handle_GEOMAlgo_HAlgo.hxx>
 #include <Standard_Integer.hxx>
 #include <MMgt_TShared.hxx>
 

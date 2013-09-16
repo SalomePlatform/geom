@@ -31,6 +31,7 @@
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
 #include <TopoDS_Shape.hxx>
+
 #include <GEOMAlgo_ShellSolid.hxx>
 
 //=======================================================================
@@ -47,7 +48,7 @@ class GEOMAlgo_SolidSolid  : public GEOMAlgo_ShellSolid
     virtual ~GEOMAlgo_SolidSolid();
 
   Standard_EXPORT
-    virtual  void Perform() ;
+    virtual void Perform() ;
 
   Standard_EXPORT
     void SetShape2(const TopoDS_Shape& aS) ;
@@ -57,8 +58,7 @@ class GEOMAlgo_SolidSolid  : public GEOMAlgo_ShellSolid
 
 protected:
   Standard_EXPORT
-    virtual  void BuildResult() ;
-
+    virtual void BuildResult() ;
 
   TopoDS_Shape myS2;
 };

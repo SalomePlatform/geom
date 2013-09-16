@@ -6022,6 +6022,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 anObj = self.HealOp.SewAllowNonManifold(theObject, theTolerance)
             else:
                 anObj = self.HealOp.Sew(theObject, theTolerance)
+            # To avoid script failure in case of good argument shape
+            if self.HealOp.GetErrorCode() == "ShHealOper_NotError_msg":
+                return theObject
             RaiseIfFailed("Sew", self.HealOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "sewed")

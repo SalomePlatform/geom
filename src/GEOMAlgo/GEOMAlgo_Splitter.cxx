@@ -20,9 +20,12 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  File:   GEOMAlgo_Splitter.cxx
-//  Author: Peter KURNEV
+// File:        GEOMAlgo_Splitter.cxx
+// Created:     Thu Sep 06 10:54:04 2012
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
+
 #include <GEOMAlgo_Splitter.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
@@ -31,138 +34,135 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 
-#include <TopExp.hxx>
-
 #include <BRep_Builder.hxx>
-#include <BRepLib.hxx>
 
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
+#include <BOPCol_MapOfShape.hxx>
+#include <BOPCol_ListOfShape.hxx>
 
-#include <BOP_CorrectTolerances.hxx>
+#include <BOPTools.hxx>
 
 
-static
-  void TreatCompound(const TopoDS_Shape& aC,
-                     TopTools_ListOfShape& aLSX);
+static 
+  void TreatCompound(const TopoDS_Shape& aC, 
+                     BOPCol_ListOfShape& aLSX);
 
 //=======================================================================
-//function :
-//purpose  :
+//function : 
+//purpose  : 
 //=======================================================================
-  GEOMAlgo_Splitter::GEOMAlgo_Splitter()
+GEOMAlgo_Splitter::GEOMAlgo_Splitter()
 :
-  GEOMAlgo_Builder()
+  BOPAlgo_Builder(),
+  myTools(myAllocator),
+  myMapTools(100, myAllocator)
+{
+  myLimit=TopAbs_SHAPE;
+  myLimitMode=0;
+}
+//=======================================================================
+//function : 
+//purpose  : 
+//=======================================================================
+GEOMAlgo_Splitter::GEOMAlgo_Splitter
+  (const Handle(NCollection_BaseAllocator)& theAllocator)
+:
+  BOPAlgo_Builder(theAllocator),
+  myTools(myAllocator),
+  myMapTools(100, myAllocator)
 {
   myLimit=TopAbs_SHAPE;
   myLimitMode=0;
 }
 //=======================================================================
 //function : ~
-//purpose  :
+//purpose  : 
 //=======================================================================
-  GEOMAlgo_Splitter::~GEOMAlgo_Splitter()
+GEOMAlgo_Splitter::~GEOMAlgo_Splitter()
 {
-}
-//=======================================================================
-//function : AddToolCompound
-//purpose  :
-//=======================================================================
-  void GEOMAlgo_Splitter::AddToolCompound(const TopoDS_Shape& theShape)
-{
-  TopoDS_Iterator aIt;
-  //
-  aIt.Initialize(theShape);
-  for (; aIt.More(); aIt.Next()) {
-    const TopoDS_Shape& aS=aIt.Value();
-    AddTool(aS);
-  }
 }
 //=======================================================================
 //function : AddTool
-//purpose  :
+//purpose  : 
 //=======================================================================
-  void GEOMAlgo_Splitter::AddTool(const TopoDS_Shape& theShape)
+void GEOMAlgo_Splitter::AddTool(const TopoDS_Shape& theShape)
 {
   if (myMapTools.Add(theShape)) {
     myTools.Append(theShape);
     //
-    AddShape(theShape);
+    AddArgument(theShape);
   }
 }
 //=======================================================================
 //function : Tools
-//purpose  :
+//purpose  : 
 //=======================================================================
-  const TopTools_ListOfShape& GEOMAlgo_Splitter::Tools()const
+const BOPCol_ListOfShape& GEOMAlgo_Splitter::Tools()const
 {
   return myTools;
 }
 //=======================================================================
 //function : SetLimit
-//purpose  :
+//purpose  : 
 //=======================================================================
-  void GEOMAlgo_Splitter::SetLimit(const TopAbs_ShapeEnum aLimit)
+void GEOMAlgo_Splitter::SetLimit(const TopAbs_ShapeEnum aLimit) 
 {
   myLimit=aLimit;
 }
 //=======================================================================
 //function : Limit
-//purpose  :
+//purpose  : 
 //=======================================================================
-  TopAbs_ShapeEnum GEOMAlgo_Splitter::Limit()const
+TopAbs_ShapeEnum GEOMAlgo_Splitter::Limit()const
 {
   return myLimit;
 }
 //=======================================================================
 //function : SetLimitMode
-//purpose  :
+//purpose  : 
 //=======================================================================
-  void GEOMAlgo_Splitter::SetLimitMode(const Standard_Integer aMode)
+void GEOMAlgo_Splitter::SetLimitMode(const Standard_Integer aMode)
 {
   myLimitMode=aMode;
 }
 //=======================================================================
 //function : LimitMode
-//purpose  :
+//purpose  : 
 //=======================================================================
-  Standard_Integer GEOMAlgo_Splitter::LimitMode()const
+Standard_Integer GEOMAlgo_Splitter::LimitMode()const
 {
   return myLimitMode;
 }
 //=======================================================================
 //function : Clear
-//purpose  :
+//purpose  : 
 //=======================================================================
-  void GEOMAlgo_Splitter::Clear()
+void GEOMAlgo_Splitter::Clear()
 {
   myTools.Clear();
   myMapTools.Clear();
   myLimit=TopAbs_SHAPE;
-  GEOMAlgo_Builder::Clear();
+  BOPAlgo_Builder::Clear();
 }
 //=======================================================================
 //function : BuildResult
-//purpose  :
+//purpose  : 
 //=======================================================================
-  void GEOMAlgo_Splitter::BuildResult(const TopAbs_ShapeEnum theType)
+void GEOMAlgo_Splitter::BuildResult(const TopAbs_ShapeEnum theType)
 {
   myErrorStatus=0;
   //
   TopAbs_ShapeEnum aType;
   BRep_Builder aBB;
-  TopTools_MapOfShape aM;
-  TopTools_ListIteratorOfListOfShape aIt, aItIm;
+  BOPCol_MapOfShape aM;
+  BOPCol_ListIteratorOfListOfShape aIt, aItIm;
   //
-  aIt.Initialize(myShapes);
+  aIt.Initialize(myArguments);
   for (; aIt.More(); aIt.Next()) {
     const TopoDS_Shape& aS=aIt.Value();
     aType=aS.ShapeType();
     if (aType==theType && !myMapTools.Contains(aS)) {
-      if (myImages.HasImage(aS)) {
-        const TopTools_ListOfShape& aLSIm=myImages.Image(aS);
+      if (myImages.IsBound(aS)) {
+        const BOPCol_ListOfShape& aLSIm=myImages.Find(aS);
         aItIm.Initialize(aLSIm);
         for (; aItIm.More(); aItIm.Next()) {
           const TopoDS_Shape& aSIm=aItIm.Value();
@@ -181,36 +181,35 @@ static
 }
 //=======================================================================
 //function : PostTreat
-//purpose  :
+//purpose  : 
 //=======================================================================
-  void GEOMAlgo_Splitter::PostTreat()
+void GEOMAlgo_Splitter::PostTreat()
 {
   if (myLimit!=TopAbs_SHAPE) {
     Standard_Integer i, aNbS;
     BRep_Builder aBB;
     TopoDS_Compound aC;
-    TopTools_IndexedMapOfShape aMx;
+    BOPCol_IndexedMapOfShape aMx;
     //
     aBB.MakeCompound(aC);
     //
-    TopExp::MapShapes(myShape, myLimit, aMx);
+    BOPTools::MapShapes(myShape, myLimit, aMx);
     aNbS=aMx.Extent();
     for (i=1; i<=aNbS; ++i) {
       const TopoDS_Shape& aS=aMx(i);
       aBB.Add(aC, aS);
     }
-    //
     if (myLimitMode) {
       Standard_Integer iType, iLimit, iTypeX;
       TopAbs_ShapeEnum aType, aTypeX;
-      TopTools_ListOfShape aLSP, aLSX;
-      TopTools_ListIteratorOfListOfShape aIt, aItX, aItIm;
-      TopTools_MapOfShape  aM;
+      BOPCol_ListOfShape aLSP, aLSX;
+      BOPCol_ListIteratorOfListOfShape aIt, aItX, aItIm;
+      BOPCol_MapOfShape  aM;
       //
-      iLimit=(Standard_Integer)myLimit;
+      iLimit=(Standard_Integer)myLimit; 
       //
       // 1. Collect the shapes to process aLSP
-      aIt.Initialize(myShapes);
+      aIt.Initialize(myArguments);
       for (; aIt.More(); aIt.Next()) {
         const TopoDS_Shape& aS=aIt.Value();
         if (myMapTools.Contains(aS)) {
@@ -242,38 +241,29 @@ static
         }
       }// for (; aIt.More(); aIt.Next()) {
       //
-      //modified by NIZNHY-PKV Fri Oct 30 11:07:08 2009 f
       aMx.Clear();
-      TopExp::MapShapes(aC, aMx);
-      //modified by NIZNHY-PKV Fri Oct 30 11:12:30 2009t
-      //
-      // 2. Add them to aC
+      BOPTools::MapShapes(aC, aMx);
+       // 2. Add them to aC
       aIt.Initialize(aLSP);
       for (; aIt.More(); aIt.Next()) {
         const TopoDS_Shape& aS=aIt.Value();
-        if (myImages.HasImage(aS)) {
-          const TopTools_ListOfShape& aLSIm=myImages.Image(aS);
+        if (myImages.IsBound(aS)) {
+          const BOPCol_ListOfShape& aLSIm=myImages.Find(aS);
           aItIm.Initialize(aLSIm);
           for (; aItIm.More(); aItIm.Next()) {
             const TopoDS_Shape& aSIm=aItIm.Value();
             if (aM.Add(aSIm)) {
-              //modified by NIZNHY-PKV Fri Oct 30 11:09:57 2009f
               if (!aMx.Contains(aSIm)) {
                 aBB.Add(aC, aSIm);
               }
-              //aBB.Add(aC, aSIm);
-              //modified by NIZNHY-PKV Fri Oct 30 11:10:02 2009
             }
           }
         }
         else {
           if (aM.Add(aS)) {
-            //modified by NIZNHY-PKV Fri Oct 30 11:10:46 2009f
             if (!aMx.Contains(aS)) {
               aBB.Add(aC, aS);
             }
-            //aBB.Add(aC, aS);
-            //modified by NIZNHY-PKV Fri Oct 30 11:11:00 2009t
           }
         }
       }
@@ -281,19 +271,33 @@ static
     myShape=aC;
   }//if (myLimit!=TopAbs_SHAPE) {
   //
-  GEOMAlgo_Builder::PostTreat();
+  Standard_Integer aNbS;
+  TopoDS_Iterator aIt;
+  BOPCol_ListOfShape aLS;
+  //
+  aIt.Initialize(myShape);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aS=aIt.Value();
+    aLS.Append(aS);
+  }
+  aNbS=aLS.Extent();
+  if (aNbS==1) {
+    myShape=aLS.First();
+  }
+  //
+  BOPAlgo_Builder::PostTreat();
 }
 //=======================================================================
 //function : TreatCompound
-//purpose  :
+//purpose  : 
 //=======================================================================
-void TreatCompound(const TopoDS_Shape& aC1,
-                   TopTools_ListOfShape& aLSX)
+void TreatCompound(const TopoDS_Shape& aC1, 
+                   BOPCol_ListOfShape& aLSX)
 {
   Standard_Integer aNbC1;
   TopAbs_ShapeEnum aType;
-  TopTools_ListOfShape aLC, aLC1;
-  TopTools_ListIteratorOfListOfShape aIt, aIt1;
+  BOPCol_ListOfShape aLC, aLC1;
+  BOPCol_ListIteratorOfListOfShape aIt, aIt1;
   TopoDS_Iterator aItC;
   //
   aLC.Append (aC1);
@@ -331,7 +335,7 @@ void TreatCompound(const TopoDS_Shape& aC1,
 }
 //
 // myErrorStatus
-//
+// 
 // 0  - Ok
 // 1  - The object is just initialized
 // 2  - PaveFiller is failed

@@ -27,27 +27,8 @@ package GEOMAlgo
 
 	---Purpose:
 
-uses
-    TCollection,
-
-    TColgp,
-    Geom,
-    Bnd,
-    gp,
-    GeomAdaptor,
-    TopAbs,
-    TopoDS,
-    TopTools,
-    IntTools,
-    BOPTools,
-    BOP,
-
-    TColStd,
-    BOPTColStd,
-    BRepAlgo,
-    NMTDS,
-    NMTTools
-
+--uses
+ 
 is
     --  Enumerations
     imported State from GEOMAlgo;
@@ -55,73 +36,97 @@ is
     imported KindOfName from GEOMAlgo;
     imported KindOfBounds from GEOMAlgo;
     imported KindOfClosed from GEOMAlgo;
-    --
+    --  
+    -- Algos 
+    -- 
+    imported Algo from GEOMAlgo;
+    imported ShapeSolid from GEOMAlgo;  
+    imported VertexSolid from GEOMAlgo;  
+    imported WireSolid from GEOMAlgo; 
+    imported ShellSolid from GEOMAlgo; 
+    imported SolidSolid from GEOMAlgo;  
+    imported FinderShapeOn from GEOMAlgo; 
+    imported FinderShapeOn1 from GEOMAlgo; 
+    imported HAlgo from GEOMAlgo; 
+    imported ShapeAlgo from GEOMAlgo;  
+    imported Clsf from GEOMAlgo; 
+    imported ClsfBox from GEOMAlgo;  
+    imported ClsfSurf from GEOMAlgo;
+    imported ClsfSolid from GEOMAlgo; 
+    imported FinderShapeOn2 from GEOMAlgo;
+    imported FinderShapeOnQuad from GEOMAlgo; 
+    imported Gluer from GEOMAlgo; 
+    imported GlueAnalyser from GEOMAlgo; 
+    imported GluerAlgo from GEOMAlgo; 
+    imported GlueDetector from GEOMAlgo; 
+    imported BuilderShape from GEOMAlgo;
+    imported Gluer2 from GEOMAlgo; 
+    imported GetInPlace from GEOMAlgo; 
+    imported Splitter from GEOMAlgo;
+    --  
+    
+    -- 
+    imported AlgoTools from GEOMAlgo;
+     
     --  Gluer / GetInPlace
-    imported Gluer2 from GEOMAlgo;
-    imported GlueDetector from GEOMAlgo;
-    imported GluerAlgo from GEOMAlgo;
-    imported GetInPlace from GEOMAlgo;
+    --
+    
+    
+    --
     -- Algos
     imported RemoverWebs from GEOMAlgo;
-    imported WireSplitter from GEOMAlgo;
-    imported WESScaler from GEOMAlgo;
-    imported WESCorrector from GEOMAlgo;
-    imported WireEdgeSet from GEOMAlgo;
-    imported GlueAnalyser from GEOMAlgo;
-    imported Gluer from GEOMAlgo;
-    imported FinderShapeOn2 from GEOMAlgo;
-    imported FinderShapeOn1 from GEOMAlgo;
-    imported FinderShapeOn from GEOMAlgo;
-    imported ShapeAlgo from GEOMAlgo;
-    imported SolidSolid from GEOMAlgo;
-    imported ShellSolid from GEOMAlgo;
-    imported VertexSolid from GEOMAlgo;
-    imported WireSolid from GEOMAlgo;
-    imported ShapeSolid from GEOMAlgo;
-    imported Splitter from GEOMAlgo;
-    imported Builder from GEOMAlgo;
-    imported BuilderShape from GEOMAlgo;
-    imported BuilderSolid from GEOMAlgo;
-    imported BuilderFace from GEOMAlgo;
-    imported BuilderArea from GEOMAlgo;
+
+    --imported WireSplitter from GEOMAlgo;
+    --imported WESScaler from GEOMAlgo;
+    --imported WESCorrector from GEOMAlgo;
+    --imported WireEdgeSet from GEOMAlgo;
+    --imported GlueAnalyser from GEOMAlgo;
+    --imported Gluer from GEOMAlgo;
+    
+    --
+    
+    --imported Splitter from GEOMAlgo;
+    --imported Builder from GEOMAlgo;
+    
+    --imported BuilderSolid from GEOMAlgo;
+    --imported BuilderFace from GEOMAlgo;
+    --imported BuilderArea from GEOMAlgo;
+
     imported ShapeInfoFiller from GEOMAlgo;
-    imported Algo from GEOMAlgo;
+    --
     -- Data /  Tools
-    imported ShapeSet from GEOMAlgo;
+    --imported ShapeSet from GEOMAlgo;
     imported SurfaceTools from GEOMAlgo;
     imported ShapeInfo from GEOMAlgo;
     imported CoupleOfShapes from GEOMAlgo;
-    imported BuilderTools from GEOMAlgo;
-    imported Tools3D from GEOMAlgo;
-    imported Tools from GEOMAlgo;
-    imported PWireEdgeSet from GEOMAlgo;
+    --imported BuilderTools from GEOMAlgo;
+    --imported Tools3D from GEOMAlgo;
+    --imported Tools from GEOMAlgo;
+    --imported PWireEdgeSet from GEOMAlgo;
+    imported BndSphere from GEOMAlgo;
     imported StateCollector from GEOMAlgo;
     imported PassKey from GEOMAlgo;
     imported PassKeyMapHasher from GEOMAlgo;
     imported PassKeyShape from GEOMAlgo;
     imported PassKeyShapeMapHasher from GEOMAlgo;
-    imported ClsfBox from GEOMAlgo;
-    imported ClsfSurf from GEOMAlgo;
-    imported ClsfSolid from GEOMAlgo;
-    imported Clsf from GEOMAlgo;
-    imported HAlgo from GEOMAlgo;
-
     imported ListOfCoupleOfShapes from GEOMAlgo;
     imported ListIteratorOfListOfCoupleOfShapes from GEOMAlgo;
     imported ListOfPnt from GEOMAlgo;
-    imported ListIteratorOfListOfPnt from GEOMAlgo;
-    imported DataMapOfShapeShapeSet from GEOMAlgo;
-    imported DataMapIteratorOfDataMapOfShapeShapeSet from GEOMAlgo;
-    imported DataMapOfShapeReal from GEOMAlgo;
-    imported DataMapIteratorOfDataMapOfShapeReal from GEOMAlgo;
-    imported DataMapOfRealListOfShape from GEOMAlgo;
-    imported DataMapIteratorOfDataMapOfRealListOfShape from GEOMAlgo;
+    imported ListIteratorOfListOfPnt from GEOMAlgo; 
+    imported IndexedDataMapOfShapeIndexedMapOfShape from GEOMAlgo; 
+    
+    --imported DataMapOfShapeShapeSet from GEOMAlgo;
+    --imported DataMapIteratorOfDataMapOfShapeShapeSet from GEOMAlgo;
+    --imported DataMapOfShapeReal from GEOMAlgo;
+    --imported DataMapIteratorOfDataMapOfShapeReal from GEOMAlgo;
+    --imported DataMapOfRealListOfShape from GEOMAlgo;
+    --imported DataMapIteratorOfDataMapOfRealListOfShape from GEOMAlgo;
     imported DataMapOfPassKeyInteger from GEOMAlgo;
     imported DataMapIteratorOfDataMapOfPassKeyInteger from GEOMAlgo;
-    imported DataMapOfPassKeyShapeShape from GEOMAlgo;
-    imported DataMapIteratorOfDataMapOfPassKeyShapeShape from GEOMAlgo;
-    imported DataMapOfOrientedShapeShape from GEOMAlgo;
-    imported DataMapIteratorOfDataMapOfOrientedShapeShape from GEOMAlgo;
+    --imported DataMapOfPassKeyShapeShape from GEOMAlgo;
+    --imported DataMapIteratorOfDataMapOfPassKeyShapeShape from GEOMAlgo;
+    --imported DataMapOfOrientedShapeShape from GEOMAlgo;
+    --imported DataMapIteratorOfDataMapOfOrientedShapeShape from GEOMAlgo;
     imported DataMapOfShapeMapOfShape from GEOMAlgo;
     imported DataMapIteratorOfDataMapOfShapeMapOfShape from GEOMAlgo;
     imported DataMapOfShapePnt from GEOMAlgo;
@@ -131,5 +136,5 @@ is
     imported IndexedDataMapOfShapeState from GEOMAlgo;
     imported IndexedDataMapOfIntegerShape from GEOMAlgo;
     imported IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo;
- 
+
 end GEOMAlgo;

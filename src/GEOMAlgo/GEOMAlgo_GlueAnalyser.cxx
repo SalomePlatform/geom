@@ -26,11 +26,20 @@
 
 #include <GEOMAlgo_GlueAnalyser.hxx>
 
+#include <Bnd_Box.hxx>
+#include <Bnd_HArray1OfBox.hxx>
+#include <Bnd_BoundSortBox.hxx>
+#include <BRepBndLib.hxx>
+
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
+
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Compound.hxx>
+#include <TopoDS_Vertex.hxx>
 
 #include <BRep_Builder.hxx>
 
@@ -41,24 +50,16 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
 
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
-#include <GEOMAlgo_Tools.hxx>
-#include <GEOMAlgo_CoupleOfShapes.hxx>
-#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
-
-#include <GEOMAlgo_Gluer.hxx>
-#include <Bnd_HArray1OfBox.hxx>
-#include <Bnd_BoundSortBox.hxx>
-#include <TopoDS_Vertex.hxx>
 #include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
 #include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
-#include <Bnd_Box.hxx>
-#include <TColStd_ListOfInteger.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <BRepBndLib.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
+#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
+#include <GEOMAlgo_Gluer.hxx>
 
 //=======================================================================
 //function :
@@ -302,7 +303,7 @@
   }
   // check geometric coincidence
   if (myCheckGeometry) {
-    iErr=GEOMAlgo_Tools::RefineSDShapes(aMPKLF, myTol, myContext); //XX
+    iErr=GEOMAlgo_AlgoTools::RefineSDShapes(aMPKLF, myTol, myContext); //XX
     if (iErr) {
       myErrorStatus=200;
       return;

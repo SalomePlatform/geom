@@ -35,12 +35,11 @@
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
 
-#include <NMTTools_CoupleOfShape.hxx>
-#include <NMTTools_ListOfCoupleOfShape.hxx>
-
 #include <GEOMAlgo_GluerAlgo.hxx>
 #include <GEOMAlgo_BuilderShape.hxx>
 #include <GEOMAlgo_GlueDetector.hxx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
+#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
 
 //=======================================================================
 //class : GEOMAlgo_Gluer2
@@ -170,8 +169,8 @@ protected:
                   TopoDS_Face& theFnew) ;
 
   Standard_EXPORT
-    void TreatPair(const NMTTools_CoupleOfShape& theCS,
-                   NMTTools_ListOfCoupleOfShape& theLCS) ;
+    void TreatPair(const GEOMAlgo_CoupleOfShapes& theCS,
+                   GEOMAlgo_ListOfCoupleOfShapes& theLCS) ;
 
 protected:
   TopTools_DataMapOfShapeListOfShape myShapesToGlue;
@@ -180,9 +179,8 @@ protected:
   TopTools_DataMapOfShapeListOfShape myImagesToWork;
   TopTools_DataMapOfShapeShape myOriginsToWork;
   Standard_Boolean myKeepNonSolids;
-  //modified by NIZNHY-PKV Tue Mar 13 13:30:40 2012f
   GEOMAlgo_GlueDetector myDetector;
-  //modified by NIZNHY-PKV Tue Mar 13 13:30:43 2012t
+
 private:
 };
 #endif

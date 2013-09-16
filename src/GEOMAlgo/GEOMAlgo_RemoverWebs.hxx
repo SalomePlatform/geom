@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -22,8 +22,7 @@
 // File:        GEOMAlgo_RemoverWebs.hxx
 // Created:     Thu Mar 28 08:02:59 2013
 // Author:      Peter KURNEV
-//              <pkv@petrex>
-//
+
 // The algorithm is intended to build result [solid(s)] 
 // from given set of solids [argument]. 
 // The result cosists of: 
@@ -39,8 +38,8 @@
 #include <Standard_Macro.hxx>
 //
 #include <GEOMAlgo_ShapeAlgo.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
+#include <BOPCol_ListOfShape.hxx>
+#include <BOPCol_IndexedMapOfShape.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_RemoverWebs
@@ -67,8 +66,8 @@ protected:
     void BuildSolid() ;
 
   Standard_EXPORT
-    static void AddInternalShapes(const TopTools_ListOfShape& ,
-                                  const TopTools_IndexedMapOfShape& );
+    static void AddInternalShapes(const BOPCol_ListOfShape& ,
+				  const BOPCol_IndexedMapOfShape& );
   //
 };
 

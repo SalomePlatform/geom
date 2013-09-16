@@ -225,7 +225,7 @@ INCLUDE(CMakePackageConfigHelpers)
 # They all have to be INSTALL'd with the option "EXPORT ${PROJECT_NAME}TargetGroup"
 SET(_${PROJECT_NAME}_exposed_targets 
   GEOMArchimede BREPExport BREPImport BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
-  GEOMUtils GEOMEngine GEOM_SupervEngine IGESExport IGESImport NMTDS NMTTools GEOMSketcher
+  GEOMUtils GEOMEngine GEOM_SupervEngine IGESExport IGESImport GEOMSketcher
   SalomeIDLGEOM STEPExport STEPImport STLExport ShHealOper
 )
 IF(SALOME_BUILD_GUI)

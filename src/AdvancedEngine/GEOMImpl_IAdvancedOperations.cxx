@@ -51,8 +51,6 @@
 #include "GEOMImpl_IPipeTShape.hxx"
 #include "GEOMImpl_DividedDiskDriver.hxx"
 #include "GEOMImpl_IDividedDisk.hxx"
-// #include "GEOMImpl_DividedCylinderDriver.hxx"
-// #include "GEOMImpl_IDividedCylinder.hxx"
 #include <GEOMImpl_SmoothingSurfaceDriver.hxx>
 #include <GEOMImpl_ISmoothingSurface.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
@@ -89,6 +87,8 @@
 #include <gp_Vec.hxx>
 #include <GC_MakeConicalSurface.hxx>
 #include <Geom_CylindricalSurface.hxx>
+
+#include <ShapeAnalysis_Edge.hxx>
 
 #include <cmath>
 
@@ -1143,7 +1143,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
   // Build tools for partition operation:
   // 1 face and 2 planes
   // Face
-  Handle(GEOM_Object) arete_intersect_int;
+  Handle(GEOM_Object) arete_intersect_int, arete_intersect_ext;
   Handle(GEOM_Object) wire_t, wire_t2, face_t, face_t2;
   Handle(GEOM_Object) chan_racc;
   Handle(GEOM_Object) vi1, vi2;
@@ -1197,47 +1197,39 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
       return false;
     }
 
+    double d1min = theR2+theW2, d2min=theR2+theW2;
     for (int i = 1; i <= vertices_i->Length(); i++) {
       Handle(GEOM_Object) v = Handle(GEOM_Object)::DownCast(vertices_i->Value(i));
       v->GetLastFunction()->SetDescription("");
       TopoDS_Vertex aVertex = TopoDS::Vertex(v->GetValue());
       gp_Pnt aP = BRep_Tool::Pnt(aVertex);
-//       std::cout << "Coords: " << aP.X() << ", " << aP.Y() << ", " << aP.Z() << std::endl;
       if (Abs(aP.X()) <= Precision::Confusion()) {
-        if (Abs(aP.Y()) - theR1 <= Precision::Confusion()) {
+        if (Abs(aP.Y()) < d1min) {
           vi1 = v;
-        }
+	  d1min = Abs(aP.Y());
+	}
       } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-        if (Abs(aP.X()) - theR1 <= Precision::Confusion()) {
-          vi2 = v;
+	if (Abs(aP.X()) < d2min) {
+	  vi2 = v;
+	  d2min = Abs(aP.X());
         }
       }
+    }
+    if (vi1.IsNull() || vi2.IsNull()) {
+      SetErrorCode("Cannot find internal intersection vertices");
+      return false;
     }
 
     std::list<Handle(GEOM_Object)> theShapes;
 
     if (isNormal) {
       Handle(GEOM_Object) ve1, ve2;
+      TopoDS_Vertex vertex1, vertex2;
 
       Handle(GEOM_Object) box_e = my3DPrimOperations->MakeBoxDXDYDZ(aR2Ext, aR2Ext, aR1Ext);
       box_e->GetLastFunction()->SetDescription("");
       box_e = myTransformOperations->TranslateDXDYDZ(box_e, -aR2Ext, -aR2Ext, 0);
       box_e->GetLastFunction()->SetDescription("");
-      // Common edges on external cylinder
-      aFunction = theShape->GetLastFunction();
-      theDesc = aFunction->GetDescription();
-      Handle(TColStd_HSequenceOfTransient) edges_e =
-        myShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-      // Recover previous description to get rid of Propagate dump
-      aFunction->SetDescription(theDesc);
-      if (edges_e.IsNull() || edges_e->Length() == 0) {
-        SetErrorCode("External edges not found");
-        return false;
-      }
-      for (int i=1; i<=edges_e->Length();i++) {
-        Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
-        anObj->GetLastFunction()->SetDescription("");
-      }
 
       // search for vertices located on both external pipes
       aFunction = theShape->GetLastFunction();
@@ -1251,25 +1243,54 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
         return false;
       }
 
+      double d1max = 0, d2max = 0;
       for (int i = 1; i <= vertices_e->Length(); i++) {
         Handle(GEOM_Object) v = Handle(GEOM_Object)::DownCast(vertices_e->Value(i));
         v->GetLastFunction()->SetDescription("");
         TopoDS_Vertex aVertex = TopoDS::Vertex(v->GetValue());
         gp_Pnt aP = BRep_Tool::Pnt(aVertex);
-//         std::cout << "Coords: " << aP.X() << ", " << aP.Y() << ", " << aP.Z() << std::endl;
         if (Abs(aP.X()) <= Precision::Confusion()) {
-          if (Abs(aP.Y()) - theR2 > Precision::Confusion()) {
+          if (Abs(aP.Y()) > d1max) {
             ve1 = v;
+	    vertex1 = aVertex;
+	    d1max = Abs(aP.Y());
           }
         } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-          if (Abs(aP.X()) - theR2 > Precision::Confusion()) {
+          if (Abs(aP.X()) > d2max) {
             ve2 = v;
+	    vertex2 = aVertex;
+	    d2max = Abs(aP.X());
           }
         }
-        if ( !ve1.IsNull() && !ve2.IsNull())
-          break;
+      }
+      if (ve1.IsNull() || ve2.IsNull()) {
+        SetErrorCode("Cannot find external intersection vertices");
+        return false;
       }
       Handle(GEOM_Object) edge_e1, edge_e2;
+
+      // Common edges on external cylinder
+      aFunction = theShape->GetLastFunction();
+      theDesc = aFunction->GetDescription();
+      Handle(TColStd_HSequenceOfTransient) edges_e =
+        myShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
+      // Recover previous description to get rid of Propagate dump
+      aFunction->SetDescription(theDesc);
+      if (edges_e.IsNull() || edges_e->Length() == 0) {
+        SetErrorCode("External edges not found");
+        return false;
+      }
+      ShapeAnalysis_Edge sae;
+      for (int i=1; i<=edges_e->Length();i++) {
+        Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
+        anObj->GetLastFunction()->SetDescription("");
+	TopoDS_Edge anEdge = TopoDS::Edge(anObj->GetValue());
+	if ( !anEdge.IsNull() && 
+	     (sae.FirstVertex(anEdge).IsSame(vertex1) || sae.LastVertex(anEdge).IsSame(vertex1)) && 
+	     (sae.FirstVertex(anEdge).IsSame(vertex2) || sae.LastVertex(anEdge).IsSame(vertex2))) {
+	  arete_intersect_ext = anObj;
+	}
+      }
 
       edge_e1 = myBasicOperations->MakeLineTwoPnt(ve1, vi1);
       if (edge_e1.IsNull()) {
@@ -1289,7 +1310,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
       std::list<Handle(GEOM_Object)> edge_e_elist;
       edge_e_elist.push_back(arete_intersect_int);
       edge_e_elist.push_back(edge_e1);
-      edge_e_elist.push_back(Handle(GEOM_Object)::DownCast(edges_e->Value(1)));
+      edge_e_elist.push_back(arete_intersect_ext);
       edge_e_elist.push_back(edge_e2);
       wire_t = myShapesOperations->MakeWire(edge_e_elist, 1e-7);
       if (wire_t.IsNull()) {
@@ -1903,9 +1924,9 @@ TopoDS_Shape GEOMImpl_IAdvancedOperations::MakeThicknessReduction (gp_Ax2 theAxe
     TopoDS_Shape aTool2 = BRepBuilderAPI_MakeFace(aPln2, -aSize, +aSize, -aSize, +aSize).Shape();
 
     GEOMAlgo_Splitter PS;
-    PS.AddShape(aReduction);
+    PS.AddArgument(aReduction);
     if (isThinPart)
-      PS.AddShape(aThinPart);
+      PS.AddArgument(aThinPart);
     PS.AddTool(aTool1);
     PS.AddTool(aTool2);
     PS.SetLimit(TopAbs_SOLID);

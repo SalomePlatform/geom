@@ -1,7 +1,4 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -20,71 +17,73 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_Algo.cxx
-// Created:     Sat Dec 04 12:39:47 2004
-// Author:      Peter KURNEV
-//              <peter@PREFEX>
+// File:	GEOMAlgo_BndSphereTree.cxx
+// Created:	
+// Author:	Peter KURNEV
+//		<pkv@irinox>
 //
-#include <GEOMAlgo_Algo.hxx>
-
+#include <GEOMAlgo_BndSphereTree.hxx>
 //=======================================================================
-// function:
-// purpose:
+//function : 
+//purpose  : 
 //=======================================================================
-GEOMAlgo_Algo::GEOMAlgo_Algo()
-:
-  myErrorStatus(1),
-  myWarningStatus(0),
-  myComputeInternalShapes(Standard_True)
-{}
-//=======================================================================
-// function: ~
-// purpose:
-//=======================================================================
-GEOMAlgo_Algo::~GEOMAlgo_Algo()
+  GEOMAlgo_BndSphereTreeSelector::GEOMAlgo_BndSphereTreeSelector()
 {
 }
 //=======================================================================
-// function: CheckData
-// purpose:
+//function : ~
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_Algo::CheckData()
+  GEOMAlgo_BndSphereTreeSelector::~GEOMAlgo_BndSphereTreeSelector()
 {
-  myErrorStatus=0;
 }
 //=======================================================================
-// function: CheckResult
-// purpose:
+//function : Reject
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_Algo::CheckResult()
+  Standard_Boolean GEOMAlgo_BndSphereTreeSelector::Reject (const GEOMAlgo_BndSphere& aBox) const
 {
-  myErrorStatus=0;
+  Standard_Boolean bRet;
+  //
+  bRet=myBox.IsOut(aBox);
+  return bRet;
 }
 //=======================================================================
-// function: ErrorStatus
-// purpose:
+//function : Accept
+//purpose  : 
 //=======================================================================
-Standard_Integer GEOMAlgo_Algo::ErrorStatus()const
+  Standard_Boolean GEOMAlgo_BndSphereTreeSelector::Accept (const Standard_Integer& aIndex)
 {
-  return myErrorStatus;
+  Standard_Boolean bRet=Standard_False;
+  //
+  if (myFence.Add(aIndex)) {
+    myIndices.Append(aIndex);
+    bRet=!bRet;
+  }
+  return bRet;
 }
 //=======================================================================
-// function: WarningStatus
-// purpose:
+//function : SetBox
+//purpose  : 
 //=======================================================================
-Standard_Integer GEOMAlgo_Algo::WarningStatus()const
+  void GEOMAlgo_BndSphereTreeSelector::SetBox(const GEOMAlgo_BndSphere& aBox)
 {
-  return myWarningStatus;
+  myBox=aBox;
 }
-//  myErrorStatus
-//
-// 1 - object is just initialized
-
 //=======================================================================
-//function : ComputeInternalShapes
-//purpose  :
+//function : Clear
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_Algo::ComputeInternalShapes(const Standard_Boolean theFlag)
+  void GEOMAlgo_BndSphereTreeSelector::Clear()
 {
-  myComputeInternalShapes = theFlag;
+  myFence.Clear();
+  myIndices.Clear();
+}
+//=======================================================================
+//function : Indices
+//purpose  : 
+//=======================================================================
+  const TColStd_ListOfInteger& GEOMAlgo_BndSphereTreeSelector::Indices() const
+{
+  return myIndices;
 }

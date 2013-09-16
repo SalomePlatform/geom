@@ -49,6 +49,8 @@
 #include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepGProp.hxx>
+#include <GeomFill_Trihedron.hxx>
+#include <GeomFill_CorrectedFrenet.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
 
@@ -81,6 +83,7 @@
 #include <Geom_Conic.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <GeomAdaptor_HCurve.hxx>
 #include <GeomFill_BSplineCurves.hxx>
 #include <GeomConvert_ApproxCurve.hxx>
 #include <GeomConvert.hxx>
@@ -116,6 +119,39 @@ const Standard_GUID& GEOMImpl_PipeDriver::GetID()
 GEOMImpl_PipeDriver::GEOMImpl_PipeDriver()
 {
 }
+
+//=======================================================================
+//function : EvaluateBestSweepMode
+//purpose  : auxilary for right call of MakePipe and MakePipeShell
+//=======================================================================
+static GeomFill_Trihedron EvaluateBestSweepMode(const TopoDS_Shape& Spine)
+{
+  GeomFill_Trihedron theMode = GeomFill_IsFrenet;
+  
+  TopExp_Explorer Explo(Spine, TopAbs_EDGE);
+  for (; Explo.More(); Explo.Next())
+  {
+    TopoDS_Edge anEdge = TopoDS::Edge(Explo.Current());
+    Standard_Real fpar, lpar;
+    Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, fpar, lpar);
+    GeomAdaptor_Curve GAcurve(aCurve, fpar, lpar);
+    Handle(GeomAdaptor_HCurve) GAHcurve = new GeomAdaptor_HCurve(GAcurve);
+
+    Handle(GeomFill_CorrectedFrenet) aCorrFrenet = new GeomFill_CorrectedFrenet(Standard_True); //for evaluation
+    aCorrFrenet->SetCurve(GAHcurve);
+    GeomFill_Trihedron aMode = aCorrFrenet->EvaluateBestMode();
+    if (aMode == GeomFill_IsDiscreteTrihedron)
+    {
+      theMode = aMode;
+      break;
+    }
+    if (aMode == GeomFill_IsCorrectedFrenet)
+      theMode = aMode;
+  }
+
+  return theMode;
+}
+
 
 //=======================================================================
 //function : FillForOtherEdges
@@ -212,6 +248,9 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
   TopExp_Explorer expw2(FS2,TopAbs_WIRE);
   TopoDS_Wire aWire2 = TopoDS::Wire(expw2.Current());
   BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
+  GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(aWirePath);
+  if (theBestMode == GeomFill_IsDiscreteTrihedron)
+    aBuilder.SetDiscreteMode();
   aBuilder.Add(aWire1, aLoc1);
   aBuilder.Add(aWire2, aLoc2);
   if (!aBuilder.IsReady()) {
@@ -876,6 +915,9 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
         num2 = SplitLocNums.Value(nn);
         // make pipe
         BRepOffsetAPI_MakePipeShell aBuilder(tmpW);
+        GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(tmpW);
+        if (theBestMode == GeomFill_IsDiscreteTrihedron)
+          aBuilder.SetDiscreteMode();
         Standard_Integer nbShapes = aTmpSeqBases.Length();
         for (i=1; i<=nbShapes; i++) {
           TopoDS_Shape aShapeLoc = aTmpSeqLocs.Value(i);
@@ -904,6 +946,9 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
       }
       // make pipe for last part
       BRepOffsetAPI_MakePipeShell aBuilder(tmpW);
+      GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(tmpW);
+      if (theBestMode == GeomFill_IsDiscreteTrihedron)
+        aBuilder.SetDiscreteMode();
       Standard_Integer nbShapes = aTmpSeqBases.Length();
       for (i=1; i<=nbShapes; i++) {
         TopoDS_Shape aShapeLoc = aTmpSeqLocs.Value(i);
@@ -931,6 +976,9 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
   else {
       // old implementation without splitting
       BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
+      GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(aWirePath);
+      if (theBestMode == GeomFill_IsDiscreteTrihedron)
+        aBuilder.SetDiscreteMode();
 
       Standard_Integer nbShapes = aSeqBases.Length();
       Standard_Integer step = nbShapes/nbBases;
@@ -1450,6 +1498,9 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
       if (!aWire1.IsNull() && !aWire2.IsNull()) {
         //BRepOffsetAPI_MakePipeShell aBuilder(aWirePath);
         BRepOffsetAPI_MakePipeShell aBuilder(WPath);
+        GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(WPath);
+        if (theBestMode == GeomFill_IsDiscreteTrihedron)
+          aBuilder.SetDiscreteMode();
         aBuilder.Add(aWire1, TopoDS::Vertex(VLocs(i)),
                      aWithContact, aWithCorrect);
         aBuilder.Add(aWire2, TopoDS::Vertex(VLocs(i+1)),
@@ -1685,6 +1736,9 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
         // make pipe using aWire1 and aWire2
         if (!aWire1.IsNull() && !aWire2.IsNull()) {
           BRepOffsetAPI_MakePipeShell aBuilder(WPath);
+          GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(WPath);
+          if (theBestMode == GeomFill_IsDiscreteTrihedron)
+            aBuilder.SetDiscreteMode();
           aBuilder.Add(aWire1, TopoDS::Vertex(VLocs(i)),
                        aWithContact, aWithCorrect);
           aBuilder.Add(aWire2, TopoDS::Vertex(VLocs(i+1)),
@@ -2399,7 +2453,10 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
       
     }
     else
-      aShape = BRepOffsetAPI_MakePipe(aWirePath, aShapeBase);
+    {
+      GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(aWirePath);
+      aShape = BRepOffsetAPI_MakePipe(aWirePath, aShapeBase, theBestMode);
+    }
   }
 
   //building pipe with different sections

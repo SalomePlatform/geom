@@ -33,17 +33,17 @@
 
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
-#include <BOPTColStd_Dump.hxx>
+#include <BOPDS_DS.hxx>
+#include <BOPDS_IndexRange.hxx>
+#include <BOPDS_ListOfPaveBlock.hxx>
+#include <BOPDS_PaveBlock.hxx>
+#include <TopoDS_Solid.hxx>
+#include <BOPInt_Context.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
+#include <BRep_Tool.hxx>
+#include <BOPTools_AlgoTools.hxx>
 
-#include <BooleanOperations_ShapesDataStructure.hxx>
-#include <BooleanOperations_StateOfShape.hxx>
-
-#include <BOPTools_PaveFiller.hxx>
-#include <BOPTools_SplitShapesPool.hxx>
-#include <BOPTools_PaveBlock.hxx>
-#include <BOPTools_ListOfPaveBlock.hxx>
-#include <BOPTools_DSFiller.hxx>
-#include <BOPTools_WireStateFiller.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_WireSolid
@@ -74,19 +74,21 @@ void GEOMAlgo_WireSolid::Perform()
       myErrorStatus=10;
       return;
     }
-    if(!myDSFiller->IsDone()) {
+    if(myDSFiller->ErrorStatus()) {
       myErrorStatus=11;
       return;
     }
     //
-    Standard_Boolean bIsNewFiller;
+    Standard_Integer aNbArgs;
     //
-    bIsNewFiller=myDSFiller->IsNewFiller();
-
-    if (bIsNewFiller) {
-      Prepare();
-      myDSFiller->SetNewFiller(!bIsNewFiller);
+    const BOPDS_DS& aDS=myDSFiller->DS();
+    const BOPCol_ListOfShape& aLS=aDS.Arguments();
+    aNbArgs=aLS.Extent();
+    if (!aNbArgs) {
+      myErrorStatus=13;
+      return;
     }
+    //
     BuildResult();
   }
   //
@@ -95,78 +97,106 @@ void GEOMAlgo_WireSolid::Perform()
   }
 }
 //=======================================================================
-// function: Prepare
-// purpose:
-//=======================================================================
-void GEOMAlgo_WireSolid::Prepare()
-{
-  const BOPTools_PaveFiller& aPaveFiller=myDSFiller->PaveFiller();
-  //
-  BOPTools_WireStateFiller aStateFiller(aPaveFiller);
-  aStateFiller.Do();
-  //
-}
-//=======================================================================
 // function: BuildResult
 // purpose:
 //=======================================================================
 void GEOMAlgo_WireSolid::BuildResult()
 {
-  const BooleanOperations_ShapesDataStructure& aDS=myDSFiller->DS();
-  const BOPTools_PaveFiller& aPaveFiller=myDSFiller->PaveFiller();
-  const BOPTools_SplitShapesPool& aSplitShapesPool=aPaveFiller.SplitShapesPool();
-  //
-  Standard_Integer i, aNbPB, nSp, iBeg, iEnd;
+  Standard_Boolean bHasPaveBlocks;
+  Standard_Integer i, iRank, aNbPB,  iBeg, iEnd, aNbArgs, nE;// nSp
+  Standard_Real aTol;
   TopAbs_ShapeEnum aType;
-  BooleanOperations_StateOfShape aState;
+  TopAbs_State aState;
+  TopoDS_Edge aE;
   //
+  myErrorStatus=0;
   myLSIN.Clear();
   myLSOUT.Clear();
   myLSON.Clear();
   //
-  iBeg=1;
-  iEnd=aDS.NumberOfShapesOfTheObject();
-  if (aDS.Tool().ShapeType()==TopAbs_WIRE) {
-    iBeg=iEnd+1;
-    iEnd=aDS.NumberOfSourceShapes();
+  const BOPDS_DS& aDS=myDSFiller->DS();
+  BOPDS_DS* pDS=(BOPDS_DS*)&aDS;
+  //
+  const BOPCol_ListOfShape& aLS=pDS->Arguments();
+  aNbArgs=aLS.Extent();
+  if (aNbArgs!=2) {
+    myErrorStatus=14;
+    return;
   }
   //
+  iRank=-1;
+  const TopoDS_Shape& aObj=aLS.First();
+  if (aObj.ShapeType()==TopAbs_WIRE) {
+    iRank=0;
+  }
+  const TopoDS_Shape& aTool=aLS.Last();
+  if (aTool.ShapeType()==TopAbs_WIRE) {
+    iRank=1;
+  }
+  //
+  if (iRank==-1) {
+    myErrorStatus=15;
+    return;
+  }
+  //
+  aTol=1.e-7;
+  //
+  const TopoDS_Solid& aSolid=(iRank==0) ?  *((TopoDS_Solid*)&aTool) :
+    *((TopoDS_Solid*)&aObj);
+  //
+  Handle(BOPInt_Context) aCtx=myDSFiller->Context();
+  //BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSolid);
+  //
+  const BOPDS_IndexRange& aRange=pDS->Range(iRank);
+  aRange.Indices(iBeg, iEnd);
+  //
   for (i=iBeg; i<=iEnd; ++i) {
-    aType=aDS.GetShapeType(i);
-    if (aType==TopAbs_EDGE) {
-      const TopoDS_Shape& aE=aDS.Shape(i);
-      const BOPTools_ListOfPaveBlock& aLPB=aSplitShapesPool(aDS.RefEdge(i));
-      aNbPB=aLPB.Extent();
-      //
-      if (!aNbPB) {
-        aState=aDS.GetState(i);
-        //
-        if (aState==BooleanOperations_IN) {
-          myLSIN.Append(aE);
-        }
-        else if (aState==BooleanOperations_OUT) {
-          myLSOUT.Append(aE);
-        }
-        else if (aState==BooleanOperations_ON) {
-          myLSON.Append(aE);
-        }
+    const TopoDS_Shape& aS=pDS->Shape(i);
+    aType=aS.ShapeType();
+    if (aType!=TopAbs_EDGE) {
+      continue;
+    }
+    //
+    aE=*((TopoDS_Edge*)&pDS->Shape(i));
+    if (BRep_Tool::Degenerated(aE)) {
+      continue;
+    }
+    //
+    bHasPaveBlocks=pDS->HasPaveBlocks(i);
+    if (!bHasPaveBlocks) {
+      continue;
+    }
+    //
+    aState=TopAbs_UNKNOWN;
+    //
+    const BOPDS_ListOfPaveBlock& aLPB=pDS->PaveBlocks(i);
+    aNbPB=aLPB.Extent();
+    if (!aNbPB) {
+      aState=BOPTools_AlgoTools::ComputeStateByOnePoint(aE, aSolid, aTol, aCtx);
+    }
+    else if (aNbPB==1) {
+      const Handle(BOPDS_PaveBlock)& aPB=aLPB.First();
+#if OCC_VERSION_LARGE > 0x06060000 // Porting to OCCT higher 6.6.0 version
+      if (pDS->IsCommonBlock(aPB)) {
+#else
+      if (aPB->IsCommonBlock()) {
+#endif
+	aState=TopAbs_ON;
       }
-      //
-      else if (aNbPB==1) {
-        const BOPTools_PaveBlock& aPB=aLPB.First();
-        nSp=aPB.Edge();
-        /*const TopoDS_Shape& aSp=*/aDS.Shape(nSp);
-        aState=aDS.GetState(nSp);
-         //
-        if (aState==BooleanOperations_IN) {
-          myLSIN.Append(aE);
-        }
-        else if (aState==BooleanOperations_OUT) {
-          myLSOUT.Append(aE);
-        }
-        else if (aState==BooleanOperations_ON) {
-          myLSON.Append(aE);
-        }
+      else{
+	nE=aPB->Edge();
+	aE=*((TopoDS_Edge*)&pDS->Shape(nE));
+	aState=BOPTools_AlgoTools::ComputeStateByOnePoint(aE, aSolid, aTol, aCtx);
+      }
+      //----------
+      if (aState==TopAbs_ON) {
+	myLSON.Append(aE);
+      }
+      else if (aState==TopAbs_OUT) {
+	myLSOUT.Append(aE);
+      }
+      else if (aState==TopAbs_IN) {
+	myLSIN.Append(aE);
       }
     }
   }

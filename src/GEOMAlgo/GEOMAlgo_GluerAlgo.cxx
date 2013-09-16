@@ -25,7 +25,7 @@
 //              <peter@PREFEX>
 //
 #include <GEOMAlgo_GluerAlgo.hxx>
-#include <IntTools_Context.hxx>
+#include <BOPInt_Context.hxx>
 
 
 //=======================================================================
@@ -97,7 +97,7 @@ Standard_Boolean GEOMAlgo_GluerAlgo::CheckGeometry() const
 //function : SetContext
 //purpose  :
 //=======================================================================
-void GEOMAlgo_GluerAlgo::SetContext(const Handle(IntTools_Context)& theContext)
+void GEOMAlgo_GluerAlgo::SetContext(const Handle(BOPInt_Context)& theContext)
 {
   myContext=theContext;
 }
@@ -105,7 +105,7 @@ void GEOMAlgo_GluerAlgo::SetContext(const Handle(IntTools_Context)& theContext)
 //function : Context
 //purpose  :
 //=======================================================================
-const Handle(IntTools_Context)& GEOMAlgo_GluerAlgo::Context()
+const Handle(BOPInt_Context)& GEOMAlgo_GluerAlgo::Context()
 {
   return myContext;
 }
@@ -141,6 +141,6 @@ void GEOMAlgo_GluerAlgo::Clear()
 void GEOMAlgo_GluerAlgo::Perform()
 {
   if (myContext.IsNull()) {
-    myContext=new IntTools_Context;
+    myContext=new BOPInt_Context;
   }
 }

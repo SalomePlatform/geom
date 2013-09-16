@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,95 +20,73 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_ShapeAlgo.cxx
-// Created:     Tue Dec  7 12:06:54 2004
+// File:        GEOMAlgo_BoxBndTree.cxx
+// Created:     Tue Oct 17 13:04:11 2006
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_ShapeAlgo.hxx>
-#include <BOPInt_Context.hxx>
-
+#include <GEOMAlgo_BoxBndTree.hxx>
 //=======================================================================
-//function : GEOMAlgo_ShapeAlgo
-//purpose  :
+//function : 
+//purpose  : 
 //=======================================================================
-GEOMAlgo_ShapeAlgo::GEOMAlgo_ShapeAlgo()
-:
-  GEOMAlgo_Algo()
+  GEOMAlgo_BoxBndTreeSelector::GEOMAlgo_BoxBndTreeSelector()
 {
-  myTolerance=0.0001;
 }
-
 //=======================================================================
 //function : ~
-//purpose  :
+//purpose  : 
 //=======================================================================
-GEOMAlgo_ShapeAlgo::~GEOMAlgo_ShapeAlgo()
+  GEOMAlgo_BoxBndTreeSelector::~GEOMAlgo_BoxBndTreeSelector()
 {
 }
 //=======================================================================
-//function : SetContext
-//purpose  :
+//function : Reject
+//purpose  : 
 //=======================================================================
-void GEOMAlgo_ShapeAlgo::SetContext(const Handle(BOPInt_Context)& theContext)
+  Standard_Boolean GEOMAlgo_BoxBndTreeSelector::Reject (const Bnd_Box& aBox) const
 {
-  myContext=theContext;
+  Standard_Boolean bRet;
+  //
+  bRet=myBox.IsOut(aBox);
+  return bRet;
 }
 //=======================================================================
-//function : Context
-//purpose  :
+//function : Accept
+//purpose  : 
 //=======================================================================
-const Handle(BOPInt_Context)& GEOMAlgo_ShapeAlgo::Context()const
+  Standard_Boolean GEOMAlgo_BoxBndTreeSelector::Accept (const Standard_Integer& aIndex)
 {
-  return myContext;
-}
-//=======================================================================
-//function : SetShape
-//purpose  :
-//=======================================================================
-void GEOMAlgo_ShapeAlgo::SetShape(const TopoDS_Shape& aS)
-{
-  myShape=aS;
-}
-//=======================================================================
-//function : Shape
-//purpose  :
-//=======================================================================
-const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Shape()const
-{
-  return myShape;
-}
-//=======================================================================
-//function : SetTolerance
-//purpose  :
-//=======================================================================
-void GEOMAlgo_ShapeAlgo::SetTolerance(const Standard_Real aT)
-{
-  myTolerance=aT;
-}
-//=======================================================================
-//function : Tolerance
-//purpose  :
-//=======================================================================
-Standard_Real GEOMAlgo_ShapeAlgo::Tolerance()const
-{
-  return myTolerance;
-}
-//=======================================================================
-//function : Result
-//purpose  :
-//=======================================================================
-const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Result()const
-{
-  return myResult;
-}
-//=======================================================================
-//function : Perform
-//purpose  :
-//=======================================================================
-void GEOMAlgo_ShapeAlgo::Perform()
-{
-  if (myContext.IsNull()) {
-    myContext=new BOPInt_Context;
+  Standard_Boolean bRet=Standard_False;
+  //
+  if (myFence.Add(aIndex)) {
+    myIndices.Append(aIndex);
+    bRet=!bRet;
   }
+  return bRet;
+}
+//=======================================================================
+//function : SetBox
+//purpose  : 
+//=======================================================================
+  void GEOMAlgo_BoxBndTreeSelector::SetBox(const Bnd_Box& aBox)
+{
+  myBox=aBox;
+}
+//=======================================================================
+//function : Clear
+//purpose  : 
+//=======================================================================
+  void GEOMAlgo_BoxBndTreeSelector::Clear()
+{
+  myFence.Clear();
+  myIndices.Clear();
+}
+//=======================================================================
+//function : Indices
+//purpose  : 
+//=======================================================================
+  const TColStd_ListOfInteger& GEOMAlgo_BoxBndTreeSelector::Indices() const
+{
+  return myIndices;
 }

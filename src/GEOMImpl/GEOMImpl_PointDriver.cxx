@@ -26,7 +26,7 @@
 #include <GEOMImpl_IPoint.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
-#include <GEOMAlgo_Tools3D.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
 
 #include <ShapeAnalysis.hxx>
 
@@ -300,7 +300,7 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     }
     TopoDS_Face F = TopoDS::Face(aRefShape);
     gp_Pnt2d aP2d;
-    GEOMAlgo_Tools3D::PntInFace(F, aPnt, aP2d);
+    GEOMAlgo_AlgoTools::PntInFace(F, aPnt, aP2d);
   }
   else if (aType == POINT_LINES_INTERSECTION) {
     Handle(GEOM_Function) aRef1 = aPI.GetLine1();

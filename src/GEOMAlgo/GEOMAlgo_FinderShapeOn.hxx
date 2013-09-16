@@ -30,17 +30,22 @@
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
+#include <Standard_Boolean.hxx>
+
 #include <Handle_Geom_Surface.hxx>
+#include <Geom_Surface.hxx>
+
 #include <TopAbs_ShapeEnum.hxx>
-#include <GEOMAlgo_State.hxx>
+
 #include <TopoDS_Shape.hxx>
+
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
-#include <Standard_Boolean.hxx>
+
+
+#include <GEOMAlgo_State.hxx>
 #include <GEOMAlgo_ShapeAlgo.hxx>
-#include <Geom_Surface.hxx>
-#include <TopoDS_Shape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn

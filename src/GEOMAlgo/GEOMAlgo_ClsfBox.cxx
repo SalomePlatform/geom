@@ -27,21 +27,25 @@
 //
 #include <GEOMAlgo_ClsfBox.hxx>
 
-#include <GeomAbs_SurfaceType.hxx>
-#include <GEOMAlgo_SurfaceTools.hxx>
-#include <TopAbs_ShapeEnum.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TopExp.hxx>
-#include <TopoDS_Face.hxx>
-#include <TopoDS.hxx>
-#include <Geom_Surface.hxx>
-#include <BRep_Tool.hxx>
-#include <Geom_Plane.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Dir.hxx>
 #include <gp_Pln.hxx>
 #include <gp_Ax3.hxx>
+
+#include <GeomAbs_SurfaceType.hxx>
+#include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
+#include <TopAbs_ShapeEnum.hxx>
+
+#include <TopoDS_Face.hxx>
+#include <TopoDS.hxx>
+
+#include <BRep_Tool.hxx>
+
+#include <TopExp.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
+#include <GEOMAlgo_SurfaceTools.hxx>
 
 IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)

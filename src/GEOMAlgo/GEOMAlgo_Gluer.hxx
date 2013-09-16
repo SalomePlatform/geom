@@ -31,21 +31,26 @@
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
+
 #include <Standard_Boolean.hxx>
 #include <Standard_Real.hxx>
-#include <TopTools_DataMapOfShapeListOfShape.hxx>
-#include <TopTools_DataMapOfShapeShape.hxx>
 #include <Standard_Integer.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <GEOMAlgo_ShapeAlgo.hxx>
+
 #include <TopAbs_ShapeEnum.hxx>
+
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <TopTools_MapOfShape.hxx>
 #include <TopoDS_Compound.hxx>
+
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_DataMapOfShapeListOfShape.hxx>
+#include <TopTools_DataMapOfShapeShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+
+#include <GEOMAlgo_ShapeAlgo.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
 
 //=======================================================================
 //class    : GEOMAlgo_Gluer

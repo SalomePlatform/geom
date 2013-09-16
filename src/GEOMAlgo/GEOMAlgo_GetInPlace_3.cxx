@@ -25,7 +25,7 @@
 
 #include <GEOMAlgo_GetInPlace.hxx>
 
-#include <NMTTools_CoupleOfShape.hxx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
 
 static
   Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType1,
@@ -62,7 +62,7 @@ void GEOMAlgo_GetInPlaceIterator::Clear()
 //function : AppendPair
 //purpose  :
 //=======================================================================
-void GEOMAlgo_GetInPlaceIterator::AppendPair(const NMTTools_CoupleOfShape& theCS)
+void GEOMAlgo_GetInPlaceIterator::AppendPair(const GEOMAlgo_CoupleOfShapes& theCS)
 {
   Standard_Integer iX;
   TopAbs_ShapeEnum aType1, aType2;
@@ -114,7 +114,7 @@ void GEOMAlgo_GetInPlaceIterator::Next()
 // function: Value
 // purpose:
 //=======================================================================
-const NMTTools_CoupleOfShape& GEOMAlgo_GetInPlaceIterator::Value()const
+const GEOMAlgo_CoupleOfShapes& GEOMAlgo_GetInPlaceIterator::Value()const
 {
   return myIterator.Value();
 }

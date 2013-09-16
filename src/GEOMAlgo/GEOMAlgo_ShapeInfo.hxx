@@ -25,16 +25,18 @@
 #include <Standard_Macro.hxx>
 #include <TopAbs_ShapeEnum.hxx>
 #include <Standard_Integer.hxx>
-#include <GEOMAlgo_KindOfShape.hxx>
-#include <GEOMAlgo_KindOfName.hxx>
-#include <GEOMAlgo_KindOfBounds.hxx>
-#include <GEOMAlgo_KindOfClosed.hxx>
+
+
 #include <gp_Pnt.hxx>
 #include <gp_Dir.hxx>
 #include <gp_Ax3.hxx>
 #include <Standard_Real.hxx>
 #include <gp_Ax2.hxx>
 
+#include <GEOMAlgo_KindOfShape.hxx>
+#include <GEOMAlgo_KindOfName.hxx>
+#include <GEOMAlgo_KindOfBounds.hxx>
+#include <GEOMAlgo_KindOfClosed.hxx>
 
 
 //=======================================================================

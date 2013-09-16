@@ -37,8 +37,6 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
-#include <BooleanOperations_ShapesDataStructure.hxx>
-#include <BOPTools_DSFiller.hxx>
 
 #include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
 
@@ -86,17 +84,9 @@ void GEOMAlgo_SolidSolid::Perform()
       myErrorStatus=10;
       return;
     }
-    if(!myDSFiller->IsDone()) {
+    if(myDSFiller->ErrorStatus()) {
       myErrorStatus=11;
       return;
-    }
-    //
-    Standard_Boolean bIsNewFiller;
-    //
-    bIsNewFiller=myDSFiller->IsNewFiller();
-    if (bIsNewFiller) {
-      Prepare();
-      myDSFiller->SetNewFiller(!bIsNewFiller);
     }
     //
     myRank=2;
@@ -122,7 +112,7 @@ void GEOMAlgo_SolidSolid::BuildResult()
   GEOMAlgo_IndexedDataMapOfShapeState aMFS;
   //
   // 1. classify the faces
-  GEOMAlgo_ShellSolid::BuildResult();
+  GEOMAlgo_ShellSolid::Perform();
   //
   // 2. fill Shape-State map
   aIt.Initialize(myLSIN);
@@ -140,6 +130,7 @@ void GEOMAlgo_SolidSolid::BuildResult()
     const TopoDS_Shape& aF=aIt.Value();
     aMFS.Add(aF, TopAbs_ON);
   }
+  //
   myLSIN.Clear();
   myLSON.Clear();
   myLSOUT.Clear();

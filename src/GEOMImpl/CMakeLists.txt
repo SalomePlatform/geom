@@ -25,8 +25,6 @@ INCLUDE_DIRECTORIES(
   ${KERNEL_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/ShHealOper
-  ${PROJECT_SOURCE_DIR}/src/NMTDS	 
-  ${PROJECT_SOURCE_DIR}/src/NMTTools	 
   ${PROJECT_SOURCE_DIR}/src/GEOM	 
   ${PROJECT_SOURCE_DIR}/src/BlockFix	 
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo	 
@@ -46,7 +44,7 @@ ADD_DEFINITIONS(
 SET(_link_LIBRARIES
   ${CAS_TKFeat}
   ${PYTHON_LIBRARIES}
-  ShHealOper NMTTools GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede
+  ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede
   ${KERNEL_SALOMELocalTrace}
   )
 

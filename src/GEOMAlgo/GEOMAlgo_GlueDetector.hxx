@@ -55,11 +55,9 @@ public:
   Standard_EXPORT virtual
     void Perform() ;
 
-//modified by NIZNHY-PKV Tue Mar 13 12:23:20 2012f
   Standard_EXPORT
     const TopTools_IndexedDataMapOfShapeListOfShape& StickedShapes();
-//modified by NIZNHY-PKV Tue Mar 13 12:23:26 2012t
-//------------------------------------------------
+
 protected:
   Standard_EXPORT
     void DetectVertices() ;
@@ -81,7 +79,6 @@ protected:
     void FacePassKey(const TopoDS_Face& aF,
                      GEOMAlgo_PassKeyShape& aPK) ;
 
-  //modified by NIZNHY-PKV Tue Mar 13 09:53:03 2012f
   Standard_EXPORT
     void CheckDetected();
   //
@@ -94,7 +91,6 @@ protected:
 
  protected:
   TopTools_IndexedDataMapOfShapeListOfShape myStickedShapes;
-  //modified by NIZNHY-PKV Tue Mar 13 09:53:08 2012t
 
 };
 #endif
