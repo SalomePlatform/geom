@@ -21,19 +21,10 @@
 //
 
 //  File   : GEOM_version.h
-//  Author : Vadim SANDLER
-//  Module : SALOME
+//  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
 #if !defined(__GEOM_VERSION_H__)
 #define __GEOM_VERSION_H__
-
-/*
-  GEOM_VERSION is (major << 16) + (minor << 8) + patch.
-*/
-
-/* #define GEOM_VERSION_STR "@VERSION@" */
-/* #define GEOM_VERSION     @XVERSION@ */
-/* #define GEOM_DEVELOPMENT @VERSION_DEV@ */
 
 /*!
   Specify version of SALOME GEOM module, as follows
