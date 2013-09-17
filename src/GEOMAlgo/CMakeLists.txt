@@ -33,7 +33,7 @@ ADD_DEFINITIONS(
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_KERNEL} ${CAS_TKBool} ${CAS_BO} ${CAS_TKMesh}
+  ${CAS_KERNEL} ${CAS_TKBool} ${CAS_TKBO} ${CAS_TKMesh}
   ${KERNEL_SALOMELocalTrace}
   )
 

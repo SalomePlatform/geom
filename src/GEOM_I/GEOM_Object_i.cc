@@ -377,7 +377,7 @@ GEOM::ListOfGO* GEOM_Object_i::GetDependency()
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(aSeq->Value(i));
     if (anObj.IsNull()) continue;
     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    GEOM::GEOM_Object_var obj = _engine->GetObject(anObj->GetDocID(), anEntry.ToCString());
+    GEOM::GEOM_Object_var obj = _engine->GetObject(anObj->GetDocID(), (char*) anEntry.ToCString());
     aList[i-1] = obj;
   }
 

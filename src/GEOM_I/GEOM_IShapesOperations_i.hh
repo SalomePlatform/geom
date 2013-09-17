@@ -23,6 +23,7 @@
 #ifndef _GEOM_IShapesOperations_i_HeaderFile
 #define _GEOM_IShapesOperations_i_HeaderFile
 
+#include "GEOM_GEOM_I.hxx"
 #include "GEOMImpl_Gen.hxx"
 
 #include <SALOMEconfig.h>

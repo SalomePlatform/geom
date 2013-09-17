@@ -23,6 +23,7 @@
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -34,7 +35,8 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   ${CAS_KERNEL}
-  ${CAS_TKOffset} ${CAS_TKBool} ${CAS_BO}
+  ${CAS_TKOffset} ${CAS_TKBool} ${CAS_TKBO}
+  ${CAS_TKShHealing}
   ${KERNEL_SALOMELocalTrace}
   )
 

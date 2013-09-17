@@ -23,6 +23,7 @@
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIR}
   )
 
 # additional preprocessor / compiler flags

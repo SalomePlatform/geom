@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
@@ -34,6 +35,9 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   ${CAS_TKBRep} ${CAS_TKShHealing} ${CAS_TKMesh}
+  ${CAS_TKTopAlgo}
+  ${CAS_TKG2d}
+  ${CAS_TKG3d}
   ${KERNEL_SALOMELocalTrace}
   )
 

@@ -140,7 +140,7 @@ GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObjec
   if (theObject.IsNull()) return GO._retn();
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  GO = _engine->GetObject(theObject->GetDocID(), anEntry.ToCString());
+  GO = _engine->GetObject(theObject->GetDocID(), (char*) anEntry.ToCString());
   return GO._retn();
 }
 

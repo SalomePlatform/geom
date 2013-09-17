@@ -23,6 +23,7 @@
 #ifndef _GEOMUtils_HXX_
 #define _GEOMUtils_HXX_
 
+#include <Standard_Macro.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 

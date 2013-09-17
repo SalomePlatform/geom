@@ -28,7 +28,7 @@
 #define _GEOM_GEOMImpl_HXX_
 
 #ifdef WNT
- #if defined GEOMIMPL_EXPORTS || defined GEOMimpl_EXPORTS
+ #if defined GEOMIMPL_EXPORTS || defined GEOMImpl_EXPORTS
   #if defined WIN32
    #define GEOMIMPL_EXPORT __declspec( dllexport )
   #else

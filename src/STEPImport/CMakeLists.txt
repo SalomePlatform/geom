@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   )
 
@@ -33,6 +34,8 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   ${CAS_TKSTEP} ${CAS_TKCAF}
+  ${CAS_TKLCAF}
+  ${CAS_TKSTEPBase}
   ${KERNEL_SALOMELocalTrace}
   )
 

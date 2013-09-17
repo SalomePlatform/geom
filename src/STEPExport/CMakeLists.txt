@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   )
 

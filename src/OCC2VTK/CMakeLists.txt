@@ -37,7 +37,8 @@ SET(_link_LIBRARIES
   vtkFiltersCore
   ${CAS_KERNEL} 
   ${CAS_TKMesh} ${CAS_TKTopAlgo}
-  ${KERNEL_SALOMELocalTrace}
+  ${CAS_MODELER}
+  ${KERNEL_SALOMELocalTrace}   
   )
 
 # --- headers ---

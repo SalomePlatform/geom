@@ -23,6 +23,7 @@
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIR}
   )
 
 # additional preprocessor / compiler flags
@@ -34,6 +35,8 @@ ADD_DEFINITIONS(
 SET(_link_LIBRARIES
   ${CAS_KERNEL} 
   ${CAS_TKGeomAlgo} ${CAS_TKTopAlgo}
+  ${CAS_TKBRep}
+  ${CAS_TKG2d}
   ${KERNEL_SALOMELocalTrace}
   )
 

@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/ShHealOper
@@ -43,6 +44,7 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   ${CAS_TKFeat}
+  ${CAS_TKFillet}
   ${PYTHON_LIBRARIES}
   ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede
   ${KERNEL_SALOMELocalTrace}

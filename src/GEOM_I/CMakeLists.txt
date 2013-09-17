@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${OMNIORB_INCLUDE_DIR}
+  ${PTHREAD_INCLUDE_DIR}
   ${CAS_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
@@ -37,6 +38,7 @@ ADD_DEFINITIONS(
   ${CAS_DEFINITIONS}
   ${OMNIORB_DEFINITIONS}
   )
+
 
 # libraries to link to
 SET(_link_LIBRARIES

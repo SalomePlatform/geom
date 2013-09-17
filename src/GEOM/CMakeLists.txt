@@ -22,6 +22,7 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -35,6 +36,9 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   ${CAS_OCAFVIS}
+  ${CAS_TKLCAF}
+  ${CAS_TKCDF}
+  ${CAS_TKG3d}
   ${KERNEL_SALOMELocalTrace}
   GEOMSketcher
   )
