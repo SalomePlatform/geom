@@ -81,8 +81,10 @@ ELSE(WINDOWS)
 
   export PYTHONPATH=${OMNIORB_ROOT_DIR}/lib:\${PYTHONPATH}
   export PYTHONPATH=${OMNIORB_ROOT_DIR}/lib/${_pydir}/site-packages:\${PYTHONPATH}
+  export PYTHONPATH=${OMNIORB_ROOT_DIR}/lib64/${_pydir}/site-packages:\${PYTHONPATH}
   export PYTHONPATH=${OMNIORBPY_ROOT_DIR}/lib:\${PYTHONPATH}
   export PYTHONPATH=${OMNIORBPY_ROOT_DIR}/lib/${_pydir}/site-packages:\${PYTHONPATH}
+  export PYTHONPATH=${OMNIORBPY_ROOT_DIR}/lib64/${_pydir}/site-packages:\${PYTHONPATH}
   export LD_LIBRARY_PATH=${OMNIORB_ROOT_DIR}/lib:\${LD_LIBRARY_PATH}
   export PYTHONPATH=${SETUPTOOLS_ROOT_DIR}/lib/${_pydir}/site-packages:\${PYTHONPATH}
   export PYTHONPATH=${DOCUTILS_ROOT_DIR}/lib/${_pydir}/site-packages:\${PYTHONPATH}
