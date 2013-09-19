@@ -69,7 +69,7 @@
         <component-username>Geometry</component-username>
         <component-type>Geom</component-type>
         <component-author>NRI</component-author>
-        <component-version>@VERSION@</component-version>
+        <component-version>@SALOMEGEOM_VERSION@</component-version>
         <component-comment>Geometry component</component-comment>
         <component-multistudy>1</component-multistudy>
         <component-icone>ModuleGeom.png</component-icone>
@@ -642,7 +642,7 @@
             <component-username>GEOM_Superv</component-username>
             <component-type>OTHER</component-type>
             <component-author></component-author>
-            <component-version>@VERSION@</component-version>
+            <component-version>@SALOMEGEOM_VERSION@</component-version>
             <component-comment>Supervision wrapper for Geometry component</component-comment>
             <component-multistudy>1</component-multistudy>
             <component-impltype>1</component-impltype>
