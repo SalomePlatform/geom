@@ -99,6 +99,7 @@ QT4_WRAP_UI(_uic_HEADERS ${_uic_files})
 QT4_WRAP_CPP(_moc_SOURCES ${_moc_HEADERS})
 
 SET(AdvancedGUI_SOURCES
+  AdvancedGUI.cxx
   AdvancedGUI_PipeTShapeDlg.cxx
   AdvancedGUI_DividedDiskDlg.cxx
   AdvancedGUI_DividedCylinderDlg.cxx
