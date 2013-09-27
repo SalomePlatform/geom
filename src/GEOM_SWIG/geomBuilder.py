@@ -696,8 +696,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.MeasuOp  = self.GetIMeasureOperations  (self.myStudyId)
             self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
-            #self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
-            self.AdvOp    = self.GetPluginOperations (self.myStudyId, "AdvancedEngine")
+
+            # The below line is a right way to map all plugin functions to geomBuilder,
+            # but AdvancedOperations are already mapped, that is why this line is commented
+            # and presents here only as an axample
+            #self.AdvOp    = self.GetPluginOperations (self.myStudyId, "AdvancedEngine")
+
+            # self.AdvOp is used by functions MakePipeTShape*, MakeDividedDisk, etc.
+            self.AdvOp = GEOM._objref_GEOM_Gen.GetPluginOperations (self, self.myStudyId, "AdvancedEngine")
+
             # set GEOM as root in the use case tree
             self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
             self.myUseCaseBuilder.SetRootCurrent()
