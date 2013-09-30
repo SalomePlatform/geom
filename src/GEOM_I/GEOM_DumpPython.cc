@@ -107,7 +107,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
     CORBA::String_var IOR = aValue->GetIOR();
     if(strlen(IOR.in()) > 0) {
       CORBA::Object_var obj = _orb->string_to_object(IOR);
-      GEOM::GEOM_Object_var GO = GEOM::GEOM_Object::_narrow(obj);
+      GEOM::GEOM_BaseObject_var GO = GEOM::GEOM_BaseObject::_narrow(obj);
       if(!CORBA::is_nil(GO)) {
         CORBA::String_var aName       = aValue->GetName();
         CORBA::String_var anEntry     = GO->GetEntry();
@@ -185,7 +185,6 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
     }
 
     TCollection_AsciiString aDirScript, aNodeName, aNodeEntry, aFatherName, aFatherEntry;
-    aDirScript += "\n\t### Folders and it's content\n";
     Resource_DataMapOfAsciiStringAsciiString aNameToEntry;
     SALOMEDS::UseCaseBuilder_var useCaseBuilder = aStudy->GetUseCaseBuilder();
     SALOMEDS::UseCaseIterator_var Itr = useCaseBuilder->GetUseCaseIterator(aSO);
@@ -237,8 +236,11 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	aDirScript += ")\n";
       }
     }
-    aScript += aDirScript;
-  
+    if ( !aDirScript.IsEmpty() )
+    {
+      aScript += "\n\t### Folders and it's content\n";
+      aScript += aDirScript;
+    }
     //Output the script that sets up the visual parameters.
     char* script = aStudy->GetDefaultScript(ComponentDataType(), "\t");
     if (script && strlen(script) > 0) {

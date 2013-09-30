@@ -192,6 +192,7 @@
 
 ##   @}
 ##   @defgroup l2_measure       Using measurement tools
+##   @defgroup l2_field         Field on Geometry
 
 ## @}
 
@@ -589,6 +590,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
               self.BlocksOp = None
               self.GroupOp  = None
               self.AdvOp    = None
+              self.FieldOp  = None
             pass
 
         ## Process object publication in the study, as follows:
@@ -632,6 +634,22 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     pass
                 return _name
             # ---
+            def _publish( _name, _obj ):
+                fatherObj = None
+                if isinstance( _obj, GEOM._objref_GEOM_Field ):
+                    fatherObj = _obj.GetShape()
+                elif isinstance( _obj, GEOM._objref_GEOM_FieldStep ):
+                    fatherObj = _obj.GetField()
+                elif not _obj.IsMainShape():
+                    fatherObj = _obj.GetMainShape()
+                    pass
+                if fatherObj and fatherObj.GetStudyEntry():
+                    self.addToStudyInFather(fatherObj, _obj, _name)
+                else:
+                    self.addToStudy(_obj, _name)
+                    pass
+                return
+            # ---
             if not theObj:
                 return # null object
             if not theName and not self.myMaxNbSubShapesAllowed:
@@ -644,27 +662,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 idx = 0
                 for obj in theObj:
                     if not obj: continue # bad object
-                    ###if obj.GetStudyEntry(): continue # already published
                     name = _item_name(theName, theDefaultName, idx)
-                    if obj.IsMainShape() or not obj.GetMainShape().GetStudyEntry():
-                        self.addToStudy(obj, name) # "%s_%d"%(aName, idx)
-                    else:
-                        self.addToStudyInFather(obj.GetMainShape(), obj, name) # "%s_%d"%(aName, idx)
-                        pass
+                    _publish( name, obj )
                     idx = idx+1
                     if not theName and idx == self.myMaxNbSubShapesAllowed: break
                     pass
                 pass
             else:
                 # single object is published
-                ###if theObj.GetStudyEntry(): return # already published
                 name = _item_name(theName, theDefaultName)
-                if theObj.IsMainShape():
-                    self.addToStudy(theObj, name)
-                else:
-                    self.addToStudyInFather(theObj.GetMainShape(), theObj, name)
-                    pass
-                pass
+                _publish( name, theObj )
             pass
 
         ## @addtogroup l1_geomBuilder_auxiliary
@@ -696,6 +703,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.MeasuOp  = self.GetIMeasureOperations  (self.myStudyId)
             self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
+            self.FieldOp  = self.GetIFieldOperations    (self.myStudyId)
 
             # The below line is a right way to map all plugin functions to geomBuilder,
             # but AdvancedOperations are already mapped, that is why this line is commented
@@ -2245,7 +2253,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theParamMin the minimal value of the parameter.
         #  @param theParamMax the maximum value of the parameter.
         #  @param theParamStep the number of steps if theNewMethod = True, else step value of the parameter.
-        #  @param theCurveType the type of the curve.
+        #  @param theCurveType the type of the curve,
+        #         one of GEOM.Polyline, GEOM.Bezier, GEOM.Interpolation.
         #  @param theNewMethod flag for switching to the new method if the flag is set to false a deprecated method is used which can lead to a bug.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -2266,7 +2275,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theParamMin the minimal value of the parameter.
                 theParamMax the maximum value of the parameter.
                 theParamStep the number of steps if theNewMethod = True, else step value of the parameter.
-                theCurveType the type of the curve.
+                theCurveType the type of the curve,
+                             one of GEOM.Polyline, GEOM.Bezier, GEOM.Interpolation.
                 theNewMethod flag for switching to the new method if the flag is set to false a deprecated
                              method is used which can lead to a bug.
                 theName Object name; when specified, this parameter is used
@@ -12464,9 +12474,209 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.MoveListToFolder(ListOfSO, Folder)
             pass
 
+        ## @addtogroup l2_field
+        ## @{
+
+        ## Creates a field
+        #  @param shape the shape the field lies on
+        #  @param name the field name
+        #  @param type type of field data: 0 - bool, 1 - int, 2 - double, 3 - string
+        #  @param dimension dimension of the shape the field lies on
+        #         0 - VERTEX, 1 - EDGE, 2 - FACE, 3 - SOLID, -1 - whole shape
+        #  @param componentNames names of components
+        #  @return a created field
+        def CreateField(self, shape, name, type, dimension, componentNames):
+            """
+            Creates a field
+
+            Parameters:
+                shape the shape the field lies on
+                name  the field name
+                type  type of field data
+                dimension dimension of the shape the field lies on
+                          0 - VERTEX, 1 - EDGE, 2 - FACE, 3 - SOLID, -1 - whole shape
+                componentNames names of components
+            
+            Returns:
+                a created field
+            """
+            if isinstance( type, int ):
+                if type < 0 or type > 3:
+                    raise RuntimeError, "CreateField : Error: data type must be within [0-3] range"
+                type = [GEOM.FDT_Bool,GEOM.FDT_Int,GEOM.FDT_Double,GEOM.FDT_String][type]
+
+            f = self.FieldOp.CreateField( shape, name, type, dimension, componentNames)
+            RaiseIfFailed("CreateField", self.FieldOp)
+            global geom
+            geom._autoPublish( f, "", name)
+            return f
+
+        ## Removes a field from the GEOM component
+        #  @param field the field to remove
+        def RemoveField(self, field):
+            "Removes a field from the GEOM component"
+            global geom
+            if isinstance( field, GEOM._objref_GEOM_Field ):
+                geom.RemoveObject( field )
+            elif isinstance( field, geomField ):
+                geom.RemoveObject( field.field )
+            else:
+                raise RuntimeError, "RemoveField() : the object is not a field"
+            return
+
+        ## Returns number of fields on a shape
+        def CountFields(self, shape):
+            "Returns number of fields on a shape"
+            nb = self.FieldOp.CountFields( shape )
+            RaiseIfFailed("CountFields", self.FieldOp)
+            return nb
+
+        ## Returns all fields on a shape
+        def GetFields(self, shape):
+            "Returns all fields on a shape"
+            ff = self.FieldOp.GetFields( shape )
+            RaiseIfFailed("GetFields", self.FieldOp)
+            return ff
+
+        ## Returns a field on a shape by its name
+        def GetField(self, shape, name):
+            "Returns a field on a shape by its name"
+            f = self.FieldOp.GetField( shape, name )
+            RaiseIfFailed("GetField", self.FieldOp)
+            return f
+
+        # end of l2_field
+        ## @}
+
+
 import omniORB
 # Register the new proxy for GEOM_Gen
 omniORB.registerObjref(GEOM._objref_GEOM_Gen._NP_RepositoryId, geomBuilder)
+
+
+## Field on Geometry
+#  @ingroup l2_field
+class geomField( GEOM._objref_GEOM_Field ):
+
+    def __init__(self):
+        GEOM._objref_GEOM_Field.__init__(self)
+        self.field = GEOM._objref_GEOM_Field
+        return
+
+    ## Returns the shape the field lies on
+    def getShape(self):
+        "Returns the shape the field lies on"
+        return self.field.GetShape(self)
+
+    ## Returns the field name
+    def getName(self):
+        "Returns the field name"
+        return self.field.GetName(self)
+
+    ## Returns type of field data as integer [0-3]
+    def getType(self):
+        "Returns type of field data"
+        return self.field.GetDataType(self)._v
+
+    ## Returns type of field data:
+    #  one of GEOM.FDT_Bool, GEOM.FDT_Int, GEOM.FDT_Double, GEOM.FDT_String
+    def getTypeEnum(self):
+        "Returns type of field data"
+        return self.field.GetDataType(self)
+
+    ## Returns dimension of the shape the field lies on:
+    #  0 - VERTEX, 1 - EDGE, 2 - FACE, 3 - SOLID, -1 - whole shape
+    def getDimension(self):
+        """Returns dimension of the shape the field lies on:
+        0 - VERTEX, 1 - EDGE, 2 - FACE, 3 - SOLID, -1 - whole shape"""
+        return self.field.GetDimension(self)
+
+    ## Returns names of components
+    def getComponents(self):
+        "Returns names of components"
+        return self.field.GetComponents(self)
+
+    ## Adds a time step to the field
+    #  @param step the time step number futher used as the step identifier
+    #  @param stamp the time step time
+    #  @param values the values of the time step
+    def addStep(self, step, stamp, values):
+        "Adds a time step to the field"
+        stp = self.field.AddStep( self, step, stamp )
+        if not stp:
+            raise RuntimeError, \
+                  "Field.addStep() : Error: step %s already exists in this field"%step
+        global geom
+        geom._autoPublish( stp, "", "Step %s, %s"%(step,stamp))
+        self.setValues( step, values )
+        return stp
+
+    ## Remove a time step from the field
+    def removeStep(self,step):
+        "Remove a time step from the field"
+        self.field.RemoveStep( self, step )
+        return
+
+    ## Returns number of time steps in the field
+    def countSteps(self):
+        "Returns number of time steps in the field"
+        return self.field.CountSteps(self)
+
+    ## Returns a list of time step IDs in the field
+    def getSteps(self):
+        "Returns a list of time step IDs in the field"
+        return self.field.GetSteps(self)
+
+    ## Returns a time step by its ID
+    def getStep(self,step):
+        "Returns a time step by its ID"
+        stp = self.field.GetStep(self, step)
+        if not stp:
+            raise RuntimeError, "Step %s is missing from this field"%step
+        return stp
+
+    ## Returns the time of the field step
+    def getStamp(self,step):
+        "Returns the time of the field step"
+        return self.getStep(step).GetStamp()
+
+    ## Changes the time of the field step
+    def setStamp(self, step, stamp):
+        "Changes the time of the field step"
+        return self.getStep(step).SetStamp(stamp)
+
+    ## Returns values of the field step
+    def getValues(self, step):
+        "Returns values of the field step"
+        return self.getStep(step).GetValues()
+
+    ## Changes values of the field step
+    def setValues(self, step, values):
+        "Changes values of the field step"
+        stp = self.getStep(step)
+        errBeg = "Field.setValues(values) : Error: "
+        try:
+            ok = stp.SetValues( values )
+        except Exception, e:
+            excStr = str(e)
+            if excStr.find("WrongPythonType") > 0:
+                raise RuntimeError, errBeg +\
+                      "wrong type of values, %s values are expected"%str(self.getTypeEnum())[4:]
+            raise RuntimeError, errBeg + str(e)
+        if not ok:
+            nbOK = self.field.GetArraySize(self)
+            nbKO = len(values)
+            if nbOK != nbKO:
+                raise RuntimeError, errBeg + "len(values) must be %s but not %s"%(nbOK,nbKO)
+            else:
+                raise RuntimeError, errBeg + "failed"
+        return
+
+    pass # end of class geomField
+
+# Register the new proxy for GEOM_Field
+omniORB.registerObjref(GEOM._objref_GEOM_Field._NP_RepositoryId, geomField)
+
 
 ## Create a new geomBuilder instance.The geomBuilder class provides the Python
 #  interface to GEOM operations.

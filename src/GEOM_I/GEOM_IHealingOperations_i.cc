@@ -91,12 +91,9 @@ Handle(TColStd_HArray1OfExtendedString) GEOM_IHealingOperations_i::Convert
   if ( n <= 0 )
     return anOutArray;
   anOutArray = new TColStd_HArray1OfExtendedString( 1, n );
-  char* str;
   for ( int i = 0; i < n; i++ )
-  {
-    str = CORBA::string_dup( theInArray[i] );
-    anOutArray->SetValue( i+1, TCollection_ExtendedString( str ) );
-  }
+    anOutArray->SetValue( i+1, TCollection_ExtendedString( theInArray[i].in() ) );
+
   return anOutArray;
 }
 

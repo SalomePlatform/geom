@@ -23,31 +23,21 @@
 #ifndef _GEOM_Object_i_HeaderFile
 #define _GEOM_Object_i_HeaderFile
 
-#include "GEOM_GEOM_I.hxx"
-
 #include "GEOMImpl_Gen.hxx"
+#include "GEOM_BaseObject_i.hh"
+#include "GEOM_Object.hxx"
 
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(SALOMEDS)
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
-#include "SALOME_GenericObj_i.hh"
-
-#include "GEOM_Object.hxx"
-
 #include <TopoDS_Shape.hxx>
 
-class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual SALOME::GenericObj_i
+class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public virtual GEOM_BaseObject_i
 {
  public:
    GEOM_Object_i(PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine, Handle(GEOM_Object) theImpl);
    ~GEOM_Object_i();
-
-  virtual char* GetEntry();
-
-  virtual CORBA::Long GetStudyID();
-
-  virtual CORBA::Long GetType();
 
   virtual GEOM::shape_type GetShapeType();
 
@@ -56,10 +46,6 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
   virtual GEOM::shape_type GetMinShapeType();
 
   virtual GEOM::shape_type GetMaxShapeType();
-
-  virtual void SetName(const char* theName);
-
-  virtual char* GetName();
 
   virtual void SetColor(const SALOMEDS::Color& theColor);
 
@@ -79,14 +65,6 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual CORBA::Long GetMarkerTexture();
 
-  virtual void SetStudyEntry(const char* theEntry);
-
-  virtual char* GetStudyEntry();
-
-  virtual GEOM::ListOfGO* GetDependency();
-
-  virtual GEOM::ListOfGO* GetLastDependency();
-
   virtual SALOMEDS::TMPFile* GetShapeStream();
 
   virtual CORBA::LongLong getShape();
@@ -101,17 +79,10 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual bool IsShape();
 
-  virtual void SetParameters(const char* theParameters);
-
-  virtual char* GetParameters();
-
-  virtual GEOM::CreationInformation* GetCreationInformation();
-
   Handle(GEOM_Object) GetImpl() { return _impl; }
 
  private:
 
-  GEOM::GEOM_Gen_var _engine;
   Handle(GEOM_Object) _impl;
   TopoDS_Shape _geom;
 };

@@ -198,7 +198,7 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
     return false;
 
   // collect all GEOM objects being deleted
-  QMap<QString, GEOM::GEOM_Object_var> gobjects;
+  QMap<QString, GEOM::GEOM_BaseObject_var> gobjects;
   QMap<QString, QString>::ConstIterator oit;
   std::list<_PTR(SObject)> aSelectedSO;
   for ( oit = objects.begin(); oit != objects.end(); ++oit ) {
@@ -207,7 +207,7 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
       continue;
     aSelectedSO.push_back(so);
     CORBA::Object_var corbaObj_rem = GeometryGUI::ClientSObjectToObject( so );
-    GEOM::GEOM_Object_var geomObj_rem = GEOM::GEOM_Object::_narrow( corbaObj_rem );
+    GEOM::GEOM_BaseObject_var geomObj_rem = GEOM::GEOM_BaseObject::_narrow( corbaObj_rem );
     if( CORBA::is_nil( geomObj_rem ) )
       continue;
     gobjects.insert( oit.key(), geomObj_rem );
@@ -238,14 +238,14 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
     if( CORBA::is_nil( geomObj ) )
       continue;
 
-    GEOM::ListOfGO_var list = geomObj->GetDependency();
+    GEOM::ListOfGBO_var list = geomObj->GetDependency();
     if( list->length() == 0 )
       continue;
 
     for( int i = 0; i < list->length(); i++ ) {
       bool depends = false;
       bool deleted = false;
-      QMap<QString, GEOM::GEOM_Object_var>::Iterator git;
+      QMap<QString, GEOM::GEOM_BaseObject_var>::Iterator git;
       for ( git = gobjects.begin(); git != gobjects.end() && ( !depends || !deleted ); ++git ) {
         depends = depends || list[i]->_is_equivalent( *git );
         deleted = deleted || git.key() == child->GetID().c_str() ;//geomObj->_is_equivalent( *git );
@@ -262,8 +262,8 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
 // purpose  : Get direct (1-level) GEOM objects under each folder, sub-folder, etc. and these folders itself
 //=======================================================================
 static void getGeomChildrenAndFolders( _PTR(SObject) theSO, 
-				       QMap<QString,QString>& geomObjList, 
-				       QMap<QString,QString>& folderList ) {
+                                       QMap<QString,QString>& geomObjList, 
+                                       QMap<QString,QString>& folderList ) {
   if ( !theSO ) return;
   _PTR(Study) aStudy = theSO->GetStudy();
   if ( !aStudy ) return;

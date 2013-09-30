@@ -644,6 +644,22 @@
             <translation>tree_group_solid.png</translation>
         </message>
         <message>
+            <source>ICON_OBJBROWSER_FIELD_EDGE</source>
+            <translation>tree_field_edge.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_FIELD_FACE</source>
+            <translation>tree_field_face.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_FIELD_PNT</source>
+            <translation>tree_field_vertex.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_FIELD_SOLID</source>
+            <translation>tree_field_solid.png</translation>
+        </message>
+        <message>
             <source>ICON_OBJBROWSER_Geometry</source>
             <translation>geometry.png</translation>
         </message>

@@ -182,6 +182,10 @@ SET( _res_files
   tree_group_edge.png
   tree_group_face.png
   tree_group_solid.png
+  tree_field_vertex.png
+  tree_field_edge.png
+  tree_field_face.png
+  tree_field_solid.png
   tree_lcs.png
   vector.png
   vector_mode.png

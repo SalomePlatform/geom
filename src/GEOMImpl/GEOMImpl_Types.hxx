@@ -106,6 +106,9 @@
 #define GEOM_FILLET_2D 50
 #define GEOM_FILLET_1D 51
 
+#define GEOM_FIELD      52  // == GEOM_FIELD_OBJTYPE constant
+#define GEOM_FIELD_STEP 53  // == GEOM_FIELD_STEP_OBJTYPE constant
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1

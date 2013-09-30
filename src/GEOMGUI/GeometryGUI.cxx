@@ -1968,7 +1968,7 @@ void GeometryGUI::updateCreationInfo()
   //   return;
 
   // look for a sole selected GEOM_Object
-  GEOM::GEOM_Object_var geomObj;
+  GEOM::GEOM_BaseObject_var geomObj;
 
   SALOME_ListIO selected;
   getApp()->selectionMgr()->selectedObjects( selected );
@@ -1981,8 +1981,8 @@ void GeometryGUI::updateCreationInfo()
     if ( !io->hasEntry() ) continue;
     _PTR(SObject) sobj = study->FindObjectID( io->getEntry() );
     if ( !sobj ) continue;
-    CORBA::Object_var      obj = GeometryGUI::ClientSObjectToObject( sobj );
-    GEOM::GEOM_Object_var gobj = GEOM::GEOM_Object::_narrow( obj );
+    CORBA::Object_var          obj = GeometryGUI::ClientSObjectToObject( sobj );
+    GEOM::GEOM_BaseObject_var gobj = GEOM::GEOM_BaseObject::_narrow( obj );
     if ( !gobj->_is_nil() )
     {
       if ( !geomObj->_is_nil() )

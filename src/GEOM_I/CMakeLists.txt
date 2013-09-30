@@ -75,7 +75,9 @@ SET(GEOMEngine_HEADERS
 # --- sources ---
 
 SET(GEOMEngine_SOURCES
+  GEOM_BaseObject_i.cc
   GEOM_Object_i.cc
+  GEOM_Field_i.cc
   GEOM_IOperations_i.cc
   GEOM_IBasicOperations_i.cc
   GEOM_IHealingOperations_i.cc
@@ -89,6 +91,7 @@ SET(GEOMEngine_SOURCES
   GEOM_ITransformOperations_i.cc
   GEOM_IMeasureOperations_i.cc
   GEOM_IGroupOperations_i.cc
+  GEOM_IFieldOperations_i.cc
   GEOM_Gen_i.cc
   GEOM_DumpPython.cc
   )

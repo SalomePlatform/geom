@@ -53,6 +53,7 @@ SET(GEOM_HEADERS
   GEOM_Engine.hxx
   GEOM_Function.hxx
   GEOM_Object.hxx
+  GEOM_Field.hxx
   GEOM_BaseDriver.hxx
   GEOM_SubShapeDriver.hxx
   GEOM_IOperations.hxx
@@ -71,7 +72,9 @@ SET(GEOM_SOURCES
   GEOM_Application.cxx
   GEOM_Engine.cxx
   GEOM_Function.cxx
+  GEOM_BaseObject.cxx
   GEOM_Object.cxx
+  GEOM_Field.cxx
   GEOM_IOperations.cxx
   GEOM_Solver.cxx
   GEOM_BaseDriver.cxx

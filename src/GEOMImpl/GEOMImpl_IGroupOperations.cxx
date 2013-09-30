@@ -83,7 +83,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CreateGroup
 
   if ( theShapeType != TopAbs_VERTEX && theShapeType != TopAbs_EDGE &&
        theShapeType != TopAbs_FACE && theShapeType != TopAbs_SOLID ) {
-    SetErrorCode( "Error: You could create group only next type: vertex, edge, face or solid" );
+    SetErrorCode( "Error: You could create group of only next type: vertex, edge, face or solid" );
     return NULL;
   }
 

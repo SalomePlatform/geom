@@ -41,7 +41,7 @@ namespace GEOM
     Handle(GEOM_Function) myFunction;
 
   public:
-    Standard_EXPORT TPythonDump (Handle(GEOM_Function)& theFunction, bool theAppend=false);
+    Standard_EXPORT TPythonDump (const Handle(GEOM_Function)& theFunction, bool theAppend=false);
     Standard_EXPORT virtual ~TPythonDump();
 
     //operator TCollection_AsciiString () const;
@@ -53,8 +53,10 @@ namespace GEOM
     Standard_EXPORT TPythonDump& operator<< (float theArg);
     Standard_EXPORT TPythonDump& operator<< (const void* theArg);
     Standard_EXPORT TPythonDump& operator<< (const char* theArg);
+    Standard_EXPORT TPythonDump& operator<< (const TCollection_AsciiString theArg);
     Standard_EXPORT TPythonDump& operator<< (const TopAbs_ShapeEnum theArg);
-    Standard_EXPORT TPythonDump& operator<< (const Handle(GEOM_Object)& theObject);
+    Standard_EXPORT TPythonDump& operator<< (const Handle(GEOM_BaseObject)& theObject);
+    Standard_EXPORT TPythonDump& operator<< (const GEOM_BaseObject* theObject);
   };
 
   /*! Returns an object from two given, which has the latest entry

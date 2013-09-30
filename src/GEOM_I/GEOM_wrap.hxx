@@ -38,9 +38,29 @@ namespace GEOM
   // A simple rule: use GEOM::GEOM_Object_wrap if an object is returned by a
   // GEOM operation (GEOM::GEOM_IBasicOperations etc).
   //
-  typedef SALOME::GenericObj_wrap< GEOM_Object              > GEOM_Object_wrap;
+  class GEOM_BasicObject;
+  class GEOM_Object;
+  class GEOM_Field;
+  class GEOM_FieldStep;
+  typedef SALOME::GenericObj_wrap< GEOM_BasicObject > GEOM_BaseObject_wrap;
+  typedef SALOME::GenericObj_wrap< GEOM_Object      > GEOM_Object_wrap;
+  typedef SALOME::GenericObj_wrap< GEOM_Field       > GEOM_Field_wrap;
+  typedef SALOME::GenericObj_wrap< GEOM_FieldStep   > GEOM_FieldStep_wrap;
   //
   // wrappers of operations
+  class GEOM_IBasicOperations;
+  class GEOM_ITransformOperations;
+  class GEOM_I3DPrimOperations;
+  class GEOM_IShapesOperations;
+  class GEOM_IBlocksOperations;
+  class GEOM_IBooleanOperations;
+  class GEOM_ICurvesOperations;
+  class GEOM_ILocalOperations;
+  class GEOM_IHealingOperations;
+  class GEOM_IInsertOperations;
+  class GEOM_IMeasureOperations;
+  class GEOM_IGroupOperations;
+  class GEOM_IAdvancedOperations;
   typedef SALOME::GenericObj_wrap< GEOM_IBasicOperations    > GEOM_IBasicOperations_wrap;
   typedef SALOME::GenericObj_wrap< GEOM_ITransformOperations> GEOM_ITransformOperations_wrap;
   typedef SALOME::GenericObj_wrap< GEOM_I3DPrimOperations   > GEOM_I3DPrimOperations_wrap;

@@ -134,9 +134,10 @@ void GEOM_IOperations_i::AbortOperation()
  *  GetObject
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObject)
+GEOM::GEOM_BaseObject_ptr
+GEOM_IOperations_i::GetBaseObject(Handle(GEOM_BaseObject) theObject)
 {
-  GEOM::GEOM_Object_var GO;
+  GEOM::GEOM_BaseObject_var GO;
   if (theObject.IsNull()) return GO._retn();
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
@@ -149,15 +150,35 @@ GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObjec
  *  GetObjectImpl
  */
 //=============================================================================
-Handle(GEOM_Object) GEOM_IOperations_i::GetObjectImpl(GEOM::GEOM_Object_ptr theObject)
+Handle(GEOM_BaseObject)
+GEOM_IOperations_i::GetBaseObjectImpl(GEOM::GEOM_BaseObject_ptr theObject)
 {
-  Handle(GEOM_Object) anImpl;
+  Handle(GEOM_BaseObject) anImpl;
   if (!CORBA::is_nil(theObject)) {
     CORBA::String_var anEntry = theObject->GetEntry();
-    anImpl = GetImpl()->GetEngine()->GetObject
-      (theObject->GetStudyID(), anEntry);
+    anImpl = GetImpl()->GetEngine()->GetObject( theObject->GetStudyID(), anEntry );
   }
   return anImpl;
+}
+
+//=============================================================================
+/*!
+ *  GetObject
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObject)
+{
+  return GEOM::GEOM_Object::_narrow( GetBaseObject( theObject ));
+}
+
+//=============================================================================
+/*!
+ *  GetObjectImpl
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOM_IOperations_i::GetObjectImpl(GEOM::GEOM_Object_ptr theObject)
+{
+  return Handle(GEOM_Object)::DownCast( GetBaseObjectImpl( theObject ));
 }
 
 //=============================================================================

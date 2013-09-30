@@ -66,6 +66,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_IInsertOperations.hxx
   GEOMImpl_IMeasureOperations.hxx
   GEOMImpl_IGroupOperations.hxx
+  GEOMImpl_IFieldOperations.hxx
   GEOMImpl_IGlue.hxx
   GEOMImpl_PointDriver.hxx
   GEOMImpl_IPoint.hxx
@@ -183,6 +184,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_IInsertOperations.cxx
   GEOMImpl_IMeasureOperations.cxx
   GEOMImpl_IGroupOperations.cxx
+  GEOMImpl_IFieldOperations.cxx
   GEOMImpl_Gen.cxx
   GEOMImpl_PointDriver.cxx
   GEOMImpl_VectorDriver.cxx
@@ -233,6 +235,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_HealingDriver.cxx
   GEOMImpl_FillingDriver.cxx
   GEOMImpl_GlueDriver.cxx
+  GEOMImpl_FieldDriver.cxx
   )
 
 # --- rules ---

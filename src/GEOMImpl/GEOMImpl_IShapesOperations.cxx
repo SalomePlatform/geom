@@ -1179,8 +1179,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
     Standard_Integer aStrLen = anEntry.LengthOfCString();
     char* anEntryStr = new char[aStrLen+1];
     anEntry.ToUTF8CString(anEntryStr);
-    Handle(GEOM_Object) anObj = GetEngine()->GetObject(GetDocID(), anEntryStr, false);
-    if (!anObj.IsNull()) {
+    Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(GetDocID(), anEntryStr, false);
+    if (!anObj.IsNull() && anObj->IsKind(STANDARD_TYPE(GEOM_Object))) {
       if (!theGroupsOnly || anObj->GetType() == GEOM_GROUP) {
         aSeq->Append(anObj);
 

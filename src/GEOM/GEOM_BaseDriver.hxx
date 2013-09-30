@@ -78,14 +78,15 @@ public:
   // Adds GEOM_Param to params and sets its name
   // This method is safer than resizing the params vector and accessing to its items
   Standard_EXPORT GEOM_Param& AddParam(std::vector<GEOM_Param>& params,
-                       const char*              name);
+                                       const char*              name);
 
   // Adds GEOM_Param to params vector and sets its name and value
   // This method is safer than resizing the params vector and accessing to its items
-  template <class T> Standard_EXPORT GEOM_Param& AddParam(std::vector<GEOM_Param>& params,
-                                          const char*              name,
-                                          const T&                 value,
-                                          const char*              dfltValue = 0)
+  template <class T>
+  Standard_EXPORT GEOM_Param& AddParam(std::vector<GEOM_Param>& params,
+                                       const char*              name,
+                                       const T&                 value,
+                                       const char*              dfltValue = 0)
   {
     GEOM_Param p;
     p.Set( name, value );

@@ -581,6 +581,18 @@ Handle(TColStd_HArray1OfExtendedString) GEOM_Function::GetStringArray(int thePos
 }
 
 //=======================================================================
+//function : HasData
+//purpose  : Returns true if data of given type already exists
+//=======================================================================
+
+bool GEOM_Function::HasData(int thePosition, const Standard_GUID& dataID)
+{
+  if(thePosition <= 0) return false;
+  TDF_Label anArgLabel = ARGUMENT(thePosition);
+  return anArgLabel.IsAttribute( dataID );
+}
+
+//=======================================================================
 //function : GetReferencesTreeID
 //purpose  :
 //=======================================================================
@@ -848,42 +860,5 @@ TDF_Label GEOM_Function::GetNamingEntry (const Standard_Boolean create)
   return _label.FindChild(NAMING_LABEL, create);
 }
 
-//=======================================================================
-//function :  GEOM_Function_Type_
-//purpose  :
-//=======================================================================
-Standard_EXPORT Handle_Standard_Type& GEOM_Function_Type_()
-{
-
-  static Handle_Standard_Type aType1 = STANDARD_TYPE(MMgt_TShared);
-  if (aType1.IsNull()) aType1 = STANDARD_TYPE(MMgt_TShared);
-  static Handle_Standard_Type aType2 = STANDARD_TYPE(Standard_Transient);
-  if (aType2.IsNull()) aType2 = STANDARD_TYPE(Standard_Transient);
-
-  static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,NULL};
-  static Handle_Standard_Type _aType = new Standard_Type("GEOM_Function",
-                                                         sizeof(GEOM_Function),
-                                                         1,
-                                                         (Standard_Address)_Ancestors,
-                                                         (Standard_Address)NULL);
-
-  return _aType;
-}
-
-//=======================================================================
-//function : DownCast
-//purpose  :
-//=======================================================================
-
-const Handle(GEOM_Function) Handle(GEOM_Function)::DownCast(const Handle(Standard_Transient)& AnObject)
-{
-  Handle(GEOM_Function) _anOtherObject;
-
-  if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOM_Function))) {
-       _anOtherObject = Handle(GEOM_Function)((Handle(GEOM_Function)&)AnObject);
-     }
-  }
-
-  return _anOtherObject;
-}
+IMPLEMENT_STANDARD_HANDLE (GEOM_Function, Standard_Transient);
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_Function, Standard_Transient );

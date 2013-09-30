@@ -191,6 +191,17 @@ module GEOM
   };
 
  /*!
+   * \brief Type of field data
+   */
+  enum field_data_type {
+    FDT_Bool,
+    FDT_Int,
+    FDT_Double,
+    FDT_String
+  };
+
+
+ /*!
    * \brief Object creation parameters
    *
    * Is returned by GEOM_Object::GetCreationInformation()
@@ -217,16 +228,32 @@ module GEOM
   typedef sequence<double>      ListOfDouble;
 
   interface GEOM_Object;
+  interface GEOM_BaseObject;
+  interface GEOM_Field;
+  interface GEOM_FieldStep;
 
-  typedef sequence<GEOM_Object> ListOfGO;
+  typedef sequence<GEOM_Object>       ListOfGO;
+  typedef sequence<GEOM_BaseObject>   ListOfGBO;
+  typedef sequence<GEOM_Field>        ListOfFields;
   typedef sequence<SALOMEDS::SObject> object_list;
 
-  //# GEOM_Object
+  //# GEOM_BaseObject
   /*!
-   *  \brief Interface of geometric object
+   *  \brief A common root of objects in GEOM module
    */
-  interface GEOM_Object : SALOME::GenericObj
+  interface GEOM_BaseObject : SALOME::GenericObj
   {
+    /*!
+     *  \brief Set name of the object.
+     *
+     *  \param theName is a name which will be associated with this object.
+     */
+    void SetName (in string theName);
+
+    /*!
+    *  \brief Get name of the object associated with this object.
+     */
+    string GetName();
 
     /*!
      *  \brief Get internal (unique) entry of the object in the GEOM component's data tree.
@@ -246,6 +273,67 @@ module GEOM
      */
     long GetType();
 
+    /*!
+     *  \brief Set a Study entry where this object was published.
+     */
+    void SetStudyEntry (in string theEntry);
+
+    /*!
+     *  \brief Get a Study entry where this object was published.
+     */
+    string GetStudyEntry();
+
+    /*!
+     *  \brief Get a list of all GEOM_Object on which were the arguments
+     *  when this object was constructed and modified.
+     *  \note This method is supposed to be used by GUI only.
+     */
+    ListOfGBO GetDependency();
+
+    /*!
+     *  \brief Get a list of GEOM_Object on which the last function that created or modified the object depends.
+     *  \note This method is supposed to be used by GUI only.
+     */
+    ListOfGBO GetLastDependency();
+
+    /*
+     *  \brief Return true if geom object representes a shape.
+     *
+     *  For example, method return false for GEOM_MARKER
+     */
+     boolean IsShape();
+
+    /*
+     *  \brief Return true if passed object is identical to this object
+     *
+     *  \param other object being compared with this one
+     */
+    boolean IsSame(in GEOM_BaseObject other);
+
+     /*!
+     *  Set list of parameters
+     *  \param theParameters is a string containing the notebook variables separated by ":" symbol,
+     *         used for object creation
+     */
+    void SetParameters (in string theParameters);
+
+    /*!
+     *  \brief Return list of notebook variables used for object creation separated by ":" symbol
+     */
+    string GetParameters();
+
+    /*!
+     * \brief Return name of operation and values of parameters used for object creation
+     */
+    CreationInformation GetCreationInformation();
+  };
+
+  //# GEOM_Object
+  /*!
+   *  \brief Interface of geometric object
+   */
+  interface GEOM_Object : GEOM_BaseObject
+  {
     /*!
      *  \brief Get a <VAR>shape_type</VAR> of the object value.
      */
@@ -282,18 +370,6 @@ module GEOM
      *  \sa GetShapeType(), GetTopologyType(), GetMinShapeType()
      */
     shape_type GetMaxShapeType();
-
-    /*!
-     *  \brief Set name of the object.
-     *
-     *  \param theName is a name which will be associated with this object.
-     */
-    void SetName (in string theName);
-
-    /*!
-     *  \brief Get name of the object associated with this object.
-     */
-    string GetName();
 
     /*!
      *  \brief Set color of the object.
@@ -352,29 +428,6 @@ module GEOM
     long GetMarkerTexture();
 
     /*!
-     *  \brief Set a Study entry where this object was published.
-     */
-    void SetStudyEntry (in string theEntry);
-
-    /*!
-     *  \brief Get a Study entry where this object was published.
-     */
-    string GetStudyEntry();
-
-    /*!
-     *  \brief Get a list of all GEOM_Object on which were the arguments
-     *  when this object was constructed and modified.
-     *  \note This method is supposed to be used by GUI only.
-     */
-    ListOfGO GetDependency();
-
-    /*!
-     *  \brief Get a list of GEOM_Object on which the last function that created or modified the object depends.
-     *  \note This method is supposed to be used by GUI only.
-     */
-    ListOfGO GetLastDependency();
-
-    /*!
      *  \brief Get the TopoDS_Shape, for colocated case only.
      */
     long long getShape();
@@ -405,36 +458,166 @@ module GEOM
      */
     GEOM_Object GetMainShape();
 
-    /*
-     *  \brief Return true if geom object representes a shape.
-     *
-     *  For example, method return false for GEOM_MARKER
-     */
-     boolean IsShape();
+  };
 
-    /*
-     *  \brief Return true if passed object is identical to this object
-     *
-     *  \param other object being compared with this one
+  //# GEOM_Field
+  /*!
+   *  \brief Interface of the field
+   */
+  interface GEOM_Field : GEOM_BaseObject
+  {
+    /*!
+     *  \brief Returns the shape the field lies on
      */
-    boolean IsSame(in GEOM_Object other);
-
-     /*!
-     *  Set list of parameters
-     *  \param theParameters is a string containing the notebook variables separated by ":" symbol,
-     *         used for object creation
-     */
-    void SetParameters (in string theParameters);
+    GEOM_Object GetShape();
 
     /*!
-     *  \brief Return list of notebook variables used for object creation separated by ":" symbol
+     *  \brief Returns type of field data
      */
-    string GetParameters();
+    field_data_type GetDataType();
 
     /*!
-     * \brief Return name of operation and values of parameters used for object creation
+     *  \brief Returns dimension of the shape the field lies on
+     *  0 - VERTEX, 1 - EDGE, 2 - FACE, 3 - SOLID, -1 - whole shape
      */
-    CreationInformation GetCreationInformation();
+    short GetDimension();
+
+    /*!
+     *  \brief Returns names of components
+     */
+    string_array GetComponents();
+
+    /*!
+     *  \brief Removes a component. Component number counts from one.
+     */
+    //void RemoveComponent(in long number);
+
+    /*!
+     *  \brief Adds a time step to the field
+     */
+    GEOM_FieldStep AddStep(in long stepID, in long stamp);
+
+    /*!
+     *  \brief Remove a time step from the field
+     */
+    void RemoveStep(in long stepID);
+
+    /*!
+     *  \brief Returns number of time steps in the field
+     */
+    long CountSteps();
+
+    /*!
+     *  \brief Returns a list of time step IDs in the field
+     */
+    ListOfLong GetSteps();
+
+    /*!
+     *  \brief Returns a time step by its ID
+     */
+    GEOM_FieldStep GetStep(in long stepID);
+
+    /*!
+     *  \brief Returns a size of data array that is to be passed to
+     *         GEOM_FieldStep.SetValues( dataArray ). This size depends on the
+     *         number of sub-shapes of field dimension and the number of components
+     */
+    long GetArraySize();
+  };
+
+  // # GEOM_FieldStep:
+  /*!
+   *  \brief Interface of the field time step
+   */
+  interface GEOM_FieldStep : GEOM_BaseObject
+  {
+    /*!
+     *  \brief Changes the time of the field step
+     */
+    void SetStamp(in long stamp);
+
+    /*!
+     *  \brief Returns the time of the field step
+     */
+    long GetStamp();
+
+    /*!
+     *  \brief Returns the number of the field step
+     */
+    long GetID();
+
+    /*!
+     *  \brief Returns the field the step belongs to
+     */
+    GEOM_Field GetField();
+  };
+
+  // # GEOM_BoolFieldStep:
+  /*!
+   *  \brief Interface of the boolean field time step
+   */
+  interface GEOM_BoolFieldStep : GEOM_FieldStep
+  {
+    /*!
+     *  \brief Changes values of the field step. Returns false if number of values is wrong
+     */
+    boolean SetValues(in short_array boolValues);
+
+    /*!
+     *  \brief Returns values of the field step
+     */
+    short_array GetValues();
+  };
+
+  // # GEOM_IntFieldStep:
+  /*!
+   *  \brief Interface of the integer field time step
+   */
+  interface GEOM_IntFieldStep : GEOM_FieldStep
+  {
+    /*!
+     *  \brief Changes values of the field step. Returns false if number of values is wrong
+     */
+    boolean SetValues(in ListOfLong intValues);
+
+    /*!
+     *  \brief Returns values of the field step
+     */
+    ListOfLong GetValues();
+  };
+
+  // # GEOM_DoubleFieldStep:
+  /*!
+   *  \brief Interface of the double field time step
+   */
+  interface GEOM_DoubleFieldStep : GEOM_FieldStep
+  {
+    /*!
+     *  \brief Changes values of the field step. Returns false if number of values is wrong
+     */
+    boolean SetValues(in ListOfDouble doubleValues);
+
+    /*!
+     *  \brief Returns values of the field step
+     */
+    ListOfDouble GetValues();
+  };
+
+  // # GEOM_StringFieldStep:
+  /*!
+   *  \brief Interface of the string field time step
+   */
+  interface GEOM_StringFieldStep : GEOM_FieldStep
+  {
+    /*!
+     *  \brief Changes values of the field step. Returns false if number of values is wrong
+     */
+    boolean SetValues(in string_array strValues);
+
+    /*!
+     *  \brief Returns values of the field step
+     */
+    string_array GetValues();
   };
 
   // # GEOM_IOperations:
@@ -2284,7 +2467,7 @@ module GEOM
      *  \return found sub-shape.
      */
     GEOM_Object GetSame (in GEOM_Object theShapeWhere,
-                                in GEOM_Object theShapeWhat);
+                         in GEOM_Object theShapeWhat);
 
     /*!
      *  \brief Get sub-shape Ids of theShapeWhere, which are
@@ -4442,6 +4625,41 @@ module GEOM
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };
 
+ // # GEOM_IFieldOperations:
+  /*!
+   *  \brief Interface for field operation.
+   */
+  interface GEOM_IFieldOperations : GEOM_IOperations
+  {
+    /*!
+     *  \brief Creates a field
+     */
+    GEOM_Field CreateField(in GEOM_Object     shape, 
+                           in string          name,
+                           in field_data_type type,
+                           in short           dimension,
+                           in string_array    componentNames);
+    /*!
+     *  \brief Returns number of fields on a shape
+     */
+    long CountFields(in GEOM_Object shape);
+
+    /*!
+     *  \brief Returns all fields on a shape
+     */
+    ListOfFields GetFields(in GEOM_Object shape);
+
+    /*!
+     *  \brief Returns a field on a shape by its name
+     */
+    GEOM_Field GetField(in GEOM_Object shape, in string name);
+
+    /*!
+     *  \brief Returns number of sub-shapes of given dimension
+     */
+    long GetNbSubShapes(in GEOM_Object shape, in short fieldDim);
+  };
+
  // # GEOM_Gen:
   /*!
    *  \brief Interface to access other GEOM interfaces.
@@ -4466,9 +4684,9 @@ module GEOM
      * Returns a SObject where theObject is placed
      */
     SALOMEDS::SObject AddInStudy (in SALOMEDS::Study theStudy,
-                                  in GEOM_Object theObject,
-                                  in string theName,
-                                  in GEOM_Object theFather);
+                                  in GEOM_BaseObject theObject,
+                                  in string          theName,
+                                  in GEOM_BaseObject theFather);
 
     /*!
      *  \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments
@@ -4577,6 +4795,7 @@ module GEOM
     GEOM_IMeasureOperations   GetIMeasureOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IBlocksOperations    GetIBlocksOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IGroupOperations     GetIGroupOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IFieldOperations     GetIFieldOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
 
     GEOM_IOperations GetPluginOperations (in long   theStudyID,
                                           in string theLibName) raises (SALOME::SALOME_Exception);
@@ -4588,7 +4807,7 @@ module GEOM
      *  \brief Removes the object from the GEOM component
      *  \param theObject is a GEOM_Object to be removed
      */
-    void RemoveObject (in GEOM_Object theObject);
+    void RemoveObject (in GEOM_BaseObject theObject);
 
     /*!
      *  \brief Returns an object defined by the study and its entry in the GEOM component
@@ -4596,7 +4815,7 @@ module GEOM
      *  \param theEntry is an entry of the requested GEOM_Object in the GEOM component
      *  \note if the object has not previously been created a NULL GEOM_Object is returned
      */
-    GEOM_Object GetObject (in long theStudyID, in string theEntry);
+    GEOM_BaseObject GetObject (in long theStudyID, in string theEntry);
 
     /*!
      *  \brief Add a sub-shape defined by indices in \a theIndices

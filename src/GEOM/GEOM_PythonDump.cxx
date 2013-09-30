@@ -33,7 +33,7 @@ namespace GEOM
 {
   size_t TPythonDump::myCounter = 0;
 
-  TPythonDump::TPythonDump (Handle(GEOM_Function)& theFunction, bool theAppend)
+  TPythonDump::TPythonDump (const Handle(GEOM_Function)& theFunction, bool theAppend)
   {
     myFunction = theFunction;
     myCounter++;
@@ -101,6 +101,12 @@ namespace GEOM
     return *this;
   }
 
+  TPythonDump& TPythonDump::operator<< (const TCollection_AsciiString theArg)
+  {
+    myStream<<theArg;
+    return *this;
+  }
+
   TPythonDump& TPythonDump::operator<< (const TopAbs_ShapeEnum theArg)
   {
     myStream<<"geompy.ShapeType[\"";
@@ -109,9 +115,19 @@ namespace GEOM
     return *this;
   }
 
-  TPythonDump& TPythonDump::operator<< (const Handle(GEOM_Object)& theObject)
+  TPythonDump& TPythonDump::operator<< (const Handle(GEOM_BaseObject)& theObject)
   {
     if (theObject.IsNull()) {
+      myStream << "None";
+    } else {
+      *this << theObject.operator->();
+    }
+    return *this;
+  }
+
+  TPythonDump& TPythonDump::operator<< (const GEOM_BaseObject* theObject)
+  {
+    if ( !theObject ) {
       myStream << "None";
     } else {
       TCollection_AsciiString anEntry;

@@ -27,10 +27,8 @@
 
 #include "GEOM_Gen_i.hh"
 #include "GEOM_Object_i.hh"
+#include "GEOM_Field_i.hh"
 #include "GEOM_version.h"
-
-#include <set>
-#include <sstream>
 
 #include "Utils_CorbaException.hxx"
 #include "OpUtil.hxx"
@@ -41,9 +39,10 @@
 #include "GEOM_Object.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"
-#include <GEOM_PythonDump.hxx>
+#include "GEOM_PythonDump.hxx"
 #include "GEOMImpl_Types.hxx"
 #include "GEOMImpl_CopyDriver.hxx"
+#include "GEOM_wrap.hxx"
 
 // Cascade headers
 #include <BRep_Builder.hxx>
@@ -56,12 +55,14 @@
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>
-//#include <TopTools_IndexedMapOfShape.hxx>
 #include <TopExp.hxx>
 #include <OSD.hxx>
 
 #include <SALOMEDS_Tool.hxx>
 #include <SALOMEDS_wrap.hxx>
+
+#include <set>
+#include <sstream>
 
 #ifdef WNT
  #include <windows.h>
@@ -137,7 +138,8 @@ char* GEOM_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
                                          CORBA::Boolean isMultiFile,
                                          CORBA::Boolean isASCII)
 {
-  GEOM::GEOM_Object_var anObject = GEOM::GEOM_Object::_narrow(_orb->string_to_object(IORString));
+  GEOM::GEOM_BaseObject_var anObject =
+    GEOM::GEOM_BaseObject::_narrow(_orb->string_to_object(IORString));
   if (!CORBA::is_nil(anObject)) {
     return CORBA::string_dup(anObject->GetEntry());
   }
@@ -158,13 +160,21 @@ char* GEOM_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
 {
   SALOMEDS::Study_var aStudy = theSObject->GetStudy();
 
-  Handle(GEOM_Object) anObject = _impl->GetObject(aStudy->StudyId(), const_cast<char*>(aLocalPersistentID));
-  TCollection_AsciiString anEntry;
-  TDF_Tool::Entry(anObject->GetEntry(), anEntry);
-  GEOM::GEOM_Object_var obj = GetObject(anObject->GetDocID(), anEntry.ToCString());
+  Handle(GEOM_BaseObject) anObject =
+    _impl->GetObject(aStudy->StudyId(), aLocalPersistentID);
+  if ( !anObject.IsNull() )
+  {
+    TCollection_AsciiString anEntry;
+    TDF_Tool::Entry(anObject->GetEntry(), anEntry);
+    GEOM::GEOM_BaseObject_var obj = GetObject(anObject->GetDocID(), anEntry.ToCString());
 
-  CORBA::String_var aPersRefString = _orb->object_to_string(obj);
-  return CORBA::string_dup(aPersRefString);
+    CORBA::String_var aPersRefString = _orb->object_to_string(obj);
+    return CORBA::string_dup(aPersRefString);
+  }
+  else
+  {
+    return CORBA::string_dup("");
+  }
 }
 
 //============================================================================
@@ -182,16 +192,18 @@ bool GEOM_Gen_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 // function : PublishInStudy
 // purpose  :
 //============================================================================
-SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
+SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
                                                  SALOMEDS::SObject_ptr theSObject,
-                                                 CORBA::Object_ptr theObject,
-                                                 const char* theName) throw (SALOME::SALOME_Exception)
+                                                 CORBA::Object_ptr     theObject,
+                                                 const char*           theName)
+  throw (SALOME::SALOME_Exception)
 {
   Unexpect aCatch(SALOME_SalomeException);
   SALOMEDS::SObject_var aResultSO;
   if(CORBA::is_nil(theObject) || theStudy->_is_nil()) return aResultSO;
-  GEOM::GEOM_Object_var aShape = GEOM::GEOM_Object::_narrow(theObject);
-  if(aShape->_is_nil()) return aResultSO;
+  GEOM::GEOM_BaseObject_var aBaseObj = GEOM::GEOM_BaseObject::_narrow(theObject);
+  GEOM::GEOM_Object_var       aShape = GEOM::GEOM_Object::_narrow(theObject);
+  if(aBaseObj->_is_nil()) return aResultSO;
 
   SALOMEDS::GenericAttribute_var anAttr;
   SALOMEDS::StudyBuilder_var     aStudyBuilder = theStudy->NewBuilder();
@@ -221,109 +233,132 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   } else {
     if (!theSObject->ReferencedObject(aResultSO))
       aResultSO = SALOMEDS::SObject::_duplicate(theSObject); //SRN: Added Aug 24,2004 : for  the method AddInStudy with theFather argumenet != NULL
-      //THROW_SALOME_CORBA_EXCEPTION("Publish in study supervision graph error",SALOME::BAD_PARAM);
+    //THROW_SALOME_CORBA_EXCEPTION("Publish in study supervision graph error",SALOME::BAD_PARAM);
   }
   CORBA::String_var aGeomObjIOR = _orb->object_to_string(theObject);
   aResultSO->SetAttrString("AttributeIOR",aGeomObjIOR);
 
-  TCollection_AsciiString aShapeName("Shape_");
-
-  CORBA::Long mytype=aShape->GetType();
-  if ( mytype == GEOM_GROUP ) {
-    GEOM::GEOM_IGroupOperations_var anOp = GetIGroupOperations( theStudy->StudyId() );
-    switch ( (TopAbs_ShapeEnum)anOp->GetType( aShape ) ) {
-    case TopAbs_VERTEX:
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_PNT" );
-      aShapeName = "Group_Of_Vertices_";
-      break;
-    case TopAbs_EDGE:
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_EDGE");
-      aShapeName = "Group_Of_Edges_";
-      break;
-    case TopAbs_FACE:
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_FACE");
-      aShapeName = "Group_Of_Faces_";
-      break;
-    case TopAbs_SOLID:
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_SOLID");
-      aShapeName = "Group_Of_Solids_";
-      break;
-    }
-  } else if ( mytype == GEOM_MARKER ) {
-    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_LCS");
-    aShapeName = "LocalCS_";
-  } else if ( mytype > ADVANCED_BASE ) {
-    char buf[20];
-    sprintf( buf, "%d", aShape->GetType() );
-    std::string advId = "ICON_OBJBROWSER_ADVANCED_"; advId += buf;
-    aResultSO->SetAttrString("AttributePixMap",advId.c_str());
-    aShapeName = "Advanced_";
-  } else {
-    GEOM::shape_type myshapetype=aShape->GetShapeType();
-    if ( myshapetype == GEOM::COMPOUND ) {
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPOUND" );
-      aShapeName = "Compound_";
-    } else if ( myshapetype == GEOM::COMPSOLID ) {
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPSOLID");
-      aShapeName = "Compsolid_";
-    } else if ( myshapetype == GEOM::SOLID ) {
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SOLID");
-      aShapeName = "Solid_";
-    } else if ( myshapetype == GEOM::SHELL ) {
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SHELL");
-      aShapeName = "Shell_";
-    } else if ( myshapetype == GEOM::FACE ) {
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FACE");
-      aShapeName = "Face_";
-    } else if ( myshapetype == GEOM::WIRE ) {
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_WIRE");
-      aShapeName = "Wire_";
-    } else if ( myshapetype == GEOM::EDGE ) {
-      aResultSO->SetAttrString("AttributePixMap", "ICON_OBJBROWSER_EDGE");
-      aShapeName = "Edge_";
-    } else if ( myshapetype == GEOM::VERTEX ) {
-      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_VERTEX" );
-      aShapeName = "Vertex_";
-    }
-  }
-  //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
-  //else aShapeName = TCollection_AsciiString(CORBA::string_dup(theName));
+  TCollection_AsciiString anObjectName("Shape_");
 
   // BEGIN: try to find existed name for current shape
   bool HasName = false;
-  // recieve current TopoDS shape
-  CORBA::String_var entry = aShape->GetEntry();
-  Handle(GEOM_Object) aGShape = _impl->GetObject(aShape->GetStudyID(), entry);
-  TopoDS_Shape TopoSh = aGShape->GetValue();
-  // find label of main shape
-  GEOM::GEOM_Object_var aMainSh = aShape;
-  while( !aMainSh->IsMainShape() ) {
-    aMainSh = aMainSh->GetMainShape();
-  }
-  entry = aMainSh->GetEntry();
-  Handle(GEOM_Object) anObj = _impl->GetObject(aMainSh->GetStudyID(), entry);
-  TDF_Label aMainLbl = anObj->GetFunction(1)->GetNamingEntry();
+  if ( !aShape->_is_nil() )
+  {
+    // recieve current TopoDS shape
+    CORBA::String_var entry = aShape->GetEntry();
+    Handle(GEOM_Object) aGShape = Handle(GEOM_Object)::DownCast
+      ( _impl->GetObject( aShape->GetStudyID(), entry ));
+    TopoDS_Shape TopoSh = aGShape->GetValue();
+    // find label of main shape
+    GEOM::GEOM_Object_var aMainSh = aShape;
+    while( !aMainSh->IsMainShape() ) {
+      aMainSh = aMainSh->GetMainShape();
+    }
+    entry = aMainSh->GetEntry();
+    Handle(GEOM_BaseObject) anObj = _impl->GetObject( aMainSh->GetStudyID(), entry );
+    TDF_Label aMainLbl = anObj->GetFunction(1)->GetNamingEntry();
 
-  // check all named shapes using iterator
-  TDF_ChildIDIterator anIt (aMainLbl, TNaming_NamedShape::GetID(), Standard_True);
+    // check all named shapes using iterator
+    TDF_ChildIDIterator anIt (aMainLbl, TNaming_NamedShape::GetID(), Standard_True);
 
-  for (; anIt.More() && !HasName; anIt.Next()) {
-    Handle(TNaming_NamedShape) anAttr =
-      Handle(TNaming_NamedShape)::DownCast(anIt.Value());
-    if (anAttr.IsNull()) continue;
-    TopoDS_Shape S = anAttr->Get();
-    if (S.IsEqual(TopoSh)) {
-      TDF_Label L = anAttr->Label();
-      Handle(TDataStd_Name) aName;
-      if (L.FindAttribute(TDataStd_Name::GetID(), aName)) {
-        aShapeName = aName->Get();
-        HasName = true;
+    for (; anIt.More() && !HasName; anIt.Next()) {
+      Handle(TNaming_NamedShape) anAttr =
+        Handle(TNaming_NamedShape)::DownCast(anIt.Value());
+      if (anAttr.IsNull()) continue;
+      TopoDS_Shape S = anAttr->Get();
+      if (S.IsEqual(TopoSh)) {
+        TDF_Label L = anAttr->Label();
+        Handle(TDataStd_Name) aName;
+        if (L.FindAttribute(TDataStd_Name::GetID(), aName)) {
+          anObjectName = aName->Get();
+          HasName = true;
+        }
       }
     }
   }
   // END: try to find existed name for current shape
 
-  if (!HasName) {
+  CORBA::Long mytype=aBaseObj->GetType();
+  if ( mytype == GEOM_GROUP ) {
+    GEOM::GEOM_IGroupOperations_var anOp = GetIGroupOperations( theStudy->StudyId() );
+    switch ( (TopAbs_ShapeEnum)anOp->GetType( aShape )) {
+    case TopAbs_VERTEX:
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_PNT" );
+      anObjectName = "Group_Of_Vertices_";
+      break;
+    case TopAbs_EDGE:
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_EDGE");
+      anObjectName = "Group_Of_Edges_";
+      break;
+    case TopAbs_FACE:
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_FACE");
+      anObjectName = "Group_Of_Faces_";
+      break;
+    case TopAbs_SOLID:
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_SOLID");
+      anObjectName = "Group_Of_Solids_";
+      break;
+    }
+  } else if ( mytype == GEOM_MARKER ) {
+    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_LCS");
+    anObjectName = "LocalCS_";
+  } else if ( mytype > ADVANCED_BASE ) {
+    char buf[20];
+    sprintf( buf, "%d", aBaseObj->GetType() );
+    std::string advId = "ICON_OBJBROWSER_ADVANCED_"; advId += buf;
+    aResultSO->SetAttrString("AttributePixMap",advId.c_str());
+    anObjectName = "Advanced_";
+  } else if ( mytype == GEOM_FIELD ) {
+    anObjectName = "Field_";
+    GEOM::GEOM_Field_var aField = GEOM::GEOM_Field::_narrow(theObject);
+    if ( !aField->_is_nil() )
+      switch( aField->GetDimension() ) {
+      case 0:
+        aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FIELD_PNT" ); break;
+      case 1:
+        aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FIELD_EDGE"); break;
+      case 2:
+        aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FIELD_FACE"); break;
+      case 3:
+        aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FIELD_SOLID"); break;
+      default:
+        aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FIELD_SOLID");
+      }
+  } else if ( mytype == GEOM_FIELD_STEP ) {
+    anObjectName = "Step_";
+  } else if ( !aShape->_is_nil() ) {
+    GEOM::shape_type myshapetype=aShape->GetShapeType();
+    if ( myshapetype == GEOM::COMPOUND ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPOUND" );
+      anObjectName = "Compound_";
+    } else if ( myshapetype == GEOM::COMPSOLID ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPSOLID");
+      anObjectName = "Compsolid_";
+    } else if ( myshapetype == GEOM::SOLID ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SOLID");
+      anObjectName = "Solid_";
+    } else if ( myshapetype == GEOM::SHELL ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SHELL");
+      anObjectName = "Shell_";
+    } else if ( myshapetype == GEOM::FACE ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FACE");
+      anObjectName = "Face_";
+    } else if ( myshapetype == GEOM::WIRE ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_WIRE");
+      anObjectName = "Wire_";
+    } else if ( myshapetype == GEOM::EDGE ) {
+      aResultSO->SetAttrString("AttributePixMap", "ICON_OBJBROWSER_EDGE");
+      anObjectName = "Edge_";
+    } else if ( myshapetype == GEOM::VERTEX ) {
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_VERTEX" );
+      anObjectName = "Vertex_";
+    }
+  }
+  if (!HasName)
+  {
+    //if (strlen(theName) == 0) anObjectName += TCollection_AsciiString(aResultSO->Tag());
+    //else anObjectName = TCollection_AsciiString(CORBA::string_dup(theName));
+
     // asv : 11.11.04 Introducing a more sofisticated method of name creation, just as
     //       it is done in GUI in GEOMBase::GetDefaultName() - not just add a Tag() == number
     //       of objects in the study, but compute a number of objects with the same prefix
@@ -331,34 +366,34 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     if ( strlen( theName ) == 0 ) { // MOST PROBABLY CALLED FROM BATCHMODE OR SUPERVISOR
       int i = 0;                    // (WITH EMPTY NEW NAME)
       SALOMEDS::SObject_var obj;
-      TCollection_AsciiString aNewShapeName;
+      TCollection_AsciiString aNewObjectName;
       do {
-        aNewShapeName = aShapeName + TCollection_AsciiString(++i);
-        obj = theStudy->FindObject( aNewShapeName.ToCString() );
+        aNewObjectName = anObjectName + TCollection_AsciiString(++i);
+        obj = theStudy->FindObject( aNewObjectName.ToCString() );
       }
       while ( !obj->_is_nil() );
-      aShapeName = aNewShapeName;
+      anObjectName = aNewObjectName;
     }
     else // MOST PROBABLY CALLED FROM GEOM GUI (ALREADY WITH VALID NAME)
-      aShapeName = TCollection_AsciiString((char*)theName);
+      anObjectName = theName;
   }
 
   //Set the study entry as a name of  the published GEOM_Object
-  CORBA::String_var anID =aResultSO->GetID();
-  aShape->SetStudyEntry(anID.in());
+  CORBA::String_var anID = aResultSO->GetID();
+  aBaseObj->SetStudyEntry(anID.in());
 
   //Set a name of the added shape
-  aResultSO->SetAttrString("AttributeName",aShapeName.ToCString());
+  aResultSO->SetAttrString("AttributeName",anObjectName.ToCString());
 
   //Set NoteBook variables used in the object creation
   TCollection_AsciiString aVars;
-  CORBA::String_var aString=aShape->GetParameters();
+  CORBA::String_var aString=aBaseObj->GetParameters();
   SALOMEDS::ListOfListOfStrings_var aSections = theStudy->ParseVariables(aString);
   for(int i = 0, n = aSections->length(); i < n; i++) {
     SALOMEDS::ListOfStrings aListOfVars = aSections[i];
     for(int j = 0, m = aListOfVars.length(); j < m; j++) {
       if(theStudy->IsVariable(aListOfVars[j].in()))
-        aVars += TCollection_AsciiString(aListOfVars[j].in());
+        aVars += aListOfVars[j].in();
       if(j != m-1)
         aVars += ":";
     }
@@ -370,7 +405,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   aFather->UnRegister();
 
   //Set a name of the GEOM object
-  aShape->SetName(aShapeName.ToCString());
+  aBaseObj->SetName(anObjectName.ToCString());
 
   // add object to the use case tree
   // (to support tree representation customization and drag-n-drop)
@@ -378,7 +413,6 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
 
   return aResultSO._retn();
 }
-
 
 //============================================================================
 // function : CreateAndPublishGroup
@@ -393,16 +427,15 @@ void GEOM_Gen_i::CreateAndPublishGroup(SALOMEDS::Study_ptr theStudy,
                                        GEOM::ListOfGO_var aResList)
 {
   CORBA::String_var entry = theMainShape->GetEntry();
-  Handle(GEOM_Object) aMainShape = _impl->GetObject(theMainShape->GetStudyID(), entry);
+  //Handle(GEOM_Object) aMainShape = _impl->GetObject(theMainShape->GetStudyID(), entry);
   Handle(TColStd_HArray1OfInteger) anArray;
   if(SeqS.Length()>0) {
     // create a group
     GEOM::GEOM_IGroupOperations_var GOp = GetIGroupOperations(theStudy->StudyId());
-    GEOM::GEOM_Object_ptr GrObj =
-      GOp->CreateGroup( theMainShape, SeqS.Value(1).ShapeType() );
+    GEOM::GEOM_Object_wrap GrObj = GOp->CreateGroup( theMainShape, SeqS(1).ShapeType() );
     AddInStudy(theStudy, GrObj, GrName, theMainShape._retn());
-    CORBA::String_var GrEntry = GrObj->GetEntry();
-    Handle(GEOM_Object) HGrObj = _impl->GetObject(GrObj->GetStudyID(), GrEntry);
+    //CORBA::String_var GrEntry = GrObj->GetEntry();
+    //Handle(GEOM_Object) HGrObj = _impl->GetObject(GrObj->GetStudyID(), GrEntry);
     // add named objects
     //Handle(GEOM_Object) anObj;
     for(int i=1; i<=SeqS.Length(); i++) {
@@ -447,7 +480,8 @@ GEOM::ListOfGO* GEOM_Gen_i::
   if(theMainShape->_is_nil()) return aResList._retn();
 
   CORBA::String_var entry = theMainShape->GetEntry();
-  Handle(GEOM_Object) aMainShape = _impl->GetObject(theMainShape->GetStudyID(), entry);
+  Handle(GEOM_Object) aMainShape = Handle(GEOM_Object)::DownCast
+    ( _impl->GetObject( theMainShape->GetStudyID(), entry ));
   if (aMainShape.IsNull()) return aResList._retn();
   TopoDS_Shape MainSh = aMainShape->GetValue();
 
@@ -738,7 +772,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
 
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-  GEOM::GEOM_Object_var obj = GetObject(anObj->GetDocID(), anEntry.ToCString());
+  GEOM::GEOM_BaseObject_var obj = GetObject(anObj->GetDocID(), anEntry.ToCString());
 
   //Set the study entry of the published GEOM_Object
   obj->SetStudyEntry(aNewSO->GetID());
@@ -767,10 +801,10 @@ char* GEOM_Gen_i::ComponentDataType()
 // function : AddInStudy
 // purpose  :
 //============================================================================
-SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
-                                              GEOM::GEOM_Object_ptr theObject,
-                                              const char* theName,
-                                              GEOM::GEOM_Object_ptr theFather)
+SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr       theStudy,
+                                              GEOM::GEOM_BaseObject_ptr theObject,
+                                              const char*               theName,
+                                              GEOM::GEOM_BaseObject_ptr theFather)
 {
   SALOMEDS::SObject_var aResultSO;
   if(theObject->_is_nil() || theStudy->_is_nil()) return aResultSO;
@@ -789,14 +823,14 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
   aResultSO = PublishInStudy(theStudy, aResultSO, theObject, theName);
   if(aResultSO->_is_nil()) return aResultSO._retn();
 
-  GEOM::ListOfGO_var aList = theObject->GetDependency();
+  GEOM::ListOfGBO_var aList = theObject->GetDependency();
   Standard_Integer aLength = aList->length();
   if(aLength < 1) return aResultSO._retn();
 
   //Publish the arguments
   TCollection_AsciiString aPrevID; // to avoid multiple references to same object
   for(Standard_Integer i = 0; i< aLength; i++) {
-    GEOM::GEOM_Object_var anObject = aList[i];
+    GEOM::GEOM_BaseObject_var anObject = aList[i];
     if(anObject->_is_nil()) continue;
     IOR = _orb->object_to_string(anObject);
     SALOMEDS::SObject_wrap aSO =  theStudy->FindObjectIOR(IOR.in());
@@ -969,8 +1003,11 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
   }
   else {
     // Get all arguments
-    aList = theObject->GetDependency();
-    aLength = aList->length();
+    GEOM::ListOfGBO_var boList = theObject->GetDependency();
+    aLength = boList->length();
+    aList = new GEOM::ListOfGO;
+    for (int i = 0; i < aLength; i++)
+      aList[i] = GEOM::GEOM_Object::_narrow( boList[i] );
     nbArgsActual = aLength;
   }
 
@@ -1043,7 +1080,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
             GEOM::GEOM_Object_var anArgOTrsf = aTrsfOpSv->TransformLikeOtherCopy(anArgO, theObject);
             if (!CORBA::is_nil(anArgOTrsf)) {
               CORBA::String_var anArgOTrsfEntry = anArgOTrsf->GetEntry();
-              Handle(GEOM_Object) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
+              Handle(GEOM_BaseObject) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
               Handle(GEOM_Function) anArgOTrsfFun = anArgOTrsfImpl->GetLastFunction();
               anArgOTrsfFun->SetDescription("");
               aSubO = aShapesOp->GetInPlace(theObject, anArgOTrsf);
@@ -1238,7 +1275,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
   aResParts->length(nb);
   if (nb > 0)
   {
-    Handle(GEOM_Object) aMainObj = _impl->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    Handle(GEOM_BaseObject) aMainObj = _impl->GetObject(theObject->GetStudyID(), theObject->GetEntry());
     Handle(GEOM_Function) aFunction = aMainObj->GetLastFunction();
     GEOM::TPythonDump pd (aFunction, true);
     pd <<"[";
@@ -1254,8 +1291,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
       anObjEntryMap.insert(anEntry);
       aResParts[nbRes++] = anObj;
       // clear python dump of object
-      Handle(GEOM_Object) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anEntry);
-      Handle(GEOM_Function) anObjFun = aGeomObj->GetLastFunction();
+      Handle(GEOM_BaseObject) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anEntry);
+      Handle(GEOM_Function)   anObjFun = aGeomObj->GetLastFunction();
       if ( !anObjFun.IsNull() )
         anObjFun->SetDescription( "" );
       if ( j > 0 )
@@ -1272,7 +1309,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
       GEOM::GEOM_Object_var anObj = anOutArgs[ i ];
       if (CORBA::is_nil(anObj))
         continue;
-      Handle(GEOM_Object) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anObj->GetEntry());
+      Handle(GEOM_BaseObject) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anObj->GetEntry());
       if ( j > 0 )
         pd << ", ";
       pd << aGeomObj;
@@ -1364,7 +1401,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     th
             GEOM::GEOM_Object_var anArgOTrsf = aTrsfOpSv->TransformLikeOtherCopy(anOldSubO, theNewO);
             if (!CORBA::is_nil(anArgOTrsf)) {
               CORBA::String_var anArgOTrsfEntry = anArgOTrsf->GetEntry();
-              Handle(GEOM_Object) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
+              Handle(GEOM_BaseObject) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
               Handle(GEOM_Function) anArgOTrsfFun = anArgOTrsfImpl->GetLastFunction();
               anArgOTrsfFun->SetDescription("");
               aNewSubO = aShapesOp->GetInPlace(theNewO, anArgOTrsf);
@@ -1544,8 +1581,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
     return aParts._retn();
 
   // Get all arguments
-  GEOM::ListOfGO_var anOpArgsList = theObject->GetDependency();
-  Standard_Integer nbArgsActual = anOpArgsList->length();
+  GEOM::ListOfGBO_var anOpArgsList = theObject->GetDependency();
+  Standard_Integer    nbArgsActual = anOpArgsList->length();
 
   // If anOpArgsList list is empty, nothing to do
   if (nbArgsActual == 0)
@@ -1567,7 +1604,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
   for (int j = 0; j < nbArgsActual; j++) {
     CORBA::String_var anEntry = anOpArgsList[j]->GetEntry();
     if (anArgs.count(anEntry.in())) {
-      aList[k] = GEOM::GEOM_Object::_duplicate(anOpArgsList[j]);
+      aList[k] = GEOM::GEOM_Object::_narrow(anOpArgsList[j]);
       k++;
     }
   }
@@ -1640,7 +1677,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
             GEOM::GEOM_Object_var anArgOTrsf = aTrsfOpSv->TransformLikeOtherCopy(anArgO, theObject);
             if (!CORBA::is_nil(anArgOTrsf)) {
               CORBA::String_var anArgOTrsfEntry = anArgOTrsf->GetEntry();
-              Handle(GEOM_Object) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
+              Handle(GEOM_BaseObject) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
               Handle(GEOM_Function) anArgOTrsfFun = anArgOTrsfImpl->GetLastFunction();
               anArgOTrsfFun->SetDescription("");
               aSubO = aShapesOp->GetInPlace(theObject, anArgOTrsf);
@@ -1784,7 +1821,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
   aResParts->length(nb);
   if (nb > 0)
   {
-    Handle(GEOM_Object) aMainObj = _impl->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    Handle(GEOM_BaseObject) aMainObj = _impl->GetObject(theObject->GetStudyID(), theObject->GetEntry());
     Handle(GEOM_Function) aFunction = aMainObj->GetLastFunction();
     GEOM::TPythonDump pd (aFunction, true);
     pd <<"[";
@@ -1800,8 +1837,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
       anObjEntryMap.insert(anEntry);
       aResParts[nbRes++] = anObj;
       // clear python dump of object
-      Handle(GEOM_Object) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anEntry);
-      Handle(GEOM_Function) anObjFun = aGeomObj->GetLastFunction();
+      Handle(GEOM_BaseObject) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anEntry);
+      Handle(GEOM_Function)   anObjFun = aGeomObj->GetLastFunction();
       if ( !anObjFun.IsNull() )
         anObjFun->SetDescription( "" );
       if ( j > 0 )
@@ -1816,7 +1853,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
       GEOM::GEOM_Object_var anObj = theArgs[ i ];
       if (CORBA::is_nil(anObj))
         continue;
-      Handle(GEOM_Object) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anObj->GetEntry());
+      Handle(GEOM_BaseObject) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anObj->GetEntry());
       if ( j > 0 )
         pd << ", ";
       pd << aGeomObj;
@@ -1916,7 +1953,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesOneLevel (SALOMEDS::Study_ptr  
             GEOM::GEOM_Object_var anArgOTrsf = aTrsfOpSv->TransformLikeOtherCopy(anOldSubO, theNewO);
             if (!CORBA::is_nil(anArgOTrsf)) {
               CORBA::String_var anArgOTrsfEntry = anArgOTrsf->GetEntry();
-              Handle(GEOM_Object) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
+              Handle(GEOM_BaseObject) anArgOTrsfImpl = _impl->GetObject(anArgOTrsf->GetStudyID(), anArgOTrsfEntry);
               Handle(GEOM_Function) anArgOTrsfFun = anArgOTrsfImpl->GetLastFunction();
               anArgOTrsfFun->SetDescription("");
               aNewSubO = aShapesOp->GetInPlace(theNewO, anArgOTrsf);
@@ -2335,6 +2372,26 @@ GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations(CORBA::Long theS
 }
 
 //============================================================================
+// function : GetIFieldOperations
+// purpose  :
+//============================================================================
+GEOM::GEOM_IFieldOperations_ptr GEOM_Gen_i::GetIFieldOperations(CORBA::Long theStudyID)
+     throw ( SALOME::SALOME_Exception )
+{
+  Unexpect aCatch(SALOME_SalomeException);
+  MESSAGE( "GEOM_Gen_i::GetIFieldOperations" );
+
+  GEOM::GEOM_Gen_ptr engine = _this();
+
+  GEOM_IFieldOperations_i* aServant =
+    new GEOM_IFieldOperations_i(_poa, engine, _impl->GetIFieldOperations(theStudyID));
+
+  // activate the CORBA servant
+  GEOM::GEOM_IFieldOperations_var operations = aServant->_this();
+  return operations._retn();
+}
+
+//============================================================================
 // function : GetPluginOperations
 // purpose  :
 //============================================================================
@@ -2415,13 +2472,14 @@ GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(CORBA::Long theStudyI
  *  AddSubShape
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShape,
+GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr   theMainShape,
                                                const GEOM::ListOfLong& theIndices)
 {
   if (CORBA::is_nil(theMainShape) || theIndices.length() < 1)
     return GEOM::GEOM_Object::_nil();
   CORBA::String_var entry = theMainShape->GetEntry();
-  Handle(GEOM_Object) aMainShape = _impl->GetObject(theMainShape->GetStudyID(), entry);
+  Handle(GEOM_Object) aMainShape = Handle(GEOM_Object)::DownCast
+    ( _impl->GetObject( theMainShape->GetStudyID(), entry ));
   if (aMainShape.IsNull()) return GEOM::GEOM_Object::_nil();
 
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1, theIndices.length());
@@ -2432,7 +2490,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShap
 
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(anObject->GetEntry(), anEntry);
-  return GetObject(anObject->GetDocID(), anEntry.ToCString());
+  return GEOM::GEOM_Object::_narrow( GetObject(anObject->GetDocID(), anEntry.ToCString()));
 }
 
 //=============================================================================
@@ -2440,24 +2498,22 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShap
  *  RemoveObject
  */
 //=============================================================================
-void GEOM_Gen_i::RemoveObject(GEOM::GEOM_Object_ptr theObject)
+void GEOM_Gen_i::RemoveObject(GEOM::GEOM_BaseObject_ptr theObject)
 {
   CORBA::String_var anEntry = theObject->GetEntry();
-  Handle(GEOM_Object) anObject = _impl->GetObject(theObject->GetStudyID(), anEntry, false);
-  if (anObject.IsNull()) return;
-  _impl->RemoveObject(anObject);
-  return;
+  Handle(GEOM_BaseObject) anObject = _impl->GetObject(theObject->GetStudyID(), anEntry, false);
+  if (!anObject.IsNull())
+    _impl->RemoveObject(anObject);
 }
-
 
 //=================================================================================
 // function : GetStringFromIOR()
 // purpose  : returns a string that represents  a 'GEOM::GEOM_Object_var'
 //=================================================================================
-char* GEOM_Gen_i::GetStringFromIOR(GEOM::GEOM_Object_ptr theObject) {
+char* GEOM_Gen_i::GetStringFromIOR(GEOM::GEOM_Object_ptr theObject)
+{
   return _orb->object_to_string(theObject);
 }
-
 
 //=================================================================================
 // function : GetIORFromString()
@@ -2477,22 +2533,49 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetIORFromString(const char* stringIOR) {
 // function : GetObject()
 // purpose  :
 //=================================================================================
-GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char* theEntry)
+GEOM::GEOM_BaseObject_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char* theEntry)
 {
-  GEOM::GEOM_Object_var obj;
-  Handle(GEOM_Object) handle_object = _impl->GetObject(theStudyID, (char*)theEntry);
+  GEOM::GEOM_BaseObject_var obj;
+  Handle(GEOM_BaseObject) handle_object = _impl->GetObject(theStudyID, (char*)theEntry);
   if (handle_object.IsNull()) return obj._retn();
 
   TCollection_AsciiString stringIOR = handle_object->GetIOR();
   if (stringIOR.Length() > 1) {
     CORBA::Object_var corba_object = _orb->string_to_object(stringIOR.ToCString());
-    if (!CORBA::is_nil(corba_object)) obj = GEOM::GEOM_Object::_narrow(corba_object);
+    if (!CORBA::is_nil(corba_object)) obj = GEOM::GEOM_BaseObject::_narrow(corba_object);
     return obj._retn();
   }
 
   GEOM::GEOM_Gen_ptr engine = _this();
   //transfer the reference to GEOM_Object_i
-  GEOM_Object_i* servant = new GEOM_Object_i (_poa, engine, handle_object);
+  GEOM_BaseObject_i* servant = 0;
+  switch( handle_object->GetType() ) {
+  case GEOM_FIELD: {
+    servant = new GEOM_Field_i (_poa, engine, Handle(GEOM_Field)::DownCast( handle_object ));
+    break;
+  }
+  case GEOM_FIELD_STEP: {
+    Handle(GEOM_FieldStep) step = Handle(GEOM_FieldStep)::DownCast( handle_object );
+    Handle(GEOM_Field)    field = step->GetField();
+    int type = ( !field.IsNull() ? field->GetDataType() : 0 );
+    switch( type ) {
+    case GEOM::FDT_Bool:
+      servant = new GEOM_BoolFieldStep_i (_poa, engine, step );
+      break;
+    case GEOM::FDT_Int:
+      servant = new GEOM_IntFieldStep_i (_poa, engine, step );
+      break;
+    case GEOM::FDT_Double:
+      servant = new GEOM_DoubleFieldStep_i (_poa, engine, step );
+      break;
+    default:
+      servant = new GEOM_StringFieldStep_i (_poa, engine, step );
+    }
+    break;
+  }
+  default:
+    servant = new GEOM_Object_i (_poa, engine, Handle(GEOM_Object)::DownCast( handle_object ));
+  }
   PortableServer::ObjectId_var id = _poa->activate_object(servant);
 
   obj = servant->_this();

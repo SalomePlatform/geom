@@ -82,6 +82,7 @@
 #include <GEOMImpl_FillingDriver.hxx>
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_MeasureDriver.hxx>
+#include <GEOMImpl_FieldDriver.hxx>
 
 //=============================================================================
 /*!
@@ -163,6 +164,9 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    // Measurements
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_MeasureDriver::GetID(), new GEOMImpl_MeasureDriver());
 
+   // Field
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FieldDriver::GetID(), new GEOMImpl_FieldDriver());
+
    SetEngine(this);
 }
 
@@ -223,6 +227,10 @@ GEOMImpl_Gen::~GEOMImpl_Gen()
   std::map<int, GEOMImpl_IGroupOperations*>::iterator aGroupIter = _mapOfGroupOperations.begin();
   for (; aGroupIter != _mapOfGroupOperations.end(); aGroupIter++)
     delete (*aGroupIter).second;
+
+  std::map<int, GEOMImpl_IFieldOperations*>::iterator aFieldIter = _mapOfFieldOperations.begin();
+  for (; aFieldIter != _mapOfFieldOperations.end(); aFieldIter++)
+    delete (*aFieldIter).second;
 }
 
 //=============================================================================
@@ -391,4 +399,18 @@ GEOMImpl_IGroupOperations* GEOMImpl_Gen::GetIGroupOperations(int theDocID)
   }
 
   return _mapOfGroupOperations[theDocID];
+}
+
+//=============================================================================
+/*!
+ * GetIFieldOperations
+ */
+//=============================================================================
+GEOMImpl_IFieldOperations* GEOMImpl_Gen::GetIFieldOperations(int theDocID)
+{
+  if(_mapOfFieldOperations.find(theDocID) == _mapOfFieldOperations.end()) {
+    _mapOfFieldOperations[theDocID] = new GEOMImpl_IFieldOperations(this, theDocID);
+  }
+
+  return _mapOfFieldOperations[theDocID];
 }

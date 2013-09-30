@@ -115,20 +115,25 @@ class GEOM_Engine
   //Returns the OCAF appliaction
   Standard_EXPORT Handle(TDocStd_Application) GetApplication() { return _OCAFApp; }
 
-  //Returns a pointer to GEOM_Object defined by a document and the entry
-  Standard_EXPORT Handle(GEOM_Object) GetObject(int theDocID, char* theEntry, bool force=true);
-  
+  //Returns a pointer to GEOM_BaseObject defined by a document and the entry
+  Standard_EXPORT Handle(GEOM_BaseObject) GetObject(int         theDocID,
+                                                    const char* theEntry,
+                                                    bool        force=true);
+
+  //Adds a new object of the type theType in the OCAF document
+  Standard_EXPORT Handle(GEOM_BaseObject) AddBaseObject(int theDocID, int theType);
+
   //Adds a new object of the type theType in the OCAF document
   Standard_EXPORT Handle(GEOM_Object) AddObject(int theDocID, int theType);
 
   //Removes the object from the OCAF document
-  Standard_EXPORT bool RemoveObject(Handle(GEOM_Object) theObject);  
+  Standard_EXPORT bool RemoveObject(Handle(GEOM_BaseObject)& theObject);  
 
   //Saves the OCAF document with ID = theDocID with file with name theFileName
-  Standard_EXPORT bool Save(int theDocID, char* theFileName);
+  Standard_EXPORT bool Save(int theDocID, const char* theFileName);
   
   //Loads the OCAF document into the application and assigns to it an ID = theDocID
-  Standard_EXPORT bool Load(int theDocID, char* theFileName);
+  Standard_EXPORT bool Load(int theDocID, const char* theFileName);
 
   //Closes the document with ID =  theDocID
   Standard_EXPORT void Close(int theDocID);
@@ -144,8 +149,8 @@ class GEOM_Engine
 
   //Adds a new sub-shape object of the MainShape object
   Standard_EXPORT Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, 
-                                  Handle(TColStd_HArray1OfInteger) theIndices,
-                                  bool isStandaloneOperation = false);
+                                                  Handle(TColStd_HArray1OfInteger) theIndices,
+                                                  bool isStandaloneOperation = false);
 
   Standard_EXPORT TCollection_AsciiString DumpPython(int theDocID, 
                                                      std::vector<TObjectData>& theObjectData,
@@ -159,18 +164,10 @@ class GEOM_Engine
   Standard_EXPORT Handle(TColStd_HSequenceOfAsciiString) GetAllDumpNames() const;
 
   Standard_EXPORT int addTexture(int theDocID, int theWidth, int theHeight,
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
                                  const Handle(TColStd_HArray1OfByte)& theTexture,
-#else
-                                 const Handle(TDataStd_HArray1OfByte)& theTexture,
-#endif
                                  const TCollection_AsciiString& theFileName = "");
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
-  Standard_EXPORT Handle(TColStd_HArray1OfByte) getTexture(int theDocID, int theTextureID,
-#else
-  Standard_EXPORT Handle(TDataStd_HArray1OfByte) getTexture(int theDocID, int theTextureID,
-#endif
+  Standard_EXPORT Handle(TColStd_HArray1OfByte) getTexture(int  theDocID, int theTextureID,
                                                            int& theWidth, int& theHeight,
                                                            TCollection_AsciiString& theFileName);
 
@@ -179,26 +176,22 @@ class GEOM_Engine
   static const Standard_GUID& GetTextureGUID();
 
   Standard_EXPORT void healPyName( TCollection_AsciiString&                  pyName,
-				   const TCollection_AsciiString&            anEntry,
-				   Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
+                                   const TCollection_AsciiString&            anEntry,
+                                   Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
 
  protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
   
  private:
 
-  Handle(GEOM_Application)  _OCAFApp;
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
-  TColStd_DataMapOfIntegerTransient _mapIDDocument;
-#else
-  Interface_DataMapOfIntegerTransient _mapIDDocument;
-#endif
-  int _UndoLimit;
-  GEOM_DataMapOfAsciiStringTransient _objects;
+  Handle(GEOM_Application)                 _OCAFApp;
+  TColStd_DataMapOfIntegerTransient        _mapIDDocument;
+  int                                      _UndoLimit;
+  GEOM_DataMapOfAsciiStringTransient       _objects;
 
   Resource_DataMapOfAsciiStringAsciiString _studyEntry2NameMap;
 
-  TFreeLabelsList _freeLabels;
+  TFreeLabelsList                          _freeLabels;
 };
 
 #endif

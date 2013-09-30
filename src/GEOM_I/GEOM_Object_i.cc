@@ -60,8 +60,10 @@
 //=============================================================================
 
 GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr theEngine,
-			      Handle(GEOM_Object) theImpl)
-: SALOME::GenericObj_i( thePOA ), _engine(theEngine), _impl(theImpl)
+			      Handle(GEOM_Object) theImpl) :
+  SALOME::GenericObj_i( thePOA ),
+  GEOM_BaseObject_i( thePOA, theEngine, theImpl ),
+  _impl( theImpl )
 {
 }
 
@@ -74,43 +76,6 @@ GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr
 GEOM_Object_i::~GEOM_Object_i()
 {
   MESSAGE("GEOM_Object_i::~GEOM_Object_i");
-  GEOM_Engine::GetEngine()->RemoveObject(_impl);
-}
-
-
-//=============================================================================
-/*!
- *  GetEntry
- */
-//=============================================================================
-char* GEOM_Object_i::GetEntry()
-{
-  const TDF_Label& aLabel = _impl->GetEntry();
-  TCollection_AsciiString anEntry;
-  TDF_Tool::Entry(aLabel, anEntry);
-  const char* anEntstr = anEntry.ToCString();
-  return CORBA::string_dup(anEntstr);
-}
-
-//=============================================================================
-/*!
- *  GetStudyID
- */
-//=============================================================================
-CORBA::Long GEOM_Object_i::GetStudyID()
-{
-   return _impl->GetDocID();
-}
-
-
-//=============================================================================
-/*!
- *  GetType
- */
-//=============================================================================
-CORBA::Long GEOM_Object_i::GetType()
-{
-  return _impl->GetType();
 }
 
 //=============================================================================
@@ -191,28 +156,6 @@ GEOM::shape_type GEOM_Object_i::GetMinShapeType()
 GEOM::shape_type GEOM_Object_i::GetMaxShapeType()
 {
   return getMinMaxShapeType( _impl->GetValue(), false );
-}
-
-//=============================================================================
-/*!
- *  SetName
- */
-//=============================================================================
-void GEOM_Object_i::SetName(const char* theName)
-{
-  _impl->SetName(theName);
-}
-
-
-//=============================================================================
-/*!
- *  GetName
- */
-//=============================================================================
-char* GEOM_Object_i::GetName()
-{
-  TCollection_AsciiString aName = _impl->GetName();
-  return CORBA::string_dup( aName.ToCString() );
 }
 
 //=============================================================================
@@ -329,91 +272,6 @@ CORBA::Long GEOM_Object_i::GetMarkerTexture()
   return _impl->GetMarkerTexture();
 }
 
-
-//=============================================================================
-/*!
- *  SetStudyEntry
- */
-//=============================================================================
-void GEOM_Object_i::SetStudyEntry(const char* theEntry)
-{
-  _impl->SetAuxData(theEntry);
-}
-
-
-//=============================================================================
-/*!
- *  GetStudyEntry
- */
-//=============================================================================
-char* GEOM_Object_i::GetStudyEntry()
-{
-  TCollection_AsciiString anEntry = _impl->GetAuxData();
-  if(!anEntry.IsEmpty()) return CORBA::string_dup(anEntry.ToCString());
-  return CORBA::string_dup("");
-}
-
-
-//=============================================================================
-/*!
- *  GetDependency
- */
-//=============================================================================
-GEOM::ListOfGO* GEOM_Object_i::GetDependency()
-{
-  GEOM::ListOfGO_var aList = new GEOM::ListOfGO();
-  aList->length(0);
-
-  Handle(TColStd_HSequenceOfTransient) aSeq = _impl->GetAllDependency();
-  if (aSeq.IsNull()) return aList._retn();
-  int aLength = aSeq->Length();
-  if (aLength == 0) return aList._retn();
-
-  aList->length(aLength);
-
-  TCollection_AsciiString anEntry;
-
-  for (int i = 1; i<=aLength; i++) {
-    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(aSeq->Value(i));
-    if (anObj.IsNull()) continue;
-    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    GEOM::GEOM_Object_var obj = _engine->GetObject(anObj->GetDocID(), (char*) anEntry.ToCString());
-    aList[i-1] = obj;
-  }
-
-  return aList._retn();
-}
-
-//=============================================================================
-/*!
- * GetLastDependency
- */
-//=============================================================================
-GEOM::ListOfGO* GEOM_Object_i::GetLastDependency()
-{
-  GEOM::ListOfGO_var aList = new GEOM::ListOfGO();
-  aList->length(0);
-
-  Handle(TColStd_HSequenceOfTransient) aSeq = _impl->GetLastDependency();
-  if (aSeq.IsNull()) return aList._retn();
-  int aLength = aSeq->Length();
-  if (aLength == 0) return aList._retn();
-
-  aList->length(aLength);
-
-  TCollection_AsciiString anEntry;
-
-  for (int i = 1; i<=aLength; i++) {
-     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(aSeq->Value(i));
-     if (anObj.IsNull()) continue;
-     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-     GEOM::GEOM_Object_var obj = GEOM::GEOM_Object::_duplicate(_engine->GetObject(anObj->GetDocID(), anEntry.ToCString()));
-     aList[i-1] = obj;
-  }
-
-  return aList._retn();
-}
-
 //=================================================================================
 // function : GetShapeStream
 // Transfer resulting shape to client as sequence of bytes
@@ -494,7 +352,8 @@ GEOM::GEOM_Object_ptr GEOM_Object_i::GetMainShape()
     if(aLabel.IsNull()) return obj._retn();
     TCollection_AsciiString anEntry;
     TDF_Tool::Entry(aLabel, anEntry);
-    return _engine->GetObject(_impl->GetDocID(), anEntry.ToCString());
+    return GEOM::GEOM_Object::_narrow
+      ( _engine->GetObject(_impl->GetDocID(), anEntry.ToCString()) );
   }
 
   return obj._retn();
@@ -510,67 +369,10 @@ bool GEOM_Object_i::IsSame(GEOM::GEOM_Object_ptr other)
   TopoDS_Shape thisShape  = _impl->GetValue();
   TopoDS_Shape otherShape;
   if ( !CORBA::is_nil( other ) ) {
-    Handle(GEOM_Object) otherObject = GEOM_Engine::GetEngine()->GetObject( other->GetStudyID(), other->GetEntry(), false );
+    Handle(GEOM_Object) otherObject = Handle(GEOM_Object)::DownCast
+      ( GEOM_Engine::GetEngine()->GetObject( other->GetStudyID(), other->GetEntry(), false ));
     if ( !otherObject.IsNull() )
       otherShape = otherObject->GetValue();
   }
   return thisShape.IsSame( otherShape );
-}
-
-void GEOM_Object_i::SetParameters(const char* theParameters)
-{
-  _impl->SetParameters((char*)theParameters);
-}
-
-char* GEOM_Object_i::GetParameters()
-{
-  return CORBA::string_dup(_impl->GetParameters().ToCString());
-}
-
-GEOM::CreationInformation* GEOM_Object_i::GetCreationInformation()
-{
-  GEOM::CreationInformation_var info = new GEOM::CreationInformation;
-
-  Handle(GEOM_BaseDriver) driver =
-    Handle(GEOM_BaseDriver)::DownCast( _impl->GetCreationDriver() );
-  if ( !driver.IsNull() )
-  {
-    std::vector<GEOM_Param> params;
-    std::string             operationName;
-    try
-    {
-      OCC_CATCH_SIGNALS;
-      if ( driver->GetCreationInformation( operationName, params ))
-      {
-        info->operationName = operationName.c_str();
-        info->params.length( params.size() );
-        for ( size_t i = 0; i < params.size(); ++i )
-        {
-          info->params[i].name  = params[i].name.c_str();
-          info->params[i].value = params[i].value.c_str();
-        }
-      }
-#ifdef _DEBUG_
-      if ( operationName.empty() )
-      {
-        cout << endl << endl << endl << "Warning: " << endl << "Dear developer!!!" << endl
-             << "  Consider implementing "
-             <<    typeid(*(driver.operator->())).name() << "::GetCreationInformation() " << endl
-             << "  for the case of operation which has created '" << GetName() << "' object" << endl
-             << "PLEEEEEEEASE" << endl
-             << "\tPLEEEEEEEASE" << endl
-             << "\t\tPLEEEEEEEASE" << endl
-             << "\t\t\tPLEEEEEEEASE" << endl
-             << "\t\t\t\tPLEEEEEEEASE" << endl;
-      }
-#endif
-    }
-    catch(...)
-    {
-#ifdef _DEBUG_
-      cout << "Ecxeption in GEOM_Object_i::GetCreationInformation()" << endl;
-#endif
-    }
-  }
-  return info._retn();
 }

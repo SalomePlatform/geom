@@ -26,12 +26,13 @@
 
 #include "GEOM_Engine.hxx"
 
-#include "GEOM_Solver.hxx"
+#include "GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx"
+#include "GEOM_Field.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"
-#include "GEOM_SubShapeDriver.hxx"
-#include "GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx"
 #include "GEOM_PythonDump.hxx"
+#include "GEOM_Solver.hxx"
+#include "GEOM_SubShapeDriver.hxx"
 #include "Sketcher_Profile.hxx"
 
 #include <Basics_OCCTVersion.hxx>
@@ -62,13 +63,8 @@
 #include <TColStd_MapOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
-#else
-#include <TDataStd_HArray1OfByte.hxx>
-#include <Interface_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
-#endif
 
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
@@ -97,7 +93,7 @@ typedef std::map< TCollection_AsciiString, TObjectData* >            TSting2ObjD
 static GEOM_Engine* TheEngine = NULL;
 
 
-static TCollection_AsciiString BuildIDFromObject(Handle(GEOM_Object)& theObject)
+static TCollection_AsciiString BuildIDFromObject(Handle(GEOM_BaseObject)& theObject)
 {
   TCollection_AsciiString anID(theObject->GetDocID()), anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
@@ -105,7 +101,7 @@ static TCollection_AsciiString BuildIDFromObject(Handle(GEOM_Object)& theObject)
   return anID;
 }
 
-static TCollection_AsciiString BuildID(Standard_Integer theDocID, char* theEntry)
+static TCollection_AsciiString BuildID(Standard_Integer theDocID, const char* theEntry)
 {
   TCollection_AsciiString anID(theDocID);
   anID+=(TCollection_AsciiString("_")+theEntry);
@@ -236,11 +232,7 @@ GEOM_Engine::~GEOM_Engine()
     RemoveObject(*objit);
 
   //Close all documents not closed
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   TColStd_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
-#else
-  Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
-#endif
   for (; anItr.More(); anItr.Next())
   {
     Close(anItr.Key());
@@ -278,11 +270,7 @@ Handle(TDocStd_Document) GEOM_Engine::GetDocument(int theDocID, bool force)
 int GEOM_Engine::GetDocID(Handle(TDocStd_Document) theDocument)
 {
   if (theDocument.IsNull()) return -1;
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   TColStd_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
-#else
-  Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
-#endif
   for (; anItr.More(); anItr.Next())
     if (anItr.Value() == theDocument) return anItr.Key();
 
@@ -294,22 +282,30 @@ int GEOM_Engine::GetDocID(Handle(TDocStd_Document) theDocument)
  *  GetObject
  */
 //=============================================================================
-Handle(GEOM_Object) GEOM_Engine::GetObject(int theDocID, char* theEntry, bool force)
+
+Handle(GEOM_BaseObject) GEOM_Engine::GetObject(int theDocID, const char* theEntry, bool force)
 {
-  Handle(GEOM_Object) anObject;
+  Handle(GEOM_BaseObject) anObject;
 
   TCollection_AsciiString anID = BuildID(theDocID, theEntry);
 
   if (_objects.IsBound(anID)) {
-    anObject = Handle(GEOM_Object)::DownCast(_objects(anID));
+    anObject = Handle(GEOM_BaseObject)::DownCast(_objects(anID));
   }
   else if (force) {
     Handle(TDocStd_Document) aDoc = GetDocument(theDocID, force);
     if ( !aDoc.IsNull()) {
       TDF_Label aLabel;
       TDF_Tool::Label(aDoc->Main().Data(), theEntry, aLabel, Standard_True);
-      anObject = new GEOM_Object(aLabel);
-      _objects.Bind(anID, anObject);
+      if ( !aLabel.IsNull() ) {
+        int objType = GEOM_BaseObject::GetType( aLabel );
+        switch ( objType ) {
+        case GEOM_FIELD_OBJTYPE:      anObject = new GEOM_Field    (aLabel); break;
+        case GEOM_FIELD_STEP_OBJTYPE: anObject = new GEOM_FieldStep(aLabel); break;
+        default:                      anObject = new GEOM_Object   (aLabel);
+        }
+        _objects.Bind(anID, anObject);
+      }
     }
   }
 
@@ -318,10 +314,11 @@ Handle(GEOM_Object) GEOM_Engine::GetObject(int theDocID, char* theEntry, bool fo
 
 //=============================================================================
 /*!
- *  AddObject
+ *  AddBaseObject
  */
 //=============================================================================
-Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
+
+Handle(GEOM_BaseObject) GEOM_Engine::AddBaseObject(int theDocID, int theType)
 {
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
@@ -343,7 +340,12 @@ Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
     aChild = TDF_TagSource::NewChild(aDoc->Main());
   }
 
-  Handle(GEOM_Object) anObject = new GEOM_Object(aChild, theType);
+  Handle(GEOM_BaseObject) anObject;
+  switch ( theType ) {
+  case GEOM_FIELD_OBJTYPE:      anObject = new GEOM_Field    (aChild, theType); break;
+  case GEOM_FIELD_STEP_OBJTYPE: anObject = new GEOM_FieldStep(aChild, theType); break;
+  default:                      anObject = new GEOM_Object   (aChild, theType);
+  }
 
   //Put an object in the map of created objects
   TCollection_AsciiString anID = BuildIDFromObject(anObject);
@@ -353,12 +355,24 @@ Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
   return anObject;
 }
 
+//================================================================================
+/*!
+ * \brief Adds a new object of the type theType in the OCAF document
+ */
+//================================================================================
+
+Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
+{
+  return Handle(GEOM_Object)::DownCast( AddBaseObject(theDocID, theType) );
+}
+
 //=============================================================================
 /*!
  *  AddSubShape
  */
 //=============================================================================
-Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
+
+Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object)              theMainShape,
                                              Handle(TColStd_HArray1OfInteger) theIndices,
                                              bool isStandaloneOperation)
 {
@@ -438,7 +452,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
  *  RemoveObject
  */
 //=============================================================================
-bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
+bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
 {
   if (theObject.IsNull()) return false;
 
@@ -451,7 +465,8 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
   if (_objects.IsBound(anID)) _objects.UnBind(anID);
 
   // If sub-shape, remove it from the list of sub-shapes of its main shape
-  if (!theObject->IsMainShape()) {
+  Handle(GEOM_Object) aGO = Handle(GEOM_Object)::DownCast( theObject );
+  if ( !aGO.IsNull() && !aGO->IsMainShape()) {
     Handle(GEOM_Function) aFunction = theObject->GetFunction(1);
     GEOM_ISubShape aSSI (aFunction);
     Handle(GEOM_Function) aMainShape = aSSI.GetMainShape();
@@ -505,7 +520,7 @@ void GEOM_Engine::Redo(int theDocID)
  *  Save
  */
 //=============================================================================
-bool GEOM_Engine::Save(int theDocID, char* theFileName)
+bool GEOM_Engine::Save(int theDocID, const char* theFileName)
 {
   if(!_mapIDDocument.IsBound(theDocID)) return false;
   Handle(TDocStd_Document) aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
@@ -520,14 +535,10 @@ bool GEOM_Engine::Save(int theDocID, char* theFileName)
  *  Load
  */
 //=============================================================================
-bool GEOM_Engine::Load(int theDocID, char* theFileName)
+bool GEOM_Engine::Load(int theDocID, const char* theFileName)
 {
   Handle(TDocStd_Document) aDoc;
-#if OCC_VERSION_LARGE > 0x06050100 // For OCCT6.5.2 and higher
   if (_OCAFApp->Open(theFileName, aDoc) != PCDM_RS_OK) {
-#else
-  if (_OCAFApp->Open(theFileName, aDoc) != CDF_RS_OK) {
-#endif
     return false;
   }
 
@@ -626,7 +637,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     TDF_Label L;
     TDF_Tool::Label( aDoc->GetData(), data._entry, L );
     if ( L.IsNull() ) continue;
-    Handle(GEOM_Object) obj = GEOM_Object::GetObject( L );
+    Handle(GEOM_BaseObject) obj = GEOM_BaseObject::GetObject( L );
     // fill maps
     if ( !obj.IsNull() ) {
       TSting2ObjDataMap::iterator ent2Data =

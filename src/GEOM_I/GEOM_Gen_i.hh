@@ -49,6 +49,7 @@
 #include "GEOM_IInsertOperations_i.hh"
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
+#include "GEOM_IFieldOperations_i.hh"
 
 #include <TopTools_IndexedMapOfShape.hxx>
 
@@ -159,10 +160,10 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   /*! \brief Adds theObject in the study with a name = theName, if
    *         theFather is not null the object is placed under theFather
    */
-  SALOMEDS::SObject_ptr AddInStudy (SALOMEDS::Study_ptr theStudy,
-                                    GEOM::GEOM_Object_ptr theObject,
-                                    const char* theName,
-                                    GEOM::GEOM_Object_ptr theFather);
+  SALOMEDS::SObject_ptr AddInStudy (SALOMEDS::Study_ptr       theStudy,
+                                    GEOM::GEOM_BaseObject_ptr theObject,
+                                    const char*               theName,
+                                    GEOM::GEOM_BaseObject_ptr theFather);
 
   /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
    *         To be used from python scripts out of geompy.addToStudy (non-default usage)
@@ -256,6 +257,10 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual GEOM::GEOM_IGroupOperations_ptr GetIGroupOperations (CORBA::Long theStudyID)
     throw (SALOME::SALOME_Exception);
 
+  //Returns a pointer to FiedlOperations interface
+  virtual GEOM::GEOM_IFieldOperations_ptr GetIFieldOperations (CORBA::Long theStudyID)
+    throw (SALOME::SALOME_Exception);
+
   //Returns a pointer to corresponding plugin operations interface
   virtual GEOM::GEOM_IOperations_ptr GetPluginOperations (CORBA::Long theStudyID,
                                                           const char* theLibName)
@@ -265,7 +270,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual GEOM::GEOM_Object_ptr AddSubShape (GEOM::GEOM_Object_ptr theMainShape,
                                              const GEOM::ListOfLong& theIndices);
 
-  virtual void RemoveObject(GEOM::GEOM_Object_ptr theObject);
+  virtual void RemoveObject(GEOM::GEOM_BaseObject_ptr theObject);
 
   virtual  char* GetStringFromIOR(GEOM::GEOM_Object_ptr theObject);
 
@@ -308,7 +313,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   // Internal methods                                                      //
   //-----------------------------------------------------------------------//
 
-  virtual GEOM::GEOM_Object_ptr GetObject(CORBA::Long theStudyID, const char* theEntry);
+  virtual GEOM::GEOM_BaseObject_ptr GetObject(CORBA::Long theStudyID, const char* theEntry);
 
  private:
   GEOM::ListOfGO* RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
