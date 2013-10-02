@@ -641,6 +641,10 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpExplodeBlock:       // MENU BLOCKS - EXPLODE ON BLOCKS
     libName = "BlocksGUI";
     break;
+  case GEOMOp::OpExportXAO:          // MENU NEW ENTITY - IMPORTEXPORT - EXPORTXAO
+  case GEOMOp::OpImportXAO:          // MENU NEW ENTITY - IMPORTEXPORT - IMPORTXAO
+    libName = "ImportExportGUI";
+    break;
   //case GEOMOp::OpAdvancedNoOp:       // NO OPERATION (advanced operations base)
   //case GEOMOp::OpPipeTShape:         // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
   //case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
@@ -1052,6 +1056,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpDecrNbIsos, "", "", 0, false,
                     "Geometry:Decrease number of isolines");
 
+  // Import/Export XAO
+  createGeomAction( GEOMOp::OpExportXAO, "EXPORTXAO" );
+  createGeomAction( GEOMOp::OpImportXAO, "IMPORTXAO" );
+
   //createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
   //createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
   //createGeomAction( GEOMOp::OpDividedCylinder, "DIVIDEDCYLINDER" );
@@ -1104,6 +1112,10 @@ void GeometryGUI::initialize( CAM_Application* app )
 #if OCC_VERSION_LARGE > 0x06050300
   createMenu( GEOMOp::OpPipePath,   genId, -1 );
 #endif
+
+  int impexpId = createMenu( tr( "MEN_IMPORTEXPORT" ), newEntId, -1 );
+  createMenu( GEOMOp::OpExportXAO, impexpId, -1 );
+  createMenu( GEOMOp::OpImportXAO, impexpId, -1 );
 
   //int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
   //createMenu( GEOMOp::OpSmoothingSurface, advId, -1 );
@@ -1379,6 +1391,10 @@ void GeometryGUI::initialize( CAM_Application* app )
 #ifdef WITH_OPENCV
   createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
 #endif
+
+   int impexpTbId = createTool( tr( "TOOL_IMPORTEXPORT" ) );
+   createTool( GEOMOp::OpExportXAO, impexpTbId );
+   createTool( GEOMOp::OpImportXAO, impexpTbId );
 
   //int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
   //createTool( GEOMOp::OpSmoothingSurface, advancedTbId );

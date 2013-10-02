@@ -261,6 +261,7 @@ SET( _res_files
   dlg_pipetshapefilletrf.png
   dividedcylinder.png dividedcylinder_r_h.png
   smoothingsurface.png smoothingsurface_lpoints.png tree_smoothingsurface.png
+  exportxao.png importxao.png
   ##@@ insert new functions before this line @@ do not remove this line @@##
   )
 INSTALL(FILES ${_res_files} DESTINATION ${SALOME_GEOM_INSTALL_RES_DATA})

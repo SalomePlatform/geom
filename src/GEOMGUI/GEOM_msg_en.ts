@@ -4881,6 +4881,50 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <source>GEOM_SELECT_IMAGE</source>
         <translation>Select image...</translation>
     </message>
+    <message>
+        <source>MEN_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
+    </message>
+    <message>
+        <source>TOP_EXPORTXAO</source>
+        <translation>Export to XAO</translation>
+    </message>
+    <message>
+        <source>MEN_EXPORTXAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>STB_EXPORTXAO</source>
+        <translation>Export shape to XAO format</translation>
+    </message>
+    <message>
+        <source>TOP_IMPORTXAO</source>
+        <translation>Import from XAO</translation>
+    </message>
+    <message>
+        <source>MEN_IMPORTXAO</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>STB_IMPORTXAO</source>
+        <translation>Import shape from XAO format</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTEXPORT_204</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_SELECT_EXPORT_XAO</source>
+        <translation>Export to XAO</translation>
+    </message>
+    <message>
+        <source>XAO_FILES</source>
+        <translation>XAO files (*.xao)</translation>
+    </message>
+    <message>
+        <source>TOOLS_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -5766,6 +5810,64 @@ Do you want to create new material?</translation>
     <message>
         <source>NO_INFO</source>
         <translation>(No info available)</translation>
+    </message>
+</context>
+<context>
+    <name>ImportExportGUI_ExportXAODlg</name>
+    <message>
+        <source>GEOM_EXPORTXAO_TITLE</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
+        <translation>Shape</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_FILENAME</source>
+        <translation>File Name</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_AUTHOR</source>
+        <translation>Author</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_LGROUPS</source>
+        <translation>Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_LFIELDS</source>
+        <translation>Fields</translation>
+    </message>
+</context>
+<context>
+    <name>ImportExportGUI_ImportXAODlg</name>
+    <message>
+        <source>GEOM_IMPORTXAO_TITLE</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_IMPORTINGSHAPE</source>
+        <translation>Shape</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_FILENAME</source>
+        <translation>File Name</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_LGROUPS</source>
+        <translation>Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_LFIELDS</source>
+        <translation>Fields</translation>
     </message>
 </context>
 </TS>

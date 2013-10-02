@@ -109,6 +109,8 @@
 #define GEOM_FIELD      52  // == GEOM_FIELD_OBJTYPE constant
 #define GEOM_FIELD_STEP 53  // == GEOM_FIELD_STEP_OBJTYPE constant
 
+#define GEOM_EXPORTXAO 54
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -354,6 +356,10 @@
 #define MARKER_CS      1
 #define MARKER_SHAPE   2
 #define MARKER_PNT2VEC 3
+
+// import/export XAO
+#define IMPORTEXPORT_EXPORTXAO 1
+#define IMPORTEXPORT_IMPORTXAO 2
 
 // Advanced functions (base = 200)
 #define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)

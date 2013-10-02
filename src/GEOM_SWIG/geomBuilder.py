@@ -12288,6 +12288,36 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeSmoothingSurface", self.AdvOp)
             return anObj
 
+        ## Export a shape to XAO format
+        #  @param shape The shape to export
+        #  @param groups The list of groups to export
+        #  @param fields The list of fields to export
+        #  @param author The author of the export
+        #  @param fileName The name of the file to export
+        #  @return boolean
+        #
+        #  @ref tui_exportxao "Example"
+        def ExportXAO(self, shape, groups, fields, author, fileName):
+            res = self.InsertOp.ExportXAO(shape, groups, fields, author, fileName)
+            RaiseIfFailed("ExportXAO", self.InsertOp)
+            return res
+
+        ## Import a shape from XAO format
+        #  @param shape Shape to export
+        #  @param fileName The name of the file to import
+        #  @return tuple (res, shape, subShapes, groups, fields)
+        #       res Flag indicating if the import was successful
+        #       shape The imported shape
+        #       subShapes The list of imported subShapes
+        #       groups The list of imported groups
+        #       fields The list of imported fields
+        #
+        #  @ref tui_importxao "Example"
+        def ImportXAO(self, fileName):
+            res = self.InsertOp.ImportXAO(fileName)
+            RaiseIfFailed("ImportXAO", self.InsertOp)
+            return res
+
         #@@ insert new functions before this line @@ do not remove this line @@#
 
         # end of l4_advanced

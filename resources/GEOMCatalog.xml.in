@@ -54,6 +54,7 @@
   <objref name="GEOM_IAdvancedOperations"  id="IDL:GEOM/GEOM_IAdvancedOperations:1.0" />
   <sequence name="ListOfLong" content="int"  />
   <sequence name="ListOfGO" content="GEOM_Object"  />
+  <sequence name="ListOfBool" content="boolean"  />
   <sequence name="string_array" content="string"  />
   <struct name="BCError" >
     <member name="incriminated" type="ListOfLong"/>
@@ -73,7 +74,7 @@
         <component-comment>Geometry component</component-comment>
         <component-multistudy>1</component-multistudy>
         <component-icone>ModuleGeom.png</component-icone>
-	<component-impltype>1</component-impltype>
+        <component-impltype>1</component-impltype>
 
         <!-- component interface list -->
         <component-interface-list>
@@ -594,44 +595,44 @@
                     </outParameter-list>
                     <DataStream-list></DataStream-list>
                 </component-service>
-                    <component-service>
-                        <service-name>GetDumpName</service-name>
-                        <service-author></service-author>
-                        <service-version></service-version>
-                        <service-comment>unknown</service-comment>
-                        <service-by-default>0</service-by-default>
-                        <inParameter-list>
-                            <inParameter>
-                                <inParameter-name>theStudyEntry</inParameter-name>
-                                <inParameter-type>string</inParameter-type>
-                                <inParameter-comment>unknown</inParameter-comment>
-                            </inParameter>
-                        </inParameter-list>
-                        <outParameter-list>
-                            <outParameter>
-                                <outParameter-name>return</outParameter-name>
-                                <outParameter-type>string</outParameter-type>
-                                <outParameter-comment>unknown</outParameter-comment>
-                            </outParameter>
-                        </outParameter-list>
-                        <DataStream-list></DataStream-list>
-                    </component-service>
-                    <component-service>
-                        <service-name>GetAllDumpNames</service-name>
-                        <service-author></service-author>
-                        <service-version></service-version>
-                        <service-comment>unknown</service-comment>
-                        <service-by-default>0</service-by-default>
-                        <inParameter-list></inParameter-list>
-                        <outParameter-list>
-                            <outParameter>
-                                <outParameter-name>return</outParameter-name>
-                                <outParameter-type>string_array</outParameter-type>
-                                <outParameter-comment>unknown</outParameter-comment>
-                            </outParameter>
-                        </outParameter-list>
-                        <DataStream-list></DataStream-list>
-                    </component-service>
+                <component-service>
+                    <service-name>GetDumpName</service-name>
+                    <service-author></service-author>
+                    <service-version></service-version>
+                    <service-comment>unknown</service-comment>
+                    <service-by-default>0</service-by-default>
+                    <inParameter-list>
+                        <inParameter>
+                            <inParameter-name>theStudyEntry</inParameter-name>
+                            <inParameter-type>string</inParameter-type>
+                            <inParameter-comment>unknown</inParameter-comment>
+                        </inParameter>
+                    </inParameter-list>
+                    <outParameter-list>
+                        <outParameter>
+                            <outParameter-name>return</outParameter-name>
+                            <outParameter-type>string</outParameter-type>
+                            <outParameter-comment>unknown</outParameter-comment>
+                        </outParameter>
+                    </outParameter-list>
+                    <DataStream-list></DataStream-list>
+                </component-service>
+                <component-service>
+                    <service-name>GetAllDumpNames</service-name>
+                    <service-author></service-author>
+                    <service-version></service-version>
+                    <service-comment>unknown</service-comment>
+                    <service-by-default>0</service-by-default>
+                    <inParameter-list></inParameter-list>
+                    <outParameter-list>
+                        <outParameter>
+                            <outParameter-name>return</outParameter-name>
+                            <outParameter-type>string_array</outParameter-type>
+                            <outParameter-comment>unknown</outParameter-comment>
+                        </outParameter>
+                    </outParameter-list>
+                    <DataStream-list></DataStream-list>
+                </component-service>
             </component-service-list>
         </component-interface-list>
     <constraint>hostname = localhost</constraint>
@@ -5296,6 +5297,43 @@
                             <outParameter>
                                 <outParameter-name>return</outParameter-name>
                                 <outParameter-type>GEOM_Object</outParameter-type>
+                                <outParameter-comment>Result object</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
+                    <component-service>
+                        <service-name>MakeExportXAO</service-name>
+                        <service-author></service-author>
+                        <service-version></service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-name>theFileName</inParameter-name>
+                                <inParameter-type>string</inParameter-type>
+                                <inParameter-comment>The name of the exported file</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theExportingShape</inParameter-name>
+                                <inParameter-type>GEOM_Object</inParameter-type>
+                                <inParameter-comment>Shape to export</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>thelGroups</inParameter-name>
+                                <inParameter-type>GEOM_List</inParameter-type>
+                                <inParameter-comment>List of groups to export</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>thelFields</inParameter-name>
+                                <inParameter-type>GEOM_List</inParameter-type>
+                                <inParameter-comment>List of fields to export</inParameter-comment>
+                            </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>return</outParameter-name>
+                                <outParameter-type>bool</outParameter-type>
                                 <outParameter-comment>Result object</outParameter-comment>
                             </outParameter>
                         </outParameter-list>

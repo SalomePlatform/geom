@@ -360,3 +360,119 @@ GEOM::ListOfLong* GEOM_IInsertOperations_i::GetAllTextures()
     anIDs[i] = *anIt;
   return anIDs._retn();
 }
+
+//=============================================================================
+/*!
+ *  Export a shape to XAO format
+ *  \param shape The shape to export
+ *  \param groups The list of groups to export
+ *  \param fields The list of fields to export
+ *  \param author The author of the export
+ *  \param fileName The name of the exported file
+ *  \return boolean indicating if export was succeful.
+ */
+//=============================================================================
+CORBA::Boolean GEOM_IInsertOperations_i::ExportXAO(GEOM::GEOM_Object_ptr shape,
+						   const GEOM::ListOfGO& groups, const GEOM::ListOfGO& fields,
+						   const char* author, const char* fileName)
+{
+  bool isGood = false;
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+  
+  // Get the reference shape
+  Handle(GEOM_Object) reference = GetObjectImpl(shape);
+  
+  // Get the reference groups
+  int ind = 0;
+  std::list<Handle(GEOM_Object)> groupsObj;
+  for (; ind < groups.length(); ind++)
+  {
+    Handle(GEOM_Object) gobj = GetObjectImpl(groups[ind]);
+    if (gobj.IsNull()) return false;
+    groupsObj.push_back(gobj);
+  }
+  
+  // Get the reference fields
+  ind = 0;
+  std::list<Handle(GEOM_Object)> fieldsObj;
+  for (; ind < fields.length(); ind++)
+  {
+    Handle(GEOM_Object) fobj = GetObjectImpl(fields[ind]);
+    if (fobj.IsNull()) return false;
+    fieldsObj.push_back(fobj);
+  }
+  
+  if (!reference.IsNull())
+  {
+    // Export XAO
+    isGood = GetOperations()->ExportXAO(reference, groupsObj, fieldsObj, author, fileName);
+  }
+  
+  return isGood;
+}
+
+//=============================================================================
+/*!
+ *  Import a shape from XAO format
+ *  \param fileName The name of the file to import
+ *  \param shape The imported shape
+ *  \param subShapes The list of imported subShapes
+ *  \param groups The list of imported groups
+ *  \param fields The list of imported fields
+ *  \return boolean indicating if import was succeful.
+ */
+//=============================================================================
+CORBA::Boolean GEOM_IInsertOperations_i::ImportXAO(const char* fileName,
+						   GEOM::GEOM_Object_out shape,
+						   GEOM::ListOfGO_out subShapes,
+						   GEOM::ListOfGO_out groups,
+						   GEOM::ListOfGO_out fields)
+{
+  GEOM::GEOM_Object_var vshape;
+  shape = vshape._retn();
+  
+  subShapes = new GEOM::ListOfGO;
+  groups = new GEOM::ListOfGO;
+  fields = new GEOM::ListOfGO;
+  
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+  
+  Handle(TColStd_HSequenceOfTransient) importedSubShapes = new TColStd_HSequenceOfTransient();
+  Handle(TColStd_HSequenceOfTransient) importedGroups = new TColStd_HSequenceOfTransient();
+  Handle(TColStd_HSequenceOfTransient) importedFields = new TColStd_HSequenceOfTransient();
+  Handle(GEOM_Object) hshape;
+  bool res = GetOperations()->ImportXAO(fileName, hshape, importedSubShapes, importedGroups, importedFields);
+  
+  if (!GetOperations()->IsDone() || !res)
+    return false;
+  
+  // parse fields
+  int n = importedSubShapes->Length();
+  subShapes->length(n);
+  for (int i = 1; i <= n; i++)
+  {
+    (*subShapes)[i - 1] = GetObject(Handle(GEOM_Object)::DownCast(importedSubShapes->Value(i)));
+  }
+  
+  // parse groups
+  n = importedGroups->Length();
+  groups->length(n);
+  for (int i = 1; i <= n; i++)
+  {
+    (*groups)[i - 1] = GetObject(Handle(GEOM_Object)::DownCast(importedGroups->Value(i)));
+  }
+  
+  // parse fields
+  n = importedFields->Length();
+  fields->length(n);
+  for (int i = 1; i <= n; i++)
+  {
+    (*fields)[i - 1] = GetObject(Handle(GEOM_Object)::DownCast(importedFields->Value(i)));
+  }
+  
+  shape = GetObject(hshape);
+  
+  return res;
+}

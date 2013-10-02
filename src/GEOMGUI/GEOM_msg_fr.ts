@@ -4895,6 +4895,50 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>GEOM_SELECT_IMAGE</source>
         <translation>Sélectionner une image...</translation>
     </message>
+    <message>
+        <source>MEN_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
+    </message>
+    <message>
+        <source>TOP_EXPORTXAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>MEN_EXPORTXAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>STB_EXPORTXAO</source>
+        <translation>Exporter une forme au format XAO</translation>
+    </message>
+    <message>
+        <source>TOP_IMPORTXAO</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>MEN_IMPORTXAO</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>STB_IMPORTXAO</source>
+        <translation>Importer une forme au format XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTEXPORT_204</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_SELECT_EXPORT_XAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>XAO_FILES</source>
+        <translation>Fichiers XAO (*.xao)</translation>
+    </message>
+    <message>
+        <source>TOOLS_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -5780,6 +5824,64 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>CREATION_INFO_TITLE</source>
         <translation type="unfinished">Information</translation>
+    </message>
+</context>
+<context>
+    <name>ImportExportGUI_ExportXAODlg</name>
+    <message>
+        <source>GEOM_EXPORTXAO_TITLE</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO</source>
+        <translation>Export XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
+        <translation>Objet</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_FILENAME</source>
+        <translation>Fichier</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_AUTHOR</source>
+        <translation>Auteur</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_LGROUPS</source>
+        <translation>Groupes</translation>
+    </message>
+    <message>
+        <source>GEOM_EXPORTXAO_LFIELDS</source>
+        <translation>Champs</translation>
+    </message>
+</context>
+<context>
+    <name>ImportExportGUI_ImportXAODlg</name>
+    <message>
+        <source>GEOM_IMPORTXAO_TITLE</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO</source>
+        <translation>Import XAO</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_IMPORTINGSHAPE</source>
+        <translation>Objet</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_FILENAME</source>
+        <translation>Fichier</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_LGROUPS</source>
+        <translation>Groupes</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORTXAO_LFIELDS</source>
+        <translation>Champs</translation>
     </message>
 </context>
 </TS>

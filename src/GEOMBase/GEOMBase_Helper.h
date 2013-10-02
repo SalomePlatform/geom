@@ -164,6 +164,7 @@ protected:
   // as a top-level object.
 
   virtual QString getNewObjectName (int CurrObj = -1) const;
+  virtual QString getObjectName(GEOM::GEOM_Object_ptr object) const;
   virtual bool extractPrefix() const;
   virtual void addSubshapesToStudy();
 

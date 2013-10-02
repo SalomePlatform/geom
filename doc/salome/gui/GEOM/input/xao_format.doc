@@ -1,0 +1,10 @@
+/*!
+
+\page xao_format_page The XAO format
+
+XAO is a file format which describes a shape with its topology, groups and fields.
+
+- \subpage export_xao_page "Export"
+- \subpage import_xao_page "Import"
+
+*/

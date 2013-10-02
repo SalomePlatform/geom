@@ -3288,6 +3288,30 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetObjects (GEOM::GEOM_Object_ptr theGroup)
   return aListPtr->_this();
 }
 
+//=============================================================================
+//  ExportXAO
+//=============================================================================
+CORBA::Boolean GEOM_Superv_i::ExportXAO (GEOM::GEOM_Object_ptr shape,
+					 const GEOM::ListOfGO& groups, const GEOM::ListOfGO& fields,
+					 const char* author, const char* fileName)
+{
+  beginService( " GEOM_Superv_i::ExportXAO" );
+  MESSAGE("GEOM_Superv_i::ExportXAO");
+  getInsOp();
+  CORBA::Boolean isGood = myInsOp->ExportXAO(shape, groups, fields, author, fileName);
+  endService( " GEOM_Superv_i::ExportXAO" );
+  return isGood;
+}
+
+//=============================================================================
+//  ImportXAO
+//=============================================================================
+CORBA::Boolean GEOM_Superv_i::ImportXAO (const char* fileName, GEOM::GEOM_Object_out shape, 
+					 GEOM::ListOfGO_out subShapes, GEOM::ListOfGO_out groups, GEOM::ListOfGO_out fields)
+{
+  return false;
+}
+
 //=============================== Advanced Operations =============================
 //=============================================================================
 //  MakePipeTShape

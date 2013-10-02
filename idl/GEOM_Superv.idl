@@ -262,6 +262,11 @@ module GEOM
                             out string_array thePatterns) ;
     void ExportTranslators (out string_array theFormats,
                             out string_array thePatterns) ;
+    boolean ExportXAO(in GEOM_Object shape,
+		      in ListOfGO groups, in ListOfGO fields,
+		      in string author, in string fileName);
+    boolean ImportXAO(in string fileName, out GEOM_Object shape,
+		      out ListOfGO subShapes, out ListOfGO groups, out ListOfGO fields);
 
     //-----------------------------------------------------------//
     // TransformOperations                                       //

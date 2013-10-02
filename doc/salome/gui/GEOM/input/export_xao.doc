@@ -1,0 +1,21 @@
+/*!
+
+\page export_xao_page Export XAO
+
+To export a shape in the \b XAO format, in the <b>Main Menu</b> select <b>New Entity ->
+Import / Export -> Export XAO </b>
+
+Specify the parameters of the Export XAO dialog box and press "Apply" or "Apply & Close" button.
+
+
+<b>TUI Command:</b> <em>geompy.MakeExportXAO(Shape, FileName, Groups, Fields)</em>
+
+<b>Arguments:</b>
+- \b Shape - The shape to export
+- \b FileName - The name of the file to create
+- \b Groups - The list of groups to export
+- \b Fields - The list of fields to export
+
+\image html exportxao_dlg.png
+
+*/

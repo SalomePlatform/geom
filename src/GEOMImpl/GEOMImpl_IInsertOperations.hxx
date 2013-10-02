@@ -38,11 +38,20 @@
 
 #include <list>
 
+class GEOMImpl_IShapesOperations;
+class GEOMImpl_IGroupOperations;
+
 #if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 class Handle_TColStd_HArray1OfByte;
 #else
 class Handle_TDataStd_HArray1OfByte;
 #endif
+
+namespace XAO {
+  class Geometry;
+  class BrepGeometry;
+  class Xao;
+}
 
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:
@@ -51,10 +60,10 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
 
 
   Standard_EXPORT Handle(GEOM_Object) MakeCopy (Handle(GEOM_Object) theOriginal);
-
+  
   Standard_EXPORT Handle(GEOM_Object) Import (const TCollection_AsciiString& theFileName,
                                               const TCollection_AsciiString& theFormatType);
-
+  
   Standard_EXPORT TCollection_AsciiString ReadValue (const TCollection_AsciiString& theFileName,
                                                      const TCollection_AsciiString& theFormatType,
                                                      const TCollection_AsciiString& theParameterName);
@@ -62,21 +71,21 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
   Standard_EXPORT void Export (const Handle(GEOM_Object)      theOriginal,
                                const TCollection_AsciiString& theFileName,
                                const TCollection_AsciiString& theFormatType);
-
+  
   Standard_EXPORT Standard_Boolean ImportTranslators (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
                                                       Handle(TColStd_HSequenceOfAsciiString)& thePatterns);
-
+  
   Standard_EXPORT Standard_Boolean ExportTranslators (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
                                                       Handle(TColStd_HSequenceOfAsciiString)& thePatterns);
-
+  
   Standard_EXPORT Standard_Boolean IsSupported (const Standard_Boolean isImport,
                                                 const TCollection_AsciiString& theFormat,
                                                 Handle(TCollection_HAsciiString)& theLibName);
-
+  
   Standard_EXPORT Handle(GEOM_Object) RestoreShape (std::istringstream& theStream);
-
+  
   Standard_EXPORT int LoadTexture(const TCollection_AsciiString& theTextureFile);
-
+  
   Standard_EXPORT int AddTexture(int theWidth, int theHeight,
 #if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
                                  const Handle(TColStd_HArray1OfByte)& theTexture);
@@ -89,16 +98,39 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
 #else
   Standard_EXPORT Handle(TDataStd_HArray1OfByte) GetTexture(int theTextureId,
 #endif
-                                                            int& theWidth, int& theHeight);
+							    int& theWidth, int& theHeight);
 
   Standard_EXPORT std::list<int> GetAllTextures();
+							   
+  Standard_EXPORT bool ExportXAO(Handle(GEOM_Object) shape,
+				 std::list<Handle(GEOM_Object)> groupList,
+				 std::list<Handle(GEOM_Object)> fieldList,
+				 const char* author,
+				 const char* fileName);
+
+  Standard_EXPORT bool ImportXAO(const char* fileName,
+				 Handle(GEOM_Object)& shape,
+				 Handle(TColStd_HSequenceOfTransient)& subShapes,
+				 Handle(TColStd_HSequenceOfTransient)& groups,
+				 Handle(TColStd_HSequenceOfTransient)& fields);
 
  private:
   Standard_Boolean InitResMgr ();
 
+  void importSubShapes(XAO::Geometry* xaoGeometry, Handle(GEOM_Function) function,
+		       int shapeType, int dim,
+		       Handle(TColStd_HSequenceOfTransient)& subshapeList);
+  void exportSubshapes(const Handle(GEOM_Object)& shape, XAO::BrepGeometry* geometry);
+  void exportFields(std::list<Handle(GEOM_Object)> fieldList, XAO::Xao* xaoObject,
+		    XAO::BrepGeometry* geometry);
+  void exportGroups(std::list<Handle(GEOM_Object)> groupList, XAO::Xao* xaoObject,
+		    XAO::BrepGeometry* geometry);
+
  private:
   Handle(Resource_Manager) myResMgr;
   Handle(Resource_Manager) myResMgrUser;
+  GEOMImpl_IShapesOperations* myShapesOperations;
+  GEOMImpl_IGroupOperations* myGroupOperations;
 };
 
 #endif

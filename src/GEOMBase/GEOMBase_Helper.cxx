@@ -836,21 +836,24 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
         for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it, currObj++ ) {
           GEOM::GEOM_Object_var obj=*it;
           if ( publish ) {
-            QString aName = getNewObjectName(currObj);
-            if ( nbObjs > 1 ) {
-              if (aName.isEmpty())
-                aName = getPrefix(obj);
-              if (nbObjs <= 30) {
-                // Try to find a unique name
-                aName = GEOMBase::GetDefaultName(aName, extractPrefix());
-              } else {
-                // Don't check name uniqueness in case of numerous objects
-                aName = aName + "_" + QString::number(aNumber++);
-              }
-            } else {
-              // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
-              if ( aName.isEmpty() )
-                aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
+            QString aName = getObjectName(obj);
+            if (aName.isEmpty()) {
+               aName = getNewObjectName(currObj);
+	       if ( nbObjs > 1 ) {
+		 if (aName.isEmpty())
+		   aName = getPrefix(obj);
+		 if (nbObjs <= 30) {
+		   // Try to find a unique name
+		   aName = GEOMBase::GetDefaultName(aName, extractPrefix());
+		 } else {
+		   // Don't check name uniqueness in case of numerous objects
+		   aName = aName + "_" + QString::number(aNumber++);
+		 }
+	       } else {
+		 // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
+		 if ( aName.isEmpty() )
+		   aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
+	       }
             }
             anEntryList << addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
@@ -979,12 +982,21 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::getFather( GEOM::GEOM_Object_ptr theObj )
 }
 
 //================================================================
+// Function : getObjectName
+// Purpose  : Redefine this method to return proper name for the given object
+//================================================================
+QString GEOMBase_Helper::getObjectName(GEOM::GEOM_Object_ptr object) const
+{
+  return QString();
+}
+
+//================================================================
 // Function : getNewObjectName
 // Purpose  : Redefine this method to return proper name for a new object
 //================================================================
 QString GEOMBase_Helper::getNewObjectName (int) const
 {
-  return QString::null;
+  return QString();
 }
 
 //================================================================

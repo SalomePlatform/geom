@@ -85,7 +85,7 @@ FIND_PACKAGE(SalomeSWIG REQUIRED)
 FIND_PACKAGE(SalomeBoost REQUIRED)
 FIND_PACKAGE(SalomeOmniORB REQUIRED)
 FIND_PACKAGE(SalomeOmniORBPy REQUIRED)
-#FIND_PACKAGE(SalomeLibXml2 REQUIRED)
+FIND_PACKAGE(SalomeLibXml2 REQUIRED)
 FIND_PACKAGE(SalomeHDF5 REQUIRED COMPONENTS C)
 
 # Other KERNEL optionals:
@@ -229,13 +229,13 @@ INCLUDE(CMakePackageConfigHelpers)
 SET(_${PROJECT_NAME}_exposed_targets 
   GEOMArchimede BREPExport BREPImport BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
   GEOMUtils GEOMEngine GEOM_SupervEngine IGESExport IGESImport GEOMSketcher
-  SalomeIDLGEOM STEPExport STEPImport STLExport ShHealOper
+  SalomeIDLGEOM STEPExport STEPImport STLExport ShHealOper XAO AdvancedEngine
 )
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
     AdvancedGUI BasicGUI BlocksGUI BooleanGUI BuildGUI DisplayGUI DlgRef EntityGUI GEOMBase
     GEOMFiltersSelection GEOM GEOMToolsGUI GenerationGUI GroupGUI Material MeasureGUI GEOMObject
-    OCC2VTK VTKExport OperationGUI PrimitiveGUI RepairGUI TransformationGUI
+    OCC2VTK VTKExport OperationGUI PrimitiveGUI RepairGUI TransformationGUI ImportExportGUI
     )
 ENDIF(SALOME_BUILD_GUI)
 

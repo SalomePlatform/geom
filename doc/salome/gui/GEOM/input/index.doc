@@ -4,18 +4,18 @@
 
 \image html geomscreen.png
 
-\b Geometry module of SALOME is destined for: 
+\b Geometry module of SALOME is destined for:
 - \subpage import_export_geom_obj_page "import and export of geometrical models"
   in IGES, BREP and STEP formats;
 - \subpage create_geom_obj_page "construction of geometrical objects"
-  using a wide range of functions; 
+  using a wide range of functions;
 - \subpage view_geom_obj_page "viewing geometrical objects" in the OCC
-  viewer; 
+  viewer;
 - \subpage transform_geom_obj_page "transformation of geometrical objects"
   using various algorithms;
 - \subpage repairing_operations_page "optimization of geometrical objects";
 - viewing \subpage geometrical_obj_prop_page "geometrical object properties"
-  and other information about geometrical objects using 
+  and other information about geometrical objects using
   \subpage using_measurement_tools_page "measurement tools";
 - \subpage pictures_page "designing shapes from pictures";
 - easily setting parameters via the variables predefined in
@@ -23,6 +23,8 @@
 
 The possibility to classify the created geometrical objects by moving it into early created container (folder) is detailed on
 \subpage arranging_study_objects_page section.
+
+XAO format describing a shape with its topology, groups and fields is detailed on \subpage xao_format_page section.
 
 Geometry module preferences are described in the
 \subpage geometry_preferences_page section of SALOME Geometry Help.

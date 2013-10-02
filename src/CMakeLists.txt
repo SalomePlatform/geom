@@ -23,7 +23,8 @@
 SET(SUBDIRS_COMMON
   ARCHIMEDE BlockFix GEOMAlgo SKETCHER GEOM BREPExport
   BREPImport IGESExport IGESImport STEPExport STEPImport STLExport
-  ShHealOper GEOMUtils GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
+  ShHealOper GEOMUtils XAO XAO_Swig GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
+  AdvancedEngine
   )
 
 ##
@@ -43,7 +44,7 @@ IF(SALOME_BUILD_GUI)
     OBJECT OCC2VTK VTKExport DlgRef GEOMFiltersSelection Material GEOMGUI
     GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
     EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
-    RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI AdvancedEngine
+    RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI ImportExportGUI
     GEOM_SWIG_WITHIHM
     )
 ENDIF()

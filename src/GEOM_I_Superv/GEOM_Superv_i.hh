@@ -683,6 +683,15 @@ public:
   GEOM::GEOM_List_ptr GetObjects (GEOM::GEOM_Object_ptr theGroup);
 
   //-----------------------------------------------------------//
+  // ImportExport Operations                                   //
+  //-----------------------------------------------------------//
+  CORBA::Boolean ExportXAO(GEOM::GEOM_Object_ptr shape,
+                           const GEOM::ListOfGO& groups, const GEOM::ListOfGO& fields,
+                           const char* author, const char* fileName);
+  CORBA::Boolean ImportXAO(const char* fileName, GEOM::GEOM_Object_out shape, 
+                           GEOM::ListOfGO_out subShapes, GEOM::ListOfGO_out groups, GEOM::ListOfGO_out fields);
+
+  //-----------------------------------------------------------//
   // Advanced Operations                                       //
   //-----------------------------------------------------------//
   GEOM::GEOM_List_ptr MakePipeTShape (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,

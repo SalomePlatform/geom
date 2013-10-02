@@ -25,19 +25,22 @@ INCLUDE_DIRECTORIES(
   ${PTHREAD_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
+  ${LIBXML2_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/src/ShHealOper
-  ${PROJECT_SOURCE_DIR}/src/GEOM	 
-  ${PROJECT_SOURCE_DIR}/src/BlockFix	 
-  ${PROJECT_SOURCE_DIR}/src/GEOMAlgo	 
-  ${PROJECT_SOURCE_DIR}/src/GEOMUtils 
-  ${PROJECT_SOURCE_DIR}/src/SKETCHER	 
-  ${PROJECT_SOURCE_DIR}/src/ARCHIMEDE 
+  ${PROJECT_SOURCE_DIR}/src/GEOM 
+  ${PROJECT_SOURCE_DIR}/src/BlockFix
+  ${PROJECT_SOURCE_DIR}/src/GEOMAlgo 
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
+  ${PROJECT_SOURCE_DIR}/src/SKETCHER
+  ${PROJECT_SOURCE_DIR}/src/ARCHIMEDE
+  ${PROJECT_SOURCE_DIR}/src/XAO
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
   ${CAS_DEFINITIONS}
+  ${LIBXML2_DEFINITIONS} 
   ${PYTHON_DEFINITIONS}
   )
 
@@ -46,7 +49,8 @@ SET(_link_LIBRARIES
   ${CAS_TKFeat}
   ${CAS_TKFillet}
   ${PYTHON_LIBRARIES}
-  ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede
+  ${LIBXML2_LIBRARIES}
+  ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede XAO
   ${KERNEL_SALOMELocalTrace}
   )
 
@@ -168,6 +172,8 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_GlueDriver.hxx
   GEOMImpl_Types.hxx
   GEOM_GEOMImpl.hxx
+  GEOMImpl_IImportExportXAO.hxx
+  GEOMImpl_XAODriver.hxx
   )
 # --- sources ---
 
@@ -236,6 +242,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_FillingDriver.cxx
   GEOMImpl_GlueDriver.cxx
   GEOMImpl_FieldDriver.cxx
+  GEOMImpl_XAODriver.cxx
   )
 
 # --- rules ---

@@ -1,0 +1,18 @@
+\anchor tui_creation_exportxao
+<br><h2>Creation of ExportXAO</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create ExportXAO object
+exportxao = geompy.MakeExportXAO([value], [value], [value], [value])
+
+# add object in the study
+id_exportxao = geompy.addToStudy(exportxao,"ExportXAO")
+
+# display exportxao
+gg.createAndDisplayGO(id_exportxao) 
+\endcode
+

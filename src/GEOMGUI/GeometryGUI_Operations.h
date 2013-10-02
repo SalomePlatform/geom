@@ -193,6 +193,9 @@ namespace GEOMOp {
     OpQuadFace            = 6102,   // MENU BLOCKS - QUADRANGLE FACE
     OpPropagate           = 6103,   // MENU BLOCKS - PROPAGATE
     OpExplodeBlock        = 6104,   // MENU BLOCKS - EXPLODE ON BLOCKS
+    // ImportExport ----------------//--------------------------------
+    OpExportXAO           = 6200,   // MENU NEW ENTITY - IMPORTEXPORT - EXPORTXAO
+    OpImportXAO           = 6201,   // MENU NEW ENTITY - IMPORTEXPORT - IMPORTXAO
     // AdvancedGUI -----------------//--------------------------------
     OpAdvancedNoOp        = 10000,  // NO OPERATION (advanced operations base)
     //OpPipeTShape          = 10001,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
