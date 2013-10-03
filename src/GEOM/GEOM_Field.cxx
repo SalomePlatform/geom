@@ -570,18 +570,11 @@ int GEOM_FieldStep::GetID()
 
 void GEOM_FieldStep::SetStamp(const int stamp)
 {
-  Handle(GEOM_Function) fun = GetLastFunction();
-  if ( fun.IsNull() ) return;
-  if ( fun->GetType() == GEOM_Field::FUN_ADD_STEP )
-  {
-    // it's creation of the step, dump is performed outside
-    GEOM_IField data( fun );
-    data.SetStepStamp( stamp );
-  }
-  else
+  if ( GetStamp() != stamp )
   {
     // it's stamp modification: field.setStamp(step, stamp)
-    fun = AddFunction( GEOM_Field::GetFieldID(), GEOM_Field::FUN_CHANGE_STEP_STAMP );
+    Handle(GEOM_Function) fun =
+      AddFunction( GEOM_Field::GetFieldID(), GEOM_Field::FUN_CHANGE_STEP_STAMP );
 
     GEOM_IField data( fun );
     data.SetStepStamp( stamp );
@@ -602,7 +595,7 @@ int GEOM_FieldStep::GetStamp()
   Handle(GEOM_Function) fun = getFunction( GEOM_Field::FUN_CHANGE_STEP_STAMP, this );
   if ( !fun.IsNull() )
     return GEOM_IField( fun ).GetStepStamp();
-  return std::numeric_limits<int>::max(); // very strange
+  return std::numeric_limits<int>::max();
 }
 
 //=======================================================================
