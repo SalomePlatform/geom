@@ -488,7 +488,8 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
 
   // Remember the label to reuse it then
   std::list<TDF_Label>& aFreeLabels = _freeLabels[aDocID];
-  aFreeLabels.push_back(aLabel);
+  if ( aFreeLabels.empty() || aFreeLabels.back() != aLabel )
+    aFreeLabels.push_back(aLabel);
 
   theObject.Nullify();
 
