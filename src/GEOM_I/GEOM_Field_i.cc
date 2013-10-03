@@ -55,7 +55,6 @@ GEOM_Field_i::GEOM_Field_i (PortableServer::POA_ptr thePOA,
 GEOM_Field_i::~GEOM_Field_i()
 {
   MESSAGE("GEOM_Field_i::~GEOM_Field_i");
-  GEOM_Engine::GetEngine()->RemoveObject(_impl);
 }
 
 //================================================================================
