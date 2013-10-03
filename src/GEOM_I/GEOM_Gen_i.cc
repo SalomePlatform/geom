@@ -1006,6 +1006,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
     GEOM::ListOfGBO_var boList = theObject->GetDependency();
     aLength = boList->length();
     aList = new GEOM::ListOfGO;
+    aList->length(aLength);
     for (int i = 0; i < aLength; i++)
       aList[i] = GEOM::GEOM_Object::_narrow( boList[i] );
     nbArgsActual = aLength;
