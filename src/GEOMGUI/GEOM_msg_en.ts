@@ -2637,6 +2637,22 @@ Please, select face, shell or solid and try again</translation>
         <translation>Cut Groups</translation>
     </message>
     <message>
+        <source>MEN_FIELD</source>
+        <translation>Field</translation>
+    </message>
+    <message>
+        <source>MEN_FIELD_CREATE</source>
+        <translation>Create Field</translation>
+    </message>
+    <message>
+        <source>MEN_FIELD_EDIT</source>
+        <translation>Edit Field</translation>
+    </message>
+    <message>
+        <source>MEN_ADD_FIELD_STEP</source>
+        <translation>Add Field Step</translation>
+    </message>
+    <message>
         <source>MEN_RELOAD_IMPORTED</source>
         <translation>Reload From Disk</translation>
     </message>
@@ -2755,6 +2771,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_POP_CREATE_GROUP</source>
         <translation>Create Group</translation>
+    </message>
+    <message>
+        <source>MEN_POP_EDIT_FIELD</source>
+        <translation>Edit Field</translation>
     </message>
     <message>
         <source>MEN_POP_DISCLOSE_CHILDREN</source>
@@ -3469,6 +3489,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Cut Groups</translation>
     </message>
     <message>
+        <source>STB_FIELD_CREATE</source>
+        <translation>Create a Field</translation>
+    </message>
+    <message>
+        <source>STB_FIELD_EDIT</source>
+        <translation>Edit a Field</translation>
+    </message>
+    <message>
         <source>STB_RELOAD_IMPORTED</source>
         <translation>Reload imported shape from its original place on disk</translation>
     </message>
@@ -3575,6 +3603,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_POP_CREATE_GROUP</source>
         <translation>Create Group</translation>
+    </message>
+    <message>
+        <source>STB_POP_EDIT_FIELD</source>
+        <translation>Edit Field</translation>
     </message>
     <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
@@ -4101,6 +4133,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Cut Groups</translation>
     </message>
     <message>
+        <source>TOP_FIELD_CREATE</source>
+        <translation>Create a Field</translation>
+    </message>
+    <message>
+        <source>TOP_FIELD_EDIT</source>
+        <translation>Edit a Field</translation>
+    </message>
+    <message>
         <source>TOP_HEX_SOLID</source>
         <translation>Hexahedral Solid</translation>
     </message>
@@ -4211,6 +4251,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_POP_CREATE_GROUP</source>
         <translation>Create Group</translation>
+    </message>
+    <message>
+        <source>TOP_POP_EDIT_FIELD</source>
+        <translation>Edit Field</translation>
     </message>
     <message>
         <source>TOP_POP_UNPUBLISH_OBJ</source>
@@ -5406,6 +5450,148 @@ Number of sketch points too small</translation>
     <message>
         <source>WRN_NOT_SUBSHAPE</source>
         <translation type="unfinished">The selected shape is not a sub-shape of the main shape. Hide all extra shapes in the viewer for more suitable selection.</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI</name>
+    <message>
+        <source>NO_FIELD</source>
+        <translation>Please, select a field to edit</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_FieldDlg</name>
+    <message>
+        <source>CREATE_FIELD_TITLE</source>
+        <translation>Create Field</translation>
+    </message>
+    <message>
+        <source>EDIT_FIELD_TITLE</source>
+        <translation>Edit Field</translation>
+    </message>
+    <message>
+        <source>FIELD_NAME</source>
+        <translation>Field name</translation>
+    </message>
+    <message>
+        <source>PROPERTIES</source>
+        <translation>Properties</translation>
+    </message>
+    <message>
+        <source>SHAPE</source>
+        <translation>Shape</translation>
+    </message>
+    <message>
+        <source>DATA_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source></source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>BOOL</source>
+        <translation>Boolean</translation>
+    </message>
+    <message>
+        <source>INT</source>
+        <translation>Integer</translation>
+    </message>
+    <message>
+        <source>DOUBLE</source>
+        <translation>Double</translation>
+    </message>
+    <message>
+        <source>STRING</source>
+        <translation>String</translation>
+    </message>
+    <message>
+        <source>SHAPE_TYPE</source>
+        <translation>Sub-shape</translation>
+    </message>
+    <message>
+        <source>VERTEX</source>
+        <translation>Vertex</translation>
+    </message>
+    <message>
+        <source>EDGE</source>
+        <translation>Edge</translation>
+    </message>
+    <message>
+        <source>FACE</source>
+        <translation>Face</translation>
+    </message>
+    <message>
+        <source>SOLID</source>
+        <translation>Solid</translation>
+    </message>
+    <message>
+        <source>WHOLE</source>
+        <translation>Whole shape</translation>
+    </message>
+    <message>
+        <source>NB_COMPS</source>
+        <translation>Nb. components</translation>
+    </message>
+    <message>
+        <source>VALUES</source>
+        <translation>Values</translation>
+    </message>
+    <message>
+        <source>PREV_STEP</source>
+        <translation>Previous step</translation>
+    </message>
+    <message>
+        <source>STEP</source>
+        <translation>Step</translation>
+    </message>
+    <message>
+        <source>NEXT_STEP</source>
+        <translation>Next step</translation>
+    </message>
+    <message>
+        <source>ADD_STEP</source>
+        <translation>Add step</translation>
+    </message>
+    <message>
+        <source>STAMP</source>
+        <translation>Stamp</translation>
+    </message>
+    <message>
+        <source>REMOVE_STEP</source>
+        <translation>Remove step</translation>
+    </message>
+    <message>
+        <source>FIELD_PREFIX</source>
+        <translation>Field</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_STUDY</source>
+        <translation>No study availabel</translation>
+    </message>
+    <message>
+        <source>NO_SHAPE</source>
+        <translation>Shape not selected</translation>
+    </message>
+    <message>
+        <source>NO_FIELD</source>
+        <translation>Field not selected</translation>
+    </message>
+    <message>
+        <source>EMPTY_NAME</source>
+        <translation>Please, specify a non-empty field name</translation>
+    </message>
+    <message>
+        <source>NO_VALUES</source>
+        <translation>No steps added to the field</translation>
+    </message>
+    <message>
+        <source>SUB_SHAPE_HEADER</source>
+        <translation>Sub-shape</translation>
+    </message>
+    <message>
+        <source>WHOLE_SHAPE_VHEADER</source>
+        <translation>Shape</translation>
     </message>
 </context>
 <context>

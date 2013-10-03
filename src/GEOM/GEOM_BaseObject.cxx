@@ -221,10 +221,12 @@ GEOM_BaseObject::~GEOM_BaseObject()
 //=============================================================================
 int GEOM_BaseObject::GetType()
 {
+  int type = -1;
   Handle(TDataStd_Integer) aType;
-  if(!_label.FindChild(TYPE_LABEL).FindAttribute(TDataStd_Integer::GetID(), aType)) return -1;
+  if(_label.FindChild(TYPE_LABEL).FindAttribute(TDataStd_Integer::GetID(), aType))
+    type = aType->Get();
 
-  return aType->Get();
+  return type;
 }
 
 //=============================================================================

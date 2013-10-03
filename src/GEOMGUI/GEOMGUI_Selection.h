@@ -79,6 +79,7 @@ private:
   bool                  isComponent( const int ) const;
   bool                  isFolder( const int ) const;
   GEOM::GEOM_Object_ptr getObject( const int ) const;
+  GEOM::GEOM_BaseObject_ptr getBaseObject( const int ) const;
 
   bool                  hasImported() const;
   bool                  allImported() const;
@@ -86,7 +87,7 @@ private:
   QVariant              visibleProperty( const QString&, const QString& ) const;
 
 private:
-  typedef QVector<GEOM::GEOM_Object_var> GeomObjectVector;
+  typedef QVector<GEOM::GEOM_BaseObject_var> GeomObjectVector;
 
 private:
   GeomObjectVector      myObjects;

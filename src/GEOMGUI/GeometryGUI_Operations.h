@@ -112,6 +112,9 @@ namespace GEOMOp {
     OpFeatureDetect       = 3303,   // MENU NEW ENTITY - FEATURE DETECTION
 #endif
     OpPictureImport       = 3304,   // MENU NEW ENTITY - IMPORT PICTURE IN VIEWER
+    OpCreateField         = 3305,   // MENU FIELD - CREATE FIELD
+    OpEditField           = 3306,   // MENU FIELD - EDIT FIELD
+    OpEditFieldPopup      = 3307,   // POPUP MENU - EDIT FIELD
     // BuildGUI --------------------//--------------------------------
     OpEdge                = 3400,   // MENU NEW ENTITY - BUILD - EDGE
     OpWire                = 3401,   // MENU NEW ENTITY - BUILD - WIRE

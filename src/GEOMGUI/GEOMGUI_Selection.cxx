@@ -120,7 +120,7 @@ void GEOMGUI_Selection::init( const QString& context, LightApp_SelectionMgr* sel
         _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
         if ( aSO ) {
           CORBA::Object_var varObj = GeometryGUI::ClientSObjectToObject( aSO );
-          myObjects[idx] = GEOM::GEOM_Object::_narrow( varObj );
+          myObjects[idx] = GEOM::GEOM_BaseObject::_narrow( varObj );
         }
       }
     }
@@ -199,15 +199,19 @@ QString GEOMGUI_Selection::typeName( const int index ) const
 
   static QString aGroup( "Group" );
   static QString aShape( "Shape" );
+  static QString aField( "Field" );
+  static QString aFieldStep( "FieldStep" );
   static QString anUnknown( "Unknown" );
 
-  GEOM::GEOM_Object_var anObj = getObject( index );
+  GEOM::GEOM_BaseObject_var anObj = getBaseObject( index );
   if ( !CORBA::is_nil( anObj ) ) {
     const int aGeomType = anObj->GetType();
-    if ( aGeomType == GEOM_GROUP )
-      return aGroup;
-    else
-      return aShape;
+    switch ( aGeomType ) {
+    case GEOM_GROUP     : return aGroup;
+    case GEOM_FIELD     : return aField;
+    case GEOM_FIELD_STEP: return aFieldStep;
+    default             : return aShape;
+    }
   }
   return anUnknown;
 }
@@ -473,8 +477,8 @@ int GEOMGUI_Selection::nbChildren( const int index ) const
     if ( study && !anEntry.isEmpty() ) {
       _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
       if ( aSO->GetStudy()->GetUseCaseBuilder()->IsUseCaseNode(aSO) ) {
-	_PTR(UseCaseIterator) it = aSO->GetStudy()->GetUseCaseBuilder()->GetUseCaseIterator( aSO ); 
-	for (it->Init(false); it->More(); it->Next()) nb++;
+        _PTR(UseCaseIterator) it = aSO->GetStudy()->GetUseCaseBuilder()->GetUseCaseIterator( aSO ); 
+        for (it->Init(false); it->More(); it->Next()) nb++;
       }
     }
   }
@@ -539,7 +543,15 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
 {
   GEOM::GEOM_Object_var o;
   if ( 0 <= index && index < myObjects.size() )
-    o = GEOM::GEOM_Object::_duplicate( myObjects[index] );
+    o = GEOM::GEOM_Object::_narrow( myObjects[index] );
+  return o._retn();
+}
+
+GEOM::GEOM_BaseObject_ptr GEOMGUI_Selection::getBaseObject( const int index ) const
+{
+  GEOM::GEOM_BaseObject_var o;
+  if ( 0 <= index && index < myObjects.size() )
+    o = GEOM::GEOM_BaseObject::_duplicate( myObjects[index] );
   return o._retn();
 }
 

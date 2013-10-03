@@ -964,6 +964,18 @@
             <translation>group_edit.png</translation>
         </message>
         <message>
+            <source>ICO_FIELD_CREATE</source>
+            <translation>field_new.png</translation>
+        </message>
+        <message>
+            <source>ICO_FIELD_EDIT</source>
+            <translation>field_edit.png</translation>
+        </message>
+        <message>
+            <source>ICO_ADD_FIELD_STEP</source>
+            <translation>field_new.png</translation>
+        </message>
+        <message>
             <source>ICO_HEX_SOLID</source>
             <translation>box.png</translation>
         </message>
@@ -1078,6 +1090,10 @@
         <message>
             <source>ICO_POP_CREATE_GROUP</source>
             <translation>group_new.png</translation>
+        </message>
+        <message>
+            <source>ICO_POP_EDIT_FIELD</source>
+            <translation>field_edit.png</translation>
         </message>
         <message>
             <source>ICO_PROPAGATE</source>

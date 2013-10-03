@@ -110,6 +110,7 @@ SET(EntityGUI_HEADERS
 # header files / to be processed by moc
 SET(_moc_HEADERS
   EntityGUI_Widgets.h
+  EntityGUI_FieldDlg.h
   EntityGUI_SketcherDlg.h
   EntityGUI_3DSketcherDlg.h
   EntityGUI_SubShapeDlg.h
@@ -128,6 +129,7 @@ QT4_WRAP_CPP(_moc_SOURCES ${_moc_HEADERS})
 SET(EntityGUI_SOURCES
   EntityGUI.cxx
   EntityGUI_Widgets.cxx
+  EntityGUI_FieldDlg.cxx
   EntityGUI_SketcherDlg.cxx
   EntityGUI_3DSketcherDlg.cxx
   EntityGUI_SubShapeDlg.cxx

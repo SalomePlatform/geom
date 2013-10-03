@@ -234,6 +234,8 @@ SET( _res_files
   subblock.png
   group_new.png
   group_edit.png
+  field_new.png
+  field_edit.png
   glue.png
   check_blocks_compound.png
   get_non_blocks.png

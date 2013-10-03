@@ -67,7 +67,7 @@ GetCreationInformation(std::string&             theOperationName,
 
   if ( funType == GEOM_Field::FUN_ADD_FIELD )
   {
-    theOperationName = "ADD_FIELD";
+    theOperationName = "FIELD_CREATE";
     // geompy.CreateField(shape, name, type, dimension, componentNames)
     Handle(GEOM_Field) f = GEOM_Field::GetField( function->GetOwnerEntry() );
     AddParam( theParams, "Shape", data.GetShape() );

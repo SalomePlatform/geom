@@ -550,6 +550,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpFeatureDetect:      // MENU ENTITY - FEATURE DETECTION
 #endif
   case GEOMOp::OpPictureImport:      // MENU ENTITY - IMPORT PICTURE IN VIEWER
+  case GEOMOp::OpCreateField:        // MENU FIELD - CREATE FIELD
+  case GEOMOp::OpEditField:          // MENU FIELD - EDIT FIELD
+  case GEOMOp::OpEditFieldPopup:     // POPUP MENU - EDIT FIELD
     libName = "EntityGUI";
     break;
   case GEOMOp::OpEdge:               // MENU BUILD - EDGE
@@ -908,6 +911,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpGroupIntersect, "GROUP_INTERSECT" );
   createGeomAction( GEOMOp::OpGroupCut,    "GROUP_CUT" );
 
+  createGeomAction( GEOMOp::OpCreateField, "FIELD_CREATE" );
+  createGeomAction( GEOMOp::OpEditField,   "FIELD_EDIT" );
+
   createGeomAction( GEOMOp::OpReimport,    "RELOAD_IMPORTED" );
 
   createGeomAction( GEOMOp::OpQuadFace,    "Q_FACE" );
@@ -1034,6 +1040,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpAutoColor,        "POP_AUTO_COLOR" );
   createGeomAction( GEOMOp::OpNoAutoColor,      "POP_DISABLE_AUTO_COLOR" );
   createGeomAction( GEOMOp::OpGroupCreatePopup, "POP_CREATE_GROUP" );
+  createGeomAction( GEOMOp::OpEditFieldPopup,   "POP_EDIT_FIELD" );
   createGeomAction( GEOMOp::OpDiscloseChildren, "POP_DISCLOSE_CHILDREN" );
   createGeomAction( GEOMOp::OpConcealChildren,  "POP_CONCEAL_CHILDREN" );
   createGeomAction( GEOMOp::OpUnpublishObject,  "POP_UNPUBLISH_OBJ" );
@@ -1129,6 +1136,12 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpGroupUnion,     groupId, -1 );
   createMenu( GEOMOp::OpGroupIntersect, groupId, -1 );
   createMenu( GEOMOp::OpGroupCut,       groupId, -1 );
+
+  createMenu( separator(), newEntId, -1 );
+
+  int fieldId = createMenu( tr( "MEN_FIELD" ), newEntId, -1 );
+  createMenu( GEOMOp::OpCreateField,    fieldId, -1 );
+  createMenu( GEOMOp::OpEditField,      fieldId, -1 );
 
   createMenu( separator(), newEntId, -1 );
 
@@ -1418,13 +1431,15 @@ void GeometryGUI::initialize( CAM_Application* app )
   QtxPopupMgr* mgr = popupMgr();
 
   mgr->insert( action(  GEOMOp::OpDelete ), -1, -1 );  // delete
-  mgr->setRule( action( GEOMOp::OpDelete ), QString("$type in {'Shape' 'Group' 'Folder'} and selcount>0"), QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpDelete ), QString("$type in {'Shape' 'Group' 'Folder' 'Field' 'FieldStep'} and selcount>0"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpGroupCreatePopup ), -1, -1 ); // create group
   mgr->setRule( action( GEOMOp::OpGroupCreatePopup ), QString("type='Shape' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  GEOMOp::OpEditFieldPopup ), -1, -1 ); // edit field
+  mgr->setRule( action( GEOMOp::OpEditFieldPopup ), QString("(type='Field' or type='FieldStep') and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDiscloseChildren ), -1, -1 ); // disclose child items
   mgr->setRule( action( GEOMOp::OpDiscloseChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasConcealedChildren=true"), QtxPopupMgr::VisibleRule );
 
-  mgr->insert( action(  GEOMOp::OpConcealChildren ), -1, -1 ); // conceal shild items
+  mgr->insert( action(  GEOMOp::OpConcealChildren ), -1, -1 ); // conceal child items
   mgr->setRule( action( GEOMOp::OpConcealChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasDisclosedChildren=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpGroupEdit ), -1, -1 );  // edit group
   mgr->setRule( action( GEOMOp::OpGroupEdit ),  QString("client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
@@ -1496,7 +1511,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   QString canDisplay = "($component={'GEOM'}) and (selcount>0) and ({true} in $canBeDisplayed) ",
           onlyComponent = "((type='Component') and selcount=1)",
           rule = canDisplay + "and ((($type in {%1}) and( %2 )) or " + onlyComponent + ")",
-          types = "'Shape' 'Group'";
+          types = "'Shape' 'Group' 'FieldStep'";
 
   mgr->insert( action(  GEOMOp::OpShow ), -1, -1 ); // display
   mgr->setRule( action( GEOMOp::OpShow ), rule.arg( types ).arg( "not isVisible" ), QtxPopupMgr::VisibleRule );
@@ -1542,7 +1557,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpUnpublishObject ), -1, -1 ); // Unpublish object
-  mgr->setRule( action( GEOMOp::OpUnpublishObject ), QString("client='ObjectBrowser' and $type in {'Shape' 'Group'} and selcount>0"), QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpUnpublishObject ), QString("client='ObjectBrowser' and $type in {'Shape' 'Group' 'Field' 'FieldStep'} and selcount>0"), QtxPopupMgr::VisibleRule );
 
   mgr->insert( action(  GEOMOp::OpPublishObject ), -1, -1 ); // Publish object
   mgr->setRule( action( GEOMOp::OpPublishObject ), QString("client='ObjectBrowser' and isComponent=true"), QtxPopupMgr::VisibleRule );
@@ -1886,6 +1901,8 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
 
   action( GEOMOp::OpGroupCreate )->setEnabled( ViewOCC ); // Create Group
   action( GEOMOp::OpGroupEdit )->setEnabled( ViewOCC ); // Edit Group
+  action( GEOMOp::OpCreateField )->setEnabled( ViewOCC ); // Create Field
+  action( GEOMOp::OpEditField )->setEnabled( ViewOCC ); // Edit Field
 
   action( GEOMOp::OpMultiTransform )->setEnabled( ViewOCC ); // MENU BLOCKS - MULTI-TRANSFORMATION
 }
@@ -2047,7 +2064,7 @@ void GeometryGUI::onAutoBringToFront()
 
   SUIT_ViewWindow* SUIT_window = application()->desktop()->activeWindow();
   if ( !SUIT_window || SUIT_window->getViewManager()->getType() != OCCViewer_Viewer::Type() )
-  	return;
+        return;
 
   SalomeApp_Study* appStudy = dynamic_cast< SalomeApp_Study* >( getApp()->activeStudy() );
   if (!appStudy) return;
@@ -2995,12 +3012,12 @@ bool GeometryGUI::isDraggable( const SUIT_DataObject* what ) const
     if ( dataObj ) {
       _PTR(SObject) aSO = dataObj->object();
       if ( aSO ) {
-	_PTR(GenericAttribute) anAttr;
-	_PTR(SObject) aFatherSO = aSO->GetStudy()->GetUseCaseBuilder()->GetFather( aSO );
-	if ( aFatherSO && aFatherSO->FindAttribute(anAttr, "AttributeLocalID") ) {
-	  _PTR(AttributeLocalID) aLocalID( anAttr );
-	  anObjectInFolder = aLocalID->Value() == 999;
-	}
+        _PTR(GenericAttribute) anAttr;
+        _PTR(SObject) aFatherSO = aSO->GetStudy()->GetUseCaseBuilder()->GetFather( aSO );
+        if ( aFatherSO && aFatherSO->FindAttribute(anAttr, "AttributeLocalID") ) {
+          _PTR(AttributeLocalID) aLocalID( anAttr );
+          anObjectInFolder = aLocalID->Value() == 999;
+        }
       }
     }
   }
@@ -3031,11 +3048,11 @@ bool GeometryGUI::isDropAccepted( const SUIT_DataObject* where ) const
     if ( dataObj ) {
       _PTR(SObject) aSO = dataObj->object();
       if ( aSO ) {
-	_PTR(GenericAttribute) anAttr;
-	if ( aSO->FindAttribute(anAttr, "AttributeLocalID") ) {
-	  _PTR(AttributeLocalID) aLocalID( anAttr );
-	  isFolder = aLocalID->Value() == 999;
-	}
+        _PTR(GenericAttribute) anAttr;
+        if ( aSO->FindAttribute(anAttr, "AttributeLocalID") ) {
+          _PTR(AttributeLocalID) aLocalID( anAttr );
+          isFolder = aLocalID->Value() == 999;
+        }
       }
     }
   }
@@ -3062,7 +3079,7 @@ bool GeometryGUI::isDropAccepted( const SUIT_DataObject* where ) const
   \sa isDraggable(), isDropAccepted()
 */
 void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* where,
-			       const int row, Qt::DropAction action )
+                               const int row, Qt::DropAction action )
 {
   if (action != Qt::CopyAction && action != Qt::MoveAction)
     return; // unsupported action
@@ -3102,8 +3119,8 @@ void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* wher
 
   // call engine function
   GetGeomGen()->Move( objects.in(),                              // what
-		      _CAST(SObject, parentObj)->GetSObject(),   // where
-		      row );                                     // row
+                      _CAST(SObject, parentObj)->GetSObject(),   // where
+                      row );                                     // row
 
   // update Object browser
   getApp()->updateObjectBrowser( false );

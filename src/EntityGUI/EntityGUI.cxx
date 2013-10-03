@@ -26,18 +26,21 @@
 //
 #include "EntityGUI.h"
 
-#include <GeometryGUI.h>
+#include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
 
-#include <SUIT_Session.h>
-#include <SUIT_Desktop.h>
-#include <SUIT_ViewWindow.h>
-#include <OCCViewer_ViewModel.h>
+#include <LightApp_SelectionMgr.h>
 #include <OCCViewer_ViewManager.h>
-#include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewPort3d.h>
-#include <SalomeApp_Study.h>
+#include <OCCViewer_ViewWindow.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SUIT_Desktop.h>
+#include <SUIT_MessageBox.h>
+#include <SUIT_Session.h>
+#include <SUIT_ViewWindow.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
 
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
@@ -53,6 +56,10 @@
 #include "EntityGUI_SubShapeDlg.h"        // Method SUBSHAPE
 #include "EntityGUI_FeatureDetectorDlg.h" // Feature Detection
 #include "EntityGUI_PictureImportDlg.h"   // Import Picture in viewer
+#include "EntityGUI_FieldDlg.h"           // Create/Edit Field
+
+#include "GEOMImpl_Types.hxx"
+
 
 //=======================================================================
 // function : EntityGUI()
@@ -104,13 +111,85 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpPictureImport:    // IMPORT PICTURE IN VIEWER
     aDlg = new EntityGUI_PictureImportDlg( getGeometryGUI(), parent );
     break;
+  case GEOMOp::OpCreateField: // CREATE FIELD
+    aDlg = new EntityGUI_FieldDlg (getGeometryGUI(), GEOM::GEOM_Field::_nil(), 0,
+                                   parent);
+    break;
+  case GEOMOp::OpEditField: // EDIT FIELD
+  case GEOMOp::OpEditFieldPopup:
+  {
+    SALOME_ListIO aList;
+    aList.Clear();
+
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if (aSelMgr)
+      aSelMgr->selectedObjects(aList);
+    SALOME_ListIteratorOfListIO anIter (aList);
+
+    GEOM::GEOM_Field_var     field;
+    GEOM::GEOM_FieldStep_var step;
+
+    SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+    if ( aList.Extent() > 0 && study ) {
+      for ( ; anIter.More(); anIter.Next() )
+      {
+        Handle(SALOME_InteractiveObject) anIObj = anIter.Value();
+        if ( !anIObj.IsNull() && anIObj->hasEntry() )
+          if ( _PTR(SObject) obj = study->studyDS()->FindObjectID( anIObj->getEntry() ))
+          {
+            CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( obj );
+            GEOM::GEOM_BaseObject_var bo = GEOM::GEOM_BaseObject::_narrow( corbaObj );
+            GEOM::GEOM_Field_var     f;
+            GEOM::GEOM_FieldStep_var s;
+            switch ( bo->GetType() ) {
+            case GEOM_FIELD:
+              f = GEOM::GEOM_Field::_narrow( corbaObj ); break;
+            case GEOM_FIELD_STEP:
+              step = GEOM::GEOM_FieldStep::_narrow( corbaObj );
+              if ( !step->_is_nil() )
+                f = step->GetField();
+              break;
+            default:
+              continue;
+            }
+            if ( !f->_is_nil() )
+            {
+              if ( !field->_is_nil() && !f->_is_equivalent( field ))
+              {
+                field = GEOM::GEOM_Field::_nil(); // several field selected
+                break;
+              }
+              field = f;
+            }
+          }
+      }
+    }
+
+    if ( !field->_is_nil()) {
+      int stepID;
+      if ( !step->_is_nil() ) {
+        stepID = step->GetID();
+      }
+      else {
+        GEOM::ListOfLong_var stepIDs = field->GetSteps();
+        if ( stepIDs->length() > 0 )
+          stepID = stepIDs[0];
+        else
+          stepID = 0;
+      }
+      aDlg = new EntityGUI_FieldDlg (getGeometryGUI(), field, stepID, parent); 
+      break;
+    }
+    SUIT_MessageBox::warning(parent, tr("WRN_WARNING"), tr("NO_FIELD"));
+    break;
+  }
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
     break;
   }
   if ( aDlg )
     aDlg->show();
-  
+
   return true;
 }
 
