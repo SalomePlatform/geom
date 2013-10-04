@@ -462,7 +462,12 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
 
   //Remove an object from the map of available objects
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
-  if (_objects.IsBound(anID)) _objects.UnBind(anID);
+  if (_objects.IsBound(anID)) {
+    Handle(GEOM_BaseObject) anObject = Handle(GEOM_BaseObject)::DownCast(_objects(anID));
+    if ( anObject != theObject )
+      anObject->_label = anObject->_label.Root();
+    _objects.UnBind(anID);
+  }
 
   // If sub-shape, remove it from the list of sub-shapes of its main shape
   Handle(GEOM_Object) aGO = Handle(GEOM_Object)::DownCast( theObject );
@@ -490,6 +495,13 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_BaseObject)& theObject)
   std::list<TDF_Label>& aFreeLabels = _freeLabels[aDocID];
   if ( aFreeLabels.empty() || aFreeLabels.back() != aLabel )
     aFreeLabels.push_back(aLabel);
+
+  // we can't explicitely delete theObject. At least prevent its functioning
+  // as an alive object when aLabel is reused for a new object
+  theObject->_label = aLabel.Root();
+  theObject->_ior.Clear();
+  theObject->_parameters.Clear();
+  theObject->_docID = -1;
 
   theObject.Nullify();
 
