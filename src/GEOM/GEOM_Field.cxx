@@ -580,7 +580,7 @@ void GEOM_FieldStep::SetStamp(const int stamp)
     data.SetStepStamp( stamp );
 
     TPythonDump( fun ) <<
-      GetField() << ".setStamp( " << data.GetStepID() << ", " << stamp << " )";
+      GetField() << ".setStamp( " << GetID() << ", " << stamp << " )";
   }
 }
 
@@ -628,7 +628,7 @@ GEOM_FieldStep::getFunctionToSetValuesAndDump( const TCollection_AsciiString& va
 
 //=======================================================================
 //function : SetValues
-//purpose  : Sets int or bool values
+//purpose  : Set int or bool values
 //=======================================================================
 
 bool GEOM_FieldStep::SetValues( const Handle(TColStd_HArray1OfInteger)& values )
