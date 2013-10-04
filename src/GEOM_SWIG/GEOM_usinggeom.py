@@ -36,7 +36,9 @@ import GEOM_TestAll
 import GEOM_TestOthers
 import GEOM_TestHealing
 import GEOM_TestMeasures
+import GEOM_TestField
 
+GEOM_TestField.TestField(geompy, math) # it goes 1st as it checks Python Dump
 GEOM_TestMeasures.TestMeasureOperations(geompy, math)
 GEOM_TestHealing.TestHealingOperations(geompy, math)
 GEOM_TestOthers.TestOtherOperations(geompy, math)

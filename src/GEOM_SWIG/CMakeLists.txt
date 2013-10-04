@@ -33,6 +33,7 @@ SET(_other_SCRIPTS
   GEOM_example7.py
   GEOM_moteur.py
   GEOM_TestAll.py
+  GEOM_TestField.py
   GEOM_TestOthers.py
   GEOM_TestHealing.py
   GEOM_TestMeasures.py
