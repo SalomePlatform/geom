@@ -39,6 +39,8 @@
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 #include <BRepCheck_Analyzer.hxx>
+#include <BOPAlgo_CheckerSI.hxx>
+#include <BOPDS_DS.hxx>
 
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Compound.hxx>
@@ -53,6 +55,13 @@
 
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
+
+// Comment next macro in order to avoid check of boolean operations arguments for self-intersections
+#define BOP_CHECK_SELF_INTERSECTIONS
+// Depth of self-intersection check (see BOPAlgo_CheckerSI::SetLevelOfCheck() for more details)
+// Default value for BOPAlgo_CheckerSI gives very long computation when checking face-to-face intersections;
+// here check level is decreased to more appropriate value to avoid problems with performance).
+#define BOP_SELF_INTERSECTIONS_LEVEL 4
 
 //=======================================================================
 //function : GetID
@@ -106,6 +115,22 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
         if (!ana.IsValid())
           StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
+#ifdef BOP_CHECK_SELF_INTERSECTIONS
+	BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
+	aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
+	BOPCol_ListOfShape aList1, aList2;
+	aList1.Append(aShape1);
+	aList2.Append(aShape2);
+	aCSI.SetArguments(aList1);
+	aCSI.Perform();
+	if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
+          StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+	aCSI.SetArguments(aList2);
+	aCSI.Perform();
+	if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
+          StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+#endif
+
         aShape = performOperation (aShape1, aShape2, aType);
 
         if (aShape.IsNull())
@@ -127,30 +152,51 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
       if (nbShapes > 0) {
         aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(1));
         aShape = aRefShape->GetValue();
-
+	
         if (!aShape.IsNull()) {
           BRepCheck_Analyzer anAna (aShape, Standard_True);
-
+#ifdef BOP_CHECK_SELF_INTERSECTIONS
+	  BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
+	  aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
+#endif	  
           if (!anAna.IsValid()) {
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
           }
 
+#ifdef BOP_CHECK_SELF_INTERSECTIONS
+	  BOPCol_ListOfShape aList1;
+	  aList1.Append(aShape);
+	  aCSI.SetArguments(aList1);
+	  aCSI.Perform();
+	  if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+	    StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+	  }
+#endif	  
           for (i = 2; i <= nbShapes; i++) {
-            aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(i));
-            aShape2 = aRefShape->GetValue();
-            anAna.Init(aShape2);
-
-            if (!anAna.IsValid()) {
-              StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
-            }
-
-            aShape = performOperation (aShape, aShape2, aSimpleType);
-
-            if (aShape.IsNull()) {
-              return 0;
-            }
-          }
-        }
+	    aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(i));
+	    aShape2 = aRefShape->GetValue();
+	    anAna.Init(aShape2);
+	    
+	    if (!anAna.IsValid()) {
+	      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
+	    }
+	    
+#ifdef BOP_CHECK_SELF_INTERSECTIONS
+	    BOPCol_ListOfShape aList2;
+	    aList2.Append(aShape2);
+	    aCSI.SetArguments(aList2);
+	    aCSI.Perform();
+	    if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+	      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+	    }
+#endif	    
+	    aShape = performOperation (aShape, aShape2, aSimpleType);
+	    
+	    if (aShape.IsNull()) {
+	      return 0;
+	    }
+	  }
+	}
       }
     }
     break;
@@ -163,11 +209,24 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
       if (!aShape.IsNull()) {
         // check arguments for Mantis issue 0021019
         BRepCheck_Analyzer anAna (aShape, Standard_True);
-
+#ifdef BOP_CHECK_SELF_INTERSECTIONS
+	BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
+	aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
+#endif
         if (!anAna.IsValid()) {
           StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
         }
 
+#ifdef BOP_CHECK_SELF_INTERSECTIONS
+	BOPCol_ListOfShape aList1;
+	aList1.Append(aShape);
+	aCSI.SetArguments(aList1);
+	aCSI.Perform();
+	if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+	  StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+	}
+#endif
+	
         Handle(TColStd_HSequenceOfTransient) aTools = aCI.GetShapes();
         const Standard_Integer nbShapes = aTools->Length();
         Standard_Integer i;
@@ -182,6 +241,16 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
           if (!anAna.IsValid()) {
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
           }
+
+#ifdef BOP_CHECK_SELF_INTERSECTIONS
+	  BOPCol_ListOfShape aList2;
+	  aList2.Append(aTool);
+	  aCSI.SetArguments(aList2);
+	  aCSI.Perform();
+	  if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+	    StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+	  }
+#endif
 
           aShape = performOperation (aShape, aTool, BOOLEAN_CUT);
 
