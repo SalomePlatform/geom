@@ -9609,11 +9609,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             listSh = self.SubShapeAllIDs(theShape, theType)
             Nb = len(listSh)
-            t       = EnumToLong(theShape.GetShapeType())
-            theType = EnumToLong(theType)
-            if t == theType:
-                Nb = Nb + 1
-                pass
             return Nb
 
         ## Obtain quantity of shapes of each type in \a theShape.
@@ -9639,9 +9634,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 if typeSh in ( "AUTO", "SHAPE" ): continue
                 listSh = self.SubShapeAllIDs(theShape, self.ShapeType[typeSh])
                 Nb = len(listSh)
-                if EnumToLong(theShape.GetShapeType()) == self.ShapeType[typeSh]:
-                    Nb = Nb + 1
-                    pass
                 aDict[typeSh] = Nb
                 pass
             return aDict
