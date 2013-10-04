@@ -132,7 +132,6 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
       } else if ( aType == ELLIPSE_ARC_CENTER_TWO_PNT ) { // ELLIPSE_ARC_CENTER_TWO_PNT
         if ( aP1.Distance(aP2) <= aP1.Distance(aP3) ) {
           // Standard_ConstructionError::Raise("Arc creation aborted: the distance from Center Point to Point 1 needs to be bigger than the distance from Center Point to Point 2");      
-          cout << "aP1.Distance(aP2) <= aP1.Distance(aP3)" << endl;
           gp_Pnt aTmpP = aP2;
           aP2 = aP3;
           aP3 = aTmpP;
