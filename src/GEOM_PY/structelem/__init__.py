@@ -162,7 +162,7 @@ class StructuralElementManager:
                         logger.error("Can't get geom object corresponding to "
                                      'mesh group "%s", structural element '
                                      "part %s will not be built." %
-                                     (groupName, part))
+                                     (meshGroup, command))
                         continue
                     
                     # Create the part
