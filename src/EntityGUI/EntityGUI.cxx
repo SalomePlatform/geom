@@ -375,7 +375,11 @@ void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Sha
   try {
     if ( !S1.IsNull() ) {
       /* erase any previous */
+#if OCC_VERSION_LARGE <= 0x06060000
       ic->Erase( mySimulationShape1, Standard_True, Standard_False );
+#else
+      ic->Erase( mySimulationShape1, Standard_True );
+#endif
       ic->ClearPrs( mySimulationShape1 );
 
       mySimulationShape1 = new AIS_Shape( TopoDS_Shape() );
@@ -387,7 +391,11 @@ void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Sha
       mySimulationShape1->UnsetColor();
     }
     if ( !S2.IsNull() ) {
+#if OCC_VERSION_LARGE <= 0x06060000
       ic->Erase( mySimulationShape2, Standard_True, Standard_False );
+#else
+      ic->Erase( mySimulationShape2, Standard_True );
+#endif
       ic->ClearPrs( mySimulationShape2 );
 
       mySimulationShape2 = new AIS_Shape( TopoDS_Shape() );
@@ -431,9 +439,14 @@ void EntityGUI::EraseSimulationShape()
     if ( vw->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
       OCCViewer_Viewer* v3d = ( (OCCViewer_ViewManager*)( vw->getViewManager() ) )->getOCCViewer();
       Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
+#if OCC_VERSION_LARGE <= 0x06060000
       ic->Erase( mySimulationShape1, Standard_True, Standard_False );
-      ic->ClearPrs( mySimulationShape1 );
       ic->Erase( mySimulationShape2, Standard_True, Standard_False );
+#else 
+      ic->Erase( mySimulationShape1, Standard_True );
+      ic->Erase( mySimulationShape2, Standard_True );
+#endif
+      ic->ClearPrs( mySimulationShape1 );
       ic->ClearPrs( mySimulationShape2 );
       ic->UpdateCurrentViewer();
     } 

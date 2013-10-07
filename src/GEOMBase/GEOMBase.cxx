@@ -303,8 +303,9 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIORinGEOMAISShape(const QString& IOR, boo
 
           AIS_ListOfInteractive displayed;
           ic->DisplayedObjects( displayed );
+#if OCC_VERSION_LARGE <= 0x06060000
           ic->ObjectsInCollector( displayed );
-
+#endif
           AIS_ListIteratorOfListOfInteractive it( displayed );
           while ( it.More() && shape.IsNull() ) {
             if ( it.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
