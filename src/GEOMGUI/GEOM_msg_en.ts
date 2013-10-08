@@ -4930,6 +4930,10 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Import / Export</translation>
     </message>
     <message>
+        <source>TOOL_IMPORTEXPORT</source>
+        <translation>Import / Export</translation>
+    </message>
+    <message>
         <source>TOP_EXPORTXAO</source>
         <translation>Export to XAO</translation>
     </message>
