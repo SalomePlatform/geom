@@ -34,7 +34,7 @@
 # Load the dependencies for the libraries of @PROJECT_NAME@ 
 # (contains definitions for IMPORTED targets). This is only 
 # imported if we are not built as a subproject (in this case targets are already there)
-IF(NOT TARGET Event AND NOT @PROJECT_NAME@_BINARY_DIR)
+IF(NOT TARGET GEOMbasic AND NOT @PROJECT_NAME@_BINARY_DIR)
   INCLUDE("@PACKAGE_SALOME_INSTALL_CMAKE_LOCAL@/@PROJECT_NAME@Targets.cmake")
 ENDIF()   
 
@@ -121,7 +121,7 @@ SET(GEOM_GEOM_SupervEngine GEOM_SupervEngine)
 SET(GEOM_IGESExport IGESExport)
 SET(GEOM_IGESImport IGESImport)
 SET(GEOM_GEOMSketcher GEOMSketcher)
-SET(GEOM_SalomeIDLGeom SalomeIDLGeom)
+SET(GEOM_SalomeIDLGEOM SalomeIDLGEOM)
 SET(GEOM_STEPExport STEPExport)
 SET(GEOM_STEPImport STEPImport)
 SET(GEOM_STLExport STLExport)
