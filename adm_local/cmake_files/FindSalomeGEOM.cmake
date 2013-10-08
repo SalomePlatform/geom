@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,16 +16,16 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+#
 
-# ===============================================================
-# Files to be installed
-# ===============================================================
+IF(NOT SalomeGEOM_FIND_QUIETLY)
+  MESSAGE(STATUS "Looking for Salome GEOM ...")
+ENDIF()
 
-# These files are data, module or lib files
-SET(_adm_data
-  FindOpenCV.cmake
-  FindSalomeOpenCV.cmake
-  FindGEOM.cmake
-  FindSalomeGEOM.cmake
-)
-INSTALL(FILES ${_adm_data} DESTINATION ${SALOME_INSTALL_CMAKE_LOCAL})
+SET(CMAKE_PREFIX_PATH "${GEOM_ROOT_DIR}")
+
+SALOME_FIND_PACKAGE(SalomeGEOM SalomeGEOM CONFIG)
+
+IF(NOT SalomeGEOM_FIND_QUIETLY)
+  MESSAGE(STATUS "Found Salome GEOM: ${GEOM_ROOT_DIR}")
+ENDIF()
