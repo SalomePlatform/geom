@@ -30,6 +30,8 @@
 #include "XAO_StringField.hxx"
 #include "XAO_XaoExporter.hxx"
 
+#include <libxml/xmlstring.h>
+
 using namespace XAO;
 
 const xmlChar* C_XAO_VERSION = (xmlChar*)"1.0";
