@@ -87,6 +87,8 @@ FIND_PACKAGE(SalomeOmniORB REQUIRED)
 FIND_PACKAGE(SalomeOmniORBPy REQUIRED)
 FIND_PACKAGE(SalomeLibXml2 REQUIRED)
 FIND_PACKAGE(SalomeHDF5 REQUIRED COMPONENTS C)
+FIND_PACKAGE(SalomeCAS REQUIRED)
+FIND_PACKAGE(SalomeVTK 6.0 REQUIRED)
 
 # Other KERNEL optionals:
 IF(SALOME_USE_MPI)
@@ -131,19 +133,12 @@ IF(SALOME_BUILD_GUI)
     FIND_PACKAGE(SalomeOpenGL)
     SALOME_LOG_OPTIONAL_PACKAGE(OpenGL SALOME_USE_GLVIEWER) 
   ENDIF() 
-  IF(SALOME_USE_VTKVIEWER)
-    # Required components are listed in the FindSalomeVTK.cmake file: 
-    FIND_PACKAGE(SalomeVTK 6.0)
-    SALOME_LOG_OPTIONAL_PACKAGE(VTK SALOME_USE_VTKVIEWER)
-  ENDIF()
-
 ENDIF(SALOME_BUILD_GUI)
 
 ##
 ## GEOM specifics
 ##
 
-FIND_PACKAGE(SalomeCAS REQUIRED)
 
 IF(SALOME_BUILD_GUI)
   # OpenCV
@@ -229,13 +224,13 @@ INCLUDE(CMakePackageConfigHelpers)
 SET(_${PROJECT_NAME}_exposed_targets 
   GEOMArchimede BREPExport BREPImport BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
   GEOMUtils GEOMEngine GEOM_SupervEngine IGESExport IGESImport GEOMSketcher
-  SalomeIDLGEOM STEPExport STEPImport STLExport ShHealOper XAO AdvancedEngine
+  SalomeIDLGEOM STEPExport STEPImport STLExport ShHealOper XAO AdvancedEngine OCC2VTK VTKExport 
 )
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
     AdvancedGUI BasicGUI BlocksGUI BooleanGUI BuildGUI DisplayGUI DlgRef EntityGUI GEOMBase
     GEOMFiltersSelection GEOM GEOMToolsGUI GenerationGUI GroupGUI Material MeasureGUI GEOMObject
-    OCC2VTK VTKExport OperationGUI PrimitiveGUI RepairGUI TransformationGUI ImportExportGUI
+    OperationGUI PrimitiveGUI RepairGUI TransformationGUI ImportExportGUI
     )
 ENDIF(SALOME_BUILD_GUI)
 
@@ -258,7 +253,7 @@ SET(OPENCV_ROOT_DIR "${OPENCV_ROOT_DIR}")
 SET(GUI_ROOT_DIR "${GUI_ROOT_DIR}")
 
 SET(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include" "${PROJECT_BINARY_DIR}/include")
-CONFIGURE_PACKAGE_CONFIG_FILE(adm_local/cmake_files/${PROJECT_NAME}Config.cmake.in 
+CONFIGURE_PACKAGE_CONFIG_FILE(${PROJECT_NAME}Config.cmake.in
     ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
     INSTALL_DESTINATION "${SALOME_INSTALL_CMAKE_LOCAL}"
     PATH_VARS CONF_INCLUDE_DIRS SALOME_INSTALL_CMAKE_LOCAL CMAKE_INSTALL_PREFIX
