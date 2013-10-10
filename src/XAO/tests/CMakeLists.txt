@@ -22,14 +22,12 @@
 # additional include directories
 INCLUDE_DIRECTORIES(
   ${PTHREAD_INCLUDE_DIR}
-  ${LIBXML2_INCLUDE_DIR}
   ${CAS_INCLUDE_DIRS}
   ${CPPUNIT_INCLUDE_DIRS}
   )
 
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
-  ${LIBXML2_DEFINITIONS} 
   ${CAS_DEFINITIONS}
   ${CPPUNIT_DEFINITIONS}
   )
