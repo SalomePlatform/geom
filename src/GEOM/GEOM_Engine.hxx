@@ -39,6 +39,7 @@
 #include <TDocStd_Document.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
+#include <TColStd_MapOfInteger.hxx>
 #include <TDF_Label.hxx>
 
 #include <map>
@@ -179,15 +180,21 @@ class GEOM_Engine
                                    const TCollection_AsciiString&            anEntry,
                                    Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
 
+  void DocumentModified(const int theDocId, const bool isModified);
+  
+  bool DocumentModified(const int theDocId);
+
  protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       
   
  private:
 
-  Handle(GEOM_Application)                 _OCAFApp;
-  TColStd_DataMapOfIntegerTransient        _mapIDDocument;
-  int                                      _UndoLimit;
-  GEOM_DataMapOfAsciiStringTransient       _objects;
+  Handle(GEOM_Application)  _OCAFApp;
+  TColStd_DataMapOfIntegerTransient _mapIDDocument;
+  TColStd_MapOfInteger _mapModifiedDocs; // keeps the identifiers of the modified document ids
+
+  int _UndoLimit;
+  GEOM_DataMapOfAsciiStringTransient _objects;
 
   Resource_DataMapOfAsciiStringAsciiString _studyEntry2NameMap;
 

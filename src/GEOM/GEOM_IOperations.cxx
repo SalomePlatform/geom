@@ -79,6 +79,7 @@ void GEOM_IOperations::FinishOperation()
   Handle(TDocStd_Document) aDoc = _engine->GetDocument(_docID);
   if(aDoc->GetUndoLimit() > 0) 
     aDoc->CommitCommand();
+  _engine->DocumentModified(_docID, true);
 }
 
 //=============================================================================

@@ -60,6 +60,8 @@
 
 #include <SALOMEDS_Tool.hxx>
 #include <SALOMEDS_wrap.hxx>
+#include <SALOME_DataContainer_i.hxx>
+#include <Basics_DirUtils.hxx>
 
 #include <set>
 #include <sstream>
@@ -2879,6 +2881,131 @@ void GEOM_Gen_i::Move( const GEOM::object_list& what,
   }
 }
 
+//=================================================================================
+// function : importData
+// purpose  : imports geometrical data file into the GEOM internal data structure
+//=================================================================================
+Engines::ListOfIdentifiers* GEOM_Gen_i::importData(
+  CORBA::Long studyId, Engines::DataContainer_ptr data, const Engines::ListOfOptions& options)
+{
+  CORBA::Object_var aSMObject = name_service->Resolve( "/myStudyManager" );
+  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
+  SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( studyId );
+
+  Engines::ListOfIdentifiers_var aResult = new Engines::ListOfIdentifiers;
+  GEOM::GEOM_IInsertOperations_var aInsOp = GetIInsertOperations(aStudy->StudyId());
+  if (aInsOp->_is_nil()) {
+    MESSAGE("No insert operations!");
+    return aResult._retn();
+  }
+
+  // Get a temporary directory to store a file
+  std::string aTmpDir = SALOMEDS_Tool::GetTmpDir();
+  std::string aFileName("file");
+  if (aFileName.rfind("/") != std::string::npos) { // remove folders from the name
+    aFileName = aFileName.substr(aFileName.rfind("/") + 1);
+  }
+  std::string anExtension(data->extension());
+  aFileName += "." + anExtension;
+  // convert extension to upper case
+  std::transform(anExtension.begin(), anExtension.end(), anExtension.begin(), ::toupper);
+
+  std::string aFullPath = aTmpDir + aFileName;
+
+  Engines::TMPFile* aFileStream = data->get();
+  const char *aBuffer = (const char*)aFileStream->NP_data();
+#ifdef WIN32
+  std::ofstream aFile(aFullPath.c_str(), std::ios::binary);
+#else
+  std::ofstream aFile(aFullPath.c_str());
+#endif
+  aFile.write(aBuffer, aFileStream->length());
+  aFile.close();
+
+  GEOM::GEOM_Object_var anObj = aInsOp->ImportFile(aFullPath.c_str(), anExtension.c_str());
+  if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
+    SALOMEDS::SObject_var aSO = PublishInStudy(aStudy, SALOMEDS::SObject::_nil(), anObj, data->name());
+    aResult->length(1);
+    aResult[0] = aSO->GetID(); // unioque identifer of the object in GEOM is entry of SObject
+  } else {
+    if (anObj->_is_nil())
+      MESSAGE("Result of the import operation is incorrect for file "<<aFullPath.c_str());
+    if (!aInsOp->IsDone())
+      MESSAGE("Import operation is not done for file "<<aFullPath.c_str());
+    return aResult._retn();
+  }
+
+  // remove temporary file and directory
+  SALOMEDS::ListOfFileNames aTmpFiles;
+  aTmpFiles.length(1);
+  aTmpFiles[0] = aFileName.c_str();
+  SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir, aTmpFiles, true);
+  
+  _impl->DocumentModified(studyId, false);
+  return aResult._retn();
+}
+
+//=================================================================================
+// function : getModifiedData
+// purpose  : exports all geometry of this GEOM module into one BRep file
+//=================================================================================
+Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
+{
+  Engines::ListOfData_var aResult = new Engines::ListOfData;
+
+  if (!_impl->DocumentModified(studyId)) {
+    MESSAGE("Document is not modified")
+    return aResult._retn();
+  }
+
+  CORBA::Object_var aSMObject = name_service->Resolve("/myStudyManager");
+  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
+  SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( studyId );
+  SALOMEDS::SComponent_var aComponent = aStudy->FindComponent("GEOM");
+  if (CORBA::is_nil(aComponent))
+    return aResult._retn();
+  SALOMEDS::ChildIterator_var anIter = aStudy->NewChildIterator(aComponent); // check only published shapes
+  TopoDS_Compound aResultComp;
+  BRep_Builder aBB;
+  aBB.MakeCompound(aResultComp);
+  int aNumInComp = 0; // number of shapes in resulting compound
+  for(; anIter->More(); anIter->Next()) {
+    SALOMEDS::SObject_var aSO = anIter->Value();
+    SALOMEDS::SObject_var aRefSO;
+    // export only not referenced objects, or referenced outside of GEOM
+    if (!aSO->ReferencedObject(aRefSO) || aRefSO->GetFatherComponent()->GetID() != aComponent->GetID()) {
+      CORBA::Object_var anObj = aSO->GetObject();
+      if (!CORBA::is_nil(anObj)) {
+        GEOM::GEOM_Object_var aCORBAMainShape = GEOM::GEOM_Object::_narrow(anObj);
+        if(!aCORBAMainShape->_is_nil()) {
+          CORBA::String_var entry = aCORBAMainShape->GetEntry();
+          Handle(GEOM_Object) aMainShape = Handle(GEOM_Object)::DownCast( _impl->GetObject(studyId, entry) );
+          if (!aMainShape.IsNull()) {
+            TopoDS_Shape aMainSh = aMainShape->GetValue();
+            if (!aMainSh.IsNull()) {
+              aBB.Add(aResultComp, aMainSh);
+              aNumInComp++;
+            }
+          }
+        }
+      }
+    }
+  }
+  if (aNumInComp > 0) { // compund is correct, write it to the temporary file
+    std::string aFullPath = Kernel_Utils::GetTmpFileName() + ".brep";
+    BRepTools::Write(aResultComp, aFullPath.c_str());
+    MESSAGE("Write compound of "<<aNumInComp<<" shapes to "<<aFullPath.c_str());
+    aResult->length(1);
+    Engines::DataContainer_var aData = (new Engines_DataContainer_i(
+                    aFullPath.c_str(), "", "", true))->_this();
+    aResult[0] = aData;
+  } else {
+    MESSAGE("No shapes to export");
+  }
+  
+  return aResult._retn();
+}
+                                                               
 //=====================================================================================
 // EXPORTED METHODS
 //=====================================================================================

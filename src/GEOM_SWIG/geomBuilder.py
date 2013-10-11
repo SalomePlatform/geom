@@ -229,7 +229,11 @@ def _toListOfNames(_names, _size=-1):
 ## @ingroup l1_geomBuilder_auxiliary
 def RaiseIfFailed (Method_name, Operation):
     if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
+        Operation.AbortOperation()
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
+    else:
+        Operation.FinishOperation()
+        pass
 
 ## Return list of variables value from salome notebook
 ## @ingroup l1_geomBuilder_auxiliary
@@ -4308,6 +4312,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created compound.
             """
             # Example: see GEOM_TestAll.py
+            self.ShapesOp.StartOperation()
             anObj = self.ShapesOp.MakeCompound(theShapes)
             RaiseIfFailed("MakeCompound", self.ShapesOp)
             self._autoPublish(anObj, theName, "compound")
