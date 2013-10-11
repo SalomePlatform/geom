@@ -131,7 +131,14 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
           StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
 #endif
 
-        aShape = performOperation (aShape1, aShape2, aType);
+        // Make a copy to prevent the original shape changes.
+        TopoDS_Shape aShapeCopy1;
+        TopoDS_Shape aShapeCopy2;
+        TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+        TNaming_CopyShape::CopyTool(aShape1, aMapTShapes, aShapeCopy1);
+        TNaming_CopyShape::CopyTool(aShape2, aMapTShapes, aShapeCopy2);
+
+        aShape = performOperation (aShapeCopy1, aShapeCopy2, aType);
 
         if (aShape.IsNull())
           return 0;
@@ -172,6 +179,14 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 	    StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
 	  }
 #endif	  
+
+          // Copy shape
+          TopoDS_Shape aShapeCopy;
+          TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+
+          TNaming_CopyShape::CopyTool(aShape, aMapTShapes, aShapeCopy);
+          aShape = aShapeCopy;
+
           for (i = 2; i <= nbShapes; i++) {
 	    aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(i));
 	    aShape2 = aRefShape->GetValue();
@@ -190,7 +205,9 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 	      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
 	    }
 #endif	    
-	    aShape = performOperation (aShape, aShape2, aSimpleType);
+            // Copy shape
+            TNaming_CopyShape::CopyTool(aShape2, aMapTShapes, aShapeCopy);
+	    aShape = performOperation (aShape, aShapeCopy, aSimpleType);
 	    
 	    if (aShape.IsNull()) {
 	      return 0;
@@ -226,6 +243,12 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 	  StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
 	}
 #endif
+        // Copy shape
+        TopoDS_Shape aShapeCopy;
+        TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+
+        TNaming_CopyShape::CopyTool(aShape, aMapTShapes, aShapeCopy);
+        aShape = aShapeCopy;
 	
         Handle(TColStd_HSequenceOfTransient) aTools = aCI.GetShapes();
         const Standard_Integer nbShapes = aTools->Length();
@@ -252,7 +275,9 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 	  }
 #endif
 
-          aShape = performOperation (aShape, aTool, BOOLEAN_CUT);
+          // Copy shape
+          TNaming_CopyShape::CopyTool(aTool, aMapTShapes, aShapeCopy);
+          aShape = performOperation (aShape, aShapeCopy, BOOLEAN_CUT);
 
           if (aShape.IsNull()) {
             return 0;
