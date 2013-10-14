@@ -64,6 +64,7 @@ IF(SALOME_BUILD_GUI)
 ENDIF()
 IF(SALOME_GEOM_USE_OPENCV)
   SET_AND_CHECK(OPENCV_ROOT_DIR_EXP "@PACKAGE_OPENCV_ROOT_DIR@")
+  ADD_DEFINITIONS(-DWITH_OPENCV)
 ENDIF()
 
 # For all prerequisites, load the corresponding targets if the package was used 
