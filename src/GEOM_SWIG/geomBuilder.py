@@ -12641,7 +12641,18 @@ class geomField( GEOM._objref_GEOM_Field ):
     ## Remove a time step from the field
     def removeStep(self,step):
         "Remove a time step from the field"
+        stepSO = None
+        try:
+            stepObj = self.field.GetStep( self, step )
+            if stepObj:
+                stepSO = geom.myStudy.FindObjectID( stepObj.GetStudyEntry() )
+        except:
+            #import traceback
+            #traceback.print_exc()
+            pass
         self.field.RemoveStep( self, step )
+        if stepSO:
+            geom.myBuilder.RemoveObjectWithChildren( stepSO )
         return
 
     ## Returns number of time steps in the field
