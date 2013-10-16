@@ -205,6 +205,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
             }
 
             // Copy shape
+            aShapeCopy.Nullify();
             TNaming_CopyShape::CopyTool(aShape2, aMapTShapes, aShapeCopy);
 	    aShape = performOperation (aShape, aShapeCopy, aSimpleType);
 	    
@@ -276,6 +277,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
           }
 
           // Copy shape
+          aShapeCopy.Nullify();
           TNaming_CopyShape::CopyTool(aTool, aMapTShapes, aShapeCopy);
           aShape = performOperation (aShape, aShapeCopy, BOOLEAN_CUT);
 
