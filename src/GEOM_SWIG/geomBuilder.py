@@ -6601,6 +6601,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape2 Second argument for boolean operation.
         #  @param theOperation Indicates the operation to be done:\n
         #                      1 - Common, 2 - Cut, 3 - Fuse, 4 - Section.
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6608,7 +6610,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fuse "Example"
-        def MakeBoolean(self, theShape1, theShape2, theOperation, theName=None):
+        def MakeBoolean(self, theShape1, theShape2, theOperation, checkSelfInte=False, theName=None):
             """
             Perform one of boolean operations on two given shapes.
 
@@ -6617,6 +6619,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theShape2 Second argument for boolean operation.
                 theOperation Indicates the operation to be done:
                              1 - Common, 2 - Cut, 3 - Fuse, 4 - Section.
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6625,7 +6630,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.BoolOp.MakeBoolean(theShape1, theShape2, theOperation)
+            anObj = self.BoolOp.MakeBoolean(theShape1, theShape2, theOperation, checkSelfInte)
             RaiseIfFailed("MakeBoolean", self.BoolOp)
             def_names = { 1: "common", 2: "cut", 3: "fuse", 4: "section" }
             self._autoPublish(anObj, theName, def_names[theOperation])
@@ -6634,6 +6639,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Perform Common boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
         #  @param theShape2 Second argument for boolean operation.
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6642,13 +6649,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_common "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCommon(self, theShape1, theShape2, theName=None):
+        def MakeCommon(self, theShape1, theShape2, checkSelfInte=False, theName=None):
             """
             Perform Common boolean operation on two given shapes.
 
             Parameters: 
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6658,11 +6668,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeBoolean()
-            return self.MakeBoolean(theShape1, theShape2, 1, theName)
+            return self.MakeBoolean(theShape1, theShape2, 1, checkSelfInte, theName)
 
         ## Perform Cut boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
         #  @param theShape2 Second argument for boolean operation.
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6671,13 +6683,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_cut "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCut(self, theShape1, theShape2, theName=None):
+        def MakeCut(self, theShape1, theShape2, checkSelfInte=False, theName=None):
             """
             Perform Cut boolean operation on two given shapes.
 
             Parameters: 
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6688,11 +6703,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeBoolean()
-            return self.MakeBoolean(theShape1, theShape2, 2, theName)
+            return self.MakeBoolean(theShape1, theShape2, 2, checkSelfInte, theName)
 
         ## Perform Fuse boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
         #  @param theShape2 Second argument for boolean operation.
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6701,13 +6718,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_fuse "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeFuse(self, theShape1, theShape2, theName=None):
+        def MakeFuse(self, theShape1, theShape2, checkSelfInte=False, theName=None):
             """
             Perform Fuse boolean operation on two given shapes.
 
             Parameters: 
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6718,11 +6738,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeBoolean()
-            return self.MakeBoolean(theShape1, theShape2, 3, theName)
+            return self.MakeBoolean(theShape1, theShape2, 3, checkSelfInte, theName)
 
         ## Perform Section boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
         #  @param theShape2 Second argument for boolean operation.
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6731,13 +6753,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_section "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeSection(self, theShape1, theShape2, theName=None):
+        def MakeSection(self, theShape1, theShape2, checkSelfInte=False, theName=None):
             """
             Perform Section boolean operation on two given shapes.
 
             Parameters: 
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6748,10 +6773,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeBoolean()
-            return self.MakeBoolean(theShape1, theShape2, 4, theName)
+            return self.MakeBoolean(theShape1, theShape2, 4, checkSelfInte, theName)
 
         ## Perform Fuse boolean operation on the list of shapes.
         #  @param theShapesList Shapes to be fused.
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6760,12 +6787,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_fuse "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeFuseList(self, theShapesList, theName=None):
+        def MakeFuseList(self, theShapesList, checkSelfInte=False, theName=None):
             """
             Perform Fuse boolean operation on the list of shapes.
 
             Parameters: 
                 theShapesList Shapes to be fused.
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6775,13 +6805,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.BoolOp.MakeFuseList(theShapesList)
+            anObj = self.BoolOp.MakeFuseList(theShapesList, checkSelfInte)
             RaiseIfFailed("MakeFuseList", self.BoolOp)
             self._autoPublish(anObj, theName, "fuse")
             return anObj
 
         ## Perform Common boolean operation on the list of shapes.
         #  @param theShapesList Shapes for Common operation.
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6790,12 +6822,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_common "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCommonList(self, theShapesList, theName=None):
+        def MakeCommonList(self, theShapesList, checkSelfInte=False, theName=None):
             """
             Perform Common boolean operation on the list of shapes.
 
             Parameters: 
                 theShapesList Shapes for Common operation.
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6805,7 +6840,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.BoolOp.MakeCommonList(theShapesList)
+            anObj = self.BoolOp.MakeCommonList(theShapesList, checkSelfInte)
             RaiseIfFailed("MakeCommonList", self.BoolOp)
             self._autoPublish(anObj, theName, "common")
             return anObj
@@ -6813,6 +6848,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Perform Cut boolean operation on one object and the list of tools.
         #  @param theMainShape The object of the operation.
         #  @param theShapesList The list of tools of the operation.
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6821,13 +6858,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_cut "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCutList(self, theMainShape, theShapesList, theName=None):
+        def MakeCutList(self, theMainShape, theShapesList, checkSelfInte=False, theName=None):
             """
             Perform Cut boolean operation on one object and the list of tools.
 
             Parameters: 
                 theMainShape The object of the operation.
                 theShapesList The list of tools of the operation.
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6837,7 +6877,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.BoolOp.MakeCutList(theMainShape, theShapesList)
+            anObj = self.BoolOp.MakeCutList(theMainShape, theShapesList, checkSelfInte)
             RaiseIfFailed("MakeCutList", self.BoolOp)
             self._autoPublish(anObj, theName, "cut")
             return anObj

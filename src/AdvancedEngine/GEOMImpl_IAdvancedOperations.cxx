@@ -322,7 +322,8 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
   aBox->GetLastFunction()->SetDescription("");
   aShell->GetLastFunction()->SetDescription("");
   // Get the common shapes between shell and shape
-  Handle(GEOM_Object) aCommonCompound = myBooleanOperations->MakeBoolean (theShape, aShell, 1); // MakeCommon
+  Handle(GEOM_Object) aCommonCompound = myBooleanOperations->MakeBoolean
+                            (theShape, aShell, 1, Standard_False); // MakeCommon
   if (aCommonCompound.IsNull()) {
     SetErrorCode(myBooleanOperations->GetErrorCode());
     return false;

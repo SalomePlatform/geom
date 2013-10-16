@@ -44,14 +44,18 @@ class GEOM_I_EXPORT GEOM_IBooleanOperations_i :
 
   GEOM::GEOM_Object_ptr MakeBoolean (GEOM::GEOM_Object_ptr theShape1,
 				     GEOM::GEOM_Object_ptr theShape2,
-				     CORBA::Long           theOp);
+				     CORBA::Long           theOp,
+                                     CORBA::Boolean        IsCheckSelfInte);
 
-  GEOM::GEOM_Object_ptr MakeFuseList (const GEOM::ListOfGO& theShapes);
+  GEOM::GEOM_Object_ptr MakeFuseList (const GEOM::ListOfGO& theShapes,
+                                      CORBA::Boolean        IsCheckSelfInte);
 
-  GEOM::GEOM_Object_ptr MakeCommonList (const GEOM::ListOfGO& theShapes);
+  GEOM::GEOM_Object_ptr MakeCommonList (const GEOM::ListOfGO& theShapes,
+                                        CORBA::Boolean        IsCheckSelfInte);
 
   GEOM::GEOM_Object_ptr MakeCutList (GEOM::GEOM_Object_ptr theMainShape,
-                                     const GEOM::ListOfGO& theShapes);
+                                     const GEOM::ListOfGO& theShapes,
+                                     CORBA::Boolean        IsCheckSelfInte);
 
   GEOM::GEOM_Object_ptr MakePartition (const GEOM::ListOfGO&   theShapes,
 				       const GEOM::ListOfGO&   theTools,

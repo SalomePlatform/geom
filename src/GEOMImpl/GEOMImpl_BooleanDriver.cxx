@@ -56,8 +56,6 @@
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
 
-// Comment next macro in order to avoid check of boolean operations arguments for self-intersections
-#define BOP_CHECK_SELF_INTERSECTIONS
 // Depth of self-intersection check (see BOPAlgo_CheckerSI::SetLevelOfCheck() for more details)
 // Default value for BOPAlgo_CheckerSI gives very long computation when checking face-to-face intersections;
 // here check level is decreased to more appropriate value to avoid problems with performance).
@@ -92,6 +90,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 
   GEOMImpl_IBoolean aCI (aFunction);
   Standard_Integer aType = aFunction->GetType();
+  const Standard_Boolean isCheckSelfInte = aCI.GetCheckSelfIntersection();
 
   TopoDS_Shape aShape;
 
@@ -115,21 +114,21 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
         if (!ana.IsValid())
           StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
-#ifdef BOP_CHECK_SELF_INTERSECTIONS
-	BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
-	aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
-	BOPCol_ListOfShape aList1, aList2;
-	aList1.Append(aShape1);
-	aList2.Append(aShape2);
-	aCSI.SetArguments(aList1);
-	aCSI.Perform();
-	if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
-          StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
-	aCSI.SetArguments(aList2);
-	aCSI.Perform();
-	if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
-          StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
-#endif
+        if (isCheckSelfInte) {
+          BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
+          aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
+          BOPCol_ListOfShape aList1, aList2;
+          aList1.Append(aShape1);
+          aList2.Append(aShape2);
+          aCSI.SetArguments(aList1);
+          aCSI.Perform();
+          if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
+            StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+          aCSI.SetArguments(aList2);
+          aCSI.Perform();
+          if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0)
+            StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+        }
 
         // Make a copy to prevent the original shape changes.
         TopoDS_Shape aShapeCopy1;
@@ -162,23 +161,22 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 	
         if (!aShape.IsNull()) {
           BRepCheck_Analyzer anAna (aShape, Standard_True);
-#ifdef BOP_CHECK_SELF_INTERSECTIONS
-	  BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
-	  aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
-#endif	  
           if (!anAna.IsValid()) {
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
           }
 
-#ifdef BOP_CHECK_SELF_INTERSECTIONS
-	  BOPCol_ListOfShape aList1;
-	  aList1.Append(aShape);
-	  aCSI.SetArguments(aList1);
-	  aCSI.Perform();
-	  if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-	    StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
-	  }
-#endif	  
+          BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
+
+          if (isCheckSelfInte) {
+            aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
+            BOPCol_ListOfShape aList1;
+            aList1.Append(aShape);
+            aCSI.SetArguments(aList1);
+            aCSI.Perform();
+            if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+              StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+            }
+          }
 
           // Copy shape
           TopoDS_Shape aShapeCopy;
@@ -196,15 +194,16 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 	      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 	    }
 	    
-#ifdef BOP_CHECK_SELF_INTERSECTIONS
-	    BOPCol_ListOfShape aList2;
-	    aList2.Append(aShape2);
-	    aCSI.SetArguments(aList2);
-	    aCSI.Perform();
-	    if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-	      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
-	    }
-#endif	    
+            if (isCheckSelfInte) {
+              BOPCol_ListOfShape aList2;
+              aList2.Append(aShape2);
+              aCSI.SetArguments(aList2);
+              aCSI.Perform();
+              if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+                StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+              }
+            }
+
             // Copy shape
             TNaming_CopyShape::CopyTool(aShape2, aMapTShapes, aShapeCopy);
 	    aShape = performOperation (aShape, aShapeCopy, aSimpleType);
@@ -226,23 +225,24 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
       if (!aShape.IsNull()) {
         // check arguments for Mantis issue 0021019
         BRepCheck_Analyzer anAna (aShape, Standard_True);
-#ifdef BOP_CHECK_SELF_INTERSECTIONS
-	BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
-	aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
-#endif
+
         if (!anAna.IsValid()) {
           StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
         }
 
-#ifdef BOP_CHECK_SELF_INTERSECTIONS
-	BOPCol_ListOfShape aList1;
-	aList1.Append(aShape);
-	aCSI.SetArguments(aList1);
-	aCSI.Perform();
-	if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-	  StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
-	}
-#endif
+	BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
+
+        if (isCheckSelfInte) {
+          aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
+          BOPCol_ListOfShape aList1;
+          aList1.Append(aShape);
+          aCSI.SetArguments(aList1);
+          aCSI.Perform();
+          if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+            StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+          }
+        }
+
         // Copy shape
         TopoDS_Shape aShapeCopy;
         TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
@@ -265,15 +265,15 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
             StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
           }
 
-#ifdef BOP_CHECK_SELF_INTERSECTIONS
-	  BOPCol_ListOfShape aList2;
-	  aList2.Append(aTool);
-	  aCSI.SetArguments(aList2);
-	  aCSI.Perform();
-	  if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
-	    StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
-	  }
-#endif
+          if (isCheckSelfInte) {
+            BOPCol_ListOfShape aList2;
+            aList2.Append(aTool);
+            aCSI.SetArguments(aList2);
+            aCSI.Perform();
+            if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+              StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is self-intersected");
+            }
+          }
 
           // Copy shape
           TNaming_CopyShape::CopyTool(aTool, aMapTShapes, aShapeCopy);

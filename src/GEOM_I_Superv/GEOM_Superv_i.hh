@@ -332,9 +332,11 @@ public:
   //-----------------------------------------------------------//
   GEOM::GEOM_Object_ptr MakeBoolean (GEOM::GEOM_Object_ptr theShape1,
                                      GEOM::GEOM_Object_ptr theShape2,
-                                     CORBA::Long theOperation);
+                                     CORBA::Long           theOperation,
+                                     CORBA::Boolean        IsCheckSelfInte);
   GEOM::GEOM_Object_ptr MakeFuse (GEOM::GEOM_Object_ptr theShape1,
-                                  GEOM::GEOM_Object_ptr theShape2);
+                                  GEOM::GEOM_Object_ptr theShape2,
+                                  CORBA::Boolean        IsCheckSelfInte);
   GEOM::GEOM_Object_ptr MakePartition (GEOM::GEOM_List_ptr   theShapes,
                                        GEOM::GEOM_List_ptr   theTools,
                                        GEOM::GEOM_List_ptr   theKeepInside,

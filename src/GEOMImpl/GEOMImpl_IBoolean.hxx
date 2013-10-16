@@ -25,9 +25,10 @@
 #include "GEOM_Function.hxx"
 #include "TColStd_HSequenceOfTransient.hxx"
 
-#define BOOL_ARG_SHAPE1  1
-#define BOOL_ARG_SHAPE2  2
-#define BOOL_ARG_SHAPES  3
+#define BOOL_ARG_SHAPE1                   1
+#define BOOL_ARG_SHAPE2                   2
+#define BOOL_ARG_SHAPES                   3
+#define BOOL_ARG_CHECK_SELF_INTERSECTION  4
 
 class GEOMImpl_IBoolean
 {
@@ -39,11 +40,15 @@ class GEOMImpl_IBoolean
   void SetShape2(Handle(GEOM_Function) theRef) { _func->SetReference(BOOL_ARG_SHAPE2, theRef); }
   void SetShapes(const Handle(TColStd_HSequenceOfTransient)& theShapes)
   { _func->SetReferenceList(BOOL_ARG_SHAPES, theShapes); }
+  void SetCheckSelfIntersection (Standard_Boolean theFlag)
+  { _func->SetInteger(BOOL_ARG_CHECK_SELF_INTERSECTION, theFlag ? 1 : 0); }
 
   Handle(GEOM_Function) GetShape1() { return _func->GetReference(BOOL_ARG_SHAPE1); }
   Handle(GEOM_Function) GetShape2() { return _func->GetReference(BOOL_ARG_SHAPE2); }
   Handle(TColStd_HSequenceOfTransient) GetShapes()
   { return _func->GetReferenceList(BOOL_ARG_SHAPES); }
+  Standard_Boolean GetCheckSelfIntersection()
+  { return (_func->GetInteger(BOOL_ARG_CHECK_SELF_INTERSECTION) != 0); }
 
  private:
 

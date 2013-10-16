@@ -23,17 +23,17 @@ a list of others. </li>
 You can use advanced TUI commands performing these operations
 independently from each other:
 \par
-<em>geompy.MakeFuseList(theShapesList)</em>, where \em theShapesList is
+<em>geompy.MakeFuseList(theShapesList, checkSelfInte)</em>, where \em theShapesList is
 the list of shapes for Fuse operation; 
 \par
-<em>geompy.MakeCommonList(theShapesList)</em>, where \em theShapesList is
+<em>geompy.MakeCommonList(theShapesList, checkSelfInte)</em>, where \em theShapesList is
 the list of shapes for Common operation;
 \par
-<em>geompy.MakeCutList(theMainShape, theShapesList)</em>, where \em
+<em>geompy.MakeCutList(theMainShape, theShapesList, checkSelfInte)</em>, where \em
 theMainShape is the object of the operation and \em theShapesList is
 the list of tools for Cut operation;
 \par
-<em>geompy.MakeSection(Shape1, Shape2)</em>, where \em Shape1 is the first
+<em>geompy.MakeSection(Shape1, Shape2, checkSelfInte)</em>, where \em Shape1 is the first
 argument and \em Shape2 is the second argument of Section operation;
 
 
@@ -42,7 +42,7 @@ with only two arguments. There is a general TUI command covering these
 operations, which can be used alongside with separate commands for each
 operation.
 \par
-<em>geompy.MakeBoolean(Shape1, Shape2, Operation),</em> where \em
+<em>geompy.MakeBoolean(Shape1, Shape2, Operation, checkSelfInte),</em> where \em
 Shape1 is the first argument and \em Shape2 is the second argument of
 Boolean operation, \em Operation is a type of the Boolean operation (1
 &mdash; Common, 2 &mdash; Cut, 3 &mdash; Fuse, 4 &mdash; Section).
@@ -51,14 +51,21 @@ Boolean operation, \em Operation is a type of the Boolean operation (1
 Besides, you can use advanced TUI commands performing these operations
 independently from each other:
 \par
-<em>geompy.MakeFuse(Shape1, Shape2)</em>, where \em Shape1 is the first
+<em>geompy.MakeFuse(Shape1, Shape2, checkSelfInte)</em>, where \em Shape1 is the first
 argument and \em Shape2 is the second argument of Fuse operation; 
 \par
-<em>geompy.MakeCommon(Shape1, Shape2)</em>, where \em Shape1 is the first
+<em>geompy.MakeCommon(Shape1, Shape2, checkSelfInte)</em>, where \em Shape1 is the first
 argument and \em Shape2 is the second argument of Common operation;
 \par
-<em>geompy.MakeCut(Shape1, Shape2)</em>, where \em Shape1 is the first
+<em>geompy.MakeCut(Shape1, Shape2, checkSelfInte)</em>, where \em Shape1 is the first
 argument and \em Shape2 is the second argument of Cut operation;
+
+The flag \em checkSelfInte tells whether arguments should be checked for
+self-intersection prior to an operation. Its default value is \em False which
+means that there is no need to check it. This option is provided to ensure that
+an operation is performed on not self-intersected shapes as these shapes are
+not valid for boolean operations.
+
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_boolean_operations_page "Boolean Operations".

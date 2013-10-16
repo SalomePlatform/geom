@@ -238,9 +238,11 @@ module GEOM
     //-----------------------------------------------------------//
     GEOM_Object MakeBoolean (in GEOM_Object theShape1,
                              in GEOM_Object theShape2,
-                             in long        theOperation) ;
+                             in long        theOperation,
+                             in boolean     IsCheckSelfInte) ;
     GEOM_Object MakeFuse (in GEOM_Object theShape1,
-                          in GEOM_Object theShape2) ;
+                          in GEOM_Object theShape2,
+                          in boolean     IsCheckSelfInte) ;
     GEOM_Object MakePartition (in GEOM_List   theShapes,
                                in GEOM_List   theTools,
                                in GEOM_List   theKeepInside,

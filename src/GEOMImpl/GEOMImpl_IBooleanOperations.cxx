@@ -71,9 +71,11 @@ GEOMImpl_IBooleanOperations::~GEOMImpl_IBooleanOperations()
  *  MakeBoolean
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object) theShape1,
-                                                              Handle(GEOM_Object) theShape2,
-                                                              Standard_Integer    theOp)
+Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean
+                                  (Handle(GEOM_Object)    theShape1,
+                                   Handle(GEOM_Object)    theShape2,
+                                   const Standard_Integer theOp,
+                                   const Standard_Boolean IsCheckSelfInte)
 {
   SetErrorCode(KO);
 
@@ -108,6 +110,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
 
   aCI.SetShape1(aRef1);
   aCI.SetShape2(aRef2);
+  aCI.SetCheckSelfIntersection(IsCheckSelfInte);
 
   //Compute the Boolean value
   try {
@@ -133,7 +136,13 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
   else if (theOp == 3) pd << " = geompy.MakeFuse(";
   else if (theOp == 4) pd << " = geompy.MakeSection(";
   else {}
-  pd << theShape1 << ", " << theShape2 << ")";
+  pd << theShape1 << ", " << theShape2;
+
+  if (IsCheckSelfInte) {
+    pd << ", True";
+  }
+
+  pd << ")";
 
   SetErrorCode(OK);
   return aBool;
@@ -145,7 +154,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean (Handle(GEOM_Object
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
-                  (const Handle(TColStd_HSequenceOfTransient)& theShapes)
+                  (const Handle(TColStd_HSequenceOfTransient)& theShapes,
+                   const Standard_Boolean IsCheckSelfInte)
 {
   SetErrorCode(KO);
 
@@ -172,6 +182,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
   if (aShapesSeq.IsNull()) return NULL;
 
   aCI.SetShapes(aShapesSeq);
+  aCI.SetCheckSelfIntersection(IsCheckSelfInte);
 
   //Compute the Boolean value
   try {
@@ -190,8 +201,16 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aBool <<
-    " = geompy.MakeFuseList([" << aDescription.ToCString() << "])";
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aBool <<
+    " = geompy.MakeFuseList([" << aDescription.ToCString() << "]";
+
+  if (IsCheckSelfInte) {
+    pd << ", True";
+  }
+
+  pd << ")";
 
   SetErrorCode(OK);
   return aBool;
@@ -203,7 +222,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
-                  (const Handle(TColStd_HSequenceOfTransient)& theShapes)
+                  (const Handle(TColStd_HSequenceOfTransient)& theShapes,
+                   const Standard_Boolean IsCheckSelfInte)
 {
   SetErrorCode(KO);
 
@@ -230,6 +250,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
   if (aShapesSeq.IsNull()) return NULL;
 
   aCI.SetShapes(aShapesSeq);
+  aCI.SetCheckSelfIntersection(IsCheckSelfInte);
 
   //Compute the Boolean value
   try {
@@ -248,8 +269,16 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aBool <<
-    " = geompy.MakeCommonList([" << aDescription.ToCString() << "])";
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aBool <<
+    " = geompy.MakeCommonList([" << aDescription.ToCString() << "]";
+
+  if (IsCheckSelfInte) {
+    pd << ", True";
+  }
+
+  pd << ")";
 
   SetErrorCode(OK);
   return aBool;
@@ -262,7 +291,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCutList
                   (Handle(GEOM_Object) theMainShape,
-                   const Handle(TColStd_HSequenceOfTransient)& theShapes)
+                   const Handle(TColStd_HSequenceOfTransient)& theShapes,
+                   const Standard_Boolean IsCheckSelfInte)
 {
   SetErrorCode(KO);
 
@@ -293,6 +323,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCutList
 
   aCI.SetShape1(aMainRef);
   aCI.SetShapes(aShapesSeq);
+  aCI.SetCheckSelfIntersection(IsCheckSelfInte);
 
   //Compute the Boolean value
   try {
@@ -311,8 +342,16 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCutList
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aBool << " = geompy.MakeCutList("
-    << theMainShape << ", [" << aDescription.ToCString() << "])";
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aBool << " = geompy.MakeCutList("
+    << theMainShape << ", [" << aDescription.ToCString() << "]";
+
+  if (IsCheckSelfInte) {
+    pd << ", True";
+  }
+
+  pd << ")";
 
   SetErrorCode(OK);
   return aBool;

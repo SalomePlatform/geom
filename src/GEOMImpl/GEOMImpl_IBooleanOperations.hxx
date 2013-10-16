@@ -36,19 +36,24 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
   Standard_EXPORT GEOMImpl_IBooleanOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_IBooleanOperations();
 
-  Standard_EXPORT Handle(GEOM_Object) MakeBoolean (Handle(GEOM_Object) theShape1,
-                                                   Handle(GEOM_Object) theShape2,
-                                                   Standard_Integer    theOp);
+  Standard_EXPORT Handle(GEOM_Object) MakeBoolean
+                                (Handle(GEOM_Object)    theShape1,
+                                 Handle(GEOM_Object)    theShape2,
+                                 const Standard_Integer theOp,
+                                 const Standard_Boolean IsCheckSelfInte);
 
   Standard_EXPORT Handle(GEOM_Object) MakeFuseList
-                  (const Handle(TColStd_HSequenceOfTransient)& theShapes);
+                  (const Handle(TColStd_HSequenceOfTransient)& theShapes,
+                   const Standard_Boolean IsCheckSelfInte);
 
   Standard_EXPORT Handle(GEOM_Object) MakeCommonList
-                  (const Handle(TColStd_HSequenceOfTransient)& theShapes);
+                  (const Handle(TColStd_HSequenceOfTransient)& theShapes,
+                   const Standard_Boolean IsCheckSelfInte);
 
   Standard_EXPORT Handle(GEOM_Object) MakeCutList
                   (Handle(GEOM_Object) theMainShape,
-                   const Handle(TColStd_HSequenceOfTransient)& theShapes);
+                   const Handle(TColStd_HSequenceOfTransient)& theShapes,
+                   const Standard_Boolean IsCheckSelfInte);
 
   Standard_EXPORT Handle(GEOM_Object) MakePartition
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,

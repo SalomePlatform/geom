@@ -93,7 +93,7 @@ BooleanGUI_Dialog::BooleanGUI_Dialog (const int theOperation, GeometryGUI* theGe
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  myGroup = new DlgRef_2Sel(centralWidget());
+  myGroup = new DlgRef_2Sel2Spin1Check(centralWidget());
 
   myGroup->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   if (myOperation == BooleanGUI::CUT) {
@@ -117,6 +117,12 @@ BooleanGUI_Dialog::BooleanGUI_Dialog (const int theOperation, GeometryGUI* theGe
     myGroup->PushButton2->setIcon(image1);
     myGroup->LineEdit2->setReadOnly(true);
   }
+
+  myGroup->TextLabel3->hide();
+  myGroup->TextLabel4->hide();
+  myGroup->SpinBox_DX->hide();
+  myGroup->SpinBox_DY->hide();
+  myGroup->CheckButton1->setText(tr("GEOM_CHECK_SELF_INTERSECTIONS"));
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -152,6 +158,7 @@ void BooleanGUI_Dialog::Init()
 
   myGroup->LineEdit1->setText("");
   myGroup->LineEdit2->setText("");
+  myGroup->CheckButton1->setChecked(true);
   myObject1.nullify();
   reset();
  
@@ -402,19 +409,22 @@ bool BooleanGUI_Dialog::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
+  const bool isCheckSelfInte = myGroup->CheckButton1->isChecked();
 
   switch (myOperation) {
     case BooleanGUI::FUSE:
-      anObj = anOper->MakeFuseList(myObjects);
+      anObj = anOper->MakeFuseList(myObjects, isCheckSelfInte);
     break;
     case BooleanGUI::COMMON:
-      anObj = anOper->MakeCommonList(myObjects);
+      anObj = anOper->MakeCommonList(myObjects, isCheckSelfInte);
     break;
   case BooleanGUI::CUT:
-      anObj = anOper->MakeCutList(myObject1.get(), myObjects);
+      anObj =
+        anOper->MakeCutList(myObject1.get(), myObjects, isCheckSelfInte);
     break;
   case BooleanGUI::SECTION:
-      anObj = anOper->MakeBoolean(myObject1.get(), myObjects[0], myOperation);
+      anObj = anOper->MakeBoolean
+        (myObject1.get(), myObjects[0], myOperation, isCheckSelfInte);
     break;
   default:
     break;

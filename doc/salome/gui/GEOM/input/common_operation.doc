@@ -8,8 +8,8 @@ This operation cuts the common part of a list of shapes and transforms it into a
 
 The \b Result will be a \b GEOM_Object.
 
-<b>TUI Command:</b> <em>geompy.MakeCommonList(theShapesList)</em>\n
-<b>Arguments:</b> Name + a list of shapes.\n
+<b>TUI Command:</b> <em>geompy.MakeCommonList(theShapesList, checkSelfInte)</em>\n
+<b>Arguments:</b> Name + a list of shapes + an optional flag for self-intersection check.\n
 <b>Advanced option:</b>
 \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
@@ -17,14 +17,14 @@ The \b Result will be a \b GEOM_Object.
 
 For a particular case with two shapes for the Common operation there is the following TUI command:
 
-<b>TUI Command:</b> <em>geompy.MakeCommon(s1, s2)</em>\n
-<b>Arguments:</b> Name + 2 shapes.
+<b>TUI Command:</b> <em>geompy.MakeCommon(s1, s2, checkSelfInte)</em>\n
+<b>Arguments:</b> Name + 2 shapes + an optional flag for self-intersection check.
 
 <b>Example:</b>
 
 \image html fusesn1.png "The initial shapes"
 
-\image html commonsn.png "The resulting object" 
+\image html commonsn.png "The resulting object"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_common "Boolean Operations".
@@ -32,7 +32,7 @@ Our <b>TUI Scripts</b> provide you with useful examples of the use of
 <b> More details </b>
 
 For a detailed description of the Boolean operations please refer to
-<a href="SALOME_BOA_PA.pdf">this document</a>. 
+<a href="SALOME_BOA_PA.pdf">this document</a>.
 It provides a general review of the Partition and Boolean
 operations algorithms, describes the usage methodology and highlights
 major limitations of these operations.

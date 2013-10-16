@@ -1337,16 +1337,19 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape
 //=============================================================================
 //  MakeBoolean:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoolean (GEOM::GEOM_Object_ptr theShape1,
-                                                  GEOM::GEOM_Object_ptr theShape2,
-                                                  CORBA::Long theOperation)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoolean
+                                        (GEOM::GEOM_Object_ptr theShape1,
+                                         GEOM::GEOM_Object_ptr theShape2,
+                                         CORBA::Long           theOperation,
+                                         CORBA::Boolean        IsCheckSelfInte)
 {
   beginService( " GEOM_Superv_i::MakeBoolean" );
   // theOperation indicates the operation to be done:
   // 1 - Common, 2 - Cut, 3 - Fuse, 4 - Section
   MESSAGE("GEOM_Superv_i::MakeBoolean");
   getBoolOp();
-  GEOM::GEOM_Object_ptr anObj = myBoolOp->MakeBoolean(theShape1, theShape2, theOperation);
+  GEOM::GEOM_Object_ptr anObj =
+    myBoolOp->MakeBoolean(theShape1, theShape2, theOperation, IsCheckSelfInte);
   endService( " GEOM_Superv_i::MakeBoolean" );
   return anObj;
 }
@@ -1447,13 +1450,16 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeBiNormalAlongVector
 //=============================================================================
 //  MakeFuse:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse (GEOM::GEOM_Object_ptr theShape1,
-                                               GEOM::GEOM_Object_ptr theShape2)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse
+                                        (GEOM::GEOM_Object_ptr theShape1,
+                                         GEOM::GEOM_Object_ptr theShape2,
+                                         CORBA::Boolean        IsCheckSelfInte)
 {
   beginService( " GEOM_Superv_i::MakeFuse" );
   MESSAGE("GEOM_Superv_i::MakeFuse");
   getBoolOp();
-  GEOM::GEOM_Object_ptr anObj = myBoolOp->MakeBoolean(theShape1, theShape2, 3);
+  GEOM::GEOM_Object_ptr anObj =
+    myBoolOp->MakeBoolean(theShape1, theShape2, 3, IsCheckSelfInte);
   endService( " GEOM_Superv_i::MakeFuse" );
   return anObj;
 }

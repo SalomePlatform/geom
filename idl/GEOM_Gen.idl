@@ -2887,34 +2887,46 @@ module GEOM
      *  \param theShape2 Second argument for boolean operation.
      *  \param theOperation Indicates the operation to be done:
      *                      1 - Common, 2 - Cut, 3 - Fuse, 4 - Section.
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
      *  \return New GEOM_Object, containing the result shape.
      */
     GEOM_Object MakeBoolean (in GEOM_Object theShape1,
                              in GEOM_Object theShape2,
-                             in long theOperation);
+                             in long        theOperation,
+                             in boolean     IsCheckSelfInte);
 
     /*!
      *  \brief Perform fusion boolean operation on list of objects.
      *  \param theShapes Shapes to be fused.
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
      *  \return New GEOM_Object, containing the result shape.
      */
-    GEOM_Object MakeFuseList (in ListOfGO theShapes);
+    GEOM_Object MakeFuseList (in ListOfGO theShapes,
+                              in boolean  IsCheckSelfInte);
 
     /*!
      *  \brief Perform common boolean operation on list of objects.
      *  \param theShapes Shapes for common operation.
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
      *  \return New GEOM_Object, containing the result shape.
      */
-    GEOM_Object MakeCommonList (in ListOfGO theShapes);
+    GEOM_Object MakeCommonList (in ListOfGO theShapes,
+                                in boolean  IsCheckSelfInte);
 
     /*!
      *  \brief Perform cutting of list of objects from theMainShape.
      *  \param theMainShape the object for cut operation.
      *  \param theShapes Shapes to be cut from theMainShape (tools).
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
      *  \return New GEOM_Object, containing the result shape.
      */
     GEOM_Object MakeCutList (in GEOM_Object theMainShape,
-                             in ListOfGO theShapes);
+                             in ListOfGO theShapes,
+                             in boolean  IsCheckSelfInte);
 
     /*!
      *  \brief Perform partition operation.

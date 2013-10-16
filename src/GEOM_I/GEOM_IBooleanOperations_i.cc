@@ -62,9 +62,10 @@ GEOM_IBooleanOperations_i::~GEOM_IBooleanOperations_i()
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
-                                                 (GEOM::GEOM_Object_ptr theShape1,
-                                                  GEOM::GEOM_Object_ptr theShape2,
-                                                  CORBA::Long           theOp)
+                                    (GEOM::GEOM_Object_ptr theShape1,
+                                     GEOM::GEOM_Object_ptr theShape2,
+                                     CORBA::Long           theOp,
+                                     CORBA::Boolean        IsCheckSelfInte)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -78,7 +79,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
   if (aSh1.IsNull() || aSh2.IsNull()) return aGEOMObject._retn();
 
   // Make Boolean
-  Handle(GEOM_Object) anObject = GetOperations()->MakeBoolean(aSh1, aSh2, theOp);
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeBoolean(aSh1, aSh2, theOp, IsCheckSelfInte);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -91,7 +93,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
-                                    (const GEOM::ListOfGO& theShapes)
+                                    (const GEOM::ListOfGO& theShapes,
+                                     CORBA::Boolean        IsCheckSelfInte)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -106,7 +109,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
   }
 
   // Make fusion
-  Handle(GEOM_Object) anObject = GetOperations()->MakeFuseList(aShapes);
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeFuseList(aShapes, IsCheckSelfInte);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -120,7 +124,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonList
-                                    (const GEOM::ListOfGO& theShapes)
+                                    (const GEOM::ListOfGO& theShapes,
+                                     CORBA::Boolean        IsCheckSelfInte)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -135,7 +140,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonList
   }
 
   // Make fusion
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCommonList(aShapes);
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeCommonList(aShapes, IsCheckSelfInte);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -150,7 +156,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCommonList
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutList
                                     (GEOM::GEOM_Object_ptr theMainShape,
-                                     const GEOM::ListOfGO& theShapes)
+                                     const GEOM::ListOfGO& theShapes,
+                                     CORBA::Boolean        IsCheckSelfInte)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -171,7 +178,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeCutList
   }
 
   // Make fusion
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCutList(aMainShape, aShapes);
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeCutList(aMainShape, aShapes, IsCheckSelfInte);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
