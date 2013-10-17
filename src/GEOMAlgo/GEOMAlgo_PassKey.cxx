@@ -32,7 +32,7 @@
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 
-#ifdef WNT
+#ifdef WIN32
 #pragma warning( disable : 4101)
 #endif
 

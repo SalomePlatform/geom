@@ -34,22 +34,14 @@
 #include <TopoDS_Shape.hxx>
 #include <TDF_Label.hxx>
 
-#ifdef WNT
- #if defined BREPIMPORT_EXPORTS || defined BREPImport_EXPORTS
-  #if defined WIN32
-   #define BREPIMPORT_EXPORT __declspec( dllexport )
+#ifdef WIN32
+  #if defined BREPIMPORT_EXPORTS || defined BREPImport_EXPORTS
+    #define BREPIMPORT_EXPORT __declspec( dllexport )
   #else
-   #define BREPIMPORT_EXPORT
+    #define BREPIMPORT_EXPORT __declspec( dllimport )
   #endif
- #else
-  #if defined WIN32
-   #define BREPIMPORT_EXPORT __declspec( dllimport )
-  #else
-   #define BREPIMPORT_EXPORT
-  #endif
- #endif
 #else
- #define BREPIMPORT_EXPORT
+  #define BREPIMPORT_EXPORT
 #endif
 
 //=============================================================================

@@ -36,13 +36,13 @@
 #include <Standard_Failure.hxx>
 #include <StdFail_NotDone.hxx>
 
-#ifdef WNT
+#ifdef WIN32
 #include <windows.h>
 #else
 #include <dlfcn.h>
 #endif
 
-#ifdef WNT
+#ifdef WIN32
 #define LibHandle HMODULE
 #define LoadLib( name ) LoadLibrary( name )
 #define GetProc GetProcAddress

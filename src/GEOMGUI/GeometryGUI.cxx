@@ -247,7 +247,7 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
 {
   if ( !myGUIMap.contains( libraryName ) ) {
     // try to load library if it is not loaded yet
-#ifndef WNT
+#ifndef WIN32
     QString dirs = getenv( "LD_LIBRARY_PATH" );
     QString sep  = ":";
 #else
@@ -291,7 +291,7 @@ GEOMPluginGUI* GeometryGUI::getPluginLibrary( const QString& libraryName )
 {
   if ( !myGUIMap.contains( libraryName ) ) {
     // try to load library if it is not loaded yet
-#ifndef WNT
+#ifndef WIN32
     QString dirs = getenv( "LD_LIBRARY_PATH" );
     QString sep  = ":";
 #else
@@ -663,7 +663,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
 
       GEOMPluginGUI* library = 0;
       if ( !libName.isEmpty() ) {
-#ifndef WNT
+#ifndef WIN32
         libName = QString( "lib" ) + libName + ".so";
 #else
         libName = libName + ".dll";
@@ -692,7 +692,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
 
   GEOMGUI* library = 0;
   if ( !libName.isEmpty() ) {
-#ifndef WNT
+#ifndef WIN32
     libName = QString( "lib" ) + libName + ".so";
 #else
     libName = libName + ".dll";

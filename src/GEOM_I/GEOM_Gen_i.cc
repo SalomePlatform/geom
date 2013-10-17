@@ -19,7 +19,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-#ifdef WNT
+#ifdef WIN32
 #pragma warning( disable:4786 )
 #endif
 
@@ -66,14 +66,14 @@
 #include <set>
 #include <sstream>
 
-#ifdef WNT
+#ifdef WIN32
  #include <windows.h>
  #include <process.h>
 #else
  #include <dlfcn.h>
 #endif
 
-#ifdef WNT
+#ifdef WIN32
  #define LibHandle HMODULE
  #define LoadLib( name ) LoadLibrary( name )
  #define GetProc GetProcAddress
@@ -553,7 +553,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   // OCCT BUG: cannot save a document (in current folder)
   // if directory name is empty
   if (aTmpDir.size() == 0) {
-#ifdef WNT
+#ifdef WIN32
     aTmpDir = ".\\";
 #else
     aTmpDir = "./";
@@ -616,7 +616,7 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   // OCCT BUG: cannot load a document (from current folder)
   // if directory name is empty
   if (aTmpDir.size() == 0) {
-#ifdef WNT
+#ifdef WIN32
     aTmpDir = ".\\";
 #else
     aTmpDir = "./";
@@ -2403,7 +2403,7 @@ GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(CORBA::Long theStudyI
      throw ( SALOME::SALOME_Exception )
 {
   std::string aPlatformLibName;
-#ifdef WNT
+#ifdef WIN32
   aPlatformLibName = theLibName;
   aPlatformLibName += ".dll" ;
 #else
@@ -2427,7 +2427,7 @@ GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(CORBA::Long theStudyI
       LibHandle libHandle = LoadLib( aPlatformLibName.c_str()/*theLibName*/ );
       if (!libHandle) {
         // report any error, if occured
-#ifndef WNT
+#ifndef WIN32
         const char* anError = dlerror();
         throw(SALOME_Exception(anError));
 #else

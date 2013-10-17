@@ -514,7 +514,7 @@ Standard_Boolean GEOMImpl_IInsertOperations::IsSupported
       aKey += aMode;
       if (myResMgr->Find(aKey.ToCString())) {
         TCollection_AsciiString aLibName (myResMgr->Value(aKey.ToCString()));        
-#ifndef WNT
+#ifndef WIN32
         aLibName += ".so";     
 #else
         aLibName += ".dll";
@@ -559,7 +559,7 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
     // Initialize the Resource Manager
     TCollection_AsciiString aNull;
     aResDir = TCollection_AsciiString(getenv("GEOM_ROOT_DIR"));
-#ifdef WNT
+#ifdef WIN32
     aResDir += "\\share\\salome\\resources\\geom";
 #else
     aResDir += "/share/salome/resources/geom";
@@ -586,7 +586,7 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
     else
     {
       aUserResDir = getenv("HOME");
-#ifdef WNT
+#ifdef WIN32
       aUserResDir += "\\.salome\\resources";
 #else
       aUserResDir += "/.salome/resources";

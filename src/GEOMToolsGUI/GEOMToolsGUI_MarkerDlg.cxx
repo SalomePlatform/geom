@@ -172,7 +172,7 @@ void GEOMToolsGUI_MarkerDlg::setStandardMarker( GEOM::marker_type type, GEOM::ma
     myTypeGroup->button( 0 )->setChecked( true );
     myWGStack->setCurrentIndex( 0 );
     myStdTypeCombo->setCurrentIndex( (int)type - 1 );
-#ifdef WNT
+#ifdef WIN32
     int asize = max( (int)GEOM::MS_10, min( (int)GEOM::MS_70, (int)size ) );
 #else
     int asize = std::max( (int)GEOM::MS_10, std::min( (int)GEOM::MS_70, (int)size ) );

@@ -27,22 +27,14 @@
 #ifndef _GEOM_GEOM_I_HXX_
 #define _GEOM_GEOM_I_HXX_
 
-#ifdef WNT
- #if defined GEOM_I_EXPORTS || defined GEOMEngine_EXPORTS
-  #if defined WIN32
-   #define GEOM_I_EXPORT __declspec( dllexport )
+#ifdef WIN32
+  #if defined GEOM_I_EXPORTS || defined GEOMEngine_EXPORTS
+    #define GEOM_I_EXPORT __declspec( dllexport )
   #else
-   #define GEOM_I_EXPORT
+    #define GEOM_I_EXPORT __declspec( dllimport )
   #endif
- #else
-  #if defined WIN32
-   #define GEOM_I_EXPORT __declspec( dllimport )
-  #else
-   #define GEOM_I_EXPORT
-  #endif
- #endif
 #else
- #define GEOM_I_EXPORT
+   #define GEOM_I_EXPORT
 #endif
 
-#endif
+#endif //_GEOM_GEOM_I_HXX_

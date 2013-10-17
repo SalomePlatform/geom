@@ -53,22 +53,14 @@
 
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
-#ifdef WNT
- #if defined IGESIMPORT_EXPORTS || defined IGESImport_EXPORTS
-  #if defined WIN32
-   #define IGESIMPORT_EXPORT __declspec( dllexport )
+#ifdef WIN32
+  #if defined IGESIMPORT_EXPORTS || defined IGESImport_EXPORTS
+    #define IGESIMPORT_EXPORT __declspec( dllexport )
   #else
-   #define IGESIMPORT_EXPORT
+    #define IGESIMPORT_EXPORT __declspec( dllimport )
   #endif
- #else
-  #if defined WIN32
-   #define IGESIMPORT_EXPORT __declspec( dllimport )
-  #else
-   #define IGESIMPORT_EXPORT
-  #endif
- #endif
 #else
- #define IGESIMPORT_EXPORT
+  #define IGESIMPORT_EXPORT
 #endif
 
 //=============================================================================

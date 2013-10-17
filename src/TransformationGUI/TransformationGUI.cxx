@@ -168,7 +168,7 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-#ifdef WNT
+#ifdef WIN32
   __declspec( dllexport )
 #endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )

@@ -22,22 +22,14 @@
 #ifndef _GEOM_ADVANCEDENGINE_HXX_
 #define _GEOM_ADVANCEDENGINE_HXX_
 
-#ifdef WNT
+#ifdef WIN32
  #if defined ADVANCEDENGINE_EXPORTS || defined AdvancedEngine_EXPORTS
-  #if defined WIN32
    #define ADVANCEDENGINE_EXPORT __declspec( dllexport )
-  #else
-   #define ADVANCEDENGINE_EXPORT
-  #endif
  #else
-  #if defined WIN32
    #define ADVANCEDENGINE_EXPORT __declspec( dllimport )
-  #else
-   #define ADVANCEDENGINE_EXPORT
-  #endif
- #endif
+ #endif 
 #else
- #define ADVANCEDENGINE_EXPORT
+   #define ADVANCEDENGINE_EXPORT
 #endif
 
 #endif

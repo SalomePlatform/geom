@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifdef WNT
+#ifdef WIN32
 #pragma warning( disable:4786 )
 #endif
 

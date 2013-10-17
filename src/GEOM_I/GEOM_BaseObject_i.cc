@@ -39,7 +39,7 @@
 #include <typeinfo>
 #endif
 
-#ifdef WNT
+#ifdef WIN32
 #pragma warning( disable:4786 )
 #endif
 

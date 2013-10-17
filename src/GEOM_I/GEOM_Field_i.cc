@@ -27,7 +27,7 @@
 #include <TCollection_ExtendedString.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 
-#ifdef WNT
+#ifdef WIN32
 #pragma warning( disable:4786 )
 #endif
 

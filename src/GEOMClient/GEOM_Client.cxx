@@ -44,7 +44,7 @@
 #include <TopAbs.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
-#ifdef WNT
+#ifdef WIN32
 #include <process.h>
 #else
 #include <unistd.h>
@@ -91,7 +91,7 @@ TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr a
 GEOM_Client::GEOM_Client()
 {
   pid_client =
-#ifdef WNT
+#ifdef WIN32
     (long)_getpid();
 #else
     (long)getpid();

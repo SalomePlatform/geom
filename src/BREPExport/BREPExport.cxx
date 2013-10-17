@@ -32,22 +32,14 @@
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Shape.hxx>
 
-#ifdef WNT
- #if defined BREPEXPORT_EXPORTS || defined BREPExport_EXPORTS
-  #if defined WIN32
-   #define BREPEXPORT_EXPORT __declspec( dllexport )
+#ifdef WIN32
+  #if defined BREPEXPORT_EXPORTS || defined BREPExport_EXPORTS
+    #define BREPEXPORT_EXPORT __declspec( dllexport )
   #else
-   #define BREPEXPORT_EXPORT
+    #define BREPEXPORT_EXPORT __declspec( dllimport )
   #endif
- #else
-  #if defined WIN32
-   #define BREPEXPORT_EXPORT __declspec( dllimport )
-  #else
-   #define BREPEXPORT_EXPORT
-  #endif
- #endif
 #else
- #define BREPEXPORT_EXPORT
+   #define BREPEXPORT_EXPORT
 #endif
 
 //=============================================================================

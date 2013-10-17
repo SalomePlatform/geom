@@ -65,22 +65,14 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
-#ifdef WNT
- #if defined STEPIMPORT_EXPORTS || defined STEPImport_EXPORTS
-  #if defined WIN32
-   #define STEPIMPORT_EXPORT __declspec( dllexport )
+#ifdef WIN32
+  #if defined STEPIMPORT_EXPORTS || defined STEPImport_EXPORTS
+    #define STEPIMPORT_EXPORT __declspec( dllexport )
   #else
-   #define STEPIMPORT_EXPORT
+    #define STEPIMPORT_EXPORT __declspec( dllimport )
   #endif
- #else
-  #if defined WIN32
-   #define STEPIMPORT_EXPORT __declspec( dllimport )
-  #else
-   #define STEPIMPORT_EXPORT
-  #endif
- #endif
 #else
- #define STEPIMPORT_EXPORT
+  #define STEPIMPORT_EXPORT
 #endif
 
 //=============================================================================

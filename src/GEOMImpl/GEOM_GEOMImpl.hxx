@@ -27,22 +27,14 @@
 #ifndef _GEOM_GEOMImpl_HXX_
 #define _GEOM_GEOMImpl_HXX_
 
-#ifdef WNT
- #if defined GEOMIMPL_EXPORTS || defined GEOMImpl_EXPORTS
-  #if defined WIN32
-   #define GEOMIMPL_EXPORT __declspec( dllexport )
+#ifdef WIN32
+  #if defined GEOMIMPL_EXPORTS || defined GEOMImpl_EXPORTS
+    #define GEOMIMPL_EXPORT __declspec( dllexport )
   #else
-   #define GEOMIMPL_EXPORT
+    #define GEOMIMPL_EXPORT __declspec( dllimport )
   #endif
  #else
-  #if defined WIN32
-   #define GEOMIMPL_EXPORT __declspec( dllimport )
-  #else
-   #define GEOMIMPL_EXPORT
-  #endif
- #endif
-#else
- #define GEOMIMPL_EXPORT
+    #define GEOMIMPL_EXPORT
 #endif
 
 #endif
