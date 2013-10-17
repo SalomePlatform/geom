@@ -36,6 +36,7 @@
 #include <QMap>
 #include <QSet>
 #include <QVector>
+#include <QTableWidget>
 
 class QGroupBox;
 class QLineEdit;
@@ -131,6 +132,57 @@ private:
   QWidget*                            mySwitchTableWdg;
   QComboBox*                          myStepsCombo;
   SalomeApp_IntSpinBox*               myStampSpin;
+
+};
+
+/*
+  Class       : EntityGUI_FieldDlg::StepTable
+  Description : Table widget
+*/
+
+class EntityGUI_FieldDlg::StepTable : public QTableWidget
+{
+  Q_OBJECT
+
+  int                      myDataType;
+  int                      myStepID;
+  int                      myStamp;
+  GEOM::GEOM_FieldStep_var myStep;
+  bool                     myIsChanged;
+
+  QTableWidgetItem * newDefaultItem();
+public:
+  StepTable( int stepID, int dataType, int nbRows, int nbColumns,
+             QString shapeName, QStringList headers,
+             GEOM::GEOM_FieldStep_ptr stepVar, QWidget* = 0 );
+  virtual ~StepTable();
+
+  QSize                    minimumSizeHint() const;
+
+  void                     setEditable( bool, int, int );
+  bool                     isEditable( int, int ) const;
+
+  void                     setReadOnly( bool );
+  bool                     isReadOnly() const;
+
+  void                     insertRows( int, int = 1 );
+  QString                  text( int, int );
+
+  QList<int>               selectedRows();
+  void                     selectRows(const QList<int>& rows);
+
+  void                     setDim( int nbRows, QString shapeName, bool setDefault=true );
+  void                     setNbComps( int nbComps );
+  void                     setDataType( int dataType );
+  void                     setStamp( int stamp ) { myStamp = stamp; }
+  int                      getStamp() { return myStamp; }
+  int                      getStepID() { return myStepID; }
+  QStringList              getHeaders();
+  void                     setHeaders(const QStringList& headers);
+  GEOM::GEOM_FieldStep_var getStep() { return myStep; }
+  void                     setValues(GEOM::GEOM_FieldStep_var& step);
+public slots:
+  void                     setIsChanged() { myIsChanged = true; }
 };
 
 #endif
