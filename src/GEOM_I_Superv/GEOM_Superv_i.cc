@@ -1340,8 +1340,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoolean
                                         (GEOM::GEOM_Object_ptr theShape1,
                                          GEOM::GEOM_Object_ptr theShape2,
-                                         CORBA::Long           theOperation,
-                                         CORBA::Boolean        IsCheckSelfInte)
+                                         CORBA::Long           theOperation)
 {
   beginService( " GEOM_Superv_i::MakeBoolean" );
   // theOperation indicates the operation to be done:
@@ -1349,7 +1348,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoolean
   MESSAGE("GEOM_Superv_i::MakeBoolean");
   getBoolOp();
   GEOM::GEOM_Object_ptr anObj =
-    myBoolOp->MakeBoolean(theShape1, theShape2, theOperation, IsCheckSelfInte);
+    myBoolOp->MakeBoolean(theShape1, theShape2, theOperation, false);
   endService( " GEOM_Superv_i::MakeBoolean" );
   return anObj;
 }
@@ -1452,15 +1451,50 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeBiNormalAlongVector
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse
                                         (GEOM::GEOM_Object_ptr theShape1,
-                                         GEOM::GEOM_Object_ptr theShape2,
-                                         CORBA::Boolean        IsCheckSelfInte)
+                                         GEOM::GEOM_Object_ptr theShape2)
 {
   beginService( " GEOM_Superv_i::MakeFuse" );
   MESSAGE("GEOM_Superv_i::MakeFuse");
   getBoolOp();
   GEOM::GEOM_Object_ptr anObj =
-    myBoolOp->MakeBoolean(theShape1, theShape2, 3, IsCheckSelfInte);
+    myBoolOp->MakeBoolean(theShape1, theShape2, 3, false);
   endService( " GEOM_Superv_i::MakeFuse" );
+  return anObj;
+}
+
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCommon (GEOM::GEOM_Object_ptr theShape1,
+						 GEOM::GEOM_Object_ptr theShape2)
+{
+  beginService( " GEOM_Superv_i::MakeCommon" );
+  MESSAGE("GEOM_Superv_i::MakeCommon");
+  getBoolOp();
+  GEOM::GEOM_Object_ptr anObj =
+    myBoolOp->MakeBoolean(theShape1, theShape2, 1, false);
+  endService( " GEOM_Superv_i::MakeCommon" );
+  return anObj;
+}
+
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCut (GEOM::GEOM_Object_ptr theShape1,
+					      GEOM::GEOM_Object_ptr theShape2)
+{
+  beginService( " GEOM_Superv_i::MakeCut" );
+  MESSAGE("GEOM_Superv_i::MakeCut");
+  getBoolOp();
+  GEOM::GEOM_Object_ptr anObj =
+    myBoolOp->MakeBoolean(theShape1, theShape2, 2, false);
+  endService( " GEOM_Superv_i::MakeCut" );
+  return anObj;
+}
+
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSection (GEOM::GEOM_Object_ptr theShape1,
+						  GEOM::GEOM_Object_ptr theShape2)
+{
+  beginService( " GEOM_Superv_i::MakeCut" );
+  MESSAGE("GEOM_Superv_i::MakeCut");
+  getBoolOp();
+  GEOM::GEOM_Object_ptr anObj =
+    myBoolOp->MakeBoolean(theShape1, theShape2, 4, false);
+  endService( " GEOM_Superv_i::MakeCut" );
   return anObj;
 }
 
