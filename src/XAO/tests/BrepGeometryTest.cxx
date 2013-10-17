@@ -152,7 +152,7 @@ void BrepGeometryTest::testGetEdgeVertices()
 void printVector(std::vector<int>& v)
 {
     std::cout << "# ";
-    for (int i = 0; i < v.size(); i++)
+    for (unsigned int i = 0; i < v.size(); i++)
         std::cout << v[i] << ", ";
     std::cout << std::endl;
 }
@@ -266,7 +266,7 @@ void BrepGeometryTest::testParse()
         {
             std::cout << "  Shell #" << shellIndex << std::endl;
             std::vector<int> faces = geom->getSolidFaces(solidIndex, shellIndex);
-            for (int indf = 0; indf < faces.size(); ++indf)
+            for (unsigned int indf = 0; indf < faces.size(); ++indf)
             {
                 int faceIndex = faces[indf];
                 std::cout  << "    Face #" << geom->getFaceReference(faceIndex) << std::endl;
@@ -276,7 +276,7 @@ void BrepGeometryTest::testParse()
                 {
                     std::cout << "      Wire #" << wireIndex << std::endl;
                     std::vector<int> edges = geom->getFaceEdges(faceIndex, wireIndex);
-                    for (int inde = 0; inde < edges.size(); ++inde)
+                    for (unsigned int inde = 0; inde < edges.size(); ++inde)
                     {
                         int edgeIndex = edges[inde];
                         std::cout << "        Edge #" << geom->getEdgeReference(edgeIndex) << " : ";

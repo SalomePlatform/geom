@@ -21,7 +21,13 @@
 #ifndef __XAO_STEP_HXX__
 #define __XAO_STEP_HXX__
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
+
 
 namespace XAO
 {
@@ -29,7 +35,7 @@ namespace XAO
      * @class Step
      * Base class for steps.
      */
-    class Step
+    class XAO_EXPORT Step
     {
     protected:
         /** Default constructor. */

@@ -23,9 +23,14 @@
 
 #include <string>
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Field.hxx"
 #include "XAO_StringStep.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
 
 namespace XAO
 {
@@ -33,7 +38,7 @@ namespace XAO
      * @class StringField
      * Represents a field with string values.
      */
-    class StringField : public Field
+    class XAO_EXPORT StringField : public Field
     {
     public:
         /**

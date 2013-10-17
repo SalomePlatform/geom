@@ -23,8 +23,14 @@
 
 #include <vector>
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Step.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
+
 
 namespace XAO
 {
@@ -32,7 +38,7 @@ namespace XAO
      * @class DoubleStep
      * Step with double values.
      */
-    class DoubleStep : public Step
+    class XAO_EXPORT DoubleStep : public Step
     {
     public:
         /**

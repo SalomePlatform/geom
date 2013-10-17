@@ -24,8 +24,15 @@
 #include <string>
 #include <vector>
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Step.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#pragma warning(disable:4251) // Warning dll-interface ...
+#endif
+
 
 namespace XAO
 {
@@ -35,7 +42,7 @@ namespace XAO
      * @class Field
      * A geometrical Field.
      */
-    class Field
+    class XAO_EXPORT Field
     {
     protected:
         /**

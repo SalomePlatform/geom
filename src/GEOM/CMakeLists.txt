@@ -40,6 +40,7 @@ SET(_link_LIBRARIES
   ${CAS_TKCDF}
   ${CAS_TKG3d}
   ${KERNEL_SALOMELocalTrace}
+  ${KERNEL_OpUtil}
   GEOMSketcher
   )
 

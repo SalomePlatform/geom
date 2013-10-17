@@ -26,8 +26,14 @@
 
 #include <TopoDS_Shape.hxx>
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Geometry.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
+
 
 namespace XAO
 {
@@ -35,7 +41,7 @@ namespace XAO
      * @class BrepGeometry
      * Representation of a BRep Geometry.
      */
-    class BrepGeometry : public Geometry
+    class XAO_EXPORT BrepGeometry : public Geometry
     {
     public:
         /**

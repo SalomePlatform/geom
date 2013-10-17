@@ -180,9 +180,9 @@ class GEOM_Engine
                                    const TCollection_AsciiString&            anEntry,
                                    Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
 
-  void DocumentModified(const int theDocId, const bool isModified);
+  Standard_EXPORT void DocumentModified(const int theDocId, const bool isModified);
   
-  bool DocumentModified(const int theDocId);
+  Standard_EXPORT bool DocumentModified(const int theDocId);
 
  protected:
   Standard_EXPORT static void SetEngine(GEOM_Engine* theEngine);       

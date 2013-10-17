@@ -21,10 +21,15 @@
 #ifndef __XAO_XAOEXPORTER_HXX__
 #define __XAO_XAOEXPORTER_HXX__
 
+#include "XAO.hxx"
 #include "XAO_Xao.hxx"
 #include "XAO_Geometry.hxx"
 #include "XAO_Group.hxx"
 #include "XAO_Field.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
 
 namespace XAO
 {
@@ -32,7 +37,7 @@ namespace XAO
      * @class XaoExporter
      * Util class for import/export XAO.
      */
-    class XaoExporter
+    class XAO_EXPORT XaoExporter
     {
     public:
         /**

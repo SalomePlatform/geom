@@ -25,8 +25,12 @@
 #include <string>
 #include <exception>
 
+#include "XAO.hxx"
 #include "XAO_Exception.hxx"
 
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
 
 namespace XAO
 {
@@ -66,7 +70,7 @@ namespace XAO
      * \class XaoUtils
      * Utilities class to convert types.
      */
-    class XaoUtils
+    class XAO_EXPORT XaoUtils
     {
     public:
         /**

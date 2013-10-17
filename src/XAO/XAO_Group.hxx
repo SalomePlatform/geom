@@ -24,15 +24,18 @@
 #include <string>
 #include <set>
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
-
+#ifdef WIN32
+#pragma warning(disable:4251) // Warning dll-interface ...
+#endif
 namespace XAO
 {
     /**
      * \class Group
      * Class to represent a Geometrical Group.
      */
-    class Group
+    class XAO_EXPORT Group
     {
     public:
         /**

@@ -44,7 +44,7 @@ Field::Field(const XAO::Dimension& dimension,
 
 Field::~Field()
 {
-    for (int i = 0; i < m_steps.size(); ++i)
+    for (unsigned int i = 0; i < m_steps.size(); ++i)
         delete m_steps[i];
 }
 
@@ -81,7 +81,7 @@ throw (XAO_Exception)
 void Field::setComponentsNames(const std::vector<std::string>& names)
 throw (XAO_Exception)
 {
-    for (int i = 0; i < names.size(); ++i)
+    for (unsigned int  i = 0; i < names.size(); ++i)
     {
         if (i < m_nbComponents)
             m_components[i] = names[i];

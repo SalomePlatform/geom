@@ -23,9 +23,15 @@
 
 #include <string>
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Exception.hxx"
 #include "XAO_GeometricElement.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
+
 
 namespace XAO
 {
@@ -33,7 +39,7 @@ namespace XAO
      * @class Geometry
      * Base class for geometries.
      */
-    class Geometry
+    class XAO_EXPORT Geometry
     {
     protected:
         /**

@@ -20,6 +20,7 @@
 
 #include <sstream>
 
+#include "XAO_Exception.hxx"
 #include "XAO_Xao.hxx"
 #include "XAO_XaoUtils.hxx"
 

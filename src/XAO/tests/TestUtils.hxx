@@ -12,7 +12,8 @@ namespace XAO
         static std::string getTestFilePath(const std::string& fileName)
         {
             std::string dataDir = getenv("GEOM_SRC_DIR");
-            dataDir += "/src/XAO/tests/data/" + fileName;
+            dataDir += "/src/XAO/tests/data/";
+            dataDir += fileName;
             return dataDir;
         }
 

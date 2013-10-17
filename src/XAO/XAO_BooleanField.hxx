@@ -23,9 +23,15 @@
 
 #include <string>
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Field.hxx"
 #include "XAO_BooleanStep.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
+
 
 namespace XAO
 {
@@ -33,7 +39,7 @@ namespace XAO
      * @class BooleanField
      * Represents a field with boolean values.
      */
-    class BooleanField : public Field
+    class XAO_EXPORT BooleanField : public Field
     {
     public:
         /**

@@ -34,18 +34,17 @@ SALOME_CONFIGURE_FILE(static/header.html.in ${builddir}/static/header.html)
 SALOME_CONFIGURE_FILE(static/header_py.html.in ${builddir}/static/header_py.html)
 
 SET(f "$ENV{KERNEL_ROOT_DIR}/bin/salome/prepare_generating_doc.py")
-IF(WINDOWS)
+IF(WIN32)
   STRING(REPLACE "/" "\\" f ${f})
-ENDIF(WINDOWS)
+ENDIF(WIN32)
 
-ADD_CUSTOM_TARGET(usr_docs mkdir -p tmp 
+ADD_CUSTOM_TARGET(usr_docs ${CMAKE_COMMAND} -E make_directory tmp
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomBuilder.py ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/geomBuilder.py
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/gsketcher.py ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/gsketcher.py
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile_tui 
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile_py
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile
-  COMMAND ${PYTHON_EXECUTABLE} -c "import shutil; shutil.rmtree(r'''tmp''')"
-  COMMAND ${PYTHON_EXECUTABLE} -c "import shutil, sys; shutil.rmtree(r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM''', True); shutil.copytree(r'''${CMAKE_CURRENT_BINARY_DIR}''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM''', ignore=shutil.ignore_patterns('*usr_docs*', '*CMakeFiles*', '*.cmake', 'doxyfile*', '*.vcproj', 'static', 'Makefile*')); shutil.copy(r'''${CMAKE_CURRENT_SOURCE_DIR}/images/head.png''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM'''); shutil.copy(r'''${CMAKE_CURRENT_SOURCE_DIR}/images/head.png''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM/geompy_doc'''); shutil.copy(r'''${CMAKE_CURRENT_SOURCE_DIR}/static/SALOME_BOA_PA.pdf''', r'''${CMAKE_INSTALL_PREFIX}/share/doc/salome/gui/GEOM''')"
+  COMMAND  ${CMAKE_COMMAND} -E remove_directory tmp
   VERBATIM 
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}             
 )
@@ -53,5 +52,16 @@ ADD_CUSTOM_TARGET(usr_docs mkdir -p tmp
 ADD_DEPENDENCIES(usr_docs html_docs)
 
 INSTALL(CODE "EXECUTE_PROCESS(COMMAND \"${CMAKE_COMMAND}\" --build ${PROJECT_BINARY_DIR} --target usr_docs)")
-INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} DESTINATION ${SALOME_INSTALL_DOC}/gui)
+INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} DESTINATION ${SALOME_INSTALL_DOC}/gui
+        PATTERN "*usr_docs*" EXCLUDE
+        PATTERN "*CMakeFiles*" EXCLUDE
+        PATTERN "static" EXCLUDE
+        PATTERN "Makefile*" EXCLUDE
+        PATTERN "*.cmake" EXCLUDE
+        PATTERN "doxyfile*" EXCLUDE
+        PATTERN "*.vcproj" EXCLUDE
+)
+
 INSTALL(FILES images/head.png DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM)
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/static/SALOME_BOA_PA.pdf DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM)
+

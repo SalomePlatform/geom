@@ -23,9 +23,15 @@
 
 #include <string>
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Field.hxx"
 #include "XAO_DoubleStep.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
+
 
 namespace XAO
 {
@@ -33,7 +39,7 @@ namespace XAO
      * @class DoubleField
      * Represents a field with double values.
      */
-    class DoubleField : public Field
+    class XAO_EXPORT DoubleField : public Field
     {
     public:
         /**

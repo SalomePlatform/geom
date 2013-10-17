@@ -23,7 +23,15 @@
 
 #include <string>
 #include <map>
+
+#include "XAO.hxx"
 #include "XAO_Exception.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#pragma warning(disable:4251) // Warning dll-interface ...
+#endif
+
 
 namespace XAO
 {
@@ -31,7 +39,7 @@ namespace XAO
      * \class GeometricElement
      * Generic class to manipulate a topologic element (vertex, edge, face or solid).
      */
-    class GeometricElement
+    class XAO_EXPORT GeometricElement
     {
     public:
         /**
@@ -100,7 +108,7 @@ namespace XAO
      * \class GeometricElementList
      * Generic class to manipulate a list of topologic element.
      */
-    class GeometricElementList
+    class XAO_EXPORT GeometricElementList
     {
     public:
         /**

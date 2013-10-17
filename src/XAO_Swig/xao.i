@@ -1,5 +1,6 @@
 %module xao
 %{
+#include "XAO.hxx"
 #include "XAO_Exception.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Xao.hxx"
@@ -48,6 +49,7 @@ namespace std
 %ignore XAO::MsgBuilder;
 %ignore XAO::XaoUtils;
 
+%include "XAO.hxx"
 %include XAO_Exception.hxx
 %include XAO_XaoUtils.hxx
 

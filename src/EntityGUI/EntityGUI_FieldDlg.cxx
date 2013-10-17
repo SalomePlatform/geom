@@ -76,6 +76,10 @@
 #include <SALOMEDS_wrap.hxx>
 #include <GEOMImpl_Types.hxx>
 
+#ifdef max
+  #undef max
+#endif
+
 
 const int theIntLimit = std::numeric_limits<int>::max() - 10;
 

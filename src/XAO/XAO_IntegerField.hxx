@@ -23,9 +23,15 @@
 
 #include <string>
 
+#include "XAO.hxx"
 #include "XAO_XaoUtils.hxx"
 #include "XAO_Field.hxx"
 #include "XAO_IntegerStep.hxx"
+
+#ifdef WIN32
+#pragma warning(disable:4290) // Warning Exception ...
+#endif
+
 
 namespace XAO
 {
@@ -33,7 +39,7 @@ namespace XAO
      * @class IntegerField
      * Represents a field with integer values.
      */
-    class IntegerField : public Field
+    class XAO_EXPORT IntegerField : public Field
     {
     public:
         /**

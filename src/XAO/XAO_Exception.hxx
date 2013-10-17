@@ -21,13 +21,16 @@
 #ifndef __XAO_EXCEPTION_HXX__
 #define __XAO_EXCEPTION_HXX__
 
+#include "XAO.hxx"
+#include <exception>
+
 namespace XAO
 {
     /**
      * \class XAO_Exception
      * Exception for XAO operations.
      */
-    class XAO_Exception : public std::exception
+    class XAO_EXPORT XAO_Exception : public std::exception
     {
     public:
         /**

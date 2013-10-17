@@ -40,12 +40,13 @@ ADD_DEFINITIONS(
 SET(_link_LIBRARIES
   ${PTHREAD_LIBRARIES}
   ${LIBXML2_LIBRARIES}
-  ${CAS_TKBRep} ${CAS_TKTopAlgo}
+  ${CAS_TKBRep} ${CAS_TKTopAlgo} ${CAS_TKG2d}
   )
 
 # --- headers ---
 
 SET(XAO_HEADERS
+  XAO.hxx 
   XAO_BooleanField.hxx
   XAO_BooleanStep.hxx
   XAO_BrepGeometry.hxx
