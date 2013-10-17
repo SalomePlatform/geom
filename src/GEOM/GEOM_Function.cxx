@@ -555,9 +555,9 @@ void GEOM_Function::SetStringArray(int thePosition, const Handle(TColStd_HArray1
   if(thePosition <= 0 || theArray.IsNull()) return;
   TDF_Label anArgLabel = ARGUMENT(thePosition);
 
-  Handle(TDataStd_ExtStringArray) anArray = new TDataStd_ExtStringArray;
+  Handle(TDataStd_ExtStringArray) anArray =
+    TDataStd_ExtStringArray::Set(anArgLabel, theArray->Lower(), theArray->Upper());
   anArray->ChangeArray(theArray);
-  anArgLabel.AddAttribute(anArray);
 
   _isDone = true;
 }
