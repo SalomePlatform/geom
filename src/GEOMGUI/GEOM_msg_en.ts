@@ -3233,6 +3233,35 @@ Please, select face, shell or solid and try again</translation>
         <translation>Along V</translation>
     </message>
     <message>
+        <source>PREF_GROUP_SCALAR_BAR</source>
+        <translation>Scalar bar for field step presentation</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_X_POSITION</source>
+        <translation>X position</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_Y_POSITION</source>
+        <translation>Y position</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_WIDTH</source>
+        <translation>Width</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_HEIGHT</source>
+        <translation>Height</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_TEXT_HEIGHT</source>
+        <translation>Text height</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_NUMBER_OF_INTERVALS</source>
+        <translation>Number of intervals</translation>
+    </message>
+
+    <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
         <translation>ProcessShape</translation>
     </message>

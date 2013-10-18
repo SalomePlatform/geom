@@ -88,6 +88,9 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if (!app) return false;
 
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !appStudy ) return false;
+
   LightApp_SelectionMgr *Sel = app->selectionMgr();
   SALOME_ListIO selected;
   Sel->selectedObjects( selected );
@@ -150,6 +153,7 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     break;
   }
   Sel->setSelectedObjects( selected );
+  GEOM_Displayer( appStudy ).UpdateColorScale();
   return true;
 }
 

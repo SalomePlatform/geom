@@ -47,6 +47,8 @@
 #include <gp_Vec.hxx>
 #include <Graphic3d_AspectFillArea3d.hxx>
 #include <Graphic3d_AspectLine3d.hxx>
+#include <Graphic3d_AspectMarker3d.hxx>
+#include <Graphic3d_AspectText3d.hxx>
 
 #include <Prs3d_ShadingAspect.hxx>
 #include <Prs3d_Arrow.hxx>
@@ -58,6 +60,7 @@
 #include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <StdSelect_DisplayMode.hxx>
+#include <StdPrs_ShadedShape.hxx>
 #include <StdPrs_WFDeflectionShape.hxx>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
@@ -142,8 +145,16 @@ static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
 
 GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
                              const Standard_CString aName)
-  : SALOME_AISShape(shape), myName(aName), myDisplayVectors(false)
+  : SALOME_AISShape(shape),
+    myName(aName),
+    myDisplayVectors(false),
+    myFieldDataType(GEOM::FDT_Double),
+    myFieldDimension(0),
+    myFieldStepRangeMin(0),
+    myFieldStepRangeMax(0)
 {
+  SetHilightMode( CustomHighlight ); // override setting the mode to 0 inside AIS_Shape constructor
+
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
   myPrevDisplayMode = 0;
   storeBoundaryColors();
@@ -203,11 +214,16 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
 
   Handle(AIS_InteractiveContext) anIC = GetContext();
- 
+
+  bool anIsField = !myFieldStepData.isEmpty();
+  bool anIsColorField = anIsField && myFieldDataType != GEOM::FDT_String;
+  bool anIsTextField = anIsField && myFieldDataType == GEOM::FDT_String;
+
   //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
   bool isTopLev = isTopLevel() && switchTopLevel();
   switch (aMode) {
     case 0://StdSelect_DM_Wireframe: 
+    case CustomHighlight:
     {
       restoreIsoNumbers();
       // Restore wireframe edges colors
@@ -218,7 +234,10 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
               anAspect->SetColor( topLevelColor() );
               Attributes()->SetWireAspect( anAspect );
       }
-     StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);      
+      if( !isTopLev && anIsColorField && myFieldDimension == 1 )
+        drawField( aPrs, false, aMode == CustomHighlight );
+      else
+        StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);      
       break;
     }
     case 1://StdSelect_DM_Shading:
@@ -264,7 +283,10 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     myDrawer->SetFreeBoundaryAspect( anAspect );
 
     // Add edges to presentation
-    StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
+    if( anIsColorField && myFieldDimension == 1 )
+      drawField( aPrs );
+    else
+      StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
   }
 
   if (isShowVectors())
@@ -312,6 +334,15 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       }
     }
   }
+
+  // draw color field on vertices
+  if( anIsColorField && myFieldDimension == 0 && aMode != CustomHighlight )
+    drawField( aPrs );
+
+  // draw text field
+  if( anIsTextField )
+    drawField( aPrs, true );
+
   //  aPrs->ReCompute(); // for hidden line recomputation if necessary...
 }
 
@@ -383,9 +414,17 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
       myDrawer->ShadingAspect()->SetColor(myDrawer->ShadingAspect()->Aspect()->FrontMaterial().AmbientColor());
   }
 
-  // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
-  //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
-  AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+  bool anIsColorField = !myFieldStepData.isEmpty() && myFieldDataType != GEOM::FDT_String;
+  if( anIsColorField && ( myFieldDimension == 2 || myFieldDimension == 3 || myFieldDimension == -1 ) )
+  {
+    drawField( aPrs );
+  }
+  else
+  {
+    // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
+    //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
+    AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+  }
 }
 
 void GEOM_AISShape::storeIsoNumbers()
@@ -491,4 +530,171 @@ Standard_Boolean GEOM_AISShape::switchTopLevel() {
 
 Standard_Boolean GEOM_AISShape::toActivate() {
         return Standard_True;
+}
+
+void GEOM_AISShape::setFieldStepInfo( const GEOM::field_data_type theFieldDataType,
+                                      const int theFieldDimension,
+                                      const QList<QVariant>& theFieldStepData,
+                                      const TCollection_AsciiString& theFieldStepName,
+                                      const double theFieldStepRangeMin,
+                                      const double theFieldStepRangeMax )
+{
+  myFieldDataType = theFieldDataType;
+  myFieldDimension = theFieldDimension;
+  myFieldStepData = theFieldStepData;
+  myFieldStepName = theFieldStepName;
+  myFieldStepRangeMin = theFieldStepRangeMin;
+  myFieldStepRangeMax = theFieldStepRangeMax;
+}
+
+void GEOM_AISShape::getFieldStepInfo( GEOM::field_data_type& theFieldDataType,
+                                      int& theFieldDimension,
+                                      QList<QVariant>& theFieldStepData,
+                                      TCollection_AsciiString& theFieldStepName,
+                                      double& theFieldStepRangeMin,
+                                      double& theFieldStepRangeMax ) const
+{
+  theFieldDataType = myFieldDataType;
+  theFieldDimension = myFieldDimension;
+  theFieldStepData = myFieldStepData;
+  theFieldStepName = myFieldStepName;
+  theFieldStepRangeMin = myFieldStepRangeMin;
+  theFieldStepRangeMax = myFieldStepRangeMax;
+}
+
+void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
+                               const bool theIsString,
+                               const bool theIsHighlight )
+{
+  if( myFieldStepData.isEmpty() )
+    return;
+
+  QListIterator<QVariant> aFieldStepDataIter( myFieldStepData );
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_SHAPE;
+  switch( myFieldDimension )
+  {
+    case 0: aShapeType = TopAbs_VERTEX; break;
+    case 1: aShapeType = TopAbs_EDGE; break;
+    case 2: aShapeType = TopAbs_FACE; break;
+    case 3: aShapeType = TopAbs_SOLID; break;
+    case -1: aShapeType = TopAbs_VERTEX; break;
+  }
+
+  TopTools_IndexedMapOfShape aShapeMap;
+  TopExp::MapShapes( myshape, aShapeMap );
+
+  TColStd_IndexedMapOfInteger anIndexMap;
+
+  TopExp_Explorer anExp;
+  for( anExp.Init( myshape, aShapeType ); anExp.More(); anExp.Next() )
+  {
+    TopoDS_Shape aSubShape = anExp.Current();
+    if( !aSubShape.IsNull() )
+    {
+      Standard_Integer aSubShapeIndex = aShapeMap.FindIndex( aSubShape );
+      if( anIndexMap.Contains( aSubShapeIndex ) )
+        continue;
+
+      anIndexMap.Add( aSubShapeIndex );
+
+      Handle(Graphic3d_Group) aGroup = Prs3d_Root::NewGroup( thePrs );
+
+      QColor aQColor;
+      QString aString;
+      if( aFieldStepDataIter.hasNext() )
+      {
+        const QVariant& aVariant = aFieldStepDataIter.next();
+        if( theIsString )
+          aString = aVariant.toString();
+        else
+          aQColor = aVariant.value<QColor>();
+      }
+      else
+        break;
+
+      if( theIsString )
+      {
+        gp_Pnt aCenter;
+        if( computeMassCenter( aSubShape, aCenter ) )
+        {
+          Graphic3d_Vertex aVertex( aCenter.X(), aCenter.Y(), aCenter.Z() );
+
+          Handle(Graphic3d_AspectText3d) anAspectText3d = new Graphic3d_AspectText3d();
+          anAspectText3d->SetStyle( Aspect_TOST_ANNOTATION );
+          aGroup->SetPrimitivesAspect( anAspectText3d );
+
+          aGroup->Text( aString.toLatin1().constData(), aVertex, 14 );
+        }
+      }
+      else
+      {
+        Quantity_Color aColor( aQColor.redF(), aQColor.greenF(), aQColor.blueF(), Quantity_TOC_RGB );
+        if( myFieldDimension == 0 )
+        {
+          TopoDS_Vertex aVertexShape = TopoDS::Vertex( aSubShape );
+          if( !aVertexShape.IsNull() )
+          {
+            gp_Pnt aPnt = BRep_Tool::Pnt( aVertexShape );
+
+            Handle(Graphic3d_AspectMarker3d) anAspectMarker3d = new Graphic3d_AspectMarker3d();
+            anAspectMarker3d->SetColor( aColor );
+            anAspectMarker3d->SetType( Aspect_TOM_POINT );
+            anAspectMarker3d->SetScale( 10.0 );
+            aGroup->SetPrimitivesAspect( anAspectMarker3d );
+
+            Handle(Graphic3d_ArrayOfPoints) anArray = new Graphic3d_ArrayOfPoints( 1 );
+            anArray->AddVertex( aPnt.X(), aPnt.Y(), aPnt.Z() );
+
+            aGroup->AddPrimitiveArray( anArray );
+          }
+        }
+        else if( myFieldDimension == 1 )
+        {
+          myDrawer->WireAspect()->SetColor( aColor );
+          if( theIsHighlight )
+            myDrawer->WireAspect()->SetWidth( myOwnWidth );
+          else
+            myDrawer->WireAspect()->SetWidth( myOwnWidth + 4 );
+          StdPrs_WFDeflectionShape::Add( thePrs, aSubShape, myDrawer );
+        }
+        else if( myFieldDimension == 2 ||
+                 myFieldDimension == 3 ||
+                 myFieldDimension == -1 )
+        {
+          myDrawer->ShadingAspect()->SetColor( aColor );
+          StdPrs_ShadedShape::Add( thePrs, aSubShape, myDrawer );
+        }
+      }
+    }
+  }
+}
+
+Standard_Boolean GEOM_AISShape::computeMassCenter( const TopoDS_Shape& theShape,
+                                                   gp_Pnt& theCenter )
+{
+  Standard_Real aX = 0, aY = 0, aZ = 0;
+  Standard_Integer aNbPoints = 0;
+
+  TopExp_Explorer anExp;
+  for( anExp.Init( theShape, TopAbs_VERTEX ); anExp.More(); anExp.Next() )
+  {
+    TopoDS_Vertex aVertex = TopoDS::Vertex( anExp.Current() );
+    if( !aVertex.IsNull() )
+    {
+      gp_Pnt aPnt = BRep_Tool::Pnt( aVertex );
+      aX += aPnt.X();
+      aY += aPnt.Y();
+      aZ += aPnt.Z();
+      aNbPoints++;
+    }
+  }
+
+  if( aNbPoints == 0 )
+    return Standard_False;
+
+  theCenter.SetCoord( aX / (Standard_Real)aNbPoints,
+                      aY / (Standard_Real)aNbPoints,
+                      aZ / (Standard_Real)aNbPoints );
+  return Standard_True;
 }

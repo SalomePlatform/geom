@@ -72,9 +72,13 @@
 #include <SVTK_Prs.h>
 #include <SVTK_ViewModel.h>
 
+#include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewPort3d.h>
+
 // OCCT Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
+#include <Aspect_ColorScale.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <StdSelect_TypeOfEdge.hxx>
@@ -258,7 +262,7 @@ SUIT_SelectionFilter* GEOM_Displayer::getComplexFilter( const QList<int>* aSubSh
 // Function : getEntry
 // Purpose  :
 //================================================================
-static std::string getEntry( GEOM::GEOM_Object_ptr object )
+static std::string getEntry( GEOM::GEOM_BaseObject_ptr object )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -280,7 +284,7 @@ static std::string getEntry( GEOM::GEOM_Object_ptr object )
 // Function : getName
 // Purpose  :
 //================================================================
-static std::string getName( GEOM::GEOM_Object_ptr object )
+static std::string getName( GEOM::GEOM_BaseObject_ptr object )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -359,6 +363,11 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   #endif
 
   myViewFrame = 0;
+
+  myFieldDataType = GEOM::FDT_Double;
+  myFieldDimension = 0;
+  myFieldStepRangeMin = 0;
+  myFieldStepRangeMax = 0;
 }
 
 //=================================================================
@@ -413,7 +422,7 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
  *  not using dialog boxes.
  */
 //=================================================================
-void GEOM_Displayer::Display( GEOM::GEOM_Object_ptr theObj, const bool updateViewer )
+void GEOM_Displayer::Display( GEOM::GEOM_BaseObject_ptr theObj, const bool updateViewer )
 {
   if ( theObj->_is_nil() )
     return;
@@ -466,7 +475,7 @@ void GEOM_Displayer::Erase( const Handle(SALOME_InteractiveObject)& theIO,
  *  Erase geometry object in the current viewer
  */
 //=================================================================
-void GEOM_Displayer::Erase( GEOM::GEOM_Object_ptr theObj,
+void GEOM_Displayer::Erase( GEOM::GEOM_BaseObject_ptr theObj,
                             const bool forced,
                             const bool updateViewer )
 {
@@ -486,7 +495,8 @@ void GEOM_Displayer::Erase( GEOM::GEOM_Object_ptr theObj,
  */
 //=================================================================
 void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
-                                const bool updateViewer )
+                                const bool updateViewer,
+                                const bool checkActiveViewer )
 {
   // Remove the object permanently (<forced> == true)
   SUIT_Session* ses = SUIT_Session::session();
@@ -508,7 +518,7 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
           SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel);
           if ( view )
           {
-            if ( view->isVisible( theIO ) || view == GetActiveView() )
+            if ( view->isVisible( theIO ) || ( checkActiveViewer && view == GetActiveView() ) )
             {
               Erase( theIO, true, false, view );
               Display( theIO, updateViewer, view );
@@ -759,6 +769,14 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
     }
   }
 
+  // set field step data
+  AISShape->setFieldStepInfo( myFieldDataType,
+                              myFieldDimension,
+                              myFieldStepData,
+                              myFieldStepName,
+                              myFieldStepRangeMin,
+                              myFieldStepRangeMax );
+
   if ( create && !isTemporary && aMgrId != -1 ) {
     // set properties to the study
     study->setObjectPropMap( aMgrId, entry, propMap );
@@ -936,11 +954,13 @@ void GEOM_Displayer::Erase( const SALOME_ListIO& theIOList,
  *  Calls Redisplay() method for each object in the given list
  */
 //=================================================================
-void GEOM_Displayer::Redisplay( const SALOME_ListIO& theIOList, const bool updateViewer )
+void GEOM_Displayer::Redisplay( const SALOME_ListIO& theIOList,
+                                const bool updateViewer,
+                                const bool checkActiveViewer )
 {
   SALOME_ListIteratorOfListIO Iter( theIOList );
   for ( ; Iter.More(); Iter.Next() )
-    Redisplay( Iter.Value(), false );
+    Redisplay( Iter.Value(), false, checkActiveViewer );
 
   if ( updateViewer )
     UpdateViewer();
@@ -1276,13 +1296,34 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
               CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
               if ( !CORBA::is_nil( object ) )
               {
-                // downcast to GEOM object
-                GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( object );
-                if ( !GeomObject->_is_nil() )
+                // downcast to GEOM base object
+                GEOM::GEOM_BaseObject_var GeomBaseObject = GEOM::GEOM_BaseObject::_narrow( object );
+                if ( !GeomBaseObject->_is_nil() )
                 {
-                  // finally set shape
-                  setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
-                  myType = GeomObject->GetType();
+                  myType = GeomBaseObject->GetType();
+
+                  // downcast to GEOM object
+                  GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( GeomBaseObject );
+                  if ( myType == GEOM_FIELD_STEP )
+                  {
+                    // get the GEOM object from the field's shape
+                    GEOM::GEOM_FieldStep_var GeomFieldStep = GEOM::GEOM_FieldStep::_narrow( GeomBaseObject );
+                    if ( !GeomFieldStep->_is_nil() )
+                    {
+                      GEOM::GEOM_Field_var GeomField = GeomFieldStep->GetField();
+                      if ( !GeomField->_is_nil() )
+                        GeomObject = GeomField->GetShape();
+                    }
+
+                    // read the field step information
+                    readFieldStepInfo( GeomFieldStep );
+                  }
+
+                  if ( !GeomObject->_is_nil() )
+                  {
+                    // finally set shape
+                    setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
+                  }
                 }
               }
             }
@@ -1344,6 +1385,13 @@ void GEOM_Displayer::internalReset()
 {
   myIO.Nullify();
   myShape.Nullify();
+
+  myFieldDataType = GEOM::FDT_Double;
+  myFieldDimension = 0;
+  myFieldStepData.clear();
+  myFieldStepName.Clear();
+  myFieldStepRangeMin = 0;
+  myFieldStepRangeMax = 0;
 }
 
 //=================================================================
@@ -1542,6 +1590,13 @@ void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
       }
     }
   }
+  UpdateColorScale();
+}
+
+void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
+{
+  LightApp_Displayer::AfterErase( v, p );
+  UpdateColorScale();
 }
 
 //=================================================================
@@ -1709,12 +1764,29 @@ void GEOM_Displayer::setShape( const TopoDS_Shape& theShape )
   myShape = theShape;
 }
 
+void GEOM_Displayer::setFieldStepInfo( const GEOM::field_data_type theFieldDataType,
+                                       const int theFieldDimension,
+                                       const QList<QVariant>& theFieldStepData,
+                                       const TCollection_AsciiString& theFieldStepName,
+                                       const double theFieldStepRangeMin,
+                                       const double theFieldStepRangeMax )
+{
+  myFieldDataType = theFieldDataType;
+  myFieldDimension = theFieldDimension;
+  myFieldStepData = theFieldStepData;
+  myFieldStepName = theFieldStepName;
+  myFieldStepRangeMin = theFieldStepRangeMin;
+  myFieldStepRangeMax = theFieldStepRangeMax;
+}
+
 bool GEOM_Displayer::canBeDisplayed( const QString& entry, const QString& viewer_type ) const
 {
   _PTR(SObject) anObj = getStudy()->studyDS()->FindObjectID( (const char*)entry.toLatin1() );
   GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of GEOM objects
+  GEOM::GEOM_FieldStep_var aFieldStepObj = GEOM::GEOM_FieldStep::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of GEOM field steps
   GEOM::GEOM_Gen_var aCompObj = GEOM::GEOM_Gen::_narrow(GeometryGUI::ClientSObjectToObject(anObj)); // enable displaying of whole GEOM component
-  return ( !CORBA::is_nil( aGeomObj ) || !CORBA::is_nil( aCompObj ) ) && (viewer_type == SOCC_Viewer::Type() || viewer_type == SVTK_Viewer::Type());
+  return ( !CORBA::is_nil( aGeomObj ) || !CORBA::is_nil( aFieldStepObj ) || !CORBA::is_nil( aCompObj ) ) &&
+         (viewer_type == SOCC_Viewer::Type() || viewer_type == SVTK_Viewer::Type());
 }
 
 int GEOM_Displayer::SetDisplayMode( const int theMode )
@@ -1876,36 +1948,38 @@ PropMap GEOM_Displayer::getObjectProperties( SalomeApp_Study* study,
           CORBA::Object_var object = GeometryGUI::ClientSObjectToObject( SO );
           if ( !CORBA::is_nil( object ) ) {
             GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_narrow( object );
-            // check that geom object has color properly set
-            bool hasColor = false;
-            SALOMEDS::Color aSColor = getColor( geomObject, hasColor );
-            // set color from geometry object (only once, if it is not yet set in GUI)
-            // current implementation is to use same color for all aspects
-            // (TODO) possible future improvements about free boundaries, standalone edges etc colors can be here
-            if ( hasColor && !storedMap.contains( GEOM::propertyName( GEOM::Color ) ) ) {
-              QColor objColor = QColor::fromRgbF( aSColor.R, aSColor.G, aSColor.B );
-              propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),   objColor );
-              propMap.insert( GEOM::propertyName( GEOM::WireframeColor ), objColor );
-              propMap.insert( GEOM::propertyName( GEOM::LineColor ),      objColor );
-              propMap.insert( GEOM::propertyName( GEOM::FreeBndColor ),   objColor );
-              propMap.insert( GEOM::propertyName( GEOM::PointColor ),     objColor );
-            }
-            // check that object has point marker properly set
-            GEOM::marker_type mType = geomObject->GetMarkerType();
-            GEOM::marker_size mSize = geomObject->GetMarkerSize();
-            int mTextureId = geomObject->GetMarkerTexture();
-            bool hasMarker = ( mType > GEOM::MT_NONE && mType < GEOM::MT_USER && mSize > GEOM::MS_NONE && mSize <= GEOM::MS_70 ) || 
-                             ( mType == GEOM::MT_USER && mTextureId > 0 );
-            // set point marker from geometry object (only once, if it is not yet set in GUI)
-            if ( hasMarker && !storedMap.contains( GEOM::propertyName( GEOM::PointMarker ) ) ) {
-              if ( mType > GEOM::MT_NONE && mType < GEOM::MT_USER ) {
-                // standard type
-                propMap.insert( GEOM::propertyName( GEOM::PointMarker ),
-                                QString( "%1%2%3" ).arg( (int)mType ).arg( GEOM::subSectionSeparator() ).arg( (int)mSize ) );
+            if ( !CORBA::is_nil( geomObject ) ) { // to check
+              // check that geom object has color properly set
+              bool hasColor = false;
+              SALOMEDS::Color aSColor = getColor( geomObject, hasColor );
+              // set color from geometry object (only once, if it is not yet set in GUI)
+              // current implementation is to use same color for all aspects
+              // (TODO) possible future improvements about free boundaries, standalone edges etc colors can be here
+              if ( hasColor && !storedMap.contains( GEOM::propertyName( GEOM::Color ) ) ) {
+                QColor objColor = QColor::fromRgbF( aSColor.R, aSColor.G, aSColor.B );
+                propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),   objColor );
+                propMap.insert( GEOM::propertyName( GEOM::WireframeColor ), objColor );
+                propMap.insert( GEOM::propertyName( GEOM::LineColor ),      objColor );
+                propMap.insert( GEOM::propertyName( GEOM::FreeBndColor ),   objColor );
+                propMap.insert( GEOM::propertyName( GEOM::PointColor ),     objColor );
               }
-              else if ( mType == GEOM::MT_USER ) {
-                // custom texture
-                propMap.insert( GEOM::propertyName( GEOM::PointMarker ), QString::number( mTextureId ) );
+              // check that object has point marker properly set
+              GEOM::marker_type mType = geomObject->GetMarkerType();
+              GEOM::marker_size mSize = geomObject->GetMarkerSize();
+              int mTextureId = geomObject->GetMarkerTexture();
+              bool hasMarker = ( mType > GEOM::MT_NONE && mType < GEOM::MT_USER && mSize > GEOM::MS_NONE && mSize <= GEOM::MS_70 ) || 
+                               ( mType == GEOM::MT_USER && mTextureId > 0 );
+              // set point marker from geometry object (only once, if it is not yet set in GUI)
+              if ( hasMarker && !storedMap.contains( GEOM::propertyName( GEOM::PointMarker ) ) ) {
+                if ( mType > GEOM::MT_NONE && mType < GEOM::MT_USER ) {
+                  // standard type
+                  propMap.insert( GEOM::propertyName( GEOM::PointMarker ),
+                                  QString( "%1%2%3" ).arg( (int)mType ).arg( GEOM::subSectionSeparator() ).arg( (int)mSize ) );
+                }
+                else if ( mType == GEOM::MT_USER ) {
+                  // custom texture
+                  propMap.insert( GEOM::propertyName( GEOM::PointMarker ), QString::number( mTextureId ) );
+                }
               }
             }
           }
@@ -2109,4 +2183,375 @@ void GEOM_Displayer::EraseWithChildren(const Handle(SALOME_InteractiveObject)& t
     else
       view->Repaint();
   }
+}
+
+void GEOM_Displayer::readFieldStepInfo( GEOM::GEOM_FieldStep_var theGeomFieldStep )
+{
+  if( theGeomFieldStep->_is_nil() )
+    return;
+
+  GEOM::GEOM_Field_var aGeomField = theGeomFieldStep->GetField();
+  if( aGeomField->_is_nil() )
+    return;
+
+  GEOM::GEOM_Object_var aGeomFieldShape = aGeomField->GetShape();
+  if( aGeomFieldShape->_is_nil() )
+    return;
+
+  TCollection_AsciiString aFieldStepName( theGeomFieldStep->GetName() );
+  TCollection_AsciiString aFieldName( aGeomField->GetName() );
+  TCollection_AsciiString aShapeName( aGeomFieldShape->GetName() );
+
+  aFieldStepName = aShapeName + "\n" + aFieldName + "\n" + aFieldStepName;
+
+  GEOM::field_data_type aFieldDataType = aGeomField->GetDataType();
+
+  int aFieldDimension = aGeomField->GetDimension();
+
+  GEOM::string_array_var aFieldComponents = aGeomField->GetComponents();
+  int aFieldNbComponents = aFieldComponents->length();
+
+  QList<QVariant> aFieldStepData;
+  if( aFieldDataType == GEOM::FDT_Bool )
+  {
+    GEOM::GEOM_BoolFieldStep_var aGeomBoolFieldStep = GEOM::GEOM_BoolFieldStep::_narrow( theGeomFieldStep );
+    if ( !aGeomBoolFieldStep->_is_nil() )
+    {
+      GEOM::short_array_var aValues = aGeomBoolFieldStep->GetValues();
+      for( size_t i = 0, n = aValues->length(); i < n; i++ )
+        aFieldStepData << (bool)aValues[i];
+    }
+  }
+  else if( aFieldDataType == GEOM::FDT_Int )
+  {
+    GEOM::GEOM_IntFieldStep_var aGeomIntFieldStep = GEOM::GEOM_IntFieldStep::_narrow( theGeomFieldStep );
+    if ( !aGeomIntFieldStep->_is_nil() )
+    {
+      GEOM::ListOfLong_var aValues = aGeomIntFieldStep->GetValues();
+      for( size_t i = 0, n = aValues->length(); i < n; i++ )
+        aFieldStepData << aValues[i];
+    }
+  }
+  else if( aFieldDataType == GEOM::FDT_Double )
+  {
+    GEOM::GEOM_DoubleFieldStep_var aGeomDoubleFieldStep = GEOM::GEOM_DoubleFieldStep::_narrow( theGeomFieldStep );
+    if ( !aGeomDoubleFieldStep->_is_nil() )
+    {
+      GEOM::ListOfDouble_var aValues = aGeomDoubleFieldStep->GetValues();
+      for( size_t i = 0, n = aValues->length(); i < n; i++ )
+        aFieldStepData << aValues[i];
+    }
+  }
+  else if( aFieldDataType == GEOM::FDT_String )
+  {
+    GEOM::GEOM_StringFieldStep_var aGeomStringFieldStep = GEOM::GEOM_StringFieldStep::_narrow( theGeomFieldStep );
+    if ( !aGeomStringFieldStep->_is_nil() )
+    {
+      GEOM::string_array_var aValues = aGeomStringFieldStep->GetValues();
+      for( size_t i = 0, n = aValues->length(); i < n; i++ )
+        aFieldStepData << QString( aValues[i] );
+    }
+  }
+
+  double aFieldStepRangeMin = 0, aFieldStepRangeMax = 0;
+  aFieldStepData = groupFieldData( aFieldStepData,
+                                   aFieldNbComponents,
+                                   aFieldDataType == GEOM::FDT_String,
+                                   aFieldStepRangeMin,
+                                   aFieldStepRangeMax );
+
+  setFieldStepInfo( aFieldDataType,
+                    aFieldDimension,
+                    aFieldStepData,
+                    aFieldStepName,
+                    aFieldStepRangeMin,
+                    aFieldStepRangeMax );
+}
+
+QList<QVariant> GEOM_Displayer::groupFieldData( const QList<QVariant>& theFieldStepData,
+                                                const int theFieldNbComponents,
+                                                const bool theIsString,
+                                                double& theFieldStepRangeMin,
+                                                double& theFieldStepRangeMax )
+{
+  QList<QVariant> aResultList;
+  theFieldStepRangeMin = 0;
+  theFieldStepRangeMax = 0;
+
+  if( theFieldStepData.isEmpty() || theFieldNbComponents < 1 )
+    return aResultList;
+
+  int aNbSubShapes = theFieldStepData.count() / theFieldNbComponents;
+
+  QList<QVariant> aGroupedList;
+
+  bool anIsBoolean = false;
+  for( int aSubShape = 0; aSubShape < aNbSubShapes; aSubShape++ )
+  {
+    double aNorm = 0;
+    QStringList aStringList;
+
+    int aBaseIndex = aSubShape * theFieldNbComponents;
+    for( int aComponent = 0; aComponent < theFieldNbComponents; aComponent++ )
+    {
+      int anIndex = aComponent + aBaseIndex;
+
+      const QVariant& aVariant = theFieldStepData[ anIndex ];
+      if( theIsString )
+      {
+        if( aVariant.type() == QVariant::String )
+          aStringList << aVariant.toString();
+      }
+      else
+      {
+        double aValue = 0;
+        if( aVariant.type() == QVariant::Bool )
+        {
+          aValue = aVariant.toBool() ? 1.0 : 0.0;
+          aNorm += aValue;
+          anIsBoolean = true;
+        }
+        else
+        {
+          if( aVariant.type() == QVariant::Int )
+            aValue = double( aVariant.toInt() );
+          else if( aVariant.type() == QVariant::Double )
+            aValue = aVariant.toDouble();
+          aNorm += aValue * aValue;
+        }
+      }
+    }
+
+    if( theIsString )
+      aGroupedList << aStringList.join( "\n" );
+    else
+    {
+      if( anIsBoolean )
+        aNorm /= theFieldNbComponents;
+      else
+        aNorm = pow( aNorm, 0.5 );
+
+      if( aGroupedList.isEmpty() )
+        theFieldStepRangeMin = theFieldStepRangeMax = aNorm;
+      else
+      {
+        theFieldStepRangeMin = Min( theFieldStepRangeMin, aNorm );
+        theFieldStepRangeMax = Max( theFieldStepRangeMax, aNorm );
+      }
+
+      aGroupedList << aNorm;
+    }
+  }
+
+  if( anIsBoolean )
+  {
+    theFieldStepRangeMin = 0.0;
+    theFieldStepRangeMax = 1.0;
+  }
+
+  SUIT_Session* session = SUIT_Session::session();
+  SUIT_ResourceMgr* resMgr = session->resourceMgr();
+  Standard_Integer aNbIntervals = resMgr->integerValue( "Geometry", "scalar_bar_nb_intervals", 20 );
+
+  QListIterator<QVariant> anIter( aGroupedList );
+  while( anIter.hasNext() )
+  {
+    const QVariant& aVariant = anIter.next();
+    if( theIsString )
+      aResultList << aVariant;
+    else
+    {
+      QColor aQColor;
+      Quantity_Color aColor;
+      if( FindColor( aVariant.toDouble(), theFieldStepRangeMin, theFieldStepRangeMax, anIsBoolean ? 2 : aNbIntervals, aColor ) )
+        aQColor = QColor::fromRgbF( aColor.Red(), aColor.Green(), aColor.Blue() );
+      aResultList << aQColor;
+    }
+  }
+  return aResultList;
+}
+
+// Note: the method is copied from Aspect_ColorScale class
+Standard_Integer GEOM_Displayer::HueFromValue( const Standard_Integer aValue,
+                                               const Standard_Integer aMin,
+                                               const Standard_Integer aMax )
+{
+  Standard_Integer minLimit( 0 ), maxLimit( 230 );
+
+  Standard_Integer aHue = maxLimit;
+  if ( aMin != aMax )
+    aHue = (Standard_Integer)( maxLimit - ( maxLimit - minLimit ) * ( aValue - aMin ) / ( aMax - aMin ) );
+
+  aHue = Min( Max( minLimit, aHue ), maxLimit );
+
+  return aHue;
+}
+
+// Note: the method is copied from Aspect_ColorScale class
+Standard_Boolean GEOM_Displayer::FindColor( const Standard_Real aValue, 
+                                            const Standard_Real aMin,
+                                            const Standard_Real aMax,
+                                            const Standard_Integer ColorsCount,
+                                            Quantity_Color& aColor )
+{
+  if( aValue<aMin || aValue>aMax || aMax<aMin )
+    return Standard_False;
+
+  else
+  {
+    Standard_Real IntervNumber = 0;
+    if( aValue<aMin )
+      IntervNumber = 0;
+    else if( aValue>aMax )
+      IntervNumber = ColorsCount-1;
+    else if( Abs( aMax-aMin ) > Precision::Approximation() )
+      IntervNumber = Floor( Standard_Real( ColorsCount ) * ( aValue - aMin ) / ( aMax - aMin ) ); // 'Ceiling' replaced with 'Floor'
+
+    Standard_Integer Interv = Standard_Integer( IntervNumber );
+
+    aColor = Quantity_Color( HueFromValue( Interv, 0, ColorsCount - 1 ), 1.0, 1.0, Quantity_TOC_HLS );
+
+    return Standard_True;
+  } 
+}
+
+void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps )
+{
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
+  if( !aStudy )
+    return;
+
+  SOCC_Viewer* aViewModel = dynamic_cast<SOCC_Viewer*>( GetActiveView() );
+  if( !aViewModel )
+    return;
+
+  Handle(V3d_Viewer) aViewer = aViewModel->getViewer3d();
+  if( aViewer.IsNull() )
+    return;
+
+  aViewer->InitActiveViews();
+  if( !aViewer->MoreActiveViews() )
+    return;
+
+  Handle(V3d_View) aView = aViewer->ActiveView();
+  if( aView.IsNull() )
+    return;
+
+  Standard_Boolean anIsDisplayColorScale = Standard_False;
+  TCollection_AsciiString aColorScaleTitle;
+  Standard_Real aColorScaleMin = 0, aColorScaleMax = 0;
+  Standard_Boolean anIsBoolean = Standard_False;
+
+  SALOME_ListIO aSelectedObjects;
+  myApp->selectionMgr()->selectedObjects( aSelectedObjects );
+  if( aSelectedObjects.Extent() == 1 )
+  {
+    Handle(SALOME_InteractiveObject) anIO = aSelectedObjects.First();
+    if( !anIO.IsNull() )
+    {
+      SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>( aViewModel->CreatePrs( anIO->getEntry() ) );
+      if( aPrs )
+      {
+        AIS_ListOfInteractive aList;
+        aPrs->GetObjects( aList );
+        AIS_ListIteratorOfListOfInteractive anIter( aList );
+        for( ; anIter.More(); anIter.Next() )
+        {
+          Handle(GEOM_AISShape) aShape = Handle(GEOM_AISShape)::DownCast( anIter.Value() );
+          if( !aShape.IsNull() )
+          {
+            GEOM::field_data_type aFieldDataType;
+            int aFieldDimension;
+            QList<QVariant> aFieldStepData;
+            TCollection_AsciiString aFieldStepName;
+            double aFieldStepRangeMin, aFieldStepRangeMax;
+            aShape->getFieldStepInfo( aFieldDataType,
+                                      aFieldDimension,
+                                      aFieldStepData,
+                                      aFieldStepName,
+                                      aFieldStepRangeMin,
+                                      aFieldStepRangeMax );
+            if( !aFieldStepData.isEmpty() && aFieldDataType != GEOM::FDT_String )
+            {
+              anIsDisplayColorScale = Standard_True;
+              aColorScaleTitle = aFieldStepName;
+              aColorScaleMin = aFieldStepRangeMin;
+              aColorScaleMax = aFieldStepRangeMax;
+              anIsBoolean = aFieldDataType == GEOM::FDT_Bool;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if( anIsDisplayColorScale )
+  {
+    Handle(Aspect_ColorScale) aColorScale = aView->ColorScale();
+    if( !aColorScale.IsNull() )
+    {
+      SUIT_Session* session = SUIT_Session::session();
+      SUIT_ResourceMgr* resMgr = session->resourceMgr();
+
+      Standard_Real anXPos = resMgr->doubleValue( "Geometry", "scalar_bar_x_position", 0.05 );
+      Standard_Real anYPos = resMgr->doubleValue( "Geometry", "scalar_bar_y_position", 0.1 );
+      Standard_Real aWidth = resMgr->doubleValue( "Geometry", "scalar_bar_width", 0.2 );
+      Standard_Real aHeight = resMgr->doubleValue( "Geometry", "scalar_bar_height", 0.5 );
+      Standard_Integer aTextHeight = resMgr->integerValue( "Geometry", "scalar_bar_text_height", 14 );
+      Standard_Integer aNbIntervals = resMgr->integerValue( "Geometry", "scalar_bar_nb_intervals", 20 );
+ 
+      aColorScale->SetXPosition( anXPos );
+      aColorScale->SetYPosition( anYPos );
+      aColorScale->SetWidth( aWidth );
+      aColorScale->SetHeight( aHeight );
+
+      aColorScale->SetTextHeight( aTextHeight );
+      aColorScale->SetNumberOfIntervals( anIsBoolean ? 2 : aNbIntervals );
+
+      aColorScale->SetTitle( aColorScaleTitle );
+      aColorScale->SetRange( aColorScaleMin, aColorScaleMax );
+    }
+    if( !aView->ColorScaleIsDisplayed() )
+      aView->ColorScaleDisplay();
+  }
+  else
+  {
+    if( aView->ColorScaleIsDisplayed() )
+      aView->ColorScaleErase();
+  }
+
+  if( theIsRedisplayFieldSteps )
+  {
+    _PTR(Study) aStudyDS = aStudy->studyDS();
+    QList<SUIT_ViewManager*> vmList;
+    myApp->viewManagers( vmList );
+    for( QList<SUIT_ViewManager*>::Iterator vmIt = vmList.begin(); vmIt != vmList.end(); vmIt++ )
+    {
+      if( SUIT_ViewManager* aViewManager = *vmIt )
+      {
+        const ObjMap anObjects = aStudy->getObjectMap( aViewManager->getGlobalId() );
+        for( ObjMap::ConstIterator objIt = anObjects.begin(); objIt != anObjects.end(); objIt++ )
+        {
+          _PTR(SObject) aSObj( aStudyDS->FindObjectID( objIt.key().toLatin1().constData() ) );
+          if( aSObj )
+          {
+            CORBA::Object_var anObject = GeometryGUI::ClientSObjectToObject( aSObj );
+            if( !CORBA::is_nil( anObject ) )
+            {
+              GEOM::GEOM_FieldStep_var aFieldStep = GEOM::GEOM_FieldStep::_narrow( anObject );
+              if( !aFieldStep->_is_nil() )
+              {
+                CORBA::String_var aStepEntry = aFieldStep->GetStudyEntry();
+                Handle(SALOME_InteractiveObject) aStepIO =
+                  new SALOME_InteractiveObject( aStepEntry.in(), "GEOM", "TEMP_IO" );
+                Redisplay( aStepIO, false, false );
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  UpdateViewer();
 }

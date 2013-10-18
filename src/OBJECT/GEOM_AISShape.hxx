@@ -29,6 +29,8 @@
 
 #include "GEOM_OBJECT_defs.hxx"
 
+#include <GEOM_Gen.hh>
+
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
 #endif
@@ -60,6 +62,9 @@
 #include <AIS_DisplayMode.hxx>
 #include <Graphic3d_MaterialAspect.hxx>
 
+#include <QList>
+#include <QVariant>
+
 class PrsMgr_PresentationManager3d;
 class Prs3d_Presentation;
 class SALOME_InteractiveObject;
@@ -74,7 +79,8 @@ public:
       //WireFrame,       //!< the same as AIS_WireFrame
       //Shading,         //!< the same as AIS_Shaded
       ShadingWithEdges = AIS_Shaded+1, //!< shading with edges
-      TexturedShape = ShadingWithEdges+1 //!< the same as AIS_ExactHLR
+      TexturedShape = ShadingWithEdges+1, //!< the same as AIS_ExactHLR
+      CustomHighlight = TexturedShape+1
     } DispMode;
 
     //! Enumeration of top level display modes
@@ -149,6 +155,19 @@ public:
   void setPrevDisplayMode(const Standard_Integer mode);
   Standard_Integer prevDisplayMode() const {return myPrevDisplayMode;}
 
+  // Field step information
+  void setFieldStepInfo( const GEOM::field_data_type theFieldDataType,
+                         const int theFieldDimension,
+                         const QList<QVariant>& theFieldStepData,
+                         const TCollection_AsciiString& theFieldStepName,
+                         const double theFieldStepRangeMin,
+                         const double theFieldStepRangeMax );
+  void getFieldStepInfo( GEOM::field_data_type& theFieldDataType,
+                         int& theFieldDimension,
+                         QList<QVariant>& theFieldStepData,
+                         TCollection_AsciiString& theFieldStepName,
+                         double& theFieldStepRangeMin,
+                         double& theFieldStepRangeMax ) const;
 
 protected: 
   void shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
@@ -156,6 +175,15 @@ protected:
                    const Standard_Integer aMode);
 
   void restoreBoundaryColors();
+
+  // Displaying the field data
+  void drawField( const Handle(Prs3d_Presentation)& thePrs,
+                  const bool theIsText = false,
+                  const bool theIsHighlight = false );
+
+  // Auxiliary method to compute a center of mass for the specified shape
+  static Standard_Boolean computeMassCenter( const TopoDS_Shape& theShape,
+                                             gp_Pnt& theCenter );
 
   Quantity_Color myShadingColor;
 
@@ -172,6 +200,13 @@ private:
   bool                     myDisplayVectors;
   Standard_Boolean         myTopLevel;
   Standard_Integer         myPrevDisplayMode;
+
+  GEOM::field_data_type    myFieldDataType;
+  int                      myFieldDimension;
+  QList<QVariant>          myFieldStepData;
+  TCollection_AsciiString  myFieldStepName;
+  double                   myFieldStepRangeMin;
+  double                   myFieldStepRangeMax;
 
   static TopLevelDispMode myTopLevelDm;
   static Quantity_Color   myTopLevelColor;

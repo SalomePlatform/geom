@@ -915,6 +915,16 @@ EntityGUI_FieldDlg::~EntityGUI_FieldDlg()
   }
   // if ( !myField->_is_nil())
   //   aDisplayer->Display(myField);
+
+  QListIterator<int> anIter( myHiddenFieldStepIds );
+  while( anIter.hasNext() )
+  {
+    const int aStepId = anIter.next();
+    GEOM::GEOM_FieldStep_var step = myField->GetStep( aStepId );
+    if( !step->_is_nil() )
+      aDisplayer->Display( step, false );
+  }
+  aDisplayer->UpdateViewer();
 }
 
 //=================================================================================
@@ -924,6 +934,7 @@ EntityGUI_FieldDlg::~EntityGUI_FieldDlg()
 void EntityGUI_FieldDlg::Init()
 {
   myDmMode = -1;
+  myHiddenFieldStepIds.clear();
   myStepsCombo->clear();
 
   if ( myIsCreation || myField->_is_nil() )
@@ -950,6 +961,29 @@ void EntityGUI_FieldDlg::Init()
   }
   else // edition
   {
+    // 1) get and sort step IDs
+    // 2) hide all displayed field steps' presentations
+    GEOM_Displayer* aDisplayer = getDisplayer();
+    GEOM::ListOfLong_var stepIDs = myField->GetSteps();
+    size_t i;
+    QList< int > stepsList;
+    for ( i = 0; i < stepIDs->length(); ++i )
+    {
+      int aStepId = stepIDs[i];
+      stepsList.push_back( aStepId );
+      GEOM::GEOM_FieldStep_var step = myField->GetStep( aStepId );
+      if( !step->_is_nil() )
+      {
+        QString anEntry( step->GetStudyEntry() );
+        if( aDisplayer->IsDisplayed( anEntry ) )
+        {
+          aDisplayer->Erase( step, false, false );
+          myHiddenFieldStepIds << aStepId;
+        }
+      }
+    }
+    qSort( stepsList.begin(), stepsList.end() );
+
     myIsCreation = false;
 
     CORBA::String_var fName = myField->GetName();
@@ -975,15 +1009,8 @@ void EntityGUI_FieldDlg::Init()
     myDimCombo->setEnabled( false );
     myNbCompsSpin->setEnabled( false );
 
-    // get and sort step IDs
-    GEOM::ListOfLong_var stepIDs = myField->GetSteps();
-    QList< int > stepsList;
-    for ( size_t i = 0; i < stepIDs->length(); ++i )
-      stepsList.push_back( stepIDs[i] );
-    qSort( stepsList.begin(), stepsList.end() );
-
     myStepsCombo->blockSignals( true );
-    for ( size_t i = 0; i < stepIDs->length(); ++i )
+    for ( i = 0; i < stepIDs->length(); ++i )
     {
       myStepsCombo->insertItem( i, QString::number( stepsList[i] ));
       if ( myCurStepID == stepsList[i] )
@@ -1854,7 +1881,14 @@ bool EntityGUI_FieldDlg::execute()
       }
     }
     tbl->setValues( step );
+
+    // update the presentation if it is displayed
+    CORBA::String_var aStepEntry = step->GetStudyEntry();
+    Handle(SALOME_InteractiveObject) aStepIO =
+      new SALOME_InteractiveObject( aStepEntry.in(), "GEOM", "TEMP_IO" );
+    getDisplayer()->Redisplay( aStepIO, false, false );
   }
+  getDisplayer()->UpdateViewer();
 
   // remove steps
   if ( !myIsCreation )

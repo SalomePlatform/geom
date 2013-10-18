@@ -120,6 +120,8 @@ private:
   int                                 myDmMode;
   bool                                myIsHiddenMain;
 
+  QList<int>                          myHiddenFieldStepIds;
+
   QPushButton*                        myShapeSelBtn;
   QLineEdit*                          myShapeName;
   QComboBox*                          myTypeCombo;

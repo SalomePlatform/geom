@@ -1773,6 +1773,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
   connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( onAutoBringToFront() ));
+  connect( sm, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
 
   if ( !myCreationInfoWdg )
     myCreationInfoWdg = new GEOMGUI_CreationInfoWdg( getApp() );
@@ -1853,6 +1854,7 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   LightApp_SelectionMgr* selMrg = getApp()->selectionMgr();
 
   disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
+  disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
   getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
   myCreationInfoWdg = 0;
 
@@ -2102,6 +2104,15 @@ void GeometryGUI::onAutoBringToFront()
   }
   displayer.UpdateViewer();
   GeometryGUI::Modified();
+}
+
+void GeometryGUI::updateFieldColorScale()
+{
+  if( SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) )
+  {
+    GEOM_Displayer aDisplayer( aStudy );
+    aDisplayer.UpdateColorScale();
+  }
 }
 
 QString GeometryGUI::engineIOR() const
@@ -2436,6 +2447,46 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( markerScale, "strings", aMarkerScaleValuesList );
   setPreferenceProperty( markerScale, "indexes", aMarkerScaleIndicesList );
 
+  // Scalar bar for field step presentation
+  int scalarBarGroup = addPreference( tr( "PREF_GROUP_SCALAR_BAR" ), tabId );
+  setPreferenceProperty( scalarBarGroup, "columns", 2 );
+
+  int sbXPosition = addPreference( tr( "PREF_SCALAR_BAR_X_POSITION" ), scalarBarGroup,
+                                   LightApp_Preferences::DblSpin, "Geometry", "scalar_bar_x_position" );
+  setPreferenceProperty( sbXPosition, "min", 0 );
+  setPreferenceProperty( sbXPosition, "max", 1 );
+  setPreferenceProperty( sbXPosition, "step", 0.05 );
+
+  int sbYPosition = addPreference( tr( "PREF_SCALAR_BAR_Y_POSITION" ), scalarBarGroup,
+                                   LightApp_Preferences::DblSpin, "Geometry", "scalar_bar_y_position" );
+  setPreferenceProperty( sbYPosition, "min", 0 );
+  setPreferenceProperty( sbYPosition, "max", 1 );
+  setPreferenceProperty( sbYPosition, "step", 0.05 );
+
+  int sbWidth = addPreference( tr( "PREF_SCALAR_BAR_WIDTH" ), scalarBarGroup,
+                               LightApp_Preferences::DblSpin, "Geometry", "scalar_bar_width" );
+  setPreferenceProperty( sbWidth, "min", 0 );
+  setPreferenceProperty( sbWidth, "max", 1 );
+  setPreferenceProperty( sbWidth, "step", 0.05 );
+
+  int sbHeight = addPreference( tr( "PREF_SCALAR_BAR_HEIGHT" ), scalarBarGroup,
+                                LightApp_Preferences::DblSpin, "Geometry", "scalar_bar_height" );
+  setPreferenceProperty( sbHeight, "min", 0 );
+  setPreferenceProperty( sbHeight, "max", 1 );
+  setPreferenceProperty( sbHeight, "step", 0.05 );
+
+  int sbTextHeight = addPreference( tr( "PREF_SCALAR_BAR_TEXT_HEIGHT" ), scalarBarGroup,
+                                    LightApp_Preferences::IntSpin, "Geometry", "scalar_bar_text_height" );
+  setPreferenceProperty( sbTextHeight, "min", 6 );
+  setPreferenceProperty( sbTextHeight, "max", 24 );
+  setPreferenceProperty( sbTextHeight, "step", 1 );
+
+  int sbNbIntervals = addPreference( tr( "PREF_SCALAR_BAR_NUMBER_OF_INTERVALS" ), scalarBarGroup,
+                                     LightApp_Preferences::IntSpin, "Geometry", "scalar_bar_nb_intervals" );
+  setPreferenceProperty( sbNbIntervals, "min", 2 );
+  setPreferenceProperty( sbNbIntervals, "max", 64 );
+  setPreferenceProperty( sbNbIntervals, "step", 1 );
+
   int originGroup = addPreference( tr( "PREF_GROUP_ORIGIN_AND_BASE_VECTORS" ), tabId );
   setPreferenceProperty( originGroup, "columns", 2 );
 
@@ -2468,6 +2519,19 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
     }
     else if (param == QString("toplevel_dm")) {
       GEOM_AISShape::setTopLevelDisplayMode((GEOM_AISShape::TopLevelDispMode)aResourceMgr->integerValue("Geometry", "toplevel_dm", 0));
+    }
+    else if (param == QString("scalar_bar_x_position") ||
+             param == QString("scalar_bar_y_position") ||
+             param == QString("scalar_bar_width") ||
+             param == QString("scalar_bar_height") ||
+             param == QString("scalar_bar_text_height") ||
+             param == QString("scalar_bar_nb_intervals")) {
+      if( SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( getApp()->activeStudy() ) )
+      {
+        GEOM_Displayer aDisplayer( aStudy );
+        bool anIsRedisplayFieldSteps = param == QString("scalar_bar_nb_intervals");
+        aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps );
+      }
     }
   }
 }

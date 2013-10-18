@@ -44,6 +44,7 @@ class SALOME_OCCViewType;
 #include <LightApp_Displayer.h>
 #include <LightApp_Study.h>
 #include <Aspect_TypeOfMarker.hxx>
+#include <TCollection_AsciiString.hxx>
 
 #include <QList>
 
@@ -85,18 +86,19 @@ public:
 
   // This overloaded Display() method can be useful for operations
   // not using dialog boxes.
-  void          Display   ( GEOM::GEOM_Object_ptr theObj,
+  void          Display   ( GEOM::GEOM_BaseObject_ptr theObj,
                             const bool updateViewer = true );
 
   void          Redisplay ( const Handle(SALOME_InteractiveObject)& theIO,
-                            const bool updateViewer = true );
+                            const bool updateViewer = true,
+                            const bool checkActiveViewer = true );
 
   void          Erase     ( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool forced = false,
                             const bool updateViewer = true,
                             SALOME_View* theViewFrame = 0 );
 
-  void          Erase     ( GEOM::GEOM_Object_ptr theObj,
+  void          Erase     ( GEOM::GEOM_BaseObject_ptr theObj,
                             const bool forced = false,
                             const bool updateViewer = true );
 
@@ -113,7 +115,8 @@ public:
                             const bool updateViewer = true );
 
   void          Redisplay ( const SALOME_ListIO& theIOList,
-                            const bool updateViewer = true );
+                            const bool updateViewer = true,
+                            const bool checkActiveViewer = true );
 
   /* build presentation accordint to the current viewer type*/
   SALOME_Prs*   BuildPrs  ( GEOM::GEOM_Object_ptr );
@@ -157,6 +160,7 @@ public:
   virtual void  Update( SALOME_VTKPrs* );
   virtual void  BeforeDisplay( SALOME_View*, const SALOME_OCCPrs* );
   virtual void  AfterDisplay ( SALOME_View*, const SALOME_OCCPrs* );
+  virtual void  AfterErase   ( SALOME_View*, const SALOME_OCCPrs* );
 
   /* This methos is used for activisation/deactivisation of objects to be displayed*/
   void          SetToActivate( const bool );
@@ -188,6 +192,9 @@ public:
                                                 const QString&,
                                                 SALOME_View* = 0);
 
+  /* Update visibility and parameters of the currently selected field step's color scale */
+  void UpdateColorScale( const bool theIsRedisplayFieldSteps = false );
+
 protected:
   /* internal methods */
   /* Builds presentation according to the current viewer type */
@@ -198,6 +205,14 @@ protected:
 
   /* Sets shape */
   void        setShape( const TopoDS_Shape& theShape );
+
+  /* Sets field step information */
+  void        setFieldStepInfo( const GEOM::field_data_type theFieldDataType,
+                                const int theFieldDimension,
+                                const QList<QVariant>& theFieldStepData,
+                                const TCollection_AsciiString& theFieldStepName,
+                                const double theFieldStepRangeMin,
+                                const double theFieldStepRangeMax );
 
   /* Resets internal data */
   void        internalReset();
@@ -214,10 +229,36 @@ protected:
 
   PropMap getObjectProperties( SalomeApp_Study*, const QString&, SALOME_View* = 0 );
   PropMap getDefaultPropertyMap();
-  
+
+  /* Methods for reading the field step information */
+  void            readFieldStepInfo( GEOM::GEOM_FieldStep_var theGeomFieldStep );
+  QList<QVariant> groupFieldData( const QList<QVariant>& theFieldStepData,
+                                  const int theFieldNbComponents,
+                                  const bool theIsString,
+                                  double& theFieldStepRangeMin,
+                                  double& theFieldStepRangeMax );
+
+  // Note: the method is copied from Aspect_ColorScale class
+  static Standard_Integer HueFromValue( const Standard_Integer aValue,
+                                        const Standard_Integer aMin,
+                                        const Standard_Integer aMax );
+
+  // Note: the method is copied from Aspect_ColorScale class
+  static Standard_Boolean FindColor( const Standard_Real aValue, 
+                                     const Standard_Real aMin,
+                                     const Standard_Real aMax,
+                                     const Standard_Integer ColorsCount,
+                                     Quantity_Color& aColor );
+
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
+  GEOM::field_data_type            myFieldDataType;
+  int                              myFieldDimension;
+  QList<QVariant>                  myFieldStepData;
+  TCollection_AsciiString          myFieldStepName;
+  double                           myFieldStepRangeMin;
+  double                           myFieldStepRangeMax;
   std::string                      myName;
   std::string                      myTexture;
   int                              myType;

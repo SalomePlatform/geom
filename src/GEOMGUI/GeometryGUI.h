@@ -174,6 +174,7 @@ private slots:
   void                        updateMaterials();
   void                        updateCreationInfo();
   void                        onAutoBringToFront();
+  void                        updateFieldColorScale();
 
 signals :
   void                        SignalDeactivateActiveDialog();

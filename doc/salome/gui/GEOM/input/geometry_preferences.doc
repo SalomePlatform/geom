@@ -94,6 +94,18 @@ system immediately after the module activation.</li>
 </ul>
 </ul>
 
+<ul>
+<li><b>Scalar bar for field presentation</b></li>
+<ul>
+<li><b>X position</b> - allows to define the parametric X position of the scalar bar.</li>
+<li><b>Y position</b> - allows to define the parametric Y position of the scalar bar.</li>
+<li><b>Width</b> - allows to define the parametric width of the scalar bar.</li>
+<li><b>Height</b> - allows to define the parametric height of the scalar bar.</li>
+<li><b>Text height</b> - allows to define the font height of the scalar bar labels.</li>
+<li><b>Number of intervals</b> - allows to define the number of scalar bar intervals.</li>
+</ul>
+</ul>
+
 
 <ul>
 <li><b>Operations</b></li>
