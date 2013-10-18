@@ -214,31 +214,16 @@ class StructuralElementManager:
         elif groupMailleParam is not None and meshGroupParam is None:
             meshGroupParam = groupMailleParam
         
-        meshGroupList = []
-        if type(meshGroupParam) == types.StringType:
-            meshGroupList = self._getMeshGroupListFromString(meshGroupParam)
+        if isinstance(meshGroupParam, types.StringTypes):
+            meshGroupList = [meshGroupParam]
         else:
-            for item in meshGroupParam:
-                meshGroupList += self._getMeshGroupListFromString(item)
+            meshGroupList = meshGroupParam
         
         if len(meshGroupList) == 0:
             logger.warning("Mesh group list is empty in command %s, this "
                            "command will be ignored." % command)
 
         return (meshGroupList, newparams)
-    
-    def _getMeshGroupListFromString(self, meshString):
-        """
-        This method splits the string in parameter to extract comma separated
-        names. Those names are returned as a list of strings.
-        """
-        meshGroupList = []
-        list = meshString.split(",")
-        for item in list:
-            strippedItem = item.strip()
-            if len(strippedItem) > 0:
-                meshGroupList.append(strippedItem)
-        return meshGroupList
 
 
 class StructuralElement:
@@ -453,14 +438,14 @@ def TEST_StructuralElement():
                                         'VECT_Y': (1.0, 0.0, 1.0)}),
                        ('Orientation', {'MeshGroups': 'Edge_5',
                                         'ANGL_VRIL': 45.0}),
-                       ('GeneralBeam', {'MeshGroups': 'Edge_1, Edge_7',
+                       ('GeneralBeam', {'MeshGroups': ['Edge_1', 'Edge_7'],
                                         'A': 1, 'IY1': 20, 'IY2': 40,
                                         'IZ1': 60, 'IZ2': 30}),
                        ('VisuPoutreCercle', {'MeshGroups': ['Edge_6'],
                                              'R1': 30, 'R2': 20}),
                        ('CircularBeam', {'MeshGroups': ['Edge_2', 'Edge_3'],
                                          'R': 40, 'EP': 20}),
-                       ('RectangularBeam', {'MeshGroups': 'Edge_4, Edge_5',
+                       ('RectangularBeam', {'MeshGroups': ['Edge_4', 'Edge_5'],
                                             'HZ1': 60, 'HY1': 40,
                                             'EPZ1': 15, 'EPY1': 10,
                                             'HZ2': 40, 'HY2': 60,
