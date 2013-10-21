@@ -694,6 +694,39 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ProjectShapeCopy
 
 //=============================================================================
 /*!
+ *  ProjectPointOnWire
+ */
+//=============================================================================
+CORBA::Double GEOM_ITransformOperations_i::ProjectPointOnWire
+                               (GEOM::GEOM_Object_ptr thePoint,
+                                GEOM::GEOM_Object_ptr theWire,
+                                GEOM::GEOM_Object_out thePointOnEdge,
+                                CORBA::Long&          theEdgeInWireIndex)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  Handle(GEOM_Object) aWire = GetObjectImpl(theWire);
+
+  if (aPoint.IsNull() || aWire.IsNull()) {
+    return -1.0;
+  }
+
+  Handle(GEOM_Object) aPointOnEdge;
+  CORBA::Double aResult = GetOperations()->ProjectPointOnWire
+    (aPoint, aWire, aPointOnEdge, theEdgeInWireIndex);
+
+  if (!aPointOnEdge.IsNull()) {
+    thePointOnEdge = GetObject(aPointOnEdge);
+  }
+
+  return aResult;
+}
+
+//=============================================================================
+/*!
  *  ScaleShape
  */
 //=============================================================================

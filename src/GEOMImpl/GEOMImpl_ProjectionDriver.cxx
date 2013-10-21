@@ -25,6 +25,7 @@
 #include <GEOMImpl_ProjectionDriver.hxx>
 
 #include <GEOMImpl_IMirror.hxx>
+#include <GEOMImpl_IProjection.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
@@ -32,6 +33,7 @@
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepClass_FaceClassifier.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepOffsetAPI_NormalProjection.hxx>
 #include <BRepTools.hxx>
 
@@ -45,6 +47,7 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 #include <GeomAPI_ProjectPointOnSurf.hxx>
+#include <Geom_Curve.hxx>
 #include <Geom_Plane.hxx>
 
 #include <gp_Trsf.hxx>
@@ -82,20 +85,21 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
 
   if (aFunction.IsNull()) return 0;
 
-  TopoDS_Shape aShape;
-  gp_Trsf aTrsf;
-
-  GEOMImpl_IMirror TI (aFunction);
   Standard_Integer aType = aFunction->GetType();
 
-  Handle(GEOM_Function) anOriginalFunction = TI.GetOriginal();
-  if (anOriginalFunction.IsNull()) return 0;
-
-  TopoDS_Shape anOriginal = anOriginalFunction->GetValue();
-  if (anOriginal.IsNull()) return 0;
-
-  // Projection
   if (aType == PROJECTION_COPY) {
+    // Projection
+    TopoDS_Shape aShape;
+    gp_Trsf aTrsf;
+
+    GEOMImpl_IMirror TI (aFunction);
+
+    Handle(GEOM_Function) anOriginalFunction = TI.GetOriginal();
+    if (anOriginalFunction.IsNull()) return 0;
+
+    TopoDS_Shape anOriginal = anOriginalFunction->GetValue();
+    if (anOriginal.IsNull()) return 0;
+
     // Source shape (point, edge or wire)
     if (anOriginal.ShapeType() != TopAbs_VERTEX &&
         anOriginal.ShapeType() != TopAbs_EDGE &&
@@ -215,6 +219,151 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
 
     aFunction->SetValue(aShape);
     log.SetTouched(Label()); 
+  } else if (aType == PROJECTION_ON_WIRE) {
+    // Perform projection of point on a wire or an edge.
+    GEOMImpl_IProjection aProj (aFunction);
+    Handle(GEOM_Function) aPointFunction = aProj.GetPoint();
+    Handle(GEOM_Function) aShapeFunction = aProj.GetShape();
+
+    if (aPointFunction.IsNull() || aShapeFunction.IsNull()) {
+      return 0;
+    }
+
+    TopoDS_Shape aPoint = aPointFunction->GetValue();
+    TopoDS_Shape aShape = aShapeFunction->GetValue();
+
+    if (aPoint.IsNull() || aShape.IsNull()) {
+      return 0;
+    }
+
+    // Check shape types.
+    if (aPoint.ShapeType() != TopAbs_VERTEX) {
+      Standard_ConstructionError::Raise
+        ("Projection aborted : the point is not a vertex");
+    }
+
+    if (aShape.ShapeType() != TopAbs_EDGE &&
+        aShape.ShapeType() != TopAbs_WIRE) {
+      Standard_ConstructionError::Raise
+        ("Projection aborted : the shape is neither an edge nor a wire");
+    }
+
+    // Perform projection.
+    BRepExtrema_DistShapeShape aDistShSh(aPoint, aShape, Extrema_ExtFlag_MIN);
+
+    if (aDistShSh.IsDone() == Standard_False) {
+      Standard_ConstructionError::Raise("Projection not done");
+    }
+
+    Standard_Boolean hasValidSolution = Standard_False;
+    Standard_Integer aNbSolutions     = aDistShSh.NbSolution();
+    Standard_Integer i;
+    double           aParam   = 0.;
+    Standard_Real    aTolConf = BRep_Tool::Tolerance(TopoDS::Vertex(aPoint));
+    Standard_Real    aTolAng  = 1.e-4;        
+
+    for (i = 1; i <= aNbSolutions; i++) {
+      Standard_Boolean        isValid       = Standard_False;
+      BRepExtrema_SupportType aSupportType  = aDistShSh.SupportTypeShape2(i);
+      TopoDS_Shape            aSupportShape = aDistShSh.SupportOnShape2(i);
+
+      if (aSupportType == BRepExtrema_IsOnEdge) {
+        // Minimal distance inside edge is really a projection.
+        isValid = Standard_True;
+        aDistShSh.ParOnEdgeS2(i, aParam);
+      } else if (aSupportType == BRepExtrema_IsVertex) {
+        TopExp_Explorer anExp(aShape, TopAbs_EDGE);
+
+        if (aDistShSh.Value() <= aTolConf) {
+          // The point lies on the shape. This means this point
+          // is really a projection.
+          for (; anExp.More() && !isValid; anExp.Next()) {
+            TopoDS_Edge aCurEdge = TopoDS::Edge(anExp.Current());
+
+            if (aCurEdge.IsNull() == Standard_False) {
+              TopoDS_Vertex aVtx[2];
+                        
+              TopExp::Vertices(aCurEdge, aVtx[0], aVtx[1]);
+
+              for (int j = 0; j < 2; j++) {
+                if (aSupportShape.IsSame(aVtx[j])) {
+                  // The current edge is a projection edge.
+                  isValid       = Standard_True;
+                  aSupportShape = aCurEdge;
+                  aParam        = BRep_Tool::Parameter(aVtx[j], aCurEdge);
+                  break;
+                }
+              }
+            }
+          }
+        } else {
+          // Minimal distance to vertex is not always a real projection.
+          gp_Pnt aPnt    = BRep_Tool::Pnt(TopoDS::Vertex(aPoint));
+          gp_Pnt aPrjPnt = BRep_Tool::Pnt(TopoDS::Vertex(aSupportShape));
+          gp_Vec aDProjP(aPrjPnt, aPnt);
+
+          for (; anExp.More() && !isValid; anExp.Next()) {
+            TopoDS_Edge aCurEdge = TopoDS::Edge(anExp.Current());
+ 
+            if (aCurEdge.IsNull() == Standard_False) {
+              TopoDS_Vertex aVtx[2];
+                          
+              TopExp::Vertices(aCurEdge, aVtx[0], aVtx[1]);
+ 
+              for (int j = 0; j < 2; j++) {
+                if (aSupportShape.IsSame(aVtx[j])) {
+                  // Check if the point is a projection to the current edge.
+                  Standard_Real      anEdgePars[2];
+                  Handle(Geom_Curve) aCurve =
+                    BRep_Tool::Curve(aCurEdge, anEdgePars[0], anEdgePars[1]);
+                  gp_Pnt             aVal;
+                  gp_Vec             aD1;
+
+                  aParam = BRep_Tool::Parameter(aVtx[j], aCurEdge);
+                  aCurve->D1(aParam, aVal, aD1);
+
+                  if (Abs(aD1.Dot(aDProjP)) <= aTolAng) {
+                    // The current edge is a projection edge.
+                    isValid       = Standard_True;
+                    aSupportShape = aCurEdge;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+
+      if (isValid) {
+        if (hasValidSolution) {
+          Standard_ConstructionError::Raise
+            ("Projection aborted : multiple solutions");
+        }
+
+        // Store the valid solution.
+        hasValidSolution = Standard_True;
+        aProj.SetU(aParam);
+
+        // Compute edge index.
+        TopTools_IndexedMapOfShape anIndices;
+        TopExp::MapShapes(aShape, anIndices);
+        const int anIndex = anIndices.FindIndex(aSupportShape);
+
+        aProj.SetIndex(anIndex);
+
+        // Construct a projection vertex.
+        const gp_Pnt &aPntProj = aDistShSh.PointOnShape2(i);
+        TopoDS_Shape  aProj    = BRepBuilderAPI_MakeVertex(aPntProj).Shape();
+        
+        aFunction->SetValue(aProj);
+      }
+    }
+
+    if (!hasValidSolution) {
+      Standard_ConstructionError::Raise("Projection aborted : no projection");
+    }
   }
 
   return 1;

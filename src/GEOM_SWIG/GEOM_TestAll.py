@@ -248,6 +248,7 @@ def TestAll (geompy, math):
   Position2   = geompy.PositionAlongPath(Box, Arc, 0.5, 1, 0)  #(2 GEOM_Object, 1 Double, 2 Bool)->GEOM_Object
   Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object, Double)->GEOM_Object
   Orientation = geompy.ChangeOrientation(Box)
+  ProjOnWire  = geompy.MakeProjectionOnWire(p0, Wire)
 
   #IDList for Fillet/Chamfer
   prism_edges = geompy.ExtractShapes(Prism, geompy.ShapeType["EDGE"], True)
@@ -440,22 +441,23 @@ def TestAll (geompy, math):
     id_Path2      = geompy.addToStudy(Path2,      "Path2")
     pass
 
-  id_Translation = geompy.addToStudy(Translation, "Translation")
-  id_TranslVect  = geompy.addToStudy(TranslVect , "Translation along vector")
-  id_TranslVectD = geompy.addToStudy(TranslVectD, "Translation along vector with defined distance")
-  id_Rotation    = geompy.addToStudy(Rotation,    "Rotation")
-  id_RotatPnt    = geompy.addToStudy(RotatPnt,    "Rotation by three points")
-  id_Scale1      = geompy.addToStudy(Scale1,      "Scale1")
-  id_Scale2      = geompy.addToStudy(Scale2,      "Scale2")
-  id_Scale3      = geompy.addToStudy(Scale3,      "Scale3")
-  id_Scale4      = geompy.addToStudy(Scale4,      "Scale4")
-  id_Mirror      = geompy.addToStudy(Mirror,      "Mirror by Plane")
-  id_MirrorAxis  = geompy.addToStudy(MirrorAxis,  "Mirror by Axis")
-  id_MirrorPnt   = geompy.addToStudy(MirrorPnt,   "Mirror by Point")
-  id_Position    = geompy.addToStudy(Position,    "Positioned box")
-  id_Position2   = geompy.addToStudy(Position2,   "Positioned box along path")
-  id_Offset      = geompy.addToStudy(Offset,      "Offset")
-  id_Orientation = geompy.addToStudy(Orientation, "Orientation")
+  id_Translation = geompy.addToStudy(Translation,   "Translation")
+  id_TranslVect  = geompy.addToStudy(TranslVect ,   "Translation along vector")
+  id_TranslVectD = geompy.addToStudy(TranslVectD,   "Translation along vector with defined distance")
+  id_Rotation    = geompy.addToStudy(Rotation,      "Rotation")
+  id_RotatPnt    = geompy.addToStudy(RotatPnt,      "Rotation by three points")
+  id_Scale1      = geompy.addToStudy(Scale1,        "Scale1")
+  id_Scale2      = geompy.addToStudy(Scale2,        "Scale2")
+  id_Scale3      = geompy.addToStudy(Scale3,        "Scale3")
+  id_Scale4      = geompy.addToStudy(Scale4,        "Scale4")
+  id_Mirror      = geompy.addToStudy(Mirror,        "Mirror by Plane")
+  id_MirrorAxis  = geompy.addToStudy(MirrorAxis,    "Mirror by Axis")
+  id_MirrorPnt   = geompy.addToStudy(MirrorPnt,     "Mirror by Point")
+  id_Position    = geompy.addToStudy(Position,      "Positioned box")
+  id_Position2   = geompy.addToStudy(Position2,     "Positioned box along path")
+  id_Offset      = geompy.addToStudy(Offset,        "Offset")
+  id_Orientation = geompy.addToStudy(Orientation,   "Orientation")
+  id_ProjOnWire  = geompy.addToStudy(ProjOnWire[1], "ProjOnWire")
 
   id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
   id_Fillet2  = geompy.addToStudy(Fillet2,  "Fillet2")

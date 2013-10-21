@@ -8036,6 +8036,46 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("ProjectShapeCopy", self.TrsfOp)
             self._autoPublish(anObj, theName, "projection")
             return anObj
+            
+        ## Create a projection projection of the given point on a wire or an edge.
+        #  If there are no solutions or there are 2 or more solutions It throws an
+        #  exception.
+        #  @param thePoint the point to be projected.
+        #  @param theWire the wire. The edge is accepted as well.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return [\a u, \a PointOnEdge, \a EdgeInWireIndex]
+        #  \n \a u: The parameter of projection point on edge.
+        #  \n \a PointOnEdge: The projection point.
+        #  \n \a EdgeInWireIndex: The index of an edge in a wire.
+        #
+        #  @ref tui_projection "Example"
+        def MakeProjectionOnWire(self, thePoint, theWire, theName=None):
+            """
+            Create a projection projection of the given point on a wire or an edge.
+            If there are no solutions or there are 2 or more solutions It throws an
+            exception.
+            
+            Parameters:
+                thePoint the point to be projected.
+                theWire the wire. The edge is accepted as well.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+          
+            Returns:
+                [u, PointOnEdge, EdgeInWireIndex]
+                 u: The parameter of projection point on edge.
+                 PointOnEdge: The projection point.
+                 EdgeInWireIndex: The index of an edge in a wire.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.TrsfOp.ProjectPointOnWire(thePoint, theWire)
+            RaiseIfFailed("ProjectPointOnWire", self.TrsfOp)
+            self._autoPublish(anObj[1], theName, "projection")
+            return anObj
 
         # -----------------------------------------------------------------------------
         # Patterns

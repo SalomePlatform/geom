@@ -34,6 +34,7 @@
 
 #include <GEOMImpl_ITranslate.hxx>
 #include <GEOMImpl_IMirror.hxx>
+#include <GEOMImpl_IProjection.hxx>
 #include <GEOMImpl_IOffset.hxx>
 #include <GEOMImpl_IScale.hxx>
 #include <GEOMImpl_IRotate.hxx>
@@ -1236,6 +1237,77 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ProjectShapeCopy
   return aCopy;
 }
 
+//=============================================================================
+/*!
+ *  ProjectPointOnWire
+ */
+//=============================================================================
+Standard_Real GEOMImpl_ITransformOperations::ProjectPointOnWire
+                                    (Handle(GEOM_Object) thePoint,
+                                     Handle(GEOM_Object) theWire,
+                                     Handle(GEOM_Object) &thePointOnEdge,
+                                     Standard_Integer    &theEdgeInWireIndex)
+{
+  Standard_Real aResult = -1.;
+
+  SetErrorCode(KO);
+
+  if (thePoint.IsNull() || theWire.IsNull()) {
+    return aResult;
+  }
+
+  Handle(GEOM_Function) aLastFunction = thePoint->GetLastFunction();
+
+  if (aLastFunction.IsNull()) {
+    //There is no function which creates an object to be projected
+    return aResult;
+  }
+
+  //Add a new Projection object
+  thePointOnEdge = GetEngine()->AddObject(GetDocID(), GEOM_PROJECTION);
+
+  //Add a Projection function
+  Handle(GEOM_Function) aFunction = thePointOnEdge->AddFunction
+    (GEOMImpl_ProjectionDriver::GetID(), PROJECTION_ON_WIRE);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ProjectionDriver::GetID()) {
+    return aResult;
+  }
+
+  GEOMImpl_IProjection aProj (aFunction);
+  aProj.SetPoint(aLastFunction);
+  aProj.SetShape(theWire->GetLastFunction());
+
+  //Compute the Projection
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Projection driver failed");
+      return aResult;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aResult;
+  }
+
+  aResult            = aProj.GetU();
+  theEdgeInWireIndex = aProj.GetIndex();
+
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << "(u, " << thePointOnEdge
+    << ", EdgeInWireIndex) = geompy.MakeProjectionOnWire(" << thePoint
+    << ", " << theWire << ")";
+
+  SetErrorCode(OK);
+
+  return aResult;
+}
 
 //=============================================================================
 /*!

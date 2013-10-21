@@ -1269,6 +1269,23 @@ module GEOM
     GEOM_Object ProjectShapeCopy (in GEOM_Object theSource, in GEOM_Object theTarget);
 
     /*!
+     *  \brief Create a projection projection of the given point on a wire or
+     *  an edge.
+     *
+     *  If there are no solutions or there are 2 or more solutions It throws an
+     *  exception.
+     *  \param thePoint the point to be projected.
+     *  \param theWire the wire. The edge is accepted as well.
+     *  \param thePointOnEdge the projection point.
+     *  \param theEdgeInWireIndex the index of an edge in a wire.
+     *  \return the parameter of projection point on edge.
+     */
+    double ProjectPointOnWire (in  GEOM_Object thePoint,
+                               in  GEOM_Object theWire,
+                               out GEOM_Object thePointOnEdge,
+                               out long        theEdgeInWireIndex);
+
+    /*!
      *  \brief Scale the given object by the factor.
      *  \param theObject The object to be scaled.
      *  \param thePoint Center point for scaling.

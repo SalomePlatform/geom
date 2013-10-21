@@ -143,6 +143,11 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
   GEOM::GEOM_Object_ptr ProjectShapeCopy (GEOM::GEOM_Object_ptr theSource,
                                           GEOM::GEOM_Object_ptr theTarget);
 
+  CORBA::Double ProjectPointOnWire (GEOM::GEOM_Object_ptr thePoint,
+                                    GEOM::GEOM_Object_ptr theWire,
+                                    GEOM::GEOM_Object_out thePointOnEdge,
+                                    CORBA::Long&          theEdgeInWireIndex);
+
   GEOM::GEOM_Object_ptr ScaleShape (GEOM::GEOM_Object_ptr theObject,
                                     GEOM::GEOM_Object_ptr thePoint,
                                     CORBA::Double theFactor);

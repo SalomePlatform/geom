@@ -113,6 +113,12 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) ProjectShapeCopy (Handle(GEOM_Object) theSource,
                                                         Handle(GEOM_Object) theTarget);
 
+  Standard_EXPORT Standard_Real ProjectPointOnWire
+                                    (Handle(GEOM_Object) thePoint,
+                                     Handle(GEOM_Object) theWire,
+                                     Handle(GEOM_Object) &thePointOnEdge,
+                                     Standard_Integer    &theEdgeInWireIndex);
+
   Standard_EXPORT Handle(GEOM_Object) ScaleShape (Handle(GEOM_Object) theObject,
                                                   Handle(GEOM_Object) thePoint,
                                                   double theFactor);

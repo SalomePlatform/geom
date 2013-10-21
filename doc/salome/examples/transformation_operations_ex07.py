@@ -32,3 +32,17 @@ geompy.addToStudy(p4, "p4")
 geompy.addToStudy(p5, "p5")
 geompy.addToStudy(curve, "curve")
 geompy.addToStudy(projection, "projection")
+
+#projection of point on wire.
+e1 = geompy.MakeLineTwoPnt(p1, p2)
+e2 = geompy.MakeLineTwoPnt(p2, p3)
+
+w1 = geompy.MakeWire([e1, e2], 1.e-7)
+v1 = geompy.MakeVertex(300, 40, 100)
+
+prj = geompy.MakeProjectionOnWire(v1, w1)
+geompy.addToStudy(e1, "e1")
+geompy.addToStudy(e2, "e2")
+geompy.addToStudy(w1, "w1")
+geompy.addToStudy(v1, "v1")
+geompy.addToStudy(prj[1], "projOnWire")
