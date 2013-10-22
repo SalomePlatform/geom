@@ -173,6 +173,8 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	CORBA::String_var anEntry = CORBA::string_dup(newEntry.c_str());
 	
 	if( ap->IsSet(anEntry, 6) ) { //6 Means string array, see SALOMEDS_Attributes.idl AttributeParameter interface
+	  if ( GetDumpName((*it)._studyEntry.ToCString()) == NULL ) 
+	    continue;
 	  std::string idCommand = std::string("geompy.getObjectID(") + GetDumpName((*it)._studyEntry.ToCString()) + std::string(")");
 	  SALOMEDS::StringSeq_var aSeq= ap->GetStrArray(anEntry);
 	  int oldLenght = aSeq->length();	
@@ -230,6 +232,8 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
       } else if ( !aFatherName.IsEmpty() && !aFatherEntry.IsEmpty() ) {
 	// the node is Geom object under folder
 	aDirScript += "geompy.PutToFolder(";
+	if ( GetDumpName( aNodeSO->GetID() ) == NULL )
+	  continue;
 	aDirScript += GetDumpName( aNodeSO->GetID() );
 	aDirScript += ", ";
 	aDirScript += aFatherName;
