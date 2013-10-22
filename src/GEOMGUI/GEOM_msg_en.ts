@@ -5318,6 +5318,110 @@ Number of sketch points too small</translation>
         <source>GEOM_LEFT</source>
         <translation>Left (X-Z)</translation>
     </message>
+    <message>
+        <source>USE_ROI</source>
+        <translation>Use region of interest</translation>
+    </message>
+    <message>
+        <source>KERNEL_SIZE</source>
+        <translation>Kernel size</translation>
+    </message>
+    <message>
+        <source>QUALITY_LEVEL</source>
+        <translation>Quality level</translation>
+    </message>
+    <message>
+        <source>MIN_DISTANCE</source>
+        <translation>Min distance</translation>
+    </message>
+    <message>
+        <source>TYPE_CRITERIA</source>
+        <translation>Type criteria</translation>
+    </message>
+    <message>
+        <source>CV_TERMCRIT_ITER</source>
+        <translation>Max number of iteration</translation>
+    </message>
+    <message>
+        <source>CV_TERMCRIT_EPS</source>
+        <translation>Epsilon</translation>
+    </message>
+    <message>
+        <source>CV_TERMCRIT_ITER | CV_TERMCRIT_EPS</source>
+        <translation>Max number of iteration or epsilon</translation>
+    </message>
+    <message>
+        <source>MAX_ITER</source>
+        <translation>Max iteration</translation>
+    </message>
+    <message>
+        <source>EPSILON</source>
+        <translation>Epsilon</translation>
+    </message>
+    <message>
+        <source>L2GRADIENT</source>
+        <translation>L2 gradient</translation>
+    </message>
+    <message>
+        <source>LOWTHRESHOLD</source>
+        <translation>Low theshold</translation>
+    </message>
+    <message>
+        <source>RATIO</source>
+        <translation>Ratio</translation>
+    </message>
+    <message>
+        <source>SMOOTH_SIZE</source>
+        <translation>Smooth size</translation>
+    </message>
+    <message>
+        <source>HBINS</source>
+        <translation>Hbins</translation>
+    </message>
+    <message>
+        <source>SBINS</source>
+        <translation>Sbins</translation>
+    </message>
+    <message>
+        <source>HIST_TYPE</source>
+        <translation>Histogram type</translation>
+    </message>
+    <message>
+        <source>CV_HIST_ARRAY</source>
+        <translation>Multi-dimensional dense array</translation>
+    </message>
+    <message>
+        <source>CV_HIST_SPARSE</source>
+        <translation>Multi-dimensional sparse array</translation>
+    </message>
+    <message>
+        <source>THRESHOLD_VALUE</source>
+        <translation>Threshold value</translation>
+    </message>
+    <message>
+        <source>MAX_THRESHOLD</source>
+        <translation>Max threshold</translation>
+    </message>
+    <message>
+        <source>FIND_CONTOURS_METHOD</source>
+        <translation>Chain approximation method</translation>
+    </message>
+    <message>
+        <source>CV_CHAIN_APPROX_NONE</source>
+        <translation>None</translation>
+    </message>
+    <message>
+        <source>CV_CHAIN_APPROX_SIMPLE</source>
+        <translation>Simple</translation>
+    </message>
+    <message>
+        <source>CV_CHAIN_APPROX_TC89_KCOS</source>
+        <translation>TC89 KCOS</translation>
+    </message>
+    <message>
+        <source>CV_CHAIN_APPROX_TC89_L1</source>
+        <translation>TC89 L1</translation>
+    </message>
 </context>
 <context>
     <name>EntityGUI_PictureImportDlg</name>

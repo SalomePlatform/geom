@@ -5255,6 +5255,110 @@ Le nombre de points n&apos;est pas suffisant</translation>
         <source>GEOM_LEFT</source>
         <translation>Gauche (X-Z)</translation>
     </message>
+    <message>
+        <source>USE_ROI</source>
+        <translation type="unfinished">Use region of interest</translation>
+    </message>
+    <message>
+        <source>KERNEL_SIZE</source>
+        <translation type="unfinished">Kernel size</translation>
+    </message>
+    <message>
+        <source>QUALITY_LEVEL</source>
+        <translation type="unfinished">Quality level</translation>
+    </message>
+    <message>
+        <source>MIN_DISTANCE</source>
+        <translation type="unfinished">Min distance</translation>
+    </message>
+    <message>
+        <source>TYPE_CRITERIA</source>
+        <translation type="unfinished">Type criteria</translation>
+    </message>
+    <message>
+        <source>CV_TERMCRIT_ITER</source>
+        <translation type="unfinished">Max number of iteration</translation>
+    </message>
+    <message>
+        <source>CV_TERMCRIT_EPS</source>
+        <translation type="unfinished">Epsilon</translation>
+    </message>
+    <message>
+        <source>CV_TERMCRIT_ITER | CV_TERMCRIT_EPS</source>
+        <translation type="unfinished">Max number of iteration or epsilon</translation>
+    </message>
+    <message>
+        <source>MAX_ITER</source>
+        <translation type="unfinished">Max iteration</translation>
+    </message>
+    <message>
+        <source>EPSILON</source>
+        <translation type="unfinished">Epsilon</translation>
+    </message>
+    <message>
+        <source>L2GRADIENT</source>
+        <translation type="unfinished">L2 gradient</translation>
+    </message>
+    <message>
+        <source>LOWTHRESHOLD</source>
+        <translation type="unfinished">Low theshold</translation>
+    </message>
+    <message>
+        <source>RATIO</source>
+        <translation type="unfinished">Ratio</translation>
+    </message>
+    <message>
+        <source>SMOOTH_SIZE</source>
+        <translation type="unfinished">Smooth size</translation>
+    </message>
+    <message>
+        <source>HBINS</source>
+        <translation type="unfinished">Hbins</translation>
+    </message>
+    <message>
+        <source>SBINS</source>
+        <translation type="unfinished">Sbins</translation>
+    </message>
+    <message>
+        <source>HIST_TYPE</source>
+        <translation type="unfinished">Histogram type</translation>
+    </message>
+    <message>
+        <source>CV_HIST_ARRAY</source>
+        <translation type="unfinished">Multi-dimensional dense array</translation>
+    </message>
+    <message>
+        <source>CV_HIST_SPARSE</source>
+        <translation type="unfinished">Multi-dimensional sparse array</translation>
+    </message>
+    <message>
+        <source>THRESHOLD_VALUE</source>
+        <translation type="unfinished">Threshold value</translation>
+    </message>
+    <message>
+        <source>MAX_THRESHOLD</source>
+        <translation type="unfinished">Max threshold</translation>
+    </message>
+    <message>
+        <source>FIND_CONTOURS_METHOD</source>
+        <translation type="unfinished">Chain approximation method</translation>
+    </message>
+    <message>
+        <source>CV_CHAIN_APPROX_NONE</source>
+        <translation type="unfinished">None</translation>
+    </message>
+    <message>
+        <source>CV_CHAIN_APPROX_SIMPLE</source>
+        <translation type="unfinished">Simple</translation>
+    </message>
+    <message>
+        <source>CV_CHAIN_APPROX_TC89_KCOS</source>
+        <translation type="unfinished">TC89 KCOS</translation>
+    </message>
+    <message>
+        <source>CV_CHAIN_APPROX_TC89_L1</source>
+        <translation type="unfinished">TC89 L1</translation>
+    </message>
 </context>
 <context>
     <name>EntityGUI_PictureImportDlg</name>

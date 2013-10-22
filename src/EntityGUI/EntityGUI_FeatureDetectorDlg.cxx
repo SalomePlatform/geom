@@ -89,6 +89,25 @@ enum {
   PUSH_BUTTON,
 };
 
+enum {
+  KERNEL_SIZE,
+  FIND_CONTOURS_METHOD,
+  QUALITY_LEVEL,
+  MIN_DISTANCE,
+  TYPE_CRITERIA,
+  MAX_ITER,
+  EPSILON,
+  LOW_THRESHOLD,
+  RATIO,
+  L2GRADIENT,
+  SMOOTH_SIZE,
+  HBINS,
+  SBINS,
+  HIST_TYPE,
+  THRESHOLD_VALUE,
+  MAX_THRESHOLD,
+};
+
 // // // View
 // // enum {
 // //   XY,
@@ -157,9 +176,151 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   
 //   myOutputGroup->hide(); //caché pour la demo
     
+  // Parameters 
+  QGridLayout* parametersLayout = new QGridLayout();
+  parametersLayout->setMargin(9);
+  QComboBox* kernelSize = new QComboBox();
+  kernelSize->addItems( QStringList() << "3" << "5" << "7" );
+  myWidgets.insert( KERNEL_SIZE, kernelSize );
+  myUseROI = new QCheckBox( tr("USE_ROI") );
+  myUseROI->setChecked( true );
+
+  parametersLayout->addWidget( new QLabel( tr("KERNEL_SIZE") ), 0, 0 );
+  parametersLayout->addWidget( kernelSize, 0, 1 );
+  parametersLayout->addWidget( myUseROI, 0, 2 );
+
+  // Corners Parameters 
+  myCornersParameters = new QFrame();
+  myCornersParameters->setFrameStyle(QFrame::NoFrame);
+  QDoubleSpinBox* qualityLevel = new QDoubleSpinBox();
+  qualityLevel->setValue( 0.2 );
+  qualityLevel->setSingleStep( 0.1 );
+  qualityLevel->setRange( 0.01, 0.99 );
+  myWidgets.insert( QUALITY_LEVEL, qualityLevel );
+  QDoubleSpinBox* minDistance = new QDoubleSpinBox();
+  minDistance->setValue( 1 );
+  myWidgets.insert( MIN_DISTANCE, minDistance );
+  QComboBox* typeCriteria = new QComboBox();
+  typeCriteria->addItems( QStringList() << tr("CV_TERMCRIT_ITER") << tr("CV_TERMCRIT_EPS") << tr("CV_TERMCRIT_ITER | CV_TERMCRIT_EPS") );
+  typeCriteria->setCurrentIndex( 2 );
+  myWidgets.insert( TYPE_CRITERIA, typeCriteria );
+  QSpinBox* maxIter = new QSpinBox();
+  maxIter->setValue( 20 );
+  maxIter->setRange( 1, 100 );
+  myWidgets.insert( MAX_ITER, maxIter );
+  QDoubleSpinBox* epsilon = new QDoubleSpinBox();
+  epsilon->setValue( 0.03 );
+  epsilon->setSingleStep( 0.01 );
+  myWidgets.insert( EPSILON, epsilon );
+
+  QGridLayout* cornersLayout = new QGridLayout();
+  cornersLayout->setMargin( 0 );
+  cornersLayout->addWidget( new QLabel( tr("QUALITY_LEVEL") ), 0, 0 );
+  cornersLayout->addWidget( qualityLevel, 0, 1 );
+  cornersLayout->addWidget( new QLabel( tr("MIN_DISTANCE") ), 0, 2 );
+  cornersLayout->addWidget( minDistance, 0 ,3 );
+  cornersLayout->addWidget( new QLabel( tr("TYPE_CRITERIA") ), 1, 0 );
+  cornersLayout->addWidget( typeCriteria, 1, 1, 1, 3 );
+  cornersLayout->addWidget( new QLabel( tr("MAX_ITER") ), 2, 0 );
+  cornersLayout->addWidget( maxIter, 2, 1 );
+  cornersLayout->addWidget( new QLabel( tr("EPSILON") ), 2, 2 );
+  cornersLayout->addWidget( epsilon, 2 , 3 );
+
+  myCornersParameters->setLayout( cornersLayout );
+
+  // Contours Parameters
+  myContoursParameters = new QFrame();
+  myContoursParameters->setFrameStyle(QFrame::NoFrame);
+
+  QComboBox* findContoursMethod = new QComboBox();
+  findContoursMethod->addItems( QStringList() << tr("CV_CHAIN_APPROX_NONE") << tr("CV_CHAIN_APPROX_SIMPLE") << tr("CV_CHAIN_APPROX_TC89_L1") << tr("CV_CHAIN_APPROX_TC89_KCOS") );
+  myWidgets.insert( FIND_CONTOURS_METHOD, findContoursMethod );
+
+  myCannyParameters = new QFrame();
+  myCannyParameters->setFrameStyle(QFrame::NoFrame);
+  QSpinBox* threshold = new QSpinBox();
+  threshold->setRange( 0, 255 );
+  threshold->setValue( 100 );
+  myWidgets.insert( LOW_THRESHOLD, threshold );
+  QSpinBox* ratio = new QSpinBox();
+  ratio->setValue( 3 );
+  ratio->setRange( 0, 255 );
+  myWidgets.insert( RATIO, ratio );
+  QCheckBox* L2gradient = new QCheckBox(tr("L2GRADIENT"));
+  L2gradient->setChecked(true);
+  myWidgets.insert( L2GRADIENT, L2gradient );
+
+  QGridLayout* cannyLayout = new QGridLayout();
+  cannyLayout->setMargin( 0 );
+  cannyLayout->addWidget( new QLabel( tr("LOWTHRESHOLD") ), 0, 0 );
+  cannyLayout->addWidget( threshold, 0, 1 );
+  cannyLayout->addWidget( new QLabel( tr("RATIO") ), 0, 2 );
+  cannyLayout->addWidget( ratio, 0, 3 );
+  cannyLayout->addWidget( L2gradient, 1, 0 );
+
+  myCannyParameters->setLayout( cannyLayout );
+  myCannyParameters->setHidden( true );
+
+  myColorFilterParameters = new QFrame();
+  myColorFilterParameters->setFrameStyle(QFrame::NoFrame);
+
+  QSpinBox* smoothSize = new QSpinBox();
+  smoothSize->setValue( 3 );
+  smoothSize->setSingleStep( 2 );
+  smoothSize->setRange( 1, 1000 );
+  myWidgets.insert( SMOOTH_SIZE, smoothSize );
+  QSpinBox* hbins = new QSpinBox();
+  hbins->setValue( 30 );
+  hbins->setRange( 0, 179 );
+  myWidgets.insert( HBINS, hbins );
+  QSpinBox* sbins = new QSpinBox();
+  sbins->setValue( 32 );
+  sbins->setRange( 0, 255 );
+  myWidgets.insert( SBINS, sbins );
+  QComboBox* histType = new QComboBox();
+  histType->addItems( QStringList() << tr("CV_HIST_ARRAY") << tr("CV_HIST_SPARSE") );
+  myWidgets.insert( HIST_TYPE, histType );
+  QDoubleSpinBox* thresholdValue = new QDoubleSpinBox();
+  thresholdValue->setRange( 0, 254 );
+  thresholdValue->setValue( 128 );
+  myWidgets.insert( THRESHOLD_VALUE, thresholdValue );
+  QDoubleSpinBox* maxThreshold = new QDoubleSpinBox();
+  maxThreshold->setRange( 1, 255 );
+  maxThreshold->setValue( 255 );
+  myWidgets.insert( MAX_THRESHOLD, maxThreshold );
+
+  QGridLayout* colorFilterLayout = new QGridLayout();
+  colorFilterLayout->setMargin( 0 );
+  colorFilterLayout->addWidget( new QLabel( tr("SMOOTH_SIZE") ), 0, 0 );
+  colorFilterLayout->addWidget( smoothSize, 0, 1 );
+  colorFilterLayout->addWidget( new QLabel( tr("HBINS") ), 1, 0 );
+  colorFilterLayout->addWidget( hbins, 1, 1 );
+  colorFilterLayout->addWidget( new QLabel( tr("SBINS") ), 1, 2 );
+  colorFilterLayout->addWidget( sbins, 1, 3 );
+  colorFilterLayout->addWidget( new QLabel( tr("HIST_TYPE") ), 2, 0 );
+  colorFilterLayout->addWidget( histType, 2, 1, 1, 3 );
+  colorFilterLayout->addWidget( new QLabel( tr("THRESHOLD_VALUE") ), 3, 0 );
+  colorFilterLayout->addWidget( thresholdValue, 3, 1 );
+  colorFilterLayout->addWidget( new QLabel( tr("MAX_THRESHOLD") ), 3, 2 );
+  colorFilterLayout->addWidget( maxThreshold, 3, 3 );
+
+  myColorFilterParameters->setLayout( colorFilterLayout );
+  QGridLayout* contoursLayout = new QGridLayout();
+  contoursLayout->setMargin( 0 );
+  contoursLayout->addWidget( new QLabel( tr("FIND_CONTOURS_METHOD") ), 0, 0 );
+  contoursLayout->addWidget( findContoursMethod, 0, 1 );
+  contoursLayout->addWidget( myCannyParameters, 1, 0, 1, 3 );
+  contoursLayout->addWidget( myColorFilterParameters, 1, 0, 1, 3  );
+
+  myContoursParameters->setLayout( contoursLayout );
+
+  parametersLayout->addWidget( myCornersParameters, 1, 0, 1, 3 );
+  parametersLayout->addWidget( myContoursParameters, 1, 0, 1, 3 );
+
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
 //   layout->addWidget( myViewGroup);
+  layout->addLayout( parametersLayout );
   layout->addWidget( mySelectionGroup);
   layout->addWidget( myOutputGroup);
   
@@ -192,6 +353,7 @@ void EntityGUI_FeatureDetectorDlg::Init()
   connect( myGeomGUI,         SIGNAL( SignalCloseAllDialogs() ), this, SLOT( ClickOnCancel() ) );
   connect( buttonOk(),        SIGNAL( clicked() ),               this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),     SIGNAL( clicked() ),               this, SLOT( ClickOnApply() ) );
+  connect( myUseROI,          SIGNAL( toggled(bool) ),           this, SLOT( onCheckBoxClicked(bool) ) );
   connect( this,              SIGNAL(constructorsClicked(int)),  this, SLOT(ConstructorsClicked(int))); 
   connect( mySelectionGroup->PushButton2,      SIGNAL( clicked() ),               this, SLOT( onButtonClicked() ) );
   connect( mySelectionGroup->PushButton1,       SIGNAL( clicked() ),               this, SLOT( onButtonClicked() ) );  
@@ -341,23 +503,21 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
   switch (id)
   {
     case CORNERS:
+      myCornersParameters->show();
+      myContoursParameters->hide();
 //       myViewGroup->show();
 //       mySelectionGroup->show();
       myOutputGroup->hide();
 //       mySelectionGroup->TextLabel2->setText(tr("GEOM_DETECT_ZONE"));
-      mySelectionGroup->TextLabel2->hide();
-      mySelectionGroup->Frame->hide();
-      mySelectionGroup->PushButton2->hide();
       initName(tr("GEOM_CORNERS"));
       break;
     case CONTOURS:
+      myCornersParameters->hide();
+      myContoursParameters->show();
 //       myViewGroup->hide();
 //       mySelectionGroup->hide();
 //       mySelectionGroup->show();
       myOutputGroup->show();
-      mySelectionGroup->TextLabel2->show();
-      mySelectionGroup->Frame->show();
-      mySelectionGroup->PushButton2->show();
       mySelectionGroup->TextLabel2->setText(tr("GEOM_COLOR_FILTER"));
       initName(tr("GEOM_CONTOURS"));
       break;
@@ -422,6 +582,78 @@ void EntityGUI_FeatureDetectorDlg::onButtonClicked()
     myEditCurrentArgument = mySelectionGroup->LineEdit1;
     mySelectionGroup->LineEdit1->setEnabled(true);   
   }
+}
+
+//=================================================================================
+// function : onCheckBoxClicked(bool)
+// purpose  :
+//=================================================================================
+void EntityGUI_FeatureDetectorDlg::onCheckBoxClicked( bool isChecked )
+{
+  mySelectionGroup->TextLabel2->setVisible( isChecked );
+  mySelectionGroup->Frame->setVisible( isChecked );
+  mySelectionGroup->PushButton2->setVisible( isChecked );
+  myCannyParameters->setHidden( isChecked );
+  myColorFilterParameters->setHidden( !isChecked );
+}
+
+//=================================================================================
+// function : parametersChanged()
+// purpose  :
+//=================================================================================
+ShapeRec_Parameters* EntityGUI_FeatureDetectorDlg::parametersChanged()
+{
+  ShapeRec_Parameters* aParameters = new ShapeRec_Parameters();
+
+  if ( myConstructorId == CORNERS ) {
+    ShapeRec_CornersParameters* aCornersParameters = dynamic_cast<ShapeRec_CornersParameters*>( aParameters );
+    if ( !aCornersParameters ) aCornersParameters = new ShapeRec_CornersParameters();
+    aCornersParameters->qualityLevel = (dynamic_cast<QDoubleSpinBox*>(myWidgets[QUALITY_LEVEL]))->value();
+    aCornersParameters->minDistance  = (dynamic_cast<QDoubleSpinBox*>(myWidgets[MIN_DISTANCE]))->value();
+    switch ( (dynamic_cast<QComboBox*>(myWidgets[TYPE_CRITERIA]))->currentIndex() ) {
+    case 0: aCornersParameters->typeCriteria = CV_TERMCRIT_ITER;
+    case 1: aCornersParameters->typeCriteria = CV_TERMCRIT_EPS;
+    case 2: aCornersParameters->typeCriteria = CV_TERMCRIT_ITER | CV_TERMCRIT_EPS;
+    }
+    aCornersParameters->maxIter = (dynamic_cast<QSpinBox*>(myWidgets[MAX_ITER]))->value();
+    aCornersParameters->epsilon = (dynamic_cast<QDoubleSpinBox*>(myWidgets[EPSILON]))->value();
+    aParameters = aCornersParameters;
+  }
+  else if ( myConstructorId == CONTOURS ) {
+    if ( !myUseROI->isChecked() ) { 
+      ShapeRec_CannyParameters* aCannyParameters = dynamic_cast<ShapeRec_CannyParameters*>( aParameters );
+      if ( !aCannyParameters ) aCannyParameters = new ShapeRec_CannyParameters();
+      aCannyParameters->lowThreshold = (dynamic_cast<QSpinBox*>(myWidgets[LOW_THRESHOLD]))->value();
+      aCannyParameters->ratio        = (dynamic_cast<QSpinBox*>(myWidgets[RATIO]))->value();
+      aCannyParameters->L2gradient   = (dynamic_cast<QCheckBox*>(myWidgets[L2GRADIENT]))->isChecked();
+      aParameters = aCannyParameters;
+    }
+    else {
+      ShapeRec_ColorFilterParameters* aColorFilterParameters = dynamic_cast<ShapeRec_ColorFilterParameters*>( aParameters );
+      if ( !aColorFilterParameters ) aColorFilterParameters = new ShapeRec_ColorFilterParameters();
+      int aSmoothSize = (dynamic_cast<QSpinBox*>(myWidgets[SMOOTH_SIZE]))->value();
+      aColorFilterParameters->smoothSize  = aSmoothSize % 2 == 0 ? aSmoothSize - 1 : aSmoothSize;
+      aColorFilterParameters->histSize[0] = (dynamic_cast<QSpinBox*>(myWidgets[HBINS]))->value();
+      aColorFilterParameters->histSize[1] = (dynamic_cast<QSpinBox*>(myWidgets[SBINS]))->value();
+      switch ( (dynamic_cast<QComboBox*>(myWidgets[HIST_TYPE]))->currentIndex() ) {
+      case 0: aColorFilterParameters->histType = CV_HIST_ARRAY;  break;
+      case 1: aColorFilterParameters->histType = CV_HIST_SPARSE; break;
+      }
+      aColorFilterParameters->threshold    = (dynamic_cast<QDoubleSpinBox*>(myWidgets[THRESHOLD_VALUE]))->value();
+      aColorFilterParameters->maxThreshold = (dynamic_cast<QDoubleSpinBox*>(myWidgets[MAX_THRESHOLD]))->value();
+      aParameters = aColorFilterParameters;
+    }
+  }
+ 
+  aParameters->kernelSize = ( (dynamic_cast<QComboBox*>(myWidgets[KERNEL_SIZE]))->currentText() ).toInt();
+  switch ( (dynamic_cast<QComboBox*>(myWidgets[FIND_CONTOURS_METHOD]))->currentIndex() ) {
+  case 0: aParameters->findContoursMethod = CV_CHAIN_APPROX_NONE;      break;
+  case 1: aParameters->findContoursMethod = CV_CHAIN_APPROX_SIMPLE;    break;
+  case 2: aParameters->findContoursMethod = CV_CHAIN_APPROX_TC89_L1;   break;
+  case 3: aParameters->findContoursMethod = CV_CHAIN_APPROX_TC89_KCOS; break;
+  }
+
+  return aParameters;
 }
 
 //=================================================================================
@@ -501,85 +733,87 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   
   GEOM::GEOM_IBasicOperations_var  aBasicOperations  = myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
   GEOM::GEOM_IShapesOperations_var aShapesOperations = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
-  
-  if (myConstructorId == CORNERS)
-  {
-    double subPictureLeft;
-    double subPictureTop;
-    if( !myRect.isEmpty() )
+
+  ShapeRec_Parameters* parameters = parametersChanged();
+  if ( !parameters ) parameters = new ShapeRec_Parameters();
+
+  bool useROI = myUseROI->isChecked() && !myRect.isEmpty();
+  try {
+    if (myConstructorId == CORNERS)
     {
-      aDetector->SetROI( myRect );
-      subPictureLeft    = myStartPnt.X();                
-      subPictureTop     = myStartPnt.Y();
-    }
-    else
-    {
-      subPictureLeft    = pictureLeft;
-      subPictureTop     = pictureTop;
-    }
-    aDetector->ComputeCorners();
-    CvPoint2D32f* corners     = aDetector->GetCorners();
-    int cornerCount           = aDetector->GetCornerCount();
-    int i;
-    
-    // Build the geom objects associated to the detected corners and returned by execute   
-    if( !aBasicOperations->_is_nil() && !aShapesOperations->_is_nil() ) 
-    {
-      GEOM::GEOM_Object_var  aGeomCorner;
-      GEOM::ListOfGO_var     geomCorners = new GEOM::ListOfGO();
-      geomCorners->length( cornerCount );
-      for (i = 0; i < cornerCount; i++)
+      double subPictureLeft;
+      double subPictureTop;
+      if( useROI )
       {
-        double x = subPictureLeft + corners[i].x;
-        double y = subPictureTop  - corners[i].y;
-        double z =  0;
-        
-        aGeomCorner = aBasicOperations->MakePointXYZ( x,y,z );
-        
-        geomCorners[i] = aGeomCorner;  
-      } 
-      GEOM::GEOM_Object_var aCompound = aShapesOperations->MakeCompound(geomCorners);    
-      if ( !aCompound->_is_nil() )
-      {
-        // Dark blue color
-        SALOMEDS::Color aColor;
-        aColor.R = 0;
-        aColor.G = 0;
-        aColor.B = 0.8;
-        
-        aCompound->SetColor(aColor);
-        aCompound->SetMarkerStd(GEOM::MT_POINT,GEOM::MS_30);
-        objects.push_back( aCompound._retn() );
-        res = true;
+	subPictureLeft    = myStartPnt.X();                
+	subPictureTop     = myStartPnt.Y();
       }
+      else
+      {
+	subPictureLeft    = pictureLeft;
+	subPictureTop     = pictureTop;
+      }
+      aDetector->ComputeCorners( useROI, parameters );
+      CvPoint2D32f* corners     = aDetector->GetCorners();
+      int cornerCount           = aDetector->GetCornerCount();
+      int i;
+    
+      // Build the geom objects associated to the detected corners and returned by execute   
+      if( !aBasicOperations->_is_nil() && !aShapesOperations->_is_nil() ) 
+      {
+	GEOM::GEOM_Object_var  aGeomCorner;
+	GEOM::ListOfGO_var     geomCorners = new GEOM::ListOfGO();
+	geomCorners->length( cornerCount );
+	for (i = 0; i < cornerCount; i++)
+        {
+	  double x = subPictureLeft + corners[i].x;
+	  double y = subPictureTop  - corners[i].y;
+	  double z =  0;
+        
+	  aGeomCorner = aBasicOperations->MakePointXYZ( x,y,z );
+        
+	  geomCorners[i] = aGeomCorner;  
+	} 
+	GEOM::GEOM_Object_var aCompound = aShapesOperations->MakeCompound(geomCorners);    
+	if ( !aCompound->_is_nil() )
+	{
+	  // Dark blue color
+	  SALOMEDS::Color aColor;
+	  aColor.R = 0;
+	  aColor.G = 0;
+	  aColor.B = 0.8;
+
+	  aCompound->SetColor(aColor);
+	  aCompound->SetMarkerStd(GEOM::MT_POINT,GEOM::MS_30);
+	  objects.push_back( aCompound._retn() );
+	  res = true;
+	}
+      }   
     }
-  }
-  else if (myConstructorId == CONTOURS)
-  {
-    int method = 0 ; //CANNY
-    if( !myRect.isEmpty() && myRect.width() > 1 )
-    {
-      aDetector->SetROI( myRect );
-      method = 1 ; //COLORFILTER    
-    }
+    else if (myConstructorId == CONTOURS)
+    {    
+      GEOM::GEOM_ICurvesOperations_var aCurveOperations = myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+
+      aDetector->ComputeContours( useROI, parameters );
+      std::vector< std::vector<cv::Point> >   contours  = aDetector->GetContours();
+      std::vector<cv::Vec4i>                  hierarchy = aDetector->GetContoursHierarchy();
     
-    GEOM::GEOM_ICurvesOperations_var aCurveOperations = myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
+      std::vector< cv::Point >                contour;
+      int idx = 0;
+      
+      GEOM::ListOfGO_var                      geomContours = new GEOM::ListOfGO();
+      int contourCount = 0;
     
-    aDetector->ComputeContours( method );
-    std::vector< std::vector<cv::Point> >   contours  = aDetector->GetContours();
-    std::vector<cv::Vec4i>                  hierarchy = aDetector->GetContoursHierarchy();
+      bool insert;
     
-    std::vector< cv::Point >                contour;
-    int idx = 0;
-    
-    GEOM::ListOfGO_var                      geomContours = new GEOM::ListOfGO();
-    int contourCount = 0;
-    
-    bool insert;
-    
-    MESSAGE("hierarchy.size() =" << hierarchy.size()) 
-    for( ; idx >= 0; idx = hierarchy[idx][0])
-    {
+      MESSAGE("hierarchy.size() =" << hierarchy.size()) 
+      if ( hierarchy.size() < 1 ) {
+	getOperation()->SetErrorCode( "Impossible detected contours" );
+	return false;
+      }
+
+      for( ; idx >= 0; idx = hierarchy[idx][0])
+      {
 //       for(int count=0, child=idx; child>=0, count<1; child=hierarchy[idx][2], count++)
 //       {     
 //         contour = contours[child];
@@ -595,7 +829,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
         int j = 0;
         std::set< std::vector<int> > existing_points;
         std::pair< std::set< std::vector<int> >::iterator,bool > pnt_it;
-        for ( it=contour.begin() ; it < contour.end(); it++ )
+        for ( it=contour.begin() ; it < contour.end()-1; it++ )
         {
           int pnt_array[] = {it->x,it->y};     
           std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(int) );
@@ -662,13 +896,18 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
           contourCount++;
         }
 //       }
+      }
+      GEOM::GEOM_Object_var aContoursCompound = aShapesOperations->MakeCompound(geomContours);
+      if ( !aContoursCompound->_is_nil() )
+      {
+	objects.push_back( aContoursCompound._retn() );
+      }
+      res=true;
     }
-    GEOM::GEOM_Object_var aContoursCompound = aShapesOperations->MakeCompound(geomContours);
-    if ( !aContoursCompound->_is_nil() )
-    {
-      objects.push_back( aContoursCompound._retn() );
-    }
-    res=true;
+  }
+  catch( ... ) {
+    getOperation()->SetErrorCode( "Impossible detected contours/corners" );
+    return false;
   }
   
   // TEST not very conclusive

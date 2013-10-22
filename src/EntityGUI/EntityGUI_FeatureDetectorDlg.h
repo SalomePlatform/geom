@@ -34,6 +34,7 @@ class QCheckBox;
 class QGroupBox;
 class QPushButton;
 class QLabel;
+class QFrame;
 class QPoint;
 class DlgRef_3Radio;
 class DlgRef_1Sel;
@@ -41,6 +42,7 @@ class DlgRef_1Sel1Frame;
 
 class gp_Pnt;
 class ShapeRec_FeatureDetector;
+class ShapeRec_Parameters;
 
 //=================================================================================
 // class    : EntityGUI_Dlg
@@ -68,6 +70,7 @@ private:
   void                               Init();
   bool                               setSelectionRect();
   void                               showImageSample();
+  ShapeRec_Parameters*               parametersChanged();
 
   
 private slots:
@@ -75,6 +78,7 @@ private slots:
   void                               ConstructorsClicked( int );
 //   void                               onViewClicked( int );
   void                               onButtonClicked(); 
+  void                               onCheckBoxClicked( bool );
   void                               ClickOnOk();
   bool                               ClickOnApply();
   
@@ -92,6 +96,13 @@ private:
   
   DlgRef_1Sel1Frame*                 mySelectionGroup; 
   DlgRef_1Sel*                       mySelWidget;
+
+  QCheckBox*                         myUseROI;
+  QFrame*                            myCornersParameters;
+  QFrame*                            myContoursParameters;
+  QFrame*                            myCannyParameters;
+  QFrame*                            myColorFilterParameters;
+  QList<QWidget*>                    myWidgets;
   
   // Output typeselection widget
   DlgRef_3Radio*                     myOutputGroup;;
