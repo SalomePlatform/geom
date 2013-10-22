@@ -27,9 +27,7 @@
 #include <stdio.h>
 #include "utilities.h"
 
-using namespace cv;
-
-//TODO : All the following methods but ComputeContours use the C API of OpenCV while ComputContours
+// TODO : All the following methods but ComputeContours use the C API of OpenCV while ComputContours
 // uses the C++ API of the library.
 // This should be homogenized and preferably by using the C++ API (which is more recent for all the methods
 
@@ -68,19 +66,17 @@ void ShapeRec_FeatureDetector::SetPath( const std::string& thePath )
 /*!
   Computes the corners of the image located at imagePath
 */
-void ShapeRec_FeatureDetector::ComputeCorners(){
-  
-  // Parameters for the corner detection
-  double qualityLevel = 0.2;
-  double minDistance = 1;
- 
+void ShapeRec_FeatureDetector::ComputeCorners( bool useROI, ShapeRec_Parameters* parameters ){
+  ShapeRec_CornersParameters* aCornersParameters = dynamic_cast<ShapeRec_CornersParameters*>( parameters );
+  if ( !aCornersParameters ) aCornersParameters = new  ShapeRec_CornersParameters();
+
   // Images to be used for detection
   IplImage *eig_img, *temp_img, *src_img_gray;
   
   // Load image
   src_img_gray = cvLoadImage (imagePath.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
   
-  if ( rect.width > 1 )
+  if ( useROI )
   {
     // If a ROI as been set use it for detection
     cvSetImageROI( src_img_gray, rect );
@@ -96,9 +92,9 @@ void ShapeRec_FeatureDetector::ComputeCorners(){
 
   // Corner detection using cvCornerMinEigenVal 
   // (one of the methods available inOpenCV, there is also a cvConerHarris method that can be used by setting a flag in cvGoodFeaturesToTrack)
-  cvGoodFeaturesToTrack (src_img_gray, eig_img, temp_img, corners, &cornerCount, /*quality-level=*/qualityLevel, /*min-distance=*/minDistance);
-  cvFindCornerSubPix (src_img_gray, corners, cornerCount,
-                    cvSize (3, 3), cvSize (-1, -1), cvTermCriteria (CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03));
+  cvGoodFeaturesToTrack (src_img_gray, eig_img, temp_img, corners, &cornerCount, aCornersParameters->qualityLevel, aCornersParameters->minDistance);
+  cvFindCornerSubPix (src_img_gray, corners, cornerCount, cvSize (aCornersParameters->kernelSize, aCornersParameters->kernelSize), cvSize (-1, -1),
+		      cvTermCriteria (aCornersParameters->typeCriteria, aCornersParameters->maxIter, aCornersParameters->epsilon));
 
   cvReleaseImage (&eig_img);
   cvReleaseImage (&temp_img);
@@ -109,48 +105,121 @@ void ShapeRec_FeatureDetector::ComputeCorners(){
 /*!
   Computes the contours of the image located at imagePath
 */
-bool ShapeRec_FeatureDetector::ComputeContours( int detection_method ){
+bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters* parameters ){
  
   // Initialising images
-  Mat src, src_gray;
-  Mat detected_edges;
+  cv::Mat src, src_gray;
+  cv::Mat detected_edges;
   
   // Read image
-  src = imread( imagePath.c_str() );
+  src = cv::imread( imagePath.c_str() );
   if( !src.data )
     return false; 
   
-  if ( detection_method == CANNY )   // The problem is that with that filter the detector detects double contours
+  if ( !useROI )   // CANNY: The problem is that with that filter the detector detects double contours
   {   
-    // Thresholds for Canny detector
-    int lowThreshold = 100;
-    int ratio = 3;
-    int kernel_size = 3; // 3,5 or 7
-    
     // Convert the image to grayscale
     if (src.channels() == 3)
-      cvtColor( src, src_gray, CV_BGR2GRAY );
+      cv::cvtColor( src, src_gray, CV_BGR2GRAY );
     else if (src.channels() == 1)
       src_gray = src;
-  
-    // Reduce noise with a kernel 3x3               
-    blur( src_gray, detected_edges, Size(3,3) );
+
+    ShapeRec_CannyParameters* aCannyParameters = dynamic_cast<ShapeRec_CannyParameters*>( parameters );
+    if ( !aCannyParameters ) aCannyParameters = new ShapeRec_CannyParameters();
+
+    // Reduce noise              
+    blur( src_gray, detected_edges, cv::Size( aCannyParameters->kernelSize, aCannyParameters->kernelSize ) );
     // Canny detector
-    Canny( detected_edges, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size, /*L2gradient =*/true );      
+    Canny( detected_edges, detected_edges, aCannyParameters->lowThreshold, aCannyParameters->lowThreshold * aCannyParameters->ratio,
+	   aCannyParameters->kernelSize, aCannyParameters->L2gradient );
   }
-  else if ( detection_method == COLORFILTER )
+  else //COLORFILTER
   {
-    if ( !rect.width > 1 )
-      return false;
-    detected_edges = _colorFiltering();
-  }
-  else if ( detection_method == RIDGE_DETECTOR )  // Method adapted for engineering drawings (e.g. watershed functionnality could be used here cf.OpenCV documentation and samples)
-  {
-    // TODO
-    return false;
-  }
-  _detectAndRetrieveContours( detected_edges );
+    IplImage* find_image = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
+
+    ShapeRec_ColorFilterParameters* aColorFilterParameters = dynamic_cast<ShapeRec_ColorFilterParameters*>( parameters );
+    if ( !aColorFilterParameters ) aColorFilterParameters = new ShapeRec_ColorFilterParameters();
+
+    // Reduce noise
+    cvSmooth( find_image, find_image, CV_GAUSSIAN, aColorFilterParameters->smoothSize, aColorFilterParameters->smoothSize );
   
+    // Crop the image to build an histogram from the selected part
+    cvSetImageROI(find_image, rect);
+    IplImage* test_image = cvCreateImage(cvGetSize(find_image),
+					 find_image->depth,
+					 find_image->nChannels);
+    cvCopy(find_image, test_image, NULL);
+    cvResetImageROI(find_image);
+  
+    IplImage* test_hsv = cvCreateImage(cvGetSize(test_image),8,3);
+    IplImage* h_plane = cvCreateImage( cvGetSize(test_image), 8, 1 );
+    IplImage* s_plane = cvCreateImage( cvGetSize(test_image), 8, 1 );
+    CvHistogram* hist;
+
+    cvCvtColor(test_image, test_hsv, CV_BGR2HSV);
+  
+    cvCvtPixToPlane(test_hsv, h_plane, s_plane, 0, 0);
+    IplImage* planes[] = { h_plane, s_plane };
+  
+    //create hist
+    float hranges[] = { 0, 180 };
+    float sranges[] = { 0, 256 };
+    float* ranges[] = { hranges, sranges };
+    hist = cvCreateHist( 2, aColorFilterParameters->histSize, aColorFilterParameters->histType, ranges );
+  
+    //calculate hue /saturation histogram
+    cvCalcHist(planes, hist, 0 ,0);
+
+//   // TEST print of the histogram for debugging
+//   IplImage* hist_image = cvCreateImage(cvSize(320,300),8,3);
+//   
+//   //draw hist on hist_test image.
+//   cvZero(hist_image);
+//   float max_value = 0;
+//   cvGetMinMaxHistValue(hist, 0 , &max_value, 0, 0);
+//   int bin_w = hist_image->width/size_hist;
+//   for(int i = 0; i < size_hist; i++ )
+//   {
+//     //prevent overflow
+//     int val = cvRound( cvGetReal1D(hist->bins,i)*hist_image->
+//     height/max_value);
+//     CvScalar color = CV_RGB(200,0,0);
+//     //hsv2rgb(i*180.f/size_hist);
+//     cvRectangle( hist_image, cvPoint(i*bin_w,hist_image->height),
+//     cvPoint((i+1)*bin_w,hist_image->height - val),
+//     color, -1, 8, 0 );
+//   }
+//  
+//    
+//   cvNamedWindow("hist", 1); cvShowImage("hist",hist_image);
+  
+  
+    //calculate back projection of hue and saturation planes of input image
+    IplImage* backproject = cvCreateImage(cvGetSize(test_image), 8, 1);
+    IplImage* binary_backproject = cvCreateImage(cvGetSize(test_image), 8, 1);
+    cvCalcBackProject(planes, backproject, hist);
+  
+    // Threshold in order to obtain binary image
+    cvThreshold(backproject, binary_backproject, aColorFilterParameters->threshold, aColorFilterParameters->maxThreshold, CV_THRESH_BINARY);
+    cvReleaseImage(&test_image);
+    cvReleaseImage(&test_hsv);
+    cvReleaseImage(&h_plane);
+    cvReleaseImage(&s_plane);
+    cvReleaseImage(&find_image);
+    cvReleaseImage(&backproject);
+  
+    detected_edges = cv::Mat(binary_backproject);
+  }
+  // else if ( detection_method == RIDGE_DETECTOR )  // Method adapted for engineering drawings (e.g. watershed functionnality could be used here cf.OpenCV documentation and samples)
+  // {
+  //   // TODO
+  //   return false;
+  // }
+
+  //  _detectAndRetrieveContours( detected_edges, parameters->findContoursMethod );
+  detected_edges = detected_edges > 1;
+  findContours( detected_edges, contours, hierarchy, CV_RETR_CCOMP, parameters->findContoursMethod, useROI ? cvPoint(rect.x,rect.y) : cvPoint(0,0) );
+
   return true;
   
 }
@@ -161,9 +230,9 @@ bool ShapeRec_FeatureDetector::ComputeContours( int detection_method ){
 bool ShapeRec_FeatureDetector::ComputeLines(){
   MESSAGE("ShapeRec_FeatureDetector::ComputeLines()")
   // Initialising images
-  Mat src, src_gray, detected_edges, dst;
+  cv::Mat src, src_gray, detected_edges, dst;
   
-  src=imread(imagePath.c_str(), 0);
+  src=cv::imread(imagePath.c_str(), 0);
   
   Canny( src, dst, 50, 200, 3 );
   HoughLinesP( dst, lines, 1, CV_PI/180, 80, 30, 10 );
@@ -203,111 +272,65 @@ std::string ShapeRec_FeatureDetector::CroppImage()
   return "/tmp/cropped_image.bmp";
 }
 
-
 /*!
-  Performs contours detection and store them in contours 
-  \param binaryImg - src image to find contours of 
+  \class ShapeRec_CornersParameters
+  \brief Parameters for the corners detection 
 */
-void ShapeRec_FeatureDetector::_detectAndRetrieveContours( Mat binaryImg )
+ShapeRec_CornersParameters::ShapeRec_CornersParameters()
 {
-  binaryImg = binaryImg > 1; 
-  int method = CV_CHAIN_APPROX_NONE;
-  findContours( binaryImg, contours, hierarchy,CV_RETR_CCOMP, method);
-  // Other possible approximations CV_CHAIN_APPROX_TC89_KCOS, CV_CHAIN_APPROX_TC89_L1, CV_CHAIN_APPROX_SIMPLE cf. OpenCV documentation 
-  // for precise information
+  qualityLevel = 0.2;
+  minDistance = 1;
+  typeCriteria = CV_TERMCRIT_ITER | CV_TERMCRIT_EPS;
+  maxIter = 20;
+  epsilon = 0.03;
+}
+ShapeRec_CornersParameters::~ShapeRec_CornersParameters()
+{
 }
 
 /*!
-  Performs color filtering from the image sample contained in the ROI rect of the image 
-  located at imagePath
-  Thresholds the result in order ot obtain a binary image
-  \return binary image resulting from filtering and thersholding
+  \class ShapeRec_Parameters
+  \brief Parameters for the contour/corners detection 
 */
-Mat ShapeRec_FeatureDetector::_colorFiltering()
-{  
-  IplImage* find_image = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
-  // Reduce noise with a kernel 3x3               
-  cvSmooth( find_image, find_image, CV_GAUSSIAN, 3, 3 );
-  
-  if ( !rect.width > 1 )
-    return Mat(find_image);
-  
-  // Crop the image to build an histogram from the selected part
-  cvSetImageROI(find_image, rect);
-  IplImage* test_image = cvCreateImage(cvGetSize(find_image),
-                                       find_image->depth,
-                                       find_image->nChannels);
-  cvCopy(find_image, test_image, NULL);
-  cvResetImageROI(find_image);
-  
-  IplImage* test_hsv = cvCreateImage(cvGetSize(test_image),8,3);
-  IplImage* h_plane = cvCreateImage( cvGetSize(test_image), 8, 1 );
-  IplImage* s_plane = cvCreateImage( cvGetSize(test_image), 8, 1 );
-  CvHistogram* hist;
+ShapeRec_Parameters::ShapeRec_Parameters()
+{
+  kernelSize = 3;
+  findContoursMethod = CV_CHAIN_APPROX_NONE;
+}
+ShapeRec_Parameters::~ShapeRec_Parameters()
+{
+}
 
-  cvCvtColor(test_image, test_hsv, CV_BGR2HSV);
-  
-  cvCvtPixToPlane(test_hsv, h_plane, s_plane, 0, 0);
-  IplImage* planes[] = { h_plane, s_plane };
-  
-  //create hist
-  int hbins = 30, sbins = 32;                        // TODO think to the best values here
-  int   hist_size[] = { hbins, sbins };
-  float hranges[] = { 0, 180 };
-  float sranges[] = { 0, 255 };
-  float* ranges[] = { hranges, sranges };
-  hist = cvCreateHist(2, hist_size, CV_HIST_ARRAY, ranges, 1);
-  
-  //calculate hue /saturation histogram
-  cvCalcHist(planes, hist, 0 ,0);
+/*!
+  \class ShapeRec_CannyParameters
+  \brief Parameters for the contour detection 
+*/
+ShapeRec_CannyParameters::ShapeRec_CannyParameters()
+{
+  lowThreshold = 100; // is used for edge linking.
+  ratio = 3;          // lowThreshold*ratio is used to find initial segments of strong edges
+  L2gradient = true;  // norm L2 or L1
+}
 
-//   // TEST print of the histogram for debugging
-//   IplImage* hist_image = cvCreateImage(cvSize(320,300),8,3);
-//   
-//   //draw hist on hist_test image.
-//   cvZero(hist_image);
-//   float max_value = 0;
-//   cvGetMinMaxHistValue(hist, 0 , &max_value, 0, 0);
-//   int bin_w = hist_image->width/size_hist;
-//   for(int i = 0; i < size_hist; i++ )
-//   {
-//     //prevent overflow
-//     int val = cvRound( cvGetReal1D(hist->bins,i)*hist_image->
-//     height/max_value);
-//     CvScalar color = CV_RGB(200,0,0);
-//     //hsv2rgb(i*180.f/size_hist);
-//     cvRectangle( hist_image, cvPoint(i*bin_w,hist_image->height),
-//     cvPoint((i+1)*bin_w,hist_image->height - val),
-//     color, -1, 8, 0 );
-//   }
-//  
-//    
-//   cvNamedWindow("hist", 1); cvShowImage("hist",hist_image);
-  
-  
-  //calculate back projection of hue and saturation planes of input image
-  IplImage* backproject = cvCreateImage(cvGetSize(find_image), 8, 1);
-  IplImage* binary_backproject = cvCreateImage(cvGetSize(find_image), 8, 1);
-  IplImage* find_hsv = cvCreateImage(cvGetSize(find_image),8,3);
-  IplImage* find_hplane = cvCreateImage(cvGetSize(find_image),8,1);
-  IplImage* find_splane = cvCreateImage(cvGetSize(find_image),8,1);
-  
-  cvCvtColor(find_image, find_hsv, CV_BGR2HSV);
-  cvCvtPixToPlane(find_hsv, find_hplane, find_splane, 0, 0);
-  IplImage* find_planes[] = { find_hplane, find_splane };
-  cvCalcBackProject(find_planes, backproject, hist);
-  
-  // Threshold in order to obtain binary image
-  cvThreshold(backproject, binary_backproject, 1, 255, CV_THRESH_BINARY);  // NOTE it would be good to think about the best threshold to use (it's 1 for now)
-  cvReleaseImage(&test_image);
-  cvReleaseImage(&test_hsv);
-  cvReleaseImage(&h_plane);
-  cvReleaseImage(&s_plane);
-  cvReleaseImage(&find_image);
-  cvReleaseImage(&find_hsv);
-  cvReleaseImage(&find_hplane);
-  cvReleaseImage(&find_splane);
-  cvReleaseImage(&backproject);
-  
-  return Mat(binary_backproject);
+ShapeRec_CannyParameters::~ShapeRec_CannyParameters()
+{
+}
+
+/*!
+  \class ShapeRec_ColorFilterParameters
+  \brief Parameters for the contour detection 
+*/
+ShapeRec_ColorFilterParameters::ShapeRec_ColorFilterParameters()
+{
+  smoothSize = 3;           // The parameter of the smoothing operation, the aperture width. Must be a positive odd number
+  histSize = new int[2];    // array of the histogram dimension sizes
+  histSize[0] = 30;         // hbins
+  histSize[1] = 32;         // sbins
+  histType = CV_HIST_ARRAY; // histogram representation format
+  threshold = 128;          // threshold value
+  maxThreshold = 255;       // maximum value to use with the THRESH_BINARY thresholding types
+}
+
+ShapeRec_ColorFilterParameters::~ShapeRec_ColorFilterParameters()
+{
 }

@@ -26,17 +26,57 @@
 // OpenCV includes
 #include <cv.h>
 #include <highgui.h>
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 // Qt
 #include <QRect>
 
-enum              // Method used for contour detection
+class ShapeRec_Parameters
 {
-  CANNY,
-  COLORFILTER,
-  RIDGE_DETECTOR
+public:
+  ShapeRec_Parameters();
+  virtual ~ShapeRec_Parameters();
+
+  int kernelSize;
+  int findContoursMethod;
+};
+
+class ShapeRec_CornersParameters : public ShapeRec_Parameters
+{
+public:
+  ShapeRec_CornersParameters();
+  virtual ~ShapeRec_CornersParameters();
+
+  double qualityLevel;
+  double minDistance;
+  int typeCriteria;
+  int maxIter;
+  double epsilon;
+};
+
+class ShapeRec_CannyParameters : public ShapeRec_Parameters
+{
+public:
+  ShapeRec_CannyParameters();
+  virtual ~ShapeRec_CannyParameters();
+  
+  int lowThreshold;
+  int ratio;
+  bool L2gradient;
+};
+
+class ShapeRec_ColorFilterParameters : public ShapeRec_Parameters
+{
+public:
+  ShapeRec_ColorFilterParameters();
+  virtual ~ShapeRec_ColorFilterParameters();
+
+  int smoothSize;
+  int* histSize;
+  int histType;
+  double threshold;
+  double maxThreshold;
 };
 
 class ShapeRec_FeatureDetector
@@ -59,9 +99,9 @@ public:
   int                     GetImgWidth()          { return imgWidth;    };
   
   std::string             CroppImage();
-  void                    ComputeCorners();                              // Detects the corners from the image located at imagePath
-  bool                    ComputeLines();                                // Detects the lines from the image located at imagePath
-  bool                    ComputeContours( int method );                 // Detects the contours from the image located at imagePath
+  void                    ComputeCorners( bool useROI = false, ShapeRec_Parameters* parameters = 0 );  // Detects the corners from the image located at imagePath
+  bool                    ComputeLines();                                                              // Detects the lines from the image located at imagePath
+  bool                    ComputeContours( bool useROI = false, ShapeRec_Parameters* parameters = 0 ); // Detects the contours from the image located at imagePath
   
   
 private:
@@ -76,7 +116,4 @@ private:
   int                     imgHeight;
   int                     imgWidth; 
   CvRect                  rect;
-  
-  void                    _detectAndRetrieveContours( cv::Mat binaryImg );
-  cv::Mat                 _colorFiltering();
 };
