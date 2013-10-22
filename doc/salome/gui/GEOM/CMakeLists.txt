@@ -19,19 +19,11 @@
 
 INCLUDE(${KERNEL_ROOT_DIR}/salome_adm/cmake_files/SalomeMacros.cmake)
 
-SET(top_builddir ${CMAKE_BINARY_DIR})
-SET(top_srcdir ${CMAKE_SOURCE_DIR})
-SET(srcdir ${CMAKE_CURRENT_SOURCE_DIR})
-SET(builddir ${CMAKE_CURRENT_BINARY_DIR})
-SET(datadir ${CMAKE_INSTALL_PREFIX}/share)
-SET(docdir ${datadir}/doc/salome)
-SET(guidocdir ${docdir}/gui/GEOM)
-
 SALOME_CONFIGURE_FILE(doxyfile.in doxyfile)
 SALOME_CONFIGURE_FILE(doxyfile_py.in doxyfile_py)
 SALOME_CONFIGURE_FILE(doxyfile_tui.in doxyfile_tui)
-SALOME_CONFIGURE_FILE(static/header.html.in ${builddir}/static/header.html)
-SALOME_CONFIGURE_FILE(static/header_py.html.in ${builddir}/static/header_py.html)
+SALOME_CONFIGURE_FILE(static/header.html.in ${CMAKE_CURRENT_BINARY_DIR}/static/header.html)
+SALOME_CONFIGURE_FILE(static/header_py.html.in ${CMAKE_CURRENT_BINARY_DIR}/static/header_py.html)
 
 SET(f "$ENV{KERNEL_ROOT_DIR}/bin/salome/prepare_generating_doc.py")
 IF(WIN32)
@@ -52,16 +44,9 @@ ADD_CUSTOM_TARGET(usr_docs ${CMAKE_COMMAND} -E make_directory tmp
 ADD_DEPENDENCIES(usr_docs html_docs)
 
 INSTALL(CODE "EXECUTE_PROCESS(COMMAND \"${CMAKE_COMMAND}\" --build ${PROJECT_BINARY_DIR} --target usr_docs)")
-INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} DESTINATION ${SALOME_INSTALL_DOC}/gui
-        PATTERN "*usr_docs*" EXCLUDE
-        PATTERN "*CMakeFiles*" EXCLUDE
-        PATTERN "static" EXCLUDE
-        PATTERN "Makefile*" EXCLUDE
-        PATTERN "*.cmake" EXCLUDE
-        PATTERN "doxyfile*" EXCLUDE
-        PATTERN "*.vcproj" EXCLUDE
-)
-
+INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/GEOM DESTINATION ${SALOME_INSTALL_DOC}/gui)
 INSTALL(FILES images/head.png DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM)
+INSTALL(FILES images/head.png DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM/geompy_doc)
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/static/SALOME_BOA_PA.pdf DESTINATION ${SALOME_INSTALL_DOC}/gui/GEOM)
 
+SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES GEOM)
