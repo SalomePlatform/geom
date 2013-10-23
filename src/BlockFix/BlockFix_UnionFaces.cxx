@@ -190,6 +190,50 @@ static Handle(Geom_Surface) ClearRts(const Handle(Geom_Surface)& aSurface)
 }
 
 //=======================================================================
+//function : IsFacesOfSameSolids
+//purpose  : auxilary
+//=======================================================================
+static Standard_Boolean IsFacesOfSameSolids
+       (const TopoDS_Face                               &theFace1,
+        const TopoDS_Face                               &theFace2,
+        const TopTools_IndexedDataMapOfShapeListOfShape &theMapFaceSolids)
+{
+  Standard_Boolean isSame = Standard_False;
+
+  if (theMapFaceSolids.Contains(theFace1) &&
+      theMapFaceSolids.Contains(theFace2)) {
+    const TopTools_ListOfShape& aList1 = theMapFaceSolids.FindFromKey(theFace1);
+    const TopTools_ListOfShape& aList2 = theMapFaceSolids.FindFromKey(theFace2);
+
+    if (aList1.Extent() == aList2.Extent()) {
+      TopTools_ListIteratorOfListOfShape anIter1(aList1);
+
+      isSame = Standard_True;
+
+      for (; anIter1.More(); anIter1.Next()) {
+        const TopoDS_Shape                 &aSolid1 = anIter1.Value();
+        TopTools_ListIteratorOfListOfShape  anIter2(aList2);
+
+        for (; anIter2.More(); anIter2.Next()) {
+          if (aSolid1.IsSame(anIter2.Value())) {
+            // Same solid is detected. Break the loop
+            break;
+          }
+        }
+
+        if (!anIter2.More()) {
+          // No same solid is detected. Break the loop.
+          isSame = Standard_False;
+          break;
+        }
+      }
+    }
+  }
+
+  return isSame;
+}
+
+//=======================================================================
 //function : Perform
 //purpose  :
 //=======================================================================
@@ -197,6 +241,12 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 {
   Handle(ShapeBuild_ReShape) myContext = new ShapeBuild_ReShape;
   TopoDS_Shape aResShape = myContext->Apply(Shape);
+
+  // Fill Map of faces as keys and list of solids as items.
+  TopTools_IndexedDataMapOfShapeListOfShape aMapFaceSolids;
+
+  TopExp::MapShapesAndAncestors
+    (Shape, TopAbs_FACE, TopAbs_SOLID, aMapFaceSolids);
 
   // processing each solid
   TopExp_Explorer exps;
@@ -264,6 +314,11 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 
           if (aProcessed.Contains(anCheckedFace))
             continue;
+
+          // Check if faces belong to same solids.
+          if (!IsFacesOfSameSolids(aFace, anCheckedFace, aMapFaceSolids)) {
+            continue;
+          }
 
           if (IsSameDomain(aFace,anCheckedFace)) {
 
