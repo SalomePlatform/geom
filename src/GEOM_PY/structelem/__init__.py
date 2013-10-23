@@ -66,6 +66,7 @@ from salome.kernel.studyedit import getStudyEditor
 
 __all__ = ["parts", "orientation"]
 
+from salome.geom.geomtools import getGeompy
 from salome.geom.structelem import parts
 from salome.geom.structelem.parts import InvalidParameterError
 
@@ -238,7 +239,8 @@ class StructuralElement:
     instantiated directly in the general case.
     """
     _counter = 1
-    _mainFolderTag = 14725
+
+    MAIN_FOLDER_NAME = "Structural Elements"
 
     def __init__(self, studyId = None):
         # _parts is the dictionary mapping group name to structural element
@@ -257,15 +259,18 @@ class StructuralElement:
     def _getSObject(self):
         """
         Find or create the study object corresponding to the structural
-        element. This object is named "SE_N" where N is a numerical ID. 
+        element. This object is a Geom Folder named "SE_N" where N is a
+        numerical ID. 
         """
         if self._SObject is None:
+            geompy = getGeompy(self._studyEditor.studyId)
             geomComponent = self._studyEditor.study.FindComponent("GEOM")
-            mainFolder = self._studyEditor.setItemAtTag(geomComponent,
-                                            StructuralElement._mainFolderTag,
-                                            name = "Structural Elements")
-            self._SObject = self._studyEditor.findOrCreateItem(mainFolder,
-                                            name = "SE_" + str(self._id))
+            mainFolder = self._studyEditor.findItem(geomComponent,
+                                                    name = StructuralElement.MAIN_FOLDER_NAME,
+                                                    typeId=999)
+            if mainFolder is None:
+                mainFolder = geompy.NewFolder(StructuralElement.MAIN_FOLDER_NAME)
+            self._SObject = geompy.NewFolder("SE_" + str(self._id), mainFolder)
         return self._SObject
 
     def addPart(self, newpart):
@@ -334,6 +339,7 @@ class StructuralElement:
         different parts of the structural element, and add them to the study.
         """
         gg = salome.ImportComponentGUI("GEOM")
+        geompy = getGeompy(self._studyEditor.studyId)
         for part in self._parts.itervalues():
             # Build the structural element part
             logger.debug("Building %s" % part)
@@ -347,28 +353,17 @@ class StructuralElement:
                 continue
             
             # Add the new objects to the study
-            IOR = self._studyEditor.study.ConvertObjectToIOR(shape)
             shapeSObjName = part.name + "_" + part.groupName
-            icon = None
-            if salome.hasDesktop():
-                icon = gg.getShapeTypeIcon(IOR)
-            shapeSObj = self._studyEditor.createItem(self._getSObject(),
-                                            name = shapeSObjName, IOR = IOR,
-                                            icon = icon)
+            geompy.addToStudy(shape, shapeSObjName)
+            geompy.PutToFolder(shape, self._getSObject())
+
             if markers is not None and len(markers) > 0:
-                i = 1
-                for marker in markers:
-                    markerIOR = \
-                            self._studyEditor.study.ConvertObjectToIOR(marker)
+                for i, marker in enumerate(markers, start = 1):
                     markerSObjName = "Orient_" + shapeSObjName
                     if len(markers) > 1:
                         markerSObjName += "_%d" % i
-                    markerSObj = self._studyEditor.createItem(
-                                                self._getSObject(),
-                                                name = markerSObjName,
-                                                IOR = markerIOR,
-                                                icon = "ICON_OBJBROWSER_LCS")
-                    i += 1
+                    geompy.addToStudy(marker, markerSObjName)
+                    geompy.PutToFolder(marker, self._getSObject())
 
     def display(self):
         """
@@ -385,16 +380,17 @@ class StructuralElement:
         if theSObject is not None:
             gg = salome.ImportComponentGUI("GEOM")
             aStudy = theSObject.GetStudy()
+            useCaseBuilder = aStudy.GetUseCaseBuilder()
             editor = getStudyEditor(aStudy._get_StudyId())
-            aIterator = aStudy.NewChildIterator(theSObject)
-            aIterator.Init()
+            aIterator = useCaseBuilder.GetUseCaseIterator(theSObject)
+            aIterator.Init(False)
             while aIterator.More():
                 sobj = aIterator.Value()
                 icon = editor.getIcon(sobj)
                 if icon != "ICON_OBJBROWSER_LCS":
                     entry = aIterator.Value().GetID()
                     gg.createAndDisplayGO(entry)
-                    gg.setDisplayMode(entry, 1)
+                    gg.setDisplayMode(entry, 2) # Shading + edges
                 aIterator.Next()
 
 
