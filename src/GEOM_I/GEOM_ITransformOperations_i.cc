@@ -715,11 +715,14 @@ CORBA::Double GEOM_ITransformOperations_i::ProjectPointOnWire
   }
 
   Handle(GEOM_Object) aPointOnEdge;
+  Standard_Integer anEdgeIndex;
   CORBA::Double aResult = GetOperations()->ProjectPointOnWire
-    (aPoint, aWire, aPointOnEdge, theEdgeInWireIndex);
+    (aPoint, aWire, aPointOnEdge, anEdgeIndex);
 
   if (!aPointOnEdge.IsNull()) {
-    thePointOnEdge = GetObject(aPointOnEdge);
+    GEOM::GEOM_Object_var obj = GetObject(aPointOnEdge);
+    thePointOnEdge = obj.out();
+    theEdgeInWireIndex = anEdgeIndex;
   }
 
   return aResult;
