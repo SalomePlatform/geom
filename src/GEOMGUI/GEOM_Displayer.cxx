@@ -2229,7 +2229,7 @@ void GEOM_Displayer::readFieldStepInfo( GEOM::GEOM_FieldStep_var theGeomFieldSte
     {
       GEOM::ListOfLong_var aValues = aGeomIntFieldStep->GetValues();
       for( size_t i = 0, n = aValues->length(); i < n; i++ )
-        aFieldStepData << aValues[i];
+        aFieldStepData << (long)aValues[i];
     }
   }
   else if( aFieldDataType == GEOM::FDT_Double )
@@ -2239,7 +2239,7 @@ void GEOM_Displayer::readFieldStepInfo( GEOM::GEOM_FieldStep_var theGeomFieldSte
     {
       GEOM::ListOfDouble_var aValues = aGeomDoubleFieldStep->GetValues();
       for( size_t i = 0, n = aValues->length(); i < n; i++ )
-        aFieldStepData << aValues[i];
+        aFieldStepData << (double)aValues[i];
     }
   }
   else if( aFieldDataType == GEOM::FDT_String )
