@@ -720,8 +720,7 @@ CORBA::Double GEOM_ITransformOperations_i::ProjectPointOnWire
     (aPoint, aWire, aPointOnEdge, anEdgeIndex);
 
   if (!aPointOnEdge.IsNull()) {
-    GEOM::GEOM_Object_var obj = GetObject(aPointOnEdge);
-    thePointOnEdge = obj.out();
+    thePointOnEdge = GetObject(aPointOnEdge);
     theEdgeInWireIndex = anEdgeIndex;
   }
 
