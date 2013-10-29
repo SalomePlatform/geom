@@ -382,16 +382,28 @@ GetCreationInformation(std::string&             theOperationName,
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
 
-  GEOMImpl_IMirror aCI( function );
   Standard_Integer aType = function->GetType();
 
   theOperationName = "PROJECTION";
 
   switch ( aType ) {
   case PROJECTION_COPY:
-    AddParam( theParams, "Source object", aCI.GetOriginal() );
-    AddParam( theParams, "Target face", aCI.GetPlane() );
-    break;
+    {
+      GEOMImpl_IMirror aCI( function );
+
+      AddParam( theParams, "Source object", aCI.GetOriginal() );
+      AddParam( theParams, "Target face", aCI.GetPlane() );
+      break;
+    }
+  case PROJECTION_ON_WIRE:
+    {
+      GEOMImpl_IProjection aProj (function);
+
+      AddParam(theParams, "Point", aProj.GetPoint());
+      AddParam(theParams, "Shape", aProj.GetShape());
+
+      break;
+    }
   default:
     return false;
   }
