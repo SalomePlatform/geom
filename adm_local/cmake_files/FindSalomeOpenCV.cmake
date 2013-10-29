@@ -19,9 +19,13 @@
 # Author: Adrien Bruneton
 #
 
-# OpenCV detection dor Salome
+# OpenCV detection for Salome
 #
 #  !! Please read the generic detection procedure in SalomeMacros.cmake !!
 #
 SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS(OpenCV OpenCV_DIR 2)
 #MARK_AS_ADVANCED()
+
+IF(OpenCV_FOUND) 
+  SALOME_ACCUMULATE_ENVIRONMENT(LD_LIBRARY_PATH ${OpenCV_LIBRARIES})
+ENDIF()
