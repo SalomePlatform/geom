@@ -895,12 +895,14 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
   if ( qAbs(theValue) < prec )
     return "0";
 
-  QString aRes = QLocale().toString( theValue, thePrecision >= 0 ? 'f' : 'g', qAbs( thePrecision ) );
+  QLocale loc = QLocale(); // default locale
+  if ( loc.name() == "C" ) loc.setNumberOptions( QLocale::OmitGroupSeparator );
+  QString aRes = loc.toString( theValue, thePrecision >= 0 ? 'f' : 'g', qAbs( thePrecision ) );
 
   if ( prec > 0 ) {
     int p = 0;
     while ( p < thePrecision ) {
-      QString aRes = QLocale().toString( theValue, thePrecision >= 0 ? 'f' : 'g', qAbs( p++ ) );
+      QString aRes = loc.toString( theValue, thePrecision >= 0 ? 'f' : 'g', qAbs( p++ ) );
       double v = aRes.toDouble();
       double err = qAbs( theValue - v );
       if ( err > 0 && err <= prec )
@@ -910,8 +912,8 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
 
   // remove trailing zeroes
 
-  QRegExp expre( QString( "(%1|%2)[+-]?[0-9]+$" ).arg( QLocale().exponential().toLower(), 
-                                                       QLocale().exponential().toUpper() ) );
+  QRegExp expre( QString( "(%1|%2)[+-]?[0-9]+$" ).arg( loc.exponential().toLower(), 
+                                                       loc.exponential().toUpper() ) );
 
   int idx = aRes.indexOf( expre );
   QString aResExp = "";
@@ -920,7 +922,7 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
     aRes = aRes.left( idx );
   }
 
-  if ( aRes.contains( QLocale().decimalPoint() ) )
+  if ( aRes.contains( loc.decimalPoint() ) )
     aRes.remove( QRegExp( QString( "(\\%1|0)0*$" ).arg( QLocale().decimalPoint() ) ) );
 
   return aRes == "-0" ? QString( "0" ) : aRes + aResExp;
