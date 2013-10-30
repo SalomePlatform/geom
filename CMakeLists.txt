@@ -72,6 +72,16 @@ CMAKE_DEPENDENT_OPTION(SALOME_GEOM_USE_OPENCV "Enable shape recognition from pic
                        "SALOME_BUILD_GUI" OFF)
 MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV)
 
+# Debug options (!!! FOR DEVELOPERS ONLY !!! TO BE REMOVED LATER !!!)
+IF(CMAKE_BUILD_TYPE MATCHES "^Debug$")
+  OPTION(SALOME_GEOM_DEBUG_CC "Debug curve creator" OFF)
+  MARK_AS_ADVANCED(SALOME_GEOM_DEBUG_CC)
+
+  IF(SALOME_GEOM_DEBUG_CC)
+    ADD_DEFINITIONS(-DDEBUG_CURVE_CREATOR)
+  ENDIF(SALOME_GEOM_DEBUG_CC)
+ENDIF()
+
 # Prerequisites
 # =============
 # Find "big" prerequisites first - they reference themselves many others
@@ -230,7 +240,8 @@ INCLUDE(CMakePackageConfigHelpers)
 SET(_${PROJECT_NAME}_exposed_targets 
   GEOMArchimede BREPExport BREPImport BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
   GEOMUtils GEOMEngine GEOM_SupervEngine IGESExport IGESImport GEOMSketcher
-  SalomeIDLGEOM STEPExport STEPImport STLExport ShHealOper XAO AdvancedEngine OCC2VTK VTKExport 
+  SalomeIDLGEOM STEPExport STEPImport STLExport ShHealOper XAO AdvancedEngine OCC2VTK
+  VTKExport CurveCreator
 )
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 

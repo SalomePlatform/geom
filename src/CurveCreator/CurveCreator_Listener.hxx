@@ -1,7 +1,4 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -20,27 +17,25 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : BasicGUI.h
-// Author : Damien COQUERET, Open CASCADE S.A.S.
-//
-#ifndef BASICGUI_H
-#define BASICGUI_H
+#ifndef CURVE_CREATOR_LISTENER_HXX
+#define CURVE_CREATOR_LISTENER_HXX
 
-#include <GEOMGUI.h>
-
-//=================================================================================
-// class    : BasicGUI
-// purpose  :
-//=================================================================================
-class BasicGUI : public GEOMGUI
+class CurveCreator_Listener
 {
 public:
-  BasicGUI( GeometryGUI* );
-  ~BasicGUI();
+  CurveCreator_Listener(void){};
+  virtual ~CurveCreator_Listener(void){};
 
-  bool   OnGUIEvent( int, SUIT_Desktop* );
-  bool   OnMousePress( QMouseEvent*, SUIT_Desktop*, SUIT_ViewWindow* );
+  virtual void pointChanged( int theSection, int thePoint ){}
+  virtual void pointRemoved( int theSection, int theFirstPoint, int thePointCnt ){}
+  virtual void pointInserted( int theSection, int theIndx ){}
+
+  virtual void sectionClosed( int theSection, bool isClosed ){}
+  virtual void sectionAdded( int theSection ){}
+  virtual void sectionRemoved( int theSection ){}
+  virtual void sectionTypeChanged( int theSection ){}
+
+  virtual void curveChanged(){}
 };
 
-#endif // BASICGUI_H
+#endif

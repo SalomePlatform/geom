@@ -4,6 +4,62 @@
     <context>
         <name>@default</name>
         <message>
+            <source>ICON_CC_ARROW_UP</source>
+            <translation>arrow_up.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_ARROW_DOWN</source>
+            <translation>arrow_down.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_CLOSED_POLYLINE</source>
+            <translation>closedpolyline.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_CLOSED_SPLINE</source>
+            <translation>closedspline.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_DELETE</source>
+            <translation>delete.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_JOIN</source>
+            <translation>join2.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_NEW_POINT</source>
+            <translation>new_point.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_NEW_SECTION</source>
+            <translation>new_section.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_EDIT_POINTS</source>
+            <translation>edit_points.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_POINT</source>
+            <translation>point2.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_POLYLINE</source>
+            <translation>polyline.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_REDO</source>
+            <translation>redo.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_SPLINE</source>
+            <translation>spline.png</translation>
+        </message>
+        <message>
+            <source>ICON_CC_UNDO</source>
+            <translation>undo.png</translation>
+        </message>
+        <message>
             <source>ICON_FOLDER</source>
             <translation>folder.png</translation>
         </message>

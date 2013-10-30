@@ -2355,6 +2355,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Tolérance_limite</translation>
     </message>
     <message>
+        <source>MEN_CURVE_CREATOR</source>
+        <translation type="unfinished">Curve creator</translation>
+    </message>
+    <message>
         <source>MEN_ALL_SEL_ONLY</source>
         <translation>Sélectionner tout</translation>
     </message>
@@ -4951,6 +4955,14 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>TOOLS_IMPORTEXPORT</source>
         <translation>Import / Export</translation>
     </message>
+    <message>
+      <source>CC_PNT_ITEM_X_Y</source>
+      <translation>X=%1, Y=%2</translation>
+    </message>
+    <message>
+      <source>CC_PNT_ITEM_X_Y_Z</source>
+      <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -5190,6 +5202,262 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>FACE_2V</source>
         <translation>Face 2 V</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_NewPointDlg</name>
+    <message>
+        <source>ADD_NEW_POINT</source>
+        <translation>Add new points</translation>
+    </message>
+    <message>
+        <source>X_COORD</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <source>Y_COORD</source>
+        <translation>Y</translation>
+    </message>
+    <message>
+        <source>Z_COORD</source>
+        <translation>Z</translation>
+    </message>
+    <message>
+        <source>ADD_BTN</source>
+        <translation>Add</translation>
+    </message>
+    <message>
+        <source>ADD_CONTINUE_BTN</source>
+        <translation>Add and continue</translation>
+    </message>
+    <message>
+        <source>ADD_NEW_POINT_TO_%1</source>
+        <translation>Add new point to %1</translation>
+    </message>
+    <message>
+        <source>SET_POINT_COORDINATES</source>
+        <translation>Set point coordinates</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_NewSectionDlg</name>
+    <message>
+        <source>NAME</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>LINE_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>POLYLINE_TYPE</source>
+        <translation>Polyline</translation>
+    </message>
+    <message>
+        <source>SPLINE_TYPE</source>
+        <translation>Spline</translation>
+    </message>
+    <message>
+        <source>LINE_CLOSED</source>
+        <translation>Closed</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>Ok</translation>
+    </message>
+    <message>
+        <source>ADD_BTN</source>
+        <translation>Add</translation>
+    </message>
+    <message>
+        <source>ADD_CONTINUE_BTN</source>
+        <translation>Add and continue</translation>
+    </message>
+    <message>
+        <source>ADD_NEW_SECTION</source>
+        <translation>Add new section</translation>
+    </message>
+    <message>
+        <source>SET_SECTION_PARAMETERS</source>
+        <translation>Set section parameters</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_TreeViewModel</name>
+    <message>
+        <source>X=%1, Y=%2</source>
+        <translation>X=%1, Y=%2</translation>
+    </message>
+    <message>
+        <source>X=%1, Y=%2, Z=%3</source>
+        <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_Widget</name>
+    <message>
+        <source>CURVE_NAME_TLT</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <source>SECTION_GROUP_TLT</source>
+        <translation type="unfinished">Sections</translation>
+    </message>
+    <message>
+        <source>UNDO</source>
+        <translation type="unfinished">Undo</translation>
+    </message>
+    <message>
+        <source>UNDO_TLT</source>
+        <translation type="unfinished">Undo</translation>
+    </message>
+    <message>
+        <source>REDO</source>
+        <translation type="unfinished">Redo</translation>
+    </message>
+    <message>
+        <source>REDO_TLT</source>
+        <translation type="unfinished">Redo</translation>
+    </message>
+    <message>
+        <source>NEW_SECTION</source>
+        <translation type="unfinished">New section</translation>
+    </message>
+    <message>
+        <source>NEW_SECTION_TLT</source>
+        <translation type="unfinished">Insert new section</translation>
+    </message>
+    <message>
+        <source>INSERT_SECTION_BEFORE</source>
+        <translation type="unfinished">Insert section before</translation>
+    </message>
+    <message>
+        <source>INSERT_SECTION_BEFORE_TLT</source>
+        <translation type="unfinished">Insert section before</translation>
+    </message>
+    <message>
+        <source>INSERT_SECTION_AFTER</source>
+        <translation type="unfinished">Insert section after</translation>
+    </message>
+    <message>
+        <source>INSERT_SECTION_AFTER_TLT</source>
+        <translation type="unfinished">Insert section after</translation>
+    </message>
+    <message>
+        <source>ADDITION_MODE</source>
+        <translation type="unfinished">Addition mode</translation>
+    </message>
+    <message>
+        <source>ADDITION_MODE_TLT</source>
+        <translation type="unfinished">Addition mode</translation>
+    </message>
+    <message>
+        <source>MODIFICATION_MODE</source>
+        <translation type="unfinished">Modification mode</translation>
+    </message>
+    <message>
+        <source>MODIFICATION_MODE_TLT</source>
+        <translation type="unfinished">Modification mode</translation>
+    </message>
+    <message>
+        <source>DETECTION_MODE</source>
+        <translation type="unfinished">Detection mode</translation>
+    </message>
+    <message>
+        <source>DETECTION_MODE_TLT</source>
+        <translation type="unfinished">Detection mode</translation>
+    </message>
+    <message>
+        <source>INSERT_POINT_BEFORE</source>
+        <translation type="unfinished">Insert point before</translation>
+    </message>
+    <message>
+        <source>INSERT_POINT_BEFORE_TLT</source>
+        <translation type="unfinished">Insert point before</translation>
+    </message>
+    <message>
+        <source>INSERT_POINT_AFTER</source>
+        <translation type="unfinished">Insert point after</translation>
+    </message>
+    <message>
+        <source>CLOSE_SECTIONS</source>
+        <translation type="unfinished">Set closed</translation>
+    </message>
+    <message>
+        <source>CLOSE_SECTIONS_TLT</source>
+        <translation type="unfinished">Set selected sections closed</translation>
+    </message>
+    <message>
+        <source>UNCLOSE_SECTIONS</source>
+        <translation type="unfinished">Set open</translation>
+    </message>
+    <message>
+        <source>UNCLOSE_SECTIONS_TLT</source>
+        <translation type="unfinished">Set selected sections open</translation>
+    </message>
+    <message>
+        <source>SET_SECTIONS_POLYLINE</source>
+        <translation type="unfinished">Set polyline</translation>
+    </message>
+    <message>
+        <source>SET_SECTIONS_POLYLINE_TLT</source>
+        <translation type="unfinished">Set selected section type to polyline</translation>
+    </message>
+    <message>
+        <source>SET_SECTIONS_SPLINE</source>
+        <translation type="unfinished">Set spline</translation>
+    </message>
+    <message>
+        <source>SET_SECTIONS_SPLINE_TLT</source>
+        <translation type="unfinished">Set selected section type to spline</translation>
+    </message>
+    <message>
+        <source>REMOVE</source>
+        <translation type="unfinished">Remove</translation>
+    </message>
+    <message>
+        <source>REMOVE_TLT</source>
+        <translation type="unfinished">Remove</translation>
+    </message>
+    <message>
+        <source>JOIN</source>
+        <translation type="unfinished">Join</translation>
+    </message>
+    <message>
+        <source>JOIN_TLT</source>
+        <translation type="unfinished">Join selected sections</translation>
+    </message>
+    <message>
+        <source>STEP_UP</source>
+        <translation type="unfinished">Move up</translation>
+    </message>
+    <message>
+        <source>STEP_UP_TLT</source>
+        <translation type="unfinished">Move selected objects up</translation>
+    </message>
+    <message>
+        <source>STEP_DOWN</source>
+        <translation type="unfinished">Move down</translation>
+    </message>
+    <message>
+        <source>STEP_DOWN_TLT</source>
+        <translation type="unfinished">Move selected objects down</translation>
+    </message>
+    <message>
+        <source>CLEAR_ALL</source>
+        <translation type="unfinished">Clear all</translation>
+    </message>
+    <message>
+        <source>CLEAR_ALL_TLT</source>
+        <translation type="unfinished">Remove all objects</translation>
+    </message>
+    <message>
+        <source>JOIN_ALL</source>
+        <translation type="unfinished">Join all sections</translation>
+    </message>
+    <message>
+        <source>JOIN_ALL_TLT</source>
+        <translation type="unfinished">Join all sections</translation>
     </message>
 </context>
 <context>

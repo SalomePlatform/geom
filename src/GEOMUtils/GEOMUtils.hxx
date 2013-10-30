@@ -34,6 +34,8 @@
 #include <gp_Ax3.hxx>
 #include <gp_Vec.hxx>
 
+#include <V3d_View.hxx>
+
 #include <NCollection_DataMap.hxx>
 
 #include <functional>
@@ -173,6 +175,16 @@ class GEOMUtils {
                                (const TopoDS_Shape& theShape1,
                                 const TopoDS_Shape& theShape2,
                                 gp_Pnt& thePnt1, gp_Pnt& thePnt2);
+
+  /*!
+   * \brief Returns the point clicked in 3D view.
+   *
+   * \param x The X coordinate in the view.
+   * \param y The Y coordinate in the view.
+   * \param theView View where the given point takes place.
+   * \retval gp_Pnt Returns the point clicked in 3D view
+   */
+  Standard_EXPORT static gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) theView );
 
 };
 

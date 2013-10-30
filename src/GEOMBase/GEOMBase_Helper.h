@@ -61,6 +61,7 @@ class GEOMBASE_EXPORT GEOMBase_Helper
 public:
   GEOMBase_Helper( SUIT_Desktop* );
   virtual ~GEOMBase_Helper();
+  static SUIT_ViewWindow* getActiveView();
 
 protected:
   static GEOM::GEOM_Gen_ptr getGeomEngine();

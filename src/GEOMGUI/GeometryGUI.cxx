@@ -592,6 +592,10 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpSharedShapes:       // MENU OPERATION - GET SHARED SHAPES
   case GEOMOp::OpExtrudedBoss:       // MENU OPERATION - EXTRUDED BOSS
   case GEOMOp::OpExtrudedCut:        // MENU OPERATION - EXTRUDED CUT
+#ifdef DEBUG_CURVE_CREATOR  
+  // for debug purposes, to be removed
+  case GEOMOp::OpCurveCreator:       // MENU OPERATION - CURVE CREATOR
+#endif
     libName = "OperationGUI";
     break;
   case GEOMOp::OpSewing:             // MENU REPAIR - SEWING
@@ -958,6 +962,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpSharedShapes,   "GET_SHARED_SHAPES" );
   createGeomAction( GEOMOp::OpExtrudedCut,    "EXTRUDED_CUT" );
   createGeomAction( GEOMOp::OpExtrudedBoss,   "EXTRUDED_BOSS" );
+#ifdef DEBUG_CURVE_CREATOR
+  // for debug purposes, to be removed
+  createGeomAction( GEOMOp::OpCurveCreator,   "CURVE_CREATOR" );
+#endif
   createGeomAction( GEOMOp::OpFillet1d,       "FILLET_1D" );
   createGeomAction( GEOMOp::OpFillet2d,       "FILLET_2D" );
 
@@ -1210,6 +1218,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpChamfer,       operId, -1 );
   createMenu( GEOMOp::OpExtrudedBoss,  operId, -1 );
   createMenu( GEOMOp::OpExtrudedCut,   operId, -1 );
+#ifdef DEBUG_CURVE_CREATOR
+  // for debug purposes, to be removed
+  createMenu( separator(), operId, -1 );
+  createMenu( GEOMOp::OpCurveCreator,   operId, -1 );
+#endif
   //createMenu( GEOMOp::OpClipping,      operId, -1 );
 
   int repairId = createMenu( tr( "MEN_REPAIR" ), -1, -1, 10 );
@@ -1369,6 +1382,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpChamfer,         featTbId );
   createTool( GEOMOp::OpExtrudedBoss,    featTbId );
   createTool( GEOMOp::OpExtrudedCut,     featTbId );
+#ifdef DEBUG_CURVE_CREATOR
+  // for debug purposes, to be removed
+  createTool( GEOMOp::OpCurveCreator,    featTbId ); 
+#endif
 
   int buildTbId = createTool( tr( "TOOL_BUILD" ) );
   createTool( GEOMOp::OpEdge,     buildTbId );

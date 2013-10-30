@@ -251,6 +251,14 @@ SET( _res_files
   union_faces.png
   coordsys.png
   translation.png
+  arrow_down.png
+  arrow_up.png
+  closedpolyline.png
+  closedspline.png
+  edit_points.png
+  join2.png
+  new_point.png
+  new_section.png
   # ADVANCED_RESOURCES:
   pipetshape.png tree_pipetshape.png pipetshape_import_icon.png pipetshape_section.png
   dlg_pipetshape.png dlg_pipetshapechamfer.png dlg_pipetshapefillet.png

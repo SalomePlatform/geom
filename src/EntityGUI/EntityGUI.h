@@ -32,7 +32,6 @@
 #include <SALOMEDSClient.hxx>
 
 #include <AIS_Shape.hxx>
-#include <V3d_View.hxx>
 
 class TopoDS_Shape;
 
@@ -52,8 +51,6 @@ public :
   bool              OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow );
   bool              OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow );
   
-  static gp_Pnt     ConvertClickToPoint( int x, int y, Handle(V3d_View) aView );
-
   void              DisplaySimulationShape( const TopoDS_Shape&, const TopoDS_Shape& ); 
   void              EraseSimulationShape();
 

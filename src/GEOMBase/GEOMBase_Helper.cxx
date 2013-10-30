@@ -64,7 +64,7 @@
 // Function : getActiveView
 // Purpose  : Get active view window, returns 0 if no open study frame
 //================================================================
-static SUIT_ViewWindow* getActiveView()
+SUIT_ViewWindow* GEOMBase_Helper::getActiveView()
 {
   SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
   if ( activeStudy )

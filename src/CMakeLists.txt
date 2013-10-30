@@ -45,7 +45,7 @@ IF(SALOME_BUILD_GUI)
     GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
     EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
     RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI ImportExportGUI
-    GEOM_SWIG_WITHIHM
+    CurveCreator GEOM_SWIG_WITHIHM
     )
 ENDIF()
 

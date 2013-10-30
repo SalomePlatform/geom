@@ -1,7 +1,4 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -20,27 +17,36 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : BasicGUI.h
-// Author : Damien COQUERET, Open CASCADE S.A.S.
-//
-#ifndef BASICGUI_H
-#define BASICGUI_H
+// File:        CurveCreator.hxx
+// Author:      Sergey KHROMOV
 
-#include <GEOMGUI.h>
+#ifndef _CurveCreator_HeaderFile
+#define _CurveCreator_HeaderFile
 
-//=================================================================================
-// class    : BasicGUI
-// purpose  :
-//=================================================================================
-class BasicGUI : public GEOMGUI
+#include <deque>
+
+namespace CurveCreator
 {
-public:
-  BasicGUI( GeometryGUI* );
-  ~BasicGUI();
 
-  bool   OnGUIEvent( int, SUIT_Desktop* );
-  bool   OnMousePress( QMouseEvent*, SUIT_Desktop*, SUIT_ViewWindow* );
+  //! Dimension of the curve
+  enum Dimension
+  {
+    Dim2d = 2,
+    Dim3d = 3
+  };
+
+  //! Type of the section
+  enum Type
+  {
+    Polyline,
+    BSpline
+  };
+
+  //! Points coordinates
+  typedef float TypeCoord;
+
+  typedef std::deque<TypeCoord> Coordinates;
+
 };
 
-#endif // BASICGUI_H
+#endif

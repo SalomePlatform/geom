@@ -1,7 +1,4 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -20,27 +17,28 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : BasicGUI.h
-// Author : Damien COQUERET, Open CASCADE S.A.S.
-//
-#ifndef BASICGUI_H
-#define BASICGUI_H
+// File:        CurveCreator_Section.hxx
+// Author:      Sergey KHROMOV
 
-#include <GEOMGUI.h>
+#ifndef _CurveCreator_Section_HeaderFile
+#define _CurveCreator_Section_HeaderFile
 
-//=================================================================================
-// class    : BasicGUI
-// purpose  :
-//=================================================================================
-class BasicGUI : public GEOMGUI
+#include "CurveCreator.hxx"
+
+#include <string>
+
+//! Structure to store sections representing the CurveCreator_Curve object
+struct CurveCreator_Section
 {
-public:
-  BasicGUI( GeometryGUI* );
-  ~BasicGUI();
+  //! Constructor. Initializes object with default values.
+  CurveCreator_Section() : myName("Section"),myType(CurveCreator::Polyline), myIsClosed(false)
+  { }
 
-  bool   OnGUIEvent( int, SUIT_Desktop* );
-  bool   OnMousePress( QMouseEvent*, SUIT_Desktop*, SUIT_ViewWindow* );
+  std::string               myName; //!< section name
+  CurveCreator::Coordinates myPoints;   //!< points coordinates
+  CurveCreator::Type        myType;     //!< type of the section
+  bool                      myIsClosed; //!< closed or not
+
 };
 
-#endif // BASICGUI_H
+#endif

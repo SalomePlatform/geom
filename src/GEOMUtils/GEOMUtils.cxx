@@ -83,6 +83,9 @@
 #include <ShapeAnalysis.hxx>
 #include <ShapeFix_Shape.hxx>
 
+#include <ProjLib.hxx>
+#include <ElSLib.hxx>
+
 #include <vector>
 
 #include <Standard_Failure.hxx>
@@ -950,4 +953,30 @@ Standard_Real GEOMUtils::GetMinDistance
   }
 
   return aResult;
+}
+
+//=======================================================================
+// function : ConvertClickToPoint()
+// purpose  : Returns the point clicked in 3D view
+//=======================================================================
+gp_Pnt GEOMUtils::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
+{
+  V3d_Coordinate XEye, YEye, ZEye, XAt, YAt, ZAt;
+  aView->Eye( XEye, YEye, ZEye );
+
+  aView->At( XAt, YAt, ZAt );
+  gp_Pnt EyePoint( XEye, YEye, ZEye );
+  gp_Pnt AtPoint( XAt, YAt, ZAt );
+
+  gp_Vec EyeVector( EyePoint, AtPoint );
+  gp_Dir EyeDir( EyeVector );
+
+  gp_Pln PlaneOfTheView = gp_Pln( AtPoint, EyeDir );
+  Standard_Real X, Y, Z;
+  aView->Convert( x, y, X, Y, Z );
+  gp_Pnt ConvertedPoint( X, Y, Z );
+
+  gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project( PlaneOfTheView, ConvertedPoint );
+  gp_Pnt ResultPoint = ElSLib::Value( ConvertedPointOnPlane.X(), ConvertedPointOnPlane.Y(), PlaneOfTheView );
+  return ResultPoint;
 }
