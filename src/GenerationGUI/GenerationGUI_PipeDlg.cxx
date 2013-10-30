@@ -512,20 +512,24 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
     }
     break;
   case 2:
-    GEOM::ListOfGO_var myBaseGO = new GEOM::ListOfGO();
-    GEOM::ListOfGO_var myLocationsGO = new GEOM::ListOfGO();
-    myBaseGO->length( myBaseObjects.count() );
-    myLocationsGO->length( myLocations.count() );
-    for (int i = 0; i < myBaseObjects.count(); i++) {
-      myBaseGO[i] = myBaseObjects[i].copy();
+    {
+      GEOM::ListOfGO_var myBaseGO = new GEOM::ListOfGO();
+      GEOM::ListOfGO_var myLocationsGO = new GEOM::ListOfGO();
+      myBaseGO->length( myBaseObjects.count() );
+      myLocationsGO->length( myLocations.count() );
+      for (int i = 0; i < myBaseObjects.count(); i++) {
+	myBaseGO[i] = myBaseObjects[i].copy();
+      }
+      for (int i = 0; i < myLocations.count(); i++) {
+	myLocationsGO[i] = myLocations[i].copy();
+      }
+      
+      anObj = anOper->MakePipeWithDifferentSections(myBaseGO.in(), myLocationsGO.in(), myPath.get(), 
+						    GroupMakePoints->CheckBox1->isChecked(), 
+						    GroupMakePoints->CheckBox2->isChecked());
+      if (!anObj->_is_nil())
+	objects.push_back(anObj._retn());
     }
-    for (int i = 0; i < myLocations.count(); i++) {
-      myLocationsGO[i] = myLocations[i].copy();
-    }
-
-    anObj = anOper->MakePipeWithDifferentSections(myBaseGO.in(), myLocationsGO.in(), myPath.get(), GroupMakePoints->CheckBox1->isChecked(), GroupMakePoints->CheckBox2->isChecked());
-    if (!anObj->_is_nil())
-      objects.push_back(anObj._retn());
     break;
   default:
     break;
