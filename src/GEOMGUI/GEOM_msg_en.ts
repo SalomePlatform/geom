@@ -676,6 +676,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Local coordinate system</translation>
     </message>
     <message>
+        <source>GEOM_LOCATIONS</source>
+        <translation>Locations</translation>
+    </message>
+    <message>
         <source>GEOM_FACES</source>
         <translation>Faces</translation>
     </message>
@@ -1215,6 +1219,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_TARGET_OBJECT</source>
         <translation>Target face</translation>
+    </message>
+    <message>
+        <source>GEOM_WITH_CONTACT</source>
+        <translation>With contact</translation>
+    </message>
+    <message>
+        <source>GEOM_WITH_CORRECTION</source>
+        <translation>With correction</translation>
     </message>
     <message>
         <source>GEOM_OPERATIONS</source>

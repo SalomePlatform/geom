@@ -682,6 +682,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Système de coordonnées local</translation>
     </message>
     <message>
+        <source>GEOM_LOCATIONS</source>
+        <translation type="unfinished">Locations</translation>
+    </message>
+    <message>
         <source>GEOM_FACES</source>
         <translation>Faces</translation>
     </message>
@@ -1221,6 +1225,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_TARGET_OBJECT</source>
         <translation>Face d&apos;objectif</translation>
+    </message>
+    <message>
+        <source>GEOM_WITH_CONTACT</source>
+        <translation type="unfinished">With contact</translation>
+    </message>
+    <message>
+        <source>GEOM_WITH_CORRECTION</source>
+        <translation type="unfinished">With correction</translation>
     </message>
     <message>
         <source>GEOM_OPERATIONS</source>

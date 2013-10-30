@@ -125,6 +125,7 @@ SET( _res_files
   partitionplane.png
   pipe.png
   pipebinormal.png
+  pipesections.png
   plane.png
   planeWorking.png
   plane3points.png

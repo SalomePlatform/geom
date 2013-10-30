@@ -31,6 +31,7 @@
 #include "GEOM_GenericObjPtr.h"
 
 class DlgRef_3Sel1Check;
+class DlgRef_3Sel2Check3Spin;
 
 //=================================================================================
 // class    : GenerationGUI_PipeDlg
@@ -60,8 +61,10 @@ private:
   QList<GEOM::GeomObjPtr>            myBaseObjects;  /* Base shapes */
   GEOM::GeomObjPtr                   myPath; /* Shape, defining the path */
   GEOM::GeomObjPtr                   myVec;  /* Vector, defining the constant binormal direction */
+  QList<GEOM::GeomObjPtr>            myLocations; /* Locations on the path corresponding specified list of the Base shapes */
   
   DlgRef_3Sel1Check*                 GroupPoints;
+  DlgRef_3Sel2Check3Spin*            GroupMakePoints;
 
 private slots:
   void                               ClickOnOk();
