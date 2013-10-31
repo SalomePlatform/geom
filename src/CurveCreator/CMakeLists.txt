@@ -43,11 +43,11 @@ ADD_DEFINITIONS(
 SET(_link_LIBRARIES
   GEOMUtils
 )
-
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _link_LIBRARIES
     ${GUI_qtx}
     ${GUI_suit}
+    ${GUI_OCCViewer}
   )
 ENDIF(SALOME_BUILD_GUI)
 
