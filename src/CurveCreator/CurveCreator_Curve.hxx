@@ -28,8 +28,6 @@
 #include "CurveCreator_Macro.hxx"
 #include "CurveCreator_Operation.hxx"
 
-#include <QString>
-
 class CurveCreator_Section;
 class CurveCreator_Listener;
 

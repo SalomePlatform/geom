@@ -24,7 +24,7 @@ SET(SUBDIRS_COMMON
   ARCHIMEDE BlockFix GEOMAlgo SKETCHER GEOM BREPExport
   BREPImport IGESExport IGESImport STEPExport STEPImport STLExport
   ShHealOper GEOMUtils XAO XAO_Swig GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
-  AdvancedEngine OCC2VTK VTKExport
+  AdvancedEngine OCC2VTK VTKExport CurveCreator
   )
 
 ##
@@ -45,7 +45,7 @@ IF(SALOME_BUILD_GUI)
     GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
     EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
     RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI ImportExportGUI
-    CurveCreator GEOM_SWIG_WITHIHM
+    GEOM_SWIG_WITHIHM
     )
 ENDIF()
 

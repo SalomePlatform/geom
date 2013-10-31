@@ -25,6 +25,7 @@
 
 #include <string>
 #include <stdlib.h>
+#include <string.h>
 
 //=======================================================================
 // function: Constructor

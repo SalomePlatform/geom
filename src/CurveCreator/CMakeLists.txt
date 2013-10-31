@@ -17,7 +17,9 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-INCLUDE(${QT_USE_FILE})
+IF(SALOME_BUILD_GUI)
+  INCLUDE(${QT_USE_FILE})
+ENDIF(SALOME_BUILD_GUI)
 
 # --- options ---
 
