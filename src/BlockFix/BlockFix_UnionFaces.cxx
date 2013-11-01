@@ -302,7 +302,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
       Standard_Integer i;
       for (i = 1; i <= edges.Length(); i++) {
         TopoDS_Edge edge = TopoDS::Edge(edges(i));
-        if (BRep_Tool::Degenerated(edge))
+        if (BRep_Tool::Degenerated(edge) || BRep_Tool::IsClosed(edge, aFace))
           continue;
 
         const TopTools_ListOfShape& aList = aMapEdgeFaces.FindFromKey(edge);
@@ -314,6 +314,11 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 
           if (aProcessed.Contains(anCheckedFace))
             continue;
+
+          if (BRep_Tool::IsClosed(edge, anCheckedFace)) {
+            // Skip seam edge.
+            continue;
+          }
 
           // Check if faces belong to same solids.
           if (!IsFacesOfSameSolids(aFace, anCheckedFace, aMapFaceSolids)) {
