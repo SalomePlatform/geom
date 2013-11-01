@@ -57,6 +57,9 @@ public:
 
 private:
   //! private methods
+  void performInterval(const Standard_Real theStart,
+                       const Standard_Real theEnd,
+                       const Standard_Integer theNBSteps);
   void fillPoint(GEOMImpl_Fillet1dPoint*);
   void fillDiff(GEOMImpl_Fillet1dPoint*, Standard_Real, Standard_Boolean);
   void performNewton(GEOMImpl_Fillet1dPoint*, GEOMImpl_Fillet1dPoint*);

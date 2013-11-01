@@ -36,6 +36,7 @@
 #include <Geom_Circle.hxx>
 #include <Precision.hxx>
 #include <TColStd_ListIteratorOfListOfReal.hxx>
+#include <IntRes2d_IntersectionSegment.hxx>
 
 /**
  * class GEOMImpl_Fillet1d
@@ -248,8 +249,109 @@ Standard_Boolean GEOMImpl_Fillet1d::Perform(const Standard_Real theRadius)
   }
 
   myRadius = theRadius;
+
+  // Compute the intervals.
+  const Standard_Real aTol = Precision::Confusion();
+  Geom2dAPI_InterCurveCurve anAPIInter(myCurve1, myCurve2, aTol);
+  const Geom2dInt_GInter &anInter = anAPIInter.Intersector();
+  Standard_Integer aNb = anInter.NbPoints();
+  Standard_Integer i;
+  TColStd_ListOfReal aParams;
+  TColStd_ListIteratorOfListOfReal anIter;
+
+  // Treat intersection points.
+  for(i = 1; i <= aNb; i++) {
+    const IntRes2d_IntersectionPoint &aPoint = anInter.Point(i);
+    Standard_Real                     aParam = aPoint.ParamOnFirst();
+
+    // Adjust parameter on periodic curve.
+    if (myCurve1->IsPeriodic()) {
+      aParam = ElCLib::InPeriod
+        (aParam, myStart1, myStart1 + myCurve1->Period());
+    }
+
+    if (aParam > myStart1 + aTol && aParam < myEnd1 - aTol) {
+      // Add the point in the list in increasing order.
+      for(anIter.Initialize(aParams); anIter.More(); anIter.Next()) {
+        if (anIter.Value() > aParam) {
+          aParams.InsertBefore(aParam, anIter);
+          break;
+        }
+      }
+
+      if (!anIter.More()) {
+        aParams.Append(aParam);
+      }
+    }
+  }
+
+  // Treat intersection segments.
+  aNb = anInter.NbSegments();
+
+  for(i = 1; i <= aNb; i++) {
+    const IntRes2d_IntersectionSegment &aSegment = anInter.Segment(i);
+
+    if (aSegment.HasFirstPoint() && aSegment.HasLastPoint()) {
+      Standard_Real aParam1 = aSegment.FirstPoint().ParamOnFirst();
+      Standard_Real aParam2 = aSegment.LastPoint().ParamOnFirst();
+
+      // Adjust parameters on periodic curve.
+      if (myCurve1->IsPeriodic()) {
+        ElCLib::AdjustPeriodic(myStart1, myStart1 + myCurve1->Period(),
+                               aTol, aParam1, aParam2);
+      }
+
+      if (aParam1 > myStart1 + aTol && aParam1 < myEnd1 - aTol &&
+          aParam2 > myStart1 + aTol && aParam2 < myEnd1 - aTol) {
+        // Add the point in the list in increasing order.
+        const Standard_Real aParam = 0.5*(aParam1 + aParam2);
+  
+        for(anIter.Initialize(aParams); anIter.More(); anIter.Next()) {
+          if (anIter.Value() > aParam) {
+            aParams.InsertBefore(aParam, anIter);
+            break;
+          }
+        }
+
+        if (!anIter.More()) {
+          aParams.Append(aParam);
+        }
+      }
+    }
+  }
+
+  // Add start and end parameters to the list.
+  aParams.Prepend(myStart1);
+  aParams.Append(myEnd1);
+  anIter.Initialize(aParams);
+
+  // Perform each interval.
+  Standard_Real aStart = anIter.Value();
+
+  for (anIter.Next(); anIter.More(); anIter.Next()) {
+    const Standard_Real anEnd = anIter.Value();
+
+    // Perform the interval.
+    performInterval(aStart, anEnd, aNBSteps);
+    aStart = anEnd;
+  }
+
+  if (myResultParams.Extent())
+    return Standard_True;
+
+  return Standard_False;
+}
+
+//=======================================================================
+//function : performInterval
+//purpose  :
+//=======================================================================
+void GEOMImpl_Fillet1d::performInterval(const Standard_Real theStart,
+                                        const Standard_Real theEnd,
+                                        const Standard_Integer theNBSteps)
+{
   Standard_Real aParam, aStep, aDStep;
-  aStep = (myEnd1 - myStart1) / aNBSteps;
+  aStep = (theEnd - theStart) / theNBSteps;
   aDStep = aStep/1000.;
 
   Standard_Integer aCycle;
@@ -257,7 +359,7 @@ Standard_Boolean GEOMImpl_Fillet1d::Perform(const Standard_Real theRadius)
   {
     GEOMImpl_Fillet1dPoint *aLeft = NULL, *aRight = NULL;
 
-    for(aParam = myStart1 + aStep; aParam < myEnd1 || fabs(myEnd1 - aParam) < Precision::Confusion(); aParam += aStep)
+    for(aParam = theStart + aStep; aParam < theEnd || fabs(theEnd - aParam) < Precision::Confusion(); aParam += aStep)
     {
       if (!aLeft)
       {
@@ -278,11 +380,6 @@ Standard_Boolean GEOMImpl_Fillet1d::Perform(const Standard_Real theRadius)
     }
     delete aLeft;
   }
-
-  if (myResultParams.Extent())
-    return Standard_True;
-
-  return Standard_False;
 }
 
 //=======================================================================
