@@ -3953,11 +3953,29 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     SetErrorCode(NOT_FOUND_ANY);
     return NULL;
   }
-
+  //
+  // pkvf
+  TopTools_ListOfShape aLSA;
+  //
+  {
+    TopTools_MapOfShape aMFence;
+    TopTools_ListIteratorOfListOfShape aIt;
+    //
+    const TopTools_ListOfShape& aLS = aDMSLS.Find(aWhat);
+    aIt.Initialize(aLS);
+    for (;aIt.More(); aIt.Next()) {
+      const TopoDS_Shape& aSA=aIt.Value();
+      if(aMFence.Add(aSA)) {
+        aLSA.Append(aSA);
+      }
+    }
+  }
+  //
   // the list of shapes aLSA contains the shapes
   // of the Shape For Search that corresponds
   // to the Argument aWhat
-  const TopTools_ListOfShape& aLSA = aDMSLS.Find(aWhat);
+  //const TopTools_ListOfShape& aLSA = aDMSLS.Find(aWhat);
+  //pkvt
   if (aLSA.Extent() == 0) {
     SetErrorCode(NOT_FOUND_ANY); // Not found any Results
     return NULL;
