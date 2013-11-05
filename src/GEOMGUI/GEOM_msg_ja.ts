@@ -5,7 +5,7 @@
     <name>@default</name>
     <message>
       <source>BRep_API: command not done</source>
-      <translation>エラー: オブジェクトを作成することはできません。</translation>
+      <translation>エラー: オブジェクトをビルドできませんでした</translation>
     </message>
     <message>
       <source>PAL_NOT_DONE_ERROR</source>
@@ -17,27 +17,27 @@
     </message>
     <message>
       <source>EDGE_WIDTH_TLT</source>
-      <translation>エッジの幅を選択します</translation>
+      <translation>エッジの厚さ</translation>
     </message>
     <message>
       <source>ISOS_WIDTH_TLT</source>
-      <translation>Iso イメージの幅を選択します</translation>
+      <translation>Iso の厚さ</translation>
     </message>
     <message>
       <source>CLOSE_CONTOUR_NEW_OBJ_NAME</source>
-      <translation>CloseContour</translation>
+      <translation>閉じた輪郭</translation>
     </message>
     <message>
       <source>DEP_OBJECT</source>
-      <translation>選択したオブジェクトは、別の 1 つを作成する使用されています。削除できません。</translation>
+      <translation>選択したオブジェクトは、別のオブジェクトの作成に使用されました。 削除することはできません。</translation>
     </message>
     <message>
       <source>DEVIDE_EDGE_NEW_OBJECT_NAME</source>
-      <translation>NewObject</translation>
+      <translation>新しいオブジェクト</translation>
     </message>
     <message>
       <source>ERROR_SHAPE_TYPE</source>
-      <translation>オブジェクトの種類が正しく選択されて ！ください、顔、シェルまたはソリッドを選択し、もう一度やり直してください。</translation>
+      <translation>選択したオブジェクトの種類が正しくありません！\nフェース、シェルまたはソリッドを選択し、もう一度やり直してください。</translation>
     </message>
     <message>
       <source> iErr : 10</source>
@@ -45,59 +45,59 @@
     </message>
     <message>
       <source> iErr : 11</source>
-      <translation>図形が NULL であります。</translation>
+      <translation>フォームが NULL です。</translation>
     </message>
     <message>
       <source> iErr : 12</source>
-      <translation>サブの unallowed タイプ</translation>
+      <translation>不正なオブジェクト型</translation>
     </message>
     <message>
       <source> iErr : 13</source>
-      <translation>Unallowed 状態</translation>
+      <translation>この状態は許可されていません</translation>
     </message>
     <message>
       <source> iErr : 15</source>
-      <translation>Unallowed 表面型</translation>
+      <translation>このサーフェスタイプは許可されていません</translation>
     </message>
     <message>
       <source> iErr : 20</source>
-      <translation>三角形分割が見つかりません</translation>
+      <translation>三角パッチは見つかりませんでした。</translation>
     </message>
     <message>
       <source> iErr : 30</source>
-      <translation>リンクから行を取得できません。</translation>
+      <translation>行のリンクを取得できませんでした</translation>
     </message>
     <message>
       <source> iErr : 40</source>
-      <translation>ポイントすることができますが分類されていません。</translation>
+      <translation>ポイントを分類できません。</translation>
     </message>
     <message>
       <source> iErr : 41</source>
-      <translation>分類子の無効なデータ</translation>
+      <translation>拡張子が無効のデータです</translation>
     </message>
     <message>
       <source>GEOM_2D_CONTINUTY</source>
-      <translation>2 D の継続性</translation>
+      <translation>2Dコネクティビティ</translation>
     </message>
     <message>
       <source>GEOM_2D_CURVE_MODE</source>
-      <translation>二次元曲線モード</translation>
+      <translation>2D曲線モード</translation>
     </message>
     <message>
       <source>GEOM_2D_TOLERANCE</source>
-      <translation>2 D 公差</translation>
+      <translation>2D公差</translation>
     </message>
     <message>
       <source>GEOM_3D_CONTINUTY</source>
-      <translation>3 D の継続性</translation>
+      <translation>3Dコネクティビティ</translation>
     </message>
     <message>
       <source>GEOM_3D_CURVE_MODE</source>
-      <translation>3 D 曲線モード</translation>
+      <translation>3D曲線モード</translation>
     </message>
     <message>
       <source>GEOM_3D_TOLERANCE</source>
-      <translation>3次元公差</translation>
+      <translation>3D公差</translation>
     </message>
     <message>
       <source>GEOM_3_POINTS</source>
@@ -105,7 +105,7 @@
     </message>
     <message>
       <source>GEOM_ADD_POINT</source>
-      <translation>ポイントを追加します。</translation>
+      <translation>ポイントを追加</translation>
     </message>
     <message>
       <source>GEOM_ANGLE</source>
@@ -117,31 +117,35 @@
     </message>
     <message>
       <source>GEOM_ANGLE_2</source>
-      <translation>角 2:</translation>
+      <translation>2 の角度:</translation>
     </message>
     <message>
       <source>GEOM_ANGLE_1</source>
       <translation>角度</translation>
     </message>
     <message>
+      <source>GEOM_ANGLE_STEP</source>
+      <translation>GEOM_ANGLE_STEP</translation>
+    </message>
+    <message>
       <source>GEOM_ARC_ELLIPSE</source>
-      <translation>楕円の弧</translation>
+      <translation>楕円弧</translation>
     </message>
     <message>
       <source>GEOM_ARC</source>
-      <translation>アーク</translation>
+      <translation>Arc</translation>
     </message>
     <message>
       <source>GEOM_ARCHIMEDE</source>
-      <translation>アルキメーデ</translation>
+      <translation>らせん</translation>
     </message>
     <message>
       <source>GEOM_ARCHIMEDE_TITLE</source>
-      <translation>アルキメーデ建設</translation>
+      <translation>アルキメデス法</translation>
     </message>
     <message>
       <source>GEOM_ARC_TITLE</source>
-      <translation>アーク建設</translation>
+      <translation>円弧の作成</translation>
     </message>
     <message>
       <source>GEOM_ARGUMENTS</source>
@@ -149,7 +153,7 @@
     </message>
     <message>
       <source>GEOM_AXE_MIRROR</source>
-      <translation>斧ミラー</translation>
+      <translation>軸対称性</translation>
     </message>
     <message>
       <source>GEOM_AXIS</source>
@@ -165,7 +169,7 @@
     </message>
     <message>
       <source>GEOM_BASE_POINT</source>
-      <translation>基点</translation>
+      <translation>基準点</translation>
     </message>
     <message>
       <source>GEOM_BEZIER</source>
@@ -173,11 +177,11 @@
     </message>
     <message>
       <source>GEOM_BINORMAL</source>
-      <translation>従法線ベクトル</translation>
+      <translation>BiNormal</translation>
     </message>
     <message>
       <source>GEOM_BLOCK</source>
-      <translation>六面体のソリッド</translation>
+      <translation>Hexahedral_Solid</translation>
     </message>
     <message>
       <source>GEOM_BLOCKS_COMPOUND</source>
@@ -185,31 +189,31 @@
     </message>
     <message>
       <source>GEOM_BLOCK_EXPLODE</source>
-      <translation>サブ ブロック</translation>
+      <translation>符号化手法</translation>
     </message>
     <message>
       <source>GEOM_BLOCK_EXPLODE_TITLE</source>
-      <translation>サブ ブロックの選択</translation>
+      <translation>サブブロックの選択</translation>
     </message>
     <message>
       <source>GEOM_BLOCK_MULTITRSF</source>
-      <translation>ブロック Multi-Transformation</translation>
+      <translation>ブロック multi-transformation</translation>
     </message>
     <message>
       <source>GEOM_BLOCK_MULTITRSF_DOUBLE</source>
-      <translation>Multi-Transformation ダブル</translation>
+      <translation>Multi-transformation ダブル</translation>
     </message>
     <message>
       <source>GEOM_BLOCK_MULTITRSF_SIMPLE</source>
-      <translation>Multi-Transformation 単純な</translation>
+      <translation>簡単な multi-transformation</translation>
     </message>
     <message>
       <source>GEOM_BLOCK_MULTITRSF_TITLE</source>
-      <translation>ブロック Multi-Transformation</translation>
+      <translation>ブロック multi-transformation</translation>
     </message>
     <message>
       <source>GEOM_BLOCK_TITLE</source>
-      <translation>六面体の固体構造</translation>
+      <translation>六面体ソリッドの構築</translation>
     </message>
     <message>
       <source>GEOM_BNDBOX</source>
@@ -221,71 +225,71 @@
     </message>
     <message>
       <source>GEOM_BNDBOX_TITLE</source>
-      <translation>境界ボックス情報</translation>
+      <translation>境界ボックス</translation>
     </message>
     <message>
       <source>GEOM_BOX</source>
-      <translation>ボックス</translation>
+      <translation>Box</translation>
     </message>
     <message>
       <source>GEOM_BOX_OBJ</source>
-      <translation>原点の寸法</translation>
+      <translation>寸法</translation>
     </message>
     <message>
       <source>GEOM_BOX_TITLE</source>
-      <translation>ボックス構造</translation>
+      <translation>ボックスの作成</translation>
     </message>
     <message>
       <source>GEOM_BSplineRestriction</source>
-      <translation>BSplineRestriction</translation>
+      <translation>制限 BSpline</translation>
     </message>
     <message>
       <source>GEOM_BUT_APPLY</source>
-      <translation>&amp; 適用</translation>
+      <translation>適用(&amp;A)</translation>
     </message>
     <message>
       <source>GEOM_BUT_CANCEL</source>
-      <translation>&amp; [キャンセル</translation>
+      <translation>キャンセル(&amp;C)</translation>
     </message>
     <message>
       <source>GEOM_BUT_CLOSE</source>
-      <translation>&amp; 閉じる</translation>
+      <translation>閉じる(&amp;C)</translation>
     </message>
     <message>
       <source>GEOM_BUT_CLOSE_SKETCH</source>
-      <translation>スケッチの閉鎖</translation>
+      <translation>スケッチを終了</translation>
     </message>
     <message>
       <source>GEOM_BUT_END_SKETCH</source>
-      <translation>スケッチの検証</translation>
+      <translation>スケッチを検証</translation>
     </message>
     <message>
       <source>GEOM_BUT_EXPLODE</source>
-      <translation>&amp; 爆発</translation>
+      <translation>展開(&amp;E)</translation>
     </message>
     <message>
       <source>GEOM_BUT_HELP</source>
-      <translation>&amp; ヘルプ</translation>
+      <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
       <source>GEOM_BUT_NO</source>
-      <translation>&amp; なし</translation>
+      <translation>いいえ(&amp;N)</translation>
     </message>
     <message>
       <source>GEOM_BUT_OK</source>
-      <translation>O &amp; k</translation>
+      <translation>はい(&amp;k)</translation>
     </message>
     <message>
       <source>GEOM_BUT_APPLY_AND_CLOSE</source>
-      <translation>A &amp; に当てて行うと閉じる</translation>
+      <translation>適用して閉じる(&amp;p)</translation>
     </message>
     <message>
       <source>GEOM_BUT_YES</source>
-      <translation>&amp; はい</translation>
+      <translation>はい(&amp;Y)</translation>
     </message>
     <message>
       <source>GEOM_BY_LENGTH</source>
-      <translation>長さによって</translation>
+      <translation>長さで</translation>
     </message>
     <message>
       <source>GEOM_BY_PARAMETER</source>
@@ -297,15 +301,15 @@
     </message>
     <message>
       <source>GEOM_CENTER_DEFAULT</source>
-      <translation>(デフォルトの原点)</translation>
+      <translation>デフォルトでは原点</translation>
     </message>
     <message>
       <source>GEOM_CENTER_POINT</source>
-      <translation>センター ポイント</translation>
+      <translation>中心点</translation>
     </message>
     <message>
       <source>GEOM_CENTRAL_POINT</source>
-      <translation>セントラル ポイント</translation>
+      <translation>中心点</translation>
     </message>
     <message>
       <source>GEOM_CHAMFER</source>
@@ -313,27 +317,27 @@
     </message>
     <message>
       <source>GEOM_CHAMFER_ABORT</source>
-      <translation>面取りは%1 と%2 を計算することはできません。</translation>
+      <translation>%1 と %2 の面取りを計算することはできません。</translation>
     </message>
     <message>
       <source>GEOM_CHAMFER_ALL</source>
-      <translation>面取り全体の図形</translation>
+      <translation>上のオブジェクトの面取り</translation>
     </message>
     <message>
       <source>GEOM_CHAMFER_EDGES</source>
-      <translation>上の面取りエッジの選択</translation>
+      <translation>上のエッジの面取り</translation>
     </message>
     <message>
       <source>GEOM_CHAMFER_FACES</source>
-      <translation>面取りの面が選択されて</translation>
+      <translation>顔に面取り</translation>
     </message>
     <message>
       <source>GEOM_CHAMFER_TITLE</source>
-      <translation>面取り建設</translation>
+      <translation>面取りの構築</translation>
     </message>
     <message>
       <source>GEOM_CHANGE_ORIENTATION</source>
-      <translation>オブジェクトの向きを変更するには</translation>
+      <translation>オブジェクトを変更します。</translation>
     </message>
     <message>
       <source>GEOM_CHANGE_DIRECTION</source>
@@ -345,11 +349,11 @@
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_COMPOUND</source>
-      <translation>チェックおよびブロック化合物を強化</translation>
+      <translation>ブロックのアセンブリチェック</translation>
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_COMPOUND_FAILED</source>
-      <translation>チェックに失敗しました</translation>
+      <translation>監査つながっていません。</translation>
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_COMPOUND_ERRORS</source>
@@ -357,27 +361,27 @@
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_COMPOUND_HAS_ERRORS</source>
-      <translation>化合物のブロックにエラーがあります。</translation>
+      <translation>アセンブリ ブロックのエラーが含まれています。</translation>
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_COMPOUND_HAS_NO_ERRORS</source>
-      <translation>化合物のブロックにはエラーがないです。</translation>
+      <translation>アセンブリのブロックにはエラーがありません。</translation>
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES</source>
-      <translation>原因サブ図形の座標</translation>
+      <translation>サブオブジェクト</translation>
     </message>
     <message>
       <source>GEOM_GETNONBLOCKS_TITLE</source>
-      <translation>非六面体のソリッドと非四角形の面を取得します。</translation>
+      <translation>四角形の固体非 hexahedres と顔以外-上側を取得します。</translation>
     </message>
     <message>
       <source>GEOM_GETNONBLOCKS</source>
-      <translation>非ブロックを取得します。</translation>
+      <translation>固体非ブロックを取得します。</translation>
     </message>
     <message>
       <source>GEOM_NONBLOCKS</source>
-      <translation>NonBlocksGroup</translation>
+      <translation>GroupeSolidesNonBlocs</translation>
     </message>
     <message>
       <source>GEOM_CHECK_INFOS</source>
@@ -385,27 +389,27 @@
     </message>
     <message>
       <source>GEOM_CHECK_SHAPE</source>
-      <translation>形状をチェックします。</translation>
+      <translation>コントロール オブジェクト</translation>
     </message>
     <message>
       <source>GEOM_CHECK_TITLE</source>
-      <translation>形状情報をチェックします。</translation>
+      <translation>オブジェクトの有効性を確認します。</translation>
     </message>
     <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
-      <translation>自己交差を検出します。</translation>
+      <translation>自動交差点を検出します。</translation>
     </message>
     <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
-      <translation>自己交差の失敗の検出</translation>
+      <translation>自動交差点の検出に失敗しました</translation>
     </message>
     <message>
       <source>GEOM_NO_SELF_INTERSECTIONS</source>
-      <translation>自己交差形状ではありません。</translation>
+      <translation>ジオメトリの交差がないです。</translation>
     </message>
     <message>
       <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
-      <translation>いくつかの自己交差検出</translation>
+      <translation>交差部分の自動検出</translation>
     </message>
     <message>
       <source>GEOM_CIRCLE</source>
@@ -413,47 +417,47 @@
     </message>
     <message>
       <source>GEOM_CIRCLE_TITLE</source>
-      <translation>サークル建設</translation>
+      <translation>円の作成</translation>
     </message>
     <message>
       <source>GEOM_CLOSECONTOUR_TITLE</source>
-      <translation>近くの輪郭</translation>
+      <translation>輪郭を閉じる</translation>
     </message>
     <message>
       <source>GEOM_CMASS</source>
-      <translation>質量の中心</translation>
+      <translation>重心</translation>
     </message>
     <message>
       <source>GEOM_CMASS_TITLE</source>
-      <translation>重心を建設</translation>
+      <translation>重心の作成</translation>
     </message>
     <message>
       <source>GEOM_COMMON</source>
-      <translation>一般的です</translation>
+      <translation>交差点</translation>
     </message>
     <message>
       <source>GEOM_COMMON_TITLE</source>
-      <translation>一般的な 2 つのオブジェクト</translation>
+      <translation>交差部分を取り出す</translation>
     </message>
     <message>
       <source>GEOM_COMPOUND</source>
-      <translation>化合物</translation>
+      <translation>Compound</translation>
     </message>
     <message>
       <source>GEOM_COMPOUNDSOLID</source>
-      <translation>CompSolid</translation>
+      <translation>固体のアセンブリ</translation>
     </message>
     <message>
       <source>GEOM_COMPOUND_TITLE</source>
-      <translation>化合物を作成します。</translation>
+      <translation>コンパウンドの作成</translation>
     </message>
     <message>
       <source>GEOM_CONE</source>
-      <translation>コーン</translation>
+      <translation>Cone</translation>
     </message>
     <message>
       <source>GEOM_CONE_TITLE</source>
-      <translation>コーン建設</translation>
+      <translation>円錐の作成</translation>
     </message>
     <message>
       <source>GEOM_CONFIRM</source>
@@ -461,11 +465,11 @@
     </message>
     <message>
       <source>GEOM_CONFIRM_INFO</source>
-      <translation>形状には%1 サブ図形が含まれています ！</translation>
+      <translation>オブジェクトには %1 のサブオブジェクトが含まれています ！</translation>
     </message>
     <message>
       <source>GEOM_COOR</source>
-      <translation>座標。:</translation>
+      <translation>代：:</translation>
     </message>
     <message>
       <source>GEOM_COORDINATES</source>
@@ -477,7 +481,7 @@
     </message>
     <message>
       <source>GEOM_CREATE_COPY</source>
-      <translation>コピーを作成します。</translation>
+      <translation>コピーを作成</translation>
     </message>
     <message>
       <source>GEOM_CREATE_SINGLE_SOLID</source>
@@ -485,7 +489,7 @@
     </message>
     <message>
       <source>GEOM_CURVE</source>
-      <translation>曲線</translation>
+      <translation>Curve</translation>
     </message>
     <message>
       <source>GEOM_CURVE_CONTINUTY</source>
@@ -493,23 +497,23 @@
     </message>
     <message>
       <source>GEOM_CURVE_TITLE</source>
-      <translation>曲線の建設</translation>
+      <translation>曲線の作成</translation>
     </message>
     <message>
       <source>GEOM_CUT</source>
-      <translation>カット</translation>
+      <translation>Cut</translation>
     </message>
     <message>
       <source>GEOM_CUT_TITLE</source>
-      <translation>2 つのオブジェクトの切り取り</translation>
+      <translation>オブジェクトの切断</translation>
     </message>
     <message>
       <source>GEOM_CYLINDER</source>
-      <translation>シリンダー</translation>
+      <translation>Cylinder</translation>
     </message>
     <message>
       <source>GEOM_CYLINDER_TITLE</source>
-      <translation>シリンダー構造</translation>
+      <translation>円柱の作成</translation>
     </message>
     <message>
       <source>GEOM_D1</source>
@@ -525,15 +529,15 @@
     </message>
     <message>
       <source>GEOM_DIAGONAL_POINTS</source>
-      <translation>対角線ポイント</translation>
+      <translation>対角点</translation>
     </message>
     <message>
       <source>GEOM_DISK</source>
-      <translation>ディスク</translation>
+      <translation>Disk</translation>
     </message>
     <message>
       <source>GEOM_DISK_TITLE</source>
-      <translation>ディスクの構造</translation>
+      <translation>ディスクの作成</translation>
     </message>
     <message>
       <source>GEOM_DIMENSIONS</source>
@@ -549,51 +553,51 @@
     </message>
     <message>
       <source>GEOM_DIVIDE_EDGE_TITLE</source>
-      <translation>ポイントの追加</translation>
+      <translation>ポイントを追加</translation>
     </message>
     <message>
       <source>GEOM_DX</source>
-      <translation>Dx:</translation>
+      <translation>Dx :</translation>
     </message>
     <message>
       <source>GEOM_DY</source>
-      <translation>Dy:</translation>
+      <translation>Dy :</translation>
     </message>
     <message>
       <source>GEOM_DZ</source>
-      <translation>アルジェリア：</translation>
+      <translation>Dz :</translation>
     </message>
     <message>
       <source>GEOM_DropSmallEdges</source>
-      <translation>DropSmallEdges</translation>
+      <translation>マイナーなエッジを省略</translation>
     </message>
     <message>
       <source>GEOM_DRAFT_ANGLE</source>
-      <translation>ドラフト角度:</translation>
+      <translation>抜け勾配</translation>
     </message>
     <message>
       <source>GEOM_EDGE</source>
-      <translation>エッジ</translation>
+      <translation>Edge</translation>
     </message>
     <message>
       <source>GEOM_EDGE_TITLE</source>
-      <translation>エッジを作成します。</translation>
+      <translation>エッジを作成</translation>
     </message>
     <message>
       <source>GEOM_ELLIPSE</source>
-      <translation>楕円</translation>
+      <translation>Ellipse</translation>
     </message>
     <message>
       <source>GEOM_ELLIPSE_ERROR_1</source>
-      <translation>エラーを作成する楕円。理由： マイナーの半径は主要な半径よりも大きいです。</translation>
+      <translation>楕円を作成できません: 小さな半分軸が大きい、半分は主要な軸。</translation>
     </message>
     <message>
       <source>GEOM_ELLIPSE_TITLE</source>
-      <translation>楕円の建設</translation>
+      <translation>楕円の作成</translation>
     </message>
     <message>
       <source>GEOM_END_LCS</source>
-      <translation>終了 LCS</translation>
+      <translation>終わりの局所座標</translation>
     </message>
     <message>
       <source>GEOM_ERROR</source>
@@ -601,23 +605,23 @@
     </message>
     <message>
       <source>GEOM_ERROR_STATUS</source>
-      <translation>処理の状態</translation>
+      <translation>操作のステータス</translation>
     </message>
     <message>
       <source>GEOM_ERR_GET_ENGINE</source>
-      <translation>ジオメトリ エンジン コンポーネントを取得できませんでした。ジオメトリのモジュールをリロードしてやり直してください。</translation>
+      <translation>GEOM エンジン コンポーネントを取得することはできません。ジオメトリ モジュールを再開してから、もう一度やり直してください。</translation>
     </message>
     <message>
       <source>GEOM_ERR_LIB_NOT_FOUND</source>
-      <translation>ユーザー アクションに対応する GUI ライブラリを見つけたかロードすることができます。</translation>
+      <translation>ユーザーのアクションに対応するGUI ライブラリを開くことはできないか、既に開いています。</translation>
     </message>
     <message>
       <source>GEOM_EXTRUDED_CUT_TITLE</source>
-      <translation>押し出しカット</translation>
+      <translation>押出成形材料の除去</translation>
     </message>
     <message>
       <source>GEOM_EXTRUDED_CUT</source>
-      <translation>Extruded_cut</translation>
+      <translation>Enlevement_extrude</translation>
     </message>
     <message>
       <source>GEOM_EXTRUDED_BOSS_TITLE</source>
@@ -625,35 +629,35 @@
     </message>
     <message>
       <source>GEOM_EXTRUDED_BOSS</source>
-      <translation>Extruded_boss</translation>
+      <translation>Bossage_extrude</translation>
     </message>
     <message>
       <source>GEOM_EXTRUSION</source>
-      <translation>押出</translation>
+      <translation>Extrusion</translation>
     </message>
     <message>
       <source>GEOM_EXTRUSION_BSV</source>
-      <translation>基本図形 + ベクトル</translation>
+      <translation>ベクトルの基本図形</translation>
     </message>
     <message>
       <source>GEOM_EXTRUSION_BSV_2P</source>
-      <translation>基本図形 + 2 点</translation>
+      <translation>フォームの基本 2 ポイント</translation>
     </message>
     <message>
       <source>GEOM_EXTRUSION_DXDYDZ</source>
-      <translation>基本図形 + DX DY アルジェリア ベクトル</translation>
+      <translation>DX DY DZ のベクトルのフォームを基本します。</translation>
     </message>
     <message>
       <source>GEOM_EXTRUSION_TITLE</source>
-      <translation>押出法による建設</translation>
+      <translation>面の押出し</translation>
     </message>
     <message>
       <source>GEOM_SCALE_PRISM</source>
-      <translation>ベースの反対側の面をスケールします。</translation>
+      <translation>面のサイズを変えながら押し出す</translation>
     </message>
     <message>
       <source>GEOM_FACE</source>
-      <translation>顔</translation>
+      <translation>Face</translation>
     </message>
     <message>
       <source>GEOM_CS</source>
@@ -669,179 +673,179 @@
     </message>
     <message>
       <source>GEOM_FACES</source>
-      <translation>直面しています。</translation>
+      <translation>Faces</translation>
     </message>
     <message>
       <source>GEOM_FACE_FFW</source>
-      <translation>線やエッジから面作成</translation>
+      <translation>顔輪郭またはエッジからの作成</translation>
     </message>
     <message>
       <source>GEOM_FACE_OPT</source>
-      <translation>平坦な面を作成しようとしました。</translation>
+      <translation>平らなフェースを作成してください</translation>
     </message>
     <message>
       <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
-      <translation>平坦な面を構築することはできません: 許容差が大きすぎるために必要な。非平面の面が構築されています。</translation>
+      <translation>平面顔を構築できませんでした: \n 作成顔が高すぎるの公差</translation>
     </message>
     <message>
       <source>GEOM_FACE_OR_LCS</source>
-      <translation>顔や LCS</translation>
+      <translation>フェース または LCS</translation>
     </message>
     <message>
       <source>GEOM_FACE_SELECTION</source>
-      <translation>フェイスの選択</translation>
+      <translation>顔の選択</translation>
     </message>
     <message>
       <source>GEOM_FACE_TITLE</source>
-      <translation>顔を作成します。</translation>
+      <translation>フェースの作成</translation>
     </message>
     <message>
       <source>GEOM_RECTANGLE_TITLE</source>
-      <translation>四角形の構造</translation>
+      <translation>四角形の構築</translation>
     </message>
     <message>
       <source>GEOM_RECTANGLE</source>
-      <translation>四角形</translation>
+      <translation>四角形の作成</translation>
     </message>
     <message>
       <source>GEOM_FILLET</source>
-      <translation>フィレット</translation>
+      <translation>Fillet</translation>
     </message>
     <message>
       <source>GEOM_FILLET_2D</source>
-      <translation>2D フィレット</translation>
+      <translation>Fillet_2D</translation>
     </message>
     <message>
       <source>GEOM_FILLET_1D</source>
-      <translation>フィレット 1 D</translation>
+      <translation>FIllet_1D</translation>
     </message>
     <message>
       <source>GEOM_FILLET_1D_IGNORE_SECANT</source>
-      <translation>大きな半径を許可するヒューズ コリニア エッジ</translation>
+      <translation>大きな光を許可するように共線性のエッジをマージします。</translation>
     </message>
     <message>
       <source>GEOM_FILLET_ABORT</source>
-      <translation>フィレット半径%1 を計算することはできません。</translation>
+      <translation>半径%1 ではフィレットを構築できません。</translation>
     </message>
     <message>
       <source>GEOM_FILLET_ALL</source>
-      <translation>図形全体に乗せた</translation>
+      <translation>上のオブジェクトを残す</translation>
     </message>
     <message>
       <source>GEOM_FILLET_EDGES</source>
-      <translation>選択したエッジにフィレット</translation>
+      <translation>上のエッジを残す</translation>
     </message>
     <message>
       <source>GEOM_FILLET_FACES</source>
-      <translation>選択した面にフィレット</translation>
+      <translation>顔に残す</translation>
     </message>
     <message>
       <source>GEOM_FILLET_TITLE</source>
-      <translation>フィレット建設</translation>
+      <translation>フィレットの作成</translation>
     </message>
     <message>
       <source>GEOM_FILLET_2D_TITLE</source>
-      <translation>2D フィレットの建設</translation>
+      <translation>2Dフィレットの作成</translation>
     </message>
     <message>
       <source>GEOM_FILLET_1D_TITLE</source>
-      <translation>1 D フィレット建設</translation>
+      <translation>1Dフィレットの作成</translation>
     </message>
     <message>
       <source>GEOM_FILLING</source>
-      <translation>充填</translation>
+      <translation>Filling</translation>
     </message>
     <message>
       <source>GEOM_FILLING_ARG</source>
-      <translation>引数とパラメーター</translation>
+      <translation>パラメーターと引数</translation>
     </message>
     <message>
       <source>GEOM_FILLING_COMPOUND</source>
-      <translation>複合入力</translation>
+      <translation>アセンブリ入力</translation>
     </message>
     <message>
       <source>GEOM_FILLING_MAX_DEG</source>
-      <translation>最大度</translation>
+      <translation>最大角度</translation>
     </message>
     <message>
       <source>GEOM_FILLING_MIN_DEG</source>
-      <translation>分度</translation>
+      <translation>最小角度</translation>
     </message>
     <message>
       <source>GEOM_FILLING_NB_ITER</source>
-      <translation>注意 Iter:</translation>
+      <translation>Nb. Iter :</translation>
     </message>
     <message>
       <source>GEOM_FILLING_TITLE</source>
-      <translation>サーフェスのエッジを持つ充填</translation>
+      <translation>サーフェス エッジを埋める</translation>
     </message>
     <message>
       <source>GEOM_FILLING_TOL_2D</source>
-      <translation>許容差2 D:</translation>
+      <translation>Tol. 2D :</translation>
     </message>
     <message>
       <source>GEOM_FILLING_TOL_3D</source>
-      <translation>許容差3 D:</translation>
+      <translation>Tol. 3D :</translation>
     </message>
     <message>
       <source>GEOM_FREE_BOUNDARIES</source>
-      <translation>自由境界条件</translation>
+      <translation>自由境界</translation>
     </message>
     <message>
       <source>GEOM_FREE_BOUNDS_ERROR</source>
-      <translation>オブジェクトは選択されません。</translation>
+      <translation>オブジェクトが選択されていません</translation>
     </message>
     <message>
       <source>GEOM_FREE_BOUNDS_MSG</source>
-      <translation>無料境界検出数：%1 （%2 の閉鎖、オープン%3）</translation>
+      <translation>検出された自由境界: %1 (閉 %2、 開%3 )</translation>
     </message>
     <message>
       <source>GEOM_FREE_BOUNDS_TLT</source>
-      <translation>自由境界検出</translation>
+      <translation>無料の輪郭を見つける</translation>
     </message>
     <message>
       <source>GEOM_FREE_FACES</source>
-      <translation>無料顔</translation>
+      <translation>フリーフェース</translation>
     </message>
     <message>
       <source>GEOM_FREE_FACES_TITLE</source>
-      <translation>無料顔</translation>
+      <translation>フリーフェース</translation>
     </message>
     <message>
       <source>GEOM_FUSE</source>
-      <translation>ヒューズ</translation>
+      <translation>Fuse</translation>
     </message>
     <message>
       <source>GEOM_FUSE_TITLE</source>
-      <translation>2 つのオブジェクトをヒューズします。</translation>
+      <translation>2つのオブジェクトの結合</translation>
     </message>
     <message>
       <source>GEOM_FixFaceSize</source>
-      <translation>FixFaceSize</translation>
+      <translation>顔のサイズを修正します。</translation>
     </message>
     <message>
       <source>GEOM_FixShape</source>
-      <translation>FixShape</translation>
+      <translation>オブジェクトを修復します。</translation>
     </message>
     <message>
       <source>GEOM_GLUE</source>
-      <translation>接着剤</translation>
+      <translation>固着</translation>
     </message>
     <message>
       <source>GEOM_GLUE_FACES_TITLE</source>
-      <translation>接着剤の顔</translation>
+      <translation>フェース固着</translation>
     </message>
     <message>
       <source>GEOM_GLUE_EDGES_TITLE</source>
-      <translation>接着剤のエッジ</translation>
+      <translation>エッジ固着</translation>
     </message>
     <message>
       <source>GLUE_ERROR_STICKED_SHAPES</source>
-      <translation>許容値が大きすぎます。付着図形が検出されます。</translation>
+      <translation>公差の値が大きすぎます。「付着」図形の検出。</translation>
     </message>
     <message>
       <source>GEOM_LIMIT_TOLERANCE_TITLE</source>
-      <translation>許容</translation>
+      <translation>公差の制限</translation>
     </message>
     <message>
       <source>GEOM_HEIGHT</source>
@@ -857,43 +861,43 @@
     </message>
     <message>
       <source>GEOM_INIT_SHAPE</source>
-      <translation>初期形状</translation>
+      <translation>元のオブジェクト</translation>
     </message>
     <message>
       <source>GEOM_IDENTICAL_NAMES_SELECT_BY_MOUSE</source>
-      <translation>同一の名前： 選択マウスで ！</translation>
+      <translation>同一の名前: をマウスで選択 ！</translation>
     </message>
     <message>
       <source>GEOM_IMPORT</source>
-      <translation>Imported_Shape</translation>
+      <translation>Objet_importe</translation>
     </message>
     <message>
       <source>GEOM_INCORRECT_INPUT</source>
-      <translation>不正な入力データ ！</translation>
+      <translation>入力のデータは有効ではありません ！</translation>
     </message>
     <message>
       <source>GEOM_INERTIA_CONSTR</source>
-      <translation>行列と慣性モーメント</translation>
+      <translation>行列とモーメント</translation>
     </message>
     <message>
       <source>GEOM_INERTIA_I</source>
-      <translation>%1: 1。</translation>
+      <translation>%1:1。</translation>
     </message>
     <message>
       <source>GEOM_INERTIA_IXYZ</source>
-      <translation>IX &amp; IY &amp; IZ:</translation>
+      <translation>IX &amp; IY &amp; IZ :</translation>
     </message>
     <message>
       <source>GEOM_INERTIA_TITLE</source>
-      <translation>慣性のと</translation>
+      <translation>慣性の計算</translation>
     </message>
     <message>
       <source>GEOM_INF_LOADED</source>
-      <translation>ファイル%1 を読み込みます。</translation>
+      <translation>ファイル %1 は開いています</translation>
     </message>
     <message>
       <source>GEOM_INTERNAL_WIRES</source>
-      <translation>内部のワイヤ</translation>
+      <translation>内部ワイヤー</translation>
     </message>
     <message>
       <source>GEOM_INTERPOL</source>
@@ -901,7 +905,7 @@
     </message>
     <message>
       <source>GEOM_KEEP_OBJECT</source>
-      <translation>オブジェクトを保持します。</translation>
+      <translation>オブジェクトを維持します。</translation>
     </message>
     <message>
       <source>GEOM_LENGTH</source>
@@ -909,11 +913,11 @@
     </message>
     <message>
       <source>GEOM_LINE</source>
-      <translation>ライン</translation>
+      <translation>Line</translation>
     </message>
     <message>
       <source>GEOM_LINE_TITLE</source>
-      <translation>ラインの建設</translation>
+      <translation>線の作成</translation>
     </message>
     <message>
       <source>GEOM_MAIN_OBJECT</source>
@@ -925,27 +929,27 @@
     </message>
     <message>
       <source>GEOM_MARKER_TITLE</source>
-      <translation>マーカーを作成します。</translation>
+      <translation>座標系を作成</translation>
     </message>
     <message>
       <source>GEOM_MATERIAL_ID</source>
-      <translation>資料 ID:</translation>
+      <translation>素材: ID</translation>
     </message>
     <message>
       <source>GEOM_MATERIAL_MATERIAL</source>
-      <translation>材料</translation>
+      <translation>素材</translation>
     </message>
     <message>
       <source>GEOM_MATERIAL_SET</source>
-      <translation>&lt;&lt; 設定</translation>
+      <translation>&amp;lt; ゲーム</translation>
     </message>
     <message>
       <source>GEOM_MATERIAL_SHAPE</source>
-      <translation>図形</translation>
+      <translation>形状</translation>
     </message>
     <message>
       <source>GEOM_MATERIAL_TITLE</source>
-      <translation>支配的な融合のための材料を定義します。</translation>
+      <translation>支配的な核融合材料を定義します。</translation>
     </message>
     <message>
       <source>GEOM_MATRIX</source>
@@ -957,15 +961,15 @@
     </message>
     <message>
       <source>GEOM_MAX_3D_TOLERANCE</source>
-      <translation>最大 3 D の許容差</translation>
+      <translation>最大 3 D 公差</translation>
     </message>
     <message>
       <source>GEOM_MAX_TOLERANCE</source>
-      <translation>最大許容差</translation>
+      <translation>最長トレランス</translation>
     </message>
     <message>
       <source>GEOM_MEN_ALL_FILES</source>
-      <translation>すべてのファイル (*)</translation>
+      <translation>すべてのファイル （※）</translation>
     </message>
     <message>
       <source>GEOM_MEN_ANGLE</source>
@@ -977,7 +981,7 @@
     </message>
     <message>
       <source>GEOM_MEN_ENTER_ANGLE</source>
-      <translation>角度を度単位で入力します。</translation>
+      <translation>角度を度数で指定します</translation>
     </message>
     <message>
       <source>GEOM_MEN_EXPORT</source>
@@ -989,15 +993,15 @@
     </message>
     <message>
       <source>GEOM_MEN_ISOS</source>
-      <translation>Iso イメージの数を選択します</translation>
+      <translation>輪郭線の数を選択します。</translation>
     </message>
     <message>
       <source>GEOM_MEN_ISOU</source>
-      <translation>Iso イメージの U:</translation>
+      <translation>Isos U :</translation>
     </message>
     <message>
       <source>GEOM_MEN_ISOV</source>
-      <translation>Iso イメージの V:</translation>
+      <translation>Isos V :</translation>
     </message>
     <message>
       <source>GEOM_MEN_POPUP_NAME</source>
@@ -1005,31 +1009,31 @@
     </message>
     <message>
       <source>GEOM_MEN_SHADING</source>
-      <translation>網かけの設定</translation>
+      <translation>網かけ</translation>
     </message>
     <message>
       <source>GEOM_MEN_SHADING_WITH_EDGES</source>
-      <translation>シェーディング、エッジ</translation>
+      <translation>陰影とエッジ</translation>
     </message>
     <message>
       <source>GEOM_MEN_SKETCHER_X</source>
-      <translation>X に設定する長さを入力します</translation>
+      <translation>X 軸方向の距離を指定</translation>
     </message>
     <message>
       <source>GEOM_MEN_SKETCHER_Y</source>
-      <translation>Y に設定すると、長さを入力します</translation>
+      <translation>Y 軸方向の距離を指定</translation>
     </message>
     <message>
       <source>GEOM_MEN_STEP_LABEL</source>
-      <translation>手順:</translation>
+      <translation>ステップ：</translation>
     </message>
     <message>
       <source>GEOM_MEN_TRANSPARENCY</source>
-      <translation>透明性</translation>
+      <translation>透明度</translation>
     </message>
     <message>
       <source>GEOM_MEN_TRANSPARENCY_LABEL</source>
-      <translation>透明性:</translation>
+      <translation>透明度:</translation>
     </message>
     <message>
       <source>GEOM_MEN_WIREFRAME</source>
@@ -1037,23 +1041,39 @@
     </message>
     <message>
       <source>GEOM_MEN_X</source>
-      <translation>X:</translation>
+      <translation>X :</translation>
     </message>
     <message>
       <source>GEOM_MEN_Y</source>
-      <translation>Y:</translation>
+      <translation>Y :</translation>
     </message>
     <message>
       <source>GEOM_MESHING_DEFLECTION</source>
-      <translation>メッシュをそらします。:</translation>
+      <translation>メッシュの変形。:</translation>
     </message>
     <message>
       <source>GEOM_MIN</source>
-      <translation>Min:</translation>
+      <translation>最小:</translation>
+    </message>
+    <message>
+      <source>GEOM_MINDIST_NAME</source>
+      <translation>GEOM_MINDIST_NAME</translation>
+    </message>
+    <message>
+      <source>GEOM_MINDIST_NO_SOL</source>
+      <translation>GEOM_MINDIST_NO_SOL</translation>
     </message>
     <message>
       <source>GEOM_MINDIST_OBJ</source>
       <translation>オブジェクトと結果</translation>
+    </message>
+    <message>
+      <source>GEOM_MINDIST_PUBLISH_TITLE</source>
+      <translation>GEOM_MINDIST_PUBLISH_TITLE</translation>
+    </message>
+    <message>
+      <source>GEOM_MINDIST_PUBLISH_TEXT</source>
+      <translation>GEOM_MINDIST_PUBLISH_TEXT</translation>
     </message>
     <message>
       <source>GEOM_MINDIST_TITLE</source>
@@ -1065,7 +1085,7 @@
     </message>
     <message>
       <source>GEOM_MIRROR_TITLE</source>
-      <translation>ミラー オブジェクト</translation>
+      <translation>オブジェクトを反転</translation>
     </message>
     <message>
       <source>GEOM_MODE</source>
@@ -1073,67 +1093,67 @@
     </message>
     <message>
       <source>GEOM_MULTIROTATION</source>
-      <translation>Multi-Rotation</translation>
+      <translation>Multi-rotation</translation>
     </message>
     <message>
       <source>GEOM_MULTIROTATION_DOUBLE</source>
-      <translation>マルチ回転ダブル</translation>
+      <translation>多回転二重</translation>
     </message>
     <message>
       <source>GEOM_MULTIROTATION_SIMPLE</source>
-      <translation>マルチ回転シンプル</translation>
+      <translation>複数の単純な回転</translation>
     </message>
     <message>
       <source>GEOM_MULTIROTATION_TITLE</source>
-      <translation>Multi-Rotation</translation>
+      <translation>Multi-rotation</translation>
     </message>
     <message>
       <source>GEOM_MULTITRANSLATION</source>
-      <translation>Multi-Translation</translation>
+      <translation>Multi-translation</translation>
     </message>
     <message>
       <source>GEOM_MULTITRANSLATION_DOUBLE</source>
-      <translation>マルチ翻訳ダブル</translation>
+      <translation>ダブル マルチ翻訳</translation>
     </message>
     <message>
       <source>GEOM_MULTITRANSLATION_SIMPLE</source>
-      <translation>マルチ翻訳単純な</translation>
+      <translation>マルチは簡単な翻訳</translation>
     </message>
     <message>
       <source>GEOM_MULTITRANSLATION_TITLE</source>
-      <translation>Multi-Translation</translation>
+      <translation>複数オブジェクトの移動</translation>
     </message>
     <message>
       <source>GEOM_NAME_INCORRECT</source>
-      <translation>オブジェクト名が見つかりません</translation>
+      <translation>オブジェクトの名前が見つかりませんでした。</translation>
     </message>
     <message>
       <source>GEOM_NB_BLOCKS_NO_OTHERS</source>
-      <translation>%1 指定したブロックとない他の固体</translation>
+      <translation>指定された %1 ブロック (s) は (s) と他の固体のではないです。</translation>
     </message>
     <message>
       <source>GEOM_NB_BLOCKS_SOME_OTHERS</source>
-      <translation>%1 指定したブロックと他のいくつかの固体があります</translation>
+      <translation>%1 ブロック (s) が指定された (s) と他の固体</translation>
     </message>
     <message>
       <source>GEOM_NB_TIMES</source>
-      <translation>注意時間:</translation>
+      <translation>回数</translation>
     </message>
     <message>
       <source>GEOM_NB_TIMES_U</source>
-      <translation>注意回 U:</translation>
+      <translation>回数 U</translation>
     </message>
     <message>
       <source>GEOM_NB_TIMES_V</source>
-      <translation>注意回 V:</translation>
+      <translation>回数 V</translation>
     </message>
     <message>
       <source>GEOM_NODES</source>
-      <translation>ノード</translation>
+      <translation>節点</translation>
     </message>
     <message>
       <source>GEOM_NUM_SPLIT_POINTS</source>
-      <translation>ポイントの分割数</translation>
+      <translation>分割点の数</translation>
     </message>
     <message>
       <source>GEOM_OBJECT</source>
@@ -1149,11 +1169,11 @@
     </message>
     <message>
       <source>GEOM_OBJECT_I</source>
-      <translation>オブジェクト%1</translation>
+      <translation>オブジェクト %1</translation>
     </message>
     <message>
       <source>GEOM_OBJECT_RESULT</source>
-      <translation>オブジェクトと結果</translation>
+      <translation>目的と結果</translation>
     </message>
     <message>
       <source>GEOM_OFFSET</source>
@@ -1161,11 +1181,11 @@
     </message>
     <message>
       <source>GEOM_OFFSET_TITLE</source>
-      <translation>オフセット サーフェス</translation>
+      <translation>サーフェスをオフセット</translation>
     </message>
     <message>
       <source>GEOM_PATTERN</source>
-      <translation>分割パターン</translation>
+      <translation>加工図</translation>
     </message>
     <message>
       <source>GEOM_PROJECTION</source>
@@ -1173,15 +1193,23 @@
     </message>
     <message>
       <source>GEOM_PROJECTION_TITLE</source>
-      <translation>投影の顔に</translation>
+      <translation>フェース上に投影</translation>
     </message>
     <message>
       <source>GEOM_SOURCE_OBJECT</source>
-      <translation>ソース頂点、エッジまたはワイヤ</translation>
+      <translation>基になるポイント、エッジ、またはワイヤー</translation>
+    </message>
+    <message>
+      <source>GEOM_SOLUTION</source>
+      <translation>GEOM_SOLUTION</translation>
+    </message>
+    <message>
+      <source>GEOM_SOLUTION_I</source>
+      <translation>GEOM_SOLUTION_I</translation>
     </message>
     <message>
       <source>GEOM_TARGET_OBJECT</source>
-      <translation>ターゲットの顔</translation>
+      <translation>目的面</translation>
     </message>
     <message>
       <source>GEOM_OPERATIONS</source>
@@ -1189,11 +1217,11 @@
     </message>
     <message>
       <source>GEOM_ORIENTATION</source>
-      <translation>印刷の向き</translation>
+      <translation>方向</translation>
     </message>
     <message>
       <source>GEOM_ORIENTATION_OPT</source>
-      <translation>逆向き法線ベクトルによる</translation>
+      <translation>方向を反転して、法線ベクトルをシミュレート</translation>
     </message>
     <message>
       <source>GEOM_ORIENTATION_TITLE</source>
@@ -1209,11 +1237,11 @@
     </message>
     <message>
       <source>GEOM_POINT_ON_EDGE</source>
-      <translation>端をポイントします。</translation>
+      <translation>エッジ上のポイント</translation>
     </message>
     <message>
       <source>GEOM_POINT_ON_FACE</source>
-      <translation>顔にポイントします。</translation>
+      <translation>フェース上のポイント</translation>
     </message>
     <message>
       <source>GEOM_PARAM_VALUE</source>
@@ -1225,19 +1253,19 @@
     </message>
     <message>
       <source>GEOM_LENGTH_VALUE</source>
-      <translation>長さによって</translation>
+      <translation>長さで</translation>
     </message>
     <message>
       <source>GEOM_PARTITION</source>
-      <translation>パーティション</translation>
+      <translation>Partition</translation>
     </message>
     <message>
       <source>GEOM_WRN_PARTITION_RESULT_EMPTY</source>
-      <translation>パーティションの結果は空、再構築制限パラメーターを確認してください。</translation>
+      <translation>パーティションの空、結果「結果の型」パラメーターをチェック</translation>
     </message>
     <message>
       <source>GEOM_PARTITION_HALFSPACE</source>
-      <translation>半スペースのパーティション</translation>
+      <translation>半分でパーティション</translation>
     </message>
     <message>
       <source>GEOM_PARTITION_ORIENTATION</source>
@@ -1245,39 +1273,39 @@
     </message>
     <message>
       <source>GEOM_PARTITION_TITLE</source>
-      <translation>パーティション ツールでオブジェクトの</translation>
+      <translation>ツールオブジェクトで分割</translation>
     </message>
     <message>
       <source>GEOM_PATH_OBJECT</source>
-      <translation>パス オブジェクト</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE</source>
-      <translation>パイプ</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TITLE</source>
-      <translation>管工事</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_PATH</source>
       <translation>パス</translation>
     </message>
     <message>
+      <source>GEOM_PIPE</source>
+      <translation>Pipe</translation>
+    </message>
+    <message>
+      <source>GEOM_PIPE_TITLE</source>
+      <translation>パイプの作成</translation>
+    </message>
+    <message>
+      <source>GEOM_PIPE_PATH</source>
+      <translation>Path</translation>
+    </message>
+    <message>
       <source>GEOM_PIPE_PATH_TITLE</source>
-      <translation>復元パス</translation>
+      <translation>経路の復元</translation>
     </message>
     <message>
       <source>GEOM_PIPE_LIKE_SHAPE</source>
-      <translation>パイプのようなシェルまたはソリッド</translation>
+      <translation>シェルまたはソリッド タイプのパイプ</translation>
     </message>
     <message>
       <source>GEOM_PIPE_BASE1_OBJECT</source>
-      <translation>最初のベースの顔/ワイヤー/エッジ</translation>
+      <translation>始点となるベース　面/ワイヤ/エッジ</translation>
     </message>
     <message>
       <source>GEOM_PIPE_BASE2_OBJECT</source>
-      <translation>最後のベース面、線、エッジ</translation>
+      <translation>終点となるベース　面/ワイヤ/エッジ</translation>
     </message>
     <message>
       <source>GEOM_PROFILE</source>
@@ -1289,23 +1317,23 @@
     </message>
     <message>
       <source>GEOM_SELECT_UNPUBLISHED_EDGES</source>
-      <translation>未発表のエッジを選択します。</translation>
+      <translation>非公開のエッジを選択</translation>
     </message>
     <message>
       <source>GEOM_PLANE</source>
-      <translation>飛行機</translation>
+      <translation>Plane</translation>
     </message>
     <message>
       <source>GEOM_PLANE_MIRROR</source>
-      <translation>平面ミラー</translation>
+      <translation>ミラー平面</translation>
     </message>
     <message>
       <source>GEOM_PLANE_PV</source>
-      <translation>ポイント + ベクトル</translation>
+      <translation>ポイントとベクトル</translation>
     </message>
     <message>
       <source>GEOM_PLANE_PVC</source>
-      <translation>ポイント + 座標ベクトル</translation>
+      <translation>連絡先のベクトル ポイント</translation>
     </message>
     <message>
       <source>GEOM_PLANE_SIZE</source>
@@ -1313,11 +1341,11 @@
     </message>
     <message>
       <source>GEOM_PLANE_TITLE</source>
-      <translation>飛行機の建設</translation>
+      <translation>平面の作成</translation>
     </message>
     <message>
       <source>GEOM_POINT</source>
-      <translation>ポイント</translation>
+      <translation>基準点</translation>
     </message>
     <message>
       <source>GEOM_POINT1</source>
@@ -1337,7 +1365,7 @@
     </message>
     <message>
       <source>GEOM_POINT_I</source>
-      <translation>ポイント%1</translation>
+      <translation>点 %1</translation>
     </message>
     <message>
       <source>GEOM_POINT_MIRROR</source>
@@ -1345,23 +1373,23 @@
     </message>
     <message>
       <source>GEOM_POINT_TITLE</source>
-      <translation>ポイント建設</translation>
+      <translation>ポイントの作成</translation>
     </message>
     <message>
       <source>GEOM_START_POINT</source>
-      <translation>開始点</translation>
+      <translation>始点</translation>
     </message>
     <message>
       <source>GEOM_POLYLINE</source>
-      <translation>ポリライン</translation>
+      <translation>折れ線</translation>
     </message>
     <message>
       <source>GEOM_POSITION</source>
-      <translation>場所</translation>
+      <translation>位置</translation>
     </message>
     <message>
       <source>GEOM_POSITION_TITLE</source>
-      <translation>オブジェクトの場所を変更します。</translation>
+      <translation>オブジェクトの位置を変更</translation>
     </message>
     <message>
       <source>GEOM_PRECISION</source>
@@ -1369,15 +1397,15 @@
     </message>
     <message>
       <source>GEOM_PROPAGATE</source>
-      <translation>伝達</translation>
+      <translation>スプレッド</translation>
     </message>
     <message>
       <source>GEOM_PROPAGATE_TITLE</source>
-      <translation>伝達</translation>
+      <translation>スプレッド</translation>
     </message>
     <message>
       <source>GEOM_PROPERTIES</source>
-      <translation>基本的なプロパティ</translation>
+      <translation>基本プロパティ</translation>
     </message>
     <message>
       <source>GEOM_PROPERTIES_CONSTR</source>
@@ -1385,79 +1413,79 @@
     </message>
     <message>
       <source>GEOM_PROPERTIES_SURFACE</source>
-      <translation>表面です。</translation>
+      <translation>サーフェス:</translation>
     </message>
     <message>
       <source>GEOM_PROPERTIES_TITLE</source>
-      <translation>基本的なプロパティ情報</translation>
+      <translation>基本プロパティ</translation>
     </message>
     <message>
       <source>GEOM_PROPERTIES_VOLUME</source>
-      <translation>ボリュームです。</translation>
+      <translation>ボリューム:</translation>
     </message>
     <message>
       <source>GEOM_PRP_ABORT</source>
-      <translation>操作は中断されました</translation>
+      <translation>操作は取り消されました</translation>
     </message>
     <message>
       <source>GEOM_PRP_COMMAND</source>
-      <translation>この id に関連付けられているコマンドがない%1 を =。</translation>
+      <translation>この id = %1 に関連付けられているコマンドがない</translation>
     </message>
     <message>
       <source>GEOM_PRP_DONE</source>
-      <translation>行う操作</translation>
+      <translation>操作の結果</translation>
     </message>
     <message>
       <source>GEOM_PRP_EXPORT</source>
-      <translation>ジオメトリ%1 にエクスポートしています.</translation>
+      <translation>ジオメトリを %1 にエクスポート...</translation>
     </message>
     <message>
       <source>GEOM_PRP_LOADING</source>
-      <translation>%1 を読み込んでいます.</translation>
+      <translation>読み込み %1...</translation>
     </message>
     <message>
       <source>GEOM_PRP_MIN_DIST</source>
-      <translation>最小距離を計算</translation>
+      <translation>最小の距離を計算します。</translation>
     </message>
     <message>
       <source>GEOM_PRP_NOT_FOR_VTK_VIEWER</source>
-      <translation>VTK ビューアーで使用できません。</translation>
+      <translation>VTK ビューアーでは許可がありません</translation>
     </message>
     <message>
       <source>GEOM_PRP_NULLSHAPE</source>
-      <translation>エラーは、null または不適切な形状 ！</translation>
+      <translation>エラー！オブジェクトは存在しない、または不適切な形状です。</translation>
     </message>
     <message>
       <source>GEOM_PRP_READY</source>
-      <translation>準備ができて</translation>
+      <translation>準備完了</translation>
     </message>
     <message>
       <source>GEOM_PRP_SELECT_EDGE</source>
-      <translation>エッジを選択し、[適用] をクリックします</translation>
+      <translation>エッジを選択し、適用をクリック</translation>
     </message>
     <message>
       <source>GEOM_PRP_SELECT_FACE</source>
-      <translation>適用/[ok] をクリックして抑制する、面を選択します</translation>
+      <translation>抑制するフェースを選択し、Ok/Applyをクリック</translation>
     </message>
     <message>
       <source>GEOM_PRP_SELECT_FIRST</source>
-      <translation>最初主な図形を選択します。</translation>
+      <translation>メインオブジェクトを最初に選択</translation>
     </message>
     <message>
       <source>GEOM_PRP_SELECT_SUBSHAPES</source>
-      <translation>サブ図形を選択します</translation>
+      <translation>サブオブジェクトを選択します。</translation>
     </message>
     <message>
       <source>GEOM_PRP_SHAPE_IN_STUDY</source>
-      <translation>主な形の前に研究する必要があります。</translation>
+      <translation>最初にメインのオブジェクトを選択してください</translation>
     </message>
     <message>
       <source>GEOM_QUAD_FACE</source>
-      <translation>四角形の顔</translation>
+      <translation>Quadrangle_Face</translation>
     </message>
     <message>
       <source>GEOM_QUAD_FACE_TITLE</source>
-      <translation>四角形の顔の建設</translation>
+      <translation>四角形の顔の構築</translation>
     </message>
     <message>
       <source>GEOM_RADIUS</source>
@@ -1465,15 +1493,15 @@
     </message>
     <message>
       <source>GEOM_RADIUS_I</source>
-      <translation>半径%1:</translation>
+      <translation>半径 %1:</translation>
     </message>
     <message>
       <source>GEOM_RADIUS_MAJOR</source>
-      <translation>主要な半径:</translation>
+      <translation>長径:</translation>
     </message>
     <message>
       <source>GEOM_RADIUS_MINOR</source>
-      <translation>マイナーの半径:</translation>
+      <translation>短径:</translation>
     </message>
     <message>
       <source>GEOM_RECONSTRUCTION_LIMIT</source>
@@ -1485,11 +1513,11 @@
     </message>
     <message>
       <source>GEOM_RECONSTRUCTION_LIMIT_FACE</source>
-      <translation>顔</translation>
+      <translation>フェース</translation>
     </message>
     <message>
       <source>GEOM_RECONSTRUCTION_LIMIT_SHAPE</source>
-      <translation>図形</translation>
+      <translation>オブジェクト</translation>
     </message>
     <message>
       <source>GEOM_RECONSTRUCTION_LIMIT_SHELL</source>
@@ -1497,11 +1525,11 @@
     </message>
     <message>
       <source>GEOM_RECONSTRUCTION_LIMIT_SOLID</source>
-      <translation>固体</translation>
+      <translation>ソリッド</translation>
     </message>
     <message>
       <source>GEOM_RECONSTRUCTION_LIMIT_VERTEX</source>
-      <translation>頂点</translation>
+      <translation>基準点</translation>
     </message>
     <message>
       <source>GEOM_RECONSTRUCTION_LIMIT_WIRE</source>
@@ -1509,31 +1537,27 @@
     </message>
     <message>
       <source>GEOM_REF_POINT</source>
-      <translation>参照をポイントします。</translation>
+      <translation>基準点</translation>
     </message>
     <message>
       <source>GEOM_REMOVE_ALL_HOLES</source>
-      <translation>すべての穴を削除します。</translation>
+      <translation>すべての穴を削除</translation>
     </message>
     <message>
       <source>GEOM_REMOVE_ALL_INT_WIRES</source>
-      <translation>すべての内部のワイヤを削除します。</translation>
+      <translation>すべての内部ワイヤーを削除</translation>
     </message>
     <message>
       <source>GEOM_REMOVE_HOLES_TITLE</source>
-      <translation>穴を抑制します。</translation>
+      <translation>穴を削除</translation>
     </message>
     <message>
       <source>GEOM_REMOVE_INTERNAL_WIRES_TITLE</source>
-      <translation>内部のワイヤを抑制します。</translation>
-    </message>
-    <message>
-      <source>GEOM_REMOVE_WEBS</source>
-      <translation>Web を削除します。</translation>
+      <translation>内部のワイヤーを削除</translation>
     </message>
     <message>
       <source>GEOM_REQUIRED_DEGREE</source>
-      <translation>必要度</translation>
+      <translation>必要な自由度</translation>
     </message>
     <message>
       <source>GEOM_REQUIRED_NUM_SEGMENTS</source>
@@ -1541,35 +1565,35 @@
     </message>
     <message>
       <source>GEOM_REVERSE</source>
-      <translation>逆</translation>
+      <translation>反転</translation>
     </message>
     <message>
       <source>GEOM_REVERSE_DIRECTION</source>
-      <translation>逆方向</translation>
+      <translation>方向を反転</translation>
     </message>
     <message>
       <source>GEOM_REVERSE_PLANE</source>
-      <translation>通常の面を逆に</translation>
+      <translation>平面の法線を反転</translation>
     </message>
     <message>
       <source>GEOM_REVERSE_U</source>
-      <translation>逆 U</translation>
+      <translation>Uを反転</translation>
     </message>
     <message>
       <source>GEOM_REVERSE_V</source>
-      <translation>逆 V</translation>
+      <translation>Vを反転</translation>
     </message>
     <message>
       <source>GEOM_REVERSE_VECTOR</source>
-      <translation>逆ベクトル</translation>
+      <translation>ベクトルを反転</translation>
     </message>
     <message>
       <source>GEOM_REVOLUTION</source>
-      <translation>革命</translation>
+      <translation>Revolution</translation>
     </message>
     <message>
       <source>GEOM_REVOLUTION_TITLE</source>
-      <translation>建設革命によって</translation>
+      <translation>回転押し出しの作成</translation>
     </message>
     <message>
       <source>GEOM_ROTATION</source>
@@ -1585,11 +1609,11 @@
     </message>
     <message>
       <source>GEOM_SCALE_FACTOR</source>
-      <translation>スケール ファクター。</translation>
+      <translation>最終倍率</translation>
     </message>
     <message>
       <source>GEOM_SCALE_TITLE</source>
-      <translation>オブジェクトを拡大縮小します。</translation>
+      <translation>オブジェクトのサイズを変更</translation>
     </message>
     <message>
       <source>GEOM_SECTION</source>
@@ -1597,11 +1621,11 @@
     </message>
     <message>
       <source>GEOM_SECTION_TITLE</source>
-      <translation>2 つのオブジェクトのセクション</translation>
+      <translation>2つのオブジェクトのセクション</translation>
     </message>
     <message>
       <source>GEOM_SELECTED_FACE</source>
-      <translation>選択した面</translation>
+      <translation>選択したフェース</translation>
     </message>
     <message>
       <source>GEOM_SELECTED_OBJECTS</source>
@@ -1609,7 +1633,7 @@
     </message>
     <message>
       <source>GEOM_SELECTED_SHAPE</source>
-      <translation>選択した図形</translation>
+      <translation>選択した形状</translation>
     </message>
     <message>
       <source>GEOM_SELECTION</source>
@@ -1617,51 +1641,55 @@
     </message>
     <message>
       <source>GEOM_SET_MATERIALS</source>
-      <translation>セット素材</translation>
+      <translation>材料を定義します。</translation>
     </message>
     <message>
       <source>GEOM_SEWING</source>
-      <translation>縫製</translation>
+      <translation>つなぎ合わせ</translation>
     </message>
     <message>
       <source>GEOM_SEWING_TITLE</source>
-      <translation>トポロジカル縫製</translation>
+      <translation>トポロジーのつなぎ合わせ</translation>
+    </message>
+    <message>
+      <source>GEOM_ALLOW_NON_MANIFOLD</source>
+      <translation>GEOM_ALLOW_NON_MANIFOLD</translation>
     </message>
     <message>
       <source>GEOM_SHAPE</source>
-      <translation>図形</translation>
+      <translation>形状</translation>
     </message>
     <message>
       <source>GEOM_SHAPEPROCESS_TITLE</source>
-      <translation>図形処理</translation>
+      <translation>形状の処理</translation>
     </message>
     <message>
       <source>GEOM_SHAPES</source>
-      <translation>図形</translation>
+      <translation>形状</translation>
     </message>
     <message>
       <source>GEOM_SHELL</source>
-      <translation>シェル</translation>
+      <translation>Shell</translation>
     </message>
     <message>
       <source>GEOM_SHELLS</source>
-      <translation>シェル</translation>
+      <translation>Shells</translation>
     </message>
     <message>
       <source>GEOM_SHELL_TITLE</source>
-      <translation>シェル構造</translation>
+      <translation>シェルの構築</translation>
     </message>
     <message>
       <source>GEOM_SHOW_LENGTH</source>
-      <translation>長さ寸法を表示します。</translation>
+      <translation>長さの側を表示します。</translation>
     </message>
     <message>
       <source>GEOM_SHOW_ANGLE</source>
-      <translation>角度寸法を表示します。</translation>
+      <translation>角度の寸法を表示します。</translation>
     </message>
     <message>
       <source>GEOM_SHOW_POINTS_COORD</source>
-      <translation>開始/終了ポイントの座標を表示します。</translation>
+      <translation>出発と到着のポイントを表示します。</translation>
     </message>
     <message>
       <source>GEOM_SKETCH</source>
@@ -1669,11 +1697,11 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_ABS</source>
-      <translation>絶対</translation>
+      <translation>絶対値</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_ADD_PARAMS</source>
-      <translation>詳しいパラメーター</translation>
+      <translation>追加パラメーター</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_ANGLE</source>
@@ -1689,7 +1717,7 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_ARC</source>
-      <translation>アーク</translation>
+      <translation>円弧</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_CENTER</source>
@@ -1697,11 +1725,11 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_CENTER2</source>
-      <translation>センター：</translation>
+      <translation>センター:</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_WARNING</source>
-      <translation>警告: 端点円弧距離ではなく =</translation>
+      <translation>注意: リモートの終了点の弧:</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_CENTER_X</source>
@@ -1709,7 +1737,7 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_CENTER_Y</source>
-      <translation>Y センター:</translation>
+      <translation>センターは：</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_CENTER_DX</source>
@@ -1721,7 +1749,7 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_DEST</source>
-      <translation>宛先</translation>
+      <translation>目的</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_DIR</source>
@@ -1737,7 +1765,7 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_DZ2</source>
-      <translation>アルジェリア：</translation>
+      <translation>DZ :</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_EL</source>
@@ -1765,15 +1793,15 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_POINT</source>
-      <translation>ポイント</translation>
+      <translation>基準点</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_POINT2</source>
-      <translation>ポイント：</translation>
+      <translation>ポイント:</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_END_POINT2</source>
-      <translation>終了点:</translation>
+      <translation>終端のポイント:</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_RADIUS</source>
@@ -1785,7 +1813,7 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_REL</source>
-      <translation>相対</translation>
+      <translation>関係</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_SEGMENT</source>
@@ -1801,11 +1829,11 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_TITLE</source>
-      <translation>2 D スケッチ建設</translation>
+      <translation>2D スケッチの構築</translation>
     </message>
     <message>
       <source>GEOM_3DSKETCHER_TITLE</source>
-      <translation>3 D スケッチ建設</translation>
+      <translation>3Dスケッチの構築</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_TYPE</source>
@@ -1813,7 +1841,7 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_UNDO</source>
-      <translation>元に戻す</translation>
+      <translation>アンドゥ</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_VALUES</source>
@@ -1825,11 +1853,11 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_VXVY</source>
-      <translation>VX VY</translation>
+      <translation>VX - VY</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_WPLANE</source>
-      <translation>平坦な面、または平面を選択します</translation>
+      <translation>平面を選択します</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_VY2</source>
@@ -1841,7 +1869,7 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_X2</source>
-      <translation>X:</translation>
+      <translation>X :</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_X3</source>
@@ -1849,11 +1877,11 @@
     </message>
     <message>
       <source>GEOM_SKETCHER_Y</source>
-      <translation>Y</translation>
+      <translation>そこ</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_Y2</source>
-      <translation>Y:</translation>
+      <translation>Y :</translation>
     </message>
     <message>
       <source>GEOM_SKETCHER_Y3</source>
@@ -1865,39 +1893,39 @@
     </message>
     <message>
       <source>GEOM_3DSKETCHER</source>
-      <translation>3 D スケッチャー</translation>
+      <translation>3D_Sketcher</translation>
     </message>
     <message>
       <source>GEOM_COORDINATES_TYPE</source>
-      <translation>座標の種類</translation>
+      <translation>お問い合わせの種類</translation>
     </message>
     <message>
       <source>GEOM_CONTROLS</source>
-      <translation>コントロール</translation>
+      <translation>コントロール要素</translation>
     </message>
     <message>
       <source>GEOM_SOLID</source>
-      <translation>固体</translation>
+      <translation>Solid</translation>
     </message>
     <message>
       <source>GEOM_SOLID_TITLE</source>
-      <translation>固体建設</translation>
+      <translation>ソリッドの構築</translation>
     </message>
     <message>
       <source>GEOM_SPHERE</source>
-      <translation>球</translation>
+      <translation>Sphere</translation>
     </message>
     <message>
       <source>GEOM_SPHERE_CR</source>
-      <translation>センター + 半径</translation>
+      <translation>中央＋半径</translation>
     </message>
     <message>
       <source>GEOM_SPHERE_RO</source>
-      <translation>起源の半径</translation>
+      <translation>原点中心で半径</translation>
     </message>
     <message>
       <source>GEOM_SPHERE_TITLE</source>
-      <translation>球建設</translation>
+      <translation>球の作成</translation>
     </message>
     <message>
       <source>GEOM_SPLINE</source>
@@ -1905,115 +1933,119 @@
     </message>
     <message>
       <source>GEOM_SPLINE_TITLE</source>
-      <translation>スプラインの建設</translation>
+      <translation>スプラインの構築</translation>
     </message>
     <message>
       <source>GEOM_SQUARE</source>
-      <translation>広場</translation>
+      <translation>四角</translation>
     </message>
     <message>
       <source>GEOM_START</source>
-      <translation>開始します。</translation>
+      <translation>出発日:</translation>
     </message>
     <message>
       <source>GEOM_END</source>
-      <translation>終了:</translation>
+      <translation>到着:</translation>
     </message>
     <message>
       <source>GEOM_START_LCS</source>
-      <translation>LCS を開始します。</translation>
+      <translation>始まりの局所座標</translation>
     </message>
     <message>
       <source>SELECT_UNPUBLISHED_EDGES</source>
-      <translation>未発表のエッジを選択します。</translation>
+      <translation>非公開のエッジを選択</translation>
     </message>
     <message>
       <source>GEOM_STEP</source>
-      <translation>手順:</translation>
+      <translation>ステップ：</translation>
+    </message>
+    <message>
+      <source>GEOM_STEP_R</source>
+      <translation>GEOM_STEP_R</translation>
     </message>
     <message>
       <source>GEOM_STEP_TITLE</source>
-      <translation>GUI の構築のステップ値</translation>
+      <translation>GUI構築のステップ値</translation>
     </message>
     <message>
       <source>GEOM_STEP_U</source>
-      <translation>U のステップ:</translation>
+      <translation>間隔 U</translation>
     </message>
     <message>
       <source>GEOM_STEP_V</source>
-      <translation>ステップ V:</translation>
+      <translation>間隔 V</translation>
     </message>
     <message>
       <source>GEOM_STUDY_LOCKED</source>
-      <translation>アクティブなスタディがロックされている、ため、変更できません。</translation>
+      <translation>現在のスタディはロックされているので、変更することはできません</translation>
     </message>
     <message>
       <source>GEOM_SUBSHAPE_SELECT</source>
-      <translation>サブ図形を選択します</translation>
+      <translation>サブオブジェクトを選択</translation>
     </message>
     <message>
       <source>GEOM_SUBSHAPE_TITLE</source>
-      <translation>サブ図形の選択</translation>
+      <translation>分解</translation>
     </message>
     <message>
       <source>GEOM_SUBSHAPE_TYPE</source>
-      <translation>サブ図形の種類</translation>
+      <translation>サブオブジェクトの型:</translation>
     </message>
     <message>
       <source>GEOM_SUB_SHAPE</source>
-      <translation>サブ図形の座標</translation>
+      <translation>サブオブジェクト</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESSHOLE_FACE_SHELL</source>
-      <translation>面、またはシェル</translation>
+      <translation>フェースやシェル</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESSHOLE_SELECTFACE</source>
-      <translation>穴の面を選択します</translation>
+      <translation>穴のフェースを選択</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESSHOLE_SELECTFACE_END</source>
-      <translation>端面を選択します （場合は通過する穴)</translation>
+      <translation>(穴を通す場合)フェース端を選択</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESSHOLE_SELECTWIRE</source>
-      <translation>顔に線を選択します。</translation>
+      <translation>フェースの輪郭を選択</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESSHOLE_SELECTWIRE_END</source>
-      <translation>最後の線を選択します （場合は通過する穴)</translation>
+      <translation>(穴を通す場合)、輪郭端を選択</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESSHOLE_SELECT_HOLES_ON_FACE</source>
-      <translation>シャーシファンの顔を選択してください。</translation>
+      <translation>フェース上の穴を選択</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESSHOLE_TITLE</source>
-      <translation>穴を抑制します。</translation>
+      <translation>穴を削除</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESS_RESULT</source>
-      <translation>結果を表示しません。</translation>
+      <translation>結果を削除</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESS_RESULT_INSIDE</source>
-      <translation>内部</translation>
+      <translation>内側</translation>
     </message>
     <message>
       <source>GEOM_SUPPRESS_RESULT_OUTSIDE</source>
-      <translation>外</translation>
+      <translation>外側</translation>
     </message>
     <message>
       <source>GEOM_SUPRESSFACE</source>
-      <translation>抑制の顔</translation>
+      <translation>フェースを削除</translation>
     </message>
     <message>
       <source>GEOM_SUPRESSFACE_SELECT</source>
-      <translation>抑制する面を選択します</translation>
+      <translation>削除するフェースを選択</translation>
     </message>
     <message>
       <source>GEOM_SUPRESSFACE_TITLE</source>
-      <translation>オブジェクト内の面を抑制します。</translation>
+      <translation>オブジェクトのフェースを削除</translation>
     </message>
     <message>
       <source>GEOM_SURFACE_CONTINUTY</source>
@@ -2025,39 +2057,43 @@
     </message>
     <message>
       <source>GEOM_SURFCONE</source>
-      <translation>円錐面</translation>
+      <translation>円錐形フェース</translation>
     </message>
     <message>
       <source>GEOM_SURFCYLINDER</source>
-      <translation>円筒状の面</translation>
+      <translation>円筒形フェース</translation>
     </message>
     <message>
       <source>GEOM_SURFSPHERE</source>
-      <translation>球面</translation>
+      <translation>球形フェース</translation>
     </message>
     <message>
       <source>GEOM_SURFTORUS</source>
-      <translation>トロイダル顔</translation>
+      <translation>ドーナツ状フェース</translation>
     </message>
     <message>
       <source>GEOM_SameParameter</source>
-      <translation>SameParameter</translation>
+      <translation>同じパラメーター</translation>
     </message>
     <message>
       <source>GEOM_SplitAngle</source>
-      <translation>SplitAngle</translation>
+      <translation>別の角度</translation>
     </message>
     <message>
       <source>GEOM_SplitClosedFaces</source>
-      <translation>SplitClosedFaces</translation>
+      <translation>個別の閉じた面</translation>
     </message>
     <message>
       <source>GEOM_SplitContinuity</source>
-      <translation>SplitContinuity</translation>
+      <translation>別の継続性</translation>
+    </message>
+    <message>
+      <source>GEOM_THICKNESS</source>
+      <translation>GEOM_THICKNESS</translation>
     </message>
     <message>
       <source>GEOM_TOLERANCE</source>
-      <translation>トレランス</translation>
+      <translation>公差</translation>
     </message>
     <message>
       <source>GEOM_LINEAR_TOLERANCE</source>
@@ -2065,11 +2101,11 @@
     </message>
     <message>
       <source>GEOM_ANGULAR_TOLERANCE</source>
-      <translation>傾斜度公差</translation>
+      <translation>角度公差</translation>
     </message>
     <message>
       <source>GEOM_TOLERANCE_CONSTR</source>
-      <translation>オブジェクトとその許容差</translation>
+      <translation>オブジェクトとその公差</translation>
     </message>
     <message>
       <source>GEOM_TOLERANCE_EDGE</source>
@@ -2077,35 +2113,31 @@
     </message>
     <message>
       <source>GEOM_TOLERANCE_FACE</source>
-      <translation>顔：</translation>
+      <translation>フェース：</translation>
     </message>
     <message>
       <source>GEOM_TOLERANCE_TITLE</source>
-      <translation>最長トレランス</translation>
+      <translation>最大公差</translation>
     </message>
     <message>
       <source>GEOM_TOLERANCE_VERTEX</source>
-      <translation>頂点:</translation>
-    </message>
-    <message>
-      <source>GEOM_TOOL_OBJECT</source>
-      <translation>ツール オブジェクト</translation>
+      <translation>ポイント:</translation>
     </message>
     <message>
       <source>GEOM_TOOL_OBJECTS</source>
-      <translation>ツール オブジェクト</translation>
+      <translation>ツールオブジェクト</translation>
     </message>
     <message>
       <source>GEOM_TORUS</source>
-      <translation>トーラス</translation>
+      <translation>Torus</translation>
     </message>
     <message>
       <source>GEOM_TORUS_TITLE</source>
-      <translation>トーラス建設</translation>
+      <translation>円環の作成</translation>
     </message>
     <message>
       <source>GEOM_TRANSLATION</source>
-      <translation>翻訳</translation>
+      <translation>translation</translation>
     </message>
     <message>
       <source>GEOM_TRANSLATION_COOR</source>
@@ -2113,7 +2145,7 @@
     </message>
     <message>
       <source>GEOM_TRANSLATION_TITLE</source>
-      <translation>オブジェクトの変換</translation>
+      <translation>オブジェクトの移動</translation>
     </message>
     <message>
       <source>GEOM_TRANSPARENCY_OPAQUE</source>
@@ -2121,7 +2153,7 @@
     </message>
     <message>
       <source>GEOM_TRANSPARENCY_TITLE</source>
-      <translation>透明性</translation>
+      <translation>透明度</translation>
     </message>
     <message>
       <source>GEOM_TRANSPARENCY_TRANSPARENT</source>
@@ -2129,11 +2161,11 @@
     </message>
     <message>
       <source>GEOM_TRIHEDRON</source>
-      <translation>三面体を</translation>
+      <translation>三面体</translation>
     </message>
     <message>
       <source>GEOM_ToBezier</source>
-      <translation>ToBezier</translation>
+      <translation>ベジェに</translation>
     </message>
     <message>
       <source>GEOM_VALUE</source>
@@ -2141,11 +2173,11 @@
     </message>
     <message>
       <source>GEOM_VECTOR</source>
-      <translation>ベクトル</translation>
+      <translation>Vector</translation>
     </message>
     <message>
       <source>GEOM_AXIS_DEFAULT</source>
-      <translation>(デフォルトでは Z 軸)</translation>
+      <translation>デフォルトでZ軸</translation>
     </message>
     <message>
       <source>GEOM_VECTOR_LENGTH</source>
@@ -2153,7 +2185,7 @@
     </message>
     <message>
       <source>GEOM_VECTOR_TITLE</source>
-      <translation>ベクトル建設</translation>
+      <translation>ベクトルの作成</translation>
     </message>
     <message>
       <source>GEOM_VECTOR_U</source>
@@ -2165,11 +2197,11 @@
     </message>
     <message>
       <source>GEOM_VERTEX</source>
-      <translation>頂点</translation>
+      <translation>Vertex</translation>
     </message>
     <message>
       <source>GEOM_VERTEXES</source>
-      <translation>頂点</translation>
+      <translation>Vertexes</translation>
     </message>
     <message>
       <source>GEOM_WATER_DENSITY</source>
@@ -2177,7 +2209,7 @@
     </message>
     <message>
       <source>GEOM_WEIGHT</source>
-      <translation>重量：</translation>
+      <translation>重量:</translation>
     </message>
     <message>
       <source>GEOM_WIDTH</source>
@@ -2189,35 +2221,35 @@
     </message>
     <message>
       <source>GEOM_WHATIS_OBJECT</source>
-      <translation>オブジェクトとその位相情報</translation>
+      <translation>オブジェクトとそのトポロジー情報</translation>
     </message>
     <message>
       <source>GEOM_WHATIS_TITLE</source>
-      <translation>Whatis 情報</translation>
+      <translation>Whatis</translation>
     </message>
     <message>
       <source>GEOM_WIRE</source>
-      <translation>ワイヤー</translation>
+      <translation>Wire</translation>
     </message>
     <message>
       <source>GEOM_WIRES</source>
-      <translation>Wire(s)</translation>
+      <translation>Wires</translation>
     </message>
     <message>
       <source>GEOM_WIRES_TO_REMOVE</source>
-      <translation>線を削除するには</translation>
+      <translation>削除するワイヤー</translation>
     </message>
     <message>
       <source>GEOM_WIREZ</source>
-      <translation>ワイヤ</translation>
+      <translation>Wires</translation>
     </message>
     <message>
       <source>GEOM_WIRE_CONNECT</source>
-      <translation>接続ワイヤ/エッジからワイヤ作成</translation>
+      <translation>ワイヤー/エッジからワイヤーを作成</translation>
     </message>
     <message>
       <source>GEOM_WIRE_TITLE</source>
-      <translation>線を作成します。</translation>
+      <translation>ワイヤーを作成</translation>
     </message>
     <message>
       <source>GEOM_WPLANE</source>
@@ -2225,15 +2257,15 @@
     </message>
     <message>
       <source>GEOM_WPLANE_FACE</source>
-      <translation>平面、平面または LCS</translation>
+      <translation>計画、平らな顔または SCL</translation>
     </message>
     <message>
       <source>GEOM_WPLANE_ORIGIN</source>
-      <translation>平面を選択します。</translation>
+      <translation>平面を選択</translation>
     </message>
     <message>
       <source>GEOM_WPLANE_OXY</source>
-      <translation>酸素</translation>
+      <translation>OXY</translation>
     </message>
     <message>
       <source>GEOM_WPLANE_OYZ</source>
@@ -2249,7 +2281,7 @@
     </message>
     <message>
       <source>GEOM_WPLANE_VECTOR</source>
-      <translation>二つのベクトルを選択します</translation>
+      <translation>2ベクトルを選択</translation>
     </message>
     <message>
       <source>GEOM_WPLANE_VX</source>
@@ -2257,35 +2289,35 @@
     </message>
     <message>
       <source>GEOM_WPLANE_VZ</source>
-      <translation>ベクトル</translation>
+      <translation>ベクトル Z</translation>
     </message>
     <message>
       <source>GEOM_WRN_RADIUS_NULL</source>
-      <translation>半径が null です。</translation>
+      <translation>半径はゼロです</translation>
     </message>
     <message>
       <source>GEOM_WRN_WARNING</source>
-      <translation>警告</translation>
+      <translation>注意</translation>
     </message>
     <message>
       <source>WRN_SHAPE_UNCLOSED</source>
-      <translation>閉じられていない形%1 からソリッドを作成することはできません。</translation>
+      <translation>閉じていないオブジェクト %1 からソリッドを作成できません</translation>
     </message>
     <message>
       <source>WRN_SHAPE_NOT_SHELL</source>
-      <translation>シェルではなく図形%1 それからソリッドを作成します。</translation>
+      <translation>シェルではないためオブジェクト %1 からソリッドを作成できません</translation>
     </message>
     <message>
       <source>WRN_NULL_OBJECT_OR_SHAPE</source>
-      <translation>図形の%1 ソリッド モデルの作成が null です。</translation>
+      <translation>ソリッド作成のオブジェクト %1 が無効</translation>
     </message>
     <message>
       <source>GEOM_X</source>
-      <translation>X:</translation>
+      <translation>X :</translation>
     </message>
     <message>
       <source>GEOM_Y</source>
-      <translation>Y:</translation>
+      <translation>Y :</translation>
     </message>
     <message>
       <source>GEOM_Z</source>
@@ -2293,7 +2325,7 @@
     </message>
     <message>
       <source>GLUE_NEW_OBJ_NAME</source>
-      <translation>接着剤</translation>
+      <translation>固着</translation>
     </message>
     <message>
       <source>LIMIT_TOLERANCE_NEW_OBJ_NAME</source>
@@ -2301,23 +2333,23 @@
     </message>
     <message>
       <source>MEN_ALL_SEL_ONLY</source>
-      <translation>すべてを選択します。</translation>
+      <translation>すべてを選択</translation>
     </message>
     <message>
       <source>MEN_ARC</source>
-      <translation>アーク</translation>
+      <translation>円弧</translation>
     </message>
     <message>
       <source>MEN_ARCHIMEDE</source>
-      <translation>アルキメーデ</translation>
+      <translation>アルキメデス法</translation>
     </message>
     <message>
       <source>MEN_BASIC</source>
-      <translation>基本的です</translation>
+      <translation>基本オブジェクト</translation>
     </message>
     <message>
       <source>MEN_BASIC_PROPS</source>
-      <translation>基本的なプロパティ</translation>
+      <translation>基本プロパティ</translation>
     </message>
     <message>
       <source>MEN_BLOCKS</source>
@@ -2329,7 +2361,7 @@
     </message>
     <message>
       <source>MEN_BOOLEAN</source>
-      <translation>ブール値</translation>
+      <translation>ブーリアン</translation>
     </message>
     <message>
       <source>MEN_BOX</source>
@@ -2341,11 +2373,11 @@
     </message>
     <message>
       <source>MEN_FEATURE_DETECTION</source>
-      <translation>形状認識</translation>
+      <translation>パターン認識</translation>
     </message>
     <message>
       <source>MEN_PICTURE_IMPORT</source>
-      <translation>ビューアーで画像のインポート</translation>
+      <translation>ビュー内へのイメージの取り込み</translation>
     </message>
     <message>
       <source>MEN_CHAMFER</source>
@@ -2353,35 +2385,35 @@
     </message>
     <message>
       <source>MEN_CHANGE_ORIENTATION</source>
-      <translation>向きを変更します。</translation>
+      <translation>向きの変更</translation>
     </message>
     <message>
       <source>MEN_CHECK</source>
-      <translation>形状をチェックします。</translation>
+      <translation>オブジェクトの確認</translation>
     </message>
     <message>
       <source>MEN_CHECK_COMPOUND</source>
-      <translation>ブロックの化合物をチェックします。</translation>
+      <translation>ブロックのアセンブリチェック</translation>
     </message>
     <message>
       <source>MEN_GET_NON_BLOCKS</source>
-      <translation>非ブロックを取得します。</translation>
+      <translation>固体非ブロックを取得します。</translation>
     </message>
     <message>
       <source>MEN_CHECK_SELF_INTERSECTIONS</source>
-      <translation>自己交差を検出します。</translation>
+      <translation>自己交差の確認</translation>
     </message>
     <message>
       <source>MEN_CHECK_FREE_BNDS</source>
-      <translation>無料の境界をチェックします。</translation>
+      <translation>自由境界の確認</translation>
     </message>
     <message>
       <source>MEN_CHECK_FREE_FACES</source>
-      <translation>無料顔をチェックします。</translation>
+      <translation>フリーフェースの確認</translation>
     </message>
     <message>
       <source>MEN_CHECK_GEOMETRY</source>
-      <translation>ジオメトリを確認します。</translation>
+      <translation>ジオメトリチェック</translation>
     </message>
     <message>
       <source>MEN_CIRCLE</source>
@@ -2389,7 +2421,7 @@
     </message>
     <message>
       <source>MEN_CLIPPING</source>
-      <translation>クリップの範囲</translation>
+      <translation>面で切断</translation>
     </message>
     <message>
       <source>MEN_CLOSE_CONTOUR</source>
@@ -2397,19 +2429,19 @@
     </message>
     <message>
       <source>MEN_COMMON</source>
-      <translation>一般的です</translation>
+      <translation>共有領域</translation>
     </message>
     <message>
       <source>MEN_COMPOUND</source>
-      <translation>化合物</translation>
+      <translation>コンパウンド</translation>
     </message>
     <message>
       <source>MEN_COMPOUND_SEL_ONLY</source>
-      <translation>化合物</translation>
+      <translation>アセンブリ</translation>
     </message>
     <message>
       <source>MEN_CONE</source>
-      <translation>コーン</translation>
+      <translation>円錐</translation>
     </message>
     <message>
       <source>MEN_CURVE</source>
@@ -2417,11 +2449,11 @@
     </message>
     <message>
       <source>MEN_CUT</source>
-      <translation>カット</translation>
+      <translation>カット(&amp;t)</translation>
     </message>
     <message>
       <source>MEN_CYLINDER</source>
-      <translation>シリンダー</translation>
+      <translation>円筒</translation>
     </message>
     <message>
       <source>MEN_RECTANGLE</source>
@@ -2437,15 +2469,15 @@
     </message>
     <message>
       <source>MEN_DISPLAY</source>
-      <translation>ショー</translation>
+      <translation>表示</translation>
     </message>
     <message>
       <source>MEN_DISK</source>
-      <translation>ディスク</translation>
+      <translation>円盤</translation>
     </message>
     <message>
       <source>MEN_DISPLAY_ALL</source>
-      <translation>すべて表示します。</translation>
+      <translation>すべてを表示</translation>
     </message>
     <message>
       <source>MEN_DISPLAY_MODE</source>
@@ -2453,7 +2485,7 @@
     </message>
     <message>
       <source>MEN_DISPLAY_ONLY</source>
-      <translation>のみを表示します。</translation>
+      <translation>選択のみ表示</translation>
     </message>
     <message>
       <source>MEN_SHOW_ONLY_CHILDREN</source>
@@ -2461,27 +2493,27 @@
     </message>
     <message>
       <source>MEN_BRING_TO_FRONT</source>
-      <translation>最前面へ移動します。</translation>
+      <translation>手前に表示します。</translation>
     </message>
     <message>
       <source>TOP_BRING_TO_FRONT</source>
-      <translation>最前面へ移動します。</translation>
+      <translation>手前に表示します。</translation>
     </message>
     <message>
       <source>STB_BRING_TO_FRONT</source>
-      <translation>最前面へ移動します。</translation>
+      <translation>手前に表示します。</translation>
     </message>
     <message>
       <source>MEN_CLS_BRING_TO_FRONT</source>
-      <translation>トップ レベルの状態をクリア</translation>
+      <translation>フォア グラウンドでオブジェクトを削除します。</translation>
     </message>
     <message>
       <source>TOP_CLS_BRING_TO_FRONT</source>
-      <translation>トップ レベルの状態をクリア</translation>
+      <translation>フォア グラウンドでオブジェクトを削除します。</translation>
     </message>
     <message>
       <source>STB_CLS_BRING_TO_FRONT</source>
-      <translation>トップ レベルの状態をクリア</translation>
+      <translation>フォア グラウンドでオブジェクトを削除します。</translation>
     </message>
     <message>
       <source>MEN_EDGE</source>
@@ -2493,7 +2525,7 @@
     </message>
     <message>
       <source>MEN_EDIT</source>
-      <translation>編集</translation>
+      <translation>編集(&amp;E)</translation>
     </message>
     <message>
       <source>MEN_ELLIPSE</source>
@@ -2501,79 +2533,79 @@
     </message>
     <message>
       <source>MEN_ERASE</source>
-      <translation>非表示</translation>
+      <translation>消去</translation>
     </message>
     <message>
       <source>MEN_ERASE_ALL</source>
-      <translation>すべてを非表示します。</translation>
+      <translation>すべてを非表示</translation>
     </message>
     <message>
       <source>MEN_EXPLODE</source>
-      <translation>爆発</translation>
+      <translation>分解</translation>
     </message>
     <message>
       <source>MEN_EXPLODE_BLOCKS</source>
-      <translation>上のブロックを爆発します。</translation>
+      <translation>ブロックで展開</translation>
     </message>
     <message>
       <source>MEN_EXPORT</source>
-      <translation>エクスポート.</translation>
+      <translation>エクスポート...</translation>
     </message>
     <message>
       <source>MEN_EXTRUSION</source>
-      <translation>押出</translation>
+      <translation>面の押出し</translation>
     </message>
     <message>
       <source>MEN_EXTRUDED_CUT</source>
-      <translation>押し出しカット</translation>
+      <translation>押込み</translation>
     </message>
     <message>
       <source>MEN_EXTRUDED_BOSS</source>
-      <translation>押し出しボス</translation>
+      <translation>押出し</translation>
     </message>
     <message>
       <source>MEN_FACE</source>
-      <translation>顔</translation>
+      <translation>フェース</translation>
     </message>
     <message>
       <source>MEN_FACE_SEL_ONLY</source>
-      <translation>顔</translation>
+      <translation>フェース</translation>
     </message>
     <message>
       <source>MEN_FILE</source>
-      <translation>ファイル</translation>
+      <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
       <source>MEN_FILLET</source>
-      <translation>フィレ肉の 3 D</translation>
+      <translation>3Dフィレット</translation>
     </message>
     <message>
       <source>MEN_FILLET_1D</source>
-      <translation>フィレット 1 D</translation>
+      <translation>1D フィレット作成</translation>
     </message>
     <message>
       <source>MEN_FILLET_2D</source>
-      <translation>2D フィレット</translation>
+      <translation>2D フィレット作成</translation>
     </message>
     <message>
       <source>MEN_FILLING</source>
-      <translation>充填</translation>
+      <translation>埋込み</translation>
     </message>
     <message>
       <source>MEN_FUSE</source>
-      <translation>ヒューズ</translation>
+      <translation>結合</translation>
     </message>
     <message>
       <source>MEN_GENERATION</source>
-      <translation>世代</translation>
+      <translation>ジェネレーション</translation>
     </message>
     <message>
       <source>MEN_GLUE_FACES</source>
-      <translation>接着剤の顔</translation>
+      <translation>フェース固着</translation>
     </message>
     <message>
       <source>MEN_GLUE_EDGES</source>
-      <translation>接着剤のエッジ</translation>
+      <translation>エッジ固着</translation>
     </message>
     <message>
       <source>MEN_GROUP</source>
@@ -2581,7 +2613,7 @@
     </message>
     <message>
       <source>MEN_GROUP_CREATE</source>
-      <translation>作成します。</translation>
+      <translation>グループを作成</translation>
     </message>
     <message>
       <source>MEN_GROUP_EDIT</source>
@@ -2589,15 +2621,31 @@
     </message>
     <message>
       <source>MEN_GROUP_UNION</source>
-      <translation>連合のグループ</translation>
+      <translation>グループの連合</translation>
     </message>
     <message>
       <source>MEN_GROUP_INTERSECT</source>
-      <translation>グループが交差します。</translation>
+      <translation>グループの交差点</translation>
     </message>
     <message>
       <source>MEN_GROUP_CUT</source>
-      <translation>グループをカットします。</translation>
+      <translation>切断グループ</translation>
+    </message>
+    <message>
+      <source>MEN_FIELD</source>
+      <translation>MEN_FIELD</translation>
+    </message>
+    <message>
+      <source>MEN_FIELD_CREATE</source>
+      <translation>MEN_FIELD_CREATE</translation>
+    </message>
+    <message>
+      <source>MEN_FIELD_EDIT</source>
+      <translation>MEN_FIELD_EDIT</translation>
+    </message>
+    <message>
+      <source>MEN_ADD_FIELD_STEP</source>
+      <translation>MEN_ADD_FIELD_STEP</translation>
     </message>
     <message>
       <source>MEN_RELOAD_IMPORTED</source>
@@ -2605,11 +2653,11 @@
     </message>
     <message>
       <source>MEN_HEX_SOLID</source>
-      <translation>六面体のソリッド</translation>
+      <translation>六面体ソリッド</translation>
     </message>
     <message>
       <source>MEN_IMPORT</source>
-      <translation>インポート.</translation>
+      <translation>インポート...</translation>
     </message>
     <message>
       <source>MEN_INERTIA</source>
@@ -2617,15 +2665,15 @@
     </message>
     <message>
       <source>MEN_ISOS</source>
-      <translation>Iso イメージ</translation>
+      <translation>Isos</translation>
     </message>
     <message>
       <source>MEN_LIMIT_TOLERANCE</source>
-      <translation>許容</translation>
+      <translation>許容範囲</translation>
     </message>
     <message>
       <source>MEN_LINE</source>
-      <translation>ライン</translation>
+      <translation>線</translation>
     </message>
     <message>
       <source>MEN_LOCAL_CS</source>
@@ -2633,43 +2681,43 @@
     </message>
     <message>
       <source>MEN_MASS_CENTER</source>
-      <translation>質量の中心</translation>
+      <translation>重心</translation>
     </message>
     <message>
       <source>MEN_MEASURES</source>
-      <translation>対策</translation>
+      <translation>計測</translation>
     </message>
     <message>
       <source>MEN_MIN_DIST</source>
-      <translation>分の距離</translation>
+      <translation>最小距離</translation>
     </message>
     <message>
       <source>MEN_MIRROR</source>
-      <translation>ミラー イメージ</translation>
+      <translation>オブジェクトの反転</translation>
     </message>
     <message>
       <source>MEN_MODIFY_LOCATION</source>
-      <translation>場所を変更します。</translation>
+      <translation>位置を変更します。</translation>
     </message>
     <message>
       <source>MEN_MUL_ROTATION</source>
-      <translation>Multi-Rotation</translation>
+      <translation>Multi-rotation</translation>
     </message>
     <message>
       <source>MEN_MUL_TRANSFORM</source>
-      <translation>Multi-Transformation</translation>
+      <translation>Multi-transformation</translation>
     </message>
     <message>
       <source>MEN_MUL_TRANSLATION</source>
-      <translation>Multi-Translation</translation>
+      <translation>複数オブジェクトの移動</translation>
     </message>
     <message>
       <source>MEN_NEW_ENTITY</source>
-      <translation>新しいエンティティ</translation>
+      <translation>新しいオブジェクト</translation>
     </message>
     <message>
       <source>MEN_OFFSET</source>
-      <translation>オフセット サーフェス</translation>
+      <translation>サーフェスをオフセット</translation>
     </message>
     <message>
       <source>MEN_PROJECTION</source>
@@ -2681,7 +2729,7 @@
     </message>
     <message>
       <source>MEN_ORIGIN_AND_VECTORS</source>
-      <translation>起源と基本ベクトル</translation>
+      <translation>原点とベースベクトル</translation>
     </message>
     <message>
       <source>MEN_PARTITION</source>
@@ -2689,27 +2737,27 @@
     </message>
     <message>
       <source>MEN_PIPE</source>
-      <translation>押し出しパスに沿って</translation>
+      <translation>経路に沿って押し出し</translation>
     </message>
     <message>
       <source>MEN_PIPE_PATH</source>
-      <translation>復元パス</translation>
+      <translation>経路の復元</translation>
     </message>
     <message>
       <source>MEN_PLANE</source>
-      <translation>飛行機</translation>
+      <translation>平面</translation>
     </message>
     <message>
       <source>MEN_POINT</source>
-      <translation>ポイント</translation>
+      <translation>基準点</translation>
     </message>
     <message>
       <source>MEN_POINT_COORDS</source>
-      <translation>ポイントの座標</translation>
+      <translation>点の座標</translation>
     </message>
     <message>
       <source>MEN_POINT_ON_EDGE</source>
-      <translation>端にポイントを追加します。</translation>
+      <translation>端にポイントを追加</translation>
     </message>
     <message>
       <source>MEN_POP_COLOR</source>
@@ -2717,7 +2765,11 @@
     </message>
     <message>
       <source>MEN_POP_CREATE_GROUP</source>
-      <translation>グループを作成します。</translation>
+      <translation>グループを作成</translation>
+    </message>
+    <message>
+      <source>MEN_POP_EDIT_FIELD</source>
+      <translation>MEN_POP_EDIT_FIELD</translation>
     </message>
     <message>
       <source>MEN_POP_DISCLOSE_CHILDREN</source>
@@ -2729,31 +2781,31 @@
     </message>
     <message>
       <source>MEN_POP_UNPUBLISH_OBJ</source>
-      <translation>非公開</translation>
+      <translation>発行停止</translation>
     </message>
     <message>
       <source>MEN_POP_PUBLISH_OBJ</source>
-      <translation>発行.</translation>
+      <translation>発行...</translation>
     </message>
     <message>
       <source>MEN_POP_ISOS</source>
-      <translation>Iso イメージ</translation>
+      <translation>Isos</translation>
     </message>
     <message>
       <source>MEN_POP_DEFLECTION</source>
-      <translation>変形係数</translation>
+      <translation>変形倍率</translation>
     </message>
     <message>
       <source>MEN_POP_RENAME</source>
-      <translation>名前の変更</translation>
+      <translation>名前変更</translation>
     </message>
     <message>
       <source>MEN_POP_SHADING</source>
-      <translation>網かけの設定</translation>
+      <translation>網かけ</translation>
     </message>
     <message>
       <source>MEN_POP_SHADING_WITH_EDGES</source>
-      <translation>シェーディング、エッジ</translation>
+      <translation>陰影とエッジ</translation>
     </message>
     <message>
       <source>MEN_POP_TEXTURE</source>
@@ -2793,7 +2845,7 @@
     </message>
     <message>
       <source>MEN_POP_TRANSPARENCY</source>
-      <translation>透明性</translation>
+      <translation>透明度</translation>
     </message>
     <message>
       <source>MEN_POP_WIREFRAME</source>
@@ -2801,7 +2853,7 @@
     </message>
     <message>
       <source>MEN_POP_VECTORS</source>
-      <translation>エッジ方向を表示します。</translation>
+      <translation>エッジの方向を表示します。</translation>
     </message>
     <message>
       <source>MEN_PREFERENCES</source>
@@ -2813,7 +2865,7 @@
     </message>
     <message>
       <source>MEN_PRIMITIVES</source>
-      <translation>プリミティブ</translation>
+      <translation>基本図形</translation>
     </message>
     <message>
       <source>MEN_ADVANCED</source>
@@ -2821,19 +2873,19 @@
     </message>
     <message>
       <source>MEN_PROPAGATE</source>
-      <translation>伝達</translation>
+      <translation>スプレッド</translation>
     </message>
     <message>
       <source>MEN_Q_FACE</source>
-      <translation>四角形の顔</translation>
+      <translation>四角形フェース</translation>
     </message>
     <message>
       <source>MEN_REPAIR</source>
-      <translation>修理</translation>
+      <translation>修復</translation>
     </message>
     <message>
       <source>MEN_REVOLUTION</source>
-      <translation>革命</translation>
+      <translation>回転押し出し</translation>
     </message>
     <message>
       <source>MEN_ROTATION</source>
@@ -2841,7 +2893,7 @@
     </message>
     <message>
       <source>MEN_SCALE</source>
-      <translation>スケール変換</translation>
+      <translation>サイズを変更</translation>
     </message>
     <message>
       <source>MEN_SECTION</source>
@@ -2849,19 +2901,19 @@
     </message>
     <message>
       <source>MEN_SELECT_ONLY</source>
-      <translation>のみを選択します</translation>
+      <translation>のみを選択</translation>
     </message>
     <message>
       <source>MEN_SEWING</source>
-      <translation>縫製</translation>
+      <translation>つなぎ合わせ</translation>
     </message>
     <message>
       <source>MEN_SHADING</source>
-      <translation>網かけの設定</translation>
+      <translation>表面</translation>
     </message>
     <message>
       <source>MEN_SHADING_WITH_EDGES</source>
-      <translation>シェーディング、エッジ</translation>
+      <translation>陰影とエッジ</translation>
     </message>
     <message>
       <source>MEN_SHADING_COLOR</source>
@@ -2869,7 +2921,7 @@
     </message>
     <message>
       <source>MEN_SHAPE_PROCESS</source>
-      <translation>図形処理</translation>
+      <translation>形状処理</translation>
     </message>
     <message>
       <source>MEN_SHELL</source>
@@ -2885,15 +2937,15 @@
     </message>
     <message>
       <source>MEN_3DSKETCH</source>
-      <translation>3 D スケッチ</translation>
+      <translation>３D スケッチ</translation>
     </message>
     <message>
       <source>MEN_SOLID</source>
-      <translation>固体</translation>
+      <translation>ソリッド</translation>
     </message>
     <message>
       <source>MEN_SOLID_SEL_ONLY</source>
-      <translation>固体</translation>
+      <translation>ソリッド</translation>
     </message>
     <message>
       <source>MEN_SPHERE</source>
@@ -2905,35 +2957,39 @@
     </message>
     <message>
       <source>MEN_SUPPERSS_HOLES</source>
-      <translation>穴を抑制します。</translation>
+      <translation>穴を削除</translation>
     </message>
     <message>
       <source>MEN_SUPPRESS_FACES</source>
-      <translation>顔を抑制します。</translation>
+      <translation>フェースを削除</translation>
     </message>
     <message>
       <source>MEN_SUPPRESS_INT_WIRES</source>
-      <translation>内部のワイヤを抑制します。</translation>
+      <translation>内部の輪郭を削除します。</translation>
     </message>
     <message>
       <source>MEN_TOLERANCE</source>
-      <translation>トレランス</translation>
+      <translation>公差</translation>
     </message>
     <message>
       <source>MEN_TOOLS</source>
-      <translation>ツール</translation>
+      <translation>ツール(&amp;T)</translation>
+    </message>
+    <message>
+      <source>MEN_MATERIALS_LIBRARY</source>
+      <translation>MEN_MATERIALS_LIBRARY</translation>
     </message>
     <message>
       <source>MEN_TORUS</source>
-      <translation>トーラス</translation>
+      <translation>円環</translation>
     </message>
     <message>
       <source>MEN_TRANSFORMATION</source>
-      <translation>変換</translation>
+      <translation>変形</translation>
     </message>
     <message>
       <source>MEN_TRANSLATION</source>
-      <translation>翻訳</translation>
+      <translation>移動</translation>
     </message>
     <message>
       <source>MEN_VECTOR</source>
@@ -2941,15 +2997,15 @@
     </message>
     <message>
       <source>MEN_VERTEX_SEL_ONLY</source>
-      <translation>頂点</translation>
+      <translation>基準点</translation>
     </message>
     <message>
       <source>MEN_VIEW</source>
-      <translation>ビュー</translation>
+      <translation>表示(&amp;V)</translation>
     </message>
     <message>
       <source>MEN_WHAT_IS</source>
-      <translation>何</translation>
+      <translation>Whatis</translation>
     </message>
     <message>
       <source>MEN_WIRE</source>
@@ -2957,11 +3013,11 @@
     </message>
     <message>
       <source>MEN_VECTOR_MODE_ON</source>
-      <translation>エッジ方向を表示します。</translation>
+      <translation>エッジの方向を表示</translation>
     </message>
     <message>
       <source>MEN_VECTOR_MODE_OFF</source>
-      <translation>エッジ方向を非表示します。</translation>
+      <translation>エッジの方向を非表示</translation>
     </message>
     <message>
       <source>MEN_WIREFRAME</source>
@@ -2981,7 +3037,11 @@
     </message>
     <message>
       <source>MEN_POP_MATERIAL_PROPERTIES</source>
-      <translation>材料特性</translation>
+      <translation>材料の特性</translation>
+    </message>
+    <message>
+      <source>MEN_POP_PREDEF_MATER_CUSTOM</source>
+      <translation>MEN_POP_PREDEF_MATER_CUSTOM</translation>
     </message>
     <message>
       <source>NAME_LBL</source>
@@ -2989,11 +3049,11 @@
     </message>
     <message>
       <source>NON_GEOM_OBJECTS_SELECTED</source>
-      <translation>あるオブジェクトを選択、%1 コンポーネントに属していません。</translation>
+      <translation>%1 コンポーネントに属していない選択オブジェクトがあります</translation>
     </message>
     <message>
       <source>PREF_DEFLECTION</source>
-      <translation>変形係数</translation>
+      <translation>変形倍率</translation>
     </message>
     <message>
       <source>GEOM_PREF_def_precision</source>
@@ -3001,7 +3061,7 @@
     </message>
     <message>
       <source>GEOM_PREF_length_precision</source>
-      <translation>長の有効桁数</translation>
+      <translation>長さの精度</translation>
     </message>
     <message>
       <source>GEOM_PREF_angle_precision</source>
@@ -3009,7 +3069,7 @@
     </message>
     <message>
       <source>GEOM_PREF_len_tol_precision</source>
-      <translation>長さ公差の精度</translation>
+      <translation>長さ許容差の精度</translation>
     </message>
     <message>
       <source>GEOM_PREF_ang_tol_precision</source>
@@ -3021,7 +3081,7 @@
     </message>
     <message>
       <source>GEOM_PREF_density_precision</source>
-      <translation>密度高精度</translation>
+      <translation>密度の精度</translation>
     </message>
     <message>
       <source>GEOM_PREF_parametric_precision</source>
@@ -3029,23 +3089,23 @@
     </message>
     <message>
       <source>GEOM_PREF_param_tol_precision</source>
-      <translation>パラメトリック公差の精度</translation>
+      <translation>パラメトリック許容精度</translation>
     </message>
     <message>
       <source>PREF_AUTO_CREATE</source>
-      <translation>自動作成します。</translation>
+      <translation>自動作成</translation>
     </message>
     <message>
       <source>PREF_DISPLAY_MODE</source>
-      <translation>既定の表示モード</translation>
+      <translation>表示モード</translation>
     </message>
     <message>
       <source>PREF_FREE_BOUND_COLOR</source>
-      <translation>無料の境界の色</translation>
+      <translation>自由境界の色</translation>
     </message>
     <message>
       <source>PREF_GROUP_ORIGIN_AND_BASE_VECTORS</source>
-      <translation>起源とベースのベクトル</translation>
+      <translation>原点とベースベクトル</translation>
     </message>
     <message>
       <source>PREF_GROUP_OPERATIONS</source>
@@ -3057,7 +3117,7 @@
     </message>
     <message>
       <source>GEOM_PREF_GROUP_PRECISION</source>
-      <translation>入力フィールドの精度</translation>
+      <translation>フィールド精度の入力</translation>
     </message>
     <message>
       <source>PREF_GROUP_VERTEX</source>
@@ -3065,15 +3125,15 @@
     </message>
     <message>
       <source>PREF_ISOS_COLOR</source>
-      <translation>等値線の色</translation>
+      <translation>輪郭の色</translation>
     </message>
     <message>
       <source>PREF_TOPLEVEL_COLOR</source>
-      <translation>上のレベルの色</translation>
+      <translation>前景オブジェクトの色</translation>
     </message>
     <message>
       <source>PREF_TOPLEVEL_DM</source>
-      <translation>トップ レベル表示モード</translation>
+      <translation>フォア グラウンド モードでのオブジェクトを表示します。</translation>
     </message>
     <message>
       <source>MEN_KEEP_CURRENT_DM</source>
@@ -3081,11 +3141,11 @@
     </message>
     <message>
       <source>MEN_SHOW_ADD_WACTOR</source>
-      <translation>追加のワイヤ フレーム アクターを表示します。</translation>
+      <translation>さらに、輪郭を表示します。</translation>
     </message>
     <message>
       <source>PREF_LINE_COLOR</source>
-      <translation>エッジ、ベクトル、ワイヤの色</translation>
+      <translation>エッジ、ベクトル、輪郭の色</translation>
     </message>
     <message>
       <source>PREF_MARKER_SCALE</source>
@@ -3093,19 +3153,19 @@
     </message>
     <message>
       <source>PREF_POINT_COLOR</source>
-      <translation>ポイントの色</translation>
+      <translation>点の色</translation>
     </message>
     <message>
       <source>PREF_SHADING_COLOR</source>
-      <translation>既定の網かけの色</translation>
+      <translation>網かけの色</translation>
     </message>
     <message>
       <source>PREF_EDGES_IN_SHADING</source>
-      <translation>エッジのシェーディング</translation>
+      <translation>シェーディングのエッジ</translation>
     </message>
     <message>
       <source>PREF_STEP_VALUE</source>
-      <translation>スピン ボックスのステップ値</translation>
+      <translation>スピンボックスのステップ値</translation>
     </message>
     <message>
       <source>PREF_TAB_SETTINGS</source>
@@ -3117,35 +3177,63 @@
     </message>
     <message>
       <source>PREF_BASE_VECTORS_LENGTH</source>
-      <translation>基本ベクトルの長さ</translation>
+      <translation>基準ベクトルの長さ</translation>
     </message>
     <message>
       <source>PREF_WIREFRAME_COLOR</source>
-      <translation>ワイヤ フレームの既定の色</translation>
+      <translation>エッジの色</translation>
     </message>
     <message>
       <source>PREF_MATERIAL</source>
-      <translation>デフォルトのマテリアル</translation>
+      <translation>素材</translation>
+    </message>
+    <message>
+      <source>PREF_PREDEF_MATERIALS</source>
+      <translation>PREF_PREDEF_MATERIALS</translation>
+    </message>
+    <message>
+      <source>PREF_EDITGROUP_COLOR</source>
+      <translation>PREF_EDITGROUP_COLOR</translation>
     </message>
     <message>
       <source>PREF_EDGE_WIDTH</source>
-      <translation>エッジの幅</translation>
+      <translation>エッジの厚さ</translation>
     </message>
     <message>
       <source>PREF_ISOLINES_WIDTH</source>
-      <translation>Iso 線幅</translation>
+      <translation>輪郭の太さ</translation>
     </message>
     <message>
       <source>PREF_PREVIEW_EDGE_WIDTH</source>
-      <translation>プレビューのエッジの幅</translation>
+      <translation>プレビューの厚み</translation>
     </message>
     <message>
       <source>PREF_MEASURES_LINE_WIDTH</source>
-      <translation>対策の線幅</translation>
+      <translation>厚さ測定の機能</translation>
+    </message>
+    <message>
+      <source>PREF_AUTO_BRING_TO_FRONT</source>
+      <translation>PREF_AUTO_BRING_TO_FRONT</translation>
+    </message>
+    <message>
+      <source>PREF_ISOS</source>
+      <translation>PREF_ISOS</translation>
+    </message>
+    <message>
+      <source>PREF_ISOS_U</source>
+      <translation>PREF_ISOS_U</translation>
+    </message>
+    <message>
+      <source>PREF_ISOS_V</source>
+      <translation>PREF_ISOS_V</translation>
     </message>
     <message>
       <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
-      <translation>ProcessShape</translation>
+      <translation>FormeRetraitee</translation>
+    </message>
+    <message>
+      <source>MATERIAL_LIBRARY_TLT</source>
+      <translation>MATERIAL_LIBRARY_TLT</translation>
     </message>
     <message>
       <source>REMOVE_HOLES_NEW_OBJ_NAME</source>
@@ -3157,43 +3245,43 @@
     </message>
     <message>
       <source>SEWING_NEW_OBJ_NAME</source>
-      <translation>縫製</translation>
+      <translation>つなぎ合わせ</translation>
     </message>
     <message>
       <source>STB_ALL_SEL_ONLY</source>
-      <translation>すべてのオブジェクトを選択します</translation>
+      <translation>すべてのオブジェクトを選択</translation>
     </message>
     <message>
       <source>STB_ARC</source>
-      <translation>円弧を作成します。</translation>
+      <translation>円弧を作成</translation>
     </message>
     <message>
       <source>STB_ARCHIMEDE</source>
-      <translation>アルキメーデ操作</translation>
+      <translation>らせん操作</translation>
     </message>
     <message>
       <source>STB_BASIC_PROPS</source>
-      <translation>図形の基本的なプロパティを表示します。</translation>
+      <translation>オブジェクトの基本プロパティを表示</translation>
     </message>
     <message>
       <source>STB_BND_BOX</source>
-      <translation>図形の境界ボックスを計算します。</translation>
+      <translation>オブジェクトの境界ボックスを計算</translation>
     </message>
     <message>
       <source>STB_BOX</source>
-      <translation>ボックスを作成します。</translation>
+      <translation>ボックスを作成</translation>
     </message>
     <message>
       <source>STB_FEATURE_DETECTION</source>
-      <translation>形状認識</translation>
+      <translation>パターン認識</translation>
     </message>
     <message>
       <source>STB_PICTURE_IMPORT</source>
-      <translation>ビューアーで画像のインポート</translation>
+      <translation>ビュー内のイメージをインポートします。</translation>
     </message>
     <message>
       <source>STB_CHAMFER</source>
-      <translation>面取りを作成します。</translation>
+      <translation>面取りを作成</translation>
     </message>
     <message>
       <source>STB_CHANGE_ORIENTATION</source>
@@ -3201,95 +3289,95 @@
     </message>
     <message>
       <source>STB_CHECK</source>
-      <translation>形状の有効性を確認します。</translation>
+      <translation>形状の妥当性を確認</translation>
     </message>
     <message>
       <source>STB_CHECK_COMPOUND</source>
-      <translation>ブロックの化合物をチェックします。</translation>
+      <translation>ブロックのアセンブリチェック</translation>
     </message>
     <message>
       <source>STB_GET_NON_BLOCKS</source>
-      <translation>非ブロックを取得します。</translation>
+      <translation>純色のブロックを取得します。</translation>
     </message>
     <message>
       <source>STB_CHECK_SELF_INTERSECTIONS</source>
-      <translation>自己交差を検出します。</translation>
+      <translation>自動交差点を検出します。</translation>
     </message>
     <message>
       <source>STB_CHECK_FREE_BNDS</source>
-      <translation>無料の境界をチェックします。</translation>
+      <translation>自由境界をチェック</translation>
     </message>
     <message>
       <source>STB_CHECK_FREE_FACES</source>
-      <translation>無料顔をチェックします。</translation>
+      <translation>フリーフェースチェック</translation>
     </message>
     <message>
       <source>STB_CHECK_GEOMETRY</source>
-      <translation>ジオメトリを確認します。</translation>
+      <translation>ジオメトリチェック</translation>
     </message>
     <message>
       <source>STB_CIRCLE</source>
-      <translation>円を作成します。</translation>
+      <translation>円を作成</translation>
     </message>
     <message>
       <source>STB_CLIPPING</source>
-      <translation>クリップの範囲</translation>
+      <translation>切り抜き範囲</translation>
     </message>
     <message>
       <source>STB_CLOSE_CONTOUR</source>
-      <translation>近くの輪郭を実行します。</translation>
+      <translation>スケッチを終了</translation>
     </message>
     <message>
       <source>STB_COMMON</source>
-      <translation>一般的です</translation>
+      <translation>交差点</translation>
     </message>
     <message>
       <source>STB_COMPOUND</source>
-      <translation>化合物を構築します。</translation>
+      <translation>アセンブリをビルド</translation>
     </message>
     <message>
       <source>STB_COMPOUND_SEL_ONLY</source>
-      <translation>化合物のみを選択します</translation>
+      <translation>アセンブリのみを選択</translation>
     </message>
     <message>
       <source>STB_CONE</source>
-      <translation>円錐を作成します。</translation>
+      <translation>円錐を作成</translation>
     </message>
     <message>
       <source>STB_CURVE</source>
-      <translation>曲線を作成します。</translation>
+      <translation>カーブを作成</translation>
     </message>
     <message>
       <source>STB_CUT</source>
-      <translation>カット</translation>
+      <translation>切断</translation>
     </message>
     <message>
       <source>STB_CYLINDER</source>
-      <translation>円柱を作成します。</translation>
+      <translation>円柱を作成</translation>
     </message>
     <message>
       <source>STB_RECTANGLE</source>
-      <translation>長方形の面を作成します。</translation>
+      <translation>長方形の面を作成</translation>
     </message>
     <message>
       <source>STB_DELETE</source>
-      <translation>オブジェクトを削除します。</translation>
+      <translation>オブジェクトを削除</translation>
     </message>
     <message>
       <source>STB_DISK</source>
-      <translation>ディスクを作成します。</translation>
+      <translation>円盤を作成</translation>
     </message>
     <message>
       <source>STB_DISPLAY</source>
-      <translation>オブジェクトを表示します。</translation>
+      <translation>表示オブジェクト</translation>
     </message>
     <message>
       <source>STB_DISPLAY_ALL</source>
-      <translation>すべて表示</translation>
+      <translation>すべてを表示</translation>
     </message>
     <message>
       <source>STB_DISPLAY_ONLY</source>
-      <translation>のみを表示します。</translation>
+      <translation>選択のみ表示</translation>
     </message>
     <message>
       <source>STB_SHOW_ONLY_CHILDREN</source>
@@ -3297,203 +3385,211 @@
     </message>
     <message>
       <source>STB_EDGE</source>
-      <translation>エッジを構築します。</translation>
+      <translation>エッジを作成</translation>
     </message>
     <message>
       <source>STB_EDGE_SEL_ONLY</source>
-      <translation>エッジのみを選択します。</translation>
+      <translation>エッジだけを選択</translation>
     </message>
     <message>
       <source>STB_ELLIPSE</source>
-      <translation>楕円を作成します。</translation>
+      <translation>楕円を作成</translation>
     </message>
     <message>
       <source>STB_ERASE</source>
-      <translation>オブジェクトを非表示します。</translation>
+      <translation>オブジェクトを非表示</translation>
     </message>
     <message>
       <source>STB_ERASE_ALL</source>
-      <translation>すべてを非表示します。</translation>
+      <translation>すべてを非表示</translation>
     </message>
     <message>
       <source>STB_EXPLODE</source>
-      <translation>爆発</translation>
+      <translation>展開</translation>
     </message>
     <message>
       <source>STB_EXPLODE_BLOCKS</source>
-      <translation>上のブロックを爆発します。</translation>
+      <translation>ブロックで展開</translation>
     </message>
     <message>
       <source>STB_EXPORT</source>
-      <translation>ジオメトリ BREP ファイルにエクスポートします。</translation>
+      <translation>ジオメトリをBREPファイルにエクスポート</translation>
     </message>
     <message>
       <source>STB_EXTRUSION</source>
-      <translation>押し出しを作成します。</translation>
+      <translation>押し出しを作成</translation>
     </message>
     <message>
       <source>STB_EXTRUDED_CUT</source>
-      <translation>押し出しカット</translation>
+      <translation>押出成形材料の除去</translation>
     </message>
     <message>
       <source>STB_EXTRUDED_BOSS</source>
-      <translation>押し出しボス</translation>
+      <translation>押し出しの上司</translation>
     </message>
     <message>
       <source>STB_FACE</source>
-      <translation>ビルドの顔</translation>
+      <translation>フェースを作成</translation>
     </message>
     <message>
       <source>STB_FACE_SEL_ONLY</source>
-      <translation>面のみを選択します</translation>
+      <translation>フェースだけを選択</translation>
     </message>
     <message>
       <source>STB_FILLET</source>
-      <translation>3 D のフィレットを作成します。</translation>
+      <translation>3Dフィレットを作成</translation>
     </message>
     <message>
       <source>STB_FILLET_1D</source>
-      <translation>1 D フィレットを作成します。</translation>
+      <translation>1Dフィレットを作成</translation>
     </message>
     <message>
       <source>STB_FILLET_2D</source>
-      <translation>2D フィレットを作成します。</translation>
+      <translation>2Dフィレットを作成</translation>
     </message>
     <message>
       <source>STB_FILLING</source>
-      <translation>充填を作成します。</translation>
+      <translation>埋込みを作成</translation>
     </message>
     <message>
       <source>STB_FUSE</source>
-      <translation>ヒューズ</translation>
+      <translation>結合</translation>
     </message>
     <message>
       <source>STB_GLUE_FACES</source>
-      <translation>接着剤の顔を実行します。</translation>
+      <translation>フェース固着</translation>
     </message>
     <message>
       <source>STB_GLUE_EDGES</source>
-      <translation>接着剤のエッジを実行します。</translation>
+      <translation>エッジ固着</translation>
     </message>
     <message>
       <source>STB_GROUP_CREATE</source>
-      <translation>グループを作成します。</translation>
+      <translation>グループを作成</translation>
     </message>
     <message>
       <source>STB_GROUP_EDIT</source>
-      <translation>[グループを編集します。</translation>
+      <translation>グループを編集</translation>
     </message>
     <message>
       <source>STB_GROUP_UNION</source>
-      <translation>連合のグループ</translation>
+      <translation>グループの連合</translation>
     </message>
     <message>
       <source>STB_GROUP_INTERSECT</source>
-      <translation>グループが交差します。</translation>
+      <translation>グループの交差点</translation>
     </message>
     <message>
       <source>STB_GROUP_CUT</source>
-      <translation>グループをカットします。</translation>
+      <translation>切断グループ</translation>
+    </message>
+    <message>
+      <source>STB_FIELD_CREATE</source>
+      <translation>STB_FIELD_CREATE</translation>
+    </message>
+    <message>
+      <source>STB_FIELD_EDIT</source>
+      <translation>STB_FIELD_EDIT</translation>
     </message>
     <message>
       <source>STB_RELOAD_IMPORTED</source>
-      <translation>ディスク上の元の場所からインポートした形状の再読み込み</translation>
+      <translation>ディスク上の元の場所からインポートした形状をリロード</translation>
     </message>
     <message>
       <source>STB_HEX_SOLID</source>
-      <translation>六面体のソリッド</translation>
+      <translation>六面体ソリッド</translation>
     </message>
     <message>
       <source>STB_IMPORT</source>
-      <translation>BREP ファイルからのジオメトリをインポートします。</translation>
+      <translation>BREPファイルをジオメトリにインポート</translation>
     </message>
     <message>
       <source>STB_INERTIA</source>
-      <translation>図形の慣性モーメントを計算します。</translation>
+      <translation>オブジェクトの慣性モーメントを計算します。</translation>
     </message>
     <message>
       <source>STB_ISOS</source>
-      <translation>等値線のセット数</translation>
+      <translation>輪郭線の数を設定</translation>
     </message>
     <message>
       <source>STB_LINE</source>
-      <translation>行を作成します。</translation>
+      <translation>ラインを作成</translation>
     </message>
     <message>
       <source>STB_LIMIT_TOLERANCE</source>
-      <translation>許容</translation>
+      <translation>許容範囲</translation>
     </message>
     <message>
       <source>STB_LOCAL_CS</source>
-      <translation>ローカル座標系を作成します。</translation>
+      <translation>ローカル座標系を作成</translation>
     </message>
     <message>
       <source>STB_MASS_CENTER</source>
-      <translation>図形の重心を計算します。</translation>
+      <translation>オブジェクトの重心を計算</translation>
     </message>
     <message>
       <source>STB_MIN_DIST</source>
-      <translation>2 つのオブジェクト間の最小距離を計算します。</translation>
+      <translation>2つのオブジェクト間の最小距離を計算</translation>
     </message>
     <message>
       <source>STB_MIRROR</source>
-      <translation>図形をミラーリングします。</translation>
+      <translation>オブジェクトを反転</translation>
     </message>
     <message>
       <source>STB_MODIFY_LOCATION</source>
-      <translation>図形の位置を変更します。</translation>
+      <translation>オブジェクトの位置を変更</translation>
     </message>
     <message>
       <source>STB_MUL_ROTATION</source>
-      <translation>Multi-rotation を実行します。</translation>
+      <translation>Multi-rotation を実行</translation>
     </message>
     <message>
       <source>STB_MUL_TRANSFORM</source>
-      <translation>Multi-transformation を実行します。</translation>
+      <translation>Multi-transformation を実行</translation>
     </message>
     <message>
       <source>STB_MUL_TRANSLATION</source>
-      <translation>Multi-translation を実行します。</translation>
+      <translation>複数オブジェクトの移動を実行</translation>
     </message>
     <message>
       <source>STB_OFFSET</source>
-      <translation>オフセット サーフェス</translation>
+      <translation>サーフェスをオフセット</translation>
     </message>
     <message>
       <source>STB_PROJECTION</source>
-      <translation>ポイント、エッジまたはワイヤ上に顔をプロジェクトします。</translation>
+      <translation>ポイント、エッジ、または輪郭上の 1 つの側面を投影</translation>
     </message>
     <message>
       <source>STB_ORIGIN_AND_VECTORS</source>
-      <translation>起源を作成し、ベクトル ベース</translation>
+      <translation>起源と基底ベクトルを作成します。</translation>
     </message>
     <message>
       <source>STB_PARTITION</source>
-      <translation>パーティションをに</translation>
+      <translation>パーティションを作成</translation>
     </message>
     <message>
       <source>STB_PIPE</source>
-      <translation>押出成形、パスに沿って図形を作成します。</translation>
+      <translation>経路に沿って押し出し</translation>
     </message>
     <message>
       <source>STB_PIPE_PATH</source>
-      <translation>パスからのパイプのような形状復元します。</translation>
+      <translation>経路の復元</translation>
     </message>
     <message>
       <source>STB_PLANE</source>
-      <translation>平面を作成します。</translation>
+      <translation>平面を作成</translation>
     </message>
     <message>
       <source>STB_POINT</source>
-      <translation>ポイントを作成します。</translation>
+      <translation>ポイントを作成</translation>
     </message>
     <message>
       <source>STB_POINT_COORDS</source>
-      <translation>表示ポイントの座標</translation>
+      <translation>ポイントの座標を表示</translation>
     </message>
     <message>
       <source>STB_POINT_ON_EDGE</source>
-      <translation>端にポイントを追加します。</translation>
+      <translation>端にポイントを追加</translation>
     </message>
     <message>
       <source>STB_POP_COLOR</source>
@@ -3501,43 +3597,47 @@
     </message>
     <message>
       <source>STB_POP_CREATE_GROUP</source>
-      <translation>グループを作成します。</translation>
+      <translation>グループを作成</translation>
+    </message>
+    <message>
+      <source>STB_POP_EDIT_FIELD</source>
+      <translation>STB_POP_EDIT_FIELD</translation>
     </message>
     <message>
       <source>STB_POP_UNPUBLISH_OBJ</source>
-      <translation>オブジェクトの公開を取り下げます</translation>
+      <translation>オブジェクトの発行停止</translation>
     </message>
     <message>
       <source>STB_POP_PUBLISH_OBJ</source>
-      <translation>オブジェクトを発行します。</translation>
+      <translation>オブジェクトを発行</translation>
     </message>
     <message>
       <source>STB_POP_DISCLOSE_CHILDREN</source>
-      <translation>子項目を開示します。</translation>
+      <translation>子供を表示します。</translation>
     </message>
     <message>
       <source>STB_POP_CONCEAL_CHILDREN</source>
-      <translation>子項目を隠す</translation>
+      <translation>子供オブジェクトを隠す</translation>
     </message>
     <message>
       <source>STB_POP_ISOS</source>
-      <translation>等値線</translation>
+      <translation>輪郭</translation>
     </message>
     <message>
       <source>STB_POP_DEFLECTION</source>
-      <translation>変形係数</translation>
+      <translation>変形倍率</translation>
     </message>
     <message>
       <source>STB_POP_RENAME</source>
-      <translation>名前の変更</translation>
+      <translation>名前変更</translation>
     </message>
     <message>
       <source>STB_POP_SHADING</source>
-      <translation>網かけの設定</translation>
+      <translation>網かけ</translation>
     </message>
     <message>
       <source>STB_POP_SHADING_WITH_EDGES</source>
-      <translation>シェーディング、エッジ</translation>
+      <translation>陰影とエッジ</translation>
     </message>
     <message>
       <source>STB_POP_TEXTURE</source>
@@ -3545,7 +3645,7 @@
     </message>
     <message>
       <source>STB_POP_VECTORS</source>
-      <translation>エッジ方向を表示します。</translation>
+      <translation>エッジの方向を表示します。</translation>
     </message>
     <message>
       <source>STB_POP_SETTEXTURE</source>
@@ -3553,31 +3653,39 @@
     </message>
     <message>
       <source>STB_POP_TRANSPARENCY</source>
-      <translation>透明性</translation>
+      <translation>透明度</translation>
     </message>
     <message>
       <source>STB_POP_WIREFRAME</source>
-      <translation>ワイヤ フレーム</translation>
+      <translation>ワイヤー</translation>
+    </message>
+    <message>
+      <source>STB_MATERIALS_LIBRARY</source>
+      <translation>STB_MATERIALS_LIBRARY</translation>
+    </message>
+    <message>
+      <source>STB_POP_PREDEF_MATER_CUSTOM</source>
+      <translation>STB_POP_PREDEF_MATER_CUSTOM</translation>
     </message>
     <message>
       <source>STB_PROPAGATE</source>
-      <translation>伝達</translation>
+      <translation>スプレッド</translation>
     </message>
     <message>
       <source>STB_Q_FACE</source>
-      <translation>四角形の顔</translation>
+      <translation>四角形フェース</translation>
     </message>
     <message>
       <source>STB_REVOLUTION</source>
-      <translation>革命を作成します。</translation>
+      <translation>回転押し出しの作成</translation>
     </message>
     <message>
       <source>STB_ROTATION</source>
-      <translation>図形を回転します。</translation>
+      <translation>オブジェクトを回転</translation>
     </message>
     <message>
       <source>STB_SCALE</source>
-      <translation>図形を拡張します。</translation>
+      <translation>オブジェクトのサイズを変更</translation>
     </message>
     <message>
       <source>STB_SECTION</source>
@@ -3585,115 +3693,115 @@
     </message>
     <message>
       <source>STB_SEWING</source>
-      <translation>ミシンを実行します。</translation>
+      <translation>縫い合わせ実行</translation>
     </message>
     <message>
       <source>STB_WIREFRAME</source>
-      <translation>ワイヤ フレーム</translation>
+      <translation>ワイヤー</translation>
     </message>
     <message>
       <source>STB_SHADING</source>
-      <translation>網かけの設定</translation>
+      <translation>網かけ</translation>
     </message>
     <message>
       <source>STB_SHADING_WITH_EDGES</source>
-      <translation>シェーディング、エッジ</translation>
+      <translation>陰影とエッジ</translation>
     </message>
     <message>
       <source>STB_VECTOR_MODE</source>
-      <translation>エッジ プレゼンテーション モードの変更</translation>
+      <translation>エッジの表示モードを変更</translation>
     </message>
     <message>
       <source>STB_SHADING_COLOR</source>
-      <translation>網かけの色を設定します。</translation>
+      <translation>網かけの色を設定</translation>
     </message>
     <message>
       <source>STB_SHAPE_PROCESS</source>
-      <translation>図形処理を実行します。</translation>
+      <translation>形状処理を実行する</translation>
     </message>
     <message>
       <source>STB_SHELL</source>
-      <translation>シェルを構築します。</translation>
+      <translation>シェルを構築</translation>
     </message>
     <message>
       <source>STB_SHELL_SEL_ONLY</source>
-      <translation>シェルのみを選択します</translation>
+      <translation>シェルのみを選択</translation>
     </message>
     <message>
       <source>STB_SKETCH</source>
-      <translation>2 D スケッチを作成します。</translation>
+      <translation>2Dスケッチを作成</translation>
     </message>
     <message>
       <source>STB_3DSKETCH</source>
-      <translation>3 D スケッチを作成します。</translation>
+      <translation>3Dスケッチを作成</translation>
     </message>
     <message>
       <source>STB_SOLID</source>
-      <translation>固体を構築します。</translation>
+      <translation>ソリッドを構築</translation>
     </message>
     <message>
       <source>STB_SOLID_SEL_ONLY</source>
-      <translation>ソリッドのみを選択します</translation>
+      <translation>ソリッドだけを選択</translation>
     </message>
     <message>
       <source>STB_SPHERE</source>
-      <translation>球を作成します。</translation>
+      <translation>球を作成</translation>
     </message>
     <message>
       <source>STB_STEP_VALUE</source>
-      <translation>設定ステップ値</translation>
+      <translation>ステップの値を設定</translation>
     </message>
     <message>
       <source>STB_SUPPERSS_HOLES</source>
-      <translation>実行穴を抑制します。</translation>
+      <translation>穴の削除を実行</translation>
     </message>
     <message>
       <source>STB_SUPPRESS_FACES</source>
-      <translation>実行する顔を抑制します。</translation>
+      <translation>フェースの削除を実行</translation>
     </message>
     <message>
       <source>STB_SUPPRESS_INT_WIRES</source>
-      <translation>実行する内部のワイヤを抑制します。</translation>
+      <translation>内部ワイヤーの削除を実行</translation>
     </message>
     <message>
       <source>STB_TOLERANCE</source>
-      <translation>公差図形を計算します。</translation>
+      <translation>オブジェクトの距離を計算</translation>
     </message>
     <message>
       <source>STB_TORUS</source>
-      <translation>トーラスを作成します。</translation>
+      <translation>円環を作成</translation>
     </message>
     <message>
       <source>STB_TRANSLATION</source>
-      <translation>図形を変換します。</translation>
+      <translation>オブジェクトを移動</translation>
     </message>
     <message>
       <source>STB_VECTOR</source>
-      <translation>ベクトルを作成します。</translation>
+      <translation>ベクトルを作成</translation>
     </message>
     <message>
       <source>STB_VERTEX_SEL_ONLY</source>
-      <translation>ポイントのみを選択します</translation>
+      <translation>ポイントのみを選択</translation>
     </message>
     <message>
       <source>STB_WHAT_IS</source>
-      <translation>何</translation>
+      <translation>Whatis</translation>
     </message>
     <message>
       <source>STB_WIRE</source>
-      <translation>ワイヤを構築します。</translation>
+      <translation>ワイヤーを構築</translation>
     </message>
     <message>
       <source>STB_WIRE_SEL_ONLY</source>
-      <translation>のみ、線を選択します</translation>
+      <translation>ワイヤーだけを選択</translation>
     </message>
     <message>
       <source>STB_WORK_PLANE</source>
-      <translation>作業面を作成します。</translation>
+      <translation>作業平面を作成</translation>
     </message>
     <message>
       <source>STB_POP_POINT_MARKER</source>
-      <translation>セット ポイント マーカー</translation>
+      <translation>ポイントマーカーを設定</translation>
     </message>
     <message>
       <source>STB_POP_MATERIAL_PROPERTIES</source>
@@ -3701,7 +3809,7 @@
     </message>
     <message>
       <source>SUPPRESS_RESULT</source>
-      <translation>結果を表示しません。</translation>
+      <translation>結果を削除</translation>
     </message>
     <message>
       <source>SUPRESS_FACE_NEW_OBJ_NAME</source>
@@ -3709,19 +3817,19 @@
     </message>
     <message>
       <source>ShHealOper_ErrorExecution_msg</source>
-      <translation>失敗した形状癒しアルゴリズム</translation>
+      <translation>形状縫合に失敗</translation>
     </message>
     <message>
       <source>ShHealOper_InvalidParameters_msg</source>
-      <translation>図形を癒しアルゴリズムの不適切なパラメーター</translation>
+      <translation>形状縫合アルゴリズムのパラメータが正しくありません</translation>
     </message>
     <message>
       <source>ShHealOper_NotError_msg</source>
-      <translation>変更元の図形の形状癒しアルゴリズムは何もなかった</translation>
+      <translation>形状縫合アルゴリズムでは元の形状を変更しません</translation>
     </message>
     <message>
       <source>TLT_RENAME</source>
-      <translation>名前の変更</translation>
+      <translation>名前変更</translation>
     </message>
     <message>
       <source>TOM_O</source>
@@ -3729,19 +3837,19 @@
     </message>
     <message>
       <source>TOM_O_PLUS</source>
-      <translation>+ O</translation>
+      <translation>+ in O</translation>
     </message>
     <message>
       <source>TOM_O_POINT</source>
-      <translation>.O</translation>
+      <translation>. in O</translation>
     </message>
     <message>
       <source>TOM_O_STAR</source>
-      <translation>* O</translation>
+      <translation>* in O</translation>
     </message>
     <message>
       <source>TOM_O_X</source>
-      <translation>X O の</translation>
+      <translation>X in O</translation>
     </message>
     <message>
       <source>TOM_PLUS</source>
@@ -3761,7 +3869,7 @@
     </message>
     <message>
       <source>TOOL_BASIC</source>
-      <translation>基本的です</translation>
+      <translation>基本オブジェクト</translation>
     </message>
     <message>
       <source>TOOL_BLOCKS</source>
@@ -3769,7 +3877,7 @@
     </message>
     <message>
       <source>TOOL_BOOLEAN</source>
-      <translation>ブール演算</translation>
+      <translation>ブーリアン操作</translation>
     </message>
     <message>
       <source>TOOL_FEATURES</source>
@@ -3777,15 +3885,15 @@
     </message>
     <message>
       <source>TOOL_GENERATION</source>
-      <translation>世代</translation>
+      <translation>ジェネレーション</translation>
     </message>
     <message>
       <source>TOOL_PRIMITIVES</source>
-      <translation>プリミティブ</translation>
+      <translation>基本図形</translation>
     </message>
     <message>
       <source>TOOL_TRANSFORMATION</source>
-      <translation>変換</translation>
+      <translation>変形</translation>
     </message>
     <message>
       <source>TOOL_BUILD</source>
@@ -3797,7 +3905,7 @@
     </message>
     <message>
       <source>TOOL_PICTURES</source>
-      <translation>写真</translation>
+      <translation>画像</translation>
     </message>
     <message>
       <source>TOOL_ADVANCED</source>
@@ -3805,19 +3913,19 @@
     </message>
     <message>
       <source>TOOL_MEASURES</source>
-      <translation>対策</translation>
+      <translation>情報</translation>
     </message>
     <message>
       <source>TOP_ARC</source>
-      <translation>円弧を作成します。</translation>
+      <translation>円弧を作成</translation>
     </message>
     <message>
       <source>TOP_ARCHIMEDE</source>
-      <translation>アルキメーデ</translation>
+      <translation>らせん</translation>
     </message>
     <message>
       <source>TOP_BASIC_PROPS</source>
-      <translation>基本的なプロパティ</translation>
+      <translation>基本プロパティ</translation>
     </message>
     <message>
       <source>TOP_BND_BOX</source>
@@ -3825,7 +3933,7 @@
     </message>
     <message>
       <source>TOP_BOX</source>
-      <translation>ボックスを作成します。</translation>
+      <translation>ボックスを作成</translation>
     </message>
     <message>
       <source>TOP_CHAMFER</source>
@@ -3837,91 +3945,91 @@
     </message>
     <message>
       <source>TOP_CHECK</source>
-      <translation>形状をチェックします。</translation>
+      <translation>オブジェクトを確認</translation>
     </message>
     <message>
       <source>TOP_CHECK_COMPOUND</source>
-      <translation>ブロックの化合物をチェックします。</translation>
+      <translation>ブロック アセンブリを確認</translation>
     </message>
     <message>
       <source>TOP_GET_NON_BLOCKS</source>
-      <translation>非ブロックを取得します。</translation>
+      <translation>純色のブロックを取得します。</translation>
     </message>
     <message>
       <source>TOP_CHECK_SELF_INTERSECTIONS</source>
-      <translation>自己交差を検出します。</translation>
+      <translation>自動交差点の検出</translation>
     </message>
     <message>
       <source>TOP_CHECK_FREE_BNDS</source>
-      <translation>無料の境界をチェックします。</translation>
+      <translation>自由境界を確認</translation>
     </message>
     <message>
       <source>TOP_CHECK_FREE_FACES</source>
-      <translation>無料顔をチェックします。</translation>
+      <translation>フリーフェースチェック</translation>
     </message>
     <message>
       <source>TOP_CHECK_GEOMETRY</source>
-      <translation>ジオメトリを確認します。</translation>
+      <translation>ジオメトリチェック</translation>
     </message>
     <message>
       <source>TOP_CIRCLE</source>
-      <translation>円を作成します。</translation>
+      <translation>円を作成</translation>
     </message>
     <message>
       <source>TOP_CLIPPING</source>
-      <translation>クリップの範囲</translation>
+      <translation>切り抜き範囲</translation>
     </message>
     <message>
       <source>TOP_CLOSE_CONTOUR</source>
-      <translation>近くの輪郭を実行します。</translation>
+      <translation>スケッチを終了</translation>
     </message>
     <message>
       <source>TOP_COMMON</source>
-      <translation>一般的です</translation>
+      <translation>交差点</translation>
     </message>
     <message>
       <source>TOP_COMPOUND</source>
-      <translation>化合物の構築します。</translation>
+      <translation>アセンブリをビルド</translation>
     </message>
     <message>
       <source>TOP_CONE</source>
-      <translation>円錐を作成します。</translation>
+      <translation>円錐を作成</translation>
     </message>
     <message>
       <source>TOP_CURVE</source>
-      <translation>曲線を作成します。</translation>
+      <translation>カーブを作成</translation>
     </message>
     <message>
       <source>TOP_CUT</source>
-      <translation>カット</translation>
+      <translation>切断</translation>
     </message>
     <message>
       <source>TOP_CYLINDER</source>
-      <translation>円柱を作成します。</translation>
+      <translation>円柱を作成</translation>
     </message>
     <message>
       <source>TOP_DELETE</source>
-      <translation>オブジェクトを削除します。</translation>
+      <translation>オブジェクトを削除</translation>
     </message>
     <message>
       <source>TOP_RECTANGLE</source>
-      <translation>長方形の面を作成します。</translation>
+      <translation>長方形のフェース作成</translation>
     </message>
     <message>
       <source>TOP_DISK</source>
-      <translation>ディスクを作成します。</translation>
+      <translation>円盤を作成</translation>
     </message>
     <message>
       <source>TOP_DISPLAY</source>
-      <translation>ショー</translation>
+      <translation>表示</translation>
     </message>
     <message>
       <source>TOP_DISPLAY_ALL</source>
-      <translation>すべて表示</translation>
+      <translation>すべてを表示</translation>
     </message>
     <message>
       <source>TOP_DISPLAY_ONLY</source>
-      <translation>のみを表示します。</translation>
+      <translation>選択のみ表示</translation>
     </message>
     <message>
       <source>TOP_SHOW_ONLY_CHILDREN</source>
@@ -3929,11 +4037,11 @@
     </message>
     <message>
       <source>TOP_EDGE</source>
-      <translation>エッジを構築します。</translation>
+      <translation>エッジを構築</translation>
     </message>
     <message>
       <source>TOP_ELLIPSE</source>
-      <translation>楕円を作成します。</translation>
+      <translation>楕円を作成</translation>
     </message>
     <message>
       <source>TOP_ERASE</source>
@@ -3941,115 +4049,123 @@
     </message>
     <message>
       <source>TOP_ERASE_ALL</source>
-      <translation>すべてを非表示します。</translation>
+      <translation>すべてを非表示</translation>
     </message>
     <message>
       <source>TOP_EXPLODE</source>
-      <translation>爆発</translation>
+      <translation>展開</translation>
     </message>
     <message>
       <source>TOP_EXPLODE_BLOCKS</source>
-      <translation>上のブロックを爆発します。</translation>
+      <translation>ブロックで展開</translation>
     </message>
     <message>
       <source>TOP_EXPORT</source>
-      <translation>ジオメトリ BREP ファイルにエクスポートします。</translation>
+      <translation>ジオメトリをBREPファイルでエクスポート</translation>
     </message>
     <message>
       <source>TOP_EXTRUSION</source>
-      <translation>押し出しを作成します。</translation>
+      <translation>押し出しを作成</translation>
     </message>
     <message>
       <source>TOP_EXTRUDED_BOSS</source>
-      <translation>押し出しボス</translation>
+      <translation>押し出しの上司</translation>
     </message>
     <message>
       <source>TOP_EXTRUDED_CUT</source>
-      <translation>押し出しカット</translation>
+      <translation>押出成形材料の除去</translation>
     </message>
     <message>
       <source>TOP_FACE</source>
-      <translation>ビルドの顔</translation>
+      <translation>フェースを作成</translation>
     </message>
     <message>
       <source>TOP_FILLET</source>
-      <translation>フィレ肉の 3 D</translation>
+      <translation>3Dフィレット</translation>
     </message>
     <message>
       <source>TOP_FILLET_1D</source>
-      <translation>フィレット 1 D</translation>
+      <translation>1D フィレット作成</translation>
     </message>
     <message>
       <source>TOP_FILLET_2D</source>
-      <translation>2D フィレット</translation>
+      <translation>2D フィレット作成</translation>
     </message>
     <message>
       <source>TOP_FILLING</source>
-      <translation>充填を作成します。</translation>
+      <translation>埋込みを作成</translation>
     </message>
     <message>
       <source>TOP_FUSE</source>
-      <translation>ヒューズ</translation>
+      <translation>結合</translation>
     </message>
     <message>
       <source>TOP_GLUE_FACES</source>
-      <translation>接着剤の顔を実行します。</translation>
+      <translation>フェース固着</translation>
     </message>
     <message>
       <source>TOP_GLUE_EDGES</source>
-      <translation>接着剤のエッジを実行します。</translation>
+      <translation>エッジ固着</translation>
     </message>
     <message>
       <source>TOP_GROUP_CREATE</source>
-      <translation>グループを作成します。</translation>
+      <translation>グループを作成</translation>
     </message>
     <message>
       <source>TOP_GROUP_EDIT</source>
-      <translation>[グループを編集します。</translation>
+      <translation>グループを編集</translation>
     </message>
     <message>
       <source>TOP_GROUP_UNION</source>
-      <translation>連合のグループ</translation>
+      <translation>グループの連合</translation>
     </message>
     <message>
       <source>TOP_GROUP_INTERSECT</source>
-      <translation>グループが交差します。</translation>
+      <translation>グループの交差点</translation>
     </message>
     <message>
       <source>TOP_GROUP_CUT</source>
-      <translation>グループをカットします。</translation>
+      <translation>切断グループ</translation>
+    </message>
+    <message>
+      <source>TOP_FIELD_CREATE</source>
+      <translation>TOP_FIELD_CREATE</translation>
+    </message>
+    <message>
+      <source>TOP_FIELD_EDIT</source>
+      <translation>TOP_FIELD_EDIT</translation>
     </message>
     <message>
       <source>TOP_HEX_SOLID</source>
-      <translation>六面体のソリッド</translation>
+      <translation>六面体ソリッド</translation>
     </message>
     <message>
       <source>TOP_IMPORT</source>
-      <translation>BREP ファイルからのジオメトリをインポートします。</translation>
+      <translation>BREPファイルをジオメトリにインポート</translation>
     </message>
     <message>
       <source>TOP_INERTIA</source>
-      <translation>慣性の瞬間</translation>
+      <translation>慣性モーメント</translation>
     </message>
     <message>
       <source>TOP_ISOS</source>
-      <translation>等値線のセット数</translation>
+      <translation>輪郭線の数を設定</translation>
     </message>
     <message>
       <source>TOP_LINE</source>
-      <translation>行を作成します。</translation>
+      <translation>ラインを作成</translation>
     </message>
     <message>
       <source>TOP_LIMIT_TOLERANCE</source>
-      <translation>許容</translation>
+      <translation>許容範囲</translation>
     </message>
     <message>
       <source>TOP_LOCAL_CS</source>
-      <translation>ローカル座標系を作成します。</translation>
+      <translation>ローカル座標系を作成</translation>
     </message>
     <message>
       <source>TOP_MASS_CENTER</source>
-      <translation>質量の中心</translation>
+      <translation>重心</translation>
     </message>
     <message>
       <source>TOP_MIN_DIST</source>
@@ -4057,15 +4173,15 @@
     </message>
     <message>
       <source>TOP_MIRROR</source>
-      <translation>ミラー イメージ</translation>
+      <translation>オブジェクトの反転</translation>
     </message>
     <message>
       <source>TOP_MODIFY_LOCATION</source>
-      <translation>場所を変更します。</translation>
+      <translation>位置を変更します。</translation>
     </message>
     <message>
       <source>TOP_MUL_ROTATION</source>
-      <translation>Multi-Rotation</translation>
+      <translation>Multi-rotation</translation>
     </message>
     <message>
       <source>TOP_MUL_TRANSFORM</source>
@@ -4073,19 +4189,19 @@
     </message>
     <message>
       <source>TOP_MUL_TRANSLATION</source>
-      <translation>Multi-Translation</translation>
+      <translation>複数オブジェクトの移動</translation>
     </message>
     <message>
       <source>TOP_PICTURE_IMPORT</source>
-      <translation>ビューアーで画像のインポート</translation>
+      <translation>ビュー内のイメージをインポートします。</translation>
     </message>
     <message>
       <source>TOP_FEATURE_DETECTION</source>
-      <translation>形状認識</translation>
+      <translation>パターン認識</translation>
     </message>
     <message>
       <source>TOP_OFFSET</source>
-      <translation>オフセット サーフェス</translation>
+      <translation>サーフェスをオフセット</translation>
     </message>
     <message>
       <source>TOP_PROJECTION</source>
@@ -4093,7 +4209,7 @@
     </message>
     <message>
       <source>TOP_ORIGIN_AND_VECTORS</source>
-      <translation>起源を作成し、ベクトル ベース</translation>
+      <translation>起源と根拠のベクトルを作成します。</translation>
     </message>
     <message>
       <source>TOP_PARTITION</source>
@@ -4101,27 +4217,27 @@
     </message>
     <message>
       <source>TOP_PIPE</source>
-      <translation>押し出しパスに沿って</translation>
+      <translation>経路に沿って押し出し</translation>
     </message>
     <message>
       <source>TOP_PIPE_PATH</source>
-      <translation>復元パス</translation>
+      <translation>経路の復元</translation>
     </message>
     <message>
       <source>TOP_PLANE</source>
-      <translation>平面を作成します。</translation>
+      <translation>平面を作成</translation>
     </message>
     <message>
       <source>TOP_POINT</source>
-      <translation>ポイントを作成します。</translation>
+      <translation>ポイントを作成</translation>
     </message>
     <message>
       <source>TOP_POINT_COORDS</source>
-      <translation>ポイントの座標</translation>
+      <translation>軸に目盛り付け</translation>
     </message>
     <message>
       <source>TOP_POINT_ON_EDGE</source>
-      <translation>端にポイントを追加します。</translation>
+      <translation>端にポイントを追加</translation>
     </message>
     <message>
       <source>TOP_POP_COLOR</source>
@@ -4129,43 +4245,47 @@
     </message>
     <message>
       <source>TOP_POP_CREATE_GROUP</source>
-      <translation>グループを作成します。</translation>
+      <translation>グループを作成</translation>
+    </message>
+    <message>
+      <source>TOP_POP_EDIT_FIELD</source>
+      <translation>TOP_POP_EDIT_FIELD</translation>
     </message>
     <message>
       <source>TOP_POP_UNPUBLISH_OBJ</source>
-      <translation>オブジェクトの公開を取り下げます</translation>
+      <translation>オブジェクトの発行停止</translation>
     </message>
     <message>
       <source>TOP_POP_PUBLISH_OBJ</source>
-      <translation>オブジェクトを発行します。</translation>
+      <translation>オブジェクトを発行</translation>
     </message>
     <message>
       <source>TOP_POP_DISCLOSE_CHILDREN</source>
-      <translation>子項目を開示します。</translation>
+      <translation>子供を表示します。</translation>
     </message>
     <message>
       <source>TOP_POP_CONCEAL_CHILDREN</source>
-      <translation>子項目を隠す</translation>
+      <translation>子供オブジェクトを隠す</translation>
     </message>
     <message>
       <source>TOP_POP_ISOS</source>
-      <translation>等値線</translation>
+      <translation>輪郭</translation>
     </message>
     <message>
       <source>TOP_POP_DEFLECTION</source>
-      <translation>変形係数</translation>
+      <translation>変形倍率</translation>
     </message>
     <message>
       <source>TOP_POP_RENAME</source>
-      <translation>名前の変更</translation>
+      <translation>名前変更</translation>
     </message>
     <message>
       <source>TOP_POP_SHADING</source>
-      <translation>網かけの設定</translation>
+      <translation>網かけ</translation>
     </message>
     <message>
       <source>TOP_POP_SHADING_WITH_EDGES</source>
-      <translation>シェーディング、エッジ</translation>
+      <translation>陰影とエッジ</translation>
     </message>
     <message>
       <source>TOP_POP_SETTEXTURE</source>
@@ -4173,23 +4293,23 @@
     </message>
     <message>
       <source>TOP_POP_TRANSPARENCY</source>
-      <translation>透明性</translation>
+      <translation>透明度</translation>
     </message>
     <message>
       <source>TOP_POP_WIREFRAME</source>
-      <translation>ワイヤ フレーム</translation>
+      <translation>ワイヤー</translation>
     </message>
     <message>
       <source>TOP_PROPAGATE</source>
-      <translation>伝達</translation>
+      <translation>スプレッド</translation>
     </message>
     <message>
       <source>TOP_Q_FACE</source>
-      <translation>四角形の顔</translation>
+      <translation>四角形フェース</translation>
     </message>
     <message>
       <source>TOP_REVOLUTION</source>
-      <translation>革命を作成します。</translation>
+      <translation>回転押し出しの作成</translation>
     </message>
     <message>
       <source>TOP_ROTATION</source>
@@ -4197,7 +4317,7 @@
     </message>
     <message>
       <source>TOP_SCALE</source>
-      <translation>スケール変換</translation>
+      <translation>サイズを変更</translation>
     </message>
     <message>
       <source>TOP_SECTION</source>
@@ -4205,23 +4325,23 @@
     </message>
     <message>
       <source>TOP_SEWING</source>
-      <translation>ミシンを実行します。</translation>
+      <translation>裁縫をします。</translation>
     </message>
     <message>
       <source>TOP_SHADING</source>
-      <translation>網かけの設定</translation>
+      <translation>網かけ</translation>
     </message>
     <message>
       <source>TOP_SHADING_COLOR</source>
-      <translation>網かけの色を設定します。</translation>
+      <translation>網かけの色を設定</translation>
     </message>
     <message>
       <source>TOP_SHAPE_PROCESS</source>
-      <translation>図形処理を実行します。</translation>
+      <translation>形状処理を実行する</translation>
     </message>
     <message>
       <source>TOP_SHELL</source>
-      <translation>シェルを構築します。</translation>
+      <translation>シェルを構築</translation>
     </message>
     <message>
       <source>TOP_SKETCH</source>
@@ -4229,59 +4349,59 @@
     </message>
     <message>
       <source>TOP_3DSKETCH</source>
-      <translation>3 D スケッチ</translation>
+      <translation>3Dスケッチャー</translation>
     </message>
     <message>
       <source>TOP_SOLID</source>
-      <translation>固体ビルドします。</translation>
+      <translation>ソリッドを作成</translation>
     </message>
     <message>
       <source>TOP_SPHERE</source>
-      <translation>球を作成します。</translation>
+      <translation>球を作成</translation>
     </message>
     <message>
       <source>TOP_STEP_VALUE</source>
-      <translation>設定ステップ値</translation>
+      <translation>ステップ値を設定</translation>
     </message>
     <message>
       <source>TOP_SUPPERSS_HOLES</source>
-      <translation>実行穴を抑制します。</translation>
+      <translation>穴を削除</translation>
     </message>
     <message>
       <source>TOP_SUPPRESS_FACES</source>
-      <translation>実行する顔を抑制します。</translation>
+      <translation>フェースを削除</translation>
     </message>
     <message>
       <source>TOP_SUPPRESS_INT_WIRES</source>
-      <translation>実行する内部のワイヤを抑制します。</translation>
+      <translation>内部のワイヤーを削除</translation>
     </message>
     <message>
       <source>TOP_TOLERANCE</source>
-      <translation>トレランス</translation>
+      <translation>公差</translation>
     </message>
     <message>
       <source>TOP_TORUS</source>
-      <translation>トーラスを作成します。</translation>
+      <translation>円環を作成</translation>
     </message>
     <message>
       <source>TOP_TRANSLATION</source>
-      <translation>翻訳</translation>
+      <translation>移動</translation>
     </message>
     <message>
       <source>TOP_VECTOR</source>
-      <translation>ベクトルを作成します。</translation>
+      <translation>ベクトルを作成</translation>
     </message>
     <message>
       <source>TOP_WHAT_IS</source>
-      <translation>何</translation>
+      <translation>Whatis</translation>
     </message>
     <message>
       <source>TOP_WIRE</source>
-      <translation>ワイヤを構築します。</translation>
+      <translation>ワイヤーを構築</translation>
     </message>
     <message>
       <source>TOP_WORK_PLANE</source>
-      <translation>作業面を作成します。</translation>
+      <translation>作業平面を作成</translation>
     </message>
     <message>
       <source>TOP_POP_POINT_MARKER</source>
@@ -4289,11 +4409,11 @@
     </message>
     <message>
       <source>TOP_POP_MATERIAL_PROPERTIES</source>
-      <translation>材料特性</translation>
+      <translation>材料の特性</translation>
     </message>
     <message>
       <source>WRN_NOT_IMPLEMENTED</source>
-      <translation>申し訳ありませんが、この機能はまだ実装されていません。</translation>
+      <translation>申し訳ありませんが、この機能はまだ実装されていません</translation>
     </message>
     <message>
       <source>_S_</source>
@@ -4301,11 +4421,11 @@
     </message>
     <message>
       <source>NOT_FOUND_ANY</source>
-      <translation>1 つのエンティティを発見します。</translation>
+      <translation>エンティティが見つかりませんでした</translation>
     </message>
     <message>
       <source>GEOM_FACE_I</source>
-      <translation>顔%1</translation>
+      <translation>フェース %1</translation>
     </message>
     <message>
       <source>GEOM_CONSTANT_RADIUS</source>
@@ -4317,47 +4437,47 @@
     </message>
     <message>
       <source>GEOM_R2</source>
-      <translation>R2 は：</translation>
+      <translation>R2:</translation>
     </message>
     <message>
       <source>GEOM_BOTHWAY</source>
-      <translation>両方の方向</translation>
+      <translation>両方向</translation>
     </message>
     <message>
       <source>GEOM_NORMALE</source>
-      <translation>正常な顔に</translation>
+      <translation>フェースに垂直</translation>
     </message>
     <message>
       <source>GEOM_VECTOR_NORMALE</source>
-      <translation>Vector_Normal</translation>
+      <translation>Vecteur_Normale</translation>
     </message>
     <message>
       <source>GEOM_LINE1</source>
-      <translation>行 1</translation>
+      <translation>線 1</translation>
     </message>
     <message>
       <source>GEOM_LINE2</source>
-      <translation>2 行目</translation>
+      <translation>線 2</translation>
     </message>
     <message>
       <source>GEOM_D</source>
-      <translation>B |</translation>
+      <translation>(D):</translation>
     </message>
     <message>
       <source>GEOM_CHAMFER_EDGE</source>
-      <translation>面取りエッジ上一般的な 2 顔</translation>
+      <translation>共通の両面のエッジの面取り</translation>
     </message>
     <message>
       <source>SELECTED_EDGE</source>
-      <translation>選択したエッジ</translation>
+      <translation>エッジ</translation>
     </message>
     <message>
       <source>GEOM_NORMALE_TITLE</source>
-      <translation>正常に、顔を作成します。</translation>
+      <translation>フェースに垂直なベクトルを作成</translation>
     </message>
     <message>
       <source>GEOM_MEASURE_ANGLE_TITLE</source>
-      <translation>2 つの直線エッジ、ライン、ベクトル間の角度</translation>
+      <translation>2つのストレートエッジ、ライン、ベクトル間の角度</translation>
     </message>
     <message>
       <source>GEOM_MEASURE_ANGLE_ANGLE</source>
@@ -4369,35 +4489,59 @@
     </message>
     <message>
       <source>GEOM_MEASURE_ANGLE_IS</source>
-      <translation>度の角度:</translation>
+      <translation>角度(degree):</translation>
     </message>
     <message>
       <source>GEOM_LINE_INTERSECTION</source>
-      <translation>上の行の交差点をポイントします。</translation>
+      <translation>線の交点</translation>
     </message>
     <message>
       <source>GEOM_KEEP_NONLIMIT_SHAPES</source>
-      <translation>図形の低い種類を保持します。</translation>
+      <translation>下側のタイプの形状を保持</translation>
     </message>
     <message>
       <source>GEOM_NO_SELF_INTERSECTION</source>
-      <translation>サブ図形の座標干渉 （化合物）</translation>
+      <translation>サブ図形 (アセンブリのみ） の交差部はありません</translation>
     </message>
     <message>
       <source>GEOM_CENTER_2POINTS</source>
-      <translation>センターと 2 つのポイント</translation>
+      <translation>センターと2つのポイント</translation>
+    </message>
+    <message>
+      <source>GEOM_REMOVE_WEBS_TITLE</source>
+      <translation>GEOM_REMOVE_WEBS_TITLE</translation>
+    </message>
+    <message>
+      <source>GEOM_REMOVE_WEBS</source>
+      <translation>梁を削除</translation>
+    </message>
+    <message>
+      <source>REMOVE_WEBS_NEW_OBJ_NAME</source>
+      <translation>REMOVE_WEBS_NEW_OBJ_NAME</translation>
+    </message>
+    <message>
+      <source>TOP_REMOVE_WEBS</source>
+      <translation>TOP_REMOVE_WEBS</translation>
+    </message>
+    <message>
+      <source>MEN_REMOVE_WEBS</source>
+      <translation>MEN_REMOVE_WEBS</translation>
+    </message>
+    <message>
+      <source>STB_REMOVE_WEBS</source>
+      <translation>STB_REMOVE_WEBS</translation>
     </message>
     <message>
       <source>GEOM_REMOVE_EXTRA_EDGES_TITLE</source>
-      <translation>余分なエッジを削除します。</translation>
+      <translation>不要なエッジを削除</translation>
     </message>
     <message>
       <source>GEOM_REMOVE_EXTRA_EDGES</source>
-      <translation>オブジェクトの余分なエッジを削除するには</translation>
+      <translation>オブジェクトが不要なエッジを削除します。</translation>
     </message>
     <message>
       <source>GEOM_RMEE_UNION_FACES</source>
-      <translation>共通の表面に、連合の顔</translation>
+      <translation>同じサーフェスに属するフェースを結合</translation>
     </message>
     <message>
       <source>REMOVE_EXTRA_EDGES_NEW_OBJ_NAME</source>
@@ -4405,51 +4549,63 @@
     </message>
     <message>
       <source>TOP_REMOVE_EXTRA_EDGES</source>
-      <translation>余分なエッジを削除します。</translation>
+      <translation>不要なエッジを削除</translation>
     </message>
     <message>
       <source>MEN_REMOVE_EXTRA_EDGES</source>
-      <translation>余分なエッジを削除します。</translation>
+      <translation>不要なエッジを削除</translation>
     </message>
     <message>
       <source>STB_REMOVE_EXTRA_EDGES</source>
-      <translation>余分なエッジを削除します。</translation>
+      <translation>不要なエッジを削除</translation>
     </message>
     <message>
       <source>GEOM_FUSE_EDGES_TITLE</source>
-      <translation>ヒューズ コリニア エッジ線内</translation>
+      <translation>アウトライン内で共線性のエッジをマージします。</translation>
     </message>
     <message>
       <source>GEOM_FUSE_EDGES</source>
-      <translation>ヒューズ エッジ</translation>
+      <translation>エッジをマージします。</translation>
     </message>
     <message>
       <source>FUSE_EDGES_NEW_OBJ_NAME</source>
-      <translation>FuseEdges</translation>
+      <translation>Fusionaretes</translation>
     </message>
     <message>
       <source>TOP_FUSE_EDGES</source>
-      <translation>ヒューズ コリニア エッジ線内</translation>
+      <translation>アウトライン内で共線性のエッジをマージします。</translation>
     </message>
     <message>
       <source>MEN_FUSE_EDGES</source>
-      <translation>ヒューズ コリニア エッジ線内</translation>
+      <translation>アウトライン内で共線性のエッジをマージします。</translation>
     </message>
     <message>
       <source>STB_FUSE_EDGES</source>
-      <translation>ヒューズ コリニア エッジ線内</translation>
+      <translation>アウトライン内で共線性のエッジをマージします。</translation>
+    </message>
+    <message>
+      <source>TOP_UNION_FACES</source>
+      <translation>TOP_UNION_FACES</translation>
+    </message>
+    <message>
+      <source>MEN_UNION_FACES</source>
+      <translation>MEN_UNION_FACES</translation>
+    </message>
+    <message>
+      <source>STB_UNION_FACES</source>
+      <translation>STB_UNION_FACES</translation>
     </message>
     <message>
       <source>TOP_NORMALE</source>
-      <translation>正常な顔に</translation>
+      <translation>フェースに垂直</translation>
     </message>
     <message>
       <source>MEN_NORMALE</source>
-      <translation>正常な顔に</translation>
+      <translation>フェースに垂直</translation>
     </message>
     <message>
       <source>STB_NORMALE</source>
-      <translation>顔に通常計算します。</translation>
+      <translation>フェースに垂直</translation>
     </message>
     <message>
       <source>TOP_MEASURE_ANGLE</source>
@@ -4461,19 +4617,19 @@
     </message>
     <message>
       <source>STB_MEASURE_ANGLE</source>
-      <translation>2 つの行または直線状のエッジ間の角度を計算します。</translation>
+      <translation>2つのラインまたはエッジ間の角度を計算</translation>
     </message>
     <message>
       <source>TOP_POP_AUTO_COLOR</source>
-      <translation>自動カラー補正</translation>
+      <translation>自動色</translation>
     </message>
     <message>
       <source>MEN_POP_AUTO_COLOR</source>
-      <translation>自動カラー補正</translation>
+      <translation>自動色</translation>
     </message>
     <message>
       <source>STB_POP_AUTO_COLOR</source>
-      <translation>自動カラー補正</translation>
+      <translation>自動色</translation>
     </message>
     <message>
       <source>TOP_POP_DISABLE_AUTO_COLOR</source>
@@ -4488,8 +4644,28 @@
       <translation>自動カラー補正を無効にします。</translation>
     </message>
     <message>
+      <source>MEN_POP_CREATE_FOLDER</source>
+      <translation>MEN_POP_CREATE_FOLDER</translation>
+    </message>
+    <message>
+      <source>STB_POP_CREATE_FOLDER</source>
+      <translation>STB_POP_CREATE_FOLDER</translation>
+    </message>
+    <message>
+      <source>NEW_FOLDER_NAME</source>
+      <translation>NEW_FOLDER_NAME</translation>
+    </message>
+    <message>
+      <source>MEN_POP_SORT_CHILD_ITEMS</source>
+      <translation>MEN_POP_SORT_CHILD_ITEMS</translation>
+    </message>
+    <message>
+      <source>STB_POP_SORT_CHILD_ITEMS</source>
+      <translation>STB_POP_SORT_CHILD_ITEMS</translation>
+    </message>
+    <message>
       <source>GEOM_RESULT_NAME_GRP</source>
-      <translation>結果名</translation>
+      <translation>結果の名前</translation>
     </message>
     <message>
       <source>GEOM_RESULT_NAME_LBL</source>
@@ -4497,7 +4673,7 @@
     </message>
     <message>
       <source>GEOM_FILLING_APPROX</source>
-      <translation>近似</translation>
+      <translation>概算</translation>
     </message>
     <message>
       <source>GEOM_FILLING_METHOD</source>
@@ -4505,31 +4681,31 @@
     </message>
     <message>
       <source>GEOM_FILLING_DEFAULT</source>
-      <translation>既定 (標準的な動作)</translation>
+      <translation>既定 (標準の動作)</translation>
     </message>
     <message>
       <source>GEOM_FILLING_USEORI</source>
-      <translation>エッジの向きを使用します。</translation>
+      <translation>エッジの向きを使用</translation>
     </message>
     <message>
       <source>GEOM_FILLING_AUTO</source>
-      <translation>自動修正エッジ方向</translation>
+      <translation>エッジの向きを自動修正</translation>
     </message>
     <message>
       <source>GEOM_WRN_NO_APPROPRIATE_SELECTION</source>
-      <translation>適切なオブジェクトを選択せず</translation>
+      <translation>適当なオブジェクトが選択されていません</translation>
     </message>
     <message>
       <source>GEOM_SHAPES_ON_SHAPE</source>
-      <translation>図形の図形を取得します。</translation>
+      <translation>オブジェクトの要素を見つける</translation>
     </message>
     <message>
       <source>GEOM_SHAPES_ON_SHAPE_ESHAPE</source>
-      <translation>爆発の形状</translation>
+      <translation>展開する形状</translation>
     </message>
     <message>
       <source>GEOM_SHAPES_ON_SHAPE_CSHAPE</source>
-      <translation>チェックするための固体</translation>
+      <translation>チェックのためのソリッド</translation>
     </message>
     <message>
       <source>GEOM_SHAPES_ON_SHAPE_STATE</source>
@@ -4537,11 +4713,11 @@
     </message>
     <message>
       <source>GEOM_KIND_OF_SHAPE</source>
-      <translation>図形の種類:</translation>
+      <translation>形状の種類:</translation>
     </message>
     <message>
       <source>GEOM_CLOSED</source>
-      <translation>閉鎖</translation>
+      <translation>閉じる</translation>
     </message>
     <message>
       <source>GEOM_UNCLOSED</source>
@@ -4549,7 +4725,7 @@
     </message>
     <message>
       <source>GEOM_CLOSEDUNCLOSED</source>
-      <translation>定義されていません、終了またはオープン。おそらく、エラーが発生しました。</translation>
+      <translation>オブジェクトが開いているか閉じての場合は、定義されていません。可能性のあるエラーです。</translation>
     </message>
     <message>
       <source>GEOM_DISK_CIRCLE</source>
@@ -4557,15 +4733,15 @@
     </message>
     <message>
       <source>GEOM_DISK_ELLIPSE</source>
-      <translation>楕円形の顔</translation>
+      <translation>楕円形フェース</translation>
     </message>
     <message>
       <source>GEOM_PLANAR_FACE</source>
-      <translation>平坦な面</translation>
+      <translation>平らなフェース</translation>
     </message>
     <message>
       <source>GEOM_PLANAR_EDGE_WIRE</source>
-      <translation>平面のエッジを持つワイヤ</translation>
+      <translation>フラットエッジによるワイヤー</translation>
     </message>
     <message>
       <source>GEOM_POLYGON</source>
@@ -4577,7 +4753,7 @@
     </message>
     <message>
       <source>GEOM_NORMAL</source>
-      <translation>通常の方向</translation>
+      <translation>法線方向</translation>
     </message>
     <message>
       <source>GEOM_DIRECTION</source>
@@ -4585,55 +4761,55 @@
     </message>
     <message>
       <source>GEOM_UPARAMETER</source>
-      <translation>U パラメーター:</translation>
+      <translation>パラメーター U:</translation>
     </message>
     <message>
       <source>GEOM_VPARAMETER</source>
-      <translation>V パラメーター:</translation>
+      <translation>パラメーター V：</translation>
     </message>
     <message>
       <source>GEOM_X_I</source>
-      <translation>X%1:</translation>
+      <translation>X%1 :</translation>
     </message>
     <message>
       <source>GEOM_Y_I</source>
-      <translation>Y%1:</translation>
+      <translation>Y%1 :</translation>
     </message>
     <message>
       <source>GEOM_Z_I</source>
-      <translation>Z%1:</translation>
+      <translation>Z%1 :</translation>
     </message>
     <message>
       <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
-      <translation>図形の図形を取得します。</translation>
+      <translation>オブジェクトの要素を見つける</translation>
     </message>
     <message>
       <source>GEOM_SCALE_FACTOR_X</source>
-      <translation>スケール ファクター X:</translation>
+      <translation>倍率　X</translation>
     </message>
     <message>
       <source>GEOM_SCALE_FACTOR_Y</source>
-      <translation>スケール ファクター Y:</translation>
+      <translation>倍率　Y</translation>
     </message>
     <message>
       <source>GEOM_SCALE_FACTOR_Z</source>
-      <translation>尺度係数 Z:</translation>
+      <translation>倍率　Z</translation>
     </message>
     <message>
       <source>GEOM_STATE_IN</source>
-      <translation>の</translation>
+      <translation>IN</translation>
     </message>
     <message>
       <source>GEOM_STATE_OUT</source>
-      <translation>うち</translation>
+      <translation>OUT</translation>
     </message>
     <message>
       <source>GEOM_STATE_ON</source>
-      <translation>に</translation>
+      <translation>ON</translation>
     </message>
     <message>
       <source>GEOM_STATE_ONIN</source>
-      <translation>応仁</translation>
+      <translation>ONIN</translation>
     </message>
     <message>
       <source>GEOM_STATE_ONOUT</source>
@@ -4645,27 +4821,27 @@
     </message>
     <message>
       <source>TOP_GET_SHAPES_ON_SHAPE</source>
-      <translation>図形の図形を取得します。</translation>
+      <translation>オブジェクトの要素を見つける</translation>
     </message>
     <message>
       <source>MEN_GET_SHAPES_ON_SHAPE</source>
-      <translation>図形の図形を取得します。</translation>
+      <translation>オブジェクトの要素を見つける</translation>
     </message>
     <message>
       <source>STB_GET_SHAPES_ON_SHAPE</source>
-      <translation>図形の図形を取得します。</translation>
+      <translation>オブジェクトの要素を見つける</translation>
     </message>
     <message>
       <source>TOP_GET_SHARED_SHAPES</source>
-      <translation>共有の図形を取得します。</translation>
+      <translation>オブジェクトの要素を見つける</translation>
     </message>
     <message>
       <source>MEN_GET_SHARED_SHAPES</source>
-      <translation>取得図形を共有</translation>
+      <translation>共有アイテムを取得</translation>
     </message>
     <message>
       <source>STB_GET_SHARED_SHAPES</source>
-      <translation>共有の図形を取得します。</translation>
+      <translation>共有アイテムを取得</translation>
     </message>
     <message>
       <source>GEOM_PUBLISH_RESULT_GRP</source>
@@ -4673,11 +4849,11 @@
     </message>
     <message>
       <source>GEOM_RESTORE_SUB_SHAPES</source>
-      <translation>プレゼンテーション パラメーターおよびサブ図形の引数から設定します。</translation>
+      <translation>グループとサブオブジェクトを取得します。</translation>
     </message>
     <message>
       <source>GEOM_RSS_ADD_FREFIX</source>
-      <translation>復元されたサブの名前にプレフィックスを追加します。</translation>
+      <translation>復元されたサブオブジェクトの名前にプレフィックスを追加します。</translation>
     </message>
     <message>
       <source>GEOM_PREVIEW</source>
@@ -4685,11 +4861,11 @@
     </message>
     <message>
       <source>GEOM_ALL_IMPORT_FILES</source>
-      <translation>すべてサポートされている形式 (%1)</translation>
+      <translation>サポートされているすべての形式 (%1)</translation>
     </message>
     <message>
       <source>GEOM_UNSUPPORTED_TYPE</source>
-      <translation>サポートされていない形式のファイル</translation>
+      <translation>ファイルの形式はサポートされていません</translation>
     </message>
     <message>
       <source>GEOM_UNKNOWN_IMPORT_ERROR</source>
@@ -4697,23 +4873,23 @@
     </message>
     <message>
       <source>GEOM_IMPORT_ERRORS</source>
-      <translation>インポート操作が完了しました。</translation>
+      <translation>エラーによりインポート操作を終了します</translation>
     </message>
     <message>
       <source>EXPORT_IGES_HETEROGENEOUS_COMPOUND</source>
-      <translation>エンティティは、異なるモードで保存する必要がありますが含まれているのでこの化合物を失わず、IGES フォーマットにエクスポートできません。それは一方で頂点、エッジ、1 つの手とシェルとソリッドのワイヤです。</translation>
+      <translation>異なるモードの sauvegardees\ndans をある必要がありますエンティティを含んでいるのでこのアセンブリ IGES\nsans 損失の形式でエクスポートできません。頂点、エッジと et\nles シェルの輪郭と別の固体。</translation>
     </message>
     <message>
       <source>GEOM_PUBLISH_NAMED_SHAPES</source>
-      <translation>(ある場合) の名前付きの図形のグループを作成するか？</translation>
+      <translation>指定したオブジェクトのグループ(存在する場合)を作成しますか？</translation>
     </message>
     <message>
       <source>GEOM_SCALE_DIMENSIONS</source>
-      <translation>ユニット (%1) ファイルに埋め込まれたアカウントを考慮か？ユニットを無視することにより、モデルをスケーリング （メートル単位で指定するにはサイズを想定）。</translation>
+      <translation>単位を考慮したいと思うか？ \nIf ないモデルになる (メートル単位として解釈されます) ジオメトリをスケーリングします。</translation>
     </message>
     <message>
       <source>GEOM_PRECISION_HINT</source>
-      <translation>入力値の精度は、ジオメトリのモジュール設定に '%1' パラメーターを使用して調整できます。</translation>
+      <translation>ジオメトリモジュールの設定でパラメーター '%1' を入力することで精度を調整することが可能です。</translation>
     </message>
     <message>
       <source>GEOM_PLUGINS_OTHER</source>
@@ -4721,34 +4897,102 @@
     </message>
     <message>
       <source>SHOW_ONLY_SELECTED</source>
-      <translation>表示のみを選択</translation>
+      <translation>選択範囲のみを表示</translation>
     </message>
     <message>
       <source>HIDE_SELECTED</source>
-      <translation>選択した非表示します。</translation>
+      <translation>選択オブジェクトを隠す</translation>
     </message>
     <message>
       <source>SHOW_ALL_SUB_SHAPES</source>
-      <translation>すべてのサブ図形を表示します。</translation>
+      <translation>すべてのサブオブジェクトを表示</translation>
+    </message>
+    <message>
+      <source>TOP_SMOOTHINGSURFACE</source>
+      <translation>TOP_SMOOTHINGSURFACE</translation>
     </message>
     <message>
       <source>GEOM_SELECT_IMAGE</source>
-      <translation>イメージを選択します.</translation>
+      <translation>イメージの選択.</translation>
+    </message>
+    <message>
+      <source>MEN_IMPORTEXPORT</source>
+      <translation>MEN_IMPORTEXPORT</translation>
+    </message>
+    <message>
+      <source>TOOL_IMPORTEXPORT</source>
+      <translation>TOOL_IMPORTEXPORT</translation>
+    </message>
+    <message>
+      <source>TOP_EXPORTXAO</source>
+      <translation>TOP_EXPORTXAO</translation>
+    </message>
+    <message>
+      <source>MEN_EXPORTXAO</source>
+      <translation>MEN_EXPORTXAO</translation>
+    </message>
+    <message>
+      <source>STB_EXPORTXAO</source>
+      <translation>STB_EXPORTXAO</translation>
+    </message>
+    <message>
+      <source>TOP_IMPORTXAO</source>
+      <translation>TOP_IMPORTXAO</translation>
+    </message>
+    <message>
+      <source>MEN_IMPORTXAO</source>
+      <translation>MEN_IMPORTXAO</translation>
+    </message>
+    <message>
+      <source>STB_IMPORTXAO</source>
+      <translation>STB_IMPORTXAO</translation>
+    </message>
+    <message>
+      <source>GEOM_IMPORTEXPORT_204</source>
+      <translation>GEOM_IMPORTEXPORT_204</translation>
+    </message>
+    <message>
+      <source>GEOM_SELECT_EXPORT_XAO</source>
+      <translation>GEOM_SELECT_EXPORT_XAO</translation>
+    </message>
+    <message>
+      <source>XAO_FILES</source>
+      <translation>XAO_FILES</translation>
+    </message>
+    <message>
+      <source>TOOLS_IMPORTEXPORT</source>
+      <translation>TOOLS_IMPORTEXPORT</translation>
     </message>
   </context>
   <context>
     <name>BasicGUI_CurveDlg</name>
     <message>
       <source>GEOM_IS_CLOSED</source>
-      <translation>閉じたエッジを構築します。</translation>
+      <translation>閉じたエッジを構築</translation>
     </message>
     <message>
       <source>GEOM_BUILD_CLOSED_WIRE</source>
-      <translation>閉じたワイヤを構築します。</translation>
+      <translation>閉じたワイヤーを構築</translation>
     </message>
     <message>
       <source>GEOM_IS_REORDER</source>
-      <translation>アカウントの距離にして頂点の順序を変更します。</translation>
+      <translation>アカウントの距離を考慮して点の順序を変更</translation>
+    </message>
+    <message>
+      <source>GEOM_INTERPOL_TANGENTS</source>
+      <translation>GEOM_INTERPOL_TANGENTS</translation>
+    </message>
+    <message>
+      <source>GEOM_INTERPOL_FIRST_VEC</source>
+      <translation>GEOM_INTERPOL_FIRST_VEC</translation>
+    </message>
+    <message>
+      <source>GEOM_INTERPOL_LAST_VEC</source>
+      <translation>GEOM_INTERPOL_LAST_VEC</translation>
+    </message>
+    <message>
+      <source>GEOM_BOTH_TANGENTS_REQUIRED</source>
+      <translation>GEOM_BOTH_TANGENTS_REQUIRED</translation>
     </message>
     <message>
       <source>GEOM_CURVE_CRMODE</source>
@@ -4756,11 +5000,11 @@
     </message>
     <message>
       <source>GEOM_CURVE_SELECTION</source>
-      <translation>によって選択</translation>
+      <translation>選択</translation>
     </message>
     <message>
       <source>GEOM_CURVE_ANALITICAL</source>
-      <translation>分析</translation>
+      <translation>解析</translation>
     </message>
   </context>
   <context>
@@ -4771,19 +5015,19 @@
     </message>
     <message>
       <source>GEOM_PCURVE_X</source>
-      <translation>X(t) 方程式</translation>
+      <translation>方程式 X(t)</translation>
     </message>
     <message>
       <source>GEOM_PCURVE_Y</source>
-      <translation>Y(t) 方程式</translation>
+      <translation>方程式 Y(t)</translation>
     </message>
     <message>
       <source>GEOM_PCURVE_Z</source>
-      <translation>積分方程式</translation>
+      <translation>方程式 Z(t)</translation>
     </message>
     <message>
       <source>GEOM_PCURVE_MIN</source>
-      <translation>分 t</translation>
+      <translation>最小 t</translation>
     </message>
     <message>
       <source>GEOM_PCURVE_MAX</source>
@@ -4806,22 +5050,22 @@
     </message>
     <message>
       <source>ORIGIN_DEFAULT</source>
-      <translation>デフォルトの原点</translation>
+      <translation>デフォルトで原点</translation>
     </message>
     <message>
       <source>X_AXIS_DEFAULT</source>
-      <translation>X 軸でデフォルト</translation>
+      <translation>デフォルトでX軸</translation>
     </message>
     <message>
       <source>Z_AXIS_DEFAULT</source>
-      <translation>デフォルトでは Z 軸</translation>
+      <translation>デフォルトでZ軸</translation>
     </message>
   </context>
   <context>
     <name>BasicGUI_MarkerDlg</name>
     <message>
       <source>CAPTION</source>
-      <translation>ローカル CS 建設</translation>
+      <translation>ローカル座標系の作成</translation>
     </message>
     <message>
       <source>DX</source>
@@ -4833,7 +5077,7 @@
     </message>
     <message>
       <source>DZ</source>
-      <translation>アルジェリア</translation>
+      <translation>Dz</translation>
     </message>
     <message>
       <source>LCS_NAME</source>
@@ -4849,7 +5093,7 @@
     </message>
     <message>
       <source>VEC_PARALLEL</source>
-      <translation>座標系の軸が平行することはできません。</translation>
+      <translation>座標系の軸が平行でなければなりません</translation>
     </message>
     <message>
       <source>XDIR</source>
@@ -4857,45 +5101,45 @@
     </message>
     <message>
       <source>YDIR</source>
-      <translation>Y 軸方向</translation>
+      <translation>Y 軸の方向</translation>
     </message>
   </context>
   <context>
     <name>BlocksGUI_BlockDlg</name>
     <message>
       <source>FACE_1</source>
-      <translation>顔 1</translation>
+      <translation>フェース 1</translation>
     </message>
     <message>
       <source>FACE_2</source>
-      <translation>顔 2</translation>
+      <translation>フェース 2</translation>
     </message>
     <message>
       <source>FACE_3</source>
-      <translation>顔 3</translation>
+      <translation>フェース 3</translation>
     </message>
     <message>
       <source>FACE_4</source>
-      <translation>顔 4</translation>
+      <translation>フェース 4</translation>
     </message>
     <message>
       <source>FACE_5</source>
-      <translation>顔 5</translation>
+      <translation>フェース 5</translation>
     </message>
     <message>
       <source>FACE_6</source>
-      <translation>6 の顔</translation>
+      <translation>フェース 6</translation>
     </message>
   </context>
   <context>
     <name>BlocksGUI_ExplodeDlg</name>
     <message>
       <source>NB_FACES_MAX</source>
-      <translation>最大。nb。顔</translation>
+      <translation>面の最大数</translation>
     </message>
     <message>
       <source>NB_FACES_MIN</source>
-      <translation>分注意。顔</translation>
+      <translation>面の最大数</translation>
     </message>
   </context>
   <context>
@@ -4918,60 +5162,60 @@
     </message>
     <message>
       <source>VERTEX_1</source>
-      <translation>頂点 1</translation>
+      <translation>ポイント 1</translation>
     </message>
     <message>
       <source>VERTEX_2</source>
-      <translation>頂点 2</translation>
+      <translation>ポイント 2</translation>
     </message>
     <message>
       <source>VERTEX_3</source>
-      <translation>頂点 3</translation>
+      <translation>ポイント 3</translation>
     </message>
     <message>
       <source>VERTEX_4</source>
-      <translation>頂点 4</translation>
+      <translation>ポイント 4</translation>
     </message>
   </context>
   <context>
     <name>BlocksGUI_TrsfDlg</name>
     <message>
       <source>FACE_1</source>
-      <translation>顔 1</translation>
+      <translation>フェース 1</translation>
     </message>
     <message>
       <source>FACE_1U</source>
-      <translation>顔 1 U</translation>
+      <translation>フェース 1 U</translation>
     </message>
     <message>
       <source>FACE_1V</source>
-      <translation>顔 1 V</translation>
+      <translation>フェース 1 V</translation>
     </message>
     <message>
       <source>FACE_2</source>
-      <translation>顔 2</translation>
+      <translation>フェース 2</translation>
     </message>
     <message>
       <source>FACE_2U</source>
-      <translation>顔 2 U</translation>
+      <translation>フェース 2 U</translation>
     </message>
     <message>
       <source>FACE_2V</source>
-      <translation>顔 2 V</translation>
+      <translation>フェース 2 V</translation>
     </message>
   </context>
   <context>
     <name>EntityGUI_SketcherDlg</name>
     <message>
       <source>CANNOT_CLOSE</source>
-      <translation>それは閉じることがあまりにも小さなスケッチ ポイント数をスケッチ</translation>
+      <translation>スケッチを閉じることができません\nスケッチのポイント数が少なすぎます</translation>
     </message>
   </context>
   <context>
     <name>EntityGUI_FeatureDetectorDlg</name>
     <message>
       <source>GEOM_DETECT_TITLE</source>
-      <translation>機能検出</translation>
+      <translation>角度を検出します。</translation>
     </message>
     <message>
       <source>GEOM_SCALING</source>
@@ -4987,23 +5231,23 @@
     </message>
     <message>
       <source>GEOM_CORNER</source>
-      <translation>Detected_corners</translation>
+      <translation>Angles_detectes</translation>
     </message>
     <message>
       <source>GEOM_CORNERS</source>
-      <translation>コーナー</translation>
+      <translation>角度</translation>
     </message>
     <message>
       <source>GEOM_CONTOURS</source>
-      <translation>輪郭</translation>
+      <translation>ワイヤー</translation>
     </message>
     <message>
       <source>GEOM_FEATURES</source>
-      <translation>機能</translation>
+      <translation>特性</translation>
     </message>
     <message>
       <source>GEOM_DETECT_ZONE</source>
-      <translation>検出ゾーンを選択します (デフォルトは全体像)</translation>
+      <translation>Detection\n (すべて、既定のイメージ) の領域を選択します。</translation>
     </message>
     <message>
       <source>GEOM_DETECT_OUTPUT</source>
@@ -5011,11 +5255,11 @@
     </message>
     <message>
       <source>GEOM_PICTURE</source>
-      <translation>画像</translation>
+      <translation>Picture</translation>
     </message>
     <message>
       <source>GEOM_COLOR_FILTER</source>
-      <translation>サンプルのフィルタ リング</translation>
+      <translation>フィルター</translation>
     </message>
     <message>
       <source>GEOM_VIEW</source>
@@ -5023,71 +5267,86 @@
     </message>
     <message>
       <source>GEOM_FRONT</source>
-      <translation>フロント （Y-Z）</translation>
+      <translation>顔 （Y ・ Z）</translation>
     </message>
     <message>
       <source>GEOM_TOP</source>
-      <translation>トップ (X と Y)</translation>
+      <translation>トップ （X ・ Y）</translation>
     </message>
     <message>
       <source>GEOM_LEFT</source>
-      <translation>左 （X の-Z）</translation>
+      <translation>左 (X - Z)</translation>
     </message>
   </context>
   <context>
     <name>EntityGUI_PictureImportDlg</name>
     <message>
       <source>GEOM_PICTURE</source>
-      <translation>画像</translation>
+      <translation>Picture</translation>
     </message>
     <message>
       <source>GEOM_FILE</source>
-      <translation>ファイル名</translation>
+      <translation>ファイルの名前</translation>
     </message>
     <message>
       <source>GEOM_IMPORT_PICT_TITLE</source>
-      <translation>ビューアーで画像のインポート</translation>
+      <translation>ビューアーのイメージをインポートします。</translation>
     </message>
   </context>
   <context>
     <name>EntityGUI_SubShapeDlg</name>
     <message>
       <source>NO_SUBSHAPES_SELECTED</source>
-      <translation>1 つまたは複数のサブ図形を選択してください、</translation>
+      <translation>1つまたは複数のサブオブジェクトを選択してください</translation>
+    </message>
+  </context>
+  <context>
+    <name>GenerationGUI_PrismDlg</name>
+    <message>
+      <source>GEOM_THICKENING</source>
+      <translation>GEOM_THICKENING</translation>
+    </message>
+    <message>
+      <source>GEOM_ADD_THICKNESS</source>
+      <translation>GEOM_ADD_THICKNESS</translation>
+    </message>
+    <message>
+      <source>GEOM_TOWARDS_INSIDE</source>
+      <translation>GEOM_TOWARDS_INSIDE</translation>
     </message>
   </context>
   <context>
     <name>GroupGUI</name>
     <message>
       <source>NO_GROUP</source>
-      <translation>編集するグループを選択してください、</translation>
+      <translation>編集するグループを選択してください</translation>
     </message>
   </context>
   <context>
     <name>GroupGUI_BooleanDlg</name>
     <message>
       <source>GEOM_UNION</source>
-      <translation>連合</translation>
+      <translation>Union</translation>
     </message>
     <message>
       <source>GEOM_UNION_TITLE</source>
-      <translation>連合のグループ</translation>
+      <translation>グループの連合</translation>
     </message>
     <message>
       <source>GEOM_INTERSECT</source>
-      <translation>交差します。</translation>
+      <translation>Intersect</translation>
     </message>
     <message>
       <source>GEOM_INTERSECT_TITLE</source>
-      <translation>グループが交差します。</translation>
+      <translation>グループの交差点</translation>
     </message>
     <message>
       <source>GEOM_CUT</source>
-      <translation>カット</translation>
+      <translation>Cut</translation>
     </message>
     <message>
       <source>GEOM_CUT_TITLE</source>
-      <translation>グループをカットします。</translation>
+      <translation>オブジェクトの切断</translation>
     </message>
     <message>
       <source>GEOM_GROUPS</source>
@@ -5099,7 +5358,7 @@
     </message>
     <message>
       <source>GEOM_TOOL_GROUPS</source>
-      <translation>ツール グループ</translation>
+      <translation>グループ ツール</translation>
     </message>
   </context>
   <context>
@@ -5110,43 +5369,43 @@
     </message>
     <message>
       <source>CREATE_GROUP_TITLE</source>
-      <translation>グループを作成します。</translation>
+      <translation>グループを作成</translation>
     </message>
     <message>
       <source>EDIT_GROUP_TITLE</source>
-      <translation>[グループの編集</translation>
+      <translation>グループを編集</translation>
     </message>
     <message>
       <source>EMPTY_LIST</source>
-      <translation>グループに追加する 1 つまたは複数のサブ図形を選択してください、</translation>
+      <translation>グループ内に配置するには、1 つまたは複数のサブオブジェクトを選択します。</translation>
     </message>
     <message>
       <source>EMPTY_NAME</source>
-      <translation>空でないグループ名を指定してください、</translation>
+      <translation>グループ名が空です。有効な名前を指定します。</translation>
     </message>
     <message>
       <source>GROUP_NAME</source>
-      <translation>グループ名</translation>
+      <translation>グループの名前</translation>
     </message>
     <message>
       <source>GROUP_PREFIX</source>
-      <translation>グループ</translation>
+      <translation>Group</translation>
     </message>
     <message>
       <source>MAIN_SHAPE</source>
-      <translation>主な形</translation>
+      <translation>メイン オブジェクト</translation>
     </message>
     <message>
       <source>MAIN_SUB_SHAPES</source>
-      <translation>主な形状とサブ図形の座標</translation>
+      <translation>メインオブジェクトおよびサブオブジェクト</translation>
     </message>
     <message>
       <source>NO_GROUP</source>
-      <translation>編集するグループを選択してください、</translation>
+      <translation>編集するグループを選択してください</translation>
     </message>
     <message>
       <source>NO_MAIN_OBJ</source>
-      <translation>主な図形を選択してください、</translation>
+      <translation>メインオブジェクトを選択してください</translation>
     </message>
     <message>
       <source>REMOVE</source>
@@ -5154,15 +5413,15 @@
     </message>
     <message>
       <source>SELECT_ALL</source>
-      <translation>すべてを選択します。</translation>
+      <translation>すべてを選択</translation>
     </message>
     <message>
       <source>SHAPE_SEL_RESTR</source>
-      <translation>主な形状の選択制限</translation>
+      <translation>メインオブジェクト選択の制限</translation>
     </message>
     <message>
       <source>SHAPE_TYPE</source>
-      <translation>図形の種類</translation>
+      <translation>オブジェクトの種類</translation>
     </message>
     <message>
       <source>NO_RESTR</source>
@@ -5170,29 +5429,175 @@
     </message>
     <message>
       <source>GEOM_PARTS_OF_SHAPE2</source>
-      <translation>2 番目の図形の幾何学的な部分</translation>
+      <translation>セカンダリ オブジェクトの幾何学的な部品</translation>
     </message>
     <message>
       <source>SUBSHAPES_OF_SHAPE2</source>
-      <translation>2 番目の図形のサブのみ</translation>
+      <translation>サブオブジェクトのみセカンダリ オブジェクトの</translation>
     </message>
     <message>
       <source>SECOND_SHAPE</source>
-      <translation>2 番目の図形</translation>
+      <translation>セカンダリ オブジェクト</translation>
+    </message>
+    <message>
+      <source>WRN_NOT_SUBSHAPE</source>
+      <translation>WRN_NOT_SUBSHAPE</translation>
+    </message>
+  </context>
+  <context>
+    <name>EntityGUI</name>
+    <message>
+      <source>NO_FIELD</source>
+      <translation>NO_FIELD</translation>
+    </message>
+  </context>
+  <context>
+    <name>EntityGUI_FieldDlg</name>
+    <message>
+      <source>CREATE_FIELD_TITLE</source>
+      <translation>CREATE_FIELD_TITLE</translation>
+    </message>
+    <message>
+      <source>EDIT_FIELD_TITLE</source>
+      <translation>EDIT_FIELD_TITLE</translation>
+    </message>
+    <message>
+      <source>FIELD_NAME</source>
+      <translation>FIELD_NAME</translation>
+    </message>
+    <message>
+      <source>PROPERTIES</source>
+      <translation>PROPERTIES</translation>
+    </message>
+    <message>
+      <source>SHAPE</source>
+      <translation>SHAPE</translation>
+    </message>
+    <message>
+      <source>DATA_TYPE</source>
+      <translation>DATA_TYPE</translation>
+    </message>
+    <message>
+      <source></source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <source>BOOL</source>
+      <translation>BOOL</translation>
+    </message>
+    <message>
+      <source>INT</source>
+      <translation>INT</translation>
+    </message>
+    <message>
+      <source>DOUBLE</source>
+      <translation>DOUBLE</translation>
+    </message>
+    <message>
+      <source>STRING</source>
+      <translation>STRING</translation>
+    </message>
+    <message>
+      <source>SHAPE_TYPE</source>
+      <translation>SHAPE_TYPE</translation>
+    </message>
+    <message>
+      <source>VERTEX</source>
+      <translation>VERTEX</translation>
+    </message>
+    <message>
+      <source>EDGE</source>
+      <translation>EDGE</translation>
+    </message>
+    <message>
+      <source>FACE</source>
+      <translation>FACE</translation>
+    </message>
+    <message>
+      <source>SOLID</source>
+      <translation>SOLID</translation>
+    </message>
+    <message>
+      <source>WHOLE</source>
+      <translation>WHOLE</translation>
+    </message>
+    <message>
+      <source>NB_COMPS</source>
+      <translation>NB_COMPS</translation>
+    </message>
+    <message>
+      <source>VALUES</source>
+      <translation>VALUES</translation>
+    </message>
+    <message>
+      <source>PREV_STEP</source>
+      <translation>PREV_STEP</translation>
+    </message>
+    <message>
+      <source>STEP</source>
+      <translation>STEP</translation>
+    </message>
+    <message>
+      <source>NEXT_STEP</source>
+      <translation>NEXT_STEP</translation>
+    </message>
+    <message>
+      <source>ADD_STEP</source>
+      <translation>ADD_STEP</translation>
+    </message>
+    <message>
+      <source>STAMP</source>
+      <translation>STAMP</translation>
+    </message>
+    <message>
+      <source>REMOVE_STEP</source>
+      <translation>REMOVE_STEP</translation>
+    </message>
+    <message>
+      <source>FIELD_PREFIX</source>
+      <translation>FIELD_PREFIX</translation>
+    </message>
+    <message>
+      <source>GEOM_NO_STUDY</source>
+      <translation>GEOM_NO_STUDY</translation>
+    </message>
+    <message>
+      <source>NO_SHAPE</source>
+      <translation>NO_SHAPE</translation>
+    </message>
+    <message>
+      <source>NO_FIELD</source>
+      <translation>NO_FIELD</translation>
+    </message>
+    <message>
+      <source>EMPTY_NAME</source>
+      <translation>EMPTY_NAME</translation>
+    </message>
+    <message>
+      <source>NO_VALUES</source>
+      <translation>NO_VALUES</translation>
+    </message>
+    <message>
+      <source>SUB_SHAPE_HEADER</source>
+      <translation>SUB_SHAPE_HEADER</translation>
+    </message>
+    <message>
+      <source>WHOLE_SHAPE_VHEADER</source>
+      <translation>WHOLE_SHAPE_VHEADER</translation>
     </message>
   </context>
   <context>
     <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
     <message>
       <source>CHECK_SHAPE_GEOMETRY</source>
-      <translation>また形状のチェック</translation>
+      <translation>ジオメトリもチェック</translation>
     </message>
   </context>
   <context>
     <name>MeasureGUI_PointDlg</name>
     <message>
       <source>CAPTION</source>
-      <translation>ポイントの座標</translation>
+      <translation>点の座標</translation>
     </message>
     <message>
       <source>COORDINATES</source>
@@ -5200,7 +5605,7 @@
     </message>
     <message>
       <source>POINT</source>
-      <translation>ポイント</translation>
+      <translation>基準点</translation>
     </message>
     <message>
       <source>X</source>
@@ -5223,110 +5628,118 @@
     </message>
     <message>
       <source>FACE_1</source>
-      <translation>顔 1</translation>
+      <translation>フェース 1</translation>
     </message>
     <message>
       <source>FACE_2</source>
-      <translation>顔 2</translation>
+      <translation>フェース 2</translation>
     </message>
     <message>
       <source>SELECTED_FACES</source>
-      <translation>選択した面</translation>
+      <translation>フェース</translation>
     </message>
   </context>
   <context>
     <name>OperationGUI_FilletDlg</name>
     <message>
       <source>SELECTED_EDGES</source>
-      <translation>選択したエッジ</translation>
+      <translation>エッジ</translation>
     </message>
     <message>
       <source>SELECTED_FACES</source>
-      <translation>選択した面</translation>
+      <translation>フェース</translation>
     </message>
   </context>
   <context>
     <name>RepairGUI_FreeBoundDlg</name>
     <message>
       <source>CAPTION</source>
-      <translation>無料の境界をチェックします。</translation>
+      <translation>フリー境界チェック</translation>
     </message>
     <message>
       <source>FREE_BOUND</source>
-      <translation>自由境界条件</translation>
+      <translation>自由境界</translation>
     </message>
     <message>
       <source>NUMBER_CLOSED</source>
-      <translation>閉じた無料境界の数:</translation>
+      <translation>閉じた自由境界の数</translation>
     </message>
     <message>
       <source>NUMBER_OPEN</source>
-      <translation>開いている自由境界条件の数:</translation>
+      <translation>開いた自由境界の数</translation>
+    </message>
+    <message>
+      <source>NAME_CLOSED</source>
+      <translation>NAME_CLOSED</translation>
+    </message>
+    <message>
+      <source>NAME_OPEN</source>
+      <translation>NAME_OPEN</translation>
     </message>
   </context>
   <context>
     <name>RepairGUI_GlueDlg</name>
     <message>
       <source>FACES_FOR_GLUING_ARE_DETECTED</source>
-      <translation>接着することができます%1 面です。彼らは赤い色、画面上の色です。このメッセージ ボックスを閉じ、接着の顔を選択してください。</translation>
+      <translation>固着できる%1 のフェースがあります。それらは赤で強調表示されます。\nこのメッセージボックスを閉じ、固着するフェースを選択してください。</translation>
     </message>
     <message>
       <source>EDGES_FOR_GLUING_ARE_DETECTED</source>
-      <translation>接着することができます%1 保ちますです。彼らは赤い色、画面上の色です。このメッセージ ボックスを閉じる、接着剤のエッジを選択してください。</translation>
+      <translation>%1 のエッジが固着できます。それらはスクリーン上で赤く表示されます。\nこのメッセージボックスを閉じ、固着エッジを選択して下さい。</translation>
     </message>
     <message>
       <source>GLUE_FACES</source>
-      <translation>接着剤の顔</translation>
+      <translation>フェースの固着</translation>
     </message>
     <message>
       <source>GLUE_EDGES</source>
-      <translation>接着剤のエッジ</translation>
+      <translation>エッジ固着</translation>
     </message>
     <message>
       <source>SELECT_FACES</source>
-      <translation>面を選択します</translation>
+      <translation>顔を選択します。</translation>
     </message>
     <message>
       <source>SELECT_EDGES</source>
-      <translation>エッジを選択します。</translation>
+      <translation>エッジを選択</translation>
     </message>
     <message>
       <source>GLUE_ALL_EDGES</source>
-      <translation>すべての一致するエッジを接着します。</translation>
+      <translation>一致するすべてのエッジを固着</translation>
     </message>
     <message>
       <source>THERE_ARE_NO_FACES_FOR_GLUING</source>
-      <translation>接着剤の顔はありません。</translation>
+      <translation>貼り付けるには顔がないです。</translation>
     </message>
     <message>
       <source>THERE_ARE_NO_EDGES_FOR_GLUING</source>
-      <translation>つくことを縁がないです。</translation>
+      <translation>ペーストするエッジがないです。</translation>
     </message>
   </context>
   <context>
     <name>RepairGUI_ShapeProcessDlg</name>
     <message>
       <source>ERROR_NO_OBJECTS</source>
-      <translation>ください、幾何学的オブジェクトでは、図形を処理するためを選択します。</translation>
+      <translation>フォームの処理、幾何学的オブジェクトを選択します。</translation>
     </message>
     <message>
       <source>ERROR_NO_OPERATORS</source>
-      <translation>ください、少なくとも 1 つの図形処理操作を続行するを選択します。</translation>
+      <translation>処理操作には、少なくとも、フォームを選択します。</translation>
     </message>
     <message>
       <source>TIME_CONSUMING</source>
-      <translation>このオプションを有効にすると、非常に時間のかかる操作の入力の一部の図形になります。続行しますか。</translation>
+      <translation>このオプションを有効にすると、いくつかの形状入力に非常に時間のかかる操作になることがあります。\n続行しますか？</translation>
     </message>
   </context>
   <context>
     <name>GEOMToolsGUI_DeleteDlg</name>
     <message>
       <source>GEOM_REALLY_DELETE</source>
-      <translation>本当に%1 オブジェクトを削除しますか。</translation>
+      <translation>オブジェクト %1 を削除しますか?</translation>
     </message>
     <message>
       <source>GEOM_REALLY_DELETE_ALL</source>
-      <translation>すべてのオブジェクトを削除するよろしいですか。</translation>
+      <translation>すべてのオブジェクトを削除しますか?</translation>
     </message>
     <message>
       <source>GEOM_DELETE_OBJECTS</source>
@@ -5337,25 +5750,25 @@
     <name>GEOMToolsGUI_DeflectionDlg</name>
     <message>
       <source>GEOM_DEFLECTION_TLT</source>
-      <translation>形状の変形を選択します</translation>
+      <translation>オブジェクトの変形の度合いを選択します。</translation>
     </message>
     <message>
       <source>GEOM_DEFLECTION</source>
-      <translation>たわみ:</translation>
+      <translation>変形:</translation>
     </message>
   </context>
   <context>
     <name>GEOMToolsGUI_LineWidthDlg</name>
     <message>
       <source>GEOM_LINE_WIDTH</source>
-      <translation>線の幅:</translation>
+      <translation>線の太さ:</translation>
     </message>
   </context>
   <context>
     <name>GEOMToolsGUI_MarkerDlg</name>
     <message>
       <source>SET_MARKER_TLT</source>
-      <translation>セット ポイント マーカー</translation>
+      <translation>ポイント マーカーを定義します。</translation>
     </message>
     <message>
       <source>STANDARD_MARKER</source>
@@ -5367,7 +5780,7 @@
     </message>
     <message>
       <source>TYPE</source>
-      <translation>タイプ:</translation>
+      <translation>型:</translation>
     </message>
     <message>
       <source>SCALE</source>
@@ -5379,30 +5792,38 @@
     </message>
     <message>
       <source>BROWSE</source>
-      <translation>参照.</translation>
+      <translation>移動...</translation>
     </message>
     <message>
       <source>OK_BTN</source>
-      <translation>&amp; [OK]</translation>
+      <translation>OK(&amp;O)</translation>
     </message>
     <message>
       <source>CANCEL_BTN</source>
-      <translation>&amp; [キャンセル</translation>
+      <translation>キャンセル(&amp;C)</translation>
     </message>
     <message>
       <source>HELP_BTN</source>
-      <translation>&amp; ヘルプ</translation>
+      <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
       <source>LOAD_TEXTURE_TLT</source>
-      <translation>テクスチャの読み込み</translation>
+      <translation>テクスチャーを開く</translation>
     </message>
   </context>
   <context>
     <name>GEOMToolsGUI_MaterialPropertiesDlg</name>
     <message>
       <source>MATERIAL_PROPERTIES_TLT</source>
-      <translation>色および材料特性</translation>
+      <translation>色と材料特性</translation>
+    </message>
+    <message>
+      <source>FRONT_FACE</source>
+      <translation>FRONT_FACE</translation>
+    </message>
+    <message>
+      <source>BACK_FACE</source>
+      <translation>BACK_FACE</translation>
     </message>
     <message>
       <source>REFLECTION_0</source>
@@ -5410,7 +5831,7 @@
     </message>
     <message>
       <source>REFLECTION_1</source>
-      <translation>拡散</translation>
+      <translation>ブロードキャスト</translation>
     </message>
     <message>
       <source>REFLECTION_2</source>
@@ -5418,19 +5839,15 @@
     </message>
     <message>
       <source>REFLECTION_3</source>
-      <translation>発光</translation>
-    </message>
-    <message>
-      <source>ENABLED</source>
-      <translation>有効になって</translation>
+      <translation>馬頭</translation>
     </message>
     <message>
       <source>SHININESS</source>
-      <translation>光沢:</translation>
+      <translation>明るさ:</translation>
     </message>
     <message>
       <source>PHYSICAL</source>
-      <translation>物理</translation>
+      <translation>課された色</translation>
     </message>
     <message>
       <source>ADD_MATERIAL</source>
@@ -5438,7 +5855,7 @@
     </message>
     <message>
       <source>DELETE_MATERIAL</source>
-      <translation>材料を除去します。</translation>
+      <translation>材料を削除します。</translation>
     </message>
     <message>
       <source>RENAME_MATERIAL</source>
@@ -5446,7 +5863,7 @@
     </message>
     <message>
       <source>CURRENT_MATERIAL</source>
-      <translation>[現在]</translation>
+      <translation>[進行中]</translation>
     </message>
     <message>
       <source>CURRENT_COLOR</source>
@@ -5454,46 +5871,46 @@
     </message>
     <message>
       <source>CUSTOM_MATERIAL</source>
-      <translation>カスタム材料</translation>
+      <translation>カスタム素材</translation>
     </message>
     <message>
       <source>QUE_CREATE_NEW_MATERIAL</source>
-      <translation>事前に定義された材料の特性を変更することは許可されていません。新しい材料を作成しますか。</translation>
+      <translation>事前のプロパティを変更することはできません-defini.\nvoulez-あなたは材料を新しいを作成するか？</translation>
     </message>
     <message>
       <source>QUE_REMOVE_MATERIAL</source>
-      <translation>材料%1 を削除しますか？</translation>
+      <translation>%1 の材料を削除しますか?</translation>
     </message>
     <message>
       <source>OK_BTN</source>
-      <translation>&amp; [OK]</translation>
+      <translation>OK(&amp;O)</translation>
     </message>
     <message>
       <source>CANCEL_BTN</source>
-      <translation>&amp; [キャンセル</translation>
+      <translation>キャンセル(&amp;C)</translation>
     </message>
     <message>
       <source>HELP_BTN</source>
-      <translation>&amp; ヘルプ</translation>
+      <translation>ヘルプ(&amp;H)</translation>
     </message>
   </context>
   <context>
     <name>OperationGUI_GetSharedShapesDlg</name>
     <message>
       <source>GEOM_SHARED_SHAPES_TITLE</source>
-      <translation>取得図形を共有</translation>
+      <translation>共有アイテムを取得</translation>
     </message>
     <message>
       <source>GEOM_GET_SHARED_SHAPES</source>
-      <translation>共有の図形</translation>
+      <translation>共有要素</translation>
     </message>
     <message>
       <source>GEOM_SHARED_SHAPES_INPUT</source>
-      <translation>入力データ</translation>
+      <translation>データ入力</translation>
     </message>
     <message>
       <source>MSG_SHARED_SHAPES_TOO_FEW_SHAPES</source>
-      <translation>いくつかの図形を選択しました。</translation>
+      <translation>十分なアイテムが選択されていない</translation>
     </message>
     <message>
       <source>GEOM_SHARED_SHAPE</source>
@@ -5501,85 +5918,10 @@
     </message>
   </context>
   <context>
-    <name>AdvancedGUI_PipeTShapeDlg</name>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_TITLE</source>
-      <translation>パイプ TShape 建設</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE</source>
-      <translation>PipeTShape</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_MPIPE</source>
-      <translation>主配管</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_R</source>
-      <translation>半径</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_W</source>
-      <translation>幅</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_L</source>
-      <translation>ハーフレングス</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_IPIPE</source>
-      <translation>インシデント管</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_CHAMFER</source>
-      <translation>面取り</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_CHAMFER_H</source>
-      <translation>高さ</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_CHAMFER_W</source>
-      <translation>幅</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_FILLET</source>
-      <translation>フィレット</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_HEX</source>
-      <translation>16 進数のメッシュのための準備します。</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_POSITION</source>
-      <translation>位置の設定</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_POSITION_P1</source>
-      <translation>ジャンクション P1</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_POSITION_P2</source>
-      <translation>ジャンクション P2</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_POSITION_P3</source>
-      <translation>ジャンクション P3</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L1</source>
-      <translation>新しい L1</translation>
-    </message>
-    <message>
-      <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L2</source>
-      <translation>新しい L2</translation>
-    </message>
-  </context>
-  <context>
     <name>GEOMToolsGUI_PublishDlg</name>
     <message>
       <source>GEOM_PUBLISH_OBJECTS_TLT</source>
-      <translation>オブジェクトをパブリッシュします。</translation>
+      <translation>オブジェクトを発行</translation>
     </message>
     <message>
       <source>OBJECT_NAME</source>
@@ -5591,19 +5933,115 @@
     </message>
     <message>
       <source>UNSELECT_ALL</source>
-      <translation>U &amp; nselect すべて</translation>
+      <translation>すべての選択を解除(&amp;n)</translation>
     </message>
     <message>
       <source>SELECT_ALL</source>
-      <translation>&amp; すべてを選択します</translation>
+      <translation>すべて選択します。</translation>
     </message>
     <message>
       <source>GEOM_PUBLISH_BTN</source>
-      <translation>&amp; 発行</translation>
+      <translation>発行(&amp;P)</translation>
     </message>
     <message>
       <source>GEOM_PUBLISH_CLOSE_BTN</source>
-      <translation>P &amp; ublish と近い</translation>
+      <translation>発行し閉じる(&amp;u)</translation>
+    </message>
+  </context>
+  <context>
+    <name>RepairGUI_UnionFacesDlg</name>
+    <message>
+      <source>GEOM_UNION_FACES_TITLE</source>
+      <translation>GEOM_UNION_FACES_TITLE</translation>
+    </message>
+    <message>
+      <source>GEOM_UNION_FACES</source>
+      <translation>GEOM_UNION_FACES</translation>
+    </message>
+    <message>
+      <source>UNION_FACES_NEW_OBJ_NAME</source>
+      <translation>UNION_FACES_NEW_OBJ_NAME</translation>
+    </message>
+  </context>
+  <context>
+    <name>GEOMGUI_CreationInfoWdg</name>
+    <message>
+      <source>CREATION_INFO_TITLE</source>
+      <translation>CREATION_INFO_TITLE</translation>
+    </message>
+    <message>
+      <source>OPERATION</source>
+      <translation>OPERATION</translation>
+    </message>
+    <message>
+      <source>PARAMETER</source>
+      <translation>PARAMETER</translation>
+    </message>
+    <message>
+      <source>VALUE</source>
+      <translation>VALUE</translation>
+    </message>
+    <message>
+      <source>NO_INFO</source>
+      <translation>NO_INFO</translation>
+    </message>
+  </context>
+  <context>
+    <name>ImportExportGUI_ExportXAODlg</name>
+    <message>
+      <source>GEOM_EXPORTXAO_TITLE</source>
+      <translation>GEOM_EXPORTXAO_TITLE</translation>
+    </message>
+    <message>
+      <source>GEOM_EXPORTXAO</source>
+      <translation>GEOM_EXPORTXAO</translation>
+    </message>
+    <message>
+      <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
+      <translation>GEOM_EXPORTXAO_EXPORTINGSHAPE</translation>
+    </message>
+    <message>
+      <source>GEOM_EXPORTXAO_FILENAME</source>
+      <translation>GEOM_EXPORTXAO_FILENAME</translation>
+    </message>
+    <message>
+      <source>GEOM_EXPORTXAO_AUTHOR</source>
+      <translation>GEOM_EXPORTXAO_AUTHOR</translation>
+    </message>
+    <message>
+      <source>GEOM_EXPORTXAO_LGROUPS</source>
+      <translation>GEOM_EXPORTXAO_LGROUPS</translation>
+    </message>
+    <message>
+      <source>GEOM_EXPORTXAO_LFIELDS</source>
+      <translation>GEOM_EXPORTXAO_LFIELDS</translation>
+    </message>
+  </context>
+  <context>
+    <name>ImportExportGUI_ImportXAODlg</name>
+    <message>
+      <source>GEOM_IMPORTXAO_TITLE</source>
+      <translation>GEOM_IMPORTXAO_TITLE</translation>
+    </message>
+    <message>
+      <source>GEOM_IMPORTXAO</source>
+      <translation>GEOM_IMPORTXAO</translation>
+    </message>
+    <message>
+      <source>GEOM_IMPORTXAO_IMPORTINGSHAPE</source>
+      <translation>GEOM_IMPORTXAO_IMPORTINGSHAPE</translation>
+    </message>
+    <message>
+      <source>GEOM_IMPORTXAO_FILENAME</source>
+      <translation>GEOM_IMPORTXAO_FILENAME</translation>
+    </message>
+    <message>
+      <source>GEOM_IMPORTXAO_LGROUPS</source>
+      <translation>GEOM_IMPORTXAO_LGROUPS</translation>
+    </message>
+    <message>
+      <source>GEOM_IMPORTXAO_LFIELDS</source>
+      <translation>GEOM_IMPORTXAO_LFIELDS</translation>
     </message>
   </context>
 </TS>
