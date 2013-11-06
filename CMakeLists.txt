@@ -70,11 +70,14 @@ OPTION(SALOME_BUILD_TESTS "Build SALOME tests" ON)
 OPTION(SALOME_BUILD_GUI "Enable GUI" ON)
 CMAKE_DEPENDENT_OPTION(SALOME_GEOM_USE_OPENCV "Enable shape recognition from picture" OFF
                        "SALOME_BUILD_GUI" OFF)
-MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV)
+CMAKE_DEPENDENT_OPTION(SALOME_GEOM_BUILD_CC "Enable curve creator (experimental)" OFF
+                       "SALOME_BUILD_GUI" OFF)
+MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV SALOME_GEOM_BUILD_CC)
 
 # Debug options (!!! FOR DEVELOPERS ONLY !!! TO BE REMOVED LATER !!!)
 IF(CMAKE_BUILD_TYPE MATCHES "^Debug$")
-  OPTION(SALOME_GEOM_DEBUG_CC "Debug curve creator" OFF)
+  CMAKE_DEPENDENT_OPTION(SALOME_GEOM_DEBUG_CC "Debug curve creator" OFF
+                        "SALOME_GEOM_BUILD_CC" OFF)
   MARK_AS_ADVANCED(SALOME_GEOM_DEBUG_CC)
 
   IF(SALOME_GEOM_DEBUG_CC)
@@ -241,7 +244,7 @@ SET(_${PROJECT_NAME}_exposed_targets
   GEOMArchimede BREPExport BREPImport BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
   GEOMUtils GEOMEngine GEOM_SupervEngine IGESExport IGESImport GEOMSketcher
   SalomeIDLGEOM STEPExport STEPImport STLExport ShHealOper XAO AdvancedEngine OCC2VTK
-  VTKExport CurveCreator
+  VTKExport
 )
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
@@ -256,6 +259,12 @@ IF(SALOME_GEOM_USE_OPENCV)
     GEOMShapeRec
     )
 ENDIF(SALOME_GEOM_USE_OPENCV)
+
+IF(SALOME_GEOM_BUILD_CC)
+  LIST(APPEND _${PROJECT_NAME}_exposed_targets 
+    CurveCreator
+    )
+ENDIF(SALOME_GEOM_BUILD_CC)
 
 # Add all targets to the build-tree export set
 EXPORT(TARGETS ${_${PROJECT_NAME}_exposed_targets}
