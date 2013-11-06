@@ -59,7 +59,6 @@ class EntityGUI_FieldDlg : public GEOMBase_Skeleton
   class Delegate;
 
 public:
-
   EntityGUI_FieldDlg (GeometryGUI* theGeometryGUI,
                       GEOM::GEOM_Field_ptr theField, int stepID=0,
                       QWidget* parent=0,
@@ -105,7 +104,6 @@ private:
   int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& map);
 
 private:
-
   bool                                myIsCreation;
   GEOM::GEOM_Field_var                myField;
   GEOM::GEOM_Object_var               myShape;
@@ -153,6 +151,7 @@ class EntityGUI_FieldDlg::StepTable : public QTableWidget
   bool                     myIsChanged;
 
   QTableWidgetItem * newDefaultItem();
+
 public:
   StepTable( int stepID, int dataType, int nbRows, int nbColumns,
              QString shapeName, QStringList headers,
@@ -183,8 +182,10 @@ public:
   void                     setHeaders(const QStringList& headers);
   GEOM::GEOM_FieldStep_var getStep() { return myStep; }
   void                     setValues(GEOM::GEOM_FieldStep_var& step);
+
 public slots:
   void                     setIsChanged() { myIsChanged = true; }
+  void                     headerDblClicked( int );
 };
 
 #endif

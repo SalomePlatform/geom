@@ -55,6 +55,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -372,6 +373,8 @@ EntityGUI_FieldDlg::StepTable::StepTable (int stepID, int dataType,
   setItemDelegate( new Delegate(this) );
   // set edit triggers by default
   setReadOnly( false );
+
+  connect( horizontalHeader(), SIGNAL( sectionDoubleClicked( int ) ), this, SLOT( headerDblClicked( int ) ) );
 
   if ( stepVar->_is_nil() )
     return;
@@ -756,6 +759,23 @@ void EntityGUI_FieldDlg::StepTable::setValues(GEOM::GEOM_FieldStep_var& step)
   myIsChanged = false;
 
   return;
+}
+
+//=======================================================================
+//function : headerDblClicked
+//purpose  : rename column, called when used double-clicks on the header
+//=======================================================================
+
+void EntityGUI_FieldDlg::StepTable::headerDblClicked( int section )
+{
+  if ( section > 0 ) {
+    bool bOk;
+    QString label = QInputDialog::getText( this, EntityGUI_FieldDlg::tr( "RENAME_COMPONENT" ),
+					   EntityGUI_FieldDlg::tr ( "COMPONENT_NAME" ), QLineEdit::Normal,
+					   horizontalHeaderItem( section )->text(), &bOk );
+    if ( bOk && !label.isEmpty() )
+      horizontalHeaderItem( section )->setText( label );
+  }
 }
 
 //=======================================================================

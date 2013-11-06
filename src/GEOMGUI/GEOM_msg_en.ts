@@ -6010,6 +6010,14 @@ Number of sketch points too small</translation>
         <source>WHOLE_SHAPE_VHEADER</source>
         <translation>Shape</translation>
     </message>
+    <message>
+        <source>RENAME_COMPONENT</source>
+        <translation>Change component name</translation>
+    </message>
+    <message>
+        <source>COMPONENT_NAME</source>
+        <translation>Name:</translation>
+    </message>
 </context>
 <context>
     <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
