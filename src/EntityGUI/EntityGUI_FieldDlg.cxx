@@ -374,11 +374,12 @@ EntityGUI_FieldDlg::StepTable::StepTable (int stepID, int dataType,
   // set edit triggers by default
   setReadOnly( false );
 
-  connect( horizontalHeader(), SIGNAL( sectionDoubleClicked( int ) ), this, SLOT( headerDblClicked( int ) ) );
-
   if ( stepVar->_is_nil() )
-    return;
+  {
+    connect( horizontalHeader(), SIGNAL( sectionDoubleClicked( int ) ), this, SLOT( headerDblClicked( int ) ) );
 
+    return;
+  }
   myStamp = stepVar->GetStamp();
 
   const int nbColumns = nbComps + 1;
@@ -771,8 +772,8 @@ void EntityGUI_FieldDlg::StepTable::headerDblClicked( int section )
   if ( section > 0 ) {
     bool bOk;
     QString label = QInputDialog::getText( this, EntityGUI_FieldDlg::tr( "RENAME_COMPONENT" ),
-					   EntityGUI_FieldDlg::tr ( "COMPONENT_NAME" ), QLineEdit::Normal,
-					   horizontalHeaderItem( section )->text(), &bOk );
+                                           EntityGUI_FieldDlg::tr ( "COMPONENT_NAME" ), QLineEdit::Normal,
+                                           horizontalHeaderItem( section )->text(), &bOk );
     if ( bOk && !label.isEmpty() )
       horizontalHeaderItem( section )->setText( label );
   }
@@ -1310,7 +1311,6 @@ void EntityGUI_FieldDlg::onAddStep()
 //function : onRmStep
 //purpose  : 
 //=======================================================================
-
 void EntityGUI_FieldDlg::onRmStep()
 {
   if ( myStepsCombo->count() > 1 )
@@ -1329,7 +1329,6 @@ void EntityGUI_FieldDlg::onRmStep()
 //function : onStampChange
 //purpose  : 
 //=======================================================================
-
 void EntityGUI_FieldDlg::onStampChange()
 {
   if ( myCurStepTable )
@@ -1340,7 +1339,6 @@ void EntityGUI_FieldDlg::onStampChange()
 //function : showCurStep
 //purpose  : 
 //=======================================================================
-
 void EntityGUI_FieldDlg::showCurStep()
 {
   myCurStepID = getCurStepID();
@@ -1494,7 +1492,6 @@ TopAbs_ShapeEnum EntityGUI_FieldDlg::getShapeType(int* dim) const
 //function : getDim
 //purpose  : 
 //=======================================================================
-
 int EntityGUI_FieldDlg::getDim() const
 {
   int i = myDimCombo->currentIndex();
@@ -1505,7 +1502,6 @@ int EntityGUI_FieldDlg::getDim() const
 //function : getDataType
 //purpose  : 
 //=======================================================================
-
 int EntityGUI_FieldDlg::getDataType() const
 {
   return myTypeCombo->currentIndex();
@@ -1515,7 +1511,6 @@ int EntityGUI_FieldDlg::getDataType() const
 //function : getCurStepID
 //purpose  : 
 //=======================================================================
-
 int EntityGUI_FieldDlg::getCurStepID() const
 {
   if ( myStepsCombo->count() > 0 )
@@ -1527,7 +1522,6 @@ int EntityGUI_FieldDlg::getCurStepID() const
 //function : getNbComps
 //purpose  : 
 //=======================================================================
-
 int EntityGUI_FieldDlg::getNbComps() const
 {
   return myNbCompsSpin->value();
@@ -1567,7 +1561,6 @@ void EntityGUI_FieldDlg::updateShapeIDs()
 //function : updateDims
 //purpose  : update myDimCombo
 //=======================================================================
-
 void EntityGUI_FieldDlg::updateDims(int curDim)
 {
   myDimCombo->blockSignals( true );
@@ -1882,6 +1875,8 @@ bool EntityGUI_FieldDlg::execute()
   for ( ; i_tbl != myStepTables.end(); ++i_tbl )
   {
     StepTable* tbl = i_tbl.value();
+    QString stepName = (tr("STEP")+" %1 %2").arg( tbl->getStepID() ).arg( tbl->getStamp() );
+
     GEOM::GEOM_FieldStep_var step = tbl->getStep();
     if ( step->_is_nil() )
     {
@@ -1890,7 +1885,6 @@ bool EntityGUI_FieldDlg::execute()
       {
         step = myField->AddStep( tbl->getStepID(), tbl->getStamp() );
 
-        QString stepName = (tr("STEP")+" %1 %2").arg( tbl->getStepID() ).arg( tbl->getStamp() );
         SALOMEDS::SObject_wrap aSO =
           getGeomEngine()->AddInStudy( aStudyDS, step, stepName.toLatin1().constData(), myField );
         if ( /*!myIsCreation &&*/ !aSO->_is_nil() ) {
@@ -1900,6 +1894,17 @@ bool EntityGUI_FieldDlg::execute()
         }
       }
     }
+    else if ( step->GetStamp() != tbl->getStamp() )
+    {
+      // update a stamp in the object browser
+      CORBA::String_var entry = step->GetStudyEntry();
+      if ( entry.in() ) {
+        SALOMEDS::SObject_wrap SO = aStudyDS->FindObjectID( entry.in() );
+        if ( !SO->_is_nil() )
+          aBuilder->SetName( SO, stepName.toLatin1().constData() );
+      }
+    }
+
     tbl->setValues( step );
 
     // update the presentation if it is displayed
