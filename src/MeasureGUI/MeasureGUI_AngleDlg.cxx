@@ -56,8 +56,7 @@
 #include <Precision.hxx>
 #include <AIS.hxx>
 #include <AIS_Drawer.hxx>
-#include <Prs3d_AngleAspect.hxx>
-#include <Prs3d_LineAspect.hxx>
+#include <Prs3d_LineAspect.hxx> 
 
 // QT Includes
 #include <qlineedit.h>
@@ -348,13 +347,10 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         gce_MakePln gce_MP(aP11, aP12, aP3);
         Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
 
-        // Build the angle dimension presentation
-        QString aLabel;
-        aLabel.sprintf("%.1f", anAngle);
+        Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( anEdge1, anEdge2, aPlane->Pln() );
 
-        Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension
-          (anEdge1, anEdge2, aPlane, anAngle * M_PI / 180.,
-           TCollection_ExtendedString((Standard_CString)aLabel.toLatin1().data()));
+        Handle(Prs3d_DimensionAspect) aDimensionStyle = new Prs3d_DimensionAspect;
+
         Handle(Geom_Line) geom_lin1,geom_lin2;
         gp_Pnt ptat11,ptat12,ptat21,ptat22;
         Standard_Boolean isInfinite1,isInfinite2;
@@ -373,19 +369,20 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
                                   isInfinite1,
                                   isInfinite2,
                                   aPlane)) {
-          Standard_Real arrSize1 = anIO->ArrowSize();
-          Standard_Real arrSize2 = anIO->ArrowSize();
+          Standard_Real arrSize1 = aDimensionStyle->ArrowAspect()->Length();
+          Standard_Real arrSize2 = aDimensionStyle->ArrowAspect()->Length();
           if (!isInfinite1) arrSize1 = ptat11.Distance(ptat12)/10.;
           if (!isInfinite2) arrSize2 = ptat21.Distance(ptat22)/10.;
-          Standard_Real arrowSize = Max(arrSize1,arrSize2);
-          anIO->SetArrowSize(arrowSize);
+          aDimensionStyle->ArrowAspect()->SetLength( Max(arrSize1, arrSize2) );
         }
 
         SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-        int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
-  Handle(Prs3d_AngleAspect) asp = new Prs3d_AngleAspect();
-  asp->LineAspect()->SetWidth(w);
-        anIO->Attributes()->SetAngleAspect(asp);
+        int w = resMgr->integerValue( "Geometry", "measures_line_width", 1 );
+
+        aDimensionStyle->LineAspect()->SetWidth( w );
+        aDimensionStyle->SetHorizontalTextAlignment( Prs3d_HTA_Center );
+
+        anIO->SetDimensionAspect( aDimensionStyle );
 
         SOCC_Prs* aPrs =
           dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));

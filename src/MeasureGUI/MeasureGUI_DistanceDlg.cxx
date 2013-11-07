@@ -48,7 +48,6 @@
 #include <Geom_Plane.hxx>
 #include <AIS_LengthDimension.hxx>
 #include <AIS_Drawer.hxx>
-#include <Prs3d_LengthAspect.hxx>
 #include <Prs3d_LineAspect.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -362,8 +361,8 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       TopoDS_Vertex aVert1 = BRepBuilderAPI_MakeVertex(aPnt1);
       TopoDS_Vertex aVert2 = BRepBuilderAPI_MakeVertex(aPnt2);
 
-      QString aLabel;
-      aLabel.sprintf("%.1f", aDist);
+      //QString aLabel;
+      //aLabel.sprintf("%.1f", aDist);
 
       gp_Pnt aPnt3 ((aPnt1.X() + aPnt2.X()) / 2,
                     (aPnt1.Y() + aPnt2.Y()) / 2,
@@ -380,16 +379,19 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       gce_MakePln gce_MP (aPnt1, aPnt2, aPnt3);
       Handle(Geom_Plane) P = new Geom_Plane (gce_MP.Value());
 
-      Handle(AIS_LengthDimension) anIO = new AIS_LengthDimension
-        (aVert1, aVert2, P, aDist,
-         TCollection_ExtendedString((Standard_CString)aLabel.toLatin1().constData()));
-      anIO->SetArrowSize(aDist/20);
-      
+      Handle(AIS_LengthDimension) anIO = new AIS_LengthDimension( aVert1, aVert2, P->Pln() );
+
       SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-      int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
-      Handle(Prs3d_LengthAspect) asp = new Prs3d_LengthAspect();
-      asp->LineAspect()->SetWidth(w);
-      anIO->Attributes()->SetLengthAspect(asp);
+      int w = resMgr->integerValue( "Geometry", "measures_line_width", 1 );
+
+      Handle(Prs3d_DimensionAspect) aDimensionStyle = new Prs3d_DimensionAspect;
+
+      aDimensionStyle->ArrowAspect()->SetLength( aDist / 20.0 );
+      aDimensionStyle->LineAspect()->SetWidth( w );
+      aDimensionStyle->SetHorizontalTextAlignment( Prs3d_HTA_Center );
+
+      anIO->SetFlyout( 0.0 );
+      anIO->SetDimensionAspect( aDimensionStyle );
 
       SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
 

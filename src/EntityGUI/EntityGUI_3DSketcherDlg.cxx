@@ -65,9 +65,8 @@
 #include <Geom_Plane.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <gce_MakePln.hxx>
-#include <Prs3d_AngleAspect.hxx>
 #include <Prs3d_LineAspect.hxx>
-#include <Prs3d_LengthAspect.hxx>
+#include <Prs3d_DimensionAspect.hxx>
 #if OCC_VERSION_LARGE > 0x06050300
 #include <Prs3d_TextAspect.hxx>
 #include <Prs3d_Presentation.hxx>
@@ -1652,9 +1651,6 @@ Handle(AIS_LengthDimension) EntityGUI_3DSketcherDlg::createAISLengthDimension(do
                                                                               gp_Pnt P2, 
                                                                               gp_Dir theNormal)
 {
-  // Convert length to string
-  std::string aLength_str = doubleToString(theLength);
-  
   // Plane construction
   gce_MakePln gce_MP(P1, theNormal);
   Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
@@ -1662,20 +1658,21 @@ Handle(AIS_LengthDimension) EntityGUI_3DSketcherDlg::createAISLengthDimension(do
   TopoDS_Vertex aVert1 = BRepBuilderAPI_MakeVertex(P1);
   TopoDS_Vertex aVert2 = BRepBuilderAPI_MakeVertex(P2);
 
-  Handle(AIS_LengthDimension) anIO =
-    new AIS_LengthDimension(aVert1,
-                            aVert2,
-                            aPlane,
-                            theLength,
-                            TCollection_ExtendedString(aLength_str.c_str()));
-  anIO->SetArrowSize(theLength/20);
+  Handle(AIS_LengthDimension) anIO = new AIS_LengthDimension( aVert1, aVert2, aPlane->Pln() );
+
+  anIO->SetCustomValue( theLength );
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
-  Handle(Prs3d_LengthAspect) asp = new Prs3d_LengthAspect();
-  asp->LineAspect()->SetWidth(w);
-  anIO->Attributes()->SetLengthAspect(asp);
-  
+  int w = resMgr->integerValue( "Geometry", "measures_line_width", 1 );
+
+  Handle(Prs3d_DimensionAspect) aDimensionStyle = new Prs3d_DimensionAspect;
+
+  aDimensionStyle->ArrowAspect()->SetLength( theLength / 20.0 );
+  aDimensionStyle->LineAspect()->SetWidth( w );
+  aDimensionStyle->SetHorizontalTextAlignment( Prs3d_HTA_Center );
+  anIO->SetFlyout( 0.0 );
+  anIO->SetDimensionAspect( aDimensionStyle );
+
   return anIO;
 }
 
@@ -1711,18 +1708,34 @@ Handle(AIS_AngleDimension) EntityGUI_3DSketcherDlg::createAISAngleDimension(doub
   TopoDS_Edge anEdge1 = BRepBuilderAPI_MakeEdge(V0, V1);
   TopoDS_Edge anEdge2 = BRepBuilderAPI_MakeEdge(V0, V2);
 
-  Handle(AIS_AngleDimension) anIO =
-    new AIS_AngleDimension(anEdge1, anEdge2, aPlane, theAngle * M_PI / 180.,
-                           TCollection_ExtendedString(Angle_str.c_str()));
-    
-  anIO->SetArrowSize((theAngle * M_PI / 180) * (aLength/20));
-  
+  //Handle(AIS_AngleDimension) anIO =
+  //  new AIS_AngleDimension(anEdge1, anEdge2, aPlane, theAngle * M_PI / 180.,
+  //                         TCollection_ExtendedString(Angle_str.c_str()));
+  //  
+  //anIO->SetArrowSize((theAngle * M_PI / 180) * (aLength/20));
+  //
+  //SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  //int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
+  //Handle(Prs3d_AngleAspect) asp = new Prs3d_AngleAspect();
+  //asp->LineAspect()->SetWidth(w);
+  //anIO->Attributes()->SetAngleAspect(asp);
+
+  // todo : port
+
+  Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( anEdge1, anEdge2, aPlane->Pln() );
+
+  anIO->SetCustomValue( theAngle );
+
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
-  Handle(Prs3d_AngleAspect) asp = new Prs3d_AngleAspect();
-  asp->LineAspect()->SetWidth(w);
-  anIO->Attributes()->SetAngleAspect(asp);
-  
+  int w = resMgr->integerValue( "Geometry", "measures_line_width", 1 );
+
+  Handle(Prs3d_DimensionAspect) aDimensionStyle = new Prs3d_DimensionAspect;
+
+  aDimensionStyle->ArrowAspect()->SetLength( (theAngle * M_PI / 180.0) * (aLength / 20.0) );
+  aDimensionStyle->LineAspect()->SetWidth( w );
+
+  anIO->SetDimensionAspect( aDimensionStyle );
+
   return anIO;
 }
 
