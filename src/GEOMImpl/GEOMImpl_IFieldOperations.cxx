@@ -161,7 +161,7 @@ GEOMImpl_IFieldOperations::GetFields( const Handle(GEOM_Object)& theShape )
 {
   SetErrorCode(KO);
 
-  Handle(TColStd_HSequenceOfTransient) fields;
+  Handle(TColStd_HSequenceOfTransient) fields = new TColStd_HSequenceOfTransient;
   if ( theShape.IsNull() ) {
     SetErrorCode( "Error: NULL shape" );
     return fields;
@@ -180,10 +180,13 @@ GEOMImpl_IFieldOperations::GetFields( const Handle(GEOM_Object)& theShape )
   for (; anIt.More(); anIt.Next()) {
     TCollection_ExtendedString& anEntry = anIt.Value();
     anEntry.ToUTF8CString( (Standard_PCharacter&) pentry );
-    Handle(GEOM_Field) field = Handle(GEOM_Field)::DownCast
-      ( GetEngine()->GetObject( GetDocID(), entry, false ));
-    if ( !field.IsNull() )
-      fields->Append( field );
+    Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(GetDocID(), entry, false);
+    if ( !anObj.IsNull() && anObj->IsKind(STANDARD_TYPE(GEOM_Field)) )
+    {
+        Handle(GEOM_Field) field = Handle(GEOM_Field)::DownCast( anObj );
+        if ( !field.IsNull() )
+          fields->Append( field );
+    }
   }
 
   return fields;
