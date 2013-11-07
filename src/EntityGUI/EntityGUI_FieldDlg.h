@@ -131,6 +131,7 @@ private:
   SalomeApp_IntSpinBox*               myNbCompsSpin;
   QWidget*                            mySwitchTableWdg;
   QComboBox*                          myStepsCombo;
+  QLineEdit*                          myStepEdit;
   SalomeApp_IntSpinBox*               myStampSpin;
 
 };

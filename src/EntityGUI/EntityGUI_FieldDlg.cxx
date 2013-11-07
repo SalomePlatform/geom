@@ -872,29 +872,32 @@ EntityGUI_FieldDlg::EntityGUI_FieldDlg (GeometryGUI* theGeometryGUI,
   switchTableGrpLayout->setMargin(0);
   switchTableGrpLayout->setSpacing(0);
 
-  // step browse controls
-  myPrevStepBtn = new QPushButton( tr("PREV_STEP"), valsGroup );
-  QLabel* curStepLbl = new QLabel(tr("STEP"), valsGroup );
-  myStepsCombo = new QComboBox(valsGroup);
-  myNextStepBtn = new QPushButton( tr("NEXT_STEP"), valsGroup );
-
   // step add/rm controls
   QPushButton* addStepBtn = new QPushButton( tr("ADD_STEP"), valsGroup );
-  QLabel* stampLbl = new QLabel(tr("STAMP"), valsGroup );
-  myStampSpin = new SalomeApp_IntSpinBox( -theIntLimit, theIntLimit, 1, valsGroup, true, true);
+  QLabel* curStepLbl = new QLabel(tr("STEP"), valsGroup );
+  myStepEdit = new QLineEdit( valsGroup );
+  myStepsCombo = new QComboBox(valsGroup);
+  myStepsCombo->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed );
   myRmStepBtn = new QPushButton( tr("REMOVE_STEP"), valsGroup );
 
-  valsLayout->addWidget(mySwitchTableWdg,   0, 0, 1, 4);
-  valsLayout->addWidget(myPrevStepBtn,      1, 0);
+  // step browse controls
+  myPrevStepBtn = new QPushButton( tr("PREV_STEP"), valsGroup );
+  QLabel* stampLbl = new QLabel(tr("STAMP"), valsGroup );
+  myStampSpin = new SalomeApp_IntSpinBox( -theIntLimit, theIntLimit, 1, valsGroup, true, true);
+  myNextStepBtn = new QPushButton( tr("NEXT_STEP"), valsGroup );
+  
+  valsLayout->addWidget(mySwitchTableWdg,   0, 0, 1, 5);
+  valsLayout->addWidget(addStepBtn,         1, 0);
   valsLayout->addWidget(curStepLbl,         1, 1);
-  valsLayout->addWidget(myStepsCombo,       1, 2);
-  valsLayout->addWidget(myNextStepBtn,      1, 3);
-  valsLayout->addWidget(addStepBtn,         2, 0);
+  valsLayout->addWidget(myStepEdit,         1, 2);
+  valsLayout->addWidget(myStepsCombo,       1, 3);
+  valsLayout->addWidget(myRmStepBtn,        1, 4);
+  valsLayout->addWidget(myPrevStepBtn,      2, 0);
   valsLayout->addWidget(stampLbl,           2, 1);
-  valsLayout->addWidget(myStampSpin,        2, 2);
-  valsLayout->addWidget(myRmStepBtn,        2, 3);
+  valsLayout->addWidget(myStampSpin,        2, 2, 1, 2);
+  valsLayout->addWidget(myNextStepBtn,      2, 4);
 
-  valsLayout->setColumnStretch(2, 5);
+  valsLayout->setColumnStretch(3, 5);
   valsLayout->setRowStretch   (0, 5);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
@@ -1292,17 +1295,44 @@ void EntityGUI_FieldDlg::onNextStep()
   }
 }
 
+static int findInCombo( QComboBox* where, int what, bool& ok )
+{
+  int idx = 0;
+  ok = false;
+
+  for ( ; idx < where->count() && !ok; idx++ ) {
+    int step = where->itemText( idx ).toInt();
+    if ( step == what ) {
+      ok = true;
+    }
+    else if ( step > what )
+      break;
+  }
+  
+  return idx;
+}
+
 //=======================================================================
 //function : onAddStep
 //purpose  : 
 //=======================================================================
 void EntityGUI_FieldDlg::onAddStep()
 {
-  if ( myStepsCombo->count() > 0 )
-    myCurStepID = myStepsCombo->itemText( myStepsCombo->count()-1 ).toInt() + 1;
+  int step = 0;
 
-  myStepsCombo->insertItem( myStepsCombo->count(), QString::number( myCurStepID ));
-  myStepsCombo->setCurrentIndex( myStepsCombo->count() - 1 );
+  if ( !myStepEdit->text().isEmpty() )
+    step = myStepEdit->text().toInt();
+  bool ok = false;
+  int idx = findInCombo( myStepsCombo, step, ok );
+  
+  if ( ok ) {
+    SUIT_MessageBox::critical(this, QObject::tr("ERR_ERROR"),
+			      tr("ERR_STEP_EXISTS"));
+    return;
+  }
+
+  myStepsCombo->insertItem( idx, QString::number( step ));
+  myStepsCombo->setCurrentIndex( idx );
   myRemovedSteps.remove( getCurStepID() );
   //showCurStep();
 }
@@ -1341,7 +1371,8 @@ void EntityGUI_FieldDlg::onStampChange()
 //=======================================================================
 void EntityGUI_FieldDlg::showCurStep()
 {
-  myCurStepID = getCurStepID();
+  myCurStepID = getCurStepID(); 
+  myStepEdit->setText(QString::number( myCurStepID ));
 
   QStringList headers;
   if ( myCurStepTable )
