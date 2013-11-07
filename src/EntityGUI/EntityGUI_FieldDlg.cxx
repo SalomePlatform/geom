@@ -1177,8 +1177,8 @@ void EntityGUI_FieldDlg::SelectionIntoArgument()
           myEditCurrentArgument = 0;
 
           // re-fill myDimCombo
-          const int curDim = getDim();
-          updateDims( curDim );
+          //const int curDim = getDim();
+          updateDims( -1 );
 
           // update table
           onDimChange();
@@ -1584,7 +1584,7 @@ void EntityGUI_FieldDlg::updateDims(int curDim)
     }
     myDimCombo->insertItem( 4, tr("WHOLE"), -1 );
     if ( getDim() != curDim )
-      myDimCombo->setCurrentIndex( myDimCombo->count()-1 );
+      myDimCombo->setCurrentIndex( myDimCombo->count()-1-(myDimCombo->count()>1?1:0) );
   }
   myDimCombo->blockSignals( false );
 }
