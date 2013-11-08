@@ -423,7 +423,8 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
                                                     const Standard_Real theTolerance,
                                                     const TopAbs_ShapeEnum theShapeType,
                                                     const Standard_Boolean doKeepNonSolids,
-                                                    TCollection_AsciiString& theWarning) const
+                                                    TCollection_AsciiString& theWarning,
+                                                    const TopTools_DataMapOfShapeShape& aCopyMap) const
 {
   TopoDS_Shape aRes;
 
@@ -553,10 +554,18 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
     TDF_Label anArgumentHistoryLabel =
       aFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_True);
 
+    TopTools_ListOfShape aModified;
     for (Standard_Integer ie = 1; ie <= nbArgumentEntities; ie++) {
       TopoDS_Shape anEntity = anArgumentIndices.FindKey(ie);
-      const TopTools_ListOfShape& aModified = aGA.Modified(anEntity);
+      if (aCopyMap.IsBound(anEntity)) {
+        anEntity = aCopyMap.Find(anEntity);
+      }
+      aModified = aGA.Modified(anEntity);
       Standard_Integer nbModified = aModified.Extent();
+      if (!nbModified && aResIndices.Contains(anEntity)) {
+        aModified.Append(anEntity);
+        nbModified = 1;
+      }
 
       if (nbModified > 0) {
         TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(ie, Standard_True);
@@ -749,26 +758,31 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aShapeCopy;
   TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
   TNaming_CopyShape::CopyTool(aShapeBase, aMapTShapes, aShapeCopy);
-
+  //
+  // map sub-shapes
+  TopTools_IndexedMapOfShape aShapeBase_inds, aShapeCopy_inds;
+  TopTools_DataMapOfShapeShape aCopyMap;
+  Standard_Integer aNbInd, i;
+  //
+  TopExp::MapShapes(aShapeBase, aShapeBase_inds);
+  TopExp::MapShapes(aShapeCopy, aShapeCopy_inds);
+  //
+  aNbInd = aShapeBase_inds.Extent();
+  for (i = 1; i <= aNbInd; ++i) {
+    aCopyMap.Bind(aShapeBase_inds(i), aShapeCopy_inds(i));
+  }
+  //
   if (aType == GLUE_FACES) {
-    //aShape = GlueFacesWithWarnings(aShapeBase, tol3d, aKeepNonSolids, aWrn);
-    aShape = GlueWithWarnings(aShapeCopy, tol3d, TopAbs_FACE, aKeepNonSolids, aWrn);
+    aShape = GlueWithWarnings(aShapeCopy, tol3d, TopAbs_FACE, aKeepNonSolids, aWrn, aCopyMap);
   }
   else if (aType == GLUE_EDGES) {
-    aShape = GlueWithWarnings(aShapeCopy, tol3d, TopAbs_EDGE, aKeepNonSolids, aWrn);
+    aShape = GlueWithWarnings(aShapeCopy, tol3d, TopAbs_EDGE, aKeepNonSolids, aWrn, aCopyMap);
   }
   else if (aType == GLUE_FACES_BY_LIST || aType == GLUE_EDGES_BY_LIST) {
     Handle(TColStd_HSequenceOfTransient) SF = aCI.GetFaces();
     TopTools_MapOfShape aFaces;
-    int i = 1;
 
-    // map sub-shapes to select faces from aShapeCopy
-    TopTools_IndexedMapOfShape aShapeBase_inds;
-    TopTools_IndexedMapOfShape aShapeCopy_inds;
-    TopExp::MapShapes(aShapeBase, aShapeBase_inds);
-    TopExp::MapShapes(aShapeCopy, aShapeCopy_inds);
-
-    for (; i <= SF->Length(); i++) {
+    for (i = 1; i <= SF->Length(); i++) {
       Handle(Standard_Transient) anItem = SF->Value(i);
       if (anItem.IsNull())
         continue;
