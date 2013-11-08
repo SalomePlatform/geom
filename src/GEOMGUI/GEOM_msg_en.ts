@@ -6018,6 +6018,14 @@ Number of sketch points too small</translation>
         <source>COMPONENT_NAME</source>
         <translation>Name:</translation>
     </message>
+    <message>
+        <source>WRN_NOT_SUBSHAPE</source>
+        <translation type="unfinished">The selected shape is not a sub-shape of the main shape. Hide all extra shapes in the viewer for more suitable selection.</translation>
+    </message>
+    <message>
+        <source>ERR_STEP_EXISTS</source>
+        <translation type="unfinished">Step with such ID already exists.</translation>
+    </message>
 </context>
 <context>
     <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
