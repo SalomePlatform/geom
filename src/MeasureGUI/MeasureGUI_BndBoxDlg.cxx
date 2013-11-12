@@ -334,4 +334,6 @@ void MeasureGUI_BndBoxDlg::redisplayPreview()
   catch (const SALOME::SALOME_Exception& e) {
     SalomeApp_Tools::QtCatchCorbaException(e);
   }
+  catch (...) {
+  }
 }
