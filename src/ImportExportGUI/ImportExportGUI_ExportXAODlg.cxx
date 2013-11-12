@@ -22,8 +22,10 @@
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_OverrideCursor.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
+#include <SalomeApp_Tools.h>
 #include <LightApp_SelectionMgr.h>
 
 #include <QLabel>
@@ -32,7 +34,6 @@
 #include <QListWidget>
 #include <QFileDialog>
 #include <QMap>
-//#include <ui_ImportExportGUI_1Sel1LineEdit2ListWidget_QTD.h>
 
 // OCCT Includes
 #include <TopoDS_Shape.hxx>
@@ -43,7 +44,6 @@
 
 #include <GEOMImpl_Types.hxx>
 #include "ImportExportGUI_ExportXAODlg.h"
-//#include "ImportExportGUI_Widgets.h"
 
 //=================================================================================
 // Constructor
@@ -137,7 +137,7 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg(GeometryGUI* geometry
     lstGroups = new QListWidget(gbxFilter);
     lstGroups->setSelectionMode(QAbstractItemView::ExtendedSelection);
     lstFields = new QListWidget(gbxFilter);
-    lstFields   ->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    lstFields->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     line++; col = 0;
     gridLayoutFilter->addWidget(lstGroups, line, col++, 1, 1);
@@ -184,7 +184,6 @@ void ImportExportGUI_ExportXAODlg::Init()
 
     connect(btnFileSelect, SIGNAL(clicked()), this, SLOT(btnFileSelectClicked()));
 
-
     initName(tr("GEOM_EXPORTXAO"));
     SelectionIntoArgument();
 }
@@ -217,11 +216,25 @@ void ImportExportGUI_ExportXAODlg::processObject()
             item->setData(Qt::UserRole, QVariant(i));
             item->setText(GEOMBase::GetName(groups[i]));
             lstGroups->addItem(item);
+            item->setSelected(true);
             m_groups.append(GEOM::GeomObjPtr(groups[i].in()));
         }
         lstGroups->sortItems(Qt::AscendingOrder);
 
-        // TODO: add fields
+        // add fields
+        GEOM::GEOM_IFieldOperations_var fieldOp = getGeomEngine()->GetIFieldOperations(getStudyId());
+
+        GEOM::ListOfFields_var fields = fieldOp->GetFields(m_mainObj);
+        for (int i = 0, n = fields->length(); i < n; i++)
+        {
+            QListWidgetItem* item = new QListWidgetItem();
+            item->setData(Qt::UserRole, QVariant(i));
+            item->setText(fields[i]->GetName());
+            lstFields->addItem(item);
+            item->setSelected(true);
+            m_fields.append(GEOM::GeomFieldPtr(fields[i].in()));
+        }
+        lstFields->sortItems(Qt::AscendingOrder);
     }
 }
 
@@ -231,8 +244,10 @@ void ImportExportGUI_ExportXAODlg::processObject()
 //=================================================================================
 void ImportExportGUI_ExportXAODlg::ClickOnOk()
 {
+    setIsApplyAndClose(true);
     if (ClickOnApply())
         ClickOnCancel();
+    setIsApplyAndClose(false);
 }
 
 //=================================================================================
@@ -241,10 +256,46 @@ void ImportExportGUI_ExportXAODlg::ClickOnOk()
 //=================================================================================
 bool ImportExportGUI_ExportXAODlg::ClickOnApply()
 {
-    if (!onAccept())
-        return false;
+    if (!isApplyAndClose())
+    {
+        setIsDisableBrowsing(true);
+        setIsDisplayResult(false);
+    }
 
-    initName();
+    QString msg;
+    if (!isValid(msg))
+    {
+        showError(msg);
+        return false;
+    }
+    SUIT_OverrideCursor wc;
+    SUIT_Session::session()->activeApplication()->putInfo("");
+
+    try
+    {
+        if (openCommand())
+            if (!execute(/*isApplyAndClose()*/))
+            {
+                abortCommand();
+                showError();
+                return false;
+            }
+    }
+    catch (const SALOME::SALOME_Exception& e)
+    {
+        SalomeApp_Tools::QtCatchCorbaException(e);
+        abortCommand();
+        return false;
+    }
+    commitCommand();
+
+    if (!isApplyAndClose())
+    {
+        setIsDisableBrowsing(false);
+        setIsDisplayResult(true);
+    }
+
+    processObject();
 
     return true;
 }
@@ -343,7 +394,7 @@ bool ImportExportGUI_ExportXAODlg::isValid(QString& msg)
 // function : execute
 // purpose  :
 //=================================================================================
-bool ImportExportGUI_ExportXAODlg::execute(ObjectList& objects)
+bool ImportExportGUI_ExportXAODlg::execute()
 {
     bool res = false;
 
@@ -364,8 +415,9 @@ bool ImportExportGUI_ExportXAODlg::execute(ObjectList& objects)
 
     // get selected fields
     QList<QListWidgetItem*> selFields = lstFields->selectedItems();
-    GEOM::ListOfGO_var fields = new GEOM::ListOfGO();
+    GEOM::ListOfFields_var fields = new GEOM::ListOfFields();
     fields->length(m_fields.count());
+    i = 0;
     for (QList<QListWidgetItem*>::iterator it = selFields.begin(); it != selFields.end(); ++it)
     {
         QListWidgetItem* item = (*it);
@@ -376,8 +428,8 @@ bool ImportExportGUI_ExportXAODlg::execute(ObjectList& objects)
     // call engine function
     GEOM::GEOM_IInsertOperations_var ieOp = GEOM::GEOM_IInsertOperations::_narrow(getOperation());
     res = ieOp->ExportXAO(m_mainObj, groups, fields,
-            author.toStdString().c_str(),
-            fileName.toStdString().c_str());
+                          author.toStdString().c_str(),
+                          fileName.toStdString().c_str());
 
     return res;
 }

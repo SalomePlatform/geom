@@ -32,6 +32,7 @@
 #include <GEOMImpl_Types.hxx>
 #include "GEOMImpl_IShapesOperations.hxx"
 #include "GEOMImpl_IGroupOperations.hxx"
+#include "GEOMImpl_IFieldOperations.hxx"
 #include "GEOMImpl_XAODriver.hxx"
 #include "GEOMImpl_IImportExportXAO.hxx"
 
@@ -45,6 +46,14 @@
 #include <XAO_Group.hxx>
 #include <XAO_Field.hxx>
 #include <XAO_XaoUtils.hxx>
+#include <XAO_BooleanField.hxx>
+#include <XAO_IntegerField.hxx>
+#include <XAO_DoubleField.hxx>
+#include <XAO_StringField.hxx>
+#include <XAO_BooleanStep.hxx>
+#include <XAO_IntegerStep.hxx>
+#include <XAO_DoubleStep.hxx>
+#include <XAO_StringStep.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -67,6 +76,7 @@
 
 #if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
+#include <TColStd_HArray1OfReal.hxx>
 #else
 #include <TDataStd_HArray1OfByte.hxx>
 #endif
@@ -100,6 +110,7 @@ GEOMImpl_IInsertOperations::GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, i
   MESSAGE("GEOMImpl_IInsertOperations::GEOMImpl_IInsertOperations");
   myShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
   myGroupOperations = new GEOMImpl_IGroupOperations(GetEngine(), GetDocID());
+  myFieldOperations = new GEOMImpl_IFieldOperations(GetEngine(), GetDocID());
 }
 
 //=============================================================================
@@ -112,6 +123,7 @@ GEOMImpl_IInsertOperations::~GEOMImpl_IInsertOperations()
   MESSAGE("GEOMImpl_IInsertOperations::~GEOMImpl_IInsertOperations");
   delete myShapesOperations;
   delete myGroupOperations;
+  delete myFieldOperations;
 }
 
 //=============================================================================
@@ -837,7 +849,9 @@ XAO::Dimension shapeEnumToDimension(const TopAbs_ShapeEnum& shape)
   return dim;
 }
 
-void GEOMImpl_IInsertOperations::exportGroups(std::list<Handle(GEOM_Object)> groupList, XAO::Xao* xaoObject, XAO::BrepGeometry* geometry)
+void GEOMImpl_IInsertOperations::exportGroups(std::list<Handle(GEOM_Object)> groupList,
+                                              XAO::Xao* xaoObject,
+                                              XAO::BrepGeometry* geometry)
 {
   // add the groups
   std::list<Handle(GEOM_Object)>::iterator groupIterator = groupList.begin();
@@ -855,42 +869,129 @@ void GEOMImpl_IInsertOperations::exportGroups(std::list<Handle(GEOM_Object)> gro
     case TopAbs_VERTEX:
       for (int i = 1; i <= groupIds->Length(); i++)
       {
-	std::string ref = XAO::XaoUtils::intToString(groupIds->Value(i));
-	int index = geometry->getVertexIndexByReference(ref);
-	group->add(index);
+        std::string ref = XAO::XaoUtils::intToString(groupIds->Value(i));
+        int index = geometry->getVertexIndexByReference(ref);
+        group->add(index);
       }
       break;
     case TopAbs_EDGE:
       for (int i = 1; i <= groupIds->Length(); i++)
       {
-	std::string ref = XAO::XaoUtils::intToString(groupIds->Value(i));
-	int index = geometry->getEdgeIndexByReference(ref);
-	group->add(index);
+        std::string ref = XAO::XaoUtils::intToString(groupIds->Value(i));
+        int index = geometry->getEdgeIndexByReference(ref);
+        group->add(index);
       }
       break;
     case TopAbs_FACE:
       for (int i = 1; i <= groupIds->Length(); i++)
       {
-	std::string ref = XAO::XaoUtils::intToString(groupIds->Value(i));
-	int index = geometry->getFaceIndexByReference(ref);
-	group->add(index);
+        std::string ref = XAO::XaoUtils::intToString(groupIds->Value(i));
+        int index = geometry->getFaceIndexByReference(ref);
+        group->add(index);
       }
       break;
     case TopAbs_SOLID:
       for (int i = 1; i <= groupIds->Length(); i++)
       {
-	std::string ref = XAO::XaoUtils::intToString(groupIds->Value(i));
-	int index = geometry->getSolidIndexByReference(ref);
-	group->add(index);
+        std::string ref = XAO::XaoUtils::intToString(groupIds->Value(i));
+        int index = geometry->getSolidIndexByReference(ref);
+        group->add(index);
       }
       break;
     }
   }
 }
 
-void GEOMImpl_IInsertOperations::exportFields(std::list<Handle(GEOM_Object)> fieldList, XAO::Xao* xaoObject, XAO::BrepGeometry* geometry)
+void GEOMImpl_IInsertOperations::exportFields(std::list<Handle(GEOM_Field)> fieldList,
+                                              XAO::Xao* xaoObject,
+                                              XAO::BrepGeometry* geometry)
 {
-  // TODO
+    std::list<Handle(GEOM_Field)>::iterator fieldIterator = fieldList.begin();
+    while (fieldIterator != fieldList.end())
+    {
+        Handle(GEOM_Field) currField = (*fieldIterator++);
+
+        int fdim = currField->GetDimension();
+        int ftype = currField->GetDataType();
+        int nbComponents = currField->GetNbComponents();
+        std::string name = currField->GetName().ToCString();
+
+        XAO::Field* field = xaoObject->addField((XAO::Type)ftype, (XAO::Dimension)fdim, nbComponents, name);
+
+        Handle(TColStd_HArray1OfExtendedString) components = currField->GetComponents();
+        std::cout << "nb comp " << nbComponents << std::endl;
+        std::cout << components->Lower() << " - " << components->Upper() << std::endl;
+        for (int i = components->Lower(), j = 0; i <= components->Upper(); ++i, ++j)
+        {
+            field->setComponentName(j, TCollection_AsciiString(components->Value(i)).ToCString());
+        }
+
+        std::list< Handle(GEOM_FieldStep)> steps = currField->GetSteps();
+        std::list<Handle(GEOM_FieldStep)>::iterator stepIterator = steps.begin();
+        while (stepIterator != steps.end())
+        {
+            Handle(GEOM_FieldStep) currStep = (*stepIterator++);
+
+            XAO::Step* step = field->addNewStep(currStep->GetID());
+            step->setStamp(currStep->GetStamp());
+
+            switch (ftype)
+            {
+                case 0: // bool
+                {
+                    XAO::BooleanStep* bs = (XAO::BooleanStep*)step;
+                    Handle(TColStd_HArray1OfInteger) bvalues = currStep->GetIntValues();
+                    std::vector<bool> bv;
+                    bv.reserve(bvalues->Upper());
+                    for ( int i = bvalues->Lower(), nb = bvalues->Upper(); i <= nb; ++i )
+                    {
+                        bv.push_back(bvalues->Value(i) != 0);
+                    }
+                    bs->setValues(bv);
+                    break;
+                }
+                case 1: // integer
+                {
+                    XAO::IntegerStep* is = (XAO::IntegerStep*)step;
+                    Handle(TColStd_HArray1OfInteger) ivalues = currStep->GetIntValues();
+                    std::vector<int> iv;
+                    iv.reserve(ivalues->Upper());
+                    for ( int i = ivalues->Lower(), nb = ivalues->Upper(); i <= nb; ++i )
+                    {
+                        iv.push_back(ivalues->Value(i));
+                    }
+                    is->setValues(iv);
+                    break;
+                }
+                case 2: // double
+                {
+                    XAO::DoubleStep* ds = (XAO::DoubleStep*)step;
+                    Handle(TColStd_HArray1OfReal) dvalues = currStep->GetDoubleValues();
+                    std::vector<double> dv;
+                    dv.reserve(dvalues->Upper());
+                    for ( int i = dvalues->Lower(), nb = dvalues->Upper(); i <= nb; ++i )
+                    {
+                        dv.push_back(dvalues->Value(i));
+                    }
+                    ds->setValues(dv);
+                    break;
+                }
+                case 3: // string
+                {
+                    XAO::StringStep* ss = (XAO::StringStep*)step;
+                    Handle(TColStd_HArray1OfExtendedString) svalues = currStep->GetStringValues();
+                    std::vector<std::string> sv;
+                    sv.reserve(svalues->Upper());
+                    for ( int i = svalues->Lower(), nb = svalues->Upper(); i <= nb; ++i )
+                    {
+                        sv.push_back(TCollection_AsciiString(svalues->Value(i)).ToCString());
+                    }
+                    ss->setValues(sv);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 void GEOMImpl_IInsertOperations::exportSubshapes(const Handle(GEOM_Object)& shape, XAO::BrepGeometry* geometry)
@@ -911,17 +1012,17 @@ void GEOMImpl_IInsertOperations::exportSubshapes(const Handle(GEOM_Object)& shap
       switch (subObject->GetValue().ShapeType())
       {
       case TopAbs_VERTEX:
-	geometry->changeVertexName(subIndex, subObject->GetName().ToCString());
-	break;
+        geometry->changeVertexName(subIndex, subObject->GetName().ToCString());
+        break;
       case TopAbs_EDGE:
-	geometry->changeEdgeName(subIndex, subObject->GetName().ToCString());
-	break;
+        geometry->changeEdgeName(subIndex, subObject->GetName().ToCString());
+        break;
       case TopAbs_FACE:
-	geometry->changeFaceName(subIndex, subObject->GetName().ToCString());
-	break;
+        geometry->changeFaceName(subIndex, subObject->GetName().ToCString());
+        break;
       case TopAbs_SOLID:
-	geometry->changeSolidName(subIndex, subObject->GetName().ToCString());
-	break;
+        geometry->changeSolidName(subIndex, subObject->GetName().ToCString());
+        break;
       }
     }
   }
@@ -938,13 +1039,13 @@ void GEOMImpl_IInsertOperations::exportSubshapes(const Handle(GEOM_Object)& shap
  */
 //=============================================================================
 bool GEOMImpl_IInsertOperations::ExportXAO(Handle(GEOM_Object) shape,
-					   std::list<Handle(GEOM_Object)> groupList,
-					   std::list<Handle(GEOM_Object)> fieldList,
-					   const char* author,
-					   const char* fileName)
+                                           std::list<Handle(GEOM_Object)> groupList,
+                                           std::list<Handle(GEOM_Field)> fieldList,
+                                           const char* author,
+                                           const char* fileName)
 {
   SetErrorCode(KO);
-  
+
   if (shape.IsNull()) return false;
   
   // add a new shape function with parameters
@@ -1000,7 +1101,7 @@ bool GEOMImpl_IInsertOperations::ExportXAO(Handle(GEOM_Object) shape,
   pd << "], [";
   if (fieldList.size() > 0)
   {
-    std::list<Handle(GEOM_Object)>::iterator itField = fieldList.begin();
+    std::list<Handle(GEOM_Field)>::iterator itField = fieldList.begin();
     pd << (*itField++);
     while (itField != fieldList.end())
     {
@@ -1017,8 +1118,8 @@ bool GEOMImpl_IInsertOperations::ExportXAO(Handle(GEOM_Object) shape,
 }
 
 void GEOMImpl_IInsertOperations::importSubShapes(XAO::Geometry* xaoGeometry,
-						 Handle(GEOM_Function) function, int shapeType, int dim,
-						 Handle(TColStd_HSequenceOfTransient)& subShapeList)
+                                                 Handle(GEOM_Function) function, int shapeType, int dim,
+                                                 Handle(TColStd_HSequenceOfTransient)& subShapeList)
 {
   Handle(GEOM_Object) subShape;
   Handle(GEOM_Function) aFunction;
@@ -1070,10 +1171,10 @@ void GEOMImpl_IInsertOperations::importSubShapes(XAO::Geometry* xaoGeometry,
  */
 //=============================================================================
 bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
-					   Handle(GEOM_Object)& shape,
-					   Handle(TColStd_HSequenceOfTransient)& subShapes,
-					   Handle(TColStd_HSequenceOfTransient)& groups,
-					   Handle(TColStd_HSequenceOfTransient)& fields)
+                                           Handle(GEOM_Object)& shape,
+                                           Handle(TColStd_HSequenceOfTransient)& subShapes,
+                                           Handle(TColStd_HSequenceOfTransient)& groups,
+                                           Handle(TColStd_HSequenceOfTransient)& fields)
 {
   SetErrorCode(KO);
   
@@ -1158,7 +1259,102 @@ bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
     function = group->GetLastFunction();
   }
   
-  // TODO: create the fields
+  // create the fields
+  int nbFields = xaoObject->countFields();
+  for (int i = 0; i < nbFields; ++i)
+  {
+    XAO::Field* xaoField = xaoObject->getField(i);
+
+    Handle(TColStd_HArray1OfExtendedString) components = new TColStd_HArray1OfExtendedString(0, xaoField->countComponents());
+    for (int j = 0; j < xaoField->countComponents(); ++j)
+    {
+        components->SetValue(j, (TCollection_ExtendedString)xaoField->getComponentName(j).c_str());
+    }
+
+    Handle(GEOM_Field) field = myFieldOperations->CreateField(shape,
+                 xaoField->getName().c_str(),
+                 (int)xaoField->getType(),
+                 (int)xaoField->getDimension(),
+                 components);
+
+    switch (xaoField->getType())
+    {
+        case XAO::BOOLEAN:
+        {
+            XAO::BooleanField* bfield = (XAO::BooleanField*)xaoField;
+            for (int j = 0; j < xaoField->countSteps(); ++j)
+            {
+                XAO::BooleanStep* bstep = bfield->getStep(j);
+                Handle(GEOM_FieldStep) step = field->AddStep(bstep->getStep(), bstep->getStamp());
+
+                Handle(TColStd_HArray1OfInteger) values = new TColStd_HArray1OfInteger(0, bstep->countValues());
+                std::vector<bool> bvalues = bstep->getValues();
+                for (int k = 0; k < bstep->countValues(); ++k)
+                {
+                    values->SetValue(0, bvalues[k] ? 1 : 0);
+                }
+                step->SetValues(values);
+            }
+            break;
+        }
+        case XAO::INTEGER:
+        {
+            XAO::IntegerField* ifield = (XAO::IntegerField*)xaoField;
+            for (int j = 0; j < xaoField->countSteps(); ++j)
+            {
+                XAO::IntegerStep* istep = ifield->getStep(j);
+                Handle(GEOM_FieldStep) step = field->AddStep(istep->getStep(), istep->getStamp());
+
+                Handle(TColStd_HArray1OfInteger) values = new TColStd_HArray1OfInteger(0, istep->countValues());
+                std::vector<int> ivalues = istep->getValues();
+                for (int k = 0; k < istep->countValues(); ++k)
+                {
+                    values->SetValue(0, ivalues[k]);
+                }
+                step->SetValues(values);
+            }
+            break;
+        }
+        case XAO::DOUBLE:
+        {
+            XAO::DoubleField* dfield = (XAO::DoubleField*)xaoField;
+            for (int j = 0; j < xaoField->countSteps(); ++j)
+            {
+                XAO::DoubleStep* dstep = dfield->getStep(j);
+                Handle(GEOM_FieldStep) step = field->AddStep(dstep->getStep(), dstep->getStamp());
+
+                Handle(TColStd_HArray1OfReal) values = new TColStd_HArray1OfReal(0, dstep->countValues());
+                std::vector<double> dvalues = dstep->getValues();
+                for (int k = 0; k < dstep->countValues(); ++k)
+                {
+                    values->SetValue(0, dvalues[k]);
+                }
+                step->SetValues(values);
+            }
+            break;
+        }
+        case XAO::STRING:
+        {
+            XAO::StringField* sfield = (XAO::StringField*)xaoField;
+            for (int j = 0; j < xaoField->countSteps(); ++j)
+            {
+                XAO::StringStep* sstep = sfield->getStep(j);
+                Handle(GEOM_FieldStep) step = field->AddStep(sstep->getStep(), sstep->getStamp());
+
+                Handle(TColStd_HArray1OfExtendedString) values = new TColStd_HArray1OfExtendedString(0, sstep->countValues());
+                std::vector<std::string> svalues = sstep->getValues();
+                for (int k = 0; k < sstep->countValues(); ++k)
+                {
+                    values->SetValue(0, TCollection_ExtendedString(svalues[k].c_str()));
+                }
+                step->SetValues(values);
+            }
+            break;
+        }
+    }
+
+    fields->Append(field);
+  }
   
   // make a Python command
   GEOM::TPythonDump pd(function);

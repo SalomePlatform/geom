@@ -67,6 +67,8 @@ throw (XAO_Exception)
         return countFaces();
     if (dim == XAO::SOLID)
         return countSolids();
+    if (dim == XAO::WHOLE)
+        return 1;
 
     throw XAO_Exception(MsgBuilder() << "Unknown dimension:" << dim);
 }

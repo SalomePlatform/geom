@@ -44,7 +44,7 @@ protected:
     // redefined from GEOMBase_Helper
     virtual GEOM::GEOM_IOperations_ptr createOperation();
     virtual bool isValid(QString&);
-    virtual bool execute(ObjectList&);
+    virtual bool execute();
 
 private:
     void Init();
@@ -54,7 +54,7 @@ private:
 private:
     GEOM::GEOM_Object_var m_mainObj;
     QList<GEOM::GeomObjPtr> m_groups;
-    QList<GEOM::GeomObjPtr> m_fields;
+    QList<GEOM::GeomFieldPtr> m_fields;
     QLineEdit* ledShape;
     QLineEdit* ledFileName;
     QLineEdit* ledAuthor;
@@ -67,7 +67,6 @@ private slots:
     void ClickOnOk();
     bool ClickOnApply();
     void ActivateThisDialog();
-//  void LineEditReturnPressed();
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void btnFileSelectClicked();

@@ -216,6 +216,7 @@ namespace GEOM
   };
   
   typedef GenericObjPtr<GEOM::GEOM_Object>               GeomObjPtr;
+  typedef GenericObjPtr<GEOM::GEOM_Field>                GeomFieldPtr;
   typedef GenericObjPtr<GEOM::GEOM_IBasicOperations>     BasicOpPtr;
   typedef GenericObjPtr<GEOM::GEOM_ITransformOperations> TransformOpPtr;
   typedef GenericObjPtr<GEOM::GEOM_I3DPrimOperations>    I3DPrimOpPtr;

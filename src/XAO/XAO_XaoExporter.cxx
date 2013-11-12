@@ -86,7 +86,7 @@ namespace {
     xmlDocPtr exportXMLDoc(Xao* xaoObject);
     void exportGeometry(Geometry* xaoGeometry, xmlDocPtr doc, xmlNodePtr xao);
     void exportGeometricElements(Geometry* xaoGeometry, xmlNodePtr topology,
-				 XAO::Dimension dim, const xmlChar* colTag, const xmlChar* eltTag);
+                                 XAO::Dimension dim, const xmlChar* colTag, const xmlChar* eltTag);
     void exportGroups(Xao* xaoObject, xmlNodePtr xao);
     void exportFields(Xao* xaoObject, xmlNodePtr xao);
     void exportStep(Step* step, Field* field, xmlNodePtr nodeSteps);
@@ -109,13 +109,13 @@ namespace {
     void parseStepElementNode(xmlNodePtr eltNode, Step* step);
 
     std::string readStringProp(xmlNodePtr node, const xmlChar* attribute,
-			       const bool& required, const std::string& defaultValue, const std::string& exception = std::string(""));
+                               const bool& required, const std::string& defaultValue, const std::string& exception = std::string(""));
     int readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
-			const bool& required, const int& defaultValue, const std::string& exception = std::string(""));
+                        const bool& required, const int& defaultValue, const std::string& exception = std::string(""));
 
   std::string readStringProp(xmlNodePtr node, const xmlChar* attribute,
-			     const bool& required, const std::string& defaultValue,
-			     const std::string& exception /*= std::string() */)
+                             const bool& required, const std::string& defaultValue,
+                             const std::string& exception /*= std::string() */)
   {
     xmlChar* strAttr = xmlGetProp(node, attribute);
     if (strAttr == NULL)
@@ -138,8 +138,8 @@ namespace {
   }
 
   int readIntegerProp(xmlNodePtr node, const xmlChar* attribute,
-		      const bool& required, const int& defaultValue,
-		      const std::string& exception /*= std::string() */)
+                      const bool& required, const int& defaultValue,
+                      const std::string& exception /*= std::string() */)
   {
     xmlChar* strAttr = xmlGetProp(node, attribute);
     if (strAttr == NULL)
@@ -183,7 +183,7 @@ namespace {
   }
 
   void exportGeometricElements(Geometry* xaoGeometry,
-			       xmlNodePtr topology, XAO::Dimension dim, const xmlChar* colTag, const xmlChar* eltTag)
+                               xmlNodePtr topology, XAO::Dimension dim, const xmlChar* colTag, const xmlChar* eltTag)
   {
     xmlNodePtr vertices = xmlNewChild(topology, 0, colTag, 0);
     xmlNewProp(vertices, C_ATTR_COUNT, BAD_CAST XaoUtils::intToString(xaoGeometry->countElements(dim)).c_str());
@@ -592,12 +592,16 @@ namespace {
             int component = readIntegerProp(valNode, C_ATTR_VALUE_COMPONENT, true, -1);
             xmlChar* data = xmlNodeGetContent(valNode->children);
 
-            if (data == NULL)
+            std::string value = (char*)data;
+            if (data != NULL)
+            {
+                value = (char*)data;
+            }
+            else if (step->getType() != XAO::STRING)
             {
                 throw XAO_Exception(MsgBuilder() << "Line " << valNode->line << ": no content for value.");
             }
 
-            std::string value = (char*)data;
             step->setStringValue(index, component, value);
         }
     }

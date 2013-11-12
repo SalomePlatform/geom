@@ -156,7 +156,7 @@ bool ImportExportGUI_ImportXAODlg::ClickOnApply()
 void ImportExportGUI_ImportXAODlg::btnFileSelectClicked()
 {
     QString selFile = QFileDialog::getOpenFileName(this, tr("GEOM_SELECT_EXPORT_XAO"),
-            QString(), tr("XAO_FILES"));
+                                                   QString(), tr("XAO_FILES"));
     if (!selFile.isEmpty())
     {
         ledFileName->setText(selFile);
@@ -214,7 +214,8 @@ bool ImportExportGUI_ImportXAODlg::execute(ObjectList& objects)
 
     QString fileName = ledFileName->text();
     GEOM::GEOM_Object_var shape;
-    GEOM::ListOfGO_var groups, fields, subShapes;
+    GEOM::ListOfGO_var groups, subShapes;
+    GEOM::ListOfFields_var fields;
 
     GEOM::GEOM_IInsertOperations_var ieOp = GEOM::GEOM_IInsertOperations::_narrow(getOperation());
     res = ieOp->ImportXAO(fileName.toStdString().c_str(), shape, subShapes, groups, fields);
@@ -239,7 +240,7 @@ bool ImportExportGUI_ImportXAODlg::execute(ObjectList& objects)
     }
     for (int i = 0; i < fields->length(); i++)
     {
-        objects.push_back(GEOM::GEOM_Object::_duplicate(fields[i]));
+        //objects.push_back(GEOM::GEOM_Field::_duplicate(fields[i]));
     }
 
     return res;

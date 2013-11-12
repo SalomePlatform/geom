@@ -3743,7 +3743,7 @@ module GEOM
      *  \return boolean indicating if export was successful.
      */
     boolean ExportXAO(in GEOM_Object shape,
-		      in ListOfGO groups, in ListOfGO fields,
+		      in ListOfGO groups, in ListOfFields fields,
 		      in string author, in string fileName);
     
     /*!
@@ -3756,7 +3756,7 @@ module GEOM
      *  \return boolean indicating if import was successful.
      */
     boolean ImportXAO(in string fileName, out GEOM_Object shape,
-		      out ListOfGO subShapes, out ListOfGO groups, out ListOfGO fields);
+		      out ListOfGO subShapes, out ListOfGO groups, out ListOfFields fields);
   };
 
  // # GEOM_IKindOfShape:

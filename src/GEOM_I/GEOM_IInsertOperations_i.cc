@@ -373,8 +373,10 @@ GEOM::ListOfLong* GEOM_IInsertOperations_i::GetAllTextures()
  */
 //=============================================================================
 CORBA::Boolean GEOM_IInsertOperations_i::ExportXAO(GEOM::GEOM_Object_ptr shape,
-						   const GEOM::ListOfGO& groups, const GEOM::ListOfGO& fields,
-						   const char* author, const char* fileName)
+                                                   const GEOM::ListOfGO& groups,
+                                                   const GEOM::ListOfFields&  fields,
+                                                   const char* author,
+                                                   const char* fileName)
 {
   bool isGood = false;
   // Set a not done flag
@@ -392,13 +394,13 @@ CORBA::Boolean GEOM_IInsertOperations_i::ExportXAO(GEOM::GEOM_Object_ptr shape,
     if (gobj.IsNull()) return false;
     groupsObj.push_back(gobj);
   }
-  
+
   // Get the reference fields
   ind = 0;
-  std::list<Handle(GEOM_Object)> fieldsObj;
+  std::list<Handle(GEOM_Field)> fieldsObj;
   for (; ind < fields.length(); ind++)
   {
-    Handle(GEOM_Object) fobj = GetObjectImpl(fields[ind]);
+    Handle(GEOM_Field) fobj = Handle(GEOM_Field)::DownCast(GetBaseObjectImpl(fields[ind]));
     if (fobj.IsNull()) return false;
     fieldsObj.push_back(fobj);
   }
@@ -424,17 +426,17 @@ CORBA::Boolean GEOM_IInsertOperations_i::ExportXAO(GEOM::GEOM_Object_ptr shape,
  */
 //=============================================================================
 CORBA::Boolean GEOM_IInsertOperations_i::ImportXAO(const char* fileName,
-						   GEOM::GEOM_Object_out shape,
-						   GEOM::ListOfGO_out subShapes,
-						   GEOM::ListOfGO_out groups,
-						   GEOM::ListOfGO_out fields)
+                                                   GEOM::GEOM_Object_out shape,
+                                                   GEOM::ListOfGO_out subShapes,
+                                                   GEOM::ListOfGO_out groups,
+                                                   GEOM::ListOfFields_out fields)
 {
   GEOM::GEOM_Object_var vshape;
   shape = vshape._retn();
   
   subShapes = new GEOM::ListOfGO;
   groups = new GEOM::ListOfGO;
-  fields = new GEOM::ListOfGO;
+  fields = new GEOM::ListOfFields;
   
   // Set a not done flag
   GetOperations()->SetNotDone();
@@ -469,7 +471,8 @@ CORBA::Boolean GEOM_IInsertOperations_i::ImportXAO(const char* fileName,
   fields->length(n);
   for (int i = 1; i <= n; i++)
   {
-    (*fields)[i - 1] = GetObject(Handle(GEOM_Object)::DownCast(importedFields->Value(i)));
+      // TODO: FPS
+      //(*fields)[i - 1] = GetObject(Handle(GEOM_Field)::DownCast(importedFields->Value(i)));
   }
   
   shape = GetObject(hshape);
