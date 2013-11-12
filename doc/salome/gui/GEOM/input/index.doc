@@ -6,7 +6,7 @@
 
 \b Geometry module of SALOME is destined for:
 - \subpage import_export_geom_obj_page "import and export of geometrical models"
-  in IGES, BREP and STEP formats;
+  in IGES, BREP, STEP, ACIS and STL formats;
 - \subpage create_geom_obj_page "construction of geometrical objects"
   using a wide range of functions;
 - \subpage view_geom_obj_page "viewing geometrical objects" in the OCC

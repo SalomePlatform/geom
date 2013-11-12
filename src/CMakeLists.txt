@@ -22,7 +22,7 @@
 ##
 SET(SUBDIRS_COMMON
   ARCHIMEDE BlockFix GEOMAlgo SKETCHER GEOM BREPExport
-  BREPImport IGESExport IGESImport STEPExport STEPImport STLExport
+  BREPImport IGESExport IGESImport STEPExport STEPImport STLExport STLImport
   ShHealOper GEOMUtils XAO XAO_Swig GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
   AdvancedEngine OCC2VTK VTKExport
   )

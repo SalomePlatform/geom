@@ -243,7 +243,7 @@ INCLUDE(CMakePackageConfigHelpers)
 SET(_${PROJECT_NAME}_exposed_targets 
   GEOMArchimede BREPExport BREPImport BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
   GEOMUtils GEOMEngine GEOM_SupervEngine IGESExport IGESImport GEOMSketcher
-  SalomeIDLGEOM STEPExport STEPImport STLExport ShHealOper XAO AdvancedEngine OCC2VTK
+  SalomeIDLGEOM STEPExport STEPImport STLExport STLImport ShHealOper XAO AdvancedEngine OCC2VTK
   VTKExport
 )
 IF(SALOME_BUILD_GUI)

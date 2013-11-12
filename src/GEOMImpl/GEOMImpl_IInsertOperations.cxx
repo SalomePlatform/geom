@@ -74,6 +74,21 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+/**
+ * This function returns the input format name from the original format name.
+ */
+static TCollection_AsciiString GetImportFormatName
+        (const TCollection_AsciiString& theFormatName)
+{
+  Standard_Integer aLastInd = 4;
+
+  if (theFormatName.Search("STL") == 1) {
+    aLastInd = 3;
+  }
+
+  return theFormatName.SubString(1, aLastInd);
+}
+
 //=============================================================================
 /*!
  *  constructor
@@ -236,7 +251,8 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   if (aFunction->GetDriverGUID() != GEOMImpl_ImportDriver::GetID()) return result;
 
   Handle(TCollection_HAsciiString) aHLibName;
-  if (!IsSupported(Standard_True, theFormatName.SubString(1,4), aHLibName)) {
+  if (!IsSupported
+          (Standard_True, GetImportFormatName(theFormatName), aHLibName)) {
     return result;
   }
   TCollection_AsciiString aLibName = aHLibName->String();
@@ -320,7 +336,8 @@ TCollection_AsciiString GEOMImpl_IInsertOperations::ReadValue
   if (theFileName.IsEmpty() || theFormatName.IsEmpty() || theParameterName.IsEmpty()) return aValue;
 
   Handle(TCollection_HAsciiString) aHLibName;
-  if (!IsSupported(Standard_True, theFormatName.SubString(1,4), aHLibName)) {
+  if (!IsSupported
+          (Standard_True, GetImportFormatName(theFormatName), aHLibName)) {
     return aValue;
   }
   TCollection_AsciiString aLibName = aHLibName->String();

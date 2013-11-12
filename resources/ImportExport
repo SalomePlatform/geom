@@ -1,4 +1,4 @@
-Import: BREP|IGES|STEP|ACIS
+Import: BREP|IGES|STEP|STL|ACIS
 Export: BREP|IGES|IGES_5_3|STEP|STL_Bin|STL_ASCII|ACIS|VTK
 
 BREP.Import: BREPImport
@@ -16,6 +16,9 @@ IGES_5_3.Pattern: IGES 5.3 Files ( *.iges *.igs )
 STEP.Import: STEPImport
 STEP.Export: STEPExport
 STEP.Pattern: STEP Files ( *.step *.stp )
+
+STL.Import: STLImport
+STL.Pattern: STL Files ( *.stl )
 
 STL_Bin.Export: STLExport
 STL_Bin.Pattern: STL Binary Files ( *.stl )
