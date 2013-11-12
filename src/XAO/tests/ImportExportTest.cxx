@@ -144,33 +144,67 @@ void ImportExportTest::checkImport(Xao& xao)
     CPPUNIT_ASSERT(geom != NULL);
     CPPUNIT_ASSERT_EQUAL(std::string("mygeom"), geom->getName());
 
-    CPPUNIT_ASSERT_EQUAL(4, geom->countVertices());
+    CPPUNIT_ASSERT_EQUAL(8, geom->countVertices());
     CPPUNIT_ASSERT_EQUAL(std::string("v1"), geom->getVertexName(0));
-    CPPUNIT_ASSERT_EQUAL(std::string("1"), geom->getVertexReference(0));
+    CPPUNIT_ASSERT_EQUAL(std::string("6"), geom->getVertexReference(0));
     CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getVertexName(1));
-    CPPUNIT_ASSERT_EQUAL(std::string("2"), geom->getVertexReference(1));
+    CPPUNIT_ASSERT_EQUAL(std::string("7"), geom->getVertexReference(1));
     CPPUNIT_ASSERT_EQUAL(std::string("v3"), geom->getVertexName(2));
-    CPPUNIT_ASSERT_EQUAL(std::string("3"), geom->getVertexReference(2));
+    CPPUNIT_ASSERT_EQUAL(std::string("9"), geom->getVertexReference(2));
     CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getVertexName(3));
-    CPPUNIT_ASSERT_EQUAL(std::string("4"), geom->getVertexReference(3));
+    CPPUNIT_ASSERT_EQUAL(std::string("11"), geom->getVertexReference(3));
+    CPPUNIT_ASSERT_EQUAL(std::string("v5"), geom->getVertexName(4));
+    CPPUNIT_ASSERT_EQUAL(std::string("16"), geom->getVertexReference(4));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getVertexName(5));
+    CPPUNIT_ASSERT_EQUAL(std::string("17"), geom->getVertexReference(5));
+    CPPUNIT_ASSERT_EQUAL(std::string("v7"), geom->getVertexName(6));
+    CPPUNIT_ASSERT_EQUAL(std::string("19"), geom->getVertexReference(6));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getVertexName(7));
+    CPPUNIT_ASSERT_EQUAL(std::string("21"), geom->getVertexReference(7));
 
-    CPPUNIT_ASSERT_EQUAL(3, geom->countEdges());
+    CPPUNIT_ASSERT_EQUAL(12, geom->countEdges());
     CPPUNIT_ASSERT_EQUAL(std::string("e1"), geom->getEdgeName(0));
     CPPUNIT_ASSERT_EQUAL(std::string("5"), geom->getEdgeReference(0));
     CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getEdgeName(1));
-    CPPUNIT_ASSERT_EQUAL(std::string("6"), geom->getEdgeReference(1));
+    CPPUNIT_ASSERT_EQUAL(std::string("8"), geom->getEdgeReference(1));
     CPPUNIT_ASSERT_EQUAL(std::string("e3"), geom->getEdgeName(2));
-    CPPUNIT_ASSERT_EQUAL(std::string("7"), geom->getEdgeReference(2));
+    CPPUNIT_ASSERT_EQUAL(std::string("10"), geom->getEdgeReference(2));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getEdgeName(3));
+    CPPUNIT_ASSERT_EQUAL(std::string("12"), geom->getEdgeReference(3));
+    CPPUNIT_ASSERT_EQUAL(std::string("e5"), geom->getEdgeName(4));
+    CPPUNIT_ASSERT_EQUAL(std::string("15"), geom->getEdgeReference(4));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getEdgeName(5));
+    CPPUNIT_ASSERT_EQUAL(std::string("18"), geom->getEdgeReference(5));
+    CPPUNIT_ASSERT_EQUAL(std::string("e7"), geom->getEdgeName(6));
+    CPPUNIT_ASSERT_EQUAL(std::string("20"), geom->getEdgeReference(6));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getEdgeName(7));
+    CPPUNIT_ASSERT_EQUAL(std::string("22"), geom->getEdgeReference(7));
+    CPPUNIT_ASSERT_EQUAL(std::string("e9"), geom->getEdgeName(8));
+    CPPUNIT_ASSERT_EQUAL(std::string("25"), geom->getEdgeReference(8));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getEdgeName(9));
+    CPPUNIT_ASSERT_EQUAL(std::string("26"), geom->getEdgeReference(9));
+    CPPUNIT_ASSERT_EQUAL(std::string("e11"), geom->getEdgeName(10));
+    CPPUNIT_ASSERT_EQUAL(std::string("29"), geom->getEdgeReference(10));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getEdgeName(11));
+    CPPUNIT_ASSERT_EQUAL(std::string("30"), geom->getEdgeReference(11));
 
-    CPPUNIT_ASSERT_EQUAL(2, geom->countFaces());
+    CPPUNIT_ASSERT_EQUAL(6, geom->countFaces());
     CPPUNIT_ASSERT_EQUAL(std::string("f1"), geom->getFaceName(0));
-    CPPUNIT_ASSERT_EQUAL(std::string("8"), geom->getFaceReference(0));
+    CPPUNIT_ASSERT_EQUAL(std::string("3"), geom->getFaceReference(0));
     CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getFaceName(1));
-    CPPUNIT_ASSERT_EQUAL(std::string("9"), geom->getFaceReference(1));
+    CPPUNIT_ASSERT_EQUAL(std::string("13"), geom->getFaceReference(1));
+    CPPUNIT_ASSERT_EQUAL(std::string("f3"), geom->getFaceName(2));
+    CPPUNIT_ASSERT_EQUAL(std::string("23"), geom->getFaceReference(2));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getFaceName(3));
+    CPPUNIT_ASSERT_EQUAL(std::string("27"), geom->getFaceReference(3));
+    CPPUNIT_ASSERT_EQUAL(std::string("f5"), geom->getFaceName(4));
+    CPPUNIT_ASSERT_EQUAL(std::string("31"), geom->getFaceReference(4));
+    CPPUNIT_ASSERT_EQUAL(std::string(""), geom->getFaceName(5));
+    CPPUNIT_ASSERT_EQUAL(std::string("33"), geom->getFaceReference(5));
 
     CPPUNIT_ASSERT_EQUAL(1, geom->countSolids());
     CPPUNIT_ASSERT_EQUAL(std::string("s1"), geom->getSolidName(0));
-    CPPUNIT_ASSERT_EQUAL(std::string("10"), geom->getSolidReference(0));
+    CPPUNIT_ASSERT_EQUAL(std::string("1"), geom->getSolidReference(0));
 
     CPPUNIT_ASSERT_EQUAL(2, xao.countGroups());
     Group* group = xao.getGroup(0);
@@ -184,4 +218,11 @@ void ImportExportTest::checkImport(Xao& xao)
     CPPUNIT_ASSERT_EQUAL(XAO::FACE, group->getDimension());
     CPPUNIT_ASSERT_EQUAL(0, group->get(0));
     CPPUNIT_ASSERT_EQUAL(1, group->get(1));
+
+    CPPUNIT_ASSERT_EQUAL(1, xao.countFields());
+    Field* field= xao.getField(0);
+    CPPUNIT_ASSERT_EQUAL(std::string("color"), field->getName());
+    CPPUNIT_ASSERT_EQUAL(XAO::INTEGER, field->getType());
+    CPPUNIT_ASSERT_EQUAL(XAO::SOLID, field->getDimension());
+
 }
