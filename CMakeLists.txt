@@ -61,7 +61,7 @@ SET(BUILD_SHARED_LIBS TRUE)
 # Local macros:
 LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/adm_local/cmake_files")
 
-# User options defined in KERNEL
+# User options 
 # ============
 OPTION(SALOME_BUILD_DOC "Generate SALOME GEOM documentation" ON)
 OPTION(SALOME_BUILD_TESTS "Build SALOME tests" ON)
@@ -105,10 +105,7 @@ FIND_PACKAGE(SalomeOmniORBPy REQUIRED)
 FIND_PACKAGE(SalomeLibXml2 REQUIRED)
 FIND_PACKAGE(SalomeHDF5 REQUIRED COMPONENTS C)
 
-# Other KERNEL optionals:
-IF(SALOME_USE_MPI)
-  FIND_PACKAGE(SalomeMPI) # needed for doc generation by Sphinx
-ENDIF()  
+# Other KERNEL optionals: 
 IF(SALOME_BUILD_TESTS)
   ENABLE_TESTING()
   FIND_PACKAGE(SalomeCppUnit)
