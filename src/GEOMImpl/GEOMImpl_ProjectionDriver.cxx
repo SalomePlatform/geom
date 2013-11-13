@@ -344,14 +344,36 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
 
         // Store the valid solution.
         hasValidSolution = Standard_True;
+
+        // Normalize parameter.
+        TopoDS_Edge aSupportEdge = TopoDS::Edge(aSupportShape);
+        Standard_Real aF, aL;
+
+        BRep_Tool::Range(aSupportEdge, aF, aL);
+
+        if (Abs(aL - aF) <= aTolConf) {
+          Standard_ConstructionError::Raise
+            ("Projection aborted : degenerated projection edge");
+        }
+
+        aParam = (aParam - aF)/(aL - aF);
         aProj.SetU(aParam);
 
         // Compute edge index.
-        TopTools_IndexedMapOfShape anIndices;
-        TopExp::MapShapes(aShape, anIndices);
-        const int anIndex = anIndices.FindIndex(aSupportShape);
+        TopExp_Explorer anExp(aShape, TopAbs_EDGE);
+        int anIndex = 0;
 
-        aProj.SetIndex(anIndex);
+        for (; anExp.More(); anExp.Next(), anIndex++) {
+          if (aSupportShape.IsSame(anExp.Current())) {
+            aProj.SetIndex(anIndex);
+            break;
+          }
+        }
+
+        if (!anExp.More()) {
+          Standard_ConstructionError::Raise
+            ("Projection aborted : Can't define edge index");
+        }
 
         // Construct a projection vertex.
         const gp_Pnt &aPntProj = aDistShSh.PointOnShape2(i);
