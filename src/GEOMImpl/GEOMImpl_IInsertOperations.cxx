@@ -919,8 +919,6 @@ void GEOMImpl_IInsertOperations::exportFields(std::list<Handle(GEOM_Field)> fiel
         XAO::Field* field = xaoObject->addField((XAO::Type)ftype, (XAO::Dimension)fdim, nbComponents, name);
 
         Handle(TColStd_HArray1OfExtendedString) components = currField->GetComponents();
-        std::cout << "nb comp " << nbComponents << std::endl;
-        std::cout << components->Lower() << " - " << components->Upper() << std::endl;
         for (int i = components->Lower(), j = 0; i <= components->Upper(); ++i, ++j)
         {
             field->setComponentName(j, TCollection_AsciiString(components->Value(i)).ToCString());
