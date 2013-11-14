@@ -1087,6 +1087,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(),      fileId, 10 );
   createMenu( GEOMOp::OpImport, fileId, 10 );
   createMenu( GEOMOp::OpExport, fileId, 10 );
+  int impexpId = createMenu( tr( "MEN_IMPORTEXPORT" ), fileId, -1, 10 );
+  createMenu( GEOMOp::OpExportXAO, impexpId, -1 );
+  createMenu( GEOMOp::OpImportXAO, impexpId, -1 );
   createMenu( separator(),      fileId, -1 );
 
   int editId = createMenu( tr( "MEN_EDIT" ), -1, -1 );
@@ -1127,10 +1130,6 @@ void GeometryGUI::initialize( CAM_Application* app )
 #if OCC_VERSION_LARGE > 0x06050300
   createMenu( GEOMOp::OpPipePath,   genId, -1 );
 #endif
-
-  int impexpId = createMenu( tr( "MEN_IMPORTEXPORT" ), newEntId, -1 );
-  createMenu( GEOMOp::OpExportXAO, impexpId, -1 );
-  createMenu( GEOMOp::OpImportXAO, impexpId, -1 );
 
   //int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
   //createMenu( GEOMOp::OpSmoothingSurface, advId, -1 );

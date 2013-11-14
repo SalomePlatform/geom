@@ -4972,11 +4972,11 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     </message>
     <message>
         <source>MEN_IMPORTEXPORT</source>
-        <translation>Import / Export</translation>
+        <translation>Import / Export XAO</translation>
     </message>
     <message>
         <source>TOOL_IMPORTEXPORT</source>
-        <translation>Import / Export</translation>
+        <translation>Import / Export XAO</translation>
     </message>
     <message>
         <source>TOP_EXPORTXAO</source>

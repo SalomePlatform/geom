@@ -4913,7 +4913,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>MEN_IMPORTEXPORT</source>
-        <translation>Import / Export</translation>
+        <translation>Import / Export XAO</translation>
     </message>
     <message>
         <source>TOP_EXPORTXAO</source>
@@ -4953,7 +4953,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOOLS_IMPORTEXPORT</source>
-        <translation>Import / Export</translation>
+        <translation>Import / Export XAO</translation>
     </message>
     <message>
       <source>CC_PNT_ITEM_X_Y</source>
