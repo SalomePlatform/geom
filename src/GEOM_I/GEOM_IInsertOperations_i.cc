@@ -471,8 +471,8 @@ CORBA::Boolean GEOM_IInsertOperations_i::ImportXAO(const char* fileName,
   fields->length(n);
   for (int i = 1; i <= n; i++)
   {
-      // TODO: FPS
-      //(*fields)[i - 1] = GetObject(Handle(GEOM_Field)::DownCast(importedFields->Value(i)));
+        (*fields)[i - 1] = GEOM::GEOM_Field::_narrow(
+                GetBaseObject(Handle(GEOM_Field)::DownCast(importedFields->Value(i))));
   }
   
   shape = GetObject(hshape);
