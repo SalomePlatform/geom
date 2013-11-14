@@ -26,10 +26,13 @@
 //
 
 #include "GEOMToolsGUI_PublishDlg.h"
+#include "GEOM_Displayer.h"
+#include "GeometryGUI.h"
 
 //SALOME GUI includes
 #include <SUIT_Session.h>
 #include <SUIT_DataObject.h>
+#include <SUIT_ResourceMgr.h>
 
 #include <CAM_DataModel.h>
 
@@ -41,12 +44,15 @@
 
 
 //QT includes
+#include <QHeaderView>
 #include <QGridLayout>
 #include <QTreeWidget>
 #include <QPushButton>
 
 #define  DEFAULT_MARGIN 11
 #define  DEFAULT_SPACING 6
+
+#define VISIBILITY_COLUMN_WIDTH 25
 
 GEOMToolsGUI_PublishDlg::GEOMToolsGUI_PublishDlg(QWidget* parent):
   QDialog(parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
@@ -62,13 +68,21 @@ GEOMToolsGUI_PublishDlg::GEOMToolsGUI_PublishDlg(QWidget* parent):
    //myTreeWidget->setRootIsDecorated(false);
    //myTreeWidget->setUniformRowHeights(true);
    myTreeWidget->setAllColumnsShowFocus(true);
-   myTreeWidget->setColumnCount(2);
+   myTreeWidget->setColumnCount(3);
 
    QStringList columnNames;
    columnNames.append(tr("OBJECT_NAME"));
    columnNames.append(tr("OBJECT_ENTRY"));
+   columnNames.append("");
    QTreeWidgetItem * headerItem = new QTreeWidgetItem(columnNames);
+   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+   headerItem->setIcon( 2, QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_VISIBLE" ) ) ) );
    myTreeWidget->setHeaderItem ( headerItem );
+   myTreeWidget->header()->setClickable( true );
+   myTreeWidget->header()->setSortIndicatorShown( true );
+   myTreeWidget->header()->moveSection( 2, 0 );
+   myTreeWidget->setSortingEnabled( true );
+   myTreeWidget->setColumnWidth( 2, VISIBILITY_COLUMN_WIDTH );
 
    //Select All button
    QPushButton* selectAllButton = new  QPushButton( tr("SELECT_ALL"),this );
@@ -99,6 +113,8 @@ GEOMToolsGUI_PublishDlg::GEOMToolsGUI_PublishDlg(QWidget* parent):
    gridLayout->addWidget(closeButton, 3, 3, 1, 1);
 
    //Connect signals and slots
+   connect( myTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(onItemClicked(QTreeWidgetItem*, int)) );
+
    connect( selectAllButton, SIGNAL(clicked()), this, SLOT(clickOnSelectAll()) );
    connect( unselectAllButton, SIGNAL(clicked()), this, SLOT(clickOnUnSelectAll()) );
    
@@ -115,6 +131,31 @@ GEOMToolsGUI_PublishDlg::GEOMToolsGUI_PublishDlg(QWidget* parent):
 //=================================================================================
 GEOMToolsGUI_PublishDlg::~GEOMToolsGUI_PublishDlg()
 {
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( app ) {
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    if ( appStudy ) {
+      _PTR(Study) aStudy = appStudy->studyDS();
+      if ( aStudy ) {
+	GEOM_Displayer displayer ( appStudy );
+	QTreeWidgetItemIterator it( myTreeWidget );
+	while ( *it ) {
+	  QString entry = myEntryToItem.key( *it );
+	  _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
+	  if ( SO ) {
+	    GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
+	    if ( CORBA::is_nil( aGeomObject ) ) continue;
+	    if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {
+	      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
+	      displayer.Erase( io );
+	    }
+	  }
+	  ++it;
+	}
+	displayer.UpdateViewer();
+      }
+    }
+  }
 }
 
 //=================================================================================
@@ -161,7 +202,7 @@ void GEOMToolsGUI_PublishDlg::initData() {
 //=================================================================================
 QTreeWidgetItem* GEOMToolsGUI_PublishDlg::createItem(QTreeWidgetItem* theParent, Pair theAttributes, bool isCheckable) {
   QStringList aList;
-  aList<<theAttributes.second<<theAttributes.first;
+  aList<<theAttributes.second<<theAttributes.first<<"";
   QTreeWidgetItem* anItem = new QTreeWidgetItem(aList);
   
   if(isCheckable)
@@ -176,7 +217,8 @@ QTreeWidgetItem* GEOMToolsGUI_PublishDlg::createItem(QTreeWidgetItem* theParent,
     myTreeWidget->addTopLevelItem(anItem);
 
   myEntryToItem.insert(theAttributes.first, anItem);
-  
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  anItem->setIcon( 2, QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_INVISIBLE" ) ) ) );
   anItem->setExpanded(true);
   return anItem;
 }
@@ -387,3 +429,36 @@ void GEOMToolsGUI_PublishDlg::getTails(QTreeWidgetItem* theItem, QList<QTreeWidg
   if(theItem->data(0,Qt::UserRole).toBool())
     theList.push_back(theItem);
 }
+
+//=================================================================================
+// function : onItemClicked()
+// purpose  : Called then treeItem clicked
+//=================================================================================
+void GEOMToolsGUI_PublishDlg::onItemClicked(QTreeWidgetItem* theItem, int theColumn) {
+  if ( theColumn == 2 ) {
+    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+    if ( !app ) return;
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    if ( !appStudy ) return;
+    _PTR(Study) aStudy = appStudy->studyDS();
+    if ( !aStudy ) return;
+    QString entry = myEntryToItem.key( theItem );
+    _PTR(SObject) SO ( aStudy->FindObjectID( qPrintable( entry ) ) );
+    if ( !SO ) return;
+    GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( SO ) );
+    if ( CORBA::is_nil( aGeomObject ) ) return;
+    GEOM_Displayer displayer ( appStudy );
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( aGeomObject->GetStudyEntry(), "GEOM", "" );
+    if ( displayer.IsDisplayed( aGeomObject->GetStudyEntry() ) ) {
+      theItem->setIcon( 2, QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_INVISIBLE" ) ) ) );
+      displayer.Erase( io );
+    }
+    else {
+      theItem->setIcon( 2, QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_VISIBLE" ) ) ) );
+      displayer.Display( io );
+    }
+    displayer.UpdateViewer();
+  }
+}
+

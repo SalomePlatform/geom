@@ -70,6 +70,7 @@ protected slots:
   void clickOnApply();
   void clickOnSelectAll();
   void clickOnUnSelectAll();
+  void onItemClicked(QTreeWidgetItem*, int);
   
 private:  
   QTreeWidget*           myTreeWidget;
