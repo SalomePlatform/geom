@@ -619,9 +619,9 @@ void GEOMToolsGUI::OnPublishObject() {
     return;
   } 
   
-  GEOMToolsGUI_PublishDlg * publishDlg =
+  GEOMToolsGUI_PublishDlg* publishDlg =
     new GEOMToolsGUI_PublishDlg( SUIT_Session::session()->activeApplication()->desktop() );
-  publishDlg->exec();
+  publishDlg->show();
 }
 
 

@@ -58,7 +58,7 @@ GEOMToolsGUI_PublishDlg::GEOMToolsGUI_PublishDlg(QWidget* parent):
   QDialog(parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
    setObjectName( "GEOMToolsGUI_PublishDlg" );
-   setModal( true );
+   setModal( false );
    setWindowTitle( tr( "GEOM_PUBLISH_OBJECTS_TLT" ) );
 
    setAttribute(Qt::WA_DeleteOnClose);
