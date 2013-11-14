@@ -19,12 +19,15 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include <GEOM_Field.hxx>
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_OverrideCursor.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
+#include <SalomeApp_Tools.h>
 
 #include <QLabel>
 #include <QLineEdit>
@@ -42,6 +45,8 @@
 
 #include <GEOMImpl_Types.hxx>
 #include "ImportExportGUI_ImportXAODlg.h"
+
+#include <SALOMEDS_wrap.hxx>
 
 //=================================================================================
 // Constructor
@@ -139,7 +144,7 @@ void ImportExportGUI_ImportXAODlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-bool ImportExportGUI_ImportXAODlg::ClickOnApply()
+/*bool ImportExportGUI_ImportXAODlg::ClickOnApply()
 {
     if (!onAccept())
         return false;
@@ -147,6 +152,45 @@ bool ImportExportGUI_ImportXAODlg::ClickOnApply()
     initName();
 
     return true;
+}*/
+
+bool ImportExportGUI_ImportXAODlg::ClickOnApply()
+{
+  if(!isApplyAndClose()) {
+    setIsDisableBrowsing( true );
+    setIsDisplayResult( false );
+  }
+
+  QString msg;
+  if ( !isValid( msg ) ) {
+    showError( msg );
+    return false;
+  }
+  SUIT_OverrideCursor wc;
+  SUIT_Session::session()->activeApplication()->putInfo( "" );
+
+  try {
+    if ( openCommand() )
+      if (!execute (/*isApplyAndClose()*/))
+      {
+        abortCommand();
+        showError();
+        return false;
+      }
+  }
+  catch( const SALOME::SALOME_Exception& e ) {
+    SalomeApp_Tools::QtCatchCorbaException( e );
+    abortCommand();
+    return false;
+  }
+  commitCommand();
+
+  if(!isApplyAndClose()) {
+    setIsDisableBrowsing( false );
+    setIsDisplayResult( true );
+  }
+
+  return true;
 }
 
 //=================================================================================
@@ -208,7 +252,7 @@ bool ImportExportGUI_ImportXAODlg::isValid(QString& msg)
 // function : execute
 // purpose  :
 //=================================================================================
-bool ImportExportGUI_ImportXAODlg::execute(ObjectList& objects)
+bool ImportExportGUI_ImportXAODlg::execute()
 {
     bool res = false;
 
@@ -223,27 +267,68 @@ bool ImportExportGUI_ImportXAODlg::execute(ObjectList& objects)
     if (!shape->_is_nil())
     {
         m_mainShape = shape;
-        objects.push_back(shape._retn());
     }
     else
     {
         m_mainShape = NULL;
     }
 
-    for (int i = 0; i < subShapes->length(); i++)
+    if (m_mainShape != NULL)
     {
-        objects.push_back(GEOM::GEOM_Object::_duplicate(subShapes[i]));
-    }
-    for (int i = 0; i < groups->length(); i++)
-    {
-        objects.push_back(GEOM::GEOM_Object::_duplicate(groups[i]));
-    }
-    for (int i = 0; i < fields->length(); i++)
-    {
-        //objects.push_back(GEOM::GEOM_Field::_duplicate(fields[i]));
+        addInStudy(m_mainShape, m_mainShape->GetName());
+
+        for (int i = 0; i < subShapes->length(); i++)
+        {
+            addInStudy(subShapes[i].in(), subShapes[i]->GetName());
+        }
+        for (int i = 0; i < groups->length(); i++)
+        {
+            addInStudy(groups[i].in(), groups[i]->GetName());
+        }
+        for (int i = 0; i < fields->length(); i++)
+        {
+            addFieldInStudy(fields[i].in(), m_mainShape);
+        }
+
+        updateObjBrowser();
     }
 
     return res;
+}
+
+QString ImportExportGUI_ImportXAODlg::addFieldInStudy( GEOM::GEOM_Field_ptr theField, GEOM::GEOM_Object_ptr theFather)
+{
+  if ( !hasCommand() )
+    return QString();
+
+  _PTR(Study) aStudy = getStudy()->studyDS();
+  if ( !aStudy || theField->_is_nil() )
+    return QString();
+
+  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(aStudy);
+
+  SALOMEDS::SObject_var aSO =
+    getGeomEngine()->AddInStudy(aStudyDS, theField, theField->GetName(), theFather);
+
+  QString anEntry;
+  if ( !aSO->_is_nil() ) {
+    CORBA::String_var entry = aSO->GetID();
+    anEntry = entry.in();
+  }
+
+  // add steps
+  GEOM::ListOfLong_var steps = theField->GetSteps();
+  for (int i = 0; i < steps->length(); ++i)
+  {
+    GEOM::GEOM_FieldStep_ptr step = theField->GetStep(steps[i]);
+    QString stepName = (tr("STEP") + " %1 %2").arg( step->GetID() ).arg( step->GetStamp() );
+    SALOMEDS::SObject_wrap aSOField =
+      getGeomEngine()->AddInStudy( aStudyDS, step, stepName.toLatin1().constData(), theField );
+  }
+
+  aSO->UnRegister();
+
+  return anEntry;
 }
 
 GEOM::GEOM_Object_ptr ImportExportGUI_ImportXAODlg::getFather(GEOM::GEOM_Object_ptr object)
