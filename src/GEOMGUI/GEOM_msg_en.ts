@@ -5984,7 +5984,7 @@ Number of sketch points too small</translation>
     </message>
     <message>
         <source>GEOM_NO_STUDY</source>
-        <translation>No study availabel</translation>
+        <translation>No study available</translation>
     </message>
     <message>
         <source>NO_SHAPE</source>
@@ -6460,6 +6460,10 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_EXPORTXAO_LFIELDS</source>
         <translation>Fields</translation>
+    </message>
+    <message>
+        <source>STEP</source>
+        <translation>Step</translation>
     </message>
 </context>
 <context>

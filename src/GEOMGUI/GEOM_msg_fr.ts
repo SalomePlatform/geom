@@ -2659,6 +2659,22 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Découpe de groupes</translation>
     </message>
     <message>
+        <source>MEN_FIELD</source>
+        <translation>Champ</translation>
+    </message>
+    <message>
+        <source>MEN_FIELD_CREATE</source>
+        <translation>Créer un champ</translation>
+    </message>
+    <message>
+        <source>MEN_FIELD_EDIT</source>
+        <translation>Editer un champ</translation>
+    </message>
+    <message>
+        <source>MEN_ADD_FIELD_STEP</source>
+        <translation>Ajouter un pas</translation>
+    </message>
+    <message>
         <source>MEN_RELOAD_IMPORTED</source>
         <translation>Recharger à partir du disque</translation>
     </message>
@@ -2777,6 +2793,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_POP_CREATE_GROUP</source>
         <translation>Créer un groupe</translation>
+    </message>
+    <message>
+        <source>MEN_POP_EDIT_FIELD</source>
+        <translation>Editer champ</translation>
     </message>
     <message>
         <source>MEN_POP_SHOW_CHILDREN</source>
@@ -4528,7 +4548,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>REMOVE_EXTRA_EDGES_NEW_OBJ_NAME</source>
-        <translation>PasdAretesSupplementaires</translation>
+        <translation>Pas d&apos;arêtes supplémentaires</translation>
     </message>
     <message>
         <source>TOP_REMOVE_EXTRA_EDGES</source>
@@ -5807,6 +5827,160 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
 </context>
 <context>
+    <name>EntityGUI</name>
+    <message>
+        <source>NO_FIELD</source>
+        <translation>Sélectioner le champ à éditer</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_FieldDlg</name>
+    <message>
+        <source>CREATE_FIELD_TITLE</source>
+        <translation>Créer un champ</translation>
+    </message>
+    <message>
+        <source>EDIT_FIELD_TITLE</source>
+        <translation>Editer un champ</translation>
+    </message>
+    <message>
+        <source>FIELD_NAME</source>
+        <translation>Nom</translation>
+    </message>
+    <message>
+        <source>PROPERTIES</source>
+        <translation>Propriétés</translation>
+    </message>
+    <message>
+        <source>SHAPE</source>
+        <translation>Forme</translation>
+    </message>
+    <message>
+        <source>DATA_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>BOOL</source>
+        <translation>Booléen</translation>
+    </message>
+    <message>
+        <source>INT</source>
+        <translation>Entier</translation>
+    </message>
+    <message>
+        <source>DOUBLE</source>
+        <translation>Double</translation>
+    </message>
+    <message>
+        <source>STRING</source>
+        <translation>Chaîne</translation>
+    </message>
+    <message>
+        <source>SHAPE_TYPE</source>
+        <translation>Type d'objet</translation>
+    </message>
+    <message>
+        <source>VERTEX</source>
+        <translation>Sommet</translation>
+    </message>
+    <message>
+        <source>EDGE</source>
+        <translation>Arête</translation>
+    </message>
+    <message>
+        <source>FACE</source>
+        <translation>Face</translation>
+    </message>
+    <message>
+        <source>SOLID</source>
+        <translation>Solide</translation>
+    </message>
+    <message>
+        <source>WHOLE</source>
+        <translation>Forme</translation>
+    </message>
+    <message>
+        <source>NB_COMPS</source>
+        <translation>Nb. composantes</translation>
+    </message>
+    <message>
+        <source>VALUES</source>
+        <translation>Valeurs</translation>
+    </message>
+    <message>
+        <source>PREV_STEP</source>
+        <translation>Pas précédent</translation>
+    </message>
+    <message>
+        <source>STEP</source>
+        <translation>Pas</translation>
+    </message>
+    <message>
+        <source>NEXT_STEP</source>
+        <translation>Pas suivant</translation>
+    </message>
+    <message>
+        <source>ADD_STEP</source>
+        <translation>Ajouter pas</translation>
+    </message>
+    <message>
+        <source>STAMP</source>
+        <translation>Estampille</translation>
+    </message>
+    <message>
+        <source>REMOVE_STEP</source>
+        <translation>Supprimer pas</translation>
+    </message>
+    <message>
+        <source>FIELD_PREFIX</source>
+        <translation>Champ</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_STUDY</source>
+        <translation>Pas d'étude disponible</translation>
+    </message>
+    <message>
+        <source>NO_SHAPE</source>
+        <translation>Forme non sélectionnée</translation>
+    </message>
+    <message>
+        <source>NO_FIELD</source>
+        <translation>Champ non sélectionné</translation>
+    </message>
+    <message>
+        <source>EMPTY_NAME</source>
+        <translation>Spécifier un nom de champ</translation>
+    </message>
+    <message>
+        <source>NO_VALUES</source>
+        <translation>Aucun pas ajouter au champ</translation>
+    </message>
+    <message>
+        <source>SUB_SHAPE_HEADER</source>
+        <translation>Sous-objet</translation>
+    </message>
+    <message>
+        <source>WHOLE_SHAPE_VHEADER</source>
+        <translation>Forme</translation>
+    </message>
+    <message>
+        <source>RENAME_COMPONENT</source>
+        <translation>Changer le nom de la composante</translation>
+    </message>
+    <message>
+        <source>COMPONENT_NAME</source>
+        <translation>Nom:</translation>
+    </message>
+    <message>
+        <source>WRN_NOT_SUBSHAPE</source>
+        <translation>La forme sélectionnée n'est pas un élément de la forme principale.</translation>
+    </message>
+    <message>
+        <source>ERR_STEP_EXISTS</source>
+        <translation>Un pas avec cet identifiant existe déjà.</translation>
+    </message>
+</context>
+<context>
     <name>MeasureGUI_1Sel1TextView1Check_QTD</name>
     <message>
         <source>CHECK_SHAPE_GEOMETRY</source>
@@ -6239,6 +6413,10 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_EXPORTXAO_LFIELDS</source>
         <translation>Champs</translation>
+    </message>
+    <message>
+        <source>STEP</source>
+        <translation>Pas</translation>
     </message>
 </context>
 <context>
