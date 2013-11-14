@@ -1263,7 +1263,7 @@ bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
   {
     XAO::Field* xaoField = xaoObject->getField(i);
 
-    Handle(TColStd_HArray1OfExtendedString) components = new TColStd_HArray1OfExtendedString(0, xaoField->countComponents());
+    Handle(TColStd_HArray1OfExtendedString) components = new TColStd_HArray1OfExtendedString(0, xaoField->countComponents()-1);
     for (int j = 0; j < xaoField->countComponents(); ++j)
     {
         components->SetValue(j, (TCollection_ExtendedString)xaoField->getComponentName(j).c_str());
@@ -1285,11 +1285,11 @@ bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
                 XAO::BooleanStep* bstep = bfield->getStep(j);
                 Handle(GEOM_FieldStep) step = field->AddStep(bstep->getStep(), bstep->getStamp());
 
-                Handle(TColStd_HArray1OfInteger) values = new TColStd_HArray1OfInteger(0, bstep->countValues());
+                Handle(TColStd_HArray1OfInteger) values = new TColStd_HArray1OfInteger(0, bstep->countValues()-1);
                 std::vector<bool> bvalues = bstep->getValues();
                 for (int k = 0; k < bstep->countValues(); ++k)
                 {
-                    values->SetValue(0, bvalues[k] ? 1 : 0);
+                    values->SetValue(k, bvalues[k] ? 1 : 0);
                 }
                 step->SetValues(values);
             }
@@ -1303,11 +1303,11 @@ bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
                 XAO::IntegerStep* istep = ifield->getStep(j);
                 Handle(GEOM_FieldStep) step = field->AddStep(istep->getStep(), istep->getStamp());
 
-                Handle(TColStd_HArray1OfInteger) values = new TColStd_HArray1OfInteger(0, istep->countValues());
+                Handle(TColStd_HArray1OfInteger) values = new TColStd_HArray1OfInteger(0, istep->countValues()-1);
                 std::vector<int> ivalues = istep->getValues();
                 for (int k = 0; k < istep->countValues(); ++k)
                 {
-                    values->SetValue(0, ivalues[k]);
+                    values->SetValue(k, ivalues[k]);
                 }
                 step->SetValues(values);
             }
@@ -1321,11 +1321,11 @@ bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
                 XAO::DoubleStep* dstep = dfield->getStep(j);
                 Handle(GEOM_FieldStep) step = field->AddStep(dstep->getStep(), dstep->getStamp());
 
-                Handle(TColStd_HArray1OfReal) values = new TColStd_HArray1OfReal(0, dstep->countValues());
+                Handle(TColStd_HArray1OfReal) values = new TColStd_HArray1OfReal(0, dstep->countValues()-1);
                 std::vector<double> dvalues = dstep->getValues();
                 for (int k = 0; k < dstep->countValues(); ++k)
                 {
-                    values->SetValue(0, dvalues[k]);
+                    values->SetValue(k, dvalues[k]);
                 }
                 step->SetValues(values);
             }
@@ -1339,11 +1339,11 @@ bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
                 XAO::StringStep* sstep = sfield->getStep(j);
                 Handle(GEOM_FieldStep) step = field->AddStep(sstep->getStep(), sstep->getStamp());
 
-                Handle(TColStd_HArray1OfExtendedString) values = new TColStd_HArray1OfExtendedString(0, sstep->countValues());
+                Handle(TColStd_HArray1OfExtendedString) values = new TColStd_HArray1OfExtendedString(0, sstep->countValues()-1);
                 std::vector<std::string> svalues = sstep->getValues();
                 for (int k = 0; k < sstep->countValues(); ++k)
                 {
-                    values->SetValue(0, TCollection_ExtendedString(svalues[k].c_str()));
+                    values->SetValue(k, TCollection_ExtendedString(svalues[k].c_str()));
                 }
                 step->SetValues(values);
             }
@@ -1361,7 +1361,6 @@ bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
   // list of sub shapes
   pd << "[";
   int nbSubshapes = subShapes->Length();
-  std::cout << "Nb SubShapes = " << nbSubshapes << std::endl;
   if (nbSubshapes > 0)
   {
     for (int i = 1; i <= nbSubshapes; i++)
