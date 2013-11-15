@@ -136,24 +136,16 @@ void ImportExportGUI_ImportXAODlg::Init()
 //=================================================================================
 void ImportExportGUI_ImportXAODlg::ClickOnOk()
 {
+    setIsApplyAndClose(true);
     if (ClickOnApply())
         ClickOnCancel();
+    setIsApplyAndClose(false);
 }
 
 //=================================================================================
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-/*bool ImportExportGUI_ImportXAODlg::ClickOnApply()
-{
-    if (!onAccept())
-        return false;
-
-    initName();
-
-    return true;
-}*/
-
 bool ImportExportGUI_ImportXAODlg::ClickOnApply()
 {
   if(!isApplyAndClose()) {
@@ -275,7 +267,8 @@ bool ImportExportGUI_ImportXAODlg::execute()
 
     if (m_mainShape != NULL)
     {
-        addInStudy(m_mainShape, m_mainShape->GetName());
+        QStringList anEntryList;
+        anEntryList << addInStudy(m_mainShape, m_mainShape->GetName());
 
         for (int i = 0; i < subShapes->length(); i++)
         {
@@ -291,6 +284,10 @@ bool ImportExportGUI_ImportXAODlg::execute()
         }
 
         updateObjBrowser();
+        if( SUIT_Application* anApp = SUIT_Session::session()->activeApplication() ) {
+          LightApp_Application* aLightApp = dynamic_cast<LightApp_Application*>( anApp );
+          aLightApp->browseObjects( anEntryList );
+        }
     }
 
     return res;
