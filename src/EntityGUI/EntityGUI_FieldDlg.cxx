@@ -1181,7 +1181,7 @@ void EntityGUI_FieldDlg::SelectionIntoArgument()
 
           // re-fill myDimCombo
           //const int curDim = getDim();
-          updateDims( -1 );
+          updateDims( -100 );
 
           // update table
           onDimChange();
@@ -1607,14 +1607,14 @@ void EntityGUI_FieldDlg::updateDims(int curDim)
     {
       exp.Init( aShape, getShapeType(&dim));
       if ( exp.More() && !aShape.IsSame( exp.Current() ))
-      {
         myDimCombo->insertItem( dim, tr( subNames[dim] ), dim );
-        if ( dim == curDim )  // restore current dim
-          myDimCombo->setCurrentIndex( myDimCombo->count()-1 );
-      }
     }
     myDimCombo->insertItem( 4, tr("WHOLE"), -1 );
-    if ( getDim() != curDim )
+
+    int idx = myDimCombo->findData( curDim );
+    if ( idx != -1 )
+      myDimCombo->setCurrentIndex( idx );
+    else 
       myDimCombo->setCurrentIndex( myDimCombo->count()-1-(myDimCombo->count()>1?1:0) );
   }
   myDimCombo->blockSignals( false );
