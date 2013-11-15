@@ -6461,10 +6461,6 @@ Do you want to create new material?</translation>
         <source>GEOM_EXPORTXAO_LFIELDS</source>
         <translation>Fields</translation>
     </message>
-    <message>
-        <source>STEP</source>
-        <translation>Step</translation>
-    </message>
 </context>
 <context>
     <name>ImportExportGUI_ImportXAODlg</name>
@@ -6491,6 +6487,10 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_IMPORTXAO_LFIELDS</source>
         <translation>Fields</translation>
+    </message>
+    <message>
+        <source>STEP</source>
+        <translation>Step</translation>
     </message>
 </context>
 </TS>

@@ -6414,10 +6414,6 @@ Voulez-vous en créer un nouveau ?</translation>
         <source>GEOM_EXPORTXAO_LFIELDS</source>
         <translation>Champs</translation>
     </message>
-    <message>
-        <source>STEP</source>
-        <translation>Pas</translation>
-    </message>
 </context>
 <context>
     <name>ImportExportGUI_ImportXAODlg</name>
@@ -6444,6 +6440,10 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_IMPORTXAO_LFIELDS</source>
         <translation>Champs</translation>
+    </message>
+    <message>
+        <source>STEP</source>
+        <translation>Pas</translation>
     </message>
 </context>
 </TS>
