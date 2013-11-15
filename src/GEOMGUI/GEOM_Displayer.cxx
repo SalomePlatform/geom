@@ -1590,13 +1590,13 @@ void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
       }
     }
   }
-  UpdateColorScale();
+  UpdateColorScale(false,false);
 }
 
 void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   LightApp_Displayer::AfterErase( v, p );
-  UpdateColorScale();
+  UpdateColorScale(false,false);
 }
 
 //=================================================================
@@ -2415,7 +2415,7 @@ Standard_Boolean GEOM_Displayer::FindColor( const Standard_Real aValue,
   } 
 }
 
-void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps )
+void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, const bool updateViewer ) 
 {
   SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
   if( !aStudy )
@@ -2552,6 +2552,6 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps )
       }
     }
   }
-
-  UpdateViewer();
+  if(updateViewer)
+    UpdateViewer();
 }

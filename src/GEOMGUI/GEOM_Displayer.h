@@ -193,7 +193,7 @@ public:
                                                 SALOME_View* = 0);
 
   /* Update visibility and parameters of the currently selected field step's color scale */
-  void UpdateColorScale( const bool theIsRedisplayFieldSteps = false );
+  void UpdateColorScale( const bool theIsRedisplayFieldSteps = false, const bool updateViewer = true );
 
 protected:
   /* internal methods */

@@ -2546,7 +2546,7 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
       {
         GEOM_Displayer aDisplayer( aStudy );
         bool anIsRedisplayFieldSteps = param == QString("scalar_bar_nb_intervals");
-        aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps );
+        aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps, true );
       }
     }
   }

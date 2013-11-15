@@ -30,6 +30,7 @@
 #include <OCCViewer_ViewModel.h>
 
 #include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Study.h>
 #include <SALOME_InteractiveObject.hxx>
 
@@ -197,6 +198,9 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   if ( !vw )
     return;
 
+  SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
+  bool anAutoBringToFront = aResourceMgr->booleanValue( "Geometry", "auto_bring_to_front", false );
+
   Handle(AIS_InteractiveContext) ic = vw->getAISContext();
 
   // "entry - list_of_int" map for LOCAL selection
@@ -335,11 +339,16 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     else
       ic->AddOrRemoveSelected( Handle(AIS_InteractiveObject)::DownCast(owner->Selectable()), false );
   }
+
   ic->SetAutomaticHilight(isAutoHilight); //Bug 17269: restore mode
-  if (n < 3000)
-    ic->HilightSelected(/*updateviewer*/Standard_True);
-  else
-    vw->update();
+
+  //rnv: In case Automatic Bring To Front viewer will be updated later
+  if(!anAutoBringToFront) {
+    if (n < 3000)
+      ic->HilightSelected(Standard_True);
+    else
+      vw->update();
+  }
 
   // fill extra selected
   mySelectedExternals.clear();
