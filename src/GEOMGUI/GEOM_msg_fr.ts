@@ -6414,6 +6414,10 @@ Voulez-vous en créer un nouveau ?</translation>
         <source>GEOM_EXPORTXAO_LFIELDS</source>
         <translation>Champs</translation>
     </message>
+    <message>
+        <source>EXPORT_DLG_ACCEPT</source>
+        <translation>OK</translation>
+    </message>
 </context>
 <context>
     <name>ImportExportGUI_ImportXAODlg</name>

@@ -337,11 +337,16 @@ void ImportExportGUI_ExportXAODlg::SetEditCurrentArgument()
 //=================================================================================
 void ImportExportGUI_ExportXAODlg::btnFileSelectClicked()
 {
-    QString selFile = QFileDialog::getSaveFileName(this, tr("GEOM_SELECT_EXPORT_XAO"),
-            QString(), tr("XAO_FILES"));
-    if (!selFile.isEmpty())
+    QFileDialog dlg(this, tr("GEOM_SELECT_EXPORT_XAO") );
+    dlg.setLabelText( QFileDialog::Accept, tr("EXPORT_DLG_ACCEPT") );
+    dlg.setNameFilter( tr("XAO_FILES") );
+    if (dlg.exec())
     {
-        ledFileName->setText(selFile);
+        QStringList selFiles = dlg.selectedFiles();
+        if (selFiles.length() > 0 && !selFiles[0].isEmpty())
+        {
+            ledFileName->setText(selFiles[0]);
+        }
     }
 }
 
