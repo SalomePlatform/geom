@@ -1094,7 +1094,7 @@ bool GEOMImpl_IInsertOperations::ExportXAO(Handle(GEOM_Object) shape,
       pd << ", " << (*itGroup++);
     }
   }
-  
+
   // list of fields
   pd << "], [";
   if (fieldList.size() > 0)
@@ -1107,7 +1107,7 @@ bool GEOMImpl_IInsertOperations::ExportXAO(Handle(GEOM_Object) shape,
     }
   }
   pd << "], ";
-  pd << author << ", \"" << fileName << "\")";
+  pd << "\"" << author << "\", \"" << fileName << "\")";
   
   SetErrorCode(OK);
   delete xaoObject;
@@ -1384,6 +1384,14 @@ bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
   pd << "], [";
   
   // list of fields
+  if (nbFields > 0)
+  {
+    for (int i = 1; i <= nbFields; i++)
+    {
+      Handle(GEOM_Field) obj = Handle(GEOM_Field)::DownCast(fields->Value(i));
+      pd << obj << ((i < nbFields) ? ", " : "");
+    }
+  }
   pd << "]";
   pd << ") = geompy.ImportXAO(\"" << fileName << "\")";
   
