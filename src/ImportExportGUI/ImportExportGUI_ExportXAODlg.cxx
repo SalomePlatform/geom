@@ -135,9 +135,9 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg(GeometryGUI* geometry
 
     // Line 1
     lstGroups = new QListWidget(gbxFilter);
-    lstGroups->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    lstGroups->setSelectionMode(QAbstractItemView::NoSelection);
     lstFields = new QListWidget(gbxFilter);
-    lstFields->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    lstFields->setSelectionMode(QAbstractItemView::NoSelection);
 
     line++; col = 0;
     gridLayoutFilter->addWidget(lstGroups, line, col++, 1, 1);
@@ -215,8 +215,9 @@ void ImportExportGUI_ExportXAODlg::processObject()
             QListWidgetItem* item = new QListWidgetItem();
             item->setData(Qt::UserRole, QVariant(i));
             item->setText(GEOMBase::GetName(groups[i]));
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            item->setCheckState(Qt::Checked);
             lstGroups->addItem(item);
-            item->setSelected(true);
             m_groups.append(GEOM::GeomObjPtr(groups[i].in()));
         }
         lstGroups->sortItems(Qt::AscendingOrder);
@@ -230,8 +231,9 @@ void ImportExportGUI_ExportXAODlg::processObject()
             QListWidgetItem* item = new QListWidgetItem();
             item->setData(Qt::UserRole, QVariant(i));
             item->setText(fields[i]->GetName());
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            item->setCheckState(Qt::Checked);
             lstFields->addItem(item);
-            item->setSelected(true);
             m_fields.append(GEOM::GeomFieldPtr(fields[i].in()));
         }
         lstFields->sortItems(Qt::AscendingOrder);
@@ -274,7 +276,7 @@ bool ImportExportGUI_ExportXAODlg::ClickOnApply()
     try
     {
         if (openCommand())
-            if (!execute(/*isApplyAndClose()*/))
+            if (!execute())
             {
                 abortCommand();
                 showError();
@@ -407,7 +409,13 @@ bool ImportExportGUI_ExportXAODlg::execute()
     QString fileName = ledFileName->text();
 
     // get selected groups
-    QList<QListWidgetItem*> selGroups = lstGroups->selectedItems();
+    QList<QListWidgetItem*> selGroups;
+    for (int j = 0; j < lstGroups->count(); ++j)
+    {
+        if (lstGroups->item(j)->checkState() == Qt::Checked)
+            selGroups.append(lstGroups->item(j));
+    }
+
     GEOM::ListOfGO_var groups = new GEOM::ListOfGO();
     groups->length(selGroups.count());
     int i = 0;
@@ -419,9 +427,15 @@ bool ImportExportGUI_ExportXAODlg::execute()
     }
 
     // get selected fields
-    QList<QListWidgetItem*> selFields = lstFields->selectedItems();
+    QList<QListWidgetItem*> selFields;
+    for (int j = 0; j < lstFields->count(); ++j)
+    {
+        if (lstFields->item(j)->checkState() == Qt::Checked)
+            selFields.append(lstFields->item(j));
+    }
+
     GEOM::ListOfFields_var fields = new GEOM::ListOfFields();
-    fields->length(m_fields.count());
+    fields->length(selFields.count());
     i = 0;
     for (QList<QListWidgetItem*>::iterator it = selFields.begin(); it != selFields.end(); ++it)
     {
