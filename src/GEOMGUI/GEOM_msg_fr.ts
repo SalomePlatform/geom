@@ -3255,6 +3255,34 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Selon V</translation>
     </message>
     <message>
+        <source>PREF_GROUP_SCALAR_BAR</source>
+        <translation>Légende des champs</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_X_POSITION</source>
+        <translation>Position horizontale</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_Y_POSITION</source>
+        <translation>Position verticale</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_WIDTH</source>
+        <translation>Largeur</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_HEIGHT</source>
+        <translation>Hauteur</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_TEXT_HEIGHT</source>
+        <translation>Hauteur du texte</translation>
+    </message>
+    <message>
+        <source>PREF_SCALAR_BAR_NUMBER_OF_INTERVALS</source>
+        <translation>Nombre d&apos;intervales</translation>
+    </message>
+    <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
         <translation>FormeRetraitee</translation>
     </message>
