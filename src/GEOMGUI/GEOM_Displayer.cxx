@@ -1044,6 +1044,9 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
       // create presentation (specific for vectors)
       Handle(GEOM_AISShape) AISShape = ( myType == GEOM_VECTOR ) ? new GEOM_AISVector( myShape, "" )
                                                                  : new GEOM_AISShape ( myShape, "" );
+
+      if( myType == GEOM_FIELD_STEP )
+        AISShape->SetHilightMode( GEOM_AISShape::CustomHighlight );
       // update shape properties
       updateShapeProperties( AISShape, true );
 

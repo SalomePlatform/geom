@@ -153,7 +153,8 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
     myFieldStepRangeMin(0),
     myFieldStepRangeMax(0)
 {
-  SetHilightMode( CustomHighlight ); // override setting the mode to 0 inside AIS_Shape constructor
+  //rnv: Commented to avoid bug with local selection 
+  //SetHilightMode( CustomHighlight ); // override setting the mode to 0 inside AIS_Shape constructor
 
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
   myPrevDisplayMode = 0;
