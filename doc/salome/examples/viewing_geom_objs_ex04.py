@@ -1,5 +1,6 @@
 # Set Point Marker
 
+import os
 import salome
 salome.salome_init()
 import GEOM
