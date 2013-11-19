@@ -5,11 +5,11 @@
     <name>@default</name>
     <message>
         <source>MEN_POP_CONCEAL_CHILDREN</source>
-        <translation type="unfinished">Conceal child items</translation>
+        <translation>Retirer les sous-éléments</translation>
     </message>
     <message>
         <source>MEN_POP_DISCLOSE_CHILDREN</source>
-        <translation type="unfinished">Disclose child items</translation>
+        <translation>Publier les sous-éléments</translation>
     </message>
     <message>
         <source>BRep_API: command not done</source>
@@ -37,7 +37,7 @@
     </message>
     <message>
         <source>DEP_OBJECT</source>
-        <translation type="unfinished">L&apos;objet choisi a été utilisé pour créer un autre objet.
+        <translation>L&apos;objet choisi a été utilisé pour créer un autre objet.
 La suppression de cet objet peut entrainer un export python invalide. </translation>
     </message>
     <message>
@@ -683,7 +683,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_LOCATIONS</source>
-        <translation type="unfinished">Locations</translation>
+        <translation>Emplacements</translation>
     </message>
     <message>
         <source>GEOM_FACES</source>
@@ -1228,11 +1228,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WITH_CONTACT</source>
-        <translation type="unfinished">With contact</translation>
+        <translation>Avec contact</translation>
     </message>
     <message>
         <source>GEOM_WITH_CORRECTION</source>
-        <translation type="unfinished">With correction</translation>
+        <translation>Avec correction</translation>
     </message>
     <message>
         <source>GEOM_OPERATIONS</source>
@@ -3539,6 +3539,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Découpe de groupes</translation>
     </message>
     <message>
+        <source>STB_FIELD_CREATE</source>
+        <translation>Créer un champ</translation>
+    </message>
+    <message>
+        <source>STB_FIELD_EDIT</source>
+        <translation>Editer un champ</translation>
+    </message>
+    <message>
         <source>STB_RELOAD_IMPORTED</source>
         <translation>Recharger l&apos;objet importé depuis le disque</translation>
     </message>
@@ -4540,27 +4548,27 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_WEBS_TITLE</source>
-        <translation type="unfinished">Remove internal faces</translation>
+        <translation>Supprimer les faces internes</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_WEBS</source>
-        <translation type="unfinished">Compound of solids</translation>
+        <translation>Assemblage de solides</translation>
     </message>
     <message>
         <source>REMOVE_WEBS_NEW_OBJ_NAME</source>
-        <translation type="unfinished">NoInternalFaces</translation>
+        <translation>SansFacesInternes</translation>
     </message>
     <message>
         <source>TOP_REMOVE_WEBS</source>
-        <translation type="unfinished">Remove internal faces</translation>
+        <translation>Supprimer les faces internes</translation>
     </message>
     <message>
         <source>MEN_REMOVE_WEBS</source>
-        <translation type="unfinished">Remove Internal Faces</translation>
+        <translation>Supprimer les faces internes</translation>
     </message>
     <message>
         <source>STB_REMOVE_WEBS</source>
-        <translation type="unfinished">Remove internal faces</translation>
+        <translation>Supprimer les faces internes</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_EXTRA_EDGES_TITLE</source>
@@ -4616,15 +4624,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_UNION_FACES</source>
-        <translation type="unfinished">Union faces</translation>
+        <translation>Unir les faces</translation>
     </message>
     <message>
         <source>MEN_UNION_FACES</source>
-        <translation type="unfinished">Union Faces</translation>
+        <translation>Unir les Faces</translation>
     </message>
     <message>
         <source>STB_UNION_FACES</source>
-        <translation type="unfinished">Union faces</translation>
+        <translation>Unir les faces</translation>
     </message>
     <message>
         <source>TOP_NORMALE</source>
@@ -4676,23 +4684,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_CREATE_FOLDER</source>
-        <translation type="unfinished">Create folder</translation>
+        <translation>Créer dossier</translation>
     </message>
     <message>
         <source>STB_POP_CREATE_FOLDER</source>
-        <translation type="unfinished">Create a new folder</translation>
+        <translation>Créer un nouveau dossier</translation>
     </message>
     <message>
         <source>NEW_FOLDER_NAME</source>
-        <translation type="unfinished">NewFolder</translation>
+        <translation>NouveauDossier</translation>
     </message>
     <message>
         <source>MEN_POP_SORT_CHILD_ITEMS</source>
-        <translation type="unfinished">Sort children</translation>
+        <translation>Trier les descendants</translation>
     </message>
     <message>
         <source>STB_POP_SORT_CHILD_ITEMS</source>
-        <translation type="unfinished">Sort child items</translation>
+        <translation>Trier les descendants</translation>
     </message>
     <message>
         <source>GEOM_RESULT_NAME_GRP</source>
@@ -4945,15 +4953,15 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOP_SMOOTHINGSURFACE</source>
-        <translation type="unfinished">Surface lissee</translation>
+        <translation>Surface lissée</translation>
     </message>
     <message>
         <source>MEN_SMOOTHINGSURFACE</source>
-        <translation type="unfinished">Surface lissee</translation>
+        <translation>Surface lissée</translation>
     </message>
     <message>
         <source>STB_SMOOTHINGSURFACE</source>
-        <translation type="unfinished">Surface lissee</translation>
+        <translation>Surface lissée</translation>
     </message>
     <message>
         <source>GEOM_SELECT_IMAGE</source>
@@ -5345,103 +5353,103 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <name>CurveCreator_Widget</name>
     <message>
         <source>CURVE_NAME_TLT</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>SECTION_GROUP_TLT</source>
-        <translation type="unfinished">Sections</translation>
+        <translation>Sections</translation>
     </message>
     <message>
         <source>UNDO</source>
-        <translation type="unfinished">Undo</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>UNDO_TLT</source>
-        <translation type="unfinished">Undo</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>REDO</source>
-        <translation type="unfinished">Redo</translation>
+        <translation>Rétablir</translation>
     </message>
     <message>
         <source>REDO_TLT</source>
-        <translation type="unfinished">Redo</translation>
+        <translation>Rétablir</translation>
     </message>
     <message>
         <source>NEW_SECTION</source>
-        <translation type="unfinished">New section</translation>
+        <translation>Nouvelle section</translation>
     </message>
     <message>
         <source>NEW_SECTION_TLT</source>
-        <translation type="unfinished">Insert new section</translation>
+        <translation>Insérer une nouvelle section</translation>
     </message>
     <message>
         <source>INSERT_SECTION_BEFORE</source>
-        <translation type="unfinished">Insert section before</translation>
+        <translation>Insérer une section avant</translation>
     </message>
     <message>
         <source>INSERT_SECTION_BEFORE_TLT</source>
-        <translation type="unfinished">Insert section before</translation>
+        <translation>Insérer section avant</translation>
     </message>
     <message>
         <source>INSERT_SECTION_AFTER</source>
-        <translation type="unfinished">Insert section after</translation>
+        <translation>Insérer une section après</translation>
     </message>
     <message>
         <source>INSERT_SECTION_AFTER_TLT</source>
-        <translation type="unfinished">Insert section after</translation>
+        <translation>Insérer section après</translation>
     </message>
     <message>
         <source>ADDITION_MODE</source>
-        <translation type="unfinished">Addition mode</translation>
+        <translation>Mode Ajout</translation>
     </message>
     <message>
         <source>ADDITION_MODE_TLT</source>
-        <translation type="unfinished">Addition mode</translation>
+        <translation>Mode Ajout</translation>
     </message>
     <message>
         <source>MODIFICATION_MODE</source>
-        <translation type="unfinished">Modification mode</translation>
+        <translation>Mode Modification</translation>
     </message>
     <message>
         <source>MODIFICATION_MODE_TLT</source>
-        <translation type="unfinished">Modification mode</translation>
+        <translation>Mode Modification</translation>
     </message>
     <message>
         <source>DETECTION_MODE</source>
-        <translation type="unfinished">Detection mode</translation>
+        <translation>Mode Détection</translation>
     </message>
     <message>
         <source>DETECTION_MODE_TLT</source>
-        <translation type="unfinished">Detection mode</translation>
+        <translation>Mode Détection</translation>
     </message>
     <message>
         <source>INSERT_POINT_BEFORE</source>
-        <translation type="unfinished">Insert point before</translation>
+        <translation>Insérer point avant</translation>
     </message>
     <message>
         <source>INSERT_POINT_BEFORE_TLT</source>
-        <translation type="unfinished">Insert point before</translation>
+        <translation>Insérer un point avant</translation>
     </message>
     <message>
         <source>INSERT_POINT_AFTER</source>
-        <translation type="unfinished">Insert point after</translation>
+        <translation>Insérer point après</translation>
     </message>
     <message>
         <source>CLOSE_SECTIONS</source>
-        <translation type="unfinished">Set closed</translation>
+        <translation>Fermer sections</translation>
     </message>
     <message>
         <source>CLOSE_SECTIONS_TLT</source>
-        <translation type="unfinished">Set selected sections closed</translation>
+        <translation>Fermer les sections sélectionnées</translation>
     </message>
     <message>
         <source>UNCLOSE_SECTIONS</source>
-        <translation type="unfinished">Set open</translation>
+        <translation>Ouvrir sections</translation>
     </message>
     <message>
         <source>UNCLOSE_SECTIONS_TLT</source>
-        <translation type="unfinished">Set selected sections open</translation>
+        <translation>Ouvrir les sections sélectionnées</translation>
     </message>
     <message>
         <source>SET_SECTIONS_POLYLINE</source>
@@ -5461,51 +5469,51 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>REMOVE</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Suprimer</translation>
     </message>
     <message>
         <source>REMOVE_TLT</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <source>JOIN</source>
-        <translation type="unfinished">Join</translation>
+        <translation>Joindre</translation>
     </message>
     <message>
         <source>JOIN_TLT</source>
-        <translation type="unfinished">Join selected sections</translation>
+        <translation>Joindre les sections sélectionnées</translation>
     </message>
     <message>
         <source>STEP_UP</source>
-        <translation type="unfinished">Move up</translation>
+        <translation>Monter</translation>
     </message>
     <message>
         <source>STEP_UP_TLT</source>
-        <translation type="unfinished">Move selected objects up</translation>
+        <translation>Monter les objets sélectionnés</translation>
     </message>
     <message>
         <source>STEP_DOWN</source>
-        <translation type="unfinished">Move down</translation>
+        <translation>Descendre</translation>
     </message>
     <message>
         <source>STEP_DOWN_TLT</source>
-        <translation type="unfinished">Move selected objects down</translation>
+        <translation>Descendre les objets sélectionnés</translation>
     </message>
     <message>
         <source>CLEAR_ALL</source>
-        <translation type="unfinished">Clear all</translation>
+        <translation>Effacer tout</translation>
     </message>
     <message>
         <source>CLEAR_ALL_TLT</source>
-        <translation type="unfinished">Remove all objects</translation>
+        <translation>Supprimer tous les objets</translation>
     </message>
     <message>
         <source>JOIN_ALL</source>
-        <translation type="unfinished">Join all sections</translation>
+        <translation>Joindre sections</translation>
     </message>
     <message>
         <source>JOIN_ALL_TLT</source>
-        <translation type="unfinished">Join all sections</translation>
+        <translation>Joindre toutes les sections</translation>
     </message>
 </context>
 <context>
@@ -5589,15 +5597,15 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>KERNEL_SIZE</source>
-        <translation type="unfinished">Kernel size</translation>
+        <translation>Taille du noyau</translation>
     </message>
     <message>
         <source>QUALITY_LEVEL</source>
-        <translation type="unfinished">Quality level</translation>
+        <translation>Niveau de qualité</translation>
     </message>
     <message>
         <source>MIN_DISTANCE</source>
-        <translation type="unfinished">Min distance</translation>
+        <translation>Distance minimale</translation>
     </message>
     <message>
         <source>TYPE_CRITERIA</source>
@@ -5673,11 +5681,11 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>CV_CHAIN_APPROX_NONE</source>
-        <translation type="unfinished">None</translation>
+        <translation>Aucun</translation>
     </message>
     <message>
         <source>CV_CHAIN_APPROX_SIMPLE</source>
-        <translation type="unfinished">Simple</translation>
+        <translation>Simple</translation>
     </message>
     <message>
         <source>CV_CHAIN_APPROX_TC89_KCOS</source>
@@ -5851,7 +5859,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>WRN_NOT_SUBSHAPE</source>
-        <translation type="unfinished">The selected shape is not a sub-shape of the main shape. Hide all extra shapes in the viewer for more suitable selection.</translation>
+        <translation>La forme sélectionnée n'est pas un sous-élémént de la forme principale. Pour choisir plus facilement, cacher les formes en trop dans la vue.</translation>
     </message>
 </context>
 <context>
@@ -6378,38 +6386,38 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>RepairGUI_UnionFacesDlg</name>
     <message>
         <source>GEOM_UNION_FACES_TITLE</source>
-        <translation type="unfinished">Union faces</translation>
+        <translation>Unir les faces</translation>
     </message>
     <message>
         <source>GEOM_UNION_FACES</source>
-        <translation type="unfinished">Object to unite faces</translation>
+        <translation>Objet à traiter</translation>
     </message>
     <message>
         <source>UNION_FACES_NEW_OBJ_NAME</source>
-        <translation type="unfinished">UnionFaces</translation>
+        <translation>UnirFaces</translation>
     </message>
 </context>
 <context>
     <name>GEOMGUI_CreationInfoWdg</name>
     <message>
         <source>NO_INFO</source>
-        <translation type="unfinished">(No info available)</translation>
+        <translation>(aucune information disponible)</translation>
     </message>
     <message>
         <source>VALUE</source>
-        <translation type="unfinished">Value</translation>
+        <translation>Valeur</translation>
     </message>
     <message>
         <source>PARAMETER</source>
-        <translation type="unfinished">Parameter</translation>
+        <translation>Paramètre</translation>
     </message>
     <message>
         <source>OPERATION</source>
-        <translation type="unfinished">Creation operation</translation>
+        <translation>Création</translation>
     </message>
     <message>
         <source>CREATION_INFO_TITLE</source>
-        <translation type="unfinished">Information</translation>
+        <translation>Information</translation>
     </message>
 </context>
 <context>
