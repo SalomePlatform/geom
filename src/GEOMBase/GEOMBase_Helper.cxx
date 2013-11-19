@@ -838,22 +838,22 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
           if ( publish ) {
             QString aName = getObjectName(obj);
             if (aName.isEmpty()) {
-               aName = getNewObjectName(currObj);
-	       if ( nbObjs > 1 ) {
-		 if (aName.isEmpty())
-		   aName = getPrefix(obj);
-		 if (nbObjs <= 30) {
-		   // Try to find a unique name
-		   aName = GEOMBase::GetDefaultName(aName, extractPrefix());
-		 } else {
-		   // Don't check name uniqueness in case of numerous objects
-		   aName = aName + "_" + QString::number(aNumber++);
-		 }
-	       } else {
-		 // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
-		 if ( aName.isEmpty() )
-		   aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
-	       }
+              aName = getNewObjectName(currObj);
+	            if ( nbObjs > 1 ) {
+		            if (aName.isEmpty())
+		              aName = getPrefix(obj);
+		              if (nbObjs <= 30) {
+		                // Try to find a unique name
+		                aName = GEOMBase::GetDefaultName(aName, extractPrefix());
+		              } else {
+		                // Don't check name uniqueness in case of numerous objects
+		                aName = aName + "_" + QString::number(aNumber++);
+		              }
+	            } else {
+		            // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
+		            if ( aName.isEmpty() )
+		              aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
+	            }
             }
             anEntryList << addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
@@ -881,8 +881,13 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
           updateObjBrowser();
           if( SUIT_Application* anApp = SUIT_Session::session()->activeApplication() ) {
             LightApp_Application* aLightApp = dynamic_cast<LightApp_Application*>( anApp );
-            if(aLightApp && !isDisableBrowsing() )
-              aLightApp->browseObjects( anEntryList, isApplyAndClose(), isOptimizedBrowsing() );
+            if(aLightApp) {
+              QString anOpName( typeid(*this).name() );
+              aLightApp->emitOperationFinished( "Geometry", anOpName, anEntryList );
+
+              if ( !isDisableBrowsing() )
+                aLightApp->browseObjects( anEntryList, isApplyAndClose(), isOptimizedBrowsing() );
+            }
             anApp->putInfo( QObject::tr("GEOM_PRP_DONE") );
           }
           result = true;
