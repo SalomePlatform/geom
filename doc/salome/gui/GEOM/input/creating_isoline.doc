@@ -1,0 +1,24 @@
+/*!
+
+\page create_isoline_page Isoline
+
+To create an \b Isoline in the <b>Main Menu</b> select <b>New Entity - >
+Basic - > Isoline</b>
+
+\n The \b Result of this operation will be a GEOM_Object.
+It may be either an edge or a compound of several edges.
+
+\n You can define an Isoline by a \b Face, \b Type and \b Parameter.
+\n <b>TUI Command:</b> <em>geompy.MakeIsoline(theFace, IsUIsoline, theParameter)</em>
+\n <b>Arguments:</b> Name + Face + Type (True for U-Isoline; False for V-Isoline) + Parameter.
+
+\image html isoline1.png
+
+<b>Example:</b>
+
+\image html isoline2.png "Isoline on face"
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of 
+\ref tui_creation_curve "Basic Geometric Objects".
+
+*/

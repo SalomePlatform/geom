@@ -1220,6 +1220,14 @@
             <translation>3dsketch.png</translation>
         </message>
         <message>
+            <source>ICO_ISOLINE</source>
+            <translation>isoline.png</translation>
+        </message>
+        <message>
+            <source>ICO_ISOLINE_V</source>
+            <translation>isoline_v.png</translation>
+        </message>
+        <message>
             <source>ICO_SOLID</source>
             <translation>build_solid.png</translation>
         </message>

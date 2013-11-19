@@ -3192,6 +3192,20 @@ module GEOM
                     in long   theParamNbStep,
                     in curve_type theCurveType);
 
+     /*!
+     *  \brief Creates an isoline curve on a face.
+     *  \param theFace the face for which an isoline is created.
+     *  \param IsUIsoline True for U-isoline creation; False for V-isoline
+     *         creation.
+     *  \param theParameter the U parameter for U-isoline or V parameter
+     *         for V-isoline.
+     *  \return New GEOM_Object, containing the created isoline edge or a
+     *          compound of edges.
+     */
+    GEOM_Object MakeIsoline(in GEOM_Object theFace,
+                            in boolean     IsUIsoline,
+                            in double      theParameter);
+
     /*!
      *  \brief Create a sketcher (wire or face), following the textual description,
      *         passed through \a theCommand argument.

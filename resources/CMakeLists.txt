@@ -31,6 +31,8 @@ SET( _res_files
   ImportExport
   ShHealing
   3dsketch.png
+  isoline.png
+  isoline_v.png
   angle.png
   arc.png
   arccenter.png

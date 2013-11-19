@@ -188,6 +188,9 @@ def TestAll (geompy, math):
                                prism1_faces[5], prism1_faces[2]])
   Solid    = geompy.MakeSolid([Shell1])              #(List of GEOM_Object)->GEOM_Object
 
+  # Create Isoline
+  Isoline = geompy.MakeIsoline(Face1, True, 0.5)     #(1 GEOM_Object, Boolean, Double)->GEOM_Object
+
   ShapeListCompound = []
   i = 0
   while i <= 3 :
@@ -394,6 +397,8 @@ def TestAll (geompy, math):
   id_Disk2    = geompy.addToStudy(Disk2,    "Disk Three Points")
   id_Disk3    = geompy.addToStudy(Disk3,    "Disk OXY Radius")
   id_Shell    = geompy.addToStudy(Shell,    "Shell")
+
+  id_Isoline  = geompy.addToStudy(Isoline,  "Isoline")
 
   id_p_on_face = geompy.addToStudy(p_on_face, "Vertex on Face (0.1, 0.8)")
   id_p_on_face2 = geompy.addToStudy(p_on_face2, "Vertex on Face at(0., 0., 0.)")

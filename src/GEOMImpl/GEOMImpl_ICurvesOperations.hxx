@@ -94,6 +94,12 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
                                                            Handle(GEOM_Object) theWorkingPlane);
   Standard_EXPORT Handle(GEOM_Object) Make3DSketcherCommand (const char* theCommand);
   Standard_EXPORT Handle(GEOM_Object) Make3DSketcher (std::list<double> theCoordinates);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeIsoline
+                  (const Handle(GEOM_Object) &theFace,
+                   const bool                 IsUIso,
+                   const double               theParameter);
+
 };
 
 #endif

@@ -34,6 +34,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_BINARY_DIR}/idl
   ${PROJECT_BINARY_DIR}
   ${PROJECT_SOURCE_DIR}/src/OCC2VTK
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -55,6 +56,7 @@ SET(_link_LIBRARIES
   ${QT_QTCORE_LIBRARY}
   vtkRenderingMatplotlib
   vtkInteractionStyle
+  GEOMUtils
   #${VTK_LIBRARIES}
   )
 

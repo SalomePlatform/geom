@@ -47,11 +47,13 @@ SET(_link_LIBRARIES
 
 SET(GEOMUtils_HEADERS
   GEOMUtils.hxx
+  GEOMUtils_Hatcher.hxx
   )
 # --- sources ---
 
 SET(GEOMUtils_SOURCES
   GEOMUtils.cxx
+  GEOMUtils_Hatcher.cxx
   )
 
 # --- rules ---

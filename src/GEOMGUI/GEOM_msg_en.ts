@@ -2961,6 +2961,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>3D Sketch</translation>
     </message>
     <message>
+        <source>MEN_ISOLINE</source>
+        <translation>Isoline</translation>
+    </message>
+    <message>
         <source>MEN_SOLID</source>
         <translation>Solid</translation>
     </message>
@@ -3786,6 +3790,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create 3D sketch</translation>
     </message>
     <message>
+        <source>STB_ISOLINE</source>
+        <translation>Create U- or V-Isoline</translation>
+    </message>
+    <message>
         <source>STB_SOLID</source>
         <translation>Build a solid</translation>
     </message>
@@ -4400,6 +4408,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_3DSKETCH</source>
         <translation>3D sketch</translation>
+    </message>
+    <message>
+        <source>TOP_ISOLINE</source>
+        <translation>Isoline</translation>
     </message>
     <message>
         <source>TOP_SOLID</source>
@@ -6497,4 +6509,23 @@ Do you want to create new material?</translation>
         <translation>Step</translation>
     </message>
 </context>
+  <context>
+    <name>EntityGUI_IsolineDlg</name>
+    <message>
+      <source>GEOM_ISOLINE_TITLE</source>
+      <translation>Isoline Construction</translation>
+    </message>
+    <message>
+      <source>GEOM_ISOLINE</source>
+      <translation>Isoline</translation>
+    </message>
+    <message>
+      <source>GEOM_ISOLINE_U</source>
+      <translation>U-Isoline</translation>
+    </message>
+    <message>
+      <source>GEOM_ISOLINE_V</source>
+      <translation>V-Isoline</translation>
+    </message>
+  </context>
 </TS>

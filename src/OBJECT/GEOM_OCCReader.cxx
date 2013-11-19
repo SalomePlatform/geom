@@ -27,6 +27,8 @@
 
 #include "GEOM_OCCReader.h"
 
+#include <GEOMUtils_Hatcher.hxx>
+
 // VTK Includes
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
@@ -37,41 +39,20 @@
 #include <vtkInformationVector.h>
 
 // OpenCASCADE Includes
-#include <TopExp_Explorer.hxx>
+#include <Adaptor3d_HCurve.hxx>
 #include <Poly_Triangulation.hxx>
 #include <Poly_Polygon3D.hxx>
 #include <Poly_PolygonOnTriangulation.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
-#include <TopAbs.hxx>
 #include <Precision.hxx>
-#include <BRepTools.hxx>
 #include <BRep_Tool.hxx>
-#include <Geom2dAdaptor_Curve.hxx>
-#include <Geom2dHatch_Intersector.hxx>
-#include <Geom2dHatch_Hatcher.hxx>
-#include <Geom2d_Curve.hxx>
-#include <Geom2d_Line.hxx>
-#include <Geom2d_TrimmedCurve.hxx>
-#include <HatchGen_Domain.hxx>
-#include <TopAbs_ShapeEnum.hxx>
-#include <gp_Dir2d.hxx>
-#include <gp_Pnt2d.hxx>
 #include <TColStd_Array1OfInteger.hxx>
 #include <TColStd_Array1OfReal.hxx>
-#include <Adaptor3d_HCurve.hxx>
 
 #include "utilities.h"
 
-
-#define MAX2(X, Y)      (  Abs(X) > Abs(Y)? Abs(X) : Abs(Y) )
-#define MAX3(X, Y, Z)   ( MAX2 ( MAX2(X,Y) , Z) )
-
-// Constante for iso building
-static Standard_Real IntersectorConfusion = 1.e-10 ; // -8 ;
-static Standard_Real IntersectorTangency  = 1.e-10 ; // -8 ;
-static Standard_Real HatcherConfusion2d   = 1.e-8 ;
-static Standard_Real HatcherConfusion3d   = 1.e-8 ;
 
 static Standard_Integer lastVTKpoint = 0;
 static Standard_Integer PlotCount = 0;
@@ -219,7 +200,7 @@ void GEOM_OCCReader::TransferFaceWData(const TopoDS_Face& aFace,
 {
   TopoDS_Face aCopyFace = aFace; 
   aCopyFace.Orientation (TopAbs_FORWARD);
-  createISO(aCopyFace,Precision::Infinite(),1,Pts,Cells);
+  createISO(aCopyFace,1,Pts,Cells);
 }
 
 //=======================================================================
@@ -227,225 +208,100 @@ void GEOM_OCCReader::TransferFaceWData(const TopoDS_Face& aFace,
 // Purpose  : Create ISO for Face Wireframe representation 
 //=======================================================================
 
-void GEOM_OCCReader::createISO (const TopoDS_Face&     TopologicalFace,
-                                  const Standard_Real    Infinite,
-                                  const Standard_Integer NbIsos,
-                                  vtkPoints* Pts,
-                                  vtkCellArray* Cell)
+void GEOM_OCCReader::createISO (const TopoDS_Face      &TopologicalFace,
+                                const Standard_Integer  NbIsos,
+                                      vtkPoints        *Pts,
+                                      vtkCellArray     *Cell)
 {
-  Geom2dHatch_Hatcher aHatcher (Geom2dHatch_Intersector (IntersectorConfusion,
-                                                         IntersectorTangency),
-                                HatcherConfusion2d,
-                                HatcherConfusion3d,
-                                Standard_True,
-                                Standard_False);
-  
-  Standard_Real myInfinite,myUMin,myUMax,myVMin,myVMax;
-  //myInfinite = Precision::Infinite();
-  myInfinite = 1e38; // VTK uses float numbers - Precision::Infinite() is double and can not be accepted.
+  GEOMUtils_Hatcher aHatcher(TopologicalFace);
 
-  Standard_Integer myNbDom;
-  TColStd_Array1OfReal myUPrm(1, NbIsos),myVPrm(1, NbIsos);
-  TColStd_Array1OfInteger myUInd(1, NbIsos),myVInd(1, NbIsos);
+  aHatcher.Init(NbIsos);
+  aHatcher.Perform();
 
-  myUInd.Init(0);
-  myVInd.Init(0);
+  if (aHatcher.IsDone()) {
+    // Push iso lines in vtk kernel
+    Standard_Integer  pt_start_idx = 0;
 
-  //-----------------------------------------------------------------------
-  // If the Min Max bounds are infinite, there are bounded to Infinite
-  // value.
-  //-----------------------------------------------------------------------
-
-  BRepTools::UVBounds (TopologicalFace, myUMin, myUMax, myVMin, myVMax) ;
-  Standard_Boolean InfiniteUMin = Precision::IsNegativeInfinite (myUMin) ;
-  Standard_Boolean InfiniteUMax = Precision::IsPositiveInfinite (myUMax) ;
-  Standard_Boolean InfiniteVMin = Precision::IsNegativeInfinite (myVMin) ;
-  Standard_Boolean InfiniteVMax = Precision::IsPositiveInfinite (myVMax) ;
-  if (InfiniteUMin && InfiniteUMax) {
-    myUMin = - myInfinite ;
-    myUMax =   myInfinite ;
-  } else if (InfiniteUMin) {
-    myUMin = myUMax - myInfinite ;
-  } else if (InfiniteUMax) {
-    myUMax = myUMin + myInfinite ;
+    createIsos(aHatcher, Standard_True, pt_start_idx, Pts, Cell);
+    createIsos(aHatcher, Standard_False, pt_start_idx, Pts, Cell);
   }
-  if (InfiniteVMin && InfiniteVMax) {
-    myVMin = - myInfinite ;
-    myVMax =   myInfinite ;
-  } else if (InfiniteVMin) {
-    myVMin = myVMax - myInfinite ;
-  } else if (InfiniteVMax) {
-    myVMax = myVMin + myInfinite ;
-  }
+}
 
-  //-----------------------------------------------------------------------
-  // Retreiving the edges and loading them into the hatcher.
-  //-----------------------------------------------------------------------
-
-  TopExp_Explorer ExpEdges ;
-  for (ExpEdges.Init (TopologicalFace, TopAbs_EDGE) ; ExpEdges.More() ; ExpEdges.Next()) {
-    const TopoDS_Edge& TopologicalEdge = TopoDS::Edge (ExpEdges.Current()) ;
-    Standard_Real U1, U2 ;
-    const Handle(Geom2d_Curve) PCurve = BRep_Tool::CurveOnSurface (TopologicalEdge, TopologicalFace, U1, U2) ;
-
-    if ( PCurve.IsNull() ) {
-      return;
-    }
-
-    if ( U1==U2) {
-      return;
-    }
-
-    //-- Test if a TrimmedCurve is necessary
-    if(   Abs(PCurve->FirstParameter()-U1)<= Precision::PConfusion() 
-          && Abs(PCurve->LastParameter()-U2)<= Precision::PConfusion()) { 
-      aHatcher.AddElement (PCurve, TopologicalEdge.Orientation()) ;      
-    }
-    else { 
-      if (!PCurve->IsPeriodic()) {
-        Handle (Geom2d_TrimmedCurve) TrimPCurve =Handle(Geom2d_TrimmedCurve)::DownCast(PCurve);
-        if (!TrimPCurve.IsNull()) {
-          if (TrimPCurve->BasisCurve()->FirstParameter()-U1 > Precision::PConfusion() ||
-              U2-TrimPCurve->BasisCurve()->LastParameter()  > Precision::PConfusion()) {
-            aHatcher.AddElement (PCurve, TopologicalEdge.Orientation()) ;      
-            return;
-          }
-        }
-        else {
-          if (PCurve->FirstParameter()-U1 > Precision::PConfusion()){
-            U1=PCurve->FirstParameter();
-          }
-          if (U2-PCurve->LastParameter()  > Precision::PConfusion()){
-            U2=PCurve->LastParameter();
-          }
-        }
-      }
-      Handle (Geom2d_TrimmedCurve) TrimPCurve = new Geom2d_TrimmedCurve (PCurve, U1, U2) ;
-      aHatcher.AddElement (TrimPCurve, TopologicalEdge.Orientation()) ;
-    }
-  }
-
-
-  //-----------------------------------------------------------------------
-  // Loading and trimming the hatchings.
-  //-----------------------------------------------------------------------
-
-  Standard_Integer IIso ;
-  Standard_Real DeltaU = Abs (myUMax - myUMin) ;
-  Standard_Real DeltaV = Abs (myVMax - myVMin) ;
-  Standard_Real confusion = Min (DeltaU, DeltaV) * HatcherConfusion3d ;
-  aHatcher.Confusion3d (confusion) ;
-
-  Standard_Real StepU = DeltaU / (Standard_Real) NbIsos ;
-  if (StepU > confusion) {
-    Standard_Real UPrm = myUMin + StepU / 2. ;
-    gp_Dir2d Dir (0., 1.) ;
-    for (IIso = 1 ; IIso <= NbIsos ; IIso++) {
-      myUPrm(IIso) = UPrm ;
-      gp_Pnt2d Ori (UPrm, 0.) ;
-      Geom2dAdaptor_Curve HCur (new Geom2d_Line (Ori, Dir)) ;
-      myUInd(IIso) = aHatcher.AddHatching (HCur) ;
-      UPrm += StepU ;
-    }
-  }
-
-  Standard_Real StepV = DeltaV / (Standard_Real) NbIsos ;
-  if (StepV > confusion) {
-    Standard_Real VPrm = myVMin + StepV / 2. ;
-    gp_Dir2d Dir (1., 0.) ;
-    for (IIso = 1 ; IIso <= NbIsos ; IIso++) {
-      myVPrm(IIso) = VPrm ;
-      gp_Pnt2d Ori (0., VPrm) ;
-      Geom2dAdaptor_Curve HCur (new Geom2d_Line (Ori, Dir)) ;
-      myVInd(IIso) = aHatcher.AddHatching (HCur) ;
-      VPrm += StepV ;
-    }
-  }
-
-  //-----------------------------------------------------------------------
-  // Computation.
-  //-----------------------------------------------------------------------
-
-  aHatcher.Trim() ;
-
-  myNbDom = 0 ;
-  for (IIso = 1 ; IIso <= NbIsos ; IIso++) {
-    Standard_Integer Index ;
-
-    Index = myUInd(IIso) ;
-    if (Index != 0) {
-      if (aHatcher.TrimDone (Index) && !aHatcher.TrimFailed (Index)) {
-        aHatcher.ComputeDomains (Index);
-        if (aHatcher.IsDone (Index)) myNbDom = myNbDom + aHatcher.NbDomains (Index) ;
-      }
-    }
-
-    Index = myVInd(IIso) ;
-    if (Index != 0) {
-      if (aHatcher.TrimDone (Index) && !aHatcher.TrimFailed (Index)) {
-        aHatcher.ComputeDomains (Index);
-        if (aHatcher.IsDone (Index)) myNbDom = myNbDom + aHatcher.NbDomains (Index) ;
-      }
-    }
-  }
-
-  //-----------------------------------------------------------------------
+//=======================================================================
+// Function : createIsos
+// Purpose  : Create isolines obtained from hatcher.
+//=======================================================================
+void GEOM_OCCReader::createIsos(const GEOMUtils_Hatcher &theHatcher,
+                                const Standard_Boolean   IsUIso,
+                                      Standard_Integer  &pt_start_idx,
+                                      vtkPoints         *Pts,
+                                      vtkCellArray      *Cell)
+{
   // Push iso lines in vtk kernel
-  //-----------------------------------------------------------------------
+  Handle(TColStd_HArray1OfInteger) anIndices;
+  Handle(TColStd_HArray1OfReal)    aParams;
 
+  if (IsUIso) {
+    // U-isolines
+    anIndices = theHatcher.GetUIndices();
+    aParams   = theHatcher.GetUParams();
+  } else {
+    // V-isolines
+    anIndices = theHatcher.GetVIndices();
+    aParams   = theHatcher.GetVParams();
+  }
 
-  Standard_Integer pt_start_idx = 0;
+  if (anIndices.IsNull() || aParams.IsNull()) {
+    if (IsUIso) {
+      MESSAGE("GEOMUtils_Hatcher: null U-isoline indices")
+    } else {
+      MESSAGE("GEOMUtils_Hatcher: null V-isoline indices")
+    }
+  } else {
+    const GeomAbs_IsoType aType    = (IsUIso ? GeomAbs_IsoU : GeomAbs_IsoV);
+    Standard_Integer      anIsoInd = anIndices->Lower();
 
-  for (Standard_Integer UIso = myUPrm.Lower() ; UIso <= myUPrm.Upper() ; UIso++) {
-    Standard_Integer UInd = myUInd.Value (UIso) ;
-    if (UInd != 0) {
-      Standard_Real UPrm = myUPrm.Value (UIso) ;
-      if (!aHatcher.IsDone (UInd)) {
-        MESSAGE("DBRep_IsoBuilder:: U iso of parameter: "<<UPrm)
-        switch (aHatcher.Status (UInd)) {
-        case HatchGen_NoProblem          : MESSAGE("No Problem")          ; break ;
-        case HatchGen_TrimFailure        : MESSAGE("Trim Failure")        ; break ;
-        case HatchGen_TransitionFailure  : MESSAGE("Transition Failure")  ; break ;
-        case HatchGen_IncoherentParity   : MESSAGE("Incoherent Parity")   ; break ;
-        case HatchGen_IncompatibleStates : MESSAGE("Incompatible States") ; break ;
-        }
-      } else {
-        Standard_Integer NbDom = aHatcher.NbDomains (UInd) ;
-        for (Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++) {
-          const HatchGen_Domain& Dom = aHatcher.Domain (UInd, IDom) ;
-          Standard_Real V1 = Dom.HasFirstPoint()  ? Dom.FirstPoint().Parameter()  : myVMin - myInfinite ;
-          Standard_Real V2 = Dom.HasSecondPoint() ? Dom.SecondPoint().Parameter() : myVMax + myInfinite ;
-          DrawIso(GeomAbs_IsoU, UPrm, V1, V2, Pts, Cell,pt_start_idx);
+    for (; anIsoInd <= anIndices->Upper(); anIsoInd++) {
+      const Standard_Integer aHatchingIndex = anIndices->Value(anIsoInd);
+
+      if (aHatchingIndex != 0) {
+        const Standard_Real    aParam     = aParams->Value(anIsoInd);
+        const Standard_Integer aNbDomains =
+          theHatcher.GetNbDomains(aHatchingIndex);
+
+        if (aNbDomains < 0) {
+          if (IsUIso) {
+            MESSAGE("GEOMUtils_Hatcher: U iso of parameter: "<<aParam)
+          } else {
+            MESSAGE("GEOMUtils_Hatcher: V iso of parameter: "<<aParam)
+          }
+
+          switch (theHatcher.GetHatcher().Status (aHatchingIndex)) {
+          case HatchGen_NoProblem          :
+            MESSAGE("No Problem")          ; break ;
+          case HatchGen_TrimFailure        :
+            MESSAGE("Trim Failure")        ; break ;
+          case HatchGen_TransitionFailure  :
+            MESSAGE("Transition Failure")  ; break ;
+          case HatchGen_IncoherentParity   :
+            MESSAGE("Incoherent Parity")   ; break ;
+          case HatchGen_IncompatibleStates :
+            MESSAGE("Incompatible States") ; break ;
+          }
+        } else {
+          Standard_Integer anIDom = 1;
+          Standard_Real    aV1;
+          Standard_Real    aV2;
+
+          for (; anIDom <= aNbDomains; anIDom++) {
+            if (theHatcher.GetDomain(aHatchingIndex, anIDom, aV1, aV2)) {
+              DrawIso(aType, aParam, aV1, aV2, Pts, Cell,pt_start_idx);
+            }
+          }
         }
       }
     }
   }
-
-  for (Standard_Integer VIso = myVPrm.Lower() ; VIso <= myVPrm.Upper() ; VIso++) {
-    Standard_Integer VInd = myVInd.Value (VIso) ;
-    if (VInd != 0) {
-      Standard_Real VPrm = myVPrm.Value (VIso) ;
-      if (!aHatcher.IsDone (VInd)) {
-        MESSAGE("DBRep_IsoBuilder:: V iso of parameter: "<<VPrm)
-        switch (aHatcher.Status (VInd)) {
-        case HatchGen_NoProblem          : MESSAGE("No Problem")          ; break ;
-        case HatchGen_TrimFailure        : MESSAGE("Trim Failure")        ; break ;
-        case HatchGen_TransitionFailure  : MESSAGE("Transition Failure")  ; break ;
-        case HatchGen_IncoherentParity   : MESSAGE("Incoherent Parity")   ; break ;
-        case HatchGen_IncompatibleStates : MESSAGE("Incompatible States") ; break ;
-        }
-      } else {
-        Standard_Integer NbDom = aHatcher.NbDomains (VInd) ;
-        for (Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++) {
-          const HatchGen_Domain& Dom = aHatcher.Domain (VInd, IDom) ;
-          Standard_Real U1 = Dom.HasFirstPoint()  ? Dom.FirstPoint().Parameter()  : myVMin - myInfinite ;
-          Standard_Real U2 = Dom.HasSecondPoint() ? Dom.SecondPoint().Parameter() : myVMax + myInfinite ;
-          DrawIso(GeomAbs_IsoV, VPrm, U1, U2, Pts, Cell,pt_start_idx) ;
-        }
-      }
-    }
-  }
-
 }
 
 //=======================================================================

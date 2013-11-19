@@ -111,6 +111,8 @@
 
 #define GEOM_EXPORTXAO 54
 
+#define GEOM_ISOLINE   55
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -296,6 +298,7 @@
 #define EDGE_WIRE           11
 #define EDGE_CURVE_LENGTH   12
 #define SHAPES_ON_SHAPE     13
+#define SHAPE_ISOLINE       14
 
 
 #define ARCHIMEDE_TYPE 1

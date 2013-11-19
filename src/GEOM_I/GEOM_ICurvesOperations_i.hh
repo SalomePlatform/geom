@@ -100,6 +100,10 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
      double theParamMin, double theParamMax, CORBA::Long theParamNbStep,
      GEOM::curve_type theCurveType);
 
+  GEOM::GEOM_Object_ptr MakeIsoline (GEOM::GEOM_Object_ptr theFace,
+                                     CORBA::Boolean        IsUIsoline,
+                                     double                theParameter);
+
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane);
 
   GEOM::GEOM_Object_ptr MakeSketcherOnPlane (const char* theCommand, GEOM::GEOM_Object_ptr theWorkingPlane);

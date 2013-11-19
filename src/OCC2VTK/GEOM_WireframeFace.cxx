@@ -17,7 +17,9 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include "GEOM_WireframeFace.h" 
+#include "GEOM_WireframeFace.h"
+
+#include <GEOMUtils_Hatcher.hxx>
  
 #include <vtkObjectFactory.h> 
  
@@ -29,26 +31,9 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
  
-#include <Precision.hxx>
-#include <BRepTools.hxx>
-#include <TopExp_Explorer.hxx>
-#include <Geom2dHatch_Hatcher.hxx>
-#include <Geom2dHatch_Intersector.hxx>
-#include <TColStd_Array1OfReal.hxx>
-#include <TColStd_Array1OfInteger.hxx>
- 
-#include <TopoDS.hxx> 
-#include <TopoDS_Edge.hxx> 
-#include <BRep_Tool.hxx>
-#include <Geom2d_TrimmedCurve.hxx>
-#include <Geom2d_Line.hxx>
-#include <gp_Dir2d.hxx>
-#include <gp_Pnt2d.hxx>
- 
-#include <Geom2dHatch_Hatcher.hxx>
-#include <HatchGen_Domain.hxx>
-
 #include <Adaptor3d_HCurve.hxx>
+#include <BRep_Tool.hxx>
+#include <TColStd_Array1OfReal.hxx>
 
 vtkStandardNewMacro(GEOM_WireframeFace);
  
@@ -116,217 +101,80 @@ OCC2VTK(const TopoDS_Face& theFace,
   CreateIso(aFace,theNbIso,theDiscret,thePolyData,thePts);
 }
 
-void 
-GEOM_WireframeFace:: 
+void
+GEOM_WireframeFace::
 CreateIso(const TopoDS_Face& theFace,
-          const int theNbIso[2], 
-          const int theDiscret, 
+          const int theNbIso[2],
+          const int theDiscret,
           vtkPolyData* thePolyData,
           vtkPoints* thePts)
 {
-  // Constants for iso building
-  static Standard_Real INTERSECTOR_CONFUSION = 1.e-10 ; // -8 ;
-  static Standard_Real INTERSECTOR_TANGENCY  = 1.e-10 ; // -8 ;
+  GEOMUtils_Hatcher aHatcher(theFace);
 
-  static Standard_Real HATHCER_CONFUSION_2D = 1.e-8 ;
-  static Standard_Real HATHCER_CONFUSION_3D = 1.e-8 ;
+  aHatcher.Init(theNbIso[0], theNbIso[1]);
+  aHatcher.Perform();
 
-  Geom2dHatch_Hatcher 
-    aHatcher(Geom2dHatch_Intersector(INTERSECTOR_CONFUSION,
-                                     INTERSECTOR_TANGENCY),
-                         HATHCER_CONFUSION_2D,
-                         HATHCER_CONFUSION_3D,
-                                     Standard_True,
-                                     Standard_False);
-  
-  Standard_Real anUMin, anUMax, aVMin, aVMax;
-  TColStd_Array1OfReal anUPrm(0, theNbIso[0]), aVPrm(0, theNbIso[1]);
-  TColStd_Array1OfInteger anUInd(0, theNbIso[0]), aVInd(0, theNbIso[1]);
+  if (aHatcher.IsDone()) {
+    // Push iso lines in vtk kernel
+    CreateIso(aHatcher, Standard_True, theDiscret, thePolyData, thePts);
+    CreateIso(aHatcher, Standard_False, theDiscret, thePolyData, thePts);
+  }
+}
 
-  anUInd.Init(0);
-  aVInd.Init(0);
 
-  //-----------------------------------------------------------------------
-  // If the Min Max bounds are infinite, there are bounded to Infinite
-  // value.
-  //-----------------------------------------------------------------------
-  BRepTools::UVBounds(theFace, anUMin, anUMax, aVMin, aVMax) ;
-  Standard_Boolean InfiniteUMin = Precision::IsNegativeInfinite (anUMin) ;
-  Standard_Boolean InfiniteUMax = Precision::IsPositiveInfinite (anUMax) ;
-  Standard_Boolean InfiniteVMin = Precision::IsNegativeInfinite (aVMin) ;
-  Standard_Boolean InfiniteVMax = Precision::IsPositiveInfinite (aVMax) ;
 
-  static float VTKINFINITE = 1.0E38;
-  if(InfiniteUMin && InfiniteUMax){
-    anUMin = - VTKINFINITE ;
-    anUMax =   VTKINFINITE ;
-  }else if(InfiniteUMin){
-    anUMin = anUMax - VTKINFINITE ;
-  }else if(InfiniteUMax){
-    anUMax = anUMin + VTKINFINITE ;
+void
+GEOM_WireframeFace::
+CreateIso(const GEOMUtils_Hatcher &theHatcher,
+          const Standard_Boolean   IsUIso,
+          const int                theDiscret,
+          vtkPolyData       *thePolyData,
+          vtkPoints         *thePts)
+{
+  Handle(TColStd_HArray1OfInteger) anIndices;
+  Handle(TColStd_HArray1OfReal)    aParams;
+
+  if (IsUIso) {
+    // U-isolines
+    anIndices = theHatcher.GetUIndices();
+    aParams   = theHatcher.GetUParams();
+  } else {
+    // V-isolines
+    anIndices = theHatcher.GetVIndices();
+    aParams   = theHatcher.GetVParams();
   }
 
-  if(InfiniteVMin && InfiniteVMax){
-    aVMin = - VTKINFINITE ;
-    aVMax =   VTKINFINITE ;
-  }else if(InfiniteVMin){
-    aVMin = aVMax - VTKINFINITE ;
-  }else if(InfiniteVMax){
-    aVMax = aVMin + VTKINFINITE ;
-  }
+  if (anIndices.IsNull() == Standard_False &&
+      aParams.IsNull()   == Standard_False) {
+    const GeomAbs_IsoType aType    = (IsUIso ? GeomAbs_IsoU : GeomAbs_IsoV);
+    Standard_Integer      anIsoInd = anIndices->Lower();
 
-  //-----------------------------------------------------------------------
-  // Retreiving the edges and loading them into the hatcher.
-  //-----------------------------------------------------------------------
-  TopExp_Explorer ExpEdges(theFace, TopAbs_EDGE);
-  for(; ExpEdges.More(); ExpEdges.Next()){
-    const TopoDS_Edge& anEdge = TopoDS::Edge(ExpEdges.Current());
-    Standard_Real U1, U2 ;
-    const Handle(Geom2d_Curve) PCurve = 
-      BRep_Tool::CurveOnSurface(anEdge, theFace, U1, U2) ;
+    for (; anIsoInd <= anIndices->Upper(); anIsoInd++) {
+      const Standard_Integer aHatchingIndex = anIndices->Value(anIsoInd);
 
-    if(PCurve.IsNull() || U1 == U2)
-      return;
+      if (aHatchingIndex != 0) {
+        const Standard_Real    aParam     = aParams->Value(anIsoInd);
+        const Standard_Integer aNbDomains =
+          theHatcher.GetNbDomains(aHatchingIndex);
 
-    //-- Test if a TrimmedCurve is necessary
-    if(Abs(PCurve->FirstParameter()-U1) <= Precision::PConfusion() &&
-             Abs(PCurve->LastParameter()-U2) <= Precision::PConfusion())
-    { 
-      aHatcher.AddElement(PCurve, anEdge.Orientation()) ;      
-    }else{ 
-      if(!PCurve->IsPeriodic()){
-              Handle(Geom2d_TrimmedCurve) TrimPCurve =
-          Handle(Geom2d_TrimmedCurve)::DownCast(PCurve);
-              if(!TrimPCurve.IsNull()){
-          Handle_Geom2d_Curve aBasisCurve = TrimPCurve->BasisCurve();
-                if(aBasisCurve->FirstParameter()-U1 > Precision::PConfusion() ||
-                   U2-aBasisCurve->LastParameter() > Precision::PConfusion()) 
-          {
-                  aHatcher.AddElement(PCurve, anEdge.Orientation()) ;      
-                  return;
-                }
-              }else{
-                if(PCurve->FirstParameter()-U1 > Precision::PConfusion()){
-                  U1=PCurve->FirstParameter();
-                }
-                if(U2-PCurve->LastParameter()  > Precision::PConfusion()){
-                  U2=PCurve->LastParameter();
-                }
-              }
-      }
-      Handle(Geom2d_TrimmedCurve) TrimPCurve = 
-        new Geom2d_TrimmedCurve(PCurve, U1, U2);
-      aHatcher.AddElement(TrimPCurve, anEdge.Orientation());
-    }
-  }
+        if (aNbDomains >= 0) {
+          Standard_Integer anIDom = 1;
+          Standard_Real    aV1;
+          Standard_Real    aV2;
 
-
-  //-----------------------------------------------------------------------
-  // Loading and trimming the hatchings.
-  //-----------------------------------------------------------------------
-  Standard_Integer IIso;
-  Standard_Real DeltaU = Abs(anUMax - anUMin) ;
-  Standard_Real DeltaV = Abs(aVMax - aVMin) ;
-  Standard_Real confusion = Min(DeltaU, DeltaV) * HATHCER_CONFUSION_3D ;
-  aHatcher.Confusion3d (confusion) ;
-
-  if ( theNbIso[0] ) {
-    Standard_Real StepU = DeltaU / (Standard_Real)theNbIso[0];
-    if(StepU > confusion){
-      Standard_Real UPrm = anUMin + StepU / 2.;
-      gp_Dir2d Dir(0., 1.) ;
-      for(IIso = 1 ; IIso <= theNbIso[0] ; IIso++) {
-        anUPrm(IIso) = UPrm ;
-        gp_Pnt2d Ori (UPrm, 0.) ;
-        Geom2dAdaptor_Curve HCur (new Geom2d_Line (Ori, Dir)) ;
-        anUInd(IIso) = aHatcher.AddHatching (HCur) ;
-        UPrm += StepU ;
-      }
-    }
-  }
-
-  if ( theNbIso[1] ) {
-    Standard_Real StepV = DeltaV / (Standard_Real) theNbIso[1] ;
-    if(StepV > confusion){
-      Standard_Real VPrm = aVMin + StepV / 2.;
-      gp_Dir2d Dir(1., 0.);
-      for(IIso = 1 ; IIso <= theNbIso[1] ; IIso++){
-        aVPrm(IIso) = VPrm;
-        gp_Pnt2d Ori (0., VPrm);
-        Geom2dAdaptor_Curve HCur(new Geom2d_Line (Ori, Dir));
-        aVInd(IIso) = aHatcher.AddHatching (HCur) ;
-        VPrm += StepV ;
-      }
-    }
-  }
-
-  //-----------------------------------------------------------------------
-  // Computation.
-  //-----------------------------------------------------------------------
-  aHatcher.Trim() ;
-
-  Standard_Integer aNbDom = 0 ; // for debug purpose
-  Standard_Integer Index ;
-
-  for(IIso = 1 ; IIso <= theNbIso[0] ; IIso++){
-    Index = anUInd(IIso) ;
-    if(Index != 0){
-      if(aHatcher.TrimDone(Index) && !aHatcher.TrimFailed(Index)){
-              aHatcher.ComputeDomains(Index);
-              if(aHatcher.IsDone (Index)) 
-          aNbDom = aHatcher.NbDomains (Index);
-      }
-    }
-  }
-
-  for(IIso = 1 ; IIso <= theNbIso[1] ; IIso++){
-    Index = aVInd(IIso);
-    if(Index != 0){
-      if(aHatcher.TrimDone (Index) && !aHatcher.TrimFailed(Index)){
-              aHatcher.ComputeDomains (Index);
-              if(aHatcher.IsDone (Index)) 
-          aNbDom = aHatcher.NbDomains (Index);
-      }
-    }
-  }
-
-  //-----------------------------------------------------------------------
-  // Push iso lines in vtk kernel
-  //-----------------------------------------------------------------------
-  for(Standard_Integer UIso = anUPrm.Lower() ; UIso <= anUPrm.Upper(); UIso++){
-    Standard_Integer UInd = anUInd.Value(UIso);
-    if(UInd != 0){
-      Standard_Real UPrm = anUPrm.Value(UIso);
-      if(aHatcher.IsDone(UInd)){
-              Standard_Integer NbDom = aHatcher.NbDomains(UInd);
-              for(Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++){
-                const HatchGen_Domain& Dom = aHatcher.Domain(UInd, IDom) ;
-                Standard_Real V1 = Dom.HasFirstPoint()? Dom.FirstPoint().Parameter(): aVMin - VTKINFINITE;
-                Standard_Real V2 = Dom.HasSecondPoint()? Dom.SecondPoint().Parameter(): aVMax + VTKINFINITE;
-                CreateIso_(theFace, GeomAbs_IsoU, UPrm, V1, V2, theDiscret, thePolyData, thePts);
-        }
+          for (; anIDom <= aNbDomains; anIDom++) {
+            if (theHatcher.GetDomain(aHatchingIndex, anIDom, aV1, aV2)) {
+              CreateIso_(theHatcher.GetFace(), aType, aParam, aV1, aV2,
+                         theDiscret, thePolyData, thePts);
             }
-    }
-  }
-
-  for(Standard_Integer VIso = aVPrm.Lower() ; VIso <= aVPrm.Upper(); VIso++){
-    Standard_Integer VInd = aVInd.Value(VIso);
-    if(VInd != 0){
-      Standard_Real VPrm = aVPrm.Value(VIso);
-      if(aHatcher.IsDone (VInd)){
-              Standard_Integer NbDom = aHatcher.NbDomains(VInd);
-              for (Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++){
-                const HatchGen_Domain& Dom = aHatcher.Domain(VInd, IDom);
-                Standard_Real U1 = Dom.HasFirstPoint()? Dom.FirstPoint().Parameter(): aVMin - VTKINFINITE;
-                Standard_Real U2 = Dom.HasSecondPoint()? Dom.SecondPoint().Parameter(): aVMax + VTKINFINITE;
-            CreateIso_(theFace, GeomAbs_IsoV, VPrm, U1, U2, theDiscret, thePolyData, thePts);
-              }
+          }
+        }
       }
     }
   }
 }
 
- 
+
 
 void 
 GEOM_WireframeFace:: 

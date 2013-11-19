@@ -46,6 +46,7 @@
 #include "GEOMImpl_SplineDriver.hxx"
 #include "GEOMImpl_EllipseDriver.hxx"
 #include "GEOMImpl_ArcDriver.hxx"
+#include "GEOMImpl_ShapeDriver.hxx"
 #include "GEOMImpl_SketcherDriver.hxx"
 #include "GEOMImpl_3DSketcherDriver.hxx"
 
@@ -57,6 +58,7 @@
 #include "GEOMImpl_ISketcher.hxx"
 #include "GEOMImpl_I3DSketcher.hxx"
 #include "GEOMImpl_ICurveParametric.hxx"
+#include "GEOMImpl_IIsoline.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -1428,4 +1430,72 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (std::list<double
 
   SetErrorCode(OK);
   return a3DSketcher;
+}
+
+//=============================================================================
+/*!
+ *  MakeIsoline
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeIsoline
+                  (const Handle(GEOM_Object) &theFace,
+                   const bool                 IsUIso,
+                   const double               theParameter)
+{
+  SetErrorCode(KO);
+
+  if (theFace.IsNull()) {
+    return NULL;
+  }
+
+  //Add a new Spline object
+  Handle(GEOM_Object) anIsoline =
+    GetEngine()->AddObject(GetDocID(), GEOM_ISOLINE);
+
+  //Add a new Spline function for interpolation type
+  Handle(GEOM_Function) aFunction =
+    anIsoline->AddFunction(GEOMImpl_ShapeDriver::GetID(), SHAPE_ISOLINE);
+
+  if (aFunction.IsNull()) {
+    return NULL;
+  }
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) {
+    return NULL;
+  }
+
+  GEOMImpl_IIsoline     aCI (aFunction);
+  Handle(GEOM_Function) aRefFace = theFace->GetLastFunction();
+
+  if (aRefFace.IsNull()) {
+    return NULL;
+  }
+
+  aCI.SetFace(aRefFace);
+  aCI.SetIsUIso(IsUIso);
+  aCI.SetParameter(theParameter);
+
+  //Compute the isoline curve
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump (aFunction) << anIsoline << " = geompy.MakeIsoline( "
+    << theFace << ", " << IsUIso << ", " << theParameter << " )";
+
+  SetErrorCode(OK);
+  return anIsoline;
 }

@@ -63,6 +63,7 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 
 class TColStd_SequenceOfExtendedString;
+class TopoDS_Face;
 
 
 #include "GEOM_BaseDriver.hxx"
@@ -98,6 +99,11 @@ public:
   //
 DEFINE_STANDARD_RTTI( GEOMImpl_ShapeDriver )
 
+private:
+
+  TopoDS_Shape MakeIsoline(const TopoDS_Face &theFace,
+                           const bool         IsUIso,
+                           const double       theParameter) const;
 
 };
 

@@ -25,6 +25,7 @@ INCLUDE_DIRECTORIES(
   ${KERNEL_INCLUDE_DIRS}
   ${VTK_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   )
 
 # additional preprocessor / compiler flags
@@ -38,7 +39,8 @@ SET(_link_LIBRARIES
   ${CAS_KERNEL} 
   ${CAS_TKMesh} ${CAS_TKTopAlgo}
   ${CAS_MODELER}
-  ${KERNEL_SALOMELocalTrace}   
+  ${KERNEL_SALOMELocalTrace}
+  GEOMUtils
   )
 
 # --- headers ---

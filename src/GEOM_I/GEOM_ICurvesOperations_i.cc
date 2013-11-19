@@ -552,6 +552,32 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametricNew
 
 //=============================================================================
 /*!
+ *  MakeIsoline
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeIsoline
+                                         (GEOM::GEOM_Object_ptr theFace,
+                                          CORBA::Boolean        IsUIsoline,
+                                          double                theParameter)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  Handle(GEOM_Object) aFace = GetObjectImpl(theFace);
+
+  // Make isoline
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeIsoline(aFace, IsUIsoline, theParameter);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeSketcher
  */
 //=============================================================================

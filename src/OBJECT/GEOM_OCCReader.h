@@ -39,10 +39,12 @@
 
 class vtkPoints;
 class vtkCellArray;
+class GEOMUtils_Hatcher;
 
 // OpenCASCADE
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopoDS.hxx>
+#include <TopoDS_Vertex.hxx>
 #include <GeomAbs_IsoType.hxx>
 #include <BRepAdaptor_Surface.hxx>
 
@@ -94,10 +96,16 @@ class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkAlgorithm {
                            vtkCellArray* Cells);
 
   void createISO(const TopoDS_Face &, 
-                 double, int,
+                 int,
                  vtkPoints* Pts,
                  vtkCellArray* Cells);
-  
+
+  void createIsos(const GEOMUtils_Hatcher &theHatcher,
+                  const Standard_Boolean   IsUIso,
+                        Standard_Integer  &pt_start_idx,
+                        vtkPoints         *Pts,
+                        vtkCellArray      *Cell);
+
   void DrawIso(GeomAbs_IsoType aType,
                Standard_Real PParm,
                Standard_Real p1,

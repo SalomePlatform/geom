@@ -545,6 +545,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
     break;
   case GEOMOp::Op2dSketcher:         // MENU ENTITY - SKETCHER
   case GEOMOp::Op3dSketcher:         // MENU ENTITY - 3D SKETCHER
+  case GEOMOp::OpIsoline:            // MENU BASIC  - ISOLINE
   case GEOMOp::OpExplode:            // MENU ENTITY - EXPLODE
 #ifdef WITH_OPENCV
   case GEOMOp::OpFeatureDetect:      // MENU ENTITY - FEATURE DETECTION
@@ -890,6 +891,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpEllipse,    "ELLIPSE" );
   createGeomAction( GEOMOp::OpArc,        "ARC" );
   createGeomAction( GEOMOp::OpCurve,      "CURVE" );
+  createGeomAction( GEOMOp::OpIsoline,    "ISOLINE" );
   createGeomAction( GEOMOp::OpVector,     "VECTOR" );
   createGeomAction( GEOMOp::OpPlane,      "PLANE" );
   createGeomAction( GEOMOp::OpLCS,        "LOCAL_CS" );
@@ -925,6 +927,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::Op2dSketcher,  "SKETCH" );
   createGeomAction( GEOMOp::Op3dSketcher,  "3DSKETCH" );
+  createGeomAction( GEOMOp::OpIsoline,     "ISOLINE" );
   createGeomAction( GEOMOp::OpExplode,     "EXPLODE" );
 #ifdef WITH_OPENCV
   createGeomAction( GEOMOp::OpFeatureDetect,"FEATURE_DETECTION" );
@@ -1106,6 +1109,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpCurve,   basicId, -1 );
   createMenu( GEOMOp::Op2dSketcher, basicId, -1 );
   createMenu( GEOMOp::Op3dSketcher, basicId, -1 );
+  createMenu( GEOMOp::OpIsoline, basicId, -1 );
   createMenu( separator(),       basicId, -1 );
   createMenu( GEOMOp::OpVector,  basicId, -1 );
   createMenu( GEOMOp::OpPlane,   basicId, -1 );
@@ -1318,6 +1322,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpVector,     basicTbId );
   createTool( GEOMOp::Op2dSketcher, basicTbId ); //rnc
   createTool( GEOMOp::Op3dSketcher, basicTbId ); //rnc
+  createTool( GEOMOp::OpIsoline,    basicTbId );
   createTool( GEOMOp::OpPlane,      basicTbId );
   createTool( GEOMOp::OpLCS,        basicTbId );
   createTool( GEOMOp::OpOriginAndVectors, basicTbId );

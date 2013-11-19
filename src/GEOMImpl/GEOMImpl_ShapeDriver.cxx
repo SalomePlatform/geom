@@ -22,12 +22,14 @@
 
 #include <GEOMImpl_ShapeDriver.hxx>
 
+#include <GEOMImpl_IIsoline.hxx>
 #include <GEOMImpl_IShapes.hxx>
 #include <GEOMImpl_IVector.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
 
 #include <GEOM_Function.hxx>
+#include <GEOMUtils_Hatcher.hxx>
 
 // OCCT Includes
 #include <ShapeFix_Wire.hxx>
@@ -50,6 +52,7 @@
 #include <BRepLib_MakeEdge.hxx>
 #include <BRepTools_WireExplorer.hxx>
 
+#include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
 
 #include <TopAbs.hxx>
@@ -72,6 +75,7 @@
 #include <GCPnts_AbscissaPoint.hxx>
 
 #include <Geom_TrimmedCurve.hxx>
+#include <Geom_Surface.hxx>
 #include <GeomAbs_CurveType.hxx>
 #include <GeomConvert_CompCurveToBSplineCurve.hxx>
 #include <GeomConvert.hxx>
@@ -531,6 +535,32 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     BRepBuilderAPI_MakeEdge aME (ReOrientedCurve, UFirst, aParam);
     if (aME.IsDone())
       aShape = aME.Shape();
+  } else if (aType == SHAPE_ISOLINE) {
+    GEOMImpl_IIsoline     aII (aFunction);
+    Handle(GEOM_Function) aRefFace = aII.GetFace();
+    TopoDS_Shape          aShapeFace = aRefFace->GetValue();
+
+    if (aShapeFace.ShapeType() == TopAbs_FACE) {
+      TopoDS_Face   aFace  = TopoDS::Face(aShapeFace);
+      bool          isUIso = aII.GetIsUIso();
+      Standard_Real aParam = aII.GetParameter();
+      Standard_Real U1,U2,V1,V2;
+
+      // Construct a real geometric parameter.
+      aFace.Orientation(TopAbs_FORWARD);
+      ShapeAnalysis::GetFaceUVBounds(aFace,U1,U2,V1,V2);
+
+      if (isUIso) {
+        aParam = U1 + (U2 - U1)*aParam;
+      } else {
+        aParam = V1 + (V2 - V1)*aParam;
+      }
+
+      aShape = MakeIsoline(aFace, isUIso, aParam);
+    } else {
+      Standard_NullObject::Raise
+        ("Shape for isoline construction is not a face");
+    }
   }
   else {
   }
@@ -974,6 +1004,101 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
     return ResEdge;
 }
 
+//=============================================================================
+/*!
+ * \brief Returns an isoline for a face.
+ */
+//=============================================================================
+
+TopoDS_Shape GEOMImpl_ShapeDriver::MakeIsoline
+                            (const TopoDS_Face &theFace,
+                             const bool         IsUIso,
+                             const double       theParameter) const
+{
+  TopoDS_Shape          aResult;
+  GEOMUtils_Hatcher     aHatcher(theFace);
+  const GeomAbs_IsoType aType = (IsUIso ? GeomAbs_IsoU : GeomAbs_IsoV);
+
+  aHatcher.Init(aType, theParameter);
+  aHatcher.Perform();
+
+  if (!aHatcher.IsDone()) {
+    Standard_ConstructionError::Raise("MakeIsoline : Hatcher failure");
+  }
+
+  const Handle(TColStd_HArray1OfInteger) &anIndices =
+    (IsUIso ? aHatcher.GetUIndices() : aHatcher.GetVIndices());
+
+  if (anIndices.IsNull()) {
+    Standard_ConstructionError::Raise("MakeIsoline : Null hatching indices");
+  }
+
+  const Standard_Integer anIsoInd = anIndices->Lower();
+  const Standard_Integer aHatchingIndex = anIndices->Value(anIsoInd);
+
+  if (aHatchingIndex == 0) {
+    Standard_ConstructionError::Raise("MakeIsoline : Invalid hatching index");
+  }
+
+  const Standard_Integer aNbDomains =
+    aHatcher.GetNbDomains(aHatchingIndex);
+
+  if (aNbDomains < 0) {
+    Standard_ConstructionError::Raise("MakeIsoline : Invalid number of domains");
+  }
+
+  // The hatching is performed successfully. Create the 3d Curve.
+  Handle(Geom_Surface) aSurface   = BRep_Tool::Surface(theFace);
+  Handle(Geom_Curve)   anIsoCurve = (IsUIso ?
+    aSurface->UIso(theParameter) : aSurface->VIso(theParameter));
+  Handle(Geom2d_Curve) aPIsoCurve =
+    aHatcher.GetHatching(aHatchingIndex);
+  const Standard_Real  aTol = Precision::Confusion();
+  Standard_Integer     anIDom = 1;
+  Standard_Real        aV1;
+  Standard_Real        aV2;
+  BRep_Builder         aBuilder;
+  Standard_Integer     aNbEdges = 0;
+
+  for (; anIDom <= aNbDomains; anIDom++) {
+    if (aHatcher.GetDomain(aHatchingIndex, anIDom, aV1, aV2)) {
+      // Check first and last parameters.
+      if (!aHatcher.IsDomainInfinite(aHatchingIndex, anIDom)) {
+        // Create an edge.
+        TopoDS_Edge anEdge = BRepBuilderAPI_MakeEdge(anIsoCurve, aV1, aV2);
+
+        // Update it with a parametric curve on face.
+        aBuilder.UpdateEdge(anEdge, aPIsoCurve, theFace, aTol);
+        aNbEdges++;
+
+        if (aNbEdges > 1) {
+          // Result is a compond.
+          if (aNbEdges == 2) {
+            // Create a new compound.
+            TopoDS_Compound aCompound;
+
+            aBuilder.MakeCompound(aCompound);
+            aBuilder.Add(aCompound, aResult);
+            aResult = aCompound;
+          }
+
+          // Add an edge to the compound.
+          aBuilder.Add(aResult, anEdge);
+        } else {
+          // Result is the edge.
+          aResult = anEdge;
+        }
+      }
+    }
+  }
+
+  if (aNbEdges == 0) {
+    Standard_ConstructionError::Raise("MakeIsoline : Empty result");
+  }
+
+  return aResult;
+}
+
 //================================================================================
 /*!
  * \brief Returns a name of creation operation and names and values of creation parameters
@@ -1044,6 +1169,16 @@ GetCreationInformation(std::string&             theOperationName,
       AddParam( theParams, "Shape", shapes->Value(2) );
     AddParam( theParams, "Shape type", TopAbs_ShapeEnum( aCI.GetSubShapeType() ));
     AddParam( theParams, "State", TopAbs_State((int) aCI.GetTolerance() ));
+    break;
+  }
+  case SHAPE_ISOLINE:
+  {
+    GEOMImpl_IIsoline aII (function);
+
+    theOperationName = "ISOLINE";
+    AddParam(theParams, "Face", aII.GetFace());
+    AddParam(theParams, "Isoline type", (aII.GetIsUIso() ? "U" : "V"));
+    AddParam(theParams, "Parameter", aII.GetParameter());
     break;
   }
   default:

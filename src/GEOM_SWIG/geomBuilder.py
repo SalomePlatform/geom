@@ -2300,6 +2300,47 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "curve")
             return anObj
 
+        ## Create an isoline curve on a face.
+        #  @param theFace the face for which an isoline is created.
+        #  @param IsUIsoline True for U-isoline creation; False for V-isoline
+        #         creation.
+        #  @param theParameter the U parameter for U-isoline or V parameter
+        #         for V-isoline.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created isoline edge or
+        #          a compound of edges.
+        #
+        #  @ref tui_creation_curve "Example"
+        def MakeIsoline(self, theFace, IsUIsoline, theParameter, theName=None):
+            """
+            Create an isoline curve on a face.
+
+            Parameters:
+                theFace the face for which an isoline is created.
+                IsUIsoline True for U-isoline creation; False for V-isoline
+                           creation.
+                theParameter the U parameter for U-isoline or V parameter
+                             for V-isoline.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created isoline edge or a
+                compound of edges.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.CurvesOp.MakeIsoline(theFace, IsUIsoline, theParameter)
+            RaiseIfFailed("MakeIsoline", self.CurvesOp)
+            if IsUIsoline:
+                self._autoPublish(anObj, theName, "U-Isoline")
+            else:
+                self._autoPublish(anObj, theName, "V-Isoline")
+            return anObj
+
         # end of l4_curves
         ## @}
 

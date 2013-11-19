@@ -120,6 +120,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_IPipeShellSect.hxx
   GEOMImpl_IPipeBiNormal.hxx
   GEOMImpl_ICurveParametric.hxx
+  GEOMImpl_IIsoline.hxx
   GEOMImpl_VectorDriver.hxx
   GEOMImpl_LineDriver.hxx
   GEOMImpl_DiskDriver.hxx
