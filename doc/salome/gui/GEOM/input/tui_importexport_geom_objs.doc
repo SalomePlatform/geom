@@ -2,8 +2,11 @@
 <br><h2>Creation of ExportXAO</h2>
 
 \code
-import geompy
 import salome
+import GEOM
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
 gg = salome.ImportComponentGUI("GEOM")
 
 # create ExportXAO object
