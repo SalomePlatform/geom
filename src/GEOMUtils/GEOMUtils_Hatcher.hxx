@@ -134,7 +134,7 @@ public:
    *
    * \return the reference to OCCT hatcher.
    */
-  const Geom2dHatch_Hatcher &GetHatcher() const
+  Standard_EXPORT const Geom2dHatch_Hatcher &GetHatcher() const
   { return myHatcher; }
 
   /**
@@ -143,7 +143,7 @@ public:
    *
    * \return the array of U-isoline hatching indices.
    */
-  const Handle(TColStd_HArray1OfInteger) &GetUIndices() const
+  Standard_EXPORT const Handle(TColStd_HArray1OfInteger) &GetUIndices() const
   { return myUInd; }
 
   /**
@@ -152,7 +152,7 @@ public:
    *
    * \return the array of V-isoline hatching indices.
    */
-  const Handle(TColStd_HArray1OfInteger) &GetVIndices() const
+  Standard_EXPORT const Handle(TColStd_HArray1OfInteger) &GetVIndices() const
   { return myVInd; }
 
   /**
@@ -161,7 +161,7 @@ public:
    *
    * \return the array of U-isoline hatching parameters.
    */
-  const Handle(TColStd_HArray1OfReal) &GetUParams() const
+  Standard_EXPORT const Handle(TColStd_HArray1OfReal) &GetUParams() const
   { return myUPrm; }
 
   /**
@@ -170,7 +170,7 @@ public:
    *
    * \return the array of V-isoline hatching parameters.
    */
-  const Handle(TColStd_HArray1OfReal) &GetVParams() const
+  Standard_EXPORT const Handle(TColStd_HArray1OfReal) &GetVParams() const
   { return myVPrm; }
 
   /**
@@ -179,7 +179,7 @@ public:
    *
    * \param theHatchingIndex the hatching curve index.
    */
-  const Handle(Geom2d_Curve) &GetHatching
+  Standard_EXPORT const Handle(Geom2d_Curve) &GetHatching
                       (const Standard_Integer theHatchingIndex) const;
 
 protected:
