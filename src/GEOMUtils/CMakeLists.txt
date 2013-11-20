@@ -34,7 +34,7 @@ ADD_DEFINITIONS(
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_TKBRep} ${CAS_TKShHealing} ${CAS_TKMesh}
+  ${CAS_TKBRep} ${CAS_TKShHealing} ${CAS_TKMesh} ${CAS_TKGeomAlgo}
   ${CAS_TKTopAlgo}
   ${CAS_TKG2d}
   ${CAS_TKG3d}
