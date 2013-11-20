@@ -413,8 +413,10 @@ bool GEOMGUI_Selection::isVectorsMode( const int index ) const
 
 bool GEOMGUI_Selection::hasChildren( const _PTR(SObject)& obj )
 {
-  // as soon as Use Case browser data tree was added
-  return obj->GetStudy()->GetUseCaseBuilder()->HasChildren( obj );
+  if ( obj ) {
+    // as soon as Use Case browser data tree was added
+    return obj->GetStudy()->GetUseCaseBuilder()->HasChildren( obj );
+  }
 }
 
 bool GEOMGUI_Selection::expandable( const _PTR(SObject)& obj )
@@ -443,7 +445,7 @@ bool GEOMGUI_Selection::isFolder( const _PTR(SObject)& obj )
 {
   bool ret = false;
   _PTR(GenericAttribute) anAttr;
-  if ( obj->FindAttribute(anAttr, "AttributeLocalID") ) {
+  if ( obj && obj->FindAttribute(anAttr, "AttributeLocalID") ) {
     _PTR(AttributeLocalID) aLocalID( anAttr );
     ret = aLocalID->Value() == 999;
   }
@@ -476,7 +478,7 @@ int GEOMGUI_Selection::nbChildren( const int index ) const
     _PTR(Study) study = appStudy->studyDS();
     if ( study && !anEntry.isEmpty() ) {
       _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
-      if ( aSO->GetStudy()->GetUseCaseBuilder()->IsUseCaseNode(aSO) ) {
+      if ( aSO && aSO->GetStudy()->GetUseCaseBuilder()->IsUseCaseNode(aSO) ) {
         _PTR(UseCaseIterator) it = aSO->GetStudy()->GetUseCaseBuilder()->GetUseCaseIterator( aSO ); 
         for (it->Init(false); it->More(); it->Next()) nb++;
       }
