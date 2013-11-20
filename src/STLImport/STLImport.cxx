@@ -25,8 +25,14 @@
 
 
 #include "utilities.h"
+#include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
+#include <Precision.hxx>
 #include <StlAPI_Reader.hxx>
 #include <TCollection_AsciiString.hxx>
+#include <TopAbs_ShapeEnum.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TDF_Label.hxx>
 
@@ -65,6 +71,35 @@ STLIMPORT_EXPORT
 
     if (aShape.IsNull()) {
       theError = "STL Import failed";
+    } else {
+      // Fix the orientation of closed shell or solid.
+      if (BRep_Tool::IsClosed(aShape)) {
+        TopAbs_ShapeEnum aType = aShape.ShapeType();
+
+        if (aType == TopAbs_SHELL || aType == TopAbs_SOLID) {
+          TopoDS_Solid aSolid;
+
+          if (aType == TopAbs_SHELL) {
+            // Create a solid.
+            BRep_Builder aBuilder;
+
+            aBuilder.MakeSolid(aSolid);
+            aBuilder.Add(aSolid, aShape);
+          } else {
+            aSolid = TopoDS::Solid(aShape);
+          }
+
+          // Classify infinite point against solid.
+          BRepClass3d_SolidClassifier aClassifier(aSolid);
+
+          aClassifier.PerformInfinitePoint(Precision::Confusion());
+
+          if (aClassifier.State() == TopAbs_IN) {
+            // The shape is inverted. Reverse it.
+            aShape.Reverse();
+          }
+        }
+      }
     }
 
     return aShape;
