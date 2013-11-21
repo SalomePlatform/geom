@@ -57,6 +57,8 @@
 #include "SALOMEconfig.h"
 #include CORBA_CLIENT_HEADER(SALOMEDS)
 
+#include <SALOME_ListIO.hxx>
+
 class QDialog;
 class QMenu;
 class QAction;
@@ -231,6 +233,8 @@ private:
   int                         myLocalSelectionMode; //Select Only
 
   GEOMGUI_CreationInfoWdg*    myCreationInfoWdg;
+  
+  SALOME_ListIO               myTopLevelIOList;               
 
   friend class DisplayGUI;
 };

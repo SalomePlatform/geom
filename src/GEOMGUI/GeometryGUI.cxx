@@ -75,7 +75,7 @@
 #include <LightApp_Preferences.h>
 
 #include <SALOME_LifeCycleCORBA.hxx>
-#include <SALOME_ListIO.hxx>
+// #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SALOMEDSClient_ClientFactory.hxx>
@@ -200,7 +200,8 @@ void GeometryGUI::Modified (bool theIsUpdateActions)
 // purpose  : Constructor
 //=======================================================================
 GeometryGUI::GeometryGUI() :
-  SalomeApp_Module( "GEOM" )
+  SalomeApp_Module( "GEOM" ),
+  myTopLevelIOList()
 {
   if ( CORBA::is_nil( myComponentGeom ) )
   {
@@ -2084,7 +2085,7 @@ void GeometryGUI::onAutoBringToFront()
   bool isAutoBringToFront = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front" );
   if( !isAutoBringToFront )
     return;
-
+  
   SUIT_ViewWindow* SUIT_window = application()->desktop()->activeWindow();
   if ( !SUIT_window || SUIT_window->getViewManager()->getType() != OCCViewer_Viewer::Type() )
         return;
@@ -2093,36 +2094,42 @@ void GeometryGUI::onAutoBringToFront()
   if (!appStudy) return;
 
   GEOM_Displayer displayer( appStudy );
-
+  
   SALOME_View* window = displayer.GetActiveView();
   if ( !window ) return;
-
+  
   int aMgrId = dynamic_cast< SUIT_ViewModel* >( window )->getViewManager()->getGlobalId();
-
+  
   SALOME_ListIO selected;
   getApp()->selectionMgr()->selectedObjects( selected );
-  SALOME_ListIO allObjects;
-  window->GetVisible( allObjects );
-
-  for ( SALOME_ListIteratorOfListIO It( allObjects ); It.More(); It.Next() ) {
-    Handle( SALOME_InteractiveObject ) io = It.Value();
-    bool isSelected = false;
-    for( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      Handle( SALOME_InteractiveObject ) ioSelected = It.Value();
-      if( io->isSame( ioSelected ) )
-        isSelected = true;
-    }
-    QVariant v = appStudy->getObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), QVariant() );
-    bool isTopLevel =  v.isValid() ? v.toBool() : false;
-    if( isSelected && !isTopLevel ) {
-      appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), true );
-      if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
-    }
-    else if( !isSelected ) {
-      appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), false );
-      if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
+  if (!myTopLevelIOList.IsEmpty())
+  {
+    for( SALOME_ListIteratorOfListIO It( myTopLevelIOList ); It.More(); It.Next() )
+    {
+      Handle( SALOME_InteractiveObject ) io = It.Value();
+      bool isSelected = false;
+      for( SALOME_ListIteratorOfListIO It_sel( selected ); It_sel.More(); It_sel.Next() )
+      {
+        Handle( SALOME_InteractiveObject ) sel_io = It_sel.Value();
+        if( io->isSame( sel_io ) )
+          isSelected = true;
+      }
+      if (!isSelected && appStudy->findObjectByEntry(io->getEntry()))
+      {
+        appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), false );
+        if ( window->isVisible( io ) ) displayer.Redisplay( io, false );     
+      }
     }
   }
+  
+  myTopLevelIOList.Assign(selected);
+  for( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
+  {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::TopLevel ), true );
+    if ( window->isVisible( io ) ) displayer.Redisplay( io, false );     
+  }
+    
   displayer.UpdateViewer();
   GeometryGUI::Modified();
 }
