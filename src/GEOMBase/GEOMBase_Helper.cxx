@@ -341,6 +341,9 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( object );
   if ( aPrs == 0 || aPrs->IsNull() )
     return;
+    
+  // Make preview not clippable
+  aPrs->SetClippable (false);
 
   // Display prs
   displayPreview( aPrs, append, update );
