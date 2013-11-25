@@ -388,7 +388,10 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
 
       aDimensionStyle->ArrowAspect()->SetLength( aDist / 20.0 );
       aDimensionStyle->LineAspect()->SetWidth( w );
-      aDimensionStyle->SetHorizontalTextAlignment( Prs3d_HTA_Center );
+      aDimensionStyle->SetTextHorizontalPosition( Prs3d_DTHP_Center );
+      aDimensionStyle->SetTextVerticalPosition( Prs3d_DTVP_Center );
+      aDimensionStyle->MakeText3d( Standard_False );
+      aDimensionStyle->MakeArrows3d( Standard_True );
 
       anIO->SetFlyout( 0.0 );
       anIO->SetDimensionAspect( aDimensionStyle );
