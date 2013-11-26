@@ -138,12 +138,52 @@
 ##   to a lot of duplicated items in the study.
 ## - Sub-shapes are automatically published as child items of the parent main shape in the study if main
 ##   shape was also published before. Otherwise, sub-shapes are published as top-level objects.
-## - Not that some functions of \ref geomBuilder.geomBuilder "geomBuilder" class do not have
+## - Some functions of \ref geomBuilder.geomBuilder "geomBuilder" class do not have
 ##   \a theName parameter (and, thus, do not support automatic publication).
 ##   For example, some transformation operations like
 ##   \ref geomBuilder.geomBuilder.TranslateDXDYDZ() "TranslateDXDYDZ()".
 ##   Refer to the documentation to check if some function has such possibility.
 ##
+## It is possible to customize the representation of the geometrical
+## data in the data tree; this can be done by using folders. A folder can
+## be created in the study tree using function 
+## \ref geomBuilder.geomBuilder.NewFolder() "NewFolder()" 
+## (by default it is created under the "Geometry" root object). 
+## As soon as folder is created, any published geometry object 
+## can be moved into it.
+##  
+## For example:
+## 
+## @code
+## import salome
+## from salome.geom import geomBuilder
+## geompy = geomBuilder.New(salome.myStudy)
+## box = geompy.MakeBoxDXDYDZ(100, 100, 100, "Box") 
+## # the box was created and published in the study
+## folder = geompy.NewFolder("Primitives")
+## # an empty "Primitives" folder was created under default "Geometry" root object
+## geompy.PutToFolder(box, folder)
+## # the box was moved into "Primitives" folder
+## @endcode
+## 
+## Subfolders are also can be created by specifying another folder as a parent:
+## 
+## @code
+## subfolder = geompy.NewFolder("3D", folder)
+## # "3D" folder was created under "Primitives" folder
+## @endcode
+## 
+## @note
+## - Folder container is just a representation layer object that
+## deals with already published objects only. So, any geometry object 
+## should be published in the study (for example, with 
+## \ref geomBuilder.geomBuilder.PutToFolder() "addToStudy()" function)
+## BEFORE moving it into any existing folder.
+## - \ref geomBuilder.geomBuilder.PutToFolder() "PutToFolder()" function
+## does not change physical position of geometry object in the study tree,
+## it only affects on the representation of the data tree.
+## - It is impossible to publish geometry object using any folder as father.
+## 
 ## @}
 
 
@@ -12590,6 +12630,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param Father parent object. If None, 
         #         folder under 'Geometry' root object will be created.
         #  @return a new created folder
+        #  @ingroup l1_publish_data
         def NewFolder(self, Name, Father=None):
             """
             Create a new folder object. It is an auxiliary container for any GEOM objects.
@@ -12608,6 +12649,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Move object to the specified folder
         #  @param Object object to move
         #  @param Folder target folder
+        #  @ingroup l1_publish_data
         def PutToFolder(self, Object, Folder):
             """
             Move object to the specified folder
@@ -12622,6 +12664,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Move list of objects to the specified folder
         #  @param ListOfSO list of objects to move
         #  @param Folder target folder
+        #  @ingroup l1_publish_data
         def PutListToFolder(self, ListOfSO, Folder):
             """
             Move list of objects to the specified folder
