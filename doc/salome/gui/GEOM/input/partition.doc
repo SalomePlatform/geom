@@ -104,7 +104,7 @@ previous versions of SALOME.
 
 <b>TUI Command:</b>
 
-<em>geompy.MakeHalfPartition(Shape, Plane)</em>, where:
+<em>geompy.MakeHalfPartition(Shape, Plane, checkSelfInte)</em>, where:
 - \em Shape is a source shape to be intersected by the \em Plane
 - \em Plane is a tool shape, to intersect the \em Shape.
 - \em checkSelfInte is a flag that tells if the arguments should
