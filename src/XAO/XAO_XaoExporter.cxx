@@ -636,7 +636,7 @@ const bool XaoExporter::readFromFile(const std::string& fileName, Xao* xaoObject
 throw (XAO_Exception)
 {
     // parse the file and get the DOM
-    int options = XML_PARSE_HUGE || XML_PARSE_NOCDATA;
+    int options = XML_PARSE_HUGE | XML_PARSE_NOCDATA;
     xmlDocPtr doc = xmlReadFile(fileName.c_str(), NULL, options);
     if (doc == NULL)
     {
@@ -650,7 +650,7 @@ throw (XAO_Exception)
 const bool XaoExporter::setXML(const std::string& xml, Xao* xaoObject)
 throw (XAO_Exception)
 {
-    int options = XML_PARSE_HUGE || XML_PARSE_NOCDATA;
+    int options = XML_PARSE_HUGE | XML_PARSE_NOCDATA;
     xmlDocPtr doc = xmlReadDoc(BAD_CAST xml.c_str(), "", NULL, options);
     if (doc == NULL)
     {
