@@ -28,6 +28,7 @@
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_2Sel1List2Check;
+class QCheckBox;
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg
@@ -64,6 +65,7 @@ private:
   GEOM::ListOfGO                     myListKeepInside;
 
   DlgRef_2Sel1List2Check*            GroupPoints;
+  QCheckBox                         *mySelfInte;
 
 private slots:
   void                               ClickOnOk();

@@ -200,7 +200,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
                                        CORBA::Short            theLimit,
                                        CORBA::Boolean          theRemoveWebs,
                                        const GEOM::ListOfLong& theMaterials,
-                                       CORBA::Short theKeepNonlimitShapes)
+                                       CORBA::Short theKeepNonlimitShapes,
+                                       CORBA::Boolean          IsCheckSelfInte)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -233,7 +234,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
     GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
                                    theLimit, theRemoveWebs, aMaterials,
                                    theKeepNonlimitShapes,
-                                   /*PerformSelfIntersections*/Standard_True);
+                                   /*PerformSelfIntersections*/Standard_True,
+                                   IsCheckSelfInte);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -253,7 +255,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
                                        CORBA::Short            theLimit,
                                        CORBA::Boolean          theRemoveWebs,
                                        const GEOM::ListOfLong& theMaterials,
-                                       CORBA::Short theKeepNonlimitShapes)
+                                       CORBA::Short theKeepNonlimitShapes,
+                                       CORBA::Boolean          IsCheckSelfInte)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -286,7 +289,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
     GetOperations()->MakePartition(aShapes, aTools, aKeepIns, aRemIns,
                                    theLimit, theRemoveWebs, aMaterials,
                                    theKeepNonlimitShapes,
-                                   /*PerformSelfIntersections*/Standard_False);
+                                   /*PerformSelfIntersections*/Standard_False,
+                                   IsCheckSelfInte);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -300,7 +304,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
                                                  (GEOM::GEOM_Object_ptr theShape,
-                                                  GEOM::GEOM_Object_ptr thePlane)
+                                                  GEOM::GEOM_Object_ptr thePlane,
+                                                  CORBA::Boolean        IsCheckSelfInte)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -314,7 +319,8 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
   if (aSh.IsNull() || aPl.IsNull()) return aGEOMObject._retn();
 
   // Make Half Partition
-  Handle(GEOM_Object) anObject = GetOperations()->MakeHalfPartition(aSh, aPl);
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeHalfPartition(aSh, aPl, IsCheckSelfInte);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -39,6 +39,7 @@
 #define PART_ARG_PLANE 8
 
 #define PART_ARG_KEEP_NONLIMIT_SHAPES 9
+#define BOOL_ARG_CHECK_SELF_INTERSECTION 10
 
 class GEOMImpl_IPartition
 {
@@ -66,6 +67,8 @@ class GEOMImpl_IPartition
   void SetMaterials(const Handle(TColStd_HArray1OfInteger)& theMaterials)
   { _func->SetIntegerArray(PART_ARG_MATERIALS, theMaterials); }
 
+  void SetCheckSelfIntersection (Standard_Boolean theFlag)
+  { _func->SetInteger(BOOL_ARG_CHECK_SELF_INTERSECTION, theFlag ? 1 : 0); }
 
   int GetLimit() { return _func->GetInteger(PART_ARG_LIMIT); }
 
@@ -84,6 +87,9 @@ class GEOMImpl_IPartition
 
   Handle(GEOM_Function) GetShape() { return _func->GetReference(PART_ARG_SHAPE); }
   Handle(GEOM_Function) GetPlane() { return _func->GetReference(PART_ARG_PLANE); }
+
+  Standard_Boolean GetCheckSelfIntersection()
+  { return (_func->GetInteger(BOOL_ARG_CHECK_SELF_INTERSECTION) != 0); }
 
  private:
 

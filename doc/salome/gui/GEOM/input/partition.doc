@@ -54,6 +54,12 @@ computed. If this option is switched on, the intersection between
 sub-shapes will not be performed. In this case the Partition algorithm
 will work faster, but the result might differ from the default behavior.
 
+<b>Detect Self-intersections</b> check box is used to check arguments
+self-intersections. If this option is switched on (default behavior)
+each input shape is checked for self-intersection. In case of its detection
+the operation is aborted. If this option is switched off, the partition
+algorithm is performed without self-intersection checks.
+
  <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
@@ -67,13 +73,13 @@ will work faster, but the result might differ from the default behavior.
 
 <em>geompy.MakePartition(ListOfShapes, ListOfTools, ListOfKeepInside,
 ListOfRemoveInside, Limit, RemoveWebs, ListOfMaterials,
-KeepNonlimitShapes)</em>
+KeepNonlimitShapes, checkSelfInte)</em>
 
 <b>TUI Command (without sub-shapes intersection):</b>
 
 <em>geompy.MakePartitionNonSelfIntersectedShape(ListOfShapes,
 ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs,
-ListOfMaterials, KeepNonlimitShapes)</em>
+ListOfMaterials, KeepNonlimitShapes, checkSelfInte)</em>
 
 Here,
 - \em ListOfShapes is a list of shapes to be intersected
@@ -82,6 +88,8 @@ Here,
 - \em Limit is a Type of resulting shapes
 - \em KeepNonlimitShapes is a flag that allows to preserve standalone
 shapes of low dimension (than \em Limit) in the result.
+- \em checkSelfInte is a flag that tells if the arguments should
+be checked for self-intersection prior to the operation.
 - Other parameters are obsolete and kept only for compatibility with
 previous versions of SALOME.
 
@@ -99,6 +107,8 @@ previous versions of SALOME.
 <em>geompy.MakeHalfPartition(Shape, Plane)</em>, where:
 - \em Shape is a source shape to be intersected by the \em Plane
 - \em Plane is a tool shape, to intersect the \em Shape.
+- \em checkSelfInte is a flag that tells if the arguments should
+be checked for self-intersection prior to the operation.
 
 <b>Examples:</b>
 

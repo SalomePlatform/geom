@@ -1574,7 +1574,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
 
     Te3 = myBooleanOperations->MakePartition
               (partitionShapes, theTools, theKeepInside, theRemoveInside,
-              TopAbs_SOLID, false, theMaterials, 0, false);
+              TopAbs_SOLID, false, theMaterials, 0, false, Standard_False);
     if (Te3.IsNull()) {
       SetErrorCode("Impossible to build partition of TShape");
       return false;

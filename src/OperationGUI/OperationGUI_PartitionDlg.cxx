@@ -85,6 +85,10 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   GroupPoints->CheckButton1->setText( tr( "GEOM_KEEP_NONLIMIT_SHAPES" ) );
   GroupPoints->CheckButton2->setText( tr( "GEOM_NO_SELF_INTERSECTION" ) );
 
+  mySelfInte = new QCheckBox(GroupPoints->GroupBox1);
+  mySelfInte->setText(tr("GEOM_CHECK_SELF_INTERSECTIONS"));
+  GroupPoints->gridLayout1->addWidget(mySelfInte, 5, 0, 1, 3);
+
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupPoints );
@@ -140,6 +144,7 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_VERTEX" ) );
   GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::VERTEX);
   GroupPoints->CheckButton1->setChecked( false );
+  mySelfInte->setChecked(true);
 
   mainFrame()->GroupBoxPublish->show();
 
@@ -162,6 +167,7 @@ void OperationGUI_PartitionDlg::Init()
 
   connect( GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
   connect( GroupPoints->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
+  connect( mySelfInte,                SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
 
   initName( tr( "GEOM_PARTITION" ) );
 
@@ -440,6 +446,7 @@ bool OperationGUI_PartitionDlg::execute (ObjectList& objects)
 {
   bool res = false;
   GEOM::GEOM_Object_var anObj;
+  bool isDetectSelfInte = mySelfInte->isChecked();
 
   GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
 
@@ -453,16 +460,19 @@ bool OperationGUI_PartitionDlg::execute (ObjectList& objects)
       anObj = aNoSelfIntersection ?
         anOper->MakePartitionNonSelfIntersectedShape(myListShapes, myListTools,
                                                      myListKeepInside, myListRemoveInside,
-                                                     aLimit, false, myListMaterials, aKeepNonlimitShapes) :
+                                                     aLimit, false, myListMaterials, aKeepNonlimitShapes,
+                                                     isDetectSelfInte) :
         anOper->MakePartition(myListShapes, myListTools,
                               myListKeepInside, myListRemoveInside,
-                              aLimit, false, myListMaterials, aKeepNonlimitShapes);
+                              aLimit, false, myListMaterials, aKeepNonlimitShapes,
+                              isDetectSelfInte);
       res = true;
     }
     break;
   case 1:
     {
-      anObj = anOper->MakeHalfPartition( myListShapes[0].in(), myListTools[0].in() );
+      anObj = anOper->MakeHalfPartition( myListShapes[0].in(), myListTools[0].in(),
+                                         isDetectSelfInte );
       res = true;
     }
     break;

@@ -64,10 +64,12 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
                    const Standard_Boolean                      theRemoveWebs,
                    const Handle(TColStd_HArray1OfInteger)&     theMaterials,
                    const Standard_Integer theKeepNonlimitShapes,
-                   const Standard_Boolean thePerformSelfIntersections);
+                   const Standard_Boolean thePerformSelfIntersections,
+                   const Standard_Boolean IsCheckSelfInte);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeHalfPartition (Handle(GEOM_Object) theShape,
-                                                         Handle(GEOM_Object) thePlane);
+  Standard_EXPORT Handle(GEOM_Object) MakeHalfPartition (Handle(GEOM_Object)    theShape,
+                                                         Handle(GEOM_Object)    thePlane,
+                                                         const Standard_Boolean IsCheckSelfInte);
 
 private:
 

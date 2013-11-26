@@ -6939,6 +6939,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                             target type (equal to Limit) are kept in the result,
         #                             else standalone shapes of lower dimension
         #                             are kept also (if they exist).
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6962,7 +6964,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ref tui_partition "Example"
         def MakePartition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                           Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
-                          KeepNonlimitShapes=0, theName=None):
+                          KeepNonlimitShapes=0, checkSelfInte=False, theName=None):
             """
             Perform partition operation.
 
@@ -6976,6 +6978,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                     target type (equal to Limit) are kept in the result,
                                     else standalone shapes of lower dimension
                                     are kept also (if they exist).
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -7009,7 +7014,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
                                               ListKeepInside, ListRemoveInside,
                                               Limit, RemoveWebs, ListMaterials,
-                                              KeepNonlimitShapes);
+                                              KeepNonlimitShapes, checkSelfInte);
             RaiseIfFailed("MakePartition", self.BoolOp)
             self._autoPublish(anObj, theName, "partition")
             return anObj
@@ -7031,7 +7036,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                                  ListKeepInside=[], ListRemoveInside=[],
                                                  Limit=ShapeType["AUTO"], RemoveWebs=0,
                                                  ListMaterials=[], KeepNonlimitShapes=0,
-                                                 theName=None):
+                                                 checkSelfInte=False, theName=None):
             """
             Perform partition operation.
             This method may be useful if it is needed to make a partition for
@@ -7057,7 +7062,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
                                                                      ListKeepInside, ListRemoveInside,
                                                                      Limit, RemoveWebs, ListMaterials,
-                                                                     KeepNonlimitShapes);
+                                                                     KeepNonlimitShapes, checkSelfInte);
             RaiseIfFailed("MakePartitionNonSelfIntersectedShape", self.BoolOp)
             self._autoPublish(anObj, theName, "partition")
             return anObj
@@ -7068,7 +7073,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  \n @ref swig_Partition "Example 2"
         def Partition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                       Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
-                      KeepNonlimitShapes=0, theName=None):
+                      KeepNonlimitShapes=0, checkSelfInte=False, theName=None):
             """
             See method geompy.MakePartition for more information.
             """
@@ -7077,12 +7082,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anObj = self.MakePartition(ListShapes, ListTools,
                                        ListKeepInside, ListRemoveInside,
                                        Limit, RemoveWebs, ListMaterials,
-                                       KeepNonlimitShapes, theName);
+                                       KeepNonlimitShapes, checkSelfInte,
+                                       theName);
             return anObj
 
         ## Perform partition of the Shape with the Plane
         #  @param theShape Shape to be intersected.
         #  @param thePlane Tool shape, to intersect theShape.
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -7090,13 +7098,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_partition "Example"
-        def MakeHalfPartition(self, theShape, thePlane, theName=None):
+        def MakeHalfPartition(self, theShape, thePlane, checkSelfInte=False, theName=None):
             """
             Perform partition of the Shape with the Plane
 
             Parameters: 
                 theShape Shape to be intersected.
                 thePlane Tool shape, to intersect theShape.
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -7105,7 +7116,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.BoolOp.MakeHalfPartition(theShape, thePlane)
+            anObj = self.BoolOp.MakeHalfPartition(theShape, thePlane, checkSelfInte)
             RaiseIfFailed("MakeHalfPartition", self.BoolOp)
             self._autoPublish(anObj, theName, "partition")
             return anObj

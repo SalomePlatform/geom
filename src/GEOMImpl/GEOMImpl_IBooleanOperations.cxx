@@ -371,7 +371,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
                               const Standard_Boolean                      theRemoveWebs,
                               const Handle(TColStd_HArray1OfInteger)&     theMaterials,
                               const Standard_Integer theKeepNonlimitShapes,
-                              const Standard_Boolean thePerformSelfIntersections)
+                              const Standard_Boolean thePerformSelfIntersections,
+                              const Standard_Boolean IsCheckSelfInte)
 {
   SetErrorCode(KO);
 
@@ -437,6 +438,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
   // Limit
   aCI.SetLimit(theLimit);
   aCI.SetKeepNonlimitShapes(theKeepNonlimitShapes);
+  aCI.SetCheckSelfIntersection(IsCheckSelfInte);
 
   // Materials
   if (theRemoveWebs) {
@@ -488,7 +490,13 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
       pd << ", " << theMaterials->Value(i);
     }
   }
-  pd << "], " << theKeepNonlimitShapes <<")";
+  pd << "], " << theKeepNonlimitShapes;
+
+  if (IsCheckSelfInte) {
+    pd << ", True";
+  }
+
+  pd << ")";
 
   SetErrorCode(OK);
   return aPartition;
@@ -500,7 +508,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
-       (Handle(GEOM_Object) theShape, Handle(GEOM_Object) thePlane)
+       (Handle(GEOM_Object) theShape, Handle(GEOM_Object) thePlane,
+        const Standard_Boolean IsCheckSelfInte)
 {
   SetErrorCode(KO);
 
@@ -526,6 +535,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
 
   aCI.SetShape(aRef1);
   aCI.SetPlane(aRef2);
+  aCI.SetCheckSelfIntersection(IsCheckSelfInte);
 
   //Compute the Partition value
   try {
@@ -544,8 +554,15 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aPart << " = geompy.MakeHalfPartition("
-                               << theShape << ", " << thePlane << ")";
+  GEOM::TPythonDump pd (aFunction);
+  pd << aPart << " = geompy.MakeHalfPartition("
+     << theShape << ", " << thePlane;
+
+  if (IsCheckSelfInte) {
+    pd << ", True";
+  }
+
+  pd << ")";
 
   SetErrorCode(OK);
   return aPart;

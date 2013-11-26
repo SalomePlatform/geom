@@ -58,10 +58,18 @@
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <Standard_NullObject.hxx>
+#include <StdFail_NotDone.hxx>
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
+#include <BOPAlgo_CheckerSI.hxx>
 #include <BOPCol_IndexedDataMapOfShapeListOfShape.hxx>
 #include <BOPCol_ListOfShape.hxx>
+#include <BOPDS_DS.hxx>
+
+// Depth of self-intersection check (see BOPAlgo_CheckerSI::SetLevelOfCheck() for more details)
+// Default value for BOPAlgo_CheckerSI gives very long computation when checking face-to-face intersections;
+// here check level is decreased to more appropriate value to avoid problems with performance).
+#define BOP_SELF_INTERSECTIONS_LEVEL 4
 
 //=======================================================================
 //function : GetID
@@ -107,6 +115,21 @@ static void PrepareShapes (const TopoDS_Shape&   theShape,
   }
 }
 
+static void CheckSelfIntersection(const TopoDS_Shape &theShape)
+{
+  BOPAlgo_CheckerSI aCSI;  // checker of self-interferences
+  BOPCol_ListOfShape aList;
+
+  aList.Append(theShape);
+  aCSI.SetLevelOfCheck(BOP_SELF_INTERSECTIONS_LEVEL);
+  aCSI.SetArguments(aList);
+  aCSI.Perform();
+
+  if (aCSI.ErrorStatus() || aCSI.DS().Interferences().Extent() > 0) {
+    StdFail_NotDone::Raise("Partition operation will not be performed, because argument shape is self-intersected");
+  }
+}
+
 //=======================================================================
 //function : Execute
 //purpose  :
@@ -118,6 +141,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
 
   GEOMImpl_IPartition aCI (aFunction);
   Standard_Integer aType = aFunction->GetType();
+  const Standard_Boolean isCheckSelfInte = aCI.GetCheckSelfIntersection();
 
   TopoDS_Shape aShape;
   GEOMAlgo_Splitter PS;
@@ -147,6 +171,11 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aShape_i = aRefShape->GetValue();
       if (aShape_i.IsNull()) {
         Standard_NullObject::Raise("In Partition a shape is null");
+      }
+
+      // Check self-intersection.
+      if (isCheckSelfInte) {
+        CheckSelfIntersection(aShape_i);
       }
 
       TopoDS_Shape aShape_i_copy;
@@ -185,6 +214,12 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       if (aShape_i.IsNull()) {
         Standard_NullObject::Raise("In Partition a tool shape is null");
       }
+
+      // Check self-intersection.
+      if (isCheckSelfInte) {
+        CheckSelfIntersection(aShape_i);
+      }
+
       //
       //BRepBuilderAPI_Copy aCopyTool (aShape_i);
       TopoDS_Shape aShape_i_copy;
@@ -322,6 +357,12 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
 
     if (aShapeArg.IsNull() || aPlaneArg.IsNull()) {
       Standard_NullObject::Raise("In Half Partition a shape or a plane is null");
+    }
+
+    // Check self-intersection.
+    if (isCheckSelfInte) {
+      CheckSelfIntersection(aShapeArg);
+      CheckSelfIntersection(aPlaneArg);
     }
 
     TopoDS_Shape aShapeArg_copy;
