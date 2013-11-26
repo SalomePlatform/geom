@@ -100,6 +100,11 @@ and then displays only the children of the selected object(s).
 
   Switch the checkbox near the appropriate object and
   click <b>Publish</b> or <b>Publish And Close</b> button. 
+
+  "Eye" icons in this dialog box allow previewing unpublished objects in the viewer. All 
+  unpublished objects are by default sorted by the name in ascending order. It is possible
+  to change order of sorting (ascending / descending) by clicking the corresponding title
+  bar of the objects list.
 </li>
 </ul>
 
