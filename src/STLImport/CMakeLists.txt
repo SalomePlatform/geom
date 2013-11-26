@@ -35,6 +35,9 @@ ADD_DEFINITIONS(
 SET(_link_LIBRARIES
   ${CAS_TKSTL}
   ${KERNEL_SALOMELocalTrace}
+  ${CAS_TKTopAlgo}
+  ${CAS_TKBRep}
+  ${CAS_TKG3d}
   )
 
 # --- sources ---
