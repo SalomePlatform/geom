@@ -191,13 +191,13 @@ void GEOMToolsGUI_PublishDlg::initData() {
 
   buildTree(aStudy, myGeomRoot);
 
-
   myTreeWidget->resizeColumnToContents(0);
   myTreeWidget->resizeColumnToContents(1);
+  myTreeWidget->sortByColumn(0, Qt::AscendingOrder);
 }
 
 //=================================================================================
-// function : buildTree()
+// function : createItem()
 // purpose  :
 //=================================================================================
 QTreeWidgetItem* GEOMToolsGUI_PublishDlg::createItem(QTreeWidgetItem* theParent, Pair theAttributes, bool isCheckable) {
@@ -224,7 +224,7 @@ QTreeWidgetItem* GEOMToolsGUI_PublishDlg::createItem(QTreeWidgetItem* theParent,
 }
 
 //=================================================================================
-// function : buildTree()
+// function : findParentItem()
 // purpose  :
 //=================================================================================
 QTreeWidgetItem* GEOMToolsGUI_PublishDlg::findParentItem(_PTR(Study) theStudy, SalomeApp_DataObject* theObject, BufferedList& theList ) {
