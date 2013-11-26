@@ -4,7 +4,7 @@
 
 The possibility to classify the geometrical objects by moving it into early created container (folder) was introduced to Geometry module.
 
-\image html arranging1.png "Classified objects in folders"
+\image html arranging1.png "Objects classified in folders"
 
 To create a folder select "Create folder" popup menu item for root "Geometry" object or another folder.
 
