@@ -16,6 +16,13 @@ The \b Result will be a \b GEOM_Object.
 
 \image html bool1.png "Fuse dialog"
 
+\note This algorithm doesn't find all types of self-intersections. It is tuned
+      to detect vertex/vertex, vertex/edge, edge/edge, vertex/face and edge/face
+      intersections. Face/face intersections detection is switched off as it
+      is a time-consuming operation that gives an impact on performance. To find
+      all self-intersections please use \ref check_self_intersections_page
+      "Detect Self-intersection tool".
+
 For a particular case with two shapes to be fused there is the following TUI command:
 
 <b>TUI Command:</b> <em>geompy.MakeFuse(s1, s2, checkSelfInte)</em>\n

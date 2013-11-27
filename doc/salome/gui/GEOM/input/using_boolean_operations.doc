@@ -66,6 +66,12 @@ means that there is no need to check it. This option is provided to ensure that
 an operation is performed on not self-intersected shapes as these shapes are
 not valid for boolean operations.
 
+\note This algorithm doesn't find all types of self-intersections. It is tuned
+      to detect vertex/vertex, vertex/edge, edge/edge, vertex/face and edge/face
+      intersections. Face/face intersections detection is switched off as it
+      is a time-consuming operation that gives an impact on performance. To find
+      all self-intersections please use \ref check_self_intersections_page
+      "Detect Self-intersection tool".
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_boolean_operations_page "Boolean Operations".
