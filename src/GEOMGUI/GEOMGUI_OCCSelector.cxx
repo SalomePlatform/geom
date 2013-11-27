@@ -195,7 +195,7 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
 void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 {
   OCCViewer_Viewer* vw = viewer();
-  if ( !vw )
+  if ( !vw || !vw->isSelectionEnabled())
     return;
 
   SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
