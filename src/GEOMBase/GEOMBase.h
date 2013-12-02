@@ -31,6 +31,7 @@
 
 // SALOME Includes
 #include <GEOM_AISShape.hxx>
+#include "GEOM_GenericObjPtr.h"
 
 // IDL Headers
 #include <SALOMEconfig.h>
@@ -133,6 +134,8 @@ public :
 
   /* Publish sub-shape under the main object */
   static void         PublishSubObject( GEOM::GEOM_Object_ptr object );
+
+  static void         Synchronize( QList<GEOM::GeomObjPtr>& left, QList<GEOM::GeomObjPtr>& right );
 };
 
 #endif // GEOMBASE_H

@@ -858,14 +858,17 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
   // and seguences of shapes, perform pipe for each
   // and make sewing after that
   double fp,lp;
-  Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(Edges.Value(1)),fp,lp);
   gp_Pnt P1,P2;
   gp_Vec Vec1,Vec2;
-  C->D1(fp,P1,Vec1);
-  C->D1(lp,P2,Vec2);
-  double SumAng = fabs(Vec1.Angle(Vec2));
-  Vec1 = Vec2;
-  P1 = P2;
+  double SumAng = 0;
+  if ( Edges.Length() > 0 ) {
+    Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(Edges.Value(1)),fp,lp);
+    C->D1(fp,P1,Vec1);
+    C->D1(lp,P2,Vec2);
+    SumAng = fabs(Vec1.Angle(Vec2));
+    Vec1 = Vec2;
+    P1 = P2;
+  }
   TColStd_SequenceOfInteger SplitEdgeNums,SplitLocNums;
   int LastLoc = 1;
   //cout<<"Edges.Length()="<<Edges.Length()<<endl;

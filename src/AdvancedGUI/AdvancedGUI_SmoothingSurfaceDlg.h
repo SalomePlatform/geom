@@ -50,7 +50,6 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-  void                               synchronize( QList<GEOM::GeomObjPtr>& left, QList<GEOM::GeomObjPtr>& right );
 
 private:
   DlgRef_1Sel*                 GroupPoints;
