@@ -217,7 +217,7 @@ bool AdvancedGUI_SmoothingSurfaceDlg::execute (ObjectList& objects)
 void AdvancedGUI_SmoothingSurfaceDlg::SelectionIntoArgument()
 {
   QList<GEOM::GeomObjPtr> points = getSelected( TopAbs_VERTEX, -1 );
-  synchronize( myPoints, points );
+  GEOMBase::Synchronize( myPoints, points );
   if ( !myPoints.isEmpty()  )
     GroupPoints->LineEdit1->setText( QString::number( myPoints.count() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
   else
@@ -236,30 +236,3 @@ void AdvancedGUI_SmoothingSurfaceDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
 }
-
-void AdvancedGUI_SmoothingSurfaceDlg::synchronize( QList<GEOM::GeomObjPtr>& left, QList<GEOM::GeomObjPtr>& right )
-{
-  // 1. remove items from the "left" list that are not in the "right" list
-  QMutableListIterator<GEOM::GeomObjPtr> it1( left );
-  while ( it1.hasNext() ) {
-    GEOM::GeomObjPtr o1 = it1.next();
-    bool found = false;
-    QMutableListIterator<GEOM::GeomObjPtr> it2( right );
-    while ( it2.hasNext() && !found )
-      found = o1 == it2.next();
-    if ( !found )
-      it1.remove();
-  }
-  // 2. add items from the "right" list that are not in the "left" list (to keep selection order)
-  it1 = right;
-  while ( it1.hasNext() ) {
-    GEOM::GeomObjPtr o1 = it1.next();
-    bool found = false;
-    QMutableListIterator<GEOM::GeomObjPtr> it2( left );
-    while ( it2.hasNext() && !found )
-      found = o1 == it2.next();
-    if ( !found )
-      left << o1;
-  }
-}
-

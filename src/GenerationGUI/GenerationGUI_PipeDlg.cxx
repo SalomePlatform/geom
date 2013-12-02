@@ -322,13 +322,10 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   }
   else if ( myEditCurrentArgument == GroupMakePoints->LineEdit1 ) {
     myBaseObjects.clear();
-    QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_SHAPE, -1 );
-    for ( int i = 0; i < objects.count(); i++ ) {
-      GEOM::shape_type stype = objects[i]->GetMaxShapeType();
-      if ( stype < GEOM::SHELL || stype > GEOM::VERTEX )
-        continue;
-      myBaseObjects << objects[i];
-    }
+    QList<TopAbs_ShapeEnum> types;
+    types << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL;
+    QList<GEOM::GeomObjPtr> objects = getSelected( types, -1 );
+    GEOMBase::Synchronize( myBaseObjects, objects );
     if ( !myBaseObjects.isEmpty() ) {
       QString aName = myBaseObjects.count() > 1 ? QString( "%1_objects").arg( myBaseObjects.count() ) : GEOMBase::GetName( myBaseObjects[0].get() );
       myEditCurrentArgument->setText( aName );
@@ -336,13 +333,9 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   }
   else if ( myEditCurrentArgument == GroupMakePoints->LineEdit2 ) {
     myLocations.clear();
-    QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_SHAPE, -1 );
-    for ( int i = 0; i < objects.count(); i++ ) {
-      GEOM::shape_type stype = objects[i]->GetMaxShapeType();
-      if ( stype < GEOM::SHELL || stype > GEOM::VERTEX )
-        continue;
-      myLocations << objects[i];
-    }
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_VERTEX, -1 );
+    GEOMBase::Synchronize( myLocations, objects );
     if ( !myLocations.isEmpty() ) {
       QString aName = myLocations.count() > 1 ? QString( "%1_objects").arg( myLocations.count() ) : GEOMBase::GetName( myLocations[0].get() );
       myEditCurrentArgument->setText( aName );
