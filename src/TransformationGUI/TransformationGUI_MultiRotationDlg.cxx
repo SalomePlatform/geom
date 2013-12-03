@@ -275,7 +275,8 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
         // angular step
         double diag = sqrt((Xmax-Xmin)*(Xmax-Xmin) + (Ymax-Ymin)*(Ymax-Ymin));
         double d = sqrt((0.5*(Xmax+Xmin))*(0.5*(Xmax+Xmin)) + (0.5*(Ymax+Ymin))*(0.5*(Ymax+Ymin)));
-        myAng = floor(2.0 * atan(diag/d) * 180.0 / M_PI);
+        if ( fabs(d) > 1.e-16 )
+	  myAng = floor(2.0 * atan(diag/d) * 180.0 / M_PI);
         GroupArgs->SpinBox_DX1->setValue(myAng);
 
         // radial step

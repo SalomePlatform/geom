@@ -668,8 +668,8 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
     createPathPreview(myVectorU.get());
     createPathPreview(myVectorV.get());
     anObj = anOper->MultiTranslate2D(myBase.get(),
-                                     myVectorU.get(), myStepU, myNbTimesU,
-                                     myVectorV.get(), myStepV, myNbTimesV);
+				     myVectorU.get(), myStepU, myNbTimesU,
+				     myVectorV.get(), myStepV, myNbTimesV);
     if (!IsPreview()) {
       aParameters << GroupDimensions->SpinBox_DX1->text();
       aParameters << GroupDimensions->SpinBox_DY1->text();
@@ -743,10 +743,11 @@ void TransformationGUI_MultiTranslationDlg::createPathPreview ( GEOM::GEOM_Objec
     ShapeAnalysis_Edge aShapeAnal;
     TopoDS_Vertex aFirst = aShapeAnal.FirstVertex( anEdge );
     TopoDS_Vertex aLast = aShapeAnal.LastVertex( anEdge );
+    if ( BRep_Tool::Pnt(aFirst).IsEqual( BRep_Tool::Pnt(aLast), Precision::Confusion() ) ) return;
     TopoDS_Shape aVector = BRepBuilderAPI_MakeEdge(BRep_Tool::Pnt(aFirst), BRep_Tool::Pnt(aLast)).Shape();
     const char* aName = "tmpVector";
     Handle(GEOM_AISVector) anIO = new GEOM_AISVector( aVector, aName );
-
+    
     // add Prs to preview
     SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
     SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
