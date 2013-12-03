@@ -871,18 +871,45 @@ bool AdvancedGUI_PipeTShapeDlg::isValid (QString& msg)
     ok = LReductionGroupParams->SpinBox2->isValid(msg, !IsPreview()) && ok;
     ok = LReductionGroupParams->SpinBox3->isValid(msg, !IsPreview()) && ok;
     ok = LReductionGroupParams->SpinBox4->isValid(msg, !IsPreview()) && ok;
+    if(MainTubeGroupParams->SpinBox_DX->value() == LReductionGroupParams->SpinBox1->value()) {
+      msg += tr("GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L") + "\n";
+      ok = false;
+    }
+    if(MainTubeGroupParams->SpinBox_DX->value() + MainTubeGroupParams->SpinBox_DY->value() ==
+       LReductionGroupParams->SpinBox1->value() + LReductionGroupParams->SpinBox2->value()) {
+      msg += tr("GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L") + "\n";
+      ok = false;
+    }
   }
   if (RReductionGroupParams->GroupBox1->isChecked()) {
     ok = RReductionGroupParams->SpinBox1->isValid(msg, !IsPreview()) && ok;
     ok = RReductionGroupParams->SpinBox2->isValid(msg, !IsPreview()) && ok;
     ok = RReductionGroupParams->SpinBox3->isValid(msg, !IsPreview()) && ok;
     ok = RReductionGroupParams->SpinBox4->isValid(msg, !IsPreview()) && ok;
+    if(MainTubeGroupParams->SpinBox_DX->value() == RReductionGroupParams->SpinBox1->value()) {
+      msg += tr("GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R") + "\n";
+      ok = false;
+    }
+    if(MainTubeGroupParams->SpinBox_DX->value() + MainTubeGroupParams->SpinBox_DY->value() ==
+       RReductionGroupParams->SpinBox1->value() + RReductionGroupParams->SpinBox2->value()) {
+      msg += tr("GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R") + "\n";
+      ok = false;
+    }
   }
   if (IReductionGroupParams->GroupBox1->isChecked()) {
     ok = IReductionGroupParams->SpinBox1->isValid(msg, !IsPreview()) && ok;
     ok = IReductionGroupParams->SpinBox2->isValid(msg, !IsPreview()) && ok;
     ok = IReductionGroupParams->SpinBox3->isValid(msg, !IsPreview()) && ok;
     ok = IReductionGroupParams->SpinBox4->isValid(msg, !IsPreview()) && ok;
+    if(IncidentTubeGroupParams->SpinBox_DX->value() == IReductionGroupParams->SpinBox1->value()) {
+      msg += tr("GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I") + "\n";
+      ok = false;
+    }
+    if(IncidentTubeGroupParams->SpinBox_DX->value() + IncidentTubeGroupParams->SpinBox_DY->value() ==
+       IReductionGroupParams->SpinBox1->value() + IReductionGroupParams->SpinBox2->value()) {
+      msg += tr("GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I") + "\n";
+      ok = false;
+    }
   }
 
   ok = fabs(MainTubeGroupParams->SpinBox_DX->value()) > Precision::Confusion() && ok;
