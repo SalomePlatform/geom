@@ -3005,6 +3005,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Materials library</translation>
     </message>
     <message>
+        <source>MEN_TEXTURE</source>
+        <translation>Texture</translation>
+    </message>
+    <message>
         <source>MEN_TORUS</source>
         <translation>Torus</translation>
     </message>

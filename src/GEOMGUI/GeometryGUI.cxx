@@ -503,6 +503,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpDMWireframe:        // MENU VIEW - WIREFRAME
   case GEOMOp::OpDMShading:          // MENU VIEW - SHADING
   case GEOMOp::OpDMShadingWithEdges: // MENU VIEW - SHADING
+  case GEOMOp::OpDMTexture:          // MENU VIEW - TEXTURE
   case GEOMOp::OpShowAll:            // MENU VIEW - SHOW ALL
   case GEOMOp::OpShowOnly:           // MENU VIEW - DISPLAY ONLY
   case GEOMOp::OpShowOnlyChildren:   // MENU VIEW - SHOW ONLY CHILDREN
@@ -1019,6 +1020,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpDMWireframe,        "WIREFRAME" );
   createGeomAction( GEOMOp::OpDMShading,          "SHADING" );
   createGeomAction( GEOMOp::OpDMShadingWithEdges, "SHADING_WITH_EDGES" );
+  createGeomAction( GEOMOp::OpDMTexture,          "TEXTURE" );
   createGeomAction( GEOMOp::OpShowAll,          "DISPLAY_ALL" );
   createGeomAction( GEOMOp::OpHideAll,          "ERASE_ALL" );
   createGeomAction( GEOMOp::OpShow,             "DISPLAY" );
@@ -1291,6 +1293,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpDMWireframe,        dispmodeId, -1 );
   createMenu( GEOMOp::OpDMShading,          dispmodeId, -1 );
   createMenu( GEOMOp::OpDMShadingWithEdges, dispmodeId, -1 );
+  createMenu( GEOMOp::OpDMTexture,          dispmodeId, -1 );
   createMenu( separator(),                  dispmodeId, -1 );
   createMenu( GEOMOp::OpSwitchVectors,      dispmodeId, -1 );
 

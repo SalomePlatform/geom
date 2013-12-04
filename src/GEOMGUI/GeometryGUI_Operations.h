@@ -68,6 +68,7 @@ namespace GEOMOp {
     OpDMWireframe         = 2010,   // MENU VIEW  - DISPLAY MODE - WIREFRAME
     OpDMShading           = 2011,   // MENU VIEW  - DISPLAY MODE - SHADING
     OpDMShadingWithEdges  = 2012,   // MENU VIEW  - DISPLAY MODE - SHADING WITH EDGES
+    OpDMTexture           = 2013,   // MENU VIEW  - DISPLAY MODE - TEXTURE
     OpShow                = 2100,   // POPUP MENU - SHOW
     OpShowOnly            = 2101,   // POPUP MENU - SHOW ONLY
     OpHide                = 2102,   // POPUP MENU - HIDE
