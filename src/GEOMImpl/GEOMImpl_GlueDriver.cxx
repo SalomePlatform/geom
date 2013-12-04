@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -38,7 +39,6 @@
 #include "utilities.h"
 
 #include <TDataStd_IntegerArray.hxx>
-#include <TNaming_CopyShape.hxx>
 
 #include <TopExp.hxx>
 #include <TopoDS_Shape.hxx>
@@ -46,8 +46,6 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-
-#include <TColStd_IndexedDataMapOfTransientTransient.hxx>
 
 #include <ShapeFix_Shape.hxx>
 
@@ -423,8 +421,7 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
                                                     const Standard_Real theTolerance,
                                                     const TopAbs_ShapeEnum theShapeType,
                                                     const Standard_Boolean doKeepNonSolids,
-                                                    TCollection_AsciiString& theWarning,
-                                                    const TopTools_DataMapOfShapeShape& aCopyMap) const
+                                                    TCollection_AsciiString& theWarning) const
 {
   TopoDS_Shape aRes;
 
@@ -554,18 +551,10 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
     TDF_Label anArgumentHistoryLabel =
       aFunction->GetArgumentHistoryEntry(anArgumentRefLabel, Standard_True);
 
-    TopTools_ListOfShape aModified;
     for (Standard_Integer ie = 1; ie <= nbArgumentEntities; ie++) {
       TopoDS_Shape anEntity = anArgumentIndices.FindKey(ie);
-      if (aCopyMap.IsBound(anEntity)) {
-        anEntity = aCopyMap.Find(anEntity);
-      }
-      aModified = aGA.Modified(anEntity);
+      const TopTools_ListOfShape& aModified = aGA.Modified(anEntity);
       Standard_Integer nbModified = aModified.Extent();
-      if (!nbModified && aResIndices.Contains(anEntity)) {
-        aModified.Append(anEntity);
-        nbModified = 1;
-      }
 
       if (nbModified > 0) {
         TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(ie, Standard_True);
@@ -754,35 +743,18 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
 
   Standard_Boolean aKeepNonSolids = aCI.GetKeepNonSolids();
 
-  // Copy initial shape to prevent its modification by gluing algorithm
-  TopoDS_Shape aShapeCopy;
-  TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
-  TNaming_CopyShape::CopyTool(aShapeBase, aMapTShapes, aShapeCopy);
-  //
-  // map sub-shapes
-  TopTools_IndexedMapOfShape aShapeBase_inds, aShapeCopy_inds;
-  TopTools_DataMapOfShapeShape aCopyMap;
-  Standard_Integer aNbInd, i;
-  //
-  TopExp::MapShapes(aShapeBase, aShapeBase_inds);
-  TopExp::MapShapes(aShapeCopy, aShapeCopy_inds);
-  //
-  aNbInd = aShapeBase_inds.Extent();
-  for (i = 1; i <= aNbInd; ++i) {
-    aCopyMap.Bind(aShapeBase_inds(i), aShapeCopy_inds(i));
-  }
-  //
   if (aType == GLUE_FACES) {
-    aShape = GlueWithWarnings(aShapeCopy, tol3d, TopAbs_FACE, aKeepNonSolids, aWrn, aCopyMap);
+    //aShape = GlueFacesWithWarnings(aShapeBase, tol3d, aKeepNonSolids, aWrn);
+    aShape = GlueWithWarnings(aShapeBase, tol3d, TopAbs_FACE, aKeepNonSolids, aWrn);
   }
   else if (aType == GLUE_EDGES) {
-    aShape = GlueWithWarnings(aShapeCopy, tol3d, TopAbs_EDGE, aKeepNonSolids, aWrn, aCopyMap);
+    aShape = GlueWithWarnings(aShapeBase, tol3d, TopAbs_EDGE, aKeepNonSolids, aWrn);
   }
   else if (aType == GLUE_FACES_BY_LIST || aType == GLUE_EDGES_BY_LIST) {
     Handle(TColStd_HSequenceOfTransient) SF = aCI.GetFaces();
     TopTools_MapOfShape aFaces;
-
-    for (i = 1; i <= SF->Length(); i++) {
+    int i = 1;
+    for (; i <= SF->Length(); i++) {
       Handle(Standard_Transient) anItem = SF->Value(i);
       if (anItem.IsNull())
         continue;
@@ -792,14 +764,7 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aFace = aRefSh->GetValue();
       if (aFace.IsNull())
         continue;
-
-      // get copy of face to correspond to aShapeCopy
-      if (aShapeBase_inds.Contains(aFace)) {
-        int ind = aShapeBase_inds.FindIndex(aFace);
-        aFace = aShapeCopy_inds.FindKey(ind);
-
-        aFaces.Add(aFace);
-      }
+      aFaces.Add(aFace);
     }
 
     Standard_Boolean aGlueAllEdges = Standard_False;
@@ -807,7 +772,7 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
       aGlueAllEdges = aCI.GetGlueAllEdges();
 
     //aShape = GlueFacesByList(aShapeBase, tol3d, aKeepNonSolids, aFaces);
-    aShape = GlueByList(aShapeCopy, tol3d, aKeepNonSolids, aFaces, aGlueAllEdges);
+    aShape = GlueByList(aShapeBase, tol3d, aKeepNonSolids, aFaces, aGlueAllEdges);
   }
 
   if (aShape.IsNull()) return 0;

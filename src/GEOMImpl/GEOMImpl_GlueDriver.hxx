@@ -48,7 +48,7 @@
 #endif 
 
 #include <TopTools_MapOfShape.hxx>
-#include <TopTools_DataMapOfShapeShape.hxx>
+
 
 #ifndef _TFunction_Driver_HeaderFile
 #include <TFunction_Driver.hxx>
@@ -104,8 +104,7 @@ Standard_EXPORT TopoDS_Shape GlueWithWarnings (const TopoDS_Shape& theShape,
                                                const Standard_Real theTolerance,
                                                const TopAbs_ShapeEnum theShapeType,
                                                const Standard_Boolean doKeepNonSolids,
-                                               TCollection_AsciiString& theWarning,
-                                               const TopTools_DataMapOfShapeShape& aCopyMap) const;
+                                               TCollection_AsciiString& theWarning) const;
 
 Standard_EXPORT static TopoDS_Shape GlueByList (const TopoDS_Shape& theShape,
                                                 const Standard_Real theTolerance,
