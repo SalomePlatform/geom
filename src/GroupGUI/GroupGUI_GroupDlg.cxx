@@ -686,7 +686,7 @@ void GroupGUI_GroupDlg::showOnlySelected()
       SALOME_ListIO displayed;
       view->GetVisible(displayed);
       // Erase all, except the selected sub-shapes
-      std::map<QString, Handle(SALOME_InteractiveObject)>::const_iterator 
+      std::map<QString, Handle(SALOME_InteractiveObject)>::iterator 
         aSelDispIter = aSelEntriesMap.end();
       SALOME_ListIteratorOfListIO aDispIt( displayed );
       for ( ; aDispIt.More(); aDispIt.Next() ) {
