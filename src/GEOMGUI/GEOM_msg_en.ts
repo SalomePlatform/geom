@@ -3284,7 +3284,6 @@ Please, select face, shell or solid and try again</translation>
         <source>PREF_SCALAR_BAR_NUMBER_OF_INTERVALS</source>
         <translation>Number of intervals</translation>
     </message>
-
     <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
         <translation>ProcessShape</translation>
@@ -4575,27 +4574,27 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_WEBS_TITLE</source>
-        <translation type="unfinished">Remove internal faces</translation>
+        <translation>Remove internal faces</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_WEBS</source>
-        <translation type="unfinished">Compound of solids</translation>
+        <translation>Compound of solids</translation>
     </message>
     <message>
         <source>REMOVE_WEBS_NEW_OBJ_NAME</source>
-        <translation type="unfinished">NoInternalFaces</translation>
+        <translation>NoInternalFaces</translation>
     </message>
     <message>
         <source>TOP_REMOVE_WEBS</source>
-        <translation type="unfinished">Remove internal faces</translation>
+        <translation>Remove internal faces</translation>
     </message>
     <message>
         <source>MEN_REMOVE_WEBS</source>
-        <translation type="unfinished">Remove Internal Faces</translation>
+        <translation>Remove Internal Faces</translation>
     </message>
     <message>
         <source>STB_REMOVE_WEBS</source>
-        <translation type="unfinished">Remove internal faces</translation>
+        <translation>Remove internal faces</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_EXTRA_EDGES_TITLE</source>
@@ -4980,7 +4979,7 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     </message>
     <message>
         <source>TOP_SMOOTHINGSURFACE</source>
-        <translation type="unfinished">Smoothing Surface</translation>
+        <translation>Smoothing Surface</translation>
     </message>
     <message>
         <source>GEOM_SELECT_IMAGE</source>
@@ -5035,12 +5034,12 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Import / Export</translation>
     </message>
     <message>
-      <source>CC_PNT_ITEM_X_Y</source>
-      <translation>X=%1, Y=%2</translation>
+        <source>CC_PNT_ITEM_X_Y</source>
+        <translation>X=%1, Y=%2</translation>
     </message>
     <message>
-      <source>CC_PNT_ITEM_X_Y_Z</source>
-      <translation>X=%1, Y=%2, Z=%3</translation>
+        <source>CC_PNT_ITEM_X_Y_Z</source>
+        <translation>X=%1, Y=%2, Z=%3</translation>
     </message>
 </context>
 <context>
@@ -5660,7 +5659,7 @@ Number of sketch points too small</translation>
     </message>
     <message>
         <source>LOWTHRESHOLD</source>
-        <translation>Low theshold</translation>
+        <translation>Low threshold</translation>
     </message>
     <message>
         <source>RATIO</source>
@@ -5882,7 +5881,7 @@ Number of sketch points too small</translation>
     </message>
     <message>
         <source>WRN_NOT_SUBSHAPE</source>
-        <translation type="unfinished">The selected shape is not a sub-shape of the main shape. Hide all extra shapes in the viewer for more suitable selection.</translation>
+        <translation>The selected shape is not a sub-shape of the main shape. Hide all extra shapes in the viewer for more suitable selection.</translation>
     </message>
 </context>
 <context>
@@ -5917,10 +5916,6 @@ Number of sketch points too small</translation>
     <message>
         <source>DATA_TYPE</source>
         <translation>Type</translation>
-    </message>
-    <message>
-        <source></source>
-        <translation></translation>
     </message>
     <message>
         <source>BOOL</source>
@@ -6036,11 +6031,11 @@ Number of sketch points too small</translation>
     </message>
     <message>
         <source>WRN_NOT_SUBSHAPE</source>
-        <translation type="unfinished">The selected shape is not a sub-shape of the main shape. Hide all extra shapes in the viewer for more suitable selection.</translation>
+        <translation>The selected shape is not a sub-shape of the main shape. Hide all extra shapes in the viewer for more suitable selection.</translation>
     </message>
     <message>
         <source>ERR_STEP_EXISTS</source>
-        <translation type="unfinished">Step with such ID already exists.</translation>
+        <translation>Step with such ID already exists.</translation>
     </message>
 </context>
 <context>
@@ -6513,23 +6508,23 @@ Do you want to create new material?</translation>
         <translation>Step</translation>
     </message>
 </context>
-  <context>
+<context>
     <name>EntityGUI_IsolineDlg</name>
     <message>
-      <source>GEOM_ISOLINE_TITLE</source>
-      <translation>Isoline Construction</translation>
+        <source>GEOM_ISOLINE_TITLE</source>
+        <translation>Isoline Construction</translation>
     </message>
     <message>
-      <source>GEOM_ISOLINE</source>
-      <translation>Isoline</translation>
+        <source>GEOM_ISOLINE</source>
+        <translation>Isoline</translation>
     </message>
     <message>
-      <source>GEOM_ISOLINE_U</source>
-      <translation>U-Isoline</translation>
+        <source>GEOM_ISOLINE_U</source>
+        <translation>U-Isoline</translation>
     </message>
     <message>
-      <source>GEOM_ISOLINE_V</source>
-      <translation>V-Isoline</translation>
+        <source>GEOM_ISOLINE_V</source>
+        <translation>V-Isoline</translation>
     </message>
-  </context>
+</context>
 </TS>
