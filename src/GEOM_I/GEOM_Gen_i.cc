@@ -240,10 +240,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
   CORBA::String_var aGeomObjIOR = _orb->object_to_string(theObject);
   aResultSO->SetAttrString("AttributeIOR",aGeomObjIOR);
 
-  TCollection_AsciiString anObjectName("Shape_");
+  TCollection_AsciiString anObjectName, aNamePrefix("Shape_");
 
   // BEGIN: try to find existed name for current shape
-  bool HasName = false;
   if ( !aShape->_is_nil() )
   {
     // recieve current TopoDS shape
@@ -263,7 +262,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
     // check all named shapes using iterator
     TDF_ChildIDIterator anIt (aMainLbl, TNaming_NamedShape::GetID(), Standard_True);
 
-    for (; anIt.More() && !HasName; anIt.Next()) {
+    for (; anIt.More() && anObjectName.IsEmpty(); anIt.Next()) {
       Handle(TNaming_NamedShape) anAttr =
         Handle(TNaming_NamedShape)::DownCast(anIt.Value());
       if (anAttr.IsNull()) continue;
@@ -271,10 +270,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
       if (S.IsEqual(TopoSh)) {
         TDF_Label L = anAttr->Label();
         Handle(TDataStd_Name) aName;
-        if (L.FindAttribute(TDataStd_Name::GetID(), aName)) {
+        if (L.FindAttribute(TDataStd_Name::GetID(), aName))
           anObjectName = aName->Get();
-          HasName = true;
-        }
       }
     }
   }
@@ -286,32 +283,32 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
     switch ( (TopAbs_ShapeEnum)anOp->GetType( aShape )) {
     case TopAbs_VERTEX:
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_PNT" );
-      anObjectName = "Group_Of_Vertices_";
+      aNamePrefix = "Group_Of_Vertices_";
       break;
     case TopAbs_EDGE:
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_EDGE");
-      anObjectName = "Group_Of_Edges_";
+      aNamePrefix = "Group_Of_Edges_";
       break;
     case TopAbs_FACE:
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_FACE");
-      anObjectName = "Group_Of_Faces_";
+      aNamePrefix = "Group_Of_Faces_";
       break;
     case TopAbs_SOLID:
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_SOLID");
-      anObjectName = "Group_Of_Solids_";
+      aNamePrefix = "Group_Of_Solids_";
       break;
     }
   } else if ( mytype == GEOM_MARKER ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_LCS");
-    anObjectName = "LocalCS_";
+    aNamePrefix = "LocalCS_";
   } else if ( mytype > ADVANCED_BASE ) {
     char buf[20];
     sprintf( buf, "%d", aBaseObj->GetType() );
     std::string advId = "ICON_OBJBROWSER_ADVANCED_"; advId += buf;
     aResultSO->SetAttrString("AttributePixMap",advId.c_str());
-    anObjectName = "Advanced_";
+    aNamePrefix = "Advanced_";
   } else if ( mytype == GEOM_FIELD ) {
-    anObjectName = "Field_";
+    aNamePrefix = "Field_";
     GEOM::GEOM_Field_var aField = GEOM::GEOM_Field::_narrow(theObject);
     if ( !aField->_is_nil() )
       switch( aField->GetDimension() ) {
@@ -327,38 +324,38 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
         aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FIELD_SOLID");
       }
   } else if ( mytype == GEOM_FIELD_STEP ) {
-    anObjectName = "Step_";
+    aNamePrefix = "Step_";
   } else if ( !aShape->_is_nil() ) {
     GEOM::shape_type myshapetype=aShape->GetShapeType();
     if ( myshapetype == GEOM::COMPOUND ) {
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPOUND" );
-      anObjectName = "Compound_";
+      aNamePrefix = "Compound_";
     } else if ( myshapetype == GEOM::COMPSOLID ) {
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPSOLID");
-      anObjectName = "Compsolid_";
+      aNamePrefix = "Compsolid_";
     } else if ( myshapetype == GEOM::SOLID ) {
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SOLID");
-      anObjectName = "Solid_";
+      aNamePrefix = "Solid_";
     } else if ( myshapetype == GEOM::SHELL ) {
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SHELL");
-      anObjectName = "Shell_";
+      aNamePrefix = "Shell_";
     } else if ( myshapetype == GEOM::FACE ) {
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FACE");
-      anObjectName = "Face_";
+      aNamePrefix = "Face_";
     } else if ( myshapetype == GEOM::WIRE ) {
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_WIRE");
-      anObjectName = "Wire_";
+      aNamePrefix = "Wire_";
     } else if ( myshapetype == GEOM::EDGE ) {
       aResultSO->SetAttrString("AttributePixMap", "ICON_OBJBROWSER_EDGE");
-      anObjectName = "Edge_";
+      aNamePrefix = "Edge_";
     } else if ( myshapetype == GEOM::VERTEX ) {
       aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_VERTEX" );
-      anObjectName = "Vertex_";
+      aNamePrefix = "Vertex_";
     }
   }
-  if (!HasName)
+  if ( anObjectName.IsEmpty() )
   {
-    //if (strlen(theName) == 0) anObjectName += TCollection_AsciiString(aResultSO->Tag());
+    //if (strlen(theName) == 0) aNamePrefix += TCollection_AsciiString(aResultSO->Tag());
     //else anObjectName = TCollection_AsciiString(CORBA::string_dup(theName));
 
     // asv : 11.11.04 Introducing a more sofisticated method of name creation, just as
@@ -368,16 +365,15 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
     if ( strlen( theName ) == 0 ) { // MOST PROBABLY CALLED FROM BATCHMODE OR SUPERVISOR
       int i = 0;                    // (WITH EMPTY NEW NAME)
       SALOMEDS::SObject_var obj;
-      TCollection_AsciiString aNewObjectName;
       do {
-        aNewObjectName = anObjectName + TCollection_AsciiString(++i);
-        obj = theStudy->FindObject( aNewObjectName.ToCString() );
+        anObjectName = aNamePrefix + TCollection_AsciiString(++i);
+        obj = theStudy->FindObject( anObjectName.ToCString() );
       }
       while ( !obj->_is_nil() );
-      anObjectName = aNewObjectName;
     }
-    else // MOST PROBABLY CALLED FROM GEOM GUI (ALREADY WITH VALID NAME)
+    else { // MOST PROBABLY CALLED FROM GEOM GUI (ALREADY WITH VALID NAME)
       anObjectName = theName;
+    }
   }
 
   //Set the study entry as a name of  the published GEOM_Object
