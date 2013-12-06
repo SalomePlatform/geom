@@ -59,7 +59,8 @@ void ShapeRec_FeatureDetector::SetPath( const std::string& thePath )
   {
     IplImage* src = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
     imgHeight = src->height;
-    imgWidth = src->width; 
+    imgWidth = src->width;
+    cvReleaseImage(&src);
   }
 }
 
@@ -227,7 +228,6 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
     cvReleaseImage(&sample_h_plane);
     cvReleaseImage(&sample_s_plane);
     cvReleaseImage(&input_image);
-    cvReleaseImage(&input_image);
     cvReleaseImage(&input_hsv);
     cvReleaseImage(&input_hplane);
     cvReleaseImage(&input_splane);
@@ -293,6 +293,9 @@ std::string ShapeRec_FeatureDetector::CroppImage()
   cvResetImageROI(src);
   
   cvSaveImage ("/tmp/cropped_image.bmp", cropped_image);
+  
+  cvReleaseImage(&src);
+  cvReleaseImage(&cropped_image);
   
   return "/tmp/cropped_image.bmp";
 }
