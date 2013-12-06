@@ -24,7 +24,6 @@ namespace XAO
             rstr.open(filePath.c_str());
             rstr.seekg(0, rstr.end);        // go to the end
             length = rstr.tellg();          // report location (this is the length)
-            printf("---------------------------VSR: length=%ld\n", length);
             rstr.seekg(0, rstr.beg);        // go back to the beginning
             char* txt = new char[length+1]; // allocate memory for a buffer of appropriate dimension
             rstr.read(txt, length);         // read the whole file into the buffer
