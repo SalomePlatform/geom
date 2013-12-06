@@ -725,8 +725,8 @@ bool GEOMToolsGUI::Import()
       app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( SUIT_Tools::file( fileName, /*withExten=*/true ) ) );
       anOp->start();
 
-      CORBA::String_var fileN = fileName.toLatin1().constData();
-      CORBA::String_var fileT = aCurrentType.toLatin1().constData();
+      CORBA::String_var fileN = fileName.toUtf8().constData();
+      CORBA::String_var fileT = aCurrentType.toUtf8().constData();
 
       // jfa 21.08.2012 for mantis issue 21511 (STEP file units)
       CORBA::String_var aUnits = aInsOp->ReadValue(fileN, fileT, "LEN_UNITS");
@@ -945,7 +945,7 @@ bool GEOMToolsGUI::Export()
 
       anOp->start();
 
-      aInsOp->Export( anObj, file.toStdString().c_str(), fileType.toLatin1().constData() );
+      aInsOp->Export( anObj, file.toUtf8().constData(), fileType.toUtf8().constData() );
 
       if (aInsOp->IsDone())
         anOp->commit();
