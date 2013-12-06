@@ -66,7 +66,8 @@ void ShapeRec_FeatureDetector::SetPath( const std::string& thePath )
 /*!
   Computes the corners of the image located at imagePath
 */
-void ShapeRec_FeatureDetector::ComputeCorners( bool useROI, ShapeRec_Parameters* parameters ){
+void ShapeRec_FeatureDetector::ComputeCorners( bool useROI, ShapeRec_Parameters* parameters )
+{
   ShapeRec_CornersParameters* aCornersParameters = dynamic_cast<ShapeRec_CornersParameters*>( parameters );
   if ( !aCornersParameters ) aCornersParameters = new  ShapeRec_CornersParameters();
 
@@ -105,8 +106,8 @@ void ShapeRec_FeatureDetector::ComputeCorners( bool useROI, ShapeRec_Parameters*
 /*!
   Computes the contours of the image located at imagePath
 */
-bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters* parameters ){
- 
+bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters* parameters )
+{ 
   // Initialising images
   cv::Mat src, src_gray;
   cv::Mat detected_edges;
@@ -135,40 +136,44 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
   }
   else //COLORFILTER
   {
-    IplImage* find_image = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
+    // Load the input image where we want to detect contours
+    IplImage* input_image = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
 
     ShapeRec_ColorFilterParameters* aColorFilterParameters = dynamic_cast<ShapeRec_ColorFilterParameters*>( parameters );
     if ( !aColorFilterParameters ) aColorFilterParameters = new ShapeRec_ColorFilterParameters();
 
     // Reduce noise
-    cvSmooth( find_image, find_image, CV_GAUSSIAN, aColorFilterParameters->smoothSize, aColorFilterParameters->smoothSize );
+    cvSmooth( input_image, input_image, CV_GAUSSIAN, aColorFilterParameters->smoothSize, aColorFilterParameters->smoothSize );
   
-    // Crop the image to build an histogram from the selected part
-    cvSetImageROI(find_image, rect);
-    IplImage* test_image = cvCreateImage(cvGetSize(find_image),
-					 find_image->depth,
-					 find_image->nChannels);
-    cvCopy(find_image, test_image, NULL);
-    cvResetImageROI(find_image);
+    // Crop the image to the selected part only (sample_image)
+    cvSetImageROI(input_image, rect);
+    IplImage* sample_image = cvCreateImage(cvGetSize(input_image),
+                                           input_image->depth,
+                                           input_image->nChannels);
+    cvCopy(input_image, sample_image, NULL);
+    cvResetImageROI(input_image);
   
-    IplImage* test_hsv = cvCreateImage(cvGetSize(test_image),8,3);
-    IplImage* h_plane = cvCreateImage( cvGetSize(test_image), 8, 1 );
-    IplImage* s_plane = cvCreateImage( cvGetSize(test_image), 8, 1 );
-    CvHistogram* hist;
+    IplImage* sample_hsv = cvCreateImage( cvGetSize(sample_image),8,3 );
+    IplImage* sample_h_plane  = cvCreateImage( cvGetSize(sample_image), 8, 1 );
+    IplImage* sample_s_plane = cvCreateImage( cvGetSize(sample_image), 8, 1 );
+    CvHistogram* sample_hist;
 
-    cvCvtColor(test_image, test_hsv, CV_BGR2HSV);
+    cvCvtColor(sample_image, sample_hsv, CV_BGR2HSV);
   
-    cvCvtPixToPlane(test_hsv, h_plane, s_plane, 0, 0);
-    IplImage* planes[] = { h_plane, s_plane };
+    cvCvtPixToPlane(sample_hsv, sample_h_plane, sample_s_plane, 0, 0);
+    IplImage* sample_planes[] = { sample_h_plane, sample_s_plane };
   
-    //create hist
+    // Create the hue / saturation histogram of the SAMPLE image.
+    // This histogramm will be representative of what is the zone
+    // we want to find the frontier of. Indeed, the sample image is meant to 
+    // be representative of this zone
     float hranges[] = { 0, 180 };
     float sranges[] = { 0, 256 };
     float* ranges[] = { hranges, sranges };
-    hist = cvCreateHist( 2, aColorFilterParameters->histSize, aColorFilterParameters->histType, ranges );
+    sample_hist = cvCreateHist( 2, aColorFilterParameters->histSize, aColorFilterParameters->histType, ranges );
   
     //calculate hue /saturation histogram
-    cvCalcHist(planes, hist, 0 ,0);
+    cvCalcHist(sample_planes, sample_hist, 0 ,0);
 
 //   // TEST print of the histogram for debugging
 //   IplImage* hist_image = cvCreateImage(cvSize(320,300),8,3);
@@ -194,18 +199,38 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
 //   cvNamedWindow("hist", 1); cvShowImage("hist",hist_image);
   
   
-    //calculate back projection of hue and saturation planes of input image
-    IplImage* backproject = cvCreateImage(cvGetSize(test_image), 8, 1);
-    IplImage* binary_backproject = cvCreateImage(cvGetSize(test_image), 8, 1);
-    cvCalcBackProject(planes, backproject, hist);
+    // Calculate the back projection of hue and saturation planes of the INPUT image
+    // by mean of the histogram of the SAMPLE image.
+    //
+    // The pixels which (h,s) coordinates correspond to high values in the histogram
+    // will have high values in the grey image result. It means that a pixel of the INPUT image 
+    // which is more probably in the zone represented by the SAMPLE image, will be whiter 
+    // in the back projection.
+    IplImage* backproject = cvCreateImage(cvGetSize(input_image), 8, 1);
+    IplImage* binary_backproject = cvCreateImage(cvGetSize(input_image), 8, 1);
+    IplImage* input_hsv = cvCreateImage(cvGetSize(input_image),8,3);
+    IplImage* input_hplane = cvCreateImage(cvGetSize(input_image),8,1);
+    IplImage* input_splane = cvCreateImage(cvGetSize(input_image),8,1);
   
-    // Threshold in order to obtain binary image
+    // Get hue and saturation planes of the INPUT image
+    cvCvtColor(input_image, input_hsv, CV_BGR2HSV);
+    cvCvtPixToPlane(input_hsv, input_hplane, input_splane, 0, 0);
+    IplImage* input_planes[] = { input_hplane, input_splane };
+    
+    // Compute the back projection
+    cvCalcBackProject(input_planes, backproject, sample_hist);
+  
+    // Threshold in order to obtain a binary image
     cvThreshold(backproject, binary_backproject, aColorFilterParameters->threshold, aColorFilterParameters->maxThreshold, CV_THRESH_BINARY);
-    cvReleaseImage(&test_image);
-    cvReleaseImage(&test_hsv);
-    cvReleaseImage(&h_plane);
-    cvReleaseImage(&s_plane);
-    cvReleaseImage(&find_image);
+    cvReleaseImage(&sample_image);
+    cvReleaseImage(&sample_hsv);
+    cvReleaseImage(&sample_h_plane);
+    cvReleaseImage(&sample_s_plane);
+    cvReleaseImage(&input_image);
+    cvReleaseImage(&input_image);
+    cvReleaseImage(&input_hsv);
+    cvReleaseImage(&input_hplane);
+    cvReleaseImage(&input_splane);
     cvReleaseImage(&backproject);
   
     detected_edges = cv::Mat(binary_backproject);
@@ -218,7 +243,7 @@ bool ShapeRec_FeatureDetector::ComputeContours( bool useROI, ShapeRec_Parameters
 
   //  _detectAndRetrieveContours( detected_edges, parameters->findContoursMethod );
   detected_edges = detected_edges > 1;
-  findContours( detected_edges, contours, hierarchy, CV_RETR_CCOMP, parameters->findContoursMethod, useROI ? cvPoint(rect.x,rect.y) : cvPoint(0,0) );
+  findContours( detected_edges, contours, hierarchy, CV_RETR_CCOMP, parameters->findContoursMethod);
 
   return true;
   
