@@ -746,6 +746,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   // Find the current Study and StudyBuilder
   SALOMEDS::Study_var aStudy = theObject->GetStudy();
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+  SALOMEDS::UseCaseBuilder_var anUseCaseBuilder = aStudy->GetUseCaseBuilder();
   SALOMEDS::SObject_var aNewSO;
   // Retrieve a TopoDS_Shape from byte stream
   TopoDS_Shape aTopology;
@@ -781,6 +782,10 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   CORBA::String_var objStr = _orb->object_to_string(obj);
   anIOR->SetValue(objStr.in());
   anIOR->UnRegister();
+
+  // add object to the use case tree
+  // (to support tree representation customization and drag-n-drop)
+  anUseCaseBuilder->AppendTo( aNewSO->GetFather(), aNewSO );
 
   // Return the created in the Study SObject
   return aNewSO._retn();
