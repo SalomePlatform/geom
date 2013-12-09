@@ -282,7 +282,16 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   myWidgets.insert( HIST_TYPE, histType );
   QDoubleSpinBox* thresholdValue = new QDoubleSpinBox();
   thresholdValue->setRange( 0, 254 );
-  thresholdValue->setValue( 128 );
+  // 1 is a good default value for the threshold. It means that we are very permissive
+  // about what will be considered INSIDE the zone we want to find the frontier of
+  // This makes the algorithm more robust against a bit inhomogeneous parts in the zone
+  // that we want to delimitate.
+  // The drawback is if we want to delimitate a zone wich color is very similar to the zone
+  // we consider as the OUTSIDE, the result will be bad.
+  // The current use cases are more of the first form : 
+  //  - Strongly contrasted INSIDE and OUTSIDE zones
+  //  - Small inhomogenities in each zone
+  thresholdValue->setValue( 1 );
   myWidgets.insert( THRESHOLD_VALUE, thresholdValue );
   QDoubleSpinBox* maxThreshold = new QDoubleSpinBox();
   maxThreshold->setRange( 1, 255 );
