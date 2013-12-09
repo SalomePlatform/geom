@@ -239,15 +239,21 @@ void TransformationGUI_MultiTranslationDlg::ConstructorsClicked (int constructor
       GroupDimensions->hide();
       GroupPoints->show();
 
-      GroupPoints->LineEdit1->setText("");
-      GroupPoints->LineEdit2->setText("");
-      myBase.nullify();
-      myVectorU.nullify();
+      //GroupPoints->LineEdit1->setText("");
+      //GroupPoints->LineEdit2->setText("");
+      //myBase.nullify();
+      //myVectorU.nullify();
+
+      if ( myBase ) GroupDimensions->LineEdit1->setText( GEOMBase::GetName( myBase.get() ) );
+      if ( myVectorU ) GroupDimensions->LineEdit2->setText( GEOMBase::GetName( myVectorU.get() ) );
 
       GroupPoints->SpinBox_DX->setValue(myStepU);
       GroupPoints->SpinBox_DY->setValue(myNbTimesU);
 
-      GroupPoints->PushButton1->click();
+      if ( !myBase )
+	GroupPoints->PushButton1->click();
+      else if ( !myVectorU )
+	GroupPoints->PushButton2->click();
       break;
     }
   case 1: // Translate double
@@ -255,19 +261,28 @@ void TransformationGUI_MultiTranslationDlg::ConstructorsClicked (int constructor
       GroupPoints->hide();
       GroupDimensions->show();
 
-      GroupDimensions->LineEdit1->setText("");
-      GroupDimensions->LineEdit2->setText("");
-      GroupDimensions->LineEdit3->setText("");
-      myBase.nullify();
-      myVectorU.nullify();
-      myVectorV.nullify();
+      //GroupDimensions->LineEdit1->setText("");
+      //GroupDimensions->LineEdit2->setText("");
+      //GroupDimensions->LineEdit3->setText("");
+      //myBase.nullify();
+      //myVectorU.nullify();
+      //myVectorV.nullify();
+
+      if ( myBase ) GroupDimensions->LineEdit1->setText( GEOMBase::GetName( myBase.get() ) );
+      if ( myVectorU ) GroupDimensions->LineEdit2->setText( GEOMBase::GetName( myVectorU.get() ) );
+      if ( myVectorV ) GroupDimensions->LineEdit3->setText( GEOMBase::GetName( myVectorV.get() ) );
 
       GroupDimensions->SpinBox_DX1->setValue(myStepU);
       GroupDimensions->SpinBox_DY1->setValue(myNbTimesU);
       GroupDimensions->SpinBox_DX2->setValue(myStepV);
       GroupDimensions->SpinBox_DY2->setValue(myNbTimesV);
 
-      GroupDimensions->PushButton1->click();
+      if ( !myBase )
+	GroupDimensions->PushButton1->click();
+      else if ( !myVectorU )
+	GroupDimensions->PushButton2->click();
+      else if ( !myVectorV )
+	GroupDimensions->PushButton3->click();
       break;
     }
   }
@@ -329,7 +344,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
     QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText( aName );
 
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+    if ( myEditCurrentArgument == GroupPoints->LineEdit1 || myEditCurrentArgument == GroupDimensions->LineEdit1 ) {
       myBase = aSelectedObject;
 
       // recompute myStepU (Mantis issue 0021718)
@@ -338,35 +353,25 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
       anOper->GetBoundingBox(myBase.get(), true, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
       if (anOper->IsDone()) {
         myStepU = floor(1.5 * (Xmax - Xmin));
+        myStepV = floor(1.5 * (Ymax - Ymin));
         GroupPoints->SpinBox_DX->setValue(myStepU);
+        GroupDimensions->SpinBox_DX1->setValue(myStepU);
+        GroupDimensions->SpinBox_DX2->setValue(myStepV);
       }
 
-      if (!myVectorU)
+      if ( myEditCurrentArgument == GroupPoints->LineEdit1 && !myVectorU )
         GroupPoints->PushButton2->click();
+      if ( myEditCurrentArgument == GroupDimensions->LineEdit1 ) {
+	if ( !myVectorU )
+	  GroupDimensions->PushButton2->click();
+	else if ( !myVectorV )
+	  GroupDimensions->PushButton3->click();
+      }
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
       myVectorU = aSelectedObject;
       if ( !myBase )
         GroupPoints->PushButton1->click();
-    }
-    else if ( myEditCurrentArgument == GroupDimensions->LineEdit1 ) {
-      myBase = aSelectedObject;
-
-      // recompute myStepU and myStepV (Mantis issue 0021718)
-      GEOM::GEOM_IMeasureOperations_var anOper = getGeomEngine()->GetIMeasureOperations(getStudyId());
-      double Xmin, Xmax, Ymin, Ymax, Zmin, Zmax;
-      anOper->GetBoundingBox(myBase.get(), true, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
-      if (anOper->IsDone()) {
-        myStepU = floor(1.5 * (Xmax - Xmin));
-        myStepV = floor(1.5 * (Ymax - Ymin));
-        GroupDimensions->SpinBox_DX1->setValue(myStepU);
-        GroupDimensions->SpinBox_DX2->setValue(myStepV);
-      }
-
-      if ( !myVectorU )
-        GroupDimensions->PushButton2->click();
-      else if ( !myVectorV )
-        GroupDimensions->PushButton3->click();
     }
     else if ( myEditCurrentArgument == GroupDimensions->LineEdit2 ) {
       myVectorU = aSelectedObject;
@@ -384,10 +389,10 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
     }
 
     // clear selection
-    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-    myGeomGUI->getApp()->selectionMgr()->clearSelected();
-    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-            this, SLOT(SelectionIntoArgument()));
+    // disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+    // myGeomGUI->getApp()->selectionMgr()->clearSelected();
+    // connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+    //         this, SLOT(SelectionIntoArgument()));
   }
   else {
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ||
