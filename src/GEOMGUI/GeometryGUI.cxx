@@ -848,6 +848,11 @@ void GeometryGUI::createGeomAction( const int id, const QString& label, const QS
 void GeometryGUI::createOriginAndBaseVectors()
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+  bool aLocked = (_PTR(AttributeStudyProperties)(appStudy->studyDS()->GetProperties()))->IsLocked();
+  if ( aLocked ) {
+    SUIT_MessageBox::warning ( application()->desktop(), QObject::tr("WRN_WARNING"), QObject::tr("WRN_STUDY_LOCKED") );
+    return;
+  }
   if ( appStudy ) {
     _PTR(Study) studyDS = appStudy->studyDS();
     if ( studyDS && !CORBA::is_nil( GetGeomGen() ) ) {
