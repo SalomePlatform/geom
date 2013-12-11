@@ -697,12 +697,36 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->SetOwnDeviationCoefficient( qMax( propMap.value( GEOM::propertyName( GEOM::Deflection ) ).toDouble(), GEOM::minDeflection() ) );
 
   // set texture
+  bool textureAdded = false;
   if ( HasTexture() ) {
     // predefined display texture, manually set to displayer via GEOM_Displayer::SetTexture() function 
     AISShape->SetTextureFileName( TCollection_AsciiString( GetTexture().c_str() ) );
+    if ( ! entry.isEmpty() ) {
+      // check that study is active
+      SalomeApp_Study* study = getActiveStudy();
+      if ( study ) {
+        // Store the texture in object properties for next displays
+        study->setObjectProperty( aMgrId, entry, GEOM::propertyName( GEOM::Texture ), QString( GetTexture().c_str() ) );
+        study->setObjectProperty( aMgrId, entry, GEOM::propertyName( GEOM::DisplayMode ), 3 );
+        
+        // Update porpeties map
+        propMap = getObjectProperties( study, entry, myViewFrame );
+      }
+    }
+    textureAdded = true;
+  }
+  else {
+    // Texture from properties
+    QString aTexture = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
+    if ( !aTexture.isEmpty() ) {
+       AISShape->SetTextureFileName( TCollection_AsciiString( aTexture.toStdString().c_str() ) );
+       textureAdded = true;
+    }
+  }
+ 
+  if ( textureAdded ){ 
     AISShape->SetTextureMapOn();
     AISShape->DisableTextureModulate();
-    AISShape->SetDisplayMode( 3 );
   }
 
   // set line width

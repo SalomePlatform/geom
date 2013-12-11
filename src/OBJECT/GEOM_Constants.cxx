@@ -95,6 +95,8 @@ namespace GEOM
       "IsosColor",       // -
       // outlines color
       "OutlineColor",    // -
+      // texture
+      "Texture",         // -
     };
     return ( type >= GEOM::Visibility && type <= GEOM::LastProperty ) ? names[type] : QString();
   }

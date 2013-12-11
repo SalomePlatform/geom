@@ -184,12 +184,15 @@ bool EntityGUI_PictureImportDlg::execute( ObjectList& objects )
   int height            =  pixmap->height();
   int width             =  pixmap->width();
   
+  delete pixmap;
+  
   GEOM::GEOM_Object_var P1 = aBasicOperations->MakePointXYZ( -0.5*width, -0.5*height, 0 );
   GEOM::GEOM_Object_var P2 = aBasicOperations->MakePointXYZ( -0.5*width,  0.5*height, 0 );
   GEOM::GEOM_Object_var P3 = aBasicOperations->MakePointXYZ(  0.5*width,  0.5*height, 0 );
   GEOM::GEOM_Object_var P4 = aBasicOperations->MakePointXYZ(  0.5*width, -0.5*height, 0 );
   
   GEOM::GEOM_Object_var aFace = aBlocksOperations->MakeQuad4Vertices(P1,P2,P3,P4);
+  getDisplayer()->SetDisplayMode(3);
   getDisplayer()->SetTexture(theImgFileName.toStdString());
   
   if ( !aFace->_is_nil() )
@@ -198,8 +201,7 @@ bool EntityGUI_PictureImportDlg::execute( ObjectList& objects )
   }
   
   res=true;
- 
-
+  
   return res;
 }
 

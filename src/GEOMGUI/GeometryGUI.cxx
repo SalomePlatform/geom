@@ -2671,6 +2671,11 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           param = occParam + GEOM::propertyName( GEOM::Color );
           ip->setParameter(entry, param.toStdString(), val.join( GEOM::subSectionSeparator()).toStdString());
         }
+        
+        if (aProps.contains(GEOM::propertyName( GEOM::Texture ))) {
+          param = occParam + GEOM::propertyName( GEOM::Texture );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Texture )).toString().toStdString());
+        }
 
         if (vType == SVTK_Viewer::Type()) {
           if (aProps.contains(GEOM::propertyName( GEOM::Opacity ))) {
@@ -2821,6 +2826,8 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
           QColor c = QColor::fromRgbF(rgb[0].toDouble(), rgb[1].toDouble(), rgb[2].toDouble());
           aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Color ), c);
         }
+      } else if (paramNameStr == GEOM::propertyName( GEOM::Texture )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Texture ), val );
       } else if (paramNameStr == GEOM::propertyName( GEOM::EdgesDirection )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::EdgesDirection ), val == "true" || val == "1");
       } else if (paramNameStr == GEOM::propertyName( GEOM::Deflection )) {
