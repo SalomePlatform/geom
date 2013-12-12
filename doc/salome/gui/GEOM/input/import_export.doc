@@ -8,6 +8,8 @@ are implemented via plug-ins, which gives the opportunity to
 expand the range of available formats by adding more plug-ins (for
 example, CATIA 5).
 
+The \subpage xao_format_page "import and export of shapes in XAO format" is implemented differently.
+
 <em>To import geometrical objects from a BREP, IGES, STEP, ACIS or STL file:</em>
 
 \par

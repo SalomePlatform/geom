@@ -2,20 +2,21 @@
 
 \page union_faces_operation_page Union Faces
 
-\n To <b>Union Faces</b> in the <b>Main Menu</b> select
-<b>Repair - > Union Faces</b>.
-\n This operation unites all faces sharing one surface on a given
-shape.
+This operation unites on a given shape all faces sharing the same surface. 
 
-\n <b>TUI Command:</b> <em>geompy.UnionFaces(theShape)</em>,
-where <em>theShape</em> is a compound or a single solid.
-\n <b>Arguments:</b> Name + one shape + a flag.
-\n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+To <b>Union Faces</b> in the <b>Main Menu</b> select <b>Repair - > Union Faces</b>.
 
 \image html union_faces.png
 
-\n <b>Example:</b>
+In this dialog: 
+- Click on the "Arrow" button and select in the Object Browser or in the viewer one or more \b Shapes (compounds or single solids).
+- If necessary, activate \ref restore_presentation_parameters_page "Advanced Transformation Options".
+- Click \b Apply or <b>Apply and Close</b> button.
+
+This operation can be also launched using a <b>TUI Command:</b> <em>geompy.UnionFaces(theShape)</em>,
+where <em>theShape</em> is a compound or a single solid.
+
+<b>Example:</b>
 
 \image html union_faces1.png
 <center><em>Shape with not united faces</em></center>

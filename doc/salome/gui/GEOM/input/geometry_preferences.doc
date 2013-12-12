@@ -44,32 +44,32 @@ predefined materials.</li>
 <li><b>Isolines width</b> - allows to define default width of the isolines.</li>
 <li><b>Preview edges width</b> - allows to define width of the edges for preview.</li>
 <li><b>Measures line width</b> - allows to define lines width of measurements tools.</li>
-<li><b>Automatic bring to front</b> - when option is ON: the objects selected by the user will be automatically 
-made "top-level".</li>
+<li><b>Automatic bring to front</b> - when the option is on, the objects selected by the user automatically become "top-level".</li>
 
 </ul>
 </ul>
 
 <ul>
-<li><b>Number of isolines</b></li> - this submenu allows to specify the 
-number of isolines along the axes of coordinates:
-<ul>
-<li><b>Along U</b>
-<li><b>Along V</b>
-</ul>
+<li><b>Number of isolines</b> - allows to specify the number of isolines along <b>Along U</b> and <b>Along V</b> coordinate axes. They are shown on each selected face. For example:
+
+\image html isos.png
+
+This preference is not related with <b>Create Isoline</b> operation. 
+By default <b>Along U</b> and <b>Along V</b> are null and isolines are not drawn. </li>
+ 
 </ul>
 
 <ul>
 <li><b>Input fields precision</b></li>
 <ul>
-<li><b>Length precision</b> - allows to ajust input precision of coordinates and dimensions.</li>
-<li><b>Angular precision</b> - allows to ajust input precision of angles.</li>
-<li><b>Length tolerance precision</b> - allows to ajust input precision of tolerance of coordinates and dimensions.</li>
-<li><b>Angular tolerance precision</b> - allows to ajust input precision of tolerance of angles.</li>
-<li><b>Weight precision</b> - allows to ajust input precision of weight and mass.</li>
-<li><b>Density precision</b> - allows to ajust input precision of density.</li>
-<li><b>Parametric precision</b> - allows to ajust input precision of parametric values.</li>
-<li><b>Parametric tolerance precision</b> - allows to ajust input precision of tolerance in parametric space.</li>
+<li><b>Length precision</b> - allows to adjust input precision of coordinates and dimensions.</li>
+<li><b>Angular precision</b> - allows to adjust input precision of angles.</li>
+<li><b>Length tolerance precision</b> - allows to adjust input precision of tolerance of coordinates and dimensions.</li>
+<li><b>Angular tolerance precision</b> - allows to adjust input precision of tolerance of angles.</li>
+<li><b>Weight precision</b> - allows to adjust input precision of weight and mass.</li>
+<li><b>Density precision</b> - allows to a just input precision of density.</li>
+<li><b>Parametric precision</b> - allows to adjust input precision of parametric values.</li>
+<li><b>Parametric tolerance precision</b> - allows to adjust input precision of tolerance in parametric space.</li>
 </ul>
 </ul>
 

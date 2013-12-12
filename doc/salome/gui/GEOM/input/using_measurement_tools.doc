@@ -1,9 +1,10 @@
 /*!
 
-\page using_measurement_tools_page Measuring objects properties
+\page using_measurement_tools_page Object properties
 
-\n Measurement tools in GEOM are necessary for getting different data
-concerning created or imported geometrical objects :
+\n The key property of an object is its \subpage geometrical_obj_prop_page "Geometrical Type"
+  
+\n There are also various <b> Measurement tools </b> for getting data about created or imported geometrical objects :
 
 <ul>
 <li>\subpage point_coordinates_page "Point coordinates"</li>

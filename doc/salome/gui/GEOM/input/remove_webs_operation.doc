@@ -6,7 +6,7 @@
 <b>Repair - > Remove internal faces</b>.
 
 \n This operation removes all shared faces from a compound to obtain
-one or more bigger solids from the set of smaller solids.
+one or more bigger solids from a set of smaller solids.
 
 \image html remove_webs.png
 
@@ -15,8 +15,8 @@ one or more bigger solids from the set of smaller solids.
    \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \note Only shared faces will be removed. Coincident but not shared
-faces will stay as is, use GlueFaces or MakePartition before
-RemoveInternalFaces if you need to remove them.
+faces will stay as is, use Glue Faces or Partition before
+Remove Internal Faces if you need to remove them.
 
 \n <b>TUI Command:</b> <em>geompy.RemoveInternalFaces(theCompound)</em>,
 where <em>theCompound</em> is a compound of solids.

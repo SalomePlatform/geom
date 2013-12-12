@@ -2,10 +2,10 @@
 
 \page using_boolean_operations_page Boolean Operations
 
-For detail description of the Boolean operations please refer to
+For a detailed description of Boolean operations refer to
 <a href="SALOME_BOA_PA.pdf">this document</a>. 
 It provides a general review of the Partition and Boolean
-operations algorithms, describes the usage methodology and highlighs
+operations algorithms, describes the usage methodology and highlights
 major limitations of these operations.
 
 You can use the following boolean operations for construction of more
@@ -44,7 +44,7 @@ operation.
 \par
 <em>geompy.MakeBoolean(Shape1, Shape2, Operation, checkSelfInte),</em> where \em
 Shape1 is the first argument and \em Shape2 is the second argument of
-Boolean operation, \em Operation is a type of the Boolean operation (1
+a Boolean operation, \em Operation is the type of a Boolean operation (1
 &mdash; Common, 2 &mdash; Cut, 3 &mdash; Fuse, 4 &mdash; Section).
 
 
@@ -60,17 +60,17 @@ argument and \em Shape2 is the second argument of Common operation;
 <em>geompy.MakeCut(Shape1, Shape2, checkSelfInte)</em>, where \em Shape1 is the first
 argument and \em Shape2 is the second argument of Cut operation;
 
-The flag \em checkSelfInte tells whether arguments should be checked for
-self-intersection prior to an operation. Its default value is \em False which
+The flag \em checkSelfInte indicates whether the arguments should be checked for
+self-intersection prior to an operation. Its default value is \em False, which
 means that there is no need to check it. This option is provided to ensure that
-an operation is performed on not self-intersected shapes as these shapes are
+an operation is performed on not self-intersected shapes as they are
 not valid for boolean operations.
 
-\note This algorithm doesn't find all types of self-intersections. It is tuned
+\note This algorithm does not find all types of self-intersections. It is tuned
       to detect vertex/vertex, vertex/edge, edge/edge, vertex/face and edge/face
       intersections. Face/face intersections detection is switched off as it
       is a time-consuming operation that gives an impact on performance. To find
-      all self-intersections please use \ref check_self_intersections_page
+      all self-intersections use \ref check_self_intersections_page
       "Detect Self-intersection tool".
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 

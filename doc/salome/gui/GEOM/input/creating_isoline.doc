@@ -2,21 +2,30 @@
 
 \page create_isoline_page Isoline
 
-To create an \b Isoline in the <b>Main Menu</b> select <b>New Entity - >
-Basic - > Isoline</b>
+\b Isoline is a 3D curve built on a bounded face limited by <em> [Umin, Umax] </em> and <em> [Vmin, Vmax] </em>
+values of U and V parameters. For all points of the isoline U or V parameter value is constant. 
 
-\n The \b Result of this operation will be a GEOM_Object.
-It may be either an edge or a compound of several edges.
-
-\n You can define an Isoline by a \b Face, \b Type and \b Parameter.
-\n <b>TUI Command:</b> <em>geompy.MakeIsoline(theFace, IsUIsoline, theParameter)</em>
-\n <b>Arguments:</b> Name + Face + Type (True for U-Isoline; False for V-Isoline) + Parameter.
+To create an \b Isoline of a face in the <b>Main Menu</b> select <b>New Entity - > Basic - > Isoline</b>.
 
 \image html isoline1.png
 
+In this dialog:
+- Input or accept the default \b Name of the resulting shape. 
+- Click the arrow button and select in the Object Browser or in the Viewer the \b Face, for which the Isoline is built. 
+- Select along which coordinate: \b U-Isoline or \b V-Isoline the Isoline is built;
+- Set \b Parameter (ranging from 0 to 1), which defines the proportion, at which a face is divided by the isoline.
+If Parameter=0.5, the isoline is a median.
+- Press "Apply" or "Apply & Close" button to get the result (an edge or a compound of several edges).
+
+This operation can be performed using a <b>TUI Command:</b> 
+
+<em>geompy.MakeIsoline(theFace, IsUIsoline, theParameter)</em>
+
+<b>Arguments:</b> Name + Face + Type (True for U-Isoline; False for V-Isoline) + Parameter.
+
 <b>Example:</b>
 
-\image html isoline2.png "Isoline on face"
+\image html isoline2.png "Isoline on a rectangle face"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_curve "Basic Geometric Objects".
