@@ -81,7 +81,7 @@ list of locations (vertices) on the path corresponding specified list of the sha
 
 \image html pipe3_init.png "Initial objects"
 
-\image html pipe3_init1.png "Extrusion of the profile shapes along the path shape"
+\image html pipe3_res.png "Extrusion of the profile shapes along the path shape"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_pipe "Complex Geometric Objects".
