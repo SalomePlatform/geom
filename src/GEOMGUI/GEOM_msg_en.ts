@@ -2317,6 +2317,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Warning</translation>
     </message>
     <message>
+        <source>GEOM_WRN_FACES_NOT_SHELL</source>
+        <translation>Unable to create a shell. Result is a compound of faces.</translation>
+    </message>
+    <message>
         <source>WRN_SHAPE_UNCLOSED</source>
         <translation>Unable to create solid from unclosed shape %1</translation>
     </message>

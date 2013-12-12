@@ -32,6 +32,7 @@
 
 #include <GEOMImpl_Types.hxx>
 
+#include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
@@ -260,8 +261,17 @@ bool BuildGUI_ShellDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_Object_var anObj = anOper->MakeShell( objlist.in() );
 
-  if ( !anObj->_is_nil() )
+  if ( !anObj->_is_nil() ) {
+    TopoDS_Shape aShell;
+    GEOMBase::GetShape(anObj, aShell, TopAbs_SHELL);
+
+    if (aShell.IsNull()) {
+      SUIT_MessageBox::warning(this,
+                               QObject::tr("GEOM_WRN_WARNING"),
+                               QObject::tr("GEOM_WRN_FACES_NOT_SHELL"));
+    }
     objects.push_back( anObj._retn() );
+  }
 
   return true;
 }
