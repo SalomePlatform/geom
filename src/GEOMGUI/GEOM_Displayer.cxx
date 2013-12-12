@@ -673,8 +673,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->SetDisplayVectors( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
 
   // set transparency
-  // VSR: ??? next line is commented: transparency property is set in the AfterDisplay() function
-  //AISShape->SetTransparency( propMap.value( GEOM::propertyName( GEOM::Transparency ) ).toDouble() );
+  AISShape->SetTransparency( propMap.value( GEOM::propertyName( GEOM::Transparency ) ).toDouble() );
 
   // set iso properties
   int uIsos = propMap.value( GEOM::propertyName( GEOM::NbIsos ) ).toString().split( GEOM::subSectionSeparator() )[0].toInt();
@@ -1593,30 +1592,6 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
 
 void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
 {
-  SalomeApp_Study* aStudy = getStudy();
-  if (!aStudy) return;
-  SOCC_Viewer* vf = dynamic_cast<SOCC_Viewer*>( v );
-  if ( vf && !p->IsNull() ) {
-    int aMgrId = getViewManagerId( vf );
-    Handle(AIS_InteractiveContext) ic = vf->getAISContext();
-    const SOCC_Prs* prs = dynamic_cast<const SOCC_Prs*>( p );
-    if ( !ic.IsNull() && prs ) {
-      AIS_ListOfInteractive objects;
-      prs->GetObjects( objects );
-      AIS_ListIteratorOfListOfInteractive it( objects );
-      for ( ; it.More(); it.Next() ) {
-        Handle(GEOM_AISShape) sh = Handle(GEOM_AISShape)::DownCast( it.Value() );
-        if ( sh.IsNull() ) continue;
-        Handle(SALOME_InteractiveObject) IO = sh->getIO();
-        if ( IO.IsNull() ) continue;
-        PropMap aPropMap = aStudy->getObjectPropMap( aMgrId, IO->getEntry() );
-        if ( aPropMap.contains( GEOM::propertyName( GEOM::Transparency ) ) ) {
-          double transparency = aPropMap.value(GEOM::propertyName( GEOM::Transparency )).toDouble();
-          ic->SetTransparency( sh, transparency, true );
-        }
-      }
-    }
-  }
   UpdateColorScale(false,false);
 }
 
