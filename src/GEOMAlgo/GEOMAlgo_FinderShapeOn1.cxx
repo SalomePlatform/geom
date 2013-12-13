@@ -635,12 +635,10 @@ void GEOMAlgo_FinderShapeOn1::InnerPoints(const TopoDS_Face& aF,
           aP2=aNodes(aN2).Transformed(aTrsf);
           //
           if (aType==GeomAbs_Cylinder) {
-            Standard_Real aTolSM;
             gp_Cylinder aCyl;
             //
-            aTolSM=1.523e-6;//~1.-cos(0.1 deg)
             aCyl=aGAS.Cylinder();
-            if (!GEOMAlgo_SurfaceTools::IsCoaxial(aP1, aP2, aCyl, aTolSM)) {
+            if (!GEOMAlgo_SurfaceTools::IsCoaxial(aP1, aP2, aCyl, myTolerance)) {
               continue;
             }
           }

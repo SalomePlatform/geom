@@ -140,21 +140,34 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial(const gp_Pnt& aP1,
                                                   const gp_Cylinder& aCyl,
                                                   const Standard_Real aTol)
 {
-  Standard_Boolean bRet=Standard_False;
-  Standard_Real aSM;
-  //
-  gp_Vec aV12(aP1, aP2);
-  gp_Dir aD12(aV12);
-  //
-  const gp_Ax1& aAxis=aCyl.Axis();
-  const gp_Dir& aDAxis=aAxis.Direction();
-  //
-  aSM=fabs(aD12*aDAxis);
-  if (fabs(1.-aSM) > aTol) {
-    return bRet;
+  const gp_XYZ &aLoc   = aCyl.Location().XYZ();
+  const gp_Ax1 &aAxis  = aCyl.Axis();
+  const gp_XYZ &aDAxis = aAxis.Direction().XYZ();
+  gp_XYZ        aDP1   = aP1.XYZ().Subtracted(aLoc);
+  gp_XYZ        aDP2   = aP2.XYZ().Subtracted(aLoc);
+  Standard_Real aDot1  = aDP1.Dot(aDAxis);
+  Standard_Real aDot2  = aDP1.Dot(aDAxis);
+  Standard_Real aTol2  = aTol*aTol;
+
+  // Project P1 and P2 onto a plane with location aLoc and Norm aDAxis.
+  aDP1.Subtract(aDAxis.Multiplied(aDot1));
+  aDP2.Subtract(aDAxis.Multiplied(aDot2));
+
+  Standard_Real    aRadius1 = aDP1.Modulus();
+  Standard_Real    aRadius2 = aDP2.Modulus();
+  Standard_Boolean isOn     = Standard_False;
+
+  if (fabs(aRadius1 - aRadius2) <= aTol) {
+    // Check the deflection of the middle point.
+    gp_XYZ        aMidP       = 0.5*(aDP1 + aDP2);
+    Standard_Real aMidRadius1 = aMidP.Modulus();
+
+    if (fabs(aRadius1 - aRadius2) <= aTol) {
+      isOn = Standard_True;
+    }
   }
-  //
-  return !bRet;
+
+  return isOn;
 }
 //=======================================================================
 //function : IsAnalytic
