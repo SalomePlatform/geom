@@ -4,6 +4,14 @@
 <context>
     <name>@default</name>
     <message>
+        <source>MEN_TEXTURE</source>
+        <translation type="unfinished">Texture</translation>
+    </message>
+    <message>
+        <source>GEOM_WRN_FACES_NOT_SHELL</source>
+        <translation type="unfinished">Unable to create a shell. Result is a compound of faces.</translation>
+    </message>
+    <message>
         <source>BRep_API: command not done</source>
         <translation>Erreur: impossible de construire l&apos;objet</translation>
     </message>

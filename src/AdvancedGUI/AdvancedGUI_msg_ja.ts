@@ -135,6 +135,30 @@
   <context>
     <name>AdvancedGUI_PipeTShapeDlg</name>
     <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</source>
+        <translation type="unfinished">Incident pipe external Radius (Radius + Width) can't be equal to Incident pipe thickness reduction external Radius (rI + wI)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</source>
+        <translation type="unfinished">Incident pipe Radius can't be equal to Incident pipe thickness reduction Radius (rI)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</source>
+        <translation type="unfinished">Main pipe external Radius (Radius + Width) can't be equal to Right thickness reduction external Radius (rR + wR)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</source>
+        <translation type="unfinished">Main pipe Radius can't be equal to Right thickness reduction Radius (rR)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</source>
+        <translation type="unfinished">Main pipe external Radius (Radius + Width) can't be equal to Left thickness reduction external Radius (rL + wL)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</source>
+        <translation type="unfinished">Main pipe Radius can't be equal to Left thickness reduction Radius (rL)!</translation>
+    </message>
+    <message>
       <source>GEOM_PIPE_TSHAPE_TITLE</source>
       <translation>T型パイプの作成</translation>
     </message>
