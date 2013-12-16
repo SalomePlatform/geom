@@ -42,6 +42,7 @@
 #include "GEOM_PythonDump.hxx"
 #include "GEOMImpl_Types.hxx"
 #include "GEOMImpl_CopyDriver.hxx"
+#include "GEOMImpl_IInsertOperations.hxx"
 #include "GEOM_wrap.hxx"
 
 // Cascade headers
@@ -2906,11 +2907,11 @@ Engines::ListOfIdentifiers* GEOM_Gen_i::importData(
   if (aFileName.rfind("/") != std::string::npos) { // remove folders from the name
     aFileName = aFileName.substr(aFileName.rfind("/") + 1);
   }
+
   std::string anExtension(data->extension());
   aFileName += "." + anExtension;
   // convert extension to upper case
   std::transform(anExtension.begin(), anExtension.end(), anExtension.begin(), ::toupper);
-
   std::string aFullPath = aTmpDir + aFileName;
 
   Engines::TMPFile* aFileStream = data->get();
@@ -2923,16 +2924,30 @@ Engines::ListOfIdentifiers* GEOM_Gen_i::importData(
   aFile.write(aBuffer, aFileStream->length());
   aFile.close();
 
-  GEOM::GEOM_Object_var anObj = aInsOp->ImportFile(aFullPath.c_str(), anExtension.c_str());
-  if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
-    SALOMEDS::SObject_var aSO = PublishInStudy(aStudy, SALOMEDS::SObject::_nil(), anObj, data->name());
-    aResult->length(1);
+  GEOM::GEOM_Object_var aShapeObj;
+  GEOM::ListOfGO_var aSubShape = new GEOM::ListOfGO;
+  GEOM::ListOfGO_var aGroups = new GEOM::ListOfGO;
+  GEOM::ListOfFields_var aFields = new GEOM::ListOfFields;
+
+  CORBA::Boolean isResultOK = aInsOp->ImportXAO(aFullPath.c_str(), aShapeObj.out(), aSubShape.out(), aGroups.out(), aFields.out());
+
+  if ( isResultOK && !aShapeObj->_is_nil() && aInsOp->IsDone() ) {
+    SALOMEDS::SObject_var aSO = PublishInStudy(aStudy, SALOMEDS::SObject::_nil(), aShapeObj, aShapeObj->GetName());
+    aResult->length(aGroups->length() + 1);
     aResult[0] = aSO->GetID(); // unioque identifer of the object in GEOM is entry of SObject
-  } else {
-    if (anObj->_is_nil())
+    //Iteration for objects of the group.
+    for (int i = 0; i < aGroups->length(); i++) {
+      SALOMEDS::SObject_var aSOChild = AddInStudy(aStudy, aGroups[i], aGroups[i]->GetName(), aShapeObj);
+      aResult[i+1] = aSOChild->GetID();
+    }
+  }
+  else {
+    if (aShapeObj->_is_nil())
       MESSAGE("Result of the import operation is incorrect for file "<<aFullPath.c_str());
     if (!aInsOp->IsDone())
       MESSAGE("Import operation is not done for file "<<aFullPath.c_str());
+    if (!isResultOK)
+      MESSAGE("ImportXAO operation is failed for file "<<aFullPath.c_str());
     return aResult._retn();
   }
 
@@ -2941,7 +2956,7 @@ Engines::ListOfIdentifiers* GEOM_Gen_i::importData(
   aTmpFiles.length(1);
   aTmpFiles[0] = aFileName.c_str();
   SALOMEDS_Tool::RemoveTemporaryFiles(aTmpDir, aTmpFiles, true);
-  
+
   _impl->DocumentModified(studyId, false);
   return aResult._retn();
 }
@@ -2966,10 +2981,16 @@ Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
   if (CORBA::is_nil(aComponent))
     return aResult._retn();
   SALOMEDS::ChildIterator_var anIter = aStudy->NewChildIterator(aComponent); // check only published shapes
-  TopoDS_Compound aResultComp;
-  BRep_Builder aBB;
-  aBB.MakeCompound(aResultComp);
-  int aNumInComp = 0; // number of shapes in resulting compound
+
+  GEOM::GEOM_Object_var shapeObj;
+  GEOM::ListOfGO_var groups = new GEOM::ListOfGO;
+  GEOM::ListOfFields_var fields = new GEOM::ListOfFields;
+  std::string anAuthorName = "SIMAN Author";
+  
+  GEOM::GEOM_IShapesOperations_var  aShapesOp = GetIShapesOperations(aStudy->StudyId());
+  GEOM::GEOM_IInsertOperations_var aInsOp = GetIInsertOperations(aStudy->StudyId());
+
+  int aSeqLength = 0; // the sequence length
   for(; anIter->More(); anIter->Next()) {
     SALOMEDS::SObject_var aSO = anIter->Value();
     SALOMEDS::SObject_var aRefSO;
@@ -2980,30 +3001,42 @@ Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
         GEOM::GEOM_Object_var aCORBAMainShape = GEOM::GEOM_Object::_narrow(anObj);
         if(!aCORBAMainShape->_is_nil()) {
           CORBA::String_var entry = aCORBAMainShape->GetEntry();
-          Handle(GEOM_Object) aMainShape = Handle(GEOM_Object)::DownCast( _impl->GetObject(studyId, entry) );
-          if (!aMainShape.IsNull()) {
-            TopoDS_Shape aMainSh = aMainShape->GetValue();
-            if (!aMainSh.IsNull()) {
-              aBB.Add(aResultComp, aMainSh);
-              aNumInComp++;
+          Handle(GEOM_Object) aMainShape = Handle(GEOM_Object)::DownCast(_impl->GetObject(studyId, entry));
+
+          GEOM::shape_type aCORBAShapeType = aCORBAMainShape->GetShapeType();
+          if (!aMainShape.IsNull() && !(aCORBAShapeType == GEOM::VERTEX) && !(aCORBAShapeType == GEOM::EDGE)) {
+            aSeqLength++;
+            shapeObj = aCORBAMainShape;
+            if (aShapesOp->_is_nil()) {
+              MESSAGE("No shapes operations!");
+              return aResult._retn();
             }
+            groups = aShapesOp->GetExistingSubObjects(aCORBAMainShape, true);
+            break;
           }
         }
       }
     }
   }
-  if (aNumInComp > 0) { // compund is correct, write it to the temporary file
-    std::string aFullPath = Kernel_Utils::GetTmpFileName() + ".brep";
-    BRepTools::Write(aResultComp, aFullPath.c_str());
-    MESSAGE("Write compound of "<<aNumInComp<<" shapes to "<<aFullPath.c_str());
+
+  if (aInsOp->_is_nil()) {
+    MESSAGE("No insert operations!");
+    return aResult._retn();
+  }
+
+  if (aSeqLength > 0) { // Shape is correct, write it to the temporary file
+
+    std::string aFullXaoPath = Kernel_Utils::GetTmpFileName() + ".xao";
+    CORBA::Boolean isResultOK = aInsOp->ExportXAO(shapeObj.in(), groups.in(), fields.in(), anAuthorName.c_str(), aFullXaoPath.c_str());
+
     aResult->length(1);
     Engines::DataContainer_var aData = (new Engines_DataContainer_i(
-                    aFullPath.c_str(), "", "", true))->_this();
+                    aFullXaoPath.c_str(), "", "", true))->_this();
     aResult[0] = aData;
   } else {
     MESSAGE("No shapes to export");
   }
-  
+
   return aResult._retn();
 }
                                                                
