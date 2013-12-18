@@ -54,7 +54,8 @@ namespace GEOM
     PointColor,
     IsosColor,
     OutlineColor,
-    LastProperty = OutlineColor,
+    Texture,
+    LastProperty = Texture,
   };
 
   GEOM_OBJECT_EXPORT double minDeflection();

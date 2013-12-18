@@ -174,11 +174,11 @@ void TransformationGUI_MultiRotationDlg::ConstructorsClicked (int constructorId)
 {
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 
-  myBase.nullify();
-  myVector.nullify();
+  //myBase.nullify();
+  //myVector.nullify();
 
-  GroupArgs->LineEdit1->setText("");
-  GroupArgs->LineEdit2->setText("");
+  //GroupArgs->LineEdit1->setText("");
+  //GroupArgs->LineEdit2->setText("");
 
   GroupArgs->SpinBox_DX1->setValue(myAng);
   GroupArgs->SpinBox_DY1->setValue(myNbTimes1);
@@ -275,7 +275,8 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
         // angular step
         double diag = sqrt((Xmax-Xmin)*(Xmax-Xmin) + (Ymax-Ymin)*(Ymax-Ymin));
         double d = sqrt((0.5*(Xmax+Xmin))*(0.5*(Xmax+Xmin)) + (0.5*(Ymax+Ymin))*(0.5*(Ymax+Ymin)));
-        myAng = floor(2.0 * atan(diag/d) * 180.0 / M_PI);
+        if ( fabs(d) > 1.e-16 )
+	  myAng = floor(2.0 * atan(diag/d) * 180.0 / M_PI);
         GroupArgs->SpinBox_DX1->setValue(myAng);
 
         // radial step
@@ -293,10 +294,10 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
     }
     
     // clear selection
-    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-    myGeomGUI->getApp()->selectionMgr()->clearSelected();
-    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-            this, SLOT(SelectionIntoArgument()));
+    // disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+    // myGeomGUI->getApp()->selectionMgr()->clearSelected();
+    // connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+    //         this, SLOT(SelectionIntoArgument()));
   }
   else {
     if ( myEditCurrentArgument == GroupArgs->LineEdit1 )

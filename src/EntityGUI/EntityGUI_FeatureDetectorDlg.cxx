@@ -282,7 +282,16 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   myWidgets.insert( HIST_TYPE, histType );
   QDoubleSpinBox* thresholdValue = new QDoubleSpinBox();
   thresholdValue->setRange( 0, 254 );
-  thresholdValue->setValue( 128 );
+  // 1 is a good default value for the threshold. It means that we are very permissive
+  // about what will be considered INSIDE the zone we want to find the frontier of
+  // This makes the algorithm more robust against a bit inhomogeneous parts in the zone
+  // that we want to delimitate.
+  // The drawback is if we want to delimitate a zone wich color is very similar to the zone
+  // we consider as the OUTSIDE, the result will be bad.
+  // The current use cases are more of the first form : 
+  //  - Strongly contrasted INSIDE and OUTSIDE zones
+  //  - Small inhomogenities in each zone
+  thresholdValue->setValue( 1 );
   myWidgets.insert( THRESHOLD_VALUE, thresholdValue );
   QDoubleSpinBox* maxThreshold = new QDoubleSpinBox();
   maxThreshold->setRange( 1, 255 );
@@ -327,7 +336,7 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
 //   mainFrame()->GroupBoxName->hide();
   
   // Build an instance of detection used to perform image processing operations
-  aDetector = new ShapeRec_FeatureDetector();
+  myDetector = new ShapeRec_FeatureDetector();
   
   setHelpFileName( "shape_recognition_page.html" );
   
@@ -341,7 +350,7 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
 //=================================================================================
 EntityGUI_FeatureDetectorDlg::~EntityGUI_FeatureDetectorDlg()
 {
-  
+  delete myDetector;
 }
 
 //=================================================================================
@@ -447,9 +456,9 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
         return ;
 
       // Setting the image caracteristics
-      aDetector->SetPath( theImgFileName );
-      height            =  aDetector->GetImgHeight();
-      width             =  aDetector->GetImgWidth();
+      myDetector->SetPath( theImgFileName );
+      height            =  myDetector->GetImgHeight();
+      width             =  myDetector->GetImgWidth();
       pictureLeft       = -0.5 * width;              // X coordinate of the top left  corner of the background image in the view
       pictureTop        =  0.5 * height;             // Y coordinate of both top corners
       
@@ -674,7 +683,7 @@ void EntityGUI_FeatureDetectorDlg::setEndPnt(const gp_Pnt& theEndPnt)
 {
   myEndPnt = theEndPnt;
   MESSAGE("myEndPnt = ("<<theEndPnt.X()<<", "<<theEndPnt.Y()<<")")
-  if (setSelectionRect() && aDetector->GetImgHeight() > 0)
+  if (setSelectionRect() && myDetector->GetImgHeight() > 0)
     showImageSample();
 }
 
@@ -705,8 +714,8 @@ bool EntityGUI_FeatureDetectorDlg::setSelectionRect()
 void EntityGUI_FeatureDetectorDlg::showImageSample()
 { 
   // Cropp the image to the selection rectangle given by the user
-  aDetector->SetROI( myRect ); 
-  std::string samplePicturePath = aDetector->CroppImage();
+  myDetector->SetROI( myRect ); 
+  std::string samplePicturePath = myDetector->CroppImage();
   
   // Display the result
   QPixmap pixmap(QString(samplePicturePath.c_str()));
@@ -753,9 +762,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 	subPictureLeft    = pictureLeft;
 	subPictureTop     = pictureTop;
       }
-      aDetector->ComputeCorners( useROI, parameters );
-      CvPoint2D32f* corners     = aDetector->GetCorners();
-      int cornerCount           = aDetector->GetCornerCount();
+      myDetector->ComputeCorners( useROI, parameters );
+      CvPoint2D32f* corners     = myDetector->GetCorners();
+      int cornerCount           = myDetector->GetCornerCount();
       int i;
     
       // Build the geom objects associated to the detected corners and returned by execute   
@@ -794,9 +803,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     {    
       GEOM::GEOM_ICurvesOperations_var aCurveOperations = myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
 
-      aDetector->ComputeContours( useROI, parameters );
-      std::vector< std::vector<cv::Point> >   contours  = aDetector->GetContours();
-      std::vector<cv::Vec4i>                  hierarchy = aDetector->GetContoursHierarchy();
+      myDetector->ComputeContours( useROI, parameters );
+      std::vector< std::vector<cv::Point> >   contours  = myDetector->GetContours();
+      std::vector<cv::Vec4i>                  hierarchy = myDetector->GetContoursHierarchy();
     
       std::vector< cv::Point >                contour;
       int idx = 0;
@@ -914,8 +923,8 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   
 //   else if(myConstructorId ==LINES)
 //   {
-//     aDetector->ComputeLines();
-//     std::vector<cv::Vec4i>  lines = aDetector->GetLines();
+//     myDetector->ComputeLines();
+//     std::vector<cv::Vec4i>  lines = myDetector->GetLines();
 //     GEOM::GEOM_Object_var  Pnt1;
 //     GEOM::GEOM_Object_var  Pnt2;
 //     GEOM::GEOM_Object_var  aLine;

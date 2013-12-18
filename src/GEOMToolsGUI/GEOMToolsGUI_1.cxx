@@ -298,9 +298,9 @@ void GEOMToolsGUI::OnTexture()
 
   QString aTexture = QFileDialog::getOpenFileName( dynamic_cast< SUIT_ViewWindow* >( window ),tr("GEOM_SELECT_IMAGE"),QString(), tr("OCC_TEXTURE_FILES"));
   if( !aTexture.isEmpty() ) {
-    displayer.SetTexture( aTexture.toStdString() );
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       Handle( SALOME_InteractiveObject ) io = It.Value();
+      appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::Texture ), aTexture );
       appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::DisplayMode ), 3 );
       if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
     }

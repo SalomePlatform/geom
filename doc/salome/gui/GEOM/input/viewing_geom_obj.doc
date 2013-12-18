@@ -101,10 +101,9 @@ and then displays only the children of the selected object(s).
   Switch the checkbox near the appropriate object and
   click <b>Publish</b> or <b>Publish And Close</b> button. 
 
-  "Eye" icons in this dialog box allow previewing unpublished objects in the viewer. All 
-  unpublished objects are by default sorted by the name in ascending order. It is possible
-  to change order of sorting (ascending / descending) by clicking the corresponding title
-  bar of the objects list.
+  "Eye" icons in this dialog box allow previewing unpublished objects in the viewer. By default all 
+  unpublished objects are sorted by name in ascending order. It is possible
+  to change the order (ascending / descending) by clicking the corresponding title bar of the objects list.
 </li>
 </ul>
 
@@ -115,8 +114,7 @@ window providing some information on a selected geometric object:
 
 - <b>Creation operation</b> shows a name of the operation
 used to create the selected object.
-- In a table under <b>Creation operation</b>, \b Parameter and \b
-Value are a name and a value of a parameter used to create the
-selected object.
+- The table below lists \b Parameters used to create the
+selected object and their \b Values.
 
 */

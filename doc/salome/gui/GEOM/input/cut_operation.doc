@@ -2,29 +2,37 @@
 
 \page cut_operation_page Cut
 
-To produce a \b Cut operation in the <b>Main Menu</b> select <b>Operations - > Boolean - > Cut</b>
+\b Cut operation cuts a shape with a list of other shapes.
 
-This operation cuts a shape with a list of other shapes.
-
-The \b Result will be a \b GEOM_Object.
-
-<b>TUI Command:</b> <em>geompy.MakeCutList(theMainShape, theShapesList, checkSelfInte)</em>\n
-<b>Arguments:</b> Name + a main shape + a list of other shapes + an optional flag for self-intersection check.\n
-<b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+To produce it, select in the main menu <b>Operations - > Boolean - > Cut</b>
 
 \image html bool3.png "Cut dialog"
 
-\note This algorithm doesn't find all types of self-intersections. It is tuned
+In this dialog:
+- Input or accept the default \b Name of the resulting shape. 
+- Click the arrow button and select in the Object Browser or in the Viewer the <b>Main Object</b>, which will be cut by tool objects.
+- Select the <b>Tool objects</b>, which will cut the main object.
+- Activate the corresponding check-box if you wish to <b> Detect Self-intersections </b>.
+- Activate \ref restore_presentation_parameters_page "Advanced options" if required.
+- Press "Apply" or "Apply & Close" button to get the result (GEOM_Object).
+
+\note This algorithm does not find all types of self-intersections. It is tuned
       to detect vertex/vertex, vertex/edge, edge/edge, vertex/face and edge/face
       intersections. Face/face intersections detection is switched off as it
       is a time-consuming operation that gives an impact on performance. To find
-      all self-intersections please use \ref check_self_intersections_page
+      all self-intersections use \ref check_self_intersections_page
       "Detect Self-intersection tool".
 
-For a particular case with two shapes (object and tool) for the Cut operation there is the following TUI command:
+This operation can be performed using a <b>TUI Command:</b> 
 
-<b>TUI Command:</b> <em>geompy.MakeCut(s1, s2, checkSelfInte)</em>\n
+<em>geompy.MakeCutList(theMainShape, theShapesList, checkSelfInte)</em>
+
+<b>Arguments:</b> Name + a main shape + a list of other shapes + an optional flag for self-intersection check.
+
+There is also a special <b>TUI Command:</b> for the Cut operation on two shapes (object and tool) :
+
+<em>geompy.MakeCut(s1, s2, checkSelfInte)</em>
+
 <b>Arguments:</b> Name + the object + the tool + an optional flag for self-intersection check.
 
 <b>Example:</b>
@@ -38,8 +46,7 @@ Our <b>TUI Scripts</b> provide you with useful examples of the use of
 
 <b> More details </b>
 
-For a detailed description of the Boolean operations please refer to
-<a href="SALOME_BOA_PA.pdf">this document</a>.
+Please refer to <a href="SALOME_BOA_PA.pdf">this document</a> for a detailed description of Boolean operations.
 It provides a general review of the Partition and Boolean
 operations algorithms, describes the usage methodology and highlights
 major limitations of these operations.

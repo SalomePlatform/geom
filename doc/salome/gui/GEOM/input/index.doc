@@ -14,17 +14,14 @@
 - \subpage transform_geom_obj_page "transformation of geometrical objects"
   using various algorithms;
 - \subpage repairing_operations_page "optimization of geometrical objects";
-- viewing \subpage geometrical_obj_prop_page "geometrical object properties"
-  and other information about geometrical objects using
+- viewing information about geometrical objects using
   \subpage using_measurement_tools_page "measurement tools";
 - \subpage pictures_page "designing shapes from pictures";
-- easily setting parameters via the variables predefined in
+
+It is possible to easily set parameters via the variables predefined in
   \subpage using_notebook_geom_page "SALOME notebook".
-
-The possibility to classify the created geometrical objects by moving it into early created container (folder) is detailed on
-\subpage arranging_study_objects_page section.
-
-XAO format describing a shape with its topology, groups and fields is detailed on \subpage xao_format_page section.
+Also, there is a possibility to customize an
+\subpage arranging_study_objects_page "arrangement of the geometrical objects in the SALOME study".
 
 Geometry module preferences are described in the
 \subpage geometry_preferences_page section of SALOME Geometry Help.

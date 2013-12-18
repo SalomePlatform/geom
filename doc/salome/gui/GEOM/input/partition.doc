@@ -2,15 +2,11 @@
 
 \page partition_page Partition
 
-<ul>
-<li>For a detailed description of the Partition operation please refer to
-<a href="SALOME_BOA_PA.pdf">this document</a>. 
-It provides a general review of the Partition and Boolean
-operations algorithms, describes the usage methodology and highlights
-major limitations of these operations.</li>
-  
-<li>Perhaps you also ask yourself : \ref partition_explanation "What's the difference between partition, compounds and fuse operation ?"</li>
-</ul>
+For a detailed description of the Partition operation please refer to <a href="SALOME_BOA_PA.pdf">this document</a>.
+It provides a general review of the Partition and Boolean operations algorithms, describes the usage methodology and highlights
+major limitations of these operations.
+
+Perhaps you also ask yourself : \ref partition_explanation "What's the difference between partition, compounds and fuse operation ?"
 
 To produce a \b Partition in the <b>Main Menu</b> select <b>Operations - > Partition</b>
 
@@ -28,7 +24,7 @@ Resulting Type of shape.
 
 As far as the intersection of two objects can produce any type of
 geometrical objects, <b>Resulting type</b> box allows choosing the
-preferrable result, i.e. a solid, a shell, a list of faces, etc.
+preferable result, i.e. a solid, a shell, a list of faces, etc.
 
 The <b>Resulting type</b> has to be equal or lower than the type of the
 \em Objects. In other words, if the \em Objects don't contain any
@@ -47,28 +43,27 @@ face (there will be a hole in the resulting face, where the original
 face intersects with the box, see the corresponding \ref partition_picture_3 "picture" below).
 
 <b>No sub-shapes intersection (Compounds only)</b> check box affects
-only input shapes of the Compound type. If this option is switched off (default
-behavior) each input compound will be automatically exploded into
-sub-shapes and the intersection between these shapes will be also
-computed. If this option is switched on, the intersection between
-sub-shapes will not be performed. In this case the Partition algorithm
-will work faster, but the result might differ from the default behavior.
+only input shapes of the Compound type.
+- If this option is switched off (default behavior) each input compound will be automatically
+exploded into sub-shapes and the intersection between these shapes will be also computed.
+- If this option is switched on, the intersection between sub-shapes will not be performed.
+In this case the Partition algorithm will work faster, but the result might differ from the 
+default behavior.
 
-<b>Detect Self-intersections</b> check box is used to check arguments
-self-intersections. If this option is switched on (default behavior)
-each input shape is checked for self-intersection. In case of its detection
-the operation is aborted. If this option is switched off, the partition
-algorithm is performed without self-intersection checks.
+<b>Detect Self-intersections</b> check box is used to check self-intersection of arguments.
+- If this option is switched on (by default), each input shape is checked for self-intersection.
+If self-intersection is detected, the operation is aborted.
+- If this option is switched off, the partition algorithm is performed without self-intersection
+checks.
 
-\note This algorithm doesn't find all types of self-intersections. It is tuned
+\note This algorithm does not find all types of self-intersections. It is tuned
       to detect vertex/vertex, vertex/edge, edge/edge, vertex/face and edge/face
       intersections. Face/face intersections detection is switched off as it
       is a time-consuming operation that gives an impact on performance. To find
       all self-intersections please use \ref check_self_intersections_page
       "Detect Self-intersection tool".
 
- <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+- Activate \ref restore_presentation_parameters_page "Advanced options" if required.
 
 \note Partition is a complex operation, so its result of it depends
       on the quality of the initial shapes. Sometimes, if partition fails,
@@ -95,7 +90,7 @@ Here,
 - \em Limit is a Type of resulting shapes
 - \em KeepNonlimitShapes is a flag that allows to preserve standalone
 shapes of low dimension (than \em Limit) in the result.
-- \em checkSelfInte is a flag that tells if the arguments should
+- \em checkSelfInte is a flag that indicates if the arguments should
 be checked for self-intersection prior to the operation.
 - Other parameters are obsolete and kept only for compatibility with
 previous versions of SALOME.
@@ -106,15 +101,14 @@ previous versions of SALOME.
 
 <b>Arguments:</b> Name + 1 shape to be intersected + 1 cutting plane.
 
-<b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+Activate \ref restore_presentation_parameters_page "Advanced options" if required.
 
 <b>TUI Command:</b>
 
 <em>geompy.MakeHalfPartition(Shape, Plane, checkSelfInte)</em>, where:
 - \em Shape is a source shape to be intersected by the \em Plane
 - \em Plane is a tool shape, to intersect the \em Shape.
-- \em checkSelfInte is a flag that tells if the arguments should
+- \em checkSelfInte is a flag that indicates if the arguments should
 be checked for self-intersection prior to the operation.
 
 <b>Examples:</b>

@@ -2,26 +2,28 @@
 
 \page sewing_operation_page Sewing
 
-\n To produce a \b Sewing operation in the <b>Main Menu</b> select <b>Repair - > Sewing</b>.
+To produce a \b Sewing operation in the <b>Main Menu</b> select <b>Repair - > Sewing</b>.
 
-\n It is possible to sew only compounds of faces or shells.
-
-\n The \b Result will be a \b GEOM_Object. 
-
-\n <b>TUI Command:</b> <em>geompy.MakeSewing(ListOfShape, Precision, AllowNonManifold=False),</em>
- where \em ListOfShape is list of faces or shells to be sewed, \em Precision is a
-precision for sewing, \em AllowNonManifold flag that allows non-manifold sewing.
+The \b Result will be a \b GEOM_Object. 
 
 \image html repair6.png
 
-\n <b>Arguments:</b> Name + 1 or more shapes + 1 value (sew
-precision).
-\n \b Detect button allows to display the number of free boundaries in
-your shape:
+In this dialog: 
+- Click on the "Arrow" button and select in the Object Browser or in the viewer one or more \b Shapes (faces or shells) to be sewn.
+- Activate <b>Allow Non Manifold </b> check-box to produce non-manifold sewing, if required.
+- Define precision for sewing in \b Tolerance field.
+- Activate <b> Detect Free boundaries</b> button to display the number of free boundaries in the shape:
+\image html neo-detect2.png 
+- Click \b Apply or <b>Apply and Close</b> button.
 
-\image html neo-detect2.png
+This operation can be also launched using a <b>TUI Command:</b>
 
-\n <b>Example:</b>
+<em>geompy.MakeSewing(ListOfShape, Precision, AllowNonManifold=False),</em>
+
+where \em ListOfShape is a list of faces or shells to be sewn, \em Precision is a
+precision for sewing, \em AllowNonManifold is a flag that allows non-manifold sewing.
+
+<b>Example:</b>
 
 \image html image112.png "The initial faces"
 

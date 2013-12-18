@@ -27,6 +27,7 @@
 #include <GEOMImpl_ITransformOperations.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
+#include <GEOMUtils.hxx>
 
 #include <ShapeFix_Shape.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
@@ -175,10 +176,7 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
     Handle(GEOM_Function) aVector = TI.GetVector();
     gp_Vec Vec = gp::DX();
     if (!aVector.IsNull()) {
-      TopoDS_Shape aV = aVector->GetValue();
-      if (aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
-      TopoDS_Edge anEdge = TopoDS::Edge(aV);
-      Vec = gp_Vec(BRep_Tool::Pnt(TopExp::FirstVertex(anEdge)), BRep_Tool::Pnt(TopExp::LastVertex(anEdge)));
+      Vec = GEOMUtils::GetVector( aVector->GetValue(), Standard_False );
       Vec.Normalize();
     }
 
@@ -211,18 +209,12 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
     gp_Vec Vec2 = gp::DY();
 
     if (!aVector.IsNull()) {
-      TopoDS_Shape aV = aVector->GetValue();
-      if (aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
-      TopoDS_Edge anEdge = TopoDS::Edge(aV);
-      Vec1 = gp_Vec(BRep_Tool::Pnt(TopExp::FirstVertex(anEdge)), BRep_Tool::Pnt(TopExp::LastVertex(anEdge)));
+      Vec1 = GEOMUtils::GetVector( aVector->GetValue(), Standard_False );
       Vec1.Normalize();
     }
 
     if (!aVector2.IsNull()) {
-      TopoDS_Shape aV = aVector2->GetValue();
-      if (aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
-      TopoDS_Edge anEdge = TopoDS::Edge(aV);
-      Vec2 = gp_Vec(BRep_Tool::Pnt(TopExp::FirstVertex(anEdge)), BRep_Tool::Pnt(TopExp::LastVertex(anEdge)));
+      Vec2 = GEOMUtils::GetVector( aVector2->GetValue(), Standard_False );
       Vec2.Normalize();
     }
 

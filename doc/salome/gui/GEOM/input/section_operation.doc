@@ -2,26 +2,31 @@
 
 \page section_opeartion_page Section
 
-To produce a \b Section operation in the <b>Main Menu</b> select
-<b>Operations - > Boolean - > Section</b>
+\b Section operation creates an edge or a wire representing the intersection of surfaces of two shapes.
 
-This operation creates the section between 2 shapes.
-
-The \b Result will be any \b GEOM_Object (EDGE or WIRE).
-
-<b>TUI Command:</b> <em>geompy.MakeSection(s1, s2, checkSelfInte)</em>\n
-<b>Arguments:</b> Name + 2 shapes + an optional flag for self-intersection check.\n
-<b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
+To produce it, select in the main menu <b>Operations - > Boolean - > Section</b>
 
 \image html neo-section.png "Section dialog"
 
-\note This algorithm doesn't find all types of self-intersections. It is tuned
+In this dialog:
+- Input or accept the default \b Name of the resulting shape. 
+- Click the arrow button and select in the Object Browser or in the Viewer the intersecting <b>Objects</b>.
+- Activate the corresponding check-box if you wish to <b> Detect Self-intersections </b>.
+- Activate \ref restore_presentation_parameters_page "Advanced options" if required.
+- Press "Apply" or "Apply & Close" button to get the result (EDGE or WIRE).
+
+\note This algorithm does not find all types of self-intersections. It is tuned
       to detect vertex/vertex, vertex/edge, edge/edge, vertex/face and edge/face
       intersections. Face/face intersections detection is switched off as it
       is a time-consuming operation that gives an impact on performance. To find
-      all self-intersections please use \ref check_self_intersections_page
+      all self-intersections use \ref check_self_intersections_page
       "Detect Self-intersection tool".
+	  
+This operation can be performed using a <b>TUI Command:</b> 
+
+<em>geompy.MakeSection(s1, s2, checkSelfInte)</em>
+
+<b>Arguments:</b> Name + 2 shapes + an optional flag for self-intersection check.
 
 <b>Example:</b>
 
@@ -34,8 +39,7 @@ Our <b>TUI Scripts</b> provide you with useful examples of the use of
 
 <b> More details </b>
 
-For a detailed description of the Boolean operations please refer to
-<a href="SALOME_BOA_PA.pdf">this document</a>.
+Please refer to <a href="SALOME_BOA_PA.pdf">this document</a> for a detailed description of Boolean operations. 
 It provides a general review of the Partition and Boolean
 operations algorithms, describes the usage methodology and highlights
 major limitations of these operations.

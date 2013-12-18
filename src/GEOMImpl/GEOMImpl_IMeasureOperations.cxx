@@ -60,6 +60,7 @@
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
+#include <BRepClass_FaceClassifier.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
@@ -85,6 +86,7 @@
 
 #include <GeomAPI_IntSS.hxx>
 #include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <GeomAPI_ProjectPointOnSurf.hxx>
 
 #include <GeomAbs_SurfaceType.hxx>
 
@@ -1551,40 +1553,116 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
  *  AreCoordsInside
  */
 //=============================================================================
-std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object) theShape,
-                                                               const std::vector<double>& coords,
-                                                               double tolerance)
+std::vector<bool>
+GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object)        theShape,
+                                             const std::vector<double>& coords,
+                                             double                     tolerance)
 {
-  std::vector<bool> res;
+  std::vector<bool> isInsideRes;
   if (!theShape.IsNull()) {
     Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
     if (!aRefShape.IsNull()) {
       TopoDS_Shape aShape = aRefShape->GetValue();
-      if (!aShape.IsNull()) {
-        unsigned int nb_points = coords.size()/3;
-        for (int i = 0; i < nb_points; i++) {
-          double x = coords[3*i];
-          double y = coords[3*i+1];
-          double z = coords[3*i+2];
-          gp_Pnt aPnt(x, y, z);
-          if ( aShape.ShapeType() == TopAbs_COMPOUND || aShape.ShapeType() == TopAbs_COMPSOLID ||
-               aShape.ShapeType() == TopAbs_SOLID ) {
-            TopExp_Explorer anExp;
-            bool isFound = false;
-            for ( anExp.Init( aShape, TopAbs_SOLID ); anExp.More() && !isFound; anExp.Next() ) {
-              BRepClass3d_SolidClassifier SC( anExp.Current() );
+      if (!aShape.IsNull())
+      {
+        TopTools_IndexedMapOfShape mapShape;
+        {
+          TopExp_Explorer anExp;
+          for ( anExp.Init( aShape, TopAbs_SOLID ); anExp.More(); anExp.Next() )
+            mapShape.Add( anExp.Current() );
+          for ( anExp.Init( aShape, TopAbs_FACE, TopAbs_SOLID ); anExp.More(); anExp.Next() )
+            mapShape.Add( anExp.Current() );
+          for ( anExp.Init( aShape, TopAbs_EDGE, TopAbs_FACE ); anExp.More(); anExp.Next() )
+            mapShape.Add( anExp.Current() );
+          for ( anExp.Init( aShape, TopAbs_VERTEX, TopAbs_EDGE ); anExp.More(); anExp.Next() )
+            mapShape.Add( anExp.Current() ); //// ?????????
+        }
+        size_t nb_points = coords.size()/3, nb_points_inside = 0;
+        isInsideRes.resize( nb_points, false );
+
+        for ( int iS = 1; iS <= mapShape.Extent(); ++iS )
+        {
+          if ( nb_points_inside == nb_points )
+            break;
+          aShape = mapShape( iS );
+          switch ( aShape.ShapeType() ) {
+          case TopAbs_SOLID:
+          {
+            BRepClass3d_SolidClassifier SC( TopoDS::Solid( aShape ));
+            for ( size_t i = 0; i < nb_points; i++)
+            {
+              if ( isInsideRes[ i ]) continue;
+              gp_Pnt aPnt( coords[3*i], coords[3*i+1], coords[3*i+2] );
               SC.Perform( aPnt, tolerance );
-              isFound = ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON );
+              isInsideRes[ i ] = (( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON ));
+              nb_points_inside += isInsideRes[ i ];
             }
-            res.push_back( isFound );
+            break;
           }
-          else
-            res.push_back( false );
+          case TopAbs_FACE:
+          {
+            Standard_Real u1,u2,v1,v2;
+            const TopoDS_Face&   face = TopoDS::Face( aShape );
+            Handle(Geom_Surface) surf = BRep_Tool::Surface( face );
+            surf->Bounds( u1,u2,v1,v2 );
+            GeomAPI_ProjectPointOnSurf project;
+            project.Init(surf, u1,u2, v1,v2, tolerance );
+            for ( size_t i = 0; i < nb_points; i++)
+            {
+              if ( isInsideRes[ i ]) continue;
+              gp_Pnt aPnt( coords[3*i], coords[3*i+1], coords[3*i+2] );
+              project.Perform( aPnt );
+              if ( project.IsDone() &&
+                   project.NbPoints() > 0 &&
+                   project.LowerDistance() <= tolerance )
+              {
+                Quantity_Parameter u, v;
+                project.LowerDistanceParameters(u, v);
+                gp_Pnt2d uv( u, v );
+                BRepClass_FaceClassifier FC ( face, uv, tolerance );
+                isInsideRes[ i ] = (( FC.State() == TopAbs_IN ) || ( FC.State() == TopAbs_ON ));
+                nb_points_inside += isInsideRes[ i ];
+              }
+            }
+            break;
+          }
+          case TopAbs_EDGE:
+          {
+            Standard_Real f,l;
+            const TopoDS_Edge&  edge = TopoDS::Edge( aShape );
+            Handle(Geom_Curve) curve = BRep_Tool::Curve( edge, f, l );
+            GeomAPI_ProjectPointOnCurve project;
+            project.Init( curve, f, l );
+            for ( size_t i = 0; i < nb_points; i++)
+            {
+              if ( isInsideRes[ i ]) continue;
+              gp_Pnt aPnt( coords[3*i], coords[3*i+1], coords[3*i+2] );
+              project.Perform( aPnt );
+              isInsideRes[ i ] = ( project.NbPoints() > 0 &&
+                                   project.LowerDistance() <= tolerance );
+              nb_points_inside += isInsideRes[ i ];
+            }
+            break;
+          }
+          case TopAbs_VERTEX:
+          {
+            gp_Pnt aVPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ));
+            for ( size_t i = 0; i < nb_points; i++)
+            {
+              if ( isInsideRes[ i ]) continue;
+              gp_Pnt aPnt( coords[3*i], coords[3*i+1], coords[3*i+2] );
+              isInsideRes[ i ] = ( aPnt.SquareDistance( aVPnt ) <= tolerance * tolerance );
+              nb_points_inside += isInsideRes[ i ];
+            }
+            break;
+          }
+          default:;
+          } // switch ( aShape.ShapeType() )
         }
       }
     }
   }
-  return res;
+  return isInsideRes;
 }
 
 //=============================================================================
@@ -1592,10 +1670,15 @@ std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Objec
  *  GetMinDistance
  */
 //=============================================================================
-Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
-  (Handle(GEOM_Object) theShape1, Handle(GEOM_Object) theShape2,
-   Standard_Real& X1, Standard_Real& Y1, Standard_Real& Z1,
-   Standard_Real& X2, Standard_Real& Y2, Standard_Real& Z2)
+Standard_Real
+GEOMImpl_IMeasureOperations::GetMinDistance (Handle(GEOM_Object) theShape1,
+                                             Handle(GEOM_Object) theShape2,
+                                             Standard_Real& X1,
+                                             Standard_Real& Y1,
+                                             Standard_Real& Z1,
+                                             Standard_Real& X2,
+                                             Standard_Real& Y2,
+                                             Standard_Real& Z2)
 {
   SetErrorCode(KO);
   Standard_Real MinDist = 1.e9;

@@ -347,7 +347,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         gce_MakePln gce_MP(aP11, aP12, aP3);
         Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
 
-        Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( anEdge1, anEdge2, aPlane->Pln() );
+        Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( anEdge1, anEdge2 );
 
         Handle(Prs3d_DimensionAspect) aDimensionStyle = new Prs3d_DimensionAspect;
 

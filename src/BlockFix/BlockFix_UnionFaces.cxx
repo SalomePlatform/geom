@@ -234,6 +234,41 @@ static Standard_Boolean IsFacesOfSameSolids
 }
 
 //=======================================================================
+//function : IsEdgeValidToMerge
+//purpose  : Edge is valid if it is not seam or if it is a seam and the face
+//           has another seam edge.
+//=======================================================================
+static Standard_Boolean IsEdgeValidToMerge(const TopoDS_Edge &theEdge,
+                                           const TopoDS_Face &theFace)
+{
+  Standard_Boolean isValid = Standard_True;
+
+  if (BRep_Tool::IsClosed(theEdge, theFace)) {
+    // This is a seam edge. Check if there are another seam edges on the face.
+    TopExp_Explorer anExp(theFace, TopAbs_EDGE);
+
+    for (; anExp.More(); anExp.Next()) {
+      const TopoDS_Shape &aShEdge = anExp.Current();
+
+      // Skip same edge.
+      if (theEdge.IsSame(aShEdge)) {
+        continue;
+      }
+
+      // Check if this edge is a seam.
+      TopoDS_Edge anEdge = TopoDS::Edge(aShEdge);
+
+      if (BRep_Tool::IsClosed(anEdge, theFace)) {
+        isValid = Standard_False;
+        break;
+      }
+    }
+  }
+
+  return isValid;
+}
+
+//=======================================================================
 //function : Perform
 //purpose  :
 //=======================================================================
@@ -302,7 +337,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
       Standard_Integer i;
       for (i = 1; i <= edges.Length(); i++) {
         TopoDS_Edge edge = TopoDS::Edge(edges(i));
-        if (BRep_Tool::Degenerated(edge) || BRep_Tool::IsClosed(edge, aFace))
+        if (BRep_Tool::Degenerated(edge) || !IsEdgeValidToMerge(edge, aFace))
           continue;
 
         const TopTools_ListOfShape& aList = aMapEdgeFaces.FindFromKey(edge);
@@ -315,7 +350,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
           if (aProcessed.Contains(anCheckedFace))
             continue;
 
-          if (BRep_Tool::IsClosed(edge, anCheckedFace)) {
+          if (!IsEdgeValidToMerge(edge, anCheckedFace)) {
             // Skip seam edge.
             continue;
           }

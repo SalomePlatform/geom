@@ -84,7 +84,7 @@ private slots:
   
   
 private:
-  ShapeRec_FeatureDetector*          aDetector;
+  ShapeRec_FeatureDetector*          myDetector;
   
   gp_Ax3                             myWPlane;
   gp_Ax3                             aGlobalCS;

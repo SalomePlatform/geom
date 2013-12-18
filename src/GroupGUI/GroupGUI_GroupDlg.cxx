@@ -674,10 +674,57 @@ void GroupGUI_GroupDlg::showOnlySelected()
       Handle(SALOME_InteractiveObject) io =
         new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
       if (view->isVisible(io)) myIsHiddenMain = true;
-    }
+      
+      //keep the selected entry and IO in the map for checking
+      std::map<QString, Handle(SALOME_InteractiveObject)> aSelEntriesMap;
+      SALOME_ListIteratorOfListIO aSelIt(aSelList);
+      for ( ; aSelIt.More(); aSelIt.Next() ) {
+        Handle(SALOME_InteractiveObject) anSelIO = aSelIt.Value();
+        aSelEntriesMap[anSelIO->getEntry()] = anSelIO;
+      }
+      //get the displayed sub-shapes
+      SALOME_ListIO displayed;
+      view->GetVisible(displayed);
+      // Erase all, except the selected sub-shapes
+      std::map<QString, Handle(SALOME_InteractiveObject)>::iterator 
+        aSelDispIter = aSelEntriesMap.end();
+      SALOME_ListIteratorOfListIO aDispIt( displayed );
+      for ( ; aDispIt.More(); aDispIt.Next() ) {
+        Handle(SALOME_InteractiveObject) anIO = aDispIt.Value();
+        aSelDispIter = aSelEntriesMap.find( anIO->getEntry() );
+        if ( aSelDispIter != aSelEntriesMap.end() ) {
+          //sub-shape is selected, so erase it's record from map to keep in it not displayed, but selected sub-shapes only
+          aSelEntriesMap.erase(aSelDispIter);
+        } else {
+          //sub-shape is not in the map of selected, then erase it from view
+          aDisplayer->Erase( anIO, /*forced = */false, /*updateViewer = */false );
+        }
+      }
 
-    aDisplayer->EraseAll(/*forced = false, updateViewer = true*/);
-    aDisplayer->Display(aSelList, true);
+      if ( !aSelEntriesMap.empty() ) {
+        // Build a presentation of the selected, but not displayed sub-shapes
+        TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
+        TopTools_IndexedMapOfShape aSubShapesMap;
+        TopExp::MapShapes(aMainShape, aSubShapesMap);
+        QString anEntryBase = aMainEntry.in();
+
+        TopExp_Explorer anExp (aMainShape, getShapeType());
+        for (; anExp.More(); anExp.Next()) {
+          TopoDS_Shape aSubShape = anExp.Current();
+          int index = aSubShapesMap.FindIndex(aSubShape);
+          QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
+          if ( aSelEntriesMap.find( anEntry ) == aSelEntriesMap.end() ) {
+            //skip not selected sub-shapes
+            continue;
+          }
+          SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, view);
+          if (aPrs) {
+            displayPreview(aPrs, true, false); // append, do not update
+          }
+        }
+      }
+      aDisplayer->UpdateViewer();
+    }
 
     // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
     if (getShapeType() == TopAbs_VERTEX && myIsHiddenMain) {

@@ -503,6 +503,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpDMWireframe:        // MENU VIEW - WIREFRAME
   case GEOMOp::OpDMShading:          // MENU VIEW - SHADING
   case GEOMOp::OpDMShadingWithEdges: // MENU VIEW - SHADING
+  case GEOMOp::OpDMTexture:          // MENU VIEW - TEXTURE
   case GEOMOp::OpShowAll:            // MENU VIEW - SHOW ALL
   case GEOMOp::OpShowOnly:           // MENU VIEW - DISPLAY ONLY
   case GEOMOp::OpShowOnlyChildren:   // MENU VIEW - SHOW ONLY CHILDREN
@@ -847,6 +848,11 @@ void GeometryGUI::createGeomAction( const int id, const QString& label, const QS
 void GeometryGUI::createOriginAndBaseVectors()
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+  bool aLocked = (_PTR(AttributeStudyProperties)(appStudy->studyDS()->GetProperties()))->IsLocked();
+  if ( aLocked ) {
+    SUIT_MessageBox::warning ( application()->desktop(), QObject::tr("WRN_WARNING"), QObject::tr("WRN_STUDY_LOCKED") );
+    return;
+  }
   if ( appStudy ) {
     _PTR(Study) studyDS = appStudy->studyDS();
     if ( studyDS && !CORBA::is_nil( GetGeomGen() ) ) {
@@ -1019,6 +1025,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpDMWireframe,        "WIREFRAME" );
   createGeomAction( GEOMOp::OpDMShading,          "SHADING" );
   createGeomAction( GEOMOp::OpDMShadingWithEdges, "SHADING_WITH_EDGES" );
+  createGeomAction( GEOMOp::OpDMTexture,          "TEXTURE" );
   createGeomAction( GEOMOp::OpShowAll,          "DISPLAY_ALL" );
   createGeomAction( GEOMOp::OpHideAll,          "ERASE_ALL" );
   createGeomAction( GEOMOp::OpShow,             "DISPLAY" );
@@ -1291,6 +1298,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpDMWireframe,        dispmodeId, -1 );
   createMenu( GEOMOp::OpDMShading,          dispmodeId, -1 );
   createMenu( GEOMOp::OpDMShadingWithEdges, dispmodeId, -1 );
+  createMenu( GEOMOp::OpDMTexture,          dispmodeId, -1 );
   createMenu( separator(),                  dispmodeId, -1 );
   createMenu( GEOMOp::OpSwitchVectors,      dispmodeId, -1 );
 
@@ -2663,6 +2671,11 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           param = occParam + GEOM::propertyName( GEOM::Color );
           ip->setParameter(entry, param.toStdString(), val.join( GEOM::subSectionSeparator()).toStdString());
         }
+        
+        if (aProps.contains(GEOM::propertyName( GEOM::Texture ))) {
+          param = occParam + GEOM::propertyName( GEOM::Texture );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Texture )).toString().toStdString());
+        }
 
         if (vType == SVTK_Viewer::Type()) {
           if (aProps.contains(GEOM::propertyName( GEOM::Opacity ))) {
@@ -2813,6 +2826,8 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
           QColor c = QColor::fromRgbF(rgb[0].toDouble(), rgb[1].toDouble(), rgb[2].toDouble());
           aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Color ), c);
         }
+      } else if (paramNameStr == GEOM::propertyName( GEOM::Texture )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Texture ), val );
       } else if (paramNameStr == GEOM::propertyName( GEOM::EdgesDirection )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::EdgesDirection ), val == "true" || val == "1");
       } else if (paramNameStr == GEOM::propertyName( GEOM::Deflection )) {

@@ -1701,8 +1701,8 @@ Handle(AIS_AngleDimension) EntityGUI_3DSketcherDlg::createAISAngleDimension(doub
   std::string Angle_str = doubleToString(theAngle);
   
   // Construction of the plane
-  gce_MakePln gce_MP2(P0, P1, P2);
-  Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP2.Value());
+  //gce_MakePln gce_MP2(P0, P1, P2);
+  //Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP2.Value());
   
   TopoDS_Vertex V0 = BRepBuilderAPI_MakeVertex(P0);
   TopoDS_Vertex V1 = BRepBuilderAPI_MakeVertex(P1);
@@ -1725,7 +1725,7 @@ Handle(AIS_AngleDimension) EntityGUI_3DSketcherDlg::createAISAngleDimension(doub
 
   // todo : port
 
-  Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( anEdge1, anEdge2, aPlane->Pln() );
+  Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( anEdge1, anEdge2 );
 
   anIO->SetCustomValue( theAngle );
 

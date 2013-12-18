@@ -4,12 +4,12 @@
 <context>
     <name>@default</name>
     <message>
-        <source>MEN_POP_CONCEAL_CHILDREN</source>
-        <translation>Retirer les sous-éléments</translation>
+        <source>MEN_TEXTURE</source>
+        <translation type="unfinished">Texture</translation>
     </message>
     <message>
-        <source>MEN_POP_DISCLOSE_CHILDREN</source>
-        <translation>Publier les sous-éléments</translation>
+        <source>GEOM_WRN_FACES_NOT_SHELL</source>
+        <translation type="unfinished">Unable to create a shell. Result is a compound of faces.</translation>
     </message>
     <message>
         <source>BRep_API: command not done</source>
@@ -37,8 +37,10 @@
     </message>
     <message>
         <source>DEP_OBJECT</source>
-        <translation>L&apos;objet choisi a été utilisé pour créer un autre objet.
-La suppression de cet objet peut entrainer un export python invalide. </translation>
+        <translation>L&apos;objet choisi a été utilisé pour créer un autre objet ou est référencé par un autre module.
+La suppression de cet objet peut entrainer un export python invalide. 
+
+Voulez-vous tout de même supprimer ces objets ?</translation>
     </message>
     <message>
         <source>DEVIDE_EDGE_NEW_OBJECT_NAME</source>
@@ -1676,7 +1678,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_ALLOW_NON_MANIFOLD</source>
-        <translation type="unfinished">Allow Non Manifold</translation>
+        <translation>Non conformes autorisés</translation>
     </message>
     <message>
         <source>GEOM_SHAPE</source>
@@ -2356,7 +2358,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_CURVE_CREATOR</source>
-        <translation type="unfinished">Curve creator</translation>
+        <translation>Créateur de courbe</translation>
     </message>
     <message>
         <source>MEN_ALL_SEL_ONLY</source>
@@ -2799,12 +2801,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Editer champ</translation>
     </message>
     <message>
-        <source>MEN_POP_SHOW_CHILDREN</source>
-        <translation>Montrer les enfants</translation>
+        <source>MEN_POP_DISCLOSE_CHILDREN</source>
+        <translation>Publier les sous-éléments</translation>
     </message>
     <message>
-        <source>MEN_POP_HIDE_CHILDREN</source>
-        <translation>Cacher les enfants</translation>
+        <source>MEN_POP_CONCEAL_CHILDREN</source>
+        <translation>Retirer les sous-éléments</translation>
     </message>
     <message>
         <source>MEN_POP_UNPUBLISH_OBJ</source>
@@ -2965,6 +2967,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_3DSKETCH</source>
         <translation>Esquisse 3D</translation>
+    </message>
+    <message>
+        <source>MEN_ISOLINE</source>
+        <translation>Isoligne</translation>
     </message>
     <message>
         <source>MEN_SOLID</source>
@@ -3655,6 +3661,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer un groupe</translation>
     </message>
     <message>
+        <source>STB_POP_EDIT_FIELD</source>
+        <translation>Editer un champ</translation>
+    </message>
+    <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
         <translation>Dépublier l&apos;objet</translation>
     </message>
@@ -3785,6 +3795,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_3DSKETCH</source>
         <translation>Créer une esquisse 3D</translation>
+    </message>
+    <message>
+        <source>STB_ISOLINE</source>
+        <translation>Créer une U ou V isoligne</translation>
     </message>
     <message>
         <source>STB_SOLID</source>
@@ -4179,6 +4193,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Découpe de groupes</translation>
     </message>
     <message>
+        <source>TOP_FIELD_CREATE</source>
+        <translation>Créer un champ</translation>
+    </message>
+    <message>
+        <source>TOP_FIELD_EDIT</source>
+        <translation>Editer un champ</translation>
+    </message>
+    <message>
         <source>TOP_HEX_SOLID</source>
         <translation>Solide hexaédrique</translation>
     </message>
@@ -4291,6 +4313,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer un groupe</translation>
     </message>
     <message>
+        <source>TOP_POP_EDIT_FIELD</source>
+        <translation>Editer un champ</translation>
+    </message>
+    <message>
         <source>TOP_POP_UNPUBLISH_OBJ</source>
         <translation>Dépublier l&apos;objet</translation>
     </message>
@@ -4389,6 +4415,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_3DSKETCH</source>
         <translation>Esquisse 3D</translation>
+    </message>
+    <message>
+        <source>TOP_ISOLINE</source>
+        <translation>Isoligne</translation>
     </message>
     <message>
         <source>TOP_SOLID</source>
@@ -4956,19 +4986,15 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <translation>Surface lissée</translation>
     </message>
     <message>
-        <source>MEN_SMOOTHINGSURFACE</source>
-        <translation>Surface lissée</translation>
-    </message>
-    <message>
-        <source>STB_SMOOTHINGSURFACE</source>
-        <translation>Surface lissée</translation>
-    </message>
-    <message>
         <source>GEOM_SELECT_IMAGE</source>
         <translation>Sélectionner une image...</translation>
     </message>
     <message>
         <source>MEN_IMPORTEXPORT</source>
+        <translation>Import / Export XAO</translation>
+    </message>
+    <message>
+        <source>TOOL_IMPORTEXPORT</source>
         <translation>Import / Export XAO</translation>
     </message>
     <message>
@@ -5012,12 +5038,12 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <translation>Import / Export XAO</translation>
     </message>
     <message>
-      <source>CC_PNT_ITEM_X_Y</source>
-      <translation>X=%1, Y=%2</translation>
+        <source>CC_PNT_ITEM_X_Y</source>
+        <translation>X=%1, Y=%2</translation>
     </message>
     <message>
-      <source>CC_PNT_ITEM_X_Y_Z</source>
-      <translation>X=%1, Y=%2, Z=%3</translation>
+        <source>CC_PNT_ITEM_X_Y_Z</source>
+        <translation>X=%1, Y=%2, Z=%3</translation>
     </message>
 </context>
 <context>
@@ -5453,19 +5479,19 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>SET_SECTIONS_POLYLINE</source>
-        <translation type="unfinished">Set polyline</translation>
+        <translation>Définir la polyligne</translation>
     </message>
     <message>
         <source>SET_SECTIONS_POLYLINE_TLT</source>
-        <translation type="unfinished">Set selected section type to polyline</translation>
+        <translation>Affecter le type de section sélectionné à la polyligne</translation>
     </message>
     <message>
         <source>SET_SECTIONS_SPLINE</source>
-        <translation type="unfinished">Set spline</translation>
+        <translation>Définir la spline</translation>
     </message>
     <message>
         <source>SET_SECTIONS_SPLINE_TLT</source>
-        <translation type="unfinished">Set selected section type to spline</translation>
+        <translation>Affecter le type de section sélectionné à la spline</translation>
     </message>
     <message>
         <source>REMOVE</source>
@@ -5593,7 +5619,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>USE_ROI</source>
-        <translation type="unfinished">Use region of interest</translation>
+        <translation>Utiliser la région d&apos;intérêt</translation>
     </message>
     <message>
         <source>KERNEL_SIZE</source>
@@ -5609,75 +5635,75 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>TYPE_CRITERIA</source>
-        <translation type="unfinished">Type criteria</translation>
+        <translation>Critère de type</translation>
     </message>
     <message>
         <source>CV_TERMCRIT_ITER</source>
-        <translation type="unfinished">Max number of iteration</translation>
+        <translation>Nombre max d&apos;itérations</translation>
     </message>
     <message>
         <source>CV_TERMCRIT_EPS</source>
-        <translation type="unfinished">Epsilon</translation>
+        <translation>Epsilon</translation>
     </message>
     <message>
         <source>CV_TERMCRIT_ITER | CV_TERMCRIT_EPS</source>
-        <translation type="unfinished">Max number of iteration or epsilon</translation>
+        <translation>Nombre max d&apos;itérations ou epsilon</translation>
     </message>
     <message>
         <source>MAX_ITER</source>
-        <translation type="unfinished">Max iteration</translation>
+        <translation>Iteration max</translation>
     </message>
     <message>
         <source>EPSILON</source>
-        <translation type="unfinished">Epsilon</translation>
+        <translation>Epsilon</translation>
     </message>
     <message>
         <source>L2GRADIENT</source>
-        <translation type="unfinished">L2 gradient</translation>
+        <translation>Gradient L2</translation>
     </message>
     <message>
         <source>LOWTHRESHOLD</source>
-        <translation type="unfinished">Low theshold</translation>
+        <translation>Niveau bas</translation>
     </message>
     <message>
         <source>RATIO</source>
-        <translation type="unfinished">Ratio</translation>
+        <translation>Ratio</translation>
     </message>
     <message>
         <source>SMOOTH_SIZE</source>
-        <translation type="unfinished">Smooth size</translation>
+        <translation>Adoucissement</translation>
     </message>
     <message>
         <source>HBINS</source>
-        <translation type="unfinished">Hbins</translation>
+        <translation>Hbins</translation>
     </message>
     <message>
         <source>SBINS</source>
-        <translation type="unfinished">Sbins</translation>
+        <translation>Sbins</translation>
     </message>
     <message>
         <source>HIST_TYPE</source>
-        <translation type="unfinished">Histogram type</translation>
+        <translation>Type d&apos;histogramme</translation>
     </message>
     <message>
         <source>CV_HIST_ARRAY</source>
-        <translation type="unfinished">Multi-dimensional dense array</translation>
+        <translation>Tableau dense multi-dimensionnel</translation>
     </message>
     <message>
         <source>CV_HIST_SPARSE</source>
-        <translation type="unfinished">Multi-dimensional sparse array</translation>
+        <translation>Tableau clairsemé multi-dimensionnel</translation>
     </message>
     <message>
         <source>THRESHOLD_VALUE</source>
-        <translation type="unfinished">Threshold value</translation>
+        <translation>Seuil</translation>
     </message>
     <message>
         <source>MAX_THRESHOLD</source>
-        <translation type="unfinished">Max threshold</translation>
+        <translation>Seuil max</translation>
     </message>
     <message>
         <source>FIND_CONTOURS_METHOD</source>
-        <translation type="unfinished">Chain approximation method</translation>
+        <translation>Méthode d&apos;approximation des chaînes</translation>
     </message>
     <message>
         <source>CV_CHAIN_APPROX_NONE</source>
@@ -5689,11 +5715,11 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>CV_CHAIN_APPROX_TC89_KCOS</source>
-        <translation type="unfinished">TC89 KCOS</translation>
+        <translation>TC89 KCOS</translation>
     </message>
     <message>
         <source>CV_CHAIN_APPROX_TC89_L1</source>
-        <translation type="unfinished">TC89 L1</translation>
+        <translation>TC89 L1</translation>
     </message>
 </context>
 <context>
@@ -5859,7 +5885,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>WRN_NOT_SUBSHAPE</source>
-        <translation>La forme sélectionnée n'est pas un sous-élémént de la forme principale. Pour choisir plus facilement, cacher les formes en trop dans la vue.</translation>
+        <translation>La forme sélectionnée n&apos;est pas un sous-élémént de la forme principale. Pour choisir plus facilement, cacher les formes en trop dans la vue.</translation>
     </message>
 </context>
 <context>
@@ -5913,7 +5939,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>SHAPE_TYPE</source>
-        <translation>Type d'objet</translation>
+        <translation>Type d&apos;objet</translation>
     </message>
     <message>
         <source>VERTEX</source>
@@ -5973,7 +5999,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>GEOM_NO_STUDY</source>
-        <translation>Pas d'étude disponible</translation>
+        <translation>Pas d&apos;étude disponible</translation>
     </message>
     <message>
         <source>NO_SHAPE</source>
@@ -6009,7 +6035,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>WRN_NOT_SUBSHAPE</source>
-        <translation>La forme sélectionnée n'est pas un élément de la forme principale.</translation>
+        <translation>La forme sélectionnée n&apos;est pas un élément de la forme principale. Pour choisir plus facilement, cacher les formes en trop dans la vue.</translation>
     </message>
     <message>
         <source>ERR_STEP_EXISTS</source>
@@ -6400,24 +6426,24 @@ Voulez-vous en créer un nouveau ?</translation>
 <context>
     <name>GEOMGUI_CreationInfoWdg</name>
     <message>
-        <source>NO_INFO</source>
-        <translation>(aucune information disponible)</translation>
-    </message>
-    <message>
-        <source>VALUE</source>
-        <translation>Valeur</translation>
-    </message>
-    <message>
-        <source>PARAMETER</source>
-        <translation>Paramètre</translation>
+        <source>CREATION_INFO_TITLE</source>
+        <translation>Information</translation>
     </message>
     <message>
         <source>OPERATION</source>
         <translation>Création</translation>
     </message>
     <message>
-        <source>CREATION_INFO_TITLE</source>
-        <translation>Information</translation>
+        <source>PARAMETER</source>
+        <translation>Paramètre</translation>
+    </message>
+    <message>
+        <source>VALUE</source>
+        <translation>Valeur</translation>
+    </message>
+    <message>
+        <source>NO_INFO</source>
+        <translation>(aucune information disponible)</translation>
     </message>
 </context>
 <context>
@@ -6486,6 +6512,23 @@ Voulez-vous en créer un nouveau ?</translation>
         <translation>Pas</translation>
     </message>
 </context>
+<context>
+    <name>EntityGUI_IsolineDlg</name>
+    <message>
+        <source>GEOM_ISOLINE_TITLE</source>
+        <translation>Construction d&apos;isoligne</translation>
+    </message>
+    <message>
+        <source>GEOM_ISOLINE</source>
+        <translation>Isoligne</translation>
+    </message>
+    <message>
+        <source>GEOM_ISOLINE_U</source>
+        <translation>U-Isoligne</translation>
+    </message>
+    <message>
+        <source>GEOM_ISOLINE_V</source>
+        <translation>V-Isoligne</translation>
+    </message>
+</context>
 </TS>
-
-

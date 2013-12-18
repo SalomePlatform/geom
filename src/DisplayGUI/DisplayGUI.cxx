@@ -105,6 +105,9 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpDMShadingWithEdges:  // MENU VIEW - DISPLAY MODE - SHADING WITH EDGES
     SetDisplayMode( 2 );
     break;
+  case GEOMOp::OpDMTexture:           // MENU VIEW - DISPLAY MODE - TEXTURE
+    SetDisplayMode( 3 );
+    break;
   case GEOMOp::OpShowAll:        // MENU VIEW - SHOW ALL
     getGeometryGUI()->EmitSignalDeactivateDialog();
     DisplayAll();

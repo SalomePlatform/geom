@@ -5,269 +5,293 @@
     <name>@default</name>
     <message>
       <source>GEOM_ADVANCED</source>
-      <translation>GEOM_ADVANCED</translation>
+      <translation>高度な形状: タイプ %1</translation>
     </message>
     <message>
       <source>GEOM_ADVANCED_201</source>
-      <translation>GEOM_ADVANCED_201</translation>
+      <translation>T型パイプ</translation>
     </message>
     <message>
       <source>GEOM_ADVANCED_202</source>
-      <translation>GEOM_ADVANCED_202</translation>
+      <translation>カット済みディスク</translation>
     </message>
     <message>
       <source>GEOM_ADVANCED_203</source>
-      <translation>GEOM_ADVANCED_203</translation>
+      <translation>カット シリンダー</translation>
     </message>
     <message>
       <source>GEOM_DIVIDEDDISK</source>
-      <translation>GEOM_DIVIDEDDISK</translation>
+      <translation>Divided_Disk</translation>
     </message>
     <message>
       <source>GEOM_DIVIDEDDISK_TITLE</source>
-      <translation>GEOM_DIVIDEDDISK_TITLE</translation>
+      <translation>分割ディスクの構築</translation>
     </message>
     <message>
       <source>GEOM_DIVIDEDCYLINDER</source>
-      <translation>GEOM_DIVIDEDCYLINDER</translation>
+      <translation>Divided_Cylinder</translation>
     </message>
     <message>
       <source>GEOM_DIVIDEDCYLINDER_TITLE</source>
-      <translation>GEOM_DIVIDEDCYLINDER_TITLE</translation>
+      <translation>分割シリンダの構築</translation>
     </message>
     <message>
       <source>MEN_DIVIDEDCYLINDER</source>
-      <translation>MEN_DIVIDEDCYLINDER</translation>
+      <translation>分割シリンダ</translation>
     </message>
     <message>
       <source>TOP_DIVIDEDCYLINDER</source>
-      <translation>TOP_DIVIDEDCYLINDER</translation>
+      <translation>分割シリンダ</translation>
     </message>
     <message>
       <source>STB_DIVIDEDCYLINDER</source>
-      <translation>STB_DIVIDEDCYLINDER</translation>
+      <translation>分割シリンダ</translation>
     </message>
     <message>
       <source>MEN_DIVIDEDDISK</source>
-      <translation>MEN_DIVIDEDDISK</translation>
+      <translation>分割ディスク</translation>
     </message>
     <message>
       <source>TOP_DIVIDEDDISK</source>
-      <translation>TOP_DIVIDEDDISK</translation>
+      <translation>分割ディスク</translation>
     </message>
     <message>
       <source>STB_DIVIDEDDISK</source>
-      <translation>STB_DIVIDEDDISK</translation>
+      <translation>分割ディスク</translation>
     </message>
     <message>
       <source>TOP_PIPETSHAPE</source>
-      <translation>TOP_PIPETSHAPE</translation>
+      <translation>T型パイプを作成</translation>
     </message>
     <message>
       <source>MEN_PIPETSHAPE</source>
-      <translation>MEN_PIPETSHAPE</translation>
+      <translation>T型パイプを作成</translation>
     </message>
     <message>
       <source>STB_PIPETSHAPE</source>
-      <translation>STB_PIPETSHAPE</translation>
+      <translation>T型パイプを作成</translation>
     </message>
     <message>
       <source>TOP_SMOOTHINGSURFACE</source>
-      <translation>TOP_SMOOTHINGSURFACE</translation>
+      <translation>表面のスムージング</translation>
     </message>
     <message>
       <source>MEN_SMOOTHINGSURFACE</source>
-      <translation>MEN_SMOOTHINGSURFACE</translation>
+      <translation>表面の平滑化</translation>
     </message>
     <message>
       <source>STB_SMOOTHINGSURFACE</source>
-      <translation>STB_SMOOTHINGSURFACE</translation>
+      <translation>表面のスムージング</translation>
     </message>
     <message>
       <source>HALF_LENGTH_MAIN_PIPE</source>
-      <translation>HALF_LENGTH_MAIN_PIPE</translation>
+      <translation>半分の長さのパイプを作成</translation>
     </message>
     <message>
       <source>HALF_LENGTH_INCIDENT_PIPE</source>
-      <translation>HALF_LENGTH_INCIDENT_PIPE</translation>
+      <translation>入射管長さ半分</translation>
     </message>
     <message>
       <source>CIRCULAR_QUARTER_PIPE</source>
-      <translation>CIRCULAR_QUARTER_PIPE</translation>
+      <translation>パイプの１/4形状</translation>
     </message>
     <message>
       <source>THICKNESS</source>
-      <translation>THICKNESS</translation>
+      <translation>厚み</translation>
     </message>
     <message>
       <source>FLANGE</source>
-      <translation>FLANGE</translation>
+      <translation>フランジ</translation>
     </message>
     <message>
       <source>CHAMFER_OR_FILLET</source>
-      <translation>CHAMFER_OR_FILLET</translation>
+      <translation>面取り 又は フィレット</translation>
     </message>
     <message>
       <source>CHAMFER</source>
-      <translation>CHAMFER</translation>
+      <translation>面取り</translation>
     </message>
     <message>
       <source>FILLET</source>
-      <translation>FILLET</translation>
+      <translation>フィレット</translation>
     </message>
     <message>
       <source>JUNCTION_FACE_1</source>
-      <translation>JUNCTION_FACE_1</translation>
+      <translation>Junction 1</translation>
     </message>
     <message>
       <source>JUNCTION_FACE_2</source>
-      <translation>JUNCTION_FACE_2</translation>
+      <translation>Junction 2</translation>
     </message>
     <message>
       <source>JUNCTION_FACE_3</source>
-      <translation>JUNCTION_FACE_3</translation>
+      <translation>Junction 3</translation>
     </message>
     <message>
       <source>INTERNAL_FACES</source>
-      <translation>INTERNAL_FACES</translation>
+      <translation>内部の顔</translation>
     </message>
   </context>
   <context>
     <name>AdvancedGUI_PipeTShapeDlg</name>
     <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</source>
+        <translation type="unfinished">Incident pipe external Radius (Radius + Width) can't be equal to Incident pipe thickness reduction external Radius (rI + wI)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</source>
+        <translation type="unfinished">Incident pipe Radius can't be equal to Incident pipe thickness reduction Radius (rI)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</source>
+        <translation type="unfinished">Main pipe external Radius (Radius + Width) can't be equal to Right thickness reduction external Radius (rR + wR)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</source>
+        <translation type="unfinished">Main pipe Radius can't be equal to Right thickness reduction Radius (rR)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</source>
+        <translation type="unfinished">Main pipe external Radius (Radius + Width) can't be equal to Left thickness reduction external Radius (rL + wL)!</translation>
+    </message>
+    <message>
+        <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</source>
+        <translation type="unfinished">Main pipe Radius can't be equal to Left thickness reduction Radius (rL)!</translation>
+    </message>
+    <message>
       <source>GEOM_PIPE_TSHAPE_TITLE</source>
-      <translation>GEOM_PIPE_TSHAPE_TITLE</translation>
+      <translation>T型パイプの作成</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE</source>
-      <translation>GEOM_PIPE_TSHAPE</translation>
+      <translation>PipeTShape</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_MPIPE</source>
-      <translation>GEOM_PIPE_TSHAPE_MPIPE</translation>
+      <translation>メインパイプ</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_R</source>
-      <translation>GEOM_PIPE_TSHAPE_R</translation>
+      <translation>半径</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_W</source>
-      <translation>GEOM_PIPE_TSHAPE_W</translation>
+      <translation>幅</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_L</source>
-      <translation>GEOM_PIPE_TSHAPE_L</translation>
+      <translation>半分の長さ</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_IPIPE</source>
-      <translation>GEOM_PIPE_TSHAPE_IPIPE</translation>
+      <translation>付随パイプ</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_CHAMFER</source>
-      <translation>GEOM_PIPE_TSHAPE_CHAMFER</translation>
+      <translation>面取り</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_CHAMFER_H</source>
-      <translation>GEOM_PIPE_TSHAPE_CHAMFER_H</translation>
+      <translation>高さ</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_CHAMFER_W</source>
-      <translation>GEOM_PIPE_TSHAPE_CHAMFER_W</translation>
+      <translation>幅</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_FILLET</source>
-      <translation>GEOM_PIPE_TSHAPE_FILLET</translation>
+      <translation>フィレット</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_HEX</source>
-      <translation>GEOM_PIPE_TSHAPE_HEX</translation>
+      <translation>六面体メッシュの準備</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_POSITION</source>
-      <translation>GEOM_PIPE_TSHAPE_POSITION</translation>
+      <translation>位置を設定</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_POSITION_P1</source>
-      <translation>GEOM_PIPE_TSHAPE_POSITION_P1</translation>
+      <translation>接続部 P1</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_POSITION_P2</source>
-      <translation>GEOM_PIPE_TSHAPE_POSITION_P2</translation>
+      <translation>接続部 P2</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_POSITION_P3</source>
-      <translation>GEOM_PIPE_TSHAPE_POSITION_P3</translation>
+      <translation>接続部 P3</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L1</source>
-      <translation>GEOM_PIPE_TSHAPE_POSITION_LBL_L1</translation>
+      <translation>New L1</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L2</source>
-      <translation>GEOM_PIPE_TSHAPE_POSITION_LBL_L2</translation>
+      <translation>New L2</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_LEFT_TR</source>
-      <translation>GEOM_PIPE_TSHAPE_LEFT_TR</translation>
+      <translation>左側肉厚変更</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_RIGHT_TR</source>
-      <translation>GEOM_PIPE_TSHAPE_RIGHT_TR</translation>
+      <translation>右側肉厚変更</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_INCI_TR</source>
-      <translation>GEOM_PIPE_TSHAPE_INCI_TR</translation>
+      <translation>付随パイプ肉厚変更</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_TR_R</source>
-      <translation>GEOM_PIPE_TSHAPE_TR_R</translation>
+      <translation>半径 (r%1)</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_TR_W</source>
-      <translation>GEOM_PIPE_TSHAPE_TR_W</translation>
+      <translation>厚み (w%1)</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_TR_L_TRANS</source>
-      <translation>GEOM_PIPE_TSHAPE_TR_L_TRANS</translation>
+      <translation>拡張部長さ (ltrans %1)</translation>
     </message>
     <message>
       <source>GEOM_PIPE_TSHAPE_TR_L_THIN</source>
-      <translation>GEOM_PIPE_TSHAPE_TR_L_THIN</translation>
+      <translation>接続部長さ (lthin %1)</translation>
     </message>
     <message>
       <source>GEOM_PIPETSHAPE_GROUPMAIN</source>
-      <translation>GEOM_PIPETSHAPE_GROUPMAIN</translation>
+      <translation>メインの設定</translation>
     </message>
     <message>
       <source>GEOM_PIPETSHAPE_GROUPREDUCT</source>
-      <translation>GEOM_PIPETSHAPE_GROUPREDUCT</translation>
+      <translation>接続部詳細設定</translation>
     </message>
     <message>
       <source>GEOM_PIPETSHAPE_GROUPPOS</source>
-      <translation>GEOM_PIPETSHAPE_GROUPPOS</translation>
+      <translation>位置による設定</translation>
     </message>
   </context>
   <context>
     <name>AdvancedGUI_SmoothingSurfaceDlg</name>
     <message>
       <source>GEOM_SMOOTHINGSURFACE_TITLE</source>
-      <translation>GEOM_SMOOTHINGSURFACE_TITLE</translation>
+      <translation>滑らかな表面の構造</translation>
     </message>
     <message>
       <source>GEOM_SMOOTHINGSURFACE</source>
-      <translation>GEOM_SMOOTHINGSURFACE</translation>
+      <translation>表面 lissee</translation>
     </message>
     <message>
       <source>GEOM_SMOOTHINGSURFACE_RESULT</source>
-      <translation>GEOM_SMOOTHINGSURFACE_RESULT</translation>
+      <translation>結果の名前</translation>
     </message>
     <message>
       <source>GEOM_SMOOTHINGSURFACE_ARG</source>
-      <translation>GEOM_SMOOTHINGSURFACE_ARG</translation>
+      <translation>節点</translation>
     </message>
     <message>
       <source>GEOM_SMOOTHINGSURFACE_ARG_POINTS</source>
-      <translation>GEOM_SMOOTHINGSURFACE_ARG_POINTS</translation>
+      <translation>ポイント</translation>
     </message>
   </context>
 </TS>
