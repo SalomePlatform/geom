@@ -689,150 +689,12 @@ double GEOMUtils::GetMinDistanceSingular(const TopoDS_Shape& aSh1,
                                          const TopoDS_Shape& aSh2,
                                          gp_Pnt& Ptmp1, gp_Pnt& Ptmp2)
 {
-  bool IsChange1 = false;
-  double AddDist1 = 0.0;
-  TopExp_Explorer anExp;
-  TopoDS_Shape tmpSh1, tmpSh2;
-  int nbf = 0;
-  for ( anExp.Init( aSh1, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
-    nbf++;
-    tmpSh1 = anExp.Current();
-  }
-  if(nbf==1) {
-    TopoDS_Shape sh = aSh1;
-    while(sh.ShapeType()==TopAbs_COMPOUND) {
-      TopoDS_Iterator it(sh);
-      sh = it.Value();
-    }
-    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(tmpSh1));
-    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
-        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
-      if( sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE ) {
-        // non solid case
-        double U1,U2,V1,V2;
-        // changes for 0020677: EDF 1219 GEOM: MinDistance gives 0 instead of 20.88
-        //S->Bounds(U1,U2,V1,V2); changed by
-        ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(tmpSh1),U1,U2,V1,V2);
-        // end of changes for 020677 (dmv)
-        Handle(Geom_RectangularTrimmedSurface) TrS1 =
-          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
-        Handle(Geom_RectangularTrimmedSurface) TrS2 =
-          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
-        BRep_Builder B;
-        TopoDS_Face F1,F2;
-        TopoDS_Compound Comp;
-        B.MakeCompound(Comp);
-        B.MakeFace(F1,TrS1,1.e-7);
-        B.Add(Comp,F1);
-        B.MakeFace(F2,TrS2,1.e-7);
-        B.Add(Comp,F2);
-        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
-        sfs->Init(Comp);
-        sfs->SetPrecision(1.e-6);
-        sfs->SetMaxTolerance(1.0);
-        sfs->Perform();
-        tmpSh1 = sfs->Shape();
-        IsChange1 = true;
-      }
-      else {
-        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
-          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
-          gp_Pnt PC = SS->Location();
-          BRep_Builder B;
-          TopoDS_Vertex V;
-          B.MakeVertex(V,PC,1.e-7);
-          tmpSh1 = V;
-          AddDist1 = SS->Radius();
-          IsChange1 = true;
-        }
-        else {
-          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
-          gp_Ax3 ax3 = TS->Position();
-          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
-          BRep_Builder B;
-          TopoDS_Edge E;
-          B.MakeEdge(E,C,1.e-7);
-          tmpSh1 = E;
-          AddDist1 = TS->MinorRadius();
-          IsChange1 = true;
-        }
-      }
-    }
-    else
-      tmpSh1 = aSh1;
-  }
-  else
-    tmpSh1 = aSh1;
-  bool IsChange2 = false;
-  double AddDist2 = 0.0;
-  nbf = 0;
-  for ( anExp.Init( aSh2, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
-    nbf++;
-    tmpSh2 = anExp.Current();
-  }
-  if(nbf==1) {
-    TopoDS_Shape sh = aSh2;
-    while(sh.ShapeType()==TopAbs_COMPOUND) {
-      TopoDS_Iterator it(sh);
-      sh = it.Value();
-    }
-    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(tmpSh2));
-    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
-        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
-      if( sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE ) {
-        // non solid case
-        double U1,U2,V1,V2;
-        //S->Bounds(U1,U2,V1,V2);
-        ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(tmpSh2),U1,U2,V1,V2);
-        Handle(Geom_RectangularTrimmedSurface) TrS1 =
-          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
-        Handle(Geom_RectangularTrimmedSurface) TrS2 =
-          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
-        BRep_Builder B;
-        TopoDS_Face F1,F2;
-        TopoDS_Compound Comp;
-        B.MakeCompound(Comp);
-        B.MakeFace(F1,TrS1,1.e-7);
-        B.Add(Comp,F1);
-        B.MakeFace(F2,TrS2,1.e-7);
-        B.Add(Comp,F2);
-        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
-        sfs->Init(Comp);
-        sfs->SetPrecision(1.e-6);
-        sfs->SetMaxTolerance(1.0);
-        sfs->Perform();
-        tmpSh2 = sfs->Shape();
-        IsChange2 = true;
-      }
-      else {
-        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
-          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
-          gp_Pnt PC = SS->Location();
-          BRep_Builder B;
-          TopoDS_Vertex V;
-          B.MakeVertex(V,PC,1.e-7);
-          tmpSh2 = V;
-          AddDist2 = SS->Radius();
-          IsChange2 = true;
-        }
-        else if( S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
-          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
-          gp_Ax3 ax3 = TS->Position();
-          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
-          BRep_Builder B;
-          TopoDS_Edge E;
-          B.MakeEdge(E,C,1.e-7);
-          tmpSh2 = E;
-          AddDist2 = TS->MinorRadius();
-          IsChange2 = true;
-        }
-      }
-    }
-    else
-      tmpSh2 = aSh2;
-  }
-  else
-    tmpSh2 = aSh2;
+  TopoDS_Shape     tmpSh1;
+  TopoDS_Shape     tmpSh2;
+  Standard_Real    AddDist1 = 0.;
+  Standard_Real    AddDist2 = 0.;
+  Standard_Boolean IsChange1 = GEOMUtils::ModifyShape(aSh1, tmpSh1, AddDist1);
+  Standard_Boolean IsChange2 = GEOMUtils::ModifyShape(aSh2, tmpSh2, AddDist2);
 
   if( !IsChange1 && !IsChange2 )
     return -2.0;
@@ -979,4 +841,112 @@ gp_Pnt GEOMUtils::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
   gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project( PlaneOfTheView, ConvertedPoint );
   gp_Pnt ResultPoint = ElSLib::Value( ConvertedPointOnPlane.X(), ConvertedPointOnPlane.Y(), PlaneOfTheView );
   return ResultPoint;
+}
+
+//=======================================================================
+// function : ModifyShape
+// purpose  : 
+//=======================================================================
+Standard_Boolean GEOMUtils::ModifyShape(const TopoDS_Shape  &theShape,
+                                              TopoDS_Shape  &theModifiedShape,
+                                              Standard_Real &theAddDist)
+{
+  Standard_Boolean isModified = Standard_False;
+  TopExp_Explorer anExp;
+  int nbf = 0;
+
+  theAddDist = 0.;
+  theModifiedShape.Nullify();
+
+  for ( anExp.Init( theShape, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+    nbf++;
+    theModifiedShape = anExp.Current();
+  }
+  if(nbf==1) {
+    TopoDS_Shape sh = theShape;
+    while(sh.ShapeType()==TopAbs_COMPOUND) {
+      TopoDS_Iterator it(sh);
+      sh = it.Value();
+    }
+    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(theModifiedShape));
+    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ||
+        S->IsUPeriodic()) {
+      const Standard_Boolean isShell =
+        (sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE);
+
+      if( isShell || S->IsUPeriodic() ) {
+        // non solid case or any periodic surface (Mantis 22454).
+        double U1,U2,V1,V2;
+        // changes for 0020677: EDF 1219 GEOM: MinDistance gives 0 instead of 20.88
+        //S->Bounds(U1,U2,V1,V2); changed by
+        ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(theModifiedShape),U1,U2,V1,V2);
+        // end of changes for 020677 (dmv)
+        Handle(Geom_RectangularTrimmedSurface) TrS1 =
+          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS2 =
+          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+        BRep_Builder B;
+        TopoDS_Face F1,F2;
+        TopoDS_Shape aMShape;
+
+        if (isShell) {
+          B.MakeCompound(TopoDS::Compound(aMShape));
+        } else {
+          B.MakeShell(TopoDS::Shell(aMShape));
+        }
+
+        B.MakeFace(F1,TrS1,1.e-7);
+        B.Add(aMShape,F1);
+        B.MakeFace(F2,TrS2,1.e-7);
+        B.Add(aMShape,F2);
+        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+
+        if (!isShell) {
+          // The original shape is a solid.
+          TopoDS_Solid aSolid;
+
+          B.MakeSolid(aSolid);
+          B.Add(aSolid, aMShape);
+          aMShape = aSolid;
+        }
+
+        sfs->Init(aMShape);
+        sfs->SetPrecision(1.e-6);
+        sfs->SetMaxTolerance(1.0);
+        sfs->Perform();
+        theModifiedShape = sfs->Shape();
+        isModified = Standard_True;
+      }
+      else {
+        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
+          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+          gp_Pnt PC = SS->Location();
+          BRep_Builder B;
+          TopoDS_Vertex V;
+          B.MakeVertex(V,PC,1.e-7);
+          theModifiedShape = V;
+          theAddDist = SS->Radius();
+          isModified = Standard_True;
+        }
+        else {
+          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+          gp_Ax3 ax3 = TS->Position();
+          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
+          BRep_Builder B;
+          TopoDS_Edge E;
+          B.MakeEdge(E,C,1.e-7);
+          theModifiedShape = E;
+          theAddDist = TS->MinorRadius();
+          isModified = Standard_True;
+        }
+      }
+    } else {
+      theModifiedShape = theShape;
+    }
+  }
+  else
+    theModifiedShape = theShape;
+
+  return isModified;
 }

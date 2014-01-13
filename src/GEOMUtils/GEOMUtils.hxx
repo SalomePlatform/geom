@@ -186,6 +186,22 @@ class GEOMUtils {
    */
   Standard_EXPORT static gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) theView );
 
+private:
+
+  /**
+   * This function constructs and returns modified shape from the original one
+   * for singular cases. It is used for the method GetMinDistanceSingular.
+   *
+   * \param theShape the original shape
+   * \param theModifiedShape output parameter. The modified shape.
+   * \param theAddDist output parameter. The added distance for modified shape.
+   * \retval true if the shape is modified; false otherwise.
+   */
+  static Standard_Boolean ModifyShape(const TopoDS_Shape  &theShape,
+                                            TopoDS_Shape  &theModifiedShape,
+                                            Standard_Real &theAddDist);
+
+
 };
 
 #endif
