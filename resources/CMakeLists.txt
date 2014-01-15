@@ -107,6 +107,7 @@ SET( _res_files
   line.png
   line2points.png
   line2faces.png
+  managedimensions.png
   mindist.png
   mirrorPoint.png
   mirrorAxe.png

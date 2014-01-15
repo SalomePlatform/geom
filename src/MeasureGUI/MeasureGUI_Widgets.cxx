@@ -108,6 +108,34 @@ MeasureGUI_1Sel6LineEdit::~MeasureGUI_1Sel6LineEdit()
 }
 
 //////////////////////////////////////////
+// MeasureGUI_1Sel_Frame
+//////////////////////////////////////////
+
+MeasureGUI_1Sel_Frame::MeasureGUI_1Sel_Frame( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+MeasureGUI_1Sel_Frame::~MeasureGUI_1Sel_Frame()
+{
+}
+
+//////////////////////////////////////////
+// MeasureGUI_1TreeWidget_4Button
+//////////////////////////////////////////
+
+MeasureGUI_1TreeWidget_4Button::MeasureGUI_1TreeWidget_4Button( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+MeasureGUI_1TreeWidget_4Button::~MeasureGUI_1TreeWidget_4Button()
+{
+}
+
+//////////////////////////////////////////
 // MeasureGUI_2Sel1LineEdit
 //////////////////////////////////////////
 
@@ -118,6 +146,35 @@ MeasureGUI_2Sel1LineEdit::MeasureGUI_2Sel1LineEdit( QWidget* parent, Qt::WindowF
 }
 
 MeasureGUI_2Sel1LineEdit::~MeasureGUI_2Sel1LineEdit()
+{
+}
+
+//////////////////////////////////////////
+// MeasureGUI_2Sel_Frame
+//////////////////////////////////////////
+
+MeasureGUI_2Sel_Frame::MeasureGUI_2Sel_Frame( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+MeasureGUI_2Sel_Frame::~MeasureGUI_2Sel_Frame()
+{
+}
+
+
+//////////////////////////////////////////
+// MeasureGUI_3Sel_Frame
+//////////////////////////////////////////
+
+MeasureGUI_3Sel_Frame::MeasureGUI_3Sel_Frame( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+MeasureGUI_3Sel_Frame::~MeasureGUI_3Sel_Frame()
 {
 }
 

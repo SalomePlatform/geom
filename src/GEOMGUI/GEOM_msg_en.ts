@@ -3249,6 +3249,38 @@ Please, select face, shell or solid and try again</translation>
         <translation>Automatic bring to front</translation>
     </message>
     <message>
+        <source>PREF_DIMENSIONS</source>
+        <translation>Dimensions (Measurements)</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_COLOR</source>
+        <translation>Color</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_LINE_WIDTH</source>
+        <translation>Line width</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
+        <translation>Font height</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
+        <translation>Length of arrows</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_LENGTH_UNITS</source>
+        <translation>Length measurement units</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_ANGLE_UNITS</source>
+        <translation>Angle measurement units</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_SHOW_UNITS</source>
+        <translation>Show units of measurement</translation>
+    </message>
+    <message>
         <source>PREF_ISOS</source>
         <translation>Number of isolines</translation>
     </message>
@@ -4689,6 +4721,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Compute angle between two lines or linear edges</translation>
     </message>
     <message>
+      <source>TOP_MANAGE_DIMENSIONS</source>
+      <translation>Manage dimensions</translation>
+    </message>
+    <message>
+      <source>MEN_MANAGE_DIMENSIONS</source>
+      <translation>Manage dimensions</translation>
+    </message>
+    <message>
+      <source>STB_MANAGE_DIMENSIONS</source>
+      <translation>Manage measurement dimensions of an object</translation>
+    </message>
+    <message>
         <source>TOP_POP_AUTO_COLOR</source>
         <translation>Auto color</translation>
     </message>
@@ -6074,6 +6118,154 @@ Number of sketch points too small</translation>
     <message>
         <source>Z</source>
         <translation>Z</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_ManageDimensionsDlg</name>
+    <message>
+        <source>MANAGE_DIMENSIONS_TITLE</source>
+        <translation>Manage dimensions</translation>
+    </message>
+    <message>
+        <source>OBJECT_LABEL</source>
+        <translation>Object</translation>
+    </message>
+    <message>
+        <source>DIMENSIONS_GROUP</source>
+        <translation>Dimensions</translation>
+    </message>
+    <message>
+        <source>ADD_BTN</source>
+        <translation>Add</translation>
+    </message>
+    <message>
+        <source>REMOVE_BTN</source>
+        <translation>Remove</translation>
+    </message>
+    <message>
+        <source>SHOW_ALL_BTN</source>
+        <translation>Show all</translation>
+    </message>
+    <message>
+      <source>HIDE_ALL_BTN</source>
+      <translation>Hide all</translation>
+    </message>
+    <message>
+      <source>DISTANCE_ITEM</source>
+      <translation>Distance</translation>
+    </message>
+    <message>
+      <source>DIAMETER_ITEM</source>
+      <translation>Diameter</translation>
+    </message>
+    <message>
+      <source>ANGLE_ITEM</source>
+      <translation>Angle</translation>
+    </message>
+    <message>
+      <source>WRN_TITLE_UNSAVED</source>
+      <translation>Unsaved changes</translation>
+    </message>
+    <message>
+      <source>WRN_MSG_UNSAVED</source>
+      <translation>The unsaved changes will be lost.
+Do you want to continue?</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_CreateDimensionDlg</name>
+    <message>
+        <source>CREATE_DIMENSION_TITLE</source>
+        <translation>Add dimension</translation>
+    </message>
+    <message>
+        <source>DIMENSIONS</source>
+        <translation>Dimensions</translation>
+    </message>
+    <message>
+        <source>LENGTH</source>
+        <translation>Length</translation>
+    </message>
+    <message>
+        <source>DIAMETER</source>
+        <translation>Diameter</translation>
+    </message>
+    <message>
+        <source>ANGLE</source>
+        <translation>Angle</translation>
+    </message>
+    <message>
+        <source>ARGUMENTS</source>
+        <translation>Arguments</translation>
+    </message>
+    <message>
+        <source>EDGE_LENGTH</source>
+        <translation>Edge length</translation>
+    </message>
+    <message>
+        <source>TWO_POINTS</source>
+        <translation>Two points</translation>
+    </message>
+    <message>
+        <source>PARALLEL_EDGES</source>
+        <translation>Parallel edges</translation>
+    </message>
+    <message>
+        <source>TWO_EDGES</source>
+        <translation>Two edges</translation>
+    </message>
+    <message>
+        <source>THREE_POINTS</source>
+        <translation>Three points</translation>
+    </message>
+    <message>
+        <source>EDGE</source>
+        <translation>Edge</translation>
+    </message>
+    <message>
+        <source>EDGE_1</source>
+        <translation>Edge 1</translation>
+    </message>
+    <message>
+        <source>EDGE_2</source>
+        <translation>Edge 2</translation>
+    </message>
+    <message>
+        <source>POINT_1</source>
+        <translation>Point 1</translation>
+    </message>
+    <message>
+        <source>POINT_2</source>
+        <translation>Point 2</translation>
+    </message>
+    <message>
+        <source>POINT_3</source>
+        <translation>Point 3</translation>
+    </message>
+    <message>
+        <source>OBJECT</source>
+        <translation>Object</translation>
+    </message>
+    <message>
+        <source>NAME_LENGTH</source>
+        <translation>Length</translation>
+    </message>
+    <message>
+        <source>NAME_DIAMETER</source>
+        <translation>Diameter</translation>
+    </message>
+    <message>
+        <source>NAME_ANGLE</source>
+        <translation>Angle</translation>
+    </message>
+    <message>
+        <source>WARNING_TITLE_CANNOT_CREATE_DIMENSION</source>
+        <translation>Can not create dimension</translation>
+    </message>
+    <message>
+        <source>WARNING_MSG_INVALID_ARGUMENTS</source>
+        <translation>The dimension can not be created for the specified arguments.
+Please specify suitable arguments.</translation>
     </message>
 </context>
 <context>

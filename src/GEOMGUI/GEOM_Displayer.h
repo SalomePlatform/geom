@@ -66,6 +66,7 @@ class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_SelectionFilter;
 class Handle_GEOM_AISShape;
+class gp_Ax3;
 //class SALOME_Selection;
 
 class GEOMGUI_EXPORT GEOM_Displayer : public LightApp_Displayer
@@ -93,6 +94,10 @@ public:
                             const bool updateViewer = true,
                             const bool checkActiveViewer = true );
 
+  void          Redisplay ( const Handle(SALOME_InteractiveObject)& theIO,
+                            const bool theUpdateViewer,
+                            SALOME_View* theViewFrame );
+
   void          Erase     ( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool forced = false,
                             const bool updateViewer = true,
@@ -117,6 +122,10 @@ public:
   void          Redisplay ( const SALOME_ListIO& theIOList,
                             const bool updateViewer = true,
                             const bool checkActiveViewer = true );
+
+  void          Redisplay ( const SALOME_ListIO& theIOList,
+                            const bool theUpdateViewer,
+                            SALOME_View* theViewFrame );
 
   /* build presentation accordint to the current viewer type*/
   SALOME_Prs*   BuildPrs  ( GEOM::GEOM_Object_ptr );
@@ -226,6 +235,7 @@ protected:
   QColor         colorFromResources( const QString&, const QColor& );
   void           updateShapeProperties( const Handle(GEOM_AISShape)&, bool );
   void           updateActorProperties( GEOM_Actor*, bool );
+  void           updateDimensions( const Handle(SALOME_InteractiveObject)&, SALOME_OCCPrs*, const gp_Ax3& );
 
   PropMap getObjectProperties( SalomeApp_Study*, const QString&, SALOME_View* = 0 );
   PropMap getDefaultPropertyMap();

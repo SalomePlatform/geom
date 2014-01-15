@@ -38,6 +38,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/Material
   ${PROJECT_SOURCE_DIR}/src/GEOMClient
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -56,6 +57,7 @@ SET(_link_LIBRARIES
   GEOMFiltersSelection
   Material
   GEOMImpl
+  GEOMUtils
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_SalomeDS}
   ${KERNEL_SalomeDSClient}
@@ -76,6 +78,7 @@ SET(GEOMGUI_HEADERS
   GEOMGUI_Selection.h
   GEOM_GEOMGUI.hxx
   GEOMGUI_CreationInfoWdg.h
+  GEOMGUI_DimensionProperty.h
   )
 
 # header files / to be processed by moc
@@ -98,6 +101,7 @@ SET(GEOMGUI_SOURCES
   GEOMGUI_OCCSelector.cxx
   GEOMGUI_Selection.cxx
   GEOMGUI_CreationInfoWdg.cxx
+  GEOMGUI_DimensionProperty.cxx
   ${_moc_SOURCES}
   )
 

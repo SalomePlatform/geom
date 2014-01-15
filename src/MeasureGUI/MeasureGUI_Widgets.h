@@ -120,6 +120,38 @@ public:
 };
 
 //////////////////////////////////////////
+// MeasureGUI_1Sel_Frame
+//////////////////////////////////////////
+
+#include "ui_MeasureGUI_1Sel_Frame_QTD.h"
+
+class MeasureGUI_1Sel_Frame : public QWidget, 
+                              public Ui::MeasureGUI_1Sel_Frame_QTD
+{
+  Q_OBJECT
+
+public:
+  MeasureGUI_1Sel_Frame( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~MeasureGUI_1Sel_Frame();
+};
+
+//////////////////////////////////////////
+// MeasureGUI_1TreeWidget_4Buttons
+//////////////////////////////////////////
+
+#include "ui_MeasureGUI_1TreeWidget_4Button_QTD.h"
+
+class MeasureGUI_1TreeWidget_4Button : public QWidget,
+                                       public Ui::MeasureGUI_1TreeWidget_4Button_QTD
+{
+  Q_OBJECT
+
+public:
+  MeasureGUI_1TreeWidget_4Button( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~MeasureGUI_1TreeWidget_4Button();
+};
+
+//////////////////////////////////////////
 // MeasureGUI_2Sel1LineEdit
 //////////////////////////////////////////
 
@@ -133,6 +165,38 @@ class MeasureGUI_2Sel1LineEdit : public QWidget,
 public:
   MeasureGUI_2Sel1LineEdit( QWidget* = 0, Qt::WindowFlags = 0 );
   ~MeasureGUI_2Sel1LineEdit();
+};
+
+//////////////////////////////////////////
+// MeasureGUI_2Sel_Frame
+//////////////////////////////////////////
+
+#include "ui_MeasureGUI_2Sel_Frame_QTD.h"
+
+class MeasureGUI_2Sel_Frame : public QWidget, 
+                              public Ui::MeasureGUI_2Sel_Frame_QTD
+{
+  Q_OBJECT
+
+public:
+  MeasureGUI_2Sel_Frame( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~MeasureGUI_2Sel_Frame();
+};
+
+//////////////////////////////////////////
+// MeasureGUI_3Sel_Frame
+//////////////////////////////////////////
+
+#include "ui_MeasureGUI_3Sel_Frame_QTD.h"
+
+class MeasureGUI_3Sel_Frame : public QWidget, 
+                              public Ui::MeasureGUI_3Sel_Frame_QTD
+{
+  Q_OBJECT
+
+public:
+  MeasureGUI_3Sel_Frame( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~MeasureGUI_3Sel_Frame();
 };
 
 //////////////////////////////////////////

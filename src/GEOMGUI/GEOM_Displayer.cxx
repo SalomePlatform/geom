@@ -25,7 +25,7 @@
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
 #include "GEOM_Displayer.h"
-
+#include "GEOMGUI_DimensionProperty.h"
 #include "GeometryGUI.h"
 
 #include <GEOM_Constants.h>
@@ -39,11 +39,14 @@
 
 #include <GEOM_Actor.h>
 #include <GEOM_AISShape.hxx>
+#include <GEOM_AISDimension.hxx>
 #include <GEOM_TopWireframeShape.hxx>
 #include <GEOM_AISVector.hxx>
 #include <GEOM_AISTrihedron.hxx>
 #include <GEOM_VTKTrihedron.hxx>
 #include <GEOM_VTKPropertyMaterial.hxx>
+
+#include <GEOMUtils.hxx>
 
 #include <Material_Model.h>
 
@@ -77,7 +80,12 @@
 
 // OCCT Includes
 #include <AIS_Drawer.hxx>
+#include <AIS_Dimension.hxx>
+#include <AIS_LengthDimension.hxx>
+#include <AIS_DiameterDimension.hxx>
+#include <AIS_AngleDimension.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
+#include <Aspect_PolygonOffsetMode.hxx>
 #include <Aspect_ColorScale.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
@@ -520,14 +528,34 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
           {
             if ( view->isVisible( theIO ) || ( checkActiveViewer && view == GetActiveView() ) )
             {
-              Erase( theIO, true, false, view );
-              Display( theIO, updateViewer, view );
+              Redisplay( theIO, updateViewer, view );
             }
           }
         }
       }
     }
   }
+}
+
+//=================================================================
+/*!
+ *  GEOM_Displayer::Redisplay
+ *  Redisplay (erase and then display again) interactive object
+ *  in the specified view
+ */
+//=================================================================
+void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
+                                const bool theUpdateViewer,
+                                SALOME_View* theViewFrame )
+{
+  SALOME_View* vf = theViewFrame ? theViewFrame : GetActiveView();
+  if ( !vf )
+  {
+    return;
+  }
+
+  Erase( theIO, true, false, theViewFrame );
+  Display( theIO, theUpdateViewer, theViewFrame );
 }
 
 //=================================================================
@@ -955,6 +983,144 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
 
 //=================================================================
 /*!
+ *  GEOM_Displayer::updateDimensions
+ *  Creates or renews dimension presentation for the IO.
+ */
+//=================================================================
+void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& theIO,
+                                       SALOME_OCCPrs* thePrs,
+                                       const gp_Ax3& theShapeLCS )
+{
+  SalomeApp_Study* aStudy = getStudy();
+  if ( !aStudy )
+  {
+    return;
+  }
+
+  if ( theIO.IsNull() )
+  {
+    return;
+  }
+
+  SOCC_Prs* anOccPrs = dynamic_cast<SOCC_Prs*>( thePrs );
+
+  AIS_ListOfInteractive aListOfIO;
+
+  anOccPrs->GetObjects( aListOfIO );
+
+  AIS_ListIteratorOfListOfInteractive aIterateIO( aListOfIO );
+
+  // remove outdated presentations of dimensions
+  for ( ; aIterateIO.More(); aIterateIO.Next() )
+  {
+    const Handle(AIS_InteractiveObject)& anIO = aIterateIO.Value();
+    if ( !anIO->IsKind( STANDARD_TYPE( AIS_Dimension ) ) )
+    {
+      continue;
+    }
+
+    aListOfIO.Remove( aIterateIO );
+  }
+
+  // prepare dimension styling
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+
+  QColor  aQColor       = aResMgr->colorValue  ( "Geometry", "dimensions_color", QColor( 0, 255, 0 ) );
+  int     aLineWidth    = aResMgr->integerValue( "Geometry", "dimensions_line_width", 1 );
+  double  aFontHeight   = aResMgr->doubleValue ( "Geometry", "dimensions_font_height", 10 );
+  double  anArrowLength = aResMgr->doubleValue ( "Geometry", "dimensions_arrow_length", 5 );
+  bool    isUnitsShown  = aResMgr->booleanValue( "Geometry", "dimensions_show_units", false );
+  QString aUnitsLength  = aResMgr->stringValue ( "Geometry", "dimensions_length_units", "m" );
+  QString aUnitsAngle   = aResMgr->stringValue ( "Geometry", "dimensions_angle_units", "deg" );
+
+  // restore dimension presentation from saved attribute or property data
+  AIS_ListOfInteractive aRestoredDimensions;
+
+  QVariant aProperty = aStudy->getObjectProperty( GEOM::sharedPropertiesId(),
+                                                  theIO->getEntry(),
+                                                  GEOM::propertyName( GEOM::Dimensions ),
+                                                  QVariant() );
+
+  GEOMGUI_DimensionProperty aRecords;
+
+  if ( aProperty.isValid() && aProperty.canConvert<GEOMGUI_DimensionProperty>() )
+  {
+    aRecords = aProperty.value<GEOMGUI_DimensionProperty>();
+  }
+  else
+  {
+    aRecords.LoadFromAttribute( getStudy(), theIO->getEntry() );
+  }
+  
+  // create up-to-date dimension presentations
+  for ( int aPrsIt = 0; aPrsIt < aRecords.GetNumber(); ++aPrsIt )
+  {
+    if ( !aRecords.IsVisible( aPrsIt ) )
+    {
+      continue;
+    }
+
+    // init dimension by type
+    Handle(AIS_Dimension) aPrs;
+    switch( aRecords.GetType( aPrsIt ) )
+    {
+      case GEOMGUI_DimensionProperty::DimensionType_Length :
+      {
+        Handle(GEOM_AISLength) aLength = new GEOM_AISLength( aPrsIt );
+        aRecords.GetRecord( aPrsIt )->AsLength()->Update( aLength, theShapeLCS );
+        aPrs = aLength;
+        break;
+      }
+
+      case GEOMGUI_DimensionProperty::DimensionType_Diameter :
+      {
+        Handle(GEOM_AISDiameter) aDiam = new GEOM_AISDiameter( aPrsIt );
+        aRecords.GetRecord( aPrsIt )->AsDiameter()->Update( aDiam, theShapeLCS );
+        aPrs = aDiam;
+        break;
+      }
+
+      case GEOMGUI_DimensionProperty::DimensionType_Angle :
+      {
+        Handle(GEOM_AISAngle) anAng = new GEOM_AISAngle( aPrsIt );
+        aRecords.GetRecord( aPrsIt )->AsAngle()->Update( anAng, theShapeLCS );
+        aPrs = anAng;
+        break;
+      }
+    }
+
+    aPrs->SetOwner( theIO );
+
+    Quantity_Color aColor( aQColor.redF(), aQColor.greenF(), aQColor.blueF(), Quantity_TOC_RGB );
+
+    Handle(Prs3d_DimensionAspect) aStyle = new Prs3d_DimensionAspect();
+
+    aStyle->SetCommonColor( aColor );
+    aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
+    aStyle->MakeText3d( Standard_True );
+    aStyle->MakeTextShaded( Standard_True );
+    aStyle->TextAspect()->SetHeight( aFontHeight );
+    aStyle->ArrowAspect()->SetLength( anArrowLength );
+    aStyle->LineAspect()->SetWidth( aLineWidth );
+    aStyle->SetTextHorizontalPosition( aPrs->DimensionAspect()->TextHorizontalPosition() );
+    aStyle->SetTextVerticalPosition( aPrs->DimensionAspect()->TextVerticalPosition() );
+    aPrs->SetDimensionAspect( aStyle );
+    aPrs->SetPolygonOffsets( Aspect_POM_Fill, -1.0, -1.0 );
+
+    aListOfIO.Append( aPrs );
+  }
+
+  // update presentation
+  anOccPrs->Clear();
+
+  for ( aIterateIO.Initialize( aListOfIO ); aIterateIO.More(); aIterateIO.Next() )
+  {
+    anOccPrs->AddObject( aIterateIO.Value() );
+  }
+}
+
+//=================================================================
+/*!
  *  GEOM_Displayer::Erase
  *  Calls Erase() method for each object in the given list
  */
@@ -987,6 +1153,28 @@ void GEOM_Displayer::Redisplay( const SALOME_ListIO& theIOList,
 
   if ( updateViewer )
     UpdateViewer();
+}
+
+//=================================================================
+/*!
+ *  GEOM_Displayer::Redisplay
+ *  Calls Redisplay() method for each object in the given list
+ */
+//=================================================================
+void GEOM_Displayer::Redisplay( const SALOME_ListIO& theIOList,
+                                const bool theUpdateViewer,
+                                SALOME_View* theViewFrame )
+{
+  SALOME_ListIteratorOfListIO anIter( theIOList );
+  for ( ; anIter.More(); anIter.Next() )
+  {
+    Redisplay( anIter.Value(), false, theViewFrame );
+  }
+
+  if ( theUpdateViewer )
+  {
+    UpdateViewer();
+  }
 }
 
 //=================================================================
@@ -1119,6 +1307,8 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         AISShape->SetToUpdate();
       }
     }
+
+    updateDimensions( myIO, occPrs, GEOMUtils::GetPosition( myShape ) );
   }
 }
 

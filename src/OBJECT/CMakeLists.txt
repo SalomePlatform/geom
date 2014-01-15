@@ -86,6 +86,7 @@ SET(OBJECT_HEADERS
   GEOM_PainterPolyDataMapper.h
   GEOM_DeviceActor.h
   GEOM_Constants.h
+  GEOM_AISDimension.hxx
   )
 # --- sources ---
 
@@ -102,6 +103,7 @@ SET(OBJECT_SOURCES
   GEOM_PainterPolyDataMapper.cxx
   GEOM_DeviceActor.cxx
   GEOM_Constants.cxx
+  GEOM_AISDimension.cxx
   )
 
 # --- rules ---

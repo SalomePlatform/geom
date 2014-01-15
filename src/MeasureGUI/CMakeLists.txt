@@ -41,6 +41,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/DlgRef
   ${PROJECT_BINARY_DIR}/src/DlgRef
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -55,6 +56,7 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   GEOMBase
+  GEOMUtils
   )
 
 # --- resources ---
@@ -67,7 +69,11 @@ SET(_uic_files
   MeasureGUI_1Sel1TextView_QTD.ui
   MeasureGUI_1Sel3LineEdit_QTD.ui
   MeasureGUI_1Sel6LineEdit_QTD.ui
+  MeasureGUI_1Sel_Frame_QTD.ui
+  MeasureGUI_1TreeWidget_4Button_QTD.ui
   MeasureGUI_2Sel1LineEdit_QTD.ui
+  MeasureGUI_2Sel_Frame_QTD.ui
+  MeasureGUI_3Sel_Frame_QTD.ui
   MeasureGUI_SkeletonBox_QTD.ui
   )
 
@@ -91,6 +97,11 @@ SET(MeasureGUI_HEADERS
   MeasureGUI_GetNonBlocksDlg.h
   MeasureGUI_CheckSelfIntersectionsDlg.h
   MeasureGUI_PointDlg.h
+  MeasureGUI_ManageDimensionsDlg.h
+  MeasureGUI_CreateDimensionDlg.h
+  MeasureGUI_DimensionCreateTool.h
+  MeasureGUI_DimensionInteractor.h
+  MeasureGUI_DimensionFilter.h
   )
 
 # header files / to be processed by moc
@@ -111,6 +122,9 @@ SET(_moc_HEADERS
   MeasureGUI_GetNonBlocksDlg.h
   MeasureGUI_CheckSelfIntersectionsDlg.h
   MeasureGUI_PointDlg.h
+  MeasureGUI_ManageDimensionsDlg.h
+  MeasureGUI_CreateDimensionDlg.h
+  MeasureGUI_DimensionInteractor.h
   )
 
 # header files / uic wrappings
@@ -139,6 +153,11 @@ SET(MeasureGUI_SOURCES
   MeasureGUI_GetNonBlocksDlg.cxx
   MeasureGUI_CheckSelfIntersectionsDlg.cxx
   MeasureGUI_PointDlg.cxx
+  MeasureGUI_ManageDimensionsDlg.cxx
+  MeasureGUI_CreateDimensionDlg.cxx
+  MeasureGUI_DimensionCreateTool.cxx
+  MeasureGUI_DimensionInteractor.cxx
+  MeasureGUI_DimensionFilter.cxx
   ${_moc_SOURCES}
   ${_uic_files}
   )

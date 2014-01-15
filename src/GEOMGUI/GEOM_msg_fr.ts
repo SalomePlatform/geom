@@ -3249,6 +3249,38 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Afficher au premier plan automatiquement</translation>
     </message>
     <message>
+        <source>PREF_DIMENSIONS</source>
+        <translation type="unfinished">Dimensions (Measurements)</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_COLOR</source>
+        <translation type="unfinished">Color</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_LINE_WIDTH</source>
+        <translation type="unfinished">Line width</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
+        <translation type="unfinished">Font height</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
+        <translation type="unfinished">Length of arrows</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_LENGTH_UNITS</source>
+        <translation type="unfinished">Length measurement units</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_ANGLE_UNITS</source>
+        <translation type="unfinished">Angle measurement units</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_SHOW_UNITS</source>
+        <translation type="unfinished">Show units of measurement</translation>
+    </message>
+    <message>
         <source>PREF_ISOS</source>
         <translation>Nombre d&apos;isolignes</translation>
     </message>
@@ -4689,6 +4721,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Calculer l&apos;angle entre deux lignes ou arêtes linéaires</translation>
     </message>
     <message>
+      <source>TOP_MANAGE_DIMENSIONS</source>
+      <translation type="unfinished">Manage dimensions</translation>
+    </message>
+    <message>
+      <source>MEN_MANAGE_DIMENSIONS</source>
+      <translation type="unfinished">Manage dimensions</translation>
+    </message>
+    <message>
+      <source>STB_MANAGE_DIMENSIONS</source>
+      <translation type="unfinished">Manage measurement dimensions of an object</translation>
+    </message>
+    <message>
         <source>TOP_POP_AUTO_COLOR</source>
         <translation>Couleur automatique</translation>
     </message>
@@ -6074,6 +6118,154 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>Z</source>
         <translation>Z</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_ManageDimensionsDlg</name>
+    <message>
+        <source>MANAGE_DIMENSIONS_TITLE</source>
+        <translation type="unfinished">Manage dimensions</translation>
+    </message>
+    <message>
+        <source>OBJECT_LABEL</source>
+        <translation type="unfinished">Object</translation>
+    </message>
+    <message>
+        <source>DIMENSIONS_GROUP</source>
+        <translation type="unfinished">Dimensions</translation>
+    </message>
+    <message>
+        <source>ADD_BTN</source>
+        <translation type="unfinished">Add</translation>
+    </message>
+    <message>
+        <source>REMOVE_BTN</source>
+        <translation type="unfinished">Remove</translation>
+    </message>
+    <message>
+        <source>SHOW_ALL_BTN</source>
+        <translation type="unfinished">Show all</translation>
+    </message>
+    <message>
+      <source>HIDE_ALL_BTN</source>
+      <translation type="unfinished">Hide all</translation>
+    </message>
+    <message>
+      <source>DISTANCE_ITEM</source>
+      <translation type="unfinished">Distance</translation>
+    </message>
+    <message>
+      <source>DIAMETER_ITEM</source>
+      <translation type="unfinished">Diameter</translation>
+    </message>
+    <message>
+      <source>ANGLE_ITEM</source>
+      <translation type="unfinished">Angle</translation>
+    </message>
+    <message>
+      <source>WRN_TITLE_UNSAVED</source>
+      <translation type="unfinished">Unsaved changes</translation>
+    </message>
+    <message>
+      <source>WRN_MSG_UNSAVED</source>
+      <translation type="unfinished">The unsaved changes will be lost.
+Do you want to continue?</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_CreateDimensionDlg</name>
+    <message>
+        <source>CREATE_DIMENSION_TITLE</source>
+        <translation type="unfinished">Add dimension</translation>
+    </message>
+    <message>
+        <source>DIMENSIONS</source>
+        <translation type="unfinished">Dimensions</translation>
+    </message>
+    <message>
+        <source>LENGTH</source>
+        <translation type="unfinished">Length</translation>
+    </message>
+    <message>
+        <source>DIAMETER</source>
+        <translation type="unfinished">Diameter</translation>
+    </message>
+    <message>
+        <source>ANGLE</source>
+        <translation type="unfinished">Angle</translation>
+    </message>
+    <message>
+        <source>ARGUMENTS</source>
+        <translation type="unfinished">Arguments</translation>
+    </message>
+    <message>
+        <source>EDGE_LENGTH</source>
+        <translation type="unfinished">Edge length</translation>
+    </message>
+    <message>
+        <source>TWO_POINTS</source>
+        <translation type="unfinished">Two points</translation>
+    </message>
+    <message>
+        <source>PARALLEL_EDGES</source>
+        <translation type="unfinished">Parallel edges</translation>
+    </message>
+    <message>
+        <source>TWO_EDGES</source>
+        <translation type="unfinished">Two edges</translation>
+    </message>
+    <message>
+        <source>THREE_POINTS</source>
+        <translation type="unfinished">Three points</translation>
+    </message>
+    <message>
+        <source>EDGE</source>
+        <translation type="unfinished">Edge</translation>
+    </message>
+    <message>
+        <source>EDGE_1</source>
+        <translation type="unfinished">Edge 1</translation>
+    </message>
+    <message>
+        <source>EDGE_2</source>
+        <translation type="unfinished">Edge 2</translation>
+    </message>
+    <message>
+        <source>POINT_1</source>
+        <translation type="unfinished">Point 1</translation>
+    </message>
+    <message>
+        <source>POINT_2</source>
+        <translation type="unfinished">Point 2</translation>
+    </message>
+    <message>
+        <source>POINT_3</source>
+        <translation type="unfinished">Point 3</translation>
+    </message>
+    <message>
+        <source>OBJECT</source>
+        <translation type="unfinished">Object</translation>
+    </message>
+    <message>
+        <source>NAME_LENGTH</source>
+        <translation type="unfinished">Length</translation>
+    </message>
+    <message>
+        <source>NAME_DIAMETER</source>
+        <translation type="unfinished">Diameter</translation>
+    </message>
+    <message>
+        <source>NAME_ANGLE</source>
+        <translation type="unfinished">Angle</translation>
+    </message>
+    <message>
+        <source>WARNING_TITLE_CANNOT_CREATE_DIMENSION</source>
+        <translation type="unfinished">Can not create dimension</translation>
+    </message>
+    <message>
+        <source>WARNING_MSG_INVALID_ARGUMENTS</source>
+        <translation type="unfinished">The dimension can not be created for the specified arguments.
+Please specify suitable arguments.</translation>
     </message>
 </context>
 <context>

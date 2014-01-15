@@ -1136,6 +1136,10 @@
             <translation>angle.png</translation>
         </message>
         <message>
+            <source>ICO_MANAGE_DIMENSIONS</source>
+            <translation>managedimensions.png</translation>
+        </message>
+        <message>
             <source>ICO_POINT</source>
             <translation>point2.png</translation>
         </message>

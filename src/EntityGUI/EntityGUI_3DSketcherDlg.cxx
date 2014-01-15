@@ -1696,36 +1696,8 @@ Handle(AIS_AngleDimension) EntityGUI_3DSketcherDlg::createAISAngleDimension(doub
   if (Abs(theAngle) < Precision::Angular() ||
       aLength < Precision::Confusion())
     return NULL;
-  
-  // Convert angles to string
-  std::string Angle_str = doubleToString(theAngle);
-  
-  // Construction of the plane
-  //gce_MakePln gce_MP2(P0, P1, P2);
-  //Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP2.Value());
-  
-  TopoDS_Vertex V0 = BRepBuilderAPI_MakeVertex(P0);
-  TopoDS_Vertex V1 = BRepBuilderAPI_MakeVertex(P1);
-  TopoDS_Vertex V2 = BRepBuilderAPI_MakeVertex(P2);
-  
-  TopoDS_Edge anEdge1 = BRepBuilderAPI_MakeEdge(V0, V1);
-  TopoDS_Edge anEdge2 = BRepBuilderAPI_MakeEdge(V0, V2);
 
-  //Handle(AIS_AngleDimension) anIO =
-  //  new AIS_AngleDimension(anEdge1, anEdge2, aPlane, theAngle * M_PI / 180.,
-  //                         TCollection_ExtendedString(Angle_str.c_str()));
-  //  
-  //anIO->SetArrowSize((theAngle * M_PI / 180) * (aLength/20));
-  //
-  //SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  //int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
-  //Handle(Prs3d_AngleAspect) asp = new Prs3d_AngleAspect();
-  //asp->LineAspect()->SetWidth(w);
-  //anIO->Attributes()->SetAngleAspect(asp);
-
-  // todo : port
-
-  Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( anEdge1, anEdge2 );
+  Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( P1, P0, P2 );
 
   anIO->SetCustomValue( theAngle );
 

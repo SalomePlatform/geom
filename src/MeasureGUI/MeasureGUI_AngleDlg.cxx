@@ -320,33 +320,6 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         TopoDS_Edge anEdge1 = TopoDS::Edge(S1);
         TopoDS_Edge anEdge2 = TopoDS::Edge(S2);
 
-        // Build a plane for angle dimension presentation {P11, P12, P3}
-        TopoDS_Vertex V11, V12, V21, V22;
-        TopExp::Vertices(anEdge1, V11, V12);
-        TopExp::Vertices(anEdge2, V21, V22);
-
-        gp_Pnt aP11 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge1));
-        gp_Pnt aP12 = BRep_Tool::Pnt(TopExp::LastVertex (anEdge1));
-
-        gp_Pnt aP21 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge2));
-        gp_Pnt aP22 = BRep_Tool::Pnt(TopExp::LastVertex (anEdge2));
-
-        //        *P3
-        //         \
-        //          \
-        //           *P22
-        //          /
-        //         /
-        // P11    /         P12
-        // *-----/----------*
-        //  \   /
-        //   \ /
-        //    *P21
-        gp_Pnt aP3 (aP22.XYZ() + aP11.XYZ() - aP21.XYZ());
-
-        gce_MakePln gce_MP(aP11, aP12, aP3);
-        Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
-
         Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( anEdge1, anEdge2 );
 
         Handle(Prs3d_DimensionAspect) aDimensionStyle = new Prs3d_DimensionAspect;
@@ -356,6 +329,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         Standard_Boolean isInfinite1,isInfinite2;
         Handle(Geom_Curve) extCurv;
         Standard_Integer extShape;
+        Handle(Geom_Plane) aPlane;
         if (AIS::ComputeGeometry(anEdge1,
                                   anEdge2,
                                   extShape,

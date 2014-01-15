@@ -31,20 +31,21 @@
 #include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
 
-#include "MeasureGUI_PropertiesDlg.h"    // Method PROPERTIES
-#include "MeasureGUI_CenterMassDlg.h"    // Method CENTER MASS
-#include "MeasureGUI_NormaleDlg.h"       // Method NORMALE
-#include "MeasureGUI_InertiaDlg.h"       // Method INERTIA
-#include "MeasureGUI_BndBoxDlg.h"        // Method BNDBOX
-#include "MeasureGUI_DistanceDlg.h"      // Method DISTANCE
-#include "MeasureGUI_AngleDlg.h"         // Method ANGLE
-#include "MeasureGUI_MaxToleranceDlg.h"  // Method MAXTOLERANCE
-#include "MeasureGUI_WhatisDlg.h"        // Method WHATIS
-#include "MeasureGUI_CheckShapeDlg.h"    // Method CHECKSHAPE
-#include "MeasureGUI_CheckCompoundOfBlocksDlg.h" // Method CHECKCOMPOUND
-#include "MeasureGUI_GetNonBlocksDlg.h"  // Method GET NON BLOCKS
+#include "MeasureGUI_PropertiesDlg.h"             // Method PROPERTIES
+#include "MeasureGUI_CenterMassDlg.h"             // Method CENTER MASS
+#include "MeasureGUI_NormaleDlg.h"                // Method NORMALE
+#include "MeasureGUI_InertiaDlg.h"                // Method INERTIA
+#include "MeasureGUI_BndBoxDlg.h"                 // Method BNDBOX
+#include "MeasureGUI_DistanceDlg.h"               // Method DISTANCE
+#include "MeasureGUI_AngleDlg.h"                  // Method ANGLE
+#include "MeasureGUI_MaxToleranceDlg.h"           // Method MAXTOLERANCE
+#include "MeasureGUI_WhatisDlg.h"                 // Method WHATIS
+#include "MeasureGUI_CheckShapeDlg.h"             // Method CHECKSHAPE
+#include "MeasureGUI_CheckCompoundOfBlocksDlg.h"  // Method CHECKCOMPOUND
+#include "MeasureGUI_GetNonBlocksDlg.h"           // Method GET NON BLOCKS
 #include "MeasureGUI_CheckSelfIntersectionsDlg.h" // Method CHECK SELF INTERSCTIONS
-#include "MeasureGUI_PointDlg.h"         // Method POINTCOORDINATES
+#include "MeasureGUI_PointDlg.h"                  // Method POINTCOORDINATES
+#include "MeasureGUI_ManageDimensionsDlg.h"       // Method MANAGEDIMENSIONS
 
 #include <QApplication>
 
@@ -120,6 +121,9 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpPointCoordinates:
     dlg = new MeasureGUI_PointDlg( getGeometryGUI(), parent );
     break; // POINT COORDINATES
+  case GEOMOp::OpManageDimensions:
+    dlg = new MeasureGUI_ManageDimensionsDlg( getGeometryGUI(), parent );
+    break; // MANAGE DIMENSIONS
   default: 
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
     break;

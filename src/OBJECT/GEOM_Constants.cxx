@@ -25,6 +25,8 @@
 
 #include "GEOM_Constants.h"
 
+#include <limits.h>
+
 namespace GEOM
 {
 
@@ -97,8 +99,17 @@ namespace GEOM
       "OutlineColor",    // -
       // texture
       "Texture",         // -
+      // dimensions
+      "Dimensions"       // -
     };
     return ( type >= GEOM::Visibility && type <= GEOM::LastProperty ) ? names[type] : QString();
   }
 
+  /*!
+    \brief Id used for storing properties of objects in study shared between viewers.
+  */
+  int sharedPropertiesId()
+  {
+    return INT_MIN;
+  }
 } // namespace GEOM

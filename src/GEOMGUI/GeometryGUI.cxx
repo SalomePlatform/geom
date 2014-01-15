@@ -634,6 +634,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpGetNonBlocks:       // MENU MEASURE - Get NON BLOCKS
   case GEOMOp::OpPointCoordinates:   // MENU MEASURE - POINT COORDINATES
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
+  case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
     libName = "MeasureGUI";
     break;
   case GEOMOp::OpGroupCreate:        // MENU GROUP - CREATE
@@ -1009,6 +1010,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpBoundingBox,      "BND_BOX" );
   createGeomAction( GEOMOp::OpMinDistance,      "MIN_DIST" );
   createGeomAction( GEOMOp::OpAngle,            "MEASURE_ANGLE" );
+  createGeomAction( GEOMOp::OpManageDimensions, "MANAGE_DIMENSIONS" );
 
   createGeomAction( GEOMOp::OpTolerance,        "TOLERANCE" );
   createGeomAction( GEOMOp::OpWhatIs,           "WHAT_IS" );
@@ -1268,9 +1270,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(),                measurId, -1 );
 
   int dimId = createMenu( tr( "MEN_DIMENSIONS" ), measurId, -1 );
-  createMenu( GEOMOp::OpBoundingBox, dimId, -1 );
-  createMenu( GEOMOp::OpMinDistance, dimId, -1 );
-  createMenu( GEOMOp::OpAngle,       dimId, -1 );
+  createMenu( GEOMOp::OpBoundingBox,      dimId, -1 );
+  createMenu( GEOMOp::OpMinDistance,      dimId, -1 );
+  createMenu( GEOMOp::OpAngle,            dimId, -1 );
+  createMenu( GEOMOp::OpManageDimensions, dimId, -1 );
 
   createMenu( separator(),               measurId, -1 );
   createMenu( GEOMOp::OpTolerance,       measurId, -1 );
@@ -2360,6 +2363,47 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_AUTO_BRING_TO_FRONT" ), genGroup,
                  LightApp_Preferences::Bool, "Geometry", "auto_bring_to_front" );
 
+  int aDimGroupId = addPreference( tr( "PREF_DIMENSIONS" ), tabId );
+  setPreferenceProperty( aDimGroupId, "columns", 2 );
+
+  addPreference( tr( "PREF_DIMENSIONS_COLOR" ), aDimGroupId,
+                 LightApp_Preferences::Color, "Geometry", "dimensions_color" );
+
+  int aDimLineWidthId = addPreference( tr( "PREF_DIMENSIONS_LINE_WIDTH" ), aDimGroupId, 
+                                       LightApp_Preferences::IntSpin, "Geometry", "dimensions_line_width" );
+
+  setPreferenceProperty( aDimLineWidthId, "min", 1 );
+  setPreferenceProperty( aDimLineWidthId, "max", 5 );
+
+  addPreference( tr( "PREF_DIMENSIONS_FONT_HEIGHT" ), aDimGroupId,
+                 LightApp_Preferences::DblSpin, "Geometry", "dimensions_font_height" );
+
+  addPreference( tr( "PREF_DIMENSIONS_ARROW_LENGTH" ), aDimGroupId,
+                 LightApp_Preferences::IntSpin, "Geometry", "dimensions_arrow_length" );
+
+  int aLengthUnitsId = addPreference( tr( "PREF_DIMENSIONS_LENGTH_UNITS" ), aDimGroupId,
+                                      LightApp_Preferences::Selector, "Geometry", "dimensions_length_units" );
+
+  int anAngUnitsId = addPreference( tr( "PREF_DIMENSIONS_ANGLE_UNITS" ), aDimGroupId,
+                                   LightApp_Preferences::Selector, "Geometry", "dimensions_angle_units" );
+
+  addPreference( tr( "PREF_DIMENSIONS_SHOW_UNITS" ), aDimGroupId,
+                 LightApp_Preferences::Bool, "Geometry", "dimensions_show_units" );
+
+  QStringList aListOfLengthUnits;
+  aListOfLengthUnits << "m";
+  aListOfLengthUnits << "cm";
+  aListOfLengthUnits << "mm";
+  aListOfLengthUnits << "in.";
+  aListOfLengthUnits << "ft.";
+
+  QStringList aListOfAngUnits;
+  aListOfAngUnits << "rad";
+  aListOfAngUnits << "deg";
+
+  setPreferenceProperty( aLengthUnitsId, "strings", aListOfLengthUnits );
+  setPreferenceProperty( anAngUnitsId,   "strings", aListOfAngUnits );
+
   int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
   setPreferenceProperty( isoGroup, "columns", 2 );
   int isoU = addPreference( tr( "PREF_ISOS_U" ), isoGroup,
@@ -2568,6 +2612,46 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
         bool anIsRedisplayFieldSteps = param == QString("scalar_bar_nb_intervals");
         aDisplayer.UpdateColorScale( anIsRedisplayFieldSteps, true );
       }
+    }
+    else if ( param == QString("dimensions_color")        ||
+              param == QString("dimensions_line_width")   ||
+              param == QString("dimensions_font_height")  ||
+              param == QString("dimensions_arrow_length") ||
+              param == QString("dimensions_show_units")   ||
+              param == QString("dimensions_length_units") ||
+              param == QString("dimensions_angle_units") )
+    {
+      SalomeApp_Application* anApp = getApp();
+      if ( !anApp )
+      {
+        return;
+      }
+
+      SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
+      if ( !aStudy )
+      {
+        return;
+      }
+
+      GEOM_Displayer aDisplayer( aStudy );
+
+      ViewManagerList aVMs;
+      anApp->viewManagers( OCCViewer_Viewer::Type(), aVMs );
+      ViewManagerList::Iterator anIt = aVMs.begin();
+      for ( ; anIt != aVMs.end(); ++anIt )
+      {
+        SOCC_Viewer* aViewer = dynamic_cast<SOCC_Viewer*>( (*anIt)->getViewModel() );
+        if ( !aViewer )
+        {
+          continue;
+        }
+
+        SALOME_ListIO aVisible;
+        aViewer->GetVisible( aVisible );
+        aDisplayer.Redisplay( aVisible, false, aViewer );
+      }
+
+      aDisplayer.UpdateViewer();
     }
   }
 }
