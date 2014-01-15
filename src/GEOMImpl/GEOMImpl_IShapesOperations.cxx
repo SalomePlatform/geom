@@ -3643,7 +3643,11 @@ static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
 {
   if (theWhereFunction.IsNull() || theWhat.IsNull()) return false;
 
-  if (theWhereIndices.Contains(theWhat)) {
+  if(theWhereIndices.Contains( theWhat ) &&
+    (theWhat.ShapeType() == TopAbs_VERTEX || theWhat.ShapeType() == TopAbs_EDGE ||
+     theWhat.ShapeType() == TopAbs_FACE || theWhat.ShapeType() == TopAbs_SOLID)) {
+    // It is possible to add a shape only next type: vertex, edge, face or solid
+    // to create after a group on these elements
     // entity was not changed by the operation
     Standard_Integer aWhatIndex = theWhereIndices.FindIndex(theWhat);
     theModifiedList.Append(aWhatIndex);
@@ -3698,7 +3702,10 @@ static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
             isGood = Standard_True;
             Standard_Integer imod, aModifLen = anIntegerArray->Array()->Length();
             for (imod = 1; imod <= aModifLen; imod++) {
-              theModifiedList.Append(anIntegerArray->Array()->Value(imod));
+              TopoDS_Shape curShape = theWhereIndices.FindKey(anIntegerArray->Array()->Value(imod));
+              if(curShape.ShapeType() == TopAbs_VERTEX || curShape.ShapeType() == TopAbs_EDGE ||
+                 curShape.ShapeType() == TopAbs_FACE || curShape.ShapeType() == TopAbs_SOLID)
+                theModifiedList.Append(anIntegerArray->Array()->Value(imod));
             }
           }
         }
