@@ -922,7 +922,7 @@ void GroupGUI_GroupDlg::activateSelection()
       myIsShapeType) // check if shape type is already choosen by user
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
-  
+
     //display mode for main shape
     if ( myDmMode == -1 ) {
     SALOME_View* view = GEOM_Displayer::GetActiveView();
@@ -935,11 +935,6 @@ void GroupGUI_GroupDlg::activateSelection()
           if(!aSh.IsNull()) {
             myDmMode = aSh->isTopLevel() ? aSh->prevDisplayMode() : aSh->DisplayMode();
           }
-          // Hide main shape, if explode on VERTEX
-          if(getShapeType() != TopAbs_VERTEX) {
-            aDisplayer->Erase(myMainObj, false, false);
-            myIsHiddenMain = true;
-          }
         }
         else
           myDmMode = SUIT_Session::session()->resourceMgr()->integerValue( "Geometry", "display_mode" );
@@ -948,10 +943,13 @@ void GroupGUI_GroupDlg::activateSelection()
     aDisplayer->SetDisplayMode(myDmMode);
 
     // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
-    if (getShapeType() == TopAbs_VERTEX) {
-      if (myIsHiddenMain)
-        aDisplayer->Display(myMainObj);
+    if(getShapeType() != TopAbs_VERTEX) {
+      aDisplayer->Erase(myMainObj, false, false);
+      myIsHiddenMain = true;
     }
+    else
+      aDisplayer->Display(myMainObj);
+
     aDisplayer->Erase(myGroup, false, false);
 
     QColor aColor = SUIT_Session::session()->resourceMgr()->colorValue( "Geometry", "editgroup_color" );
