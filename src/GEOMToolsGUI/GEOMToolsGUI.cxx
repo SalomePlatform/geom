@@ -1011,7 +1011,7 @@ void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
       QListIterator<SALOME_View*> it( views );
       while ( it.hasNext() )
         if ( SALOME_View* view = it.next() )
-          disp->Erase(geomObj, true, view);
+          disp->Erase(geomObj, true, true, view);
 
       // Remove object from Engine
       // We can't directly remove object from engine. All we can do is to unpublish the object

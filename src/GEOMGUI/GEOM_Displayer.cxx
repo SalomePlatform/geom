@@ -485,13 +485,14 @@ void GEOM_Displayer::Erase( const Handle(SALOME_InteractiveObject)& theIO,
 //=================================================================
 void GEOM_Displayer::Erase( GEOM::GEOM_BaseObject_ptr theObj,
                             const bool forced,
-                            const bool updateViewer )
+                            const bool updateViewer,
+                            SALOME_View* theViewFrame)
 {
   std::string entry = getEntry( theObj );
   if ( entry != "" )
   {
     Erase(new SALOME_InteractiveObject(entry.c_str(), "GEOM", getName(theObj).c_str()),
-          forced, updateViewer);
+          forced, updateViewer, theViewFrame);
   }
 }
 

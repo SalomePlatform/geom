@@ -105,7 +105,8 @@ public:
 
   void          Erase     ( GEOM::GEOM_BaseObject_ptr theObj,
                             const bool forced = false,
-                            const bool updateViewer = true );
+                            const bool updateViewer = true,
+                            SALOME_View* theViewFrame = 0);
 
   void          EraseWithChildren(const Handle(SALOME_InteractiveObject)& theIO,
                                   const bool eraseOnlyChildren = false);
