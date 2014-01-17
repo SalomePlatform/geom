@@ -739,24 +739,21 @@ void EntityGUI_SubShapeDlg::activateSelection()
           new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
         if ( view->isVisible( io ) ) {
           Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIOinGEOMAISShape( io, true );
-          if(!aSh.IsNull()) {
+          if(!aSh.IsNull())
             myDmMode = aSh->isTopLevel() ? aSh->prevDisplayMode() : aSh->DisplayMode();
-          }
-          // Hide main shape, if explode on VERTEX
-          if (shapeType() != TopAbs_VERTEX) {
-            aDisplayer->Erase(myObject, false, false);
-            myIsHiddenMain = true;
-          }
         }
         else
           myDmMode = SUIT_Session::session()->resourceMgr()->integerValue( "Geometry", "display_mode" );
       }
     }
     // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
-    if (shapeType() == TopAbs_VERTEX) {
-      if (myIsHiddenMain)
-        aDisplayer->Display(myObject);
+    if (shapeType() != TopAbs_VERTEX) {
+      aDisplayer->Erase(myObject, false, false);
+      myIsHiddenMain = true;
     }
+    else
+      aDisplayer->Display(myObject);
+
     aDisplayer->SetDisplayMode(myDmMode);
 
     if(!isApply) {
