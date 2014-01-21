@@ -602,7 +602,9 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
       TopTools_ListIteratorOfListOfShape aFaceIt( aFaces );
       for ( ; aFaceIt.More(); aFaceIt.Next() )
       {
-        Handle(Geom_Surface) aSurface = BRep_Tool::Surface( TopoDS::Face( aFaceIt.Value() ) );
+        TopoDS_Face aFace = TopoDS::Face( aFaceIt.Value() );
+
+        Handle(Geom_Surface) aSurface = BRep_Tool::Surface( TopoDS::Face( aFace ) );
 
         gp_Pnt aCircCenter = aCircle->Circ().Location();
         Standard_Real aCircU = 0.0, aCircV = 0.0;
@@ -619,7 +621,7 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
           continue;
         }
 
-        aFaceN = gp_Vec( aNorm );
+        aFaceN = gp_Vec( aFace.Orientation() == TopAbs_REVERSED ? -aNorm : aNorm );
       }
     }
     break;
@@ -676,7 +678,9 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
   Standard_Real aCircR = aCircle->Circ().Radius();
 
   // construct closed circle as base for the diameter dimension
-  gp_Circ aRuledCirc = gce_MakeCirc( gp_Ax2( aCircP, aCircN, aCircX ), aCircR );
+  Standard_Boolean isReversed = ( ( aPln.Axis().Direction() ^ aCircX ) * aCircN ) < 0.0;
+
+  gp_Circ aRuledCirc = gce_MakeCirc( gp_Ax2( aCircP, isReversed ? -aCircN : aCircN, aCircX ), aCircR );
 
   Handle(AIS_DiameterDimension) aDimension = new AIS_DiameterDimension( aRuledCirc, aPln );
 

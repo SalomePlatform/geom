@@ -643,7 +643,7 @@ void MeasureGUI_ManageDimensionsDlg::OnInteractionFinished( Handle(AIS_Interacti
   TopoDS_Shape anParentSh;
   if ( GEOMBase::GetShape( myEditObject.get(), anParentSh ) )
   {
-    aLCS = GEOMUtils::GetPosition( anParentSh );
+    aLCS = gp_Ax3().Transformed( anParentSh.Location().Transformation() );
   }
 
   int aDimensionId = IdFromPrs( theIO );

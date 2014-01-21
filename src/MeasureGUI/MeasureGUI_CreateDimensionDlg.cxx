@@ -635,7 +635,7 @@ bool MeasureGUI_CreateDimensionDlg::AddDimensionToOwner()
   TopoDS_Shape anParentSh;
   if ( GEOMBase::GetShape( myParentObj.get(), anParentSh ) )
   {
-    aLCS = GEOMUtils::GetPosition( anParentSh );
+    aLCS = gp_Ax3().Transformed( anParentSh.Location().Transformation() );
   }
 
   QString aName = getNewObjectName();

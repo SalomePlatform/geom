@@ -1021,6 +1021,11 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
     }
 
     aListOfIO.Remove( aIterateIO );
+
+    if ( !aIterateIO.More() )
+    {
+      break;
+    }
   }
 
   // prepare dimension styling
@@ -1333,7 +1338,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
       }
     }
 
-    updateDimensions( myIO, occPrs, GEOMUtils::GetPosition( myShape ) );
+    updateDimensions( myIO, occPrs, gp_Ax3().Transformed( myShape.Location().Transformation() ) );
   }
 }
 
