@@ -47,6 +47,7 @@
 //=================================================================================
 class MeasureGUI_DimensionCreateTool
 {
+ public:
   struct Segment
   {
     gp_Pnt First;
@@ -56,7 +57,6 @@ class MeasureGUI_DimensionCreateTool
   typedef NCollection_Sequence<gp_Pln>  SeqOfPlanes;
   typedef NCollection_Sequence<Segment> SeqOfSegments;
 
-public:
   MeasureGUI_DimensionCreateTool();
 
   struct

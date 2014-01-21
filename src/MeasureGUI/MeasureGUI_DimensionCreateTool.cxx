@@ -76,6 +76,20 @@
 #include <TColgp_SequenceOfDir.hxx>
 #include <V3d_View.hxx>
 
+
+// plane associated with custom data
+struct PlaneAndSegment
+{
+  PlaneAndSegment() {}
+  PlaneAndSegment(const gp_Pln& thePlane, const MeasureGUI_DimensionCreateTool::Segment& theSegment) : pln(thePlane), seg(theSegment) {}
+  operator gp_Pln () const { return pln; }
+  operator MeasureGUI_DimensionCreateTool::Segment () const { return seg; }
+  gp_Pln pln;
+  MeasureGUI_DimensionCreateTool::Segment seg;
+};
+
+typedef NCollection_Sequence<PlaneAndSegment> SeqOfPlnsAndSegments;
+
 //=================================================================================
 // function : Constructor
 // purpose  :
@@ -915,18 +929,6 @@ void MeasureGUI_DimensionCreateTool::PositionDiameter( const Bnd_Box& theBnd,
                                                        gp_Pnt& thePnt2,
                                                        gp_Pln& thePln ) const
 {
-  // plane associated with custom data
-  struct PlaneAndSegment
-  {
-    PlaneAndSegment() {}
-    PlaneAndSegment(const gp_Pln& thePlane, const Segment& theSegment) : pln(thePlane), seg(theSegment) {}
-    operator gp_Pln () const { return pln; }
-    operator Segment () const { return seg; }
-    gp_Pln pln;
-    Segment seg;
-  };
-  typedef NCollection_Sequence<PlaneAndSegment> SeqOfPlnsAndSegments;
-
   // select list of measured segments aligned to projection planes
   SeqOfDirs aProjectionDirs;
   aProjectionDirs.Append( gp::DX() );
