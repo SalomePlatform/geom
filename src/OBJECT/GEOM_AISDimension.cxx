@@ -81,7 +81,7 @@ void GEOM_AISLength::SetId( const Standard_Integer theId )
 // purpose  : 
 //=================================================================================
 GEOM_AISDiameter::GEOM_AISDiameter( const Standard_Integer theId )
-: AIS_DiameterDimension( gp_Circ() ),
+: AIS_DiameterDimension( gp_Circ( gp_Ax2( gp::Origin(), gp::DZ() ), 0.0 ) ),
   myId( theId )
 {
 }
