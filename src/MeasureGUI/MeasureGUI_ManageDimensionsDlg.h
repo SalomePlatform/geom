@@ -79,12 +79,17 @@ protected slots:
   virtual void                    ClickOnCancel();
   bool                            ClickOnApply();
   void                            OnFinish();
+  void                            OnActivateThisDialog();
+  void                            OnDeactivateThisDialog();
 
 /* Utils */
 private:
   void                            SetEditObject( const GEOM::GeomObjPtr& );
   void                            RestoreState();
   void                            PopulateList();
+  bool                            HasUnsavedChanges();
+  bool                            AllowedToCancelChanges();
+  bool                            AllowedToSaveChanges();
   bool                            WarnUnsaved();
   int                             IdFromItem( QTreeWidgetItem* theItem );
   int                             IdFromPrs( const Handle(AIS_InteractiveObject)& theAIS );
@@ -92,6 +97,9 @@ private:
   void                            SelectInList( const int theId );
   void                            SelectInViewer( SOCC_Viewer* theViewer, const int theId );
   void                            RedisplayObject();
+
+private:
+  void                            enterEvent(QEvent*);
 
 private:
   enum GroupItems

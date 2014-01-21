@@ -34,6 +34,9 @@
 #include <GEOMUtils.hxx>
 #include <GEOMGUI_DimensionProperty.h>
 
+#include <OCCViewer_ViewManager.h>
+#include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewPort3d.h>
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DataObject.h>
@@ -127,7 +130,13 @@ MeasureGUI_CreateDimensionDlg::MeasureGUI_CreateDimensionDlg( const GEOM::GeomOb
 
   myDimensionInteractor = new MeasureGUI_DimensionInteractor( theGUI, theParent );
 
+  myDiameterArgs->setVisible( false );
+  myAngleArgs   ->setVisible( false );
+  myLengthArgs  ->setVisible( true );
+
   Init();
+
+  setHelpFileName("add_dimension_page.html");
 }
 
 //=================================================================================
@@ -404,6 +413,7 @@ void MeasureGUI_CreateDimensionDlg::StartLocalEditing()
   anAISContext->SetZLayer( myDimension, myEditingLayer );
   anAISContext->Activate( myDimension, AIS_DSM_Line );
   anAISContext->Activate( myDimension, AIS_DSM_Text );
+  anAISContext->Redisplay( myDimension );
 }
 
 //=================================================================================
@@ -434,14 +444,15 @@ void MeasureGUI_CreateDimensionDlg::StopLocalEditing()
 //=================================================================================
 void MeasureGUI_CreateDimensionDlg::Init()
 {
+  myDimension = NULL;
+
   StopLocalEditing();
 
   erasePreview();
 
-  myDiameterArgs->setVisible( false );
-  myAngleArgs   ->setVisible( false );
-  myLengthArgs  ->setVisible( true );
+  myDiameterArgs->Reset();
   myLengthArgs->Reset();
+  myAngleArgs->Reset();
 
   myRBGroup->button( TypeButtonID_Length )->click();
 }
@@ -461,11 +472,28 @@ Handle(AIS_Dimension) MeasureGUI_CreateDimensionDlg::CreateDimension()
   int     aLineWidth    = aResMgr->integerValue( "Geometry", "dimensions_line_width", 1 );
   double  aFontHeight   = aResMgr->doubleValue ( "Geometry", "dimensions_font_height", 10 );
   double  anArrowLength = aResMgr->doubleValue ( "Geometry", "dimensions_arrow_length", 5 );
+  double  aDefFlyout    = aResMgr->doubleValue ( "Geometry", "dimensions_default_flyout", 20 );
   bool    isUnitsShown  = aResMgr->booleanValue( "Geometry", "dimensions_show_units", false );
   QString aUnitsLength  = aResMgr->stringValue ( "Geometry", "dimensions_length_units", "m" );
   QString aUnitsAngle   = aResMgr->stringValue ( "Geometry", "dimensions_angle_units", "deg" );
 
-  MeasureGUI_DimensionCreateTool aTool( myGeomGUI );
+  OCCViewer_ViewWindow* anActiveView = NULL;
+
+  SalomeApp_Application* anApp = myGeomGUI->getApp();
+
+  if ( anApp )
+  {
+    OCCViewer_ViewManager* aViewMgr = (OCCViewer_ViewManager*) anApp->getViewManager( OCCViewer_Viewer::Type(), false );
+    if ( aViewMgr )
+    {
+      anActiveView = (OCCViewer_ViewWindow*) aViewMgr->getActiveView();
+    }
+  }
+
+  MeasureGUI_DimensionCreateTool aTool;
+
+  aTool.Settings.DefaultFlyout = aDefFlyout;
+  aTool.Settings.ActiveView    = anActiveView ? anActiveView->getViewPort()->getView() : NULL;
 
   switch ( getConstructorId() )
   {
@@ -559,9 +587,33 @@ Handle(AIS_Dimension) MeasureGUI_CreateDimensionDlg::CreateDimension()
   aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
   aStyle->MakeText3d( Standard_True );
   aStyle->MakeTextShaded( Standard_True );
+  aStyle->SetExtensionSize( aFontHeight * 0.5 );
   aStyle->TextAspect()->SetHeight( aFontHeight );
   aStyle->ArrowAspect()->SetLength( anArrowLength );
   aStyle->LineAspect()->SetWidth( aLineWidth );
+
+  if ( aDimensionIO->IsKind( STANDARD_TYPE(AIS_AngleDimension) ) )
+  {
+    // show degree symbol for dimension instead of label "deg"
+    if ( aUnitsAngle == "deg" )
+    {
+      aDimensionIO->SetSpecialSymbol(0xB0);
+      aDimensionIO->SetDisplaySpecialSymbol( isUnitsShown ? AIS_DSS_After : AIS_DSS_No );
+      aStyle->MakeUnitsDisplayed(Standard_False);
+    }
+    else
+    {
+      aDimensionIO->SetDisplaySpecialSymbol(AIS_DSS_No);
+      aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
+    }
+  }
+  else
+  {
+    aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
+  }
+
+  aDimensionIO->Attributes()->SetDimLengthDisplayUnits( aUnitsLength.toLatin1().data() );
+  aDimensionIO->Attributes()->SetDimAngleDisplayUnits( aUnitsAngle.toLatin1().data() );
   aDimensionIO->SetDimensionAspect( aStyle );
   aDimensionIO->SetPolygonOffsets( Aspect_POM_Fill, -1.0, -1.0 );
 

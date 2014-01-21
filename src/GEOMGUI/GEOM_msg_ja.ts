@@ -3272,6 +3272,10 @@
         <translation type="unfinished">Angle measurement units</translation>
     </message>
     <message>
+        <source>PREF_DIMENSIONS_DEFAULT_FLYOUT</source>
+        <translation type="unfinished">Default flyout length</translation>
+    </message>
+    <message>
         <source>PREF_DIMENSIONS_SHOW_UNITS</source>
         <translation type="unfinished">Show units of measurement</translation>
     </message>
@@ -4728,6 +4732,30 @@
       <translation type="unfinished">Manage measurement dimensions of an object</translation>
     </message>
     <message>
+      <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
+      <translation type="unfinished">Show all dimensions</translation>
+    </message>
+    <message>
+      <source>STB_POP_SHOW_ALL_DIMENSIONS</source>
+      <translation type="unfinished">Show all hidden measures (dimension) created for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_SHOW_ALL_DIMENSIONS</source>
+      <translation type="unfinished">Show all hidden measures (dimension) created for the object</translation>
+    </message>
+    <message>
+      <source>MEN_POP_HIDE_ALL_DIMENSIONS</source>
+      <translation type="unfinished">Hide all dimensions</translation>
+    </message>
+    <message>
+      <source>STB_POP_HIDE_ALL_DIMENSIONS</source>
+      <translation type="unfinished">Show all visible measures (dimension) created for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
+      <translation type="unfinished">Show all visible measures (dimension) created for the object</translation>
+    </message>
+    <message>
       <source>TOP_POP_AUTO_COLOR</source>
       <translation>自動色</translation>
     </message>
@@ -6157,6 +6185,16 @@
     <message>
       <source>WRN_TITLE_UNSAVED</source>
       <translation type="unfinished">Unsaved changes</translation>
+    </message>
+    <message>
+      <source>WRN_MSG_CHANGES_LOST</source>
+      <translation type="unfinished">The unsaved changes will be lost.
+Do you wish to continue?</translation>
+    </message>
+    <message>
+      <source>WRN_MSG_CHANGES_SAVE</source>
+      <translation type="unfinished">The unsaved changes will be lost.
+Do you wish to save them?</translation>
     </message>
     <message>
       <source>WRN_MSG_UNSAVED</source>

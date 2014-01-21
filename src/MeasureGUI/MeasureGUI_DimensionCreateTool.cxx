@@ -41,14 +41,28 @@
 // OCCT includes
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 #include <BRepAdaptor_Curve.hxx>
+#include <BRepAdaptor_Surface.hxx>
 #include <BRepBndLib.hxx>
+#include <ElCLib.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Circ.hxx>
+#include <gp_Sphere.hxx>
+#include <gp_Cone.hxx>
+#include <gp_Torus.hxx>
 #include <gce_MakeDir.hxx>
 #include <gce_MakePln.hxx>
+#include <gce_MakeCirc.hxx>
 #include <GC_MakePlane.hxx>
+#include <Geom_Circle.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_ElementarySurface.hxx>
 #include <Geom_Surface.hxx>
+#include <Geom_ConicalSurface.hxx>
+#include <Geom_SphericalSurface.hxx>
+#include <Geom_ToroidalSurface.hxx>
+#include <Geom_TrimmedCurve.hxx>
 #include <GeomLib.hxx>
 #include <GeomLib_Tool.hxx>
 #include <TopoDS_Shape.hxx>
@@ -58,36 +72,38 @@
 #include <TopExp_Explorer.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TColgp_SequenceOfDir.hxx>
-#include <gp_Pnt.hxx>
 #include <V3d_View.hxx>
 
 //=================================================================================
 // function : Constructor
 // purpose  :
 //=================================================================================
-MeasureGUI_DimensionCreateTool::MeasureGUI_DimensionCreateTool( GeometryGUI* theGeomGUI )
-: myGeomGUI( theGeomGUI )
+MeasureGUI_DimensionCreateTool::MeasureGUI_DimensionCreateTool()
 {
+  Settings.DefaultFlyout = 0.0;
+  Settings.ActiveView = NULL;
 }
 
 //=================================================================================
 // function : LengthOnEdge
 // purpose  :
 //=================================================================================
-Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthOnEdge( const GEOM::GeomObjPtr& theEdge )
+Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthOnEdge( const GEOM::GeomObjPtr& theMeasuredObj ) const
 {
   /* ---------------------------------------------------------------- *
    *                  get the edge and parent shape                   *
    * ---------------------------------------------------------------- */
 
-  TopoDS_Shape aShapeEdge;
-  TopoDS_Shape aShapeMain;
-  if ( !GEOMBase::GetShape( theEdge.get(), aShapeEdge ) )
+  TopoDS_Shape aMeasuredShape;
+  TopoDS_Shape aMainShape;
+  if ( !GEOMBase::GetShape( theMeasuredObj.operator ->(), aMeasuredShape ) )
   {
     return NULL;
   }
-  if ( !GEOMBase::GetShape( GetMainShape( theEdge ).get(), aShapeMain ) )
+
+  if ( !GEOMBase::GetShape( GetMainShape( theMeasuredObj ).get(), aMainShape ) )
   {
     return NULL;
   }
@@ -96,7 +112,7 @@ Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthOnEdge( const 
   /*            check the input geometry               */
   /* ------------------------------------------------- */
 
-  TopoDS_Edge anEdge = TopoDS::Edge( aShapeEdge );
+  TopoDS_Edge anEdge = TopoDS::Edge( aMeasuredShape );
 
   TopoDS_Vertex aVertex1;
   TopoDS_Vertex aVertex2;
@@ -109,59 +125,85 @@ Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthOnEdge( const 
     return NULL;
   }
 
-  /* ------------------------------------------------- *
-   *   compose list of possible flyout directions      *
-   * ------------------------------------------------- */
+  /* ------------------------- *
+   *   position the dimension 
+   * ------------------------- */
 
   Bnd_Box aBnd;
-  BRepBndLib::AddClose( aShapeMain, aBnd );
+  BRepBndLib::AddClose( aMainShape, aBnd );
 
-  TColgp_SequenceOfDir aSeqOfFlyout;
-  ChooseLengthFlyoutsFromShape( aSeqOfFlyout, anEdge, aShapeMain );
-  ChooseLengthFlyoutsFromBnd( aSeqOfFlyout, aPnt1, aPnt2, aBnd );
-  if ( aSeqOfFlyout.IsEmpty() )
+  // get face sides
+  TopTools_IndexedDataMapOfShapeListOfShape aRelationMap;
+  TopExp::MapShapesAndAncestors( aMainShape, TopAbs_EDGE, TopAbs_FACE, aRelationMap );
+  const TopTools_ListOfShape& aRelatedFaces = aRelationMap.FindFromKey( anEdge );
+
+  gp_Vec aFaceN1( gp::Origin(), gp::Origin() );
+  gp_Vec aFaceN2( gp::Origin(), gp::Origin() );
+  gp_Vec aFaceS1( gp::Origin(), gp::Origin() );
+  gp_Vec aFaceS2( gp::Origin(), gp::Origin() );
+
+  gp_Pnt aMiddlePnt = gp_Pnt( ( aPnt1.XYZ() + aPnt2.XYZ() ) * 0.5 );
+
+  TopTools_ListIteratorOfListOfShape aFaceIt( aRelatedFaces );
+
+  // get face side directions
+  if ( aFaceIt.More() )
   {
-    return NULL;
-  }
+    TopoDS_Face aFace = TopoDS::Face( aFaceIt.Value() );
 
-  gp_Dir aPointDir = gce_MakeDir( aPnt1, aPnt2 );
-
-  // make planes for dimension presentation according to flyout directions
-  NCollection_Sequence<gp_Pln> aSeqOfPlanes;
-  for ( Standard_Integer aFlyoutIt = 1; aFlyoutIt <= aSeqOfFlyout.Length(); ++aFlyoutIt )
-  {
-    gp_Pln aPlane( aPnt1, aPointDir ^ aSeqOfFlyout.Value( aFlyoutIt ) );
-    aSeqOfPlanes.Append( aPlane );
-  }
-
-  /* --------------------------------------------------------------------- *
-   *     select best matching dimension plane for view projection          *
-   * --------------------------------------------------------------------- */
-
-  OCCViewer_ViewWindow* anActiveView = NULL;
-
-  if ( myGeomGUI != NULL )
-  {
-    SalomeApp_Application* anApp = myGeomGUI->getApp();
-    if ( !anApp )
+    gp_Dir aSideDir;
+    if ( GetFaceSide( aFace, anEdge, aSideDir ) )
     {
-      OCCViewer_ViewManager* aViewMgr = (OCCViewer_ViewManager*) anApp->getViewManager( OCCViewer_Viewer::Type(), false );
-      if ( aViewMgr )
-      {
-        anActiveView = (OCCViewer_ViewWindow*)  aViewMgr->getActiveView();
-      }
+      aFaceS1 = aSideDir;
+    }
+
+    Handle(Geom_Surface) aSurface = BRep_Tool::Surface( aFace );
+
+    Standard_Real aU = 0.0, aV = 0.0;
+    GeomLib_Tool::Parameters( aSurface, aMiddlePnt, Precision::Confusion(), aU, aV );
+
+    gp_Dir aNorm;
+    if ( GeomLib::NormEstim( aSurface, gp_Pnt2d( aU, aV ), Precision::Confusion(), aNorm ) <= 1 )
+    {
+      aFaceN1 = aFace.Orientation() == TopAbs_REVERSED ? -aNorm : aNorm;
+    }
+
+    aFaceIt.Next();
+  }
+
+  if ( aFaceIt.More() )
+  {
+    TopoDS_Face aFace = TopoDS::Face( aFaceIt.Value() );
+
+    gp_Dir aSideDir;
+    if ( GetFaceSide( aFace, anEdge, aSideDir ) )
+    {
+      aFaceS2 = aSideDir;
+    }
+
+    Handle(Geom_Surface) aSurface = BRep_Tool::Surface( aFace );
+
+    Standard_Real aU = 0.0, aV = 0.0;
+    GeomLib_Tool::Parameters( aSurface, aMiddlePnt, Precision::Confusion(), aU, aV );
+
+    gp_Dir aNorm;
+    if ( GeomLib::NormEstim( aSurface, gp_Pnt2d( aU, aV ), Precision::Confusion(), aNorm ) <= 1 )
+    {
+      aFaceN2 = aFace.Orientation() == TopAbs_REVERSED ? -aNorm : aNorm;
     }
   }
 
-  gp_Pln aChoosenPlane = anActiveView
-    ? SelectPlaneForProjection( aSeqOfPlanes, anActiveView->getViewPort()->getView() )
-    : aSeqOfPlanes.First();
+  gp_Pln aPln;
+  PositionLength( aBnd, aFaceN1, aFaceN2, aFaceS1, aFaceS2, aPnt1, aPnt2, aPln );
 
-  /* ------------------------------------------------------------------------------------ *
-   *                        construct interactive presentation                            *
-   * ------------------------------------------------------------------------------------ */
+  /* --------------------------------------------------------- *
+   *   construct the dimension for the best selected position
+   * --------------------------------------------------------- */
 
-  Handle(AIS_LengthDimension) aDimension = new AIS_LengthDimension( anEdge, aChoosenPlane );
+  Handle(AIS_LengthDimension) aDimension = new AIS_LengthDimension( anEdge, aPln );
+
+  aDimension->SetFlyout( Settings.DefaultFlyout );
+
   if ( !aDimension->IsValid() )
   {
     return NULL;
@@ -174,45 +216,155 @@ Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthOnEdge( const 
 // function : LengthByPoints
 // purpose  :
 //=================================================================================
-Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthByPoints( const GEOM::GeomObjPtr& thePoint1,
-                                                                            const GEOM::GeomObjPtr& thePoint2 )
+Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthByPoints( const GEOM::GeomObjPtr& theMeasuredObj1,
+                                                                            const GEOM::GeomObjPtr& theMeasuredObj2 ) const
 {
-  TopoDS_Shape aFirstSh;
-  if ( !GEOMBase::GetShape( thePoint1.operator ->(), aFirstSh ) )
+  /* ---------------------------------------------------------------- *
+   *                  get the edge and parent shape                   *
+   * ---------------------------------------------------------------- */
+
+  TopoDS_Shape aMeasuredShape1;
+  TopoDS_Shape aMeasuredShape2;
+  TopoDS_Shape aMainShape;
+
+  if ( !GEOMBase::GetShape( theMeasuredObj1.operator ->(), aMeasuredShape1 ) )
   {
     return NULL;
   }
 
-  TopoDS_Shape aSecondSh;
-  if ( !GEOMBase::GetShape( thePoint2.operator ->(), aSecondSh ) )
+  if ( !GEOMBase::GetShape( theMeasuredObj2.operator ->(), aMeasuredShape2 ) )
   {
     return NULL;
   }
 
-  TopoDS_Vertex aFirstVertex  = TopoDS::Vertex( aFirstSh );
-  TopoDS_Vertex aSecondVertex = TopoDS::Vertex( aSecondSh );
-
-  gp_Pnt aPnt1 = BRep_Tool::Pnt( aFirstVertex );
-  gp_Pnt aPnt2 = BRep_Tool::Pnt( aSecondVertex );
-
-  gp_Vec aDir( aPnt1, aPnt2 );
-  gp_Dir aUnitVecs[] = { gp::DZ(), gp::DY(), gp::DX() };
-  int aUnitVecIt = 0;
-  for ( ; aUnitVecIt < 3; ++aUnitVecIt )
+  if ( !GEOMBase::GetShape( GetMainShape( theMeasuredObj1 ).get(), aMainShape ) )
   {
-    if ( aDir.Dot( aUnitVecs[aUnitVecIt] ) <= 0.5 )
+    return NULL;
+  }
+
+  /* ------------------------------------------------- */
+  /*            check the input geometry               */
+  /* ------------------------------------------------- */
+
+  TopoDS_Vertex aVertex1 = TopoDS::Vertex( aMeasuredShape1 );
+  TopoDS_Vertex aVertex2 = TopoDS::Vertex( aMeasuredShape2 );
+
+  gp_Pnt aPnt1 = BRep_Tool::Pnt( aVertex1 );
+  gp_Pnt aPnt2 = BRep_Tool::Pnt( aVertex2 );
+  if ( aPnt1.Distance( aPnt2 ) <= Precision::Confusion() )
+  {
+    return NULL;
+  }
+
+  /* ------------------------- *
+   *   position the dimension 
+   * ------------------------- */
+
+  Bnd_Box aBnd;
+  BRepBndLib::AddClose( aMainShape, aBnd );
+
+  // check whether the points share same edge
+  TopExp_Explorer anEdgeExp( aMainShape, TopAbs_EDGE, TopAbs_EDGE );
+  for ( ; anEdgeExp.More(); anEdgeExp.Next() )
+  {
+    TopoDS_Vertex anEdgeV1;
+    TopoDS_Vertex anEdgeV2;
+    TopExp::Vertices( TopoDS::Edge( anEdgeExp.Current() ), anEdgeV1, anEdgeV2 );
+    gp_Pnt anEdgePnt1 = BRep_Tool::Pnt( anEdgeV1 );
+    gp_Pnt anEdgePnt2 = BRep_Tool::Pnt( anEdgeV2 );
+
+    if ( aPnt1.Distance( anEdgePnt1 ) <= Precision::Confusion() )
     {
-      break;
+      if ( aPnt2.Distance( anEdgePnt2 ) <= Precision::Confusion() )
+      {
+        break;
+      }
+    }
+
+    if ( aPnt2.Distance( anEdgePnt1 ) <= Precision::Confusion() )
+    {
+      if ( aPnt1.Distance( anEdgePnt2 ) <= Precision::Confusion() )
+      {
+        break;
+      }
     }
   }
 
-  gp_Pnt aPnt3 = aPnt2.Translated( aUnitVecs[aUnitVecIt] );
+  gp_Vec aFaceN1( gp::Origin(), gp::Origin() );
+  gp_Vec aFaceN2( gp::Origin(), gp::Origin() );
+  gp_Vec aFaceS1( gp::Origin(), gp::Origin() );
+  gp_Vec aFaceS2( gp::Origin(), gp::Origin() );
 
-  GC_MakePlane aMkPlane( aPnt1, aPnt2, aPnt3 );
-  Handle(Geom_Plane) aPlane = aMkPlane.Value();
+  // have shared edge
+  if ( anEdgeExp.More() )
+  {
+    TopoDS_Edge anEdge = TopoDS::Edge( anEdgeExp.Current() );
+    TopTools_IndexedDataMapOfShapeListOfShape aRelationMap;
+    TopExp::MapShapesAndAncestors( aMainShape, TopAbs_EDGE, TopAbs_FACE, aRelationMap );
+    const TopTools_ListOfShape& aRelatedFaces = aRelationMap.FindFromKey( anEdge );
 
-  // check whether it is possible to compute valid dimension
-  Handle(AIS_LengthDimension) aDimension = new AIS_LengthDimension ( aFirstVertex, aSecondVertex, aPlane->Pln() );
+    gp_Pnt aMiddlePnt = gp_Pnt( ( aPnt1.XYZ() + aPnt2.XYZ() ) * 0.5 );
+
+    TopTools_ListIteratorOfListOfShape aFaceIt( aRelatedFaces );
+
+    // get face side directions
+    if ( aFaceIt.More() )
+    {
+      TopoDS_Face aFace = TopoDS::Face( aFaceIt.Value() );
+
+      gp_Dir aSideDir;
+      if ( GetFaceSide( aFace, anEdge, aSideDir ) )
+      {
+        aFaceS1 = aSideDir;
+      }
+
+      Handle(Geom_Surface) aSurface = BRep_Tool::Surface( aFace );
+
+      Standard_Real aU = 0.0, aV = 0.0;
+      GeomLib_Tool::Parameters( aSurface, aMiddlePnt, Precision::Confusion(), aU, aV );
+
+      gp_Dir aNorm;
+      if ( GeomLib::NormEstim( aSurface, gp_Pnt2d( aU, aV ), Precision::Confusion(), aNorm ) <= 1 )
+      {
+        aFaceN1 = aFace.Orientation() == TopAbs_REVERSED ? -aNorm : aNorm;
+      }
+
+      aFaceIt.Next();
+    }
+
+    if ( aFaceIt.More() )
+    {
+      TopoDS_Face aFace = TopoDS::Face( aFaceIt.Value() );
+
+      gp_Dir aSideDir;
+      if ( GetFaceSide( aFace, anEdge, aSideDir ) )
+      {
+        aFaceS2 = aSideDir;
+      }
+
+      Handle(Geom_Surface) aSurface = BRep_Tool::Surface( aFace );
+
+      Standard_Real aU = 0.0, aV = 0.0;
+      GeomLib_Tool::Parameters( aSurface, aMiddlePnt, Precision::Confusion(), aU, aV );
+
+      gp_Dir aNorm;
+      if ( GeomLib::NormEstim( aSurface, gp_Pnt2d( aU, aV ), Precision::Confusion(), aNorm ) <= 1 )
+      {
+        aFaceN2 = aFace.Orientation() == TopAbs_REVERSED ? -aNorm : aNorm;
+      }
+    }
+  }
+
+  gp_Pln aPln;
+  PositionLength( aBnd, aFaceN1, aFaceN2, aFaceS1, aFaceS2, aPnt1, aPnt2, aPln );
+
+  /* --------------------------------------------------------- *
+   *   construct the dimension for the best selected position
+   * --------------------------------------------------------- */
+
+  Handle(AIS_LengthDimension) aDimension = new AIS_LengthDimension( aPnt1, aPnt2, aPln );
+
+  aDimension->SetFlyout( Settings.DefaultFlyout );
 
   if ( !aDimension->IsValid() )
   {
@@ -227,7 +379,7 @@ Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthByPoints( cons
 // purpose  :
 //=================================================================================
 Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthByParallelEdges( const GEOM::GeomObjPtr& theEdge1,
-                                                                                   const GEOM::GeomObjPtr& theEdge2 )
+                                                                                   const GEOM::GeomObjPtr& theEdge2 ) const
 {
   TopoDS_Shape aFirstSh;
   if ( !GEOMBase::GetShape( theEdge1.operator ->(), aFirstSh ) )
@@ -258,6 +410,8 @@ Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthByParallelEdge
   // check whether it is possible to compute valid dimension
   Handle(AIS_LengthDimension) aDimension = new AIS_LengthDimension ( aFirstEdge, aSecondEdge, aPlane->Pln() );
 
+  aDimension->SetFlyout( Settings.DefaultFlyout );
+
   if ( !aDimension->IsValid() )
   {
     return NULL;
@@ -270,23 +424,250 @@ Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthByParallelEdge
 // function : Diameter
 // purpose  :
 //=================================================================================
-Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GEOM::GeomObjPtr& theShape )
+Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GEOM::GeomObjPtr& theMeasuredObj ) const
 {
-  TopoDS_Shape aShape;
-  if ( !GEOMBase::GetShape( theShape.operator ->(), aShape ) )
+  /* ------------------------------------------------ *
+   *     get the shape and its parent (if exist)      *
+   * ------------------------------------------------ */
+
+  TopoDS_Shape aMeasuredShape;
+  TopoDS_Shape aMainShape;
+  if ( !GEOMBase::GetShape( theMeasuredObj.operator ->(), aMeasuredShape ) )
   {
     return NULL;
   }
 
-  if ( aShape.ShapeType() != TopAbs_EDGE &&
-       aShape.ShapeType() != TopAbs_FACE &&
-       aShape.ShapeType() != TopAbs_WIRE )
+  if ( !GEOMBase::GetShape( GetMainShape( theMeasuredObj ).get(), aMainShape ) )
   {
     return NULL;
   }
 
-  // check whether it is possible to compute dimension on the passed geometry
-  Handle(AIS_DiameterDimension) aDimension = new AIS_DiameterDimension( aShape );
+  Bnd_Box aBnd;
+  BRepBndLib::AddClose( aMainShape, aBnd );
+
+  /* ------------------------------------------------ *
+   *    get the dimension construction arguments      *
+   * ------------------------------------------------ */
+
+  Handle(Geom_Circle) aCircle;
+
+  Standard_Real aPmin = 0, aPmax = 2 * M_PI;
+
+  gp_Vec aFaceN( gp_Pnt(0.0, 0.0, 0.0), gp_Pnt(0.0, 0.0, 0.0) );
+
+  switch ( aMeasuredShape.ShapeType() )
+  {
+    case TopAbs_FACE:
+    {
+      TopoDS_Face aMeasuredFace = TopoDS::Face(aMeasuredShape);
+
+      BRepAdaptor_Surface aSurf( aMeasuredFace );
+
+      Standard_Real aVmin = aSurf.FirstVParameter();
+      Standard_Real aVmax = aSurf.LastVParameter();
+
+      // get arguments of closed sphere
+      if ( aSurf.GetType() == GeomAbs_Sphere )
+      {
+        if ( !aSurf.IsUClosed() || !aSurf.IsVClosed() )
+        {
+          return NULL;
+        }
+
+        // take circle in XOY plane from sphere
+        gp_Sphere aSphere = aSurf.Sphere();
+        gp_Ax2 anAx2 = gp_Ax2( aSphere.Location(), gp::DZ() );
+        aCircle = new Geom_Circle( anAx2, aSphere.Radius() );
+        break;
+      }
+
+
+      // get arguments of closed torus
+      if ( aSurf.GetType() == GeomAbs_Torus )
+      {
+        if ( !aSurf.IsUClosed() || !aSurf.IsVClosed() )
+        {
+          return NULL;
+        }
+
+        gp_Torus aTorus = aSurf.Torus();
+        gp_Ax2 anAx2 = aTorus.Position().Ax2();
+        aCircle = new Geom_Circle( anAx2, aTorus.MinorRadius() );
+        break;
+      }
+
+      // get arguments of closed cone
+      if ( aSurf.GetType() == GeomAbs_Cone )
+      {
+        if ( !aSurf.IsUClosed() || !aSurf.IsVClosed() )
+        {
+          return NULL;
+        }
+
+        gp_Cone aCone = aSurf.Cone();
+        gp_Ax2 anAx2 = aCone.Position().Ax2();
+        aCircle = new Geom_Circle( anAx2, aCone.RefRadius() );
+
+        aFaceN = aCone.SemiAngle() > 0.0 
+          ?  anAx2.Axis().Direction()
+          : -anAx2.Axis().Direction();
+        break;
+      }
+
+      // get arguments of closed/opened cylinder
+      if ( aSurf.GetType() == GeomAbs_Cylinder )
+      {
+        Handle(Geom_Curve) aCurve = aSurf.Surface().Surface()->VIso( (aVmax + aVmin) * 0.5 );
+
+        if ( aCurve->IsKind( STANDARD_TYPE( Geom_Circle ) ) )
+        {
+          aPmin = aSurf.FirstUParameter();
+          aPmax = aSurf.LastUParameter();
+          aCircle = Handle(Geom_Circle)::DownCast( aCurve );
+        }
+        else if (  aCurve->IsKind( STANDARD_TYPE( Geom_TrimmedCurve ) ) )
+        {
+          Handle(Geom_TrimmedCurve) aTrimmedCurve = Handle(Geom_TrimmedCurve)::DownCast( aCurve );
+          aPmin = aTrimmedCurve->FirstParameter();
+          aPmax = aTrimmedCurve->LastParameter();
+
+          aCircle = Handle(Geom_Circle)::DownCast( aTrimmedCurve );
+        }
+
+        break;
+      }
+
+      // face containing edge?
+      TopExp_Explorer anExp( aMeasuredShape, TopAbs_EDGE );
+      if ( !anExp.More() )
+      {
+        return NULL;
+      }
+
+      TopoDS_Shape anExpEdge = anExp.Current();
+      if ( anExpEdge.IsNull() )
+      {
+        return NULL;
+      }
+
+      // only a single edge is expected
+      anExp.Next();
+      if ( anExp.More() )
+      {
+        return NULL;
+      }
+
+      // do not break, go to edge checking
+      aMeasuredShape = anExpEdge;
+    }
+
+    case TopAbs_EDGE:
+    {
+      TopoDS_Edge aMeasureEdge = TopoDS::Edge( aMeasuredShape );
+
+      BRepAdaptor_Curve aCurve(aMeasureEdge);
+
+      if ( aCurve.GetType() != GeomAbs_Circle )
+      {
+        return NULL;
+      }
+
+      aPmin = aCurve.FirstParameter();
+      aPmax = aCurve.LastParameter();
+
+      aCircle = new Geom_Circle( aCurve.Circle() );
+
+      // check if there is an parent face containing the edge
+      TopTools_IndexedDataMapOfShapeListOfShape aShapeMap;
+      TopExp::MapShapesAndAncestors( aMainShape, TopAbs_EDGE, TopAbs_FACE, aShapeMap );
+      const TopTools_ListOfShape& aFaces = aShapeMap.FindFromKey( aMeasureEdge );
+
+      TopTools_ListIteratorOfListOfShape aFaceIt( aFaces );
+      for ( ; aFaceIt.More(); aFaceIt.Next() )
+      {
+        Handle(Geom_Surface) aSurface = BRep_Tool::Surface( TopoDS::Face( aFaceIt.Value() ) );
+
+        gp_Pnt aCircCenter = aCircle->Circ().Location();
+        Standard_Real aCircU = 0.0, aCircV = 0.0;
+        GeomLib_Tool::Parameters( aSurface, aCircCenter, Precision::Confusion(), aCircU, aCircV );
+
+        gp_Dir aNorm;
+        if ( GeomLib::NormEstim( aSurface, gp_Pnt2d( aCircU, aCircV ), Precision::Confusion(), aNorm ) > 1 )
+        {
+          break;
+        }
+
+        if ( aNorm.Angle( aCircle->Circ().Axis().Direction() ) > M_PI * 0.25 )
+        {
+          continue;
+        }
+
+        aFaceN = gp_Vec( aNorm );
+      }
+    }
+    break;
+  }
+
+  if ( aCircle.IsNull() )
+  {
+    return NULL;
+  }
+
+  ElCLib::AdjustPeriodic( 0.0, M_PI * 2, Precision::PConfusion(), aPmin, aPmax );
+
+  /* ------------------------- *
+   *   position the dimension 
+   * ------------------------- */
+
+  gp_Pnt aPnt1;
+  gp_Pnt aPnt2;
+  gp_Pln aPln;
+
+  // diameter for closed circle
+  if ( Abs( ( aPmax - aPmin ) - M_PI * 2 ) <= Precision::PConfusion() )
+  {
+    PositionDiameter( aBnd, aFaceN, aCircle->Circ(), aPnt1, aPnt2, aPln );
+  }
+  // diameter for half-closed circle
+  else if ( Abs( aPmax - aPmin ) > M_PI )
+  {
+    Standard_Real anAnchor = aPmin + ( ( aPmax - aPmin ) - M_PI ) * 0.5;
+
+    PositionDiameter( aBnd, aFaceN, aCircle->Circ(), anAnchor, aPln );
+
+    aPnt1 = ElCLib::Value( anAnchor, aCircle->Circ() );
+    aPnt2 = ElCLib::Value( anAnchor + M_PI, aCircle->Circ() );
+  }
+  // diameter for less than half-closed circle
+  else
+  {
+    Standard_Real anAnchor = aPmin + ( aPmax - aPmin ) * 0.5;
+
+    PositionDiameter( aBnd, aFaceN, aCircle->Circ(), anAnchor, aPln );
+
+    aPnt1 = ElCLib::Value( anAnchor, aCircle->Circ() );
+    aPnt2 = ElCLib::Value( anAnchor + M_PI, aCircle->Circ() );
+  }
+
+  /* --------------------------------------------------------- *
+   *   construct the dimension for the best selected position
+   * --------------------------------------------------------- */
+
+  gp_Pnt aCircP = aCircle->Circ().Location();
+  gp_Dir aCircN = aCircle->Circ().Axis().Direction();
+  gp_Dir aCircX = gce_MakeDir( aPnt1, aPnt2 );
+  Standard_Real aCircR = aCircle->Circ().Radius();
+
+  // construct closed circle as base for the diameter dimension
+  gp_Circ aRuledCirc = gce_MakeCirc( gp_Ax2( aCircP, aCircN, aCircX ), aCircR );
+
+  Handle(AIS_DiameterDimension) aDimension = new AIS_DiameterDimension( aRuledCirc, aPln );
+
+  // if flyout is extended in tangent direction to circle, the default flyout value is used
+  // if flyout is extended in plane of circle, the zero flyout value is choosen initially
+  Standard_Real aFlyout = aCircN.IsParallel( aPln.Axis().Direction(), Precision::Angular() ) ? 0.0 : Settings.DefaultFlyout;
+
+  aDimension->SetFlyout(aFlyout);
 
   if ( !aDimension->IsValid() )
   {
@@ -301,7 +682,7 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
 // purpose  :
 //=================================================================================
 Handle(AIS_AngleDimension) MeasureGUI_DimensionCreateTool::AngleByTwoEdges( const GEOM::GeomObjPtr& theEdge1,
-                                                                            const GEOM::GeomObjPtr& theEdge2 )
+                                                                            const GEOM::GeomObjPtr& theEdge2 ) const
 {
   /* --------------------------------------------------- */
   /*         get construction and parent shapes          */
@@ -358,6 +739,8 @@ Handle(AIS_AngleDimension) MeasureGUI_DimensionCreateTool::AngleByTwoEdges( cons
     aDimension = new AIS_AngleDimension( aSecondPoint, aCenterPoint, aFirstPoint );
   }
 
+  aDimension->SetFlyout( Settings.DefaultFlyout );
+
   return aDimension;
 }
 
@@ -367,7 +750,7 @@ Handle(AIS_AngleDimension) MeasureGUI_DimensionCreateTool::AngleByTwoEdges( cons
 //=================================================================================
 Handle(AIS_AngleDimension) MeasureGUI_DimensionCreateTool::AngleByThreePoints( const GEOM::GeomObjPtr& thePoint1,
                                                                                const GEOM::GeomObjPtr& thePoint2,
-                                                                               const GEOM::GeomObjPtr& thePoint3 )
+                                                                               const GEOM::GeomObjPtr& thePoint3 ) const
 {
   TopoDS_Shape aFirstSh;
   if ( !GEOMBase::GetShape( thePoint1.operator ->(), aFirstSh ) )
@@ -407,73 +790,248 @@ Handle(AIS_AngleDimension) MeasureGUI_DimensionCreateTool::AngleByThreePoints( c
 }
 
 //=================================================================================
-// function : ChooseLengthFlyoutsFromShape
-// purpose  :
+// function : PositionLength
+// purpose  : The method provides preliminary positioning algorithm for
+//            for length dimensions measuring the length between two points.
+//            Parameters:
+//              theBnd [in] - the bounding box of the main shape
+//              theFaceN1 [in] - the normal to a first face of edge length (if any)
+//              theFaceN2 [in] - the normal to a second face of edge length (if any)
+//              theFaceS1 [in] - the side vector from a first face of edge length (if any)
+//              theFaceS2 [in] - the side vector from a second face of edge length (if any)
+//              thePnt1 [in] - the first measured point
+//              thePnt2 [in] - the last measured point
+//            The method selects flyout plane to best match the current
+//            view projection. If edge length is constructed, then the flyout
+//            can go in line with sides of faces, normal to the faces, or
+//            aligned to XOY, YOZ, ZOX planes.
 //=================================================================================
-void MeasureGUI_DimensionCreateTool::ChooseLengthFlyoutsFromShape( TColgp_SequenceOfDir& theDirs,
-                                                                   const TopoDS_Vertex& theVertex1,
-                                                                   const TopoDS_Vertex& theVertex2,
-                                                                   const TopoDS_Shape& theShape )
+void MeasureGUI_DimensionCreateTool::PositionLength( const Bnd_Box& theBnd,
+                                                     const gp_Vec& theFaceN1,
+                                                     const gp_Vec& theFaceN2,
+                                                     const gp_Vec& theFaceS1,
+                                                     const gp_Vec& theFaceS2,
+                                                     const gp_Pnt& thePnt1,
+                                                     const gp_Pnt& thePnt2,
+                                                     gp_Pln& thePln ) const
 {
-}
-
-//=================================================================================
-// function : ChooseLengthFlyoutsFromShape
-// purpose  :
-//=================================================================================
-void MeasureGUI_DimensionCreateTool::ChooseLengthFlyoutsFromShape( TColgp_SequenceOfDir& theDirs,
-                                                                   const TopoDS_Edge& theEdge,
-                                                                   const TopoDS_Shape& theShape )
-{
-  TopTools_IndexedDataMapOfShapeListOfShape aRelationMap;
-  TopExp::MapShapesAndAncestors( theShape, TopAbs_EDGE, TopAbs_FACE, aRelationMap );
-  const TopTools_ListOfShape& aRelatedFaces = aRelationMap.FindFromKey( theEdge );
-
-  // get face side directions
-  gp_Dir aSideDir;
-  if ( aRelatedFaces.Extent() > 0 && GetFaceSide( TopoDS::Face( aRelatedFaces.First() ), theEdge, aSideDir ) )
-  {
-    theDirs.Append( aSideDir );
-  }
-  if ( aRelatedFaces.Extent() > 1 && GetFaceSide( TopoDS::Face( aRelatedFaces.Last() ), theEdge, aSideDir ) )
-  {
-    theDirs.Append( aSideDir );
-  }
+  Standard_Boolean isFace1 = theFaceN1.Magnitude() > Precision::Confusion();
+  Standard_Boolean isFace2 = theFaceN2.Magnitude() > Precision::Confusion();
+  gp_Vec anAverageN( gp_Pnt(0.0, 0.0, 0.0), gp_Pnt(0.0, 0.0, 0.0) );
 
   // get average direction in case of two non-sharp angled faces
-  if ( theDirs.Length() == 2 )
+  if ( isFace1 && isFace2 )
   {
-    const gp_Dir& aDir1 = theDirs.First();
-    const gp_Dir& aDir2 = theDirs.Last();
-    Standard_Boolean isSame = aDir1.IsParallel( aDir2, Precision::Angular() );
+    Standard_Boolean isSame = theFaceN1.IsParallel( theFaceN2, Precision::Angular() );
     if ( !isSame )
     {
-      gp_Dir aReferenceDir = aDir1 ^ aDir2;
+      gp_Dir aReferenceDir = theFaceN1 ^ theFaceN2;
       // compute angle between face sides [0 - 2PI]
-      Standard_Real aDirAngle = aDir1.AngleWithRef( aDir2, aReferenceDir );
+      Standard_Real aDirAngle = theFaceN1.AngleWithRef( theFaceN2, aReferenceDir );
       if ( aDirAngle < 0 )
       {
         aDirAngle = ( M_PI * 2.0 ) - aDirAngle;
       }
 
-      // non-sharp angle, use averaged direction
+      // non-sharp angle, use averaged directio
+      if ( aDirAngle > M_PI * 0.5 )
+      {
+        anAverageN = theFaceN1 + theFaceN2;
+      }
+
       if ( aDirAngle > M_PI )
       {
-        theDirs.Clear();
-        theDirs.Append( aDir1.Rotated( gp_Ax1( gp::Origin(), aReferenceDir ), aDirAngle * 0.5 ) );
+        isFace1 = Standard_False;
+        isFace2 = Standard_False;
       }
     }
   }
+
+  Standard_Boolean isAverage = anAverageN.Magnitude() > Precision::Confusion();
+
+  SeqOfDirs aFlyoutDirs;
+  if ( isFace1 )
+  {
+    aFlyoutDirs.Append( theFaceN1 );
+    aFlyoutDirs.Append( theFaceS1 );
+  }
+  if ( isFace2 )
+  {
+    aFlyoutDirs.Append( theFaceN2 );
+    aFlyoutDirs.Append( theFaceS2 );
+  }
+  if ( isAverage )
+  {
+    aFlyoutDirs.Append( anAverageN );
+  }
+
+  ChooseLengthFlyoutsFromBnd( aFlyoutDirs, thePnt1, thePnt2, theBnd );
+
+  if ( aFlyoutDirs.IsEmpty() )
+  {
+    return;
+  }
+
+  gp_Dir aPointDir = gce_MakeDir( thePnt1, thePnt2 );
+
+  // make planes for dimension presentation according to flyout directions
+  SeqOfPlanes aSeqOfPlanes;
+  for ( Standard_Integer aFlyoutIt = 1; aFlyoutIt <= aFlyoutDirs.Length(); ++aFlyoutIt )
+  {
+    gp_Pln aPlane( thePnt1, aPointDir ^ aFlyoutDirs.Value( aFlyoutIt ) );
+    aSeqOfPlanes.Append( aPlane );
+  }
+
+  Handle(V3d_View) aView = Settings.ActiveView;
+
+  thePln = !aView.IsNull()
+    ? SelectPlaneForProjection( aSeqOfPlanes, aView )
+    : aSeqOfPlanes.First();
+}
+
+//=================================================================================
+// function : PositionDiameter
+// purpose  : The method provides preliminary positioning algorithm for
+//            for diameter dimensions measuring the circle.
+//            Parameters:
+//              theBnd [in] - the bounding box of the shape
+//              theFaceN [in] - the circle face normal (can be void)
+//              theCirc [in] - the measured circle
+//              thePnt1 [out] - first dimension point
+//              thePnt2 [out] - second dimension point
+//              thePln [out] - dimension flyout plane
+//            The method selects points on the circle for diameter dimension and
+//            flyout plane to best match the current view projection (if any)
+//            The points are aligned to XOY, YOZ, ZOX planes.
+//            The flyout takes into account bounding box of main shape of face normal
+//            vector. The flyouts tangetial to the circle plane are directed in 
+//            accordance with the face normal (if not-null), otherwise the flyouts
+//            are turned to direct to the closest border of bounding box.
+//=================================================================================
+void MeasureGUI_DimensionCreateTool::PositionDiameter( const Bnd_Box& theBnd,
+                                                       const gp_Vec& theFaceN,
+                                                       const gp_Circ& theCirc,
+                                                       gp_Pnt& thePnt1,
+                                                       gp_Pnt& thePnt2,
+                                                       gp_Pln& thePln ) const
+{
+  // plane associated with custom data
+  struct PlaneAndSegment
+  {
+    PlaneAndSegment() {}
+    PlaneAndSegment(const gp_Pln& thePlane, const Segment& theSegment) : pln(thePlane), seg(theSegment) {}
+    operator gp_Pln () const { return pln; }
+    operator Segment () const { return seg; }
+    gp_Pln pln;
+    Segment seg;
+  };
+  typedef NCollection_Sequence<PlaneAndSegment> SeqOfPlnsAndSegments;
+
+  // select list of measured segments aligned to projection planes
+  SeqOfDirs aProjectionDirs;
+  aProjectionDirs.Append( gp::DX() );
+  aProjectionDirs.Append( gp::DY() );
+  aProjectionDirs.Append( gp::DZ() );
+
+  SeqOfSegments aMeasureSegments = GetInPlaneSegments( theCirc, aProjectionDirs );
+
+  SeqOfPlnsAndSegments aSelectedPlanes;
+
+  // select in-circle-plane direction for flyout closest to border of bounding box
+  for ( Standard_Integer aSegmentIt = 1; aSegmentIt <= aMeasureSegments.Length(); ++aSegmentIt )
+  {
+    const Segment& aSegment = aMeasureSegments.Value(aSegmentIt);
+
+    Standard_Real anAnchor = ElCLib::Parameter( theCirc, aSegment.First );
+
+    gp_Pln aSelectedPlane;
+
+    PositionDiameter( theBnd, theFaceN, theCirc, anAnchor, aSelectedPlane );
+
+    aSelectedPlanes.Append( PlaneAndSegment( aSelectedPlane, aSegment ) );
+  }
+
+  Handle(V3d_View) aView = Settings.ActiveView;
+
+  PlaneAndSegment aChoosenParams = !aView.IsNull()
+    ? SelectPlaneForProjection( aSelectedPlanes, aView )
+    : aSelectedPlanes.First();
+
+  thePnt1 = ((Segment)aChoosenParams).First;
+  thePnt2 = ((Segment)aChoosenParams).Last;
+  thePln  = ((gp_Pln)aChoosenParams);
+}
+
+//=================================================================================
+// function : PositionDiameter
+// purpose  : The method provides preliminary positioning algorithm for
+//            for diameter dimensions measuring the circle. The diameter
+//            dimension is bound at anchor point on the circle.
+//            Parameters:
+//              theBnd [in] the bounding box of the shape
+//              theFaceN [in] - the circle face normal (can be void)
+//              theCirc [in] - the measured circle
+//              theAnchorAt [in] - the anchoring parameter
+//              thePln [out] - dimension flyout plane
+//            The method selects flyout plane to best match the current
+//            view projection. The flyout plane can be parallel to circle,
+//            or tangent to it.
+//=================================================================================
+void MeasureGUI_DimensionCreateTool::PositionDiameter( const Bnd_Box& theBnd,
+                                                       const gp_Vec& theFaceN,
+                                                       const gp_Circ& theCirc,
+                                                       const Standard_Real& theAnchorAt,
+                                                       gp_Pln& thePln ) const
+{
+  gp_Dir aCircN = theCirc.Axis().Direction();
+  gp_Pnt aCircP = theCirc.Location();
+
+  // select tangent direction for flyout closest to border of bounding box
+  gp_Dir aSelectedTanDir;
+  if ( theFaceN.Magnitude() < Precision::Confusion() )
+  {
+    SeqOfDirs aTangentDirs;
+    aTangentDirs.Append(  aCircN );
+    aTangentDirs.Append( -aCircN );
+    aSelectedTanDir = ChooseDirFromBnd( aTangentDirs, aCircP, theBnd );
+  }
+  else
+  {
+    aSelectedTanDir = gp_Dir( theFaceN );
+  }
+
+  gp_Pnt aPnt1 = ElCLib::Value( theAnchorAt, theCirc );
+  gp_Pnt aPnt2 = ElCLib::Value( theAnchorAt + M_PI, theCirc );
+
+  gp_Dir aSegmentDir = gce_MakeDir( aPnt1, aPnt2 );
+
+  SeqOfDirs aSegmentDirs;
+  aSegmentDirs.Append(  aCircN ^ aSegmentDir );
+  aSegmentDirs.Append( -aCircN ^ aSegmentDir );
+  gp_Dir aSelectedSegDir = ChooseDirFromBnd( aSegmentDirs, aCircP, theBnd );
+
+  gp_Pln aTangentFlyout( aCircP, aSegmentDir ^ aSelectedTanDir );
+  gp_Pln aCoplanarFlyout( aCircP, aSegmentDir ^ aSelectedSegDir );
+
+  SeqOfPlanes aSelectedPlanes;
+  aSelectedPlanes.Append( aTangentFlyout );
+  aSelectedPlanes.Append( aCoplanarFlyout );
+
+  Handle(V3d_View) aView = Settings.ActiveView;
+
+  thePln = !aView.IsNull()
+    ? SelectPlaneForProjection( aSelectedPlanes, aView )
+    : aSelectedPlanes.First();
 }
 
 //=================================================================================
 // function : ChooseLengthFlyoutsFromBnd
 // purpose  :
 //=================================================================================
-void MeasureGUI_DimensionCreateTool::ChooseLengthFlyoutsFromBnd( TColgp_SequenceOfDir& theDirs,
+void MeasureGUI_DimensionCreateTool::ChooseLengthFlyoutsFromBnd( SeqOfDirs& theDirs,
                                                                  const gp_Pnt& thePnt1,
                                                                  const gp_Pnt& thePnt2,
-                                                                 const Bnd_Box& theBnd )
+                                                                 const Bnd_Box& theBnd ) const
 {
   // compose a list of axis-aligned planes for lying-in flyouts
   NCollection_Sequence<gp_Pln> anAAPlanes;
@@ -527,11 +1085,53 @@ void MeasureGUI_DimensionCreateTool::ChooseLengthFlyoutsFromBnd( TColgp_Sequence
 }
 
 //=================================================================================
+// function : ChooseDirFromBnd
+// purpose  : The method chooses the best direction from the passed list of
+//            directions, which is closest to the bounding box border.
+//            Parameters:
+//              theCandidates [in] the list of candidate directions
+//              thePos [in] the position from where the directions are traced
+//              theBnd [in] the bounding box of main shape
+//=================================================================================
+gp_Dir MeasureGUI_DimensionCreateTool::ChooseDirFromBnd( const SeqOfDirs& theCandidates,
+                                                         const gp_Pnt& thePos,
+                                                         const Bnd_Box& theBnd ) const
+{
+  gp_Dir aBestDir;
+
+  Standard_Real aBestDistance = RealLast();
+
+  SeqOfDirs::Iterator anIt( theCandidates );
+  for ( ; anIt.More(); anIt.Next() )
+  {
+    const gp_Dir& aDir = anIt.Value();
+
+    gp_Ax3 aFlyoutSpace( thePos, aDir );
+
+    gp_Trsf aRelativeTransform;
+    aRelativeTransform.SetTransformation( gp_Ax3(), aFlyoutSpace );
+    Bnd_Box aRelativeBounds = theBnd.Transformed( aRelativeTransform );
+
+    Standard_Real aXmin, aXmax, aYmin, aYmax, aZmin, aZmax;
+    aRelativeBounds.Get( aXmin, aYmin, aZmin, aXmax, aYmax, aZmax );
+
+    if ( aYmax < aBestDistance )
+    {
+      aBestDir = aDir;
+      aBestDistance = aYmax;
+    }
+  }
+
+  return aBestDir;
+}
+
+//=================================================================================
 // function : SelectPlaneForProjection
 // purpose  : Select best matching plane in current view projection
 //=================================================================================
-gp_Pln MeasureGUI_DimensionCreateTool::SelectPlaneForProjection( const NCollection_Sequence<gp_Pln>& thePlanes,
-                                                                 const Handle(V3d_View)& theView )
+template <typename TPlane>
+TPlane MeasureGUI_DimensionCreateTool::SelectPlaneForProjection( const NCollection_Sequence<TPlane>& thePlanes,
+                                                                 const Handle(V3d_View)& theView ) const
 {
   Quantity_Parameter U[3];
   Quantity_Parameter N[3];
@@ -541,15 +1141,15 @@ gp_Pln MeasureGUI_DimensionCreateTool::SelectPlaneForProjection( const NCollecti
   gp_Dir aViewN( (Standard_Real)N[0], (Standard_Real)N[1], (Standard_Real)N[2] );
   gp_Dir aViewU( (Standard_Real)U[0], (Standard_Real)U[1], (Standard_Real)U[2] );
 
-  gp_Pln aBestPlane = thePlanes.First();
+  TPlane aBestPlane = thePlanes.First();
 
   Standard_Real aBestDotProduct = RealFirst();
 
   for ( Standard_Integer aPlnIt = 1; aPlnIt <= thePlanes.Length(); ++aPlnIt )
   {
-    const gp_Pln& aPlane = thePlanes.Value( aPlnIt );
+    const TPlane& aPlane = thePlanes.Value( aPlnIt );
 
-    Standard_Real aDotProduct = Abs( aPlane.Axis().Direction() * aViewN );
+    Standard_Real aDotProduct = Abs( ((gp_Pln)aPlane).Axis().Direction() * aViewN );
 
     // preferred plane is "view parallel"
     if ( aDotProduct <= aBestDotProduct )
@@ -569,7 +1169,7 @@ gp_Pln MeasureGUI_DimensionCreateTool::SelectPlaneForProjection( const NCollecti
 // function : GetMainShape
 // purpose  :
 //=================================================================================
-GEOM::GeomObjPtr MeasureGUI_DimensionCreateTool::GetMainShape( const GEOM::GeomObjPtr& theShape )
+GEOM::GeomObjPtr MeasureGUI_DimensionCreateTool::GetMainShape( const GEOM::GeomObjPtr& theShape ) const
 {
   // iterate over top-level objects to search for main shape
   GEOM::GeomObjPtr aMainShapeIt = theShape;
@@ -584,7 +1184,7 @@ GEOM::GeomObjPtr MeasureGUI_DimensionCreateTool::GetMainShape( const GEOM::GeomO
 // function : GetFaceSide
 // purpose  :
 //=================================================================================
-bool MeasureGUI_DimensionCreateTool::GetFaceSide( const TopoDS_Face& theFace, const TopoDS_Edge& theEdge, gp_Dir& theDir )
+bool MeasureGUI_DimensionCreateTool::GetFaceSide( const TopoDS_Face& theFace, const TopoDS_Edge& theEdge, gp_Dir& theDir ) const
 {
   // get correctly oriented edge from main shape
   TopoDS_Edge anEdgeFromFace;
@@ -647,4 +1247,45 @@ bool MeasureGUI_DimensionCreateTool::GetFaceSide( const TopoDS_Face& theFace, co
 
   theDir = gp_Dir( aTangent ) ^ aNorm;
   return true;
+}
+
+//=================================================================================
+// function : GetInPlaneSegments
+// purpose  : The method finds segments crossing the passed circle,
+//            which lie in the passed planes.
+//            Parameters:
+//              theCirc [in] the circle to be crossed.
+//              thePlanes [in] the projection planes crossing the circle.
+//=================================================================================
+MeasureGUI_DimensionCreateTool::SeqOfSegments
+  MeasureGUI_DimensionCreateTool::GetInPlaneSegments( const gp_Circ& theCirc,
+                                                      const SeqOfDirs& thePlanes ) const
+{
+  SeqOfSegments aResult;
+
+  gp_Pnt aCircP = theCirc.Location();
+  gp_Dir aCircN = theCirc.Axis().Direction();
+  Standard_Real aCircR = theCirc.Radius();
+
+  SeqOfDirs::Iterator anIt( thePlanes );
+  for ( ; anIt.More(); anIt.Next() )
+  {
+    const gp_Dir& aDir = anIt.Value();
+
+    if ( aDir.IsParallel( aCircN, Precision::Angular() ) )
+    {
+      continue;
+    }
+
+    gp_Dir aIntDir = aDir ^ aCircN;
+
+    gp_Pnt aPnt1 = gp_Pnt( aCircP.XYZ() - aIntDir.XYZ() * aCircR );
+    gp_Pnt aPnt2 = gp_Pnt( aCircP.XYZ() + aIntDir.XYZ() * aCircR );
+    Segment aSegment;
+    aSegment.First = aPnt1;
+    aSegment.Last  = aPnt2;
+    aResult.Append( aSegment );
+  }
+
+  return aResult;
 }

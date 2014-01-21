@@ -53,9 +53,9 @@ class SalomeApp_Study;
  * (name);(is_visible);(dimension type);(dimension property list);
  * 
  * The following packing scheme is used to store dimension data:
- * Length: (plane)[0-3] (flyout)[4] (text flags)[5-6] (p1)[7-9] (pnt2)[10-12]
- * Diam:   (plane)[0-3] (flyout)[4] (text flags)[5-6] (circle loc, xdir, ydir, rad)[7-16]
- * Angle:               (flyout)[0] (text flags)[1-2] (p1)[3-5] (p2)[6-8] (center)[9-11]
+ * Length: (plane)[0-3] (flyout)[4] (text flags)[5-6] (arrow flag)[7] (p1)[8-10] (pnt2)[11-13]
+ * Diam:   (plane)[0-3] (flyout)[4] (text flags)[5-6] (arrow flag)[7] (circle loc, xdir, ydir, rad)[8-17]
+ * Angle:               (flyout)[0] (text flags)[1-2] (arrow flag)[3] (p1)[4-6] (p2)[7-9] (center)[10-12]
  */
 class Standard_EXPORT GEOMGUI_DimensionProperty
 {
@@ -109,7 +109,8 @@ public:
       Plane( gp::XOY() ),
       Flyout( 0.0 ),
       TextHPos( Prs3d_DTHP_Fit ),
-      TextVPos( Prs3d_DTVP_Center )
+      TextVPos( Prs3d_DTVP_Center ),
+      ArrowPos( Prs3d_DAO_Fit )
       {}
 
     Length( const Length& theOther ) :
@@ -119,7 +120,8 @@ public:
       Plane( theOther.Plane ),
       Flyout( theOther.Flyout ),
       TextHPos( theOther.TextHPos ),
-      TextVPos( theOther.TextVPos )
+      TextVPos( theOther.TextVPos ),
+      ArrowPos( theOther.ArrowPos )
       {}
 
     ~Length() {}
@@ -150,6 +152,7 @@ public:
     double Flyout;
     Prs3d_DimensionTextHorizontalPosition TextHPos;
     Prs3d_DimensionTextVerticalPosition   TextVPos;
+    Prs3d_DimensionArrowOrientation       ArrowPos;
   };
 
   /*!
@@ -162,7 +165,8 @@ public:
       Plane( gp::XOY() ),
       Flyout( 0.0 ),
       TextHPos( Prs3d_DTHP_Fit ),
-      TextVPos( Prs3d_DTVP_Center )
+      TextVPos( Prs3d_DTVP_Center ),
+      ArrowPos( Prs3d_DAO_Fit )
       {}
 
      Diameter( const Diameter& theOther ) :
@@ -171,7 +175,8 @@ public:
        Plane( theOther.Plane ),
        Flyout( theOther.Flyout ),
        TextHPos( theOther.TextHPos ),
-       TextVPos( theOther.TextVPos )
+       TextVPos( theOther.TextVPos ),
+       ArrowPos( theOther.ArrowPos )
        {}
 
     ~Diameter() {}
@@ -201,6 +206,7 @@ public:
     double Flyout;
     Prs3d_DimensionTextHorizontalPosition TextHPos;
     Prs3d_DimensionTextVerticalPosition   TextVPos;
+    Prs3d_DimensionArrowOrientation       ArrowPos;
   };
 
   /*!
@@ -215,7 +221,8 @@ public:
       CenterPoint( gp::Origin() ),
       Flyout( 0.0 ),
       TextHPos( Prs3d_DTHP_Fit ),
-      TextVPos( Prs3d_DTVP_Center )
+      TextVPos( Prs3d_DTVP_Center ),
+      ArrowPos( Prs3d_DAO_Fit )
       {}
 
     Angle( const Angle& theOther ) :
@@ -225,7 +232,8 @@ public:
       CenterPoint( theOther.CenterPoint ),
       Flyout( theOther.Flyout ),
       TextHPos( theOther.TextHPos ),
-      TextVPos( theOther.TextVPos )
+      TextVPos( theOther.TextVPos ),
+      ArrowPos( theOther.ArrowPos )
       {}
 
     ~Angle() {}
@@ -256,6 +264,7 @@ public:
     double Flyout;
     Prs3d_DimensionTextHorizontalPosition TextHPos;
     Prs3d_DimensionTextVerticalPosition   TextVPos;
+    Prs3d_DimensionArrowOrientation       ArrowPos;
   };
 
   typedef QSharedPointer<Record> RecordPtr;
@@ -272,6 +281,11 @@ public:
    */
   GEOMGUI_DimensionProperty( const GEOMGUI_DimensionProperty& theOther );
 
+   /*!
+   * \brief Constructor. Inits property from attribute.
+   */
+  GEOMGUI_DimensionProperty( SalomeApp_Study* theStudy, const std::string& theEntry );
+
   /*!
    * \brief Destructor.
    */
@@ -286,6 +300,14 @@ public:
    * \brief Overload comparsion.
    */
   bool operator == (const GEOMGUI_DimensionProperty &theOther) const;
+
+  /*!
+   * \brief Overload comparsion.
+   */
+  bool operator != (const GEOMGUI_DimensionProperty &theOther) const
+  {
+    return !(operator == (theOther));
+  }
 
 public:
 

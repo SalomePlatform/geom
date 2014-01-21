@@ -78,6 +78,11 @@ private:
 
   bool                  isComponent( const int ) const;
   bool                  isFolder( const int ) const;
+
+  bool                  hasDimensions( const int, bool&, bool& ) const;
+  bool                  hasHiddenDimensions( const int ) const;
+  bool                  hasVisibleDimensions( const int ) const;
+
   GEOM::GEOM_Object_ptr getObject( const int ) const;
   GEOM::GEOM_BaseObject_ptr getBaseObject( const int ) const;
 

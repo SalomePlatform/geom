@@ -50,6 +50,20 @@ predefined materials.</li>
 </ul>
 
 <ul>
+<li><b>Dimensions (Measurements)</b></li>
+<ul>
+<li><b>Color</b> - allows to define color for persistent dimension presentations.</li>
+<li><b>Line width</b> - allows to define pixel width of dimension lines.</li>
+<li><b>Font height</b> - allows to define height of dimension text.</li>
+<li><b>Length of arrows</b> - allows to define length of dimension arrows.</li>
+<li><b>Length measurement units</b> - allows to define units of measurement for lengths dimensions.</li>
+<li><b>Angle measurement units</b> - allows to define units of measurement for angles dimensions.</li>
+<li><b>Show units of measurements</b> - when this option is on, the measurement units are added as prefix to value label of dimension.</li>
+<li><b>Default flyout length</b> - allows to define default flyout length used when creating the dimensions. The length can be interactively changed after creation by moving the flyouts.</li>
+</ul>
+</ul>
+
+<ul>
 <li><b>Number of isolines</b> - allows to specify the number of isolines along <b>Along U</b> and <b>Along V</b> coordinate axes. They are shown on each selected face. For example:
 
 \image html isos.png

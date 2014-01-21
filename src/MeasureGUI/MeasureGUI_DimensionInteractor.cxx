@@ -518,8 +518,9 @@ void MeasureGUI_DimensionInteractor::MoveText( const Handle(V3d_View)& theView,
 
   const gp_Dir& aPlaneN = aPlane.Axis().Direction();
 
-  Prs3d_DimensionTextHorizontalPosition aHPos = myInteractedIO->DimensionAspect()->TextHorizontalPosition();
-  Prs3d_DimensionTextVerticalPosition   aVPos = myInteractedIO->DimensionAspect()->TextVerticalPosition();
+  Prs3d_DimensionTextHorizontalPosition aHPos   = myInteractedIO->DimensionAspect()->TextHorizontalPosition();
+  Prs3d_DimensionTextVerticalPosition   aVPos   = myInteractedIO->DimensionAspect()->TextVerticalPosition();
+  Prs3d_DimensionArrowOrientation       aArrPos = myInteractedIO->DimensionAspect()->ArrowOrientation();
 
   Standard_Real aHeight = myInteractedIO->DimensionAspect()->TextAspect()->Height() * 0.5;
 
@@ -563,15 +564,18 @@ void MeasureGUI_DimensionInteractor::MoveText( const Handle(V3d_View)& theView,
 
     if ( aPosX < 0.0 )
     {
-      aHPos = Prs3d_DTHP_Left;
+      aHPos   = Prs3d_DTHP_Left;
+      aArrPos = Prs3d_DAO_External;
     }
     else if ( aPosX > aFirstPoint.Distance( aSecondPoint ) )
     {
-      aHPos = Prs3d_DTHP_Right;
+      aHPos   = Prs3d_DTHP_Right;
+      aArrPos = Prs3d_DAO_External;
     }
     else
     {
-      aHPos = Prs3d_DTHP_Center;
+      aHPos   = Prs3d_DTHP_Center;
+      aArrPos = Prs3d_DAO_Fit;
     }
 
     if ( aPosY > aHeight )
@@ -636,16 +640,19 @@ void MeasureGUI_DimensionInteractor::MoveText( const Handle(V3d_View)& theView,
     if ( aPointAngle < -aDirAngle * 0.5 ) // outside of second dir
     {
       aHPos = Prs3d_DTHP_Left;
+      aArrPos = Prs3d_DAO_External;
       aPosY = Abs( aPointVec.Dot( aFirstDir ) ) - Abs( myInteractedIO->GetFlyout() );
     }
     else if ( aPointAngle > aDirAngle * 0.5 ) // outside of first dir
     {
       aHPos = Prs3d_DTHP_Right;
+      aArrPos = Prs3d_DAO_External;
       aPosY = Abs( aPointVec.Dot( aSecondDir ) ) - Abs( myInteractedIO->GetFlyout() );
     }
     else // between first and second direction
     {
       aHPos = Prs3d_DTHP_Center;
+      aArrPos = Prs3d_DAO_Fit;
       aPosY = Abs( aPointVec.Magnitude() ) - Abs( myInteractedIO->GetFlyout() );
     }
 
@@ -665,6 +672,7 @@ void MeasureGUI_DimensionInteractor::MoveText( const Handle(V3d_View)& theView,
 
   myInteractedIO->DimensionAspect()->SetTextVerticalPosition( aVPos );
   myInteractedIO->DimensionAspect()->SetTextHorizontalPosition( aHPos );
+  myInteractedIO->DimensionAspect()->SetArrowOrientation( aArrPos );
   myInteractedIO->SetToUpdate();
 
   myViewer->getAISContext()->Redisplay( myInteractedIO );

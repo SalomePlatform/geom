@@ -47,6 +47,7 @@ void GEOMGUI_DimensionProperty::Length::Init( const Handle(AIS_LengthDimension)&
   Flyout      = theIO->GetFlyout();
   TextHPos    = theIO->DimensionAspect()->TextHorizontalPosition();
   TextVPos    = theIO->DimensionAspect()->TextVerticalPosition();
+  ArrowPos    = theIO->DimensionAspect()->ArrowOrientation();
 }
 
 //=================================================================================
@@ -68,6 +69,7 @@ void GEOMGUI_DimensionProperty::Length::Update( Handle(AIS_LengthDimension)& the
   Handle(Prs3d_DimensionAspect) aStyle = new Prs3d_DimensionAspect();
   aStyle->SetTextHorizontalPosition( TextHPos );
   aStyle->SetTextVerticalPosition( TextVPos );
+  aStyle->SetArrowOrientation( ArrowPos );
   theIO->SetDimensionAspect( aStyle );
 }
 
@@ -99,7 +101,8 @@ bool GEOMGUI_DimensionProperty::Length::operator == (const Length& theOther) con
 
   if ( Flyout   != theOther.Flyout 
     || TextHPos != theOther.TextHPos 
-    || TextVPos != theOther.TextVPos )
+    || TextVPos != theOther.TextVPos
+    || ArrowPos != theOther.ArrowPos )
   {
     return false;
   }
@@ -121,6 +124,7 @@ void GEOMGUI_DimensionProperty::Diameter::Init( const Handle(AIS_DiameterDimensi
   Flyout   = theIO->GetFlyout();
   TextHPos = theIO->DimensionAspect()->TextHorizontalPosition();
   TextVPos = theIO->DimensionAspect()->TextVerticalPosition();
+  ArrowPos = theIO->DimensionAspect()->ArrowOrientation();
 }
 
 //=================================================================================
@@ -154,6 +158,7 @@ void GEOMGUI_DimensionProperty::Diameter::Update( Handle(AIS_DiameterDimension)&
   Handle(Prs3d_DimensionAspect) aStyle = new Prs3d_DimensionAspect();
   aStyle->SetTextHorizontalPosition( TextHPos );
   aStyle->SetTextVerticalPosition( TextVPos );
+  aStyle->SetArrowOrientation( ArrowPos );
   theIO->SetDimensionAspect( aStyle );
 }
 
@@ -189,7 +194,8 @@ bool GEOMGUI_DimensionProperty::Diameter::operator == (const Diameter& theOther)
 
   if ( Flyout   != theOther.Flyout 
     || TextHPos != theOther.TextHPos 
-    || TextVPos != theOther.TextVPos )
+    || TextVPos != theOther.TextVPos 
+    || ArrowPos != theOther.ArrowPos )
   {
     return false;
   }
@@ -212,6 +218,7 @@ void GEOMGUI_DimensionProperty::Angle::Init( const Handle(AIS_AngleDimension)& t
   Flyout      = theIO->GetFlyout();
   TextHPos    = theIO->DimensionAspect()->TextHorizontalPosition();
   TextVPos    = theIO->DimensionAspect()->TextVerticalPosition();
+  ArrowPos = theIO->DimensionAspect()->ArrowOrientation();
 }
 
 //=================================================================================
@@ -233,6 +240,7 @@ void GEOMGUI_DimensionProperty::Angle::Update( Handle(AIS_AngleDimension)& theIO
   Handle(Prs3d_DimensionAspect) aStyle = new Prs3d_DimensionAspect();
   aStyle->SetTextHorizontalPosition( TextHPos );
   aStyle->SetTextVerticalPosition( TextVPos );
+  aStyle->SetArrowOrientation( ArrowPos );
   theIO->SetDimensionAspect( aStyle );
 }
 
@@ -257,7 +265,8 @@ bool GEOMGUI_DimensionProperty::Angle::operator == (const Angle& theOther) const
 
   if ( Flyout   != theOther.Flyout 
     || TextHPos != theOther.TextHPos 
-    || TextVPos != theOther.TextVPos )
+    || TextVPos != theOther.TextVPos 
+    || ArrowPos != theOther.ArrowPos )
   {
     return false;
   }
@@ -309,6 +318,15 @@ GEOMGUI_DimensionProperty::GEOMGUI_DimensionProperty( const GEOMGUI_DimensionPro
     myNames.append( *aNamesIt );
     myRecords.append( aNewRecord );
   }
+}
+
+//=================================================================================
+// function : Init constructor
+// purpose  : 
+//=================================================================================
+GEOMGUI_DimensionProperty::GEOMGUI_DimensionProperty( SalomeApp_Study* theStudy, const std::string& theEntry )
+{
+  LoadFromAttribute( theStudy, theEntry );
 }
 
 //=================================================================================
@@ -463,6 +481,8 @@ void GEOMGUI_DimensionProperty::AddRecord( const RecordPtr& theRecord )
 //=================================================================================
 void GEOMGUI_DimensionProperty::RemoveRecord( const int theIndex )
 {
+  myNames.remove( theIndex );
+  myVisibility.remove( theIndex );
   myRecords.remove( theIndex );
 }
 
@@ -472,6 +492,8 @@ void GEOMGUI_DimensionProperty::RemoveRecord( const int theIndex )
 //=================================================================================
 void GEOMGUI_DimensionProperty::Clear()
 {
+  myNames.clear();
+  myVisibility.clear();
   myRecords.clear();
 }
 
@@ -480,8 +502,8 @@ void GEOMGUI_DimensionProperty::Clear()
 // purpose  : 
 //=================================================================================
 void GEOMGUI_DimensionProperty::SetRecord( const int theIndex,
-					   const Handle(AIS_Dimension)& theIO,
-					   const gp_Ax3& theLCS )
+                                           const Handle(AIS_Dimension)& theIO,
+                                           const gp_Ax3& theLCS )
 {
   int aType = TypeFromIO( theIO );
 
@@ -588,7 +610,7 @@ int GEOMGUI_DimensionProperty::GetType( const int theIndex ) const
 // purpose  : 
 //=================================================================================
 void GEOMGUI_DimensionProperty::LoadFromAttribute( SalomeApp_Study* theStudy,
-						   const std::string& theEntry )
+                                                   const std::string& theEntry )
 {
   Clear();
 
@@ -647,13 +669,16 @@ void GEOMGUI_DimensionProperty::LoadFromAttribute( SalomeApp_Study* theStudy,
         aLength->TextHPos = (Prs3d_DimensionTextHorizontalPosition)(int)aPacked[it++];
         aLength->TextVPos = (Prs3d_DimensionTextVerticalPosition)  (int)aPacked[it++];
 
-        // point 1 [9,10,11]
+        // arrow flags [9]
+        aLength->ArrowPos = (Prs3d_DimensionArrowOrientation) (int)aPacked[it++];
+
+        // point 1 [10,11,12]
         Standard_Real aFirstX = aPacked[it++];
         Standard_Real aFirstY = aPacked[it++];
         Standard_Real aFirstZ = aPacked[it++];
         aLength->FirstPoint = gp_Pnt( aFirstX, aFirstY, aFirstZ );
 
-        // point 2 [12,13,14]
+        // point 2 [13,14,15]
         Standard_Real aSecondX = aPacked[it++];
         Standard_Real aSecondY = aPacked[it++];
         Standard_Real aSecondZ = aPacked[it++];
@@ -681,22 +706,25 @@ void GEOMGUI_DimensionProperty::LoadFromAttribute( SalomeApp_Study* theStudy,
         aDiam->TextHPos = (Prs3d_DimensionTextHorizontalPosition)(int)aPacked[it++];
         aDiam->TextVPos = (Prs3d_DimensionTextVerticalPosition)  (int)aPacked[it++];
 
-        // circle location [9,10,11]
+        // arrow flags [9]
+        aDiam->ArrowPos = (Prs3d_DimensionArrowOrientation) (int)aPacked[it++];
+
+        // circle location [10,11,12]
         Standard_Real aLocX = (Standard_Real) aPacked[it++];
         Standard_Real aLocY = (Standard_Real) aPacked[it++];
         Standard_Real aLocZ = (Standard_Real) aPacked[it++];
 
-        // circle normal [12,13,14]
+        // circle normal [13,14,15]
         Standard_Real aNormX = (Standard_Real) aPacked[it++];
         Standard_Real aNormY = (Standard_Real) aPacked[it++];
         Standard_Real aNormZ = (Standard_Real) aPacked[it++];
 
-        // x-direction [15,16,17]
+        // x-direction [16,17,18]
         Standard_Real aXDirX = (Standard_Real) aPacked[it++];
         Standard_Real aXDirY = (Standard_Real) aPacked[it++];
         Standard_Real aXDirZ = (Standard_Real) aPacked[it++];
 
-        // radius [18]
+        // radius [19]
         Standard_Real aRadius = (Standard_Real) aPacked[it++];
 
         gp_Ax2 anAx( gp_Pnt( aLocX, aLocY, aLocZ ),
@@ -720,22 +748,24 @@ void GEOMGUI_DimensionProperty::LoadFromAttribute( SalomeApp_Study* theStudy,
         anAngle->TextHPos = (Prs3d_DimensionTextHorizontalPosition)(int)aPacked[it++];
         anAngle->TextVPos = (Prs3d_DimensionTextVerticalPosition)  (int)aPacked[it++];
 
-        // point 1 [5,6,7]
+        // arrow flags [5]
+        anAngle->ArrowPos = (Prs3d_DimensionArrowOrientation) (int)aPacked[it++];
+
+        // point 1 [6,7,8]
         Standard_Real aFirstX = (Standard_Real) aPacked[it++];
         Standard_Real aFirstY = (Standard_Real) aPacked[it++];
         Standard_Real aFirstZ = (Standard_Real) aPacked[it++];
 
-        // point 2 [8,9,10]
+        // point 2 [9,10,11]
         Standard_Real aSecondX = (Standard_Real) aPacked[it++];
         Standard_Real aSecondY = (Standard_Real) aPacked[it++];
         Standard_Real aSecondZ = (Standard_Real) aPacked[it++];
 
-        // center [11,12,13]
+        // center [12,13,14]
         Standard_Real aCenterX = (Standard_Real) aPacked[it++];
         Standard_Real aCenterY = (Standard_Real) aPacked[it++];
         Standard_Real aCenterZ = (Standard_Real) aPacked[it++];
 
-        // points point 1 [4-6], point 2 [7-9], center [10-12]
         anAngle->FirstPoint  = gp_Pnt( aFirstX, aFirstY, aFirstZ );
         anAngle->SecondPoint = gp_Pnt( aSecondX, aSecondY, aSecondZ );
         anAngle->CenterPoint = gp_Pnt( aCenterX, aCenterY, aCenterZ );
@@ -756,7 +786,7 @@ void GEOMGUI_DimensionProperty::LoadFromAttribute( SalomeApp_Study* theStudy,
 // purpose  : 
 //=================================================================================
 void GEOMGUI_DimensionProperty::SaveToAttribute( SalomeApp_Study *theStudy,
-						 const std::string &theEntry )
+                                                 const std::string &theEntry )
 {
   _PTR(SObject) aSObj = theStudy->studyDS()->FindObjectID( theEntry );
   if ( !aSObj )
@@ -806,12 +836,15 @@ void GEOMGUI_DimensionProperty::SaveToAttribute( SalomeApp_Study *theStudy,
         aPacked.push_back( (double) aProps->TextHPos );
         aPacked.push_back( (double) aProps->TextVPos );
 
-        // point 1 [9,10,11]
+        // arrow flags [9]
+        aPacked.push_back( (double) aProps->ArrowPos );
+
+        // point 1 [10,11,12]
         aPacked.push_back( (double) aProps->FirstPoint.X() );
         aPacked.push_back( (double) aProps->FirstPoint.Y() );
         aPacked.push_back( (double) aProps->FirstPoint.Z() );
 
-        // point 2 [12,13,14]
+        // point 2 [13,14,15]
         aPacked.push_back( (double) aProps->SecondPoint.X() );
         aPacked.push_back( (double) aProps->SecondPoint.Y() );
         aPacked.push_back( (double) aProps->SecondPoint.Z() );
@@ -837,22 +870,25 @@ void GEOMGUI_DimensionProperty::SaveToAttribute( SalomeApp_Study *theStudy,
         aPacked.push_back( (double) aProps->TextHPos );
         aPacked.push_back( (double) aProps->TextVPos );
 
-        // circle location [9,10,11]
+        // arrow flags [9]
+        aPacked.push_back( (double) aProps->ArrowPos );
+
+        // circle location [10,11,12]
         aPacked.push_back( (double) aProps->Circle.Location().X() );
         aPacked.push_back( (double) aProps->Circle.Location().Y() );
         aPacked.push_back( (double) aProps->Circle.Location().Z() );
 
-        // circle normal [12,13,14]
+        // circle normal [13,14,15]
         aPacked.push_back( (double) aProps->Circle.Axis().Direction().X() );
         aPacked.push_back( (double) aProps->Circle.Axis().Direction().Y() );
         aPacked.push_back( (double) aProps->Circle.Axis().Direction().Z() );
 
-        // x-direction [15,16,17]
+        // x-direction [16,17,18]
         aPacked.push_back( (double) aProps->Circle.XAxis().Direction().X() );
         aPacked.push_back( (double) aProps->Circle.XAxis().Direction().Y() );
         aPacked.push_back( (double) aProps->Circle.XAxis().Direction().Z() );
 
-        // radius [18]
+        // radius [19]
         aPacked.push_back( (double) aProps->Circle.Radius() );
         break;
       }
@@ -868,17 +904,20 @@ void GEOMGUI_DimensionProperty::SaveToAttribute( SalomeApp_Study *theStudy,
         aPacked.push_back( (double) aProps->TextHPos );
         aPacked.push_back( (double) aProps->TextVPos );
 
-        // point 1 [5,6,7]
+        // arrow flags [5]
+        aPacked.push_back( (double) aProps->ArrowPos );
+
+        // point 1 [6,7,8]
         aPacked.push_back( (double) aProps->FirstPoint.X() );
         aPacked.push_back( (double) aProps->FirstPoint.Y() );
         aPacked.push_back( (double) aProps->FirstPoint.Z() );
 
-        // point 2 [8,9,10]
+        // point 2 [9,10,11]
         aPacked.push_back( (double) aProps->SecondPoint.X() );
         aPacked.push_back( (double) aProps->SecondPoint.Y() );
         aPacked.push_back( (double) aProps->SecondPoint.Z() );
 
-        // center [11,12,13]
+        // center [12,13,14]
         aPacked.push_back( (double) aProps->CenterPoint.X() );
         aPacked.push_back( (double) aProps->CenterPoint.Y() );
         aPacked.push_back( (double) aProps->CenterPoint.Z() );

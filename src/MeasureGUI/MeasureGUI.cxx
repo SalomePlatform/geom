@@ -28,8 +28,14 @@
 
 #include <GeometryGUI.h>
 #include "GeometryGUI_Operations.h"
+
+#include <GEOMGUI_DimensionProperty.h>
+
+#include <LightApp_SelectionMgr.h>
+#include <SUIT_OverrideCursor.h>
 #include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
 
 #include "MeasureGUI_PropertiesDlg.h"             // Method PROPERTIES
 #include "MeasureGUI_CenterMassDlg.h"             // Method CENTER MASS
@@ -124,6 +130,12 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpManageDimensions:
     dlg = new MeasureGUI_ManageDimensionsDlg( getGeometryGUI(), parent );
     break; // MANAGE DIMENSIONS
+  case GEOMOp::OpShowAllDimensions:
+    ChangeDimensionsVisibility( true );
+    break; // SHOW ALL DIMENSIONS
+  case GEOMOp::OpHideAllDimensions:
+    ChangeDimensionsVisibility( false );
+    break; // HIDE ALL DIMENSIONS
   default: 
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
     break;
@@ -136,6 +148,56 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   return true;
 }
 
+//=======================================================================
+// function : ChangeDimensionsVisibility
+// purpose  : 
+//=======================================================================
+void MeasureGUI::ChangeDimensionsVisibility( const bool theIsVisible )
+{
+  SalomeApp_Application* anApp = getGeometryGUI()->getApp();
+  if (!anApp)
+  {
+    return;
+  }
+
+  SalomeApp_Study* anActiveStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
+  if ( !anActiveStudy )
+  {
+    return;
+  }
+
+  LightApp_SelectionMgr* aSelMgr = anApp->selectionMgr();
+  if ( !aSelMgr )
+  {
+    return;
+  }
+
+  SALOME_ListIO aListIO;
+  aSelMgr->selectedObjects( aListIO );
+  if ( aListIO.Extent() != 1 )
+  {
+    return;
+  }
+
+  Handle(SALOME_InteractiveObject) anIObject = aListIO.First();
+  if ( !anIObject->hasEntry() )
+  {
+    return;
+  }
+
+  SUIT_OverrideCursor();
+
+  GEOMGUI_DimensionProperty aDimensions( anActiveStudy, anIObject->getEntry() );
+
+  for ( int anIt = 0; anIt < aDimensions.GetNumber(); ++anIt )
+  {
+    aDimensions.SetVisible( anIt, theIsVisible );
+  }
+
+  aDimensions.SaveToAttribute( anActiveStudy, anIObject->getEntry() );
+
+  GEOM_Displayer( anActiveStudy ).Redisplay( anIObject, true );
+}
 
 //=====================================================================================
 // EXPORTED METHODS

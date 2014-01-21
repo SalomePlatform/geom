@@ -635,6 +635,8 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpPointCoordinates:   // MENU MEASURE - POINT COORDINATES
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
+  case GEOMOp::OpShowAllDimensions:  // POPUP MENU - SHOW ALL DIMENSIONS
+  case GEOMOp::OpHideAllDimensions:  // POPUP MENU - HIDE ALL DIMENSIONS
     libName = "MeasureGUI";
     break;
   case GEOMOp::OpGroupCreate:        // MENU GROUP - CREATE
@@ -1071,6 +1073,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
   createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
+  createGeomAction( GEOMOp::OpShowAllDimensions, "POP_SHOW_ALL_DIMENSIONS" );
+  createGeomAction( GEOMOp::OpHideAllDimensions, "POP_HIDE_ALL_DIMENSIONS" );
 
   // Create actions for increase/decrease transparency shortcuts
   createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false,
@@ -1587,6 +1591,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule(action(GEOMOp::OpShowOnly ), rule.arg( types ).arg( "true" ), QtxPopupMgr::VisibleRule );
   mgr->insert( action(GEOMOp::OpShowOnlyChildren ), -1, -1 ); // display only children
   mgr->setRule(action(GEOMOp::OpShowOnlyChildren ), (canDisplay + "and ($type in {%1}) and client='ObjectBrowser' and hasChildren=true").arg( types ), QtxPopupMgr::VisibleRule );
+
+  QString aDimensionRule = "($component={'GEOM'}) and selcount=1 and isVisible and type='Shape' and %1";
+
+  mgr->insert( separator(), -1, -1 ); // -----------
+  mgr->insert( action( GEOMOp::OpShowAllDimensions ), -1, -1 ); // show all dimensions
+  mgr->setRule( action( GEOMOp::OpShowAllDimensions ), aDimensionRule.arg( "hasHiddenDimensions" ), QtxPopupMgr::VisibleRule );
+  mgr->insert( action( GEOMOp::OpHideAllDimensions ), -1, -1 ); // hide all dimensions
+  mgr->setRule( action( GEOMOp::OpHideAllDimensions ), aDimensionRule.arg( "hasVisibleDimensions" ), QtxPopupMgr::VisibleRule );
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpUnpublishObject ), -1, -1 ); // Unpublish object
@@ -2375,11 +2387,19 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( aDimLineWidthId, "min", 1 );
   setPreferenceProperty( aDimLineWidthId, "max", 5 );
 
-  addPreference( tr( "PREF_DIMENSIONS_FONT_HEIGHT" ), aDimGroupId,
-                 LightApp_Preferences::DblSpin, "Geometry", "dimensions_font_height" );
+  int aDimFontHeightId = addPreference( tr( "PREF_DIMENSIONS_FONT_HEIGHT" ), aDimGroupId,
+                                        LightApp_Preferences::DblSpin, "Geometry", "dimensions_font_height" );
 
-  addPreference( tr( "PREF_DIMENSIONS_ARROW_LENGTH" ), aDimGroupId,
-                 LightApp_Preferences::IntSpin, "Geometry", "dimensions_arrow_length" );
+  setPreferenceProperty( aDimFontHeightId, "min", 1e-9 );
+  setPreferenceProperty( aDimFontHeightId, "max", 1e+9 );
+  setPreferenceProperty( aDimFontHeightId, "precision", 9 );
+
+  int aDimArrLengthId = addPreference( tr( "PREF_DIMENSIONS_ARROW_LENGTH" ), aDimGroupId,
+                                       LightApp_Preferences::DblSpin, "Geometry", "dimensions_arrow_length" );
+
+  setPreferenceProperty( aDimArrLengthId, "min", 1e-9 );
+  setPreferenceProperty( aDimArrLengthId, "max", 1e+9 );
+  setPreferenceProperty( aDimArrLengthId, "precision", 9 );
 
   int aLengthUnitsId = addPreference( tr( "PREF_DIMENSIONS_LENGTH_UNITS" ), aDimGroupId,
                                       LightApp_Preferences::Selector, "Geometry", "dimensions_length_units" );
@@ -2403,6 +2423,13 @@ void GeometryGUI::createPreferences()
 
   setPreferenceProperty( aLengthUnitsId, "strings", aListOfLengthUnits );
   setPreferenceProperty( anAngUnitsId,   "strings", aListOfAngUnits );
+
+  int aDimDefFlyout = addPreference( tr( "PREF_DIMENSIONS_DEFAULT_FLYOUT" ), aDimGroupId,
+                                     LightApp_Preferences::DblSpin, "Geometry", "dimensions_default_flyout" );
+
+  setPreferenceProperty( aDimDefFlyout, "min", 1e-9 );
+  setPreferenceProperty( aDimDefFlyout, "max", 1e+9 );
+  setPreferenceProperty( aDimDefFlyout, "precision", 9 );
 
   int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
   setPreferenceProperty( isoGroup, "columns", 2 );

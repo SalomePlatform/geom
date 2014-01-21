@@ -3277,6 +3277,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Angle measurement units</translation>
     </message>
     <message>
+        <source>PREF_DIMENSIONS_DEFAULT_FLYOUT</source>
+        <translation>Default flyout length</translation>
+    </message>
+    <message>
         <source>PREF_DIMENSIONS_SHOW_UNITS</source>
         <translation>Show units of measurement</translation>
     </message>
@@ -4733,6 +4737,30 @@ Please, select face, shell or solid and try again</translation>
       <translation>Manage measurement dimensions of an object</translation>
     </message>
     <message>
+      <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
+      <translation>Show all dimensions</translation>
+    </message>
+    <message>
+      <source>STB_POP_SHOW_ALL_DIMENSIONS</source>
+      <translation>Show all hidden measures (dimension) created for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_SHOW_ALL_DIMENSIONS</source>
+      <translation>Show all hidden measures (dimension) created for the object</translation>
+    </message>
+    <message>
+      <source>MEN_POP_HIDE_ALL_DIMENSIONS</source>
+      <translation>Hide all dimensions</translation>
+    </message>
+    <message>
+      <source>STB_POP_HIDE_ALL_DIMENSIONS</source>
+      <translation>Show all visible measures (dimension) created for the object</translation>
+    </message>
+    <message>
+      <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
+      <translation>Show all visible measures (dimension) created for the object</translation>
+    </message>
+    <message>
         <source>TOP_POP_AUTO_COLOR</source>
         <translation>Auto color</translation>
     </message>
@@ -6165,6 +6193,16 @@ Number of sketch points too small</translation>
     <message>
       <source>WRN_TITLE_UNSAVED</source>
       <translation>Unsaved changes</translation>
+    </message>
+    <message>
+      <source>WRN_MSG_CHANGES_LOST</source>
+      <translation>The unsaved changes will be lost.
+Do you wish to continue?</translation>
+    </message>
+    <message>
+      <source>WRN_MSG_CHANGES_SAVE</source>
+      <translation>The unsaved changes will be lost.
+Do you wish to save them?</translation>
     </message>
     <message>
       <source>WRN_MSG_UNSAVED</source>

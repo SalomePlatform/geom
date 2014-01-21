@@ -1,0 +1,64 @@
+/*! 
+
+\page managing_dimensions_page Manage Dimensions
+
+\image html dimensions_preview.png
+
+Dimensions of sub-elements can be measured for a geometrical object representing a shape. 
+There are three types of dimensions available
+<ul>
+<li>Length.</li>
+<li>Diameter.</li>
+<li>Angle.</li>
+</ul>
+
+Measurement units and group of presentation attributes for the measurement dimensions can be seen and changed from the \ref geometry_preferences_page "geometry preference dialog".
+
+The application entities, representing the dimensions, are associated with the geometrical object for which its elements are measured. The dimensions follow their associated object on show/hide, transformation and deletion operations.
+
+Each dimension instance has its <i>local visibility</i> flag intended for showing/hiding it among other dimensions of the associated object.
+
+\image html manage_dimensions.png
+
+This dialog allows managing list of dimensions for the selected geometrical object.
+It shows the list and provides dimension creation and removal, modification of name and visibility, along with the interactive modification of dimension's geometrical properties.
+
+The list view groups dimension objects by their type: "Distances", "Diameters", "Angles". This view allows selection of the dimensions and lets user to change the dimension's name and visibility.
+
+The buttons located at the right side of the dialog have the following purposes:
+<ul>
+<li>"Add" - opens \ref add_dimension_page "Add Dimension" dialog for interactive specification of a new dimension for the selected object.</li>
+<li>"Remove" - removes selected instance of dimension.</li>
+<li>"Show All" / "Hide All" - turn on/off local visibility flags of all dimensions presented in the list.</li>
+</ul>
+
+\image html interact_with_dimensions.png
+
+Geometrical properties of the selected dimension become interactively editable in viewer.
+When hovering with mouse, the element of dimension become highlighted.
+This means that the element is ready for interactive operations.
+
+The following interactive operations are allowed:
+<ul>
+<li>Modification of flyout length. By dragging the flyout with left mouse button the user is allowed to change its length without changing its plane (direction).</li>
+<li>Modification of flyout length & plane (direction). If dimension is viewed at least slightly from side, then dragging the flyout with holding <i>ctrl</i> key additionally enables modification of the flyout plane.</li>
+<li>Modification of label alignment. By dragging the label the user is allowed to change its alignment. </li>
+</ul>
+
+The following horizontally aligned positions can be specified:
+<ul>
+<li>Left. Label is located outside of the left flyout line.</li>
+<li>Right. Label is located outside of the right flyout line.</li>
+<li>Center. Label is centered among of the flyout lines.</li>
+</ul>
+
+The following vertically aligned positions can be specified:
+<ul>
+<li>On flyout line. The label is located at the side of flyout line, which is farther from the measured geometry.</li>
+<li>Under flyout line. The label is located at the side of flyout line, which is closer to the measured geometry.</li>
+<li>In center of flyout line.</li>
+</ul>
+
+All of the modifications to the dimensions, until applied, are temporary. The "Apply" and "Apply and Close" buttons save the changes.
+
+*/

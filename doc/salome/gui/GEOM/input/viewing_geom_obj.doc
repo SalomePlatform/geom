@@ -59,6 +59,8 @@ geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em></li>
 
 \image html image33.png
 
+<li><b>Show all dimensions</b> - shows all of the persistent dimensions created for the selected geometrical object.</li>
+<li><b>Hide all dimensions</b> - hides all of the persistent dimensions created for the selected geometrical object.</li>
 <li><b>Dump view</b> - exports an object from the viewer in bmp, png,
 jpg or jpeg image format.</li>
 <li><b>Change background</b> - allows to redefine the background

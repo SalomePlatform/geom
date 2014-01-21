@@ -46,6 +46,9 @@ public:
   ~MeasureGUI();
 
   bool OnGUIEvent( int, SUIT_Desktop* );
+
+  // Show/hide all dimension created for object
+  void ChangeDimensionsVisibility( const bool theIsVisible );
 };
 
 #endif // MEASUREGUI_H

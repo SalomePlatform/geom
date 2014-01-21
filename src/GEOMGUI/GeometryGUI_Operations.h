@@ -190,6 +190,8 @@ namespace GEOMOp {
     OpCheckSelfInters     = 5012,   // MENU MEASURES - CHECK SELF INTERSECTIONS
     OpGetNonBlocks        = 5013,   // MENU MEASURES - GET NON BLOCKS
     OpManageDimensions    = 5014,   // MENU MEASURES - MANAGE DIMENSIONS
+    OpShowAllDimensions   = 5015,   // POPUP MENU - SHOW ALL DIMENSIONS
+    OpHideAllDimensions   = 5016,   // POPUP MENU - HIDE ALL DIMENSIONS
     // GroupGUI --------------------//--------------------------------
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT

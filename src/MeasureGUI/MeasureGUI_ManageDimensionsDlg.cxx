@@ -121,6 +121,9 @@ MeasureGUI_ManageDimensionsDlg::MeasureGUI_ManageDimensionsDlg( GeometryGUI* the
   connect( buttonApply(), SIGNAL( clicked() ), SLOT( ClickOnApply() ) );
 
   connect( this, SIGNAL( finished( int ) ), SLOT( OnFinish() ) );
+  
+  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( OnDeactivateThisDialog() ) );
+  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
 
   myDimensionInteractor = new MeasureGUI_DimensionInteractor( theGUI, theParent ),
 
@@ -130,6 +133,8 @@ MeasureGUI_ManageDimensionsDlg::MeasureGUI_ManageDimensionsDlg( GeometryGUI* the
   {
     myObjectSelector->PushButton1->click();
   }
+
+  setHelpFileName("managing_dimensions_page.html");
 }
 
 //=================================================================================
@@ -151,7 +156,7 @@ void MeasureGUI_ManageDimensionsDlg::StartSelection( const Selection theSelectio
 
   myCurrentSelection = theSelection;
 
-  if ( theSelection == Selection_Object && WarnUnsaved() )
+  if ( theSelection == Selection_Object && AllowedToCancelChanges() )
   {
     /* -----------------------------------------------  *
      *               selection of object                *
@@ -703,7 +708,7 @@ void MeasureGUI_ManageDimensionsDlg::ClickOnOk()
 //=================================================================================
 void MeasureGUI_ManageDimensionsDlg::ClickOnCancel()
 {
-  if ( !WarnUnsaved() )
+  if ( !AllowedToCancelChanges() )
   {
     return;
   }
@@ -779,6 +784,70 @@ void MeasureGUI_ManageDimensionsDlg::OnFinish()
                              QVariant() );
 
   redisplay( myEditObject.get() );
+}
+
+//=================================================================================
+// function : enterEvent()
+// purpose  :
+//=================================================================================
+void MeasureGUI_ManageDimensionsDlg::enterEvent( QEvent* )
+{
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
+  {
+    OnActivateThisDialog();
+  }
+}
+
+//=================================================================================
+// function : OnActivateThisDialog
+// purpose  :
+//=================================================================================
+void MeasureGUI_ManageDimensionsDlg::OnActivateThisDialog()
+{
+  disconnect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( OnDeactivateThisDialog() ) );
+  GEOMBase_Skeleton::ActivateThisDialog();
+  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( OnDeactivateThisDialog() ) );
+
+  SelectionIntoArgument( Selection_Object );
+
+  if ( myEditObject.isNull() )
+  {
+    myObjectSelector->PushButton1->click();
+  }
+}
+
+//=================================================================================
+// function : OnDeactivateThisDialog
+// purpose  :
+//=================================================================================
+void MeasureGUI_ManageDimensionsDlg::OnDeactivateThisDialog()
+{
+  if ( AllowedToSaveChanges() )
+  {
+    ClickOnApply();
+  }
+
+  if ( !myEditObject.isNull() )
+  {
+    SalomeApp_Study* aStudy = NULL;
+    SalomeApp_Application* anApp = myGeomGUI->getApp();
+    if ( anApp )
+    {
+      aStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
+    }
+
+    if ( aStudy )
+    {
+      aStudy->setObjectProperty( GEOM::sharedPropertiesId(),
+                                 myEditObject->GetStudyEntry(),
+                                 GEOM::propertyName( GEOM::Dimensions ),
+                                 QVariant() );
+    }
+
+    redisplay( myEditObject.get() );
+  }
+
+  GEOMBase_Skeleton::DeactivateActiveDialog();
 }
 
 //=================================================================================
@@ -967,26 +1036,26 @@ void MeasureGUI_ManageDimensionsDlg::PopulateList()
 }
 
 //=================================================================================
-// function : WarnUnsaved
+// function : HasUnsavedChanges
 // purpose  :
 //=================================================================================
-bool MeasureGUI_ManageDimensionsDlg::WarnUnsaved()
+bool MeasureGUI_ManageDimensionsDlg::HasUnsavedChanges()
 {
   if ( myEditObject.isNull() )
   {
-    return true;
+    return false;
   }
 
   SalomeApp_Application* anApp = myGeomGUI->getApp();
   if ( !anApp )
   {
-    return true;
+    return false;
   }
 
   SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( anApp->activeStudy() );
   if ( !aStudy )
   {
-    return true;
+    return false;
   }
 
   GEOMGUI_DimensionProperty aCurrentState =
@@ -996,14 +1065,43 @@ bool MeasureGUI_ManageDimensionsDlg::WarnUnsaved()
                                QVariant() )
                                .value<GEOMGUI_DimensionProperty>();
 
-  if ( aCurrentState == mySavedPropertyState )
+  return aCurrentState != mySavedPropertyState;
+}
+
+//=================================================================================
+// function : AllowedToCancelChanges
+// purpose  :
+//=================================================================================
+bool MeasureGUI_ManageDimensionsDlg::AllowedToCancelChanges()
+{
+  if ( !HasUnsavedChanges() )
   {
     return true;
   }
 
   int aResponse = SUIT_MessageBox::warning( this,
                                             tr( "WRN_TITLE_UNSAVED" ),
-                                            tr( "WRN_MSG_UNSAVED" ),
+                                            tr( "WRN_MSG_CHANGES_LOST" ),
+                                            QMessageBox::Ok,
+                                            QMessageBox::Cancel );
+
+  return aResponse == QMessageBox::Ok;
+}
+
+//=================================================================================
+// function : AllowedToSaveChanges
+// purpose  :
+//=================================================================================
+bool MeasureGUI_ManageDimensionsDlg::AllowedToSaveChanges()
+{
+  if ( !HasUnsavedChanges() )
+  {
+    return false;
+  }
+
+  int aResponse = SUIT_MessageBox::warning( this,
+                                            tr( "WRN_TITLE_UNSAVED" ),
+                                            tr( "WRN_MSG_CHANGES_SAVE" ),
                                             QMessageBox::Ok,
                                             QMessageBox::Cancel );
 

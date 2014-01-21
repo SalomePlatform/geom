@@ -1100,6 +1100,7 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
     aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
     aStyle->MakeText3d( Standard_True );
     aStyle->MakeTextShaded( Standard_True );
+    aStyle->SetExtensionSize( aFontHeight * 0.5 );
     aStyle->TextAspect()->SetHeight( aFontHeight );
     aStyle->ArrowAspect()->SetLength( anArrowLength );
     aStyle->LineAspect()->SetWidth( aLineWidth );
@@ -1107,6 +1108,28 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
     aStyle->SetTextVerticalPosition( aPrs->DimensionAspect()->TextVerticalPosition() );
     aPrs->SetDimensionAspect( aStyle );
     aPrs->SetPolygonOffsets( Aspect_POM_Fill, -1.0, -1.0 );
+    aPrs->Attributes()->SetDimLengthDisplayUnits( aUnitsLength.toLatin1().data() );
+    aPrs->Attributes()->SetDimAngleDisplayUnits( aUnitsAngle.toLatin1().data() );
+
+    if ( aPrs->IsKind( STANDARD_TYPE(AIS_AngleDimension) ) )
+    {
+      // show degree symbol for dimension instead of label "deg"
+      if ( aUnitsAngle == "deg" )
+      {
+        aPrs->SetSpecialSymbol(0xB0);
+        aPrs->SetDisplaySpecialSymbol( isUnitsShown ? AIS_DSS_After : AIS_DSS_No );
+        aStyle->MakeUnitsDisplayed(Standard_False);
+      }
+      else
+      {
+        aPrs->SetDisplaySpecialSymbol(AIS_DSS_No);
+        aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
+      }
+    }
+    else
+    {
+      aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
+    }
 
     aListOfIO.Append( aPrs );
   }

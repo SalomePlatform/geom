@@ -47,60 +47,96 @@
 //=================================================================================
 class MeasureGUI_DimensionCreateTool
 {
+  struct Segment
+  {
+    gp_Pnt First;
+    gp_Pnt Last;
+  };
+  typedef NCollection_Sequence<gp_Dir>  SeqOfDirs;
+  typedef NCollection_Sequence<gp_Pln>  SeqOfPlanes;
+  typedef NCollection_Sequence<Segment> SeqOfSegments;
+
 public:
-  MeasureGUI_DimensionCreateTool( GeometryGUI* );
+  MeasureGUI_DimensionCreateTool();
+
+  struct
+  {
+    Standard_Real DefaultFlyout;
+    Handle(V3d_View) ActiveView;
+  } Settings;
 
 /* construction methods */
 public:
-  Handle(AIS_LengthDimension)   LengthOnEdge( const GEOM::GeomObjPtr& );
+  Handle(AIS_LengthDimension)   LengthOnEdge( const GEOM::GeomObjPtr& ) const;
 
   Handle(AIS_LengthDimension)   LengthByPoints( const GEOM::GeomObjPtr&,
-                                                const GEOM::GeomObjPtr& );
+                                                const GEOM::GeomObjPtr& ) const;
 
   Handle(AIS_LengthDimension)   LengthByParallelEdges( const GEOM::GeomObjPtr&,
-                                                       const GEOM::GeomObjPtr& );
+                                                       const GEOM::GeomObjPtr& ) const;
 
-  Handle(AIS_DiameterDimension) Diameter( const GEOM::GeomObjPtr& );
+  Handle(AIS_DiameterDimension) Diameter( const GEOM::GeomObjPtr& ) const;
 
   Handle(AIS_AngleDimension)    AngleByTwoEdges( const GEOM::GeomObjPtr&,
-                                                 const GEOM::GeomObjPtr& );
+                                                 const GEOM::GeomObjPtr& ) const;
 
   Handle(AIS_AngleDimension)    AngleByThreePoints( const GEOM::GeomObjPtr&,
                                                     const GEOM::GeomObjPtr&,
-                                                    const GEOM::GeomObjPtr& );
+                                                    const GEOM::GeomObjPtr& ) const;
+
 
 /* selecting flyout direction for length dimensions */
 protected:
 
-  void ChooseLengthFlyoutsFromShape( TColgp_SequenceOfDir&,
-                                     const TopoDS_Vertex&,
-                                     const TopoDS_Vertex&,
-                                     const TopoDS_Shape& );
+  void   ChooseLengthFlyoutsFromBnd( SeqOfDirs&,
+                                     const gp_Pnt&,
+                                     const gp_Pnt&,
+                                     const Bnd_Box& ) const;
 
-  void ChooseLengthFlyoutsFromShape( TColgp_SequenceOfDir&,
-                                     const TopoDS_Edge&,
-                                     const TopoDS_Shape& );
-
-  void ChooseLengthFlyoutsFromBnd( TColgp_SequenceOfDir&,
-                                   const gp_Pnt&,
-                                   const gp_Pnt&,
-                                   const Bnd_Box& );
+  gp_Dir ChooseDirFromBnd( const SeqOfDirs&,
+                           const gp_Pnt&,
+                           const Bnd_Box& ) const;
 
 /* selecting best flyout direction taking into account view projection */
 protected:
 
-  gp_Pln SelectPlaneForProjection( const NCollection_Sequence<gp_Pln>&,
-                                   const Handle(V3d_View)& );
+  template <typename TPlane>
+  TPlane SelectPlaneForProjection( const NCollection_Sequence<TPlane>&,
+                                   const Handle(V3d_View)& ) const;
+
+/* positioning */
+protected:
+
+  void PositionLength( const Bnd_Box&,
+                       const gp_Vec&,
+                       const gp_Vec&,
+                       const gp_Vec&,
+                       const gp_Vec&,
+                       const gp_Pnt&,
+                       const gp_Pnt&,
+                       gp_Pln& ) const;
+
+  void PositionDiameter( const Bnd_Box&,
+                         const gp_Vec&,
+                         const gp_Circ&,
+                         gp_Pnt&,
+                         gp_Pnt&,
+                         gp_Pln& ) const;
+
+  void PositionDiameter( const Bnd_Box&,
+                         const gp_Vec&,
+                         const gp_Circ&,
+                         const Standard_Real&,
+                         gp_Pln& ) const;
 
 /* utility */
 protected:
-  GEOM::GeomObjPtr              GetMainShape( const GEOM::GeomObjPtr& );
+  GEOM::GeomObjPtr              GetMainShape( const GEOM::GeomObjPtr& ) const;
   bool                          GetFaceSide( const TopoDS_Face&,
                                              const TopoDS_Edge&,
-                                             gp_Dir& );
-
-private:
-  GeometryGUI*                  myGeomGUI;
+                                             gp_Dir& ) const;
+  SeqOfSegments                 GetInPlaneSegments( const gp_Circ&,
+                                                    const SeqOfDirs& ) const;
 };
 
 #endif

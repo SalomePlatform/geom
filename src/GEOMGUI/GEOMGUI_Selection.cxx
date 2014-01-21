@@ -24,6 +24,7 @@
 // Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
 
 #include "GEOMGUI_Selection.h"
+#include <GEOMGUI_DimensionProperty.h>
 
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
@@ -178,6 +179,10 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = isPhysicalMaterial(idx);
   else if ( p == "isFolder" )
     v = isFolder(idx);
+  else if ( p == "hasHiddenDimensions" )
+    v = hasHiddenDimensions(idx);
+  else if ( p == "hasVisibleDimensions" )
+    v = hasVisibleDimensions(idx);
   else
     v = LightApp_Selection::parameter( idx, p );
 
@@ -680,5 +685,61 @@ bool GEOMGUI_Selection::isFolder( const int index ) const
     }
   }
   return res;
+}
+
+bool GEOMGUI_Selection::hasDimensions( const int theIndex, bool& theHidden, bool& theVisible ) const
+{
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( study() );
+
+  if ( !appStudy )
+  {
+    return false;
+  }
+
+  QString anEntry = entry( theIndex );
+  _PTR(Study) aStudy = appStudy->studyDS();
+  if ( !aStudy || anEntry.isNull() )
+  {
+    return false;
+  }
+
+  GEOMGUI_DimensionProperty aDimensions( appStudy, anEntry.toStdString() );
+
+  theHidden  = false;
+  theVisible = false;
+
+  for ( int it = 0; it < aDimensions.GetNumber(); ++it )
+  {
+    if ( aDimensions.IsVisible( it ) )
+      theVisible = true;
+    else
+      theHidden = true;
+  }
+
+  return aDimensions.GetNumber() > 0;
+}
+
+bool GEOMGUI_Selection::hasHiddenDimensions( const int theIndex ) const
+{
+  bool isAnyVisible = false;
+  bool isAnyHidden = false;
+  if ( !hasDimensions( theIndex, isAnyHidden, isAnyVisible ) )
+  {
+    return false;
+  }
+
+  return isAnyHidden;
+}
+
+bool GEOMGUI_Selection::hasVisibleDimensions( const int theIndex ) const
+{
+  bool isAnyVisible = false;
+  bool isAnyHidden = false;
+  if ( !hasDimensions( theIndex, isAnyHidden, isAnyVisible ) )
+  {
+    return false;
+  }
+
+  return isAnyVisible;
 }
 
