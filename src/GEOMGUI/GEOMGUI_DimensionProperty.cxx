@@ -218,7 +218,7 @@ void GEOMGUI_DimensionProperty::Angle::Init( const Handle(AIS_AngleDimension)& t
   Flyout      = theIO->GetFlyout();
   TextHPos    = theIO->DimensionAspect()->TextHorizontalPosition();
   TextVPos    = theIO->DimensionAspect()->TextVerticalPosition();
-  ArrowPos = theIO->DimensionAspect()->ArrowOrientation();
+  ArrowPos    = theIO->DimensionAspect()->ArrowOrientation();
 }
 
 //=================================================================================

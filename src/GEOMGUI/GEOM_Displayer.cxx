@@ -1106,6 +1106,7 @@ void GEOM_Displayer::updateDimensions( const Handle(SALOME_InteractiveObject)& t
     aStyle->LineAspect()->SetWidth( aLineWidth );
     aStyle->SetTextHorizontalPosition( aPrs->DimensionAspect()->TextHorizontalPosition() );
     aStyle->SetTextVerticalPosition( aPrs->DimensionAspect()->TextVerticalPosition() );
+    aStyle->SetArrowOrientation( aPrs->DimensionAspect()->ArrowOrientation() );
     aPrs->SetDimensionAspect( aStyle );
     aPrs->SetPolygonOffsets( Aspect_POM_Fill, -1.0, -1.0 );
     aPrs->Attributes()->SetDimLengthDisplayUnits( aUnitsLength.toLatin1().data() );

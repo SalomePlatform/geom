@@ -601,8 +601,15 @@ void MeasureGUI_DimensionInteractor::MoveText( const Handle(V3d_View)& theView,
     const gp_Pnt& aFirstPoint  = anAngle->FirstPoint();
     const gp_Pnt& aSecondPoint = anAngle->SecondPoint();
 
+    Standard_Boolean isPositive = anAngle->GetFlyout() > 0.0;
+
     gp_Dir aFirstDir  = gce_MakeDir( aCenterPoint, aFirstPoint );
     gp_Dir aSecondDir = gce_MakeDir( aCenterPoint, aSecondPoint );
+    if ( anAngle->GetFlyout() < 0.0 )
+    {
+      aFirstDir.Reverse();
+      aSecondDir.Reverse();
+    }
 
     Standard_Real aDirAngle = aFirstDir.Angle( aSecondDir );
 
@@ -611,49 +618,35 @@ void MeasureGUI_DimensionInteractor::MoveText( const Handle(V3d_View)& theView,
     // the direction are: \ | /
     //            first    \|/   second
     //             dir      c      dir
-    // 
 
     gp_Dir aCenterDir = aFirstDir.Rotated( gp_Ax1( aCenterPoint, aPlaneN ), -aDirAngle * 0.5 );
 
-    gp_Dir aPointDir  = gce_MakeDir( aCenterPoint, aPointOnPlane );
+    gp_Dir aPointDir = gce_MakeDir( aCenterPoint, aPointOnPlane );
 
-    Standard_Boolean isPositive = aPointDir.Dot( aCenterDir ) > 0;
-
-    Standard_Real aPointAngle = aPointDir.AngleWithRef(  aCenterDir,  aPlaneN );
-    if ( !isPositive )
-    {
-      aPointAngle = ( M_PI - Abs( aPointAngle ) ) * ( -Sign( 1.0, aPointAngle ) );
-    }
+    Standard_Real aPointAngle = aPointDir.AngleWithRef( aCenterDir, aPlaneN );
 
     gp_Vec aPointVec = gp_Vec( aCenterPoint, aPointOnPlane );
 
     Standard_Real aPosY = 0.0;
 
-    // the point should lie within the dimension flyout area
-    if (  isPositive && aPointVec.Dot( aFirstDir ) < 0.0
-      || !isPositive && aPointVec.Dot( aFirstDir ) > 0.0 )
-    {
-      return;
-    }
-
     // calculate flyout for each separate case of point location
     if ( aPointAngle < -aDirAngle * 0.5 ) // outside of second dir
     {
-      aHPos = Prs3d_DTHP_Left;
+      aHPos   = Prs3d_DTHP_Left;
       aArrPos = Prs3d_DAO_External;
-      aPosY = Abs( aPointVec.Dot( aFirstDir ) ) - Abs( myInteractedIO->GetFlyout() );
+      aPosY   = aPointVec.Dot( aFirstDir ) - Abs( anAngle->GetFlyout() );
     }
     else if ( aPointAngle > aDirAngle * 0.5 ) // outside of first dir
     {
-      aHPos = Prs3d_DTHP_Right;
+      aHPos   = Prs3d_DTHP_Right;
       aArrPos = Prs3d_DAO_External;
-      aPosY = Abs( aPointVec.Dot( aSecondDir ) ) - Abs( myInteractedIO->GetFlyout() );
+      aPosY   = aPointVec.Dot( aSecondDir ) - Abs( anAngle->GetFlyout() );
     }
     else // between first and second direction
     {
-      aHPos = Prs3d_DTHP_Center;
+      aHPos   = Prs3d_DTHP_Center;
       aArrPos = Prs3d_DAO_Fit;
-      aPosY = Abs( aPointVec.Magnitude() ) - Abs( myInteractedIO->GetFlyout() );
+      aPosY   = aPointVec.Magnitude() - Abs( anAngle->GetFlyout() );
     }
 
     if ( aPosY > aHeight )
