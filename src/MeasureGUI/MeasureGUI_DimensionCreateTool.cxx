@@ -531,7 +531,10 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
       // get arguments of closed/opened cylinder
       if ( aSurf.GetType() == GeomAbs_Cylinder )
       {
-        Handle(Geom_Curve) aCurve = aSurf.Surface().Surface()->VIso( (aVmax + aVmin) * 0.5 );
+        Handle(Geom_Surface) aBasisSurface = Handle(Geom_Surface)::DownCast(
+          aSurf.Surface().Surface()->Transformed( aSurf.Trsf() ) );
+
+        Handle(Geom_Curve) aCurve = aBasisSurface->VIso( (aVmax + aVmin) * 0.5 );
 
         if ( aCurve->IsKind( STANDARD_TYPE( Geom_Circle ) ) )
         {
