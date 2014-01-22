@@ -358,6 +358,11 @@ bool MeasureGUI_CreateDimensionDlg::ClickOnApply()
 {
   StopLocalEditing();
 
+  if ( myDimension.IsNull() )
+  {
+    return true;
+  }
+
   if ( !AddDimensionToOwner() )
   {
     return false;

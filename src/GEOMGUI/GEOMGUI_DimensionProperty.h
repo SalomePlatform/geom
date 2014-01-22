@@ -93,6 +93,9 @@ public:
     Diameter* AsDiameter() { return static_cast<Diameter*>( this ); }
     Angle*    AsAngle()    { return static_cast<Angle*>( this ); }
 
+    virtual void ToValues(std::vector<double>& theValues) const = 0;
+    virtual void FromValues(int& theIt, const std::vector<double>& theValues) = 0;
+
   private:
     DimensionType myType;
   };
@@ -139,6 +142,19 @@ public:
      * \param theLCS [in] the local coordiante system of parent object.
      */
     void Update( Handle(AIS_LengthDimension)& theIO, const gp_Ax3& theLCS );
+
+    /*!
+     * \brief Packs properties to array of doubles.
+     * \param theValues [out] the values vector to populate.
+     */
+    void ToValues(std::vector<double>& theValues) const;
+
+    /*!
+     * \brief Unpacks properties from array of doubles.
+     * \param theIt [in/out] the array index iterator.
+     * \param theValues [in] the vector of values.
+     */
+    void FromValues(int& theIt, const std::vector<double>& theValues);
 
     /*!
      * \brief Overload comparsion.
@@ -194,6 +210,19 @@ public:
      * \param theLCS [in] the local coordiante system of parent object.
      */
     void Update( Handle(AIS_DiameterDimension)& theIO, const gp_Ax3& theLCS );
+
+    /*!
+     * \brief Packs properties to array of doubles.
+     * \param theValues [out] the values vector to populate.
+     */
+    void ToValues(std::vector<double>& theValues) const;
+
+    /*!
+     * \brief Unpacks properties from array of doubles.
+     * \param theIt [in/out] the array index iterator.
+     * \param theValues [in] the vector of values.
+     */
+    void FromValues(int& theIt, const std::vector<double>& theValues);
 
     /*!
      * \brief Overload comparsion.
@@ -253,6 +282,19 @@ public:
     void Update( Handle(AIS_AngleDimension)& theIO, const gp_Ax3& theLCS );
 
     /*!
+     * \brief Packs properties to array of doubles.
+     * \param theValues [out] the values vector to populate.
+     */
+    void ToValues(std::vector<double>& theValues) const;
+
+    /*!
+     * \brief Unpacks properties from array of doubles.
+     * \param theIt [in/out] the array index iterator.
+     * \param theValues [in] the vector of values.
+     */
+    void FromValues(int& theIt, const std::vector<double>& theValues);
+
+    /*!
      * \brief Overload comparsion.
      */
     bool operator == (const Angle &theOther) const;
@@ -286,6 +328,11 @@ public:
    */
   GEOMGUI_DimensionProperty( SalomeApp_Study* theStudy, const std::string& theEntry );
 
+   /*!
+   * \brief Constructor. Inits property from formatted QString.
+   */
+  GEOMGUI_DimensionProperty( const QString& theProperty );
+
   /*!
    * \brief Destructor.
    */
@@ -294,7 +341,12 @@ public:
   /*!
    * \brief Overload QVariant cast operator.
    */
-  operator QVariant();
+  operator QVariant() const;
+
+  /*!
+   * \brief Overload QString cast operator.
+   */
+  operator QString() const;
 
   /*!
    * \brief Overload comparsion.

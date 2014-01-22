@@ -32,6 +32,42 @@
 
 #include <SalomeApp_Study.h>
 
+// Static patterns for casting value-to-string & value-from-string. The patterns are:
+//  ITEM: { name[string] : visibility : type : values[composite] };
+//  PLANE: a[float] : b[float] : c[float] : d[float]
+//  PROPS: flyout[float] : text h pos[int] : text v pos[int] : arrow pos[int]
+//  XYZ: x [float] : y[float] : z[float]
+//  FLOAT: value [float]
+namespace
+{
+  static const QString PATTERN_ITEM_GROUP = "\\{ (Name=(?::{2,}|.)*:(?!:)Visible=.*:Type=.*:.*) \\}";
+  static const QString PATTERN_ITEM  = "Name=((?::{2,}|.)*):(?!:)Visible=(\\d{1}):Type=(\\d{1}):(.*)";
+  static const QString PATTERN_PLANE = "Plane=\\{(.*):(.*):(.*):(.*)\\}";
+  static const QString PATTERN_PROPS = "Flyout=(.*):TextH=(.*):TextV=(.*):Arrow=(.*)";
+  static const QString PATTERN_XYZ   = "%1=\\{(.*):(.*):(.*)\\}";
+  static const QString PATTERN_FLOAT = "%1=(.*)";
+
+  static const QString PATTERN_LENGTH =
+    PATTERN_PLANE + ":" +
+    PATTERN_PROPS + ":" +
+    PATTERN_XYZ.arg( "Point1" ) + ":" +
+    PATTERN_XYZ.arg( "Point2" );
+
+  static const QString PATTERN_DIAMETER =
+    PATTERN_PLANE + ":" +
+    PATTERN_PROPS + ":" +
+    PATTERN_XYZ.arg( "Position" ) + ":" +
+    PATTERN_XYZ.arg( "NDir" ) + ":" +
+    PATTERN_XYZ.arg( "XDir" ) + ":" +
+    PATTERN_FLOAT.arg( "Radius" );
+
+  static const QString PATTERN_ANGLE =
+    PATTERN_PROPS + ":" +
+    PATTERN_XYZ.arg( "Point1" ) + ":" +
+    PATTERN_XYZ.arg( "Point2" ) + ":" +
+    PATTERN_XYZ.arg( "Point3" );
+};
+
 //=================================================================================
 // function : Length::Init
 // purpose  : 
@@ -71,6 +107,77 @@ void GEOMGUI_DimensionProperty::Length::Update( Handle(AIS_LengthDimension)& the
   aStyle->SetTextVerticalPosition( TextVPos );
   aStyle->SetArrowOrientation( ArrowPos );
   theIO->SetDimensionAspect( aStyle );
+}
+
+//=================================================================================
+// function : Length::ToValues
+// purpose  : 
+//=================================================================================
+void GEOMGUI_DimensionProperty::Length::ToValues(std::vector<double>& theValues) const
+{
+  // custom plane [2,3,4,5]
+  Standard_Real A, B, C, D;
+  Plane.Coefficients( A, B, C, D );
+  theValues.push_back( (double) A );
+  theValues.push_back( (double) B );
+  theValues.push_back( (double) C );
+  theValues.push_back( (double) D );
+
+  // flyout size [6]
+  theValues.push_back( (double) Flyout );
+
+  // text flags [7,8]
+  theValues.push_back( (double) TextHPos );
+  theValues.push_back( (double) TextVPos );
+
+  // arrow flags [9]
+  theValues.push_back( (double) ArrowPos );
+
+  // point 1 [10,11,12]
+  theValues.push_back( (double) FirstPoint.X() );
+  theValues.push_back( (double) FirstPoint.Y() );
+  theValues.push_back( (double) FirstPoint.Z() );
+
+  // point 2 [13,14,15]
+  theValues.push_back( (double) SecondPoint.X() );
+  theValues.push_back( (double) SecondPoint.Y() );
+  theValues.push_back( (double) SecondPoint.Z() );
+}
+
+//=================================================================================
+// function : Length::FromValues
+// purpose  : 
+//=================================================================================
+void GEOMGUI_DimensionProperty::Length::FromValues(int& theIt, const std::vector<double>& theValues)
+{
+  // custom plane [2,3,4,5]
+  Standard_Real A = (Standard_Real) theValues[theIt++];
+  Standard_Real B = (Standard_Real) theValues[theIt++];
+  Standard_Real C = (Standard_Real) theValues[theIt++];
+  Standard_Real D = (Standard_Real) theValues[theIt++];
+  Plane = gp_Pln( A, B, C, D );
+
+  // flyout size [6]
+  Flyout = (Standard_Real) theValues[theIt++];
+
+  // text flags [7,8]
+  TextHPos = (Prs3d_DimensionTextHorizontalPosition)(int)theValues[theIt++];
+  TextVPos = (Prs3d_DimensionTextVerticalPosition)  (int)theValues[theIt++];
+
+  // arrow flags [9]
+  ArrowPos = (Prs3d_DimensionArrowOrientation) (int)theValues[theIt++];
+
+  // point 1 [10,11,12]
+  Standard_Real aFirstX = theValues[theIt++];
+  Standard_Real aFirstY = theValues[theIt++];
+  Standard_Real aFirstZ = theValues[theIt++];
+  FirstPoint = gp_Pnt( aFirstX, aFirstY, aFirstZ );
+
+  // point 2 [13,14,15]
+  Standard_Real aSecondX = theValues[theIt++];
+  Standard_Real aSecondY = theValues[theIt++];
+  Standard_Real aSecondZ = theValues[theIt++];
+  SecondPoint = gp_Pnt( aSecondX, aSecondY, aSecondZ );
 }
 
 //=================================================================================
@@ -163,6 +270,97 @@ void GEOMGUI_DimensionProperty::Diameter::Update( Handle(AIS_DiameterDimension)&
 }
 
 //=================================================================================
+// function : Diameter::ToValues
+// purpose  : 
+//=================================================================================
+void GEOMGUI_DimensionProperty::Diameter::ToValues(std::vector<double>& theValues) const
+{
+  // custom plane [2,3,4,5]
+  Standard_Real A, B, C, D;
+  Plane.Coefficients( A, B, C, D );
+  theValues.push_back( (double) A );
+  theValues.push_back( (double) B );
+  theValues.push_back( (double) C );
+  theValues.push_back( (double) D );
+
+  // flyout size [6]
+  theValues.push_back( (double) Flyout );
+
+  // text flags [7,8]
+  theValues.push_back( (double) TextHPos );
+  theValues.push_back( (double) TextVPos );
+
+  // arrow flags [9]
+  theValues.push_back( (double) ArrowPos );
+
+  // circle location [10,11,12]
+  theValues.push_back( (double) Circle.Location().X() );
+  theValues.push_back( (double) Circle.Location().Y() );
+  theValues.push_back( (double) Circle.Location().Z() );
+
+  // circle normal [13,14,15]
+  theValues.push_back( (double) Circle.Axis().Direction().X() );
+  theValues.push_back( (double) Circle.Axis().Direction().Y() );
+  theValues.push_back( (double) Circle.Axis().Direction().Z() );
+
+  // x-direction [16,17,18]
+  theValues.push_back( (double) Circle.XAxis().Direction().X() );
+  theValues.push_back( (double) Circle.XAxis().Direction().Y() );
+  theValues.push_back( (double) Circle.XAxis().Direction().Z() );
+
+  // radius [19]
+  theValues.push_back( (double) Circle.Radius() );
+}
+
+//=================================================================================
+// function : Diameter::FromValues
+// purpose  : 
+//=================================================================================
+void GEOMGUI_DimensionProperty::Diameter::FromValues(int& theIt, const std::vector<double>& theValues)
+{
+  // custom plane [2,3,4,5]
+  Standard_Real A = (Standard_Real) theValues[theIt++];
+  Standard_Real B = (Standard_Real) theValues[theIt++];
+  Standard_Real C = (Standard_Real) theValues[theIt++];
+  Standard_Real D = (Standard_Real) theValues[theIt++];
+  Plane = gp_Pln( A, B, C, D );
+
+  // flyout size [6]
+  Flyout = (Standard_Real) theValues[theIt++];
+
+  // text flags [7,8]
+  TextHPos = (Prs3d_DimensionTextHorizontalPosition)(int)theValues[theIt++];
+  TextVPos = (Prs3d_DimensionTextVerticalPosition)  (int)theValues[theIt++];
+
+  // arrow flags [9]
+  ArrowPos = (Prs3d_DimensionArrowOrientation) (int)theValues[theIt++];
+
+  // circle location [10,11,12]
+  Standard_Real aLocX = (Standard_Real) theValues[theIt++];
+  Standard_Real aLocY = (Standard_Real) theValues[theIt++];
+  Standard_Real aLocZ = (Standard_Real) theValues[theIt++];
+
+  // circle normal [13,14,15]
+  Standard_Real aNormX = (Standard_Real) theValues[theIt++];
+  Standard_Real aNormY = (Standard_Real) theValues[theIt++];
+  Standard_Real aNormZ = (Standard_Real) theValues[theIt++];
+
+  // x-direction [16,17,18]
+  Standard_Real aXDirX = (Standard_Real) theValues[theIt++];
+  Standard_Real aXDirY = (Standard_Real) theValues[theIt++];
+  Standard_Real aXDirZ = (Standard_Real) theValues[theIt++];
+
+  // radius [19]
+  Standard_Real aRadius = (Standard_Real) theValues[theIt++];
+
+  gp_Ax2 anAx( gp_Pnt( aLocX, aLocY, aLocZ ),
+               gp_Dir( aNormX, aNormY, aNormZ ),
+               gp_Dir( aXDirX, aXDirY, aXDirZ ) );
+
+  Circle = gp_Circ( anAx, aRadius );
+}
+
+//=================================================================================
 // function : Diameter::operator == 
 // purpose  : 
 //=================================================================================
@@ -242,6 +440,74 @@ void GEOMGUI_DimensionProperty::Angle::Update( Handle(AIS_AngleDimension)& theIO
   aStyle->SetTextVerticalPosition( TextVPos );
   aStyle->SetArrowOrientation( ArrowPos );
   theIO->SetDimensionAspect( aStyle );
+}
+
+//=================================================================================
+// function : Angle::ToValues
+// purpose  : 
+//=================================================================================
+void GEOMGUI_DimensionProperty::Angle::ToValues(std::vector<double>& theValues) const
+{
+  // flyout [2]
+  theValues.push_back( (double) Flyout );
+
+  // text flags [3,4]
+  theValues.push_back( (double) TextHPos );
+  theValues.push_back( (double) TextVPos );
+
+  // arrow flags [5]
+  theValues.push_back( (double) ArrowPos );
+
+  // point 1 [6,7,8]
+  theValues.push_back( (double) FirstPoint.X() );
+  theValues.push_back( (double) FirstPoint.Y() );
+  theValues.push_back( (double) FirstPoint.Z() );
+
+  // point 2 [9,10,11]
+  theValues.push_back( (double) SecondPoint.X() );
+  theValues.push_back( (double) SecondPoint.Y() );
+  theValues.push_back( (double) SecondPoint.Z() );
+
+  // center [12,13,14]
+  theValues.push_back( (double) CenterPoint.X() );
+  theValues.push_back( (double) CenterPoint.Y() );
+  theValues.push_back( (double) CenterPoint.Z() );
+}
+
+//=================================================================================
+// function : Angle::FromValues
+// purpose  : 
+//=================================================================================
+void GEOMGUI_DimensionProperty::Angle::FromValues(int& theIt, const std::vector<double>& theValues)
+{
+  // flyout [2]
+  Flyout = (Standard_Real) theValues[theIt++];
+
+  // text flags [3,4]
+  TextHPos = (Prs3d_DimensionTextHorizontalPosition)(int)theValues[theIt++];
+  TextVPos = (Prs3d_DimensionTextVerticalPosition)  (int)theValues[theIt++];
+
+  // arrow flags [5]
+  ArrowPos = (Prs3d_DimensionArrowOrientation) (int)theValues[theIt++];
+
+  // point 1 [6,7,8]
+  Standard_Real aFirstX = (Standard_Real) theValues[theIt++];
+  Standard_Real aFirstY = (Standard_Real) theValues[theIt++];
+  Standard_Real aFirstZ = (Standard_Real) theValues[theIt++];
+
+  // point 2 [9,10,11]
+  Standard_Real aSecondX = (Standard_Real) theValues[theIt++];
+  Standard_Real aSecondY = (Standard_Real) theValues[theIt++];
+  Standard_Real aSecondZ = (Standard_Real) theValues[theIt++];
+
+  // center [12,13,14]
+  Standard_Real aCenterX = (Standard_Real) theValues[theIt++];
+  Standard_Real aCenterY = (Standard_Real) theValues[theIt++];
+  Standard_Real aCenterZ = (Standard_Real) theValues[theIt++];
+
+  FirstPoint  = gp_Pnt( aFirstX, aFirstY, aFirstZ );
+  SecondPoint = gp_Pnt( aSecondX, aSecondY, aSecondZ );
+  CenterPoint = gp_Pnt( aCenterX, aCenterY, aCenterZ );
 }
 
 //=================================================================================
@@ -330,6 +596,85 @@ GEOMGUI_DimensionProperty::GEOMGUI_DimensionProperty( SalomeApp_Study* theStudy,
 }
 
 //=================================================================================
+// function : Init constructor
+// purpose  : 
+//=================================================================================
+GEOMGUI_DimensionProperty::GEOMGUI_DimensionProperty( const QString& theProperty )
+{
+  QRegExp aRegExpItemGroups( PATTERN_ITEM_GROUP );
+  QRegExp aRegExpItem( "^" + PATTERN_ITEM + "$" );
+  aRegExpItemGroups.setMinimal( true );
+  aRegExpItem.setMinimal( true );
+
+  int aPos = 0;
+  while ( ( aPos = aRegExpItemGroups.indexIn( theProperty, aPos ) ) != -1 )
+  {
+    aPos += aRegExpItemGroups.matchedLength();
+
+    QString aStrItem = aRegExpItemGroups.cap(1);
+
+    if ( aRegExpItem.indexIn( aStrItem ) < 0 )
+    {
+      continue;
+    }
+
+    // extract name
+    QString aStrName    = aRegExpItem.cap( 1 );
+    QString aStrVisible = aRegExpItem.cap( 2 );
+    QString aStrType    = aRegExpItem.cap( 3 );
+    QString aStrValues  = aRegExpItem.cap( 4 );
+
+    // extract values
+    aStrName.replace( "::", ":" );
+    bool isVisible = aStrVisible.toInt() != 0;
+    int aType = aStrType.toInt();
+    
+    RecordPtr aRecord;
+    switch ( aType )
+    {
+      case DimensionType_Length   : aRecord = RecordPtr( new Length ); break;
+      case DimensionType_Diameter : aRecord = RecordPtr( new Diameter ); break;
+      case DimensionType_Angle    : aRecord = RecordPtr( new Angle ); break;
+      default:
+        continue;
+    }
+    
+    QRegExp aRegExpValues;
+    switch ( aType )
+    {
+      case DimensionType_Length   : aRegExpValues = QRegExp( "^" + PATTERN_LENGTH + "$" ); break;
+      case DimensionType_Diameter : aRegExpValues = QRegExp( "^" + PATTERN_DIAMETER + "$" ); break;
+      case DimensionType_Angle    : aRegExpValues = QRegExp( "^" + PATTERN_ANGLE + "$" ); break;
+    }
+
+    aRegExpValues.setMinimal(true);
+
+    if ( aRegExpValues.indexIn( aStrValues ) < 0 )
+    {
+      continue;
+    }
+
+    std::vector<double> aValues;
+
+    QStringList aStrListOfValues = aRegExpValues.capturedTexts();
+    QStringList::Iterator aStrListOfValuesIt = aStrListOfValues.begin();
+    ++aStrListOfValuesIt; // skip first capture
+    for ( ; aStrListOfValuesIt != aStrListOfValues.end(); ++aStrListOfValuesIt )
+    {
+      aValues.push_back( (*aStrListOfValuesIt).toDouble() );
+    }
+
+    int aValueIt = 0;
+
+    aRecord->FromValues( aValueIt, aValues );
+
+    myVisibility.append( isVisible );
+    myNames.append( aStrName );
+    myRecords.append( aRecord );
+  }
+}
+
+//=================================================================================
 // function : Destructor
 // purpose  : 
 //=================================================================================
@@ -341,11 +686,75 @@ GEOMGUI_DimensionProperty::~GEOMGUI_DimensionProperty()
 // function : operator QVariant()
 // purpose  : 
 //=================================================================================
-GEOMGUI_DimensionProperty::operator QVariant()
+GEOMGUI_DimensionProperty::operator QVariant() const
 {
   QVariant aQVariant;
   aQVariant.setValue( *this );
   return aQVariant;
+}
+
+//=================================================================================
+// function : operator QString()
+// purpose  : 
+//=================================================================================
+GEOMGUI_DimensionProperty::operator QString() const
+{
+  QStringList anItems;
+
+  VectorOfVisibility::ConstIterator aVisibilityIt = myVisibility.constBegin();
+  VectorOfRecords::ConstIterator aRecordIt        = myRecords.constBegin();
+  VectorOfNames::ConstIterator aNameIt            = myNames.constBegin();
+  for ( ; aRecordIt != myRecords.constEnd(); ++aRecordIt, ++aNameIt, ++aVisibilityIt )
+  {
+    QString aName            = *aNameIt;
+    const bool& isVisible    = *aVisibilityIt;
+    const RecordPtr& aRecord = *aRecordIt;
+
+    // pack values
+    std::vector<double> aPacked;
+    aRecord->ToValues( aPacked );
+
+    // put values into pattern
+    QString aStringValues;
+    switch ( aRecord->Type() )
+    {
+      case DimensionType_Length   : aStringValues = PATTERN_LENGTH; break;
+      case DimensionType_Diameter : aStringValues = PATTERN_DIAMETER; break;
+      case DimensionType_Angle    : aStringValues = PATTERN_ANGLE; break;
+      default:
+        continue;
+    }
+
+    aStringValues.remove("\\");
+
+    int it = 0;
+    for ( ; it < aPacked.size(); ++it )
+    {
+      int aNextPos = aStringValues.indexOf("(.*)");
+      if ( aNextPos < 0 )
+      {
+        break; // invalid pattern
+      }
+
+      aStringValues.replace( aNextPos, 4, QString::number( aPacked.at(it) ) );
+    }
+
+    if ( it < aPacked.size() )
+    {
+      continue; // invalid pattern
+    }
+
+    // replace all ':' to '::' for pattern matching
+    aName.replace(":", "::");
+
+    anItems.append( 
+      QString("{ Name=") + aName +
+      QString(":") + QString("Visible=") + QString::number( isVisible ? 1 : 0 ) +
+      QString(":") + QString("Type=") + QString::number( (int) aRecord->Type() ) +
+      QString(":") + aStringValues + QString(" }") );
+  }
+
+  return anItems.join( ":" );
 }
 
 //=================================================================================
@@ -651,129 +1060,11 @@ void GEOMGUI_DimensionProperty::LoadFromAttribute( SalomeApp_Study* theStudy,
 
     switch (aType)
     {
-      case DimensionType_Length :
-      {
-        Length* aLength = new Length;
-
-        // custom plane [2,3,4,5]
-        Standard_Real A = (Standard_Real) aPacked[it++];
-        Standard_Real B = (Standard_Real) aPacked[it++];
-        Standard_Real C = (Standard_Real) aPacked[it++];
-        Standard_Real D = (Standard_Real) aPacked[it++];
-        aLength->Plane = gp_Pln( A, B, C, D );
-
-        // flyout size [6]
-        aLength->Flyout = (Standard_Real) aPacked[it++];
-
-        // text flags [7,8]
-        aLength->TextHPos = (Prs3d_DimensionTextHorizontalPosition)(int)aPacked[it++];
-        aLength->TextVPos = (Prs3d_DimensionTextVerticalPosition)  (int)aPacked[it++];
-
-        // arrow flags [9]
-        aLength->ArrowPos = (Prs3d_DimensionArrowOrientation) (int)aPacked[it++];
-
-        // point 1 [10,11,12]
-        Standard_Real aFirstX = aPacked[it++];
-        Standard_Real aFirstY = aPacked[it++];
-        Standard_Real aFirstZ = aPacked[it++];
-        aLength->FirstPoint = gp_Pnt( aFirstX, aFirstY, aFirstZ );
-
-        // point 2 [13,14,15]
-        Standard_Real aSecondX = aPacked[it++];
-        Standard_Real aSecondY = aPacked[it++];
-        Standard_Real aSecondZ = aPacked[it++];
-        aLength->SecondPoint = gp_Pnt( aSecondX, aSecondY, aSecondZ );
-
-        aRecord = RecordPtr( aLength );
-        break;
-      }
-
-      case DimensionType_Diameter :
-      {
-        Diameter* aDiam = new Diameter;
-
-        // custom plane [2,3,4,5]
-        Standard_Real A = (Standard_Real) aPacked[it++];
-        Standard_Real B = (Standard_Real) aPacked[it++];
-        Standard_Real C = (Standard_Real) aPacked[it++];
-        Standard_Real D = (Standard_Real) aPacked[it++];
-        aDiam->Plane = gp_Pln( A, B, C, D );
-
-        // flyout size [6]
-        aDiam->Flyout = (Standard_Real) aPacked[it++];
-
-        // text flags [7,8]
-        aDiam->TextHPos = (Prs3d_DimensionTextHorizontalPosition)(int)aPacked[it++];
-        aDiam->TextVPos = (Prs3d_DimensionTextVerticalPosition)  (int)aPacked[it++];
-
-        // arrow flags [9]
-        aDiam->ArrowPos = (Prs3d_DimensionArrowOrientation) (int)aPacked[it++];
-
-        // circle location [10,11,12]
-        Standard_Real aLocX = (Standard_Real) aPacked[it++];
-        Standard_Real aLocY = (Standard_Real) aPacked[it++];
-        Standard_Real aLocZ = (Standard_Real) aPacked[it++];
-
-        // circle normal [13,14,15]
-        Standard_Real aNormX = (Standard_Real) aPacked[it++];
-        Standard_Real aNormY = (Standard_Real) aPacked[it++];
-        Standard_Real aNormZ = (Standard_Real) aPacked[it++];
-
-        // x-direction [16,17,18]
-        Standard_Real aXDirX = (Standard_Real) aPacked[it++];
-        Standard_Real aXDirY = (Standard_Real) aPacked[it++];
-        Standard_Real aXDirZ = (Standard_Real) aPacked[it++];
-
-        // radius [19]
-        Standard_Real aRadius = (Standard_Real) aPacked[it++];
-
-        gp_Ax2 anAx( gp_Pnt( aLocX, aLocY, aLocZ ),
-                     gp_Dir( aNormX, aNormY, aNormZ ),
-                     gp_Dir( aXDirX, aXDirY, aXDirZ ) );
-
-        aDiam->Circle = gp_Circ( anAx, aRadius );
-
-        aRecord = RecordPtr( aDiam );
-        break;
-      }
-
-      case DimensionType_Angle :
-      {
-        Angle* anAngle = new Angle;
-
-        // flyout [2]
-        anAngle->Flyout = (Standard_Real) aPacked[it++];
-
-        // text flags [3,4]
-        anAngle->TextHPos = (Prs3d_DimensionTextHorizontalPosition)(int)aPacked[it++];
-        anAngle->TextVPos = (Prs3d_DimensionTextVerticalPosition)  (int)aPacked[it++];
-
-        // arrow flags [5]
-        anAngle->ArrowPos = (Prs3d_DimensionArrowOrientation) (int)aPacked[it++];
-
-        // point 1 [6,7,8]
-        Standard_Real aFirstX = (Standard_Real) aPacked[it++];
-        Standard_Real aFirstY = (Standard_Real) aPacked[it++];
-        Standard_Real aFirstZ = (Standard_Real) aPacked[it++];
-
-        // point 2 [9,10,11]
-        Standard_Real aSecondX = (Standard_Real) aPacked[it++];
-        Standard_Real aSecondY = (Standard_Real) aPacked[it++];
-        Standard_Real aSecondZ = (Standard_Real) aPacked[it++];
-
-        // center [12,13,14]
-        Standard_Real aCenterX = (Standard_Real) aPacked[it++];
-        Standard_Real aCenterY = (Standard_Real) aPacked[it++];
-        Standard_Real aCenterZ = (Standard_Real) aPacked[it++];
-
-        anAngle->FirstPoint  = gp_Pnt( aFirstX, aFirstY, aFirstZ );
-        anAngle->SecondPoint = gp_Pnt( aSecondX, aSecondY, aSecondZ );
-        anAngle->CenterPoint = gp_Pnt( aCenterX, aCenterY, aCenterZ );
-
-        aRecord = RecordPtr( anAngle );
-        break;
-      }
+      case DimensionType_Length   : aRecord = RecordPtr( new Length ); break;
+      case DimensionType_Diameter : aRecord = RecordPtr( new Diameter ); break;
+      case DimensionType_Angle    : aRecord = RecordPtr( new Angle ); break;
     }
+    aRecord->FromValues(it, aPacked);
 
     myVisibility.append( isVisible );
     myNames.append( aName );
@@ -815,115 +1106,8 @@ void GEOMGUI_DimensionProperty::SaveToAttribute( SalomeApp_Study *theStudy,
     // type [1]
     aPacked.push_back( (double) aRecord->Type() );
 
-    switch ( aRecord->Type() )
-    {
-      case DimensionType_Length:
-      {
-        Length* aProps = aRecord->AsLength();
-
-        // custom plane [2,3,4,5]
-        Standard_Real A, B, C, D;
-        aProps->Plane.Coefficients( A, B, C, D );
-        aPacked.push_back( (double) A );
-        aPacked.push_back( (double) B );
-        aPacked.push_back( (double) C );
-        aPacked.push_back( (double) D );
-
-        // flyout size [6]
-        aPacked.push_back( (double) aProps->Flyout );
-
-        // text flags [7,8]
-        aPacked.push_back( (double) aProps->TextHPos );
-        aPacked.push_back( (double) aProps->TextVPos );
-
-        // arrow flags [9]
-        aPacked.push_back( (double) aProps->ArrowPos );
-
-        // point 1 [10,11,12]
-        aPacked.push_back( (double) aProps->FirstPoint.X() );
-        aPacked.push_back( (double) aProps->FirstPoint.Y() );
-        aPacked.push_back( (double) aProps->FirstPoint.Z() );
-
-        // point 2 [13,14,15]
-        aPacked.push_back( (double) aProps->SecondPoint.X() );
-        aPacked.push_back( (double) aProps->SecondPoint.Y() );
-        aPacked.push_back( (double) aProps->SecondPoint.Z() );
-        break;
-      }
-
-      case DimensionType_Diameter:
-      {
-        Diameter* aProps = aRecord->AsDiameter();
-
-        // custom plane [2,3,4,5]
-        Standard_Real A, B, C, D;
-        aProps->Plane.Coefficients( A, B, C, D );
-        aPacked.push_back( (double) A );
-        aPacked.push_back( (double) B );
-        aPacked.push_back( (double) C );
-        aPacked.push_back( (double) D );
-
-        // flyout size [6]
-        aPacked.push_back( (double) aProps->Flyout );
-
-        // text flags [7,8]
-        aPacked.push_back( (double) aProps->TextHPos );
-        aPacked.push_back( (double) aProps->TextVPos );
-
-        // arrow flags [9]
-        aPacked.push_back( (double) aProps->ArrowPos );
-
-        // circle location [10,11,12]
-        aPacked.push_back( (double) aProps->Circle.Location().X() );
-        aPacked.push_back( (double) aProps->Circle.Location().Y() );
-        aPacked.push_back( (double) aProps->Circle.Location().Z() );
-
-        // circle normal [13,14,15]
-        aPacked.push_back( (double) aProps->Circle.Axis().Direction().X() );
-        aPacked.push_back( (double) aProps->Circle.Axis().Direction().Y() );
-        aPacked.push_back( (double) aProps->Circle.Axis().Direction().Z() );
-
-        // x-direction [16,17,18]
-        aPacked.push_back( (double) aProps->Circle.XAxis().Direction().X() );
-        aPacked.push_back( (double) aProps->Circle.XAxis().Direction().Y() );
-        aPacked.push_back( (double) aProps->Circle.XAxis().Direction().Z() );
-
-        // radius [19]
-        aPacked.push_back( (double) aProps->Circle.Radius() );
-        break;
-      }
-
-      case DimensionType_Angle:
-      {
-        Angle* aProps = aRecord->AsAngle();
-
-        // flyout [2]
-        aPacked.push_back( (double) aProps->Flyout );
-
-        // text flags [3,4]
-        aPacked.push_back( (double) aProps->TextHPos );
-        aPacked.push_back( (double) aProps->TextVPos );
-
-        // arrow flags [5]
-        aPacked.push_back( (double) aProps->ArrowPos );
-
-        // point 1 [6,7,8]
-        aPacked.push_back( (double) aProps->FirstPoint.X() );
-        aPacked.push_back( (double) aProps->FirstPoint.Y() );
-        aPacked.push_back( (double) aProps->FirstPoint.Z() );
-
-        // point 2 [9,10,11]
-        aPacked.push_back( (double) aProps->SecondPoint.X() );
-        aPacked.push_back( (double) aProps->SecondPoint.Y() );
-        aPacked.push_back( (double) aProps->SecondPoint.Z() );
-
-        // center [12,13,14]
-        aPacked.push_back( (double) aProps->CenterPoint.X() );
-        aPacked.push_back( (double) aProps->CenterPoint.Y() );
-        aPacked.push_back( (double) aProps->CenterPoint.Z() );
-        break;
-      }
-    }
+    // values
+    aRecord->ToValues( aPacked );
 
     aRecordsAtt->AddColumn( aPacked );
     aRecordsAtt->SetColumnTitle( it + 1, aName.toStdString() );

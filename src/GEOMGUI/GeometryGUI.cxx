@@ -34,6 +34,7 @@
 #include "GEOMGUI_OCCSelector.h"
 #include "GEOMGUI_Selection.h"
 #include "GEOMGUI_CreationInfoWdg.h"
+#include "GEOMGUI_DimensionProperty.h"
 #include "GEOM_Constants.h"
 #include "GEOM_Displayer.h"
 #include "GEOM_AISShape.hxx"
@@ -87,6 +88,7 @@
 
 // External includes
 #include <QDir>
+#include <QSet>
 #include <QMenu>
 #include <QTime>
 #include <QAction>
@@ -2727,6 +2729,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
                                                              savePoint);
   _PTR(IParameters) ip = ClientFactory::getIParameters(ap);
 
+  QSet<QString> anEntriesToStoreShared;
   QList<SUIT_ViewManager*> lst;
   QList<SUIT_ViewManager*>::Iterator it;
 
@@ -2757,6 +2760,13 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         _PTR(GenericAttribute) anAttr;
         if (!obj->FindAttribute(anAttr, "AttributeIOR"))
           continue;
+
+        // remember entry of object to store shared GEOM properties
+        // (e.g. dimension properties).
+        if ( vType == OCCViewer_Viewer::Type() )
+        {
+          anEntriesToStoreShared.insert( o_it.key() );
+        }
 
         QString param, occParam = vType;
         occParam += GEOM::sectionSeparator();
@@ -2843,6 +2853,26 @@ void GeometryGUI::storeVisualParameters (int savePoint)
       } // object iterator
     } // for (views)
   } // for (viewManagers)
+
+  // store dimension attributes of objects:
+  // since the displayed object always persists in property map, we remember the object entries
+  // on the passes when we store viewer related properties - to avoid extra iterations on GEOM component tree.
+  QString aDimensionParam = OCCViewer_Viewer::Type() + GEOM::sectionSeparator() + GEOM::propertyName( GEOM::Dimensions );
+  QSet<QString>::ConstIterator aEntryIt = anEntriesToStoreShared.constBegin();
+  for ( ; aEntryIt != anEntriesToStoreShared.constEnd(); ++aEntryIt )
+  {
+    std::string aStudyEntry = (*aEntryIt).toLatin1().data();
+    std::string aStoreEntry = ip->encodeEntry( aStudyEntry, componentName);
+
+    GEOMGUI_DimensionProperty aDimensions( appStudy, aStudyEntry );
+
+    if ( aDimensions.GetNumber() == 0 )
+    {
+      continue;
+    }
+
+    ip->setParameter( aStoreEntry, aDimensionParam.toStdString(), ((QString)aDimensions).toLatin1().data() );
+  }
 }
 
 /*!
@@ -2899,12 +2929,36 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
     for (; namesIt != paramNames.end(); ++namesIt, ++valuesIt)
     {
-      // visual parameters are stored in strings as follows: ViewerType_ViewIndex_ParamName.
+      // visual parameters are stored in strings as follows: 
+      //   1) ViewerType_ViewIndex_ParamName
+      //   2) ViewerType_ParamName (shared for GEOM module)
       // '_' is used as separator and should not be used in viewer type or parameter names.
       QStringList lst = QString((*namesIt).c_str()).split( GEOM::sectionSeparator(), QString::SkipEmptyParts);
-      if (lst.size() != 3)
-        continue;
 
+      bool isShared = lst.size() == 2;
+      bool isViewer = lst.size() == 3;
+      if ( !isShared && !isViewer )
+      {
+        continue;
+      }
+
+      // shared visual parameters
+      if ( isShared )
+      {
+        QString aParamNameStr( lst[1] );
+        QString aValuesStr( (*valuesIt).c_str() );
+
+        // shared dimension properties are stored as attribute
+        if ( aParamNameStr == GEOM::propertyName( GEOM::Dimensions ) )
+        {
+          GEOMGUI_DimensionProperty aDimensionProp( aValuesStr );
+          aDimensionProp.SaveToAttribute( appStudy, entry.toLatin1().data() );
+        }
+
+        continue;
+      }
+
+      // per view visual parameters
       viewerTypStr = lst[0];
       viewIndexStr = lst[1];
       QString paramNameStr = lst[2];
