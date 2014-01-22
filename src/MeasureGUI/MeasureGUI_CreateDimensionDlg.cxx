@@ -134,6 +134,8 @@ MeasureGUI_CreateDimensionDlg::MeasureGUI_CreateDimensionDlg( const GEOM::GeomOb
   myAngleArgs   ->setVisible( false );
   myLengthArgs  ->setVisible( true );
 
+  myRBGroup->button( TypeButtonID_Length )->click();
+
   Init();
 
   setHelpFileName("add_dimension_page.html");
@@ -453,8 +455,6 @@ void MeasureGUI_CreateDimensionDlg::Init()
   myDiameterArgs->Reset();
   myLengthArgs->Reset();
   myAngleArgs->Reset();
-
-  myRBGroup->button( TypeButtonID_Length )->click();
 }
 
 //=================================================================================
