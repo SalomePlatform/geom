@@ -495,21 +495,6 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
         break;
       }
 
-
-      // get arguments of closed torus
-      if ( aSurf.GetType() == GeomAbs_Torus )
-      {
-        if ( !aSurf.IsUClosed() || !aSurf.IsVClosed() )
-        {
-          return NULL;
-        }
-
-        gp_Torus aTorus = aSurf.Torus();
-        gp_Ax2 anAx2 = aTorus.Position().Ax2();
-        aCircle = new Geom_Circle( anAx2, aTorus.MinorRadius() );
-        break;
-      }
-
       // get arguments of closed cone
       if ( aSurf.GetType() == GeomAbs_Cone )
       {
@@ -528,9 +513,14 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
         break;
       }
 
-      // get arguments of closed/opened cylinder
-      if ( aSurf.GetType() == GeomAbs_Cylinder )
+      // get arguments of closed torus or cylinder
+      if ( aSurf.GetType() == GeomAbs_Torus || aSurf.GetType() == GeomAbs_Cylinder )
       {
+        if ( !aSurf.IsUClosed() || !aSurf.IsVClosed() )
+        {
+          return NULL;
+        }
+
         Handle(Geom_Surface) aBasisSurface = Handle(Geom_Surface)::DownCast(
           aSurf.Surface().Surface()->Transformed( aSurf.Trsf() ) );
 
@@ -806,6 +796,8 @@ Handle(AIS_AngleDimension) MeasureGUI_DimensionCreateTool::AngleByThreePoints( c
   {
     return NULL;
   }
+
+  aDimension->SetFlyout( Settings.DefaultFlyout );
 
   return aDimension;
 }
