@@ -297,11 +297,29 @@ void MeasureGUI_CreateDimensionDlg::SelectionIntoArgument()
     return;
   }
 
+  GEOM::GeomObjPtr aSelected = getSelected( mySelectionModes );
+  if ( aSelected.isNull() )
+  {
+    ActiveArgs()->SelectionIntoArguments( GEOM::GeomObjPtr() );
+    return;
+  }
+
+  GEOM::GeomObjPtr aSelectedMain = 
+    !aSelected->IsMainShape() 
+      ? aSelected->GetMainShape() 
+      : GEOM::GeomObjPtr();
+
+  if ( myParentObj != aSelected && myParentObj != aSelectedMain )
+  {
+    ActiveArgs()->SelectionIntoArguments( GEOM::GeomObjPtr() );
+    return;
+  }
+
   StopLocalEditing();
 
   erasePreview();
 
-  ActiveArgs()->SelectionIntoArguments( getSelected( mySelectionModes ) );
+  ActiveArgs()->SelectionIntoArguments( aSelected );
 }
 
 //=================================================================================

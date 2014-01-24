@@ -477,31 +477,46 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
 
       BRepAdaptor_Surface aSurf( aMeasuredFace );
 
+      Standard_Real aUmin = aSurf.FirstUParameter();
+      Standard_Real aUmax = aSurf.LastUParameter();
       Standard_Real aVmin = aSurf.FirstVParameter();
       Standard_Real aVmax = aSurf.LastVParameter();
 
-      // get arguments of closed sphere
+      // get arguments of sphere (the sphere should not be cutted at v-center)
       if ( aSurf.GetType() == GeomAbs_Sphere )
       {
-        if ( !aSurf.IsUClosed() || !aSurf.IsVClosed() )
+        if ( aVmax <= Precision::PConfusion() || aVmin >= Precision::PConfusion() )
         {
           return NULL;
         }
 
-        // take circle in XOY plane from sphere
-        gp_Sphere aSphere = aSurf.Sphere();
-        gp_Ax2 anAx2 = gp_Ax2( aSphere.Location(), gp::DZ() );
-        aCircle = new Geom_Circle( anAx2, aSphere.Radius() );
+        Handle(Geom_Surface) aBasisSurface = Handle(Geom_Surface)::DownCast(
+          aSurf.Surface().Surface()->Transformed( aSurf.Trsf() ) );
+
+        Handle(Geom_Curve) aCurve = aBasisSurface->VIso( 0.0 );
+
+        if ( aCurve->IsKind( STANDARD_TYPE( Geom_Circle ) ) )
+        {
+          aPmin = aUmin;
+          aPmax = aUmax;
+          aCircle = Handle(Geom_Circle)::DownCast( aCurve );
+        }
+        else if (  aCurve->IsKind( STANDARD_TYPE( Geom_TrimmedCurve ) ) )
+        {
+          Handle(Geom_TrimmedCurve) aTrimmedCurve = Handle(Geom_TrimmedCurve)::DownCast( aCurve );
+          aPmin = aTrimmedCurve->FirstParameter();
+          aPmax = aTrimmedCurve->LastParameter();
+
+          aCircle = Handle(Geom_Circle)::DownCast( aTrimmedCurve );
+        }
         break;
       }
 
-      // get arguments of closed cone
+      // get arguments of cone
       if ( aSurf.GetType() == GeomAbs_Cone )
       {
-        if ( !aSurf.IsUClosed() || !aSurf.IsVClosed() )
-        {
-          return NULL;
-        }
+        aPmin = aUmin;
+        aPmax = aUmax;
 
         gp_Cone aCone = aSurf.Cone();
         gp_Ax2 anAx2 = aCone.Position().Ax2();
@@ -516,11 +531,6 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
       // get arguments of closed torus or cylinder
       if ( aSurf.GetType() == GeomAbs_Torus || aSurf.GetType() == GeomAbs_Cylinder )
       {
-        if ( !aSurf.IsUClosed() || !aSurf.IsVClosed() )
-        {
-          return NULL;
-        }
-
         Handle(Geom_Surface) aBasisSurface = Handle(Geom_Surface)::DownCast(
           aSurf.Surface().Surface()->Transformed( aSurf.Trsf() ) );
 
@@ -528,8 +538,8 @@ Handle(AIS_DiameterDimension) MeasureGUI_DimensionCreateTool::Diameter( const GE
 
         if ( aCurve->IsKind( STANDARD_TYPE( Geom_Circle ) ) )
         {
-          aPmin = aSurf.FirstUParameter();
-          aPmax = aSurf.LastUParameter();
+          aPmin = aUmin;
+          aPmax = aUmax;
           aCircle = Handle(Geom_Circle)::DownCast( aCurve );
         }
         else if (  aCurve->IsKind( STANDARD_TYPE( Geom_TrimmedCurve ) ) )
