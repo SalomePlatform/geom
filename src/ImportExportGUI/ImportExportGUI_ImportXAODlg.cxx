@@ -101,7 +101,7 @@ ImportExportGUI_ImportXAODlg::ImportExportGUI_ImportXAODlg(GeometryGUI* geometry
     layout->addWidget(gbxExport);
 
     // set help
-    setHelpFileName("create_importxao_page.html");
+    setHelpFileName("xao_format_page.html");
 
     Init();
 }

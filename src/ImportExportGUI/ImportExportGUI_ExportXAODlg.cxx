@@ -151,7 +151,7 @@ ImportExportGUI_ExportXAODlg::ImportExportGUI_ExportXAODlg(GeometryGUI* geometry
     layout->addWidget(gbxFilter);
 
     // set help
-    setHelpFileName("create_exportxao_page.html");
+    setHelpFileName("xao_format_page.html");
 
     Init();
 }
