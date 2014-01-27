@@ -54,34 +54,32 @@ BiNormal direction to perform the extrusion.
 
 \image html pipebinormalsn.png "Extrusion of a face with BiNormal parameter"
 
-\n Third, to create a shape by extrusion of the profile shapes along the path shape, 
-you can define the <b>Base Object</b>s (edges, planar wires, faces or shells), which will be extruded, 
-the <b>Locations</b> (vertices that specify locations on the <b>Path Object</b> corresponding to the
-specified <b>Base Object</b>s; list of the <b>Locations</b> should be either empty or of the same
-length as list of <b>Base Object</b>s) and the <b>Path Object</b> (edge or wire) along which the
-<b>Base Object</b> will be extruded.
+\n Thirdly, it is possible to additionally select profiles of the pipe object to be built. For this, you can define the following parameters:
+- <b>Base Object</b> or a list of objects (edges, planar wires, faces or shells), which will be extruded;
+- <b>Locations</b> - a vertex or a list of vertices that specify the locations of extruded <b>Base Objects</b> on the resulting <b>Path Object</b>. The number of Base Objects should be equal to the number of <b>Locations</b>.
+- <b>Path Object</b> (edge or wire), along which the <b>Base Object</b> will be extruded.
 
 Additional controls:
-- <b>With contact</b> checkbox - if checked, the section is translated to be in contact with the spine.
-- <b>With correction</b> checkbox - if checked, the section is rotated to be orthogonal to the spine
+- If <b>With contact</b> is checked, the section is translated in contact with the spine.
+- If <b>With correction</b> is checked, the section is rotated to be orthogonal to the spine
 tangent in the corresponding point.
 
-\n The \b Result of the operation will be a GEOM_Object (shell or solid).
+\n The \b Result of the operation will be a shell or a solid.
 
 \n <b>TUI Command:</b> <em>geompy.MakePipeWithDifferentSections(baseShape, locations, pathShape, withContact, withCorrection)</em>
 \n <b>Arguments:</b> Name + list of shapes (edges, planar wires, faces or shells) serving as base object + 
 list of locations (vertices) on the path corresponding specified list of the shapes + 
 1 shape (edge or wire) for definition of the path + 
-2 bool parameters (withContact, withCorrection).
+2 Boolean parameters (withContact, withCorrection).
 \n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 \image html pipe3.png
 
 <b>Example:</b>
 
-\image html pipe3_init.png "Initial objects"
+\image html pipe3_init.png "Base objects and Location vertices"
 
-\image html pipe3_init1.png "Extrusion of the profile shapes along the path shape"
+\image html pipe3_res.png "Extrusion of the profile shapes along the path shape"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_pipe "Complex Geometric Objects".
