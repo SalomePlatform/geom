@@ -360,22 +360,25 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
     return;
   }
 
-  GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aCurItem];
-  GEOM::ListOfLong aObjLst = aErr.incriminated;
-  QStringList aSubShapeList;
-  TopoDS_Shape aSelShape;
-  if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) ) {
-    TopTools_IndexedMapOfShape anIndices;
-    TopExp::MapShapes( aSelShape, anIndices );
-    for ( int i = 0, n = aObjLst.length(); i < n; i++ ) {
-      TopoDS_Shape aSubShape = anIndices.FindKey( aObjLst[i] );
-      QString aType = GEOMBase::GetShapeTypeString( aSubShape );
-      if ( !aType.isEmpty() )
-        aSubShapeList.append( QString( "%1_%2" ).arg( aType ).arg( aObjLst[i] ) );
-    }
-  }
   myGrp->ListBox2->clear();
-  myGrp->ListBox2->addItems( aSubShapeList );
+
+  if (aCurItem < aErrs.length()) {
+    GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aCurItem];
+    GEOM::ListOfLong aObjLst = aErr.incriminated;
+    QStringList aSubShapeList;
+    TopoDS_Shape aSelShape;
+    if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) ) {
+      TopTools_IndexedMapOfShape anIndices;
+      TopExp::MapShapes( aSelShape, anIndices );
+      for ( int i = 0, n = aObjLst.length(); i < n; i++ ) {
+        TopoDS_Shape aSubShape = anIndices.FindKey( aObjLst[i] );
+        QString aType = GEOMBase::GetShapeTypeString( aSubShape );
+        if ( !aType.isEmpty() )
+          aSubShapeList.append( QString( "%1_%2" ).arg( aType ).arg( aObjLst[i] ) );
+      }
+    }
+    myGrp->ListBox2->addItems( aSubShapeList );
+  }
 }
 
 //=================================================================================
