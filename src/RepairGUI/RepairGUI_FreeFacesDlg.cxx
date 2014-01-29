@@ -30,14 +30,18 @@
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Tools.h>
+#include <SalomeApp_Study.h>
 
 #include <SUIT_MessageBox.h>
 #include <SUIT_Session.h>
 #include <SUIT_OverrideCursor.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_ViewManager.h>
 
 #include <GEOMImpl_Types.hxx>
+#include <GEOM_Constants.h>
 
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TColStd_MapOfInteger.hxx>
@@ -325,11 +329,33 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
     TopExp::MapShapes( aSelShape, anIndices);
     SALOME_Prs* aPrs = 0;
     
+    //Get object trancparency and set it to preview
+    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+    double transparency = 1.0;
+    if( app ) {
+      SUIT_ViewWindow* window = app->desktop( )->activeWindow( );
+      if( window && window->getViewManager() ) {
+	if ( app ) {
+	  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+	  if( aStudy ) {
+	    int aMgrId = window->getViewManager()->getGlobalId();
+	    CORBA::String_var aMainEntry = myObj->GetStudyEntry();
+	    QString anEntry = aMainEntry.in();
+	    QVariant v = aStudy->getObjectProperty( aMgrId , anEntry , GEOM::propertyName( GEOM::Transparency ) , transparency );
+	    if( v.canConvert( QVariant::Double ) ) {
+	      transparency = v.toDouble();
+	    }
+	  }
+	}
+      }
+    }
+    
     for ( int i = 0, n = aFaceLst->length(); i < n; i++ ) {
       aFace = anIndices.FindKey( aFaceLst[i] );
       try {
         getDisplayer()->SetColor( Quantity_NOC_RED );
         getDisplayer()->SetToActivate( false );
+	getDisplayer()->SetTransparency( transparency );
         aPrs = !aFace.IsNull() ? getDisplayer()->BuildPrs( aFace ) : 0;
         if ( aPrs )
           displayPreview( aPrs, true );

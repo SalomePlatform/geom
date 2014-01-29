@@ -138,6 +138,11 @@ public:
   void          UnsetColor();
   int           GetColor  () const;
   bool          HasColor  () const;
+
+  void          SetTransparency  ( const double );
+  void          UnsetTransparency();
+  double        GetTransparency  () const;
+  bool          HasTransparency  () const;
   
   /* Set texture for shape displaying. */
   void          SetTexture  ( const std::string& );
@@ -285,6 +290,7 @@ protected:
   bool                             myHasDisplayMode;
   Aspect_TypeOfMarker              myTypeOfMarker;
   double                           myScaleOfMarker;
+  double                           myTransparency;
 
 private:
   SalomeApp_Application* myApp;

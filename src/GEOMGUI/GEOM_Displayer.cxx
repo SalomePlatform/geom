@@ -355,7 +355,7 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
 
   myWidth = -1;
   myType = -1;
-
+  myTransparency = -1.0;
   myToActivate = true;
   // This parameter is used for activisation/deactivisation of objects to be displayed
 
@@ -702,7 +702,11 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->SetDisplayVectors( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
 
   // set transparency
-  AISShape->SetTransparency( propMap.value( GEOM::propertyName( GEOM::Transparency ) ).toDouble() );
+  if( HasTransparency() ) {
+    AISShape->SetTransparency( GetTransparency() );
+  } else {
+    AISShape->SetTransparency( propMap.value( GEOM::propertyName( GEOM::Transparency ) ).toDouble() );
+  }
 
   // set iso properties
   int uIsos = propMap.value( GEOM::propertyName( GEOM::NbIsos ) ).toString().split( GEOM::subSectionSeparator() )[0].toInt();
@@ -941,7 +945,11 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
   actor->SetEdgesInShadingColor( c.redF(), c.greenF(), c.blueF() );
 
   // set opacity
-  actor->SetOpacity( 1.0 - propMap.value( GEOM::propertyName( GEOM::Transparency ) ).toDouble() );
+  if( HasTransparency() ) {
+    actor->SetOpacity( 1.0 - GetTransparency() );
+  } else {
+    actor->SetOpacity( 1.0 - propMap.value( GEOM::propertyName( GEOM::Transparency ) ).toDouble() );
+  }
 
   // set line width
   actor->SetWidth( HasWidth() ?
@@ -1857,6 +1865,33 @@ void GEOM_Displayer::UnsetColor()
   QColor col = resMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
   myShadingColor = SalomeApp_Tools::color( col );
 }
+
+//=================================================================
+/*!
+ *  GEOM_Displayer::SetTransparency
+ *  Set transparency for shape displaying.
+ */
+//=================================================================
+void GEOM_Displayer::SetTransparency( const double transparency )
+{
+  myTransparency = transparency;
+}
+
+double GEOM_Displayer::GetTransparency() const
+{
+  return myTransparency;
+}
+
+bool GEOM_Displayer::HasTransparency() const
+{
+  return myTransparency != -1.0;
+}
+
+void GEOM_Displayer::UnsetTransparency()
+{
+  myTransparency = -1.0;
+}
+
 
 //=================================================================
 /*!
