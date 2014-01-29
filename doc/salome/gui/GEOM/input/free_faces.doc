@@ -2,12 +2,8 @@
 
 \page free_faces_page Check Free Faces
 
-Highlights all free faces of a given shape. A free
-face is a face which is not shared between two objects of the shape.
-
-\note This functionality works only in VTK viewer.
-
-\b Result: a list of IDs of all free faces, containing in the shape.
+Emphasizes by the red color all free faces of a given shape in the 3D Viewer.
+A free face is a face which is not shared between several sub-shapes of the shape.
 
 <b>TUI Command:</b> <em>GetFreeFacesIDs(Shape),</em> where \em Shape is
 a shape to be checked.
