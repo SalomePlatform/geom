@@ -90,13 +90,7 @@
 static TCollection_AsciiString GetImportFormatName
         (const TCollection_AsciiString& theFormatName)
 {
-  Standard_Integer aLastInd = 4;
-
-  if (theFormatName.Search("STL") == 1) {
-    aLastInd = 3;
-  }
-
-  return theFormatName.SubString(1, aLastInd);
+  return theFormatName.Token("_");
 }
 
 //=============================================================================
