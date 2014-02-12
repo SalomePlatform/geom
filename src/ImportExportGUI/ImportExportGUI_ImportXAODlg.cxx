@@ -254,7 +254,7 @@ bool ImportExportGUI_ImportXAODlg::execute()
     GEOM::ListOfFields_var fields;
 
     GEOM::GEOM_IInsertOperations_var ieOp = GEOM::GEOM_IInsertOperations::_narrow(getOperation());
-    res = ieOp->ImportXAO(fileName.toStdString().c_str(), shape, subShapes, groups, fields);
+    res = ieOp->ImportXAO(fileName.toUtf8().constData(), shape, subShapes, groups, fields);
 
     if (!shape->_is_nil())
     {

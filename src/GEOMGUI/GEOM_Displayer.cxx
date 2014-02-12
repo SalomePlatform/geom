@@ -751,7 +751,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
     // Texture from properties
     QString aTexture = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
     if ( !aTexture.isEmpty() ) {
-       AISShape->SetTextureFileName( TCollection_AsciiString( aTexture.toStdString().c_str() ) );
+      AISShape->SetTextureFileName( TCollection_AsciiString( aTexture.toUtf8().constData() ) );
        textureAdded = true;
     }
   }

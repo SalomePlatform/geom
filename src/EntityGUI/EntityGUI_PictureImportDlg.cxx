@@ -193,7 +193,8 @@ bool EntityGUI_PictureImportDlg::execute( ObjectList& objects )
   
   GEOM::GEOM_Object_var aFace = aBlocksOperations->MakeQuad4Vertices(P1,P2,P3,P4);
   getDisplayer()->SetDisplayMode(3);
-  getDisplayer()->SetTexture(theImgFileName.toStdString());
+  const QByteArray asc = theImgFileName.toUtf8();
+  getDisplayer()->SetTexture( std::string( asc.constData(), asc.length() ) );
   
   if ( !aFace->_is_nil() )
   {
