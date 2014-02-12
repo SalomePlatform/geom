@@ -2570,8 +2570,8 @@ QList<QVariant> GEOM_Displayer::groupFieldData( const QList<QVariant>& theFieldS
         }
         else
         {
-          if( aVariant.type() == QVariant::Int )
-            aValue = double( aVariant.toInt() );
+          if( aVariant.type() == QVariant::LongLong )
+            aValue = double( aVariant.toLongLong() );
           else if( aVariant.type() == QVariant::Double )
             aValue = aVariant.toDouble();
           aNorm += aValue * aValue;
