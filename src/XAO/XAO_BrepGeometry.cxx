@@ -53,10 +53,7 @@ const std::string BrepGeometry::getShapeString()
 {
     std::ostringstream streamShape;
     BRepTools::Write(m_shape, streamShape);
-    std::string data = streamShape.str();
-    char* res = new char[data.size()];
-    strcpy(res, data.c_str());
-    return res;
+    return streamShape.str();
 }
 
 void BrepGeometry::setShapeString(const std::string& shape)
