@@ -23,6 +23,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_OverrideCursor.h>
+#include <SUIT_FileDlg.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Tools.h>
@@ -339,17 +340,11 @@ void ImportExportGUI_ExportXAODlg::SetEditCurrentArgument()
 //=================================================================================
 void ImportExportGUI_ExportXAODlg::btnFileSelectClicked()
 {
-    QFileDialog dlg(this, tr("GEOM_SELECT_EXPORT_XAO") );
-    dlg.setLabelText( QFileDialog::Accept, tr("EXPORT_DLG_ACCEPT") );
-    dlg.setNameFilter( tr("XAO_FILES") );
-    if (dlg.exec())
-    {
-        QStringList selFiles = dlg.selectedFiles();
-        if (selFiles.length() > 0 && !selFiles[0].isEmpty())
-        {
-            ledFileName->setText(selFiles[0]);
-        }
-    }
+  QString file = SUIT_FileDlg::getFileName(this, ledFileName->text(), 
+                                           tr("XAO_FILES"), 
+                                           tr("GEOM_SELECT_EXPORT_XAO"), false);
+  if ( !file.isEmpty() )
+    ledFileName->setText( file );
 }
 
 //=================================================================================

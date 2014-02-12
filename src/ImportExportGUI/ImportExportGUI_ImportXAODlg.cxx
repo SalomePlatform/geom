@@ -24,6 +24,7 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_OverrideCursor.h>
+#include <SUIT_FileDlg.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
@@ -191,12 +192,11 @@ bool ImportExportGUI_ImportXAODlg::ClickOnApply()
 //=================================================================================
 void ImportExportGUI_ImportXAODlg::btnFileSelectClicked()
 {
-    QString selFile = QFileDialog::getOpenFileName(this, tr("GEOM_SELECT_EXPORT_XAO"),
-                                                   QString(), tr("XAO_FILES"));
-    if (!selFile.isEmpty())
-    {
-        ledFileName->setText(selFile);
-    }
+  QString file = SUIT_FileDlg::getFileName(this, ledFileName->text(), 
+                                           tr("XAO_FILES"), 
+                                           tr("GEOM_SELECT_IMPORT_XAO"));
+  if ( !file.isEmpty() )
+    ledFileName->setText( file );
 }
 
 //=================================================================================

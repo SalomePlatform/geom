@@ -5098,6 +5098,10 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Export XAO</translation>
     </message>
     <message>
+        <source>GEOM_SELECT_IMPORT_XAO</source>
+        <translation>Import from XAO</translation>
+    </message>
+    <message>
         <source>GEOM_SELECT_EXPORT_XAO</source>
         <translation>Export to XAO</translation>
     </message>

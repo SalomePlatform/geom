@@ -5098,6 +5098,10 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <translation>Export XAO</translation>
     </message>
     <message>
+        <source>GEOM_SELECT_IMPORT_XAO</source>
+        <translation type="unfinished">Import from XAO</translation>
+    </message>
+    <message>
         <source>GEOM_SELECT_EXPORT_XAO</source>
         <translation>Export XAO</translation>
     </message>
