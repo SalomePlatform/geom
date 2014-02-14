@@ -106,6 +106,7 @@ SET(MeasureGUI_HEADERS
 
 # header files / to be processed by moc
 SET(_moc_HEADERS
+  MeasureGUI.h
   MeasureGUI_Widgets.h
   MeasureGUI_Skeleton.h
   MeasureGUI_PropertiesDlg.h

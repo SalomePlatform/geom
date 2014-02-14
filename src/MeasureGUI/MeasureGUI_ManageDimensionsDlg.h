@@ -36,6 +36,7 @@ class DlgRef_1Sel;
 class QTreeWidget;
 class QPushButton;
 class SOCC_Viewer;
+class MeasureGUI_CreateDimensionDlg;
 
 //=================================================================================
 // class    : MeasureGUI_ManageDimensionsDlg
@@ -81,6 +82,8 @@ protected slots:
   void                            OnFinish();
   void                            OnActivateThisDialog();
   void                            OnDeactivateThisDialog();
+  void                            OnDimensionAdded();
+
 
 /* Utils */
 private:
@@ -119,6 +122,7 @@ private:
   GEOMGUI_DimensionProperty       mySavedPropertyState;
   SOCC_Viewer*                    myOperatedViewer;
   Selection                       myCurrentSelection;
+  MeasureGUI_CreateDimensionDlg*  myCreateDialog;
 };
 
 #endif

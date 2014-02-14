@@ -390,7 +390,9 @@ bool MeasureGUI_CreateDimensionDlg::ClickOnApply()
 
   if ( !isApplyAndClose() )
   {
+    emit applyClicked();
     Init();
+    ConstructTypeChanged( getConstructorId() );
   }
 
   return true;

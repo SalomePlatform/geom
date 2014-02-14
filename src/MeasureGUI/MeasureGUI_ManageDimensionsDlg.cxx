@@ -67,7 +67,8 @@
 MeasureGUI_ManageDimensionsDlg::MeasureGUI_ManageDimensionsDlg( GeometryGUI* theGUI, QWidget* theParent )
 : GEOMBase_Skeleton( theGUI, theParent ),
   myOperatedViewer( NULL ),
-  myCurrentSelection( Selection_None )
+  myCurrentSelection( Selection_None ),
+  myCreateDialog(0)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
 
@@ -381,20 +382,22 @@ void MeasureGUI_ManageDimensionsDlg::SelectionIntoArgument( const Selection theS
 //=================================================================================
 void MeasureGUI_ManageDimensionsDlg::OnAdd()
 {
-  QWidget* aParent = qobject_cast<QWidget*>( this->parent() );
-
-  this->Suspend();
-
-  MeasureGUI_CreateDimensionDlg* aCreateDlg = new MeasureGUI_CreateDimensionDlg( myEditObject, myGeomGUI, aParent );
-
-  connect( aCreateDlg, SIGNAL( finished( int ) ), this, SLOT( Resume() ) );
-
-  // this is necessary as the GEOMBase_Helper switches selection mode on destruction
-  connect( aCreateDlg, SIGNAL( destroyed( QObject* ) ), this, SLOT( Resume() ) );
-
-  aCreateDlg->updateGeometry();
-  aCreateDlg->resize( aCreateDlg->minimumSizeHint() );
-  aCreateDlg->show();
+  if(!myCreateDialog) {
+    QWidget* aParent = qobject_cast<QWidget*>( this->parent() );
+    this->Suspend();
+    myCreateDialog = new MeasureGUI_CreateDimensionDlg( myEditObject, myGeomGUI, aParent );
+    connect( myCreateDialog, SIGNAL( finished( int ) ), this, SLOT( Resume() ) );
+    // this is necessary as the GEOMBase_Helper switches selection mode on destruction
+    connect( myCreateDialog, SIGNAL( destroyed( QObject* ) ), this, SLOT( Resume() ) );
+    connect( myCreateDialog, SIGNAL( applyClicked() ), this, SLOT( OnDimensionAdded() ) );
+    myCreateDialog->updateGeometry();
+    myCreateDialog->resize( myCreateDialog->minimumSizeHint() );
+    myCreateDialog->show();
+  } else {
+    myCreateDialog->activateWindow();
+  }
+  myObjectSelector->setEnabled(false);
+  myDimensionView->setEnabled(false);
 }
 
 //=================================================================================
@@ -672,7 +675,6 @@ void MeasureGUI_ManageDimensionsDlg::OnInteractionFinished( Handle(AIS_Interacti
 void MeasureGUI_ManageDimensionsDlg::Suspend()
 {
   StopSelection();
-  hide();
 }
 
 //=================================================================================
@@ -681,11 +683,27 @@ void MeasureGUI_ManageDimensionsDlg::Suspend()
 //=================================================================================
 void MeasureGUI_ManageDimensionsDlg::Resume()
 {
-  this->show();
+  if(myCreateDialog){
+    myCreateDialog = 0;
+    myObjectSelector->setEnabled(true);
+    myDimensionView->setEnabled(true);
+  }
+
   if ( !myEditObject.isNull() )
   {
     PopulateList();
     StartSelection( Selection_Dimension );
+  }
+}
+
+//=================================================================================
+// function : Suspend
+// purpose  :
+//=================================================================================
+void MeasureGUI_ManageDimensionsDlg::OnDimensionAdded() {
+  if ( !myEditObject.isNull() )
+  {
+    PopulateList();
   }
 }
 
@@ -712,7 +730,12 @@ void MeasureGUI_ManageDimensionsDlg::ClickOnCancel()
   {
     return;
   }
-
+  
+  if( myCreateDialog ) {
+    myCreateDialog->close();
+    myCreateDialog = 0;
+  }
+  
   GEOMBase_Skeleton::ClickOnCancel();
 }
 

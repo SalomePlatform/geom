@@ -83,6 +83,10 @@ public:
 public:
   void                                Init();
 
+
+signals:
+  void                                applyClicked();
+
 /* User event logics */
 protected slots:
   void                                ConstructTypeChanged( int theType );

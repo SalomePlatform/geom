@@ -61,6 +61,7 @@
 //=======================================================================
 MeasureGUI::MeasureGUI( GeometryGUI* parent ) : GEOMGUI( parent )
 {
+  myManageDimensionDlg = 0;
 }
 
 //=======================================================================
@@ -128,7 +129,12 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     dlg = new MeasureGUI_PointDlg( getGeometryGUI(), parent );
     break; // POINT COORDINATES
   case GEOMOp::OpManageDimensions:
-    dlg = new MeasureGUI_ManageDimensionsDlg( getGeometryGUI(), parent );
+    if( !myManageDimensionDlg ) {
+      dlg = new MeasureGUI_ManageDimensionsDlg( getGeometryGUI(), parent );
+      myManageDimensionDlg = dlg;
+      connect( dlg, SIGNAL( finished(int) ), this, SLOT( onFinished(int) ) );
+    }
+    myManageDimensionDlg->activateWindow();
     break; // MANAGE DIMENSIONS
   case GEOMOp::OpShowAllDimensions:
     ChangeDimensionsVisibility( true );
@@ -197,6 +203,16 @@ void MeasureGUI::ChangeDimensionsVisibility( const bool theIsVisible )
   aDimensions.SaveToAttribute( anActiveStudy, anIObject->getEntry() );
 
   GEOM_Displayer( anActiveStudy ).Redisplay( anIObject, true );
+}
+
+//=======================================================================
+// function : onFinished
+// purpose  : called then "Manage Dimension" dialog is closed.
+//=======================================================================
+void MeasureGUI::onFinished(int /*theResult*/) {
+  if(sender() == myManageDimensionDlg) {
+    myManageDimensionDlg = 0;
+  }
 }
 
 //=====================================================================================

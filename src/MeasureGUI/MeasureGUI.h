@@ -29,6 +29,8 @@
 
 #include <GEOMGUI.h>
 
+class QDialog;
+
 //=================================================================================
 // class    : MeasureGUI
 // purpose  :
@@ -41,6 +43,7 @@ displayPreview(true, false, true, true, w, -1, -1);
 
 class MeasureGUI : public GEOMGUI
 {
+  Q_OBJECT
 public:
   MeasureGUI( GeometryGUI* ); 
   ~MeasureGUI();
@@ -49,6 +52,10 @@ public:
 
   // Show/hide all dimension created for object
   void ChangeDimensionsVisibility( const bool theIsVisible );
+private:
+  QDialog* myManageDimensionDlg;
+private slots:
+  void onFinished(int);
 };
 
 #endif // MEASUREGUI_H
