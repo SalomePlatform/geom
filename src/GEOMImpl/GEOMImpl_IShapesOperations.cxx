@@ -3643,11 +3643,7 @@ static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
 {
   if (theWhereFunction.IsNull() || theWhat.IsNull()) return false;
 
-  if(theWhereIndices.Contains( theWhat ) &&
-    (theWhat.ShapeType() == TopAbs_VERTEX || theWhat.ShapeType() == TopAbs_EDGE ||
-     theWhat.ShapeType() == TopAbs_FACE || theWhat.ShapeType() == TopAbs_SOLID)) {
-    // It is possible to add a shape only next type: vertex, edge, face or solid
-    // to create after a group on these elements
+  if (theWhereIndices.Contains(theWhat)) {
     // entity was not changed by the operation
     Standard_Integer aWhatIndex = theWhereIndices.FindIndex(theWhat);
     theModifiedList.Append(aWhatIndex);
@@ -3702,10 +3698,7 @@ static bool GetInPlaceOfShape (const Handle(GEOM_Function)& theWhereFunction,
             isGood = Standard_True;
             Standard_Integer imod, aModifLen = anIntegerArray->Array()->Length();
             for (imod = 1; imod <= aModifLen; imod++) {
-              TopoDS_Shape curShape = theWhereIndices.FindKey(anIntegerArray->Array()->Value(imod));
-              if(curShape.ShapeType() == TopAbs_VERTEX || curShape.ShapeType() == TopAbs_EDGE ||
-                 curShape.ShapeType() == TopAbs_FACE || curShape.ShapeType() == TopAbs_SOLID)
-                theModifiedList.Append(anIntegerArray->Array()->Value(imod));
+              theModifiedList.Append(anIntegerArray->Array()->Value(imod));
             }
           }
         }
@@ -4290,12 +4283,39 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
     return NULL;
   }
 
-  Handle(TColStd_HArray1OfInteger) aModifiedArray =
-    new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
+  Standard_Integer nbFound = aModifiedList.Extent();
   TColStd_ListIteratorOfListOfInteger anIterModif (aModifiedList);
-  for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
-    aModifiedArray->SetValue(imod, anIterModif.Value());
+  if ( nbFound > 1 )
+  {
+    // remove sub-shapes inappropriate for group creation
+    TopAbs_ShapeEnum subType = TopAbs_SHAPE;
+    while ( anIterModif.More() ) {
+      TopAbs_ShapeEnum type = aWhereIndices( anIterModif.Value() ).ShapeType();
+      bool okForGroup = ( type == TopAbs_VERTEX || type == TopAbs_EDGE ||
+                          type == TopAbs_FACE   || type == TopAbs_SOLID );
+      if ( okForGroup ) {
+        if ( subType == TopAbs_SHAPE )
+          subType = type;
+        else
+          okForGroup = ( subType == type );
+      }
+      if ( okForGroup )
+        anIterModif.Next();
+      else
+        aModifiedList.Remove( anIterModif );
+      nbFound -= ( !okForGroup );
+    }
+    if ( nbFound == 0 ) {
+      SetErrorCode("Error: result found but it's type is inappropriate for group creation.");
+      return NULL;
+    }
   }
+
+  Handle(TColStd_HArray1OfInteger) aModifiedArray =
+    new TColStd_HArray1OfInteger( 1, nbFound );
+  anIterModif.Initialize(aModifiedList);
+  for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++)
+    aModifiedArray->SetValue(imod, anIterModif.Value());
 
   //Add a new object
   Handle(GEOM_Object) aResult = GetEngine()->AddSubShape(theShapeWhere, aModifiedArray);
@@ -4320,7 +4340,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
   Handle(GEOM_Function) aFunction = aResult->GetFunction(1);
 
   GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlaceByHistory("
-    << theShapeWhere << ", " << theShapeWhat << ")";
+                               << theShapeWhere << ", " << theShapeWhat << ")";
 
   SetErrorCode(OK);
   return aResult;
