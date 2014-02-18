@@ -42,7 +42,7 @@
 #include "GEOMImpl_Block6Explorer.hxx"
 #include "GEOMImpl_IHealingOperations.hxx"
 
-#include <GEOMImpl_Gen.hxx>
+#include "GEOMImpl_Gen.hxx"
 
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"
@@ -63,9 +63,9 @@
 
 #include <Basics_OCCTVersion.hxx>
 
-#include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <utilities.h>
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
