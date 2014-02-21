@@ -636,6 +636,7 @@ void Sketcher_Profile::ShapeFunctor::addSegmentLength( const TCollection_AsciiSt
 void Sketcher_Profile::ShapeFunctor::addSegmentX( const TCollection_AsciiString& x,
                                                   int CurrentIndex )
 {
+  myMove = none;
   myLength = x.RealValue();
   if ( Abs( myDx ) < Precision::Confusion() ) {
     MESSAGE("profile : cannot intersect, arg "<<CurrentIndex-1);
@@ -644,8 +645,6 @@ void Sketcher_Profile::ShapeFunctor::addSegmentX( const TCollection_AsciiString&
   myLength = ( myLength - myX ) / myDx;
   if ( Abs( myLength ) > Precision::Confusion() )
     myMove = line;
-  else
-    myMove = none;
 }
 
 /*!
@@ -657,6 +656,7 @@ void Sketcher_Profile::ShapeFunctor::addSegmentX( const TCollection_AsciiString&
 void Sketcher_Profile::ShapeFunctor::addSegmentY( const TCollection_AsciiString& y,
                                                   int CurrentIndex )
 {
+  myMove = none;
   myLength = y.RealValue();
   if ( Abs( myDy ) < Precision::Confusion() ) {
     MESSAGE("profile : cannot intersect, arg "<<CurrentIndex-1);
@@ -665,8 +665,6 @@ void Sketcher_Profile::ShapeFunctor::addSegmentY( const TCollection_AsciiString&
   myLength = ( myLength - myY ) / myDy;
   if ( Abs( myLength ) > Precision::Confusion() )
     myMove = line;
-  else
-    myMove = none;
 }
 
 /*!
