@@ -22,7 +22,6 @@
 //  File:   GEOMAlgo_Splitter.hxx
 //
 //  Author: Peter KURNEV
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 
 #ifndef GEOMAlgo_Splitter_HeaderFile
 #define GEOMAlgo_Splitter_HeaderFile
