@@ -941,13 +941,13 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
       else if ( constructorId == 0 ) {  // X
         mySketchType = DIR_ANGLE_X;
         initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "angle_precision" );
-        Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_X3" ) );
+        Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_X2" ) );
         Group2Spin->SpinBox_DY->setValue( myX );
       }
       else if ( constructorId == 1 ) {  // Y
         mySketchType = DIR_ANGLE_Y;
         initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "angle_precision" );        
-        Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y3" ) );
+        Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
         Group2Spin->SpinBox_DY->setValue( myY );
       }
     }
@@ -962,12 +962,12 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
       }
       else if ( constructorId == 0 ) {  // X
         mySketchType = DIR_PER_X;
-        Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X3" ) );
+        Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
         Group1Spin->SpinBox_DX->setValue( myX );
       }
       else if ( constructorId == 1 ) {  // Y
         mySketchType = DIR_PER_Y;
-        Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_Y3" ) );
+        Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_Y2" ) );
         Group1Spin->SpinBox_DX->setValue( myY );
       }
     }
@@ -982,12 +982,12 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
       }
       else if ( constructorId == 0 ) {  // X
         mySketchType = DIR_TAN_X;
-        Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X3" ) );
+        Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
         Group1Spin->SpinBox_DX->setValue( myX );
       }
       else if ( constructorId == 1 ) {  // Y
         mySketchType = DIR_TAN_Y;
-        Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_Y3" ) );
+        Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_Y2" ) );
         Group1Spin->SpinBox_DX->setValue( myY );
       }
     }
@@ -1009,12 +1009,12 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
       }
       else if ( constructorId == 0 ) { // X
         mySketchType = DIR_DXDY_X;
-        Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_X3" ) );
+        Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_X2" ) );
         Group3Spin->SpinBox_DZ->setValue( myX );
       }
       else if ( constructorId == 1 ) {  // Y
         mySketchType = DIR_DXDY_Y;
-        Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_Y3" ) );
+        Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_Y2" ) );
         Group3Spin->SpinBox_DZ->setValue( myY );
       }
     }
