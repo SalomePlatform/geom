@@ -125,11 +125,11 @@ void GEOM_IInsertOperations_i::Export
  *  ImportFile
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::ImportFile
+GEOM::ListOfGO* GEOM_IInsertOperations_i::ImportFile
                    (const char* theFileName,
                     const char* theFormatName)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -137,22 +137,31 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::ImportFile
   //Import the shape from the file
   char* aFileName   = strdup(theFileName);
   char* aFormatName = strdup(theFormatName);
-  Handle(GEOM_Object) anObject = GetOperations()->Import(aFileName, aFormatName);
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->Import(aFileName, aFormatName);
 
-  if( strcmp(aFormatName,"IGES_UNIT")==0 && !anObject.IsNull() ) {
+  if( strcmp(aFormatName,"IGES_UNIT")==0 && !aHSeq.IsNull() ) {
     free(aFileName);
     free(aFormatName);
-    return GetObject(anObject);
+    return aSeq._retn();
   }
 
   free(aFileName);
   free(aFormatName);
 
-  if (!GetOperations()->IsDone() || anObject.IsNull()) {
-    return aGEOMObject._retn();
+  if (!GetOperations()->IsDone() || aHSeq.IsNull()) {
+    return aSeq._retn();
   }
 
-  return GetObject(anObject);
+  // Copy created objects.
+  Standard_Integer aLength = aHSeq->Length();
+
+  aSeq->length(aLength);
+
+  for (Standard_Integer i = 1; i <= aLength; i++) {
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+  }
+
+  return aSeq._retn();
 }
 
 //=============================================================================

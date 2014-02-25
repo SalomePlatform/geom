@@ -32,10 +32,13 @@
 #include <TDF_ChildIDIterator.hxx>
 #include <TDF_Label.hxx>
 #include <TDataStd_Name.hxx>
+#include <TDataStd_Comment.hxx>
 #include <TNaming_Builder.hxx>
 #include <TNaming_NamedShape.hxx>
 
 #include <IFSelect_ReturnStatus.hxx>
+#include <Interface_EntityIterator.hxx>
+#include <Interface_Graph.hxx>
 #include <Interface_InterfaceModel.hxx>
 #include <Interface_Static.hxx>
 #include <STEPControl_Reader.hxx>
@@ -44,6 +47,10 @@
 #include <StepBasic_ProductDefinitionFormation.hxx>
 #include <StepGeom_GeometricRepresentationItem.hxx>
 #include <StepShape_TopologicalRepresentationItem.hxx>
+#include <StepRepr_DescriptiveRepresentationItem.hxx>
+#include <StepRepr_ProductDefinitionShape.hxx>
+#include <StepRepr_PropertyDefinitionRepresentation.hxx>
+#include <StepRepr_Representation.hxx>
 #include <TransferBRep.hxx>
 #include <Transfer_Binder.hxx>
 #include <Transfer_TransientProcess.hxx>
@@ -74,6 +81,254 @@
 #else
   #define STEPIMPORT_EXPORT
 #endif
+
+
+//=============================================================================
+/*!
+ *  GetShape()
+ */
+//=============================================================================
+
+static TopoDS_Shape GetShape(const Handle(Standard_Transient)        &theEnti,
+                             const Handle(Transfer_TransientProcess) &theTP)
+{
+  TopoDS_Shape            aResult;
+  Handle(Transfer_Binder) aBinder = theTP->Find(theEnti);
+
+  if (aBinder.IsNull()) {
+    return aResult;
+  }
+
+  aResult = TransferBRep::ShapeResult(aBinder);
+
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ *  GetLabel()
+ */
+//=============================================================================
+
+static TDF_Label GetLabel(const Handle(Standard_Transient) &theEnti,
+                          const TDF_Label                  &theShapeLabel,
+                          const TopoDS_Shape               &aShape)
+{
+  TDF_Label aResult;
+
+  if (theEnti->IsKind
+            (STANDARD_TYPE(StepGeom_GeometricRepresentationItem))) {
+    // check all named shapes using iterator
+    TDF_ChildIDIterator anIt
+      (theShapeLabel, TDataStd_Name::GetID(), Standard_True);
+
+    for (; anIt.More(); anIt.Next()) {
+      Handle(TDataStd_Name) nameAttr =
+        Handle(TDataStd_Name)::DownCast(anIt.Value());
+
+      if (nameAttr.IsNull()) {
+        continue;
+      }
+
+      TDF_Label aLab = nameAttr->Label();
+      Handle(TNaming_NamedShape) shAttr; 
+
+      if (aLab.FindAttribute(TNaming_NamedShape::GetID(), shAttr) &&
+          shAttr->Get().IsEqual(aShape)) {
+        aResult = aLab;
+      }
+    }
+  }
+
+  // create label and set shape
+  if (aResult.IsNull()) {
+    TDF_TagSource aTag;
+
+    aResult = aTag.NewChild(theShapeLabel);
+
+    TNaming_Builder tnBuild (aResult);
+
+    tnBuild.Generated(aShape);
+  }
+
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ *  StoreName()
+ */
+//=============================================================================
+
+static void StoreName(const Handle(Standard_Transient)        &theEnti,
+                      const TopTools_IndexedMapOfShape        &theIndices,
+                      const Handle(Transfer_TransientProcess) &theTP,
+                      const TDF_Label                         &theShapeLabel)
+{
+  Handle(TCollection_HAsciiString) aName;
+
+  if (theEnti->IsKind(STANDARD_TYPE(StepShape_TopologicalRepresentationItem)) ||
+      theEnti->IsKind(STANDARD_TYPE(StepGeom_GeometricRepresentationItem))) {
+    aName = Handle(StepRepr_RepresentationItem)::DownCast(theEnti)->Name();
+  } else {
+    Handle(StepBasic_ProductDefinition) PD =
+      Handle(StepBasic_ProductDefinition)::DownCast(theEnti);
+
+    if (PD.IsNull() == Standard_False) {
+      Handle(StepBasic_Product) Prod = PD->Formation()->OfProduct();
+      aName = Prod->Name();
+    }
+  }
+
+  bool isValidName = false;
+
+  if (aName.IsNull() == Standard_False) {
+    isValidName = true;
+
+    if (aName->UsefullLength() < 1) {
+      isValidName = false;
+    } else if (aName->UsefullLength() == 4 &&
+               toupper (aName->Value(1)) == 'N' &&
+               toupper (aName->Value(2)) == 'O' &&
+               toupper (aName->Value(3)) == 'N' &&
+               toupper (aName->Value(4)) == 'E') {
+      // skip 'N0NE' name
+      isValidName = false;
+    } else {
+      // special check to pass names like "Open CASCADE STEP translator 6.3 1"
+      TCollection_AsciiString aSkipName ("Open CASCADE STEP translator");
+
+      if (aName->Length() >= aSkipName.Length()) {
+        if (aName->String().SubString
+                            (1, aSkipName.Length()).IsEqual(aSkipName)) {
+          isValidName = false;
+        }
+      }
+    }
+  }
+
+  if (isValidName) {
+    TCollection_ExtendedString aNameExt (aName->ToCString());
+
+    // find target shape
+    TopoDS_Shape S = GetShape(theEnti, theTP);
+
+    if (S.IsNull()) {
+      return;
+    }
+
+    // as PRODUCT can be included in the main shape
+    // several times, we look here for all iclusions.
+    Standard_Integer isub, nbSubs = theIndices.Extent();
+
+    for (isub = 1; isub <= nbSubs; isub++) {
+      TopoDS_Shape aSub = theIndices.FindKey(isub);
+
+      if (aSub.IsPartner(S)) {
+        TDF_Label L = GetLabel(theEnti, theShapeLabel, aSub);
+
+        // set a name
+        TDataStd_Name::Set(L, aNameExt);
+      }
+    }
+  }
+}
+
+//=============================================================================
+/*!
+ *  StoreMaterial()
+ */
+//=============================================================================
+
+static void StoreMaterial
+                    (const Handle(Standard_Transient)        &theEnti,
+                     const TopTools_IndexedMapOfShape        &theIndices,
+                     const Handle(Transfer_TransientProcess) &theTP,
+                     const TDF_Label                         &theShapeLabel)
+{
+  // Treat Product Definition Shape only.
+  Handle(StepRepr_ProductDefinitionShape) aPDS =
+      Handle(StepRepr_ProductDefinitionShape)::DownCast(theEnti);
+  Handle(StepBasic_ProductDefinition)     aProdDef;
+
+  if(aPDS.IsNull() == Standard_False) {
+    // Product Definition Shape ==> Product Definition
+    aProdDef = aPDS->Definition().ProductDefinition();
+  }
+
+  if (aProdDef.IsNull() == Standard_False) {
+    // Product Definition ==> Property Definition
+    const Interface_Graph    &aGraph = theTP->Graph();
+    Interface_EntityIterator  aSubs  = aGraph.Sharings(aProdDef);
+    TopoDS_Shape              aShape;
+
+    for(aSubs.Start(); aSubs.More(); aSubs.Next()) {
+      Handle(StepRepr_PropertyDefinition) aPropD =
+        Handle(StepRepr_PropertyDefinition)::DownCast(aSubs.Value());
+
+      if(aPropD.IsNull() == Standard_False) {
+        // Property Definition ==> Representation.
+        Interface_EntityIterator aSubs1 = aGraph.Sharings(aPropD);
+
+        for(aSubs1.Start(); aSubs1.More(); aSubs1.Next()) {
+          Handle(StepRepr_PropertyDefinitionRepresentation) aPDR =
+            Handle(StepRepr_PropertyDefinitionRepresentation)::
+              DownCast(aSubs1.Value());
+
+          if(aPDR.IsNull() == Standard_False) {
+            // Property Definition ==> Material Name.
+            Handle(StepRepr_Representation) aRepr = aPDR->UsedRepresentation();
+
+            if(aRepr.IsNull() == Standard_False) {
+              Standard_Integer ir;
+
+              for(ir = 1; ir <= aRepr->NbItems(); ir++) {
+                Handle(StepRepr_RepresentationItem) aRI = aRepr->ItemsValue(ir);
+                Handle(StepRepr_DescriptiveRepresentationItem) aDRI =
+                  Handle(StepRepr_DescriptiveRepresentationItem)::DownCast(aRI);
+
+                if(aDRI.IsNull() == Standard_False) {
+                  // Get shape from Product Definition
+                  Handle(TCollection_HAsciiString) aMatName = aDRI->Name();
+
+                  if(aMatName.IsNull() == Standard_False) {
+                    TCollection_ExtendedString
+                                 aMatNameExt (aMatName->ToCString());
+
+                    if (aShape.IsNull()) {
+                      // Get the shape.
+                      aShape = GetShape(aProdDef, theTP);
+
+                      if (aShape.IsNull()) {
+                        return;
+                      }
+                    }
+
+                    // as PRODUCT can be included in the main shape
+                    // several times, we look here for all iclusions.
+                    Standard_Integer isub, nbSubs = theIndices.Extent();
+
+                    for (isub = 1; isub <= nbSubs; isub++) {
+                      TopoDS_Shape aSub = theIndices.FindKey(isub);
+
+                      if (aSub.IsPartner(aShape)) {
+                        TDF_Label aLabel =
+                          GetLabel(aProdDef, theShapeLabel, aSub);
+
+                        // set a name
+                        TDataStd_Comment::Set(aLabel, aMatNameExt);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
 //=============================================================================
 /*!
@@ -271,7 +526,7 @@ extern "C"
           return TopoDS_Shape();
         }
 
-        // BEGIN: Store names of sub-shapes from file
+        // BEGIN: Store names and materials of sub-shapes from file
         TopTools_IndexedMapOfShape anIndices;
         TopExp::MapShapes(aResShape, anIndices);
 
@@ -279,92 +534,20 @@ extern "C"
         Handle(XSControl_TransferReader) TR = aReader.WS()->TransferReader();
         if (!TR.IsNull()) {
           Handle(Transfer_TransientProcess) TP = TR->TransientProcess();
-          Handle(Standard_Type) tPD  = STANDARD_TYPE(StepBasic_ProductDefinition);
-          Handle(Standard_Type) tShape  = STANDARD_TYPE(StepShape_TopologicalRepresentationItem);
-          Handle(Standard_Type) tGeom  = STANDARD_TYPE(StepGeom_GeometricRepresentationItem);
 
           Standard_Integer nb = Model->NbEntities();
+
           for (Standard_Integer ie = 1; ie <= nb; ie++) {
             Handle(Standard_Transient) enti = Model->Value(ie);
-            Handle(TCollection_HAsciiString) aName;
-            if ( enti->IsKind( tShape ) || enti->IsKind(tGeom))
-            {
-              aName = Handle(StepRepr_RepresentationItem)::DownCast(enti)->Name();
-            }
-            else if (enti->DynamicType() == tPD)
-            {
-              Handle(StepBasic_ProductDefinition) PD =
-                Handle(StepBasic_ProductDefinition)::DownCast(enti);
-              if (PD.IsNull()) continue;
 
-              Handle(StepBasic_Product) Prod = PD->Formation()->OfProduct();
-              aName = Prod->Name();
-            }
-            else
-            {
-              continue;
-            }
-            if ( aName->UsefullLength() < 1 )
-              continue;
-            // skip 'N0NE' name
-            if ( aName->UsefullLength() == 4 &&
-                 toupper (aName->Value(1)) == 'N' &&
-                 toupper (aName->Value(2)) == 'O' &&
-                 toupper (aName->Value(3)) == 'N' &&
-                 toupper (aName->Value(4)) == 'E')
-              continue;
+            // Store names.
+            StoreName(enti, anIndices, TP, theShapeLabel);
 
-            // special check to pass names like "Open CASCADE STEP translator 6.3 1"
-            TCollection_AsciiString aSkipName ("Open CASCADE STEP translator");
-            if (aName->Length() >= aSkipName.Length()) {
-              if (aName->String().SubString(1, aSkipName.Length()).IsEqual(aSkipName))
-                continue;
-            }
-            TCollection_ExtendedString aNameExt (aName->ToCString());
-
-            // find target shape
-            Handle(Transfer_Binder) binder = TP->Find(enti);
-            if (binder.IsNull()) continue;
-            TopoDS_Shape S = TransferBRep::ShapeResult(binder);
-            if (S.IsNull()) continue;
-
-            // as PRODUCT can be included in the main shape
-            // several times, we look here for all iclusions.
-            Standard_Integer isub, nbSubs = anIndices.Extent();
-            for (isub = 1; isub <= nbSubs; isub++)
-            {
-              TopoDS_Shape aSub = anIndices.FindKey(isub);
-              if (aSub.IsPartner(S)) {
-                TDF_Label L;
-                if (enti->IsKind(tGeom)) {
-                  // check all named shapes using iterator
-                  TDF_ChildIDIterator anIt (theShapeLabel, TDataStd_Name::GetID(), Standard_True);
-                  for (; anIt.More(); anIt.Next()) {
-                    Handle(TDataStd_Name) nameAttr =
-                      Handle(TDataStd_Name)::DownCast(anIt.Value());
-                    if (nameAttr.IsNull()) continue;
-                    TDF_Label Lab = nameAttr->Label();
-                    Handle(TNaming_NamedShape) shAttr; 
-                    if (Lab.FindAttribute(TNaming_NamedShape::GetID(), shAttr) && shAttr->Get().IsEqual(aSub))
-                      L = Lab;
-                  }
-                }
-                // create label and set shape
-                if (L.IsNull())
-                {
-                  TDF_TagSource aTag;
-                  L = aTag.NewChild(theShapeLabel);
-                  TNaming_Builder tnBuild (L);
-                  //tnBuild.Generated(S);
-                  tnBuild.Generated(aSub);
-                }
-                // set a name
-                TDataStd_Name::Set(L, aNameExt);
-              }
-            }
+            // Store materials.
+            StoreMaterial(enti, anIndices, TP, theShapeLabel);
           }
         }
-        // END: Store names
+        // END: Store names and materials
       }
       else {
 //        switch (status) {

@@ -35,6 +35,8 @@
 #include <TDocStd_Document.hxx>
 #include <TColStd_HSequenceOfAsciiString.hxx>
 #include <TCollection_HAsciiString.hxx>
+#include <NCollection_DataMap.hxx>
+#include <NCollection_List.hxx>
 #include <Resource_Manager.hxx>
 
 #include <list>
@@ -55,6 +57,9 @@ namespace XAO {
   class Xao;
 }
 
+typedef NCollection_DataMap<TCollection_ExtendedString, NCollection_List<TopoDS_Shape> >
+        DataMapOfStringListOfShape;
+
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:
   Standard_EXPORT GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID);
@@ -63,8 +68,9 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakeCopy (Handle(GEOM_Object) theOriginal);
   
-  Standard_EXPORT Handle(GEOM_Object) Import (const TCollection_AsciiString& theFileName,
-                                              const TCollection_AsciiString& theFormatType);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) Import
+                         (const TCollection_AsciiString& theFileName,
+                          const TCollection_AsciiString& theFormatType);
   
   Standard_EXPORT TCollection_AsciiString ReadValue (const TCollection_AsciiString& theFileName,
                                                      const TCollection_AsciiString& theFormatType,
@@ -127,6 +133,14 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
                     XAO::BrepGeometry* geometry);
   void exportGroups(std::list<Handle(GEOM_Object)> groupList, XAO::Xao* xaoObject,
                     XAO::BrepGeometry* geometry);
+
+  void MakeMaterialGroups(const Handle(GEOM_Object)                  &theObject,
+                          const Handle(TColStd_HSequenceOfTransient) &theSeq);
+
+  Handle(GEOM_Object) MakeGroup
+                         (const Handle(GEOM_Object)            &theObject,
+                          const TCollection_ExtendedString     &theName,
+                          const NCollection_List<TopoDS_Shape> &theShapes);
 
  private:
   Handle(Resource_Manager) myResMgr;

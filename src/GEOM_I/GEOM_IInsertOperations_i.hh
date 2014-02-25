@@ -49,8 +49,8 @@ class GEOM_I_EXPORT GEOM_IInsertOperations_i :
                                 const char*           theFileName,
                                 const char*           theFormatName);
 
-  GEOM::GEOM_Object_ptr ImportFile (const char* theFileName,
-                                    const char* theFormatName);
+  GEOM::ListOfGO* ImportFile (const char* theFileName,
+                              const char* theFormatName);
 
   char* ReadValue (const char* theFileName,
                    const char* theFormatName,

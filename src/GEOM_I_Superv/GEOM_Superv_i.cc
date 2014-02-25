@@ -1588,7 +1588,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportFile (const char* theFileName,
   beginService( " GEOM_Superv_i::ImportFile" );
   MESSAGE("GEOM_Superv_i::ImportFile");
   getInsOp();
-  GEOM::GEOM_Object_ptr anObj = myInsOp->ImportFile(theFileName, theFormatName);
+  GEOM::ListOfGO* aSeq = myInsOp->ImportFile(theFileName, theFormatName);
+  GEOM::GEOM_Object_ptr anObj;
+  
+  if (aSeq->length() > 0) {
+    anObj = aSeq->operator[](0);
+  }
+
   endService( " GEOM_Superv_i::ImportFile" );
   return anObj;
 }

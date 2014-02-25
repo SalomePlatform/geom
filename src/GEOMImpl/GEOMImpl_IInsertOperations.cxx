@@ -64,8 +64,13 @@
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_Logbook.hxx>
+#include <TDF_ChildIDIterator.hxx>
 #include <TDF_Tool.hxx>
 #include <TDataStd_Integer.hxx>
+#include <TNaming_NamedShape.hxx>
+#include <TDataStd_Comment.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
@@ -238,7 +243,7 @@ void GEOMImpl_IInsertOperations::Export
  *  Import
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IInsertOperations::Import
                                  (const TCollection_AsciiString& theFileName,
                                   const TCollection_AsciiString& theFormatName)
 {
@@ -247,19 +252,21 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   if (theFileName.IsEmpty() || theFormatName.IsEmpty()) return NULL;
 
   //Add a new result object
-  Handle(GEOM_Object) result = GetEngine()->AddObject(GetDocID(), GEOM_IMPORT);
+  Handle(GEOM_Object) anImported = GetEngine()->AddObject(GetDocID(), GEOM_IMPORT);
 
   //Add an Import function
-  Handle(GEOM_Function) aFunction = result->AddFunction(GEOMImpl_ImportDriver::GetID(), IMPORT_SHAPE);
-  if (aFunction.IsNull()) return result;
+  Handle(GEOM_Function) aFunction =
+    anImported->AddFunction(GEOMImpl_ImportDriver::GetID(), IMPORT_SHAPE);
+
+  if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ImportDriver::GetID()) return result;
+  if (aFunction->GetDriverGUID() != GEOMImpl_ImportDriver::GetID()) return NULL;
 
   Handle(TCollection_HAsciiString) aHLibName;
   if (!IsSupported
           (Standard_True, GetImportFormatName(theFormatName), aHLibName)) {
-    return result;
+    return NULL;
   }
   TCollection_AsciiString aLibName = aHLibName->String();
 
@@ -270,6 +277,8 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   aCI.SetPluginName(aLibName);
 
   //Perform the Import
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+
   try {
 #if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
@@ -278,6 +287,11 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
       SetErrorCode("Import driver failed");
       return NULL;
     }
+
+    aSeq->Append(anImported);
+
+    // Greate material groups.
+    MakeMaterialGroups(anImported, aSeq);
   }
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
@@ -289,17 +303,17 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   if (theFormatName != "IGES_UNIT") {
     GEOM::TPythonDump pd (aFunction);
     if (theFormatName == "BREP")
-      pd << result << " = geompy.ImportBREP(\"" << theFileName.ToCString() << "\")";
+      pd << anImported << " = geompy.ImportBREP(\"" << theFileName.ToCString() << "\")";
     else if (theFormatName == "IGES")
-      pd << result << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\")";
+      pd << anImported << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\")";
     else if (theFormatName == "IGES_SCALE")
-      pd << result << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\", True)";
+      pd << anImported << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\", True)";
     else if (theFormatName == "STEP")
-      pd << result << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\")";
+      pd << anImported << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\")";
     else if (theFormatName == "STEP_SCALE")
-      pd << result << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\", True)";
+      pd << anImported << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\", True)";
     else {
-      pd << result << " = geompy.ImportFile(\""
+      pd << anImported << " = geompy.ImportFile(\""
          << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
     }
   }
@@ -322,7 +336,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   }
   // OLD CODE: end
 
-  return result;
+  return aSeq;
 }
 
 //=============================================================================
@@ -1393,4 +1407,174 @@ bool GEOMImpl_IInsertOperations::ImportXAO(const char* fileName,
   SetErrorCode(OK);
   
   return true;
+}
+
+//=============================================================================
+/*!
+ *  This method creates material groups for an imported object.
+ *  \param theObject the imported object.
+ */
+//=============================================================================
+void GEOMImpl_IInsertOperations::MakeMaterialGroups
+                        (const Handle(GEOM_Object) &theObject,
+                         const Handle(TColStd_HSequenceOfTransient) &theSeq)
+{
+  TopoDS_Shape aResShape = theObject->GetValue();
+
+  if (aResShape.IsNull() == Standard_False) {
+    // Group shapes by material names.
+    Handle(GEOM_Function)      aFunction = theObject->GetLastFunction();
+    DataMapOfStringListOfShape aMapMaterialShapes;
+
+    // check all named shapes using iterator
+    TDF_ChildIDIterator anIt (aFunction->GetNamingEntry(),
+        TNaming_NamedShape::GetID(), Standard_True);
+
+    for (; anIt.More(); anIt.Next()) {
+      Handle(TNaming_NamedShape) anAttr =
+          Handle(TNaming_NamedShape)::DownCast(anIt.Value());
+
+      if (anAttr.IsNull() == Standard_False) {
+        TDF_Label                aLabel = anAttr->Label();
+        Handle(TDataStd_Comment) aComment;
+
+        if (aLabel.FindAttribute(TDataStd_Comment::GetID(), aComment)) {
+          TCollection_ExtendedString aMatName = aComment->Get();
+          TopoDS_Shape               aShape   = anAttr->Get();
+
+          if (aMapMaterialShapes.IsBound(aMatName) == Standard_False) {
+            NCollection_List<TopoDS_Shape> anEmptyList;
+
+            aMapMaterialShapes.Bind(aMatName, anEmptyList);
+          }
+
+          aMapMaterialShapes(aMatName).Append(aShape);
+        }
+      }
+    }
+
+    if (aMapMaterialShapes.IsEmpty() == Standard_False) {
+      // Construct groups.
+      TopAbs_ShapeEnum aType = aResShape.ShapeType();
+      Standard_Integer i;
+      DataMapOfStringListOfShape::Iterator aMapIter;
+
+      // Check each shape type.
+      for(i = aType; i <= TopAbs_VERTEX; i++) {
+        DataMapOfStringListOfShape::Iterator aMapIter(aMapMaterialShapes);
+
+        for (; aMapIter.More(); aMapIter.Next()) {
+          NCollection_List<TopoDS_Shape> &aShList = aMapIter.ChangeValue();
+          NCollection_List<TopoDS_Shape>::Iterator aShIter(aShList);
+          NCollection_List<TopoDS_Shape>  aShListSameType;
+
+          while (aShIter.More()) {
+            const TopoDS_Shape &aShape = aShIter.Value();
+
+            if (i == aShape.ShapeType()) {
+              // Treat this element.
+              aShListSameType.Append(aShape);
+              aShList.Remove(aShIter);
+            } else {
+              // Go to the next element.
+              aShIter.Next();
+            }
+          }
+
+          if (aShListSameType.IsEmpty() == Standard_False) {
+            // Construct a group.
+            Handle(GEOM_Object) aGroup =
+              MakeGroup(theObject, aMapIter.Key(), aShListSameType);
+
+            if (aGroup.IsNull() == Standard_False) {
+              theSeq->Append(aGroup);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+//=============================================================================
+/*!
+ *  This method creates a group of shapes of certain type.
+ *  \param theObject the imported object.
+ *  \param theName the material name.
+ *  \param theShapes the list of shapes to be added to this group.
+ *  \return the created group.
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeGroup
+                  (const Handle(GEOM_Object)            &theObject,
+                   const TCollection_ExtendedString     &theName,
+                   const NCollection_List<TopoDS_Shape> &theShapes)
+{
+  Handle(GEOM_Object)                aGroup;
+  TopTools_IndexedMapOfShape         anIndices;
+  Handle(TColStd_HSequenceOfInteger) aSeqIDs = new TColStd_HSequenceOfInteger;
+  NCollection_List<TopoDS_Shape>::Iterator anIter(theShapes);
+
+  TopExp::MapShapes(theObject->GetValue(), anIndices);
+
+  // Compose shape IDs.
+  for (; anIter.More(); anIter.Next()) {
+    const TopoDS_Shape &aShape = anIter.Value();
+    const Standard_Integer anIndex = anIndices.FindIndex(aShape);
+
+    if (anIndex > 0) {
+      aSeqIDs->Append(anIndex);
+    }
+  }
+
+  if (aSeqIDs->IsEmpty() == Standard_False) {
+    // Create a group.
+    const TopAbs_ShapeEnum aType  = theShapes.First().ShapeType();
+
+    aGroup = myGroupOperations->CreateGroup(theObject, aType);
+
+    if (aGroup.IsNull() == Standard_False) {
+      aGroup->GetLastFunction()->SetDescription("");
+      myGroupOperations->UnionIDs(aGroup, aSeqIDs);
+      aGroup->GetLastFunction()->SetDescription("");
+
+      // Compose the group name.
+      TCollection_AsciiString aGroupName(theName);
+
+      switch(aType) {
+        case TopAbs_VERTEX:
+          aGroupName += "_VERTEX";
+          break;
+        case TopAbs_EDGE:
+          aGroupName += "_EDGE";
+          break;
+        case TopAbs_WIRE:
+          aGroupName += "_WIRE";
+          break;
+        case TopAbs_FACE:
+          aGroupName += "_FACE";
+          break;
+        case TopAbs_SHELL:
+          aGroupName += "_SHELL";
+          break;
+        case TopAbs_SOLID:
+          aGroupName += "_SOLID";
+          break;
+        case TopAbs_COMPSOLID:
+          aGroupName += "_COMPSOLID";
+          break;
+        case TopAbs_COMPOUND:
+          aGroupName += "_COMPOUND";
+          break;
+        default:
+          aGroupName += "_SHAPE";
+          break;
+      }
+
+      aGroup->SetName(aGroupName.ToCString());
+    }
+  }
+
+  return aGroup;
 }

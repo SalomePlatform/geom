@@ -3682,9 +3682,9 @@ module GEOM
      *         If format 'IGES_SCALE' is used instead of 'IGES' or
      *            format 'STEP_SCALE' is used instead of 'STEP',
      *            file length unit will be ignored (set to 'meter') and result model will be scaled.
-     *  \return New GEOM_Object, containing the imported shape.
+     *  \return List of GEOM_Object, containing the created shape and groups of materials.
      */
-    GEOM_Object ImportFile (in string theFileName, in string theFormatName);
+    ListOfGO ImportFile (in string theFileName, in string theFormatName);
 
     /*!
      *  \brief Read a value of parameter from a file, containing a shape.

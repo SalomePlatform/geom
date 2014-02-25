@@ -243,9 +243,10 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
   aResultSO->SetAttrString("AttributeIOR",aGeomObjIOR);
 
   TCollection_AsciiString anObjectName, aNamePrefix("Shape_");
+  CORBA::Long mytype=aBaseObj->GetType();
 
   // BEGIN: try to find existed name for current shape
-  if ( !aShape->_is_nil() )
+  if ( !aShape->_is_nil() && mytype != GEOM_GROUP)
   {
     // recieve current TopoDS shape
     CORBA::String_var entry = aShape->GetEntry();
@@ -279,7 +280,6 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
   }
   // END: try to find existed name for current shape
 
-  CORBA::Long mytype=aBaseObj->GetType();
   if ( mytype == GEOM_GROUP ) {
     GEOM::GEOM_IGroupOperations_var anOp = GetIGroupOperations( theStudy->StudyId() );
     switch ( (TopAbs_ShapeEnum)anOp->GetType( aShape )) {

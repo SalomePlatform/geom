@@ -818,9 +818,10 @@ bool GEOMToolsGUI::Import()
       } // else if ( aCurrentType == "ACIS" )
 
       // IMPORT
-      GEOM::GEOM_Object_var anObj = aInsOp->ImportFile( fileN, fileT );
+      GEOM::ListOfGO_var anObj = aInsOp->ImportFile( fileN, fileT );
 
-      if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
+      if ( anObj->length() > 0 && aInsOp->IsDone() ) {
+        GEOM::GEOM_Object_ptr aFather = anObj[0]._retn();
         QString aPublishObjName =
           GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, /*withExten=*/true ) );
 
@@ -828,19 +829,26 @@ bool GEOMToolsGUI::Import()
         SALOMEDS::SObject_var aSO =
           GeometryGUI::GetGeomGen()->PublishInStudy( aDSStudy,
                                                      SALOMEDS::SObject::_nil(),
-                                                     anObj,
+                                                     aFather,
                                                      aPublishObjName.toLatin1().constData() );
         if ( ( !aSO->_is_nil() ) )
           anEntryList.append( aSO->GetID() );
 
-        objsForDisplay.append( anObj );
+        objsForDisplay.append( aFather );
 
         if ( aCurrentType == "ACIS" ) {
           if ( acisAnswer == SUIT_MessageBox::Yes || acisAnswer == SUIT_MessageBox::YesToAll )
-            GeometryGUI::GetGeomGen()->PublishNamedShapesInStudy( aDSStudy, anObj );
+            GeometryGUI::GetGeomGen()->PublishNamedShapesInStudy( aDSStudy, aFather );
         }
 
         anOp->commit();
+
+        // Treat group objects.
+        for (int i = 1, n = anObj->length(); i < n; i++) {
+          GEOM::GEOM_Object_ptr anObject = anObj[i]._retn();
+          GeometryGUI::GetGeomGen()->AddInStudy(aDSStudy,
+            anObject, tr(anObject->GetName()).toStdString().c_str(), aFather);
+        }
       }
       else {
         anOp->abort();

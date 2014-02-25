@@ -10303,6 +10303,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing the imported shape.
+        #          If material names are imported it returns the list of
+        #          objects. The first one is the imported object followed by
+        #          material groups.
+        #  @note Auto publishing is allowed for the shape itself. Imported
+        #        material groups are not automatically published.
         #
         #  @ref swig_Import_Export "Example"
         def ImportFile(self, theFileName, theFormatName, theName=None):
@@ -10323,12 +10328,22 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Returns:
                 New GEOM.GEOM_Object, containing the imported shape.
+                If material names are imported it returns the list of
+                objects. The first one is the imported object followed by
+                material groups.
+            Note:
+                Auto publishing is allowed for the shape itself. Imported
+                material groups are not automatically published.
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.InsertOp.ImportFile(theFileName, theFormatName)
+            aListObj = self.InsertOp.ImportFile(theFileName, theFormatName)
             RaiseIfFailed("ImportFile", self.InsertOp)
-            self._autoPublish(anObj, theName, "imported")
-            return anObj
+            aNbObj = len(aListObj)
+            if aNbObj > 0:
+                self._autoPublish(aListObj[0], theName, "imported")
+            if aNbObj == 1:
+                return aListObj[0]
+            return aListObj
 
         ## Deprecated analog of ImportFile()
         def Import(self, theFileName, theFormatName, theName=None):
@@ -10432,6 +10447,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing the imported shape.
+        #          If material names are imported it returns the list of
+        #          objects. The first one is the imported object followed by
+        #          material groups.
+        #  @note Auto publishing is allowed for the shape itself. Imported
+        #        material groups are not automatically published.
         #
         #  @ref swig_Import_Export "Example"
         def ImportSTEP(self, theFileName, ignoreUnits = False, theName=None):
@@ -10449,6 +10469,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Returns:
                 New GEOM.GEOM_Object, containing the imported shape.
+                If material names are imported it returns the list of
+                objects. The first one is the imported object followed by
+                material groups.
+            Note:
+                Auto publishing is allowed for the shape itself. Imported
+                material groups are not automatically published.
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.ImportFile()

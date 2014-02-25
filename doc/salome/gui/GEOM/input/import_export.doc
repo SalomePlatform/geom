@@ -10,6 +10,10 @@ example, CATIA 5).
 
 The \subpage xao_format_page "import and export of shapes in XAO format" is implemented differently.
 
+\note If a plugin supports import of materials associated with shapes, these
+shapes are grouped corresponding to the imported materials. For the moment STEP
+import is the only plugin that supports this feature.
+
 <em>To import geometrical objects from a BREP, IGES, STEP, ACIS or STL file:</em>
 
 \par
