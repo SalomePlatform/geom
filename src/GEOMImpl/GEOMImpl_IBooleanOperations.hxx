@@ -68,8 +68,7 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
                    const Standard_Boolean IsCheckSelfInte);
 
   Standard_EXPORT Handle(GEOM_Object) MakeHalfPartition (Handle(GEOM_Object)    theShape,
-                                                         Handle(GEOM_Object)    thePlane,
-                                                         const Standard_Boolean IsCheckSelfInte);
+                                                         Handle(GEOM_Object)    thePlane);
 
 private:
 

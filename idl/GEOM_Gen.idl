@@ -2968,8 +2968,6 @@ module GEOM
      *         Each shape from theRemoveInside must belong to theShapes also.
      *  \param theRemoveWebs If TRUE, perform Glue 3D algorithm.
      *  \param theMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
-     *  \param IsCheckSelfInte If TRUE, perform check self intersection
-     *                         of arguments before an operation.
      *
      *  \return New GEOM_Object, containing the result shapes.
      */
@@ -2980,8 +2978,7 @@ module GEOM
                                in short      theLimit,
                                in boolean    theRemoveWebs,
                                in ListOfLong theMaterials,
-                               in short      theKeepNonlimitShapes,
-                               in boolean    IsCheckSelfInte);
+                               in short      theKeepNonlimitShapes);
 
     /*!
      *  \brief Perform partition operation.
@@ -2990,7 +2987,10 @@ module GEOM
      *  a compound containing nonintersected shapes. Performance will be better
      *  since intersection between shapes from compound is not performed.
      *
-     *  Description of all parameters as in previous method MakePartition()
+     *  Description of all parameters as in previous method MakePartition().
+     *  One additional parameter is provided:
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
      *
      *  \note Passed compounds (via ListShapes or via ListTools)
      *        have to consist of nonintersecting shapes.
@@ -3011,13 +3011,10 @@ module GEOM
      *  \brief Perform partition of the Shape with the Plane
      *  \param theShape Shape to be intersected.
      *  \param thePlane Tool shape, to intersect theShape.
-     *  \param IsCheckSelfInte If TRUE, perform check self intersection
-     *                         of arguments before an operation.
      *  \return New GEOM_Object, containing the result shape.
      */
     GEOM_Object MakeHalfPartition (in GEOM_Object theShape,
-                                   in GEOM_Object thePlane,
-                                   in boolean     IsCheckSelfInte);
+                                   in GEOM_Object thePlane);
   };
 
  // # GEOM_ICurvesOperations:

@@ -174,7 +174,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       }
 
       // Check self-intersection.
-      if (isCheckSelfInte) {
+      if (isCheckSelfInte && aType == PARTITION_NO_SELF_INTERSECTIONS) {
         CheckSelfIntersection(aShape_i);
       }
 
@@ -216,7 +216,7 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       }
 
       // Check self-intersection.
-      if (isCheckSelfInte) {
+      if (isCheckSelfInte && aType == PARTITION_NO_SELF_INTERSECTIONS) {
         CheckSelfIntersection(aShape_i);
       }
 
@@ -359,12 +359,6 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       Standard_NullObject::Raise("In Half Partition a shape or a plane is null");
     }
 
-    // Check self-intersection.
-    if (isCheckSelfInte) {
-      CheckSelfIntersection(aShapeArg);
-      CheckSelfIntersection(aPlaneArg);
-    }
-
     TopoDS_Shape aShapeArg_copy;
     TopoDS_Shape aPlaneArg_copy;
     {
@@ -405,8 +399,20 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
     }
 
     // add object shapes that are in ListShapes;
-    PS.AddArgument(aShapeArg_copy);
-    //PS.AddShape(aShapeArg);
+    TopTools_ListOfShape aSimpleShapes;
+    TopTools_MapOfShape aShapesMap;
+
+    PrepareShapes(aShapeArg_copy, aType, aSimpleShapes);
+
+    TopTools_ListIteratorOfListOfShape aSimpleIter (aSimpleShapes);
+
+    for (; aSimpleIter.More(); aSimpleIter.Next()) {
+      const TopoDS_Shape& aSimpleSh = aSimpleIter.Value();
+
+      if (aShapesMap.Add(aSimpleSh)) {
+        PS.AddArgument(aSimpleSh);
+      }
+    }
 
     // add tool shapes that are in ListTools and not in ListShapes;
     PS.AddTool(aPlaneArg_copy);
@@ -560,6 +566,10 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam( theParams, "Resulting type", (TopAbs_ShapeEnum) aCI.GetLimit());
     AddParam( theParams, "Keep shapes of lower type", aCI.GetKeepNonlimitShapes());
     AddParam( theParams, "No object intersections", ( aType == PARTITION_NO_SELF_INTERSECTIONS ));
+
+    if (aType == PARTITION_NO_SELF_INTERSECTIONS) {
+      AddParam( theParams, "Check self-intersections", aCI.GetCheckSelfIntersection());
+    }
     break;
   case PARTITION_HALF:
     AddParam( theParams, "Object", aCI.GetShape() );

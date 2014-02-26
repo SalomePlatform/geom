@@ -51,10 +51,11 @@ In this case the Partition algorithm will work faster, but the result might diff
 default behavior.
 
 <b>Detect Self-intersections</b> check box is used to check self-intersection of arguments.
-- If this option is switched on (by default), each input shape is checked for self-intersection.
+It is enabled only if <b>No sub-shapes intersection (Compounds only)</b> is checked.
+- If this option is switched off (by default), the partition algorithm is
+performed without self-intersection checks.
+- If this option is switched on, each input shape is checked for self-intersection.
 If self-intersection is detected, the operation is aborted.
-- If this option is switched off, the partition algorithm is performed without self-intersection
-checks.
 
 \note This algorithm does not find all types of self-intersections. It is tuned
       to detect vertex/vertex, vertex/edge, edge/edge, vertex/face and edge/face
@@ -75,7 +76,7 @@ checks.
 
 <em>geompy.MakePartition(ListOfShapes, ListOfTools, ListOfKeepInside,
 ListOfRemoveInside, Limit, RemoveWebs, ListOfMaterials,
-KeepNonlimitShapes, checkSelfInte)</em>
+KeepNonlimitShapes)</em>
 
 <b>TUI Command (without sub-shapes intersection):</b>
 
@@ -105,11 +106,9 @@ Activate \ref restore_presentation_parameters_page "Advanced options" if require
 
 <b>TUI Command:</b>
 
-<em>geompy.MakeHalfPartition(Shape, Plane, checkSelfInte)</em>, where:
+<em>geompy.MakeHalfPartition(Shape, Plane)</em>, where:
 - \em Shape is a source shape to be intersected by the \em Plane
 - \em Plane is a tool shape, to intersect the \em Shape.
-- \em checkSelfInte is a flag that indicates if the arguments should
-be checked for self-intersection prior to the operation.
 
 <b>Examples:</b>
 

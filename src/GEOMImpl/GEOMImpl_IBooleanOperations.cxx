@@ -492,7 +492,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
   }
   pd << "], " << theKeepNonlimitShapes;
 
-  if (IsCheckSelfInte) {
+  if (IsCheckSelfInte && !thePerformSelfIntersections) {
     pd << ", True";
   }
 
@@ -508,8 +508,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
-       (Handle(GEOM_Object) theShape, Handle(GEOM_Object) thePlane,
-        const Standard_Boolean IsCheckSelfInte)
+       (Handle(GEOM_Object) theShape, Handle(GEOM_Object) thePlane)
 {
   SetErrorCode(KO);
 
@@ -535,7 +534,6 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
 
   aCI.SetShape(aRef1);
   aCI.SetPlane(aRef2);
-  aCI.SetCheckSelfIntersection(IsCheckSelfInte);
 
   //Compute the Partition value
   try {
@@ -556,13 +554,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
   pd << aPart << " = geompy.MakeHalfPartition("
-     << theShape << ", " << thePlane;
-
-  if (IsCheckSelfInte) {
-    pd << ", True";
-  }
-
-  pd << ")";
+     << theShape << ", " << thePlane << ")";
 
   SetErrorCode(OK);
   return aPart;

@@ -7115,16 +7115,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                             target type (equal to Limit) are kept in the result,
         #                             else standalone shapes of lower dimension
         #                             are kept also (if they exist).
-        #  @param checkSelfInte The flag that tells if the arguments should
-        #         be checked for self-intersection prior to the operation.
-        #
-        #  @note This algorithm doesn't find all types of self-intersections.
-        #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
-        #        vertex/face and edge/face intersections. Face/face
-        #        intersections detection is switched off as it is a
-        #        time-consuming operation that gives an impact on performance.
-        #        To find all self-intersections please use
-        #        CheckSelfIntersections() method.
         #
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -7149,7 +7139,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ref tui_partition "Example"
         def MakePartition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                           Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
-                          KeepNonlimitShapes=0, checkSelfInte=False, theName=None):
+                          KeepNonlimitShapes=0, theName=None):
             """
             Perform partition operation.
 
@@ -7163,18 +7153,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                     target type (equal to Limit) are kept in the result,
                                     else standalone shapes of lower dimension
                                     are kept also (if they exist).
-                checkSelfInte The flag that tells if the arguments should
-                              be checked for self-intersection prior to
-                              the operation.
-
-            Note:
-                    This algorithm doesn't find all types of self-intersections.
-                    It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
-                    vertex/face and edge/face intersections. Face/face
-                    intersections detection is switched off as it is a
-                    time-consuming operation that gives an impact on performance.
-                    To find all self-intersections please use
-                    CheckSelfIntersections() method.
 
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
@@ -7209,7 +7187,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
                                               ListKeepInside, ListRemoveInside,
                                               Limit, RemoveWebs, ListMaterials,
-                                              KeepNonlimitShapes, checkSelfInte);
+                                              KeepNonlimitShapes);
             RaiseIfFailed("MakePartition", self.BoolOp)
             self._autoPublish(anObj, theName, "partition")
             return anObj
@@ -7219,7 +7197,18 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  compound contains nonintersected shapes. Performance will be better
         #  since intersection between shapes from compound is not performed.
         #
-        #  Description of all parameters as in previous method MakePartition()
+        #  Description of all parameters as in previous method MakePartition().
+        #  One additional parameter is provided:
+        #  @param checkSelfInte The flag that tells if the arguments should
+        #         be checked for self-intersection prior to the operation.
+        #
+        #  @note This algorithm doesn't find all types of self-intersections.
+        #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
+        #        vertex/face and edge/face intersections. Face/face
+        #        intersections detection is switched off as it is a
+        #        time-consuming operation that gives an impact on performance.
+        #        To find all self-intersections please use
+        #        CheckSelfIntersections() method.
         #
         #  @note Passed compounds (via ListShapes or via ListTools)
         #           have to consist of nonintersecting shapes.
@@ -7239,7 +7228,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             since intersection between shapes from compound is not performed.
 
             Parameters: 
-                Description of all parameters as in method geompy.MakePartition
+                Description of all parameters as in method geompy.MakePartition.
+                One additional parameter is provided:
+                checkSelfInte The flag that tells if the arguments should
+                              be checked for self-intersection prior to
+                              the operation.
+
+            Note:
+                    This algorithm doesn't find all types of self-intersections.
+                    It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
+                    vertex/face and edge/face intersections. Face/face
+                    intersections detection is switched off as it is a
+                    time-consuming operation that gives an impact on performance.
+                    To find all self-intersections please use
+                    CheckSelfIntersections() method.
         
             NOTE:
                 Passed compounds (via ListShapes or via ListTools)
@@ -7268,7 +7270,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  \n @ref swig_Partition "Example 2"
         def Partition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                       Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
-                      KeepNonlimitShapes=0, checkSelfInte=False, theName=None):
+                      KeepNonlimitShapes=0, theName=None):
             """
             See method geompy.MakePartition for more information.
             """
@@ -7277,58 +7279,35 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anObj = self.MakePartition(ListShapes, ListTools,
                                        ListKeepInside, ListRemoveInside,
                                        Limit, RemoveWebs, ListMaterials,
-                                       KeepNonlimitShapes, checkSelfInte,
-                                       theName);
+                                       KeepNonlimitShapes, theName);
             return anObj
 
         ## Perform partition of the Shape with the Plane
         #  @param theShape Shape to be intersected.
         #  @param thePlane Tool shape, to intersect theShape.
-        #  @param checkSelfInte The flag that tells if the arguments should
-        #         be checked for self-intersection prior to the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @note This algorithm doesn't find all types of self-intersections.
-        #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
-        #        vertex/face and edge/face intersections. Face/face
-        #        intersections detection is switched off as it is a
-        #        time-consuming operation that gives an impact on performance.
-        #        To find all self-intersections please use
-        #        CheckSelfIntersections() method.
-        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_partition "Example"
-        def MakeHalfPartition(self, theShape, thePlane, checkSelfInte=False, theName=None):
+        def MakeHalfPartition(self, theShape, thePlane, theName=None):
             """
             Perform partition of the Shape with the Plane
 
             Parameters: 
                 theShape Shape to be intersected.
                 thePlane Tool shape, to intersect theShape.
-                checkSelfInte The flag that tells if the arguments should
-                              be checked for self-intersection prior to
-                              the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
-
-            Note:
-                    This algorithm doesn't find all types of self-intersections.
-                    It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
-                    vertex/face and edge/face intersections. Face/face
-                    intersections detection is switched off as it is a
-                    time-consuming operation that gives an impact on performance.
-                    To find all self-intersections please use
-                    CheckSelfIntersections() method.
 
             Returns:  
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.BoolOp.MakeHalfPartition(theShape, thePlane, checkSelfInte)
+            anObj = self.BoolOp.MakeHalfPartition(theShape, thePlane)
             RaiseIfFailed("MakeHalfPartition", self.BoolOp)
             self._autoPublish(anObj, theName, "partition")
             return anObj

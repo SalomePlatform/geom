@@ -144,7 +144,7 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_VERTEX" ) );
   GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::VERTEX);
   GroupPoints->CheckButton1->setChecked( false );
-  mySelfInte->setChecked(true);
+  mySelfInte->setChecked(false);
 
   mainFrame()->GroupBoxPublish->show();
 
@@ -167,8 +167,10 @@ void OperationGUI_PartitionDlg::Init()
 
   connect( GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
   connect( GroupPoints->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
+  connect( GroupPoints->CheckButton2, SIGNAL(toggled(bool)), mySelfInte, SLOT(setEnabled(bool)) );
   connect( mySelfInte,                SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
 
+  mySelfInte->setEnabled(GroupPoints->CheckButton2->isChecked());
   initName( tr( "GEOM_PARTITION" ) );
 
   ConstructorsClicked( 0 );
@@ -201,6 +203,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
     GroupPoints->ComboBox1->setCurrentIndex( 0 );
     GroupPoints->CheckButton1->show();
     GroupPoints->CheckButton2->show();
+    mySelfInte->show();
     GroupPoints->PushButton1->setDown( true );
     GroupPoints->PushButton2->setDown( false );
     GroupPoints->LineEdit1->setEnabled(true);
@@ -214,6 +217,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
     GroupPoints->TextLabel2->setText( tr( "GEOM_PLANE" ) );
     GroupPoints->CheckButton1->hide();
     GroupPoints->CheckButton2->hide();
+    mySelfInte->hide();
     GroupPoints->PushButton1->setDown( true );
     GroupPoints->LineEdit1->setEnabled(true);
     break;
@@ -446,13 +450,13 @@ bool OperationGUI_PartitionDlg::execute (ObjectList& objects)
 {
   bool res = false;
   GEOM::GEOM_Object_var anObj;
-  bool isDetectSelfInte = mySelfInte->isChecked();
 
   GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
 
   switch ( getConstructorId() ) {
   case 0:
     {
+      bool isDetectSelfInte    = mySelfInte->isChecked();
       int aLimit               = GetLimit();
       int aKeepNonlimitShapes  = GroupPoints->CheckButton1->isChecked();
       bool aNoSelfIntersection = GroupPoints->CheckButton2->isChecked();
@@ -464,15 +468,13 @@ bool OperationGUI_PartitionDlg::execute (ObjectList& objects)
                                                      isDetectSelfInte) :
         anOper->MakePartition(myListShapes, myListTools,
                               myListKeepInside, myListRemoveInside,
-                              aLimit, false, myListMaterials, aKeepNonlimitShapes,
-                              isDetectSelfInte);
+                              aLimit, false, myListMaterials, aKeepNonlimitShapes);
       res = true;
     }
     break;
   case 1:
     {
-      anObj = anOper->MakeHalfPartition( myListShapes[0].in(), myListTools[0].in(),
-                                         isDetectSelfInte );
+      anObj = anOper->MakeHalfPartition(myListShapes[0].in(), myListTools[0].in());
       res = true;
     }
     break;

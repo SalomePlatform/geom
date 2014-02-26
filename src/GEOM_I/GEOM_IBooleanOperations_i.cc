@@ -200,8 +200,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
                                        CORBA::Short            theLimit,
                                        CORBA::Boolean          theRemoveWebs,
                                        const GEOM::ListOfLong& theMaterials,
-                                       CORBA::Short theKeepNonlimitShapes,
-                                       CORBA::Boolean          IsCheckSelfInte)
+                                       CORBA::Short theKeepNonlimitShapes)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -235,7 +234,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartition
                                    theLimit, theRemoveWebs, aMaterials,
                                    theKeepNonlimitShapes,
                                    /*PerformSelfIntersections*/Standard_True,
-                                   IsCheckSelfInte);
+                                   /*IsCheckSelfInte*/Standard_False);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -304,8 +303,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakePartitionNonSelfIntersected
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
                                                  (GEOM::GEOM_Object_ptr theShape,
-                                                  GEOM::GEOM_Object_ptr thePlane,
-                                                  CORBA::Boolean        IsCheckSelfInte)
+                                                  GEOM::GEOM_Object_ptr thePlane)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -320,7 +318,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeHalfPartition
 
   // Make Half Partition
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeHalfPartition(aSh, aPl, IsCheckSelfInte);
+    GetOperations()->MakeHalfPartition(aSh, aPl);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -1528,7 +1528,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
       myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(),
                               aListImplKI->GetList(), aListImplRI->GetList(),
                               theLimit, theRemoveWebs, aListImplM->GetList(),
-                              theKeepNonlimitShapes, false);
+                              theKeepNonlimitShapes);
     endService( " GEOM_Superv_i::MakePartition" );
     return anObj;
   }
@@ -1546,7 +1546,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHalfPartition (GEOM::GEOM_Object_ptr th
   MESSAGE("GEOM_Superv_i::MakeHalfPartition");
   getBoolOp();
   GEOM::GEOM_Object_ptr anObj =
-    myBoolOp->MakeHalfPartition(theShape, thePlane, false);
+    myBoolOp->MakeHalfPartition(theShape, thePlane);
   endService( " GEOM_Superv_i::MakeHalfPartition" );
   return anObj;
 }

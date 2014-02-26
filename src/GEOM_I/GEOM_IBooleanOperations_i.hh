@@ -64,8 +64,7 @@ class GEOM_I_EXPORT GEOM_IBooleanOperations_i :
 				       CORBA::Short            theLimit,
 				       CORBA::Boolean          theRemoveWebs,
 				       const GEOM::ListOfLong& theMaterials,
-				       CORBA::Short theKeepNonlimitShapes,
-                                       CORBA::Boolean          IsCheckSelfInte);
+				       CORBA::Short theKeepNonlimitShapes);
 
   GEOM::GEOM_Object_ptr MakePartitionNonSelfIntersectedShape (const GEOM::ListOfGO&   theShapes,
 							      const GEOM::ListOfGO&   theTools,
@@ -79,8 +78,7 @@ class GEOM_I_EXPORT GEOM_IBooleanOperations_i :
 
 
   GEOM::GEOM_Object_ptr MakeHalfPartition (GEOM::GEOM_Object_ptr theShape,
-					   GEOM::GEOM_Object_ptr thePlane,
-                                           CORBA::Boolean        IsCheckSelfInte);
+					   GEOM::GEOM_Object_ptr thePlane);
 
   ::GEOMImpl_IBooleanOperations* GetOperations()
   { return (::GEOMImpl_IBooleanOperations*)GetImpl(); }
