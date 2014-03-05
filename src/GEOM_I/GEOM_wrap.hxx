@@ -61,6 +61,7 @@ namespace GEOM
   class GEOM_IMeasureOperations;
   class GEOM_IGroupOperations;
   class GEOM_IAdvancedOperations;
+  class GEOM_IFieldOperations;
   typedef SALOME::GenericObj_wrap< GEOM_IBasicOperations    > GEOM_IBasicOperations_wrap;
   typedef SALOME::GenericObj_wrap< GEOM_ITransformOperations> GEOM_ITransformOperations_wrap;
   typedef SALOME::GenericObj_wrap< GEOM_I3DPrimOperations   > GEOM_I3DPrimOperations_wrap;
@@ -74,6 +75,7 @@ namespace GEOM
   typedef SALOME::GenericObj_wrap< GEOM_IMeasureOperations  > GEOM_IMeasureOperations_wrap;
   typedef SALOME::GenericObj_wrap< GEOM_IGroupOperations    > GEOM_IGroupOperations_wrap;
   typedef SALOME::GenericObj_wrap< GEOM_IAdvancedOperations > GEOM_IAdvancedOperations_wrap;
+  typedef SALOME::GenericObj_wrap< GEOM_IFieldOperations    > GEOM_IFieldOperations_wrap;
 }
 
 #endif
