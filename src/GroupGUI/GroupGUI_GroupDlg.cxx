@@ -787,12 +787,16 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
             TopExp::MapShapes(aMainShape, aMainMap);
 
             TopExp_Explorer anExp (aShape, getShapeType());
+            bool isShowWarning = true;
             for (; anExp.More(); anExp.Next()) {
               TopoDS_Shape aSubShape = anExp.Current();
               int anIndex = aMainMap.FindIndex(aSubShape);
               if (anIndex == 0) {
-                SUIT_MessageBox::warning(app->desktop(), QObject::tr("WRN_WARNING"),
+                if (isShowWarning) {
+                  SUIT_MessageBox::warning(app->desktop(), QObject::tr("WRN_WARNING"),
                                          tr("WRN_NOT_SUBSHAPE"));
+                  isShowWarning = false;
+                }
               }
               else {
                 if (subSelectionWay() != ALL_SUBSHAPES &&
