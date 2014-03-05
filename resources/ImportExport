@@ -1,5 +1,5 @@
-Import: BREP|IGES|STEP|STL|ACIS
-Export: BREP|IGES|IGES_5_3|STEP|STL_Bin|STL_ASCII|ACIS|VTK
+Import: BREP|IGES|STEP|STL
+Export: BREP|IGES|IGES_5_3|STEP|STL_Bin|STL_ASCII|VTK
 
 BREP.Import: BREPImport
 BREP.Export: BREPExport
@@ -25,10 +25,6 @@ STL_Bin.Pattern: STL Binary Files ( *.stl )
 
 STL_ASCII.Export: STLExport
 STL_ASCII.Pattern: STL ASCII Files ( *.stl )
-
-ACIS.Import: ACISImport
-ACIS.Export: ACISExport
-ACIS.Pattern: ACIS Files ( *.sat )
 
 VTK.Export: VTKExport
 VTK.Pattern: VTK Files ( *.vtk )

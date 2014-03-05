@@ -143,8 +143,7 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
                           const NCollection_List<TopoDS_Shape> &theShapes);
 
  private:
-  Handle(Resource_Manager) myResMgr;
-  Handle(Resource_Manager) myResMgrUser;
+  std::vector<Handle(Resource_Manager)> myResMgrList;
   GEOMImpl_IShapesOperations* myShapesOperations;
   GEOMImpl_IGroupOperations* myGroupOperations;
   GEOMImpl_IFieldOperations* myFieldOperations;

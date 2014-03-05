@@ -392,56 +392,46 @@ Standard_Boolean GEOMImpl_IInsertOperations::ImportTranslators
 
   if (!InitResMgr()) return Standard_False;
 
-  // Read Import formats list from install directory
-  if (myResMgr->Find("Import")) {
-    TCollection_AsciiString aFormats (myResMgr->Value("Import"));
-    TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
-    int i = 1;
-    for (; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
-      theFormats->Append(aToken);
+  // Read Import formats from directories
+  Handle(Resource_Manager) aResMgr;
+  Handle(TColStd_HSequenceOfAsciiString) aFormatsToAdd;
+  for(int index = 0; index < myResMgrList.size(); index++) {
+    int anOldLen = theFormats->Length();
+    aResMgr = myResMgrList.at(index);
+    if (aResMgr->Find("Import")) {
+      TCollection_AsciiString aFormats (aResMgr->Value("Import"));
+      TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
+      for (int i = 1; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
+        int aLenFormats = theFormats->Length();
+        bool isFound = false;
+        for(int aInd=1;aInd<=aLenFormats;aInd++){
+          if( theFormats->Value(aInd) == aToken ){
+            isFound = true;
+            break;
+          }
+        }
+        if(!isFound)
+          theFormats->Append(aToken);
+      }
     }
-  }
 
-  // Read Import formats from user directory
-  if (myResMgrUser->Find("Import")) {
-    TCollection_AsciiString aFormats (myResMgrUser->Value("Import"));
-    TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
-    int i = 1;
-    for (; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
-      int aLenFormats = theFormats->Length();
-      bool isFound = false;
-      for(int aInd=1;aInd<=aLenFormats;aInd++){
-        if( theFormats->Value(aInd) == aToken){
-          isFound = true;
-          break;
+    // Read Patterns for each supported format
+    for (int j = anOldLen+1; j <= theFormats->Length(); j++) {
+      TCollection_AsciiString aKey, aPattern;
+      aKey = theFormats->Value(j) + ".ImportPattern";
+      if (aResMgr->Find(aKey.ToCString()))
+        aPattern = aResMgr->Value(aKey.ToCString());
+      else {
+        aKey = theFormats->Value(j) + ".Pattern";
+        if (aResMgr->Find(aKey.ToCString()))
+          aPattern = aResMgr->Value(aKey.ToCString());
+        else {
+          aPattern = theFormats->Value(j);
+          aPattern += " Files ( *.* )";
         }
       }
-      if(!isFound)
-        theFormats->Append(aToken);
+      thePatterns->Append(aPattern);
     }
-  }
-
-  // Read Patterns for each supported format
-  int j = 1, len = theFormats->Length();
-  for (; j <= len; j++) {
-    TCollection_AsciiString aKey, aPattern;
-    aKey = theFormats->Value(j) + ".ImportPattern";
-    if (myResMgr->Find(aKey.ToCString()))
-      aPattern = myResMgr->Value(aKey.ToCString());
-    else if(myResMgrUser->Find(aKey.ToCString()))
-      aPattern = myResMgrUser->Value(aKey.ToCString());
-    else {
-      aKey = theFormats->Value(j) + ".Pattern";
-      if (myResMgr->Find(aKey.ToCString()))
-        aPattern = myResMgr->Value(aKey.ToCString());
-      else if(myResMgrUser->Find(aKey.ToCString()))
-        aPattern = myResMgrUser->Value(aKey.ToCString());
-      else {
-        aPattern = theFormats->Value(j);
-        aPattern += " Files ( *.* )";
-      }
-    }
-    thePatterns->Append(aPattern);
   }
 
   return (!theFormats->IsEmpty());
@@ -468,56 +458,45 @@ Standard_Boolean GEOMImpl_IInsertOperations::ExportTranslators
 
   if (!InitResMgr()) return Standard_False;
 
-  // Read Export formats list from install directory
-  if (myResMgr->Find("Export")) {
-    TCollection_AsciiString aFormats (myResMgr->Value("Export"));
-    TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
-    int i = 1;
-    for (; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
-      theFormats->Append(aToken);
+  // Read Export formats list from directories
+  Handle(Resource_Manager) aResMgr;
+  for(int index=0; index < myResMgrList.size(); index++) {
+    int anOldLen = theFormats->Length();
+    aResMgr = myResMgrList.at(index);
+    if (aResMgr->Find("Export")) {
+      TCollection_AsciiString aFormats (aResMgr->Value("Export"));
+      TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
+      for (int i = 1; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
+        int aLenFormats = theFormats->Length();
+        bool isFound = false;
+        for(int aInd=1;aInd<=aLenFormats;aInd++){
+          if( theFormats->Value(aInd) == aToken){
+            isFound = true;
+            break;
+          }
+        }
+        if(!isFound)
+          theFormats->Append(aToken);
+      }
     }
-  }
 
-  // Read Export formats list from user directory
-  if (myResMgrUser->Find("Export")) {
-    TCollection_AsciiString aFormats (myResMgrUser->Value("Export"));
-    TCollection_AsciiString aToken = aFormats.Token("| \t", 1);
-    int i = 1;
-    for (; !aToken.IsEmpty(); aToken = aFormats.Token("| \t", ++i)) {
-      int aLenFormats = theFormats->Length();
-      bool isFound = false;
-      for(int aInd=1;aInd<=aLenFormats;aInd++){
-        if( theFormats->Value(aInd) == aToken){
-          isFound = true;
-          break;
+    // Read Patterns for each supported format
+    for (int j = anOldLen+1; j <= theFormats->Length(); j++) {
+      TCollection_AsciiString aKey, aPattern;
+      aKey = theFormats->Value(j) + ".ExportPattern";
+      if (aResMgr->Find(aKey.ToCString()))
+        aPattern = aResMgr->Value(aKey.ToCString());
+      else {
+        aKey = theFormats->Value(j) + ".Pattern";
+        if (aResMgr->Find(aKey.ToCString()))
+          aPattern = aResMgr->Value(aKey.ToCString());
+        else {
+          aPattern = theFormats->Value(j);
+          aPattern += " Files ( *.* )";
         }
       }
-      if(!isFound)
-        theFormats->Append(aToken);
+      thePatterns->Append(aPattern);
     }
-  }
-
-  // Read Patterns for each supported format
-  int j = 1, len = theFormats->Length();
-  for (; j <= len; j++) {
-    TCollection_AsciiString aKey, aPattern;
-    aKey = theFormats->Value(j) + ".ExportPattern";
-    if (myResMgr->Find(aKey.ToCString()))
-      aPattern = myResMgr->Value(aKey.ToCString());
-    else if (myResMgrUser->Find(aKey.ToCString()))
-      aPattern = myResMgrUser->Value(aKey.ToCString());
-    else {
-      aKey = theFormats->Value(j) + ".Pattern";
-      if (myResMgr->Find(aKey.ToCString()))
-        aPattern = myResMgr->Value(aKey.ToCString());
-      else if (myResMgrUser->Find(aKey.ToCString()))
-        aPattern = myResMgrUser->Value(aKey.ToCString());
-      else {
-        aPattern = theFormats->Value(j);
-        aPattern += " Files ( *.* )";
-      }
-    }
-    thePatterns->Append(aPattern);
   }
 
   return (!theFormats->IsEmpty());
@@ -541,48 +520,29 @@ Standard_Boolean GEOMImpl_IInsertOperations::IsSupported
   if (isImport) aMode = "Import";
   else aMode = "Export";
 
-  // Read supported formats for the certain mode from install directory
-  if (myResMgr->Find(aMode.ToCString())) {
-    TCollection_AsciiString aFormats (myResMgr->Value(aMode.ToCString()));
-    if (aFormats.Search(theFormat) > -1) {
-      // Read library name for the supported format
-      TCollection_AsciiString aKey (theFormat);
-      aKey += ".";
-      aKey += aMode;
-      if (myResMgr->Find(aKey.ToCString())) {
-        TCollection_AsciiString aLibName (myResMgr->Value(aKey.ToCString()));        
-#ifndef WIN32
-	if ( aLibName.Length() > 3 && aLibName.SubString(1,3) != "lib" )
-	  aLibName.Prepend("lib");
-        aLibName += ".so";
-#else
-        aLibName += ".dll";
-#endif
-        theLibName = new TCollection_HAsciiString (aLibName);
-        return Standard_True;
-      }
-    }
-  }
-  
   // Read supported formats for the certain mode from user directory
-  if (myResMgrUser->Find(aMode.ToCString())) {
-    TCollection_AsciiString aFormats (myResMgrUser->Value(aMode.ToCString()));
-    if (aFormats.Search(theFormat) > -1) {
-      // Read library name for the supported format
-      TCollection_AsciiString aKey (theFormat);
-      aKey += ".";
-      aKey += aMode;
-      if (myResMgrUser->Find(aKey.ToCString())) {
-        TCollection_AsciiString aLibName (myResMgrUser->Value(aKey.ToCString()));
-#ifndef WIN32
-	if ( aLibName.Length() > 3 && aLibName.SubString(1,3) != "lib" )
-	  aLibName.Prepend("lib");
-        aLibName += ".so";
-#else
-        aLibName += ".dll";
-#endif
-        theLibName = new TCollection_HAsciiString (aLibName);
-        return Standard_True;
+  Handle(Resource_Manager) aResMgr;
+  for(int index=0; index < myResMgrList.size(); index++) {
+    aResMgr = myResMgrList.at(index);
+    if (aResMgr->Find(aMode.ToCString())) {
+      TCollection_AsciiString aFormats (aResMgr->Value(aMode.ToCString()));
+      if (aFormats.Search(theFormat) > -1) {
+        // Read library name for the supported format
+        TCollection_AsciiString aKey (theFormat);
+        aKey += ".";
+        aKey += aMode;
+        if (aResMgr->Find(aKey.ToCString())) {
+          TCollection_AsciiString aLibName (aResMgr->Value(aKey.ToCString()));
+  #ifndef WIN32
+	  if ( aLibName.Length() > 3 && aLibName.SubString(1,3) != "lib" )
+	    aLibName.Prepend("lib");
+          aLibName += ".so";
+  #else
+          aLibName += ".dll";
+  #endif
+          theLibName = new TCollection_HAsciiString (aLibName);
+          return Standard_True;
+        }
       }
     }
   }
@@ -597,67 +557,56 @@ Standard_Boolean GEOMImpl_IInsertOperations::IsSupported
 //=============================================================================
 Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
 {
-  bool isResourceFound     = false;
-  bool isResourceFoundUser = false;
-  TCollection_AsciiString aUserResDir,aResDir;
+  bool isResourceFound = false;
+  TCollection_AsciiString aNull;
   
-  if (myResMgr.IsNull()) {
-    // Initialize the Resource Manager
-    TCollection_AsciiString aNull;
-    aResDir = TCollection_AsciiString(getenv("GEOM_ROOT_DIR"));
+  myResMgrList.clear();
+
+  // Initialize the GEOM Resource Manager
+  TCollection_AsciiString aResDir = TCollection_AsciiString(getenv("GEOM_ROOT_DIR"));
 #ifdef WIN32
-    aResDir += "\\share\\salome\\resources\\geom";
+  aResDir += "\\share\\salome\\resources\\geom";
 #else
-    aResDir += "/share/salome/resources/geom";
+  aResDir += "/share/salome/resources/geom";
 #endif
-    
-    myResMgr = new Resource_Manager ("ImportExport", aResDir, aNull, Standard_False);
-
+  Handle(Resource_Manager) aGeomResMgr = new Resource_Manager ("ImportExport", aResDir, aNull, Standard_False);
+  if ( aGeomResMgr->Find("Import") || aGeomResMgr->Find("Export") ) {
+    myResMgrList.push_back( aGeomResMgr );
     isResourceFound = true;
-    if (!myResMgr->Find("Import") && !myResMgr->Find("Export")) {
-      // instead of complains in Resource_Manager
-      isResourceFound = false;
-      INFOS("No valid file \"ImportExport\" found in " << aResDir.ToCString());
-    }
-  } else
-    isResourceFound = true;
-
-  if (myResMgrUser.IsNull()) {
-    char * dir = getenv("GEOM_ENGINE_RESOURCES_DIR");
-    TCollection_AsciiString aNull;
-    if ( dir )
-    {
-      aUserResDir = dir;
-    }
-    else
-    {
-      aUserResDir = getenv("HOME");
-#ifdef WIN32
-      aUserResDir += "\\.salome\\resources";
-#else
-      aUserResDir += "/.salome/resources";
-#endif
-    }
-
-    myResMgrUser = new Resource_Manager ("ImportExport", aNull, aUserResDir, Standard_False);
-
-    isResourceFoundUser = true;
-    
-    if (!myResMgrUser->Find("Import") && !myResMgrUser->Find("Export")) {
-      // instead of complains in Resource_Manager
-      isResourceFoundUser = false;
-    }
-      
-  } else
-    isResourceFoundUser = true;
-    
-  if(!isResourceFound && !isResourceFoundUser){
-    INFOS("No valid file \"ImportExport\" found in " << aResDir.ToCString());
-    INFOS("No valid file \"ImportExport\" found in " << aUserResDir.ToCString() );
   }
 
-  return ( myResMgr->Find("Import") || myResMgr->Find("Export") ||
-           myResMgrUser->Find("Import") || myResMgrUser->Find("Export"));
+  // Initialize the user's Resource Manager
+  TCollection_AsciiString aResDirsStr = getenv("GEOM_ENGINE_RESOURCES_DIR");
+  if ( !aResDirsStr.IsEmpty() )
+  {
+    std::string aSep = ":";
+#ifdef WIN32
+    aSep = ";";
+#endif
+    aResDir = aResDirsStr.Token(aSep.c_str(), 1);
+    for (int i = 1; !aResDir.IsEmpty(); aResDir = aResDirsStr.Token(aSep.c_str(), ++i)) {
+      Handle(Resource_Manager) anUserResMgr = new Resource_Manager ("ImportExport", aNull, aResDir, Standard_False);
+      if (anUserResMgr->Find("Import") || anUserResMgr->Find("Export")) {
+        myResMgrList.push_back( anUserResMgr );
+        isResourceFound = true;
+      }
+    }
+  }
+  else
+  {
+    aResDir = getenv("HOME");
+#ifdef WIN32
+    aResDir += "\\.config\\salome";
+#else
+    aResDir += "/.config/salome";
+#endif
+    Handle(Resource_Manager) anUserResMgr = new Resource_Manager ("ImportExport", aNull, aResDir, Standard_False);
+    if (anUserResMgr->Find("Import") || anUserResMgr->Find("Export")) {
+      myResMgrList.push_back( anUserResMgr );
+      isResourceFound = true;
+    }
+  }
+  return isResourceFound;
 }
 
 //=============================================================================
