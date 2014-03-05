@@ -277,20 +277,26 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
   Handle(ShapeBuild_ReShape) myContext = new ShapeBuild_ReShape;
   TopoDS_Shape aResShape = myContext->Apply(Shape);
 
-  // Fill Map of faces as keys and list of solids as items.
-  TopTools_IndexedDataMapOfShapeListOfShape aMapFaceSolids;
+  // Fill Map of faces as keys and list of solids or shells as items.
+  TopTools_IndexedDataMapOfShapeListOfShape aMapFaceSoOrSh;
+
+  TopAbs_ShapeEnum aType = Shape.ShapeType();
+
+  if (aType != TopAbs_SHELL) {
+    aType = TopAbs_SOLID;
+  }
 
   TopExp::MapShapesAndAncestors
-    (Shape, TopAbs_FACE, TopAbs_SOLID, aMapFaceSolids);
+    (Shape, TopAbs_FACE, aType, aMapFaceSoOrSh);
 
   // processing each solid
   TopExp_Explorer exps;
-  for (exps.Init(Shape, TopAbs_SOLID); exps.More(); exps.Next()) {
-    TopoDS_Solid aSolid = TopoDS::Solid(exps.Current());
+  for (exps.Init(Shape, aType); exps.More(); exps.Next()) {
+    TopoDS_Shape aSoOrSh = exps.Current();
 
     // creating map of edge faces
     TopTools_IndexedDataMapOfShapeListOfShape aMapEdgeFaces;
-    TopExp::MapShapesAndAncestors(aSolid, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces);
+    TopExp::MapShapesAndAncestors(aSoOrSh, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces);
 
     // map of processed shapes
     TopTools_MapOfShape aProcessed;
@@ -305,7 +311,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
     int nbf = 0;
     TopExp_Explorer exp;
     TopTools_MapOfShape mapF;
-    for (exp.Init(aSolid, TopAbs_FACE); exp.More(); exp.Next()) {
+    for (exp.Init(aSoOrSh, TopAbs_FACE); exp.More(); exp.Next()) {
       if (mapF.Add(exp.Current()))
         nbf++;
     }
@@ -315,7 +321,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 
     // processing each face
     mapF.Clear();
-    for (exp.Init(aSolid, TopAbs_FACE); exp.More() && doUnion; exp.Next()) {
+    for (exp.Init(aSoOrSh, TopAbs_FACE); exp.More() && doUnion; exp.Next()) {
       TopoDS_Face aFace = TopoDS::Face(exp.Current().Oriented(TopAbs_FORWARD));
 
       if (aProcessed.Contains(aFace))
@@ -356,7 +362,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
           }
 
           // Check if faces belong to same solids.
-          if (!IsFacesOfSameSolids(aFace, anCheckedFace, aMapFaceSolids)) {
+          if (!IsFacesOfSameSolids(aFace, anCheckedFace, aMapFaceSoOrSh)) {
             continue;
           }
 
@@ -570,7 +576,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 
     //TopoDS_Shape aResult = Shape;
     if (NbModif > 0 && !hasFailed) {
-      TopoDS_Shape aResult = aContext->Apply(aSolid);
+      TopoDS_Shape aResult = aContext->Apply(aSoOrSh);
 
       ShapeFix_Edge sfe;
       for (exp.Init(aResult,TopAbs_EDGE); exp.More(); exp.Next()) {
@@ -580,11 +586,11 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
         sfe.FixSameParameter(E, myTolerance);
       }
 
-      myContext->Replace(aSolid, aResult);
+      myContext->Replace(aSoOrSh, aResult);
     }
     //else
     {
-      for (exp.Init(aSolid, TopAbs_FACE); exp.More(); exp.Next()) {
+      for (exp.Init(aSoOrSh, TopAbs_FACE); exp.More(); exp.Next()) {
         TopoDS_Face aFace = TopoDS::Face(exp.Current().Oriented(TopAbs_FORWARD));
         Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire;
         sfw->SetContext(myContext);
