@@ -766,11 +766,14 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetNonBlocks
   //Get the result
   Handle(GEOM_Object) aFaces;
   Handle(GEOM_Object) anObject = GetOperations()->GetNonBlocks(aShape, aFaces);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
+  if (!GetOperations()->IsDone())
     return aGEOMObject._retn();
 
   if (!aFaces.IsNull())
     theNonQuads = GetObject(aFaces);
+
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
 
   return GetObject(anObject);
 }
