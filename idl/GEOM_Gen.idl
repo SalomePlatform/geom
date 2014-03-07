@@ -274,6 +274,11 @@ module GEOM
     long GetType();
 
     /*!
+     *  \brief Get value of a modification counter of the object
+     */
+    long GetTick();
+
+    /*!
      *  \brief Set a Study entry where this object was published.
      */
     void SetStudyEntry (in string theEntry);

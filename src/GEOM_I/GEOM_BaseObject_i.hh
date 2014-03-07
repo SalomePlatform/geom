@@ -46,6 +46,8 @@ class GEOM_I_EXPORT GEOM_BaseObject_i : public virtual POA_GEOM::GEOM_BaseObject
 
   virtual CORBA::Long GetType();
 
+  virtual CORBA::Long GetTick();
+
   virtual void SetName(const char* theName);
 
   virtual char* GetName();
