@@ -563,7 +563,8 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
   myResMgrList.clear();
 
   // Initialize the GEOM Resource Manager
-  TCollection_AsciiString aResDir = TCollection_AsciiString(getenv("GEOM_ROOT_DIR"));
+  TCollection_AsciiString aResDir;
+  aResDir = getenv("GEOM_ROOT_DIR");
 #ifdef WIN32
   aResDir += "\\share\\salome\\resources\\geom";
 #else
@@ -576,7 +577,8 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
   }
 
   // Initialize the user's Resource Manager
-  TCollection_AsciiString aResDirsStr = getenv("GEOM_ENGINE_RESOURCES_DIR");
+  TCollection_AsciiString aResDirsStr;
+  aResDirsStr = getenv("GEOM_ENGINE_RESOURCES_DIR");
   if ( !aResDirsStr.IsEmpty() )
   {
     std::string aSep = ":";
