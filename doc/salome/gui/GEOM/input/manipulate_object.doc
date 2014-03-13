@@ -1,0 +1,30 @@
+/*!
+
+\page manipulate_object Manipulate GEOM object in the study (module geomtools)
+
+The usage of the geomtools module can be appreciated with this set
+of instructions:
+
+\code
+from salome.geom.geomtools import TEST_createAndDeleteShape
+TEST_createAndDeleteShape()
+\endcode
+
+This test executes the following procedure:
+
+- Create, publish, and display a cylinder
+- Create, publish, and display a sphere
+- Create a box, publish it in a folder "boxset", and display it with a
+  "pink" color.
+- Erase the sphere from the viewer (the sphere still exists in the study)
+- Delete the cylinder (the cylinder is no longer displayed and does
+  not exist any more, neither in the study nor the GEOM componet.
+
+At the end of the execution of this test, you should have in the
+SALOME session:
+
+- the box, in a dedicated folder of the study, and displayed in the
+  viewer
+- the sphere, in the standard place of the study, and not displayed
+
+*/

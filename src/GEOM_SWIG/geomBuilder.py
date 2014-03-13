@@ -29,7 +29,7 @@
 """
 
 ##
-## @defgroup l1_publish_data Publishing results in SALOME study
+## @defgroup geomBuilder geomBuilder Python module
 ## @{
 ##
 ## @details
@@ -184,8 +184,12 @@
 ## it only affects on the representation of the data tree.
 ## - It is impossible to publish geometry object using any folder as father.
 ## 
+##  \defgroup l1_publish_data
+##  \defgroup l1_geomBuilder_auxiliary
+##  \defgroup l1_geomBuilder_purpose
 ## @}
 
+## @defgroup l1_publish_data Publishing results in SALOME study
 
 ## @defgroup l1_geomBuilder_auxiliary Auxiliary data structures and methods
 
@@ -504,7 +508,7 @@ class info:
     CLOSED   = 1
     UNCLOSED = 2
 
-##! Private class used to bind calls of plugin operations to geomBuilder
+## Private class used to bind calls of plugin operations to geomBuilder
 class PluginOperation:
   def __init__(self, operation, function):
     self.operation = operation

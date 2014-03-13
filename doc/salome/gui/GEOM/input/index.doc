@@ -27,9 +27,7 @@ Geometry module preferences are described in the
 \subpage geometry_preferences_page section of SALOME Geometry Help.
 
 Almost all geometry module functionalities are accessible via
-\subpage geompy_page "Geometry module Python Interface"
-
-Other functions are available in <a class="el" target="_new" href="../../tui/GEOM/docutils/index.html">salome.geom python package</a>.
+\subpage python_interface "Geometry module Python Interface"
 
 You can find the answer to some Frequently Asked Questions in this page:
 - \subpage faq "Frequently Asked Questions"

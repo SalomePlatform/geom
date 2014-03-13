@@ -32,7 +32,11 @@ ENDIF(WIN32)
 
 ADD_CUSTOM_TARGET(usr_docs ${CMAKE_COMMAND} -E make_directory tmp
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomBuilder.py ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/geomBuilder.py
-  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/gsketcher.py ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/gsketcher.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/gsketcher.py   ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/gsketcher.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomtools.py   ${CMAKE_SOURCE_DIR}/src/GEOM_PY/geomtools.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/structelem.py  ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/__init__.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/parts.py       ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/parts.py
+  COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/orientation.py ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/orientation.py
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile_tui 
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile_py
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile

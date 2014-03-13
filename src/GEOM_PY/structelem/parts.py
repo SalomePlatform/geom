@@ -18,6 +18,16 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
+## \defgroup parts parts
+#  \{ 
+#  \details
+#  This module defines the different structural element parts. It is used to
+#  build the geometric shapes of the structural elements. It should not be used
+#  directly in the general case. Structural elements should be created by the
+#  \ref structelem.StructuralElementManager "salome.geom.structelem.StructuralElementManager".
+#  \}
+
 """
 This module defines the different structural element parts. It is used to
 build the geometric shapes of the structural elements. It should not be used
@@ -56,7 +66,9 @@ LIGHT_RED = SALOMEDS.Color(1.0, 0.5, 0.5)
 PURPLE = SALOMEDS.Color(170.0/255.0, 85.0/255.0, 1.0)
 ORANGE = SALOMEDS.Color(1.0, 170.0/255.0, 0.0)
 
-
+## This exception is raised when an invalid parameter is used to build a
+#  structural element part.
+#  \ingroup parts
 class InvalidParameterError(Exception):
     """
     This exception is raised when an invalid parameter is used to build a
@@ -74,7 +86,10 @@ class InvalidParameterError(Exception):
                                             self.expression, self.value,
                                             self.groupName)
 
-
+## This class enables the use of sub-shapes in sets or as dictionary keys.
+#  It implements __eq__ and __hash__ methods so that sub-shapes with the same
+#  CORBA object \em mainShape and the same \em id are considered equal.
+#  \ingroup parts
 class SubShapeID:
     """
     This class enables the use of sub-shapes in sets or as dictionary keys.
@@ -86,6 +101,8 @@ class SubShapeID:
         self._mainShape = mainShape
         self._id = id
 
+    ## Return the sub-shape (GEOM object). \em geom is a pseudo-geompy object
+    #  used to find the geometrical object.
     def getObj(self, geom):
         """
         Return the sub-shape (GEOM object). `geom` is a pseudo-geompy object
@@ -100,7 +117,16 @@ class SubShapeID:
     def __hash__(self):
         return self._mainShape._hash(2147483647) ^ self._id
 
-
+## This class is the base class for all structural element parts. It should
+#  not be instantiated directly (consider it as an "abstract" class).
+#  \param studyId (integer) the ID of the study in which the part is created.
+#  \param groupName (string) the name of the underlying geometrical primitive 
+#  in the study.
+#  \param groupGeomObj (GEOM object) the underlying geometrical primitive.
+#  \param parameters (dictionary) parameters defining the structural element (see
+#  subclasses for details).
+#  \param name (string) name to use for the created object in the study.
+#  \ingroup parts
 class StructuralElementPart:
     """
     This class is the base class for all structural element parts. It should
@@ -148,6 +174,9 @@ class StructuralElementPart:
         if self.color is None:
             self.color = self._groupGeomObj.GetColor()
 
+    ## This method finds the value of a parameter in the parameters
+    #  dictionary. The argument is a list because some parameters can have
+    #  several different names.
     def _getParameter(self, nameList, default = None):
         """
         This method finds the value of a parameter in the parameters
@@ -162,6 +191,7 @@ class StructuralElementPart:
                 return self._parameters[name]
         return default
 
+    ## This method finds the user name for a parameter.
     def _getParamUserName(self, paramName):
         """
         This method finds the user name for a parameter.
@@ -183,6 +213,9 @@ class StructuralElementPart:
         return '%s("%s", %s)' % (self.__class__.__name__, self.groupName,
                                  reprdict)
 
+    ## Add orientation information to the structural element part. See class
+    #  \ref Orientation1D "salome.geom.structelem.orientation.Orientation1D" 
+    #  for the description of the parameters.
     def addOrientation(self, orientParams):
         """
         Add orientation information to the structural element part. See class
@@ -191,6 +224,8 @@ class StructuralElementPart:
         """
         self._orientation.addParams(orientParams)
 
+    ## This method checks that some parameters or some expressions involving
+    #  those parameters are greater than a minimum value.
     def _checkSize(self, value, mindim, expression):
         """
         This method checks that some parameters or some expressions involving
@@ -200,6 +235,8 @@ class StructuralElementPart:
             raise InvalidParameterError(self.groupName, expression,
                                         mindim, value)
 
+    ## Build the geometric shapes and the markers corresponding to the
+    #  structural element part in the study \em studyId.
     def build(self):
         """
         Build the geometric shapes and the markers corresponding to the
@@ -212,6 +249,8 @@ class StructuralElementPart:
             marker.SetColor(self.color)
         return (shape, markers)
 
+    ## This abstract method must be implemented in subclasses and should
+    #  create the geometrical shape(s) of the structural element part.
     def _buildPart(self):
         """
         This abstract method must be implemented in subclasses and should
@@ -222,6 +261,9 @@ class StructuralElementPart:
                                   "StructuralElementPart subclasses)." %
                                   self.__class__.__name__)
 
+    ## This abstract method must be implemented in subclasses and should
+    #  create the markers defining the orientation of the structural element
+    #  part.
     def _buildMarkers(self):
         """
         This abstract method must be implemented in subclasses and should
@@ -233,6 +275,7 @@ class StructuralElementPart:
                                   "StructuralElementPart subclasses)." %
                                   self.__class__.__name__)
 
+    ## Find and return the base sub-shapes in the structural element part.
     def _getSubShapes(self, minDim = MIN_LENGTH_FOR_EXTRUSION):
         """
         Find and return the base sub-shapes in the structural element part.
@@ -252,7 +295,10 @@ class StructuralElementPart:
                 subShapes.append(subShape)
         return subShapes
 
-
+## This class is an "abstract" class for all 1D structural element parts. It
+#  should not be instantiated directly. See class StructuralElementPart 
+#  for the description of the parameters.
+#  \ingroup parts
 class Beam(StructuralElementPart):
     """
     This class is an "abstract" class for all 1D structural element parts. It
@@ -268,6 +314,9 @@ class Beam(StructuralElementPart):
                                        parameters, name, color)
         self._orientation = orientation.Orientation1D()
 
+    ## This method checks if a 1D object is "reversed", i.e. if its
+    #  orientation is different than the orientation of the underlying OCC
+    #  object.
     def _isReversed(self, path):
         """
         This method checks if a 1D object is "reversed", i.e. if its
@@ -280,6 +329,9 @@ class Beam(StructuralElementPart):
         dist = self.geom.MinDistance(p1, p2)
         return dist > length / 2
 
+    ## Get a vertex and the corresponding tangent on a wire by parameter.
+    #  This method takes into account the "real" orientation of the wire
+    #  (i.e. the orientation of the underlying OCC object).
     def _getVertexAndTangentOnOrientedWire(self, path, param):
         """
         Get a vertex and the corresponding tangent on a wire by parameter.
@@ -298,6 +350,8 @@ class Beam(StructuralElementPart):
             tangent = self.geom.MakeTangentOnCurve(path, param)
         return (vertex, tangent)
 
+    ## Create a solid by the extrusion of section \em wire1 to section \em wire2
+    #  along \em path.
     def _makeSolidPipeFromWires(self, wire1, wire2, point1, point2, path):
         """
         Create a solid by the extrusion of section `wire1` to section `wire2`
@@ -312,6 +366,7 @@ class Beam(StructuralElementPart):
         solid = self.geom.MakeSolid([closedShell])
         return solid
 
+    ## Build the structural element part.
     def _buildPart(self):
         """
         Build the structural element part.
@@ -351,6 +406,7 @@ class Beam(StructuralElementPart):
         else:
             return self.geom.MakeCompound(listPipes)
 
+    ## Build the markers defining the orientation of the structural element part.
     def _buildMarkers(self):
         """
         Build the markers defining the orientation of the structural element
@@ -367,6 +423,18 @@ class Beam(StructuralElementPart):
         return listMarkers
 
 
+## This class defines a beam with a circular section. It can be full or
+#  hollow, and its radius and thickness can vary from one end of the beam to
+#  the other. The valid parameters for circular beams are:
+#  - "R1" or "R": radius at the first end of the beam.
+#  - "R2" or "R": radius at the other end of the beam.
+#  - "EP1" or "EP" (optional): thickness at the first end of the beam.
+#    If not specified or equal to 0, the beam is considered full.
+#  - "EP2" or "EP" (optional): thickness at the other end of the beam.
+#  If not specified or equal to 0, the beam is considered full.
+#
+#  See class StructuralElementPart for the description of the other parameters.
+#  \ingroup parts
 class CircularBeam(Beam):
     """
     This class defines a beam with a circular section. It can be full or
@@ -428,6 +496,7 @@ class CircularBeam(Beam):
                             "%s - %s" % (self._getParamUserName("R2"),
                                          self._getParamUserName("EP2")))
 
+    ## Create the circular sections used to build the pipe.
     def _makeSectionWires(self, fPoint, fNormal, lPoint, lNormal):
         """
         Create the circular sections used to build the pipe.
@@ -446,6 +515,28 @@ class CircularBeam(Beam):
         return (outerCircle1, innerCircle1, outerCircle2, innerCircle2)
 
 
+## This class defines a beam with a rectangular section. It can be full or
+#  hollow, and its dimensions can vary from one end of the beam to the other.
+#  The valid parameters for rectangular beams are:
+#  - "HY1", "HY", "H1" or "H": width at the first end of the beam.
+#  - "HZ1", "HZ", "H1" or "H": height at the first end of the beam.
+#  - "HY2", "HY", "H2" or "H": width at the other end of the beam.
+#  - "HZ2", "HZ", "H2" or "H": height at the other end of the beam.
+#  - "EPY1", "EPY", "EP1" or "EP" (optional): thickness in the width
+#    direction at the first end of the beam. If not specified or equal to 0,
+#    the beam is considered full.
+#  - "EPZ1", "EPZ", "EP1" or "EP" (optional): thickness in the height
+#    direction at the first end of the beam. If not specified or equal to 0,
+#    the beam is considered full.
+#  - "EPY2", "EPY", "EP2" or "EP" (optional): thickness in the width
+#    direction at the other end of the beam. If not specified or equal to 0,
+#    the beam is considered full.
+#  - "EPZ2", "EPZ", "EP2" or "EP" (optional): thickness in the height
+#    direction at the other end of the beam. If not specified or equal to 0,
+#    the beam is considered full.
+#
+#   See class StructuralElementPart for the description of the other parameters.
+#  \ingroup parts
 class RectangularBeam(Beam):
     """
     This class defines a beam with a rectangular section. It can be full or
@@ -539,6 +630,7 @@ class RectangularBeam(Beam):
                             "%s - 2 * %s" % (self._getParamUserName("HZ2"),
                                              self._getParamUserName("EPZ2")))
 
+    ## Create a rectangle in the specified plane.
     def _makeRectangle(self, HY, HZ, lcs):
         """
         Create a rectangle in the specified plane.
@@ -553,6 +645,7 @@ class RectangularBeam(Beam):
         sketch = self.geom.MakeSketcherOnPlane(sketchStr, lcs)
         return sketch
 
+    ## Create one side of the rectangular sections used to build the pipe.
     def _makeSectionRectangles(self, point, vecX, HY, HZ, EPY, EPZ):
         """
         Create one side of the rectangular sections used to build the pipe.
@@ -568,6 +661,7 @@ class RectangularBeam(Beam):
             innerRect = None
         return (outerRect, innerRect)
 
+    ## Create the rectangular sections used to build the pipe.
     def _makeSectionWires(self, fPoint, fNormal, lPoint, lNormal):
         """
         Create the rectangular sections used to build the pipe.
@@ -581,6 +675,10 @@ class RectangularBeam(Beam):
         return (outerRect1, innerRect1, outerRect2, innerRect2)
 
 
+## This method finds the value of a parameter in the parameters
+#  dictionary. The argument is a list because some parameters can have
+#  several different names.
+#  \ingroup parts
 def getParameterInDict(nameList, parametersDict, default = None):
     """
     This method finds the value of a parameter in the parameters
@@ -592,7 +690,15 @@ def getParameterInDict(nameList, parametersDict, default = None):
             return parametersDict[name]
     return default
 
-
+## This class defines a beam with a generic section. It is represented as a
+#  full rectangular beam with the following parameters:
+#  - HY1 = sqrt(12 * IZ1 / A1)
+#  - HZ1 = sqrt(12 * IY1 / A1)
+#  - HY2 = sqrt(12 * IZ2 / A2)
+#  - HZ2 = sqrt(12 * IY2 / A2)
+#    
+#  See StructuralElementPart for the description of the other parameters.
+#  \ingroup parts
 class GeneralBeam(RectangularBeam):
     """
     This class defines a beam with a generic section. It is represented as a
@@ -629,7 +735,10 @@ class GeneralBeam(RectangularBeam):
         RectangularBeam.__init__(self, studyId, groupName, groupGeomObj, parameters,
                                  name, color)
 
-
+## This class is an "abstract" class for all 2D structural element parts. It
+#  should not be instantiated directly. 
+#  See class StructuralElementPart for the description of the parameters.
+#  \ingroup parts
 class StructuralElementPart2D(StructuralElementPart):
     """
     This class is an "abstract" class for all 2D structural element parts. It
@@ -649,6 +758,7 @@ class StructuralElementPart2D(StructuralElementPart):
                                         self._getParameter(["Vecteur"]))
         self.offset = self._getParameter(["Excentre"], 0.0)
 
+    ## Create a copy of a face at a given offset.
     def _makeFaceOffset(self, face, offset, epsilon = 1e-6):
         """
         Create a copy of a face at a given offset.
@@ -663,6 +773,8 @@ class StructuralElementPart2D(StructuralElementPart):
                                           self.geom.ShapeType["FACE"])
             return faces[0]
 
+    ## Build the markers for the structural element part with a given offset
+    #  from the base face.
     def _buildMarkersWithOffset(self, offset):
         """
         Build the markers for the structural element part with a given offset
@@ -691,7 +803,19 @@ class StructuralElementPart2D(StructuralElementPart):
 
         return listMarkers
 
-
+## This class defines a shell with a given thickness. It can be shifted from
+#  the base face. The valid parameters for thick shells are:
+#  - "Epais": thickness of the shell.
+#  - "Excentre": offset of the shell from the base face.
+#  - "angleAlpha": angle used to build the markers (see class
+#    \ref orientation.Orientation2D "salome.geom.structelem.orientation.Orientation2D")
+#  - "angleBeta": angle used to build the markers (see class
+#    \ref orientation.Orientation2D "salome.geom.structelem.orientation.Orientation2D")
+#  - "Vecteur": vector used instead of the angles to build the markers (see
+#    \ref orientation.Orientation2D "salome.geom.structelem.orientation.Orientation2D")
+#
+#    See class StructuralElementPart for the description of the other parameters.
+#  \ingroup parts
 class ThickShell(StructuralElementPart2D):
     """
     This class defines a shell with a given thickness. It can be shifted from
@@ -719,6 +843,7 @@ class ThickShell(StructuralElementPart2D):
         self.thickness = self._getParameter(["Epais"])
         logger.debug(repr(self))
 
+    ## Create the geometrical shapes corresponding to the thick shell.
     def _buildPart(self):
         """
         Create the geometrical shapes corresponding to the thick shell.
@@ -740,6 +865,8 @@ class ThickShell(StructuralElementPart2D):
         else:
             return self.geom.MakeCompound(listSolids)
 
+    ## Create the geometrical shapes corresponding to the thick shell for a
+    #  given face.
     def _buildThickShellForFace(self, face):
         """
         Create the geometrical shapes corresponding to the thick shell for a
@@ -775,6 +902,7 @@ class ThickShell(StructuralElementPart2D):
         resultSolid = self.geom.MakeSolid([resultShell])
         return resultSolid
 
+    ## Remove the side edge in a cylinder.
     def _removeCylinderExtraEdge(self, wires):
         """
         Remove the side edge in a cylinder.
@@ -787,6 +915,7 @@ class ThickShell(StructuralElementPart2D):
                     result.append(edge)
         return result
 
+    ## Build the markers defining the orientation of the thick shell.
     def _buildMarkers(self):
         """
         Build the markers defining the orientation of the thick shell.
@@ -794,7 +923,31 @@ class ThickShell(StructuralElementPart2D):
         return self._buildMarkersWithOffset(self.offset +
                                             self.thickness / 2.0)
 
-
+## This class defines a grid. A grid is represented by a 2D face patterned
+#  with small lines in the main direction of the grid frame. The valid
+#  parameters for grids are:
+#  - "Excentre": offset of the grid from the base face.
+#  - "angleAlpha": angle used to build the markers (see class
+#    \ref orientation.Orientation2D "salome.geom.structelem.orientation.Orientation2D")
+#  - "angleBeta": angle used to build the markers (see class
+#    \ref orientation.Orientation2D "salome.geom.structelem.orientation.Orientation2D")
+#  - "Vecteur": vector used instead of the angles to build the markers (see
+#    \ref orientation.Orientation2D "salome.geom.structelem.orientation.Orientation2D")
+#  - "origAxeX": X coordinate of the origin of the axis used to determine the
+#    orientation of the frame in the case of a cylindrical grid.
+#  - "origAxeY": Y coordinate of the origin of the axis used to determine the
+#    orientation of the frame in the case of a cylindrical grid.
+#  - "origAxeZ": Z coordinate of the origin of the axis used to determine the
+#    orientation of the frame in the case of a cylindrical grid.
+#  - "axeX": X coordinate of the axis used to determine the orientation of
+#    the frame in the case of a cylindrical grid.
+#  - "axeY": Y coordinate of the axis used to determine the orientation of
+#    the frame in the case of a cylindrical grid.
+#  - "axeZ": Z coordinate of the axis used to determine the orientation of
+#    the frame in the case of a cylindrical grid.
+#
+#    See class StructuralElementPart for the description of the other parameters.
+#  \ingroup parts
 class Grid(StructuralElementPart2D):
     """
     This class defines a grid. A grid is represented by a 2D face patterned
@@ -839,6 +992,7 @@ class Grid(StructuralElementPart2D):
         self.vz = self._getParameter(["axeZ"])
         logger.debug(repr(self))
 
+    ## Create the geometrical shapes representing the grid.
     def _buildPart(self):
         """
         Create the geometrical shapes representing the grid.
@@ -867,6 +1021,8 @@ class Grid(StructuralElementPart2D):
         else:
             return self.geom.MakeCompound(listGridShapes)
 
+    ## Create the geometrical shapes representing the grid for a given
+    #  non-cylindrical face.
     def _buildGridForNormalFace(self, face):
         """
         Create the geometrical shapes representing the grid for a given
@@ -902,6 +1058,8 @@ class Grid(StructuralElementPart2D):
         grid = self.geom.MakeCompound(gridList)
         return grid
 
+    ## Create the geometrical shapes representing the grid for a given
+    #  cylindrical face.
     def _buildGridForCylinderFace(self, face):
         """
         Create the geometrical shapes representing the grid for a given
@@ -941,13 +1099,15 @@ class Grid(StructuralElementPart2D):
         grid = self.geom.MakeCompound(gridList)
         return grid
 
+    ## Create the markers defining the orientation of the grid.
     def _buildMarkers(self):
         """
         Create the markers defining the orientation of the grid.
         """
         return self._buildMarkersWithOffset(self.offset)
 
-
+## Alias for class GeneralBeam.
+#  \ingroup parts
 def VisuPoutreGenerale(studyId, groupName, groupGeomObj, parameters,
                        name = "POUTRE"):
     """
@@ -955,20 +1115,26 @@ def VisuPoutreGenerale(studyId, groupName, groupGeomObj, parameters,
     """
     return GeneralBeam(studyId, groupName, groupGeomObj, parameters, name)
 
+## Alias for class CircularBeam.
+#  \ingroup parts
 def VisuPoutreCercle(studyId, groupName, groupGeomObj, parameters,
                      name = "POUTRE"):
     """
     Alias for class :class:`CircularBeam`.
     """
     return CircularBeam(studyId, groupName, groupGeomObj, parameters, name)
-  
+
+## Alias for class RectangularBeam. 
+#  \ingroup parts
 def VisuPoutreRectangle(studyId, groupName, groupGeomObj, parameters,
                         name = "POUTRE"):
     """
     Alias for class :class:`RectangularBeam`.
     """
     return RectangularBeam(studyId, groupName, groupGeomObj, parameters, name)
-  
+
+## Alias for class GeneralBeam.  
+#  \ingroup parts
 def VisuBarreGenerale(studyId, groupName, groupGeomObj, parameters,
                       name = "BARRE"):
     """
@@ -976,7 +1142,9 @@ def VisuBarreGenerale(studyId, groupName, groupGeomObj, parameters,
     """
     return GeneralBeam(studyId, groupName, groupGeomObj, parameters, name,
                        color = ORANGE)
-      
+
+## Alias for class RectangularBeam.      
+#  \ingroup parts
 def VisuBarreRectangle(studyId, groupName, groupGeomObj, parameters,
                        name = "BARRE"):
     """
@@ -985,6 +1153,8 @@ def VisuBarreRectangle(studyId, groupName, groupGeomObj, parameters,
     return RectangularBeam(studyId, groupName, groupGeomObj, parameters, name,
                            color = ORANGE)
 
+## Alias for class CircularBeam.
+#  \ingroup parts
 def VisuBarreCercle(studyId, groupName, groupGeomObj, parameters,
                     name = "BARRE"):
     """
@@ -993,6 +1163,8 @@ def VisuBarreCercle(studyId, groupName, groupGeomObj, parameters,
     return CircularBeam(studyId, groupName, groupGeomObj, parameters, name,
                         color = ORANGE)
 
+## Alias for class CircularBeam.
+#  \ingroup parts
 def VisuCable(studyId, groupName, groupGeomObj, parameters, name = "CABLE"):
     """
     Alias for class :class:`CircularBeam`.
@@ -1000,12 +1172,16 @@ def VisuCable(studyId, groupName, groupGeomObj, parameters, name = "CABLE"):
     return CircularBeam(studyId, groupName, groupGeomObj, parameters, name,
                         color = PURPLE)
 
+## Alias for class ThickShell.
+#  \ingroup parts
 def VisuCoque(studyId, groupName, groupGeomObj, parameters, name = "COQUE"):
     """
     Alias for class :class:`ThickShell`.
     """
     return ThickShell(studyId, groupName, groupGeomObj, parameters, name)
-  
+
+## Alias for class Grid.
+#  \ingroup parts
 def VisuGrille(studyId, groupName, groupGeomObj, parameters, name = "GRILLE"):
     """
     Alias for class :class:`Grid`.

@@ -21,6 +21,38 @@
 #  Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
 #  Module : GEOM_SWIG
 
+## @defgroup sketcher sketcher - Wrapper to help the creation of simple sketches
+#  @{ 
+#  @details
+#  This module provides the user with a simple python API 
+#  to realize various sketches from the GEOM text user interface.
+#  @n Example:
+#  @code
+#  import GEOM
+#  from salome.geom import geomBuilder
+#  geompy = geomBuilder.New(salome.myStudy)
+#
+#  # create a wire for sketcher
+#  geomObj_1 = geompy.MakeMarker(0, 0, 0, 1, 0, 0, 0, 1, 0)
+#
+#  # Create the sketch
+#  sk = geompy.Sketcher2D()
+#  sk.addPoint(0.000000, 0.000000)
+#  sk.addSegmentAbsolute(50.000000, 50.000000)
+#  sk.addSegmentPerpY(0.000000)
+#  sk.addArcAbsolute(0.000000, 0.000000)
+#  sk.close()
+#  Sketch_1 = sk.wire(geomObj_1)
+#
+#  # add objects in the study
+#  geompy.addToStudy( Sketch_1, 'Sketch_1' )
+#
+#  # update object browser
+#  salome.sg.updateObjBrowser(1)
+#  @endcode
+#  @n Additionnal examples can be found as unit tests in the source code.
+#  @}
+
 """
     \namespace geompy
     \brief 2D and 3D Sketcher interfaces
@@ -37,6 +69,7 @@ def printVar (var):
 #  Use geompy.Sketcher3D() method to obtain an instance of this class.
 #
 #  @ref tui_3dsketcher_page "Example"
+#  @ingroup sketcher
 class Sketcher3D:
     """
     3D sketcher interface.
@@ -284,9 +317,9 @@ class Sketcher3D:
         self.geompyD._autoPublish(wire, theName, "wire")
         return wire
 
-#  An interface to build a 2D Sketcher step-by-step.
+##  An interface to build a 2D Sketcher step-by-step.
 #  Use geompy.Sketcher2D() method to obtain an instance of this class.
-  
+#  @ingroup sketcher  
 class Sketcher2D:
     """
     2D sketcher interface.

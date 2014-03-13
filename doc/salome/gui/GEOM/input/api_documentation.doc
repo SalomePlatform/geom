@@ -1,0 +1,12 @@
+/*!
+
+\page api_documentation Documentation of the programming interface (API)
+
+This section describes the python packages and modules of the \b salome.geom python package. 
+The main part is generated from the code documentation included in source python files.
+
+<b>salome.geom</b> – Package containing the %GEOM python utilities:
+- <a href="geompy_doc/group__geomtools.html">geomtools</a>
+- <a href="geompy_doc/group__sketcher.html">sketcher</a>
+- <a href="geompy_doc/group__structelem.html">structelem</a>
+*/

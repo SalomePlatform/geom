@@ -18,6 +18,45 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
+## \defgroup structelem structelem - Structural elements package
+#  \{ 
+#  \details
+#  This package is used to create and visualize structural elements. 
+#  It contains three modules:
+#  - This module \ref structelem "salome.geom.structelem" defines the main classes
+#  StructuralElement and StructuralElementManager that can be
+#  directly used to build structural elements.
+#  - The module \ref parts "salome.geom.structelem.parts" defines 
+#  the classes corresponding to the different parts (beams, grids, etc.) that make up 
+#  a structural element. It is used to build the geometric shapes in the structural element.
+#  - The module \ref orientation "salome.geom.structelem.orientation" defines 
+#  the classes that are used to compute the orientation of the structural element parts 
+#  and to build the corresponding markers.
+#
+#  A structural element is a set of geometric shapes (beams, grids, etc.) that
+#  are built semi-automatically along a set of geometric primitives (edges for
+#  instance). They are visualized with the same color as their base primitives in
+#  the geom viewer.
+#  \n Structural elements are generally created by the StructuralElementManager class, 
+#  from a list of commands describing the element to create.
+#
+#  Example:
+#  \code
+#  commandList = [('VisuPoutreGenerale', {'Group_Maille': 'Edge_1'}),
+#                 ('VisuBarreCercle', {'R': 30, 'Group_Maille': 'Edge_1', 'EP': 15}),
+#                ]
+#
+#  structElemManager = StructuralElementManager()
+#  elem = structElemManager.createElement(commandList)
+#  elem.display()
+#  salome.sg.updateObjBrowser(True)
+#  \endcode
+#
+#  \defgroup orientation
+#  \defgroup parts
+#  \}
+
 """
 This package is used to create and visualize structural elements. It contains
 three modules:
@@ -70,6 +109,13 @@ from salome.geom.geomtools import getGeompy
 from salome.geom.structelem import parts
 from salome.geom.structelem.parts import InvalidParameterError
 
+## This class manages the structural elements in the study. It is used to
+#  create a new structural element from a list of commands. The parameter
+#  \em studyId defines the ID of the study in which the manager will create
+#  structural elements. If it is \b None or not specified, it will use
+#  the ID of the current study as defined by 
+#  \b salome.kernel.studyedit.getActiveStudyId() function.
+#  \ingroup structelem
 class StructuralElementManager:
     """
     This class manages the structural elements in the study. It is used to
@@ -82,6 +128,42 @@ class StructuralElementManager:
     def __init__(self, studyId = None):
         self._studyEditor = getStudyEditor(studyId)
 
+    ## Create a structural element from the list of commands \em commandList.
+    #  Each command in this list represent a part of the structural element,
+    #  that is a specific kind of shape (circular beam, grid, etc.)
+    #  associated with one or several geometrical primitives. A command must
+    #  be a tuple. The first element is the structural element part class
+    #  name or alias name. The second element is a dictionary containing the
+    #  parameters describing the part. Valid class names are all the classes
+    #  defined in the module salome.geom.structelem.parts and inheriting
+    #  parts.StructuralElementPart. There are also several
+    #  aliases for backward compatibility. Here is the complete list:        
+    #  - parts.GeneralBeam
+    #  - parts.CircularBeam
+    #  - parts.RectangularBeam
+    #  - parts.ThickShell
+    #  - parts.Grid
+    #  - parts.VisuPoutreGenerale() (alias for parts.GeneralBeam)
+    #  - parts.VisuPoutreCercle() (alias for parts.CircularBeam)
+    #  - parts.VisuPoutreRectangle() (alias for parts.RectangularBeam)
+    #  - parts.VisuBarreGenerale() (alias for parts.GeneralBeam)
+    #  - parts.VisuBarreRectangle() (alias for parts.RectangularBeam)
+    #  - parts.VisuBarreCercle() (alias for parts.CircularBeam)
+    #  - parts.VisuCable() (alias for parts.CircularBeam)
+    #  - parts.VisuCoque() (alias for parts.ThickShell)
+    #  - parts.VisuGrille() (alias for parts.Grid)
+    #  - \b Orientation: This identifier is used to specify the orientation
+    #  of one or several 1D structural element parts (i.e. beams). The
+    #  parameters are described in class orientation.Orientation1D.
+    #
+    #  The valid parameters in the dictionary depend on the type of the
+    #  structural element part, and are detailed in the documentation of
+    #  the corresponding class. The only parameter that is common to all the
+    #  classes is "MeshGroups" (that can also be named "Group_Maille"). It
+    #  defines the name of the geometrical object(s) in the study that will
+    #  be used as primitives to build the structural element part. This
+    #  parameter can be either a list of strings or a single string with
+    #  comma separated names.
     def createElement(self, commandList):
         """
         Create a structural element from the list of commands `commandList`.
@@ -191,7 +273,12 @@ class StructuralElementManager:
         element.build()
         logger.debug("StructuralElementManager.createElement: END")
         return element
-    
+   
+    ## This method extracts the names of the mesh groups (i.e. the
+    #  geometrical objects used to build the structural element part) in the
+    #  command in parameter. It returns a tuple containing the mesh groups as
+    #  a list of strings and the other parameters of the command as a new
+    #  dictionary. 
     def _extractMeshGroups(self, command):
         """
         This method extracts the names of the mesh groups (i.e. the
@@ -227,6 +314,15 @@ class StructuralElementManager:
         return (meshGroupList, newparams)
 
 
+## This class represents a structural element, i.e. a set of geometrical
+#  objects built along geometrical primitives. The parameter \em studyId
+#  defines the ID of the study that will contain the structural element. If
+#  it is \b None or not specified, the constructor will use the ID of
+#  the active study as defined by \b salome.kernel.studyedit.getActiveStudyId
+#  function. Structural elements are normally created by the class
+#  StructuralElementManager, so this class should not be
+#  instantiated directly in the general case.
+#  \ingroup structelem
 class StructuralElement:
     """
     This class represents a structural element, i.e. a set of geometrical
@@ -256,6 +352,9 @@ class StructuralElement:
                      self._studyEditor.studyId)
         self._SObject = None
 
+    ## Find or create the study object corresponding to the structural
+    #  element. This object is a Geom Folder named "SE_N" where N is a
+    #  numerical ID. 
     def _getSObject(self):
         """
         Find or create the study object corresponding to the structural
@@ -273,6 +372,9 @@ class StructuralElement:
             self._SObject = geompy.NewFolder("SE_" + str(self._id), mainFolder)
         return self._SObject
 
+    ## Add a part to the structural element.
+    #
+    #  \param newpart (StructuralElementPart) the part to add to the structural element.
     def addPart(self, newpart):
         """
         Add a part to the structural element.
@@ -310,6 +412,13 @@ class StructuralElement:
         for shape in newshapes:
             self._shapeDict[shape] = newpart
 
+    ## Add orientation information to a part in the structural element. This
+    #  information will be used to build the corresponding markers.
+    #
+    #  \param meshGroup (string) the name of a geometrical primitive. The orientation
+    #  information will apply to the structural element part built along this primitive.
+    #  \param orientParams (dictionary) parameters defining the orientation of the
+    #  structural element part. Those parameters are detailed in class orientation.Orientation1D.
     def addOrientation(self, meshGroup, orientParams):
         """
         Add orientation information to a part in the structural element. This
@@ -333,6 +442,8 @@ class StructuralElement:
             logger.warning('Mesh group "%s" not found in structural element, '
                            'cannot set orientation.' % meshGroup)
 
+    ## Build the geometric shapes and the markers corresponding to the
+    #  different parts of the structural element, and add them to the study.
     def build(self):
         """
         Build the geometric shapes and the markers corresponding to the
@@ -365,6 +476,7 @@ class StructuralElement:
                     geompy.addToStudy(marker, markerSObjName)
                     geompy.PutToFolder(marker, self._getSObject())
 
+    ## Display the structural element in the geom view.
     def display(self):
         """
         Display the structural element in the geom view.
@@ -372,6 +484,7 @@ class StructuralElement:
         StructuralElement.showElement(self._SObject)
 
     @staticmethod
+    ## Display the structural element corresponding to the study object \b theSObject
     def showElement(theSObject):
         """
         Display the structural element corresponding to the study object

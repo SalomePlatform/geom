@@ -18,6 +18,14 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
+## \defgroup geomtools geomtools - Tools to access GEOM engine and objects 
+#  \{ 
+#  \details
+#  This module provides tools to facilitate the use of geom engine and geom
+#  objects in Salome.
+#  \}
+
 """
 This module provides tools to facilitate the use of geom engine and geom
 objects in Salome.
@@ -44,6 +52,10 @@ except:
 
 _geompys = {}
 
+## Return an object behaving exactly like geompy module, except that it is
+#  associated with the study \em studyId. If \em studyId is \b None, return
+#  a pseudo geompy object for the current study.
+#  \ingroup geomtools
 def getGeompy(studyId = None):
     """
     Return an object behaving exactly like geompy module, except that it is
@@ -68,6 +80,16 @@ ModeShading = 1
 DisplayMode=ModeShading
 PreviewColor=[236,163,255]
 
+## This class provides several methods to manipulate geom objects in Salome study. 
+#  The parameter <em>studyEditor</em> defines a \b StudyEditor
+#  object used to access the study. If \b None, the method returns a 
+#  \b StudyEditor object on the current study.
+#
+#  \b editor  
+# 
+#  This instance attribute contains the underlying \b StudyEditor object. 
+#  It can be used to access the study but the attribute itself should not be modified.
+#  \ingroup geomtools
 class GeomStudyTools:
     """
     This class provides several methods to manipulate geom objects in Salome
@@ -95,6 +117,16 @@ class GeomStudyTools:
     # ======================================================================
     # Helper functions to add/remove a geometrical shape in/from the study
     # ======================================================================
+    ## Add a GEOM shape in the study. It returns the associated entry
+    #  that corresponds to the identifier of the entry in the study. This
+    #  entry can be used to retrieve an object in the study. A folderName
+    #  can be specified. In this case, a folder with this name is first
+    #  created in the Geometry part of the study, and the shape study
+    #  object is stored in this folder of the study. 
+    #
+    #    \param  shape (GEOM object) the GEOM object defining the shape
+    #    \param  shapeName (string) the name for this shape in the study 
+    #    \param  folderName (string) the name of a folder in the GEOM part of the study
     def addShapeToStudy(self, shape,shapeName,folderName=None):
         """
         Add a GEOM shape in the study. It returns the associated entry
@@ -138,7 +170,11 @@ class GeomStudyTools:
             entry = shapeStudyObject.GetID()
 
         return entry
-
+    
+    ## This removes the specified entry from the study. Note that this
+    #  operation does not destroy the underlying GEOM object, neither
+    #  erase the drawing in the viewer.
+    #  The underlying GEOM object is returned (so that it can be destroyed)
     def removeFromStudy(self, shapeStudyEntry):
         """
         This removes the specified entry from the study. Note that this
@@ -163,6 +199,11 @@ class GeomStudyTools:
     # python source code). 
     # ======================================================================
 
+    ## Display the geometrical shape whose name in the study is <em>shapeName</em>. 
+    #
+    #  \param shapeName (string) name of the geometrical shape
+    #  \param color (tuple) RGB components of the color of the shape
+    #  \return True if the shape was found, False otherwise
     def displayShapeByName(self, shapeName, color = None, fit=True):
         """
         Display the geometrical shape whose name in the study is `shapeName`.
@@ -187,6 +228,10 @@ class GeomStudyTools:
                     return self.displayShapeByEntry(entry,color,fit)
         return False
 
+    ## Display the geometrical shape whose entry is given by \em entry. 
+    #  You should prefer use this function instead of the
+    #  displayShapeByName() which can have an unpredictible behavior in 
+    #  the case where several objects exist with the same name in the study.
     def displayShapeByEntry(self, shapeStudyEntry, color = None, fit=True):
         """
         Display the geometrical shape whose entry is given by
@@ -205,6 +250,10 @@ class GeomStudyTools:
             geomgui.setColor(shapeStudyEntry, color[0], color[1], color[2])
         return True
 
+    ## Erase the geometrical shape whose entry is given by \em entry. 
+    #  Please note that the shape is just erased from the
+    #  viewer. The associated study object still exists in the study,
+    #  and the geom object still exists in the GEOM engine.
     def eraseShapeByEntry(self, shapeStudyEntry):
         """
         Erase the geometrical shape whose entry is given by
@@ -222,6 +271,13 @@ class GeomStudyTools:
     # Helper functions for a complete suppression of a shape from the
     # SALOME session.
     # ======================================================================
+    ## This completly deletes a geom shape.
+    #  \warning Please be aware that to delete a geom object, 
+    #  you have three operations to perform:
+    #    
+    #  1. erase the shape from the viewers
+    #  2. remove the entry from the study
+    #  3. destroy the underlying geom object
     def deleteShape(self,shapeStudyEntry):
         """
         This completly deletes a geom shape.
@@ -240,19 +296,22 @@ class GeomStudyTools:
     # ======================================================================
     # Helper functions for interactivity with the object browser
     # ======================================================================
+    ## Returns the GEOM object currently selected in the objects browser.
     def getGeomObjectSelected(self):
-        '''
+        """
         Returns the GEOM object currently selected in the objects browser.
-        '''
+        """
         sobject, entry = guihelper.getSObjectSelected()
         geomObject = self.getGeomObjectFromEntry(entry)
         return geomObject
 
+    ## Returns the GEOM object associated to the specified entry,
+    #  (the entry is the identifier of an item in the active study)
     def getGeomObjectFromEntry(self,entry):
-        '''
+        """
         Returns the GEOM object associated to the specified entry,
         (the entry is the identifier of an item in the active study)
-        '''
+        """
         if entry is None:
             return None
         geomObject=IDToObject(entry, self.editor.study)
@@ -286,6 +345,13 @@ def TEST_getGeomObjectSelected():
     myGeomObject = tool.getGeomObjectSelected()
     print myGeomObject
 
+## This test is a simple use case that illustrates how to create a
+#  GEOM shape in a SALOME session (create the GEOM object, put in in
+#  the study, and display the shape in a viewer) and delete a shape
+#  from a SALOME session (erase the shape from the viewer, delete the
+#  entry from the study, and finally destroy the underlying GEOM
+#  object).
+#  \ingroup geomtools
 def TEST_createAndDeleteShape():
     """
     This test is a simple use case that illustrates how to create a

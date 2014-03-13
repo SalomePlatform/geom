@@ -18,6 +18,14 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
+## \defgroup orientation orientation
+#  \{ 
+#  \details
+#  This module is used to compute the orientation of the different parts in a
+#  structural element and to build the corresponding markers (trihedrons).
+#  \}
+
 """
 This module is used to compute the orientation of the different parts in a
 structural element and to build the corresponding markers (trihedrons).
@@ -29,7 +37,9 @@ from salome.kernel.logger import Logger
 from salome.kernel import termcolor
 logger = Logger("salome.geom.structelem.orientation", color = termcolor.RED)
 
-
+## This class is used to compute the orientation of 1D elements and to build
+#  the corresponding markers.
+#  \ingroup orientation
 class Orientation1D:
     """
     This class is used to compute the orientation of 1D elements and to build
@@ -46,6 +56,14 @@ class Orientation1D:
         del reprdict["geom"]
         return '%s(%s)' % (self.__class__.__name__, reprdict)
 
+    ## Add orientation parameters. \em params is a dictionary containing one or
+    #  several orientation parameters. The valid parameters are:
+    #  - "VECT_Y": Triplet defining the local Y axis (the X axis is the
+    #  main direction of the 1D element).
+    #  - "ANGL_VRIL": Angle of rotation along the X axis to define the local
+    #  coordinate system.
+    #  The parameters can be specified several times. In this case, only the
+    #  last "VECT_Y" or "ANGL_VRIL" is taken into account.
     def addParams(self, params):
         """
         Add orientation parameters. `params` is a dictionary containing one or
@@ -78,7 +96,9 @@ class Orientation1D:
         if len(mydict) > 0:
             logger.warning("Invalid orientation parameter(s) (ignored): %s" %
                            str(mydict))
-
+    ## Get the vectors Y and Z for the default LCS, that use the main
+    #  direction of the 1D object as the local X axis and the global Z axis
+    #  to determine the local Z axis.
     def _getDefaultVecYZ(self, center, vecX):
         """
         Get the vectors Y and Z for the default LCS, that use the main
@@ -100,7 +120,9 @@ class Orientation1D:
         locPlaneXY = self.geom.MakePlaneThreePnt(center, xPoint, yPoint, 1.0)
         locZ = self.geom.GetNormal(locPlaneXY)
         return (locY, locZ)
-
+    
+    ## Create a marker with origin \em center and X axis \em vecX. 
+    #  \em geom is the pseudo-geompy object used to build the geometric shapes.
     def buildMarker(self, geom, center, vecX):
         """
         Create a marker with origin `center` and X axis `vecX`. `geom` is the
@@ -110,6 +132,9 @@ class Orientation1D:
         marker = geom.MakeMarkerPntTwoVec(center, vecX, locY)
         return marker
 
+    ## Get the vectors Y and Z for the LCS with origin \em center and X axis
+    #  \em vecX. \em geom is the pseudo-geompy object used to build the 
+    #  geometric shapes.
     def getVecYZ(self, geom, center, vecX):
         """
         Get the vectors Y and Z for the LCS with origin `center` and X axis
@@ -148,7 +173,11 @@ class Orientation1D:
 
         return (locY, locZ)
 
-
+## This class is used to compute the orientation of 2D elements and to build
+#  the corresponding markers. Angles \em alpha and \em beta are used to determine
+#  the local coordinate system for the 2D element. If \em vect is not
+#  \b None, it is used instead of \em alpha and \em beta.
+#  \ingroup orientation
 class Orientation2D:
     """
     This class is used to compute the orientation of 2D elements and to build
@@ -168,6 +197,10 @@ class Orientation2D:
         del reprdict["geom"]
         return '%s(%s)' % (self.__class__.__name__, reprdict)
 
+    ## Create the default marker, that use the normal vector of the 2D object
+    #  as the local Z axis and the global X axis to determine the local X
+    #  axis. \em warnings can be used to enable or disable the logging of
+    # warning messages.
     def _buildDefaultMarker(self, center, normal, warnings = True):
         """
         Create the default marker, that use the normal vector of the 2D object
@@ -189,6 +222,8 @@ class Orientation2D:
             marker = self._buildMarkerRefVecX(center, normal, globalVecX)
         return marker
 
+    ## Create a marker using \em normal as Z axis and \em refVecX 
+    #  to determine the X axis.
     def _buildMarkerRefVecX(self, center, normal, refVecX):
         """
         Create a marker using `normal` as Z axis and `refVecX` to determine
@@ -204,6 +239,11 @@ class Orientation2D:
         marker = self.geom.MakeMarkerPntTwoVec(center, locX, locY)
         return marker
 
+    ## Create a marker with origin \em center and \em normal as Z axis. 
+    #  The other axes are computed using the parameters alpha and beta of the
+    #  Orientation2D instance. \em geom is the pseudo-geompy object used to
+    #  build the geometric shapes. \em warnings can be used to enable or
+    #  disable the logging of warning messages.
     def buildMarker(self, geom, center, normal, warnings = True):
         """
         Create a marker with origin `center` and `normal` as Z axis. The other

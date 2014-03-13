@@ -3,11 +3,11 @@
 \page geompy_page Python Interface geomBuilder.py
 
 \n Please, see
-<a href="geompy_doc/modules.html">structured documentation for geomBuilder.py</a>,
+<a href="geompy_doc/group__geomBuilder.html">structured documentation for geomBuilder.py</a>,
 where all package functionality is separated in groups by purpose.
 
-\n Also you can find any function in the \ref geomBuilder
-"linear documentation for geomBuilder.py".
+\n Also you can find any function in the <a href="geompy_doc/namespacegeomBuilder.html">
+linear documentation for geomBuilder.py</a>
 
 \n With SALOME 7.2, the Python interface for Geometry has been slightly modified to offer new functionality,
 \n You may have to modify your scripts generated with SALOME 6 or older versions.
