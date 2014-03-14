@@ -45,7 +45,7 @@ class SALOME_OCCViewType;
 #include <LightApp_Study.h>
 #include <Aspect_TypeOfMarker.hxx>
 #include <TCollection_AsciiString.hxx>
-
+#include <Basics_OCCTVersion.hxx>
 #include <QList>
 
 #include <list>
@@ -175,7 +175,9 @@ public:
   virtual void  Update( SALOME_VTKPrs* );
   virtual void  BeforeDisplay( SALOME_View*, const SALOME_OCCPrs* );
   virtual void  AfterDisplay ( SALOME_View*, const SALOME_OCCPrs* );
+#if OCC_VERSION_LARGE > 0x06070000
   virtual void  BeforeErase  ( SALOME_View*, const SALOME_OCCPrs* );
+#endif
   virtual void  AfterErase   ( SALOME_View*, const SALOME_OCCPrs* );
 
   /* This methos is used for activisation/deactivisation of objects to be displayed*/

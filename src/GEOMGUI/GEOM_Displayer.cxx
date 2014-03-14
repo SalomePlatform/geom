@@ -138,6 +138,7 @@
 // Hard-coded value of shape deflection coefficient for VTK viewer
 const double VTK_MIN_DEFLECTION = 0.001;
 
+#if OCC_VERSION_LARGE > 0x06070000
 // Pixmap caching support
 namespace
 {
@@ -258,6 +259,7 @@ namespace
     }
   }
 }
+#endif
 
 //================================================================
 // Function : getActiveStudy
@@ -873,15 +875,23 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
     aImagePath = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
   }
 
-  Handle(Image_PixMap) aPixmap;
-  if ( !aImagePath.isEmpty() )
-    aPixmap = cacheTextureFor( aImagePath, AISShape );
+  if ( !aImagePath.isEmpty() ) {
+#if OCC_VERSION_LARGE > 0x06070000
+    Handle(Image_PixMap) aPixmap = cacheTextureFor( aImagePath, AISShape );
 
-  // apply image to shape
-  if ( !aPixmap.IsNull() ) {
-    AISShape->SetTexturePixMap( aPixmap );
+    // apply image to shape
+    if ( !aPixmap.IsNull() ) {
+      AISShape->SetTexturePixMap( aPixmap );
+      AISShape->SetTextureMapOn();
+      AISShape->DisableTextureModulate();
+    }
+    else
+      AISShape->SetTextureMapOff();
+#else
+    AISShape->SetTextureFileName( TCollection_AsciiString( aImagePath.toUtf8().constData() ) );
     AISShape->SetTextureMapOn();
     AISShape->DisableTextureModulate();
+#endif
   }
   else
     AISShape->SetTextureMapOff();
@@ -1948,11 +1958,13 @@ void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
   UpdateColorScale(false,false);
 }
 
+#if OCC_VERSION_LARGE > 0x06070000
 void GEOM_Displayer::BeforeErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   LightApp_Displayer::BeforeErase( v, p );
   releaseTextures( p );
 }
+#endif
 
 void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
