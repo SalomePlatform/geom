@@ -106,6 +106,8 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopoDS.hxx>
+#include <NCollection_DataMap.hxx>
+#include <NCollection_Map.hxx>
 
 #include <Prs3d_ShadingAspect.hxx>
 
@@ -135,6 +137,127 @@
 
 // Hard-coded value of shape deflection coefficient for VTK viewer
 const double VTK_MIN_DEFLECTION = 0.001;
+
+// Pixmap caching support
+namespace
+{
+  typedef NCollection_Map<Handle(GEOM_AISShape)>                    SetOfAISShapes;
+  typedef NCollection_DataMap<Handle(Image_PixMap), SetOfAISShapes> PixmapUsageMap;
+  typedef QMap<QString, Handle(Image_PixMap)>                       PixmapCacheMap;
+
+  static inline PixmapUsageMap& getPixmapUsageMap()
+  {
+    static PixmapUsageMap aMap;
+    return aMap;
+  }
+
+  static inline PixmapCacheMap& getPixmapCacheMap()
+  {
+    static PixmapCacheMap aMap;
+    return aMap;
+  }
+
+  //===========================================================================
+  // Function : cacheTextureFor
+  // Purpose  : Load and cache image for the specified presentation.
+  //===========================================================================
+  static inline Handle(Image_PixMap) cacheTextureFor( const QString& thePath,
+                                                      const Handle(GEOM_AISShape)& theShape )
+  {
+    if ( thePath.isEmpty() )
+      return NULL;
+
+    PixmapUsageMap& aPixmapUsersMap = getPixmapUsageMap();
+    PixmapCacheMap& aPixmapCacheMap = getPixmapCacheMap();
+
+    Handle(Image_PixMap) aPixmap = aPixmapCacheMap.value( thePath, NULL );
+    if ( !aPixmap.IsNull() ) {
+      // point that the texture is used by the presentation
+      if ( !aPixmapUsersMap.IsBound( aPixmap ) )
+        aPixmapUsersMap.Bind( aPixmap, SetOfAISShapes() );
+
+      aPixmapUsersMap.ChangeFind( aPixmap ).Add( theShape );
+
+      return aPixmap;
+    }
+
+    // convert texture to compatible image format
+    QImage anImage = QImage( thePath ).convertToFormat( QImage::Format_ARGB32 );
+    if ( anImage.isNull() )
+      return NULL;
+
+    aPixmap = new Image_PixMap();
+    aPixmap->InitTrash( Image_PixMap::ImgBGRA, anImage.width(), anImage.height() );
+    aPixmap->SetTopDown( Standard_True );
+
+    const uchar* aImageBytes = anImage.bits();
+
+    for ( int aLine = anImage.height() - 1; aLine >= 0; --aLine ) {
+      Image_ColorBGRA* aPixmapBytes = aPixmap->EditData<Image_ColorBGRA>().ChangeRow(aLine);
+
+      // convert pixels from ARGB to renderer-compatible RGBA
+      for ( int aByte = 0; aByte < anImage.width(); ++aByte ) {
+        aPixmapBytes->b() = (Standard_Byte) *aImageBytes++;
+        aPixmapBytes->g() = (Standard_Byte) *aImageBytes++;
+        aPixmapBytes->r() = (Standard_Byte) *aImageBytes++;
+        aPixmapBytes->a() = (Standard_Byte) *aImageBytes++;
+        aPixmapBytes++;
+      }
+    }
+
+    aPixmapCacheMap.insert( thePath, aPixmap );
+
+    if ( !aPixmapUsersMap.IsBound( aPixmap ) )
+      aPixmapUsersMap.Bind( aPixmap, SetOfAISShapes() );
+
+    aPixmapUsersMap.ChangeFind( aPixmap ).Add( theShape );
+
+    return aPixmap;
+  }
+
+  //===========================================================================
+  // Function : releaseTextures
+  // Purpose  : Releases cached textures found for the specified presentation.
+  //===========================================================================
+  static inline void releaseTextures( const SALOME_OCCPrs* thePrs )
+  {
+    const SOCC_Prs* anOccPrs = dynamic_cast<const SOCC_Prs*>( thePrs );
+
+    AIS_ListOfInteractive aListOfIO;
+
+    anOccPrs->GetObjects( aListOfIO );
+
+    AIS_ListIteratorOfListOfInteractive aIterateIO( aListOfIO );
+
+    PixmapUsageMap& aPixmapUsersMap = getPixmapUsageMap();
+    PixmapCacheMap& aPixmapCacheMap = getPixmapCacheMap();
+
+    for ( ; aIterateIO.More(); aIterateIO.Next() )
+    {
+      Handle(GEOM_AISShape) aAISShape =
+        Handle(GEOM_AISShape)::DownCast( aIterateIO.Value() );
+
+      if ( aAISShape.IsNull() )
+        continue;
+
+      const Handle(Image_PixMap)& aPixmap = aAISShape->TexturePixMap();
+      if ( aPixmap.IsNull() )
+        continue;
+
+      if ( !aPixmapUsersMap.IsBound( aPixmap ) )
+        continue;
+
+      SetOfAISShapes& aUsersShapes = aPixmapUsersMap.ChangeFind( aPixmap );
+
+      aUsersShapes.Remove( aAISShape );
+
+      if ( aUsersShapes.IsEmpty() ) {
+        aPixmapUsersMap.UnBind( aPixmap );
+        aPixmapCacheMap.remove( aPixmapCacheMap.key( aPixmap ) );
+      }
+    }
+  }
+}
 
 //================================================================
 // Function : getActiveStudy
@@ -729,10 +852,10 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->SetOwnDeviationCoefficient( qMax( propMap.value( GEOM::propertyName( GEOM::Deflection ) ).toDouble(), GEOM::minDeflection() ) );
 
   // set texture
-  bool textureAdded = false;
+  QString aImagePath;
   if ( HasTexture() ) {
     // predefined display texture, manually set to displayer via GEOM_Displayer::SetTexture() function 
-    AISShape->SetTextureFileName( TCollection_AsciiString( GetTexture().c_str() ) );
+    aImagePath = GetTexture().c_str();
     if ( ! entry.isEmpty() ) {
       // check that study is active
       SalomeApp_Study* study = getActiveStudy();
@@ -745,21 +868,23 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
         propMap = getObjectProperties( study, entry, myViewFrame );
       }
     }
-    textureAdded = true;
   }
   else {
-    // Texture from properties
-    QString aTexture = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
-    if ( !aTexture.isEmpty() ) {
-      AISShape->SetTextureFileName( TCollection_AsciiString( aTexture.toUtf8().constData() ) );
-       textureAdded = true;
-    }
+    aImagePath = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
   }
- 
-  if ( textureAdded ){ 
+
+  Handle(Image_PixMap) aPixmap;
+  if ( !aImagePath.isEmpty() )
+    aPixmap = cacheTextureFor( aImagePath, AISShape );
+
+  // apply image to shape
+  if ( !aPixmap.IsNull() ) {
+    AISShape->SetTexturePixMap( aPixmap );
     AISShape->SetTextureMapOn();
     AISShape->DisableTextureModulate();
   }
+  else
+    AISShape->SetTextureMapOff();
 
   // set line width
   AISShape->SetWidth( HasWidth() ?
@@ -1821,6 +1946,12 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
 void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   UpdateColorScale(false,false);
+}
+
+void GEOM_Displayer::BeforeErase( SALOME_View* v, const SALOME_OCCPrs* p )
+{
+  LightApp_Displayer::BeforeErase( v, p );
+  releaseTextures( p );
 }
 
 void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )

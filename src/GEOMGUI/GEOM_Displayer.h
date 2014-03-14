@@ -175,6 +175,7 @@ public:
   virtual void  Update( SALOME_VTKPrs* );
   virtual void  BeforeDisplay( SALOME_View*, const SALOME_OCCPrs* );
   virtual void  AfterDisplay ( SALOME_View*, const SALOME_OCCPrs* );
+  virtual void  BeforeErase  ( SALOME_View*, const SALOME_OCCPrs* );
   virtual void  AfterErase   ( SALOME_View*, const SALOME_OCCPrs* );
 
   /* This methos is used for activisation/deactivisation of objects to be displayed*/
