@@ -1123,7 +1123,6 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
                                                            int theIndex )
 {
   GEOM::GEOM_Object_var object;
-  bool found = false;
   
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   if ( study ) {
@@ -1132,16 +1131,15 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
     _PTR(SObject) sobject( studyDS->FindObjectIOR( IOR.toLatin1().constData() ) );
     if ( sobject ) {
       _PTR(ChildIterator) it( studyDS->NewChildIterator( sobject ) );
-      for ( ; it->More() && !found; it->Next() ) {
+      for ( ; it->More(); it->Next() ) {
         GEOM::GEOM_Object_var cobject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( it->Value() ) );
         if ( !CORBA::is_nil( cobject ) ) {
           GEOM::ListOfLong_var indices = cobject->GetSubShapeIndices();
           int length = indices->length();
-          for ( int i = 0; i < length && !found; i++ ) {
-            if ( indices[i] == theIndex ) {
-              object = cobject;
-              found = true;
-            }
+	  // VSR 18/03/2014: we need only sub-shapes with single sub-shape index (to exclude groups, etc)
+	  if ( length == 1 && indices[0] == theIndex ) {
+	    object = cobject;
+	    break;
           }
         }
       }
