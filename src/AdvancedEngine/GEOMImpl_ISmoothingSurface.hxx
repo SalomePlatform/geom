@@ -36,8 +36,8 @@ public:
   void SetLength(int theLen) { _func->SetInteger(SMOOTHINGSURFACE_ARG_LENG, theLen); }
   int GetLength() { return _func->GetInteger(SMOOTHINGSURFACE_ARG_LENG); }
 
-  void SetPoint(int theId, Handle(GEOM_Function) theP) { _func->SetReference(SMOOTHINGSURFACE_ARG_LAST + theId, theP); }
-  Handle(GEOM_Function) GetPoint(int theId) { return _func->GetReference(SMOOTHINGSURFACE_ARG_LAST + theId); }
+  void SetPntOrComp(int theId, Handle(GEOM_Function) theP) { _func->SetReference(SMOOTHINGSURFACE_ARG_LAST + theId, theP); }
+  Handle(GEOM_Function) GetPntOrComp(int theId) { return _func->GetReference(SMOOTHINGSURFACE_ARG_LAST + theId); }
 
 private:
   Handle(GEOM_Function) _func;

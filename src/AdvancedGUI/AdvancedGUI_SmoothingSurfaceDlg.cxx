@@ -31,6 +31,7 @@
 // OCCT Includes
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <TopExp.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -209,15 +210,79 @@ bool AdvancedGUI_SmoothingSurfaceDlg::execute (ObjectList& objects)
 }
 
 //=================================================================================
+// function : getNbPoints()
+// purpose  : Returns the number of points in myPoints list.
+//=================================================================================
+int AdvancedGUI_SmoothingSurfaceDlg::getNbPoints() const
+{
+  TopTools_IndexedMapOfShape aMap;
+
+  foreach (GEOM::GeomObjPtr anObj, myPoints) {
+    TopoDS_Shape aShape;
+
+    if(anObj && GEOMBase::GetShape(anObj.get(), aShape) && !aShape.IsNull()) {
+      if (aShape.ShapeType() == TopAbs_VERTEX) {
+        aMap.Add(aShape);
+      } else {
+        // Compound.
+        TopExp::MapShapes(aShape, TopAbs_VERTEX, aMap);
+      }
+    }
+  }
+
+  const int aNbPoints = aMap.Extent();
+
+  return aNbPoints;
+}
+
+//=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
 //=================================================================================
 void AdvancedGUI_SmoothingSurfaceDlg::SelectionIntoArgument()
 {
-  QList<GEOM::GeomObjPtr> points = getSelected( TopAbs_VERTEX, -1 );
+  QList<TopAbs_ShapeEnum> aTypes;
+
+  aTypes << TopAbs_VERTEX << TopAbs_COMPOUND;
+
+  QList<GEOM::GeomObjPtr> points = getSelected( aTypes, -1 );
+
+  // Check the selected compounds if they consist of points only.
+  foreach (GEOM::GeomObjPtr anObj, points) {
+    TopoDS_Shape aShape;
+
+    if(anObj && GEOMBase::GetShape(anObj.get(), aShape) && !aShape.IsNull()) {
+      if (aShape.ShapeType() == TopAbs_COMPOUND) {
+        // Check if the compound contains vertices only.
+        TopoDS_Iterator anIter(aShape);
+        Standard_Boolean isValid = Standard_False;
+
+        for (; anIter.More(); anIter.Next()) {
+          const TopoDS_Shape &aSubShape = anIter.Value();
+
+          if (aSubShape.ShapeType() == TopAbs_VERTEX) {
+            isValid = Standard_True;
+          } else {
+            isValid = Standard_False;
+            break;
+          }
+        }
+
+        if (!isValid) {
+          points.clear();
+          break;
+        }
+      }
+    } else {
+      // NEVERREACHED
+      points.clear();
+      break;
+    }
+  }
+
   GEOMBase::Synchronize( myPoints, points );
   if ( !myPoints.isEmpty()  )
-    GroupPoints->LineEdit1->setText( QString::number( myPoints.count() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
+    GroupPoints->LineEdit1->setText( QString::number( getNbPoints() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
   else
     GroupPoints->LineEdit1->setText( "" );
   processPreview();

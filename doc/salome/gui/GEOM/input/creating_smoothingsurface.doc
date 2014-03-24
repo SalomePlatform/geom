@@ -7,6 +7,8 @@ Advanced - > SmoothingSurface </b>
 
 Specify the \b Name of the surface and the list of \b Points, from which it is approximated and press "Apply" or "Apply & Close" button.
 
+\note The dialog accepts compounds of points as well as single nodes.
+
 The result of the operation will be a GEOM_Object(Surface).
 
 <b>TUI Command:</b> <em>geompy.MakeSmoothingSurface(Points)</em>

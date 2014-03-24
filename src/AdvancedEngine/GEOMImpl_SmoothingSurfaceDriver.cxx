@@ -34,6 +34,9 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
+#include <TopExp_Explorer.hxx>
 
 #include <TColgp_SequenceOfPnt.hxx>
 #include <TColgp_Array2OfPnt.hxx>
@@ -167,22 +170,43 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
   // cout << "Youhou : " << aType << endl;
 
   GEOMImpl_ISmoothingSurface aData (aFunction);
-  
-  Standard_Integer nbPoints = aData.GetLength();
 
-  Handle(TColgp_HArray1OfPnt) anArrayofPnt = new TColgp_HArray1OfPnt(1,nbPoints);
-  for (int ind=1;ind<=nbPoints;ind++)
-  {
-    Handle(GEOM_Function) aPoint = aData.GetPoint(ind);
-    TopoDS_Shape aShapePnt = aPoint->GetValue();
-    TopoDS_Vertex dsPoint;
-    dsPoint = TopoDS::Vertex( aShapePnt );
-    gp_Pnt aPnt = BRep_Tool::Pnt( dsPoint );
-    anArrayofPnt->SetValue(ind,aPnt);
+  // Fill the map of vertices.
+  Standard_Integer    aNbShapes = aData.GetLength();
+  TopTools_MapOfShape aMapPoints;
+  Standard_Integer    i;
+
+  for (i = 1; i <= aNbShapes; i++) {
+    Handle(GEOM_Function) aFShape = aData.GetPntOrComp(i);
+    TopoDS_Shape aShape = aFShape->GetValue();
+
+    if (aShape.ShapeType() == TopAbs_VERTEX) {
+      aMapPoints.Add(aShape);
+    } else {
+      TopExp_Explorer anExp(aShape, TopAbs_VERTEX);
+
+      for (; anExp.More(); anExp.Next()) {
+        aMapPoints.Add(anExp.Current());
+      }
+    }
   }
 
-  TopoDS_Shape aShape;
-  aShape = GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(anArrayofPnt);
+  // Add points to the array of points.
+  const Standard_Integer      aNbPoints    = aMapPoints.Extent();
+  Handle(TColgp_HArray1OfPnt) anArrayofPnt =
+      new TColgp_HArray1OfPnt(1, aNbPoints);
+  TopTools_MapIteratorOfMapOfShape anIter(aMapPoints);
+
+  for (i = 1; anIter.More(); anIter.Next(), i++) {
+    TopoDS_Vertex aPoint = TopoDS::Vertex(anIter.Key());
+    gp_Pnt aPnt = BRep_Tool::Pnt(aPoint);
+
+    anArrayofPnt->SetValue(i, aPnt);
+  }
+
+  // Make smoothing surface.
+  TopoDS_Shape aShape =
+    GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(anArrayofPnt);
 
   if (aShape.IsNull()) return 0;
 
@@ -217,7 +241,7 @@ GetCreationInformation(std::string&             theOperationName,
     if ( aCI.GetLength() > 1 )
       theParams[0] << aCI.GetLength() << " points: ";
     for ( int i = 1, nb = aCI.GetLength(); i <= nb; ++i )
-      theParams[0] << aCI.GetPoint( i ) << " ";
+      theParams[0] << aCI.GetPntOrComp( i ) << " ";
     break;
   default:
     return false;

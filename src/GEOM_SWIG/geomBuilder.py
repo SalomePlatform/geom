@@ -12629,7 +12629,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Create a surface from a cloud of points
-        #  @param thelPoints list of points
+        #  @param thelPoints list of points. Compounds of points are
+        #         accepted as well.
         #  @return New GEOM_Object, containing the created shape.
         #
         #  @ref tui_creation_smoothingsurface "Example"

@@ -48,6 +48,7 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  int                                getNbPoints() const;
 
 private:
   DlgRef_1Sel*                 GroupPoints;

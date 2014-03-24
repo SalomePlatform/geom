@@ -3429,7 +3429,7 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double th
 //=============================================================================
 /*!
  *  Create a smoothing surface from a set of points
- *  \param thelPoints list of points
+ *  \param thelPoints list of points or compounds of points
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
@@ -3454,12 +3454,12 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeSmoothingSurface (std::lis
   int ind = 1;
   std::list<Handle(GEOM_Object)>::iterator it = thelPoints.begin();
   for (; it != thelPoints.end(); it++, ind++) {
-    Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
-    if (aRefPnt.IsNull()) {
-      SetErrorCode("NULL point for bSplineFaceShape");
+    Handle(GEOM_Function) aRefObj = (*it)->GetLastFunction();
+    if (aRefObj.IsNull()) {
+      SetErrorCode("NULL point or compound for bSplineFaceShape");
       return NULL;
     }
-    aData.SetPoint(ind, aRefPnt);
+    aData.SetPntOrComp(ind, aRefObj);
   }
 
 
