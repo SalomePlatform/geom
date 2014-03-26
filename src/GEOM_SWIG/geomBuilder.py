@@ -12631,12 +12631,41 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Create a surface from a cloud of points
         #  @param thelPoints list of points. Compounds of points are
         #         accepted as well.
+        #  @param theNbMax maximum number of Bezier pieces in the resulting
+        #         surface.
+        #  @param theDegMax maximum degree of the resulting BSpline surface.
+        #  @param theDMax specifies maximum value of the
+        #         GeomPlate_PlateG0Criterion criterion.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
         #  @return New GEOM_Object, containing the created shape.
         #
         #  @ref tui_creation_smoothingsurface "Example"
-        def MakeSmoothingSurface(self, thelPoints):
-            anObj = self.AdvOp.MakeSmoothingSurface(thelPoints)
+        def MakeSmoothingSurface(self, thelPoints, theNbMax=2, theDegMax=8,
+                                 theDMax=0.0, theName=None):
+            """
+            Create a surface from a cloud of points
+
+            Parameters:
+                thelPoints list of points. Compounds of points are
+                           accepted as well.
+                theNbMax maximum number of Bezier pieces in the resulting
+                         surface.
+                theDegMax maximum degree of the resulting BSpline surface.
+                theDMax specifies maximum value of the
+                        GeomPlate_PlateG0Criterion criterion.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM_Object, containing the created shape.
+            """
+            anObj = self.AdvOp.MakeSmoothingSurface
+                (thelPoints, theNbMax, theDegMax, theDMax)
             RaiseIfFailed("MakeSmoothingSurface", self.AdvOp)
+            self._autoPublish(anObj, theName, "smoothing")
             return anObj
 
         ## Export a shape to XAO format

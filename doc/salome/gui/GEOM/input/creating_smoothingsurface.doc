@@ -5,13 +5,20 @@
 To create a <b> Smoothing Surface</b> in the <b>Main Menu</b> select <b>New Entity - >
 Advanced - > SmoothingSurface </b>
 
-Specify the \b Name of the surface and the list of \b Points, from which it is approximated and press "Apply" or "Apply & Close" button.
+To create a surface it is necessary to specify the \b Name of the surface, the list of \b Points
+from which it is approximated and some plate approximation parameters such as: <b>Max nbr of
+Bezier pieces</b>, <b>Max BSpline surface degree</b> and <b>Max plate criterion value</b>.
+And then press "Apply" or "Apply & Close" button.
 
 \note The dialog accepts compounds of points as well as single nodes.
 
 The result of the operation will be a GEOM_Object(Surface).
 
-<b>TUI Command:</b> <em>geompy.MakeSmoothingSurface(Points)</em>
+<b>TUI Command:</b> <em>geompy.MakeSmoothingSurface(thelPoints, theNbMax, theDegMax, theDMax)</em>, where:
+- \em thelPoints list of points. Compounds of points are accepted as well
+- \em theNbMax maximum number of Bezier pieces in the resulting surface
+- \em theDegMax maximum degree of the resulting BSpline surface
+- \em theDMax specifies maximum value of the GeomPlate_PlateG0Criterion criterion
 
 \image html smoothingsurface_dlg.png
 

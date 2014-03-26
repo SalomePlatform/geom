@@ -3516,7 +3516,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSmoothingSurface (GEOM::GEOM_List_ptr t
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thelPoints, myPOA).in())) {
     getCurvesOp();
-    GEOM::GEOM_Object_ptr anObj = myAdvancedOp->MakeSmoothingSurface(aListImplP->GetList());
+    GEOM::GEOM_Object_ptr anObj = myAdvancedOp->MakeSmoothingSurface(aListImplP->GetList(), 2, 8, 0.);
     endService( " GEOM_Superv_i::MakeSmoothingSurface" );
     return anObj;
   }

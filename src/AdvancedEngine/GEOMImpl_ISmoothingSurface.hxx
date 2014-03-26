@@ -27,6 +27,9 @@
 
 #define SMOOTHINGSURFACE_ARG_LENG        1
 #define SMOOTHINGSURFACE_ARG_LAST        2
+#define SMOOTHINGSURFACE_ARG_NB_MAX      3
+#define SMOOTHINGSURFACE_ARG_DEG_MAX     4
+#define SMOOTHINGSURFACE_ARG_D_MAX       5
 
 class GEOMImpl_ISmoothingSurface
 {
@@ -38,6 +41,15 @@ public:
 
   void SetPntOrComp(int theId, Handle(GEOM_Function) theP) { _func->SetReference(SMOOTHINGSURFACE_ARG_LAST + theId, theP); }
   Handle(GEOM_Function) GetPntOrComp(int theId) { return _func->GetReference(SMOOTHINGSURFACE_ARG_LAST + theId); }
+
+  void SetNbMax(int theNbMax) { _func->SetInteger(SMOOTHINGSURFACE_ARG_NB_MAX, theNbMax); }
+  int GetNbMax() { return _func->GetInteger(SMOOTHINGSURFACE_ARG_NB_MAX); }
+
+  void SetDegMax(int theDegMax) { _func->SetInteger(SMOOTHINGSURFACE_ARG_DEG_MAX, theDegMax); }
+  int GetDegMax() { return _func->GetInteger(SMOOTHINGSURFACE_ARG_DEG_MAX); }
+
+  void SetDMax(double theDMax) { _func->SetReal(SMOOTHINGSURFACE_ARG_D_MAX, theDMax); }
+  double GetDMax() { return _func->GetReal(SMOOTHINGSURFACE_ARG_D_MAX); }
 
 private:
   Handle(GEOM_Function) _func;

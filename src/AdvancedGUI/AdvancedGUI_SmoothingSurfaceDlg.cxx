@@ -42,7 +42,10 @@
 // Constructor
 //=================================================================================
 AdvancedGUI_SmoothingSurfaceDlg::AdvancedGUI_SmoothingSurfaceDlg (GeometryGUI* theGeometryGUI, QWidget* parent)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, false)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, false),
+    myNbMaxSpin(0),
+    myDegMaxSpin(0),
+    myDMaxSpin(0)
 {
   QPixmap imageOp  (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_SMOOTHINGSURFACE_LPOINTS")));
   QPixmap imageSel (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
@@ -64,6 +67,20 @@ AdvancedGUI_SmoothingSurfaceDlg::AdvancedGUI_SmoothingSurfaceDlg (GeometryGUI* t
   GroupPoints->TextLabel1->setText( tr( "GEOM_SMOOTHINGSURFACE_ARG_POINTS" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
+
+  QLabel *aNbMax  = new QLabel(tr("GEOM_SMOOTHINGSURFACE_ARG_NB_MAX"));
+  QLabel *aDegMax = new QLabel(tr("GEOM_SMOOTHINGSURFACE_ARG_DEG_MAX"));
+  QLabel *aDMax   = new QLabel(tr("GEOM_SMOOTHINGSURFACE_ARG_D_MAX"));
+
+  myNbMaxSpin  = new SalomeApp_IntSpinBox(0, 1000, 1, 0, true, true);
+  myDegMaxSpin = new SalomeApp_IntSpinBox(0, 1000, 1, 0, true, true);
+  myDMaxSpin   = new SalomeApp_DoubleSpinBox;
+  GroupPoints->gridLayout1->addWidget(aNbMax,       1, 0);
+  GroupPoints->gridLayout1->addWidget(aDegMax,      2, 0);
+  GroupPoints->gridLayout1->addWidget(aDMax,        3, 0);
+  GroupPoints->gridLayout1->addWidget(myNbMaxSpin,  1, 1, 1, 2);
+  GroupPoints->gridLayout1->addWidget(myDegMaxSpin, 2, 1, 1, 2);
+  GroupPoints->gridLayout1->addWidget(myDMaxSpin,   3, 1, 1, 2);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -91,7 +108,12 @@ void AdvancedGUI_SmoothingSurfaceDlg::Init()
 {
   // Get setting of step value from file configuration
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
+
+  initSpinBox(myDMaxSpin, 0., COORD_MAX, 0.00001, "parametric_precision" );
+
+  myNbMaxSpin->setValue(2);
+  myDegMaxSpin->setValue(8);
+  myDMaxSpin->setValue(0.);
 
   //@@ initialize dialog box widgets here @@//
 
@@ -102,7 +124,13 @@ void AdvancedGUI_SmoothingSurfaceDlg::Init()
           this,          SLOT(SetDoubleSpinBoxStep(double)));
   connect( myGeomGUI->getApp()->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-
+  connect(myNbMaxSpin, SIGNAL(valueChanged(const QString&)),
+          this, SLOT(processPreview()) );
+  connect(myDegMaxSpin, SIGNAL(valueChanged(const QString&)),
+          this, SLOT(processPreview()) );
+  connect(myDMaxSpin, SIGNAL(valueChanged(const QString&)),
+          this, SLOT(processPreview()) );
+ 
   initName(tr("GEOM_SMOOTHINGSURFACE"));
   //displayPreview();
 }
@@ -167,9 +195,14 @@ GEOM::GEOM_IOperations_ptr AdvancedGUI_SmoothingSurfaceDlg::createOperation()
 //=================================================================================
 bool AdvancedGUI_SmoothingSurfaceDlg::isValid (QString& msg)
 {
-  bool ok = true;
+  if (myPoints.empty()) {
+    msg += tr("GEOM_SMOOTHINGSURFACE_NO_POINTS");
+    return false;
+  }
 
-  //@@ add custom validation actions here @@//
+  bool ok = myNbMaxSpin->isValid (msg, !IsPreview()) &&
+            myDegMaxSpin->isValid(msg, !IsPreview()) &&
+            myDMaxSpin->isValid  (msg, !IsPreview());
 
   return ok;
 }
@@ -192,9 +225,12 @@ bool AdvancedGUI_SmoothingSurfaceDlg::execute (ObjectList& objects)
   for ( int i = 0; i < myPoints.count(); i++ )
     points[i] = myPoints[i].copy();
 
+  const int    aNbMax  = myNbMaxSpin->value();
+  const int    aDegMax = myDegMaxSpin->value();
+  const double aDMax   = myDMaxSpin->value();
 
   // call engine function
-  anObj = anOper->MakeSmoothingSurface(points);
+  anObj = anOper->MakeSmoothingSurface(points, aNbMax, aDegMax, aDMax);
   res = !anObj->_is_nil();
   if (res && !IsPreview())
   {

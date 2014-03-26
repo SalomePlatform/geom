@@ -287,11 +287,27 @@
     </message>
     <message>
         <source>GEOM_SMOOTHINGSURFACE_ARG</source>
-        <translation>Nodes</translation>
+        <translation>Arguments</translation>
     </message>
     <message>
         <source>GEOM_SMOOTHINGSURFACE_ARG_POINTS</source>
         <translation>Points</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_ARG_NB_MAX</source>
+        <translation>Max nbr of Bezier pieces</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_ARG_DEG_MAX</source>
+        <translation>Max BSpline surface degree</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_ARG_D_MAX</source>
+        <translation>Max plate criterion value</translation>
+    </message>
+    <message>
+        <source>GEOM_SMOOTHINGSURFACE_NO_POINTS</source>
+        <translation>No points selected</translation>
     </message>
 </context>
 </TS>

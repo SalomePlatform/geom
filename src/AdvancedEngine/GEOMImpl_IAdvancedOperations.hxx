@@ -236,7 +236,10 @@ public:
                                                            double theH,
                                                            int thePattern);
   
-  Standard_EXPORT Handle(GEOM_Object) MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thelPoints);
+  Standard_EXPORT Handle(GEOM_Object) MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thelPoints, 
+                                                            int                            theNbMax,
+                                                            int                            theDegMax,
+                                                            double                         theDMax);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 };
 #endif

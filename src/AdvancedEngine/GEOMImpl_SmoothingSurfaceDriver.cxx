@@ -98,13 +98,17 @@ GEOMImpl_SmoothingSurfaceDriver::GEOMImpl_SmoothingSurfaceDriver()
 //function : MakeSmoothingSurfaceUnClosed
 //purpose  :
 //=======================================================================
-TopoDS_Shape GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(Handle_TColgp_HArray1OfPnt myListOfPoints) const
+TopoDS_Shape GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed
+                          (const Handle_TColgp_HArray1OfPnt &theListOfPoints,
+                           const Standard_Integer            theNbMax,
+                           const Standard_Integer            theDegMax,
+                           const Standard_Real               theDMax) const
 {
   TopoDS_Face aInitShape;
   
   // Create an average Plane
-  //Handle(TColgp_HArray1OfPnt) HAP = new TColgp_HArray1OfPnt(1,myListOfPoints.Length())
-  GeomPlate_BuildAveragePlane gpbap(myListOfPoints,myListOfPoints->Length(),Precision::Confusion(),1,1);
+  //Handle(TColgp_HArray1OfPnt) HAP = new TColgp_HArray1OfPnt(1,theListOfPoints.Length())
+  GeomPlate_BuildAveragePlane gpbap(theListOfPoints,theListOfPoints->Length(),Precision::Confusion(),1,1);
   Handle(Geom_Plane) plane(gpbap.Plane());
   Standard_Real Umin, Umax, Vmin, Vmax;
   gpbap.MinMaxBox(Umin,Umax,Vmin,Vmax);
@@ -121,11 +125,11 @@ TopoDS_Shape GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(Handl
 
   Standard_Integer j, j1, j2;
   // cout << "Init surface" << endl;
-  j1 = myListOfPoints->Lower();
-  j2 = myListOfPoints->Upper();
+  j1 = theListOfPoints->Lower();
+  j2 = theListOfPoints->Upper();
   for (j=j1; j<=j2 ; j++)
   {
-    gp_Pnt aPnt = myListOfPoints->Value(j); 
+    gp_Pnt aPnt = theListOfPoints->Value(j); 
     Handle(GeomPlate_PointConstraint) PCont = new GeomPlate_PointConstraint(aPnt,0);
     aBuilder.Add(PCont);
   }
@@ -136,10 +140,14 @@ TopoDS_Shape GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(Handl
   // A ce niveau : surface algo
   Handle(GeomPlate_Surface) gpPlate = aBuilder.Surface();
   
-  Standard_Integer nbcarreau=2;
-  Standard_Integer degmax=8;
-  Standard_Real seuil;
-  seuil = Max(0.0001,10*aBuilder.G0Error());
+  Standard_Integer nbcarreau = (theNbMax > 0 ? theNbMax : 2);
+  Standard_Integer degmax = (theDegMax > 0 ? theDegMax : 8);
+  Standard_Real seuil = theDMax;
+
+  if (seuil <= 0.) {
+    seuil = Max(0.0001,10*aBuilder.G0Error());
+  }
+
   GeomPlate_MakeApprox Mapp(gpPlate,0.0001,nbcarreau,degmax,seuil);
   // cout << "Approx surface" << endl;
 
@@ -204,9 +212,13 @@ Standard_Integer GEOMImpl_SmoothingSurfaceDriver::Execute(TFunction_Logbook& log
     anArrayofPnt->SetValue(i, aPnt);
   }
 
+  const Standard_Integer aNbMax  = aData.GetNbMax();
+  const Standard_Integer aDegMax = aData.GetDegMax();
+  const Standard_Real    aDMax   = aData.GetDMax();
+
   // Make smoothing surface.
-  TopoDS_Shape aShape =
-    GEOMImpl_SmoothingSurfaceDriver::MakeSmoothingSurfaceUnClosed(anArrayofPnt);
+  TopoDS_Shape aShape = GEOMImpl_SmoothingSurfaceDriver::
+    MakeSmoothingSurfaceUnClosed(anArrayofPnt, aNbMax, aDegMax, aDMax);
 
   if (aShape.IsNull()) return 0;
 
@@ -237,11 +249,21 @@ GetCreationInformation(std::string&             theOperationName,
 
   switch ( aType ) {
   case SMOOTHINGSURFACE_LPOINTS:
-    AddParam( theParams, "Points" );
-    if ( aCI.GetLength() > 1 )
-      theParams[0] << aCI.GetLength() << " points: ";
-    for ( int i = 1, nb = aCI.GetLength(); i <= nb; ++i )
-      theParams[0] << aCI.GetPntOrComp( i ) << " ";
+    {
+      AddParam( theParams, "Points" );
+      if ( aCI.GetLength() > 1 )
+        theParams[0] << aCI.GetLength() << " points: ";
+      for ( int i = 1, nb = aCI.GetLength(); i <= nb; ++i )
+        theParams[0] << aCI.GetPntOrComp( i ) << " ";
+
+      const Standard_Integer aNbMax  = aCI.GetNbMax();
+      const Standard_Integer aDegMax = aCI.GetDegMax();
+      const Standard_Real    aDMax   = aCI.GetDMax();
+
+      AddParam(theParams, "Max nbr of Bezier pieces", aCI.GetNbMax());
+      AddParam(theParams, "Max BSpline surface degree", aCI.GetDegMax());
+      AddParam(theParams, "Max plate criterion value", aCI.GetDMax());
+    }
     break;
   default:
     return false;

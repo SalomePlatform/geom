@@ -755,10 +755,16 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedCylinder (CORBA::Do
 /*!
  *  
  *  \param thelPoints list of  points
+ *  \param theNbMax maximum number of Bezier pieces in the resulting surface.
+ *  \param theDegMax maximum degree of the resulting BSpline surface
+ *  \param theDMax specifies maximum value of the GeomPlate_PlateG0Criterion criterion.
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeSmoothingSurface (const GEOM::ListOfGO& thelPoints)
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeSmoothingSurface (const GEOM::ListOfGO& thelPoints,
+                                                                        CORBA::Long           theNbMax,
+                                                                        CORBA::Long           theDegMax,
+                                                                        CORBA::Double         theDMax)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -775,7 +781,8 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeSmoothingSurface (const GE
     aPoints.push_back(aPnt);
   }
   //Create the SmoothingSurface
-  Handle(GEOM_Object) anObject = GetOperations()->MakeSmoothingSurface(aPoints);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeSmoothingSurface
+        (aPoints, theNbMax, theDegMax, theDMax);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

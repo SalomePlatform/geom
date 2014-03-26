@@ -3430,10 +3430,16 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double th
 /*!
  *  Create a smoothing surface from a set of points
  *  \param thelPoints list of points or compounds of points
+ *  \param theNbMax maximum number of Bezier pieces in the resulting surface.
+ *  \param theDegMax maximum degree of the resulting BSpline surface
+ *  \param theDMax specifies maximum value of the GeomPlate_PlateG0Criterion criterion.
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thelPoints)
+Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thelPoints, 
+                                                                        int                            theNbMax,
+                                                                        int                            theDegMax,
+                                                                        double                         theDMax)
 {
   SetErrorCode(KO);
 
@@ -3462,6 +3468,9 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeSmoothingSurface (std::lis
     aData.SetPntOrComp(ind, aRefObj);
   }
 
+  aData.SetNbMax(theNbMax);
+  aData.SetDegMax(theDegMax);
+  aData.SetDMax(theDMax);
 
   //Compute the resulting value
   try {
@@ -3487,7 +3496,10 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeSmoothingSurface (std::lis
   while (it != thelPoints.end()) {
     pd << ", " << (*it++);
   }
-  pd << "])";
+  pd << "], "
+     << theNbMax << ", "
+     << theDegMax << ", "
+     << theDMax <<")";
 
   SetErrorCode(OK);
 

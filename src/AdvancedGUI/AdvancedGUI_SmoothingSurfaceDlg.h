@@ -26,6 +26,7 @@
 #include <list>
 
 class DlgRef_1Sel;
+class SalomeApp_IntSpinBox;
 
 //=================================================================================
 // class    : AdvancedGUI_SmoothingSurfaceDlg
@@ -53,6 +54,9 @@ private:
 private:
   DlgRef_1Sel*                 GroupPoints;
   QList<GEOM::GeomObjPtr>            myPoints;
+  SalomeApp_IntSpinBox              *myNbMaxSpin;
+  SalomeApp_IntSpinBox              *myDegMaxSpin;
+  SalomeApp_DoubleSpinBox           *myDMaxSpin;
 
 private slots:
   void                               ClickOnOk();

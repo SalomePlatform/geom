@@ -63,7 +63,11 @@ public:
 DEFINE_STANDARD_RTTI( GEOMImpl_SmoothingSurfaceDriver )
 
 private:
-  TopoDS_Shape MakeSmoothingSurfaceUnClosed(Handle_TColgp_HArray1OfPnt myListOfPoints) const;
+  TopoDS_Shape MakeSmoothingSurfaceUnClosed
+                    (const Handle_TColgp_HArray1OfPnt &theListOfPoints,
+                     const Standard_Integer            theNbMax,
+                     const Standard_Integer            theDegMax,
+                     const Standard_Real               theDMax) const;
 };
 
 #endif // _GEOMImpl_SmoothingSurfaceDriver_HXX

@@ -4694,10 +4694,16 @@ module GEOM
     /*!
      *  
      *  Create a smoothing surface from a set of points
-     *  \param thelPoints list of points
+     *  \param thelPoints list of points. Compounds of points are accepted as well.
+     *  \param theNbMax maximum number of Bezier pieces in the resulting surface.
+     *  \param theDegMax maximum degree of the resulting BSpline surface
+     *  \param theDMax specifies maximum value of the GeomPlate_PlateG0Criterion criterion.
      *  \return New GEOM_Object, containing the created shape.
      */
-    GEOM_Object MakeSmoothingSurface (in ListOfGO thelPoints);
+    GEOM_Object MakeSmoothingSurface (in ListOfGO thelPoints,
+                                      in long     theNbMax,
+                                      in long     theDegMax,
+                                      in double   theDMax);
 
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };
