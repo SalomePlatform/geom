@@ -150,12 +150,79 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean
 
 //=============================================================================
 /*!
+ *  MakeFuse
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuse
+                                  (Handle(GEOM_Object)    theShape1,
+                                   Handle(GEOM_Object)    theShape2,
+                                   const bool             IsCheckSelfInte,
+                                   const bool             IsRmExtraEdges)
+{
+  SetErrorCode(KO);
+
+  if (theShape1.IsNull() || theShape2.IsNull()) return NULL;
+
+  //Add a new Boolean object
+  Handle(GEOM_Object) aBool = GetEngine()->AddObject(GetDocID(), GEOM_BOOLEAN);
+
+  //Add a new Boolean function
+  Handle(GEOM_Function) aFunction =
+    aBool->AddFunction(GEOMImpl_BooleanDriver::GetID(), BOOLEAN_FUSE);
+
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_BooleanDriver::GetID()) return NULL;
+
+  GEOMImpl_IBoolean aCI (aFunction);
+
+  Handle(GEOM_Function) aRef1 = theShape1->GetLastFunction();
+  Handle(GEOM_Function) aRef2 = theShape2->GetLastFunction();
+
+  if (aRef1.IsNull() || aRef2.IsNull()) return NULL;
+
+  aCI.SetShape1(aRef1);
+  aCI.SetShape2(aRef2);
+  aCI.SetCheckSelfIntersection(IsCheckSelfInte);
+  aCI.SetRmExtraEdges(IsRmExtraEdges);
+
+  //Compute the Boolean value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Boolean driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+
+  pd << aBool << " = geompy.MakeFuse(";
+  pd << theShape1 << ", " << theShape2 << ", "
+     << IsCheckSelfInte << ", " << IsRmExtraEdges << ")";
+
+  SetErrorCode(OK);
+  return aBool;
+}
+
+//=============================================================================
+/*!
  *  MakeFuseList
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,
-                   const Standard_Boolean IsCheckSelfInte)
+                   const bool                                  IsCheckSelfInte,
+                   const bool                                  IsRmExtraEdges)
 {
   SetErrorCode(KO);
 
@@ -183,6 +250,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
 
   aCI.SetShapes(aShapesSeq);
   aCI.SetCheckSelfIntersection(IsCheckSelfInte);
+  aCI.SetRmExtraEdges(IsRmExtraEdges);
 
   //Compute the Boolean value
   try {
@@ -203,14 +271,8 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
 
-  pd << aBool <<
-    " = geompy.MakeFuseList([" << aDescription.ToCString() << "]";
-
-  if (IsCheckSelfInte) {
-    pd << ", True";
-  }
-
-  pd << ")";
+  pd << aBool << " = geompy.MakeFuseList([" << aDescription.ToCString() << "], "
+     << IsCheckSelfInte << ", " << IsRmExtraEdges << ")";
 
   SetErrorCode(OK);
   return aBool;

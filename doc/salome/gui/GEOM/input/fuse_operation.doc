@@ -12,6 +12,7 @@ In this dialog:
 - Input or accept the default \b Name of the resulting shape. 
 - Click the arrow button and select in the Object Browser or in the Viewer the <b>Objects</b> to be fused.
 - Activate the corresponding check-box if you wish to <b> Detect Self-intersections </b>.
+- Activate the corresponding check-box if you wish to <b> remove extra edges </b>.
 - Activate \ref restore_presentation_parameters_page "Advanced options" if required.
 - Press "Apply" or "Apply & Close" button to get the result (GEOM_Object).
 
@@ -24,15 +25,17 @@ In this dialog:
  
 This operation can be performed using a <b>TUI Command:</b> 
 
-<em>geompy.MakeFuseList(theShapesList, checkSelfInte)</em>
+<em>geompy.MakeFuseList(theShapesList, checkSelfInte, rmExtraEdges)</em>
 
-<b>Arguments:</b> Name + a list of shapes + an optional flag for self-intersection check.
+<b>Arguments:</b> Name + a list of shapes + an optional flag for
+self-intersection check + an optional flag to remove extra edges.
 
 There is also a special <b>TUI Command</b> for \b Fuse operation on two shapes  :
 
-<em>geompy.MakeFuse(s1, s2, checkSelfInte)</em>
+<em>geompy.MakeFuse(s1, s2, checkSelfInte, rmExtraEdges)</em>
 
-<b>Arguments:</b> Name + 2 shapes + an optional flag for self-intersection check.
+<b>Arguments:</b> Name + 2 shapes + an optional flag for self-intersection
+check + an optional flag to remove extra edges.
 
 <b>Example:</b>
 

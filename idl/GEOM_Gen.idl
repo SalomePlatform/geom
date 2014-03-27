@@ -2917,16 +2917,33 @@ module GEOM
                              in GEOM_Object theShape2,
                              in long        theOperation,
                              in boolean     IsCheckSelfInte);
+    /*!
+     *  \brief Perform fusion boolean operation on two given shapes.
+     *  \param theShape1 First argument for fuse operation.
+     *  \param theShape2 Second argument for fuse operation.
+     *  \param IsCheckSelfInte If TRUE, perform check self intersection
+     *                         of arguments before an operation.
+     *  \param IsRmExtraEdges If TRUE, perform removal of extra edges
+     *                        during an operation.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFuse (in GEOM_Object theShape1,
+                          in GEOM_Object theShape2,
+                          in boolean     IsCheckSelfInte,
+                          in boolean     IsRmExtraEdges);
 
     /*!
      *  \brief Perform fusion boolean operation on list of objects.
      *  \param theShapes Shapes to be fused.
      *  \param IsCheckSelfInte If TRUE, perform check self intersection
      *                         of arguments before an operation.
+     *  \param IsRmExtraEdges If TRUE, perform removal of extra edges
+     *                        during an operation.
      *  \return New GEOM_Object, containing the result shape.
      */
     GEOM_Object MakeFuseList (in ListOfGO theShapes,
-                              in boolean  IsCheckSelfInte);
+                              in boolean  IsCheckSelfInte,
+                              in boolean  IsRmExtraEdges);
 
     /*!
      *  \brief Perform common boolean operation on list of objects.

@@ -89,12 +89,45 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeBoolean
 
 //=============================================================================
 /*!
+ *  MakeFuse
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuse
+                                    (GEOM::GEOM_Object_ptr theShape1,
+                                     GEOM::GEOM_Object_ptr theShape2,
+                                     CORBA::Boolean        IsCheckSelfInte,
+                                     CORBA::Boolean        IsRmExtraEdges)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shapes
+  Handle(GEOM_Object) aSh1 = GetObjectImpl(theShape1);
+  Handle(GEOM_Object) aSh2 = GetObjectImpl(theShape2);
+
+  if (aSh1.IsNull() || aSh2.IsNull()) return aGEOMObject._retn();
+
+  // Make Boolean
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFuse
+    (aSh1, aSh2, IsCheckSelfInte, IsRmExtraEdges);
+
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeFuseList
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
                                     (const GEOM::ListOfGO& theShapes,
-                                     CORBA::Boolean        IsCheckSelfInte)
+                                     CORBA::Boolean        IsCheckSelfInte,
+                                     CORBA::Boolean        IsRmExtraEdges)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -110,7 +143,7 @@ GEOM::GEOM_Object_ptr GEOM_IBooleanOperations_i::MakeFuseList
 
   // Make fusion
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeFuseList(aShapes, IsCheckSelfInte);
+    GetOperations()->MakeFuseList(aShapes, IsCheckSelfInte, IsRmExtraEdges);
 
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();

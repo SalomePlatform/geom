@@ -42,9 +42,16 @@ class GEOMImpl_IBooleanOperations : public GEOM_IOperations {
                                  const Standard_Integer theOp,
                                  const Standard_Boolean IsCheckSelfInte);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeFuse
+                                (Handle(GEOM_Object) theShape1,
+                                 Handle(GEOM_Object) theShape2,
+                                 const bool          IsCheckSelfInte,
+                                 const bool          IsRmExtraEdges);
+
   Standard_EXPORT Handle(GEOM_Object) MakeFuseList
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,
-                   const Standard_Boolean IsCheckSelfInte);
+                   const bool                                  IsCheckSelfInte,
+                   const bool                                  IsRmExtraEdges);
 
   Standard_EXPORT Handle(GEOM_Object) MakeCommonList
                   (const Handle(TColStd_HSequenceOfTransient)& theShapes,

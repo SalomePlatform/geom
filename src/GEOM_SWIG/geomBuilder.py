@@ -6846,6 +6846,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape2 Second argument for boolean operation.
         #  @param checkSelfInte The flag that tells if the arguments should
         #         be checked for self-intersection prior to the operation.
+        #  @param rmExtraEdges The flag that tells if Remove Extra Edges
+        #         operation should be performed during the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6862,7 +6864,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_fuse "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeFuse(self, theShape1, theShape2, checkSelfInte=False, theName=None):
+        def MakeFuse(self, theShape1, theShape2, checkSelfInte=False,
+                     rmExtraEdges=False, theName=None):
             """
             Perform Fuse boolean operation on two given shapes.
 
@@ -6872,6 +6875,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 checkSelfInte The flag that tells if the arguments should
                               be checked for self-intersection prior to
                               the operation.
+                rmExtraEdges The flag that tells if Remove Extra Edges
+                             operation should be performed during the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6890,8 +6895,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             
             """
             # Example: see GEOM_TestOthers.py
-            # note: auto-publishing is done in self.MakeBoolean()
-            return self.MakeBoolean(theShape1, theShape2, 3, checkSelfInte, theName)
+            anObj = self.BoolOp.MakeFuse(theShape1, theShape2,
+                                         checkSelfInte, rmExtraEdges)
+            RaiseIfFailed("MakeFuse", self.BoolOp)
+            self._autoPublish(anObj, theName, "fuse")
+            return anObj
 
         ## Perform Section boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
@@ -6949,6 +6957,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShapesList Shapes to be fused.
         #  @param checkSelfInte The flag that tells if the arguments should
         #         be checked for self-intersection prior to the operation.
+        #  @param rmExtraEdges The flag that tells if Remove Extra Edges
+        #         operation should be performed during the operation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6965,7 +6975,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_fuse "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeFuseList(self, theShapesList, checkSelfInte=False, theName=None):
+        def MakeFuseList(self, theShapesList, checkSelfInte=False,
+                         rmExtraEdges=False, theName=None):
             """
             Perform Fuse boolean operation on the list of shapes.
 
@@ -6974,6 +6985,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 checkSelfInte The flag that tells if the arguments should
                               be checked for self-intersection prior to
                               the operation.
+                rmExtraEdges The flag that tells if Remove Extra Edges
+                             operation should be performed during the operation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6992,7 +7005,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             
             """
             # Example: see GEOM_TestOthers.py
-            anObj = self.BoolOp.MakeFuseList(theShapesList, checkSelfInte)
+            anObj = self.BoolOp.MakeFuseList(theShapesList, checkSelfInte,
+                                             rmExtraEdges)
             RaiseIfFailed("MakeFuseList", self.BoolOp)
             self._autoPublish(anObj, theName, "fuse")
             return anObj
@@ -12662,8 +12676,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 New GEOM_Object, containing the created shape.
             """
-            anObj = self.AdvOp.MakeSmoothingSurface
-                (thelPoints, theNbMax, theDegMax, theDMax)
+            anObj = self.AdvOp.MakeSmoothingSurface(thelPoints, theNbMax,
+                                                    theDegMax, theDMax)
             RaiseIfFailed("MakeSmoothingSurface", self.AdvOp)
             self._autoPublish(anObj, theName, "smoothing")
             return anObj

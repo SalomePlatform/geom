@@ -47,8 +47,14 @@ class GEOM_I_EXPORT GEOM_IBooleanOperations_i :
 				     CORBA::Long           theOp,
                                      CORBA::Boolean        IsCheckSelfInte);
 
+  GEOM::GEOM_Object_ptr MakeFuse (GEOM::GEOM_Object_ptr theShape1,
+				  GEOM::GEOM_Object_ptr theShape2,
+                                  CORBA::Boolean        IsCheckSelfInte,
+                                  CORBA::Boolean        IsRmExtraEdges);
+
   GEOM::GEOM_Object_ptr MakeFuseList (const GEOM::ListOfGO& theShapes,
-                                      CORBA::Boolean        IsCheckSelfInte);
+                                      CORBA::Boolean        IsCheckSelfInte,
+                                      CORBA::Boolean        IsRmExtraEdges);
 
   GEOM::GEOM_Object_ptr MakeCommonList (const GEOM::ListOfGO& theShapes,
                                         CORBA::Boolean        IsCheckSelfInte);

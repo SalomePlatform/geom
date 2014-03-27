@@ -93,7 +93,7 @@ BooleanGUI_Dialog::BooleanGUI_Dialog (const int theOperation, GeometryGUI* theGe
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  myGroup = new DlgRef_2Sel2Spin1Check(centralWidget());
+  myGroup = new DlgRef_2Sel2Spin3Check(centralWidget());
 
   myGroup->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   if (myOperation == BooleanGUI::CUT) {
@@ -108,21 +108,30 @@ BooleanGUI_Dialog::BooleanGUI_Dialog (const int theOperation, GeometryGUI* theGe
     myGroup->TextLabel2->hide();
     myGroup->PushButton2->hide();
     myGroup->LineEdit2->hide();
+
+    if (myOperation == BooleanGUI::FUSE) {
+      myGroup->CheckBox2->setText(tr("GEOM_BOOL_REMOVE_EXTRA_EDGES"));
+    }
   }
 
   myGroup->PushButton1->setIcon(image1);
   myGroup->LineEdit1->setReadOnly(true);
 
-  if (myOperation != BooleanGUI::FUSE && myOperation != BooleanGUI::COMMON) {
-    myGroup->PushButton2->setIcon(image1);
-    myGroup->LineEdit2->setReadOnly(true);
+  if (myOperation != BooleanGUI::FUSE) {
+    myGroup->CheckBox2->hide();
+
+    if (myOperation != BooleanGUI::COMMON) {
+      myGroup->PushButton2->setIcon(image1);
+      myGroup->LineEdit2->setReadOnly(true);
+    }
   }
 
   myGroup->TextLabel3->hide();
   myGroup->TextLabel4->hide();
   myGroup->SpinBox_DX->hide();
   myGroup->SpinBox_DY->hide();
-  myGroup->CheckButton1->setText(tr("GEOM_CHECK_SELF_INTERSECTIONS"));
+  myGroup->CheckBox3->hide();
+  myGroup->CheckBox1->setText(tr("GEOM_CHECK_SELF_INTERSECTIONS"));
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -158,7 +167,12 @@ void BooleanGUI_Dialog::Init()
 
   myGroup->LineEdit1->setText("");
   myGroup->LineEdit2->setText("");
-  myGroup->CheckButton1->setChecked(true);
+  myGroup->CheckBox1->setChecked(true);
+
+  if (myOperation == BooleanGUI::FUSE) {
+    myGroup->CheckBox2->setChecked(true);
+  }
+
   myObject1.nullify();
   reset();
  
@@ -409,11 +423,16 @@ bool BooleanGUI_Dialog::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
-  const bool isCheckSelfInte = myGroup->CheckButton1->isChecked();
+  const bool isCheckSelfInte = myGroup->CheckBox1->isChecked();
 
   switch (myOperation) {
     case BooleanGUI::FUSE:
-      anObj = anOper->MakeFuseList(myObjects, isCheckSelfInte);
+      {
+        const bool isRmExtraEdges = myGroup->CheckBox2->isChecked();
+
+        anObj = anOper->MakeFuseList
+          (myObjects, isCheckSelfInte, isRmExtraEdges);
+      }
     break;
     case BooleanGUI::COMMON:
       anObj = anOper->MakeCommonList(myObjects, isCheckSelfInte);

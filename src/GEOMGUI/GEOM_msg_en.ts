@@ -4641,6 +4641,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Remove extra edges</translation>
     </message>
     <message>
+        <source>GEOM_BOOL_REMOVE_EXTRA_EDGES</source>
+        <translation>Remove extra edges</translation>
+    </message>
+    <message>
         <source>GEOM_REMOVE_EXTRA_EDGES</source>
         <translation>Object to remove extra edges</translation>
     </message>

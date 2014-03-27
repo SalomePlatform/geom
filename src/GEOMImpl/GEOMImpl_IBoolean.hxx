@@ -29,6 +29,7 @@
 #define BOOL_ARG_SHAPE2                   2
 #define BOOL_ARG_SHAPES                   3
 #define BOOL_ARG_CHECK_SELF_INTERSECTION  4
+#define BOOL_ARG_RM_EXTRA_EDGES           5
 
 class GEOMImpl_IBoolean
 {
@@ -42,6 +43,8 @@ class GEOMImpl_IBoolean
   { _func->SetReferenceList(BOOL_ARG_SHAPES, theShapes); }
   void SetCheckSelfIntersection (Standard_Boolean theFlag)
   { _func->SetInteger(BOOL_ARG_CHECK_SELF_INTERSECTION, theFlag ? 1 : 0); }
+  void SetRmExtraEdges (Standard_Boolean theFlag)
+  { _func->SetInteger(BOOL_ARG_RM_EXTRA_EDGES, theFlag ? 1 : 0); }
 
   Handle(GEOM_Function) GetShape1() { return _func->GetReference(BOOL_ARG_SHAPE1); }
   Handle(GEOM_Function) GetShape2() { return _func->GetReference(BOOL_ARG_SHAPE2); }
@@ -49,6 +52,8 @@ class GEOMImpl_IBoolean
   { return _func->GetReferenceList(BOOL_ARG_SHAPES); }
   Standard_Boolean GetCheckSelfIntersection()
   { return (_func->GetInteger(BOOL_ARG_CHECK_SELF_INTERSECTION) != 0); }
+  Standard_Boolean GetRmExtraEdges()
+  { return (_func->GetInteger(BOOL_ARG_RM_EXTRA_EDGES) != 0); }
 
  private:
 

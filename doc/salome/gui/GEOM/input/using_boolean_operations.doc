@@ -23,7 +23,7 @@ a list of others. </li>
 You can use advanced TUI commands performing these operations
 independently from each other:
 \par
-<em>geompy.MakeFuseList(theShapesList, checkSelfInte)</em>, where \em theShapesList is
+<em>geompy.MakeFuseList(theShapesList, checkSelfInte, rmExtraEdges)</em>, where \em theShapesList is
 the list of shapes for Fuse operation; 
 \par
 <em>geompy.MakeCommonList(theShapesList, checkSelfInte)</em>, where \em theShapesList is
@@ -51,7 +51,7 @@ a Boolean operation, \em Operation is the type of a Boolean operation (1
 Besides, you can use advanced TUI commands performing these operations
 independently from each other:
 \par
-<em>geompy.MakeFuse(Shape1, Shape2, checkSelfInte)</em>, where \em Shape1 is the first
+<em>geompy.MakeFuse(Shape1, Shape2, checkSelfInte, rmExtraEdges)</em>, where \em Shape1 is the first
 argument and \em Shape2 is the second argument of Fuse operation; 
 \par
 <em>geompy.MakeCommon(Shape1, Shape2, checkSelfInte)</em>, where \em Shape1 is the first
@@ -72,6 +72,17 @@ not valid for boolean operations.
       is a time-consuming operation that gives an impact on performance. To find
       all self-intersections use \ref check_self_intersections_page
       "Detect Self-intersection tool".
+
+The flag \em rmExtraEdges is used for \em MakeFuseList and \em MakeFuse
+operations only. It indicates if Remove Extra Edges operation should be
+performed during the operation. Its default value is \em False, which
+means that there is no need to do it.
+
+\note \em rmExtraEdges is not available for \em MakeBoolean call with
+      operation type 3 (Fuse). \em MakeBoolean operation doesn't perform
+      Remove Extra Edges. So the call <em>geompy.MakeBoolean(Shape1, Shape2,
+      3, checkSelfInte)</em> is equivalent to <em>geompy.MakeFuse(Shape1,
+      Shape2, checkSelfInte, False)</em>.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_boolean_operations_page "Boolean Operations".

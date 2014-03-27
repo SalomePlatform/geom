@@ -30,7 +30,7 @@
 #include "GEOMBase_Skeleton.h"
 #include "GEOM_GenericObjPtr.h"
 
-class DlgRef_2Sel2Spin1Check;
+class DlgRef_2Sel2Spin3Check;
 
 //=================================================================================
 // class    : BooleanGUI_Dialog
@@ -65,7 +65,7 @@ private:
   GEOM::GeomObjPtr                   myObject1;
   GEOM::ListOfGO_var                 myObjects;
   
-  DlgRef_2Sel2Spin1Check*            myGroup;
+  DlgRef_2Sel2Spin3Check*            myGroup;
 
 private slots:
   void                               ClickOnOk();

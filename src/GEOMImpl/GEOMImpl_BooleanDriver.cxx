@@ -26,6 +26,8 @@
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOM_Function.hxx>
 #include <GEOMUtils.hxx>
+#include <BlockFix_BlockFixAPI.hxx>
+#include <ShHealOper_ShapeProcess.hxx>
 
 #include <TNaming_CopyShape.hxx>
 
@@ -61,6 +63,49 @@
 // here check level is decreased to more appropriate value to avoid problems with performance).
 #define BOP_SELF_INTERSECTIONS_LEVEL 4
 
+/**
+ * This function performs extra edges removal.
+ *
+ * \param theShape the shape to be processed.
+ * \return the modified shape or null shape in case of failure.
+ */
+static TopoDS_Shape RemoveExtraEdges(const TopoDS_Shape &theShape)
+{
+  TopoDS_Shape aResult;
+
+  if (theShape.IsNull() == Standard_False) {
+    BlockFix_BlockFixAPI aTool;
+
+    aTool.OptimumNbFaces() = 0;
+    aTool.SetShape(theShape);
+    aTool.Perform();
+    aResult = aTool.Shape();
+
+    // Repair result
+    BRepCheck_Analyzer anAna (aResult, false);
+    Standard_Boolean isValid = anAna.IsValid();
+
+    if (!isValid) {
+      TopoDS_Shape aFixed;
+      ShHealOper_ShapeProcess aHealer;
+
+      aHealer.Perform(aResult, aFixed);
+
+      if (aHealer.isDone()) {
+        aResult = aFixed;
+        anAna.Init(aResult, false);
+        isValid = anAna.IsValid();
+      }
+    }
+
+    if (!isValid) {
+      aResult.Nullify();
+    }
+  }
+
+  return aResult;
+}
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -91,6 +136,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
   GEOMImpl_IBoolean aCI (aFunction);
   Standard_Integer aType = aFunction->GetType();
   const Standard_Boolean isCheckSelfInte = aCI.GetCheckSelfIntersection();
+  const Standard_Boolean isRmExtraEdges  = aCI.GetRmExtraEdges();
 
   TopoDS_Shape aShape;
 
@@ -139,8 +185,13 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 
         aShape = performOperation (aShapeCopy1, aShapeCopy2, aType);
 
-        if (aShape.IsNull())
+        if (isRmExtraEdges) {
+          aShape = RemoveExtraEdges(aShape);
+        }
+
+        if (aShape.IsNull()) {
           return 0;
+        }
       }
     }
     break;
@@ -208,6 +259,10 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
             aShapeCopy.Nullify();
             TNaming_CopyShape::CopyTool(aShape2, aMapTShapes, aShapeCopy);
 	    aShape = performOperation (aShape, aShapeCopy, aSimpleType);
+
+            if (isRmExtraEdges) {
+              aShape = RemoveExtraEdges(aShape);
+            }
 	    
 	    if (aShape.IsNull()) {
 	      return 0;
@@ -621,40 +676,50 @@ GetCreationInformation(std::string&             theOperationName,
 
   GEOMImpl_IBoolean aCI (function);
   Standard_Integer aType = function->GetType();
+  Standard_Boolean isCheckSelfInte = aCI.GetCheckSelfIntersection();
 
   switch ( aType ) {
   case BOOLEAN_COMMON:
     theOperationName = "COMMON";
     AddParam( theParams, "Object 1", aCI.GetShape1() );
     AddParam( theParams, "Object 2", aCI.GetShape2() );
+    AddParam( theParams, "Check self-intersections", isCheckSelfInte );
     break;
   case BOOLEAN_CUT:
     theOperationName = "CUT";
     AddParam( theParams, "Main Object", aCI.GetShape1() );
     AddParam( theParams, "Tool Object", aCI.GetShape2() );
+    AddParam( theParams, "Check self-intersections", isCheckSelfInte );
     break;
   case BOOLEAN_FUSE:
     theOperationName = "FUSE";
     AddParam( theParams, "Object 1", aCI.GetShape1() );
     AddParam( theParams, "Object 2", aCI.GetShape2() );
+    AddParam( theParams, "Check self-intersections", isCheckSelfInte );
+    AddParam( theParams, "Remove extra edges", aCI.GetRmExtraEdges() );
     break;
   case BOOLEAN_SECTION:
     theOperationName = "SECTION";
     AddParam( theParams, "Object 1", aCI.GetShape1() );
     AddParam( theParams, "Object 2", aCI.GetShape2() );
+    AddParam( theParams, "Check self-intersections", isCheckSelfInte );
     break;
   case BOOLEAN_COMMON_LIST:
     theOperationName = "COMMON";
     AddParam( theParams, "Selected objects", aCI.GetShapes() );
+    AddParam( theParams, "Check self-intersections", isCheckSelfInte );
     break;
   case BOOLEAN_FUSE_LIST:
     theOperationName = "FUSE";
     AddParam( theParams, "Selected objects", aCI.GetShapes() );
+    AddParam( theParams, "Check self-intersections", isCheckSelfInte );
+    AddParam( theParams, "Remove extra edges", aCI.GetRmExtraEdges() );
     break;
   case BOOLEAN_CUT_LIST:
     theOperationName = "CUT";
     AddParam( theParams, "Main Object", aCI.GetShape1() );
     AddParam( theParams, "Tool Objects", aCI.GetShapes() );
+    AddParam( theParams, "Check self-intersections", isCheckSelfInte );
     break;
   default:
     return false;
