@@ -61,8 +61,8 @@ module GEOM
   /*!
    * \brief Marker type
    */
-  enum marker_type { MT_NONE, MT_POINT, MT_PLUS, MT_STAR, MT_O, MT_X, MT_O_POINT, MT_O_PLUS,
-                     MT_O_STAR, MT_O_X, MT_BALL, MT_RING1, MT_RING2, MT_RING3, MT_USER };
+  enum marker_type { MT_NONE, MT_POINT, MT_PLUS, MT_STAR, MT_X, MT_O, MT_O_POINT, MT_O_PLUS,
+                     MT_O_STAR, MT_O_X, MT_RING1, MT_RING2, MT_RING3, MT_BALL, MT_USER };
 
   /*!
    * /brief Marker size

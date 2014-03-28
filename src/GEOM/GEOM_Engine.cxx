@@ -1615,16 +1615,16 @@ void AddObjectColors (int                      theDocID,
       case Aspect_TOM_POINT:   aCommand += "GEOM.MT_POINT";   break;
       case Aspect_TOM_PLUS:    aCommand += "GEOM.MT_PLUS";    break;
       case Aspect_TOM_STAR:    aCommand += "GEOM.MT_STAR";    break;
-      case Aspect_TOM_O:       aCommand += "GEOM.MT_O";       break;
       case Aspect_TOM_X:       aCommand += "GEOM.MT_X";       break;
+      case Aspect_TOM_O:       aCommand += "GEOM.MT_O";       break;
       case Aspect_TOM_O_POINT: aCommand += "GEOM.MT_O_POINT"; break;
       case Aspect_TOM_O_PLUS:  aCommand += "GEOM.MT_O_PLUS";  break;
       case Aspect_TOM_O_STAR:  aCommand += "GEOM.MT_O_STAR";  break;
       case Aspect_TOM_O_X:     aCommand += "GEOM.MT_O_X";     break;
-      case Aspect_TOM_BALL:    aCommand += "GEOM.MT_BALL";    break;
       case Aspect_TOM_RING1:   aCommand += "GEOM.MT_RING1";   break;
       case Aspect_TOM_RING2:   aCommand += "GEOM.MT_RING2";   break;
       case Aspect_TOM_RING3:   aCommand += "GEOM.MT_RING3";   break;
+      case Aspect_TOM_BALL:    aCommand += "GEOM.MT_BALL";    break;
       default:                 aCommand += "GEOM.MT_NONE";    break; // just for completeness, should not get here
       }
       aCommand += ", ";
