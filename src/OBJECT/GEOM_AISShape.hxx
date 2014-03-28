@@ -50,8 +50,8 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
-#ifndef _Handle_PrsMgr_PresentationManager3d_HeaderFile
-#include <Handle_PrsMgr_PresentationManager3d.hxx>
+#ifndef _PrsMgr_PresentationManager_HeaderFile
+#include <PrsMgr_PresentationManager.hxx>
 #endif
 #ifndef _Handle_Prs3d_Presentation_HeaderFile
 #include <Handle_Prs3d_Presentation.hxx>
@@ -65,7 +65,6 @@
 #include <QList>
 #include <QVariant>
 
-class PrsMgr_PresentationManager3d;
 class Prs3d_Presentation;
 class SALOME_InteractiveObject;
 class TopoDS_Shape;
