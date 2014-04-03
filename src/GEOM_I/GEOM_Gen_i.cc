@@ -110,14 +110,11 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
   {
     //work around PAL12004, PAL12628
     //OSD::SetSignal( true );
-    bool raiseFPE;
-#ifdef _DEBUG_
-    raiseFPE = true;
-    char* envDisableFPE = getenv("DISABLE_FPE");
-    if (envDisableFPE && atoi(envDisableFPE))
-      raiseFPE = false;
-#else
-    raiseFPE = false;
+    bool raiseFPE = false;
+#if defined(_DEBUG_) | defined(_DEBUG) //the Last for WIN32 default settings
+    char* envEnableFPE = getenv("ENABLE_FPE");
+    if (envEnableFPE && atoi(envEnableFPE))
+      raiseFPE = true;
 #endif
     OSD::SetSignal( raiseFPE );
   }
