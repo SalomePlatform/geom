@@ -299,25 +299,19 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
     aErrStr = "";
     switch ( aErrs[i].error ) {
       case GEOM::GEOM_IBlocksOperations::NOT_BLOCK :
-        aErrStr = "Not a Block";
+        aErrStr = tr("GEOM_CHECK_BLOCKS_NOT_BLOCK");
         break;
       case GEOM::GEOM_IBlocksOperations::EXTRA_EDGE :
-        aErrStr = "Extra Edge";
+        aErrStr = tr("GEOM_CHECK_BLOCKS_EXTRA_EDGE");
         break;
       case GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION :
-        aErrStr = "Invalid Connection";
-        aErrStr += aConSfx;
-        aErrStr += QString::number( aConNum );
-        aConNum++;
+        aErrStr = tr("GEOM_CHECK_BLOCKS_INVALID_CONNECTION").arg(aConNum++);
         break;
       case GEOM::GEOM_IBlocksOperations::NOT_CONNECTED :
-        aErrStr = "Not Connected";
+        aErrStr = tr("GEOM_CHECK_BLOCKS_NOT_CONNECTED");
         break;
       case GEOM::GEOM_IBlocksOperations::NOT_GLUED :
-        aErrStr = "Not Glued";
-        aErrStr += aGluedSfx;
-        aErrStr += QString::number( aGluedNum );
-        aGluedNum++;
+        aErrStr = tr("GEOM_CHECK_BLOCKS_NOT_GLUED").arg(aGluedNum++);
         break;
       default :
         aErrStr = "";

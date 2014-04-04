@@ -20,96 +20,56 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_IMeasureOperations.hxx>
-
-#include <GEOMImpl_Types.hxx>
-#include <GEOMImpl_MeasureDriver.hxx>
 #include <GEOMImpl_IMeasure.hxx>
-#include <GEOMImpl_IShapesOperations.hxx>
+#include <GEOMImpl_MeasureDriver.hxx>
+#include <GEOMImpl_Types.hxx>
 
 #include <GEOMUtils.hxx>
 
-#include <GEOMAlgo_ShapeInfo.hxx>
+#include <GEOMAlgo_AlgoTools.hxx>
+#include <GEOMAlgo_KindOfName.hxx>
 #include <GEOMAlgo_ShapeInfoFiller.hxx>
 
-#include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
 #include <utilities.h>
-#include <OpUtil.hxx>
-#include <Utils_ExceptHandlers.hxx>
 
 // OCCT Includes
-#include <TFunction_DriverTable.hxx>
-#include <TFunction_Driver.hxx>
-#include <TFunction_Logbook.hxx>
-#include <TDF_Tool.hxx>
-
+#include <Bnd_Box.hxx>
+#include <BOPAlgo_CheckerSI.hxx>
+#include <BOPCol_ListOfShape.hxx>
+#include <BOPDS_DS.hxx>
+#include <BOPDS_MapOfPassKey.hxx>
 #include <BRep_Builder.hxx>
-#include <BRep_TFace.hxx>
-#include <BRep_Tool.hxx>
-#include <BRepAdaptor_Surface.hxx>
-#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBndLib.hxx>
-#include <BRepCheck.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
-#include <BRepCheck_Result.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
-
-#include <Bnd_Box.hxx>
-
-#include <TopAbs.hxx>
-#include <TopExp.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Face.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Compound.hxx>
-#include <TopoDS_Iterator.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-
-#include <ShapeAnalysis.hxx>
-#include <ShapeAnalysis_Surface.hxx>
-
-#include <GeomAPI_IntSS.hxx>
+#include <BRep_Tool.hxx>
+#include <Geom_Line.hxx>
 #include <GeomAPI_ProjectPointOnCurve.hxx>
 #include <GeomAPI_ProjectPointOnSurf.hxx>
-
-#include <GeomAbs_SurfaceType.hxx>
-
-#include <Geom_Line.hxx>
-#include <Geom_Surface.hxx>
-
 #include <GeomLProp_CLProps.hxx>
 #include <GeomLProp_SLProps.hxx>
-
 #include <GProp_GProps.hxx>
 #include <GProp_PrincipalProps.hxx>
-
-#include <gp_Pln.hxx>
-#include <gp_Lin.hxx>
-
-#include <BOPCol_ListOfShape.hxx>
-#include <BOPDS_DS.hxx>
-#include <BOPDS_MapOfPassKey.hxx>
-#include <BOPDS_PassKey.hxx>
-#include <GEOMAlgo_AlgoTools.hxx>
-#include <BOPAlgo_CheckerSI.hxx>
-
-#include <Standard_Failure.hxx>
+#include <ShapeAnalysis.hxx>
+#include <ShapeAnalysis_Surface.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfIntegerListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 //=============================================================================
@@ -1298,11 +1258,12 @@ void GEOMImpl_IMeasureOperations::GetTolerance
  *  CheckShape
  */
 //=============================================================================
-bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)      theShape,
-                                              const Standard_Boolean   theIsCheckGeom,
-                                              TCollection_AsciiString& theDump)
+bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)     theShape,
+                                              const Standard_Boolean  theIsCheckGeom,
+                                              std::list<ShapeError>  &theErrors)
 {
   SetErrorCode(KO);
+  theErrors.clear();
 
   if (theShape.IsNull()) return false;
 
@@ -1323,10 +1284,9 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)      theShape,
 #endif
     BRepCheck_Analyzer ana (aShape, theIsCheckGeom);
     if (ana.IsValid()) {
-      theDump.Clear();
       isValid = true;
     } else {
-      StructuralDump(ana, aShape, theDump);
+      FillErrors(ana, aShape, theErrors);
     }
   }
   catch (Standard_Failure) {
@@ -1337,6 +1297,223 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)      theShape,
 
   SetErrorCode(OK);
   return isValid;
+}
+
+//=============================================================================
+/*!
+ *  PrintShapeErrors
+ */
+//=============================================================================
+TCollection_AsciiString GEOMImpl_IMeasureOperations::PrintShapeErrors
+                                 (Handle(GEOM_Object)          theShape,
+                                  const std::list<ShapeError> &theErrors)
+{
+  TCollection_AsciiString aDump;
+
+  if (theShape.IsNull()) {
+    return aDump;
+  }
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+
+  if (aRefShape.IsNull()) {
+    return aDump;
+  }
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+
+  if (aShape.IsNull()) {
+    SetErrorCode("The Objects has NULL Shape");
+    return aDump;
+  }
+
+  if (!theErrors.empty()) {
+    // The shape is not valid. Prepare errors for dump.
+    TopTools_IndexedMapOfShape anIndices;
+    std::list<ShapeError>::const_iterator anIter = theErrors.begin();
+    Standard_Integer nbv, nbe, nbw, nbf, nbs, nbo;
+    nbv = nbe = nbw = nbf = nbs = nbo = 0;
+
+    // Map sub-shapes and their indices
+    TopExp::MapShapes(aShape, anIndices);
+
+    const Standard_Integer aNbSubShapes = anIndices.Extent();
+    TColStd_MapOfInteger   aMapPbInd;
+
+    aDump += " -- The Shape has problems :\n";
+    aDump += "  Check                                    Count\n";
+    aDump += " ------------------------------------------------\n";
+
+    for (; anIter != theErrors.end(); anIter++) {
+      Standard_Integer aNbShapes = anIter->incriminated.size();
+
+      switch(anIter->error) {
+      case BRepCheck_InvalidPointOnCurve:
+        aDump += "  Invalid Point on Curve ................... ";
+        break;
+      case BRepCheck_InvalidPointOnCurveOnSurface:
+        aDump += "  Invalid Point on CurveOnSurface .......... ";
+        break;
+      case BRepCheck_InvalidPointOnSurface:
+        aDump += "  Invalid Point on Surface ................. ";
+        break;
+      case BRepCheck_No3DCurve:
+        aDump += "  No 3D Curve .............................. ";
+        break;
+      case BRepCheck_Multiple3DCurve:
+        aDump += "  Multiple 3D Curve ........................ ";
+        break;
+      case BRepCheck_Invalid3DCurve:
+        aDump += "  Invalid 3D Curve ......................... ";
+        break;
+      case BRepCheck_NoCurveOnSurface:
+        aDump += "  No Curve on Surface ...................... ";
+        break;
+      case BRepCheck_InvalidCurveOnSurface:
+        aDump += "  Invalid Curve on Surface ................. ";
+        break;
+      case BRepCheck_InvalidCurveOnClosedSurface:
+        aDump += "  Invalid Curve on closed Surface .......... ";
+        break;
+      case BRepCheck_InvalidSameRangeFlag:
+        aDump += "  Invalid SameRange Flag ................... ";
+        break;
+      case BRepCheck_InvalidSameParameterFlag:
+        aDump += "  Invalid SameParameter Flag ............... ";
+        break;
+      case BRepCheck_InvalidDegeneratedFlag:
+        aDump += "  Invalid Degenerated Flag ................. ";
+        break;
+      case BRepCheck_FreeEdge:
+        aDump += "  Free Edge ................................ ";
+        break;
+      case BRepCheck_InvalidMultiConnexity:
+        aDump += "  Invalid MultiConnexity ................... ";
+        break;
+      case BRepCheck_InvalidRange:
+        aDump += "  Invalid Range ............................ ";
+        break;
+      case BRepCheck_EmptyWire:
+        aDump += "  Empty Wire ............................... ";
+        break;
+      case BRepCheck_RedundantEdge:
+        aDump += "  Redundant Edge ........................... ";
+        break;
+      case BRepCheck_SelfIntersectingWire:
+        aDump += "  Self Intersecting Wire ................... ";
+        break;
+      case BRepCheck_NoSurface:
+        aDump += "  No Surface ............................... ";
+        break;
+      case BRepCheck_InvalidWire:
+        aDump += "  Invalid Wire ............................. ";
+        break;
+      case BRepCheck_RedundantWire:
+        aDump += "  Redundant Wire ........................... ";
+        break;
+      case BRepCheck_IntersectingWires:
+        aDump += "  Intersecting Wires ....................... ";
+        break;
+      case BRepCheck_InvalidImbricationOfWires:
+        aDump += "  Invalid Imbrication of Wires ............. ";
+        break;
+      case BRepCheck_EmptyShell:
+        aDump += "  Empty Shell .............................. ";
+        break;
+      case BRepCheck_RedundantFace:
+        aDump += "  Redundant Face ........................... ";
+        break;
+      case BRepCheck_UnorientableShape:
+        aDump += "  Unorientable Shape ....................... ";
+        break;
+      case BRepCheck_NotClosed:
+        aDump += "  Not Closed ............................... ";
+        break;
+      case BRepCheck_NotConnected:
+        aDump += "  Not Connected ............................ ";
+        break;
+      case BRepCheck_SubshapeNotInShape:
+        aDump += "  Sub-shape not in Shape ................... ";
+        break;
+      case BRepCheck_BadOrientation:
+        aDump += "  Bad Orientation .......................... ";
+        break;
+      case BRepCheck_BadOrientationOfSubshape:
+        aDump += "  Bad Orientation of Sub-shape ............. ";
+        break;
+      case BRepCheck_InvalidToleranceValue:
+        aDump += "  Invalid Tolerance Value .................. ";
+        break;
+      case BRepCheck_CheckFail:
+        aDump += "  Check Shape Failure ...................... ";
+        break;
+      default:
+        break;
+      }
+
+      aDump += TCollection_AsciiString(aNbShapes) + "\n";
+
+      // Count types of shape.
+      std::list<int>::const_iterator aShIter = anIter->incriminated.begin();
+
+      for (; aShIter != anIter->incriminated.end(); aShIter++) {
+        const Standard_Integer anIndex = *aShIter;
+
+        if (anIndex > 0 && anIndex <= aNbSubShapes && aMapPbInd.Add(anIndex)) {
+          const TopoDS_Shape     &aSubShape = anIndices.FindKey(anIndex);
+          const TopAbs_ShapeEnum  aType     = aSubShape.ShapeType();
+
+          switch (aType) {
+            case TopAbs_VERTEX : nbv++; break;
+            case TopAbs_EDGE   : nbe++; break;
+            case TopAbs_WIRE   : nbw++; break;
+            case TopAbs_FACE   : nbf++; break;
+            case TopAbs_SHELL  : nbs++; break;
+            case TopAbs_SOLID  : nbo++; break;
+            default            : break;
+          }
+        }
+      }
+    }
+
+    const Standard_Integer aNbFaultyShapes = nbv + nbe + nbw + nbf + nbs + nbo;
+    aDump += " ------------------------------------------------\n";
+    aDump += "*** Shapes with problems : ";
+    aDump += TCollection_AsciiString(aNbFaultyShapes) + "\n";
+
+    if (nbv > 0) {
+      aDump += "VERTEX : ";
+      if (nbv < 10) aDump += " ";
+      aDump += TCollection_AsciiString(nbv) + "\n";
+    }
+    if (nbe > 0) {
+      aDump += "EDGE   : ";
+      if (nbe < 10) aDump += " ";
+      aDump += TCollection_AsciiString(nbe) + "\n";
+    }
+    if (nbw > 0) {
+      aDump += "WIRE   : ";
+      if (nbw < 10) aDump += " ";
+      aDump += TCollection_AsciiString(nbw) + "\n";
+    }
+    if (nbf > 0) {
+      aDump += "FACE   : ";
+      if (nbf < 10) aDump += " ";
+      aDump += TCollection_AsciiString(nbf) + "\n";
+    }
+    if (nbs > 0) {
+      aDump += "SHELL  : ";
+      if (nbs < 10) aDump += " ";
+      aDump += TCollection_AsciiString(nbs) + "\n";
+    }
+    if (nbo > 0) {
+      aDump += "SOLID  : ";
+      if (nbo < 10) aDump += " ";
+      aDump += TCollection_AsciiString(nbo) + "\n";
+    }
+  }
+
+  return aDump;
 }
 
 //=============================================================================
@@ -2297,362 +2474,157 @@ Standard_Real GEOMImpl_IMeasureOperations::MinSurfaceCurvatureByPoint
   return getSurfaceCurvatures(aSurf, UV.X(), UV.Y(), false);
 }
 
-
 //=======================================================================
-//function : StructuralDump
-//purpose  : Structural (data exchange) style of output.
+//function : FillErrorsSub
+//purpose  : Fill the errors list of subshapes on shape.
 //=======================================================================
-void GEOMImpl_IMeasureOperations::StructuralDump (const BRepCheck_Analyzer& theAna,
-                                                  const TopoDS_Shape&       theShape,
-                                                  TCollection_AsciiString&  theDump)
+void GEOMImpl_IMeasureOperations::FillErrorsSub
+           (const BRepCheck_Analyzer                   &theAna,
+            const TopoDS_Shape                         &theShape,
+            const TopAbs_ShapeEnum                     theSubType,
+                  TopTools_DataMapOfIntegerListOfShape &theMapErrors) const
 {
-  Standard_Integer i;
-  theDump.Clear();
-  theDump += " -- The Shape has problems :\n";
-  theDump += "  Check                                    Count\n";
-  theDump += " ------------------------------------------------\n";
+  TopExp_Explorer anExp(theShape, theSubType);
+  TopTools_MapOfShape aMapSubShapes;
 
-  Standard_Integer last_stat = (Standard_Integer)BRepCheck_CheckFail;
-  Handle(TColStd_HArray1OfInteger) NbProblems =
-    new TColStd_HArray1OfInteger(1, last_stat);
-  for (i = 1; i <= last_stat; i++)
-    NbProblems->SetValue(i,0);
+  for (; anExp.More(); anExp.Next()) {
+    const TopoDS_Shape &aSubShape = anExp.Current();
 
-  Handle(TopTools_HSequenceOfShape) sl;
-  sl = new TopTools_HSequenceOfShape();
-  TopTools_DataMapOfShapeListOfShape theMap;
-  theMap.Clear();
-  GetProblemShapes(theAna, theShape, sl, NbProblems, theMap);
-  theMap.Clear();
+    if (aMapSubShapes.Add(aSubShape)) {
+      const Handle(BRepCheck_Result) &aRes = theAna.Result(aSubShape);
 
-  Standard_Integer count = 0;
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidPointOnCurve);
-  if (count > 0) {
-    theDump += "  Invalid Point on Curve ................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidPointOnCurveOnSurface);
-  if (count > 0) {
-    theDump += "  Invalid Point on CurveOnSurface .......... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidPointOnSurface);
-  if (count > 0) {
-    theDump += "  Invalid Point on Surface ................. ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_No3DCurve);
-  if (count > 0) {
-    theDump += "  No 3D Curve .............................. ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_Multiple3DCurve);
-  if (count > 0) {
-    theDump += "  Multiple 3D Curve ........................ ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_Invalid3DCurve);
-  if (count > 0) {
-    theDump += "  Invalid 3D Curve ......................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_NoCurveOnSurface);
-  if (count > 0) {
-    theDump += "  No Curve on Surface ...................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidCurveOnSurface);
-  if (count > 0) {
-    theDump += "  Invalid Curve on Surface ................. ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidCurveOnClosedSurface);
-  if (count > 0) {
-    theDump += "  Invalid Curve on closed Surface .......... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidSameRangeFlag);
-  if (count > 0) {
-    theDump += "  Invalid SameRange Flag ................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidSameParameterFlag);
-  if (count > 0) {
-    theDump += "  Invalid SameParameter Flag ............... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidDegeneratedFlag);
-  if (count > 0) {
-    theDump += "  Invalid Degenerated Flag ................. ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_FreeEdge);
-  if (count > 0) {
-    theDump += "  Free Edge ................................ ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidMultiConnexity);
-  if (count > 0) {
-    theDump += "  Invalid MultiConnexity ................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidRange);
-  if (count > 0) {
-    theDump += "  Invalid Range ............................ ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_EmptyWire);
-  if (count > 0) {
-    theDump += "  Empty Wire ............................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_RedundantEdge);
-  if (count > 0) {
-    theDump += "  Redundant Edge ........................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_SelfIntersectingWire);
-  if (count > 0) {
-    theDump += "  Self Intersecting Wire ................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_NoSurface);
-  if (count > 0) {
-    theDump += "  No Surface ............................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidWire);
-  if (count > 0) {
-    theDump += "  Invalid Wire ............................. ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_RedundantWire);
-  if (count > 0) {
-    theDump += "  Redundant Wire ........................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_IntersectingWires);
-  if (count > 0) {
-    theDump += "  Intersecting Wires ....................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_InvalidImbricationOfWires);
-  if (count > 0) {
-    theDump += "  Invalid Imbrication of Wires ............. ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_EmptyShell);
-  if (count > 0) {
-    theDump += "  Empty Shell .............................. ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_RedundantFace);
-  if (count > 0) {
-    theDump += "  Redundant Face ........................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_UnorientableShape);
-  if (count > 0) {
-    theDump += "  Unorientable Shape ....................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_NotClosed);
-  if (count > 0) {
-    theDump += "  Not Closed ............................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_NotConnected);
-  if (count > 0) {
-    theDump += "  Not Connected ............................ ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_SubshapeNotInShape);
-  if (count > 0) {
-    theDump += "  Sub-shape not in Shape .................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_BadOrientation);
-  if (count > 0) {
-    theDump += "  Bad Orientation .......................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_BadOrientationOfSubshape);
-  if (count > 0) {
-    theDump += "  Bad Orientation of Sub-shape .............. ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
-  count = NbProblems->Value((Standard_Integer)BRepCheck_CheckFail);
-  if (count > 0) {
-    theDump += "  checkshape failure ....................... ";
-    theDump += TCollection_AsciiString(count) + "\n";
-  }
+      for (aRes->InitContextIterator();
+           aRes->MoreShapeInContext(); 
+           aRes->NextShapeInContext()) {
+        if (aRes->ContextualShape().IsSame(theShape)) {
+          BRepCheck_ListIteratorOfListOfStatus itl(aRes->StatusOnShape());
 
-  theDump += " ------------------------------------------------\n";
-  theDump += "*** Shapes with problems : ";
-  theDump += TCollection_AsciiString(sl->Length()) + "\n";
+          if (itl.Value() != BRepCheck_NoError) {
+            // Add all errors for theShape and its sub-shape.
+            for (;itl.More(); itl.Next()) {
+              const Standard_Integer aStat = (Standard_Integer)itl.Value();
 
-  Standard_Integer nbv, nbe, nbw, nbf, nbs, nbo;
-  nbv = nbe = nbw = nbf = nbs = nbo = 0;
+              if (!theMapErrors.IsBound(aStat)) {
+                TopTools_ListOfShape anEmpty;
 
-  for (i = 1; i <= sl->Length(); i++) {
-    TopoDS_Shape shi = sl->Value(i);
-    TopAbs_ShapeEnum sti = shi.ShapeType();
-    switch (sti) {
-      case TopAbs_VERTEX : nbv++; break;
-      case TopAbs_EDGE   : nbe++; break;
-      case TopAbs_WIRE   : nbw++; break;
-      case TopAbs_FACE   : nbf++; break;
-      case TopAbs_SHELL  : nbs++; break;
-      case TopAbs_SOLID  : nbo++; break;
-      default            : break;
-    }
-  }
+                theMapErrors.Bind(aStat, anEmpty);
+              }
 
-  if (nbv > 0) {
-    theDump += "VERTEX : ";
-    if (nbv < 10) theDump += " ";
-    theDump += TCollection_AsciiString(nbv) + "\n";
-  }
-  if (nbe > 0) {
-    theDump += "EDGE   : ";
-    if (nbe < 10) theDump += " ";
-    theDump += TCollection_AsciiString(nbe) + "\n";
-  }
-  if (nbw > 0) {
-    theDump += "WIRE   : ";
-    if (nbw < 10) theDump += " ";
-    theDump += TCollection_AsciiString(nbw) + "\n";
-  }
-  if (nbf > 0) {
-    theDump += "FACE   : ";
-    if (nbf < 10) theDump += " ";
-    theDump += TCollection_AsciiString(nbf) + "\n";
-  }
-  if (nbs > 0) {
-    theDump += "SHELL  : ";
-    if (nbs < 10) theDump += " ";
-    theDump += TCollection_AsciiString(nbs) + "\n";
-  }
-  if (nbo > 0) {
-    theDump += "SOLID  : ";
-    if (nbo < 10) theDump += " ";
-    theDump += TCollection_AsciiString(nbo) + "\n";
-  }
-}
+              TopTools_ListOfShape &theShapes = theMapErrors.ChangeFind(aStat);
 
-
-//=======================================================================
-//function : GetProblemShapes
-// purpose : for StructuralDump
-//=======================================================================
-void GEOMImpl_IMeasureOperations::GetProblemShapes (const BRepCheck_Analyzer&           theAna,
-                                                    const TopoDS_Shape&                 theShape,
-                                                    Handle(TopTools_HSequenceOfShape)&  sl,
-                                                    Handle(TColStd_HArray1OfInteger)&   NbProblems,
-                                                    TopTools_DataMapOfShapeListOfShape& theMap)
-{
-  for (TopoDS_Iterator iter(theShape); iter.More(); iter.Next()) {
-    GetProblemShapes(theAna, iter.Value(), sl, NbProblems, theMap);
-  }
-  TopAbs_ShapeEnum styp = theShape.ShapeType();
-  BRepCheck_ListIteratorOfListOfStatus itl;
-  TopTools_ListOfShape empty;
-  if (!theMap.IsBound(theShape)) {
-    theMap.Bind(theShape,empty);
-
-    if (!theAna.Result(theShape).IsNull()) {
-      itl.Initialize(theAna.Result(theShape)->Status());
-      // !!! May be, we have to print all the problems, not only the first one ?
-      if (itl.Value() != BRepCheck_NoError) {
-        sl->Append(theShape);
-        BRepCheck_Status stat = itl.Value();
-        NbProblems->SetValue((Standard_Integer)stat,
-                             NbProblems->Value((Standard_Integer)stat) + 1);
-      }
-    }
-  }
-
-  switch (styp) {
-  case TopAbs_EDGE:
-    GetProblemSub(theAna, theShape, sl, NbProblems, TopAbs_VERTEX, theMap);
-    break;
-  case TopAbs_FACE:
-    GetProblemSub(theAna, theShape, sl, NbProblems, TopAbs_WIRE, theMap);
-    GetProblemSub(theAna, theShape, sl, NbProblems, TopAbs_EDGE, theMap);
-    GetProblemSub(theAna, theShape, sl, NbProblems, TopAbs_VERTEX, theMap);
-    break;
-  case TopAbs_SHELL:
-    break;
-  case TopAbs_SOLID:
-    GetProblemSub(theAna, theShape, sl, NbProblems, TopAbs_SHELL, theMap);
-    break;
-  default:
-    break;
-  }
-}
-
-//=======================================================================
-//function : Contains
-//=======================================================================
-static Standard_Boolean Contains (const TopTools_ListOfShape& L,
-                                  const TopoDS_Shape& S)
-{
-  TopTools_ListIteratorOfListOfShape it;
-  for (it.Initialize(L); it.More(); it.Next()) {
-    if (it.Value().IsSame(S)) {
-      return Standard_True;
-    }
-  }
-  return Standard_False;
-}
-
-//=======================================================================
-//function : GetProblemSub
-// purpose : for StructuralDump
-//=======================================================================
-void GEOMImpl_IMeasureOperations::GetProblemSub (const BRepCheck_Analyzer&           theAna,
-                                                 const TopoDS_Shape&                 theShape,
-                                                 Handle(TopTools_HSequenceOfShape)&  sl,
-                                                 Handle(TColStd_HArray1OfInteger)&   NbProblems,
-                                                 const TopAbs_ShapeEnum              Subtype,
-                                                 TopTools_DataMapOfShapeListOfShape& theMap)
-{
-  BRepCheck_ListIteratorOfListOfStatus itl;
-  TopExp_Explorer exp;
-  for (exp.Init(theShape, Subtype); exp.More(); exp.Next()) {
-    const TopoDS_Shape& sub = exp.Current();
-
-    const Handle(BRepCheck_Result)& res = theAna.Result(sub);
-    for (res->InitContextIterator();
-         res->MoreShapeInContext();
-         res->NextShapeInContext()) {
-      if (res->ContextualShape().IsSame(theShape) && !Contains(theMap(sub), theShape)) {
-        theMap(sub).Append(theShape);
-        itl.Initialize(res->StatusOnShape());
-
-        if (itl.Value() != BRepCheck_NoError) {
-          Standard_Integer ii = 0;
-
-          for (ii = 1; ii <= sl->Length(); ii++)
-            if (sl->Value(ii).IsSame(sub)) break;
-
-          if (ii > sl->Length()) {
-            sl->Append(sub);
-            BRepCheck_Status stat = itl.Value();
-            NbProblems->SetValue((Standard_Integer)stat,
-                                 NbProblems->Value((Standard_Integer)stat) + 1);
-          }
-          for (ii = 1; ii <= sl->Length(); ii++)
-            if (sl->Value(ii).IsSame(theShape)) break;
-          if (ii > sl->Length()) {
-            sl->Append(theShape);
-            BRepCheck_Status stat = itl.Value();
-            NbProblems->SetValue((Standard_Integer)stat,
-                                 NbProblems->Value((Standard_Integer)stat) + 1);
+              theShapes.Append(aSubShape);
+              theShapes.Append(theShape);
+            }
           }
         }
+
         break;
       }
+    }
+  }
+}
+
+//=======================================================================
+//function : FillErrors
+//purpose  : Fill the errors list.
+//=======================================================================
+void GEOMImpl_IMeasureOperations::FillErrors
+             (const BRepCheck_Analyzer                   &theAna,
+              const TopoDS_Shape                         &theShape,
+                    TopTools_DataMapOfIntegerListOfShape &theMapErrors,
+                    TopTools_MapOfShape                  &theMapShapes) const
+{
+  if (theMapShapes.Add(theShape)) {
+    // Fill errors of child shapes.
+    for (TopoDS_Iterator iter(theShape); iter.More(); iter.Next()) {
+      FillErrors(theAna, iter.Value(), theMapErrors, theMapShapes);
+    }
+
+    // Fill errors of theShape.
+    const Handle(BRepCheck_Result) &aRes = theAna.Result(theShape);
+
+    if (!aRes.IsNull()) {
+      BRepCheck_ListIteratorOfListOfStatus itl(aRes->Status());
+
+      if (itl.Value() != BRepCheck_NoError) {
+        // Add all errors for theShape.
+        for (;itl.More(); itl.Next()) {
+          const Standard_Integer aStat = (Standard_Integer)itl.Value();
+
+          if (!theMapErrors.IsBound(aStat)) {
+            TopTools_ListOfShape anEmpty;
+
+            theMapErrors.Bind(aStat, anEmpty);
+          }
+
+          theMapErrors.ChangeFind(aStat).Append(theShape);
+        }
+      }
+    }
+
+    // Add errors of subshapes on theShape.
+    const TopAbs_ShapeEnum aType = theShape.ShapeType();
+
+    switch (aType) {
+    case TopAbs_EDGE:
+      FillErrorsSub(theAna, theShape, TopAbs_VERTEX, theMapErrors);
+      break;
+    case TopAbs_FACE:
+      FillErrorsSub(theAna, theShape, TopAbs_WIRE, theMapErrors);
+      FillErrorsSub(theAna, theShape, TopAbs_EDGE, theMapErrors);
+      FillErrorsSub(theAna, theShape, TopAbs_VERTEX, theMapErrors);
+      break;
+    case TopAbs_SOLID:
+      FillErrorsSub(theAna, theShape, TopAbs_SHELL, theMapErrors);
+      break;
+    default:
+      break;
+    }
+  }
+}
+
+//=======================================================================
+//function : FillErrors
+//purpose  : Fill the errors list.
+//=======================================================================
+void GEOMImpl_IMeasureOperations::FillErrors
+                  (const BRepCheck_Analyzer    &theAna,
+                   const TopoDS_Shape          &theShape,
+                         std::list<ShapeError> &theErrors) const
+{
+  // Fill the errors map.
+  TopTools_DataMapOfIntegerListOfShape aMapErrors;
+  TopTools_MapOfShape                  aMapShapes;
+
+  FillErrors(theAna, theShape, aMapErrors, aMapShapes);
+
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices;
+
+  TopExp::MapShapes(theShape, anIndices);
+
+  TopTools_DataMapIteratorOfDataMapOfIntegerListOfShape aMapIter(aMapErrors);
+
+  for (; aMapIter.More(); aMapIter.Next()) {
+    ShapeError anError;
+
+    anError.error = (BRepCheck_Status)aMapIter.Key();
+
+    TopTools_ListIteratorOfListOfShape aListIter(aMapIter.Value());
+    TopTools_MapOfShape                aMapUnique;
+
+    for (; aListIter.More(); aListIter.Next()) {
+      const TopoDS_Shape &aShape = aListIter.Value();
+
+      if (aMapUnique.Add(aShape)) {
+        const Standard_Integer anIndex = anIndices.FindIndex(aShape);
+
+        anError.incriminated.push_back(anIndex);
+      }
+    }
+
+    if (!anError.incriminated.empty()) {
+      theErrors.push_back(anError);
     }
   }
 }

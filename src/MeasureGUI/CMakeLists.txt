@@ -66,6 +66,7 @@ SET(_uic_files
   MeasureGUI_1Sel12LineEdit_QTD.ui
   MeasureGUI_1Sel1TextView1Check_QTD.ui
   MeasureGUI_1Sel1TextView2ListBox_QTD.ui
+  MeasureGUI_1Sel1Check1TextView2ListBox_QTD.ui
   MeasureGUI_1Sel1TextView_QTD.ui
   MeasureGUI_1Sel3LineEdit_QTD.ui
   MeasureGUI_1Sel6LineEdit_QTD.ui

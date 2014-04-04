@@ -376,6 +376,26 @@ Please, select face, shell or solid and try again</translation>
         <translation>Incriminated Sub-shapes</translation>
     </message>
     <message>
+        <source>GEOM_CHECK_BLOCKS_NOT_BLOCK</source>
+        <translation>Not a Block</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_BLOCKS_EXTRA_EDGE</source>
+        <translation>Extra Edge</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_BLOCKS_INVALID_CONNECTION</source>
+        <translation>Invalid Connection # %1</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_BLOCKS_NOT_CONNECTED</source>
+        <translation>Not Connected</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_BLOCKS_NOT_GLUED</source>
+        <translation>Not Glued # %1</translation>
+    </message>
+    <message>
         <source>GEOM_GETNONBLOCKS_TITLE</source>
         <translation>Get non-hexahedral solids and non-quadrangular faces</translation>
     </message>
@@ -390,14 +410,6 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_CHECK_INFOS</source>
         <translation>Object And Its Topological Information</translation>
-    </message>
-    <message>
-        <source>GEOM_CHECK_SHAPE</source>
-        <translation>Check Shape</translation>
-    </message>
-    <message>
-        <source>GEOM_CHECK_TITLE</source>
-        <translation>Check Shape Information</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
@@ -6312,6 +6324,161 @@ Do you want to continue?</translation>
         <source>WARNING_MSG_INVALID_ARGUMENTS</source>
         <translation>The dimension can not be created for the specified arguments.
 Please specify suitable arguments.</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_CheckShapeDlg</name>
+    <message>
+        <source>GEOM_CHECK_TITLE</source>
+        <translation>Check Shape Information</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SHAPE</source>
+        <translation>Check Shape</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SHAPE_NAME</source>
+        <translation>Faulty</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SHAPE_VALID</source>
+        <translation>This Shape seems to be valid</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SHAPE_NOT_VALID</source>
+        <translation>This Shape has errors:</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_POINT_ON_CURVE</source>
+        <translation>Invalid Point on Curve</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_POINT_ON_CURVE_ON_SURFACE</source>
+        <translation>Invalid Point on Curve on Surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_POINT_ON_SURFACE</source>
+        <translation>Invalid Point on Surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NO_3D_CURVE</source>
+        <translation>No 3D Curve</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_MULTIPLE_3D_CURVE</source>
+        <translation>Multiple 3D Curve</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_3D_CURVE</source>
+        <translation>Invalid 3D Curve</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NO_CURVE_ON_SURFACE</source>
+        <translation>No Curve on Surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_CURVE_ON_SURFACE</source>
+        <translation>Invalid Curve on Surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_CURVE_ON_CLOSED_SURFACE</source>
+        <translation>Invalid Curve on Closed Surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_SAME_RANGE_FLAG</source>
+        <translation>Invalid Same Range Flag</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_SAME_PARAMETER_FLAG</source>
+        <translation>Invalid Same Parameter Flag</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_DEGENERATED_FLAG</source>
+        <translation>Invalid Degenerated Flag</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_FREE_EDGE</source>
+        <translation>Free Edge</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_MULTI_CONNEXITY</source>
+        <translation>Invalid Multi Connexity</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_RANGE</source>
+        <translation>Invalid Range</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_EMPTY_WIRE</source>
+        <translation>Empty Wire</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_REDUNDANT_EDGE</source>
+        <translation>Redundant Edge</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_SELF_INTERSECTING_WIRE</source>
+        <translation>Self-Intersecting Wire</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NO_SURFACE</source>
+        <translation>No Surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_WIRE</source>
+        <translation>Invalid Wire</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_REDUNDANT_WIRE</source>
+        <translation>Redundant Wire</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INTERSECTING_WIRES</source>
+        <translation>Intersecting Wires</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_IMBRICATION_OF_WIRES</source>
+        <translation>Invalid Imbrication of Wires</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_EMPTY_SHELL</source>
+        <translation>Empty Shell</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_REDUNDANT_FACE</source>
+        <translation>Redundant Face</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_UNORIENTABLE_SHAPE</source>
+        <translation>Unorientable Shape</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NOT_CLOSED</source>
+        <translation>Not Closed</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NOT_CONNECTED</source>
+        <translation>Not Connected</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_SUBSHAPE_NOT_IN_SHAPE</source>
+        <translation>Subshape not in Shape</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_BAD_ORIENTATION</source>
+        <translation>Bad Orientation</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_BAD_ORIENTATION_OF_SUBSHAPE</source>
+        <translation>Bad Orientation of Subshape</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_TOLERANCE_VALUE</source>
+        <translation>Invalid Tolerance Value</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_CHECK_FAIL</source>
+        <translation>Check Fail</translation>
     </message>
 </context>
 <context>

@@ -10142,15 +10142,52 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "normal")
             return anObj
 
+        ## Print shape errors obtained from CheckShape.
+        #  @param theShape Shape that was checked.
+        #  @param theShapeErrors the shape errors obtained by CheckShape.
+        #  @param theReturnStatus If 0 the description of problem is printed.
+        #                         If 1 the description of problem is returned.
+        #  @return If theReturnStatus is equal to 1 the description is returned.
+        #          Otherwise doesn't return anything.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def PrintShapeErrors(self, theShape, theShapeErrors, theReturnStatus = 0):
+            """
+            Print shape errors obtained from CheckShape.
+
+            Parameters:
+                theShape Shape that was checked.
+                theShapeErrors the shape errors obtained by CheckShape.
+                theReturnStatus If 0 the description of problem is printed.
+                                If 1 the description of problem is returned.
+
+            Returns:
+                If theReturnStatus is equal to 1 the description is returned.
+                  Otherwise doesn't return anything.
+            """
+            # Example: see GEOM_TestMeasures.py
+            Descr = self.MeasuOp.PrintShapeErrors(theShape, theShapeErrors)
+            if theReturnStatus == 1:
+                return Descr
+            print Descr
+            pass
+
         ## Check a topology of the given shape.
         #  @param theShape Shape to check validity of.
         #  @param theIsCheckGeom If FALSE, only the shape's topology will be checked, \n
         #                        if TRUE, the shape's geometry will be checked also.
-        #  @param theReturnStatus If FALSE and if theShape is invalid, a description \n
-        #                        of problem is printed.
-        #                        if TRUE and if theShape is invalid, the description 
-        #                        of problem is also returned.
+        #  @param theReturnStatus If 0 and if theShape is invalid, a description
+        #                         of problem is printed.
+        #                         If 1 isValid flag and the description of
+        #                         problem is returned.
+        #                         If 2 isValid flag and the list of error data
+        #                         is returned.
         #  @return TRUE, if the shape "seems to be valid".
+        #          If theShape is invalid, prints a description of problem.
+        #          If theReturnStatus is equal to 1 the description is returned
+        #          along with IsValid flag.
+        #          If theReturnStatus is equal to 2 the list of error data is
+        #          returned along with IsValid flag.
         #
         #  @ref tui_measurement_tools_page "Example"
         def CheckShape(self,theShape, theIsCheckGeom = 0, theReturnStatus = 0):
@@ -10161,28 +10198,37 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theShape Shape to check validity of.
                 theIsCheckGeom If FALSE, only the shape's topology will be checked,
                                if TRUE, the shape's geometry will be checked also.
-                theReturnStatus If FALSE and if theShape is invalid, a description
+                theReturnStatus If 0 and if theShape is invalid, a description
                                 of problem is printed.
-                                if TRUE and if theShape is invalid, the description 
-                                of problem is returned.
+                                If 1 IsValid flag and the description of
+                                problem is returned.
+                                If 2 IsValid flag and the list of error data
+                                is returned.
 
             Returns:   
                 TRUE, if the shape "seems to be valid".
                 If theShape is invalid, prints a description of problem.
-                This description can also be returned.
+                If theReturnStatus is equal to 1 the description is returned
+                along with IsValid flag.
+                If theReturnStatus is equal to 2 the list of error data is
+                returned along with IsValid flag.
             """
             # Example: see GEOM_TestMeasures.py
             if theIsCheckGeom:
-                (IsValid, Status) = self.MeasuOp.CheckShapeWithGeometry(theShape)
+                (IsValid, ShapeErrors) = self.MeasuOp.CheckShapeWithGeometry(theShape)
                 RaiseIfFailed("CheckShapeWithGeometry", self.MeasuOp)
             else:
-                (IsValid, Status) = self.MeasuOp.CheckShape(theShape)
+                (IsValid, ShapeErrors) = self.MeasuOp.CheckShape(theShape)
                 RaiseIfFailed("CheckShape", self.MeasuOp)
             if IsValid == 0:
                 if theReturnStatus == 0:
-                    print Status
+                    Descr = self.MeasuOp.PrintShapeErrors(theShape, ShapeErrors)
+                    print Descr
             if theReturnStatus == 1:
-              return (IsValid, Status)
+              Descr = self.MeasuOp.PrintShapeErrors(theShape, ShapeErrors)
+              return (IsValid, Descr)
+            elif theReturnStatus == 2:
+              return (IsValid, ShapeErrors)
             return IsValid
 
         ## Detect self-intersections in the given shape.

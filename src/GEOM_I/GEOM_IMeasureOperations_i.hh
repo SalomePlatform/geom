@@ -84,11 +84,17 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
                      CORBA::Double& EdgeMin, CORBA::Double& EdgeMax,
                      CORBA::Double& VertMin, CORBA::Double& VertMax);
 
-  CORBA::Boolean CheckShape (GEOM::GEOM_Object_ptr theShape,
-                             CORBA::String_out     theDescription);
+  CORBA::Boolean CheckShape
+             (GEOM::GEOM_Object_ptr                          theShape,
+              GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors);
 
-  CORBA::Boolean CheckShapeWithGeometry (GEOM::GEOM_Object_ptr theShape,
-                                         CORBA::String_out     theDescription);
+  CORBA::Boolean CheckShapeWithGeometry
+             (GEOM::GEOM_Object_ptr                          theShape,
+              GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors);
+
+  char* PrintShapeErrors
+             (      GEOM::GEOM_Object_ptr                       theShape,
+              const GEOM::GEOM_IMeasureOperations::ShapeErrors &theErrors);
 
   CORBA::Boolean CheckSelfIntersections (GEOM::GEOM_Object_ptr theShape,
                                          GEOM::ListOfLong_out  theIntersections);

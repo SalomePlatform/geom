@@ -58,6 +58,7 @@
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopExp.hxx>
+#include <TopTools_SequenceOfShape.hxx>
 #include <OSD.hxx>
 
 #include <SALOMEDS_Tool.hxx>

@@ -27,15 +27,15 @@
 #ifndef MEASUREGUI_CHECKSHAPEDLG_H
 #define MEASUREGUI_CHECKSHAPEDLG_H
 
-#include "MeasureGUI_Skeleton.h"
+#include <GEOMBase_Skeleton.h>
 
-class MeasureGUI_1Sel1TextView1Check;
+class MeasureGUI_1Sel1Check1TextView2ListBox;
 
 //=================================================================================
 // class    : MeasureGUI_CheckShapeDlg
 // purpose  :
 //=================================================================================
-class MeasureGUI_CheckShapeDlg : public MeasureGUI_Skeleton
+class MeasureGUI_CheckShapeDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
@@ -45,14 +45,32 @@ public:
 
 protected:
   // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
-  virtual void                    processObject();
+  virtual GEOM::GEOM_IOperations_ptr  createOperation();
+  virtual bool                        execute( ObjectList& );
+  virtual void                        processObject();
+  virtual void                        activateSelection();
+  virtual bool                        isValid( QString& );
+  virtual bool extractPrefix() const;
+
+private slots:
+  void                                SelectionIntoArgument();
+  void                                ClickOnOk();
+  bool                                ClickOnApply();
+  void                                ActivateThisDialog();
+  void                                SetEditCurrentArgument();
+  void                                onErrorsListSelectionChanged();
+  void                                onSubShapesListSelectionChanged();
 
 private:
-  void                            Init();
-  bool                            getParameters( bool&, QString& );
+  void                                Init();
+  void                                enterEvent( QEvent* );
+  bool                                getErrors
+        ( bool&, GEOM::GEOM_IMeasureOperations::ShapeErrors&);
 
 private:
-  MeasureGUI_1Sel1TextView1Check* myGrp;
+  GEOM::GEOM_Object_var                   myObj;
+  MeasureGUI_1Sel1Check1TextView2ListBox* myGrp;
+  GEOM::GEOM_IShapesOperations_var        myShapesOper;
 };
 
 #endif // MEASUREGUI_CHECKSHAPEDLG_H

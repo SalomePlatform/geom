@@ -72,6 +72,22 @@ public:
 };
 
 //////////////////////////////////////////
+// MeasureGUI_1Sel1Check1TextView2ListBox
+//////////////////////////////////////////
+
+#include "ui_MeasureGUI_1Sel1Check1TextView2ListBox_QTD.h"
+
+class MeasureGUI_1Sel1Check1TextView2ListBox : public QWidget,
+                                               public Ui::MeasureGUI_1Sel1Check1TextView2ListBox_QTD
+{
+  Q_OBJECT
+
+public:
+  MeasureGUI_1Sel1Check1TextView2ListBox( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~MeasureGUI_1Sel1Check1TextView2ListBox();
+};
+
+//////////////////////////////////////////
 // MeasureGUI_1Sel1TextView
 //////////////////////////////////////////
 

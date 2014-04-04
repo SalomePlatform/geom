@@ -66,6 +66,21 @@ MeasureGUI_1Sel1TextView2ListBox::~MeasureGUI_1Sel1TextView2ListBox()
 }
 
 //////////////////////////////////////////
+// MeasureGUI_1Sel1Check1TextView2ListBox
+//////////////////////////////////////////
+
+MeasureGUI_1Sel1Check1TextView2ListBox::MeasureGUI_1Sel1Check1TextView2ListBox( QWidget* parent, 
+                                                                                Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+MeasureGUI_1Sel1Check1TextView2ListBox::~MeasureGUI_1Sel1Check1TextView2ListBox()
+{
+}
+
+//////////////////////////////////////////
 // MeasureGUI_1Sel1TextView
 //////////////////////////////////////////
 

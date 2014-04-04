@@ -30,6 +30,291 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+/**
+ * This function converts shape errors from theErrorsFrom to theErrorsTo.
+ * Note that theErrorsTo is not cleared at first.
+ *
+ * \param theErrorsFrom errors to be converted.
+ * \param theErrorsTo result errors.
+ */
+static void ConvertShapeError
+    (const GEOM::GEOM_IMeasureOperations::ShapeErrors         &theErrorsFrom,
+           std::list<GEOMImpl_IMeasureOperations::ShapeError> &theErrorsTo)
+{
+  int aNbErr = theErrorsFrom.length();
+  int i = 0;
+
+  for (; i < aNbErr; i++) {
+    const GEOM::GEOM_IMeasureOperations::ShapeError anErr = theErrorsFrom[i];
+    const GEOM::GEOM_IMeasureOperations::ShapeErrorType aType = anErr.error;
+    const GEOM::ListOfLong anIncrims = anErr.incriminated;
+    GEOMImpl_IMeasureOperations::ShapeError anErrStruct;
+
+    switch (aType) {
+    case GEOM::GEOM_IMeasureOperations::InvalidPointOnCurve:
+      anErrStruct.error = BRepCheck_InvalidPointOnCurve;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidPointOnCurveOnSurface:
+      anErrStruct.error = BRepCheck_InvalidPointOnCurveOnSurface;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidPointOnSurface:
+      anErrStruct.error = BRepCheck_InvalidPointOnSurface;
+      break;
+    case GEOM::GEOM_IMeasureOperations::No3DCurve:
+      anErrStruct.error = BRepCheck_No3DCurve;
+      break;
+    case GEOM::GEOM_IMeasureOperations::Multiple3DCurve:
+      anErrStruct.error = BRepCheck_Multiple3DCurve;
+      break;
+    case GEOM::GEOM_IMeasureOperations::Invalid3DCurve:
+      anErrStruct.error = BRepCheck_Invalid3DCurve;
+      break;
+    case GEOM::GEOM_IMeasureOperations::NoCurveOnSurface:
+      anErrStruct.error = BRepCheck_NoCurveOnSurface;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidCurveOnSurface:
+      anErrStruct.error = BRepCheck_InvalidCurveOnSurface;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidCurveOnClosedSurface:
+      anErrStruct.error = BRepCheck_InvalidCurveOnClosedSurface;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidSameRangeFlag:
+      anErrStruct.error = BRepCheck_InvalidSameRangeFlag;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidSameParameterFlag:
+      anErrStruct.error = BRepCheck_InvalidSameParameterFlag;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidDegeneratedFlag:
+      anErrStruct.error = BRepCheck_InvalidDegeneratedFlag;
+      break;
+    case GEOM::GEOM_IMeasureOperations::FreeEdge:
+      anErrStruct.error = BRepCheck_FreeEdge;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidMultiConnexity:
+      anErrStruct.error = BRepCheck_InvalidMultiConnexity;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidRange:
+      anErrStruct.error = BRepCheck_InvalidRange;
+      break;
+    case GEOM::GEOM_IMeasureOperations::EmptyWire:
+      anErrStruct.error = BRepCheck_EmptyWire;
+      break;
+    case GEOM::GEOM_IMeasureOperations::RedundantEdge:
+      anErrStruct.error = BRepCheck_RedundantEdge;
+      break;
+    case GEOM::GEOM_IMeasureOperations::SelfIntersectingWire:
+      anErrStruct.error = BRepCheck_SelfIntersectingWire;
+      break;
+    case GEOM::GEOM_IMeasureOperations::NoSurface:
+      anErrStruct.error = BRepCheck_NoSurface;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidWire:
+      anErrStruct.error = BRepCheck_InvalidWire;
+      break;
+    case GEOM::GEOM_IMeasureOperations::RedundantWire:
+      anErrStruct.error = BRepCheck_RedundantWire;
+      break;
+    case GEOM::GEOM_IMeasureOperations::IntersectingWires:
+      anErrStruct.error = BRepCheck_IntersectingWires;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidImbricationOfWires:
+      anErrStruct.error = BRepCheck_InvalidImbricationOfWires;
+      break;
+    case GEOM::GEOM_IMeasureOperations::EmptyShell:
+      anErrStruct.error = BRepCheck_EmptyShell;
+      break;
+    case GEOM::GEOM_IMeasureOperations::RedundantFace:
+      anErrStruct.error = BRepCheck_RedundantFace;
+      break;
+    case GEOM::GEOM_IMeasureOperations::UnorientableShape:
+      anErrStruct.error = BRepCheck_UnorientableShape;
+      break;
+    case GEOM::GEOM_IMeasureOperations::NotClosed:
+      anErrStruct.error = BRepCheck_NotClosed;
+      break;
+    case GEOM::GEOM_IMeasureOperations::NotConnected:
+      anErrStruct.error = BRepCheck_NotConnected;
+      break;
+    case GEOM::GEOM_IMeasureOperations::SubshapeNotInShape:
+      anErrStruct.error = BRepCheck_SubshapeNotInShape;
+      break;
+    case GEOM::GEOM_IMeasureOperations::BadOrientation:
+      anErrStruct.error = BRepCheck_BadOrientation;
+      break;
+    case GEOM::GEOM_IMeasureOperations::BadOrientationOfSubshape:
+      anErrStruct.error = BRepCheck_BadOrientationOfSubshape;
+      break;
+    case GEOM::GEOM_IMeasureOperations::InvalidToleranceValue:
+      anErrStruct.error = BRepCheck_InvalidToleranceValue;
+      break;
+    case GEOM::GEOM_IMeasureOperations::CheckFail:
+      anErrStruct.error = BRepCheck_CheckFail;
+      break;
+    default:
+      break;
+    }
+
+    int ii = 0;
+    int aLen = anIncrims.length();
+
+    for (; ii < aLen; ii++) {
+      anErrStruct.incriminated.push_back(anIncrims[ii]);
+    }
+
+    theErrorsTo.push_back(anErrStruct);
+  }
+}
+
+/**
+ * This function converts shape errors from theErrorsFrom to theErrorsTo.
+ * Note that theErrorsTo is not cleared at first.
+ *
+ * \param theErrorsFrom errors to be converted.
+ * \param theErrorsTo result errors.
+ */
+static void ConvertShapeError
+    (const std::list<GEOMImpl_IMeasureOperations::ShapeError> &theErrorsFrom,
+           GEOM::GEOM_IMeasureOperations::ShapeErrors_out     &theErrorsTo)
+{
+  const int aNbErr = theErrorsFrom.size();
+  GEOM::GEOM_IMeasureOperations::ShapeErrors_var anErrArray =
+    new GEOM::GEOM_IMeasureOperations::ShapeErrors;
+
+  anErrArray->length(aNbErr);
+
+  // fill the local CORBA array with values from lists
+  std::list<GEOMImpl_IMeasureOperations::ShapeError>::const_iterator
+    anIt = theErrorsFrom.begin();
+  int i = 0;
+
+  for (; anIt != theErrorsFrom.end(); i++, anIt++) {
+    GEOM::GEOM_IMeasureOperations::ShapeError_var anErrStruct =
+      new GEOM::GEOM_IMeasureOperations::ShapeError;
+
+    switch (anIt->error) {
+    case BRepCheck_InvalidPointOnCurve:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidPointOnCurve;
+      break;
+    case BRepCheck_InvalidPointOnCurveOnSurface:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidPointOnCurveOnSurface;
+      break;
+    case BRepCheck_InvalidPointOnSurface:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidPointOnSurface;
+      break;
+    case BRepCheck_No3DCurve:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::No3DCurve;
+      break;
+    case BRepCheck_Multiple3DCurve:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::Multiple3DCurve;
+      break;
+    case BRepCheck_Invalid3DCurve:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::Invalid3DCurve;
+      break;
+    case BRepCheck_NoCurveOnSurface:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::NoCurveOnSurface;
+      break;
+    case BRepCheck_InvalidCurveOnSurface:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidCurveOnSurface;
+      break;
+    case BRepCheck_InvalidCurveOnClosedSurface:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidCurveOnClosedSurface;
+      break;
+    case BRepCheck_InvalidSameRangeFlag:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidSameRangeFlag;
+      break;
+    case BRepCheck_InvalidSameParameterFlag:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidSameParameterFlag;
+      break;
+    case BRepCheck_InvalidDegeneratedFlag:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidDegeneratedFlag;
+      break;
+    case BRepCheck_FreeEdge:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::FreeEdge;
+      break;
+    case BRepCheck_InvalidMultiConnexity:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidMultiConnexity;
+      break;
+    case BRepCheck_InvalidRange:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidRange;
+      break;
+    case BRepCheck_EmptyWire:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::EmptyWire;
+      break;
+    case BRepCheck_RedundantEdge:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::RedundantEdge;
+      break;
+    case BRepCheck_SelfIntersectingWire:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::SelfIntersectingWire;
+      break;
+    case BRepCheck_NoSurface:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::NoSurface;
+      break;
+    case BRepCheck_InvalidWire:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidWire;
+      break;
+    case BRepCheck_RedundantWire:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::RedundantWire;
+      break;
+    case BRepCheck_IntersectingWires:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::IntersectingWires;
+      break;
+    case BRepCheck_InvalidImbricationOfWires:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidImbricationOfWires;
+      break;
+    case BRepCheck_EmptyShell:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::EmptyShell;
+      break;
+    case BRepCheck_RedundantFace:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::RedundantFace;
+      break;
+    case BRepCheck_UnorientableShape:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::UnorientableShape;
+      break;
+    case BRepCheck_NotClosed:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::NotClosed;
+      break;
+    case BRepCheck_NotConnected:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::NotConnected;
+      break;
+    case BRepCheck_SubshapeNotInShape:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::SubshapeNotInShape;
+      break;
+    case BRepCheck_BadOrientation:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::BadOrientation;
+      break;
+    case BRepCheck_BadOrientationOfSubshape:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::BadOrientationOfSubshape;
+      break;
+    case BRepCheck_InvalidToleranceValue:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::InvalidToleranceValue;
+      break;
+    case BRepCheck_CheckFail:
+      anErrStruct->error = GEOM::GEOM_IMeasureOperations::CheckFail;
+      break;
+    default:
+      break;
+    }
+
+    std::list<int> aIndList = anIt->incriminated;
+    GEOM::ListOfLong_var anIncrims = new GEOM::ListOfLong();
+    anIncrims->length(aIndList.size());
+
+    std::list<int>::iterator anIndIt = aIndList.begin();
+    int jj = 0;
+
+    for (; anIndIt != aIndList.end(); jj++, anIndIt++) {
+      anIncrims[jj] = *anIndIt;
+    }
+
+    anErrStruct->incriminated = anIncrims;
+
+    anErrArray[i] = anErrStruct;
+  }
+
+  // initialize out-parameter with local array
+  theErrorsTo = anErrArray._retn();
+}
+
 //=============================================================================
 /*!
  *   constructor:
@@ -332,15 +617,15 @@ void GEOM_IMeasureOperations_i::GetTolerance
  *  CheckShape
  */
 //=============================================================================
-CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape (GEOM::GEOM_Object_ptr theShape,
-                                                      CORBA::String_out     theDescription)
+CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape
+             (GEOM::GEOM_Object_ptr                          theShape,
+              GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
   if (CORBA::is_nil(theShape))
   {
-    theDescription = CORBA::string_dup("null");
     return 0;
   }
 
@@ -349,30 +634,26 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShape (GEOM::GEOM_Object_ptr theS
 
   if (aShape.IsNull())
   {
-    theDescription = CORBA::string_dup("null2");
     return 0;
   }
 
-  // Get shape parameters
-  TCollection_AsciiString aDump;
-  if (GetOperations()->CheckShape(aShape, /*check_geom = */false, aDump))
-  {
-    theDescription = CORBA::string_dup("OK");
-    return 1;
-  }
-  theDescription = CORBA::string_dup(aDump.ToCString());
-  return 0;
+  std::list<GEOMImpl_IMeasureOperations::ShapeError> anErrList;
+  bool isOk = GetOperations()->CheckShape(aShape, false, anErrList);
+
+  ConvertShapeError(anErrList, theErrors);
+
+  return isOk;
 }
 
-CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry (GEOM::GEOM_Object_ptr theShape,
-                                                                  CORBA::String_out     theDescription)
+CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry
+             (GEOM::GEOM_Object_ptr                          theShape,
+              GEOM::GEOM_IMeasureOperations::ShapeErrors_out theErrors)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
   if (CORBA::is_nil(theShape))
   {
-    theDescription = CORBA::string_dup("null");
     return 0;
   }
 
@@ -381,19 +662,42 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry (GEOM::GEOM_Obj
 
   if (aShape.IsNull())
   {
-    theDescription = CORBA::string_dup("null2");
     return 0;
   }
 
-  // Get shape parameters
-  TCollection_AsciiString aDump;
-  if (GetOperations()->CheckShape(aShape, /*check_geom = */true, aDump))
-  {
-    theDescription = CORBA::string_dup("OK");
-    return 1;
+  std::list<GEOMImpl_IMeasureOperations::ShapeError> anErrList;
+  bool isOk = GetOperations()->CheckShape(aShape, true, anErrList);
+
+  ConvertShapeError(anErrList, theErrors);
+
+  return isOk;
+}
+
+//=============================================================================
+/*!
+ *  PrintShapeErrors
+ */
+//=============================================================================
+char* GEOM_IMeasureOperations_i::PrintShapeErrors
+             (      GEOM::GEOM_Object_ptr                       theShape,
+              const GEOM::GEOM_IMeasureOperations::ShapeErrors &theErrors)
+{
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+
+  if (aShape.IsNull()) {
+    return NULL;
   }
-  theDescription = CORBA::string_dup(aDump.ToCString());
-  return 0;
+
+  // Convert the errors sequence
+  std::list<GEOMImpl_IMeasureOperations::ShapeError> anErrList;
+
+  ConvertShapeError(theErrors, anErrList);
+
+  TCollection_AsciiString aDescr =
+    GetOperations()->PrintShapeErrors(aShape, anErrList);
+
+  return CORBA::string_dup(aDescr.ToCString());
 }
 
 //=============================================================================

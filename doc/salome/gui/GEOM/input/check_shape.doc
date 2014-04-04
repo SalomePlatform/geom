@@ -6,10 +6,35 @@
 True if it is valid. Check also geometry checkbox allows to test the
 geometry as well.
 
-\n <b>Result:</b> Boolean.
-\n <b>TUI Command:</b> <em>geompy.CheckShape(theShape, theIsCheckGeom = 0),</em>
-where \em theShape is the shape checked for validity.
-
+\n <b>Result:</b> Boolean; highlight in the viewer.
+\n <b>TUI Commands:</b>
+<UL>
+<LI>
+<em>geompy.CheckShape(theShape, theIsCheckGeom = 0, theReturnStatus = 0),</em> \n
+where \n
+\em theShape is the shape checked for validity. \n
+\em theIsCheckGeom is the flag that tells if geometry should be checked also.\n
+\em theReturnStatus is the flag that can have the following values:
+<UL>
+<LI>0 - Means that if theShape is invalid, a description of problem is printed.
+IsValid status is returned.</LI>
+<LI>1 - Means that IsValid status and the description of problem are returned.</LI>
+<LI>2 - Means that IsValid status and the list of error data are returned.</LI>
+</UL>
+</LI>
+<LI>
+<em>geompy.PrintShapeErrors(self, theShape, theShapeErrors, theReturnStatus = 0),</em> \n
+where \n
+\em theShape Shape that was checked. \n
+\em theShapeErrors the shape errors obtained by CheckShape. \n
+\em theReturnStatus is the flag that can have the following values:
+<UL>
+<LI>0 - Means that a description of problem is printed.
+IsValid status is returned.</LI>
+<LI>1 - Means that the description of problem is returned.</LI>
+</UL>
+</LI>
+</UL>
 See also a \ref tui_check_shape_page "TUI example".
 
 \image html measures9.png

@@ -26,13 +26,13 @@
 #include "GEOM_IOperations.hxx"
 
 #include <BRepCheck_Analyzer.hxx>
+#include <BRepCheck_Status.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopTools_HSequenceOfShape.hxx>
-#include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 #include <TColStd_HSequenceOfReal.hxx>
-#include <gp_Ax3.hxx>
+#include <TopTools_DataMapOfIntegerListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
 #include <Geom_Surface.hxx>
 #include <Precision.hxx>
 
@@ -127,9 +127,18 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                      Standard_Real& EdgeMin, Standard_Real& EdgeMax,
                                      Standard_Real& VertMin, Standard_Real& VertMax);
 
-  Standard_EXPORT bool CheckShape (Handle(GEOM_Object)      theShape,
-                                   const Standard_Boolean   theIsCheckGeom,
-                                   TCollection_AsciiString& theDump);
+  struct ShapeError {
+    BRepCheck_Status error;
+    std::list<int>   incriminated;
+  };
+
+  Standard_EXPORT bool CheckShape (Handle(GEOM_Object)     theShape,
+                                   const Standard_Boolean  theIsCheckGeom,
+                                   std::list<ShapeError>  &theErrors);
+
+  Standard_EXPORT TCollection_AsciiString PrintShapeErrors
+                                  (Handle(GEOM_Object)          theShape,
+                                   const std::list<ShapeError> &theErrors);
 
   Standard_EXPORT bool CheckSelfIntersections (Handle(GEOM_Object) theShape,
                                                Handle(TColStd_HSequenceOfInteger)& theIntersections);
@@ -177,22 +186,21 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                                             Handle(GEOM_Object) thePoint);
 
  private:
-  void StructuralDump (const BRepCheck_Analyzer& theAna,
-                       const TopoDS_Shape&       theShape,
-                       TCollection_AsciiString&  theDump);
 
-  void GetProblemShapes (const BRepCheck_Analyzer&           theAna,
-                         const TopoDS_Shape&                 theShape,
-                         Handle(TopTools_HSequenceOfShape)&  sl,
-                         Handle(TColStd_HArray1OfInteger)&   NbProblems,
-                         TopTools_DataMapOfShapeListOfShape& theMap);
+   void FillErrorsSub
+           (const BRepCheck_Analyzer                   &theAna,
+            const TopoDS_Shape                         &theShape,
+            const TopAbs_ShapeEnum                     theSubType,
+                  TopTools_DataMapOfIntegerListOfShape &theMapErrors) const;
+   void FillErrors
+             (const BRepCheck_Analyzer                   &theAna,
+              const TopoDS_Shape                         &theShape,
+                    TopTools_DataMapOfIntegerListOfShape &theMapErrors,
+                    TopTools_MapOfShape                  &theMapShapes) const;
 
-  void GetProblemSub (const BRepCheck_Analyzer&           theAna,
-                      const TopoDS_Shape&                 theShape,
-                      Handle(TopTools_HSequenceOfShape)&  sl,
-                      Handle(TColStd_HArray1OfInteger)&   NbProblems,
-                      const TopAbs_ShapeEnum              Subtype,
-                      TopTools_DataMapOfShapeListOfShape& theMap);
+  void FillErrors (const BRepCheck_Analyzer &theAna,
+                   const TopoDS_Shape       &theShape,
+                   std::list<ShapeError>    &theErrors) const;
 
   Standard_Real getSurfaceCurvatures (const Handle(Geom_Surface)& aSurf,
                                       Standard_Real theUParam,

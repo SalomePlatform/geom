@@ -41,8 +41,9 @@ def TestMeasureOperations (geompy, math):
 
   ####### CheckShape #######
 
-  IsValid = geompy.CheckShape(box)
+  (IsValid, err) = geompy.CheckShape(box, 0, 2)
   if IsValid == 0:
+    geompy.PrintShapeError(box, err)
     raise RuntimeError, "Invalid box created"
   else:
     print "\nBox is valid"

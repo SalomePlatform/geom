@@ -4003,22 +4003,103 @@ module GEOM
                        out double VertMin, out double VertMax);
 
     /*!
+     *  \brief Enumeration of Shape defects coming from CheckShape algorithms.
+     */
+    enum ShapeErrorType
+    {
+      /* for vertices */
+      InvalidPointOnCurve,
+      InvalidPointOnCurveOnSurface,
+      InvalidPointOnSurface,
+
+      /* for edges */
+      No3DCurve,
+      Multiple3DCurve,
+      Invalid3DCurve,
+      NoCurveOnSurface,
+      InvalidCurveOnSurface,
+      InvalidCurveOnClosedSurface,
+      InvalidSameRangeFlag,
+      InvalidSameParameterFlag,
+      InvalidDegeneratedFlag,
+
+      FreeEdge,
+      InvalidMultiConnexity,
+      InvalidRange,
+
+      /* for wires */
+      EmptyWire,
+      RedundantEdge,
+      SelfIntersectingWire, /* on a face */
+
+      /* for faces */
+      NoSurface,
+      InvalidWire,
+      RedundantWire,
+      IntersectingWires,
+      InvalidImbricationOfWires,
+
+      /* for shells */
+      EmptyShell,
+      RedundantFace,
+
+      /* for shapes */
+      UnorientableShape,
+      NotClosed,
+      NotConnected,
+
+      SubshapeNotInShape,
+
+      BadOrientation,
+      BadOrientationOfSubshape,
+
+      InvalidToleranceValue,
+
+      /* for exception */
+      CheckFail
+    };
+
+    /*!
+     *  \brief Description of a shape defect: type and incriminated sub-shapes.
+     */
+    struct ShapeError
+    {
+      ShapeErrorType error;
+      ListOfLong     incriminated;
+    };
+
+    /*!
+     *  \brief Sequence of all shape defects.
+     */
+    typedef sequence<ShapeError> ShapeErrors;
+
+    /*!
      *  \brief Check a topology of the given shape.
      *  \param theShape Shape to check validity of.
-     *  \param theDescription Output. Description of problems in the shape, if they are.
+     *  \param theErrors Structure, containing discovered errors and incriminated sub-shapes.
      *  \return TRUE, if the shape "seems to be valid" from the topological point of view.
      */
-    boolean CheckShape (in GEOM_Object theShape,
-                        out string     theDescription);
+    boolean CheckShape (in GEOM_Object  theShape,
+                        out ShapeErrors theErrors);
 
     /*!
      *  \brief Check a topology and a geometry of the given shape.
      *  \param theShape Shape to check validity of.
-     *  \param theDescription Output. Description of problems in the shape, if they are.
+     *  \param theErrors Structure, containing discovered errors and incriminated sub-shapes.
      *  \return TRUE, if the shape "seems to be valid".
      */
-    boolean CheckShapeWithGeometry (in GEOM_Object theShape,
-                                    out string     theDescription);
+    boolean CheckShapeWithGeometry (in GEOM_Object  theShape,
+                                    out ShapeErrors theErrors);
+
+    /*!
+     *  \brief Convert sequence of shape errors, returned by
+     *  <VAR>CheckShape()</VAR> or <VAR>CheckShapeWithGeometry()</VAR>, into string.
+     *  \param theShape the invalid shape.
+     *  \param theErrors The sequence of \a theShape errors.
+     *  \return String, describing all the errors in form, suitable for printing.
+     */
+    string PrintShapeErrors (in GEOM_Object theShape,
+                             in ShapeErrors theErrors);
 
     /*!
      *  \brief Check a topology of the given shape on self-intersections presence.

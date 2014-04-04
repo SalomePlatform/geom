@@ -60,6 +60,7 @@
 
 //#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+class TopTools_SequenceOfShape;
 
 //=====================================================================
 // Generic operations creator (for plugins mechanism)
