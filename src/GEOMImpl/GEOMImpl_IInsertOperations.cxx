@@ -303,17 +303,17 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IInsertOperations::Import
   if (theFormatName != "IGES_UNIT") {
     GEOM::TPythonDump pd (aFunction);
     if (theFormatName == "BREP")
-      pd << anImported << " = geompy.ImportBREP(\"" << theFileName.ToCString() << "\")";
+      pd << aSeq << " = geompy.ImportBREP(\"" << theFileName.ToCString() << "\")";
     else if (theFormatName == "IGES")
-      pd << anImported << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\")";
+      pd << aSeq << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\")";
     else if (theFormatName == "IGES_SCALE")
-      pd << anImported << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\", True)";
+      pd << aSeq << " = geompy.ImportIGES(\"" << theFileName.ToCString() << "\", True)";
     else if (theFormatName == "STEP")
-      pd << anImported << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\")";
+      pd << aSeq << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\")";
     else if (theFormatName == "STEP_SCALE")
-      pd << anImported << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\", True)";
+      pd << aSeq << " = geompy.ImportSTEP(\"" << theFileName.ToCString() << "\", True)";
     else {
-      pd << anImported << " = geompy.ImportFile(\""
+      pd << aSeq << " = geompy.ImportFile(\""
          << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
     }
   }

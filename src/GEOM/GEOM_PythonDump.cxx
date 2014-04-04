@@ -125,6 +125,22 @@ namespace GEOM
     return *this;
   }
 
+  TPythonDump& TPythonDump::operator<< (const Handle(TColStd_HSequenceOfTransient)& theObjects)
+  {
+    Standard_Integer aLength = theObjects->Length();
+    if ( aLength > 1 ) {
+      myStream << "[";
+    }
+    for ( Standard_Integer i = 1; i <= aLength; i++ ) {
+      *this << Handle(GEOM_Object)::DownCast(theObjects->Value(i));
+      if ( i < aLength ) myStream << ", ";
+    }
+    if ( aLength > 1 ) {
+      myStream << "]";
+    }
+    return *this;
+  }
+
   TPythonDump& TPythonDump::operator<< (const GEOM_BaseObject* theObject)
   {
     if ( !theObject ) {
