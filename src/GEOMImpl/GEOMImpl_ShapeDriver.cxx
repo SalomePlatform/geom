@@ -991,8 +991,11 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
         if (CurveSeq(1)->IsInstance(STANDARD_TYPE(Geom_TrimmedCurve)))
           CurveSeq(1) = (*((Handle(Geom_TrimmedCurve)*)&(CurveSeq(1))))->BasisCurve();
 
-        CurveSeq(1)->Transform(LocSeq(1).Location().Transformation());
-        ResEdge = BRepLib_MakeEdge(CurveSeq(1),
+        Handle(Geom_Curve) aNewCurve =
+          Handle(Geom_Curve)::DownCast(CurveSeq(1)->Copy());
+
+        aNewCurve->Transform(LocSeq(1).Location().Transformation());
+        ResEdge = BRepLib_MakeEdge(aNewCurve,
                                    FirstVtx_final, LastVtx_final,
                                    FparSeq(1), LparSeq(1));
       }
