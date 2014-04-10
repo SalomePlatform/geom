@@ -674,7 +674,6 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
     TColStd_SequenceOfReal TolSeq;
     GeomAbs_CurveType CurType;
     TopoDS_Vertex FirstVertex, LastVertex;
-    Standard_Boolean FinalReverse = Standard_False;
 
     BRepTools_WireExplorer wexp(theWire) ;
     for (; wexp.More(); wexp.Next())
@@ -706,8 +705,6 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
         LparSeq.Append(lpar);
         CurType = aType;
         FirstVertex = wexp.CurrentVertex();
-        if (anEdge.Orientation() == TopAbs_REVERSED)
-          FinalReverse = Standard_True;
       }
       else
       {
@@ -910,10 +907,8 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
     LastVertex = wexp.CurrentVertex();
     TolSeq.Append(BRep_Tool::Tolerance(LastVertex));
 
-    TopoDS_Vertex FirstVtx_final = (FinalReverse)? LastVertex : FirstVertex;
-    FirstVtx_final.Orientation(TopAbs_FORWARD);
-    TopoDS_Vertex LastVtx_final = (FinalReverse)? FirstVertex : LastVertex;
-    LastVtx_final.Orientation(TopAbs_REVERSED);
+    FirstVertex.Orientation(TopAbs_FORWARD);
+    LastVertex.Orientation(TopAbs_REVERSED);
 
     if (!CurveSeq.IsEmpty())
     {
@@ -982,7 +977,7 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
           Standard_ConstructionError::Raise("Construction aborted : The given Wire has sharp bends between some Edges, no valid Edge can be built");
         }
         ResEdge = BRepLib_MakeEdge(concatcurve->Value(concatcurve->Lower()),
-                                   FirstVtx_final, LastVtx_final,
+                                   FirstVertex, LastVertex,
                                    concatcurve->Value(concatcurve->Lower())->FirstParameter(),
                                    concatcurve->Value(concatcurve->Lower())->LastParameter());
       }
@@ -996,13 +991,10 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
 
         aNewCurve->Transform(LocSeq(1).Location().Transformation());
         ResEdge = BRepLib_MakeEdge(aNewCurve,
-                                   FirstVtx_final, LastVtx_final,
+                                   FirstVertex, LastVertex,
                                    FparSeq(1), LparSeq(1));
       }
     }
-
-    if (FinalReverse)
-      ResEdge.Reverse();
 
     return ResEdge;
 }
