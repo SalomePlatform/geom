@@ -990,9 +990,23 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
           Handle(Geom_Curve)::DownCast(CurveSeq(1)->Copy());
 
         aNewCurve->Transform(LocSeq(1).Location().Transformation());
+
+        if (LocSeq(1).Orientation() == TopAbs_REVERSED) {
+          const TopoDS_Vertex aVtxTmp = FirstVertex;
+
+          FirstVertex = LastVertex;
+          LastVertex  = aVtxTmp;
+          FirstVertex.Orientation(TopAbs_FORWARD);
+          LastVertex.Orientation(TopAbs_REVERSED);
+        }
+
         ResEdge = BRepLib_MakeEdge(aNewCurve,
                                    FirstVertex, LastVertex,
                                    FparSeq(1), LparSeq(1));
+
+        if (LocSeq(1).Orientation() == TopAbs_REVERSED) {
+          ResEdge.Reverse();
+        }
       }
     }
 
