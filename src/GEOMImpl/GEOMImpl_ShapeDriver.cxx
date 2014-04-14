@@ -976,10 +976,59 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
         if (concatcurve->Value(concatcurve->Lower())->Continuity()==GeomAbs_C0){
           Standard_ConstructionError::Raise("Construction aborted : The given Wire has sharp bends between some Edges, no valid Edge can be built");
         }
-        ResEdge = BRepLib_MakeEdge(concatcurve->Value(concatcurve->Lower()),
-                                   FirstVertex, LastVertex,
-                                   concatcurve->Value(concatcurve->Lower())->FirstParameter(),
-                                   concatcurve->Value(concatcurve->Lower())->LastParameter());
+
+        Standard_Boolean isValidEndVtx = Standard_True;
+
+        if (closed_flag) {
+          // Check if closed curve is reordered.
+          Handle(Geom_Curve) aCurve  = concatcurve->Value(concatcurve->Lower());
+          Standard_Real      aFPar   = aCurve->FirstParameter();
+          gp_Pnt             aPFirst;
+          gp_Pnt             aPntVtx = BRep_Tool::Pnt(FirstVertex);
+          Standard_Real      aTolVtx = BRep_Tool::Tolerance(FirstVertex);
+
+          aCurve->D0(aFPar, aPFirst);
+
+          if (!aPFirst.IsEqual(aPntVtx, aTolVtx)) {
+            // The curve is reordered. Find the new first and last vertices.
+            TopTools_IndexedMapOfShape aMapVtx;
+            TopExp::MapShapes(theWire, TopAbs_VERTEX, aMapVtx);
+
+            const Standard_Integer aNbVtx = aMapVtx.Extent();
+            Standard_Integer       iVtx;
+
+            for (iVtx = 1; iVtx <= aNbVtx; iVtx++) {
+              const TopoDS_Vertex aVtx = TopoDS::Vertex(aMapVtx.FindKey(iVtx));
+              const gp_Pnt        aPnt = BRep_Tool::Pnt(aVtx);
+              const Standard_Real aTol = BRep_Tool::Tolerance(aVtx);
+
+              if (aPFirst.IsEqual(aPnt, aTol)) {
+                // The coinsident vertex is found.
+                FirstVertex = aVtx;
+                LastVertex  = aVtx;
+                FirstVertex.Orientation(TopAbs_FORWARD);
+                LastVertex.Orientation(TopAbs_REVERSED);
+                break;
+              }
+            }
+
+            if (iVtx > aNbVtx) {
+              // It is necessary to create new vertices.
+              isValidEndVtx = Standard_False;
+            }
+          }
+        }
+
+        if (isValidEndVtx) {
+          ResEdge = BRepLib_MakeEdge(concatcurve->Value(concatcurve->Lower()),
+                                     FirstVertex, LastVertex,
+                                     concatcurve->Value(concatcurve->Lower())->FirstParameter(),
+                                     concatcurve->Value(concatcurve->Lower())->LastParameter());
+        } else {
+          ResEdge = BRepLib_MakeEdge(concatcurve->Value(concatcurve->Lower()),
+                                     concatcurve->Value(concatcurve->Lower())->FirstParameter(),
+                                     concatcurve->Value(concatcurve->Lower())->LastParameter());
+        }
       }
       else
       {
