@@ -218,7 +218,7 @@ void RepairGUI_FreeBoundDlg::SelectionIntoArgument()
 
   myObj = anObj;
   myEditCurrentArgument->setText(GEOMBase::GetName(myObj));
-  displayPreview(true, false, true, true, 3);
+  displayPreview(true, false, true, true, 3, 0);
 }
 
 //=================================================================================
