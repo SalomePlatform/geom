@@ -159,6 +159,50 @@ namespace
   }
 
   //===========================================================================
+  // Function : imageToPixmap
+  // Purpose  : Concert QImage to OCCT pixmap
+  //===========================================================================
+  static inline Handle(Image_PixMap) imageToPixmap( const QImage& anImage )
+  { 
+    Handle(Image_PixMap) aPixmap = new Image_PixMap();
+    if ( !anImage.isNull() ) {
+      aPixmap->InitTrash( Image_PixMap::ImgBGRA, anImage.width(), anImage.height() );
+      aPixmap->SetTopDown( Standard_True );
+      
+      const uchar* aImageBytes = anImage.bits();
+      
+      for ( int aLine = anImage.height() - 1; aLine >= 0; --aLine ) {
+	Image_ColorBGRA* aPixmapBytes = aPixmap->EditData<Image_ColorBGRA>().ChangeRow(aLine);
+	
+	// convert pixels from ARGB to renderer-compatible RGBA
+	for ( int aByte = 0; aByte < anImage.width(); ++aByte ) {
+	  aPixmapBytes->b() = (Standard_Byte) *aImageBytes++;
+	  aPixmapBytes->g() = (Standard_Byte) *aImageBytes++;
+	  aPixmapBytes->r() = (Standard_Byte) *aImageBytes++;
+	  aPixmapBytes->a() = (Standard_Byte) *aImageBytes++;
+	  aPixmapBytes++;
+	}
+      }
+    }
+    return aPixmap;
+  }
+  
+  //===========================================================================
+  // Function : getDefaultTexture
+  // Purpose  : Get default texture
+  //===========================================================================
+  static inline Handle(Image_PixMap) getDefaultTexture()
+  {
+    static Handle(Image_PixMap) aPixmap;
+    if ( aPixmap.IsNull() ) {
+      QPixmap px(":images/default_texture.png");
+      if ( !px.isNull() )
+	aPixmap = imageToPixmap( px.toImage() );
+    }
+    return aPixmap;
+  }
+
+  //===========================================================================
   // Function : cacheTextureFor
   // Purpose  : Load and cache image for the specified presentation.
   //===========================================================================
@@ -187,24 +231,7 @@ namespace
     if ( anImage.isNull() )
       return NULL;
 
-    aPixmap = new Image_PixMap();
-    aPixmap->InitTrash( Image_PixMap::ImgBGRA, anImage.width(), anImage.height() );
-    aPixmap->SetTopDown( Standard_True );
-
-    const uchar* aImageBytes = anImage.bits();
-
-    for ( int aLine = anImage.height() - 1; aLine >= 0; --aLine ) {
-      Image_ColorBGRA* aPixmapBytes = aPixmap->EditData<Image_ColorBGRA>().ChangeRow(aLine);
-
-      // convert pixels from ARGB to renderer-compatible RGBA
-      for ( int aByte = 0; aByte < anImage.width(); ++aByte ) {
-        aPixmapBytes->b() = (Standard_Byte) *aImageBytes++;
-        aPixmapBytes->g() = (Standard_Byte) *aImageBytes++;
-        aPixmapBytes->r() = (Standard_Byte) *aImageBytes++;
-        aPixmapBytes->a() = (Standard_Byte) *aImageBytes++;
-        aPixmapBytes++;
-      }
-    }
+    aPixmap = imageToPixmap( anImage );
 
     aPixmapCacheMap.insert( thePath, aPixmap );
 
@@ -866,7 +893,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
         study->setObjectProperty( aMgrId, entry, GEOM::propertyName( GEOM::Texture ), QString( GetTexture().c_str() ) );
         study->setObjectProperty( aMgrId, entry, GEOM::propertyName( GEOM::DisplayMode ), 3 );
         
-        // Update porpeties map
+        // Update propeties map
         propMap = getObjectProperties( study, entry, myViewFrame );
       }
     }
@@ -875,26 +902,29 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
     aImagePath = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
   }
 
-  if ( !aImagePath.isEmpty() ) {
 #if OCC_VERSION_LARGE > 0x06070000
-    Handle(Image_PixMap) aPixmap = cacheTextureFor( aImagePath, AISShape );
+  Handle(Image_PixMap) aPixmap;
+  if ( !aImagePath.isEmpty() )
+    aPixmap = cacheTextureFor( aImagePath, AISShape );
+  else
+    aPixmap = getDefaultTexture();
 
-    // apply image to shape
-    if ( !aPixmap.IsNull() ) {
-      AISShape->SetTexturePixMap( aPixmap );
-      AISShape->SetTextureMapOn();
-      AISShape->DisableTextureModulate();
-    }
-    else
-      AISShape->SetTextureMapOff();
+  // apply image to shape
+  if ( !aPixmap.IsNull() ) {
+    AISShape->SetTexturePixMap( aPixmap );
+    AISShape->SetTextureMapOn();
+    AISShape->DisableTextureModulate();
+  }
+  else {
+    AISShape->SetTextureMapOff();
+  }
 #else
+  if ( !aImagePath.isEmpty() ) {
     AISShape->SetTextureFileName( TCollection_AsciiString( aImagePath.toUtf8().constData() ) );
     AISShape->SetTextureMapOn();
     AISShape->DisableTextureModulate();
-#endif
   }
-  else
-    AISShape->SetTextureMapOff();
+#endif
 
   // set line width
   AISShape->SetWidth( HasWidth() ?

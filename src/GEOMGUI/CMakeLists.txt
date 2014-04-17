@@ -87,10 +87,26 @@ SET(_moc_HEADERS
   GeometryGUI.h
   )
 
+# --- resources ---
+
+# resource files / to be processed by rcc
+SET(_rcc_RESOURCES GEOMGUI.qrc)
+
+# resource files / to be processed by lrelease
+SET(_ts_RESOURCES
+  GEOM_images.ts
+  GEOM_msg_en.ts
+  GEOM_msg_fr.ts
+  GEOM_msg_ja.ts
+)
+
 # --- sources ---
 
 # sources / moc wrappings
 QT4_WRAP_CPP(_moc_SOURCES ${_moc_HEADERS})
+
+# sources / rcc wrappings
+QT4_ADD_RESOURCES(_rcc_SOURCES ${_rcc_RESOURCES})
 
 SET(GEOMGUI_SOURCES
   GeometryGUI.cxx
@@ -103,17 +119,8 @@ SET(GEOMGUI_SOURCES
   GEOMGUI_CreationInfoWdg.cxx
   GEOMGUI_DimensionProperty.cxx
   ${_moc_SOURCES}
+  ${_rcc_SOURCES}
   )
-
-# --- resources ---
-
-# resource files / to be processed by lrelease
-SET(GEOMGUI_RESOURCES
-  GEOM_images.ts
-  GEOM_msg_en.ts
-  GEOM_msg_fr.ts
-  GEOM_msg_ja.ts
-)
 
 # --- rules ---
 
@@ -122,4 +129,4 @@ TARGET_LINK_LIBRARIES(GEOM ${_link_LIBRARIES})
 INSTALL(TARGETS GEOM EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
 
 INSTALL(FILES ${GEOMGUI_HEADERS} DESTINATION ${SALOME_INSTALL_HEADERS})
-QT4_INSTALL_TS_RESOURCES("${GEOMGUI_RESOURCES}" "${SALOME_GEOM_INSTALL_RES_DATA}")
+QT4_INSTALL_TS_RESOURCES("${_ts_RESOURCES}" "${SALOME_GEOM_INSTALL_RES_DATA}")

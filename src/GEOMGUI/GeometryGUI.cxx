@@ -224,6 +224,8 @@ GeometryGUI::GeometryGUI() :
   myCreationInfoWdg = 0;
 
   connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
+
+  Q_INIT_RESOURCE( GEOMGUI );
 }
 
 //=======================================================================
@@ -2488,11 +2490,13 @@ void GeometryGUI::createPreferences()
   aModesList.append( tr("MEN_WIREFRAME") );
   aModesList.append( tr("MEN_SHADING") );
   aModesList.append( tr("MEN_SHADING_WITH_EDGES") );
+  aModesList.append( tr("MEN_TEXTURE") );
 
   QList<QVariant> anIndexesList;
   anIndexesList.append(0);
   anIndexesList.append(1);
   anIndexesList.append(2);
+  anIndexesList.append(3);
 
   setPreferenceProperty( dispmode, "strings", aModesList );
   setPreferenceProperty( dispmode, "indexes", anIndexesList );
