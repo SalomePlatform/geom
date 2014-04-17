@@ -309,9 +309,9 @@ setDisplayMode(int theMode)
 
   if ( theMode == (int)eShadingWithEdges ) {
     // Coloring edges
-    myIsolatedEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
-                                                 myEdgesInShadingColor[1],
-                                                 myEdgesInShadingColor[2]);
+    myIsolatedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
+                                                 myIsolatedEdgeColor[1],
+                                                 myIsolatedEdgeColor[2]);
     myOneFaceEdgeActor->GetProperty()->SetColor(myEdgesInShadingColor[0],
                                                 myEdgesInShadingColor[1],
                                                 myEdgesInShadingColor[2]);
@@ -757,8 +757,7 @@ void GEOM_Actor::SetPointColor(double r,  double g,  double b)
 void GEOM_Actor::SetIsolatedEdgeColor(double r, double g,  double b)
 {
   myIsolatedEdgeColor[0] = r; myIsolatedEdgeColor[1] = g; myIsolatedEdgeColor[2] = b;
-  if ( myDisplayMode != (int)eShadingWithEdges )
-    myIsolatedEdgeActor->GetProperty()->SetColor(r, g, b);
+  myIsolatedEdgeActor->GetProperty()->SetColor(r, g, b);
 }
 
 /*!

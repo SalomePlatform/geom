@@ -1089,7 +1089,7 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
     }
 
     // - standalone edge color
-    c = propMap.value( GEOM::propertyName( GEOM::WireframeColor ) ).value<QColor>();
+    c = propMap.value( GEOM::propertyName( GEOM::LineColor ) ).value<QColor>();
     actor->SetIsolatedEdgeColor( c.redF(), c.greenF(), c.blueF() );
 
     c = propMap.value( GEOM::propertyName( GEOM::WireframeColor ) ).value<QColor>();
