@@ -85,17 +85,29 @@
     else \
       str = QString(); }
 
-#define VTK_DISPLAY_MODE_TO_STRING( str, dm ) { \
-    if ( dm == 0 ) \
-      str = QString( "Wireframe" ); \
-    else if ( dm == 1 )    \
-      str = QString( "Shading" ); \
-    else if ( dm == 3 )    \
-      str = QString( "ShadingWithEdges" ); \
-    else \
-      str = QString(); }
-
 #define USE_VISUAL_PROP_MAP
+
+#ifdef USE_VISUAL_PROP_MAP
+  #define VTK_DISPLAY_MODE_TO_STRING( str, dm ) { \
+      if ( dm == 0 ) \
+        str = QString( "Wireframe" ); \
+      else if ( dm == 1 )    \
+        str = QString( "Shading" ); \
+      else if ( dm == 2 )    \
+        str = QString( "ShadingWithEdges" ); \
+      else \
+        str = QString(); }
+#else
+  #define VTK_DISPLAY_MODE_TO_STRING( str, dm ) { \
+      if ( dm == 0 ) \
+        str = QString( "Wireframe" ); \
+      else if ( dm == 1 )    \
+        str = QString( "Shading" ); \
+      else if ( dm == 3 )    \
+        str = QString( "ShadingWithEdges" ); \
+      else \
+        str = QString(); }
+#endif
 
 GEOMGUI_Selection::GEOMGUI_Selection()
 : LightApp_Selection()
