@@ -178,6 +178,8 @@ private:
   SOCC_Prs*                          myAnglePrs;
   SOCC_Prs*                          myLengthPrs;
   SOCC_Prs*                          myTextPrs;
+  bool                               myIsUndoRedo;
+  XYZ                                myWorkPoint;
 
 private slots:
   void                               ClickOnOk();

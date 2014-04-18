@@ -219,7 +219,8 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg (GeometryGUI* theGeometryGUI, Q
     myOK(false),
     myLineWidth(lineWidth),
     myGeometryGUI(theGeometryGUI),
-    myLengthIORedoList()
+    myLengthIORedoList(),
+    myIsUndoRedo(false)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_UNDO")));
@@ -615,6 +616,7 @@ void EntityGUI_3DSketcherDlg::UpdatePointCoordinates()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ClickOnUndo()
 {
+  myIsUndoRedo = true;
   if (myPointsList.count() > 0) {
     
     myRedoList.append(myPointsList.last());
@@ -635,6 +637,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myTextPrs);
     
     // Remove last point from list
+    myWorkPoint = myPointsList.last();
     myPointsList.removeLast();
     GEOMBase_Helper::displayPreview(true, false, true, true, myLineWidth);
     UpdateButtonsState();
@@ -644,6 +647,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
 
     updateViewer();
   }
+  myIsUndoRedo = false;
 }
 
 //=================================================================================
@@ -652,6 +656,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ClickOnRedo()
 {
+  myIsUndoRedo = true;
   if (myRedoList.count() > 0) {
     
     myPointsList.append(myRedoList.last());
@@ -672,6 +677,7 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myTextPrs);
     
     // Remove last point from redo list
+    myWorkPoint = myRedoList.last();
     myRedoList.removeLast();
     GEOMBase_Helper::displayPreview(true, false, true, true, myLineWidth);
     UpdateButtonsState();
@@ -681,6 +687,7 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
 
     updateViewer();
   }
+  myIsUndoRedo = false;
 }
 
 //=================================================================================
@@ -1242,7 +1249,13 @@ gp_Dir EntityGUI_3DSketcherDlg::getPresentationPlane() const
   bool twoAngles = GroupAngles->checkBox->isChecked();
   
   XYZ Last    = getLastPoint();
-  XYZ Current = getCurrentPoint();
+  XYZ Current;
+  if( myIsUndoRedo ) {
+      Current = myWorkPoint;
+  } else {
+    Current = getCurrentPoint();
+  }
+  
   XYZ Penultimate = getPenultimatePoint();
   
   gp_Pnt P1 = gp_Pnt(Last.x,Last.y,Last.z);
@@ -1303,7 +1316,9 @@ gp_Dir EntityGUI_3DSketcherDlg::getPresentationPlane() const
       }
     }
     // If no angles, the plane is the one formed by the last edge and the current one
-    aNormal = gp_Dir(Vec1.Crossed(Vec2)); 
+    if(Abs(Vec1.CrossMagnitude(Vec2)) > Precision::Confusion()) {
+      aNormal = gp_Dir(Vec1.Crossed(Vec2)); 
+    }
   }
   return aNormal;
 }
