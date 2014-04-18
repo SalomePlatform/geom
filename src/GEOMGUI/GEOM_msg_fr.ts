@@ -4593,8 +4593,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Objets et résultats</translation>
     </message>
     <message>
-        <source>GEOM_MEASURE_ANGLE_IS</source>
+        <source>GEOM_MEASURE_ANGLE_DEG</source>
         <translation>Angle en degrés :</translation>
+    </message>
+    <message>
+        <source>GEOM_MEASURE_ANGLE_RAD</source>
+        <translation type="unfinished">Angle in radians :</translation>
     </message>
     <message>
         <source>GEOM_LINE_INTERSECTION</source>

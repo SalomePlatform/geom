@@ -4605,8 +4605,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Objects And Results</translation>
     </message>
     <message>
-        <source>GEOM_MEASURE_ANGLE_IS</source>
+        <source>GEOM_MEASURE_ANGLE_DEG</source>
         <translation>Angle in degrees :</translation>
+    </message>
+    <message>
+        <source>GEOM_MEASURE_ANGLE_RAD</source>
+        <translation>Angle in radians :</translation>
     </message>
     <message>
         <source>GEOM_LINE_INTERSECTION</source>

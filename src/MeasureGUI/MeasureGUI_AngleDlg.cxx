@@ -57,6 +57,9 @@
 #include <AIS.hxx>
 #include <AIS_Drawer.hxx>
 #include <Prs3d_LineAspect.hxx> 
+#include <IntTools_EdgeEdge.hxx>
+#include <IntTools_SequenceOfCommonPrts.hxx>
+#include <IntTools_CommonPrt.hxx>
 
 // QT Includes
 #include <qlineedit.h>
@@ -97,7 +100,7 @@ MeasureGUI_AngleDlg::MeasureGUI_AngleDlg (GeometryGUI* GUI, QWidget* parent)
   myGrp->GroupBox1->setTitle(tr("GEOM_MEASURE_ANGLE_OBJ"));
   myGrp->TextLabel1->setText(tr("GEOM_OBJECT_I").arg("1"));
   myGrp->TextLabel2->setText(tr("GEOM_OBJECT_I").arg("2"));
-  myGrp->TextLabel3->setText(tr("GEOM_MEASURE_ANGLE_IS"));
+  myGrp->TextLabel3->setText(tr(aResMgr->stringValue ( "Geometry", "dimensions_angle_units", "deg" ) == "deg" ? "GEOM_MEASURE_ANGLE_DEG" : "GEOM_MEASURE_ANGLE_RAD"));
   myGrp->LineEdit3->setReadOnly(true);
   myGrp->PushButton1->setIcon(image1);
   myGrp->PushButton2->setIcon(image1);
@@ -197,9 +200,8 @@ void MeasureGUI_AngleDlg::processObject()
 
   double anAngle = 0.;
   if (getParameters(anAngle)) {
-    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-    int aPrecision = resMgr->integerValue( "Geometry", "angle_precision", 6 );
-    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(anAngle, aPrecision));
+    // To avoid the using different angle values in viewer and dialog,
+    // the value from presentation is used in both cases (see buildPrs())
     redisplayPreview();
   }
   else {
@@ -352,6 +354,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
 
         SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
         int w = resMgr->integerValue( "Geometry", "measures_line_width", 1 );
+        QString aUnitsAngle = resMgr->stringValue ( "Geometry", "dimensions_angle_units", "deg" );
 
         aDimensionStyle->LineAspect()->SetWidth( w );
         aDimensionStyle->SetTextHorizontalPosition( Prs3d_DTHP_Center );
@@ -360,12 +363,27 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         aDimensionStyle->MakeArrows3d( Standard_True );
 
         anIO->SetDimensionAspect( aDimensionStyle );
+        anIO->SetDisplayUnits( aUnitsAngle.toLatin1().data() );
+        if (aUnitsAngle == "rad")
+          anIO->SetDisplaySpecialSymbol(AIS_DSS_No);
 
         SOCC_Prs* aPrs =
           dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
 
         if (aPrs)
           aPrs->AddObject(anIO);
+
+        // set angle value into dialog
+        double anAngle = anIO->GetValue();
+        QString anAngleLabel = "GEOM_MEASURE_ANGLE_RAD";
+        if (aUnitsAngle == "deg") {
+          // using degrees instead of radians
+          anAngle *= 180. / M_PI;
+          anAngleLabel = "GEOM_MEASURE_ANGLE_DEG";
+        }
+        myGrp->TextLabel3->setText(tr(anAngleLabel.toLatin1().data()));
+        int aPrecision = resMgr->integerValue( "Geometry", "angle_precision", 6 );
+        myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(anAngle, aPrecision));
 
         return aPrs;
       }

@@ -4588,8 +4588,12 @@
       <translation>オブジェクトと結果</translation>
     </message>
     <message>
-      <source>GEOM_MEASURE_ANGLE_IS</source>
+      <source>GEOM_MEASURE_ANGLE_DEG</source>
       <translation>角度(degree):</translation>
+    </message>
+    <message>
+        <source>GEOM_MEASURE_ANGLE_RAD</source>
+        <translation type="unfinished">Angle in radians :</translation>
     </message>
     <message>
       <source>GEOM_LINE_INTERSECTION</source>
