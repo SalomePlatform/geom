@@ -183,12 +183,26 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
       BRepOffsetAPI_NormalProjection OrtProj (aFaceShape);
       OrtProj.Add(anOriginal);
 
-      //Standard_Real tol = 1.e-4;        
-      //Standard_Real tol2d = Pow(tol, 2./3);
-      //GeomAbs_Shape Continuity = GeomAbs_C2;  
-      //Standard_Integer MaxDeg = 14;           
-      //Standard_Integer MaxSeg = 16;           
-      //OrtProj.SetParams(tol, tol2d, Continuity, MaxDeg, MaxSeg);
+      // Compute maximal tolerance of projection.
+      TopExp_Explorer anExp(anOriginal,TopAbs_VERTEX);
+      Standard_Real   aMaxTol = Precision::Confusion();
+
+      for(; anExp.More(); anExp.Next()) { 
+        const TopoDS_Vertex aVtx    = TopoDS::Vertex(anExp.Current());
+        const Standard_Real aCurTol = BRep_Tool::Tolerance(aVtx);
+
+        if (aMaxTol < aCurTol) {
+          aMaxTol = aCurTol;
+        }
+      }
+
+      Standard_Real tol2d = Pow(aMaxTol, 2./3);
+      GeomAbs_Shape Continuity = GeomAbs_C2;
+      Standard_Integer MaxDeg = 14;
+      Standard_Integer MaxSeg = 16;
+
+      OrtProj.SetParams(aMaxTol, tol2d, Continuity, MaxDeg, MaxSeg);
+
       try {
         OrtProj.Build();
       } catch (Standard_Failure) {
