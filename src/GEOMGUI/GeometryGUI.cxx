@@ -1961,6 +1961,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
 void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
   mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
+  mappa.insert( SalomeApp_Application::WT_NoteBook, Qt::LeftDockWidgetArea );
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::BottomDockWidgetArea );
   if ( myCreationInfoWdg )
     mappa.insert( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
