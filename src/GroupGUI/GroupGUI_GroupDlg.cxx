@@ -309,6 +309,7 @@ void GroupGUI_GroupDlg::ClickOnOk()
   if (ClickOnApply())
     ClickOnCancel();
   setIsApplyAndClose(false);
+  getDisplayer()->UnsetDisplayMode();
 }
 
 //=================================================================================
