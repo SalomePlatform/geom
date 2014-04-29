@@ -78,7 +78,8 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
     myMode(mode),
     myBusy(false),
     myIsShapeType(false),
-    myIsHiddenMain(false)
+    myIsHiddenMain(false),
+    myWasHiddenMain(true)
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
@@ -192,7 +193,10 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
 GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
 {
   GEOM_Displayer* aDisplayer = getDisplayer();
-  if (myIsHiddenMain) {
+  if (myWasHiddenMain) {
+    aDisplayer->Erase(myMainObj);
+    myIsHiddenMain = true;
+  } else {
     aDisplayer->Display(myMainObj);
     myIsHiddenMain = false;
   }
@@ -238,8 +242,16 @@ void GroupGUI_GroupDlg::Init()
 
         GEOM::GEOM_IGroupOperations_var anOper = GEOM::GEOM_IGroupOperations::_narrow(getOperation());
         myMainObj = anOper->GetMainShape(myGroup);
-        if (!CORBA::is_nil(myMainObj))
+        if (!CORBA::is_nil(myMainObj)) {
           myMainName->setText(GEOMBase::GetName(myMainObj));
+          SALOME_View* view = GEOM_Displayer::GetActiveView();
+          if (view) {
+            CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+            Handle(SALOME_InteractiveObject) io =
+              new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+            if (view->isVisible(io)) myWasHiddenMain = false;
+          }
+        }
 
         setShapeType((TopAbs_ShapeEnum)anOper->GetType(myGroup));
 
@@ -521,6 +533,15 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
           myIsHiddenMain = false;
         }
         myMainObj = anObj;
+        if (!CORBA::is_nil(myMainObj)) {
+          SALOME_View* view = GEOM_Displayer::GetActiveView();
+          if (view) {
+            CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+            Handle(SALOME_InteractiveObject) io =
+              new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+            if (view->isVisible(io)) myWasHiddenMain = false;
+          }
+        }
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
         // activate sub-shapes selection by default
         myEditCurrentArgument = 0;
