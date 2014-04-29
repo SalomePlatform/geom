@@ -729,6 +729,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.myStudyId = self.myStudy._get_StudyId()
             self.myBuilder = self.myStudy.NewBuilder()
             self.father = self.myStudy.FindComponent("GEOM")
+            notebook.myStudy = theStudy
             if self.father is None:
                 self.father = self.myBuilder.NewComponent("GEOM")
                 A1 = self.myBuilder.FindOrCreateAttribute(self.father, "AttributeName")
