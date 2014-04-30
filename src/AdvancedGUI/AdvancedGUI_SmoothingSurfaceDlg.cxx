@@ -115,6 +115,8 @@ void AdvancedGUI_SmoothingSurfaceDlg::Init()
   myDegMaxSpin->setValue(8);
   myDMaxSpin->setValue(0.);
 
+  showOnlyPreviewControl();
+
   //@@ initialize dialog box widgets here @@//
 
   // Signal/slot connections
@@ -133,6 +135,7 @@ void AdvancedGUI_SmoothingSurfaceDlg::Init()
  
   initName(tr("GEOM_SMOOTHINGSURFACE"));
   //displayPreview();
+  SelectionIntoArgument();
 }
 
 //=================================================================================
