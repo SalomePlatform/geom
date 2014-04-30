@@ -262,7 +262,7 @@ GetCreationInformation(std::string&             theOperationName,
 
       AddParam(theParams, "Max nbr of Bezier pieces", aCI.GetNbMax());
       AddParam(theParams, "Max BSpline surface degree", aCI.GetDegMax());
-      AddParam(theParams, "Max plate criterion value", aCI.GetDMax());
+      AddParam(theParams, "3D tolerance of initial approximation", aCI.GetDMax());
     }
     break;
   default:

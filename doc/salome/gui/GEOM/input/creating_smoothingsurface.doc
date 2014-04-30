@@ -7,7 +7,7 @@ Advanced - > SmoothingSurface </b>
 
 To create a surface it is necessary to specify the \b Name of the surface, the list of \b Points
 from which it is approximated and some plate approximation parameters such as: <b>Max nbr of
-Bezier pieces</b>, <b>Max BSpline surface degree</b> and <b>Max plate criterion value</b>.
+Bezier pieces</b>, <b>Max BSpline surface degree</b> and <b>3D tolerance of initial approximation</b>.
 And then press "Apply" or "Apply & Close" button.
 
 \note The dialog accepts compounds of points as well as single nodes.
@@ -18,7 +18,13 @@ The result of the operation will be a GEOM_Object(Surface).
 - \em thelPoints list of points. Compounds of points are accepted as well
 - \em theNbMax maximum number of Bezier pieces in the resulting surface
 - \em theDegMax maximum degree of the resulting BSpline surface
-- \em theDMax specifies maximum value of the GeomPlate_PlateG0Criterion criterion
+- \em theDMax specifies 3D tolerance of initial approximation
+
+\note <b>3D tolerance of initial approximation</b> represents a tolerance of
+initial plate surface approximation. If this parameter is equal to 0 (default
+value) it is computed. In this case an error of initial plate surface
+computation is used as the approximation tolerance. This error represents a
+maximal distance between computed plate surface and given points.
 
 \image html smoothingsurface_dlg.png
 

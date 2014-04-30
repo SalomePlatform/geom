@@ -12695,12 +12695,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theNbMax maximum number of Bezier pieces in the resulting
         #         surface.
         #  @param theDegMax maximum degree of the resulting BSpline surface.
-        #  @param theDMax specifies maximum value of the
-        #         GeomPlate_PlateG0Criterion criterion.
+        #  @param theDMax 3D tolerance of initial approximation.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #  @return New GEOM_Object, containing the created shape.
+        #  @note 3D tolerance of initial approximation represents a tolerance of
+        #        initial plate surface approximation. If this parameter is equal
+        #        to 0 (default value) it is computed. In this case an error of
+        #        initial plate surface computation is used as the approximation
+        #        tolerance. This error represents a maximal distance between
+        #        computed plate surface and given points.
         #
         #  @ref tui_creation_smoothingsurface "Example"
         def MakeSmoothingSurface(self, thelPoints, theNbMax=2, theDegMax=8,
@@ -12714,14 +12719,21 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theNbMax maximum number of Bezier pieces in the resulting
                          surface.
                 theDegMax maximum degree of the resulting BSpline surface.
-                theDMax specifies maximum value of the
-                        GeomPlate_PlateG0Criterion criterion.
+                theDMax 3D tolerance of initial approximation.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
                 New GEOM_Object, containing the created shape.
+
+            Note:
+                3D tolerance of initial approximation represents a tolerance of
+                initial plate surface approximation. If this parameter is equal
+                to 0 (default value) it is computed. In this case an error of
+                initial plate surface computation is used as the approximation
+                tolerance. This error represents a maximal distance between
+                computed plate surface and given points.
             """
             anObj = self.AdvOp.MakeSmoothingSurface(thelPoints, theNbMax,
                                                     theDegMax, theDMax)

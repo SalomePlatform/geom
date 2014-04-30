@@ -303,7 +303,7 @@
     </message>
     <message>
         <source>GEOM_SMOOTHINGSURFACE_ARG_D_MAX</source>
-        <translation>Max plate criterion value</translation>
+        <translation>3D tolerance of initial approximation</translation>
     </message>
     <message>
         <source>GEOM_SMOOTHINGSURFACE_NO_POINTS</source>
