@@ -10,6 +10,8 @@ from which it is approximated and some plate approximation parameters such as: <
 Bezier pieces</b>, <b>Max BSpline surface degree</b> and <b>3D tolerance of initial approximation</b>.
 And then press "Apply" or "Apply & Close" button.
 
+<b>Advanced options:</b> \ref preview_anchor "Preview"
+
 \note The dialog accepts compounds of points as well as single nodes.
 
 The result of the operation will be a GEOM_Object(Surface).
