@@ -2,12 +2,13 @@
 
 \page bounding_box_page Bounding Box
 
-Displays the bounding box dimensions for the selected
-geometrical object and creates the corresponding box shape on "Apply".
+This operation performs precise computation of bounding box for the selected geometrical object and displays its dimensions.
 
 \image html measures5.png
 
-\note This functionallity performs precise computation of bounding box.
+The coordinates of two corners of its bounding box are shown in the table. 
+
+Press \b Apply or <b>Apply and Close</b> button to publish the bounding \b Box in the study. 
 
 \n <b>TUI Commands:</b> <em>[Xmin,Xmax, Ymin,Ymax, Zmin,Zmax] = geompy.BoundingBox(Shape, precise)</em>,
 <em>BBox = geompy.MakeBoundingBox(Shape, precise)</em>, where \em Shape

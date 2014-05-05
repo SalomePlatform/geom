@@ -14,55 +14,46 @@ To create a 3D Sketch, select in the main menu <em>New Entity -> Basic -> 3D Ske
 \image html 3dsketch_dlg.png
 
 The first point of a sketch can be defined by \b Absolute coordinates X, Y and Z.
-When the first point is defined, it is possible to add straight segments.
-Each segment will start at the end point of the previous segment or at the
-first point of the sketch, if there are no validated segments.
+After this, it is possible to add straight segments.
 
-The way of segment construction can be selected by the <b>Coordinates Type</b>
-radio buttons.
+Each segment starts at the end point of the previous segment or at the first point of the sketch, if there are no validated segments.
 
+The second point of a segment can be defined in two different ways depending on the selected <b>Coordinates Type</b> radio buttons:
+
+By <b>Cartesian coordinates</b> , which can be either:
+- \b Absolute coordinates \b X, \b Y and \b Z, or
+- \b Relative coordinates \b DX, \b DY and \b DZ with respect to the previous applied point,
+ 
+By <b>Angular coordinates</b>, which include:
+- the \b Length of the segment and an \b Angle in the chosen plane (OXY for example) in \b Relative mode. The angle is then relative to a local coordinate system with the last point of the sketch as origin. </li>
+   
+\image html 3dsketch_angle_rel.png
+   
+- the \b Radius (i.e. the distance from the origin) and an \b Angle in the chosen plane in \b Absolute mode 
+   
+\image html 3dsketch_angle_abs.png
+
+In both angular modes you can additionally specify the following:
+- the second \b Angle (latitude)
+
+\image html 3dsketch_2angles_rel.png
+   
+- the \b Height
+ 
+\image html 3dsketch_angle_height_rel.png
+   
 To validate a segment and to proceed with the definition of the next
 one, click <b>Apply</b> button. \b Undo and \b Redo buttons,
 respectively, remove or restore the last segment in the wire.
 
-\n <b>"Sketch Validation"</b> button applies the wire, built by the
+\n <b>Sketch Validation</b> button applies the wire, built by the
 user, "as is".
-\n <b>"Sketch Closure"</b> closes the Sketch by a straight line from
+\n <b>Sketch Closure</b> closes the Sketch by a straight line from
 the start to the end point and applies it. 
 
-A segment can be defined by:
-- <b>Cartesian coordinates</b> of its second end, which can be either:
- - \b Absolute coordinates X, Y and Z, or
- - \b Relative coordinates DX, DY and DZ with
-   respect to the previous applied point,
-   
-- <b>Angular coordinates</b> of its second end specified by:
-<ul>
- <li> the \b Length of the segment and an \b Angle in the chosen plane (OXY for example) in \b Relative mode.
-   The angle is then relative to a local coordinate system with the last point of the sketch as origin. </li>
-   
-   \image html 3dsketch_angle_rel.png
-   
- <li> the \b Radius (i.e. the distance from the origin) and an \b Angle in the chosen plane in \b Absolute mode </li>
-   
-   \image html 3dsketch_angle_abs.png
+<h2>TUI Commands</h2>
 
- In both angular modes you can additionally specify the following:
- 
- <li> the second \b Angle (latitude) </li>
- 
- \image html 3dsketch_2angles_rel.png
-   
- or
-   
- <li> the \b Height </li>
- 
- \image html 3dsketch_angle_height_rel.png
-   
-
-</ul>
-
-<b>TUI Command:</b> <em>geompy.Make3DSketcher( [ PointsList ] )</em>
+<em>geompy.Make3DSketcher( [ PointsList ] )</em>
 This algorithm creates a wire from the list of real values, which
 define absolute XYZ coordinates of points. The Result of the operation
 will be a \b GEOM_Object.
@@ -73,13 +64,13 @@ last point should have the same coordinates.
 \n Another way to create the 3D Sketcher in TUI is using Sketcher3D
 interface.
 
-<b>TUI Command:</b> <em>sk = geompy.Sketcher3D()</em>
+<em>sk = geompy.Sketcher3D()</em>
 
-Returns an instance of Sketcher3D interface <i>sk</i>.
+Returns an instance of Sketcher3D interface <em>sk</em>.
 
 Use the below examples and see the \ref gsketcher.Sketcher3D "Sketcher3D"
 interface documentation for more information.
 
-Our <b>TUI Scripts</b> provide you with useful examples of the use of
+<b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_3dsketcher_page "3D Sketcher".
 */

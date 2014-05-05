@@ -2,21 +2,24 @@
 
 \page get_non_blocks_page Get Non Blocks
 
+
+This operation retrieves all non-block solids and non-quadrangular faces from the selected shape.
+
+A non-block solid is a solid that does not have 6 faces, or has 6 faces, but some of them are not quadrangular).
+
 \image html measures2.png
 
-This operation retrieves all non block solids and faces from the given
-shape in two groups: solids and faces separately.
+\b Preview option shows non block solids and faces in the viewer. 
 
-Two or less groups are published in the Object
-Browser under the processed object. An error is raised if
-no bad sub-shapes (solids and faces) have been found.
+Press \b Apply or <b>Apply and Close</b> button to publish non block solids and faces in the Object
+Browser under the processed object. Solids and faces are published separately in two groups. 
+
+If no bad sub-shapes have been found, the corresponding warning is shown. 
+
+\image html measures2a.png
 
 \n <b>TUI Command:</b>
-<em>geompy.GetNonBlocks(Compound).</em> Returns a tuple of two
-    GEOM_Objects. The first object is a group of all non block solids
-    (not having 6 faces, or having 6 faces, but some of them
-    are not quadrangular). The second object is a group of all non
-    quadrangular faces.
+<em>geompy.GetNonBlocks(Compound).</em> Returns a tuple of two GEOM_Objects. 
 
 See also a \ref tui_get_non_blocks_page "TUI example".
 

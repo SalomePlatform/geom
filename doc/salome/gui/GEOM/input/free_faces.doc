@@ -2,14 +2,17 @@
 
 \page free_faces_page Check Free Faces
 
-Emphasizes by the red color all free faces of a given shape in the 3D Viewer.
-A free face is a face which is not shared between several sub-shapes of the shape.
+This operation highlights in red all free faces of the selected shape in the 3D Viewer.
+
+A free face is a face, which is not shared between several sub-shapes of the shape.
+
+\image html repair10.png
 
 <b>TUI Command:</b> <em>GetFreeFacesIDs(Shape),</em> where \em Shape is
 a shape to be checked.
 
-See also a \ref tui_free_faces_page "TUI example".
+\image html repair10a.png
 
-\image html repair10.png
+See also a \ref tui_free_faces_page "TUI example".
 
 */

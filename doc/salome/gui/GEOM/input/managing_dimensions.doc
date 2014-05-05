@@ -2,63 +2,72 @@
 
 \page managing_dimensions_page Manage Dimensions
 
+<b> Manage Dimensions </b> functionality allows showing in the viewer the measured dimensions of sub-elements of a geometrical object (shape). 
+
 \image html dimensions_preview.png
 
-Dimensions of sub-elements can be measured for a geometrical object representing a shape. 
-There are three types of dimensions available
-<ul>
-<li>Length.</li>
-<li>Diameter.</li>
-<li>Angle.</li>
-</ul>
-
-Measurement units and group of presentation attributes for the measurement dimensions can be seen and changed from the \ref geometry_preferences_page "geometry preference dialog".
-
-The application entities, representing the dimensions, are associated with the geometrical object for which its elements are measured. The dimensions follow their associated object on show/hide, transformation and deletion operations.
-
-Each dimension instance has its <i>local visibility</i> flag intended for showing/hiding it among other dimensions of the associated object.
+It can be accessed from the main menu via <b>Measures -> Dimensions -> Manage Dimensions </b>
 
 \image html manage_dimensions.png
 
-This dialog allows managing list of dimensions for the selected geometrical object.
-It shows the list and provides dimension creation and removal, modification of name and visibility, along with the interactive modification of dimension's geometrical properties.
+<b>List of Dimensions</b>
 
-The list view groups dimension objects by their type: "Distances", "Diameters", "Angles". This view allows selection of the dimensions and lets user to change the dimension's name and visibility.
+This dialog provides the list of dimensions shown in the view for the selected geometrical <b>Object</b>. The list items are sorted by  dimension type: <b>Distance</b>, <b>Diameter</b> and <b>Angle</b>. 
 
-The buttons located at the right side of the dialog have the following purposes:
+It is possible to show/hide a dimension in the view by checking on/off the box to the left of its name. 
+
+The buttons to the right of the list provide the following operations:
 <ul>
-<li>"Add" - opens \ref add_dimension_page "Add Dimension" dialog for interactive specification of a new dimension for the selected object.</li>
-<li>"Remove" - removes selected instance of dimension.</li>
-<li>"Show All" / "Hide All" - turn on/off local visibility flags of all dimensions presented in the list.</li>
+<li>"Add" - opens \ref add_dimension_page "Add Dimension" dialog to define a new fly-out.</li>
+<li>"Remove" - removes the selected item from the list.</li>
+<li>"Show All" / "Hide All" - shows/hides all dimensions existing in the list.</li>
 </ul>
+
+<b>Add a Dimension</b>
+
+To add a new dimension to the object presentation, click <b>Add</b> button in the <b>Manage Dimensions</b> dialog.  
+
+\image html add_dimension.png
+
+The following dimensions can be shown:
+
+<ul>
+<li> <b>Length.</b> There are three possible types of length dimensions: 
+<ul>
+<li> <b>Edge length</b> - shows the length of the edge selected in the viewer. Only line edges, i.e. line segments built on two points are accepted. </li>
+<li> <b>Two points </b> - shows the distance between two points selected in the viewer.</li>
+<li> <b>Parallel edges</b> - shows the distance between two parallel line edges.</li>
+</ul>
+</li>
+
+<li> <b>Diameter </b> of an an arc, a circular edge or face, a sphere, a cylinder, a cone or a  torus.</li> 
+
+<li> <b>Angle.</b> The angle dimension can be defined in one of two possible ways :  </li>
+
+<ul>
+<li>By selecting <b>Two edges</b> located in the same plane.</li>
+<li>By selecting <b>Three points</b>. The second point is in the corner of the angle.</li>
+</ul>
+</ul>
+
+<b>Modification of Dimension properties</b>
+
+The default properties of dimension text and line, such as font color, line width, measurement units, etc. can be defined from the \ref geometry_preferences_page "Geometry preferences".
+
+It is also possible to change the geometrical properties of the selected dimension interactively in the viewer. 
+
+When hovering with mouse, the text and line become highlighted, which means that the dimension is ready for interactive operations.
 
 \image html interact_with_dimensions.png
 
-Geometrical properties of the selected dimension become interactively editable in viewer.
-When hovering with mouse, the element of dimension become highlighted.
-This means that the element is ready for interactive operations.
-
-The following interactive operations are allowed:
+The following operations are possible:
 <ul>
-<li>Modification of flyout length. By dragging the flyout with left mouse button the user is allowed to change its length without changing its plane (direction).</li>
-<li>Modification of flyout length & plane (direction). If dimension is viewed at least slightly from side, then dragging the flyout with holding <i>ctrl</i> key additionally enables modification of the flyout plane.</li>
-<li>Modification of label alignment. By dragging the label the user is allowed to change its alignment. </li>
+<li>To change the fly-out of a dimension text without changing its plane (direction), drag it by mouse with left mouse button pressed.</li>
+<li>To change both the fly-out and the plane (direction) of a dimension text, drag the flyout by mouse with both <i>ctrl</i> key and additionally enables modification of the flyout plane.</li>
+<li>To modify the location of the dimension text correspondingly to the dimension line, drag it by mouse. The text can be aligned horizontally or vertically and located on the line, under it or in its center.</li>
 </ul>
 
-The following horizontally aligned positions can be specified:
-<ul>
-<li>Left. Label is located outside of the left flyout line.</li>
-<li>Right. Label is located outside of the right flyout line.</li>
-<li>Center. Label is centered among of the flyout lines.</li>
-</ul>
+All modifications of the dimensions are temporary. The "Apply" and "Apply and Close" buttons save the changes.
 
-The following vertically aligned positions can be specified:
-<ul>
-<li>On flyout line. The label is located at the side of flyout line, which is farther from the measured geometry.</li>
-<li>Under flyout line. The label is located at the side of flyout line, which is closer to the measured geometry.</li>
-<li>In center of flyout line.</li>
-</ul>
-
-All of the modifications to the dimensions, until applied, are temporary. The "Apply" and "Apply and Close" buttons save the changes.
 
 */

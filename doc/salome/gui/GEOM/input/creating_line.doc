@@ -8,7 +8,7 @@ To create a \b Line in the <b>Main Menu</b> select <b>New Entity - >Basic - > Li
 There are 2 algorithms to create a \b Line in the 3D space.
 The Result of each operation will be a GEOM_Object (edge).
 
-\n Firstly you can define a \b Line through \b Point1 and \b Point2,
+\n Firstly you can define a \b Line by \b Point1 and \b Point2,
 which are the points through  which the \b Line passes.
 \n <b>TUI Command:</b> <em>geompy.MakeLineTwoPnt(Point1, Point2)</em>
 \n <b>Arguments:</b> Name + 2 vertices.

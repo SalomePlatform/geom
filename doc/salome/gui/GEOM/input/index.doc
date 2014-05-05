@@ -20,8 +20,6 @@
 
 It is possible to easily set parameters via the variables predefined in
   \subpage using_notebook_geom_page "SALOME notebook".
-Also, there is a possibility to customize an
-\subpage arranging_study_objects_page "arrangement of the geometrical objects in the SALOME study".
 
 Geometry module preferences are described in the
 \subpage geometry_preferences_page section of SALOME Geometry Help.

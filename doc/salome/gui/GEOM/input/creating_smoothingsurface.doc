@@ -5,22 +5,22 @@
 To create a <b> Smoothing Surface</b> in the <b>Main Menu</b> select <b>New Entity - >
 Advanced - > SmoothingSurface </b>
 
-To create a surface it is necessary to specify the \b Name of the surface, the list of \b Points
-from which it is approximated and some plate approximation parameters such as: <b>Max nbr of
-Bezier pieces</b>, <b>Max BSpline surface degree</b> and <b>Max plate criterion value</b>.
-And then press "Apply" or "Apply & Close" button.
+\image html smoothingsurface_dlg.png
 
-\note The dialog accepts compounds of points as well as single nodes.
+In this dialog you can specify the following parameters:
+- \b Name of the surface; 
+- the list of \b Points or compounds of points, from which it is approximated;
+- <b>Max nbr of Bezier pieces</b> in the resulting surface;
+- <b>Max BSpline surface degree</b> of the resulting BSpline surface;
+- <b>Max plate criterion value</b>, which is computed as <em> max(0.0001,10*error), </em> where error is a 3D tolerance of the surface.
 
-The result of the operation will be a GEOM_Object(Surface).
+Press "Apply" or "Apply & Close" button to get the resulting <em>GEOM_Object(Surface)</em>.
 
 <b>TUI Command:</b> <em>geompy.MakeSmoothingSurface(thelPoints, theNbMax, theDegMax, theDMax)</em>, where:
-- \em thelPoints list of points. Compounds of points are accepted as well
-- \em theNbMax maximum number of Bezier pieces in the resulting surface
-- \em theDegMax maximum degree of the resulting BSpline surface
-- \em theDMax specifies maximum value of the GeomPlate_PlateG0Criterion criterion
-
-\image html smoothingsurface_dlg.png
+- \em thelPoints is a list of points or compounds of points;
+- \em theNbMax maximum number of Bezier pieces in the resulting surface;
+- \em theDegMax maximum degree;  
+- \em theDMax specifies maximum value of <em> GeomPlate_PlateG0Criterion </em>.
 
 Example:
 

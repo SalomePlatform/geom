@@ -12,22 +12,21 @@ ellipse's <b>Major Axis</b> and its <b>Major</b> & <b>Minor Radiuses</b>.
 \note The parameters <b>Center</b>, <b>Vector</b> and <b>Major Axis</b>
 are optional. By default it is presumed that the <b>Center</b> point
 is located at the origin of the global coordinate system, the \b Vector
-corresponds to the OZ axis of the global coordinate system and <b>Major Axis</b>
-corresponds to the OX axis of the global coordinate system.
-
+corresponds to OZ axis of the global coordinate system and <b>Major Axis</b>
+corresponds to OX axis of the global coordinate system.
 
 \note The actual direction of the major axis vector is defined as
 <EM> Vmaj' = (Vn * Vmaj) * Vn</em>, where \em Vn is a normal vector and
 \em Vmaj is an original vector of the major axis.
 
-\n <b>TUI Command (no major axis):</b> <em>geompy.MakeEllipse(Point, Vector, RadiusMajor, RadiusMinor)</em>
+\n <b>TUI Command (with the major axis):</b> <em>geompy.MakeEllipse(Point, Vector, RadiusMajor, RadiusMinor)</em>
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
 the direction) + 1 X Radius + 1 Y Radius.
 
-\n <b>TUI Command (use major axis):</b><em>geompy.MakeEllipseVec(Point, Vector, RadiusMajor, RadiusMinor, VectorMajor)</em>
+\n <b>TUI Command (without the major axis):</b> <em>geompy.MakeEllipseVec(Point, Vector, RadiusMajor, RadiusMinor, VectorMajor)</em>
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
 the normal direction) + 1 X Radius + 1 Y Radius + 1 edge (for the
-major axis direction)
+major axis direction).
 
 \image html ellipse.png
 
