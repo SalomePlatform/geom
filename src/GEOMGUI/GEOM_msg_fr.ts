@@ -5,11 +5,11 @@
     <name>@default</name>
     <message>
         <source>MEN_TEXTURE</source>
-        <translation type="unfinished">Texture</translation>
+        <translation>Texture</translation>
     </message>
     <message>
         <source>GEOM_WRN_FACES_NOT_SHELL</source>
-        <translation type="unfinished">Unable to create a shell. Result is a compound of faces.</translation>
+        <translation>Impossible de créer une coque. Le résultat est un assemblage de faces.</translation>
     </message>
     <message>
         <source>BRep_API: command not done</source>
@@ -382,6 +382,26 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES</source>
         <translation>Sous-objets incriminés</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_BLOCKS_NOT_BLOCK</source>
+        <translation>Ceci n&apos;est pas un bloc</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_BLOCKS_EXTRA_EDGE</source>
+        <translation>Arête supplémentaire</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_BLOCKS_INVALID_CONNECTION</source>
+        <translation>Connection invalide # %1</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_BLOCKS_NOT_CONNECTED</source>
+        <translation>Non connecté</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_BLOCKS_NOT_GLUED</source>
+        <translation>Pas collé # %1</translation>
     </message>
     <message>
         <source>GEOM_GETNONBLOCKS_TITLE</source>
@@ -3250,39 +3270,39 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS</source>
-        <translation type="unfinished">Dimensions (Measurements)</translation>
+        <translation>Dimensions (Mesures)</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_COLOR</source>
-        <translation type="unfinished">Color</translation>
+        <translation>Couleur</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_LINE_WIDTH</source>
-        <translation type="unfinished">Line width</translation>
+        <translation>Epaisseur de la ligne</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-        <translation type="unfinished">Font height</translation>
+        <translation>Taille de police</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
-        <translation type="unfinished">Length of arrows</translation>
+        <translation>Epaisseur des flèches</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_LENGTH_UNITS</source>
-        <translation type="unfinished">Length measurement units</translation>
+        <translation>Unité de mesure</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ANGLE_UNITS</source>
-        <translation type="unfinished">Angle measurement units</translation>
+        <translation>Unité de mesure des angles</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_DEFAULT_FLYOUT</source>
-        <translation type="unfinished">Default flyout length</translation>
+        <translation>Distance par défaut</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_SHOW_UNITS</source>
-        <translation type="unfinished">Show units of measurement</translation>
+        <translation>Afficher les unités</translation>
     </message>
     <message>
         <source>PREF_ISOS</source>
@@ -4598,7 +4618,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_MEASURE_ANGLE_RAD</source>
-        <translation type="unfinished">Angle in radians :</translation>
+        <translation>Angle en radians :</translation>
     </message>
     <message>
         <source>GEOM_LINE_INTERSECTION</source>
@@ -4729,40 +4749,40 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Calculer l&apos;angle entre deux lignes ou arêtes linéaires</translation>
     </message>
     <message>
-      <source>TOP_MANAGE_DIMENSIONS</source>
-      <translation type="unfinished">Manage dimensions</translation>
+        <source>TOP_MANAGE_DIMENSIONS</source>
+        <translation>Gérer les cotations</translation>
     </message>
     <message>
-      <source>MEN_MANAGE_DIMENSIONS</source>
-      <translation type="unfinished">Manage dimensions</translation>
+        <source>MEN_MANAGE_DIMENSIONS</source>
+        <translation>Gérer les cotations</translation>
     </message>
     <message>
-      <source>STB_MANAGE_DIMENSIONS</source>
-      <translation type="unfinished">Manage measurement dimensions of an object</translation>
+        <source>STB_MANAGE_DIMENSIONS</source>
+        <translation>Gérer la cotation d&apos;un objet</translation>
     </message>
     <message>
-      <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all dimensions</translation>
+        <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
+        <translation>Afficher les cotations </translation>
     </message>
     <message>
-      <source>STB_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all hidden measures (dimension) created for the object</translation>
+        <source>STB_POP_SHOW_ALL_DIMENSIONS</source>
+        <translation>Afficher toutes les cotations cachées pour un objet</translation>
     </message>
     <message>
-      <source>TOP_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all hidden measures (dimension) created for the object</translation>
+        <source>TOP_POP_SHOW_ALL_DIMENSIONS</source>
+        <translation>Afficher toutes les cotations cachées sur l&apos;objet</translation>
     </message>
     <message>
-      <source>MEN_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Hide all dimensions</translation>
+        <source>MEN_POP_HIDE_ALL_DIMENSIONS</source>
+        <translation>Cacher toutes les cotations</translation>
     </message>
     <message>
-      <source>STB_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all visible measures (dimension) created for the object</translation>
+        <source>STB_POP_HIDE_ALL_DIMENSIONS</source>
+        <translation>Afficher toutes les cotations visibles créées sur l&apos;objet</translation>
     </message>
     <message>
-      <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all visible measures (dimension) created for the object</translation>
+        <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
+        <translation>Afficher toutes les cotations visibles créées sur l&apos;objet</translation>
     </message>
     <message>
         <source>TOP_POP_AUTO_COLOR</source>
@@ -5103,7 +5123,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>GEOM_SELECT_IMPORT_XAO</source>
-        <translation type="unfinished">Import from XAO</translation>
+        <translation>Import XAO</translation>
     </message>
     <message>
         <source>GEOM_SELECT_EXPORT_XAO</source>
@@ -6160,158 +6180,313 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <name>MeasureGUI_ManageDimensionsDlg</name>
     <message>
         <source>MANAGE_DIMENSIONS_TITLE</source>
-        <translation type="unfinished">Manage dimensions</translation>
+        <translation>Gérer les cotations</translation>
     </message>
     <message>
         <source>OBJECT_LABEL</source>
-        <translation type="unfinished">Object</translation>
+        <translation>Objet</translation>
     </message>
     <message>
         <source>DIMENSIONS_GROUP</source>
-        <translation type="unfinished">Dimensions</translation>
+        <translation>Cotations</translation>
     </message>
     <message>
         <source>ADD_BTN</source>
-        <translation type="unfinished">Add</translation>
+        <translation>Ajouter</translation>
     </message>
     <message>
         <source>REMOVE_BTN</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <source>SHOW_ALL_BTN</source>
-        <translation type="unfinished">Show all</translation>
+        <translation>Afficher tout</translation>
     </message>
     <message>
-      <source>HIDE_ALL_BTN</source>
-      <translation type="unfinished">Hide all</translation>
+        <source>HIDE_ALL_BTN</source>
+        <translation>Cacher tout</translation>
     </message>
     <message>
-      <source>DISTANCE_ITEM</source>
-      <translation type="unfinished">Distance</translation>
+        <source>DISTANCE_ITEM</source>
+        <translation>Distance</translation>
     </message>
     <message>
-      <source>DIAMETER_ITEM</source>
-      <translation type="unfinished">Diameter</translation>
+        <source>DIAMETER_ITEM</source>
+        <translation>Diamètre</translation>
     </message>
     <message>
-      <source>ANGLE_ITEM</source>
-      <translation type="unfinished">Angle</translation>
+        <source>ANGLE_ITEM</source>
+        <translation>Angle</translation>
     </message>
     <message>
-      <source>WRN_TITLE_UNSAVED</source>
-      <translation type="unfinished">Unsaved changes</translation>
+        <source>WRN_TITLE_UNSAVED</source>
+        <translation>Modifications non sauvegardées</translation>
     </message>
     <message>
-      <source>WRN_MSG_CHANGES_LOST</source>
-      <translation type="unfinished">The unsaved changes will be lost.
-Do you wish to continue?</translation>
+        <source>WRN_MSG_CHANGES_LOST</source>
+        <translation>Les changements non sauvegardés seront perdus.
+Voulez-vous continuer?</translation>
     </message>
     <message>
-      <source>WRN_MSG_CHANGES_SAVE</source>
-      <translation type="unfinished">The unsaved changes will be lost.
-Do you wish to save them?</translation>
+        <source>WRN_MSG_CHANGES_SAVE</source>
+        <translation>Les changements non sauvegardés seront perdus.
+Voulez-vous les sauvegarder?</translation>
     </message>
     <message>
-      <source>WRN_MSG_UNSAVED</source>
-      <translation type="unfinished">The unsaved changes will be lost.
-Do you want to continue?</translation>
+        <source>WRN_MSG_UNSAVED</source>
+        <translation>Les changements non sauvegardés seront perdus.
+Voulez-vous continuer?</translation>
     </message>
 </context>
 <context>
     <name>MeasureGUI_CreateDimensionDlg</name>
     <message>
         <source>CREATE_DIMENSION_TITLE</source>
-        <translation type="unfinished">Add dimension</translation>
+        <translation>Ajouter une cotation</translation>
     </message>
     <message>
         <source>DIMENSIONS</source>
-        <translation type="unfinished">Dimensions</translation>
+        <translation>Cotations</translation>
     </message>
     <message>
         <source>LENGTH</source>
-        <translation type="unfinished">Length</translation>
+        <translation>Longueur</translation>
     </message>
     <message>
         <source>DIAMETER</source>
-        <translation type="unfinished">Diameter</translation>
+        <translation>Diamètre</translation>
     </message>
     <message>
         <source>ANGLE</source>
-        <translation type="unfinished">Angle</translation>
+        <translation>Angle</translation>
     </message>
     <message>
         <source>ARGUMENTS</source>
-        <translation type="unfinished">Arguments</translation>
+        <translation>Arguments</translation>
     </message>
     <message>
         <source>EDGE_LENGTH</source>
-        <translation type="unfinished">Edge length</translation>
+        <translation>Longeur d&apos;arête</translation>
     </message>
     <message>
         <source>TWO_POINTS</source>
-        <translation type="unfinished">Two points</translation>
+        <translation>Deux points</translation>
     </message>
     <message>
         <source>PARALLEL_EDGES</source>
-        <translation type="unfinished">Parallel edges</translation>
+        <translation>Arêtes parallèles</translation>
     </message>
     <message>
         <source>TWO_EDGES</source>
-        <translation type="unfinished">Two edges</translation>
+        <translation>Deux arêtes</translation>
     </message>
     <message>
         <source>THREE_POINTS</source>
-        <translation type="unfinished">Three points</translation>
+        <translation>Trois points</translation>
     </message>
     <message>
         <source>EDGE</source>
-        <translation type="unfinished">Edge</translation>
+        <translation>Arête</translation>
     </message>
     <message>
         <source>EDGE_1</source>
-        <translation type="unfinished">Edge 1</translation>
+        <translation>Arête 1</translation>
     </message>
     <message>
         <source>EDGE_2</source>
-        <translation type="unfinished">Edge 2</translation>
+        <translation>Arête 2</translation>
     </message>
     <message>
         <source>POINT_1</source>
-        <translation type="unfinished">Point 1</translation>
+        <translation>Point 1</translation>
     </message>
     <message>
         <source>POINT_2</source>
-        <translation type="unfinished">Point 2</translation>
+        <translation>Point 2</translation>
     </message>
     <message>
         <source>POINT_3</source>
-        <translation type="unfinished">Point 3</translation>
+        <translation>Point 3</translation>
     </message>
     <message>
         <source>OBJECT</source>
-        <translation type="unfinished">Object</translation>
+        <translation>Objet</translation>
     </message>
     <message>
         <source>NAME_LENGTH</source>
-        <translation type="unfinished">Length</translation>
+        <translation>Longeur</translation>
     </message>
     <message>
         <source>NAME_DIAMETER</source>
-        <translation type="unfinished">Diameter</translation>
+        <translation>Diamètre</translation>
     </message>
     <message>
         <source>NAME_ANGLE</source>
-        <translation type="unfinished">Angle</translation>
+        <translation>Angle</translation>
     </message>
     <message>
         <source>WARNING_TITLE_CANNOT_CREATE_DIMENSION</source>
-        <translation type="unfinished">Can not create dimension</translation>
+        <translation>Impossible de créer la cotation</translation>
     </message>
     <message>
         <source>WARNING_MSG_INVALID_ARGUMENTS</source>
-        <translation type="unfinished">The dimension can not be created for the specified arguments.
+        <translation>The dimension can not be created for the specified arguments.
 Please specify suitable arguments.</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_CheckShapeDlg</name>
+    <message>
+        <source>GEOM_CHECK_TITLE</source>
+        <translation>Contrôler la validité de l&apos;objet</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SHAPE</source>
+        <translation>Contrôler un objet</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SHAPE_NAME</source>
+        <translation>Eronné</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SHAPE_VALID</source>
+        <translation>L&apos;objet semble valide.</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SHAPE_NOT_VALID</source>
+        <translation>L&apos;objet comporte des erreurs:</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_POINT_ON_CURVE</source>
+        <translation>Point invalide sur la courbe</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_POINT_ON_CURVE_ON_SURFACE</source>
+        <translation>Point invalide sur la courbe de la surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_POINT_ON_SURFACE</source>
+        <translation>Point invalide sur la surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NO_3D_CURVE</source>
+        <translation>Pas de courbe 3D</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_MULTIPLE_3D_CURVE</source>
+        <translation>Multiple courbes 3D</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_3D_CURVE</source>
+        <translation>Courbe 3D invalide</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NO_CURVE_ON_SURFACE</source>
+        <translation>Pas de courbe sur la surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_CURVE_ON_SURFACE</source>
+        <translation>Courbe invalide sur la surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_CURVE_ON_CLOSED_SURFACE</source>
+        <translation>Courbe invalide sur la surface fermée</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_SAME_RANGE_FLAG</source>
+        <translation>Invalide Même indicateur de plage</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_SAME_PARAMETER_FLAG</source>
+        <translation>Invalide Même paramètre</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_DEGENERATED_FLAG</source>
+        <translation>Invalide Mauvais indicateur</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_FREE_EDGE</source>
+        <translation>Arête libre</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_MULTI_CONNEXITY</source>
+        <translation>Multi-connectivité invalide</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_RANGE</source>
+        <translation>Plage invalide</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_EMPTY_WIRE</source>
+        <translation>Contour vide</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_REDUNDANT_EDGE</source>
+        <translation>Arête redondante</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_SELF_INTERSECTING_WIRE</source>
+        <translation>Arête auto-intersectée</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NO_SURFACE</source>
+        <translation>Pas de surface</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_WIRE</source>
+        <translation>Contour invalide</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_REDUNDANT_WIRE</source>
+        <translation>Contour redondant</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INTERSECTING_WIRES</source>
+        <translation>Contours intersectés</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_IMBRICATION_OF_WIRES</source>
+        <translation>Imbrications de contours invalides</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_EMPTY_SHELL</source>
+        <translation>Coque vide</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_REDUNDANT_FACE</source>
+        <translation>Face redondante </translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_UNORIENTABLE_SHAPE</source>
+        <translation>Objet non orientable</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NOT_CLOSED</source>
+        <translation>Non fermé</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_NOT_CONNECTED</source>
+        <translation>Non connecté</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_SUBSHAPE_NOT_IN_SHAPE</source>
+        <translation>Sous-objet absent de l&apos;objet</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_BAD_ORIENTATION</source>
+        <translation>Mauvaise orientation</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_BAD_ORIENTATION_OF_SUBSHAPE</source>
+        <translation>Mauvaise orientation du sous-objet</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_INVALID_TOLERANCE_VALUE</source>
+        <translation>Valeur de tolérance invalide</translation>
+    </message>
+    <message>
+        <source>CHECK_ERROR_CHECK_FAIL</source>
+        <translation>Echec du contrôle</translation>
     </message>
 </context>
 <context>

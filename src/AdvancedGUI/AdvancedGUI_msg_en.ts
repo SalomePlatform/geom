@@ -73,15 +73,15 @@
     </message>
     <message>
         <source>TOP_SMOOTHINGSURFACE</source>
-        <translation type="unfinished">Smoothing Surface</translation>
+        <translation>Smoothing Surface</translation>
     </message>
     <message>
         <source>MEN_SMOOTHINGSURFACE</source>
-        <translation type="unfinished">Smoothing Surface</translation>
+        <translation>Smoothing Surface</translation>
     </message>
     <message>
         <source>STB_SMOOTHINGSURFACE</source>
-        <translation type="unfinished">Smoothing Surface</translation>
+        <translation>Smoothing Surface</translation>
     </message>
     <message>
         <source>HALF_LENGTH_MAIN_PIPE</source>
@@ -248,27 +248,27 @@
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</source>
-        <translation>Main pipe Radius can't be equal to Left thickness reduction Radius (rL)!</translation>
+        <translation type="unfinished">Le rayon du tuyau principale ne peut pas être égal à la réduction d&apos;épaisseur à gauche (rL)!</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</source>
-        <translation>Main pipe external Radius (Radius + Width) can't be equal to Left thickness reduction external Radius (rL + wL)!</translation>
+        <translation type="unfinished">Le rayon extérieur du tuyau principal (Rayon + épaisseur) ne peut pas être égal au rayon externe de la réduction d&apos;épaisseur à gauche (rL + wL)!</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</source>
-        <translation>Main pipe Radius can't be equal to Right thickness reduction Radius (rR)!</translation>
+        <translation type="unfinished">Le rayon du tuyau principal ne peut pas être égal au rayon de la réduction d&apos;épaisseur à droite (rR)!</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</source>
-        <translation>Main pipe external Radius (Radius + Width) can't be equal to Right thickness reduction external Radius (rR + wR)!</translation>
+        <translation type="unfinished">Le rayon extérieur du tuyau principal (Rayon + épaisseur) ne peut pas être égal au rayon externe de la réduction d&apos;épaisseur à droite (rL + wL)!</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</source>
-        <translation>Incident pipe Radius can't be equal to Incident pipe thickness reduction Radius (rI)!</translation>
+        <translation type="unfinished">Le rayon du tuyau incident ne peut pas être égal au rayon de la réduction d&apos;épaisseur du tuyau incident (rI)!</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</source>
-        <translation>Incident pipe external Radius (Radius + Width) can't be equal to Incident pipe thickness reduction external Radius (rI + wI)!</translation>
+        <translation type="unfinished">Le rayon externe du tuyau incident (Rayon + Epaisseur) ne peut pas être égal au rayon extérieur de la réduction du tuyau incident (rI + wI)!</translation>
     </message>
 </context>
 <context>

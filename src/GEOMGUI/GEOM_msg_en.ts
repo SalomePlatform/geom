@@ -4745,40 +4745,40 @@ Please, select face, shell or solid and try again</translation>
         <translation>Compute angle between two lines or linear edges</translation>
     </message>
     <message>
-      <source>TOP_MANAGE_DIMENSIONS</source>
-      <translation>Manage dimensions</translation>
+        <source>TOP_MANAGE_DIMENSIONS</source>
+        <translation>Manage dimensions</translation>
     </message>
     <message>
-      <source>MEN_MANAGE_DIMENSIONS</source>
-      <translation>Manage dimensions</translation>
+        <source>MEN_MANAGE_DIMENSIONS</source>
+        <translation>Manage dimensions</translation>
     </message>
     <message>
-      <source>STB_MANAGE_DIMENSIONS</source>
-      <translation>Manage measurement dimensions of an object</translation>
+        <source>STB_MANAGE_DIMENSIONS</source>
+        <translation>Manage measurement dimensions of an object</translation>
     </message>
     <message>
-      <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation>Show all dimensions</translation>
+        <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
+        <translation>Show all dimensions</translation>
     </message>
     <message>
-      <source>STB_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation>Show all hidden measures (dimension) created for the object</translation>
+        <source>STB_POP_SHOW_ALL_DIMENSIONS</source>
+        <translation>Show all hidden measures (dimension) created for the object</translation>
     </message>
     <message>
-      <source>TOP_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation>Show all hidden measures (dimension) created for the object</translation>
+        <source>TOP_POP_SHOW_ALL_DIMENSIONS</source>
+        <translation>Show all hidden measures (dimension) created for the object</translation>
     </message>
     <message>
-      <source>MEN_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation>Hide all dimensions</translation>
+        <source>MEN_POP_HIDE_ALL_DIMENSIONS</source>
+        <translation>Hide all dimensions</translation>
     </message>
     <message>
-      <source>STB_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation>Show all visible measures (dimension) created for the object</translation>
+        <source>STB_POP_HIDE_ALL_DIMENSIONS</source>
+        <translation>Show all visible measures (dimension) created for the object</translation>
     </message>
     <message>
-      <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation>Show all visible measures (dimension) created for the object</translation>
+        <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
+        <translation>Show all visible measures (dimension) created for the object</translation>
     </message>
     <message>
         <source>TOP_POP_AUTO_COLOR</source>
@@ -6199,38 +6199,38 @@ Number of sketch points too small</translation>
         <translation>Show all</translation>
     </message>
     <message>
-      <source>HIDE_ALL_BTN</source>
-      <translation>Hide all</translation>
+        <source>HIDE_ALL_BTN</source>
+        <translation>Hide all</translation>
     </message>
     <message>
-      <source>DISTANCE_ITEM</source>
-      <translation>Distance</translation>
+        <source>DISTANCE_ITEM</source>
+        <translation>Distance</translation>
     </message>
     <message>
-      <source>DIAMETER_ITEM</source>
-      <translation>Diameter</translation>
+        <source>DIAMETER_ITEM</source>
+        <translation>Diameter</translation>
     </message>
     <message>
-      <source>ANGLE_ITEM</source>
-      <translation>Angle</translation>
+        <source>ANGLE_ITEM</source>
+        <translation>Angle</translation>
     </message>
     <message>
-      <source>WRN_TITLE_UNSAVED</source>
-      <translation>Unsaved changes</translation>
+        <source>WRN_TITLE_UNSAVED</source>
+        <translation>Unsaved changes</translation>
     </message>
     <message>
-      <source>WRN_MSG_CHANGES_LOST</source>
-      <translation>The unsaved changes will be lost.
+        <source>WRN_MSG_CHANGES_LOST</source>
+        <translation>The unsaved changes will be lost.
 Do you wish to continue?</translation>
     </message>
     <message>
-      <source>WRN_MSG_CHANGES_SAVE</source>
-      <translation>The unsaved changes will be lost.
+        <source>WRN_MSG_CHANGES_SAVE</source>
+        <translation>The unsaved changes will be lost.
 Do you wish to save them?</translation>
     </message>
     <message>
-      <source>WRN_MSG_UNSAVED</source>
-      <translation>The unsaved changes will be lost.
+        <source>WRN_MSG_UNSAVED</source>
+        <translation>The unsaved changes will be lost.
 Do you want to continue?</translation>
     </message>
 </context>
