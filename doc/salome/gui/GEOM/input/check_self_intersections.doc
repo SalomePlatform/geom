@@ -2,9 +2,15 @@
 
 \page check_self_intersections_page Detect Self-intersections
 
-\n Checks the topology of the selected shape to detect self-intersections.
- Returns True if there are no self-intersections. Reports pairs of
- intersected sub-shapes, if there are any.
+This operation checks the topology of the selected shape to detect self-intersections.
+
+\image html measures11.png
+
+In this dialog:
+
+- \b Object - the checked object. \b Selection button allows picking it in the viewer or in the object browser. 
+- \b Errors list contains the list of intersections. Select the intersection to show <b>Incriminated Sub-shapes</b> in the field to the right. 
+
 
 \note This tool is useful for detection of shapes, not suitable for
 arguments of Boolean operations and Partition algorithm.
@@ -17,6 +23,5 @@ where \em theShape is the shape checked for validity.
 
 See also a \ref tui_check_self_intersections_page "TUI example".
 
-\image html measures11.png
 
 */

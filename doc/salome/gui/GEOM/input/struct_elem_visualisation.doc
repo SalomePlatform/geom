@@ -2,15 +2,17 @@
 
 \page struct_elem_visualisation Visualization of structural elements (package structelem)
 
-The usage of the visualization of structural elements can be
-appreciated with this set of instructions:
+The Python package <a href="geompy_doc/group__structelem.html">structelem</a> contains functions
+to create geometrical 3D representations of mechanical models called "structural elements".
+
+The visualization of structural elements can be tested with the following set of instructions:
 
 \code
 from salome.geom.structelem import TEST_StructuralElement
 TEST_StructuralElement()
 \endcode
 
-This creates the geometrical objects displayed in the study below:
+This creates geometrical objects displayed in the study below:
 
 \image html salome-geom-structuralelements.png
 

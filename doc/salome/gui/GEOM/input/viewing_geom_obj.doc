@@ -2,8 +2,10 @@
 
 \page view_geom_obj_page Viewing geometrical objects
 
-Newly created geometrical objects are automatically displayed in
+Newly created or imported geometrical objects are added as items in the Object Browser and displayed in
 the <b>OCC 3D Viewer</b>.
+
+See the corresponding topic about the \subpage arranging_study_objects_page "Operations available in the Object Browser for Geometry module".
 
 <b>OCC 3D Viewer</b> is described in the documentation on <b>GUI
 module</b>.
@@ -76,47 +78,6 @@ on the viewer background:
 <li><b>Select Only</b> provides a filter for exclusive selection of objects of a certain type.</li>
 </ul>
 
-The following commands appear in the Object Browser context menu
-under certain conditions:
 
-\image html ob_popup_menu.png <br>
-
-<ul>
-<li>\ref work_with_groups_page "Create Group" - allows creating groups of geometrical objects.</li>
-
-<li><b>Conceal child items</b> / <b>Disclose child items</b> - hides / shows child
-sub-objects in the Object Browser, if the selected geometric object has
-child objects. When some child objects are hidden, the name of the
-parent object is hilghlighted with bold font.</li>
-
-<li><b>Show Only Children</b> - erases from the current viewer all objects
-and then displays only the children of the selected object(s).
-</li>
-
-<li><b>Unpublish</b> - unpublishes the selected geometric object from the Object Browser 
-  and erase it from all viewers. To publish unpublished geometric objects select in the 
-  context menu of the <b>Geometry</b> root object <b>Publish...</b> item. 
-  The following dialog box will appear
-
-  \image html publish_dlg.png <br>
-
-  Switch the checkbox near the appropriate object and
-  click <b>Publish</b> or <b>Publish And Close</b> button. 
-
-  "Eye" icons in this dialog box allow previewing unpublished objects in the viewer. By default all 
-  unpublished objects are sorted by name in ascending order. It is possible
-  to change the order (ascending / descending) by clicking the corresponding title bar of the objects list.
-</li>
-</ul>
-
-At the bottom of the Object Browser, there is \b Information
-window providing some information on a selected geometric object:
-
-\image html creation_op_info.png Information window
-
-- <b>Creation operation</b> shows a name of the operation
-used to create the selected object.
-- The table below lists \b Parameters used to create the
-selected object and their \b Values.
 
 */

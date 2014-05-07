@@ -2,10 +2,17 @@
 
 \page boundaries_page Check Free Boundaries
 
-Detects and highlights wires and edges that are not shared between
-two faces and are considered a shape's boundary.
-<br>Creates corresponding objects and publishes them into the study on
-"Apply" or "Apply and Close".
+This operation detects and highlights the free boundaries of the selected object. 
+
+Free boundaries are wires and edges that are not shared between two faces.
+
+\image html repair9.png
+
+The information about the number of closed and open free boundaries is also provided. 
+
+Press \b Apply or <b>Apply and Close</b> button to publish the corresponding wires or edges in the study. 
+
+\image html repair9a.png "Free boundary of a compound"
 
 <b>TUI Command:</b> <em>(NoError, ClosedWires, OpenWires) =
 geompy.GetFreeBoundary(Shape),</em> where \em Shape is a shape to be
@@ -15,6 +22,6 @@ boundaries, \em ClosedWires is a list of closed free boundary wires,
 
 See also a \ref tui_free_boundaries_page "TUI example".
 
-\image html repair9.png
+
 
 */

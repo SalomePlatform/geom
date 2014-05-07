@@ -2,14 +2,14 @@
 
 \page point_coordinates_page Point Coordinates
 
-Returns the coordinates of a point.
+This operation returns XYZ coordinates of the selected point.
 
-<b>Result:</b> Point coordinates (X, Y, Z) in 3D space in the form of Python Tuple.
+\image html measures1.png
+
 \n<b>TUI Command:</b> <em>geompy.PointCoordinates(Point),</em>
 where \em Point is a point whose coordinates are inquired.
 
 See also a \ref tui_point_coordinates_page "TUI example".
 
-\image html measures1.png
 
 */

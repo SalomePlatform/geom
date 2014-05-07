@@ -2,23 +2,16 @@
 
 \page build_by_blocks_page Building by blocks
 
-<h2>Introduction</h2>
-
-Below are some general notions about blocks:
-
 A block is a an elementary geometric solid that has specific
-geometric constraints oriented for meshing. In the hexahedral case,
-blocks have 6 faces and each face has 4 edges.
+geometric constraints oriented for meshing. 
+- Tetrahedral Block - is a block with constraints for tetrahedral
+meshing. It has 4 faces and 3 edges on each face. 
+- Hexahedral Block - is a block with constraints for hexahedral meshing. 
+It has 6 faces and each 4 edges on each face.
+- Block Compound - is a compound composed of blocks only.
 
-Tetrahedral Block - is a block with constraints for tetrahedral
-meshing.
-
-Hexahedral Block - is a block with constraints for hexahedral meshing.
-
-Block Compound - is a compound composed of blocks only.
-
-Some functionalities that allow building blocks easily are available from the main menu via <em>New
-Entity / Blocks</em>.
+The functionalities that allow building blocks are available from the main menu via <b>New
+Entity / Blocks</b> item.
 
 <ul>
 <li>\subpage create_quadrangle_face_page "Quadrangle face"</li>

@@ -2,8 +2,14 @@
 
 \page manipulate_object Manipulate GEOM object in the study (module geomtools)
 
-The usage of the geomtools module can be appreciated with this set
-of instructions:
+The Python module <a href="geompy_doc/group__geomtools.html">geomtools</a> provides
+utility functions to handle %GEOM items in SALOME study:
+- add or remove a shape;
+- display or erase a shape in the viewer;
+- completely delete a shape (undisplay, unpublish, and destroy it);
+- manage the selection in the object browser
+
+The usage of <em>geomtools</em> module can be tested with the following set of instructions:
 
 \code
 from salome.geom.geomtools import TEST_createAndDeleteShape
@@ -11,20 +17,14 @@ TEST_createAndDeleteShape()
 \endcode
 
 This test executes the following procedure:
-
-- Create, publish, and display a cylinder
-- Create, publish, and display a sphere
-- Create a box, publish it in a folder "boxset", and display it with a
-  "pink" color.
+- Create, publish, and display a cylinder;
+- Create, publish, and display a sphere;
+- Create a box, publish it in a folder <em>boxset</em>, and display it in <em>pink</em> color.
 - Erase the sphere from the viewer (the sphere still exists in the study)
-- Delete the cylinder (the cylinder is no longer displayed and does
-  not exist any more, neither in the study nor the GEOM componet.
+- Delete the cylinder. It is no longer displayed and does not exist any more in the study or in the GEOM component.
 
-At the end of the execution of this test, you should have in the
-SALOME session:
-
-- the box, in a dedicated folder of the study, and displayed in the
-  viewer
-- the sphere, in the standard place of the study, and not displayed
+At outcome of the test execution, the following objects appear in the SALOME session:
+- The box located in a dedicated study folder and displayed in the viewer;
+- The sphere in the standard place of the study, and not displayed.
 
 */
