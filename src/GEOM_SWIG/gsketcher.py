@@ -21,7 +21,7 @@
 #  Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
 #  Module : GEOM_SWIG
 
-## @defgroup sketcher sketcher - Wrapper to help the creation of simple sketches
+## @defgroup sketcher gsketcher - Wrapper to help the creation of simple sketches
 #  @{ 
 #  @details
 #  This module provides the user with a simple python API 

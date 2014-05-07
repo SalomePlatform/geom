@@ -2,15 +2,18 @@
 
 \page normal_page Normal to a Face
 
-\n Calculates the normal vector to the selected \b Face. The \b Point
-is a point of the \b Face, where the Normal should be calculated.
+This operation calculates the normal vector to the selected \b Face. 
 
-\n <b>TUI Command:</b> <em>geompy.GetNormal(Face, OptionalPoint = None),</em> where \em Face is
-the face to define normale of and \em OptionalPoint is the point to compute the normal at.
-If the point is not given, the normale is calculated at the center of mass.
+\image html normaletoface.png
+
+- \b Face is the face whose Normal should be calculated.
+- \b Point is a point on this face. If the point is not given, the normal is calculated at the center of mass.
+
+Press \b Apply or <b>Apply and Close</b> button to publish the \b Normal \b Vector in the study. 
+
+\n <b>TUI Command:</b> <em>geompy.GetNormal(Face, OptionalPoint = None)</em>. 
 
 See also a \ref tui_normal_face_page "TUI example".
 
-\image html normaletoface.png
 
 */

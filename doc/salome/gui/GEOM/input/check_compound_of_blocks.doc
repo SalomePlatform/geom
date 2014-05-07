@@ -2,25 +2,29 @@
 
 \page check_compound_of_blocks_page Check Compound of Blocks
 
-Checks whether a shape is a compound of glued blocks. To be
-considered as a compound of blocks, the given shape must satisfy the
+This operation checks whether a shape is a compound of glued blocks. 
+
+\image html measures10.png
+
+To be considered as a compound of blocks, the given shape must satisfy the
 following conditions:
-<ul>
-<li>Each element of the compound should be a Block (6 faces and 12 edges);</li>
-<li>Blocks can be connected only via an entire quadrangle face or an entire edge;</li>
-<li>The compound should be connected;</li>
-<li>Each couple of connecting quadrangle faces should be glued.</li>
-</ul>
+- Each element of the compound should be a Block (6 faces and 12 edges);
+- Blocks can be connected only via an entire quadrangle face or an entire edge;
+- The compound should be connected;
+- Each couple of connecting quadrangle faces should be glued.
 
-\n Informs of the following possible errors:
-<ul>
-<li>not a block;</li>
-<li>not glued;</li>
-<li>not connected;</li>
-<li>extra or degenerated edge.</li>
-</ul>
 
-\n <b>Result:</b> Boolean; highlight in the viewer.
+In this dialog:
+
+- \b Object - the checked object. \b Selection button allows picking it in the viewer or in the object browser. 
+- \b Errors list informs of possible errors, for example:. 
+	- Not a block;
+	- Not glued;
+	- Not connected;
+	- Extra or degenerated edge.
+- <b>Incriminated Sub-shapes</b> field outputs the list of sub-shapes that cause problem. It is possible to select them in the list and publish in the study for further analysis by clicking \b Apply or <b>Apply and Close</b> button. 
+
+
 \n <b>TUI Command:</b>
 <em>geompy.CheckCompoundOfBlocks(Compound).</em> Checks if the shape
 is a valid compound of blocks. If it is true, then the validity flag
@@ -28,6 +32,5 @@ is returned, and encountered errors are printed in the python console.
 
 See also a \ref tui_check_compound_of_blocks_page "TUI example".
 
-\image html measures10.png
 
 */

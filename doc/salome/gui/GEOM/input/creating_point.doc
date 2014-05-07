@@ -39,8 +39,8 @@ can exceed the length of the edge or be negative. In this case the edge
 is extrapolated along its curve (except for bezier and b-spline
 curves). 
 The <b>Start Point</b> defines the direction for the length
-calculation (if not defined, the first vertex of
-Edge is used, else the vertex of Edge closest to StartPoint is used).
+calculation (if not defined, the first vertex of the 
+Edge is used, else the vertex of the Edge, which is closest to the Start Point).
 \n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurveByLength(Edge,Length,StartPoint=None).</em>
 \n <b>Arguments:</b> Name + 1 edge  + 1 Length  + 1 Point.
 
@@ -53,29 +53,25 @@ projected on the given edge to produce the resulting point.
 projected point.
 \image html point3_2.png
 
-\n Fourthly, we can define a point(s) by intersection of two \b Lines or \b Wires (or a Wire and a Line). 
-If they intersect only once, a point will be created. If there are several intersections, a compound of 
-points will be created. The type of the selected object (Line or Wire) can be changed in the popup menu, 
-after clicking the corresponding selection button. (see the picture below) 
+\n Fourthly, we can define a point by intersection of two \b Lines or \b Wires (or a Wire and a Line). 
+If they intersect only once, a point will be created. If there are several intersections, a compound of points will be created. The type of the selected object (Line or Wire) can be changed in the popup menu, after clicking the corresponding selection button. 
 \n <b>TUI Command:</b> <em>geompy.MakePointOnLinesIntersection(myLine1,myWire1).</em>
 \n <b>Arguments:</b> Name + 2 1D objects
 
 \image html point4.png
 
-\n Finally, we can define a point by a \b Face and
-Two <b> Parameters: U </b> and \b V
-indicating its position on the Face, ranging from 0.0 to 1.0. For example, (0.5; 0.5) means that the
-point is located in the middle of the face.
+\n Finally, we can define a point located on a \b Face. 
+The position of the point on it can be defined in one of two ways:
+
+- by two <b> Parameters: U </b> and \b V, ranging from 0.0 to 1.0. For example, (0.5; 0.5) means that the point is located in the middle of the face.
 \n <b>TUI Command:</b> <em>geompy.MakeVertexOnSurface(myFace,myUParameter,myVParameter).</em>
-\n <b>Arguments:</b> Name + 1 face + 2 Parameters defining the
-position of the point on the given face.
+\n <b>Arguments:</b> Name + 1 face + 2 Parameters defining the position of the point on the given face.
 
 \image html point5.png
 
-Alternatively, it is possible to define 3D coordinates of the point projected on the given face.
+- by three coordinates of the point projected on the given face.
 \n <b>TUI Command:</b> <em>geompy.MakeVertexOnSurfaceByCoord(myFace,X,Y,Z).</em>
-\n <b>Arguments:</b> Name + 1 face  + 3 coordinate values
-to project point on the given face.
+\n <b>Arguments:</b> Name + 1 face  + 3 coordinate values to project point on the given face.
 
 \image html point5_2.png
 
@@ -83,7 +79,6 @@ to project point on the given face.
 
 \image html points.png "Points by edge and parameter and by coordinates"
 
-Our <b>TUI Scripts</b> provide you with useful examples of creation of 
-\ref tui_creation_point "Basic Geometric Objects".
+Our <b>TUI Scripts</b> provide you with useful examples of creation of \ref tui_creation_point "Basic Geometric Objects".
 
 */

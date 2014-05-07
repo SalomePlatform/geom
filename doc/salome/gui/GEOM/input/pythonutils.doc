@@ -1,0 +1,11 @@
+/*!
+
+\page pythonutils_page Auxiliary Python API of Geometry module
+
+Python API of Geometry module includes some additional packages:
+
+- Sketcher module <a href="geompy_doc/group__sketcher.html">gsketcher.py</a> to create 2D / 3D sketches
+
+- Simplified sketcher module <a href="geompy_doc/group__simplesketcher.html">sketcher.py</a> (deprecated)
+
+*/

@@ -18,6 +18,15 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
+## \defgroup simplesketcher sketcher - Simplified sketcher API
+#  \{
+#  \details
+#  This module provides simplified access to the 2D sketcher functionality of Geometry module.
+#  
+#  \note This module is deprecated, refer to \ref gsketcher for more details
+#  \}
+
 """
 This module provides the user with a simple python API to realize
 various sketches from the GEOM text user interface.
@@ -60,6 +69,8 @@ except:
     geompyEnable = False
     pass
 
+##
+#  \ingroup simplesketcher
 class Sketcher:
 
     __sketch = None

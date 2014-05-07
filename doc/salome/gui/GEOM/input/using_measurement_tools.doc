@@ -16,6 +16,7 @@
 <li>\subpage min_distance_page "Min. distance"</li>
 <li>\subpage angle_page "Angle"</li>
 <li>\subpage tolerance_page "Tolerance"</li>
+<li>\subpage managing_dimensions_page "Dimensions"</li>
 <li>\subpage whatis_page "WhatIs"</li>
 </ul>
 
@@ -28,13 +29,6 @@
 <li>\subpage check_compound_of_blocks_page "Check compound of blocks"</li>
 <li>\subpage get_non_blocks_page "Get non blocks"</li>
 <li>\subpage check_self_intersections_page "Detect Self-intersections"</li>
-</ul>
-
-\n Or to measure dimensions of the shape elements:
-
-<ul>
-<li>\subpage managing_dimensions_page "Manage Dimensions"</li>
-<li>\subpage add_dimension_page "Add Dimension"</li>
 </ul>
 
 \n Our <b>TUI Scripts</b> show how to use
