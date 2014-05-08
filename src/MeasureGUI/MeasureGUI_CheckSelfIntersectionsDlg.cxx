@@ -144,7 +144,7 @@ void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
     isFailed = true;
   }
 
-  if (!anOper->IsDone()) {
+  if (!anOper->IsDone() && myInters->length() == 0) {
     aMsg += tr(anOper->GetErrorCode());
     myGrp->TextView1->setText(aMsg);
     return;
@@ -162,6 +162,12 @@ void MeasureGUI_CheckSelfIntersectionsDlg::processObject()
   else {
     aMsg += tr("GEOM_SELF_INTERSECTIONS_FOUND");
   }
+
+  if (!anOper->IsDone()) {
+    aMsg += "\n\n";
+    aMsg += tr("GEOM_CHECK_SELF_INTERSECTIONS_ERRORS");
+  }
+
   myGrp->TextView1->setText(aMsg);
 
   // Pairs

@@ -428,6 +428,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Some self-intersections detected</translation>
     </message>
     <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
+        <translation>Warning: there were errors during the operation, so the list may be incomplete.</translation>
+    </message>
+    <message>
         <source>GEOM_CIRCLE</source>
         <translation>Circle</translation>
     </message>

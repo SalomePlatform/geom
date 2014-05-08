@@ -41,7 +41,6 @@
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPDS_DS.hxx>
 #include <BOPDS_MapOfPassKey.hxx>
-#include <BRep_Builder.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
@@ -65,7 +64,6 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
-#include <TopoDS_Compound.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfIntegerListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -1543,8 +1541,6 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   if (aShape.IsNull()) return isGood;
 
   // 0. Prepare data
-  BRep_Builder aBB;
-  TopoDS_Compound aCS;
   TopoDS_Shape aScopy;
   //
   GEOMAlgo_AlgoTools::CopyShape(aShape, aScopy);
@@ -1552,9 +1548,6 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   // Map sub-shapes and their indices
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aScopy, anIndices);
-
-  aBB.MakeCompound(aCS);
-  aBB.Add(aCS, aScopy);
 
   BOPCol_ListOfShape aLCS;
   aLCS.Append(aScopy);
@@ -1565,9 +1558,6 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   // 1. Launch the checker
   aCSI.Perform();
   Standard_Integer iErr = aCSI.ErrorStatus();
-  if (iErr) {
-    return false; // Error
-  }
 
   isGood = true;
   //
@@ -1596,7 +1586,10 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
     isGood = false;
   }
 
-  SetErrorCode(OK);
+  if (!iErr) {
+    SetErrorCode(OK);
+  }
+
   return isGood;
 }
 
