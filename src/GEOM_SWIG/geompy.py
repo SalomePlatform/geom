@@ -75,5 +75,9 @@ geompy = geomBuilder.New(salome.myStudy)
 
 See also GEOM User's Guide for more details
 
+WARNING:
+The geompy.py module works correctly only in first created study.
+It does not work in second, third, etc studies!
+
 ===============================================================================
 """
