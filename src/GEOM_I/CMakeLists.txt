@@ -55,22 +55,22 @@ SET(_link_LIBRARIES
 # --- headers ---
 
 SET(GEOMEngine_HEADERS
-  # GEOM_Object_i.hh
-  # GEOM_IOperations_i.hh
-  # GEOM_IBasicOperations_i.hh
-  # GEOM_IHealingOperations_i.hh
-  # GEOM_I3DPrimOperations_i.hh
-  # GEOM_IShapesOperations_i.hh
-  # GEOM_IBlocksOperations_i.hh
-  # GEOM_IBooleanOperations_i.hh
-  # GEOM_ICurvesOperations_i.hh
-  # GEOM_ILocalOperations_i.hh
-  # GEOM_IInsertOperations_i.hh
-  # GEOM_ITransformOperations_i.hh
-  # GEOM_IMeasureOperations_i.hh
-  # GEOM_IGroupOperations_i.hh
-  # GEOM_Gen_i.hh
-  # GEOM_GEOM_I.hxx
+  GEOM_Object_i.hh
+  GEOM_IOperations_i.hh
+  GEOM_IBasicOperations_i.hh
+  GEOM_IHealingOperations_i.hh
+  GEOM_I3DPrimOperations_i.hh
+  GEOM_IShapesOperations_i.hh
+  GEOM_IBlocksOperations_i.hh
+  GEOM_IBooleanOperations_i.hh
+  GEOM_ICurvesOperations_i.hh
+  GEOM_ILocalOperations_i.hh
+  GEOM_IInsertOperations_i.hh
+  GEOM_ITransformOperations_i.hh
+  GEOM_IMeasureOperations_i.hh
+  GEOM_IGroupOperations_i.hh
+  GEOM_Gen_i.hh
+  GEOM_GEOM_I.hxx
   GEOM_wrap.hxx
   )
 # --- sources ---
