@@ -29,7 +29,6 @@
 
 #include <GeometryGUI.h>
 #include "GeometryGUI_Operations.h"
-#include <GEOMBase.h>
 #include <GEOM_Operation.h>
 #include <GEOM_Displayer.h>
 
@@ -1042,6 +1041,146 @@ void GEOMToolsGUI::deactivate()
     GEOM_Displayer aDisp (appStudy);
     aDisp.GlobalSelection();
     getGeometryGUI()->setLocalSelectionMode(GEOM_ALLOBJECTS);
+  }
+}
+
+//=======================================================================
+// function : 
+// purpose  : 
+//=======================================================================
+std::string GEOMToolsGUI::getDependencyTree( QStringList rootObjectIORs )
+{
+  // fill in the tree structure
+  DependencyTree tree;
+  foreach( QString ior, rootObjectIORs ) {
+    GEOM::GEOM_Object_ptr anObj = GEOMBase::GetObjectFromIOR( ior );
+    QList<NodeLevel> upLevelList;
+    getUpwardDependency( anObj, upLevelList );
+    QList<NodeLevel> downLevelList;
+    getDownwardDependency( anObj, downLevelList );
+    tree.insert( ior, QPair<QList<NodeLevel>, QList<NodeLevel> >( upLevelList, downLevelList ) );
+  }
+  // translation the tree into string
+  std::string treeStr;
+  DependencyTree::iterator i;
+  for ( i = tree.begin(); i != tree.end(); ++i ) {
+    treeStr.append( i.key().toUtf8().constData() );
+    treeStr.append( "-" );
+    QList<NodeLevel> upLevelList = i.value().first;
+    treeStr.append( "upward" );
+    treeStr.append( "{" );
+    foreach( NodeLevel level, upLevelList ) {
+      NodeLevel::iterator upIter;
+      for ( upIter = level.begin(); upIter != level.end(); ++upIter ) {
+        treeStr.append( upIter.key().toUtf8().constData() );
+        treeStr.append( "_" );
+        treeStr.append( QStringList(upIter.value()).join("_").toUtf8().constData() );
+        treeStr.append( upIter+1 == level.end() ? ";" : "," );
+      }
+    }
+    treeStr.append( "}" );
+    QList<NodeLevel> downLevelList = i.value().second;
+    treeStr.append( "downward" );
+    treeStr.append( "{" );
+    foreach( NodeLevel level, downLevelList ) {
+      NodeLevel::iterator downIter;
+      for ( downIter = level.begin(); downIter != level.end(); ++downIter ) {
+        treeStr.append( downIter.key().toUtf8().constData() );
+        treeStr.append( "_" );
+        treeStr.append( QStringList(downIter.value()).join("_").toUtf8().constData() );
+        treeStr.append( downIter+1 == level.end() ? ";" : "," );
+      }
+    }
+    treeStr.append("}");
+  }
+  return treeStr;
+}
+
+//=======================================================================
+// function : 
+// purpose  : 
+//=======================================================================
+void GEOMToolsGUI::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+                                        QList<NodeLevel> &upLevelList,  
+                                        int level )
+{
+  QString aGboIOR = GEOMBase::GetIORFromObject(GEOM::GEOM_Object::_narrow(gbo));
+  GEOM::ListOfGBO_var depList = gbo->GetDependency();
+  for( int j = 0; j < depList->length(); j++ ) {
+    if ( level > 0 ) {
+      QStringList anIORs;
+      NodeLevel aLevelMap;
+      if ( level-1 >= upLevelList.size() ) {
+        upLevelList.append( aLevelMap );
+      } else {
+        aLevelMap = upLevelList.at(level-1);
+        if ( aLevelMap.contains( aGboIOR ) )
+          anIORs = aLevelMap.value( aGboIOR );
+      }
+      anIORs << GEOMBase::GetIORFromObject(GEOM::GEOM_Object::_narrow(depList[j]));
+      aLevelMap.insert( aGboIOR, anIORs );
+    }
+    getUpwardDependency(depList[j], upLevelList, level++);
+  }
+}
+
+//=======================================================================
+// function : 
+// purpose  : 
+//=======================================================================
+void GEOMToolsGUI::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+                                          QList<NodeLevel> &downLevelList, 
+                                          int level )
+{
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app )
+    return;
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !appStudy )
+    return;
+
+  _PTR(Study) aStudy = appStudy->studyDS();
+
+  // get GEOM component
+  CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
+  QString geomComp = getParentComponent( aStudy->FindObjectIOR( geomIOR.in() ) );
+
+  _PTR(SObject) comp = aStudy->FindObjectID( geomComp.toLatin1().data() );
+  if ( !comp )
+    return;
+
+  _PTR(ChildIterator) it ( aStudy->NewChildIterator( comp ) );
+  for ( it->InitEx( true ); it->More(); it->Next() ) {
+    _PTR(SObject) child( it->Value() );
+    CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( child );
+    GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+    if( CORBA::is_nil( geomObj ) )
+      continue;
+
+    GEOM::ListOfGBO_var depList = geomObj->GetDependency();
+    if( depList->length() == 0 )
+      continue;
+    QString aGoIOR = GEOMBase::GetIORFromObject( geomObj );
+
+    for( int i = 0; i < depList->length(); i++ ) {
+      if ( depList[i]->IsSame( gbo ) ) {
+        QStringList anIORs;
+        NodeLevel aLevelMap;
+        if ( level >= downLevelList.size() ) {
+          aLevelMap = NodeLevel();
+          downLevelList.append( aLevelMap );
+        } else {
+          aLevelMap = downLevelList.at(level);
+          if ( aLevelMap.contains( aGoIOR ) )
+            anIORs = aLevelMap.value( aGoIOR );
+        }
+        anIORs << GEOMBase::GetIORFromObject(GEOM::GEOM_Object::_narrow(depList[i]));
+        aLevelMap.insert( aGoIOR, anIORs );
+      }
+    }
+    getDownwardDependency(geomObj, downLevelList, level++);
   }
 }
 

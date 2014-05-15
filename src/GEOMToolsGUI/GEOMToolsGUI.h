@@ -30,6 +30,7 @@
 #include "GEOM_ToolsGUI.hxx"
 
 #include <GEOMGUI.h>
+#include <GEOMBase.h>
 #include <SALOMEDSClient.hxx>
 
 class GEOM_Displayer;
@@ -42,6 +43,11 @@ class Handle_SALOME_InteractiveObject;
 class Handle_AIS_InteractiveContext;
 
 #include <QList>
+#include <QMap>
+#include <QPair>
+
+typedef QMap< QString, QStringList > NodeLevel;
+typedef QMap< QString, QPair<QList<NodeLevel>, QList<NodeLevel> > > DependencyTree;
 
 //=================================================================================
 // class    : GEOMToolsGUI
@@ -59,6 +65,14 @@ public:
   virtual void deactivate();
 
   enum ActionType { SHOWDLG, INCR, DECR };
+
+  std::string getDependencyTree( QStringList rootObjectIORs );
+  void getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+                            QList<NodeLevel> &upLevelList,  
+                            int level = 0 );
+  void getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+                              QList<NodeLevel> &downLevelList, 
+                              int level = 0 );
 
 private:
   // Import and export topology methods
