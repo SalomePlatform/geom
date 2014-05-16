@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS>
+<TS version="2.0" language="ja" sourcelanguage="en">
   <context>
     <name>@default</name>
-    <message>
-        <source>MEN_TEXTURE</source>
-        <translation type="unfinished">Texture</translation>
-    </message>
-    <message>
-        <source>GEOM_WRN_FACES_NOT_SHELL</source>
-        <translation type="unfinished">Unable to create a shell. Result is a compound of faces.</translation>
-    </message>
     <message>
       <source>BRep_API: command not done</source>
       <translation>エラー: オブジェクトをビルドできませんでした</translation>
@@ -380,6 +372,26 @@
       <translation>サブオブジェクト</translation>
     </message>
     <message>
+      <source>GEOM_CHECK_BLOCKS_NOT_BLOCK</source>
+      <translation>GEOM_CHECK_BLOCKS_NOT_BLOCK</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_BLOCKS_EXTRA_EDGE</source>
+      <translation>GEOM_CHECK_BLOCKS_EXTRA_EDGE</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_BLOCKS_INVALID_CONNECTION</source>
+      <translation>GEOM_CHECK_BLOCKS_INVALID_CONNECTION</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_BLOCKS_NOT_CONNECTED</source>
+      <translation>GEOM_CHECK_BLOCKS_NOT_CONNECTED</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_BLOCKS_NOT_GLUED</source>
+      <translation>GEOM_CHECK_BLOCKS_NOT_GLUED</translation>
+    </message>
+    <message>
       <source>GEOM_GETNONBLOCKS_TITLE</source>
       <translation>四角形の固体非 hexahedres と顔以外-上側を取得します。</translation>
     </message>
@@ -396,28 +408,24 @@
       <translation>オブジェクトとその位相情報</translation>
     </message>
     <message>
-      <source>GEOM_CHECK_SHAPE</source>
-      <translation>コントロール オブジェクト</translation>
-    </message>
-    <message>
-      <source>GEOM_CHECK_TITLE</source>
-      <translation>オブジェクトの有効性を確認します。</translation>
-    </message>
-    <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
-      <translation>自動交差点を検出します。</translation>
+      <translation>自己交差を検出します。</translation>
     </message>
     <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
-      <translation>自動交差点の検出に失敗しました</translation>
+      <translation>自己交差の検出に失敗しました</translation>
     </message>
     <message>
       <source>GEOM_NO_SELF_INTERSECTIONS</source>
-      <translation>ジオメトリの交差がないです。</translation>
+      <translation>自己交差形状ではありません。</translation>
     </message>
     <message>
       <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
-      <translation>交差部分の自動検出</translation>
+      <translation>自己交差が検出されました。</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
+      <translation>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</translation>
     </message>
     <message>
       <source>GEOM_CIRCLE</source>
@@ -1585,7 +1593,7 @@
     </message>
     <message>
       <source>GEOM_REVERSE</source>
-      <translation>裏返し</translation>
+      <translation>反転</translation>
     </message>
     <message>
       <source>GEOM_REVERSE_DIRECTION</source>
@@ -2320,6 +2328,10 @@
       <translation>注意</translation>
     </message>
     <message>
+      <source>GEOM_WRN_FACES_NOT_SHELL</source>
+      <translation>GEOM_WRN_FACES_NOT_SHELL</translation>
+    </message>
+    <message>
       <source>WRN_SHAPE_UNCLOSED</source>
       <translation>閉じていないオブジェクト %1 からソリッドを作成できません</translation>
     </message>
@@ -3008,6 +3020,10 @@
       <translation>材料の特性</translation>
     </message>
     <message>
+      <source>MEN_TEXTURE</source>
+      <translation>MEN_TEXTURE</translation>
+    </message>
+    <message>
       <source>MEN_TORUS</source>
       <translation>円環</translation>
     </message>
@@ -3244,40 +3260,40 @@
       <translation>フォア グラウンドで自動的に表示されます。</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS</source>
-        <translation type="unfinished">Dimensions (Measurements)</translation>
+      <source>PREF_DIMENSIONS</source>
+      <translation>PREF_DIMENSIONS</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_COLOR</source>
-        <translation type="unfinished">Color</translation>
+      <source>PREF_DIMENSIONS_COLOR</source>
+      <translation>PREF_DIMENSIONS_COLOR</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_LINE_WIDTH</source>
-        <translation type="unfinished">Line width</translation>
+      <source>PREF_DIMENSIONS_LINE_WIDTH</source>
+      <translation>PREF_DIMENSIONS_LINE_WIDTH</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-        <translation type="unfinished">Font height</translation>
+      <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
+      <translation>PREF_DIMENSIONS_FONT_HEIGHT</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
-        <translation type="unfinished">Length of arrows</translation>
+      <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
+      <translation>PREF_DIMENSIONS_ARROW_LENGTH</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_LENGTH_UNITS</source>
-        <translation type="unfinished">Length measurement units</translation>
+      <source>PREF_DIMENSIONS_LENGTH_UNITS</source>
+      <translation>PREF_DIMENSIONS_LENGTH_UNITS</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_ANGLE_UNITS</source>
-        <translation type="unfinished">Angle measurement units</translation>
+      <source>PREF_DIMENSIONS_ANGLE_UNITS</source>
+      <translation>PREF_DIMENSIONS_ANGLE_UNITS</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_DEFAULT_FLYOUT</source>
-        <translation type="unfinished">Default flyout length</translation>
+      <source>PREF_DIMENSIONS_DEFAULT_FLYOUT</source>
+      <translation>PREF_DIMENSIONS_DEFAULT_FLYOUT</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_SHOW_UNITS</source>
-        <translation type="unfinished">Show units of measurement</translation>
+      <source>PREF_DIMENSIONS_SHOW_UNITS</source>
+      <translation>PREF_DIMENSIONS_SHOW_UNITS</translation>
     </message>
     <message>
       <source>PREF_ISOS</source>
@@ -3393,7 +3409,7 @@
     </message>
     <message>
       <source>STB_CHECK_SELF_INTERSECTIONS</source>
-      <translation>自動交差点を検出します。</translation>
+      <translation>自己交差の確認</translation>
     </message>
     <message>
       <source>STB_CHECK_FREE_BNDS</source>
@@ -4053,7 +4069,7 @@
     </message>
     <message>
       <source>TOP_CHECK_SELF_INTERSECTIONS</source>
-      <translation>自動交差点の検出</translation>
+      <translation>自己交差の確認</translation>
     </message>
     <message>
       <source>TOP_CHECK_FREE_BNDS</source>
@@ -4589,15 +4605,15 @@
     </message>
     <message>
       <source>GEOM_MEASURE_ANGLE_DEG</source>
-      <translation>角度(degree):</translation>
+      <translation>GEOM_MEASURE_ANGLE_DEG</translation>
     </message>
     <message>
-        <source>GEOM_MEASURE_ANGLE_RAD</source>
-        <translation type="unfinished">Angle in radians :</translation>
+      <source>GEOM_MEASURE_ANGLE_RAD</source>
+      <translation>GEOM_MEASURE_ANGLE_RAD</translation>
     </message>
     <message>
       <source>GEOM_LINE_INTERSECTION</source>
-      <translation>線の交点</translation>
+      <translation>線と点の交差の確認</translation>
     </message>
     <message>
       <source>GEOM_KEEP_NONLIMIT_SHAPES</source>
@@ -4638,6 +4654,10 @@
     <message>
       <source>GEOM_REMOVE_EXTRA_EDGES_TITLE</source>
       <translation>不要なエッジを削除</translation>
+    </message>
+    <message>
+      <source>GEOM_BOOL_REMOVE_EXTRA_EDGES</source>
+      <translation>GEOM_BOOL_REMOVE_EXTRA_EDGES</translation>
     </message>
     <message>
       <source>GEOM_REMOVE_EXTRA_EDGES</source>
@@ -4725,39 +4745,39 @@
     </message>
     <message>
       <source>TOP_MANAGE_DIMENSIONS</source>
-      <translation type="unfinished">Manage dimensions</translation>
+      <translation>TOP_MANAGE_DIMENSIONS</translation>
     </message>
     <message>
       <source>MEN_MANAGE_DIMENSIONS</source>
-      <translation type="unfinished">Manage dimensions</translation>
+      <translation>MEN_MANAGE_DIMENSIONS</translation>
     </message>
     <message>
       <source>STB_MANAGE_DIMENSIONS</source>
-      <translation type="unfinished">Manage measurement dimensions of an object</translation>
+      <translation>STB_MANAGE_DIMENSIONS</translation>
     </message>
     <message>
       <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all dimensions</translation>
+      <translation>MEN_POP_SHOW_ALL_DIMENSIONS</translation>
     </message>
     <message>
       <source>STB_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all hidden measures (dimension) created for the object</translation>
+      <translation>STB_POP_SHOW_ALL_DIMENSIONS</translation>
     </message>
     <message>
       <source>TOP_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all hidden measures (dimension) created for the object</translation>
+      <translation>TOP_POP_SHOW_ALL_DIMENSIONS</translation>
     </message>
     <message>
       <source>MEN_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Hide all dimensions</translation>
+      <translation>MEN_POP_HIDE_ALL_DIMENSIONS</translation>
     </message>
     <message>
       <source>STB_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all visible measures (dimension) created for the object</translation>
+      <translation>STB_POP_HIDE_ALL_DIMENSIONS</translation>
     </message>
     <message>
       <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation type="unfinished">Show all visible measures (dimension) created for the object</translation>
+      <translation>TOP_POP_HIDE_ALL_DIMENSIONS</translation>
     </message>
     <message>
       <source>TOP_POP_AUTO_COLOR</source>
@@ -4989,11 +5009,11 @@
     </message>
     <message>
       <source>GEOM_RESTORE_SUB_SHAPES</source>
-      <translation>グループとサブオブジェクトを取得します。</translation>
+      <translation>グループとサブオブジェクトを継承します。</translation>
     </message>
     <message>
       <source>GEOM_RSS_ADD_FREFIX</source>
-      <translation>復元されたサブオブジェクトの名前にプレフィックスを追加します。</translation>
+      <translation>継承したサブオブジェクトの名前にプレフィックスを追加します。</translation>
     </message>
     <message>
       <source>GEOM_PREVIEW</source>
@@ -5090,6 +5110,10 @@
     <message>
       <source>GEOM_IMPORTEXPORT_204</source>
       <translation>エクスポートしました。</translation>
+    </message>
+    <message>
+      <source>GEOM_SELECT_IMPORT_XAO</source>
+      <translation>GEOM_SELECT_IMPORT_XAO</translation>
     </message>
     <message>
       <source>GEOM_SELECT_EXPORT_XAO</source>
@@ -5937,11 +5961,11 @@
     </message>
     <message>
       <source>GEOM_PARTS_OF_SHAPE2</source>
-      <translation>セカンダリ オブジェクトの幾何学的な部品</translation>
+      <translation>セカンダリオブジェクトのジオメトリパーツ</translation>
     </message>
     <message>
       <source>SUBSHAPES_OF_SHAPE2</source>
-      <translation>サブオブジェクトのみセカンダリ オブジェクトの</translation>
+      <translation>セカンダリオブジェクトのサブオブジェクトのみ</translation>
     </message>
     <message>
       <source>SECOND_SHAPE</source>
@@ -5984,10 +6008,6 @@
     <message>
       <source>DATA_TYPE</source>
       <translation>タイプ</translation>
-    </message>
-    <message>
-      <source></source>
-      <translation type="unfinished"/>
     </message>
     <message>
       <source>BOOL</source>
@@ -6147,159 +6167,310 @@
   <context>
     <name>MeasureGUI_ManageDimensionsDlg</name>
     <message>
-        <source>MANAGE_DIMENSIONS_TITLE</source>
-        <translation type="unfinished">Manage dimensions</translation>
+      <source>MANAGE_DIMENSIONS_TITLE</source>
+      <translation>MANAGE_DIMENSIONS_TITLE</translation>
     </message>
     <message>
-        <source>OBJECT_LABEL</source>
-        <translation type="unfinished">Object</translation>
+      <source>OBJECT_LABEL</source>
+      <translation>OBJECT_LABEL</translation>
     </message>
     <message>
-        <source>DIMENSIONS_GROUP</source>
-        <translation type="unfinished">Dimensions</translation>
+      <source>DIMENSIONS_GROUP</source>
+      <translation>DIMENSIONS_GROUP</translation>
     </message>
     <message>
-        <source>ADD_BTN</source>
-        <translation type="unfinished">Add</translation>
+      <source>ADD_BTN</source>
+      <translation>ADD_BTN</translation>
     </message>
     <message>
-        <source>REMOVE_BTN</source>
-        <translation type="unfinished">Remove</translation>
+      <source>REMOVE_BTN</source>
+      <translation>REMOVE_BTN</translation>
     </message>
     <message>
-        <source>SHOW_ALL_BTN</source>
-        <translation type="unfinished">Show all</translation>
+      <source>SHOW_ALL_BTN</source>
+      <translation>SHOW_ALL_BTN</translation>
     </message>
     <message>
       <source>HIDE_ALL_BTN</source>
-      <translation type="unfinished">Hide all</translation>
+      <translation>HIDE_ALL_BTN</translation>
     </message>
     <message>
       <source>DISTANCE_ITEM</source>
-      <translation type="unfinished">Distance</translation>
+      <translation>DISTANCE_ITEM</translation>
     </message>
     <message>
       <source>DIAMETER_ITEM</source>
-      <translation type="unfinished">Diameter</translation>
+      <translation>DIAMETER_ITEM</translation>
     </message>
     <message>
       <source>ANGLE_ITEM</source>
-      <translation type="unfinished">Angle</translation>
+      <translation>ANGLE_ITEM</translation>
     </message>
     <message>
       <source>WRN_TITLE_UNSAVED</source>
-      <translation type="unfinished">Unsaved changes</translation>
+      <translation>WRN_TITLE_UNSAVED</translation>
     </message>
     <message>
       <source>WRN_MSG_CHANGES_LOST</source>
-      <translation type="unfinished">The unsaved changes will be lost.
-Do you wish to continue?</translation>
+      <translation>WRN_MSG_CHANGES_LOST</translation>
     </message>
     <message>
       <source>WRN_MSG_CHANGES_SAVE</source>
-      <translation type="unfinished">The unsaved changes will be lost.
-Do you wish to save them?</translation>
+      <translation>WRN_MSG_CHANGES_SAVE</translation>
     </message>
     <message>
       <source>WRN_MSG_UNSAVED</source>
-      <translation type="unfinished">The unsaved changes will be lost.
-Do you want to continue?</translation>
+      <translation>WRN_MSG_UNSAVED</translation>
     </message>
   </context>
   <context>
     <name>MeasureGUI_CreateDimensionDlg</name>
     <message>
-        <source>CREATE_DIMENSION_TITLE</source>
-        <translation type="unfinished">Add dimension</translation>
+      <source>CREATE_DIMENSION_TITLE</source>
+      <translation>CREATE_DIMENSION_TITLE</translation>
     </message>
     <message>
-        <source>DIMENSIONS</source>
-        <translation type="unfinished">Dimensions</translation>
+      <source>DIMENSIONS</source>
+      <translation>DIMENSIONS</translation>
     </message>
     <message>
-        <source>LENGTH</source>
-        <translation type="unfinished">Length</translation>
+      <source>LENGTH</source>
+      <translation>LENGTH</translation>
     </message>
     <message>
-        <source>DIAMETER</source>
-        <translation type="unfinished">Diameter</translation>
+      <source>DIAMETER</source>
+      <translation>DIAMETER</translation>
     </message>
     <message>
-        <source>ANGLE</source>
-        <translation type="unfinished">Angle</translation>
+      <source>ANGLE</source>
+      <translation>ANGLE</translation>
     </message>
     <message>
-        <source>ARGUMENTS</source>
-        <translation type="unfinished">Arguments</translation>
+      <source>ARGUMENTS</source>
+      <translation>ARGUMENTS</translation>
     </message>
     <message>
-        <source>EDGE_LENGTH</source>
-        <translation type="unfinished">Edge length</translation>
+      <source>EDGE_LENGTH</source>
+      <translation>EDGE_LENGTH</translation>
     </message>
     <message>
-        <source>TWO_POINTS</source>
-        <translation type="unfinished">Two points</translation>
+      <source>TWO_POINTS</source>
+      <translation>TWO_POINTS</translation>
     </message>
     <message>
-        <source>PARALLEL_EDGES</source>
-        <translation type="unfinished">Parallel edges</translation>
+      <source>PARALLEL_EDGES</source>
+      <translation>PARALLEL_EDGES</translation>
     </message>
     <message>
-        <source>TWO_EDGES</source>
-        <translation type="unfinished">Two edges</translation>
+      <source>TWO_EDGES</source>
+      <translation>TWO_EDGES</translation>
     </message>
     <message>
-        <source>THREE_POINTS</source>
-        <translation type="unfinished">Three points</translation>
+      <source>THREE_POINTS</source>
+      <translation>THREE_POINTS</translation>
     </message>
     <message>
-        <source>EDGE</source>
-        <translation type="unfinished">Edge</translation>
+      <source>EDGE</source>
+      <translation>EDGE</translation>
     </message>
     <message>
-        <source>EDGE_1</source>
-        <translation type="unfinished">Edge 1</translation>
+      <source>EDGE_1</source>
+      <translation>EDGE_1</translation>
     </message>
     <message>
-        <source>EDGE_2</source>
-        <translation type="unfinished">Edge 2</translation>
+      <source>EDGE_2</source>
+      <translation>EDGE_2</translation>
     </message>
     <message>
-        <source>POINT_1</source>
-        <translation type="unfinished">Point 1</translation>
+      <source>POINT_1</source>
+      <translation>POINT_1</translation>
     </message>
     <message>
-        <source>POINT_2</source>
-        <translation type="unfinished">Point 2</translation>
+      <source>POINT_2</source>
+      <translation>POINT_2</translation>
     </message>
     <message>
-        <source>POINT_3</source>
-        <translation type="unfinished">Point 3</translation>
+      <source>POINT_3</source>
+      <translation>POINT_3</translation>
     </message>
     <message>
-        <source>OBJECT</source>
-        <translation type="unfinished">Object</translation>
+      <source>OBJECT</source>
+      <translation>OBJECT</translation>
     </message>
     <message>
-        <source>NAME_LENGTH</source>
-        <translation type="unfinished">Length</translation>
+      <source>NAME_LENGTH</source>
+      <translation>NAME_LENGTH</translation>
     </message>
     <message>
-        <source>NAME_DIAMETER</source>
-        <translation type="unfinished">Diameter</translation>
+      <source>NAME_DIAMETER</source>
+      <translation>NAME_DIAMETER</translation>
     </message>
     <message>
-        <source>NAME_ANGLE</source>
-        <translation type="unfinished">Angle</translation>
+      <source>NAME_ANGLE</source>
+      <translation>NAME_ANGLE</translation>
     </message>
     <message>
-        <source>WARNING_TITLE_CANNOT_CREATE_DIMENSION</source>
-        <translation type="unfinished">Can not create dimension</translation>
+      <source>WARNING_TITLE_CANNOT_CREATE_DIMENSION</source>
+      <translation>WARNING_TITLE_CANNOT_CREATE_DIMENSION</translation>
     </message>
     <message>
-        <source>WARNING_MSG_INVALID_ARGUMENTS</source>
-        <translation type="unfinished">The dimension can not be created for the specified arguments.
-Please specify suitable arguments.</translation>
+      <source>WARNING_MSG_INVALID_ARGUMENTS</source>
+      <translation>WARNING_MSG_INVALID_ARGUMENTS</translation>
+    </message>
+  </context>
+  <context>
+    <name>MeasureGUI_CheckShapeDlg</name>
+    <message>
+      <source>GEOM_CHECK_TITLE</source>
+      <translation>GEOM_CHECK_TITLE</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_SHAPE</source>
+      <translation>GEOM_CHECK_SHAPE</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_SHAPE_NAME</source>
+      <translation>GEOM_CHECK_SHAPE_NAME</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_SHAPE_VALID</source>
+      <translation>GEOM_CHECK_SHAPE_VALID</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_SHAPE_NOT_VALID</source>
+      <translation>GEOM_CHECK_SHAPE_NOT_VALID</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_POINT_ON_CURVE</source>
+      <translation>CHECK_ERROR_INVALID_POINT_ON_CURVE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_POINT_ON_CURVE_ON_SURFACE</source>
+      <translation>CHECK_ERROR_INVALID_POINT_ON_CURVE_ON_SURFACE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_POINT_ON_SURFACE</source>
+      <translation>CHECK_ERROR_INVALID_POINT_ON_SURFACE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_NO_3D_CURVE</source>
+      <translation>CHECK_ERROR_NO_3D_CURVE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_MULTIPLE_3D_CURVE</source>
+      <translation>CHECK_ERROR_MULTIPLE_3D_CURVE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_3D_CURVE</source>
+      <translation>CHECK_ERROR_INVALID_3D_CURVE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_NO_CURVE_ON_SURFACE</source>
+      <translation>CHECK_ERROR_NO_CURVE_ON_SURFACE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_CURVE_ON_SURFACE</source>
+      <translation>CHECK_ERROR_INVALID_CURVE_ON_SURFACE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_CURVE_ON_CLOSED_SURFACE</source>
+      <translation>CHECK_ERROR_INVALID_CURVE_ON_CLOSED_SURFACE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_SAME_RANGE_FLAG</source>
+      <translation>CHECK_ERROR_INVALID_SAME_RANGE_FLAG</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_SAME_PARAMETER_FLAG</source>
+      <translation>CHECK_ERROR_INVALID_SAME_PARAMETER_FLAG</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_DEGENERATED_FLAG</source>
+      <translation>CHECK_ERROR_INVALID_DEGENERATED_FLAG</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_FREE_EDGE</source>
+      <translation>CHECK_ERROR_FREE_EDGE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_MULTI_CONNEXITY</source>
+      <translation>CHECK_ERROR_INVALID_MULTI_CONNEXITY</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_RANGE</source>
+      <translation>CHECK_ERROR_INVALID_RANGE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_EMPTY_WIRE</source>
+      <translation>CHECK_ERROR_EMPTY_WIRE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_REDUNDANT_EDGE</source>
+      <translation>CHECK_ERROR_REDUNDANT_EDGE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_SELF_INTERSECTING_WIRE</source>
+      <translation>CHECK_ERROR_SELF_INTERSECTING_WIRE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_NO_SURFACE</source>
+      <translation>CHECK_ERROR_NO_SURFACE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_WIRE</source>
+      <translation>CHECK_ERROR_INVALID_WIRE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_REDUNDANT_WIRE</source>
+      <translation>CHECK_ERROR_REDUNDANT_WIRE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INTERSECTING_WIRES</source>
+      <translation>CHECK_ERROR_INTERSECTING_WIRES</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_IMBRICATION_OF_WIRES</source>
+      <translation>CHECK_ERROR_INVALID_IMBRICATION_OF_WIRES</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_EMPTY_SHELL</source>
+      <translation>CHECK_ERROR_EMPTY_SHELL</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_REDUNDANT_FACE</source>
+      <translation>CHECK_ERROR_REDUNDANT_FACE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_UNORIENTABLE_SHAPE</source>
+      <translation>CHECK_ERROR_UNORIENTABLE_SHAPE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_NOT_CLOSED</source>
+      <translation>CHECK_ERROR_NOT_CLOSED</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_NOT_CONNECTED</source>
+      <translation>CHECK_ERROR_NOT_CONNECTED</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_SUBSHAPE_NOT_IN_SHAPE</source>
+      <translation>CHECK_ERROR_SUBSHAPE_NOT_IN_SHAPE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_BAD_ORIENTATION</source>
+      <translation>CHECK_ERROR_BAD_ORIENTATION</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_BAD_ORIENTATION_OF_SUBSHAPE</source>
+      <translation>CHECK_ERROR_BAD_ORIENTATION_OF_SUBSHAPE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_INVALID_TOLERANCE_VALUE</source>
+      <translation>CHECK_ERROR_INVALID_TOLERANCE_VALUE</translation>
+    </message>
+    <message>
+      <source>CHECK_ERROR_CHECK_FAIL</source>
+      <translation>CHECK_ERROR_CHECK_FAIL</translation>
     </message>
   </context>
   <context>

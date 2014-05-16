@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS>
+<TS version="2.0" language="ja" sourcelanguage="en">
   <context>
     <name>@default</name>
     <message>
@@ -135,30 +135,6 @@
   <context>
     <name>AdvancedGUI_PipeTShapeDlg</name>
     <message>
-        <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</source>
-        <translation type="unfinished">Incident pipe external Radius (Radius + Width) can't be equal to Incident pipe thickness reduction external Radius (rI + wI)!</translation>
-    </message>
-    <message>
-        <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</source>
-        <translation type="unfinished">Incident pipe Radius can't be equal to Incident pipe thickness reduction Radius (rI)!</translation>
-    </message>
-    <message>
-        <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</source>
-        <translation type="unfinished">Main pipe external Radius (Radius + Width) can't be equal to Right thickness reduction external Radius (rR + wR)!</translation>
-    </message>
-    <message>
-        <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</source>
-        <translation type="unfinished">Main pipe Radius can't be equal to Right thickness reduction Radius (rR)!</translation>
-    </message>
-    <message>
-        <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</source>
-        <translation type="unfinished">Main pipe external Radius (Radius + Width) can't be equal to Left thickness reduction external Radius (rL + wL)!</translation>
-    </message>
-    <message>
-        <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</source>
-        <translation type="unfinished">Main pipe Radius can't be equal to Left thickness reduction Radius (rL)!</translation>
-    </message>
-    <message>
       <source>GEOM_PIPE_TSHAPE_TITLE</source>
       <translation>T型パイプの作成</translation>
     </message>
@@ -270,6 +246,30 @@
       <source>GEOM_PIPETSHAPE_GROUPPOS</source>
       <translation>位置による設定</translation>
     </message>
+    <message>
+      <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</source>
+      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</translation>
+    </message>
+    <message>
+      <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</source>
+      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</translation>
+    </message>
+    <message>
+      <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</source>
+      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</translation>
+    </message>
+    <message>
+      <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</source>
+      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</translation>
+    </message>
+    <message>
+      <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</source>
+      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</translation>
+    </message>
+    <message>
+      <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</source>
+      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</translation>
+    </message>
   </context>
   <context>
     <name>AdvancedGUI_SmoothingSurfaceDlg</name>
@@ -292,6 +292,22 @@
     <message>
       <source>GEOM_SMOOTHINGSURFACE_ARG_POINTS</source>
       <translation>ポイント</translation>
+    </message>
+    <message>
+      <source>GEOM_SMOOTHINGSURFACE_ARG_NB_MAX</source>
+      <translation>GEOM_SMOOTHINGSURFACE_ARG_NB_MAX</translation>
+    </message>
+    <message>
+      <source>GEOM_SMOOTHINGSURFACE_ARG_DEG_MAX</source>
+      <translation>GEOM_SMOOTHINGSURFACE_ARG_DEG_MAX</translation>
+    </message>
+    <message>
+      <source>GEOM_SMOOTHINGSURFACE_ARG_D_MAX</source>
+      <translation>GEOM_SMOOTHINGSURFACE_ARG_D_MAX</translation>
+    </message>
+    <message>
+      <source>GEOM_SMOOTHINGSURFACE_NO_POINTS</source>
+      <translation>GEOM_SMOOTHINGSURFACE_NO_POINTS</translation>
     </message>
   </context>
 </TS>
