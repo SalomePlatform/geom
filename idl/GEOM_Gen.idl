@@ -5089,6 +5089,19 @@ module GEOM
     void Move( in object_list what, 
 	       in SALOMEDS::SObject where, 
 	       in long row );
+
+    /*!
+     * \brief Get dependencies of the given object from other objects in study
+     * \param list of IORs
+     * \return texture byte array
+     * Example of using: 
+     *   SALOMEDS::TMPFile_var SeqFile = 
+     *     myGeometryGUI->GetGeomGen()->GetDependencyTree( aListOfIORs );
+     *   char* buf;
+     *   buf = (char*) &SeqFile[0];
+     */
+    SALOMEDS::TMPFile GetDependencyTree(in string_array strValues);
+
   };
 };
 

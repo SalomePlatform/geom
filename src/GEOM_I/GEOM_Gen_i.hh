@@ -197,6 +197,8 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                                       CORBA::Boolean          theInheritFirstArg,
                                       CORBA::Boolean          theAddPrefix);
 
+  SALOMEDS::TMPFile* GetDependencyTree(const GEOM::string_array&);
+
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
   //-----------------------------------------------------------------------//
