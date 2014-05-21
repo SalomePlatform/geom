@@ -38,6 +38,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
   ${PROJECT_SOURCE_DIR}/src/Material
+  ${PROJECT_SOURCE_DIR}/src/DependencyTree
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -56,6 +57,7 @@ SET(_link_LIBRARIES
   GEOM
   GEOMBase
   Material
+  DependencyTree
   )
 
 # --- headers ---

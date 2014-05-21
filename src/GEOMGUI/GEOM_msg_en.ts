@@ -5025,6 +5025,62 @@ Please, select face, shell or solid and try again</translation>
         <translation>Preview</translation>
     </message>
     <message>
+        <source>PREF_TAB_DEPENDENCY_VIEW</source>
+        <translation>Dependency Tree</translation>
+    </message>
+    <message>
+        <source>PREF_HIERARCHY_TYPE</source>
+        <translation>Hierarchy type</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_ASCENDANTS</source>
+        <translation>Display only ascendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_DESCENDANTS</source>
+        <translation>Display only descendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
+        <translation>Display both ascendants and descendants trees</translation>
+    </message>
+    <message>
+        <source>GEOM_MOVE_POSSIBILITY</source>
+        <translation>Possibility to move nodes</translation>
+    </message>
+    <message>
+        <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
+        <translation>Color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
+        <translation>Background color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
+        <translation>Default node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
+        <translation>Main node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
+        <translation>Selected node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
+        <translation>Arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
+        <translation>Highlighted arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
+        <translation>Selected arrow color</translation>
+    </message>
+    <message>
         <source>GEOM_ALL_IMPORT_FILES</source>
         <translation>All supported formats ( %1 )</translation>
     </message>

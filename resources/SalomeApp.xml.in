@@ -67,6 +67,15 @@
     <parameter name="measures_line_width" value="1" />
     <parameter name="iso_number_u"        value="0" />
     <parameter name="iso_number_v"        value="0" />
+    <parameter name="dependency_tree_hierarchy_type" value="0" />
+    <parameter name="dependency_tree_move_nodes"     value="true" />
+    <parameter name="dependency_tree_background_color" value="255, 255, 255" />
+    <parameter name="dependency_tree_node_color"     value="62, 180, 238" />
+    <parameter name="dependency_tree_main_node_color" value="238, 90, 125" />
+    <parameter name="dependency_tree_select_node_color" value="237, 243, 58" />
+    <parameter name="dependency_tree_arrow_color"    value="0, 0, 130" />
+    <parameter name="dependency_tree_highlight_arrow_color" value="0, 0, 255" />
+    <parameter name="dependency_tree_select_arrow_color" value="255, 0, 0" />
 
     <!-- Dimension presentation properties -->
     <parameter name="dimensions_color"          value="#ffffff" />

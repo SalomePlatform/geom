@@ -90,6 +90,7 @@ private:
   void         OnClsBringToFront();
   void         OnCreateFolder();
   void         OnSortChildren();
+  void         OnShowDependencyTree();
 
   // Shortcut commands
   void         OnChangeTransparency( bool );

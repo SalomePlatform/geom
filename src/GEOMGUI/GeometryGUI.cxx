@@ -75,6 +75,10 @@
 #include <LightApp_DataObject.h>
 #include <LightApp_Preferences.h>
 
+#include <GraphicsView_Viewer.h>
+#include <DependencyTree_View.h>
+#include <DependencyTree_ViewModel.h>
+
 #include <SALOME_LifeCycleCORBA.hxx>
 // #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
@@ -502,6 +506,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpClsBringToFront:    //
   case GEOMOp::OpCreateFolder:       // POPUP MENU - CREATE FOLDER
   case GEOMOp::OpSortChildren:       // POPUP MENU - SORT CHILD ITEMS
+  case GEOMOp::OpShowDependencyTree: // POPUP MENU - SHOW DEPENDENCY TREE
     libName = "GEOMToolsGUI";
     break;
   case GEOMOp::OpDMWireframe:        // MENU VIEW - WIREFRAME
@@ -1077,6 +1082,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
   createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
+  createGeomAction( GEOMOp::OpShowDependencyTree, "POP_SHOW_DEPENDENCY_TREE" );
   createGeomAction( GEOMOp::OpShowAllDimensions, "POP_SHOW_ALL_DIMENSIONS" );
   createGeomAction( GEOMOp::OpHideAllDimensions, "POP_HIDE_ALL_DIMENSIONS" );
 
@@ -1621,6 +1627,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpSortChildren ), -1, -1 ); // Sort child items
   mgr->setRule( action( GEOMOp::OpSortChildren ), QString("client='ObjectBrowser' and $component={'GEOM'} and nbChildren>1"), QtxPopupMgr::VisibleRule );
+
+  mgr->insert( separator(), -1, -1 );     // -----------
+  mgr->insert( action(  GEOMOp::OpShowDependencyTree ), -1, -1 ); // Show dependency tree
+  mgr->setRule( action( GEOMOp::OpShowDependencyTree ), clientOCCorVTKorOB + " and selcount>0" + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 
@@ -2617,6 +2627,50 @@ void GeometryGUI::createPreferences()
 
   addPreference( tr( "GEOM_PREVIEW" ), operationsGroup,
                  LightApp_Preferences::Bool, "Geometry", "geom_preview" );
+
+  int DependencyViewId = addPreference( tr( "PREF_TAB_DEPENDENCY_VIEW" ) );
+
+  int hierarchy_type = addPreference( tr( "PREF_HIERARCHY_TYPE" ), DependencyViewId,
+                      LightApp_Preferences::Selector, "Geometry", "dependency_tree_hierarchy_type" );
+
+  QStringList aHierarchyTypeList;
+  aHierarchyTypeList.append( tr("MEN_BOTH_ASCENDANTS_DESCENDANTS") );
+  aHierarchyTypeList.append( tr("MEN_ONLY_ASCENDANTS") );
+  aHierarchyTypeList.append( tr("MEN_ONLY_DESCENDANTS") );
+
+  QList<QVariant> aHierarchyTypeIndexesList;
+  aHierarchyTypeIndexesList.append(0);
+  aHierarchyTypeIndexesList.append(1);
+  aHierarchyTypeIndexesList.append(2);
+
+  setPreferenceProperty( hierarchy_type, "strings", aHierarchyTypeList );
+  setPreferenceProperty( hierarchy_type, "indexes", aHierarchyTypeIndexesList );
+
+  addPreference( tr( "GEOM_MOVE_POSSIBILITY" ), DependencyViewId,
+                 LightApp_Preferences::Bool, "Geometry", "dependency_tree_move_nodes" );
+
+  int treeColorGroup = addPreference( tr( "PREF_GROUP_DEPENDENCY_VIEW_COLOR" ), DependencyViewId );
+
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_background_color" );
+
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_NODE_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_node_color" );
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_main_node_color" );
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_select_node_color" );
+
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_ARROW_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_arrow_color" );
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_highlight_arrow_color" );
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_select_arrow_color" );
+
+
+
+
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )
@@ -2686,6 +2740,55 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
       }
 
       aDisplayer.UpdateViewer();
+    }
+    else if ( param.startsWith( "dependency_tree") )
+    {
+      SalomeApp_Application* app = getApp();
+      if ( !app ) return;
+
+      SUIT_ViewManager *svm = app->getViewManager( GraphicsView_Viewer::Type(), false );
+      if( !svm ) return;
+
+      if( DependencyTree_ViewModel* viewModel = dynamic_cast<DependencyTree_ViewModel*>( svm->getViewModel() ) )
+        if( DependencyTree_View* view = dynamic_cast<DependencyTree_View*>( viewModel->getActiveViewPort() ) ) {
+          if( param == QString("dependency_tree_hierarchy_type") ) {
+            int hierarchyType = aResourceMgr->integerValue( section, param, 0);
+            view->setHierarchyType( hierarchyType );
+          }
+          else if(  param == QString("dependency_tree_move_nodes") ) {
+            bool isNodesMovable = aResourceMgr->booleanValue( section, param, true);
+            view->setNodesMovable( isNodesMovable );
+          }
+          else if(  param == QString("dependency_tree_background_color") ) {
+            QColor c = aResourceMgr->colorValue( section, param, QColor( 255, 255, 255 ) );
+            view->setPrefBackgroundColor( c );
+          }
+          else if(  param == QString("dependency_tree_node_color") ) {
+            QColor c = aResourceMgr->colorValue( section, param, QColor( 62, 180, 238 ) );
+            view->setNodeColor( c );
+          }
+          else if(  param == QString("dependency_tree_main_node_color") ) {
+            QColor c = aResourceMgr->colorValue( section, param, QColor( 238, 90, 125 ) );
+            view->setMainNodeColor( c );
+          }
+          else if(  param == QString("dependency_tree_select_node_color") ) {
+            QColor c = aResourceMgr->colorValue( section, param, QColor( 237, 243, 58 ) );
+            view->setSelectNodeColor( c );
+          }
+          else if(  param == QString("dependency_tree_arrow_color") ) {
+            QColor c = aResourceMgr->colorValue( section, param, QColor( 0, 0, 130 ) );
+            view->setArrowColor( c );
+          }
+          else if(  param == QString("dependency_tree_highlight_arrow_color") ) {
+            QColor c = aResourceMgr->colorValue( section, param, QColor( 0, 0, 255 ) );
+            view->setHighlightArrowColor( c );
+          }
+          else if(  param == QString("dependency_tree_select_arrow_color") ) {
+            QColor c = aResourceMgr->colorValue( section, param, QColor( 255, 0, 0 ) );
+            view->setSelectArrowColor( c );
+          }
+
+      }
     }
   }
 }

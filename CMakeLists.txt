@@ -243,7 +243,7 @@ IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
     AdvancedGUI BasicGUI BlocksGUI BooleanGUI BuildGUI DisplayGUI DlgRef EntityGUI GEOMBase
     GEOMFiltersSelection GEOM GEOMToolsGUI GenerationGUI GroupGUI Material MeasureGUI GEOMObject
-    OperationGUI PrimitiveGUI RepairGUI TransformationGUI ImportExportGUI
+    OperationGUI PrimitiveGUI RepairGUI TransformationGUI ImportExportGUI DependencyTree
     )
 ENDIF(SALOME_BUILD_GUI)
 

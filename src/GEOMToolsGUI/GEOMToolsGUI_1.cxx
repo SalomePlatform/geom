@@ -46,6 +46,8 @@
 #include <GEOMBase.h>
 #include <GEOM_Actor.h>
 
+#include <DependencyTree.h>
+
 #include <Basics_OCCTVersion.hxx>
 
 #include <SALOME_ListIO.hxx>
@@ -861,4 +863,9 @@ void GEOMToolsGUI::OnSortChildren()
   aStudy->GetUseCaseBuilder()->SortChildren( aFatherSO, true/*AscendingOrder*/ );
 
   app->updateObjectBrowser( true );
+}
+
+void GEOMToolsGUI::OnShowDependencyTree()
+{
+  DependencyTree();
 }
