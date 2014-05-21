@@ -13083,7 +13083,7 @@ class geomField( GEOM._objref_GEOM_Field ):
         return self.field.GetComponents(self)
 
     ## Adds a time step to the field
-    #  @param step the time step number futher used as the step identifier
+    #  @param step the time step number further used as the step identifier
     #  @param stamp the time step time
     #  @param values the values of the time step
     def addStep(self, step, stamp, values):
