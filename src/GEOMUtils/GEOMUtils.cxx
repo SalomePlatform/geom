@@ -87,6 +87,7 @@
 #include <ElSLib.hxx>
 
 #include <vector>
+#include <sstream>
 
 #include <Standard_Failure.hxx>
 #include <Standard_NullObject.hxx>
@@ -94,11 +95,13 @@
 
 #define STD_SORT_ALGO 1
 
+namespace GEOMUtils {
+
 //=======================================================================
 //function : GetPosition
 //purpose  :
 //=======================================================================
-gp_Ax3 GEOMUtils::GetPosition (const TopoDS_Shape& theShape)
+gp_Ax3 GetPosition (const TopoDS_Shape& theShape)
 {
   gp_Ax3 aResult;
 
@@ -158,7 +161,7 @@ gp_Ax3 GEOMUtils::GetPosition (const TopoDS_Shape& theShape)
 //function : GetVector
 //purpose  :
 //=======================================================================
-gp_Vec GEOMUtils::GetVector (const TopoDS_Shape& theShape,
+gp_Vec GetVector (const TopoDS_Shape& theShape,
                              Standard_Boolean doConsiderOrientation)
 {
   if (theShape.IsNull())
@@ -227,7 +230,7 @@ std::pair<double, double> ShapeToDouble (const TopoDS_Shape& S, bool isOldSortin
 //function : CompareShapes::operator()
 //purpose  : used by std::sort(), called from SortShapes()
 //=======================================================================
-bool GEOMUtils::CompareShapes::operator() (const TopoDS_Shape& theShape1,
+bool CompareShapes::operator() (const TopoDS_Shape& theShape1,
                                            const TopoDS_Shape& theShape2)
 {
   if (!myMap.IsBound(theShape1)) {
@@ -287,7 +290,7 @@ bool GEOMUtils::CompareShapes::operator() (const TopoDS_Shape& theShape1,
 //function : SortShapes
 //purpose  :
 //=======================================================================
-void GEOMUtils::SortShapes (TopTools_ListOfShape& SL,
+void SortShapes (TopTools_ListOfShape& SL,
                             const Standard_Boolean isOldSorting)
 {
 #ifdef STD_SORT_ALGO
@@ -425,7 +428,7 @@ void GEOMUtils::SortShapes (TopTools_ListOfShape& SL,
 //function : CompsolidToCompound
 //purpose  :
 //=======================================================================
-TopoDS_Shape GEOMUtils::CompsolidToCompound (const TopoDS_Shape& theCompsolid)
+TopoDS_Shape CompsolidToCompound (const TopoDS_Shape& theCompsolid)
 {
   if (theCompsolid.ShapeType() != TopAbs_COMPSOLID) {
     return theCompsolid;
@@ -452,7 +455,7 @@ TopoDS_Shape GEOMUtils::CompsolidToCompound (const TopoDS_Shape& theCompsolid)
 //function : AddSimpleShapes
 //purpose  :
 //=======================================================================
-void GEOMUtils::AddSimpleShapes (const TopoDS_Shape& theShape, TopTools_ListOfShape& theList)
+void AddSimpleShapes (const TopoDS_Shape& theShape, TopTools_ListOfShape& theList)
 {
   if (theShape.ShapeType() != TopAbs_COMPOUND &&
       theShape.ShapeType() != TopAbs_COMPSOLID) {
@@ -480,7 +483,7 @@ void GEOMUtils::AddSimpleShapes (const TopoDS_Shape& theShape, TopTools_ListOfSh
 //function : CheckTriangulation
 //purpose  :
 //=======================================================================
-bool GEOMUtils::CheckTriangulation (const TopoDS_Shape& aShape)
+bool CheckTriangulation (const TopoDS_Shape& aShape)
 {
   bool isTriangulation = true;
 
@@ -530,7 +533,7 @@ bool GEOMUtils::CheckTriangulation (const TopoDS_Shape& aShape)
 //function : GetTypeOfSimplePart
 //purpose  :
 //=======================================================================
-TopAbs_ShapeEnum GEOMUtils::GetTypeOfSimplePart (const TopoDS_Shape& theShape)
+TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape)
 {
   TopAbs_ShapeEnum aType = theShape.ShapeType();
   if      (aType == TopAbs_VERTEX)                             return TopAbs_VERTEX;
@@ -551,7 +554,7 @@ TopAbs_ShapeEnum GEOMUtils::GetTypeOfSimplePart (const TopoDS_Shape& theShape)
 //function : GetEdgeNearPoint
 //purpose  :
 //=======================================================================
-TopoDS_Shape GEOMUtils::GetEdgeNearPoint (const TopoDS_Shape& theShape,
+TopoDS_Shape GetEdgeNearPoint (const TopoDS_Shape& theShape,
                                           const TopoDS_Vertex& thePoint)
 {
   TopoDS_Shape aResult;
@@ -619,7 +622,7 @@ TopoDS_Shape GEOMUtils::GetEdgeNearPoint (const TopoDS_Shape& theShape,
 //function : PreciseBoundingBox
 //purpose  : 
 //=======================================================================
-Standard_Boolean GEOMUtils::PreciseBoundingBox
+Standard_Boolean PreciseBoundingBox
                           (const TopoDS_Shape &theShape, Bnd_Box &theBox)
 {
   Standard_Real aBound[6];
@@ -665,7 +668,7 @@ Standard_Boolean GEOMUtils::PreciseBoundingBox
 
     // Get minimal distance between planar face and shape.
     Standard_Real aMinDist =
-      GEOMUtils::GetMinDistance(aFace, theShape, aPMin[0], aPMin[1]);
+      GetMinDistance(aFace, theShape, aPMin[0], aPMin[1]);
 
     if (aMinDist < 0.) {
       return Standard_False;
@@ -682,172 +685,19 @@ Standard_Boolean GEOMUtils::PreciseBoundingBox
 }
 
 //=======================================================================
-//function : GetMinDistanceSingular
-//purpose  : 
-//=======================================================================
-double GEOMUtils::GetMinDistanceSingular(const TopoDS_Shape& aSh1,
-                                         const TopoDS_Shape& aSh2,
-                                         gp_Pnt& Ptmp1, gp_Pnt& Ptmp2)
-{
-  TopoDS_Shape     tmpSh1;
-  TopoDS_Shape     tmpSh2;
-  Standard_Real    AddDist1 = 0.;
-  Standard_Real    AddDist2 = 0.;
-  Standard_Boolean IsChange1 = GEOMUtils::ModifyShape(aSh1, tmpSh1, AddDist1);
-  Standard_Boolean IsChange2 = GEOMUtils::ModifyShape(aSh2, tmpSh2, AddDist2);
-
-  if( !IsChange1 && !IsChange2 )
-    return -2.0;
-
-  BRepExtrema_DistShapeShape dst(tmpSh1,tmpSh2);
-  if (dst.IsDone()) {
-    double MinDist = 1.e9;
-    gp_Pnt PMin1, PMin2, P1, P2;
-    for (int i = 1; i <= dst.NbSolution(); i++) {
-      P1 = dst.PointOnShape1(i);
-      P2 = dst.PointOnShape2(i);
-      Standard_Real Dist = P1.Distance(P2);
-      if (MinDist > Dist) {
-        MinDist = Dist;
-        PMin1 = P1;
-        PMin2 = P2;
-      }
-    }
-    if(MinDist<1.e-7) {
-      Ptmp1 = PMin1;
-      Ptmp2 = PMin2;
-    }
-    else {
-      gp_Dir aDir(gp_Vec(PMin1,PMin2));
-      if( MinDist > (AddDist1+AddDist2) ) {
-        Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
-                        PMin1.Y() + aDir.Y()*AddDist1,
-                        PMin1.Z() + aDir.Z()*AddDist1 );
-        Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
-                        PMin2.Y() - aDir.Y()*AddDist2,
-                        PMin2.Z() - aDir.Z()*AddDist2 );
-        return (MinDist - AddDist1 - AddDist2);
-      }
-      else {
-        if( AddDist1 > 0 ) {
-          Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
-                          PMin1.Y() + aDir.Y()*AddDist1,
-                          PMin1.Z() + aDir.Z()*AddDist1 );
-          Ptmp2 = Ptmp1;
-        }
-        else {
-          Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
-                          PMin2.Y() - aDir.Y()*AddDist2,
-                          PMin2.Z() - aDir.Z()*AddDist2 );
-          Ptmp1 = Ptmp2;
-        }
-      }
-    }
-    double res = MinDist - AddDist1 - AddDist2;
-    if(res<0.) res = 0.0;
-    return res;
-  }
-  return -2.0;
-}
-
-//=======================================================================
-//function : GetMinDistance
-//purpose  : 
-//=======================================================================
-Standard_Real GEOMUtils::GetMinDistance
-                               (const TopoDS_Shape& theShape1,
-                                const TopoDS_Shape& theShape2,
-                                gp_Pnt& thePnt1, gp_Pnt& thePnt2)
-{
-  Standard_Real aResult = 1.e9;
-
-  // Issue 0020231: A min distance bug with torus and vertex.
-  // Make GetMinDistance() return zero if a sole VERTEX is inside any of SOLIDs
-
-  // which of shapes consists of only one vertex?
-  TopExp_Explorer exp1(theShape1,TopAbs_VERTEX), exp2(theShape2,TopAbs_VERTEX);
-  TopoDS_Shape V1 = exp1.More() ? exp1.Current() : TopoDS_Shape();
-  TopoDS_Shape V2 = exp2.More() ? exp2.Current() : TopoDS_Shape();
-  exp1.Next(); exp2.Next();
-  if ( exp1.More() ) V1.Nullify();
-  if ( exp2.More() ) V2.Nullify();
-  // vertex and container of solids
-  TopoDS_Shape V = V1.IsNull() ? V2 : V1;
-  TopoDS_Shape S = V1.IsNull() ? theShape1 : theShape2;
-  if ( !V.IsNull() ) {
-    // classify vertex against solids
-    gp_Pnt p = BRep_Tool::Pnt( TopoDS::Vertex( V ) );
-    for ( exp1.Init( S, TopAbs_SOLID ); exp1.More(); exp1.Next() ) {
-      BRepClass3d_SolidClassifier classifier( exp1.Current(), p, 1e-6);
-      if ( classifier.State() == TopAbs_IN ) {
-        thePnt1 = p;
-        thePnt2 = p;
-        return 0.0;
-      }
-    }
-  }
-  // End Issue 0020231
-
-  // skl 30.06.2008
-  // additional workaround for bugs 19899, 19908 and 19910 from Mantis
-  double dist = GEOMUtils::GetMinDistanceSingular
-      (theShape1, theShape2, thePnt1, thePnt2);
-
-  if (dist > -1.0) {
-    return dist;
-  }
-
-  BRepExtrema_DistShapeShape dst (theShape1, theShape2);
-  if (dst.IsDone()) {
-    gp_Pnt P1, P2;
-
-    for (int i = 1; i <= dst.NbSolution(); i++) {
-      P1 = dst.PointOnShape1(i);
-      P2 = dst.PointOnShape2(i);
-
-      Standard_Real Dist = P1.Distance(P2);
-      if (aResult > Dist) {
-        aResult = Dist;
-        thePnt1 = P1;
-        thePnt2 = P2;
-      }
-    }
-  }
-
-  return aResult;
-}
-
-//=======================================================================
-// function : ConvertClickToPoint()
-// purpose  : Returns the point clicked in 3D view
-//=======================================================================
-gp_Pnt GEOMUtils::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
-{
-  V3d_Coordinate XEye, YEye, ZEye, XAt, YAt, ZAt;
-  aView->Eye( XEye, YEye, ZEye );
-
-  aView->At( XAt, YAt, ZAt );
-  gp_Pnt EyePoint( XEye, YEye, ZEye );
-  gp_Pnt AtPoint( XAt, YAt, ZAt );
-
-  gp_Vec EyeVector( EyePoint, AtPoint );
-  gp_Dir EyeDir( EyeVector );
-
-  gp_Pln PlaneOfTheView = gp_Pln( AtPoint, EyeDir );
-  Standard_Real X, Y, Z;
-  aView->Convert( x, y, X, Y, Z );
-  gp_Pnt ConvertedPoint( X, Y, Z );
-
-  gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project( PlaneOfTheView, ConvertedPoint );
-  gp_Pnt ResultPoint = ElSLib::Value( ConvertedPointOnPlane.X(), ConvertedPointOnPlane.Y(), PlaneOfTheView );
-  return ResultPoint;
-}
-
-//=======================================================================
 // function : ModifyShape
-// purpose  : 
+// purpose  : This function constructs and returns modified shape 
+//            from the original one for singular cases. 
+//            It is used for the method GetMinDistanceSingular.
+//   
+//   \param theShape the original shape
+//   \param theModifiedShape output parameter. The modified shape.
+//   \param theAddDist output parameter. The added distance for modified shape.
+//   \retval true if the shape is modified; false otherwise.
+//   
+
 //=======================================================================
-Standard_Boolean GEOMUtils::ModifyShape(const TopoDS_Shape  &theShape,
+Standard_Boolean ModifyShape(const TopoDS_Shape  &theShape,
                                               TopoDS_Shape  &theModifiedShape,
                                               Standard_Real &theAddDist)
 {
@@ -950,3 +800,297 @@ Standard_Boolean GEOMUtils::ModifyShape(const TopoDS_Shape  &theShape,
 
   return isModified;
 }
+
+//=======================================================================
+//function : GetMinDistanceSingular
+//purpose  : 
+//=======================================================================
+double GetMinDistanceSingular(const TopoDS_Shape& aSh1,
+                                         const TopoDS_Shape& aSh2,
+                                         gp_Pnt& Ptmp1, gp_Pnt& Ptmp2)
+{
+  TopoDS_Shape     tmpSh1;
+  TopoDS_Shape     tmpSh2;
+  Standard_Real    AddDist1 = 0.;
+  Standard_Real    AddDist2 = 0.;
+  Standard_Boolean IsChange1 = ModifyShape(aSh1, tmpSh1, AddDist1);
+  Standard_Boolean IsChange2 = ModifyShape(aSh2, tmpSh2, AddDist2);
+
+  if( !IsChange1 && !IsChange2 )
+    return -2.0;
+
+  BRepExtrema_DistShapeShape dst(tmpSh1,tmpSh2);
+  if (dst.IsDone()) {
+    double MinDist = 1.e9;
+    gp_Pnt PMin1, PMin2, P1, P2;
+    for (int i = 1; i <= dst.NbSolution(); i++) {
+      P1 = dst.PointOnShape1(i);
+      P2 = dst.PointOnShape2(i);
+      Standard_Real Dist = P1.Distance(P2);
+      if (MinDist > Dist) {
+        MinDist = Dist;
+        PMin1 = P1;
+        PMin2 = P2;
+      }
+    }
+    if(MinDist<1.e-7) {
+      Ptmp1 = PMin1;
+      Ptmp2 = PMin2;
+    }
+    else {
+      gp_Dir aDir(gp_Vec(PMin1,PMin2));
+      if( MinDist > (AddDist1+AddDist2) ) {
+        Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
+                        PMin1.Y() + aDir.Y()*AddDist1,
+                        PMin1.Z() + aDir.Z()*AddDist1 );
+        Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
+                        PMin2.Y() - aDir.Y()*AddDist2,
+                        PMin2.Z() - aDir.Z()*AddDist2 );
+        return (MinDist - AddDist1 - AddDist2);
+      }
+      else {
+        if( AddDist1 > 0 ) {
+          Ptmp1 = gp_Pnt( PMin1.X() + aDir.X()*AddDist1,
+                          PMin1.Y() + aDir.Y()*AddDist1,
+                          PMin1.Z() + aDir.Z()*AddDist1 );
+          Ptmp2 = Ptmp1;
+        }
+        else {
+          Ptmp2 = gp_Pnt( PMin2.X() - aDir.X()*AddDist2,
+                          PMin2.Y() - aDir.Y()*AddDist2,
+                          PMin2.Z() - aDir.Z()*AddDist2 );
+          Ptmp1 = Ptmp2;
+        }
+      }
+    }
+    double res = MinDist - AddDist1 - AddDist2;
+    if(res<0.) res = 0.0;
+    return res;
+  }
+  return -2.0;
+}
+
+//=======================================================================
+//function : GetMinDistance
+//purpose  : 
+//=======================================================================
+Standard_Real GetMinDistance
+                               (const TopoDS_Shape& theShape1,
+                                const TopoDS_Shape& theShape2,
+                                gp_Pnt& thePnt1, gp_Pnt& thePnt2)
+{
+  Standard_Real aResult = 1.e9;
+
+  // Issue 0020231: A min distance bug with torus and vertex.
+  // Make GetMinDistance() return zero if a sole VERTEX is inside any of SOLIDs
+
+  // which of shapes consists of only one vertex?
+  TopExp_Explorer exp1(theShape1,TopAbs_VERTEX), exp2(theShape2,TopAbs_VERTEX);
+  TopoDS_Shape V1 = exp1.More() ? exp1.Current() : TopoDS_Shape();
+  TopoDS_Shape V2 = exp2.More() ? exp2.Current() : TopoDS_Shape();
+  exp1.Next(); exp2.Next();
+  if ( exp1.More() ) V1.Nullify();
+  if ( exp2.More() ) V2.Nullify();
+  // vertex and container of solids
+  TopoDS_Shape V = V1.IsNull() ? V2 : V1;
+  TopoDS_Shape S = V1.IsNull() ? theShape1 : theShape2;
+  if ( !V.IsNull() ) {
+    // classify vertex against solids
+    gp_Pnt p = BRep_Tool::Pnt( TopoDS::Vertex( V ) );
+    for ( exp1.Init( S, TopAbs_SOLID ); exp1.More(); exp1.Next() ) {
+      BRepClass3d_SolidClassifier classifier( exp1.Current(), p, 1e-6);
+      if ( classifier.State() == TopAbs_IN ) {
+        thePnt1 = p;
+        thePnt2 = p;
+        return 0.0;
+      }
+    }
+  }
+  // End Issue 0020231
+
+  // skl 30.06.2008
+  // additional workaround for bugs 19899, 19908 and 19910 from Mantis
+  double dist = GetMinDistanceSingular
+      (theShape1, theShape2, thePnt1, thePnt2);
+
+  if (dist > -1.0) {
+    return dist;
+  }
+
+  BRepExtrema_DistShapeShape dst (theShape1, theShape2);
+  if (dst.IsDone()) {
+    gp_Pnt P1, P2;
+
+    for (int i = 1; i <= dst.NbSolution(); i++) {
+      P1 = dst.PointOnShape1(i);
+      P2 = dst.PointOnShape2(i);
+
+      Standard_Real Dist = P1.Distance(P2);
+      if (aResult > Dist) {
+        aResult = Dist;
+        thePnt1 = P1;
+        thePnt2 = P2;
+      }
+    }
+  }
+
+  return aResult;
+}
+
+//=======================================================================
+// function : ConvertClickToPoint()
+// purpose  : Returns the point clicked in 3D view
+//=======================================================================
+gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
+{
+  V3d_Coordinate XEye, YEye, ZEye, XAt, YAt, ZAt;
+  aView->Eye( XEye, YEye, ZEye );
+
+  aView->At( XAt, YAt, ZAt );
+  gp_Pnt EyePoint( XEye, YEye, ZEye );
+  gp_Pnt AtPoint( XAt, YAt, ZAt );
+
+  gp_Vec EyeVector( EyePoint, AtPoint );
+  gp_Dir EyeDir( EyeVector );
+
+  gp_Pln PlaneOfTheView = gp_Pln( AtPoint, EyeDir );
+  Standard_Real X, Y, Z;
+  aView->Convert( x, y, X, Y, Z );
+  gp_Pnt ConvertedPoint( X, Y, Z );
+
+  gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project( PlaneOfTheView, ConvertedPoint );
+  gp_Pnt ResultPoint = ElSLib::Value( ConvertedPointOnPlane.X(), ConvertedPointOnPlane.Y(), PlaneOfTheView );
+  return ResultPoint;
+}
+
+//=======================================================================
+// function : ConvertTreeToString()
+// purpose  : Returns the string representation of dependency tree
+//=======================================================================
+void ConvertTreeToString( const TreeModel &tree,
+			  std::string &treeStr )
+{
+  TreeModel::const_iterator i;
+  for ( i = tree.begin(); i != tree.end(); ++i ) {
+    treeStr.append( i->first );
+    treeStr.append( "-" );
+    std::vector<LevelInfo> upLevelList = i->second.first;
+    treeStr.append( "upward" );
+    treeStr.append( "{" );
+    for( std::vector<LevelInfo>::iterator j = upLevelList.begin(); 
+	 j != upLevelList.end(); ++j ) {
+      LevelInfo level = (*j);
+      LevelInfo::iterator upIter;
+      for ( upIter = level.begin(); upIter != level.end(); ++upIter ) {
+        treeStr.append( upIter->first );
+	for ( std::vector<std::string>::iterator k = upIter->second.begin();
+	     k != upIter->second.end(); ++k ) {
+	  treeStr.append( "_" );
+	  treeStr.append( *k );
+	}
+        treeStr.append( upIter++ == level.end() ? ";" : "," );
+	upIter--;
+      }
+    }
+    treeStr.append( "}" );
+    std::vector<LevelInfo> downLevelList = i->second.second;
+    treeStr.append( "downward" );
+    treeStr.append( "{" );
+    for( std::vector<LevelInfo>::iterator j = downLevelList.begin(); 
+	 j != downLevelList.end(); ++j ) {
+      LevelInfo level = (*j);
+      LevelInfo::iterator downIter;
+      for ( downIter = level.begin(); downIter != level.end(); ++downIter ) {
+        treeStr.append( downIter->first );
+	for ( std::vector<std::string>::iterator k = downIter->second.begin();
+	     k != downIter->second.end(); ++k ) {
+	  treeStr.append( "_" );
+	  treeStr.append( *k );
+	}
+        treeStr.append( downIter++ == level.end() ? ";" : "," );
+	downIter--;
+      }
+    }
+    treeStr.append("}");
+  }
+}
+
+LevelsList parseWard( const std::string& theData, std::size_t& theCursor )
+{
+  std::size_t indexStart = theData.find( "{", theCursor ) + 1;
+  std::size_t indexEnd = theData.find( "}", indexStart );
+
+  std::string ward = theData.substr( indexStart, indexEnd - indexStart );
+  std::stringstream ss(ward);
+  std::string substr;
+  std::vector<std::string> levelsListStr;
+  while ( std::getline( ss, substr, ';' ) ) {
+    if ( !substr.empty() )
+      levelsListStr.push_back( substr );
+  }
+  LevelsList levelsListData;
+  for( int level = 0; level < levelsListStr.size(); level++ ) {
+    std::cout<<"    Level" << level + 1 << ":" << std::endl;
+    std::vector<std::string> namesListStr;
+    ss.str( levelsListStr[level] );
+    while ( std::getline( ss, substr, ',' ) ) {
+      if ( !substr.empty() )
+	namesListStr.push_back( substr );
+    }
+    LevelInfo levelInfoData;
+    for( int node = 0; node < namesListStr.size(); node++ ) {
+      std::vector<std::string> linksListStr;
+      ss.str( namesListStr[node] );
+      while ( std::getline( ss, substr, '_' ) ) {
+	if ( !substr.empty() )
+	  linksListStr.push_back( substr );
+      }
+      std::string nodeItem = linksListStr[0];
+      if( !nodeItem.empty() ) {
+        NodeLinks linksListData;
+        std::cout<<"      " << nodeItem << " - ";
+        for( int link = 1; link < linksListStr.size(); link++ ) {
+          std::string linkItem = linksListStr[link];
+          linksListData.push_back( linkItem );
+          std::cout << linkItem << ", ";
+        }// Links
+        levelInfoData[nodeItem] = linksListData;
+        std::cout << std::endl;
+      }
+    }// Level's objects
+    levelsListData.push_back(levelInfoData);
+  }// Levels
+
+  theCursor = indexEnd + 1;
+  return levelsListData;
+}
+
+//=======================================================================
+// function : ConvertStringToTree()
+// purpose  : Returns the dependency tree
+//=======================================================================
+void ConvertStringToTree( const std::string &theData,
+			  TreeModel &tree )
+{
+  std::size_t cursor = 0;
+
+  while( theData.find('-',cursor) != std::string::npos ) //find next selected object
+  {
+    std::size_t objectIndex = theData.find( '-', cursor );
+    std::string objectEntry = theData.substr( cursor, objectIndex - cursor );
+    std::cout<<"\n\nMainObject = " << objectEntry <<std::endl;
+    cursor = objectIndex;
+
+    std::size_t upwardIndexBegin = theData.find("{",cursor) + 1;
+    std::size_t upwardIndexFinish = theData.find("}",upwardIndexBegin);
+    std::cout<<"  Upward:" << std::endl	;
+    LevelsList upwardList = parseWard( theData, cursor );
+
+    std::cout<<"  Downward:" << std::endl;
+    LevelsList downwardList = parseWard( theData, cursor );
+
+    tree[objectEntry] = std::pair<LevelsList,LevelsList>( upwardList, downwardList );
+  }
+}
+
+} //namespace GEOMUtils

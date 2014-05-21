@@ -51,11 +51,13 @@
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
 #include "GEOM_IFieldOperations_i.hh"
+#include "GEOMUtils.hxx"
 
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <map>
 #include <set>
+#include <list>
 #include <string>
 
 //#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -197,7 +199,8 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                                       CORBA::Boolean          theInheritFirstArg,
                                       CORBA::Boolean          theAddPrefix);
 
-  SALOMEDS::TMPFile* GetDependencyTree(const GEOM::string_array&);
+  SALOMEDS::TMPFile* GetDependencyTree(SALOMEDS::Study_ptr theStudy,
+				       const GEOM::string_array& theObjectIORs);
 
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
@@ -367,6 +370,15 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                              const TColStd_SequenceOfAsciiString& SeqN,
                              const Standard_CString& GrName,
                              GEOM::ListOfGO_var aResList);
+
+  void getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+                            GEOMUtils::LevelsList &upLevelList,  
+                            int level = 0 );
+
+  void getDownwardDependency( SALOMEDS::Study_ptr theStudy,
+			      GEOM::GEOM_BaseObject_ptr gbo, 
+                              GEOMUtils::LevelsList &downLevelList, 
+                              int level = 0 );
 
  private:
 

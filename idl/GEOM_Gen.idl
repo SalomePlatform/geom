@@ -5096,11 +5096,12 @@ module GEOM
      * \return texture byte array
      * Example of using: 
      *   SALOMEDS::TMPFile_var SeqFile = 
-     *     myGeometryGUI->GetGeomGen()->GetDependencyTree( aListOfIORs );
+     *     myGeometryGUI->GetGeomGen()->GetDependencyTree( aStudy, aListOfIORs );
      *   char* buf;
      *   buf = (char*) &SeqFile[0];
      */
-    SALOMEDS::TMPFile GetDependencyTree(in string_array strValues);
+    SALOMEDS::TMPFile GetDependencyTree(in SALOMEDS::Study theStudy,
+					in string_array strValues);
 
   };
 };

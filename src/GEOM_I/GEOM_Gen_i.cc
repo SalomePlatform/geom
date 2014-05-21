@@ -3043,8 +3043,107 @@ Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
 // function : 
 // purpose  : 
 //=======================================================================
-SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree(const GEOM::string_array&) {
+SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
+						  const GEOM::string_array& theObjectIORs ) {
+  // fill in the tree structure
+  GEOMUtils::TreeModel tree;
 
+  //  foreach( QString ior, theObjectIORs ) {
+  std::string ior;
+  for ( int i = 0; i < theObjectIORs.length(); i++ ) {
+    ior = theObjectIORs[i].in();
+    GEOM::GEOM_Object_ptr anObj = GetIORFromString( ior.c_str() );
+    GEOMUtils::LevelsList upLevelList;
+    getUpwardDependency( anObj, upLevelList );
+    GEOMUtils::LevelsList downLevelList;
+    getDownwardDependency( theStudy, anObj, downLevelList );
+    tree.insert( std::pair<std::string, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList> >(ior, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList>( upLevelList, downLevelList ) ) );
+  }
+
+  // translation the tree into string
+  std::string treeStr;
+  GEOMUtils::ConvertTreeToString( tree, treeStr );
+  
+  char* aBuffer = (char*)CORBA::string_dup(treeStr.c_str());
+  int aBufferSize = strlen((char*)aBuffer);
+
+  CORBA::Octet* anOctetBuf =  (CORBA::Octet*)aBuffer;
+
+  SALOMEDS::TMPFile_var aStream = new SALOMEDS::TMPFile(aBufferSize, aBufferSize, anOctetBuf, 1);
+
+  return aStream._retn();
+}
+
+//=======================================================================
+// function : 
+// purpose  : 
+//=======================================================================
+void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+				      GEOMUtils::LevelsList &upLevelList, 
+				      int level ) {
+  std::string aGboIOR = GetStringFromIOR(GEOM::GEOM_Object::_narrow(gbo));
+  GEOM::ListOfGBO_var depList = gbo->GetDependency();
+  for( int j = 0; j < depList->length(); j++ ) {
+    if ( level > 0 ) {
+      GEOMUtils::NodeLinks anIORs;
+      GEOMUtils::LevelInfo aLevelMap;
+      if ( level-1 >= upLevelList.size() ) {
+        upLevelList.push_back( aLevelMap );
+      } else {
+        aLevelMap = upLevelList.at(level-1);
+        if ( aLevelMap.count( aGboIOR ) > 0 )
+          anIORs = aLevelMap[ aGboIOR ];
+      }
+      anIORs.push_back( GetStringFromIOR(GEOM::GEOM_Object::_narrow(depList[j])) );
+      aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGboIOR, anIORs) );
+    }
+    getUpwardDependency(depList[j], upLevelList, level++);
+  }
+}
+
+//=======================================================================
+// function : 
+// purpose  : 
+//=======================================================================
+void GEOM_Gen_i::getDownwardDependency( SALOMEDS::Study_ptr theStudy,
+					GEOM::GEOM_BaseObject_ptr gbo, 
+					GEOMUtils::LevelsList &downLevelList, 
+					int level ) {
+  SALOMEDS::SComponent_var comp = theStudy->FindComponent("GEOM");
+  if ( !comp )
+    return;
+
+  SALOMEDS::ChildIterator_var it = theStudy->NewChildIterator( comp );
+  for ( it->InitEx( true ); it->More(); it->Next() ) {
+    SALOMEDS::SObject_var child = it->Value();
+    CORBA::Object_var corbaObj = child->GetObject();
+    GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+    if( CORBA::is_nil( geomObj ) )
+      continue;
+
+    GEOM::ListOfGBO_var depList = geomObj->GetDependency();
+    if( depList->length() == 0 )
+      continue;
+    std::string aGoIOR = GetStringFromIOR( geomObj );
+
+    for( int i = 0; i < depList->length(); i++ ) {
+      if ( depList[i]->IsSame( gbo ) ) {
+	GEOMUtils::NodeLinks anIORs;
+        GEOMUtils::LevelInfo aLevelMap;
+        if ( level >= downLevelList.size() ) {
+          aLevelMap = GEOMUtils::LevelInfo();
+          downLevelList.push_back( aLevelMap );
+        } else {
+          aLevelMap = downLevelList.at(level);
+          if ( aLevelMap.count( aGoIOR ) > 0 )
+            anIORs = aLevelMap[ aGoIOR ];
+        }
+        anIORs.push_back( GetStringFromIOR(GEOM::GEOM_Object::_narrow(depList[i])));
+        aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGoIOR, anIORs) );
+      }
+    }
+    getDownwardDependency(theStudy, geomObj, downLevelList, level++);
+  }
 }
 
 //=====================================================================================
