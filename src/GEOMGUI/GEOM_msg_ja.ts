@@ -153,7 +153,7 @@
     </message>
     <message>
       <source>GEOM_AXE_MIRROR</source>
-      <translation>軸対称性</translation>
+      <translation>対称軸</translation>
     </message>
     <message>
       <source>GEOM_AXIS</source>
@@ -185,7 +185,7 @@
     </message>
     <message>
       <source>GEOM_BLOCKS_COMPOUND</source>
-      <translation>BlocksCompound</translation>
+      <translation>ブロックアセンブリ</translation>
     </message>
     <message>
       <source>GEOM_BLOCK_EXPLODE</source>
@@ -373,23 +373,23 @@
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_NOT_BLOCK</source>
-      <translation>GEOM_CHECK_BLOCKS_NOT_BLOCK</translation>
+      <translation>ブロックでない</translation>
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_EXTRA_EDGE</source>
-      <translation>GEOM_CHECK_BLOCKS_EXTRA_EDGE</translation>
+      <translation>追加のエッジ</translation>
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_INVALID_CONNECTION</source>
-      <translation>GEOM_CHECK_BLOCKS_INVALID_CONNECTION</translation>
+      <translation>有効な接続でない # %1</translation>
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_NOT_CONNECTED</source>
-      <translation>GEOM_CHECK_BLOCKS_NOT_CONNECTED</translation>
+      <translation>接続されていない</translation>
     </message>
     <message>
       <source>GEOM_CHECK_BLOCKS_NOT_GLUED</source>
-      <translation>GEOM_CHECK_BLOCKS_NOT_GLUED</translation>
+      <translation>接着していない # %1</translation>
     </message>
     <message>
       <source>GEOM_GETNONBLOCKS_TITLE</source>
@@ -425,7 +425,7 @@
     </message>
     <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
-      <translation>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</translation>
+      <translation>警告: 操作中にエラーがあったので、リストが不完全かもしれない</translation>
     </message>
     <message>
       <source>GEOM_CIRCLE</source>
@@ -2329,7 +2329,7 @@
     </message>
     <message>
       <source>GEOM_WRN_FACES_NOT_SHELL</source>
-      <translation>GEOM_WRN_FACES_NOT_SHELL</translation>
+      <translation>シェルを作成できません。面の結合です。</translation>
     </message>
     <message>
       <source>WRN_SHAPE_UNCLOSED</source>
@@ -3021,7 +3021,7 @@
     </message>
     <message>
       <source>MEN_TEXTURE</source>
-      <translation>MEN_TEXTURE</translation>
+      <translation>テクスチャ</translation>
     </message>
     <message>
       <source>MEN_TORUS</source>
@@ -3261,39 +3261,39 @@
     </message>
     <message>
       <source>PREF_DIMENSIONS</source>
-      <translation>PREF_DIMENSIONS</translation>
+      <translation>ディメンジョン (測定)</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_COLOR</source>
-      <translation>PREF_DIMENSIONS_COLOR</translation>
+      <translation>色</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_LINE_WIDTH</source>
-      <translation>PREF_DIMENSIONS_LINE_WIDTH</translation>
+      <translation>線幅</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-      <translation>PREF_DIMENSIONS_FONT_HEIGHT</translation>
+      <translation>フォント高さ</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
-      <translation>PREF_DIMENSIONS_ARROW_LENGTH</translation>
+      <translation>矢印の長さ</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_LENGTH_UNITS</source>
-      <translation>PREF_DIMENSIONS_LENGTH_UNITS</translation>
+      <translation>測定単位</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_ANGLE_UNITS</source>
-      <translation>PREF_DIMENSIONS_ANGLE_UNITS</translation>
+      <translation>角度測定単位</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_DEFAULT_FLYOUT</source>
-      <translation>PREF_DIMENSIONS_DEFAULT_FLYOUT</translation>
+      <translation>既定の距離</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_SHOW_UNITS</source>
-      <translation>PREF_DIMENSIONS_SHOW_UNITS</translation>
+      <translation>測定単位の表示</translation>
     </message>
     <message>
       <source>PREF_ISOS</source>
@@ -4605,11 +4605,11 @@
     </message>
     <message>
       <source>GEOM_MEASURE_ANGLE_DEG</source>
-      <translation>GEOM_MEASURE_ANGLE_DEG</translation>
+      <translation>角度 :</translation>
     </message>
     <message>
       <source>GEOM_MEASURE_ANGLE_RAD</source>
-      <translation>GEOM_MEASURE_ANGLE_RAD</translation>
+      <translation>ラジアン角 :</translation>
     </message>
     <message>
       <source>GEOM_LINE_INTERSECTION</source>
@@ -4657,7 +4657,7 @@
     </message>
     <message>
       <source>GEOM_BOOL_REMOVE_EXTRA_EDGES</source>
-      <translation>GEOM_BOOL_REMOVE_EXTRA_EDGES</translation>
+      <translation>不要なエッジの削除</translation>
     </message>
     <message>
       <source>GEOM_REMOVE_EXTRA_EDGES</source>
@@ -4745,39 +4745,39 @@
     </message>
     <message>
       <source>TOP_MANAGE_DIMENSIONS</source>
-      <translation>TOP_MANAGE_DIMENSIONS</translation>
+      <translation>ディメンジョンの管理</translation>
     </message>
     <message>
       <source>MEN_MANAGE_DIMENSIONS</source>
-      <translation>MEN_MANAGE_DIMENSIONS</translation>
+      <translation>ディメンジョンの管理</translation>
     </message>
     <message>
       <source>STB_MANAGE_DIMENSIONS</source>
-      <translation>STB_MANAGE_DIMENSIONS</translation>
+      <translation>オブジェクトの基準寸法を管理</translation>
     </message>
     <message>
       <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation>MEN_POP_SHOW_ALL_DIMENSIONS</translation>
+      <translation>すべての寸法を表示</translation>
     </message>
     <message>
       <source>STB_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation>STB_POP_SHOW_ALL_DIMENSIONS</translation>
+      <translation>オブジェクトに作成されたすべての非表示の基準寸法を表示</translation>
     </message>
     <message>
       <source>TOP_POP_SHOW_ALL_DIMENSIONS</source>
-      <translation>TOP_POP_SHOW_ALL_DIMENSIONS</translation>
+      <translation>オブジェクトに作成されたすべての非表示の基準寸法を表示</translation>
     </message>
     <message>
       <source>MEN_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation>MEN_POP_HIDE_ALL_DIMENSIONS</translation>
+      <translation>すべての寸法を非表示</translation>
     </message>
     <message>
       <source>STB_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation>STB_POP_HIDE_ALL_DIMENSIONS</translation>
+      <translation>オブジェクトのために作成されたすべての見える基準寸法を表示</translation>
     </message>
     <message>
       <source>TOP_POP_HIDE_ALL_DIMENSIONS</source>
-      <translation>TOP_POP_HIDE_ALL_DIMENSIONS</translation>
+      <translation>オブジェクトのために作成されたすべての見える基準寸法を表示</translation>
     </message>
     <message>
       <source>TOP_POP_AUTO_COLOR</source>
@@ -5113,7 +5113,7 @@
     </message>
     <message>
       <source>GEOM_SELECT_IMPORT_XAO</source>
-      <translation>GEOM_SELECT_IMPORT_XAO</translation>
+      <translation>XAOからインポート</translation>
     </message>
     <message>
       <source>GEOM_SELECT_EXPORT_XAO</source>
@@ -6168,309 +6168,309 @@
     <name>MeasureGUI_ManageDimensionsDlg</name>
     <message>
       <source>MANAGE_DIMENSIONS_TITLE</source>
-      <translation>MANAGE_DIMENSIONS_TITLE</translation>
+      <translation>寸法管理</translation>
     </message>
     <message>
       <source>OBJECT_LABEL</source>
-      <translation>OBJECT_LABEL</translation>
+      <translation>オブジェクト</translation>
     </message>
     <message>
       <source>DIMENSIONS_GROUP</source>
-      <translation>DIMENSIONS_GROUP</translation>
+      <translation>ディメンジョン</translation>
     </message>
     <message>
       <source>ADD_BTN</source>
-      <translation>ADD_BTN</translation>
+      <translation>追加</translation>
     </message>
     <message>
       <source>REMOVE_BTN</source>
-      <translation>REMOVE_BTN</translation>
+      <translation>削除</translation>
     </message>
     <message>
       <source>SHOW_ALL_BTN</source>
-      <translation>SHOW_ALL_BTN</translation>
+      <translation>全表示</translation>
     </message>
     <message>
       <source>HIDE_ALL_BTN</source>
-      <translation>HIDE_ALL_BTN</translation>
+      <translation>全非表示</translation>
     </message>
     <message>
       <source>DISTANCE_ITEM</source>
-      <translation>DISTANCE_ITEM</translation>
+      <translation>距離</translation>
     </message>
     <message>
       <source>DIAMETER_ITEM</source>
-      <translation>DIAMETER_ITEM</translation>
+      <translation>直径</translation>
     </message>
     <message>
       <source>ANGLE_ITEM</source>
-      <translation>ANGLE_ITEM</translation>
+      <translation>角</translation>
     </message>
     <message>
       <source>WRN_TITLE_UNSAVED</source>
-      <translation>WRN_TITLE_UNSAVED</translation>
+      <translation>保存されていない変更</translation>
     </message>
     <message>
       <source>WRN_MSG_CHANGES_LOST</source>
-      <translation>WRN_MSG_CHANGES_LOST</translation>
+      <translation>保存されていない変更は失われます．続行しますか？</translation>
     </message>
     <message>
       <source>WRN_MSG_CHANGES_SAVE</source>
-      <translation>WRN_MSG_CHANGES_SAVE</translation>
+      <translation>保存していない変更は失われます．それらを保存したいですか？</translation>
     </message>
     <message>
       <source>WRN_MSG_UNSAVED</source>
-      <translation>WRN_MSG_UNSAVED</translation>
+      <translation>保存していない変更は失われます．続行しますか？</translation>
     </message>
   </context>
   <context>
     <name>MeasureGUI_CreateDimensionDlg</name>
     <message>
       <source>CREATE_DIMENSION_TITLE</source>
-      <translation>CREATE_DIMENSION_TITLE</translation>
+      <translation>寸法の追加</translation>
     </message>
     <message>
       <source>DIMENSIONS</source>
-      <translation>DIMENSIONS</translation>
+      <translation>ディメンジョン</translation>
     </message>
     <message>
       <source>LENGTH</source>
-      <translation>LENGTH</translation>
+      <translation>長さ</translation>
     </message>
     <message>
       <source>DIAMETER</source>
-      <translation>DIAMETER</translation>
+      <translation>直径</translation>
     </message>
     <message>
       <source>ANGLE</source>
-      <translation>ANGLE</translation>
+      <translation>角度</translation>
     </message>
     <message>
       <source>ARGUMENTS</source>
-      <translation>ARGUMENTS</translation>
+      <translation>引数</translation>
     </message>
     <message>
       <source>EDGE_LENGTH</source>
-      <translation>EDGE_LENGTH</translation>
+      <translation>エッジ長</translation>
     </message>
     <message>
       <source>TWO_POINTS</source>
-      <translation>TWO_POINTS</translation>
+      <translation>2点</translation>
     </message>
     <message>
       <source>PARALLEL_EDGES</source>
-      <translation>PARALLEL_EDGES</translation>
+      <translation>平行エッジ</translation>
     </message>
     <message>
       <source>TWO_EDGES</source>
-      <translation>TWO_EDGES</translation>
+      <translation>２本のエッジ</translation>
     </message>
     <message>
       <source>THREE_POINTS</source>
-      <translation>THREE_POINTS</translation>
+      <translation>3点</translation>
     </message>
     <message>
       <source>EDGE</source>
-      <translation>EDGE</translation>
+      <translation>エッジ</translation>
     </message>
     <message>
       <source>EDGE_1</source>
-      <translation>EDGE_1</translation>
+      <translation>エッジ 1</translation>
     </message>
     <message>
       <source>EDGE_2</source>
-      <translation>EDGE_2</translation>
+      <translation>エッジ 2</translation>
     </message>
     <message>
       <source>POINT_1</source>
-      <translation>POINT_1</translation>
+      <translation>点 1</translation>
     </message>
     <message>
       <source>POINT_2</source>
-      <translation>POINT_2</translation>
+      <translation>点 2</translation>
     </message>
     <message>
       <source>POINT_3</source>
-      <translation>POINT_3</translation>
+      <translation>点 3</translation>
     </message>
     <message>
       <source>OBJECT</source>
-      <translation>OBJECT</translation>
+      <translation>オブジェクト</translation>
     </message>
     <message>
       <source>NAME_LENGTH</source>
-      <translation>NAME_LENGTH</translation>
+      <translation>長さ</translation>
     </message>
     <message>
       <source>NAME_DIAMETER</source>
-      <translation>NAME_DIAMETER</translation>
+      <translation>直径</translation>
     </message>
     <message>
       <source>NAME_ANGLE</source>
-      <translation>NAME_ANGLE</translation>
+      <translation>角</translation>
     </message>
     <message>
       <source>WARNING_TITLE_CANNOT_CREATE_DIMENSION</source>
-      <translation>WARNING_TITLE_CANNOT_CREATE_DIMENSION</translation>
+      <translation>ディメンジョンを作成できない</translation>
     </message>
     <message>
       <source>WARNING_MSG_INVALID_ARGUMENTS</source>
-      <translation>WARNING_MSG_INVALID_ARGUMENTS</translation>
+      <translation>寸法は具体的に明記された引数のために作られることは不可能です．適した引数を明記してください．</translation>
     </message>
   </context>
   <context>
     <name>MeasureGUI_CheckShapeDlg</name>
     <message>
       <source>GEOM_CHECK_TITLE</source>
-      <translation>GEOM_CHECK_TITLE</translation>
+      <translation>形状情報の確認</translation>
     </message>
     <message>
       <source>GEOM_CHECK_SHAPE</source>
-      <translation>GEOM_CHECK_SHAPE</translation>
+      <translation>形状確認</translation>
     </message>
     <message>
       <source>GEOM_CHECK_SHAPE_NAME</source>
-      <translation>GEOM_CHECK_SHAPE_NAME</translation>
+      <translation>欠陥のある</translation>
     </message>
     <message>
       <source>GEOM_CHECK_SHAPE_VALID</source>
-      <translation>GEOM_CHECK_SHAPE_VALID</translation>
+      <translation>この形は有効であると思われる</translation>
     </message>
     <message>
       <source>GEOM_CHECK_SHAPE_NOT_VALID</source>
-      <translation>GEOM_CHECK_SHAPE_NOT_VALID</translation>
+      <translation>この形にエラーがある :</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_POINT_ON_CURVE</source>
-      <translation>CHECK_ERROR_INVALID_POINT_ON_CURVE</translation>
+      <translation>曲線上の無効点</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_POINT_ON_CURVE_ON_SURFACE</source>
-      <translation>CHECK_ERROR_INVALID_POINT_ON_CURVE_ON_SURFACE</translation>
+      <translation>面上のカーブの上にある無効な点</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_POINT_ON_SURFACE</source>
-      <translation>CHECK_ERROR_INVALID_POINT_ON_SURFACE</translation>
+      <translation>面上の無効な点</translation>
     </message>
     <message>
       <source>CHECK_ERROR_NO_3D_CURVE</source>
-      <translation>CHECK_ERROR_NO_3D_CURVE</translation>
+      <translation>3Dカーブはない</translation>
     </message>
     <message>
       <source>CHECK_ERROR_MULTIPLE_3D_CURVE</source>
-      <translation>CHECK_ERROR_MULTIPLE_3D_CURVE</translation>
+      <translation>多重の3Dカーブ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_3D_CURVE</source>
-      <translation>CHECK_ERROR_INVALID_3D_CURVE</translation>
+      <translation>無効な3Dカーブ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_NO_CURVE_ON_SURFACE</source>
-      <translation>CHECK_ERROR_NO_CURVE_ON_SURFACE</translation>
+      <translation>無効な面上のカーブ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_CURVE_ON_SURFACE</source>
-      <translation>CHECK_ERROR_INVALID_CURVE_ON_SURFACE</translation>
+      <translation>面上の無効なカーブ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_CURVE_ON_CLOSED_SURFACE</source>
-      <translation>CHECK_ERROR_INVALID_CURVE_ON_CLOSED_SURFACE</translation>
+      <translation>閉じた面上の無効なカーブ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_SAME_RANGE_FLAG</source>
-      <translation>CHECK_ERROR_INVALID_SAME_RANGE_FLAG</translation>
+      <translation>無効な同じ領域のフラグ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_SAME_PARAMETER_FLAG</source>
-      <translation>CHECK_ERROR_INVALID_SAME_PARAMETER_FLAG</translation>
+      <translation>無効な同じパラメータフラグ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_DEGENERATED_FLAG</source>
-      <translation>CHECK_ERROR_INVALID_DEGENERATED_FLAG</translation>
+      <translation>無効な縮退フラグ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_FREE_EDGE</source>
-      <translation>CHECK_ERROR_FREE_EDGE</translation>
+      <translation>フリーエッジ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_MULTI_CONNEXITY</source>
-      <translation>CHECK_ERROR_INVALID_MULTI_CONNEXITY</translation>
+      <translation>無効な多重関係</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_RANGE</source>
-      <translation>CHECK_ERROR_INVALID_RANGE</translation>
+      <translation>無効な領域</translation>
     </message>
     <message>
       <source>CHECK_ERROR_EMPTY_WIRE</source>
-      <translation>CHECK_ERROR_EMPTY_WIRE</translation>
+      <translation>空のワイヤ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_REDUNDANT_EDGE</source>
-      <translation>CHECK_ERROR_REDUNDANT_EDGE</translation>
+      <translation>不要なエッジ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_SELF_INTERSECTING_WIRE</source>
-      <translation>CHECK_ERROR_SELF_INTERSECTING_WIRE</translation>
+      <translation>自己交差ワイヤ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_NO_SURFACE</source>
-      <translation>CHECK_ERROR_NO_SURFACE</translation>
+      <translation>面がない</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_WIRE</source>
-      <translation>CHECK_ERROR_INVALID_WIRE</translation>
+      <translation>無効なワイヤ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_REDUNDANT_WIRE</source>
-      <translation>CHECK_ERROR_REDUNDANT_WIRE</translation>
+      <translation>不要なワイヤ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INTERSECTING_WIRES</source>
-      <translation>CHECK_ERROR_INTERSECTING_WIRES</translation>
+      <translation>交差エッジ</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_IMBRICATION_OF_WIRES</source>
-      <translation>CHECK_ERROR_INVALID_IMBRICATION_OF_WIRES</translation>
+      <translation>ワイヤの無効な覆い</translation>
     </message>
     <message>
       <source>CHECK_ERROR_EMPTY_SHELL</source>
-      <translation>CHECK_ERROR_EMPTY_SHELL</translation>
+      <translation>空のシェル</translation>
     </message>
     <message>
       <source>CHECK_ERROR_REDUNDANT_FACE</source>
-      <translation>CHECK_ERROR_REDUNDANT_FACE</translation>
+      <translation>不要な面</translation>
     </message>
     <message>
       <source>CHECK_ERROR_UNORIENTABLE_SHAPE</source>
-      <translation>CHECK_ERROR_UNORIENTABLE_SHAPE</translation>
+      <translation>不適用形状</translation>
     </message>
     <message>
       <source>CHECK_ERROR_NOT_CLOSED</source>
-      <translation>CHECK_ERROR_NOT_CLOSED</translation>
+      <translation>閉じていない</translation>
     </message>
     <message>
       <source>CHECK_ERROR_NOT_CONNECTED</source>
-      <translation>CHECK_ERROR_NOT_CONNECTED</translation>
+      <translation>接続していない</translation>
     </message>
     <message>
       <source>CHECK_ERROR_SUBSHAPE_NOT_IN_SHAPE</source>
-      <translation>CHECK_ERROR_SUBSHAPE_NOT_IN_SHAPE</translation>
+      <translation>形状の中にないサブ形状</translation>
     </message>
     <message>
       <source>CHECK_ERROR_BAD_ORIENTATION</source>
-      <translation>CHECK_ERROR_BAD_ORIENTATION</translation>
+      <translation>悪い方向</translation>
     </message>
     <message>
       <source>CHECK_ERROR_BAD_ORIENTATION_OF_SUBSHAPE</source>
-      <translation>CHECK_ERROR_BAD_ORIENTATION_OF_SUBSHAPE</translation>
+      <translation>サブ形状の悪い方向</translation>
     </message>
     <message>
       <source>CHECK_ERROR_INVALID_TOLERANCE_VALUE</source>
-      <translation>CHECK_ERROR_INVALID_TOLERANCE_VALUE</translation>
+      <translation>無効なトレランス値</translation>
     </message>
     <message>
       <source>CHECK_ERROR_CHECK_FAIL</source>
-      <translation>CHECK_ERROR_CHECK_FAIL</translation>
+      <translation>失敗をチェック</translation>
     </message>
   </context>
   <context>

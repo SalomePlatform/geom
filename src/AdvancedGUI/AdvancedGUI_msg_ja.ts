@@ -248,27 +248,27 @@
     </message>
     <message>
       <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</source>
-      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</translation>
+      <translation type="unfinished">メインパイプの半径は、左側薄型化（rL）と等しくすることはできません！</translation>
     </message>
     <message>
       <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</source>
-      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</translation>
+      <translation type="unfinished">メインパイプの外半径（半径+幅）は、左側薄型化外半径（rL+wL）と等しくすることはできません！</translation>
     </message>
     <message>
       <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</source>
-      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</translation>
+      <translation type="unfinished">メインパイプの半径は、右側薄型化半径（rR）と同じにすることはできません！</translation>
     </message>
     <message>
       <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</source>
-      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</translation>
+      <translation type="unfinished">メインパイプの外半径（半径+幅）は、右側薄型化外半径（rR+wR）と等しくすることはできません！</translation>
     </message>
     <message>
       <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</source>
-      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</translation>
+      <translation type="unfinished">インシデントパイプの半径は、インシデントパイプ薄肉化半径（rl）と等しくすることはできません！</translation>
     </message>
     <message>
       <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</source>
-      <translation type="unfinished">GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</translation>
+      <translation type="unfinished">インシデントパイプの外半径（半径+厚さ）は、インシデントパイプの薄肉化外半径（rI+wI）と等しくすることはできません！</translation>
     </message>
   </context>
   <context>
@@ -295,19 +295,19 @@
     </message>
     <message>
       <source>GEOM_SMOOTHINGSURFACE_ARG_NB_MAX</source>
-      <translation>GEOM_SMOOTHINGSURFACE_ARG_NB_MAX</translation>
+      <translation>ベジェパッチの最大数</translation>
     </message>
     <message>
       <source>GEOM_SMOOTHINGSURFACE_ARG_DEG_MAX</source>
-      <translation>GEOM_SMOOTHINGSURFACE_ARG_DEG_MAX</translation>
+      <translation>Bスプライン面の最大自由度</translation>
     </message>
     <message>
       <source>GEOM_SMOOTHINGSURFACE_ARG_D_MAX</source>
-      <translation>GEOM_SMOOTHINGSURFACE_ARG_D_MAX</translation>
+      <translation>初期近似の３次元公差</translation>
     </message>
     <message>
       <source>GEOM_SMOOTHINGSURFACE_NO_POINTS</source>
-      <translation>GEOM_SMOOTHINGSURFACE_NO_POINTS</translation>
+      <translation>点が選択されていない</translation>
     </message>
   </context>
 </TS>
