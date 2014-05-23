@@ -23,32 +23,28 @@
 #include <GraphicsView_ViewPort.h>
 #include <GraphicsView_ViewFrame.h>
 
-#include <QGraphicsView>
-#include <QList>
-#include <QMap>
-#include <QString>
-#include <QPair>
+#include <GEOMUtils.hxx>
+
 #include <QWidgetAction>
+#include <QPushButton>
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QProgressBar>
 #include <QThread>
-#include <QDialog>
-
-#include "DependencyTree_Arrow.h"
 
 class DependencyTree_Object;
+class DependencyTree_Arrow;
 class DependencyTree_View;
-
 
 class DependencyTree_ComputeDlg_QThread : public QThread
 {
   Q_OBJECT
 
 public:
-  DependencyTree_ComputeDlg_QThread(DependencyTree_View*);
-  bool                   result();
-  void                   cancel();
+
+  DependencyTree_ComputeDlg_QThread( DependencyTree_View* );
+  bool result();
+  void cancel();
 
   DependencyTree_View*   getView() { return myView; };
 
@@ -61,11 +57,11 @@ private:
 
 class DependencyTree_View: public GraphicsView_ViewPort
 {
-	Q_OBJECT
+  Q_OBJECT
+
 public:
 
-
-  DependencyTree_View( QWidget* theParent=0 );
+  DependencyTree_View( QWidget* = 0 );
   ~DependencyTree_View();
 
   void setHierarchyType( const int );
@@ -78,18 +74,18 @@ public:
   void setHighlightArrowColor( const QColor& );
   void setSelectArrowColor( const QColor& );
 
-  typedef QList<QString> NodeLinks;
-  typedef QMap<QString, NodeLinks> LevelInfo;
-  typedef QList<LevelInfo> LevelsList;
-  typedef QMap<QString,QPair<LevelsList,LevelsList> > TreeModel;
+//  typedef QList<QString> NodeLinks;
+//  typedef QMap<QString, NodeLinks> LevelInfo;
+//  typedef QList<LevelInfo> LevelsList;
+//  typedef QMap<QString,QPair<LevelsList,LevelsList> > TreeModel;
 
-  TreeModel myTreeModel;
-  QMap<QString,DependencyTree_Object*> myTreeMap;
-  QList<DependencyTree_Arrow*> Arrows;
+  GEOMUtils::TreeModel myTreeModel;
+  std::map<std::string,DependencyTree_Object*> myTreeMap;
+  std::map<std::pair<DependencyTree_Object*,DependencyTree_Object*>,DependencyTree_Arrow*> Arrows;
 
-  QMap<QString,int> myLevelMap;
+  std::map<std::string,int> myLevelMap;
 
-  QMap< int, QList<QString> > myLevelsObject;
+  std::map< int, std::vector<std::string> > myLevelsObject;
   int myCurrentLevel;
 
   void init( GraphicsView_ViewFrame* );
@@ -112,15 +108,20 @@ private slots:
   void onCancel();
 
 private:
-  void parseData( QString& data );
-  void addNode( const QString& entry );
+//  void parseData( QString& data );
+
+  void parseTree();
+  void parseTreeWard(const GEOMUtils::LevelsList);
+  void parseTreeWardArrow(const GEOMUtils::LevelsList);
+
+  void addNode( const std::string& entry );
   void addArrow( DependencyTree_Object *startItem, DependencyTree_Object *endItem );
   void findArrow( DependencyTree_Object *startItem, DependencyTree_Object *endItem );
-  DependencyTree_View::LevelsList parseWard( const QString& data, int& cursor );
+//  GEOMUtils::LevelsList parseWard( const QString& data, int& cursor );
   void drawTree();
-  void drawWard( DependencyTree_View::LevelsList ward, const int levelStep );
+  void drawWard( GEOMUtils::LevelsList ward, const int levelStep );
   void drawArrows();
-  void drawWardArrows( LevelsList );
+  void drawWardArrows( GEOMUtils::LevelsList );
 
   int checkMaxLevelsNumber();
   int myLevelsNumber;
@@ -132,7 +133,7 @@ private:
   QCheckBox* myDisplayAscendants;
   QCheckBox* myDisplayDescendants;
 
-  QString myData;
+  std::string myData;
 
   bool myIsUpdate;
 
@@ -145,34 +146,8 @@ private:
   QWidgetAction*  cancelAction;
   QWidgetAction*  progressAction;
 
+  //SALOMEDS::Study_var myStudy;
+
 };
-
-
-
-///*!
-// * \brief Dialog to display Cancel button
-// */
-//
-//class DependencyTree_ComputeDlg_QThreadQDialog : public QDialog
-//{
-//  Q_OBJECT
-//
-//public:
-//  DependencyTree_ComputeDlg_QThreadQDialog(QWidget* parent, DependencyTree_View*);
-//  bool result();
-//
-//protected:
-//  void timerEvent(QTimerEvent *timer);
-//  void closeEvent(QCloseEvent *event);
-//
-//private slots:
-//  void onCancel();
-//
-//private:
-//
-//  DependencyTree_ComputeDlg_QThread qthread;
-//  QPushButton *               cancelButton;
-//  QProgressBar*               progressBar;
-//};
 
 #endif

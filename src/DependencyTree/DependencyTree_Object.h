@@ -28,7 +28,8 @@ class DependencyTree_Object: public GraphicsView_Object
 {
 
 public:
-  DependencyTree_Object( const QString&, QGraphicsItem* = 0 );
+
+  DependencyTree_Object( const std::string&, QGraphicsItem* = 0 );
   ~DependencyTree_Object();
 
   virtual void              compute() {};
@@ -39,7 +40,7 @@ public:
   virtual bool              select( double, double, const QRectF& );
   virtual void              unselect();
 
-  QString                   getEntry() const;
+  std::string               getEntry() const;
 
   void                      updateName();
 
@@ -60,7 +61,7 @@ private:
   QGraphicsPolygonItem*     myPolygonItem;
   QGraphicsSimpleTextItem*  myTextItem;
 
-  QString                   myEntry;
+  std::string                   myEntry;
 
   bool                      myIsMainObject;
   bool                      myIsLongName;

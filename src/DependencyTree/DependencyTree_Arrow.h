@@ -26,6 +26,7 @@ class DependencyTree_Object;
 
 class DependencyTree_Arrow : public QGraphicsLineItem
 {
+
 public:
 
   DependencyTree_Arrow( DependencyTree_Object* startItem, DependencyTree_Object* endItem,

@@ -19,9 +19,15 @@
 
 #include "DependencyTree_Object.h"
 
+// GEOM includes
+#include <GeometryGUI.h>
+#include <GEOM_BaseObject.hxx>
+
 // GUI includes
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
 
 // Qt includes
 #include <QFont>
@@ -29,7 +35,7 @@
 const int itemH = 20;
 const int itemW = 90;
 
-DependencyTree_Object::DependencyTree_Object( const QString& theEntry, QGraphicsItem* theParent )
+DependencyTree_Object::DependencyTree_Object( const std::string& theEntry, QGraphicsItem* theParent )
 :GraphicsView_Object( theParent ),
 myIsMainObject( false ),
 myIsLongName( false )
@@ -135,7 +141,7 @@ void DependencyTree_Object::unselect()
 // function : getEntry()
 // purpose  : get entry of current item
 //=================================================================================
-QString DependencyTree_Object::getEntry() const
+std::string DependencyTree_Object::getEntry() const
 {
   return myEntry;
 }
@@ -146,9 +152,18 @@ QString DependencyTree_Object::getEntry() const
 //=================================================================================
 void DependencyTree_Object::updateName()
 {
-  QString name = myEntry;
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy( study->studyDS());
+  int StudyId = aStudyDS->StudyId();
+  GEOM::_objref_GEOM_BaseObject* object = GeometryGUI::GetGeomGen()->GetObject( StudyId, myEntry.c_str() );
 
-  setName( myEntry );
+  QString name = object->GetName();
+
+//	QString name = myEntry.c_str();
+
+  setName( name );
 
   myTextItem->setText( name );
   double textWidth = myTextItem->sceneBoundingRect().width();

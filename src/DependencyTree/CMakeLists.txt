@@ -32,7 +32,8 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
-  ${PROJECT_SOURCE_DIR}/src/GEOM
+    ${PROJECT_SOURCE_DIR}/src/GEOM
+        ${PROJECT_SOURCE_DIR}/src/GEOMUtils
     
     
       ${PROJECT_BINARY_DIR}/idl
@@ -64,6 +65,7 @@ SET(_link_LIBRARIES
   ${GUI_GraphicsView}
   ${GUI_SalomeObject}
   GEOMUtils
+  ${KERNEL_SalomeDS}
 )
 
 # --- headers ---
