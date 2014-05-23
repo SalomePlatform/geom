@@ -3052,7 +3052,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
   std::string ior;
   for ( int i = 0; i < theObjectIORs.length(); i++ ) {
     ior = theObjectIORs[i].in();
-    GEOM::GEOM_Object_ptr anObj = GetIORFromString( ior.c_str() );
+    GEOM::GEOM_BaseObject_var anObj = GetObject( theStudy->StudyId(), ior.c_str() );
     GEOMUtils::LevelsList upLevelList;
     getUpwardDependency( anObj, upLevelList );
     GEOMUtils::LevelsList downLevelList;
@@ -3081,23 +3081,38 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
 void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
 				      GEOMUtils::LevelsList &upLevelList, 
 				      int level ) {
-  std::string aGboIOR = GetStringFromIOR(GEOM::GEOM_Object::_narrow(gbo));
+  std::string aGboIOR = gbo->GetEntry();
+  //std::cout << "\n\nAKL: upnode IOR: " << aGboIOR << endl;
+  //std::cout << "AKL: level: " << level << endl;
+  GEOMUtils::NodeLinks anIORs;
+  GEOMUtils::LevelInfo aLevelMap;
+  if ( level > 0 ) {
+    if ( level-1 >= upLevelList.size() ) {
+      upLevelList.push_back( aLevelMap );
+      //std::cout << "AKL: new map" << endl;
+    } else {
+      aLevelMap = upLevelList.at(level-1);
+      if ( aLevelMap.count( aGboIOR ) > 0 ) {
+	anIORs = aLevelMap[ aGboIOR ];
+	//std::cout << "AKL: get already added iors list: " << endl;
+      }
+    }
+  }
   GEOM::ListOfGBO_var depList = gbo->GetDependency();
   for( int j = 0; j < depList->length(); j++ ) {
     if ( level > 0 ) {
-      GEOMUtils::NodeLinks anIORs;
-      GEOMUtils::LevelInfo aLevelMap;
-      if ( level-1 >= upLevelList.size() ) {
-        upLevelList.push_back( aLevelMap );
-      } else {
-        aLevelMap = upLevelList.at(level-1);
-        if ( aLevelMap.count( aGboIOR ) > 0 )
-          anIORs = aLevelMap[ aGboIOR ];
-      }
-      anIORs.push_back( GetStringFromIOR(GEOM::GEOM_Object::_narrow(depList[j])) );
-      aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGboIOR, anIORs) );
+      anIORs.push_back( depList[j]->GetEntry() );
+      //std::cout << "AKL: add link ior: " << depList[j]->GetEntry() << endl;
     }
-    getUpwardDependency(depList[j], upLevelList, level++);
+    //std::cout << "AKL: <<<<<<<< start next step: " << endl;
+    getUpwardDependency(depList[j], upLevelList, level+1);
+    //std::cout << "AKL: end next step >>>>>>>> : " << endl;
+  }
+  if ( level > 0 ) {
+    //std::cout << "AKL: insert links for node: " << aGboIOR << endl;
+    aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGboIOR, anIORs) );
+    //std::cout << "AKL: insert level map: " << endl;
+    upLevelList[level-1] = aLevelMap;
   }
 }
 
@@ -3113,6 +3128,21 @@ void GEOM_Gen_i::getDownwardDependency( SALOMEDS::Study_ptr theStudy,
   if ( !comp )
     return;
 
+  GEOMUtils::NodeLinks anIORs;
+  GEOMUtils::LevelInfo aLevelMap;
+  std::string aGboIOR = gbo->GetEntry();
+  if ( level > 0 ) {
+    if ( level-1 >= downLevelList.size() ) {
+      downLevelList.push_back( aLevelMap );
+      //std::cout << "AKL: new map" << endl;
+    } else {
+      aLevelMap = downLevelList.at(level-1);
+      if ( aLevelMap.count( aGboIOR ) > 0 ) {
+	anIORs = aLevelMap[ aGboIOR ];
+	//std::cout << "AKL: get already added iors list: " << endl;
+      }
+    }
+  }
   SALOMEDS::ChildIterator_var it = theStudy->NewChildIterator( comp );
   for ( it->InitEx( true ); it->More(); it->Next() ) {
     SALOMEDS::SObject_var child = it->Value();
@@ -3124,25 +3154,20 @@ void GEOM_Gen_i::getDownwardDependency( SALOMEDS::Study_ptr theStudy,
     GEOM::ListOfGBO_var depList = geomObj->GetDependency();
     if( depList->length() == 0 )
       continue;
-    std::string aGoIOR = GetStringFromIOR( geomObj );
+    std::string aGoIOR = geomObj->GetEntry();
 
     for( int i = 0; i < depList->length(); i++ ) {
       if ( depList[i]->IsSame( gbo ) ) {
-	GEOMUtils::NodeLinks anIORs;
-        GEOMUtils::LevelInfo aLevelMap;
-        if ( level >= downLevelList.size() ) {
-          aLevelMap = GEOMUtils::LevelInfo();
-          downLevelList.push_back( aLevelMap );
-        } else {
-          aLevelMap = downLevelList.at(level);
-          if ( aLevelMap.count( aGoIOR ) > 0 )
-            anIORs = aLevelMap[ aGoIOR ];
-        }
-        anIORs.push_back( GetStringFromIOR(GEOM::GEOM_Object::_narrow(depList[i])));
-        aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGoIOR, anIORs) );
+	if ( level > 0 ) {
+	  anIORs.push_back( geomObj->GetEntry());
+	}
+	getDownwardDependency(theStudy, geomObj, downLevelList, level+1);
       }
     }
-    getDownwardDependency(theStudy, geomObj, downLevelList, level++);
+  }
+  if ( level > 0 ) {
+    aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGboIOR, anIORs) );
+    downLevelList[level-1] = aLevelMap;
   }
 }
 

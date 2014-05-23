@@ -58,6 +58,7 @@
 #include <GEOM_InteractiveObject.hxx>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include "GEOMUtils.hxx"
 
 
 
@@ -85,7 +86,7 @@ myIsUpdate( true )
 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
-
+  
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
@@ -106,7 +107,8 @@ myIsUpdate( true )
 
     GEOM::GEOM_Object_var myObject = GEOM::GEOM_Object::_nil();
     myObject = GEOMBase::ConvertIOinGEOMObject( io );
-    QString ior = GEOMBase::GetIORFromObject(myObject);
+    //QString ior = GEOMBase::GetIORFromObject(myObject);
+    QString ior = myObject->GetEntry();
     ObjectIORs[aaa] = ior.toLatin1().constData();
     aaa++;
 
@@ -133,12 +135,18 @@ myIsUpdate( true )
 //
 //  }
 
+  // get dependencies tree as a stream
   SALOMEDS::TMPFile_var SeqFile =
-  GeometryGUI::GetGeomGen()->GetDependencyTree( aStudyDS, ObjectIORs );
-  char* buf;
-  buf = (char*) &SeqFile[0];
+    GeometryGUI::GetGeomGen()->GetDependencyTree( aStudyDS, ObjectIORs );
+  // convert stream into string
+  char* treeStr;
+  treeStr = (char*) &SeqFile[0];
 
-  std::cout << "\n\n\n\n\n TREE = " << buf << std::endl;
+  std::cout << "\n TREE = " << treeStr << std::endl;
+
+  // parse string to deal with 'TreeModel' object
+  GEOMUtils::TreeModel tree;
+  GEOMUtils::ConvertStringToTree( treeStr, tree );
 }
 
 DependencyTree_View::~DependencyTree_View()

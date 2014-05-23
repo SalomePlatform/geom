@@ -963,6 +963,30 @@ gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
   return ResultPoint;
 }
 
+void parseWard( const LevelsList &theLevelList, std::string &treeStr )
+{
+  treeStr.append( "{" );
+  for( LevelsList::const_iterator j = theLevelList.begin(); 
+       j != theLevelList.end(); ++j ) {
+    if ( j != theLevelList.begin() ) {
+      treeStr.append( ";" );
+    }
+    LevelInfo level = (*j);
+    LevelInfo::iterator upIter;
+    for ( upIter = level.begin(); upIter != level.end(); ++upIter ) {
+      if ( upIter != level.begin() ) {
+	treeStr.append( "," );
+      }
+      treeStr.append( upIter->first );
+      for ( std::vector<std::string>::iterator k = upIter->second.begin(); k != upIter->second.end(); ++k ) {
+	treeStr.append( "_" );
+	treeStr.append( *k );
+      }
+    }
+  }
+  treeStr.append( "}" );
+}
+
 //=======================================================================
 // function : ConvertTreeToString()
 // purpose  : Returns the string representation of dependency tree
@@ -976,42 +1000,10 @@ void ConvertTreeToString( const TreeModel &tree,
     treeStr.append( "-" );
     std::vector<LevelInfo> upLevelList = i->second.first;
     treeStr.append( "upward" );
-    treeStr.append( "{" );
-    for( std::vector<LevelInfo>::iterator j = upLevelList.begin(); 
-	 j != upLevelList.end(); ++j ) {
-      LevelInfo level = (*j);
-      LevelInfo::iterator upIter;
-      for ( upIter = level.begin(); upIter != level.end(); ++upIter ) {
-        treeStr.append( upIter->first );
-	for ( std::vector<std::string>::iterator k = upIter->second.begin();
-	     k != upIter->second.end(); ++k ) {
-	  treeStr.append( "_" );
-	  treeStr.append( *k );
-	}
-        treeStr.append( upIter++ == level.end() ? ";" : "," );
-	upIter--;
-      }
-    }
-    treeStr.append( "}" );
+    parseWard( upLevelList, treeStr );
     std::vector<LevelInfo> downLevelList = i->second.second;
     treeStr.append( "downward" );
-    treeStr.append( "{" );
-    for( std::vector<LevelInfo>::iterator j = downLevelList.begin(); 
-	 j != downLevelList.end(); ++j ) {
-      LevelInfo level = (*j);
-      LevelInfo::iterator downIter;
-      for ( downIter = level.begin(); downIter != level.end(); ++downIter ) {
-        treeStr.append( downIter->first );
-	for ( std::vector<std::string>::iterator k = downIter->second.begin();
-	     k != downIter->second.end(); ++k ) {
-	  treeStr.append( "_" );
-	  treeStr.append( *k );
-	}
-        treeStr.append( downIter++ == level.end() ? ";" : "," );
-	downIter--;
-      }
-    }
-    treeStr.append("}");
+    parseWard( downLevelList, treeStr );
   }
 }
 
