@@ -89,6 +89,7 @@ myIsUpdate( true )
 
   GEOMUtils::ConvertStringToTree( buf, myTreeModel );
 
+  aSelMgr->clearSelected();
 }
 
 DependencyTree_View::~DependencyTree_View()
@@ -345,6 +346,7 @@ void DependencyTree_View::drawTree()
 		  }
 		}
   centerOn( scene()->sceneRect().center() );
+  fitAll( true );
 
 }
 
@@ -362,7 +364,6 @@ void DependencyTree_View::drawWard( const GEOMUtils::LevelsList theWard, const i
 		for (node = levelInfo.begin(); node != levelInfo.end(); node++ ) {
 	      DependencyTree_Object* object = myTreeMap[ node->first ];
 	      if( !isItemAdded( object ) ) {
-	    	std::cout<< "\n\n\n addItem = " << object->getEntry() << std::endl;
 	        addItem( object );
 	        myLevelMap[ node->first ] = myCurrentLevel;
 	        myLevelsObject[ myCurrentLevel ].push_back( node->first );
@@ -506,6 +507,7 @@ void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
   setNodesMovable( resMgr->booleanValue( "Geometry", "dependency_tree_move_nodes", true ) );
   setHierarchyType( resMgr->integerValue( "Geometry", "dependency_tree_hierarchy_type", 0 ) );
 
+
 }
 
 void DependencyTree_View::onMoveNodes( bool theIsMoveNodes )
@@ -564,7 +566,11 @@ void DependencyTree_View::updateView()
   qthread = new DependencyTree_ComputeDlg_QThread(this);// = DependencyTree_ComputeDlg_QThread(this);// const_cast<DependencyTree_View*>(this) );
   cancelAction->setVisible( true );
   progressAction->setVisible(true);
-  startTimer(100); // millisecs
+  myNodesMovable->setEnabled(false);
+  myHierarchyDepth->setEnabled( false);
+  myDisplayAscendants->setEnabled( false );
+  myDisplayDescendants->setEnabled( false );
+  myTimer = startTimer(100); // millisecs
   qthread->start();
 }
 
@@ -578,6 +584,10 @@ void DependencyTree_View::onCancel()
   qthread->cancel();
   cancelButton->setText( tr("CANCELING"));
   cancelButton->setEnabled(false);
+  killTimer( myTimer );
+  qthread->killTimer( myTimer );
+  qthread->deleteLater();
+
 }
 
 void DependencyTree_View::timerEvent(QTimerEvent *event)
@@ -592,6 +602,10 @@ void DependencyTree_View::timerEvent(QTimerEvent *event)
 	  progressAction->setVisible(false);
 	  cancelButton->setText( tr("CANCEL"));
 	  cancelButton->setEnabled(true);
+	  myNodesMovable->setEnabled( true );
+	  myHierarchyDepth->setEnabled( true );
+	  myDisplayAscendants->setEnabled( true );
+	  myDisplayDescendants->setEnabled( true );
   }
 
   event->accept();
@@ -707,39 +721,25 @@ int DependencyTree_View::select( const QRectF& theRect, bool theIsAppend )
 {
 	GraphicsView_ViewPort::select( theRect, theIsAppend );
 
-//    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-//
-//    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-//
-//    // get selection
-//    SALOME_ListIO listIO;
-//
-//    SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-//    SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy( study->studyDS());
-//    int StudyId = aStudyDS->StudyId();
-//    for( initSelected(); moreSelected(); nextSelected() )
-//      if( DependencyTree_Object* aDepObject = dynamic_cast<DependencyTree_Object*>( selectedObject() ) ) {
-//
-//          _PTR(SObject) SO ( aStudyDS->FindObjectID( aDepObject->getEntry().c_str() ) );
-//          if ( SO ) { //;&& QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
-//            _PTR(SComponent) SC ( SO->GetFatherComponent() );
-//            // if component is selected
-//            _PTR(ChildIterator) anIter ( aStudyDS->NewChildIterator( SO ) );
-//            anIter->InitEx( true );
-//            while( anIter->More() ) {
-//              _PTR(SObject) valSO ( anIter->Value() );
-//              _PTR(SObject) refSO;
-//              if ( !valSO->ReferencedObject( refSO ) ) {
-//                listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
-//                                                            SC->ComponentDataType().c_str(),
-//                                                            valSO->GetName().c_str()) );
-//              }
-//              anIter->Next();
-//            }
-//            break;
-//          }
-//      }
-//  aSelMgr->setSelectedObjects( listIO, true );
+    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+
+    // get selection
+    SALOME_ListIO listIO;
+aSelMgr->clearSelected();
+    SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+    SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy( study->studyDS());
+    int StudyId = aStudyDS->StudyId();
+    for( initSelected(); moreSelected(); nextSelected() )
+      if( DependencyTree_Object* aDepObject = dynamic_cast<DependencyTree_Object*>( selectedObject() ) ) {
+          GEOM::_objref_GEOM_BaseObject* object = GeometryGUI::GetGeomGen()->GetObject( StudyId, aDepObject->getEntry().c_str() );
+          CORBA::String_var aChildEntry = object->GetStudyEntry();
+      Handle(SALOME_InteractiveObject) tmpIO =
+        new SALOME_InteractiveObject( aChildEntry.in(), "GEOM", "TEMP_IO");
+      listIO.Append(tmpIO);
+      }
+  aSelMgr->setSelectedObjects( listIO, true );
 }
 
 //================================================================================

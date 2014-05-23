@@ -137,6 +137,8 @@ private:
 
   std::string myData;
 
+  int myTimer;
+
   bool myIsUpdate;
 
   GraphicsView_ViewFrame* myViewFrame;
