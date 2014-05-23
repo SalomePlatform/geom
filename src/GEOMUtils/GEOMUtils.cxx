@@ -1024,16 +1024,16 @@ LevelsList parseWard( const std::string& theData, std::size_t& theCursor )
   for( int level = 0; level < levelsListStr.size(); level++ ) {
     std::cout<<"    Level" << level + 1 << ":" << std::endl;
     std::vector<std::string> namesListStr;
-    ss.str( levelsListStr[level] );
-    while ( std::getline( ss, substr, ',' ) ) {
+    std::stringstream ss1( levelsListStr[level] );
+    while ( std::getline( ss1, substr, ',' ) ) {
       if ( !substr.empty() )
 	namesListStr.push_back( substr );
     }
     LevelInfo levelInfoData;
     for( int node = 0; node < namesListStr.size(); node++ ) {
       std::vector<std::string> linksListStr;
-      ss.str( namesListStr[node] );
-      while ( std::getline( ss, substr, '_' ) ) {
+      std::stringstream ss2( namesListStr[node] );
+      while ( std::getline( ss2, substr, '_' ) ) {
 	if ( !substr.empty() )
 	  linksListStr.push_back( substr );
       }
