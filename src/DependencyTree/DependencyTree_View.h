@@ -74,6 +74,8 @@ public:
   void setHighlightArrowColor( const QColor& );
   void setSelectArrowColor( const QColor& );
 
+  virtual int select( const QRectF&, bool );
+
 //  typedef QList<QString> NodeLinks;
 //  typedef QMap<QString, NodeLinks> LevelInfo;
 //  typedef QList<LevelInfo> LevelsList;

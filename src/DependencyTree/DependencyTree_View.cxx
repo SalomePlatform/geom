@@ -101,16 +101,18 @@ void DependencyTree_View::drawArrows()
 	GEOMUtils::TreeModel::const_iterator i;
 	for (i = myTreeModel.begin(); i != myTreeModel.end(); i++ ) {
 		DependencyTree_Object* Main_object = myTreeMap[i->first];
-		GEOMUtils::LevelInfo Levelup = i->second.first.at(0);
-		if( myDisplayAscendants ->isChecked() ) {
-			GEOMUtils::LevelInfo::const_iterator node;
-		for (node = Levelup.begin(); node != Levelup.end(); node++ ) {
-		    DependencyTree_Object* object = myTreeMap[node->first];
-		    DependencyTree_Arrow* arrow = Arrows[std::pair<DependencyTree_Object*,DependencyTree_Object*>(Main_object, object)];
-		    if( arrow && !isItemAdded( arrow) )
-		      addItem( arrow );
+	    if( i->second.first.size() > 0 ) {
+		  GEOMUtils::LevelInfo Levelup = i->second.first.at(0);
+		  if( myDisplayAscendants ->isChecked() ) {
+		 	GEOMUtils::LevelInfo::const_iterator node;
+		    for (node = Levelup.begin(); node != Levelup.end(); node++ ) {
+		      DependencyTree_Object* object = myTreeMap[node->first];
+		      DependencyTree_Arrow* arrow = Arrows[std::pair<DependencyTree_Object*,DependencyTree_Object*>(Main_object, object)];
+		      if( arrow && !isItemAdded( arrow) )
+		        addItem( arrow );
+		    }
 		  }
-		}
+	    }
 		if( myDisplayAscendants ->isChecked() )
        drawWardArrows( i->second.first );
 		if( myDisplayDescendants->isChecked() )
@@ -158,11 +160,13 @@ void DependencyTree_View::parseTree()
 
   for (i = myTreeModel.begin(); i != myTreeModel.end(); i++ ) {
     DependencyTree_Object* Main_object = myTreeMap[i->first];
-    GEOMUtils::LevelInfo Levelup = i->second.first.at(0);
-    GEOMUtils::LevelInfo::const_iterator node;
-    for (node = Levelup.begin(); node != Levelup.end(); node++ ) {
-      DependencyTree_Object* object = myTreeMap[node->first];
-      addArrow( Main_object, object );
+    if( i->second.first.size() > 0 ) {
+      GEOMUtils::LevelInfo Levelup = i->second.first.at(0);
+      GEOMUtils::LevelInfo::const_iterator node;
+      for (node = Levelup.begin(); node != Levelup.end(); node++ ) {
+        DependencyTree_Object* object = myTreeMap[node->first];
+        addArrow( Main_object, object );
+      }
     }
     parseTreeWardArrow( i->second.first );
     parseTreeWardArrow( i->second.second );
@@ -697,6 +701,45 @@ void DependencyTree_View::setSelectArrowColor( const QColor& theColor )
     DependencyTree_Arrow* arrow = Arrows[ j->first ];
     arrow->setSelectColor( theColor );
   }
+}
+
+int DependencyTree_View::select( const QRectF& theRect, bool theIsAppend )
+{
+	GraphicsView_ViewPort::select( theRect, theIsAppend );
+
+//    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+//
+//    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+//
+//    // get selection
+//    SALOME_ListIO listIO;
+//
+//    SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+//    SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy( study->studyDS());
+//    int StudyId = aStudyDS->StudyId();
+//    for( initSelected(); moreSelected(); nextSelected() )
+//      if( DependencyTree_Object* aDepObject = dynamic_cast<DependencyTree_Object*>( selectedObject() ) ) {
+//
+//          _PTR(SObject) SO ( aStudyDS->FindObjectID( aDepObject->getEntry().c_str() ) );
+//          if ( SO ) { //;&& QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
+//            _PTR(SComponent) SC ( SO->GetFatherComponent() );
+//            // if component is selected
+//            _PTR(ChildIterator) anIter ( aStudyDS->NewChildIterator( SO ) );
+//            anIter->InitEx( true );
+//            while( anIter->More() ) {
+//              _PTR(SObject) valSO ( anIter->Value() );
+//              _PTR(SObject) refSO;
+//              if ( !valSO->ReferencedObject( refSO ) ) {
+//                listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
+//                                                            SC->ComponentDataType().c_str(),
+//                                                            valSO->GetName().c_str()) );
+//              }
+//              anIter->Next();
+//            }
+//            break;
+//          }
+//      }
+//  aSelMgr->setSelectedObjects( listIO, true );
 }
 
 //================================================================================

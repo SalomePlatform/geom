@@ -152,6 +152,7 @@ std::string DependencyTree_Object::getEntry() const
 //=================================================================================
 void DependencyTree_Object::updateName()
 {
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app ) return;
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
@@ -160,8 +161,15 @@ void DependencyTree_Object::updateName()
   GEOM::_objref_GEOM_BaseObject* object = GeometryGUI::GetGeomGen()->GetObject( StudyId, myEntry.c_str() );
 
   QString name = object->GetName();
+  QString StudyEntry = object->GetStudyEntry();
+  std::cout << "\n\n\n StudyEntry = " << StudyEntry.toStdString() << "  " << StudyEntry.isEmpty() <<  std::endl;
 
-//	QString name = myEntry.c_str();
+
+  if( StudyEntry.isEmpty() ) {
+	if( name.isEmpty() )
+      name = "unpublished";
+    myColor = resMgr->colorValue( "Geometry", "dependency_tree_background_color", QColor( 255, 255, 255 ) );
+  }
 
   setName( name );
 
