@@ -35,9 +35,10 @@
 
 // Qt includes
 #include <QCloseEvent>
-#include <QTimerEvent>
+#include <QApplication>
 #include <QGraphicsScene>
 
+#define DRAW_EVENT  ( QEvent::User + 1 )
 
 #include <iostream>
 
@@ -96,7 +97,7 @@ void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
   QWidgetAction* hierarchyDepthAction = new QWidgetAction( theViewFrame );
   hierarchyDepthAction->setDefaultWidget( myHierarchyDepth );
 
-  QPushButton* updateButton = new QPushButton( tr( "UPDATE" ) );
+  updateButton = new QPushButton( tr( "UPDATE" ) );
   QWidgetAction* updateAction = new QWidgetAction( theViewFrame );
   updateAction->setDefaultWidget( updateButton );
 
@@ -159,6 +160,7 @@ void DependencyTree_View::drawTree()
   std::cout << "\n\n\n TOTAL COST = " << myTotalCost << std::endl;
 
   clearSelected();
+  clearView( false );
 
   // draw nodes on scene
   std::map< std::string, int > entryLevelMap;
@@ -171,7 +173,6 @@ void DependencyTree_View::drawTree()
       return;
     currentLevel = 0;
     myComputedCost++;
-    sleep(1);
     std::string objectEntry = i->first;
     DependencyTree_Object* objectItem = myTreeMap[ objectEntry ];
     horDistance = 100 + int( objectItem->boundingRect().width() );
@@ -226,7 +227,6 @@ void DependencyTree_View::drawTree()
       drawWardArrows( j->second.second );
   }
   std::cout << "\n ComputedCost = " << myComputedCost << std::endl;
-  fitAll( true );
 }
 
 int DependencyTree_View::select( const QRectF& theRect, bool theIsAppend )
@@ -246,6 +246,40 @@ int DependencyTree_View::select( const QRectF& theRect, bool theIsAppend )
       listIO.Append( tmpIO );
     }
   mySelectionMgr->setSelectedObjects( listIO, true );
+}
+
+void DependencyTree_View::customEvent ( QEvent * event )
+{
+  if( event->type() == DRAW_EVENT ) {
+	//qthread->sleepDraw();
+
+	std::cout << "\n\n\n DRAW_EVENT!!! " << std::endl;
+    QPushButton* cancelButton = dynamic_cast<QPushButton*>( cancelAction->defaultWidget() );
+    QProgressBar* progressBar = dynamic_cast<QProgressBar*>( progressAction->defaultWidget() );
+
+    std::cout << "\n\n *** myIsCompute " << myIsCompute << std::endl;
+    if ( !cancelButton->isChecked() ) {
+      std::cout << "\n\n *** getComputeProgress = " << getComputeProgress() << std::endl;
+      progressBar->setValue( progressBar->maximum() * getComputeProgress() );
+
+    }
+
+    std::cout << "\n\n *** qthread->isFinished() = " << qthread->isFinished() << std::endl;
+    if( !myIsCompute || qthread->isFinished() ) {
+      changeWidgetState( false );
+      cancelButton->setChecked( false );
+      progressBar->setValue(0);
+    }
+  }
+  event->accept();
+}
+
+void DependencyTree_View::addItem( QGraphicsItem* theObject )
+{
+  GraphicsView_ViewPort::addItem( theObject );
+  qthread->sleepDraw();
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  QApplication::postEvent( this, new QEvent( ( QEvent::Type )DRAW_EVENT ) );
 }
 
 void DependencyTree_View::mouseMoveEvent(QMouseEvent *event)
@@ -362,23 +396,23 @@ bool DependencyTree_View::getIsCompute()
   return myIsCompute;
 }
 
-void DependencyTree_View::timerEvent(QTimerEvent *event)
-{
-  QPushButton* cancelButton = dynamic_cast<QPushButton*>( cancelAction->defaultWidget() );
-  QProgressBar* progressBar = dynamic_cast<QProgressBar*>( progressAction->defaultWidget() );
-
-  std::cout << "TIMER! " << std::endl;
-  if ( !cancelButton->isChecked() )
-    progressBar->setValue( progressBar->maximum() * getComputeProgress() );
-
-  if( !myIsCompute || qthread->isFinished() ) {
-    changeWidgetState( false );
-    killTimer( myTimer );
-    cancelButton->setChecked( false );
-    progressBar->setValue(0);
-  }
-  event->accept();
-}
+//void DependencyTree_View::timerEvent(QTimerEvent *event)
+//{
+//  QPushButton* cancelButton = dynamic_cast<QPushButton*>( cancelAction->defaultWidget() );
+//  QProgressBar* progressBar = dynamic_cast<QProgressBar*>( progressAction->defaultWidget() );
+//
+//  std::cout << "TIMER! " << std::endl;
+//  if ( !cancelButton->isChecked() )
+//    progressBar->setValue( progressBar->maximum() * getComputeProgress() );
+//
+//  if( !myIsCompute || qthread->isFinished() ) {
+//    changeWidgetState( false );
+//    killTimer( myTimer );
+//    cancelButton->setChecked( false );
+//    progressBar->setValue(0);
+//  }
+//  event->accept();
+//}
 
 void DependencyTree_View::closeEvent( QCloseEvent* event )
 {
@@ -395,13 +429,13 @@ void DependencyTree_View::updateView()
   if( !myIsUpdate )
     return;
 
-  clearView( false );
+//  clearView( false );
 
   qthread = new DependencyTree_ComputeDlg_QThread( this );
 
   changeWidgetState( true );
 
-  myTimer = startTimer( 100 ); // millisecs
+  //myTimer = startTimer( 100 ); // millisecs
   qthread->start();
 }
 
@@ -535,7 +569,6 @@ void DependencyTree_View::drawWard( const GEOMUtils::LevelsList& theWard,
     if( level >= myLevelsNumber || !myIsCompute )
       return;
     myComputedCost++;
-    sleep(1);
     theCurrentLevel += theLevelStep;
     GEOMUtils::LevelInfo levelInfo = theWard.at( level );
     GEOMUtils::LevelInfo::const_iterator node;
@@ -557,7 +590,6 @@ void DependencyTree_View::drawWardArrows( GEOMUtils::LevelsList theWard )
     if( j >= myLevelsNumber || !myIsCompute )
       break;
     myComputedCost++;
-    sleep(1);
     GEOMUtils::LevelInfo Level = theWard.at(j);
     GEOMUtils::LevelInfo::const_iterator node;
     for (node = Level.begin(); node != Level.end(); node++ ) {
@@ -672,6 +704,7 @@ void DependencyTree_View::changeWidgetState( bool theIsCompute )
   myHierarchyDepth->setEnabled( !theIsCompute );
   myDisplayAscendants->setEnabled( !theIsCompute );
   myDisplayDescendants->setEnabled( !theIsCompute );
+  updateButton->setEnabled( !theIsCompute );
 }
 
 DependencyTree_ComputeDlg_QThread::DependencyTree_ComputeDlg_QThread( DependencyTree_View* theView )
@@ -683,11 +716,14 @@ void DependencyTree_ComputeDlg_QThread::run()
 {
   myView->setIsCompute( true );
   myView->drawTree();
+  myView->fitAll( true );
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  QApplication::postEvent( myView, new QEvent( ( QEvent::Type )DRAW_EVENT ) );
 }
 
-bool DependencyTree_ComputeDlg_QThread::result()
+void DependencyTree_ComputeDlg_QThread::sleepDraw()
 {
-
+  msleep(10);
 }
 
 void DependencyTree_ComputeDlg_QThread::cancel()

@@ -46,7 +46,7 @@ class DependencyTree_ComputeDlg_QThread : public QThread
 public:
 
   DependencyTree_ComputeDlg_QThread( DependencyTree_View* );
-  bool result();
+  void sleepDraw();
   void cancel();
 
   DependencyTree_View*   getView() { return myView; };
@@ -75,6 +75,8 @@ public:
   void drawTree();
 
   virtual int select( const QRectF&, bool );
+  virtual void customEvent ( QEvent* );
+  void addItem( QGraphicsItem* );
   void mouseMoveEvent(QMouseEvent *event);
 
   void setHierarchyType( const int );
@@ -91,7 +93,7 @@ public:
   bool getIsCompute();
 
 protected:
-  void timerEvent( QTimerEvent* );
+//  void timerEvent( QTimerEvent* );
   void closeEvent( QCloseEvent* );
 
 private slots:
@@ -139,6 +141,7 @@ private:
   QCheckBox* myDisplayDescendants;
   QWidgetAction*  cancelAction;
   QWidgetAction*  progressAction;
+  QPushButton* updateButton;
 
   int myTimer;
 
