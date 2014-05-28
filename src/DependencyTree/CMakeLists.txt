@@ -72,8 +72,8 @@ SET(_link_LIBRARIES
 
 SET(DependencyTree_HEADERS
   DependencyTree.h
-  DependencyTree_Object.h
   DependencyTree_Arrow.h
+  DependencyTree_Object.h
   )
 
 # header files / to be processed by moc

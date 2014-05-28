@@ -22,6 +22,10 @@
 
 #include <GraphicsView_Object.h>
 
+// GEOM includes
+#include <GeometryGUI.h>
+#include <GEOM_BaseObject.hxx>
+
 #include <QPen>
 
 class DependencyTree_Object: public GraphicsView_Object
@@ -32,39 +36,41 @@ public:
   DependencyTree_Object( const std::string&, QGraphicsItem* = 0 );
   ~DependencyTree_Object();
 
-  virtual void              compute() {};
+  virtual void                compute() {};
 
-  virtual bool              highlight( double, double );
-  virtual void              unhighlight();
+  virtual bool                highlight( double, double );
+  virtual void                unhighlight();
 
-  virtual bool              select( double, double, const QRectF& );
-  virtual void              unselect();
+  virtual bool                select( double, double, const QRectF& );
+  virtual void                unselect();
 
-  std::string               getEntry() const;
+  std::string                 getEntry() const;
 
-  void                      updateName();
+  GEOM::GEOM_BaseObject_var  getGeomObject() const;
 
-  void                      setColor(const QColor& );
-  void                      setSelectColor(const QColor& );
-  void                      setMainObjectColor(const QColor& );
+  void                        updateName();
 
-  void                      setIsMainObject( bool );
+  void                        setColor(const QColor& );
+  void                        setSelectColor(const QColor& );
+  void                        setMainObjectColor(const QColor& );
+
+  void                        setIsMainObject( bool );
 
 private:
 
-  QPen                      getPen( const QColor& );
+  QPen                        getPen( const QColor& );
 
-  QColor                    myColor;
-  QColor                    mySelectColor;
-  QColor                    myMainObjectColor;
+  QColor                      myColor;
+  QColor                      mySelectColor;
+  QColor                      myMainObjectColor;
 
-  QGraphicsPolygonItem*     myPolygonItem;
-  QGraphicsSimpleTextItem*  myTextItem;
+  QGraphicsPolygonItem*       myPolygonItem;
+  QGraphicsSimpleTextItem*    myTextItem;
 
-  std::string                   myEntry;
+  GEOM::GEOM_BaseObject_var   myGeomObject;
+  std::string                 myEntry;
 
-  bool                      myIsMainObject;
-  bool                      myIsLongName;
+  bool                        myIsMainObject;
 
 };
 

@@ -22,6 +22,9 @@
 
 #include <GraphicsView_ViewPort.h>
 #include <GraphicsView_ViewFrame.h>
+#include <GraphicsView_Scene.h>
+
+#include <SalomeApp_Application.h>
 
 #include <GEOMUtils.hxx>
 
@@ -55,6 +58,9 @@ private:
   DependencyTree_View* myView;
 };
 
+typedef std::map<std::string,DependencyTree_Object*> EntryObjectMap;
+typedef std::map<std::pair<DependencyTree_Object*,DependencyTree_Object*>,DependencyTree_Arrow*> ArrowsInfo;
+
 class DependencyTree_View: public GraphicsView_ViewPort
 {
   Q_OBJECT
@@ -63,6 +69,13 @@ public:
 
   DependencyTree_View( QWidget* = 0 );
   ~DependencyTree_View();
+
+  void init( GraphicsView_ViewFrame* );
+  void updateModel();
+  void drawTree();
+
+  virtual int select( const QRectF&, bool );
+  void mouseMoveEvent(QMouseEvent *event);
 
   void setHierarchyType( const int );
   void setNodesMovable( const bool );
@@ -74,58 +87,48 @@ public:
   void setHighlightArrowColor( const QColor& );
   void setSelectArrowColor( const QColor& );
 
-  virtual int select( const QRectF&, bool );
+  void setIsCompute( bool );
+  bool getIsCompute();
 
-//  typedef QList<QString> NodeLinks;
-//  typedef QMap<QString, NodeLinks> LevelInfo;
-//  typedef QList<LevelInfo> LevelsList;
-//  typedef QMap<QString,QPair<LevelsList,LevelsList> > TreeModel;
+protected:
+  void timerEvent( QTimerEvent* );
+  void closeEvent( QCloseEvent* );
 
-  GEOMUtils::TreeModel myTreeModel;
-  std::map<std::string,DependencyTree_Object*> myTreeMap;
-  std::map<std::pair<DependencyTree_Object*,DependencyTree_Object*>,DependencyTree_Arrow*> Arrows;
-
-  std::map<std::string,int> myLevelMap;
-
-  std::map< int, std::vector<std::string> > myLevelsObject;
-  int myCurrentLevel;
-
-  void init( GraphicsView_ViewFrame* );
-
-  void onRedrawTree();
-
-  void setIsCompute( bool theIsCompute );
-  bool getIsCompute() { return myIsCompute; };
 private slots:
-  void onUpdateTree();
   void updateView();
   void onMoveNodes( bool );
   void onHierarchyType();
-
-protected:
-  void timerEvent(QTimerEvent *timer);
-  void closeEvent(QCloseEvent *event);
-
-private slots:
   void onCancel();
 
+signals:
+
 private:
-//  void parseData( QString& data );
+
+  void addNode( const std::string& );
+  void addArrow( DependencyTree_Object*, DependencyTree_Object* );
 
   void parseTree();
   void parseTreeWard(const GEOMUtils::LevelsList);
   void parseTreeWardArrow(const GEOMUtils::LevelsList);
 
-  void addNode( const std::string& entry );
-  void addArrow( DependencyTree_Object *startItem, DependencyTree_Object *endItem );
-  void findArrow( DependencyTree_Object *startItem, DependencyTree_Object *endItem );
-//  GEOMUtils::LevelsList parseWard( const QString& data, int& cursor );
-  void drawTree();
-  void drawWard( GEOMUtils::LevelsList ward, const int levelStep );
-  void drawArrows();
+  void drawWard( const GEOMUtils::LevelsList&, std::map< std::string, int >&,
+                 std::map< int, std::vector< std::string > >&, int, const int );
   void drawWardArrows( GEOMUtils::LevelsList );
 
+  void getNewTreeModel();
+  void clearView( bool );
+
   int checkMaxLevelsNumber();
+  void calcTotalCost();
+  double getComputeProgress();
+
+  void changeWidgetState( bool );
+
+  GEOMUtils::TreeModel myTreeModel;
+
+  EntryObjectMap myTreeMap;
+  ArrowsInfo myArrows;
+
   int myLevelsNumber;
   int myMaxDownwardLevelsNumber;
   int myMaxUpwardLevelsNumber;
@@ -134,23 +137,23 @@ private:
   QSpinBox* myHierarchyDepth;
   QCheckBox* myDisplayAscendants;
   QCheckBox* myDisplayDescendants;
-
-  std::string myData;
+  QWidgetAction*  cancelAction;
+  QWidgetAction*  progressAction;
 
   int myTimer;
 
   bool myIsUpdate;
 
-  GraphicsView_ViewFrame* myViewFrame;
-
   bool myIsCompute;
-  DependencyTree_ComputeDlg_QThread* qthread;
-  QPushButton *               cancelButton;
-  QProgressBar*               progressBar;
-  QWidgetAction*  cancelAction;
-  QWidgetAction*  progressAction;
 
-  //SALOMEDS::Study_var myStudy;
+  int myTotalCost;
+  int myComputedCost;
+
+  DependencyTree_ComputeDlg_QThread* qthread;
+
+
+  SALOMEDS::Study_var myStudy;
+  LightApp_SelectionMgr* mySelectionMgr;
 
 };
 

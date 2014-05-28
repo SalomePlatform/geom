@@ -48,6 +48,7 @@ myEndItem( theEndItem )
   myStartItem = theStartItem;
   myEndItem = theEndItem;
 
+  myLine = QLineF( myStartItem->pos(), myEndItem->pos() );
   myArrowHead  = createArrowHead( myStartItem->pos(), myEndItem->pos() );
   myReverseArrowHead = createArrowHead( myEndItem->pos(), myStartItem->pos() );
 
@@ -79,8 +80,8 @@ QRectF DependencyTree_Arrow::boundingRect() const
   }
   else {
     extra = ( pen().width() + 20 ) / 2.0;
-    boundingRect = QRectF( line().p1(), QSizeF( line().p2().x() - line().p1().x(),
-                                                line().p2().y() - line().p1().y() ) );
+    boundingRect = QRectF( myLine.p1(), QSizeF( myLine.p2().x() - myLine.p1().x(),
+                                                myLine.p2().y() - myLine.p1().y() ) );
   }
   return boundingRect.normalized().adjusted( -extra, -extra, extra, extra );
 }
@@ -209,7 +210,7 @@ void DependencyTree_Arrow::paint( QPainter* painter, const QStyleOptionGraphicsI
     myArrowHead  = createArrowHead( myStartItem->pos(), myEndItem->pos() );
     myReverseArrowHead = createArrowHead( myEndItem->pos(), myStartItem->pos() );
 
-    painter->drawLine( line() );
+    painter->drawLine( myLine );
     painter->drawPolygon( myArrowHead );
     if( myIsBiLink )
       painter->drawPolygon( myReverseArrowHead );
@@ -238,21 +239,21 @@ QPolygonF DependencyTree_Arrow::createArrowHead( QPointF theStartPoint, QPointF 
         break;
       p1 = p2;
     }
-    setLine( QLineF( intersectPoint, theStartPoint ) );
+    myLine = QLineF( intersectPoint, theStartPoint );
   }
   else
-    setLine( QLineF( theEndPoint, theStartPoint ) );
+    myLine = QLineF( theEndPoint, theStartPoint );
 
-  double angle = acos(line().dx() / line().length());
-  if( line().dy() >= 0 )
+  double angle = acos(myLine.dx() / myLine.length());
+  if( myLine.dy() >= 0 )
     angle = ( M_PI * 2 ) - angle;
 
-  QPointF arrowP1 = line().p1() + QPointF( sin( angle + M_PI / 3 ) * arrowSize,
+  QPointF arrowP1 = myLine.p1() + QPointF( sin( angle + M_PI / 3 ) * arrowSize,
                                            cos( angle + M_PI / 3 ) * arrowSize );
-  QPointF arrowP2 = line().p1() + QPointF( sin( angle + M_PI - M_PI / 3 ) * arrowSize,
+  QPointF arrowP2 = myLine.p1() + QPointF( sin( angle + M_PI - M_PI / 3 ) * arrowSize,
                                            cos( angle + M_PI - M_PI / 3 ) * arrowSize );
 
   QPolygonF anArrowHead;
-  anArrowHead << line().p1() << arrowP1 << arrowP2;
+  anArrowHead << myLine.p1() << arrowP1 << arrowP2;
   return anArrowHead;
 }

@@ -73,7 +73,11 @@ DependencyTree::DependencyTree()
 	      svm->setTitle("DEPENDENCY_TREE");
 	    }
 	    else {
-	      svm->getActiveView()->setFocus();
+          if( DependencyTree_ViewModel* viewModel = dynamic_cast<DependencyTree_ViewModel*>( svm->getViewModel() ) )
+	        if( DependencyTree_View* view = dynamic_cast<DependencyTree_View*>( viewModel->getActiveViewPort() ) ) {
+	          svm->getActiveView()->setFocus();
+	          view->updateModel();
+	        }
 	    }
 
 

@@ -37,8 +37,7 @@ const int itemW = 90;
 
 DependencyTree_Object::DependencyTree_Object( const std::string& theEntry, QGraphicsItem* theParent )
 :GraphicsView_Object( theParent ),
-myIsMainObject( false ),
-myIsLongName( false )
+myIsMainObject( false )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
@@ -61,6 +60,13 @@ myIsLongName( false )
   myTextItem->setFont( textFont );
 
   myEntry = theEntry;
+
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  int studyId = GeometryGUI::ClientStudyToStudy( study->studyDS())->StudyId();
+  myGeomObject = GeometryGUI::GetGeomGen()->GetObject( studyId, myEntry.c_str() );
+
   updateName();
 
   addToGroup( myPolygonItem );
@@ -85,8 +91,7 @@ bool DependencyTree_Object::highlight( double theX, double theY )
     myPolygonItem->setBrush( color );
     myPolygonItem->setPen( getPen( color ) );
 
-    if( myIsLongName )
-      myPolygonItem->setToolTip( getName() );
+    myPolygonItem->setToolTip( getName() );
   }
   return GraphicsView_Object::highlight( theX, theY );
 }
@@ -147,28 +152,30 @@ std::string DependencyTree_Object::getEntry() const
 }
 
 //=================================================================================
+// function : getGeomObject()
+// purpose  : get geometry object of current item
+//=================================================================================
+GEOM::GEOM_BaseObject_var DependencyTree_Object::getGeomObject() const
+{
+  return myGeomObject;
+}
+
+//=================================================================================
 // function : updateName()
 // purpose  : update name of current item using its entry
 //=================================================================================
 void DependencyTree_Object::updateName()
 {
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( !app ) return;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy( study->studyDS());
-  int StudyId = aStudyDS->StudyId();
-  GEOM::_objref_GEOM_BaseObject* object = GeometryGUI::GetGeomGen()->GetObject( StudyId, myEntry.c_str() );
 
-  QString name = object->GetName();
-  QString StudyEntry = object->GetStudyEntry();
-  std::cout << "\n\n\n StudyEntry = " << StudyEntry.toStdString() << "  " << StudyEntry.isEmpty() <<  std::endl;
+  QString name = myGeomObject->GetName();
+  QString studyEntry = myGeomObject->GetStudyEntry();
 
-
-  if( StudyEntry.isEmpty() ) {
+  if( studyEntry.isEmpty() ) {
 	if( name.isEmpty() )
       name = "unpublished";
-    myColor = resMgr->colorValue( "Geometry", "dependency_tree_background_color", QColor( 255, 255, 255 ) );
+    myColor = QColor( 255, 255, 255 );
+    myPolygonItem->setBrush( myColor );
+    myPolygonItem->setPen( getPen( myColor ) );
   }
 
   setName( name );
@@ -181,7 +188,6 @@ void DependencyTree_Object::updateName()
   double polygonHeight = myPolygonItem->sceneBoundingRect().height();
 
   if( ( textWidth - 4 ) > polygonWidth ) {
-    myIsLongName = true;
     int numberSymbol = int( polygonWidth * name.length() / textWidth );
     QString newName = name.left( numberSymbol - 3 ) + "...";
     myTextItem->setText( newName );

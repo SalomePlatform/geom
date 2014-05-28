@@ -67,6 +67,8 @@ private:
 
   QRectF                  mySelfDependencyArrow;
 
+  QLineF                  myLine;
+
 };
 
 #endif
