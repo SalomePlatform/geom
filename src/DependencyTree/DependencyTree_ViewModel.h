@@ -22,6 +22,7 @@
 
 class DependencyTree_ViewModel: public GraphicsView_Viewer
 {
+  Q_OBJECT
 
 public:
 
@@ -35,5 +36,8 @@ public:
 
 //  static QString                Type() { return "DependencyTree";  }
 
+private slots:
+  void onShowSelected();
+  void onShowOnlySelected();
 
 };

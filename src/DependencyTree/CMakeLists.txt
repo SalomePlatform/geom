@@ -74,12 +74,12 @@ SET(DependencyTree_HEADERS
   DependencyTree.h
   DependencyTree_Object.h
   DependencyTree_Arrow.h
-  DependencyTree_ViewModel.h
   )
 
 # header files / to be processed by moc
 SET(_moc_HEADERS
   DependencyTree_View.h
+  DependencyTree_ViewModel.h
 )
 
 # --- sources ---
