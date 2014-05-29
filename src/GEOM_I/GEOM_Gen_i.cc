@@ -3082,6 +3082,11 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
 				      GEOMUtils::LevelsList &upLevelList, 
 				      int level ) {
   std::string aGboIOR = gbo->GetEntry();
+  for (int i=0; i < upLevelList.size(); i++ ) {
+    GEOMUtils::LevelInfo aMap = upLevelList.at(i);
+    if ( aMap.count( aGboIOR ) > 0 )
+      return;
+  }
   //std::cout << "\n\nAKL: upnode IOR: " << aGboIOR << endl;
   //std::cout << "AKL: level: " << level << endl;
   GEOMUtils::NodeLinks anIORs;
@@ -3131,7 +3136,7 @@ void GEOM_Gen_i::getDownwardDependency( SALOMEDS::Study_ptr theStudy,
     return;
 
   std::string aGboIOR = gbo->GetEntry();
-  cout << "for " << aGboIOR << " at level " << level << endl;
+  //cout << "for " << aGboIOR << " at level " << level << endl;
   /*if ( level > 0 ) {
     if ( level >= downLevelList.size() ) {
       downLevelList.push_back( aLevelMap );
