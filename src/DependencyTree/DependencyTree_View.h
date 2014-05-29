@@ -26,6 +26,8 @@
 
 #include <SalomeApp_Application.h>
 
+#include <SALOME_ListIO.hxx>
+
 #include <GEOMUtils.hxx>
 
 #include <QWidgetAction>
@@ -34,6 +36,7 @@
 #include <QCheckBox>
 #include <QProgressBar>
 #include <QThread>
+#include <QMutex>
 
 class DependencyTree_Object;
 class DependencyTree_Arrow;
@@ -71,12 +74,11 @@ public:
   ~DependencyTree_View();
 
   void init( GraphicsView_ViewFrame* );
-  void updateModel();
+  void updateModel( bool = true );
   void drawTree();
 
   virtual int select( const QRectF&, bool );
   virtual void customEvent ( QEvent* );
-  void addItem( QGraphicsItem* );
   void mouseMoveEvent(QMouseEvent *event);
 
   void setHierarchyType( const int );
@@ -92,8 +94,13 @@ public:
   void setIsCompute( bool );
   bool getIsCompute();
 
+
+  QMutex myMutex;
+
+public slots:
+  void onUpdateModel( bool = true );
+
 protected:
-//  void timerEvent( QTimerEvent* );
   void closeEvent( QCloseEvent* );
 
 private slots:
@@ -108,6 +115,7 @@ private:
 
   void addNode( const std::string& );
   void addArrow( DependencyTree_Object*, DependencyTree_Object* );
+  void addNewItem( QGraphicsItem* );
 
   void parseTree();
   void parseTreeWard(const GEOMUtils::LevelsList);
@@ -117,7 +125,7 @@ private:
                  std::map< int, std::vector< std::string > >&, int, const int );
   void drawWardArrows( GEOMUtils::LevelsList );
 
-  void getNewTreeModel();
+  void getNewTreeModel( bool = true );
   void clearView( bool );
 
   int checkMaxLevelsNumber();
@@ -154,9 +162,11 @@ private:
 
   DependencyTree_ComputeDlg_QThread* qthread;
 
+  SALOME_ListIO myMainObjects;
 
   SALOMEDS::Study_var myStudy;
   LightApp_SelectionMgr* mySelectionMgr;
+
 
 };
 

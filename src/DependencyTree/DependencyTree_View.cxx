@@ -47,7 +47,7 @@ DependencyTree_View::DependencyTree_View( QWidget* theParent )
 myMaxDownwardLevelsNumber(0),
 myMaxUpwardLevelsNumber(0),
 myLevelsNumber(0),
-myIsCompute(true),
+myIsCompute(false),
 myIsUpdate( true ),
 myTotalCost(0),
 myComputedCost(0)
@@ -70,6 +70,8 @@ DependencyTree_View::~DependencyTree_View()
 
 void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
 {
+  qthread = new DependencyTree_ComputeDlg_QThread( this );
+
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
   myNodesMovable = new QCheckBox( tr( "MOVE_NODES" ) );
@@ -134,7 +136,7 @@ void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
   connect( myHierarchyDepth, SIGNAL( valueChanged ( int ) ), this, SLOT( onHierarchyType() ) );
   connect( myDisplayAscendants , SIGNAL( toggled( bool ) ), this, SLOT( onHierarchyType() ) );
   connect( myDisplayDescendants, SIGNAL( toggled( bool ) ), this, SLOT( onHierarchyType() ) );
-  connect( updateButton, SIGNAL( clicked() ), this, SLOT( updateView() ) );
+  connect( updateButton, SIGNAL( clicked() ), this, SLOT( onUpdateModel( false ) ) );
   connect( cancelButton, SIGNAL( clicked() ), this, SLOT( onCancel() ) );
 
   setPrefBackgroundColor( resMgr->colorValue( "Geometry", "dependency_tree_background_color", QColor( 255, 255, 255 ) ) );
@@ -142,9 +144,9 @@ void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
   setHierarchyType( resMgr->integerValue( "Geometry", "dependency_tree_hierarchy_type", 0 ) );
 }
 
-void DependencyTree_View::updateModel()
+void DependencyTree_View::updateModel( bool getSelectedObjects )
 {
-  getNewTreeModel();
+  getNewTreeModel( getSelectedObjects );
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
@@ -159,8 +161,11 @@ void DependencyTree_View::drawTree()
   calcTotalCost();
   std::cout << "\n\n\n TOTAL COST = " << myTotalCost << std::endl;
 
-  clearSelected();
+	if( !myIsCompute )
+    return;
+
   clearView( false );
+  clearSelected();
 
   // draw nodes on scene
   std::map< std::string, int > entryLevelMap;
@@ -180,7 +185,7 @@ void DependencyTree_View::drawTree()
     if( isItemAdded( objectItem ) )
       currentLevel = entryLevelMap[ objectEntry ];
     else {
-      addItem( objectItem );
+      addNewItem( objectItem );
       objectItem->unselect();
       entryLevelMap[ objectEntry ] = currentLevel;
       levelObjects[ currentLevel ].push_back( objectEntry );
@@ -217,7 +222,7 @@ void DependencyTree_View::drawTree()
           DependencyTree_Object* object = myTreeMap[node->first];
           DependencyTree_Arrow* arrow = myArrows[std::pair<DependencyTree_Object*,DependencyTree_Object*>(Main_object, object)];
           if( arrow && !isItemAdded( arrow) )
-            addItem( arrow );
+            addNewItem( arrow );
         }
       }
     }
@@ -227,6 +232,7 @@ void DependencyTree_View::drawTree()
       drawWardArrows( j->second.second );
   }
   std::cout << "\n ComputedCost = " << myComputedCost << std::endl;
+
 }
 
 int DependencyTree_View::select( const QRectF& theRect, bool theIsAppend )
@@ -248,36 +254,33 @@ int DependencyTree_View::select( const QRectF& theRect, bool theIsAppend )
   mySelectionMgr->setSelectedObjects( listIO, true );
 }
 
-void DependencyTree_View::customEvent ( QEvent * event )
+void DependencyTree_View::customEvent( QEvent * event )
 {
   if( event->type() == DRAW_EVENT ) {
-	//qthread->sleepDraw();
 
-	std::cout << "\n\n\n DRAW_EVENT!!! " << std::endl;
     QPushButton* cancelButton = dynamic_cast<QPushButton*>( cancelAction->defaultWidget() );
     QProgressBar* progressBar = dynamic_cast<QProgressBar*>( progressAction->defaultWidget() );
 
-    std::cout << "\n\n *** myIsCompute " << myIsCompute << std::endl;
-    if ( !cancelButton->isChecked() ) {
-      std::cout << "\n\n *** getComputeProgress = " << getComputeProgress() << std::endl;
+    if ( !cancelButton->isChecked() )
       progressBar->setValue( progressBar->maximum() * getComputeProgress() );
-
-    }
 
     std::cout << "\n\n *** qthread->isFinished() = " << qthread->isFinished() << std::endl;
     if( !myIsCompute || qthread->isFinished() ) {
       changeWidgetState( false );
       cancelButton->setChecked( false );
       progressBar->setValue(0);
+      fitAll();
+      QApplication::removePostedEvents( this, ( QEvent::Type )DRAW_EVENT );
     }
   }
   event->accept();
 }
 
-void DependencyTree_View::addItem( QGraphicsItem* theObject )
+void DependencyTree_View::addNewItem( QGraphicsItem* theObject )
 {
-  GraphicsView_ViewPort::addItem( theObject );
   qthread->sleepDraw();
+  if( theObject )
+    addItem( theObject );
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   QApplication::postEvent( this, new QEvent( ( QEvent::Type )DRAW_EVENT ) );
 }
@@ -424,19 +427,23 @@ void DependencyTree_View::closeEvent( QCloseEvent* event )
   event->accept();
 }
 
+void DependencyTree_View::onUpdateModel( bool getSelectedObjects )
+{
+  updateModel( getSelectedObjects );
+}
+
 void DependencyTree_View::updateView()
 {
   if( !myIsUpdate )
     return;
 
-//  clearView( false );
-
-  qthread = new DependencyTree_ComputeDlg_QThread( this );
-
   changeWidgetState( true );
 
-  //myTimer = startTimer( 100 ); // millisecs
   qthread->start();
+
+
+
+
 }
 
 void DependencyTree_View::onMoveNodes( bool theIsMoveNodes )
@@ -575,7 +582,7 @@ void DependencyTree_View::drawWard( const GEOMUtils::LevelsList& theWard,
     for (node = levelInfo.begin(); node != levelInfo.end(); node++ ) {
       DependencyTree_Object* object = myTreeMap[ node->first ];
       if( !isItemAdded( object ) ) {
-        addItem( object );
+        addNewItem( object );
         object->unselect();
         theEntryLevelMap[ node->first ] = theCurrentLevel;
         theLevelObjects[ theCurrentLevel ].push_back( node->first );
@@ -600,25 +607,25 @@ void DependencyTree_View::drawWardArrows( GEOMUtils::LevelsList theWard )
         if( isItemAdded( object ) && isItemAdded( LinkObject ) ) {
           DependencyTree_Arrow* arrow = myArrows[std::pair<DependencyTree_Object*,DependencyTree_Object*>(object, LinkObject)];
           if( arrow && !isItemAdded( arrow) )
-            addItem( arrow );
+            addNewItem( arrow );
         }
       }
     }
   }
 }
 
-void DependencyTree_View::getNewTreeModel()
+void DependencyTree_View::getNewTreeModel( bool getSelectedObjects )
 {
   clearView( true );
 
-  SALOME_ListIO aSelList;
-  mySelectionMgr->selectedObjects( aSelList );
+  if( getSelectedObjects )
+    mySelectionMgr->selectedObjects( myMainObjects );
 
   // create a list of selected object entry
   GEOM::string_array_var objectsEntry = new GEOM::string_array();
-  objectsEntry->length( aSelList.Extent());
+  objectsEntry->length( myMainObjects.Extent());
   int iter = 0;
-  for ( SALOME_ListIteratorOfListIO It( aSelList ); It.More(); It.Next(), iter++ ) {
+  for ( SALOME_ListIteratorOfListIO It( myMainObjects ); It.More(); It.Next(), iter++ ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
     GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
     geomObject = GEOMBase::ConvertIOinGEOMObject( io );
@@ -647,14 +654,16 @@ void DependencyTree_View::clearView( bool isClearModel )
   EntryObjectMap::const_iterator objectIter;
   for( objectIter = myTreeMap.begin(); objectIter != myTreeMap.end(); objectIter++ ) {
     DependencyTree_Object* object = objectIter->second;
-    if( isItemAdded( object ) && object )
+    if( object )
+      if( isItemAdded( object ) )
       removeItem( object );
   }
 
   ArrowsInfo::const_iterator arrowIter;
   for( arrowIter = myArrows.begin(); arrowIter != myArrows.end(); arrowIter++ ) {
     DependencyTree_Arrow* object = arrowIter->second;
-    if( isItemAdded( object ) && object )
+    if( object )
+      if( isItemAdded( object ) )
       removeItem( object );
   }
   if( isClearModel ) {
@@ -664,7 +673,7 @@ void DependencyTree_View::clearView( bool isClearModel )
     myMaxDownwardLevelsNumber = 0;
     myMaxUpwardLevelsNumber = 0;
     myLevelsNumber = 0;
-    myIsCompute = true;
+    myIsCompute = false;
     myIsUpdate = true;
   }
 }
@@ -714,16 +723,19 @@ DependencyTree_ComputeDlg_QThread::DependencyTree_ComputeDlg_QThread( Dependency
 
 void DependencyTree_ComputeDlg_QThread::run()
 {
+  myView->myMutex.lock();
+ // QMutexLocker lock( &myView->myMutex );
   myView->setIsCompute( true );
   myView->drawTree();
-  myView->fitAll( true );
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+
   QApplication::postEvent( myView, new QEvent( ( QEvent::Type )DRAW_EVENT ) );
+  myView->myMutex.unlock();
+  //exec();
 }
 
 void DependencyTree_ComputeDlg_QThread::sleepDraw()
 {
-  msleep(10);
+  msleep(1);
 }
 
 void DependencyTree_ComputeDlg_QThread::cancel()

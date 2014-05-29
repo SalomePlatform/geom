@@ -169,6 +169,7 @@ void DependencyTree_Object::updateName()
 
   QString name = myGeomObject->GetName();
   QString studyEntry = myGeomObject->GetStudyEntry();
+  std::cout<<"\n\n name = " << name.toStdString() << " studyEntry = " << studyEntry.toStdString() << std::endl;
 
   if( studyEntry.isEmpty() ) {
 	if( name.isEmpty() )

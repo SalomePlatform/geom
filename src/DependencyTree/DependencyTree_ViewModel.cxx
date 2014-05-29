@@ -119,13 +119,16 @@ void DependencyTree_ViewModel::contextMenuPopup( QMenu* theMenu )
   GraphicsView_Viewer::contextMenuPopup( theMenu );
   std::cout<<"\n\n\n\n *****contextMenuPopup " << std::endl;
 
+
   if( DependencyTree_View* aViewPort = dynamic_cast<DependencyTree_View*>(getActiveViewPort()) )
   {
     int aNbSelected = aViewPort->nbSelected();
     std::cout<<"\n  aNbSelected " << aNbSelected << std::endl;
     if( aNbSelected > 0 ) {
+      theMenu->clear();
       theMenu->addAction( tr( "MEN_DISPLAY" ), this, SLOT( onShowSelected() ) );
       theMenu->addAction( tr( "MEN_DISPLAY_ONLY" ), this, SLOT( onShowOnlySelected() ) );
+      theMenu->addAction( tr( "REBUILD_THE_TREE"), aViewPort, SLOT( onUpdateModel() ) );
     }
   }
 

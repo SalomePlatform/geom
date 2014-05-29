@@ -86,33 +86,3 @@ DependencyTree::DependencyTree()
 DependencyTree::~DependencyTree()
 {
 }
-
-//void DependencyTree::setBackgroundColor( const QColor& theColor )
-//{
-//  //myView->setBackgroundColor( theColor );
-//	myBackgroundColor = theColor;
-//}
-//void DependencyTree::setNodeColor( const QColor& theColor )
-//{
-//  myView->setNodeColor( theColor );
-//}
-//void DependencyTree::setMainNodeColor( const QColor& theColor )
-//{
-//  myView->setMainNodeColor( theColor );
-//}
-//void DependencyTree::setSelectNodeColor( const QColor& theColor )
-//{
-//  myView->setSelectNodeColor( theColor );
-//}
-//void DependencyTree::setArrowColor( const QColor& theColor )
-//{
-//  myView->setArrowColor( theColor );
-//}
-//void DependencyTree::setHighlightArrowColor( const QColor& theColor )
-//{
-//  myView->setHighlightArrowColor( theColor );
-//}
-//void DependencyTree::setSelectArrowColor( const QColor& theColor )
-//{
-//  myView->setSelectArrowColor( theColor );
-//}
