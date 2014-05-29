@@ -3343,6 +3343,11 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
       if (!CORBA::is_nil(anObj)) {
         anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
+        // rename the given object in the dependency tree
+        if ( SUIT_ViewManager *svm = app->getViewManager( GraphicsView_Viewer::Type(), false ) )
+          if ( DependencyTree_ViewModel* viewModel = dynamic_cast<DependencyTree_ViewModel*>( svm->getViewModel() ) )
+            if ( DependencyTree_View* view = dynamic_cast<DependencyTree_View*>( viewModel->getActiveViewPort() ) )
+              view->updateObjectName( anObj->GetEntry() );
       }
       result = true;
     }

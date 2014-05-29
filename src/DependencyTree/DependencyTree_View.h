@@ -94,6 +94,7 @@ public:
   void setIsCompute( bool );
   bool getIsCompute();
 
+  bool updateObjectName( const std::string &theEntry );
 
   QMutex myMutex;
 

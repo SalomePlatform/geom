@@ -716,6 +716,18 @@ void DependencyTree_View::changeWidgetState( bool theIsCompute )
   updateButton->setEnabled( !theIsCompute );
 }
 
+bool DependencyTree_View::updateObjectName( const std::string &theEntry )
+{
+  bool res = false;
+  for( initSelected(); moreSelected(); nextSelected() ) {
+    if( DependencyTree_Object* aDepObject = dynamic_cast<DependencyTree_Object*>( selectedObject() ) ) {
+      aDepObject->updateName();
+      res = true;
+    }
+  }
+  return res;
+}
+
 DependencyTree_ComputeDlg_QThread::DependencyTree_ComputeDlg_QThread( DependencyTree_View* theView )
 {
   myView = theView;
