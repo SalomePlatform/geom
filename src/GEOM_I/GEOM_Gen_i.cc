@@ -60,6 +60,8 @@
 #include <TopExp.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 #include <OSD.hxx>
+#include <TDataStd_ChildNodeIterator.hxx>
+#include <TDocStd_Owner.hxx>
 
 #include <SALOMEDS_Tool.hxx>
 #include <SALOMEDS_wrap.hxx>
@@ -3149,45 +3151,65 @@ void GEOM_Gen_i::getDownwardDependency( SALOMEDS::Study_ptr theStudy,
       }
     }
   }*/
-  SALOMEDS::ChildIterator_var it = theStudy->NewChildIterator( comp );
-  for ( it->InitEx( true ); it->More(); it->Next() ) {
-    SALOMEDS::SObject_var child = it->Value();
-    CORBA::Object_var corbaObj = child->GetObject();
-    GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-    if( CORBA::is_nil( geomObj ) )
-      continue;
+  Handle(TDocStd_Document) aDoc = GEOM_Engine::GetEngine()->GetDocument(gbo->GetStudyID());
+  Handle(TDataStd_TreeNode) aNode, aRoot;
+  Handle(GEOM_Function) aFunction;
+  if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
+    TDataStd_ChildNodeIterator Itr( aRoot );
+    for (; Itr.More(); Itr.Next()) {
+      aNode = Itr.Value();
+      aFunction = GEOM_Function::GetFunction(aNode->Label());
+      if (aFunction.IsNull()) {
+        //MESSAGE ( "Null function !!!!" );
+        continue;
+      }
+      TDF_Label aLabel  = aFunction->GetOwnerEntry();
+      if(aLabel.IsNull()) continue;
+      TCollection_AsciiString anEntry;
+      TDF_Tool::Entry(aLabel, anEntry);
+      GEOM::GEOM_BaseObject_var geomObj = GetObject( gbo->GetStudyID(), anEntry.ToCString() );
+      /*
+      SALOMEDS::ChildIterator_var it = theStudy->NewChildIterator( comp );
+      for ( it->InitEx( true ); it->More(); it->Next() ) {
+        SALOMEDS::SObject_var child = it->Value();
+        CORBA::Object_var corbaObj = child->GetObject();
+        GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+      */
+      if( CORBA::is_nil( geomObj ) )
+        continue;
 
-    GEOM::ListOfGBO_var depList = geomObj->GetDependency();
-    if( depList->length() == 0 )
-      continue;
-    std::string aGoIOR = geomObj->GetEntry();
-    //cout << "check " << aGoIOR << endl;
+      GEOM::ListOfGBO_var depList = geomObj->GetDependency();
+      if( depList->length() == 0 )
+        continue;
+      std::string aGoIOR = geomObj->GetEntry();
+      //cout << "check " << aGoIOR << endl;
 
-    for( int i = 0; i < depList->length(); i++ ) {
-      //cout << "depends on " << depList[i]->GetEntry() << endl;
-      if ( depList[i]->IsSame( gbo ) ) {
-	//cout << "  the same! " << endl;
-	//if ( level > 0 ) {
-	GEOMUtils::NodeLinks anIORs;
-	GEOMUtils::LevelInfo aLevelMap;
-	anIORs.push_back( gbo->GetEntry());
-	if ( level >= downLevelList.size() ) {
-	  downLevelList.push_back( aLevelMap );
-	  //std::cout << "AKL: new map" << endl;
-	} else {
-	  aLevelMap = downLevelList.at(level);
-	  if ( aLevelMap.count( aGoIOR ) > 0 ) {
-	    anIORs = aLevelMap[ aGoIOR ];
-	    //std::cout << "AKL: get already added iors list: " << endl;
-	  }
-	}
-	aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGoIOR, anIORs) );
-	downLevelList[level] = aLevelMap;
-	//}
-	if ( !depList[i]->IsSame( geomObj ) ) {
-	  //cout << "  go on! " << endl;
-	  getDownwardDependency(theStudy, geomObj, downLevelList, level+1);
-	}
+      for( int i = 0; i < depList->length(); i++ ) {
+        //cout << "depends on " << depList[i]->GetEntry() << endl;
+        if ( depList[i]->IsSame( gbo ) ) {
+          //cout << "  the same! " << endl;
+          //if ( level > 0 ) {
+          GEOMUtils::NodeLinks anIORs;
+          GEOMUtils::LevelInfo aLevelMap;
+          anIORs.push_back( gbo->GetEntry());
+          if ( level >= downLevelList.size() ) {
+            downLevelList.push_back( aLevelMap );
+	    //std::cout << "AKL: new map" << endl;
+          } else {
+            aLevelMap = downLevelList.at(level);
+            if ( aLevelMap.count( aGoIOR ) > 0 ) {
+              anIORs = aLevelMap[ aGoIOR ];
+              //std::cout << "AKL: get already added iors list: " << endl;
+            }
+          }
+          aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGoIOR, anIORs) );
+          downLevelList[level] = aLevelMap;
+          //}
+          if ( !depList[i]->IsSame( geomObj ) ) {
+            //cout << "  go on! " << endl;
+            getDownwardDependency(theStudy, geomObj, downLevelList, level+1);
+          }
+        }
       }
     }
   }
