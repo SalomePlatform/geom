@@ -3055,6 +3055,8 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
   for ( int i = 0; i < theObjectIORs.length(); i++ ) {
     ior = theObjectIORs[i].in();
     GEOM::GEOM_BaseObject_var anObj = GetObject( theStudy->StudyId(), ior.c_str() );
+    if ( anObj->_is_nil() )
+      continue;
     GEOMUtils::LevelsList upLevelList;
     getUpwardDependency( anObj, upLevelList );
     GEOMUtils::LevelsList downLevelList;
@@ -3073,6 +3075,7 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
 
   SALOMEDS::TMPFile_var aStream = new SALOMEDS::TMPFile(aBufferSize, aBufferSize, anOctetBuf, 1);
 
+  //std::cout << "AKL: end of get" << endl;
   return aStream._retn();
 }
 
@@ -3107,12 +3110,15 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
   }
   GEOM::ListOfGBO_var depList = gbo->GetDependency();
   for( int j = 0; j < depList->length(); j++ ) {
+    if ( depList[j]->_is_nil() )
+      continue;
     if ( level > 0 ) {
       anIORs.push_back( depList[j]->GetEntry() );
       //std::cout << "AKL: add link ior: " << depList[j]->GetEntry() << endl;
     }
     //std::cout << "AKL: <<<<<<<< start next step: " << endl;
-    if ( !depList[j]->IsSame( gbo ) ) {
+    //if ( !depList[j]->IsSame( gbo ) ) {
+    if ( !depList[j]->_is_equivalent( gbo ) ) {
       getUpwardDependency(depList[j], upLevelList, level+1);
     }
     //std::cout << "AKL: end next step >>>>>>>> : " << endl;
@@ -3185,8 +3191,11 @@ void GEOM_Gen_i::getDownwardDependency( SALOMEDS::Study_ptr theStudy,
       //cout << "check " << aGoIOR << endl;
 
       for( int i = 0; i < depList->length(); i++ ) {
+        if ( depList[i]->_is_nil() )
+          continue;
         //cout << "depends on " << depList[i]->GetEntry() << endl;
-        if ( depList[i]->IsSame( gbo ) ) {
+        //if ( depList[i]->IsSame( gbo ) ) {
+        if ( depList[i]->_is_equivalent( gbo ) ) {
           //cout << "  the same! " << endl;
           //if ( level > 0 ) {
           GEOMUtils::NodeLinks anIORs;
@@ -3205,7 +3214,8 @@ void GEOM_Gen_i::getDownwardDependency( SALOMEDS::Study_ptr theStudy,
           aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGoIOR, anIORs) );
           downLevelList[level] = aLevelMap;
           //}
-          if ( !depList[i]->IsSame( geomObj ) ) {
+          //if ( !depList[i]->IsSame( geomObj ) ) {
+          if ( !depList[i]->_is_equivalent( geomObj ) ) {
             //cout << "  go on! " << endl;
             getDownwardDependency(theStudy, geomObj, downLevelList, level+1);
           }
