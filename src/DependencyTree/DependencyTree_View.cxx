@@ -21,8 +21,6 @@
 #include "DependencyTree_Object.h"
 #include "DependencyTree_Arrow.h"
 
-#include <GEOM_InteractiveObject.hxx>
-#include <GeometryGUI.h>
 #include <GEOMBase.h>
 
 // GUI includes
@@ -60,6 +58,8 @@ myComputedCost(0)
 
   mySelectionMgr = app->selectionMgr();
   if ( !mySelectionMgr ) return;
+
+  myMainEntries = new GEOM::string_array();
 
   getNewTreeModel();
 }
@@ -136,7 +136,7 @@ void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
   connect( myHierarchyDepth, SIGNAL( valueChanged ( int ) ), this, SLOT( onHierarchyType() ) );
   connect( myDisplayAscendants , SIGNAL( toggled( bool ) ), this, SLOT( onHierarchyType() ) );
   connect( myDisplayDescendants, SIGNAL( toggled( bool ) ), this, SLOT( onHierarchyType() ) );
-  connect( updateButton, SIGNAL( clicked() ), this, SLOT( onUpdateModel( false ) ) );
+  connect( updateButton, SIGNAL( clicked() ), this, SLOT( onUpdateModel() ) );
   connect( cancelButton, SIGNAL( clicked() ), this, SLOT( onCancel() ) );
 
   setPrefBackgroundColor( resMgr->colorValue( "Geometry", "dependency_tree_background_color", QColor( 255, 255, 255 ) ) );
@@ -144,15 +144,10 @@ void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
   setHierarchyType( resMgr->integerValue( "Geometry", "dependency_tree_hierarchy_type", 0 ) );
 }
 
-void DependencyTree_View::updateModel( bool getSelectedObjects )
+void DependencyTree_View::updateModel( bool theUseSelectedObject, bool theUseOB )
 {
-  getNewTreeModel( getSelectedObjects );
-
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-
-  setPrefBackgroundColor( resMgr->colorValue( "Geometry", "dependency_tree_background_color", QColor( 255, 255, 255 ) ) );
-  setNodesMovable( resMgr->booleanValue( "Geometry", "dependency_tree_move_nodes", true ) );
-  setHierarchyType( resMgr->integerValue( "Geometry", "dependency_tree_hierarchy_type", 0 ) );
+  getNewTreeModel( theUseSelectedObject, theUseOB );
+  onHierarchyType();
 }
 
 void DependencyTree_View::drawTree()
@@ -235,25 +230,6 @@ void DependencyTree_View::drawTree()
 
 }
 
-int DependencyTree_View::select( const QRectF& theRect, bool theIsAppend )
-{
-  GraphicsView_ViewPort::select( theRect, theIsAppend );
-
-  mySelectionMgr->clearSelected();
-
-  // get selection
-  SALOME_ListIO listIO;
-  int StudyId = myStudy->StudyId();
-  for( initSelected(); moreSelected(); nextSelected() )
-    if( DependencyTree_Object* treeObject = dynamic_cast<DependencyTree_Object*>( selectedObject() ) ) {
-      CORBA::String_var studyEntry = treeObject->getGeomObject()->GetStudyEntry();
-      Handle(SALOME_InteractiveObject) tmpIO =
-        new SALOME_InteractiveObject( studyEntry.in(), "GEOM", "TEMP_IO");
-      listIO.Append( tmpIO );
-    }
-  mySelectionMgr->setSelectedObjects( listIO, true );
-}
-
 void DependencyTree_View::customEvent( QEvent * event )
 {
   if( event->type() == DRAW_EVENT ) {
@@ -293,6 +269,11 @@ void DependencyTree_View::mouseMoveEvent(QMouseEvent *event)
     DependencyTree_Arrow* arrow = myArrows[ j->first ];
     arrow->update();
   }
+}
+
+DependencyTree_Object* DependencyTree_View::getObjectByEntry( QString theEntry )
+{
+  return myTreeMap[theEntry.toStdString()];
 }
 
 void DependencyTree_View::setHierarchyType( const int theType )
@@ -427,9 +408,14 @@ void DependencyTree_View::closeEvent( QCloseEvent* event )
   event->accept();
 }
 
-void DependencyTree_View::onUpdateModel( bool getSelectedObjects )
+void DependencyTree_View::onUpdateModel()
 {
-  updateModel( getSelectedObjects );
+  updateModel( false );
+}
+
+void DependencyTree_View::onRebuildModel()
+{
+  updateModel( true, false );
 }
 
 void DependencyTree_View::updateView()
@@ -614,32 +600,46 @@ void DependencyTree_View::drawWardArrows( GEOMUtils::LevelsList theWard )
   }
 }
 
-void DependencyTree_View::getNewTreeModel( bool getSelectedObjects )
+void DependencyTree_View::getNewTreeModel( bool theUseSelectedObject, bool theUseOB )
 {
-  clearView( true );
 
-  if( getSelectedObjects )
-    mySelectionMgr->selectedObjects( myMainObjects );
-
-  // create a list of selected object entry
   GEOM::string_array_var objectsEntry = new GEOM::string_array();
-  objectsEntry->length( myMainObjects.Extent());
   int iter = 0;
-  for ( SALOME_ListIteratorOfListIO It( myMainObjects ); It.More(); It.Next(), iter++ ) {
-    Handle( SALOME_InteractiveObject ) io = It.Value();
-    GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
-    geomObject = GEOMBase::ConvertIOinGEOMObject( io );
-    QString entry = geomObject->GetEntry();
-    objectsEntry[ iter ] = entry.toLatin1().constData();
+
+  if( theUseSelectedObject ) {
+    if( theUseOB ) {
+      SALOME_ListIO mainObjects;
+      mySelectionMgr->selectedObjects( mainObjects );
+      // create a list of selected object entry
+      objectsEntry->length( mainObjects.Extent());
+      for ( SALOME_ListIteratorOfListIO It( mainObjects ); It.More(); It.Next(), iter++ ) {
+        Handle( SALOME_InteractiveObject ) io = It.Value();
+        GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
+        geomObject = GEOMBase::ConvertIOinGEOMObject( io );
+        QString entry = geomObject->GetEntry();
+        objectsEntry[ iter ] = entry.toLatin1().constData();
+      }
+    }
+    else {
+      objectsEntry->length( nbSelected() );
+      for( initSelected(); moreSelected(); nextSelected(), iter++ )
+        if( DependencyTree_Object* treeObject = dynamic_cast<DependencyTree_Object*>( selectedObject() ) ) {
+          objectsEntry[ iter ] = treeObject->getEntry().c_str();
+          std::cout << "\n\n\n ----------- entry = " << treeObject->getEntry() << std::endl;
+        }
+    }
+
+    myMainEntries = objectsEntry;
   }
 
   // get string which describes dependency tree structure
   SALOMEDS::TMPFile_var SeqFile =
-    GeometryGUI::GetGeomGen()->GetDependencyTree( myStudy, objectsEntry );
+    GeometryGUI::GetGeomGen()->GetDependencyTree( myStudy, myMainEntries );
   char* buf = (char*) &SeqFile[0];
 
   std::cout << "\n\n\n\n\n TREE = " << buf << std::endl;
 
+  clearView( true );
   // get dependency tree structure
   GEOMUtils::ConvertStringToTree( buf, myTreeModel );
 

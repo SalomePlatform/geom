@@ -1630,7 +1630,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpShowDependencyTree ), -1, -1 ); // Show dependency tree
-  mgr->setRule( action( GEOMOp::OpShowDependencyTree ), clientOCCorVTKorOB + " and selcount>0" + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpShowDependencyTree ), clientOCCorVTKorOB + " and selcount>0 and ($component={'GEOM'}) and type='Shape'", QtxPopupMgr::VisibleRule );
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 

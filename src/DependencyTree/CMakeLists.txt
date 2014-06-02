@@ -74,6 +74,7 @@ SET(DependencyTree_HEADERS
   DependencyTree.h
   DependencyTree_Arrow.h
   DependencyTree_Object.h
+  DependencyTree_Selector.h
   )
 
 # header files / to be processed by moc
@@ -92,6 +93,7 @@ SET(DependencyTree_SOURCES
   DependencyTree_View.cxx
   DependencyTree_Object.cxx
   DependencyTree_Arrow.cxx
+  DependencyTree_Selector.cxx
   #arrow.cxx
   DependencyTree_ViewModel.cxx
   ${_moc_SOURCES}

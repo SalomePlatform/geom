@@ -128,7 +128,7 @@ void DependencyTree_ViewModel::contextMenuPopup( QMenu* theMenu )
       theMenu->clear();
       theMenu->addAction( tr( "MEN_DISPLAY" ), this, SLOT( onShowSelected() ) );
       theMenu->addAction( tr( "MEN_DISPLAY_ONLY" ), this, SLOT( onShowOnlySelected() ) );
-      theMenu->addAction( tr( "REBUILD_THE_TREE"), aViewPort, SLOT( onUpdateModel() ) );
+      theMenu->addAction( tr( "REBUILD_THE_TREE"), aViewPort, SLOT( onRebuildModel() ) );
     }
   }
 

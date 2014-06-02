@@ -29,6 +29,9 @@
 #include <SALOME_ListIO.hxx>
 
 #include <GEOMUtils.hxx>
+#include <GEOM_InteractiveObject.hxx>
+#include <GeometryGUI.h>
+
 
 #include <QWidgetAction>
 #include <QPushButton>
@@ -74,12 +77,13 @@ public:
   ~DependencyTree_View();
 
   void init( GraphicsView_ViewFrame* );
-  void updateModel( bool = true );
+  void updateModel( bool = true, bool = true );
   void drawTree();
 
-  virtual int select( const QRectF&, bool );
   virtual void customEvent ( QEvent* );
   void mouseMoveEvent(QMouseEvent *event);
+
+  DependencyTree_Object* getObjectByEntry( QString );
 
   void setHierarchyType( const int );
   void setNodesMovable( const bool );
@@ -99,7 +103,8 @@ public:
   QMutex myMutex;
 
 public slots:
-  void onUpdateModel( bool = true );
+  void onUpdateModel();
+  void onRebuildModel();
 
 protected:
   void closeEvent( QCloseEvent* );
@@ -126,7 +131,7 @@ private:
                  std::map< int, std::vector< std::string > >&, int, const int );
   void drawWardArrows( GEOMUtils::LevelsList );
 
-  void getNewTreeModel( bool = true );
+  void getNewTreeModel( bool = true, bool = true );
   void clearView( bool );
 
   int checkMaxLevelsNumber();
@@ -163,7 +168,7 @@ private:
 
   DependencyTree_ComputeDlg_QThread* qthread;
 
-  SALOME_ListIO myMainObjects;
+  GEOM::string_array_var myMainEntries;
 
   SALOMEDS::Study_var myStudy;
   LightApp_SelectionMgr* mySelectionMgr;

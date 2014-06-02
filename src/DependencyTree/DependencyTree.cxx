@@ -39,13 +39,17 @@
 #include <QtxActionToolMgr.h>
 
 #include "DependencyTree_View.h"
+#include <DependencyTree_Selector.h>
+
 #include <GraphicsView_Viewer.h>
 #include <GraphicsView_ViewFrame.h>
 #include <GraphicsView_Scene.h>
 
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
+#include <SUIT_SelectionMgr.h>
 #include <SalomeApp_Application.h>
+
 
 #include <QList>
 #include <QGraphicsView>
@@ -58,12 +62,16 @@ DependencyTree::DependencyTree()
 	  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
 	    if ( !app ) return;
 
+	    LightApp_SelectionMgr* mySelMgr = app->selectionMgr();
+
 	    SUIT_ViewManager *svm = app->getViewManager(GraphicsView_Viewer::Type(), false );
 
 	    if(!svm) {
 	      myView = new DependencyTree_View();
 	      DependencyTree_ViewModel* ViewModel = new DependencyTree_ViewModel(GraphicsView_Viewer::Type(), myView);
 	      SUIT_ViewManager *svm = app->createViewManager( ViewModel );
+	      new DependencyTree_Selector( ViewModel,
+	    		 ( SUIT_SelectionMgr*)mySelMgr );
 	      SUIT_ViewWindow* svw = svm->getActiveView();
 	      GraphicsView_ViewFrame* aViewFrame = 0;
 	      if (!svw) svw = svm->createViewWindow();
