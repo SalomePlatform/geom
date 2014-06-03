@@ -101,11 +101,11 @@
     </message>
     <message>
       <source>GEOM_3_POINTS</source>
-      <translation>3 ポイント</translation>
+      <translation>3 点</translation>
     </message>
     <message>
       <source>GEOM_ADD_POINT</source>
-      <translation>ポイントを追加します。</translation>
+      <translation>点の追加</translation>
     </message>
     <message>
       <source>GEOM_ANGLE</source>
@@ -329,7 +329,7 @@
     </message>
     <message>
       <source>GEOM_CHAMFER_FACES</source>
-      <translation>顔に面取り</translation>
+      <translation>選択面の面取り</translation>
     </message>
     <message>
       <source>GEOM_CHAMFER_TITLE</source>
@@ -409,7 +409,7 @@
     </message>
     <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
-      <translation>自己交差を検出します。</translation>
+      <translation>自己交差の検出</translation>
     </message>
     <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
@@ -417,7 +417,7 @@
     </message>
     <message>
       <source>GEOM_NO_SELF_INTERSECTIONS</source>
-      <translation>自己交差形状ではありません。</translation>
+      <translation>自己交差は検出されませんでした。</translation>
     </message>
     <message>
       <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
@@ -2369,7 +2369,7 @@
     </message>
     <message>
       <source>MEN_ALL_SEL_ONLY</source>
-      <translation>すべてを選択</translation>
+      <translation>全選択</translation>
     </message>
     <message>
       <source>MEN_ARC</source>
@@ -2469,11 +2469,11 @@
     </message>
     <message>
       <source>MEN_COMPOUND</source>
-      <translation>結合</translation>
+      <translation>コンパウンド</translation>
     </message>
     <message>
       <source>MEN_COMPOUND_SEL_ONLY</source>
-      <translation>結合</translation>
+      <translation>コンパウンド</translation>
     </message>
     <message>
       <source>MEN_CONE</source>
@@ -2485,7 +2485,7 @@
     </message>
     <message>
       <source>MEN_CUT</source>
-      <translation>カット</translation>
+      <translation>カット(&amp;t)</translation>
     </message>
     <message>
       <source>MEN_CYLINDER</source>
@@ -2513,7 +2513,7 @@
     </message>
     <message>
       <source>MEN_DISPLAY_ALL</source>
-      <translation>すべてを表示</translation>
+      <translation>全表示</translation>
     </message>
     <message>
       <source>MEN_DISPLAY_MODE</source>
@@ -2529,7 +2529,7 @@
     </message>
     <message>
       <source>MEN_BRING_TO_FRONT</source>
-      <translation>手前に表示します。</translation>
+      <translation>手前に表示</translation>
     </message>
     <message>
       <source>TOP_BRING_TO_FRONT</source>
@@ -2617,11 +2617,11 @@
     </message>
     <message>
       <source>MEN_FILLET_1D</source>
-      <translation>1D フィレット作成</translation>
+      <translation>1D フィレット</translation>
     </message>
     <message>
       <source>MEN_FILLET_2D</source>
-      <translation>2D フィレット作成</translation>
+      <translation>2D フィレット</translation>
     </message>
     <message>
       <source>MEN_FILLING</source>
@@ -2673,7 +2673,7 @@
     </message>
     <message>
       <source>MEN_FIELD_CREATE</source>
-      <translation>フィールドを作成します。</translation>
+      <translation>フィールドの作成</translation>
     </message>
     <message>
       <source>MEN_FIELD_EDIT</source>
@@ -2793,7 +2793,7 @@
     </message>
     <message>
       <source>MEN_POINT_ON_EDGE</source>
-      <translation>端にポイントを追加</translation>
+      <translation>エッジに点を追加</translation>
     </message>
     <message>
       <source>MEN_POP_COLOR</source>
@@ -2941,7 +2941,7 @@
     </message>
     <message>
       <source>MEN_SEWING</source>
-      <translation>つなぎ合わせ</translation>
+      <translation>縫合</translation>
     </message>
     <message>
       <source>MEN_SHADING</source>
