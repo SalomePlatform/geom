@@ -71,7 +71,6 @@ SET(_link_LIBRARIES
 # --- headers ---
 
 SET(DependencyTree_HEADERS
-  DependencyTree.h
   DependencyTree_Arrow.h
   DependencyTree_Object.h
   DependencyTree_Selector.h
@@ -89,12 +88,10 @@ SET(_moc_HEADERS
 QT4_WRAP_CPP(_moc_SOURCES ${_moc_HEADERS})
 
 SET(DependencyTree_SOURCES
-  DependencyTree.cxx
   DependencyTree_View.cxx
   DependencyTree_Object.cxx
   DependencyTree_Arrow.cxx
   DependencyTree_Selector.cxx
-  #arrow.cxx
   DependencyTree_ViewModel.cxx
   ${_moc_SOURCES}
 )
@@ -107,13 +104,13 @@ SET(_res_files
   resources/DependencyTree_msg_fr.ts 
   resources/DependencyTree_msg_ja.ts          
 )
+
 # --- rules ---
 
 ADD_LIBRARY(DependencyTree ${DependencyTree_SOURCES})
 TARGET_LINK_LIBRARIES(DependencyTree ${_link_LIBRARIES})
 INSTALL(TARGETS DependencyTree EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
 
-#INSTALL(FILES ${_res_files} DESTINATION ${SALOME_GEOM_INSTALL_RES_DATA})
-QT4_INSTALL_TS_RESOURCES("${_res_files}" "${SALOME_GEOM_INSTALL_RES_DATA}")
-
 INSTALL(FILES ${DependencyTree_HEADERS} DESTINATION ${SALOME_INSTALL_HEADERS})
+
+QT4_INSTALL_TS_RESOURCES("${_res_files}" "${SALOME_GEOM_INSTALL_RES_DATA}")

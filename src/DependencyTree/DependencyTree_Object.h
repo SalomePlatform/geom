@@ -46,7 +46,7 @@ public:
 
   std::string                 getEntry() const;
 
-  GEOM::GEOM_BaseObject_var  getGeomObject() const;
+  GEOM::GEOM_BaseObject_var   getGeomObject() const;
 
   void                        updateName();
 

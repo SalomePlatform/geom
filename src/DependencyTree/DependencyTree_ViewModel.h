@@ -17,27 +17,27 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#ifndef DEPENDENCYTREE_VIEWMODEL_H
+#define DEPENDENCYTREE_VIEWMODEL_H
+
 #include <GraphicsView_Viewer.h>
-#include <QWidget>
 
 class DependencyTree_ViewModel: public GraphicsView_Viewer
 {
+
   Q_OBJECT
 
 public:
-
   DependencyTree_ViewModel( const QString& title );
   DependencyTree_ViewModel( const QString& title, QWidget* w  );
   ~DependencyTree_ViewModel();
 
-public:
-  virtual void                  contextMenuPopup( QMenu* );
-//  virtual SUIT_ViewWindow*      createView( SUIT_Desktop* );
-
-//  static QString                Type() { return "DependencyTree";  }
+  virtual void contextMenuPopup( QMenu* );
 
 private slots:
   void onShowSelected();
   void onShowOnlySelected();
 
 };
+
+#endif

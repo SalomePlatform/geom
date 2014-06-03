@@ -4761,6 +4761,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Gérer la cotation d&apos;un objet</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation type="unfinished">Show dependency tree</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
         <translation>Afficher les cotations </translation>
     </message>

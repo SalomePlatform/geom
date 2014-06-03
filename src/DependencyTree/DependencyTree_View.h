@@ -20,24 +20,21 @@
 #ifndef DEPENDENCYTREE_VIEW_H
 #define DEPENDENCYTREE_VIEW_H
 
+// GEOM includes
+#include <GEOMUtils.hxx>
+#include <GeometryGUI.h>
+
+// GUI includes
 #include <GraphicsView_ViewPort.h>
 #include <GraphicsView_ViewFrame.h>
-#include <GraphicsView_Scene.h>
 
 #include <SalomeApp_Application.h>
 
-#include <SALOME_ListIO.hxx>
-
-#include <GEOMUtils.hxx>
-#include <GEOM_InteractiveObject.hxx>
-#include <GeometryGUI.h>
-
-
+// QT includes
 #include <QWidgetAction>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QCheckBox>
-#include <QProgressBar>
 #include <QThread>
 #include <QMutex>
 
@@ -45,13 +42,13 @@ class DependencyTree_Object;
 class DependencyTree_Arrow;
 class DependencyTree_View;
 
-class DependencyTree_ComputeDlg_QThread : public QThread
+class DependencyTree_QThread : public QThread
 {
   Q_OBJECT
 
 public:
 
-  DependencyTree_ComputeDlg_QThread( DependencyTree_View* );
+  DependencyTree_QThread( DependencyTree_View* );
   void sleepDraw();
   void cancel();
 
@@ -79,6 +76,8 @@ public:
   void init( GraphicsView_ViewFrame* );
   void updateModel( bool = true, bool = true );
   void drawTree();
+
+  QString getViewName() const;
 
   virtual void customEvent ( QEvent* );
   void mouseMoveEvent(QMouseEvent *event);
@@ -166,7 +165,7 @@ private:
   int myTotalCost;
   int myComputedCost;
 
-  DependencyTree_ComputeDlg_QThread* qthread;
+  DependencyTree_QThread* qthread;
 
   GEOM::string_array_var myMainEntries;
 

@@ -17,11 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// Internal includes
 #include "DependencyTree_View.h"
 #include "DependencyTree_Object.h"
 #include "DependencyTree_Arrow.h"
-
-#include <GEOMBase.h>
 
 // GUI includes
 #include <SUIT_Session.h>
@@ -31,17 +30,20 @@
 #include <LightApp_SelectionMgr.h>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
+// GEOM includes
+#include <GEOMBase.h>
+
 // Qt includes
 #include <QCloseEvent>
 #include <QApplication>
-#include <QGraphicsScene>
+#include <QProgressBar>
 
-#define DRAW_EVENT  ( QEvent::User + 1 )
+#define UPDATE_EVENT ( QEvent::User + 1 )
 
 #include <iostream>
 
 DependencyTree_View::DependencyTree_View( QWidget* theParent )
-:GraphicsView_ViewPort(theParent),
+:GraphicsView_ViewPort( theParent ),
 myMaxDownwardLevelsNumber(0),
 myMaxUpwardLevelsNumber(0),
 myLevelsNumber(0),
@@ -70,7 +72,7 @@ DependencyTree_View::~DependencyTree_View()
 
 void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
 {
-  qthread = new DependencyTree_ComputeDlg_QThread( this );
+  qthread = new DependencyTree_QThread( this );
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
@@ -121,11 +123,11 @@ void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
   QAction* separator2 = theViewFrame->toolMgr()->separator( false );
 
   theViewFrame->toolMgr()->append( separator1, theViewFrame->getToolBarId() );
-  theViewFrame->toolMgr()->append( nodesMovableAction, theViewFrame->getToolBarId() );
   theViewFrame->toolMgr()->append( hierarchyDepthLabelAction, theViewFrame->getToolBarId() );
   theViewFrame->toolMgr()->append( hierarchyDepthAction, theViewFrame->getToolBarId() );
   theViewFrame->toolMgr()->append( ShowParentsAction, theViewFrame->getToolBarId() );
   theViewFrame->toolMgr()->append( ShowChildrenAction, theViewFrame->getToolBarId() );
+  theViewFrame->toolMgr()->append( nodesMovableAction, theViewFrame->getToolBarId() );
 
   theViewFrame->toolMgr()->append( separator2, theViewFrame->getToolBarId() );
   theViewFrame->toolMgr()->append( updateAction, theViewFrame->getToolBarId() );
@@ -148,6 +150,11 @@ void DependencyTree_View::updateModel( bool theUseSelectedObject, bool theUseOB 
 {
   getNewTreeModel( theUseSelectedObject, theUseOB );
   onHierarchyType();
+}
+
+QString DependencyTree_View::getViewName() const
+{
+  return tr( "DEPENDENCY_TREE" );
 }
 
 void DependencyTree_View::drawTree()
@@ -232,7 +239,7 @@ void DependencyTree_View::drawTree()
 
 void DependencyTree_View::customEvent( QEvent * event )
 {
-  if( event->type() == DRAW_EVENT ) {
+  if( event->type() == UPDATE_EVENT ) {
 
     QPushButton* cancelButton = dynamic_cast<QPushButton*>( cancelAction->defaultWidget() );
     QProgressBar* progressBar = dynamic_cast<QProgressBar*>( progressAction->defaultWidget() );
@@ -246,7 +253,7 @@ void DependencyTree_View::customEvent( QEvent * event )
       cancelButton->setChecked( false );
       progressBar->setValue(0);
       fitAll();
-      QApplication::removePostedEvents( this, ( QEvent::Type )DRAW_EVENT );
+      QApplication::removePostedEvents( this, ( QEvent::Type )UPDATE_EVENT );
     }
   }
   event->accept();
@@ -254,11 +261,11 @@ void DependencyTree_View::customEvent( QEvent * event )
 
 void DependencyTree_View::addNewItem( QGraphicsItem* theObject )
 {
-  qthread->sleepDraw();
   if( theObject )
     addItem( theObject );
+  qthread->sleepDraw();
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  QApplication::postEvent( this, new QEvent( ( QEvent::Type )DRAW_EVENT ) );
+  QApplication::postEvent( this, new QEvent( ( QEvent::Type )UPDATE_EVENT ) );
 }
 
 void DependencyTree_View::mouseMoveEvent(QMouseEvent *event)
@@ -728,29 +735,29 @@ bool DependencyTree_View::updateObjectName( const std::string &theEntry )
   return res;
 }
 
-DependencyTree_ComputeDlg_QThread::DependencyTree_ComputeDlg_QThread( DependencyTree_View* theView )
+DependencyTree_QThread::DependencyTree_QThread( DependencyTree_View* theView )
 {
   myView = theView;
 }
 
-void DependencyTree_ComputeDlg_QThread::run()
+void DependencyTree_QThread::run()
 {
   myView->myMutex.lock();
  // QMutexLocker lock( &myView->myMutex );
   myView->setIsCompute( true );
   myView->drawTree();
 
-  QApplication::postEvent( myView, new QEvent( ( QEvent::Type )DRAW_EVENT ) );
+  QApplication::postEvent( myView, new QEvent( ( QEvent::Type )UPDATE_EVENT ) );
   myView->myMutex.unlock();
   //exec();
 }
 
-void DependencyTree_ComputeDlg_QThread::sleepDraw()
+void DependencyTree_QThread::sleepDraw()
 {
   msleep(1);
 }
 
-void DependencyTree_ComputeDlg_QThread::cancel()
+void DependencyTree_QThread::cancel()
 {
   myView->setIsCompute( false );
 }

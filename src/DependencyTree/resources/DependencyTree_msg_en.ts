@@ -13,7 +13,7 @@
     </message>
     <message>
       <source>HIERARCHY_DEPTH</source>
-      <translation>Hierarchy depth</translation>
+      <translation>Hierarchy depth  </translation>
     </message>
     <message>
       <source>DISPLAY_ASCENDANTS</source>
@@ -24,12 +24,21 @@
       <translation>Display descendants</translation>
     </message>
     <message>
+      <source>SHOW_ALL</source>
+      <translation>Show all</translation>
+    </message>
+    <message>
+      <source>UPDATE</source>
+      <translation>Update</translation>
+    </message>
+    <message>
       <source>CANCEL</source>
       <translation>Cancel</translation>
     </message>
-        <message>
-      <source>CANCELING</source>
-      <translation>Canceling...</translation>
+  <name>DependencyTree_ViewModel</name>
+    <message>
+      <source>REBUILD_THE_TREE</source>
+      <translation>Rebuild the tree</translation>
     </message>
 </context>
 </TS>

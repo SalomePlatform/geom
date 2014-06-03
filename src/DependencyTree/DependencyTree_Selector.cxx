@@ -50,20 +50,22 @@ void DependencyTree_Selector::getSelection( SUIT_DataOwnerPtrList& theList ) con
     if( DependencyTree_Object* treeObject = dynamic_cast<DependencyTree_Object*>( myView->selectedObject() ) ) {
       const char* entry;
       const char* name;
-      QString studyEntry = treeObject->getGeomObject()->GetStudyEntry();
-      if( studyEntry.isEmpty() ) {
-        entry = treeObject->getEntry().c_str();
-        name = "TEMP_IO_UNPUBLISHED";
-      }
-      else {
-        entry = studyEntry.toStdString().c_str();
-        name = "TEMP_IO";
-      }
-      Handle(SALOME_InteractiveObject) tmpIO =
-        new SALOME_InteractiveObject( entry, "GEOM", name);
+      if( !treeObject->getGeomObject()->_is_nil() ) {
+        QString studyEntry = treeObject->getGeomObject()->GetStudyEntry();
+        if( studyEntry.isEmpty() ) {
+          entry = treeObject->getEntry().c_str();
+          name = "TEMP_IO_UNPUBLISHED";
+        }
+        else {
+          entry = studyEntry.toStdString().c_str();
+          name = "TEMP_IO";
+        }
+        Handle(SALOME_InteractiveObject) tmpIO =
+          new SALOME_InteractiveObject( entry, "GEOM", name);
 
-      theList.append( new LightApp_DataOwner( tmpIO ) );
-  }
+        theList.append( new LightApp_DataOwner( tmpIO ) );
+      }
+    }
 }
 
 //=================================================================================

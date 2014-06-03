@@ -4761,6 +4761,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Manage measurement dimensions of an object</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation>Show dependency tree</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
         <translation>Show all dimensions</translation>
     </message>

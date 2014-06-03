@@ -4736,6 +4736,10 @@
       <translation type="unfinished">Manage measurement dimensions of an object</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation type="unfinished">Show dependency tree</translation>
+    </message>
+    <message>
       <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
       <translation type="unfinished">Show all dimensions</translation>
     </message>
