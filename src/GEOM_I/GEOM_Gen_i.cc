@@ -3042,32 +3042,35 @@ Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
 }
                                                                
 //=======================================================================
-// function : 
-// purpose  : 
+// function : GetDependencyTree
+// purpose  : Collects dependencies of the given objects from other ones
 //=======================================================================
 SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
-						  const GEOM::string_array& theObjectIORs ) {
+						  const GEOM::string_array& theObjectEntries ) {
   // fill in the tree structure
   GEOMUtils::TreeModel tree;
 
-  //  foreach( QString ior, theObjectIORs ) {
-  std::string ior;
-  for ( int i = 0; i < theObjectIORs.length(); i++ ) {
-    ior = theObjectIORs[i].in();
-    GEOM::GEOM_BaseObject_var anObj = GetObject( theStudy->StudyId(), ior.c_str() );
+  std::string entry;
+  for ( int i = 0; i < theObjectEntries.length(); i++ ) {
+    // process objects one-by-one
+    entry = theObjectEntries[i].in();
+    GEOM::GEOM_BaseObject_var anObj = GetObject( theStudy->StudyId(), entry.c_str() );
     if ( anObj->_is_nil() )
       continue;
     GEOMUtils::LevelsList upLevelList;
+    // get objects from which current one depends on recursively
     getUpwardDependency( anObj, upLevelList );
     GEOMUtils::LevelsList downLevelList;
-    getDownwardDependency( theStudy, anObj, downLevelList );
-    tree.insert( std::pair<std::string, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList> >(ior, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList>( upLevelList, downLevelList ) ) );
+    // get objects that depends on current one recursively
+    getDownwardDependency( anObj, downLevelList );
+    tree.insert( std::pair<std::string, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList> >(entry, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList>( upLevelList, downLevelList ) ) );
   }
 
   // translation the tree into string
   std::string treeStr;
   GEOMUtils::ConvertTreeToString( tree, treeStr );
   
+  // put string into stream
   char* aBuffer = (char*)CORBA::string_dup(treeStr.c_str());
   int aBufferSize = strlen((char*)aBuffer);
 
@@ -3075,98 +3078,73 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
 
   SALOMEDS::TMPFile_var aStream = new SALOMEDS::TMPFile(aBufferSize, aBufferSize, anOctetBuf, 1);
 
-  //std::cout << "AKL: end of get" << endl;
   return aStream._retn();
 }
 
 //=======================================================================
-// function : 
-// purpose  : 
+// function : getUpwardDependency
+// purpose  : Collects the entries of objects on that the given one depends
 //=======================================================================
 void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
 				      GEOMUtils::LevelsList &upLevelList, 
 				      int level ) {
-  std::string aGboIOR = gbo->GetEntry();
+  std::string aGboEntry = gbo->GetEntry();
   for (int i=0; i < upLevelList.size(); i++ ) {
     GEOMUtils::LevelInfo aMap = upLevelList.at(i);
-    if ( aMap.count( aGboIOR ) > 0 )
+    if ( aMap.count( aGboEntry ) > 0 )
+      // this object has been processed earlier
       return;
   }
-  //std::cout << "\n\nAKL: upnode IOR: " << aGboIOR << endl;
-  //std::cout << "AKL: level: " << level << endl;
-  GEOMUtils::NodeLinks anIORs;
+  GEOMUtils::NodeLinks anEntries;
   GEOMUtils::LevelInfo aLevelMap;
   if ( level > 0 ) {
     if ( level-1 >= upLevelList.size() ) {
+      // create a new map
       upLevelList.push_back( aLevelMap );
-      //std::cout << "AKL: new map" << endl;
     } else {
+      // get the existent map
       aLevelMap = upLevelList.at(level-1);
-      if ( aLevelMap.count( aGboIOR ) > 0 ) {
-	anIORs = aLevelMap[ aGboIOR ];
-	//std::cout << "AKL: get already added iors list: " << endl;
+      if ( aLevelMap.count( aGboEntry ) > 0 ) {
+	anEntries = aLevelMap[ aGboEntry ];
       }
     }
   }
+  // get objects on that the current one depends
   GEOM::ListOfGBO_var depList = gbo->GetDependency();
   for( int j = 0; j < depList->length(); j++ ) {
     if ( depList[j]->_is_nil() )
       continue;
     if ( level > 0 ) {
-      anIORs.push_back( depList[j]->GetEntry() );
-      //std::cout << "AKL: add link ior: " << depList[j]->GetEntry() << endl;
+      anEntries.push_back( depList[j]->GetEntry() );
     }
-    //std::cout << "AKL: <<<<<<<< start next step: " << endl;
-    //if ( !depList[j]->IsSame( gbo ) ) {
-    if ( !depList[j]->_is_equivalent( gbo ) ) {
+    // get dependencies recursively
+    if ( !depList[j]->_is_equivalent( gbo ) ) { // avoid self-recursion
       getUpwardDependency(depList[j], upLevelList, level+1);
     }
-    //std::cout << "AKL: end next step >>>>>>>> : " << endl;
   }
   if ( level > 0 ) {
-    //std::cout << "AKL: insert links for node: " << aGboIOR << endl;
-    aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGboIOR, anIORs) );
-    //std::cout << "AKL: insert level map: " << endl;
+    aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGboEntry, anEntries) );
     upLevelList[level-1] = aLevelMap;
   }
 }
 
 //=======================================================================
-// function : 
-// purpose  : 
+// function : getDownwardDependency
+// purpose  : Collects the entries of objects that depends on the given one
 //=======================================================================
-void GEOM_Gen_i::getDownwardDependency( SALOMEDS::Study_ptr theStudy,
-					GEOM::GEOM_BaseObject_ptr gbo, 
+void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
 					GEOMUtils::LevelsList &downLevelList, 
 					int level ) {
-  SALOMEDS::SComponent_var comp = theStudy->FindComponent("GEOM");
-  if ( !comp )
-    return;
-
-  std::string aGboIOR = gbo->GetEntry();
-  //cout << "for " << aGboIOR << " at level " << level << endl;
-  /*if ( level > 0 ) {
-    if ( level >= downLevelList.size() ) {
-      downLevelList.push_back( aLevelMap );
-      //std::cout << "AKL: new map" << endl;
-    } else {
-      aLevelMap = downLevelList.at(level);
-      if ( aLevelMap.count( aGboIOR ) > 0 ) {
-	anIORs = aLevelMap[ aGboIOR ];
-	//std::cout << "AKL: get already added iors list: " << endl;
-      }
-    }
-  }*/
   Handle(TDocStd_Document) aDoc = GEOM_Engine::GetEngine()->GetDocument(gbo->GetStudyID());
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
   if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
+    // go through the whole OCAF tree
     TDataStd_ChildNodeIterator Itr( aRoot );
     for (; Itr.More(); Itr.Next()) {
       aNode = Itr.Value();
       aFunction = GEOM_Function::GetFunction(aNode->Label());
       if (aFunction.IsNull()) {
-        //MESSAGE ( "Null function !!!!" );
         continue;
       }
       TDF_Label aLabel  = aFunction->GetOwnerEntry();
@@ -3174,59 +3152,41 @@ void GEOM_Gen_i::getDownwardDependency( SALOMEDS::Study_ptr theStudy,
       TCollection_AsciiString anEntry;
       TDF_Tool::Entry(aLabel, anEntry);
       GEOM::GEOM_BaseObject_var geomObj = GetObject( gbo->GetStudyID(), anEntry.ToCString() );
-      /*
-      SALOMEDS::ChildIterator_var it = theStudy->NewChildIterator( comp );
-      for ( it->InitEx( true ); it->More(); it->Next() ) {
-        SALOMEDS::SObject_var child = it->Value();
-        CORBA::Object_var corbaObj = child->GetObject();
-        GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-      */
       if( CORBA::is_nil( geomObj ) )
         continue;
-
+      // get dependencies for current object in the tree
       GEOM::ListOfGBO_var depList = geomObj->GetDependency();
       if( depList->length() == 0 )
         continue;
-      std::string aGoIOR = geomObj->GetEntry();
-      //cout << "check " << aGoIOR << endl;
-
+      std::string aGoEntry = geomObj->GetEntry();
+      // go through dependencies of current object to check whether it depends on the given object
       for( int i = 0; i < depList->length(); i++ ) {
         if ( depList[i]->_is_nil() )
           continue;
-        //cout << "depends on " << depList[i]->GetEntry() << endl;
-        //if ( depList[i]->IsSame( gbo ) ) {
         if ( depList[i]->_is_equivalent( gbo ) ) {
-          //cout << "  the same! " << endl;
-          //if ( level > 0 ) {
-          GEOMUtils::NodeLinks anIORs;
+	  // yes, the current object depends on the given object
+          GEOMUtils::NodeLinks anEntries;
           GEOMUtils::LevelInfo aLevelMap;
-          anIORs.push_back( gbo->GetEntry());
+          anEntries.push_back( gbo->GetEntry());
           if ( level >= downLevelList.size() ) {
             downLevelList.push_back( aLevelMap );
-	    //std::cout << "AKL: new map" << endl;
           } else {
             aLevelMap = downLevelList.at(level);
-            if ( aLevelMap.count( aGoIOR ) > 0 ) {
-              anIORs = aLevelMap[ aGoIOR ];
-              //std::cout << "AKL: get already added iors list: " << endl;
+            if ( aLevelMap.count( aGoEntry ) > 0 ) {
+              anEntries = aLevelMap[ aGoEntry ];
             }
           }
-          aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGoIOR, anIORs) );
+          aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGoEntry, anEntries) );
           downLevelList[level] = aLevelMap;
-          //}
-          //if ( !depList[i]->IsSame( geomObj ) ) {
-          if ( !depList[i]->_is_equivalent( geomObj ) ) {
-            //cout << "  go on! " << endl;
-            getDownwardDependency(theStudy, geomObj, downLevelList, level+1);
+	  // get dependencies of the current object recursively
+          if ( !depList[i]->_is_equivalent( geomObj ) ) { // avoid self-recursion
+            getDownwardDependency(geomObj, downLevelList, level+1);
           }
+	  break;
         }
       }
     }
   }
-  /*if ( level > 0 ) {
-    aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGboIOR, anIORs) );
-    downLevelList[level-1] = aLevelMap;
-  }*/
 }
 
 //=====================================================================================

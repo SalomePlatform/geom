@@ -1022,7 +1022,6 @@ LevelsList parseWard( const std::string& theData, std::size_t& theCursor )
   }
   LevelsList levelsListData;
   for( int level = 0; level < levelsListStr.size(); level++ ) {
-    std::cout<<"    Level" << level + 1 << ":" << std::endl;
     std::vector<std::string> namesListStr;
     std::stringstream ss1( levelsListStr[level] );
     while ( std::getline( ss1, substr, ',' ) ) {
@@ -1040,14 +1039,11 @@ LevelsList parseWard( const std::string& theData, std::size_t& theCursor )
       std::string nodeItem = linksListStr[0];
       if( !nodeItem.empty() ) {
         NodeLinks linksListData;
-        std::cout<<"      " << nodeItem << " - ";
         for( int link = 1; link < linksListStr.size(); link++ ) {
           std::string linkItem = linksListStr[link];
           linksListData.push_back( linkItem );
-          std::cout << linkItem << ", ";
         }// Links
         levelInfoData[nodeItem] = linksListData;
-        std::cout << std::endl;
       }
     }// Level's objects
     levelsListData.push_back(levelInfoData);
@@ -1070,15 +1066,12 @@ void ConvertStringToTree( const std::string &theData,
   {
     std::size_t objectIndex = theData.find( '-', cursor );
     std::string objectEntry = theData.substr( cursor, objectIndex - cursor );
-    std::cout<<"\n\nMainObject = " << objectEntry <<std::endl;
     cursor = objectIndex;
 
     std::size_t upwardIndexBegin = theData.find("{",cursor) + 1;
     std::size_t upwardIndexFinish = theData.find("}",upwardIndexBegin);
-    std::cout<<"  Upward:" << std::endl	;
     LevelsList upwardList = parseWard( theData, cursor );
 
-    std::cout<<"  Downward:" << std::endl;
     LevelsList downwardList = parseWard( theData, cursor );
 
     tree[objectEntry] = std::pair<LevelsList,LevelsList>( upwardList, downwardList );

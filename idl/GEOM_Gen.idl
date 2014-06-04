@@ -5091,17 +5091,13 @@ module GEOM
 	       in long row );
 
     /*!
-     * \brief Get dependencies of the given object from other objects in study
-     * \param list of IORs
-     * \return texture byte array
-     * Example of using: 
-     *   SALOMEDS::TMPFile_var SeqFile = 
-     *     myGeometryGUI->GetGeomGen()->GetDependencyTree( aStudy, aListOfIORs );
-     *   char* buf;
-     *   buf = (char*) &SeqFile[0];
+     * \brief Collects dependencies of the given objects from other ones
+     * \param theStudy The study in which the object is published
+     * \param theListOfEntries List of GEOM object entries in OCAF tree (not in study)
+     * \return Struct of dependent entries and its links as a byte array
      */
     SALOMEDS::TMPFile GetDependencyTree(in SALOMEDS::Study theStudy,
-					in string_array strValues);
+					in string_array theListOfEntries);
 
   };
 };

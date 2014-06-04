@@ -199,8 +199,9 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                                       CORBA::Boolean          theInheritFirstArg,
                                       CORBA::Boolean          theAddPrefix);
 
+  //Collects dependencies of the given objects from other ones
   SALOMEDS::TMPFile* GetDependencyTree(SALOMEDS::Study_ptr theStudy,
-				       const GEOM::string_array& theObjectIORs);
+				       const GEOM::string_array& theObjectEntries);
 
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
@@ -375,8 +376,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                             GEOMUtils::LevelsList &upLevelList,  
                             int level = 0 );
 
-  void getDownwardDependency( SALOMEDS::Study_ptr theStudy,
-			      GEOM::GEOM_BaseObject_ptr gbo, 
+  void getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
                               GEOMUtils::LevelsList &downLevelList, 
                               int level = 0 );
 
