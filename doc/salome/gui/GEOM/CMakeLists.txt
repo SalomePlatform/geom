@@ -25,12 +25,23 @@ SALOME_CONFIGURE_FILE(doxyfile_tui.in doxyfile_tui)
 SALOME_CONFIGURE_FILE(static/header.html.in ${CMAKE_CURRENT_BINARY_DIR}/static/header.html)
 SALOME_CONFIGURE_FILE(static/header_py.html.in ${CMAKE_CURRENT_BINARY_DIR}/static/header_py.html)
 
+# Generate a temporary python file, needed for the genaration of the documentation
+# of the built-in Geometry plugins.
+SET(DOC_GEOM_PluginsList AdvancedGEOM STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin VTKPlugin)
+SALOME_ACCUMULATE_ENVIRONMENT(GEOM_PluginsList NOCHECK ${DOC_GEOM_PluginsList})
+SET(geom_file "${CMAKE_CURRENT_SOURCE_DIR}/collect_geom_methods.py")
+SET(plugins_cmd_options ${geom_file} -o tmp1/geomBuilder.py ${DOC_GEOM_PluginsList})
+SALOME_GENERATE_ENVIRONMENT_SCRIPT(plugins_cmd env_script "${PYTHON_EXECUTABLE}" "${plugins_cmd_options}")
+# Install a script
+SALOME_INSTALL_SCRIPTS(collect_geom_methods.py ${SALOME_INSTALL_BINS})
+
 SET(f "$ENV{KERNEL_ROOT_DIR}/bin/salome/prepare_generating_doc.py")
 IF(WIN32)
   STRING(REPLACE "/" "\\" f ${f})
 ENDIF(WIN32)
 
 ADD_CUSTOM_TARGET(usr_docs ${CMAKE_COMMAND} -E make_directory tmp
+  COMMAND ${CMAKE_COMMAND} -E make_directory tmp1
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomBuilder.py ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/geomBuilder.py
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/gsketcher.py   ${CMAKE_SOURCE_DIR}/src/GEOM_SWIG/gsketcher.py
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/geomtools.py   ${CMAKE_SOURCE_DIR}/src/GEOM_PY/geomtools.py
@@ -38,12 +49,14 @@ ADD_CUSTOM_TARGET(usr_docs ${CMAKE_COMMAND} -E make_directory tmp
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/structelem.py  ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/__init__.py
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/parts.py       ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/parts.py
   COMMAND ${PYTHON_EXECUTABLE} ${f} -o tmp/orientation.py ${CMAKE_SOURCE_DIR}/src/GEOM_PY/structelem/orientation.py
+  COMMAND ${plugins_cmd}
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile_tui 
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile_py
   COMMAND ${DOXYGEN_EXECUTABLE} doxyfile
   COMMAND  ${CMAKE_COMMAND} -E remove_directory tmp
+  COMMAND  ${CMAKE_COMMAND} -E remove_directory tmp1
   VERBATIM 
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}             
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 ADD_DEPENDENCIES(usr_docs html_docs)

@@ -26,23 +26,7 @@
 #ifndef _GEOMImpl_ImportDriver_HeaderFile
 #define _GEOMImpl_ImportDriver_HeaderFile
 
-#ifndef _TColStd_SequenceOfExtendedString_HeaderFile
-#include <TColStd_SequenceOfExtendedString.hxx>
-#endif
-#ifndef _Standard_TypeMismatch_HeaderFile
-#include <Standard_TypeMismatch.hxx>
-#endif
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
 #ifndef _Standard_GUID_HeaderFile
 #include <Standard_GUID.hxx>
 #endif 
@@ -82,13 +66,6 @@ Standard_EXPORT ~GEOMImpl_ImportDriver() {};
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
-
-  // Static method
-  Standard_EXPORT static TCollection_AsciiString ReadValue (const TCollection_AsciiString& theFileName,
-                                                            const TCollection_AsciiString& theLibName,
-                                                            const TCollection_AsciiString& theParameterName,
-                                                            TCollection_AsciiString& theError);
-
 DEFINE_STANDARD_RTTI( GEOMImpl_ImportDriver )
 };
 

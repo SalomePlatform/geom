@@ -1151,9 +1151,38 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdgesByList
  *  GetExistingSubObjects
  */
 //=============================================================================
-Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubObjects
-                                          (Handle(GEOM_Object)    theShape,
-                                           const Standard_Boolean theGroupsOnly)
+Handle(TColStd_HSequenceOfTransient)
+GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShape,
+						  const Standard_Boolean theGroupsOnly)
+{
+  // note: this method does not return fields
+
+  Standard_Integer types = theGroupsOnly ? Groups : Groups|SubShapes;
+  Handle(TColStd_HSequenceOfTransient) results = GetExistingSubObjects(theShape, types);
+
+  if (results->Length() > 0) {
+    //Make a Python command
+    TCollection_AsciiString anAsciiList;
+    for (int i = 1; i <= results->Length(); i++)
+    {
+      Handle(GEOM_BaseObject) obj = Handle(GEOM_BaseObject)::DownCast( results->Value(i));
+      obj->GetEntryString();
+      if ( i < results->Length() )
+	anAsciiList += ",";
+    }
+    
+    GEOM::TPythonDump pd (theShape->GetLastFunction(), /*append=*/true);
+    pd << "[" << anAsciiList.ToCString();
+    pd << "] = geompy.GetExistingSubObjects(";
+    pd << theShape << ", " << (bool)theGroupsOnly << ")";
+  }
+
+  return results;
+}
+
+Handle(TColStd_HSequenceOfTransient)
+GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShape,
+						  const Standard_Integer theTypes)
 {
   SetErrorCode(KO);
 
@@ -1171,8 +1200,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
 
   SetErrorCode(KO);
 
-  TCollection_AsciiString anAsciiList;
-
   TDataStd_ListIteratorOfListOfExtendedString anIt (aListEntries);
   for (; anIt.More(); anIt.Next()) {
     TCollection_ExtendedString anEntry = anIt.Value();
@@ -1180,13 +1207,14 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
     char* anEntryStr = new char[aStrLen+1];
     anEntry.ToUTF8CString(anEntryStr);
     Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(GetDocID(), anEntryStr, false);
-    if (!anObj.IsNull() && anObj->IsKind(STANDARD_TYPE(GEOM_Object))) {
-      if (!theGroupsOnly || anObj->GetType() == GEOM_GROUP) {
+    if (!anObj.IsNull() ) {
+      bool isGroup    = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() == GEOM_GROUP;
+      bool isSubShape = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() != GEOM_GROUP;
+      bool isField    = anObj->IsKind(STANDARD_TYPE(GEOM_Field));
+      if (theTypes & Groups    && isGroup ||
+	  theTypes & SubShapes && isSubShape ||
+	  theTypes & Fields    && isField) {
         aSeq->Append(anObj);
-
-        // for python command
-        anAsciiList += anEntryStr;
-        anAsciiList += ",";
       }
     }
     delete [] anEntryStr;
@@ -1196,14 +1224,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
     SetErrorCode(NOT_FOUND_ANY);
     return aSeq;
   }
-
-  //Make a Python command
-  anAsciiList.Trunc(anAsciiList.Length() - 1);
-
-  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
-  pd << "[" << anAsciiList.ToCString();
-  pd << "] = geompy.GetExistingSubObjects(";
-  pd << theShape << ", " << (bool)theGroupsOnly << ")";
 
   SetErrorCode(OK);
 

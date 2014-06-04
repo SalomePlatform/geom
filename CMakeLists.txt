@@ -234,16 +234,18 @@ INCLUDE(CMakePackageConfigHelpers)
 # List of targets in this project we want to make visible to the rest of the world.
 # They all have to be INSTALL'd with the option "EXPORT ${PROJECT_NAME}TargetGroup"
 SET(_${PROJECT_NAME}_exposed_targets 
-  GEOMArchimede BREPExport BREPImport BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
-  GEOMUtils GEOMEngine GEOM_SupervEngine IGESExport IGESImport GEOMSketcher
-  SalomeIDLGEOM STEPExport STEPImport STLExport STLImport ShHealOper XAO AdvancedEngine OCC2VTK
-  VTKExport
+  GEOMArchimede BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
+  GEOMUtils GEOMEngine GEOM_SupervEngine GEOMSketcher
+  SalomeIDLGEOM SalomeIDLGEOMSuperv SalomeIDLAdvancedGEOM ShHealOper XAO AdvancedEngine OCC2VTK
+  SalomeIDLSTLPlugin SalomeIDLBREPPlugin SalomeIDLSTEPPlugin SalomeIDLIGESPlugin SalomeIDLXAOPlugin SalomeIDLVTKPlugin
+  STLPluginEngine BREPPluginEngine STEPPluginEngine IGESPluginEngine XAOPluginEngine VTKPluginEngine
 )
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
     AdvancedGUI BasicGUI BlocksGUI BooleanGUI BuildGUI DisplayGUI DlgRef EntityGUI GEOMBase
     GEOMFiltersSelection GEOM GEOMToolsGUI GenerationGUI GroupGUI Material MeasureGUI GEOMObject
-    OperationGUI PrimitiveGUI RepairGUI TransformationGUI ImportExportGUI DependencyTree
+    OperationGUI PrimitiveGUI RepairGUI TransformationGUI DependencyTree
+    STLPluginGUI BREPPluginGUI STEPPluginGUI IGESPluginGUI XAOPluginGUI VTKPluginGUI
     )
 ENDIF(SALOME_BUILD_GUI)
 

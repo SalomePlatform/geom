@@ -65,9 +65,11 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ICurvesOperations.hxx
   GEOMImpl_ILocalOperations.hxx
   GEOMImpl_IInsertOperations.hxx
+  GEOMImpl_IECallBack.hxx
   GEOMImpl_IMeasureOperations.hxx
   GEOMImpl_IGroupOperations.hxx
   GEOMImpl_IFieldOperations.hxx
+  GEOMImpl_IBaseIEOperations.hxx
   GEOMImpl_IGlue.hxx
   GEOMImpl_PointDriver.hxx
   GEOMImpl_IPoint.hxx
@@ -171,8 +173,6 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_GlueDriver.hxx
   GEOMImpl_Types.hxx
   GEOM_GEOMImpl.hxx
-  GEOMImpl_IImportExportXAO.hxx
-  GEOMImpl_XAODriver.hxx
   )
 # --- sources ---
 
@@ -187,9 +187,11 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_ICurvesOperations.cxx
   GEOMImpl_ILocalOperations.cxx
   GEOMImpl_IInsertOperations.cxx
+  GEOMImpl_IECallBack.cxx
   GEOMImpl_IMeasureOperations.cxx
   GEOMImpl_IGroupOperations.cxx
   GEOMImpl_IFieldOperations.cxx
+  GEOMImpl_IBaseIEOperations.cxx
   GEOMImpl_Gen.cxx
   GEOMImpl_PointDriver.cxx
   GEOMImpl_VectorDriver.cxx
@@ -241,7 +243,6 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_FillingDriver.cxx
   GEOMImpl_GlueDriver.cxx
   GEOMImpl_FieldDriver.cxx
-  GEOMImpl_XAODriver.cxx
   )
 
 # --- rules ---

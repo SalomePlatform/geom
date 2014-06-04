@@ -1004,14 +1004,6 @@
       <translation>角度を度数で指定します</translation>
     </message>
     <message>
-      <source>GEOM_MEN_EXPORT</source>
-      <translation>エクスポート</translation>
-    </message>
-    <message>
-      <source>GEOM_MEN_IMPORT</source>
-      <translation>インポート</translation>
-    </message>
-    <message>
       <source>GEOM_MEN_ISOS</source>
       <translation>輪郭線の数を選択します。</translation>
     </message>
@@ -1465,7 +1457,7 @@
     </message>
     <message>
       <source>GEOM_PRP_EXPORT</source>
-      <translation>ジオメトリを %1 にエクスポート...</translation>
+      <translation>ジオメトリを %1 にエクスポート</translation>
     </message>
     <message>
       <source>GEOM_PRP_LOADING</source>
@@ -2693,7 +2685,7 @@
     </message>
     <message>
       <source>MEN_IMPORT</source>
-      <translation>インポート...</translation>
+      <translation>インポート</translation>
     </message>
     <message>
       <source>MEN_INERTIA</source>
@@ -3536,10 +3528,6 @@
       <translation>ブロックで展開</translation>
     </message>
     <message>
-      <source>STB_EXPORT</source>
-      <translation>ジオメトリをBREPファイルにエクスポート</translation>
-    </message>
-    <message>
       <source>STB_EXTRUSION</source>
       <translation>押し出しを作成</translation>
     </message>
@@ -3622,10 +3610,6 @@
     <message>
       <source>STB_HEX_SOLID</source>
       <translation>Hexahedral_Solid</translation>
-    </message>
-    <message>
-      <source>STB_IMPORT</source>
-      <translation>BREPファイルをジオメトリにインポート</translation>
     </message>
     <message>
       <source>STB_INERTIA</source>
@@ -4144,10 +4128,6 @@
       <translation>ブロックで展開</translation>
     </message>
     <message>
-      <source>TOP_EXPORT</source>
-      <translation>ジオメトリをBREPファイルでエクスポート</translation>
-    </message>
-    <message>
       <source>TOP_EXTRUSION</source>
       <translation>押し出しを作成</translation>
     </message>
@@ -4222,10 +4202,6 @@
     <message>
       <source>TOP_HEX_SOLID</source>
       <translation>Hexahedral_Solid</translation>
-    </message>
-    <message>
-      <source>TOP_IMPORT</source>
-      <translation>BREPファイルをジオメトリにインポート</translation>
     </message>
     <message>
       <source>TOP_INERTIA</source>
@@ -5084,10 +5060,6 @@
       <translation>指定したオブジェクトのグループ(存在する場合)を作成しますか？</translation>
     </message>
     <message>
-      <source>GEOM_SCALE_DIMENSIONS</source>
-      <translation>インポートしたファイルの単位をミリメートルからメートルに変換しますか？いいえを選んだ場合、メートル単位として解釈します。</translation>
-    </message>
-    <message>
       <source>GEOM_PRECISION_HINT</source>
       <translation>パラメーターの入力値の精度を調整することは '%1' の好みにジオメトリ モジュールの。</translation>
     </message>
@@ -5114,54 +5086,6 @@
     <message>
       <source>GEOM_SELECT_IMAGE</source>
       <translation>イメージの選択.</translation>
-    </message>
-    <message>
-      <source>MEN_IMPORTEXPORT</source>
-      <translation>インポート/エクスポート</translation>
-    </message>
-    <message>
-      <source>TOP_EXPORTXAO</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>MEN_EXPORTXAO</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>STB_EXPORTXAO</source>
-      <translation>ソテーした形式でフォームをエクスポートします。</translation>
-    </message>
-    <message>
-      <source>TOP_IMPORTXAO</source>
-      <translation>インポートしました。</translation>
-    </message>
-    <message>
-      <source>MEN_IMPORTXAO</source>
-      <translation>インポートしました。</translation>
-    </message>
-    <message>
-      <source>STB_IMPORTXAO</source>
-      <translation>ソテーしたフォームをインポートします。</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTEXPORT_204</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_SELECT_IMPORT_XAO</source>
-      <translation>XAOからインポート</translation>
-    </message>
-    <message>
-      <source>GEOM_SELECT_EXPORT_XAO</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>XAO_FILES</source>
-      <translation>ファイルした (*.xao)</translation>
-    </message>
-    <message>
-      <source>TOOLS_IMPORTEXPORT</source>
-      <translation>インポート/エクスポート</translation>
     </message>
     <message>
       <source>CC_PNT_ITEM_X_Y</source>
@@ -6983,72 +6907,6 @@
     <message>
       <source>NO_INFO</source>
       <translation>(有効情報なし)</translation>
-    </message>
-  </context>
-  <context>
-    <name>ImportExportGUI_ExportXAODlg</name>
-    <message>
-      <source>GEOM_EXPORTXAO_TITLE</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
-      <translation>オブジェクト</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_FILENAME</source>
-      <translation>ファイル</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_AUTHOR</source>
-      <translation>作成者</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_LGROUPS</source>
-      <translation>グループ</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_LFIELDS</source>
-      <translation>フィールド</translation>
-    </message>
-    <message>
-      <source>EXPORT_DLG_ACCEPT</source>
-      <translation>OK</translation>
-    </message>
-  </context>
-  <context>
-    <name>ImportExportGUI_ImportXAODlg</name>
-    <message>
-      <source>GEOM_IMPORTXAO_TITLE</source>
-      <translation>インポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO</source>
-      <translation>インポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO_IMPORTINGSHAPE</source>
-      <translation>オブジェクト</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO_FILENAME</source>
-      <translation>ファイル</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO_LGROUPS</source>
-      <translation>グループ</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO_LFIELDS</source>
-      <translation>フィールド</translation>
-    </message>
-    <message>
-      <source>STEP</source>
-      <translation>Step</translation>
     </message>
   </context>
   <context>

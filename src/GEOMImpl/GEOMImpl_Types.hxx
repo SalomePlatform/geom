@@ -109,8 +109,6 @@
 #define GEOM_FIELD      52  // == GEOM_FIELD_OBJTYPE constant
 #define GEOM_FIELD_STEP 53  // == GEOM_FIELD_STEP_OBJTYPE constant
 
-#define GEOM_EXPORTXAO 54
-
 #define GEOM_ISOLINE   55
 
 //GEOM_Function types
@@ -118,8 +116,8 @@
 #define COPY_WITH_REF    1
 #define COPY_WITHOUT_REF 2
 
-#define EXPORT_SHAPE 1
 #define IMPORT_SHAPE 1
+#define EXPORT_SHAPE 2
 
 #define POINT_XYZ                1
 #define POINT_XYZ_REF            2
@@ -363,9 +361,10 @@
 #define MARKER_SHAPE   2
 #define MARKER_PNT2VEC 3
 
-// import/export XAO
-#define IMPORTEXPORT_EXPORTXAO 1
-#define IMPORTEXPORT_IMPORTXAO 2
+// Advanced functions
+#define USER_TYPE 200     // Base type for GEOM advanced shapes
+#define USER_TYPE_EX 1000 // Base type for GEOM plugins
 
-// Advanced functions (base = 200)
-#define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)
+
+//Plugins specified constants
+#define PLUGIN_NAME "Plugin Name"

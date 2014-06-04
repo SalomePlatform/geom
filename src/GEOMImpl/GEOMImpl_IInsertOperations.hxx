@@ -51,15 +51,6 @@ class Handle_TColStd_HArray1OfByte;
 class Handle_TDataStd_HArray1OfByte;
 #endif
 
-namespace XAO {
-  class Geometry;
-  class BrepGeometry;
-  class Xao;
-}
-
-typedef NCollection_DataMap<TCollection_ExtendedString, NCollection_List<TopoDS_Shape> >
-        DataMapOfStringListOfShape;
-
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:
   Standard_EXPORT GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID);
@@ -80,16 +71,6 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
                                const TCollection_AsciiString& theFileName,
                                const TCollection_AsciiString& theFormatType);
   
-  Standard_EXPORT Standard_Boolean ImportTranslators (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
-                                                      Handle(TColStd_HSequenceOfAsciiString)& thePatterns);
-  
-  Standard_EXPORT Standard_Boolean ExportTranslators (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
-                                                      Handle(TColStd_HSequenceOfAsciiString)& thePatterns);
-  
-  Standard_EXPORT Standard_Boolean IsSupported (const Standard_Boolean isImport,
-                                                const TCollection_AsciiString& theFormat,
-                                                Handle(TCollection_HAsciiString)& theLibName);
-  
   Standard_EXPORT Handle(GEOM_Object) RestoreShape (std::istringstream& theStream);
   
   Standard_EXPORT int LoadTexture(const TCollection_AsciiString& theTextureFile);
@@ -109,38 +90,6 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
 							    int& theWidth, int& theHeight);
 
   Standard_EXPORT std::list<int> GetAllTextures();
-
-  Standard_EXPORT bool ExportXAO(Handle(GEOM_Object) shape,
-                                 std::list<Handle(GEOM_Object)> groupList,
-                                 std::list<Handle(GEOM_Field)> fieldList,
-                                 const char* author,
-                                 const char* fileName);
-
-  Standard_EXPORT bool ImportXAO(const char* fileName,
-                                 Handle(GEOM_Object)& shape,
-                                 Handle(TColStd_HSequenceOfTransient)& subShapes,
-                                 Handle(TColStd_HSequenceOfTransient)& groups,
-                                 Handle(TColStd_HSequenceOfTransient)& fields);
-
- private:
-  Standard_Boolean InitResMgr ();
-
-  void importSubShapes(XAO::Geometry* xaoGeometry, Handle(GEOM_Function) function,
-                       int shapeType, int dim,
-                       Handle(TColStd_HSequenceOfTransient)& subshapeList);
-  void exportSubshapes(const Handle(GEOM_Object)& shape, XAO::BrepGeometry* geometry);
-  void exportFields(std::list<Handle(GEOM_Field)> fieldList, XAO::Xao* xaoObject,
-                    XAO::BrepGeometry* geometry);
-  void exportGroups(std::list<Handle(GEOM_Object)> groupList, XAO::Xao* xaoObject,
-                    XAO::BrepGeometry* geometry);
-
-  void MakeMaterialGroups(const Handle(GEOM_Object)                  &theObject,
-                          const Handle(TColStd_HSequenceOfTransient) &theSeq);
-
-  Handle(GEOM_Object) MakeGroup
-                         (const Handle(GEOM_Object)            &theObject,
-                          const TCollection_ExtendedString     &theName,
-                          const NCollection_List<TopoDS_Shape> &theShapes);
 
  private:
   std::vector<Handle(Resource_Manager)> myResMgrList;

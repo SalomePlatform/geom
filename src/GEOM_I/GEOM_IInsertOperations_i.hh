@@ -56,12 +56,6 @@ class GEOM_I_EXPORT GEOM_IInsertOperations_i :
                    const char* theFormatName,
                    const char* theParameterName);
 
-  void ImportTranslators (GEOM::string_array_out theFormats,
-                          GEOM::string_array_out thePatterns);
-
-  void ExportTranslators (GEOM::string_array_out theFormats,
-                          GEOM::string_array_out thePatterns);
-
   GEOM::GEOM_Object_ptr RestoreShape (const SALOMEDS::TMPFile& theStream);
 
   CORBA::Long LoadTexture(const char* theTextureFile);
@@ -72,18 +66,6 @@ class GEOM_I_EXPORT GEOM_IInsertOperations_i :
                                 CORBA::Long& theHeight);
 
   GEOM::ListOfLong* GetAllTextures();
-  
-  CORBA::Boolean ExportXAO (GEOM::GEOM_Object_ptr shape,
-                            const GEOM::ListOfGO& groups,
-                            const GEOM::ListOfFields&  fields,
-                            const char* author,
-                            const char* fileName);
-
-  CORBA::Boolean ImportXAO (const char* fileName,
-                            GEOM::GEOM_Object_out shape,
-                            GEOM::ListOfGO_out subShapes,
-                            GEOM::ListOfGO_out groups,
-                            GEOM::ListOfFields_out fields);
   
   ::GEOMImpl_IInsertOperations* GetOperations()
   { return (::GEOMImpl_IInsertOperations*)GetImpl(); }

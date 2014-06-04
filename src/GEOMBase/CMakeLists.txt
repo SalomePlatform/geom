@@ -64,6 +64,7 @@ SET(_link_LIBRARIES
 SET(GEOMBase_HEADERS
   GEOMBase.h
   GEOMBase_Skeleton.h
+  GEOMBase_DlgSkeleton.h
   GEOMBase_Helper.h
   GEOM_Operation.h
   GEOM_GEOMBase.hxx
@@ -73,6 +74,7 @@ SET(GEOMBase_HEADERS
 # header files / to be processed by moc
 SET(_moc_HEADERS
   GEOMBase_Skeleton.h
+  GEOMBase_DlgSkeleton.h
   )
 
 # --- sources ---
@@ -86,6 +88,7 @@ SET(GEOMBase_SOURCES
   GEOMBase_Helper.cxx
   GEOM_Operation.cxx
   GEOM_GenericObjPtr.cxx
+  GEOMBase_DlgSkeleton.cxx
   ${_moc_SOURCES}
   )
 

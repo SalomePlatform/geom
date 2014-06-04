@@ -216,7 +216,6 @@ void AdvancedGUI_DividedCylinderDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_DividedCylinderDlg::createOperation()
 {
-  //return getGeomEngine()->GetIAdvancedOperations(getStudyId());
   return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
 }
 
@@ -243,7 +242,7 @@ bool AdvancedGUI_DividedCylinderDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
-  GEOM::GEOM_IAdvancedOperations_var anOper = GEOM::GEOM_IAdvancedOperations::_narrow(getOperation());
+  GEOM::IAdvancedOperations_var anOper = GEOM::IAdvancedOperations::_narrow(getOperation());
 
   //@@ retrieve input values from the widgets here @@//
   CORBA::Double theR = GroupParams->SpinBox_DX->value();

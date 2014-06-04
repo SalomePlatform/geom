@@ -30,7 +30,6 @@
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
 #include "GEOMPluginGUI.h"
-#include "GEOMGUI_XmlHandler.h"
 #include "GEOMGUI_OCCSelector.h"
 #include "GEOMGUI_Selection.h"
 #include "GEOMGUI_CreationInfoWdg.h"
@@ -38,6 +37,7 @@
 #include "GEOM_Constants.h"
 #include "GEOM_Displayer.h"
 #include "GEOM_AISShape.hxx"
+#include "GEOMUtils_XmlHandler.hxx"
 
 #include "GEOM_Actor.h"
 
@@ -467,8 +467,6 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpOriginAndVectors:   // MENU BASIC - ORIGIN AND BASE VECTORS
     createOriginAndBaseVectors(); // internal operation
     return;
-  case GEOMOp::OpImport:             // MENU FILE - IMPORT
-  case GEOMOp::OpExport:             // MENU FILE - EXPORT
   case GEOMOp::OpSelectVertex:       // POPUP MENU - SELECT ONLY - VERTEX
   case GEOMOp::OpSelectEdge:         // POPUP MENU - SELECT ONLY - EDGE
   case GEOMOp::OpSelectWire:         // POPUP MENU - SELECT ONLY - WIRE
@@ -664,10 +662,6 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpPropagate:          // MENU BLOCKS - PROPAGATE
   case GEOMOp::OpExplodeBlock:       // MENU BLOCKS - EXPLODE ON BLOCKS
     libName = "BlocksGUI";
-    break;
-  case GEOMOp::OpExportXAO:          // MENU NEW ENTITY - IMPORTEXPORT - EXPORTXAO
-  case GEOMOp::OpImportXAO:          // MENU NEW ENTITY - IMPORTEXPORT - IMPORTXAO
-    libName = "ImportExportGUI";
     break;
   //case GEOMOp::OpAdvancedNoOp:       // NO OPERATION (advanced operations base)
   //case GEOMOp::OpPipeTShape:         // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
@@ -901,9 +895,6 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   // ----- create actions --------------
 
-  createGeomAction( GEOMOp::OpImport,     "IMPORT", "", Qt::ControlModifier + Qt::Key_I );
-  createGeomAction( GEOMOp::OpExport,     "EXPORT", "", Qt::ControlModifier + Qt::Key_E );
-
   createGeomAction( GEOMOp::OpDelete,     "DELETE", "", Qt::Key_Delete );
 
   createGeomAction( GEOMOp::OpPoint,      "POINT" );
@@ -1103,10 +1094,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpDecrNbIsos, "", "", 0, false,
                     "Geometry:Decrease number of isolines");
 
-  // Import/Export XAO
-  createGeomAction( GEOMOp::OpExportXAO, "EXPORTXAO" );
-  createGeomAction( GEOMOp::OpImportXAO, "IMPORTXAO" );
-
   //createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
   //createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
   //createGeomAction( GEOMOp::OpDividedCylinder, "DIVIDEDCYLINDER" );
@@ -1116,13 +1103,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   // ---- create menus --------------------------
 
   int fileId = createMenu( tr( "MEN_FILE" ), -1, -1 );
-  createMenu( separator(),      fileId, 10 );
-  createMenu( GEOMOp::OpImport, fileId, 10 );
-  createMenu( GEOMOp::OpExport, fileId, 10 );
-  int impexpId = createMenu( tr( "MEN_IMPORTEXPORT" ), fileId, -1, 10 );
-  createMenu( GEOMOp::OpExportXAO, impexpId, -1 );
-  createMenu( GEOMOp::OpImportXAO, impexpId, -1 );
-  createMenu( separator(),      fileId, -1 );
 
   int editId = createMenu( tr( "MEN_EDIT" ), -1, -1 );
   createMenu( GEOMOp::OpDelete, editId, -1 );
@@ -1458,11 +1438,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
 #endif
 
-   int impexpTbId = createTool( tr( "TOOL_IMPORTEXPORT" ), QString( "GEOMImportExportXAO" ) );
-   createTool( GEOMOp::OpExportXAO, impexpTbId );
-   createTool( GEOMOp::OpImportXAO, impexpTbId );
-
-  //int advancedTbId = createTool( tr( "TOOL_ADVANCED" ), QString( "GEOMAdvanced" ) );
+  //int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
   //createTool( GEOMOp::OpSmoothingSurface, advancedTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
@@ -1667,131 +1643,77 @@ void GeometryGUI::addPluginActions()
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   if (!resMgr) return;
 
-  // Find names of a resource XML files ("GEOMActions.xml" and others);
-  QString PluginsXml;
-  char* cenv = getenv("GEOM_PluginsList");
-  if (cenv)
-    PluginsXml.sprintf("%s", cenv);
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+  if (!appStudy) return;
 
-  QStringList PluginsXmlList = PluginsXml.split(":", QString::SkipEmptyParts);
-  if (PluginsXmlList.count() == 0) return;
+  // Find names of a resource XML files ("AdvancedGEOM.xml" and others);
 
-  // get full names of xml files from PluginsXmlList
-  QStringList xmlFiles;
-  xmlFiles.append(QDir::home().filePath("CustomGeomPlugins.xml")); // may be inexistent
-  for (int i = 0; i < PluginsXmlList.count(); i++) {
-    PluginsXml = PluginsXmlList[ i ];
+  GEOMUtils::PluginInfo plugins = GEOMUtils::ReadPluginInfo();
 
-    // Find full path to the resource XML file
-    QString xmlFile = resMgr->path("resources", "GEOM", PluginsXml + ".xml");
-    if ( xmlFile.isEmpty() ) // try PLUGIN resources
-      xmlFile = resMgr->path("resources", PluginsXml, PluginsXml + ".xml");
-    if ( !xmlFile.isEmpty() )
-      xmlFiles.append( xmlFile );
-  }
-
-  // create "Advanced Operations" menu and corresponding toolbar
-  //int advancedMenuId = createMenu(tr("MEN_ADVANCED"), -1, -1, 10);
-  //int advancedTbarId = createTool(tr("TOOL_ADVANCED"), QString( "Advanced" ));
   int id = GEOMOp::OpLastOperationID; // TODO?
 
-  // loop on xmlFiles
-  QString aNoAccessFiles;
-  for (int i = 0; i < xmlFiles.count(); i++) {
-    QString xmlFile = xmlFiles[ i ];
+  // loop on plugins
+  GEOMUtils::PluginInfo::const_iterator it;
+  for ( it = plugins.begin(); it != plugins.end(); ++it ) {
+    // bind action lib and label to its ID for activateOperation() method proper work
+    GEOMUtils::PluginData pdata = (*it);
+    myPluginLibs[pdata.name.c_str()] = pdata.clientLib.c_str();
+    std::list<GEOMUtils::ActionData> actions = (*it).actions;
+    std::list<GEOMUtils::ActionData>::const_iterator ait;
+    for ( ait = actions.begin(); ait != actions.end(); ++ait ) {
+      GEOMUtils::ActionData adata = (*ait);
+      // icon
+      QPixmap icon;
+      if ( !adata.icon.empty() )
+	icon = resMgr->loadPixmap( pdata.name.c_str(), adata.icon.c_str() );
+      // menu text (path)
+      QStringList smenus = QString( adata.menuText.c_str() ).split( "/" );
+      QString actionName = smenus.last();
+      actionName = actionName.toUpper().prepend( "MEN_" );
+      smenus.removeLast();
 
-    QFile file (xmlFile);
-    if (file.exists() && file.open(QIODevice::ReadOnly)) {
-      file.close();
+      // path to action in toolbar
+      QStringList stools = QString( adata.toolTip.c_str() ).split( "/" );
+      QString actionTool = stools.last();
+      actionTool = actionTool.toUpper().prepend( "TOP_" );
+      stools.removeLast();
+      
+      QString actionStat = adata.statusText.c_str();
+      actionStat = actionStat.toUpper().prepend( "STB_" );
 
-      GEOMGUI_XmlHandler* aXmlHandler = new GEOMGUI_XmlHandler();
-      ASSERT(aXmlHandler);
-
-      QXmlInputSource source (&file);
-      QXmlSimpleReader reader;
-      reader.setContentHandler(aXmlHandler);
-      reader.setErrorHandler(aXmlHandler);
-      bool ok = reader.parse(source);
-      file.close();
-
-      if (ok) {
-        // bind action lib and label to its ID for activateOperation() method proper work
-        myPluginLibs[aXmlHandler->myPluginData.myName] = aXmlHandler->myPluginData.myClientLib;
-
-        QListIterator<GEOMGUI_ActionData> anActionsIter (aXmlHandler->myPluginData.myListOfActions);
-        while (anActionsIter.hasNext()) {
-          GEOMGUI_ActionData anActionData = anActionsIter.next();
-
-          //QPixmap icon = resMgr->loadPixmap("GEOM", tr(anActionData.myIcon.toLatin1().constData()));
-          QPixmap icon = resMgr->loadPixmap(aXmlHandler->myPluginData.myName,
-                                            anActionData.myIcon.toLatin1().constData());
-
-          // path to action in menu
-          QStringList smenus = anActionData.myMenu.split( "/" );
-          QString actionName = smenus.last();
-          actionName = actionName.toUpper().prepend("MEN_");
-          smenus.removeLast();
-
-          // path to action in toolbar
-          QStringList stools = anActionData.myTooltip.split( "/" );
-          QString actionTool = stools.last();
-          actionTool = actionTool.toUpper().prepend("TOP_");
-          stools.removeLast();
-
-          QString actionStat = anActionData.myStatusBar;
-          actionStat = actionStat.toUpper().prepend("STB_");
-
-          createAction(id, // ~ anActionData.myLabel
-                       tr(actionTool.toLatin1().constData()),
-                       icon,
-                       tr(actionName.toLatin1().constData()),
-                       tr(actionStat.toLatin1().constData()),
-                       0 /*accel*/,
-                       application()->desktop(),
-                       false /*toggle*/,
-                       this, SLOT(OnGUIEvent()),
-                       QString() /*shortcutAction*/);
-
-          int menuId = -1;
-          foreach (QString subMenu, smenus) {
-            subMenu = subMenu.toUpper().prepend("MEN_");
-            menuId = createMenu(tr(subMenu.toLatin1().constData()), menuId, -1);
-          }
-          //createMenu(id, pluginMenuId, -1);
-          createMenu(id, menuId, -1);
-
-          QString subTool = stools[0];
-          subTool = subTool.toUpper().prepend("TOOL_");
-          int toolId = createTool(tr(subTool.toLatin1().constData()), subTool.toLatin1().constData());
-          //createTool(id, advancedTbarId);
-          createTool(id, toolId);
-
-          // add action id to map
-          PluginAction anAction (aXmlHandler->myPluginData.myClientLib, anActionData.myLabel);
-          myPluginActions[id] = anAction;
-
-          id++;
-        }
+      createAction( id, // ~ adata.label
+		    tr( actionTool.toLatin1().constData() ),
+		    icon,
+		    tr( actionName.toLatin1().constData() ),
+		    tr( actionStat.toLatin1().constData() ),
+		    QKeySequence( tr( adata.accel.c_str() ) ),
+		    application()->desktop(),
+		    false /*toggle*/,
+		    this, SLOT( OnGUIEvent() ),
+		    QString() /*shortcutAction*/ );
+      
+      int menuId = -1;
+      foreach ( QString subMenu, smenus ) {
+	QStringList subMenuList = subMenu.split( ":" );
+	QString subMenuName = subMenuList[0].toUpper().prepend( "MEN_" );
+	int subMenuGroup = subMenuList.size() > 1 ? subMenuList[1].toInt() : -1;
+	menuId = createMenu( tr( subMenuName.toLatin1().constData() ), menuId, -1, subMenuGroup );
       }
-      else {
-        SUIT_MessageBox::critical(application()->desktop(),
-                                  tr("INF_PARSE_ERROR"),
-                                  tr(aXmlHandler->errorProtocol().toLatin1().data()));
+      createMenu( id, menuId, -1 );
+      
+      if ( !stools.isEmpty() ) {
+	QString subTool = stools[0];
+	subTool = subTool.toUpper().prepend( "TOOL_" );
+	int toolId = createTool( tr( subTool.toLatin1().constData() ) );
+	createTool(id, toolId);
       }
-      delete aXmlHandler;
-    }
-    else if ( i > 0 ) { // 1st is ~/CustomGeomPlugins.xml
-      if (aNoAccessFiles.isEmpty())
-        aNoAccessFiles = xmlFile;
-      else
-        aNoAccessFiles += ", " + xmlFile;
-    }
-  } // end loop on xmlFiles
 
-  if (!aNoAccessFiles.isEmpty()) {
-    QString aMess = QObject::tr("PLUGIN_FILE_CANT_OPEN") + " " + aNoAccessFiles + "\n";
-    aMess += QObject::tr("PLUGIN_FILE_CHECK_VARIABLE");
-    SUIT_MessageBox::warning(application()->desktop(), tr("GEOM_WRN_WARNING"), aMess);
+      // add action id to map
+      PluginAction anAction( pdata.clientLib.c_str(), adata.label.c_str() );
+      myPluginActions[id] = anAction;
+      
+      id++;
+    }
   }
 }
 
@@ -1832,8 +1754,6 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
           this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
 
   // Reset actions accelerator keys
-  action(GEOMOp::OpImport)->setEnabled( true ); // Import: CTRL + Key_I
-  action(GEOMOp::OpExport)->setEnabled( true ); // Export: CTRL + Key_E
   action(GEOMOp::OpDelete)->setEnabled( true ); // Delete: Key_Delete
 
   GUIMap::Iterator it;
@@ -1922,8 +1842,6 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
     it.value()->deactivate();
 
   // Unset actions accelerator keys
-  action(GEOMOp::OpImport)->setEnabled( false ); // Import: CTRL + Key_I
-  action(GEOMOp::OpExport)->setEnabled( false ); // Export: CTRL + Key_E
   action(GEOMOp::OpDelete)->setEnabled( false ); // Delete: Key_Delete
 
   qDeleteAll(myOCCSelectors);
@@ -2099,15 +2017,22 @@ void GeometryGUI::updateCreationInfo()
         SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
         QString name = info->operationName.in();
         if ( !name.isEmpty() ) {
-          icon = resMgr->loadPixmap( "GEOM", tr( ("ICO_"+name).toLatin1().constData() ), false );
+	  
+	  QString plugin_name;
+          for ( size_t i = 0; i < info->params.length(); ++i ) {
+            myCreationInfoWdg->addParam( info->params[i].name.in(),
+                                         info->params[i].value.in() );
+            QString value = info->params[i].name.in();
+	    if( value == PLUGIN_NAME ) {
+	      plugin_name = info->params[i].value.in();
+	    }
+	  }
+	  QString prefix = plugin_name.isEmpty() ? "GEOM" : plugin_name;
+          icon = resMgr->loadPixmap( prefix, tr( ("ICO_"+name).toLatin1().constData() ), false );
           operationName = tr( ("MEN_"+name).toLatin1().constData() );
           if ( operationName.startsWith( "MEN_" ))
             operationName = name; // no translation
           myCreationInfoWdg->setOperation( icon, operationName );
-
-          for ( size_t i = 0; i < info->params.length(); ++i )
-            myCreationInfoWdg->addParam( info->params[i].name.in(),
-                                         info->params[i].value.in() );
         }
       }
     }

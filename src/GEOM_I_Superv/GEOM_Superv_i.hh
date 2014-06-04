@@ -28,6 +28,13 @@
 // IDL headers
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
+#include CORBA_CLIENT_HEADER(AdvancedGEOM)
+#include CORBA_CLIENT_HEADER(STLPlugin)
+#include CORBA_CLIENT_HEADER(BREPPlugin)
+#include CORBA_CLIENT_HEADER(STEPPlugin)
+#include CORBA_CLIENT_HEADER(IGESPlugin)
+#include CORBA_CLIENT_HEADER(XAOPlugin)
+#include CORBA_CLIENT_HEADER(VTKPlugin)
 #include CORBA_SERVER_HEADER(GEOM_Superv)
 
 #include "SALOME_Component_i.hxx"
@@ -61,6 +68,12 @@ public:
   void getLocalOp();
   void getGroupOp();
   void getAdvancedOp();
+  void getSTLPluginOp();
+  void getBREPPluginOp();
+  void getSTEPPluginOp();
+  void getIGESPluginOp();
+  void getXAOPluginOp();
+  void getVTKPluginOp();
 
   PortableServer::ServantBase_var GetServant(CORBA::Object_ptr       theObject,
                                              PortableServer::POA_ptr thePOA);
@@ -369,10 +382,6 @@ public:
                const char*           theFormatName);
   GEOM::GEOM_Object_ptr ImportFile (const char* theFileName,
                                     const char* theFormatName);
-  void ImportTranslators (GEOM::string_array_out theFormats,
-                          GEOM::string_array_out thePatterns);
-  void ExportTranslators (GEOM::string_array_out theFormats,
-                          GEOM::string_array_out thePatterns);
 
   //-----------------------------------------------------------//
   // TransformOperations                                       //
@@ -699,11 +708,47 @@ public:
   //-----------------------------------------------------------//
   // ImportExport Operations                                   //
   //-----------------------------------------------------------//
-  CORBA::Boolean ExportXAO(GEOM::GEOM_Object_ptr shape,
-                           const GEOM::ListOfGO& groups, const GEOM::ListOfFields& fields,
-                           const char* author, const char* fileName);
-  CORBA::Boolean ImportXAO(const char* fileName, GEOM::GEOM_Object_out shape, 
-                           GEOM::ListOfGO_out subShapes, GEOM::ListOfGO_out groups, GEOM::ListOfFields_out fields);
+
+  void ExportSTL( GEOM::GEOM_Object_ptr theObject,
+                  const char*           theFileName,
+                  const bool            theIsASCII,
+                  CORBA::Double         theDeflection,
+                  const bool            theIsRelative );
+
+  GEOM::GEOM_Object_ptr ImportSTL( const char* theFileName );
+
+  void ExportBREP( GEOM::GEOM_Object_ptr theObject,
+                   const char*           theFileName );
+
+  GEOM::GEOM_Object_ptr ImportBREP( const char* theFileName );
+
+  void ExportSTEP( GEOM::GEOM_Object_ptr theObject,
+                   const char*           theFileName );
+
+  GEOM::GEOM_Object_ptr ImportSTEP( const char* theFileName,
+                                    const bool  theIsIgnoreUnits );
+
+  void ExportIGES( GEOM::GEOM_Object_ptr theObject,
+                   const char*           theFileName,
+                   const char*           theVersion );
+
+  GEOM::GEOM_Object_ptr ImportIGES( const char* theFileName,
+                                    const bool  theIsIgnoreUnits );
+
+  CORBA::Boolean ExportXAO( GEOM::GEOM_Object_ptr shape,
+                            const GEOM::ListOfGO& groups,
+                            const GEOM::ListOfFields& fields,
+                            const char* author,
+                            const char* fileName);
+  CORBA::Boolean ImportXAO( const char* fileName,
+                            GEOM::GEOM_Object_out shape,
+                            GEOM::ListOfGO_out subShapes,
+                            GEOM::ListOfGO_out groups,
+                            GEOM::ListOfFields_out fields );
+
+  void ExportVTK( GEOM::GEOM_Object_ptr theObject,
+                  const char*           theFileName,
+                  CORBA::Double         theDeflection );
 
   //-----------------------------------------------------------//
   // Advanced Operations                                       //
@@ -754,7 +799,13 @@ private:
   GEOM::GEOM_ICurvesOperations_var    myCurvesOp;
   GEOM::GEOM_ILocalOperations_var     myLocalOp;
   GEOM::GEOM_IGroupOperations_var     myGroupOp;
-  GEOM::GEOM_IAdvancedOperations_var  myAdvancedOp;
+  GEOM::IAdvancedOperations_var       myAdvancedOp;
+  GEOM::ISTLOperations_var            mySTLOp;
+  GEOM::IBREPOperations_var           myBREPOp;
+  GEOM::ISTEPOperations_var           mySTEPOp;
+  GEOM::IIGESOperations_var           myIGESOp;
+  GEOM::IXAOOperations_var            myXAOOp;
+  GEOM::IVTKOperations_var            myVTKOp;
 };
 
 #endif

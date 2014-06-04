@@ -1025,14 +1025,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Indiquez l&apos;angle en degrés</translation>
     </message>
     <message>
-        <source>GEOM_MEN_EXPORT</source>
-        <translation>Exporter</translation>
-    </message>
-    <message>
-        <source>GEOM_MEN_IMPORT</source>
-        <translation>Importer</translation>
-    </message>
-    <message>
         <source>GEOM_MEN_ISOS</source>
         <translation>Choisir le nombre d&apos;isolignes</translation>
     </message>
@@ -2602,7 +2594,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_EXPORT</source>
-        <translation>Exporter...</translation>
+        <translation>Exporter</translation>
     </message>
     <message>
         <source>MEN_EXTRUSION</source>
@@ -2710,7 +2702,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_IMPORT</source>
-        <translation>Importer...</translation>
+        <translation>Importer</translation>
     </message>
     <message>
         <source>MEN_INERTIA</source>
@@ -3549,10 +3541,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Eclater en blocs</translation>
     </message>
     <message>
-        <source>STB_EXPORT</source>
-        <translation>Exporter la géométrie au fichier BREP</translation>
-    </message>
-    <message>
         <source>STB_EXTRUSION</source>
         <translation>Créer une extrusion</translation>
     </message>
@@ -3635,10 +3623,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_HEX_SOLID</source>
         <translation>Solide hexaédrique</translation>
-    </message>
-    <message>
-        <source>STB_IMPORT</source>
-        <translation>Importer une géométrie d&apos;un fichier BREP</translation>
     </message>
     <message>
         <source>STB_INERTIA</source>
@@ -4157,10 +4141,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Eclater en blocs</translation>
     </message>
     <message>
-        <source>TOP_EXPORT</source>
-        <translation>Exporter une géométrie au format BREP</translation>
-    </message>
-    <message>
         <source>TOP_EXTRUSION</source>
         <translation>Créer une extrusion</translation>
     </message>
@@ -4235,10 +4215,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_HEX_SOLID</source>
         <translation>Solide hexaédrique</translation>
-    </message>
-    <message>
-        <source>TOP_IMPORT</source>
-        <translation>Importer une géométrie d&apos;un fichier BREP</translation>
     </message>
     <message>
         <source>TOP_INERTIA</source>
@@ -5096,11 +5072,6 @@ les coques et solides d&apos;un autre.</translation>
         <translation>Créer des groupes pour les objets indiqués (s&apos;ils existent)?</translation>
     </message>
     <message>
-        <source>GEOM_SCALE_DIMENSIONS</source>
-        <translation>Voulez-vous prendre les unités du fichier (%1) en considération?
-Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme des mètres).</translation>
-    </message>
-    <message>
         <source>GEOM_PRECISION_HINT</source>
         <translation>Il est possible d&apos;ajuster la précision de la valeur d&apos;entrée avec 
 le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translation>
@@ -5128,54 +5099,6 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>GEOM_SELECT_IMAGE</source>
         <translation>Sélectionner une image...</translation>
-    </message>
-    <message>
-        <source>MEN_IMPORTEXPORT</source>
-        <translation>Import / Export XAO</translation>
-    </message>
-    <message>
-        <source>TOP_EXPORTXAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>MEN_EXPORTXAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>STB_EXPORTXAO</source>
-        <translation>Exporter une forme au format XAO</translation>
-    </message>
-    <message>
-        <source>TOP_IMPORTXAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>MEN_IMPORTXAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>STB_IMPORTXAO</source>
-        <translation>Importer une forme au format XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTEXPORT_204</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_SELECT_IMPORT_XAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_SELECT_EXPORT_XAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>XAO_FILES</source>
-        <translation>Fichiers XAO (*.xao)</translation>
-    </message>
-    <message>
-        <source>TOOLS_IMPORTEXPORT</source>
-        <translation>Import / Export XAO</translation>
     </message>
     <message>
         <source>CC_PNT_ITEM_X_Y</source>
@@ -7007,72 +6930,6 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>NO_INFO</source>
         <translation>(aucune information disponible)</translation>
-    </message>
-</context>
-<context>
-    <name>ImportExportGUI_ExportXAODlg</name>
-    <message>
-        <source>GEOM_EXPORTXAO_TITLE</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
-        <translation>Objet</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_FILENAME</source>
-        <translation>Fichier</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_AUTHOR</source>
-        <translation>Auteur</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_LGROUPS</source>
-        <translation>Groupes</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_LFIELDS</source>
-        <translation>Champs</translation>
-    </message>
-    <message>
-        <source>EXPORT_DLG_ACCEPT</source>
-        <translation>OK</translation>
-    </message>
-</context>
-<context>
-    <name>ImportExportGUI_ImportXAODlg</name>
-    <message>
-        <source>GEOM_IMPORTXAO_TITLE</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_IMPORTINGSHAPE</source>
-        <translation>Objet</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_FILENAME</source>
-        <translation>Fichier</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_LGROUPS</source>
-        <translation>Groupes</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_LFIELDS</source>
-        <translation>Champs</translation>
-    </message>
-    <message>
-        <source>STEP</source>
-        <translation>Pas</translation>
     </message>
 </context>
 <context>

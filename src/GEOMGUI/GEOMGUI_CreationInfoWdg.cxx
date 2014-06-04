@@ -77,7 +77,6 @@ void GEOMGUI_CreationInfoWdg::setOperation(const QPixmap& icon, const QString& n
 {
   myIconLbl->setPixmap( icon );
   myOperaionLnEd->setText( name );
-  myParamsTreeWd->clear();
 
   if ( name.isEmpty() )
     myOperaionLnEd->setText( tr("NO_INFO"));

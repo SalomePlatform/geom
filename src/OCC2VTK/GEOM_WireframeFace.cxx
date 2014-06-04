@@ -109,7 +109,7 @@ CreateIso(const TopoDS_Face& theFace,
           vtkPolyData* thePolyData,
           vtkPoints* thePts)
 {
-  GEOMUtils_Hatcher aHatcher(theFace);
+  GEOMUtils::Hatcher aHatcher(theFace);
 
   aHatcher.Init(theNbIso[0], theNbIso[1]);
   aHatcher.Perform();
@@ -125,11 +125,11 @@ CreateIso(const TopoDS_Face& theFace,
 
 void
 GEOM_WireframeFace::
-CreateIso(const GEOMUtils_Hatcher &theHatcher,
+CreateIso(const GEOMUtils::Hatcher &theHatcher,
           const Standard_Boolean   IsUIso,
           const int                theDiscret,
-          vtkPolyData       *thePolyData,
-          vtkPoints         *thePts)
+          vtkPolyData              *thePolyData,
+          vtkPoints                *thePts)
 {
   Handle(TColStd_HArray1OfInteger) anIndices;
   Handle(TColStd_HArray1OfReal)    aParams;

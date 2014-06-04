@@ -657,7 +657,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
               self.MeasuOp  = None
               self.BlocksOp = None
               self.GroupOp  = None
-              self.AdvOp    = None
               self.FieldOp  = None
             pass
 
@@ -774,14 +773,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
             self.FieldOp  = self.GetIFieldOperations    (self.myStudyId)
 
-            # The below line is a right way to map all plugin functions to geomBuilder,
-            # but AdvancedOperations are already mapped, that is why this line is commented
-            # and presents here only as an axample
-            #self.AdvOp    = self.GetPluginOperations (self.myStudyId, "AdvancedEngine")
-
-            # self.AdvOp is used by functions MakePipeTShape*, MakeDividedDisk, etc.
-            self.AdvOp = GEOM._objref_GEOM_Gen.GetPluginOperations (self, self.myStudyId, "AdvancedEngine")
-
             # set GEOM as root in the use case tree
             self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
             self.myUseCaseBuilder.SetRootCurrent()
@@ -790,16 +781,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         def GetPluginOperations(self, studyID, libraryName):
             op = GEOM._objref_GEOM_Gen.GetPluginOperations(self, studyID, libraryName)
-            if op:
-                # bind methods of operations to self
-                methods = op.__class__.__dict__['__methods__']
-                avoid_methods = self.BasicOp.__class__.__dict__['__methods__']
-                for meth_name in methods:
-                    if not meth_name in avoid_methods: # avoid basic methods
-                        function = getattr(op.__class__, meth_name)
-                        if callable(function):
-                            #self.__dict__[meth_name] = self.__PluginOperation(op, function)
-                            self.__dict__[meth_name] = PluginOperation(op, function)
             return op
 
         ## Enable / disable results auto-publishing
@@ -10706,8 +10687,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## @addtogroup l2_import_export
         ## @{
 
-        ## Import a shape from the BREP or IGES or STEP file
+        ## Import a shape from the BREP, IGES, STEP or other file
         #  (depends on given format) with given name.
+        #
+        #  Note: this function is deprecated, it is kept for backward compatibility only
+        #  Use Import<FormatName> instead, where <FormatName> is a name of desirable format to import.
+        #
         #  @param theFileName The file, containing the shape.
         #  @param theFormatName Specify format for the file reading.
         #         Available formats can be obtained with InsertOp.ImportTranslators() method.
@@ -10729,10 +10714,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         @ManageTransactions("InsertOp")
         def ImportFile(self, theFileName, theFormatName, theName=None):
             """
-            Import a shape from the BREP or IGES or STEP file
+            Import a shape from the BREP, IGES, STEP or other file
             (depends on given format) with given name.
 
-            Parameters:
+            Note: this function is deprecated, it is kept for backward compatibility only
+            Use Import<FormatName> instead, where <FormatName> is a name of desirable format to import.
+
+            Parameters: 
                 theFileName The file, containing the shape.
                 theFormatName Specify format for the file reading.
                     Available formats can be obtained with geompy.InsertOp.ImportTranslators() method.
@@ -10753,6 +10741,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 material groups are not automatically published.
             """
             # Example: see GEOM_TestOthers.py
+            print """
+            WARNING: Function ImportFile is deprecated, use Import<FormatName> instead,
+            where <FormatName> is a name of desirable format for importing.
+            """
             aListObj = self.InsertOp.ImportFile(theFileName, theFormatName)
             RaiseIfFailed("ImportFile", self.InsertOp)
             aNbObj = len(aListObj)
@@ -10767,158 +10759,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Deprecated analog of geompy.ImportFile, kept for backward compatibility only.
             """
-            print "WARNING: Function Import is deprecated, use ImportFile instead"
             # note: auto-publishing is done in self.ImportFile()
             return self.ImportFile(theFileName, theFormatName, theName)
-
-        ## Shortcut to ImportFile() for BREP format.
-        #  Import a shape from the BREP file with given name.
-        #  @param theFileName The file, containing the shape.
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM.GEOM_Object, containing the imported shape.
-        #
-        #  @ref swig_Import_Export "Example"
-        def ImportBREP(self, theFileName, theName=None):
-            """
-            geompy.ImportFile(...) function for BREP format
-            Import a shape from the BREP file with given name.
-
-            Parameters:
-                theFileName The file, containing the shape.
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM.GEOM_Object, containing the imported shape.
-            """
-            # Example: see GEOM_TestOthers.py
-            # note: auto-publishing is done in self.ImportFile()
-            return self.ImportFile(theFileName, "BREP", theName)
-
-        ## Shortcut to ImportFile() for IGES format
-        #  Import a shape from the IGES file with given name.
-        #  @param theFileName The file, containing the shape.
-        #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
-        #                     and result model will be scaled, if its units are not meters.
-        #                     If False (default), file length units will be taken into account.
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM.GEOM_Object, containing the imported shape.
-        #
-        #  @ref swig_Import_Export "Example"
-        def ImportIGES(self, theFileName, ignoreUnits = False, theName=None):
-            """
-            geompy.ImportFile(...) function for IGES format
-
-            Parameters:
-                theFileName The file, containing the shape.
-                ignoreUnits If True, file length units will be ignored (set to 'meter')
-                            and result model will be scaled, if its units are not meters.
-                            If False (default), file length units will be taken into account.
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM.GEOM_Object, containing the imported shape.
-            """
-            # Example: see GEOM_TestOthers.py
-            # note: auto-publishing is done in self.ImportFile()
-            if ignoreUnits:
-                return self.ImportFile(theFileName, "IGES_SCALE", theName)
-            return self.ImportFile(theFileName, "IGES", theName)
-
-        ## Return length unit from given IGES file
-        #  @param theFileName The file, containing the shape.
-        #  @return String, containing the units name.
-        #
-        #  @ref swig_Import_Export "Example"
-        @ManageTransactions("InsertOp")
-        def GetIGESUnit(self, theFileName):
-            """
-            Return length units from given IGES file
-
-            Parameters:
-                theFileName The file, containing the shape.
-
-            Returns:
-                String, containing the units name.
-            """
-            # Example: see GEOM_TestOthers.py
-            aUnitName = self.InsertOp.ReadValue(theFileName, "IGES", "LEN_UNITS")
-            return aUnitName
-
-        ## Shortcut to ImportFile() for STEP format
-        #  Import a shape from the STEP file with given name.
-        #  @param theFileName The file, containing the shape.
-        #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
-        #                     and result model will be scaled, if its units are not meters.
-        #                     If False (default), file length units will be taken into account.
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM.GEOM_Object, containing the imported shape.
-        #          If material names are imported it returns the list of
-        #          objects. The first one is the imported object followed by
-        #          material groups.
-        #  @note Auto publishing is allowed for the shape itself. Imported
-        #        material groups are not automatically published.
-        #
-        #  @ref swig_Import_Export "Example"
-        def ImportSTEP(self, theFileName, ignoreUnits = False, theName=None):
-            """
-            geompy.ImportFile(...) function for STEP format
-
-            Parameters:
-                theFileName The file, containing the shape.
-                ignoreUnits If True, file length units will be ignored (set to 'meter')
-                            and result model will be scaled, if its units are not meters.
-                            If False (default), file length units will be taken into account.
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM.GEOM_Object, containing the imported shape.
-                If material names are imported it returns the list of
-                objects. The first one is the imported object followed by
-                material groups.
-            Note:
-                Auto publishing is allowed for the shape itself. Imported
-                material groups are not automatically published.
-            """
-            # Example: see GEOM_TestOthers.py
-            # note: auto-publishing is done in self.ImportFile()
-            if ignoreUnits:
-                return self.ImportFile(theFileName, "STEP_SCALE", theName)
-            return self.ImportFile(theFileName, "STEP", theName)
-
-        ## Return length unit from given IGES or STEP file
-        #  @param theFileName The file, containing the shape.
-        #  @return String, containing the units name.
-        #
-        #  @ref swig_Import_Export "Example"
-        @ManageTransactions("InsertOp")
-        def GetSTEPUnit(self, theFileName):
-            """
-            Return length units from given STEP file
-
-            Parameters:
-                theFileName The file, containing the shape.
-
-            Returns:
-                String, containing the units name.
-            """
-            # Example: see GEOM_TestOthers.py
-            aUnitName = self.InsertOp.ReadValue(theFileName, "STEP", "LEN_UNITS")
-            return aUnitName
 
         ## Read a shape from the binary stream, containing its bounding representation (BRep).
         #  @note This method will not be dumped to the python script by DumpStudy functionality.
@@ -10955,6 +10797,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Export the given shape into a file with given name.
+        #
+        #  Note: this function is deprecated, it is kept for backward compatibility only
+        #  Use Export<FormatName> instead, where <FormatName> is a name of desirable format to export.
+        #
         #  @param theObject Shape to be stored in the file.
         #  @param theFileName Name of the file to store the given shape in.
         #  @param theFormatName Specify format for the shape storage.
@@ -10967,7 +10813,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Export the given shape into a file with given name.
 
-            Parameters:
+            Note: this function is deprecated, it is kept for backward compatibility only
+            Use Export<FormatName> instead, where <FormatName> is a name of desirable format to export.
+            
+            Parameters: 
                 theObject Shape to be stored in the file.
                 theFileName Name of the file to store the given shape in.
                 theFormatName Specify format for the shape storage.
@@ -10975,41 +10824,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                               geompy.InsertOp.ExportTranslators()[0] method.
             """
             # Example: see GEOM_TestOthers.py
+            print """
+            WARNING: Function Export is deprecated, use Export<FormatName> instead,
+            where <FormatName> is a name of desirable format for exporting.
+            """
             self.InsertOp.Export(theObject, theFileName, theFormatName)
             if self.InsertOp.IsDone() == 0:
                 raise RuntimeError,  "Export : " + self.InsertOp.GetErrorCode()
                 pass
             pass
-
-        ## Shortcut to Export() for BREP format
-        #
-        #  @ref swig_Import_Export "Example"
-        def ExportBREP(self,theObject, theFileName):
-            """
-            geompy.Export(...) function for BREP format
-            """
-            # Example: see GEOM_TestOthers.py
-            return self.Export(theObject, theFileName, "BREP")
-
-        ## Shortcut to Export() for IGES format
-        #
-        #  @ref swig_Import_Export "Example"
-        def ExportIGES(self,theObject, theFileName):
-            """
-            geompy.Export(...) function for IGES format
-            """
-            # Example: see GEOM_TestOthers.py
-            return self.Export(theObject, theFileName, "IGES")
-
-        ## Shortcut to Export() for STEP format
-        #
-        #  @ref swig_Import_Export "Example"
-        def ExportSTEP(self,theObject, theFileName):
-            """
-            geompy.Export(...) function for STEP format
-            """
-            # Example: see GEOM_TestOthers.py
-            return self.Export(theObject, theFileName, "STEP")
 
         # end of l2_import_export
         ## @}
@@ -12645,565 +12468,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         # end of l3_groups
         ## @}
 
-        ## @addtogroup l4_advanced
-        ## @{
-
-        ## Create a T-shape object with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length).
-        #  The extremities of the main pipe are located on junctions points P1 and P2.
-        #  The extremity of the incident pipe is located on junction point P3.
-        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-        #  the main plane of the T-shape is XOY.
-        #
-        #  @param theR1 Internal radius of main pipe
-        #  @param theW1 Width of main pipe
-        #  @param theL1 Half-length of main pipe
-        #  @param theR2 Internal radius of incident pipe (R2 < R1)
-        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
-        #  @param theL2 Half-length of incident pipe
-        #
-        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-        #  @param theP1 1st junction point of main pipe
-        #  @param theP2 2nd junction point of main pipe
-        #  @param theP3 Junction point of incident pipe
-        #
-        #  @param theRL Internal radius of left thickness reduction
-        #  @param theWL Width of left thickness reduction
-        #  @param theLtransL Length of left transition part
-        #  @param theLthinL Length of left thin part
-        #
-        #  @param theRR Internal radius of right thickness reduction
-        #  @param theWR Width of right thickness reduction
-        #  @param theLtransR Length of right transition part
-        #  @param theLthinR Length of right thin part
-        #
-        #  @param theRI Internal radius of incident thickness reduction
-        #  @param theWI Width of incident thickness reduction
-        #  @param theLtransI Length of incident transition part
-        #  @param theLthinI Length of incident thin part
-        #
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
-        #
-        #  @ref tui_creation_pipetshape "Example"
-        @ManageTransactions("AdvOp")
-        def MakePipeTShape (self, theR1, theW1, theL1, theR2, theW2, theL2,
-                            theHexMesh=True, theP1=None, theP2=None, theP3=None,
-                            theRL=0, theWL=0, theLtransL=0, theLthinL=0,
-                            theRR=0, theWR=0, theLtransR=0, theLthinR=0,
-                            theRI=0, theWI=0, theLtransI=0, theLthinI=0,
-                            theName=None):
-            """
-            Create a T-shape object with specified caracteristics for the main
-            and the incident pipes (radius, width, half-length).
-            The extremities of the main pipe are located on junctions points P1 and P2.
-            The extremity of the incident pipe is located on junction point P3.
-            If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-            the main plane of the T-shape is XOY.
-
-            Parameters:
-                theR1 Internal radius of main pipe
-                theW1 Width of main pipe
-                theL1 Half-length of main pipe
-                theR2 Internal radius of incident pipe (R2 < R1)
-                theW2 Width of incident pipe (R2+W2 < R1+W1)
-                theL2 Half-length of incident pipe
-                theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-                theP1 1st junction point of main pipe
-                theP2 2nd junction point of main pipe
-                theP3 Junction point of incident pipe
-
-                theRL Internal radius of left thickness reduction
-                theWL Width of left thickness reduction
-                theLtransL Length of left transition part
-                theLthinL Length of left thin part
-
-                theRR Internal radius of right thickness reduction
-                theWR Width of right thickness reduction
-                theLtransR Length of right transition part
-                theLthinR Length of right thin part
-
-                theRI Internal radius of incident thickness reduction
-                theWI Width of incident thickness reduction
-                theLtransI Length of incident transition part
-                theLthinI Length of incident thin part
-
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                List of GEOM_Object, containing the created shape and propagation groups.
-
-            Example of usage:
-                # create PipeTShape object
-                pipetshape = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0)
-                # create PipeTShape object with position
-                pipetshape_position = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, True, P1, P2, P3)
-                # create PipeTShape object with left thickness reduction
-                pipetshape_thr = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, theRL=60, theWL=20, theLtransL=40, theLthinL=20)
-            """
-            theR1, theW1, theL1, theR2, theW2, theL2, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI)
-            if (theP1 and theP2 and theP3):
-                anObj = self.AdvOp.MakePipeTShapeTRWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                                theRL, theWL, theLtransL, theLthinL,
-                                                                theRR, theWR, theLtransR, theLthinR,
-                                                                theRI, theWI, theLtransI, theLthinI,
-                                                                theHexMesh, theP1, theP2, theP3)
-            else:
-                anObj = self.AdvOp.MakePipeTShapeTR(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                    theRL, theWL, theLtransL, theLthinL,
-                                                    theRR, theWR, theLtransR, theLthinR,
-                                                    theRI, theWI, theLtransI, theLthinI,
-                                                    theHexMesh)
-            RaiseIfFailed("MakePipeTShape", self.AdvOp)
-            if Parameters: anObj[0].SetParameters(Parameters)
-            def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
-            self._autoPublish(anObj, _toListOfNames(theName, len(anObj)), def_names)
-            return anObj
-
-        ## Create a T-shape object with chamfer and with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length). The chamfer is
-        #  created on the junction of the pipes.
-        #  The extremities of the main pipe are located on junctions points P1 and P2.
-        #  The extremity of the incident pipe is located on junction point P3.
-        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-        #  the main plane of the T-shape is XOY.
-        #  @param theR1 Internal radius of main pipe
-        #  @param theW1 Width of main pipe
-        #  @param theL1 Half-length of main pipe
-        #  @param theR2 Internal radius of incident pipe (R2 < R1)
-        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
-        #  @param theL2 Half-length of incident pipe
-        #  @param theH Height of the chamfer.
-        #  @param theW Width of the chamfer.
-        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-        #  @param theP1 1st junction point of main pipe
-        #  @param theP2 2nd junction point of main pipe
-        #  @param theP3 Junction point of incident pipe
-        #
-        #  @param theRL Internal radius of left thickness reduction
-        #  @param theWL Width of left thickness reduction
-        #  @param theLtransL Length of left transition part
-        #  @param theLthinL Length of left thin part
-        #
-        #  @param theRR Internal radius of right thickness reduction
-        #  @param theWR Width of right thickness reduction
-        #  @param theLtransR Length of right transition part
-        #  @param theLthinR Length of right thin part
-        #
-        #  @param theRI Internal radius of incident thickness reduction
-        #  @param theWI Width of incident thickness reduction
-        #  @param theLtransI Length of incident transition part
-        #  @param theLthinI Length of incident thin part
-        #
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
-        #
-        #  @ref tui_creation_pipetshape "Example"
-        @ManageTransactions("AdvOp")
-        def MakePipeTShapeChamfer (self, theR1, theW1, theL1, theR2, theW2, theL2,
-                                   theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None,
-                                   theRL=0, theWL=0, theLtransL=0, theLthinL=0,
-                                   theRR=0, theWR=0, theLtransR=0, theLthinR=0,
-                                   theRI=0, theWI=0, theLtransI=0, theLthinI=0,
-                                   theName=None):
-            """
-            Create a T-shape object with chamfer and with specified caracteristics for the main
-            and the incident pipes (radius, width, half-length). The chamfer is
-            created on the junction of the pipes.
-            The extremities of the main pipe are located on junctions points P1 and P2.
-            The extremity of the incident pipe is located on junction point P3.
-            If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-            the main plane of the T-shape is XOY.
-
-            Parameters:
-                theR1 Internal radius of main pipe
-                theW1 Width of main pipe
-                theL1 Half-length of main pipe
-                theR2 Internal radius of incident pipe (R2 < R1)
-                theW2 Width of incident pipe (R2+W2 < R1+W1)
-                theL2 Half-length of incident pipe
-                theH Height of the chamfer.
-                theW Width of the chamfer.
-                theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-                theP1 1st junction point of main pipe
-                theP2 2nd junction point of main pipe
-                theP3 Junction point of incident pipe
-
-                theRL Internal radius of left thickness reduction
-                theWL Width of left thickness reduction
-                theLtransL Length of left transition part
-                theLthinL Length of left thin part
-
-                theRR Internal radius of right thickness reduction
-                theWR Width of right thickness reduction
-                theLtransR Length of right transition part
-                theLthinR Length of right thin part
-
-                theRI Internal radius of incident thickness reduction
-                theWI Width of incident thickness reduction
-                theLtransI Length of incident transition part
-                theLthinI Length of incident thin part
-
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                List of GEOM_Object, containing the created shape and propagation groups.
-
-            Example of usage:
-                # create PipeTShape with chamfer object
-                pipetshapechamfer = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0)
-                # create PipeTShape with chamfer object with position
-                pipetshapechamfer_position = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0, True, P1, P2, P3)
-                # create PipeTShape with chamfer object with left thickness reduction
-                pipetshapechamfer_thr = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0, theRL=60, theWL=20, theLtransL=40, theLthinL=20)
-            """
-            theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI)
-            if (theP1 and theP2 and theP3):
-              anObj = self.AdvOp.MakePipeTShapeTRChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                                     theRL, theWL, theLtransL, theLthinL,
-                                                                     theRR, theWR, theLtransR, theLthinR,
-                                                                     theRI, theWI, theLtransI, theLthinI,
-                                                                     theH, theW, theHexMesh, theP1, theP2, theP3)
-            else:
-              anObj = self.AdvOp.MakePipeTShapeTRChamfer(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                         theRL, theWL, theLtransL, theLthinL,
-                                                         theRR, theWR, theLtransR, theLthinR,
-                                                         theRI, theWI, theLtransI, theLthinI,
-                                                         theH, theW, theHexMesh)
-            RaiseIfFailed("MakePipeTShapeChamfer", self.AdvOp)
-            if Parameters: anObj[0].SetParameters(Parameters)
-            def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
-            self._autoPublish(anObj, _toListOfNames(theName, len(anObj)), def_names)
-            return anObj
-
-        ## Create a T-shape object with fillet and with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length). The fillet is
-        #  created on the junction of the pipes.
-        #  The extremities of the main pipe are located on junctions points P1 and P2.
-        #  The extremity of the incident pipe is located on junction point P3.
-        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-        #  the main plane of the T-shape is XOY.
-        #  @param theR1 Internal radius of main pipe
-        #  @param theW1 Width of main pipe
-        #  @param theL1 Half-length of main pipe
-        #  @param theR2 Internal radius of incident pipe (R2 < R1)
-        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
-        #  @param theL2 Half-length of incident pipe
-        #  @param theRF Radius of curvature of fillet.
-        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-        #  @param theP1 1st junction point of main pipe
-        #  @param theP2 2nd junction point of main pipe
-        #  @param theP3 Junction point of incident pipe
-        #
-        #  @param theRL Internal radius of left thickness reduction
-        #  @param theWL Width of left thickness reduction
-        #  @param theLtransL Length of left transition part
-        #  @param theLthinL Length of left thin part
-        #
-        #  @param theRR Internal radius of right thickness reduction
-        #  @param theWR Width of right thickness reduction
-        #  @param theLtransR Length of right transition part
-        #  @param theLthinR Length of right thin part
-        #
-        #  @param theRI Internal radius of incident thickness reduction
-        #  @param theWI Width of incident thickness reduction
-        #  @param theLtransI Length of incident transition part
-        #  @param theLthinI Length of incident thin part
-        #
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
-        #
-        #  @ref tui_creation_pipetshape "Example"
-        @ManageTransactions("AdvOp")
-        def MakePipeTShapeFillet (self, theR1, theW1, theL1, theR2, theW2, theL2,
-                                  theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None,
-                                  theRL=0, theWL=0, theLtransL=0, theLthinL=0,
-                                  theRR=0, theWR=0, theLtransR=0, theLthinR=0,
-                                  theRI=0, theWI=0, theLtransI=0, theLthinI=0,
-                                  theName=None):
-            """
-            Create a T-shape object with fillet and with specified caracteristics for the main
-            and the incident pipes (radius, width, half-length). The fillet is
-            created on the junction of the pipes.
-            The extremities of the main pipe are located on junctions points P1 and P2.
-            The extremity of the incident pipe is located on junction point P3.
-
-            Parameters:
-                If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-                the main plane of the T-shape is XOY.
-                theR1 Internal radius of main pipe
-                theW1 Width of main pipe
-                heL1 Half-length of main pipe
-                theR2 Internal radius of incident pipe (R2 < R1)
-                theW2 Width of incident pipe (R2+W2 < R1+W1)
-                theL2 Half-length of incident pipe
-                theRF Radius of curvature of fillet.
-                theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-                theP1 1st junction point of main pipe
-                theP2 2nd junction point of main pipe
-                theP3 Junction point of incident pipe
-
-                theRL Internal radius of left thickness reduction
-                theWL Width of left thickness reduction
-                theLtransL Length of left transition part
-                theLthinL Length of left thin part
-
-                theRR Internal radius of right thickness reduction
-                theWR Width of right thickness reduction
-                theLtransR Length of right transition part
-                theLthinR Length of right thin part
-
-                theRI Internal radius of incident thickness reduction
-                theWI Width of incident thickness reduction
-                theLtransI Length of incident transition part
-                theLthinI Length of incident thin part
-
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                List of GEOM_Object, containing the created shape and propagation groups.
-
-            Example of usage:
-                # create PipeTShape with fillet object
-                pipetshapefillet = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0)
-                # create PipeTShape with fillet object with position
-                pipetshapefillet_position = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0, True, P1, P2, P3)
-                # create PipeTShape with fillet object with left thickness reduction
-                pipetshapefillet_thr = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0, theRL=60, theWL=20, theLtransL=40, theLthinL=20)
-            """
-            theR1, theW1, theL1, theR2, theW2, theL2, theRF, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI)
-            if (theP1 and theP2 and theP3):
-              anObj = self.AdvOp.MakePipeTShapeTRFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                                    theRL, theWL, theLtransL, theLthinL,
-                                                                    theRR, theWR, theLtransR, theLthinR,
-                                                                    theRI, theWI, theLtransI, theLthinI,
-                                                                    theRF, theHexMesh, theP1, theP2, theP3)
-            else:
-              anObj = self.AdvOp.MakePipeTShapeTRFillet(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                        theRL, theWL, theLtransL, theLthinL,
-                                                        theRR, theWR, theLtransR, theLthinR,
-                                                        theRI, theWI, theLtransI, theLthinI,
-                                                        theRF, theHexMesh)
-            RaiseIfFailed("MakePipeTShapeFillet", self.AdvOp)
-            if Parameters: anObj[0].SetParameters(Parameters)
-            def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
-            self._autoPublish(anObj, _toListOfNames(theName, len(anObj)), def_names)
-            return anObj
-
-        ## This function allows creating a disk already divided into blocks. It
-        #  can be used to create divided pipes for later meshing in hexaedra.
-        #  @param theR Radius of the disk
-        #  @param theOrientation Orientation of the plane on which the disk will be built
-        #         1 = XOY, 2 = OYZ, 3 = OZX
-        #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM_Object, containing the created shape.
-        #
-        #  @ref tui_creation_divideddisk "Example"
-        @ManageTransactions("AdvOp")
-        def MakeDividedDisk(self, theR, theOrientation, thePattern, theName=None):
-            """
-            Creates a disk, divided into blocks. It can be used to create divided pipes
-            for later meshing in hexaedra.
-
-            Parameters:
-                theR Radius of the disk
-                theOrientation Orientation of the plane on which the disk will be built:
-                               1 = XOY, 2 = OYZ, 3 = OZX
-                thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM_Object, containing the created shape.
-            """
-            theR, Parameters = ParseParameters(theR)
-            anObj = self.AdvOp.MakeDividedDisk(theR, 67.0, theOrientation, thePattern)
-            RaiseIfFailed("MakeDividedDisk", self.AdvOp)
-            if Parameters: anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "dividedDisk")
-            return anObj
-
-        ## This function allows creating a disk already divided into blocks. It
-        #  can be used to create divided pipes for later meshing in hexaedra.
-        #  @param theCenter Center of the disk
-        #  @param theVector Normal vector to the plane of the created disk
-        #  @param theRadius Radius of the disk
-        #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM_Object, containing the created shape.
-        #
-        #  @ref tui_creation_divideddisk "Example"
-        @ManageTransactions("AdvOp")
-        def MakeDividedDiskPntVecR(self, theCenter, theVector, theRadius, thePattern, theName=None):
-            """
-            Creates a disk already divided into blocks. It can be used to create divided pipes
-            for later meshing in hexaedra.
-
-            Parameters:
-                theCenter Center of the disk
-                theVector Normal vector to the plane of the created disk
-                theRadius Radius of the disk
-                thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM_Object, containing the created shape.
-            """
-            theRadius, Parameters = ParseParameters(theRadius)
-            anObj = self.AdvOp.MakeDividedDiskPntVecR(theCenter, theVector, theRadius, 67.0, thePattern)
-            RaiseIfFailed("MakeDividedDiskPntVecR", self.AdvOp)
-            if Parameters: anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "dividedDisk")
-            return anObj
-
-        ## Builds a cylinder prepared for hexa meshes
-        #  @param theR Radius of the cylinder
-        #  @param theH Height of the cylinder
-        #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM_Object, containing the created shape.
-        #
-        #  @ref tui_creation_dividedcylinder "Example"
-        @ManageTransactions("AdvOp")
-        def MakeDividedCylinder(self, theR, theH, thePattern, theName=None):
-            """
-            Builds a cylinder prepared for hexa meshes
-
-            Parameters:
-                theR Radius of the cylinder
-                theH Height of the cylinder
-                thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM_Object, containing the created shape.
-            """
-            theR, theH, Parameters = ParseParameters(theR, theH)
-            anObj = self.AdvOp.MakeDividedCylinder(theR, theH, thePattern)
-            RaiseIfFailed("MakeDividedCylinder", self.AdvOp)
-            if Parameters: anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "dividedCylinder")
-            return anObj
-
-        ## Create a surface from a cloud of points
-        #  @param thelPoints list of points. Compounds of points are
-        #         accepted as well.
-        #  @param theNbMax maximum number of Bezier pieces in the resulting
-        #         surface.
-        #  @param theDegMax maximum degree of the resulting BSpline surface.
-        #  @param theDMax 3D tolerance of initial approximation.
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #  @return New GEOM_Object, containing the created shape.
-        #  @note 3D tolerance of initial approximation represents a tolerance of
-        #        initial plate surface approximation. If this parameter is equal
-        #        to 0 (default value) it is computed. In this case an error of
-        #        initial plate surface computation is used as the approximation
-        #        tolerance. This error represents a maximal distance between
-        #        computed plate surface and given points.
-        #
-        #  @ref tui_creation_smoothingsurface "Example"
-        @ManageTransactions("AdvOp")
-        def MakeSmoothingSurface(self, thelPoints, theNbMax=2, theDegMax=8,
-                                 theDMax=0.0, theName=None):
-            """
-            Create a surface from a cloud of points
-
-            Parameters:
-                thelPoints list of points. Compounds of points are
-                           accepted as well.
-                theNbMax maximum number of Bezier pieces in the resulting
-                         surface.
-                theDegMax maximum degree of the resulting BSpline surface.
-                theDMax 3D tolerance of initial approximation.
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM_Object, containing the created shape.
-
-            Note:
-                3D tolerance of initial approximation represents a tolerance of
-                initial plate surface approximation. If this parameter is equal
-                to 0 (default value) it is computed. In this case an error of
-                initial plate surface computation is used as the approximation
-                tolerance. This error represents a maximal distance between
-                computed plate surface and given points.
-            """
-            anObj = self.AdvOp.MakeSmoothingSurface(thelPoints, theNbMax,
-                                                    theDegMax, theDMax)
-            RaiseIfFailed("MakeSmoothingSurface", self.AdvOp)
-            self._autoPublish(anObj, theName, "smoothing")
-            return anObj
-
-        ## Export a shape to XAO format
-        #  @param shape The shape to export
-        #  @param groups The list of groups to export
-        #  @param fields The list of fields to export
-        #  @param author The author of the export
-        #  @param fileName The name of the file to export
-        #  @return boolean
-        #
-        #  @ref tui_exportxao "Example"
-        @ManageTransactions("InsertOp")
-        def ExportXAO(self, shape, groups, fields, author, fileName):
-            res = self.InsertOp.ExportXAO(shape, groups, fields, author, fileName)
-            RaiseIfFailed("ExportXAO", self.InsertOp)
-            return res
-
-        ## Import a shape from XAO format
-        #  @param shape Shape to export
-        #  @param fileName The name of the file to import
-        #  @return tuple (res, shape, subShapes, groups, fields)
-        #       res Flag indicating if the import was successful
-        #       shape The imported shape
-        #       subShapes The list of imported subShapes
-        #       groups The list of imported groups
-        #       fields The list of imported fields
-        #
-        #  @ref tui_importxao "Example"
-        @ManageTransactions("InsertOp")
-        def ImportXAO(self, fileName):
-            res = self.InsertOp.ImportXAO(fileName)
-            RaiseIfFailed("ImportXAO", self.InsertOp)
-            return res
-
         #@@ insert new functions before this line @@ do not remove this line @@#
-
-        # end of l4_advanced
-        ## @}
 
         ## Create a copy of the given object
         #
@@ -13652,3 +12917,36 @@ def New( study, instance=None):
     assert isinstance(geom,geomBuilder), "Geom engine class is %s but should be geomBuilder.geomBuilder. Import geomBuilder before creating the instance."%geom.__class__
     geom.init_geom(study)
     return geom
+
+
+# Register methods from the plug-ins in the geomBuilder class 
+plugins_var = os.environ.get( "GEOM_PluginsList" )
+
+plugins = None
+if plugins_var is not None:
+    plugins = plugins_var.split( ":" )
+    plugins=filter(lambda x: len(x)>0, plugins)
+if plugins is not None:
+    for pluginName in plugins:
+        pluginBuilderName = pluginName + "Builder"
+        try:
+            exec( "from salome.%s.%s import *" % (pluginName, pluginBuilderName))
+        except Exception, e:
+            from salome_utils import verbose
+            print "Exception while loading %s: %s" % ( pluginBuilderName, e )
+            continue
+        exec( "from salome.%s import %s" % (pluginName, pluginBuilderName))
+        plugin = eval( pluginBuilderName )
+        
+        # add methods from plugin module to the geomBuilder class
+        for k in dir( plugin ):
+            if k[0] == '_': continue
+            method = getattr( plugin, k )
+            if type( method ).__name__ == 'function':
+                if not hasattr( geomBuilder, k ):
+                    setattr( geomBuilder, k, method )
+                pass
+            pass
+        del pluginName
+        pass
+    pass   

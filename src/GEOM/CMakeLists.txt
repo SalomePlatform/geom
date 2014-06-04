@@ -65,6 +65,7 @@ SET(GEOM_HEADERS
   GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx
   GEOM_DataMapOfAsciiStringTransient.hxx
   Handle_GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx
+  GEOM_BaseObject.hxx
   )
 
 # --- sources ---

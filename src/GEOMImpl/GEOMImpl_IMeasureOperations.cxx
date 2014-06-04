@@ -121,7 +121,7 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
   int geom_type = theShape->GetType();
 
   // check if it's advanced shape
-  if ( geom_type > ADVANCED_BASE ) {
+  if ( geom_type > USER_TYPE ) {
     SetErrorCode(OK);
     return SK_ADVANCED;
   }

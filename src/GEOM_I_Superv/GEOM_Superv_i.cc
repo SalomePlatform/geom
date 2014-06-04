@@ -394,13 +394,108 @@ void GEOM_Superv_i::getAdvancedOp()
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
-  // get GEOM_IAdvancedOperations interface
+  // get GEOM::IAdvancedOperations interface
   if (CORBA::is_nil(myAdvancedOp) || isNewStudy(myLastStudyID,myStudyID)) {
     //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
     //     Try to get id of the study from the SALOME Session
     if(myStudyID < 0 ) SetStudyID(-1);
-    //myAdvancedOp = myGeomEngine->GetIAdvancedOperations(myStudyID);
-    myAdvancedOp = GEOM::GEOM_IAdvancedOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "AdvancedEngine"));
+    myAdvancedOp = GEOM::IAdvancedOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "AdvancedEngine"));
+  }
+}
+
+//=============================================================================
+//  getSTLPluginOp:
+//=============================================================================
+void GEOM_Superv_i::getSTLPluginOp()
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  // get GEOM::ISTLOperations interface
+  if (CORBA::is_nil(mySTLOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
+    mySTLOp = GEOM::ISTLOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "STLPluginEngine"));
+  }
+}
+
+//=============================================================================
+//  getBREPPluginOp:
+//=============================================================================
+void GEOM_Superv_i::getBREPPluginOp()
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  // get GEOM:IBREPOperations interface
+  if (CORBA::is_nil(myBREPOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
+    myBREPOp = GEOM::IBREPOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "BREPPluginEngine"));
+  }
+}
+
+//=============================================================================
+//  getSTEPPluginOp:
+//=============================================================================
+void GEOM_Superv_i::getSTEPPluginOp()
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  // get GEOM::ISTEPOperations interface
+  if (CORBA::is_nil(mySTEPOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
+    mySTEPOp = GEOM::ISTEPOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "STEPPluginEngine"));
+  }
+}
+
+//=============================================================================
+//  getIGESPluginOp:
+//=============================================================================
+void GEOM_Superv_i::getIGESPluginOp()
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  // get GEOM::IIGESOperations interface
+  if (CORBA::is_nil(myIGESOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
+    myIGESOp = GEOM::IIGESOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "IGESPluginEngine"));
+  }
+}
+
+//=============================================================================
+//  getXAOPluginOp:
+//=============================================================================
+void GEOM_Superv_i::getXAOPluginOp()
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  // get GEOM::IXAOOperations interface
+  if (CORBA::is_nil(myXAOOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
+    myXAOOp = GEOM::IXAOOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "XAOPluginEngine"));
+  }
+}
+
+//=============================================================================
+//  getVTKPluginOp:
+//=============================================================================
+void GEOM_Superv_i::getVTKPluginOp()
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  // get GEOM::IVTKOperations interface
+  if (CORBA::is_nil(myVTKOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
+    myVTKOp = GEOM::IVTKOperations::_narrow(myGeomEngine->GetPluginOperations(myStudyID, "VTKPluginEngine"));
   }
 }
 
@@ -1629,32 +1724,6 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportFile (const char* theFileName,
 
   endService( " GEOM_Superv_i::ImportFile" );
   return anObj;
-}
-
-//=============================================================================
-//  ImportTranslators:
-//=============================================================================
-void GEOM_Superv_i::ImportTranslators (GEOM::string_array_out theFormats,
-                                       GEOM::string_array_out thePatterns)
-{
-  beginService( " GEOM_Superv_i::ImportTranslators" );
-  MESSAGE("GEOM_Superv_i::ImportTranslators");
-  getInsOp();
-  myInsOp->ImportTranslators(theFormats, thePatterns);
-  endService( " GEOM_Superv_i::ImportTranslators" );
-}
-
-//=============================================================================
-//  ExportTranslators:
-//=============================================================================
-void GEOM_Superv_i::ExportTranslators (GEOM::string_array_out theFormats,
-                                       GEOM::string_array_out thePatterns)
-{
-  beginService( " GEOM_Superv_i::ExportTranslators" );
-  MESSAGE("GEOM_Superv_i::ExportTranslators");
-  getInsOp();
-  myInsOp->ExportTranslators(theFormats, thePatterns);
-  endService( " GEOM_Superv_i::ExportTranslators" );
 }
 
 //============================= TransformOperations ===========================
@@ -3367,28 +3436,181 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetObjects (GEOM::GEOM_Object_ptr theGroup)
   return aListPtr->_this();
 }
 
+//=============================== Import/Export Operations =============================
 //=============================================================================
-//  ExportXAO
+//  Export STL
 //=============================================================================
-CORBA::Boolean GEOM_Superv_i::ExportXAO (GEOM::GEOM_Object_ptr shape,
-					 const GEOM::ListOfGO& groups, const GEOM::ListOfFields& fields,
-					 const char* author, const char* fileName)
+void GEOM_Superv_i::ExportSTL( GEOM::GEOM_Object_ptr theObject,
+                               const char*           theFileName,
+                               const bool            theIsASCII,
+                               CORBA::Double         theDeflection,
+                               const bool            theIsRelative )
+{
+  beginService( " GEOM_Superv_i::ExportSTL" );
+  MESSAGE("GEOM_Superv_i::ExportSTL");
+  getSTLPluginOp();
+  mySTLOp->ExportSTL( theObject, theFileName, theIsASCII, theDeflection, theIsRelative );
+  endService( " GEOM_Superv_i::ExportSTL" );
+}
+
+//=============================================================================
+//  Import STL
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportSTL( const char* theFileName )
+{
+  beginService( " GEOM_Superv_i::ImportSTL" );
+  MESSAGE("GEOM_Superv_i::ImportSTL");
+  getSTLPluginOp();
+  GEOM::ListOfGO* aSeq = mySTLOp->ImportSTL(theFileName );
+  GEOM::GEOM_Object_ptr anObj;
+
+  if (aSeq->length() > 0) {
+    anObj = aSeq->operator[](0);
+  }
+
+  endService( " GEOM_Superv_i::ImportSTL" );
+  return anObj;
+}
+
+//=============================================================================
+//  Export BREP
+//=============================================================================
+void GEOM_Superv_i::ExportBREP( GEOM::GEOM_Object_ptr theObject,
+                                const char*           theFileName )
+{
+  beginService( " GEOM_Superv_i::ExportBREP" );
+  MESSAGE("GEOM_Superv_i::ExportBREP");
+  getBREPPluginOp();
+  myBREPOp->ExportBREP( theObject, theFileName );
+  endService( " GEOM_Superv_i::ExportBREP" );
+}
+
+//=============================================================================
+//  Import BREP
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportBREP( const char* theFileName )
+{
+  beginService( " GEOM_Superv_i::ImportBREP" );
+  MESSAGE("GEOM_Superv_i::ImportBREP");
+  getBREPPluginOp();
+  GEOM::ListOfGO* aSeq = myBREPOp->ImportBREP(theFileName );
+  GEOM::GEOM_Object_ptr anObj;
+
+  if (aSeq->length() > 0) {
+    anObj = aSeq->operator[](0);
+  }
+
+  endService( " GEOM_Superv_i::ImportBREP" );
+  return anObj;
+}
+
+//=============================================================================
+//  Export STEP
+//=============================================================================
+void GEOM_Superv_i::ExportSTEP( GEOM::GEOM_Object_ptr theObject,
+                                const char*           theFileName )
+{
+  beginService( " GEOM_Superv_i::ExportSTEP" );
+  MESSAGE("GEOM_Superv_i::ExportSTEP");
+  getSTEPPluginOp();
+  mySTEPOp->ExportSTEP( theObject, theFileName );
+  endService( " GEOM_Superv_i::ExportSTEP" );
+}
+
+//=============================================================================
+//  Import STEP
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportSTEP( const char* theFileName,
+                                                 const bool  theIsIgnoreUnits )
+{
+  beginService( " GEOM_Superv_i::ImportSTEP" );
+  MESSAGE("GEOM_Superv_i::ImportSTEP");
+  getSTEPPluginOp();
+  GEOM::ListOfGO* aSeq = mySTEPOp->ImportSTEP(theFileName, theIsIgnoreUnits );
+  GEOM::GEOM_Object_ptr anObj;
+
+  if (aSeq->length() > 0) {
+    anObj = aSeq->operator[](0);
+  }
+
+  endService( " GEOM_Superv_i::ImportSTEP" );
+  return anObj;
+}
+
+//=============================================================================
+//  Export IGES
+//=============================================================================
+void GEOM_Superv_i::ExportIGES( GEOM::GEOM_Object_ptr theObject,
+                                const char*           theFileName,
+                                const char*           theVersion )
+{
+  beginService( " GEOM_Superv_i::ExportIGES" );
+  MESSAGE("GEOM_Superv_i::ExportIGES");
+  getIGESPluginOp();
+  myIGESOp->ExportIGES( theObject, theFileName, theVersion );
+  endService( " GEOM_Superv_i::ExportIGES" );
+}
+
+//=============================================================================
+//  Import IGES
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportIGES( const char* theFileName,
+                                                 const bool  theIsIgnoreUnits )
+{
+  beginService( " GEOM_Superv_i::ImportIGES" );
+  MESSAGE("GEOM_Superv_i::ImportIGES");
+  getIGESPluginOp();
+  GEOM::ListOfGO* aSeq = myIGESOp->ImportIGES(theFileName, theIsIgnoreUnits );
+  GEOM::GEOM_Object_ptr anObj;
+
+  if (aSeq->length() > 0) {
+    anObj = aSeq->operator[](0);
+  }
+
+  endService( " GEOM_Superv_i::ImportIGES" );
+  return anObj;
+}
+
+//=============================================================================
+//  Export XAO
+//=============================================================================
+CORBA::Boolean GEOM_Superv_i::ExportXAO( GEOM::GEOM_Object_ptr shape,
+                                         const GEOM::ListOfGO& groups,
+                                         const GEOM::ListOfFields& fields,
+                                         const char* author, const char* fileName )
 {
   beginService( " GEOM_Superv_i::ExportXAO" );
   MESSAGE("GEOM_Superv_i::ExportXAO");
-  getInsOp();
-  CORBA::Boolean isGood = myInsOp->ExportXAO(shape, groups, fields, author, fileName);
+  getXAOPluginOp();
+  CORBA::Boolean isGood = myXAOOp->ExportXAO( shape, groups, fields, author, fileName );
   endService( " GEOM_Superv_i::ExportXAO" );
   return isGood;
 }
 
 //=============================================================================
-//  ImportXAO
+//  Import XAO
 //=============================================================================
-CORBA::Boolean GEOM_Superv_i::ImportXAO (const char* fileName, GEOM::GEOM_Object_out shape, 
-					 GEOM::ListOfGO_out subShapes, GEOM::ListOfGO_out groups, GEOM::ListOfFields_out fields)
+CORBA::Boolean GEOM_Superv_i::ImportXAO( const char* fileName,
+                                         GEOM::GEOM_Object_out shape,
+                                         GEOM::ListOfGO_out subShapes,
+                                         GEOM::ListOfGO_out groups,
+                                         GEOM::ListOfFields_out fields )
 {
   return false;
+}
+
+//=============================================================================
+//  Export VTK
+//=============================================================================
+void GEOM_Superv_i::ExportVTK(  GEOM::GEOM_Object_ptr theObject,
+				const char*           theFileName,
+				CORBA::Double         theDeflection )
+{
+  beginService( " GEOM_Superv_i::ExportVTK" );
+  MESSAGE("GEOM_Superv_i::ExportVTK");
+  getVTKPluginOp();
+  myVTKOp->ExportVTK( theObject, theFileName, theDeflection );
+  endService( " GEOM_Superv_i::ExportVTK" );
 }
 
 //=============================== Advanced Operations =============================

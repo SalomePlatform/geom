@@ -54,6 +54,15 @@ class Handle(TColStd_HArray1OfInteger);
 class GEOMImpl_IShapesOperations : public GEOM_IOperations
 {
  public:
+
+  enum SubShapeType {
+    None      = 0x00,
+    Groups    = 0x01,
+    Fields    = 0x02,
+    SubShapes = 0x04,
+    All       = Groups | Fields | SubShapes,
+  };
+
   Standard_EXPORT GEOMImpl_IShapesOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_IShapesOperations();
 
@@ -106,10 +115,11 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                            const Standard_Real theTolerance,
                                                            std::list<Handle(GEOM_Object)> theEdges);
 
-  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects
-    (Handle(GEOM_Object)    theShape,
-     const Standard_Boolean theGroupsOnly);
-
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects(Handle(GEOM_Object)    theShape,
+									     const Standard_Boolean theGroupsOnly);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects(Handle(GEOM_Object)    theShape,
+									     const Standard_Integer theTypes = All);
+  
   enum ExplodeType {
     EXPLODE_OLD_INCLUDE_MAIN,
     EXPLODE_NEW_INCLUDE_MAIN,

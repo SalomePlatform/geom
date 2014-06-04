@@ -899,20 +899,6 @@ DlgRef_6Sel::~DlgRef_6Sel()
 }
 
 //////////////////////////////////////////
-// DlgRef_Skeleton
-//////////////////////////////////////////
-
-DlgRef_Skeleton::DlgRef_Skeleton( QWidget* parent, Qt::WindowFlags f )
-: QWidget( parent, f )
-{
-  setupUi( this );
-}
-
-DlgRef_Skeleton::~DlgRef_Skeleton()
-{
-}
-
-//////////////////////////////////////////
 // Utility functions
 //////////////////////////////////////////
 

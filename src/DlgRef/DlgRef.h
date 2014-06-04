@@ -973,22 +973,6 @@ public:
 };
 
 //////////////////////////////////////////
-// DlgRef_Skeleton
-//////////////////////////////////////////
-
-#include "ui_DlgRef_Skeleton_QTD.h"
-
-class DLGREF_EXPORT DlgRef_Skeleton : public QWidget, 
-                                      public Ui::DlgRef_Skeleton_QTD
-{
-  Q_OBJECT
-
-public:
-  DlgRef_Skeleton( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_Skeleton();
-};
-
-//////////////////////////////////////////
 // Utility functions
 //////////////////////////////////////////
 

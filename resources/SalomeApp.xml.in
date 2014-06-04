@@ -37,8 +37,14 @@
   <section name="resources">
     <!-- Module resources -->
     <parameter name="GEOM" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
-    <parameter name="AdvancedGUI" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
     <parameter name="DependencyTree" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
+    <parameter name="AdvancedGEOM" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
+    <parameter name="STLPlugin" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
+    <parameter name="BREPPlugin" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
+    <parameter name="STEPPlugin" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
+    <parameter name="IGESPlugin" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
+    <parameter name="XAOPlugin" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
+    <parameter name="VTKPlugin" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
   </section>
   <section name="Geometry" >
     <!-- Other module preferences -->

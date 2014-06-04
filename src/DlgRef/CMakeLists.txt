@@ -101,7 +101,6 @@ SET(_uic_files
   DlgRef_4Sel1Spin3Check_QTD.ui
   DlgRef_4Spin_QTD.ui
   DlgRef_6Sel_QTD.ui
-  DlgRef_Skeleton_QTD.ui
   )
 
 # --- headers ---

@@ -229,7 +229,6 @@ namespace GEOM
   typedef GenericObjPtr<GEOM::GEOM_IInsertOperations>    InsertOpPtr;
   typedef GenericObjPtr<GEOM::GEOM_IMeasureOperations>   MeasureOpPtr;
   typedef GenericObjPtr<GEOM::GEOM_IGroupOperations>     GroupOpPtr;
-  typedef GenericObjPtr<GEOM::GEOM_IAdvancedOperations>  AdvancedOpPtr;
 
   template<> bool GEOMBASE_EXPORT GenericObjPtr<GEOM::GEOM_Object>::isSame( GEOM::GEOM_Object_ptr theLeft, GEOM::GEOM_Object_ptr theRight );
 }

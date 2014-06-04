@@ -1153,7 +1153,7 @@ TopoDS_Shape GEOMImpl_ShapeDriver::MakeIsoline
                              const double       theParameter) const
 {
   TopoDS_Shape          aResult;
-  GEOMUtils_Hatcher     aHatcher(theFace);
+  GEOMUtils::Hatcher    aHatcher(theFace);
   const GeomAbs_IsoType aType = (IsUIso ? GeomAbs_IsoU : GeomAbs_IsoV);
 
   aHatcher.Init(aType, theParameter);

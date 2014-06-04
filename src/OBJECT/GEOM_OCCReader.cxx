@@ -213,7 +213,7 @@ void GEOM_OCCReader::createISO (const TopoDS_Face      &TopologicalFace,
                                       vtkPoints        *Pts,
                                       vtkCellArray     *Cell)
 {
-  GEOMUtils_Hatcher aHatcher(TopologicalFace);
+  GEOMUtils::Hatcher aHatcher(TopologicalFace);
 
   aHatcher.Init(NbIsos);
   aHatcher.Perform();
@@ -231,7 +231,7 @@ void GEOM_OCCReader::createISO (const TopoDS_Face      &TopologicalFace,
 // Function : createIsos
 // Purpose  : Create isolines obtained from hatcher.
 //=======================================================================
-void GEOM_OCCReader::createIsos(const GEOMUtils_Hatcher &theHatcher,
+void GEOM_OCCReader::createIsos(const GEOMUtils::Hatcher &theHatcher,
                                 const Standard_Boolean   IsUIso,
                                       Standard_Integer  &pt_start_idx,
                                       vtkPoints         *Pts,

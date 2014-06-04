@@ -19,6 +19,9 @@
 
 #include "AdvancedGUI_PipeTShapeDlg.h"
 
+#include <SALOMEconfig.h>
+#include CORBA_SERVER_HEADER(AdvancedGEOM)
+
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
@@ -844,7 +847,6 @@ void AdvancedGUI_PipeTShapeDlg::DisplayPreview (const bool activate, const bool 
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_PipeTShapeDlg::createOperation()
 {
-  //return getGeomEngine()->GetIAdvancedOperations(getStudyId());
   return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
 }
 
@@ -1059,7 +1061,7 @@ bool AdvancedGUI_PipeTShapeDlg::executeNoCheck (ObjectList& objects)
   //   GEOM::GEOM_Object_var anObj;
   GEOM::ListOfGO_var anObj;
 
-  GEOM::GEOM_IAdvancedOperations_var anOper = GEOM::GEOM_IAdvancedOperations::_narrow(getOperation());
+  GEOM::IAdvancedOperations_var anOper = GEOM::IAdvancedOperations::_narrow(getOperation());
 
   //@@ retrieve input values from the widgets here @@//
   CORBA::Double theR1 = MainTubeGroupParams->SpinBox_DX->value();

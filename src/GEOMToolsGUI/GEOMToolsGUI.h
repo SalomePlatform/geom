@@ -61,9 +61,6 @@ public:
   enum ActionType { SHOWDLG, INCR, DECR };
 
 private:
-  // Import and export topology methods
-  bool         Import();
-  bool         Export();
 
   void         OnEditDelete();
   void         OnCheckGeometry();

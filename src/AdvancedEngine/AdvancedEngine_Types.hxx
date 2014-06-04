@@ -20,13 +20,14 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#include "GEOMImpl_Types.hxx"
+
 // Advanced functions (base = 200)
-#define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)
-#define GEOM_TSHAPE 201
-#define GEOM_DIVIDEDDISK 202
-#define GEOM_DIVIDEDCYLINDER 203
-#define GEOM_SMOOTHINGSURFACE 204
-/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
+#define GEOM_TSHAPE            ( USER_TYPE + 1 )
+#define GEOM_DIVIDEDDISK       ( USER_TYPE + 2 )
+#define GEOM_DIVIDEDCYLINDER   ( USER_TYPE + 3 )
+#define GEOM_SMOOTHINGSURFACE  ( USER_TYPE + 4 )
+
 // Advanced functions sub-operations codes
 #define TSHAPE_BASIC 1
 #define TSHAPE_CHAMFER 2
@@ -35,4 +36,3 @@
 #define DIVIDEDDISK_R_VECTOR_PNT 2
 #define DIVIDEDCYLINDER_R_H 1
 #define SMOOTHINGSURFACE_LPOINTS 1
-/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

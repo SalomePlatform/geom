@@ -20,25 +20,14 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include "GEOM_AdvancedEngine.hxx"
-
-#include "AdvancedEngine_OperationsCreator.hh"
-
-//=============================================================================
-/*!
- *
- */
-//=============================================================================
+#include "AdvancedEngine.hxx"
+#include "AdvancedEngine_OperationsCreator.hxx"
 
 extern "C"
 {
-ADVANCEDENGINE_EXPORT
+  ADVANCEDENGINE_EXPORT
   GEOM_GenericOperationsCreator* GetOperationsCreator()
   {
-    //MESSAGE("GetOperationsCreator");
-
-    AdvancedEngine_OperationsCreator* aCreator = new AdvancedEngine_OperationsCreator();
-
-    return aCreator;
+    return new AdvancedEngine_OperationsCreator();
   }
 }
