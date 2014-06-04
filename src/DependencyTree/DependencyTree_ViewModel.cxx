@@ -17,6 +17,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// internal includes
 #include "DependencyTree_ViewModel.h"
 #include "DependencyTree_View.h"
 
@@ -33,7 +34,6 @@
 // QT includes
 #include <QMenu>
 
-
 DependencyTree_ViewModel::DependencyTree_ViewModel( const QString& title )
 : GraphicsView_Viewer( title )
 {
@@ -48,6 +48,10 @@ DependencyTree_ViewModel::~DependencyTree_ViewModel()
 {
 }
 
+//=================================================================================
+// function : onShowSelected()
+// purpose  : slot for showing selected objects in OCC Viewer
+//=================================================================================
 void DependencyTree_ViewModel::onShowSelected()
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
@@ -76,6 +80,10 @@ void DependencyTree_ViewModel::onShowSelected()
   }
 }
 
+//=================================================================================
+// function : onShowOnlySelected()
+// purpose  : slot for showing only selected objects in OCC Viewer
+//=================================================================================
 void DependencyTree_ViewModel::onShowOnlySelected()
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
@@ -103,6 +111,10 @@ void DependencyTree_ViewModel::onShowOnlySelected()
   }
 }
 
+//=================================================================================
+// function : contextMenuPopup()
+// purpose  : process calling of context menu popup
+//=================================================================================
 void DependencyTree_ViewModel::contextMenuPopup( QMenu* theMenu )
 {
   GraphicsView_Viewer::contextMenuPopup( theMenu );

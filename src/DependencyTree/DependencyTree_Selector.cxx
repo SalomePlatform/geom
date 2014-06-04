@@ -17,6 +17,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// internal includes
 #include "DependencyTree_Selector.h"
 #include "DependencyTree_View.h"
 #include "DependencyTree_ViewModel.h"
@@ -27,8 +28,6 @@
 
 //GEOM includes
 #include <GEOMBase.h>
-
-#include <iostream>
 
 DependencyTree_Selector::DependencyTree_Selector( DependencyTree_ViewModel* theModel, SUIT_SelectionMgr* theSelMgr )
 :LightApp_GVSelector( (GraphicsView_Viewer*)theModel, theSelMgr )
@@ -50,21 +49,23 @@ void DependencyTree_Selector::getSelection( SUIT_DataOwnerPtrList& theList ) con
     if( DependencyTree_Object* treeObject = dynamic_cast<DependencyTree_Object*>( myView->selectedObject() ) ) {
       const char* entry;
       const char* name;
-      if( !treeObject->getGeomObject()->_is_nil() ) {
-        QString studyEntry = treeObject->getGeomObject()->GetStudyEntry();
-        if( studyEntry.isEmpty() ) {
-          entry = treeObject->getEntry().c_str();
-          name = "TEMP_IO_UNPUBLISHED";
-        }
-        else {
-          entry = studyEntry.toStdString().c_str();
-          name = "TEMP_IO";
-        }
-        Handle(SALOME_InteractiveObject) tmpIO =
-          new SALOME_InteractiveObject( entry, "GEOM", name);
-
-        theList.append( new LightApp_DataOwner( tmpIO ) );
+      GEOM::GEOM_BaseObject_var anObj = GeometryGUI::GetGeomGen()->GetObject( myView->getStudyId(),
+                                                                              treeObject->getEntry().c_str() );
+      if( anObj->_is_nil() )
+        continue;
+      QString studyEntry = anObj->GetStudyEntry();
+      if( studyEntry.isEmpty() ) {
+        entry = treeObject->getEntry().c_str();
+        name = "TEMP_IO_UNPUBLISHED";
       }
+      else {
+        entry = studyEntry.toStdString().c_str();
+        name = "TEMP_IO";
+      }
+      Handle(SALOME_InteractiveObject) tmpIO =
+        new SALOME_InteractiveObject( entry, "GEOM", name);
+
+      theList.append( new LightApp_DataOwner( tmpIO ) );
     }
 }
 
@@ -93,7 +94,7 @@ void DependencyTree_Selector::setSelection( const SUIT_DataOwnerPtrList& theList
             return;
           entry = geomObject->GetEntry();
     	}
-        DependencyTree_Object* object = myView->getObjectByEntry( QString( entry ) );
+        DependencyTree_Object* object = myView->getObjectByEntry( entry );
         if( object ) {
            myView->setSelected( object );
            object->select( object->pos().x(), object->pos().y(), object->getRect() );

@@ -28,15 +28,17 @@ class DependencyTree_ViewModel: public GraphicsView_Viewer
   Q_OBJECT
 
 public:
+
   DependencyTree_ViewModel( const QString& title );
   DependencyTree_ViewModel( const QString& title, QWidget* w  );
   ~DependencyTree_ViewModel();
 
-  virtual void contextMenuPopup( QMenu* );
+  virtual void  contextMenuPopup( QMenu* );
 
 private slots:
-  void onShowSelected();
-  void onShowOnlySelected();
+
+  void          onShowSelected();
+  void          onShowOnlySelected();
 
 };
 

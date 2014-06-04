@@ -29,15 +29,18 @@ class DependencyTree_Selector: public LightApp_GVSelector
 {
 
 public:
+
   DependencyTree_Selector( DependencyTree_ViewModel*, SUIT_SelectionMgr* );
   ~DependencyTree_Selector();
 
 protected:
-  virtual void getSelection( SUIT_DataOwnerPtrList& ) const;
-  virtual void setSelection( const SUIT_DataOwnerPtrList& );
+
+  virtual void          getSelection( SUIT_DataOwnerPtrList& ) const;
+  virtual void          setSelection( const SUIT_DataOwnerPtrList& );
 
 private:
-  DependencyTree_View* myView;
+
+  DependencyTree_View*  myView;
 
 };
 

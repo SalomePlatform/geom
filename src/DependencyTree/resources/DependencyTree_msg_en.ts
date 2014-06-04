@@ -31,10 +31,6 @@
       <source>UPDATE</source>
       <translation>Update</translation>
     </message>
-    <message>
-      <source>CANCEL</source>
-      <translation>Cancel</translation>
-    </message>
   <name>DependencyTree_ViewModel</name>
     <message>
       <source>REBUILD_THE_TREE</source>

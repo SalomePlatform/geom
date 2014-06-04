@@ -17,6 +17,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// internal includes
 #include "DependencyTree_Object.h"
 
 // GEOM includes
@@ -169,7 +170,6 @@ void DependencyTree_Object::updateName()
 
   QString name = myGeomObject->GetName();
   QString studyEntry = myGeomObject->GetStudyEntry();
-  std::cout<<"\n\n name = " << name.toStdString() << " studyEntry = " << studyEntry.toStdString() << std::endl;
 
   if( studyEntry.isEmpty() ) {
 	if( name.isEmpty() )

@@ -17,6 +17,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// internal includes
 #include "DependencyTree_Arrow.h"
 #include "DependencyTree_Object.h"
 
@@ -75,7 +76,7 @@ QRectF DependencyTree_Arrow::boundingRect() const
   qreal extra;
   QRectF boundingRect;
   if( myStartItem == myEndItem ) {
-    extra = arrowSize / 2.0;
+    extra = arrowSize / 2.0 + 2.0;
     boundingRect = mySelfDependencyArrow;
   }
   else {
