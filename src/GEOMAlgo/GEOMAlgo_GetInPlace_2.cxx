@@ -38,6 +38,7 @@
 #include <BRep_Builder.hxx>
 
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
@@ -59,98 +60,198 @@ static
 //=======================================================================
 void GEOMAlgo_GetInPlace::CheckGProps()
 {
-  myFound=Standard_False;
+  myFound=Standard_True;
   CheckGProps(myArgument);
 }
 //=======================================================================
 //function : CheckGProps
 //purpose  :
 //=======================================================================
-void GEOMAlgo_GetInPlace::CheckGProps(const TopoDS_Shape& aS1)
+Standard_Integer GEOMAlgo_GetInPlace::CheckGProps(const TopoDS_Shape& theS)
 {
-  Standard_Boolean bOnlyClosed;
-  Standard_Integer iDim, aNbS2;
-  Standard_Real aMass1, aMass2, aD2, aTolCG2, dM;
-  TopAbs_ShapeEnum  aType1;
-  gp_Pnt aCG1, aCG2;
-  TopoDS_Iterator aIt;
-  TopoDS_Compound aC2;
-  BRep_Builder aBB;
-  TopTools_ListIteratorOfListOfShape aItLS;
-  //
-  myErrorStatus=0;
-  //
-  aType1=aS1.ShapeType();
-  if (aType1==TopAbs_COMPOUND) {
-    aIt.Initialize(aS1);
-    for(; aIt.More(); aIt.Next()) {
-      const TopoDS_Shape& aS1x=aIt.Value();
-      CheckGProps(aS1x);
-      if (!myFound) {
-        return;
+  TopAbs_ShapeEnum aType = theS.ShapeType();
+
+  if (aType == TopAbs_COMPOUND) {
+    TopoDS_Iterator anIt(theS);
+    TopTools_MapOfShape aMapInc;
+
+    for(; anIt.More(); anIt.Next()) {
+      const TopoDS_Shape &aS1x = anIt.Value();
+
+      aType = aS1x.ShapeType();
+
+      if (aType != TopAbs_COMPOUND && myShapesInclusive.IsBound(aS1x)) {
+        // This is a part of a whole.
+        aMapInc.Add(aS1x);
+      } else {
+        // Check this subshape.
+        const Standard_Integer iFound = CheckGProps(aS1x);
+        
+        if (!iFound) {
+          UpdateChecked(theS, 0);
+          myFound = Standard_False;
+          return 0;
+        }
       }
     }
+
+    // Treat parts of a whole.
+    while (!aMapInc.IsEmpty()) {
+      TopTools_MapIteratorOfMapOfShape aMapIt(aMapInc);
+      const TopoDS_Shape &aWhole = myShapesInclusive.Find(aMapIt.Key());
+
+      if (!myImages.IsBound(aWhole)) {
+        // Should not be.
+        UpdateChecked(theS, 0);
+        myFound = Standard_False;
+        return 0;
+      }
+
+      const TopTools_ListOfShape& aLS1 = myImages.Find(aWhole);
+
+      if (aLS1.IsEmpty()) {
+        // Empty list of parts. Should not be.
+        UpdateChecked(theS, 0);
+        myFound = Standard_False;
+        return 0;
+      }
+
+      TopTools_ListIteratorOfListOfShape aItS1x(aLS1);
+
+      for (; aItS1x.More(); aItS1x.Next()) {
+        const TopoDS_Shape &aS1x = aItS1x.Value();
+
+        if (!aMapInc.Remove(aS1x)) {
+          // There is no aS1x in theS. Should not be.
+          UpdateChecked(theS, 0);
+          myFound = Standard_False;
+          return 0;
+        }
+      }
+
+      // Compare a shape with an image.
+      if (!CompareGProps(aWhole, aLS1)) {
+        // Image doesn't correspond to the shape.
+        UpdateChecked(theS, 0);
+        myFound = Standard_False;
+        return 0;
+      }
+    }
+
+    return myFound ? 1 : 0;
   }
-  //
-  iDim=Dimension(aType1);
-  //
-  if (!myImages.IsBound(aS1)) {
+
+  // Check the simple shape.
+  if (!myImages.IsBound(theS)) {
     // it should not be.
-    return;
+    UpdateChecked(theS, 0);
+    myFound = Standard_False;
+    return 0;
   }
-  const TopTools_ListOfShape& aLS2=myImages.Find(aS1);
-  aNbS2=aLS2.Extent();
-  if (!aNbS2) {
+  //
+  const TopTools_ListOfShape &aLS2 = myImages.Find(theS);
+
+  if (aLS2.IsEmpty()) {
     // it should not be.
-    return;
+    UpdateChecked(theS, 0);
+    myFound = Standard_False;
+    return 0;
   }
+
+  // Compare a shape with an image.
+  if (!CompareGProps(theS, aLS2)) {
+    // Image doesn't correspond to the shape.
+    UpdateChecked(theS, 0);
+    myFound = Standard_False;
+    return 0;
+  }
+
+  UpdateChecked(theS, 1);
   //
-  aBB.MakeCompound(aC2);
-  aItLS.Initialize(aLS2);
-  for (; aItLS.More(); aItLS.Next()) {
-    const TopoDS_Shape& aS2x=aItLS.Value();
-    aBB.Add(aC2, aS2x);
+  return 1;
+}
+
+//=======================================================================
+//function : CompareGProps
+//purpose  : 
+//=======================================================================
+Standard_Boolean GEOMAlgo_GetInPlace::CompareGProps
+                        (const TopoDS_Shape         &theShape1,
+                         const TopTools_ListOfShape &theListShape2) const
+{
+  Standard_Boolean                   aResult = Standard_True;
+  TopoDS_Compound                    aComp2;
+  BRep_Builder                       aBuilder;
+  TopTools_ListIteratorOfListOfShape anIt(theListShape2);
+
+  aBuilder.MakeCompound(aComp2);
+
+  for (; anIt.More(); anIt.Next()) {
+    const TopoDS_Shape &aShape2 = anIt.Value();
+
+    aBuilder.Add(aComp2, aShape2);
   }
-  //-------------------------
-  GProp_GProps aG1, aG2;
-  //
-  aTolCG2=myTolCG*myTolCG;
-  bOnlyClosed=Standard_False;
-  //
-  if (iDim==0) {
-    PointProperties(aS1, aG1);
-    PointProperties(aC2, aG2);
+
+  // Compute General Properties.
+  GProp_GProps           aG1;
+  GProp_GProps           aG2;
+  const Standard_Real    aTolCG2     = myTolCG*myTolCG;
+  Standard_Boolean       bOnlyClosed = Standard_False;
+  const TopAbs_ShapeEnum aType       = theShape1.ShapeType();
+  const Standard_Integer iDim        = Dimension(aType);
+
+  if (iDim == 0) {
+    PointProperties(theShape1, aG1);
+    PointProperties(aComp2,    aG2);
   }
-  else if (iDim==1) {
-    BRepGProp::LinearProperties(aS1, aG1);
-    BRepGProp::LinearProperties(aC2, aG2);
+  else if (iDim == 1) {
+    BRepGProp::LinearProperties(theShape1, aG1);
+    BRepGProp::LinearProperties(aComp2,    aG2);
   }
-  else if (iDim==2) {
-    BRepGProp::SurfaceProperties(aS1, aG1);
-    BRepGProp::SurfaceProperties(aC2, aG2);
+  else if (iDim == 2) {
+    BRepGProp::SurfaceProperties(theShape1, aG1);
+    BRepGProp::SurfaceProperties(aComp2,    aG2);
   }
-  else if (iDim==3) {
-    BRepGProp::VolumeProperties(aS1, aG1, bOnlyClosed);
-    BRepGProp::VolumeProperties(aC2, aG2, bOnlyClosed);
+  else if (iDim == 3) {
+    BRepGProp::VolumeProperties(theShape1, aG1, bOnlyClosed);
+    BRepGProp::VolumeProperties(aComp2,    aG2, bOnlyClosed);
+  } else {
+    return Standard_False;
   }
-  //
-  aMass1=aG1.Mass();
-  aMass2=aG2.Mass();
-  aCG1=aG1.CentreOfMass();
-  aCG2=aG2.CentreOfMass();
-  //
-  dM=fabs(aMass1-aMass2);
+
+  // Compare properties.
+  const Standard_Real aMass1 = aG1.Mass();
+  const Standard_Real aMass2 = aG2.Mass();
+  const gp_Pnt        aCG1   = aG1.CentreOfMass();
+  const gp_Pnt        aCG2   = aG2.CentreOfMass();
+  Standard_Real       aDM    = fabs(aMass1 - aMass2);
+  const Standard_Real aD2    = aCG1.SquareDistance(aCG2);
+
   if (aMass1 > myTolMass) {
-    dM=dM/aMass1;
+    aDM /= aMass1;
   }
-  //
-  aD2=aCG1.SquareDistance(aCG2);
-  //
-  if ((dM > myTolMass) || (aD2 > aTolCG2)) {
-    myFound=Standard_False;
-    return;
+
+  if ((aDM > myTolMass) || (aD2 > aTolCG2)) {
+    aResult = Standard_False;
   }
-  myFound=Standard_True;
+
+  return aResult;
+}
+
+//=======================================================================
+//function : UpdateChecked
+//purpose  : 
+//=======================================================================
+void GEOMAlgo_GetInPlace::UpdateChecked(const TopoDS_Shape& theS1,
+                                        const Standard_Integer theFlag)
+{
+  if (myChecked.IsBound(theS1)) {
+    Standard_Integer& iChecked=myChecked.ChangeFind(theS1);
+    iChecked=theFlag;
+  }
+  else {
+    myChecked.Bind(theS1, theFlag);
+  }
 }
 //=======================================================================
 //function : Dimension

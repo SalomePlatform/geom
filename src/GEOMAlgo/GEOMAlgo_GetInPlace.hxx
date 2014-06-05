@@ -43,6 +43,8 @@
 #include <GEOMAlgo_GluerAlgo.hxx>
 #include <GEOMAlgo_Algo.hxx>
 #include <GEOMAlgo_DataMapOfShapePnt.hxx>
+#include <TopTools_DataMapOfShapeInteger.hxx>
+#include <TopTools_DataMapOfShapeShape.hxx>
 
 
 //=======================================================================
@@ -206,7 +208,7 @@ class GEOMAlgo_GetInPlace  : public GEOMAlgo_GluerAlgo,
   /**
    * Returns state of the search.
    * @return
-   *   Standard_True if the argument is found.
+   *   Standard_True if the whole argument is found.
    */
   Standard_EXPORT
     Standard_Boolean IsFound() const;
@@ -244,7 +246,24 @@ class GEOMAlgo_GetInPlace  : public GEOMAlgo_GluerAlgo,
    */
   Standard_EXPORT
     const GEOMAlgo_DataMapOfShapeMapOfShape& ShapesOn() const;
-
+  //
+  /**
+   * Returns the result that includes parts of the whole and whole from parts.
+   *
+   * The Result is the parts (taken from myShapeWhere) that correspond to
+   * myArgument (the whole one or its part). To check if the whole myArgument
+   * is found in myShapeWhere it is possible to use the method IsFound.
+   *
+   * The Result is a compound.
+   *
+   * @return
+   *  - the compound of the parts from myShapeWhere 
+   *    that correspond to the myArgument if success.
+   *  - NULL shape otherwise
+   */
+  Standard_EXPORT
+    const TopoDS_Shape &Result();
+    
 protected:
   Standard_EXPORT
     void Intersect() ;
@@ -258,6 +277,8 @@ protected:
   Standard_EXPORT
     void PerformEE() ;
 
+    void PerformEE(const TopoDS_Shape &theE1, const TopoDS_Shape &theE2);
+
   Standard_EXPORT
     void PerformVF() ;
 
@@ -267,14 +288,16 @@ protected:
   Standard_EXPORT
     void PerformFF() ;
 
-  Standard_EXPORT
-    void FillEdgesOn() ;
+    void PerformFF(const TopoDS_Shape &theF1, const TopoDS_Shape &theF2);
 
   Standard_EXPORT
-    void FillFacesOn() ;
+    void FillEdgesOn(const TopoDS_Shape &theShape);
 
   Standard_EXPORT
-    void FillSolidsOn() ;
+    void FillFacesOn(const TopoDS_Shape &theShape);
+
+  Standard_EXPORT
+    void FillSolidsOn(const TopoDS_Shape &theShape);
 
   Standard_EXPORT
     void PerformZF() ;
@@ -282,17 +305,25 @@ protected:
   Standard_EXPORT
     void PerformZZ() ;
 
-  Standard_EXPORT
-    void FillImages() ;
+    void PerformZZ(const TopoDS_Shape &theSo1, const TopoDS_Shape &theSo2);
 
   Standard_EXPORT
-    void FillImagesCompound(const TopoDS_Shape& theS) ;
+    void FillImages(const TopoDS_Shape &theShape,
+                    const Standard_Boolean IsWhere);
+
+    void FillImgSimple(const TopoDS_Shape     &theShape,
+                       const TopAbs_ShapeEnum  theSubShapeType,
+                       const Standard_Boolean  IsWhere);
+
+    void FillImgComplex(const TopoDS_Shape     &theShape,
+                        const Standard_Boolean  IsWhere);
+
+    void FillImgComplex(const TopoDS_Shape     &theShape,
+                        const TopAbs_ShapeEnum  theSubShapeType,
+                        const Standard_Boolean  IsWhere);
 
   Standard_EXPORT
     void CheckGProps() ;
-
-  Standard_EXPORT
-    void CheckGProps(const TopoDS_Shape& theS) ;
 
   Standard_EXPORT
     void FillShapesIn(const TopoDS_Shape& theS1,
@@ -305,16 +336,30 @@ protected:
   Standard_EXPORT
     Standard_Boolean CheckCoincidence(const TopoDS_Shape& theS1,
                                       const TopoDS_Shape& theS2);
+  
+  Standard_EXPORT
+    Standard_Integer CheckGProps(const TopoDS_Shape& theS);
 
+  Standard_Boolean CompareGProps
+                  (const TopoDS_Shape         &theShape1,
+                   const TopTools_ListOfShape &theListShape2) const;
 
+  Standard_EXPORT
+    void UpdateChecked(const TopoDS_Shape& theS1,
+                       const Standard_Integer theFlag);
+  //
   TopoDS_Shape myShapeWhere;
   GEOMAlgo_GetInPlaceIterator myIterator;
   GEOMAlgo_DataMapOfShapeMapOfShape myShapesIn;
   GEOMAlgo_DataMapOfShapeMapOfShape myShapesOn;
+  TopTools_DataMapOfShapeShape myShapesInclusive;
   Standard_Real myTolMass;
   Standard_Real myTolCG;
   Standard_Boolean myFound;
   GEOMAlgo_DataMapOfShapePnt myMapShapePnt;
+  TopTools_DataMapOfShapeInteger myChecked;
+  //
+  TopoDS_Shape myResult;
 
 private:
 };

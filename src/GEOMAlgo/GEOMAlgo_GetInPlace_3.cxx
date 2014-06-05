@@ -75,6 +75,16 @@ void GEOMAlgo_GetInPlaceIterator::AppendPair(const GEOMAlgo_CoupleOfShapes& theC
   iX=TypeToInteger(aType1, aType2);
   if (iX>=0) {
     myLists[iX].Append(theCS);
+  } else {
+    // Add inverted pair of shapes.
+    iX=TypeToInteger(aType2, aType1);
+
+    if (iX>=0) {
+      GEOMAlgo_CoupleOfShapes aCSInv;
+
+      aCSInv.SetShapes(aS2, aS1);
+      myLists[iX].Append(aCSInv);
+    }
   }
 }
 //=======================================================================
