@@ -23,8 +23,8 @@
 #include <GraphicsView_Object.h>
 
 // GEOM includes
-#include <GeometryGUI.h>
-#include <GEOM_BaseObject.hxx>
+#include <SALOMEconfig.h>
+#include CORBA_CLIENT_HEADER(GEOM_Gen)
 
 #include <QPen>
 
@@ -50,9 +50,10 @@ public:
 
   void                        updateName();
 
-  void                        setColor(const QColor& );
-  void                        setSelectColor(const QColor& );
-  void                        setMainObjectColor(const QColor& );
+  void                        setColor( const QColor& );
+  void                        setSelectColor( const QColor& );
+  void                        setMainObjectColor( const QColor& );
+  void                        setUnpublishObjectColor( const QColor& );
 
   void                        setIsMainObject( bool );
 
@@ -63,6 +64,7 @@ private:
   QColor                      myColor;
   QColor                      mySelectColor;
   QColor                      myMainObjectColor;
+  QColor                      myUnpublishObjectColor;
 
   QGraphicsPolygonItem*       myPolygonItem;
   QGraphicsSimpleTextItem*    myTextItem;

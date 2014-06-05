@@ -5069,12 +5069,16 @@ Please, select face, shell or solid and try again</translation>
         <translation>Main node color</translation>
     </message>
     <message>
+        <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
+        <translation>Unpublished node color</translation>
+    </message>
+    <message>
         <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
         <translation>Selected node color</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
-        <translation>Arrow color</translation>
+        <translation>Default arrow color</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>

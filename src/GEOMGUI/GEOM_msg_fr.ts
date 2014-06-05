@@ -5029,6 +5029,66 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Prévisualiser</translation>
     </message>
     <message>
+        <source>PREF_TAB_DEPENDENCY_VIEW</source>
+        <translation type="unfinished">Dependency Tree</translation>
+    </message>
+    <message>
+        <source>PREF_HIERARCHY_TYPE</source>
+        <translation type="unfinished">Hierarchy type</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_ASCENDANTS</source>
+        <translation type="unfinished">Display only ascendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_DESCENDANTS</source>
+        <translation type="unfinished">Display only descendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
+        <translation type="unfinished">Display both ascendants and descendants trees</translation>
+    </message>
+    <message>
+        <source>GEOM_MOVE_POSSIBILITY</source>
+        <translation type="unfinished">Possibility to move nodes</translation>
+    </message>
+    <message>
+        <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
+        <translation type="unfinished">Color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
+        <translation type="unfinished">Background color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
+        <translation type="unfinished">Default node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
+        <translation type="unfinished">Main node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
+        <translation type="unfinished">Unpublished node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
+        <translation type="unfinished">Selected node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
+        <translation type="unfinished">Arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
+        <translation type="unfinished">Highlighted arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
+        <translation type="unfinished">Selected arrow color</translation>
+    </message>
+    <message>
         <source>GEOM_ALL_IMPORT_FILES</source>
         <translation>Tous les formats supportés ( %1 )</translation>
     </message>

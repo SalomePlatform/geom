@@ -60,17 +60,6 @@ public:
   int                     getStudyId() const;
 
   DependencyTree_Object*  getObjectByEntry( const std::string& );
-  bool                    updateObjectName( const std::string& theEntry );
-
-  void                    setHierarchyType( const int );
-  void                    setNodesMovable( const bool );
-  void                    setPrefBackgroundColor( const QColor& );
-  void                    setNodeColor( const QColor& );
-  void                    setMainNodeColor( const QColor& );
-  void                    setSelectNodeColor( const QColor& );
-  void                    setArrowColor( const QColor& );
-  void                    setHighlightArrowColor( const QColor& );
-  void                    setSelectArrowColor( const QColor& );
 
 public slots:
 
@@ -81,6 +70,8 @@ private slots:
   void                    onUpdateModel();
   void                    onMoveNodes( bool );
   void                    onHierarchyType();
+  void                    onPreferenceChanged( const QString&, const QString& );
+  void                    onRenameObject( const QString& theEntry );
 
 private:
 
@@ -99,9 +90,20 @@ private:
   void                    updateView();
   void                    clearView( bool );
 
+  int                     checkMaxLevelsNumber();
+
   void                    getNewTreeModel( bool = true, bool = true );
 
-  int                     checkMaxLevelsNumber();
+  void                    setHierarchyType( const int );
+  void                    setNodesMovable( const bool );
+  void                    setPrefBackgroundColor( const QColor& );
+  void                    setNodeColor( const QColor& );
+  void                    setMainNodeColor( const QColor& );
+  void                    setUnpublishNodeColor( const QColor& );
+  void                    setSelectNodeColor( const QColor& );
+  void                    setArrowColor( const QColor& );
+  void                    setHighlightArrowColor( const QColor& );
+  void                    setSelectArrowColor( const QColor& );
 
   GEOMUtils::TreeModel    myTreeModel;
 

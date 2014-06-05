@@ -22,7 +22,6 @@
 
 // GEOM includes
 #include <GeometryGUI.h>
-#include <GEOM_BaseObject.hxx>
 
 // GUI includes
 #include <SUIT_Session.h>
@@ -45,6 +44,7 @@ myIsMainObject( false )
   myColor = resMgr->colorValue( "Geometry", "dependency_tree_node_color", QColor( 62, 180, 238 ) );
   mySelectColor = resMgr->colorValue( "Geometry", "dependency_tree_select_node_color", QColor( 237, 243, 58 ) );
   myMainObjectColor = resMgr->colorValue( "Geometry", "dependency_tree_main_node_color", QColor( 238, 90, 125 ) );
+  myUnpublishObjectColor = resMgr->colorValue( "Geometry", "dependency_tree_unpublish_node_color", QColor( 255, 255, 255 ) );
 
   myPolygonItem = new QGraphicsPolygonItem();
   QPolygonF myPolygon;
@@ -52,8 +52,6 @@ myIsMainObject( false )
             << QPointF( -itemW, itemH )  << QPointF( -itemW, -itemH );
 
   myPolygonItem->setPolygon( myPolygon );
-  myPolygonItem->setBrush( myColor );
-  myPolygonItem->setPen( getPen( myColor ) );
 
   myTextItem = new QGraphicsSimpleTextItem();
   QFont textFont;
@@ -174,10 +172,11 @@ void DependencyTree_Object::updateName()
   if( studyEntry.isEmpty() ) {
 	if( name.isEmpty() )
       name = "unpublished";
-    myColor = QColor( 255, 255, 255 );
-    myPolygonItem->setBrush( myColor );
-    myPolygonItem->setPen( getPen( myColor ) );
+    myColor = myUnpublishObjectColor;
   }
+
+  myPolygonItem->setBrush( myColor );
+  myPolygonItem->setPen( getPen( myColor ) );
 
   setName( name );
 
@@ -204,7 +203,12 @@ void DependencyTree_Object::updateName()
 //=================================================================================
 void DependencyTree_Object::setColor( const QColor& theColor )
 {
-  myColor = theColor;
+  QString studyEntry = myGeomObject->GetStudyEntry();
+  if( studyEntry.isEmpty() )
+    myColor = myUnpublishObjectColor;
+  else
+    myColor = theColor;
+
 }
 
 //=================================================================================
@@ -223,6 +227,18 @@ void DependencyTree_Object::setSelectColor( const QColor& theColor )
 void DependencyTree_Object::setMainObjectColor( const QColor& theColor )
 {
   myMainObjectColor = theColor;
+}
+
+//=================================================================================
+// function : setUnpublishObjectColor()
+// purpose  : set color if current item is unpublished object
+//=================================================================================
+void DependencyTree_Object::setUnpublishObjectColor( const QColor& theColor )
+{
+  myUnpublishObjectColor = theColor;
+  QString studyEntry = myGeomObject->GetStudyEntry();
+  if( studyEntry.isEmpty() )
+    myColor = myUnpublishObjectColor;
 }
 
 //=================================================================================

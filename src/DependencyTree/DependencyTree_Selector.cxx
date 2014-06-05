@@ -28,6 +28,7 @@
 
 //GEOM includes
 #include <GEOMBase.h>
+#include <GeometryGUI.h>
 
 DependencyTree_Selector::DependencyTree_Selector( DependencyTree_ViewModel* theModel, SUIT_SelectionMgr* theSelMgr )
 :LightApp_GVSelector( (GraphicsView_Viewer*)theModel, theSelMgr )

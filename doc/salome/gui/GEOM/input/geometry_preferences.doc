@@ -128,5 +128,34 @@ system immediately after the module activation.</li>
 </ul>
 </ul>
 
+Also you can set preferences for visualisation of <b>Dependency Tree</b> in 2D Viewer.
+
+\image html pref_dep_tree.png
+
+<ul>
+<li><b>General</b></li>
+<ul>
+<li><b>Hierarchy type</b> - allows to choose between display only ascendants tree,
+display only descendants tree or display both ascendants and descendants trees.</li>
+<li><b>Possibility to move nodes</b> - allows to customize the moving nodes by default.</li>
+</ul>
+</ul>
+
+<ul>
+<li><b>Color</b></li>
+<ul>
+<li><b>Background color</b> - allows to select default background color.</li>
+<li><b>Default node color</b> - allows to select default node color.</li>
+<li><b>Main node color</b> - allows to select default main node color.</li>
+<li><b>Unpublished node color</b> - allows to select default node color
+for unpublished objects.</li>
+<li><b>Selected node color</b> - allows to select default selected node color.</li>
+<li><b>Default arrow color</b> - allows to select default arrow color.</li>
+<li><b>Highlighted arrow color</b> - allows to select default highlighted 
+arrow color.</li>
+<li><b>Selected arrow color</b> - allows to select default selected 
+arrow color.</li>
+</ul>
+</ul>
 
 */

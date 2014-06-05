@@ -117,8 +117,16 @@ void DependencyTree_View::init( GraphicsView_ViewFrame* theViewFrame )
   connect( myDisplayDescendants, SIGNAL( toggled( bool ) ), this, SLOT( onHierarchyType() ) );
   connect( updateButton, SIGNAL( clicked() ), this, SLOT( onUpdateModel() ) );
 
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
+  if ( aGeomGUI ) {
+    connect( aGeomGUI, SIGNAL( SignalDependencyTreeParamChanged( const QString&, const QString& ) ),
+             this, SLOT( onPreferenceChanged( const QString&, const QString& ) ) );
+    connect( aGeomGUI, SIGNAL( SignalDependencyTreeRenameObject( const QString& ) ),
+             this, SLOT( onRenameObject( const QString& ) ) );
+  }
 
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   setPrefBackgroundColor( resMgr->colorValue( "Geometry", "dependency_tree_background_color", QColor( 255, 255, 255 ) ) );
   setNodesMovable( resMgr->booleanValue( "Geometry", "dependency_tree_move_nodes", true ) );
   setHierarchyType( resMgr->integerValue( "Geometry", "dependency_tree_hierarchy_type", 0 ) );
@@ -173,22 +181,6 @@ int DependencyTree_View::getStudyId() const
 DependencyTree_Object* DependencyTree_View::getObjectByEntry( const std::string& theEntry )
 {
   return myTreeMap[ theEntry ];
-}
-
-//=================================================================================
-// function : updateObjectName()
-// purpose  : update object name, having edited it in Object Browser
-//=================================================================================
-bool DependencyTree_View::updateObjectName( const std::string& theEntry )
-{
-  bool res = false;
-  for( initSelected(); moreSelected(); nextSelected() ) {
-    if( DependencyTree_Object* aDepObject = dynamic_cast<DependencyTree_Object*>( selectedObject() ) ) {
-      aDepObject->updateName();
-      res = true;
-    }
-  }
-  return res;
 }
 
 //=================================================================================
@@ -264,6 +256,19 @@ void DependencyTree_View::setMainNodeColor( const QColor& theColor )
   for( i = myTreeMap.begin(); i != myTreeMap.end(); i++ ) {
     DependencyTree_Object* object = myTreeMap[ i->first ];
     object->setMainObjectColor( theColor );
+  }
+}
+
+//=================================================================================
+// function : setUnpublishNodeColor()
+// purpose  : set unpublished node color from preferences
+//=================================================================================
+void DependencyTree_View::setUnpublishNodeColor( const QColor& theColor )
+{
+  EntryObjectMap::const_iterator i;
+  for( i = myTreeMap.begin(); i != myTreeMap.end(); i++ ) {
+    DependencyTree_Object* object = myTreeMap[ i->first ];
+    object->setUnpublishObjectColor( theColor );
   }
 }
 
@@ -367,6 +372,66 @@ void DependencyTree_View::onHierarchyType()
     myLevelsNumber = myHierarchyDepth->value();
 
   updateView();
+}
+
+//=================================================================================
+// function : onPreferencesChanged()
+// purpose  : slot for changing tree parameters from preferences
+//=================================================================================
+void DependencyTree_View::onPreferenceChanged( const QString& section, const QString& param )
+{
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+
+  if( param == QString("dependency_tree_hierarchy_type") ) {
+    int hierarchyType = resMgr->integerValue( section, param, 0);
+    setHierarchyType( hierarchyType );
+  }
+  else if(  param == QString("dependency_tree_move_nodes") ) {
+    bool isNodesMovable = resMgr->booleanValue( section, param, true);
+    setNodesMovable( isNodesMovable );
+  }
+  else if(  param == QString("dependency_tree_background_color") ) {
+    QColor c = resMgr->colorValue( section, param, QColor( 255, 255, 255 ) );
+    setPrefBackgroundColor( c );
+  }
+  else if(  param == QString("dependency_tree_node_color") ) {
+    QColor c = resMgr->colorValue( section, param, QColor( 62, 180, 238 ) );
+    setNodeColor( c );
+  }
+  else if(  param == QString("dependency_tree_main_node_color") ) {
+    QColor c = resMgr->colorValue( section, param, QColor( 238, 90, 125 ) );
+    setMainNodeColor( c );
+  }
+  else if(  param == QString("dependency_tree_unpublish_node_color") ) {
+    QColor c = resMgr->colorValue( section, param, QColor( 255, 255, 255 ) );
+    setUnpublishNodeColor( c );
+  }
+  else if(  param == QString("dependency_tree_select_node_color") ) {
+    QColor c = resMgr->colorValue( section, param, QColor( 237, 243, 58 ) );
+    setSelectNodeColor( c );
+  }
+  else if(  param == QString("dependency_tree_arrow_color") ) {
+    QColor c = resMgr->colorValue( section, param, QColor( 0, 0, 130 ) );
+    setArrowColor( c );
+  }
+  else if(  param == QString("dependency_tree_highlight_arrow_color") ) {
+    QColor c = resMgr->colorValue( section, param, QColor( 0, 0, 255 ) );
+    setHighlightArrowColor( c );
+  }
+  else if(  param == QString("dependency_tree_select_arrow_color") ) {
+    QColor c = resMgr->colorValue( section, param, QColor( 255, 0, 0 ) );
+    setSelectArrowColor( c );
+  }
+}
+
+//=================================================================================
+// function : onRenameObject()
+// purpose  : update object name, having edited it in Object Browser
+//=================================================================================
+void DependencyTree_View::onRenameObject( const QString& theEntry )
+{
+  DependencyTree_Object* object = getObjectByEntry( theEntry.toStdString() );
+  object->updateName();
 }
 
 //=================================================================================
