@@ -374,10 +374,12 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 
   void getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
                             GEOMUtils::LevelsList &upLevelList,  
+			    std::set<std::string> &passedEntries,
                             int level = 0 );
 
   void getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
                               GEOMUtils::LevelsList &downLevelList, 
+			      std::set<std::string> &passedEntries,
                               int level = 0 );
 
  private:

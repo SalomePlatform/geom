@@ -3057,12 +3057,14 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
     GEOM::GEOM_BaseObject_var anObj = GetObject( theStudy->StudyId(), entry.c_str() );
     if ( anObj->_is_nil() )
       continue;
+    std::set<std::string> passedEntries;
+    passedEntries.insert( entry );
     GEOMUtils::LevelsList upLevelList;
     // get objects from which current one depends on recursively
-    getUpwardDependency( anObj, upLevelList );
+    getUpwardDependency( anObj, upLevelList, passedEntries );
     GEOMUtils::LevelsList downLevelList;
     // get objects that depends on current one recursively
-    getDownwardDependency( anObj, downLevelList );
+    //getDownwardDependency( anObj, downLevelList, passedEntries );
     tree.insert( std::pair<std::string, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList> >(entry, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList>( upLevelList, downLevelList ) ) );
   }
 
@@ -3087,14 +3089,18 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
 //=======================================================================
 void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
 				      GEOMUtils::LevelsList &upLevelList, 
+				      std::set<std::string> &passedEntries,
 				      int level ) {
   std::string aGboEntry = gbo->GetEntry();
+  passedEntries.insert( aGboEntry );
+  /*
   for (int i=0; i < upLevelList.size(); i++ ) {
     GEOMUtils::LevelInfo aMap = upLevelList.at(i);
     if ( aMap.count( aGboEntry ) > 0 )
       // this object has been processed earlier
       return;
   }
+  */
   GEOMUtils::NodeLinks anEntries;
   GEOMUtils::LevelInfo aLevelMap;
   if ( level > 0 ) {
@@ -3118,8 +3124,9 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
       anEntries.push_back( depList[j]->GetEntry() );
     }
     // get dependencies recursively
-    if ( !depList[j]->_is_equivalent( gbo ) ) { // avoid self-recursion
-      getUpwardDependency(depList[j], upLevelList, level+1);
+    if ( !depList[j]->_is_equivalent( gbo ) &&  /*avoid self-recursion*/
+	 passedEntries.count( depList[j]->GetEntry() ) == 0 /*avoid checking the passed objects*/ ) {
+      getUpwardDependency(depList[j], upLevelList, passedEntries, level+1);
     }
   }
   if ( level > 0 ) {
@@ -3134,6 +3141,7 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
 //=======================================================================
 void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
 					GEOMUtils::LevelsList &downLevelList, 
+					std::set<std::string> &passedEntries,
 					int level ) {
   Handle(TDocStd_Document) aDoc = GEOM_Engine::GetEngine()->GetDocument(gbo->GetStudyID());
   Handle(TDataStd_TreeNode) aNode, aRoot;
@@ -3180,7 +3188,7 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
           downLevelList[level] = aLevelMap;
 	  // get dependencies of the current object recursively
           if ( !depList[i]->_is_equivalent( geomObj ) ) { // avoid self-recursion
-            getDownwardDependency(geomObj, downLevelList, level+1);
+            getDownwardDependency(geomObj, downLevelList, passedEntries, level+1);
           }
 	  break;
         }
