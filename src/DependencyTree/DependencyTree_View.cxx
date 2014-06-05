@@ -151,8 +151,8 @@ void DependencyTree_View::mouseMoveEvent( QMouseEvent *event )
   QGraphicsView::mouseMoveEvent( event );
   ArrowsInfo::const_iterator i;
   for( i = myArrows.begin(); i != myArrows.end(); i++ ) {
-    DependencyTree_Arrow* arrow = myArrows[ i->first ];
-    arrow->update();
+    if( DependencyTree_Arrow* arrow = myArrows[ i->first ] )
+      arrow->update();
   }
 }
 
@@ -724,6 +724,8 @@ void DependencyTree_View::getNewTreeModel( bool theUseSelectedObject, bool theUs
       objectsEntry->length( mainObjects.Extent() );
       for ( SALOME_ListIteratorOfListIO It( mainObjects ); It.More(); It.Next(), iter++ ) {
         Handle( SALOME_InteractiveObject ) io = It.Value();
+        if( !io->hasEntry() )
+          continue;
         GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
         geomObject = GEOMBase::ConvertIOinGEOMObject( io );
         QString entry = geomObject->GetEntry();
