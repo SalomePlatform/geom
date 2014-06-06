@@ -430,8 +430,8 @@ void DependencyTree_View::onPreferenceChanged( const QString& section, const QSt
 //=================================================================================
 void DependencyTree_View::onRenameObject( const QString& theEntry )
 {
-  DependencyTree_Object* object = getObjectByEntry( theEntry.toStdString() );
-  object->updateName();
+  if( DependencyTree_Object* object = getObjectByEntry( theEntry.toStdString() ) )
+    object->updateName();
 }
 
 //=================================================================================
@@ -682,21 +682,30 @@ void DependencyTree_View::clearView( bool isClearModel )
 {
   EntryObjectMap::const_iterator objectIter;
   for( objectIter = myTreeMap.begin(); objectIter != myTreeMap.end(); objectIter++ ) {
-    DependencyTree_Object* object = objectIter->second;
-    if( object )
+    if( DependencyTree_Object* object = objectIter->second )
       if( isItemAdded( object ) )
         removeItem( object );
   }
 
   ArrowsInfo::const_iterator arrowIter;
   for( arrowIter = myArrows.begin(); arrowIter != myArrows.end(); arrowIter++ ) {
-    DependencyTree_Arrow* object = arrowIter->second;
-    if( object )
-      if( isItemAdded( object ) )
-        removeItem( object );
+    if( DependencyTree_Arrow* arrow = arrowIter->second )
+      if( isItemAdded( arrow ) )
+        removeItem( arrow );
   }
 
   if( isClearModel ) {
+    EntryObjectMap::const_iterator objectIter;
+    for( objectIter = myTreeMap.begin(); objectIter != myTreeMap.end(); objectIter++ ) {
+      if( DependencyTree_Object* object = objectIter->second )
+        delete object;
+    }
+
+    ArrowsInfo::const_iterator arrowIter;
+    for( arrowIter = myArrows.begin(); arrowIter != myArrows.end(); arrowIter++ ) {
+      if( DependencyTree_Arrow* arrow = arrowIter->second )
+        delete arrow;
+    }
     myTreeMap.clear();
     myArrows.clear();
     myTreeModel.clear();

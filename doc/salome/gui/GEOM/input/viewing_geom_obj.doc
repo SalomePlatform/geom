@@ -21,6 +21,7 @@ other useful options by right-clicking on the selected object.
 object.</li>
 <li><b>Delete</b> - irreversibly deletes the selected object from the
 viewer and from the Object Browser.</li> 
+<li><b>Create Group</b> - allows to create group.</li> 
 <li>\subpage display_mode_page "Display Mode" - allows to select between
 Wireframe and Shading presentation.</li>
 <li>\subpage bring_to_front_page "Bring To Front" - allows to bring to 
@@ -63,6 +64,8 @@ geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em></li>
 
 <li><b>Show all dimensions</b> - shows all of the persistent dimensions created for the selected geometrical object.</li>
 <li><b>Hide all dimensions</b> - hides all of the persistent dimensions created for the selected geometrical object.</li>
+<li>\subpage dependency_tree_page "Show dependency tree" - shows dependency tree of selected objects
+in new 2D View Window.</li>
 <li><b>Dump view</b> - exports an object from the viewer in bmp, png,
 jpg or jpeg image format.</li>
 <li><b>Change background</b> - allows to redefine the background

@@ -2,6 +2,8 @@
 
 \page geometry_preferences_page Geometry preferences
 
+\anchor pref_settings <h2>Settings</h2>
+
 In the \b Geometry module you can set preferences for visualisation of
 geometrical figures, which can be used in later sessions with this module.
 There is also a special group of preferences controlling input
@@ -127,6 +129,8 @@ system immediately after the module activation.</li>
 <li><b>Preview</b> - allows to customize the displaying preview by default.</li>
 </ul>
 </ul>
+
+\anchor pref_dependency_tree <h2>Dependency Tree</h2>
 
 Also you can set preferences for visualisation of <b>Dependency Tree</b> in 2D Viewer.
 

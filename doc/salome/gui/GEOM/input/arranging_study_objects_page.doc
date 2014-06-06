@@ -34,6 +34,9 @@ and then displays only the children of the selected object(s).
   unpublished objects are sorted by name in ascending order. It is possible
   to change the order (ascending / descending) by clicking the corresponding title bar of the objects list.
 </li>
+
+<li>\subpage dependency_tree_page "Show dependency tree" - shows dependency tree of selected objects
+in new 2D View Window.</li>
 </ul>
 
 <h2> Folders </h2>

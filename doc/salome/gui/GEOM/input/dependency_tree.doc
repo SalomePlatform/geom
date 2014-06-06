@@ -1,0 +1,205 @@
+/*!
+
+\page dependency_tree_page Dependency Tree
+
+\n In order to better understand the relations between the %GEOM 
+objects in a study the user has the possibility to display the 
+ascendants and descendant of an object in a family tree.
+
+User can build the dependency tree with new main objects by selecting 
+them in Object Browser, in OCC Viewer or in Dependency Tree Viewer 
+and calling corresponding popup menu. When invoked, this menu item 
+will open a 2D view window and display a dependency tree for the 
+selected object or objects (multiple selection is supported).
+
+\image html tree_example.png
+
+User can change all necessary parameters of Dependency Tree Viewer 
+in \ref pref_dependency_tree "Preferences".
+
+<hr>
+\anchor dependency_tree_nodes <h2>Nodes</h2>
+
+Tree nodes in the Dependency Viewer are named according to the study 
+names of the corresponding objects. 
+
+Non-published objects are shown in the tree as "unpublished" and are 
+colored in special for non-published objects color.
+
+The long name of the object is displayed in a shortened version; 
+full name of the object can be seen in the tool tip when the cursor 
+is on the node.
+
+Dependency Tree Viewer supports the following states of nodes:
+
+\image html tree_main_node.png
+<ul><li><b>Main node</b> - node of main object, selected in Object 
+Browser, OCC Viewer or Dependency Tree Viewer in order to build the 
+dependency tree;</li></ul>
+
+\image html tree_default_node.png
+<ul><li><b>Default node</b> - node, which participate in building of 
+dependency tree as ascendant or descendant;</li></ul>
+
+\image html tree_unpublished_node.png
+<ul><li><b>Unpublished node</b> - node of non-published in study 
+object;</li></ul>
+
+\image html tree_highlighted_node.png
+<ul><li><b>Highlighted node</b> - the state of node when mouse is 
+near or on it;</li></ul>
+
+\image html tree_selected_node.png
+<ul><li><b>Selected node</b> - the state of selected node when 
+clicking left mouse button on node.</li></ul>
+
+<hr>
+\anchor dependency_tree_links <h2>Links</h2>
+
+Dependency Tree Viewer shows oriented links between nodes to 
+represent dependency direction. Viewer supports the following states 
+of links:
+
+\image html tree_unidir_link.png
+<ul><li><b>Unidirectional link</b> - shows that object A depends on 
+the object B;</li></ul>
+
+\image html tree_bidir_link.png
+<ul><li><b>Bidirectional link</b> - shows that object A depends on 
+the object B and at the same time object B depends on 
+the object A;</li></ul>
+
+\image html tree_selfdep_link.png
+<ul><li><b>Self-dependency link</b> - shows that object depends on 
+itself;</li></ul>
+
+\image html tree_cycldep_link.png
+<ul><li><b>Cyclic dependency links</b> - shows cyclic dependency of 
+some nodes.</li></ul>
+
+<hr>
+\anchor dependency_tree_operations <h2>Operations</h2>
+
+The dependency tree of a chosen %GEOM object is displayed in 
+the dedicated 2D view window.
+\n The functionalities of 2D viewer are available via its Viewer 
+Toolbar. 
+
+Buttons marked with small downward triangles have extended 
+functionality which can be accessed by locking on them with left 
+mouse button.
+
+\image tree_tool_bar
+
+\image html tree_view_dump.png
+
+<b>Dump View</b> - exports an object from the viewer in bmp, png or
+jpeg image format.
+
+\image html tree_view_fitall.png
+
+<b>Fit all</b> - scales the presentation so that it could fit within
+the Viewer boundaries.
+
+\image html tree_view_fitarea.png
+
+<b>Fit area</b> - resizes the view to place in the visible area only
+the contents of a frame drawn with pressed left mouse button.
+
+\image html tree_view_fitselect.png
+
+<b>Fit selection</b> - resizes the view to fit in the visible area
+only currently selected objects.
+
+\image html tree_view_zoom.png
+
+<b>Zoom</b> - allows to zoom in and out.
+
+\image html tree_view_pan.png
+
+<b>Panning</b> - if the represented objects are greater that the
+visible area and you don't wish to use <b>Fit all</b> functionality,
+click on this button and you'll be able to drag the scene to see its
+remote parts.
+
+\image html tree_view_glpan.png
+
+<b>Global panning</b> - allows to select a point to be the center of
+the presentation showing all displayed objects in the visible ares.
+
+\image html tree_hierarchy_type.png
+
+<b>Hierarchy depth</b> - allows to change the number of hierarchy 
+levels to be shown in the dependency tree.
+<ul>
+<li>Level 1 corresponds to the parents and children of the selected 
+object(s);</li>
+<li>Level 2 is Level 1 plus the grand-parents and grand-children 
+of the selected object(s);</li>
+<li>etc...</li>
+</ul>
+
+\image html tree_disp_ascendants.png
+
+<b>Display ascendants</b> - allows to customize the display 
+of ascendants.
+
+\image html tree_disp_descendants.png
+
+<b>Display descendants</b> - allows to customize the display 
+of descendants.
+
+\image html tree_move_nodes.png
+
+<b>Move nodes</b> - allows to customize the moving of nodes.
+
+\image html tree_button_update.png
+
+<b>Update</b> - allows to update a dependency tree model and a view.
+
+<hr>
+\anchor dependency_tree_navigation <h2>Navigation</h2>
+
+Dependency Tree 2D Viewer supports the following navigation mode:
+
+Rectangle selection in this mode is performed by the left mouse 
+button; multiple selection is available when \b Shift button 
+is pressed.
+
+Also, holding \b Ctrl key with pressed mouse buttons performs 
+the following view transformations:
+<ul>
+<li>Ctrl + left mouse button - zooming;</li>
+<li>Ctrl + middle mouse button - panning;</li>
+</ul>
+
+<hr>
+\anchor dependency_tree_popup_menu <h2>Popup Menu</h2>
+
+After the object has appeared in the Dependency Tree 2D Viewer, 
+you can select it with left mouse click to change its presentation 
+parameters and access to other useful options by right-clicking on 
+the selected object.
+
+\image html tree_popup_menu.png
+
+<ul>
+<li>\b Show - allows to show selected object(s) in OCC 3D Viewer;</li>
+<li><b> Show Only</b> - allows to show only selected object(s) 
+in OCC 3D Viewer;</li>
+<li><b> Rebuild the tree</b> - allows to rebuild the dependency tree 
+for selected object(s);</li>
+</ul>
+
+Some functionalities are available through right-clicking on 
+the viewer background:
+
+\image html tree_popup_menu2.png
+
+Dependency Tree 2D Viewer background can be customized using the 
+"Change background" popup menu command that opens standard 
+"Select Color" dialog box:
+
+\image html selectcolor.png
+
+*/
