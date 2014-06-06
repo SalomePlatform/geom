@@ -3122,9 +3122,7 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
       anEntries.push_back( aDepEntry );
     }
     // get dependencies recursively
-    if ( !depList[j]->_is_equivalent( gbo ) /*avoid self-recursion*/ ) {
-      getUpwardDependency(depList[j], upLevelList, passedEntries, level+1);
-    }
+    getUpwardDependency(depList[j], upLevelList, passedEntries, level+1);
   }
   if ( level > 0 ) {
     aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGboEntry, anEntries) );
@@ -3190,11 +3188,9 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
           }
           aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGoEntry, anEntries) );
           downLevelList[level] = aLevelMap;
-	  // get dependencies of the current object recursively
-          if ( !depList[i]->_is_equivalent( geomObj ) ) { // avoid self-recursion
-            getDownwardDependency(geomObj, downLevelList, passedEntries, level+1);
-          }
-	  break;
+          // get dependencies of the current object recursively
+          getDownwardDependency(geomObj, downLevelList, passedEntries, level+1);
+          break;
         }
       }
     }
