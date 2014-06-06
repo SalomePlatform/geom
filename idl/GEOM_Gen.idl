@@ -5095,6 +5095,7 @@ module GEOM
      * \param theStudy The study in which the object is published
      * \param theListOfEntries List of GEOM object entries in OCAF tree (not in study)
      * \return Struct of dependent entries and its links as a byte array
+     * \note This method is supposed to be used by GUI only.
      */
     SALOMEDS::TMPFile GetDependencyTree(in SALOMEDS::Study theStudy,
 					in string_array theListOfEntries);
