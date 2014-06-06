@@ -132,16 +132,15 @@ system immediately after the module activation.</li>
 
 \anchor pref_dependency_tree <h2>Dependency Tree</h2>
 
-Also you can set preferences for visualisation of <b>Dependency Tree</b> in 2D Viewer.
+Also user can set preferences for visualisation of <b>Dependency Tree</b> in 2D Viewer.
 
 \image html pref_dep_tree.png
 
 <ul>
 <li><b>General</b></li>
 <ul>
-<li><b>Hierarchy type</b> - allows to choose between display only ascendants tree,
-display only descendants tree or display both ascendants and descendants trees.</li>
-<li><b>Possibility to move nodes</b> - allows to customize the moving nodes by default.</li>
+<li><b>Hierarchy type</b> - allows to choose default displaying mode of dependency tree.</li>
+<li><b>Possibility to move nodes</b> - enable/disable the possibility of moving nodes by default.</li>
 </ul>
 </ul>
 
