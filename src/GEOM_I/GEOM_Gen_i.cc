@@ -3057,14 +3057,13 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
     GEOM::GEOM_BaseObject_var anObj = GetObject( theStudy->StudyId(), entry.c_str() );
     if ( anObj->_is_nil() )
       continue;
-    std::set<std::string> passedEntries;
-    passedEntries.insert( entry );
+    std::map< std::string, std::set<std::string> > passedEntries;
     GEOMUtils::LevelsList upLevelList;
     // get objects from which current one depends on recursively
     getUpwardDependency( anObj, upLevelList, passedEntries );
     GEOMUtils::LevelsList downLevelList;
     // get objects that depends on current one recursively
-    //getDownwardDependency( anObj, downLevelList, passedEntries );
+    getDownwardDependency( anObj, downLevelList, passedEntries );
     tree.insert( std::pair<std::string, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList> >(entry, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList>( upLevelList, downLevelList ) ) );
   }
 
@@ -3089,18 +3088,9 @@ SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
 //=======================================================================
 void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
 				      GEOMUtils::LevelsList &upLevelList, 
-				      std::set<std::string> &passedEntries,
+				      std::map< std::string, std::set<std::string> > &passedEntries,
 				      int level ) {
   std::string aGboEntry = gbo->GetEntry();
-  passedEntries.insert( aGboEntry );
-  /*
-  for (int i=0; i < upLevelList.size(); i++ ) {
-    GEOMUtils::LevelInfo aMap = upLevelList.at(i);
-    if ( aMap.count( aGboEntry ) > 0 )
-      // this object has been processed earlier
-      return;
-  }
-  */
   GEOMUtils::NodeLinks anEntries;
   GEOMUtils::LevelInfo aLevelMap;
   if ( level > 0 ) {
@@ -3117,15 +3107,22 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
   }
   // get objects on that the current one depends
   GEOM::ListOfGBO_var depList = gbo->GetDependency();
+  std::string aDepEntry;
   for( int j = 0; j < depList->length(); j++ ) {
     if ( depList[j]->_is_nil() )
       continue;
+    aDepEntry = depList[j]->GetEntry();
+    if ( passedEntries.count( aGboEntry ) > 0 && 
+         passedEntries[aGboEntry].count( aDepEntry ) > 0 ) {
+      //avoid checking the passed objects
+      continue;
+    }
+    passedEntries[aGboEntry].insert( aDepEntry );
     if ( level > 0 ) {
-      anEntries.push_back( depList[j]->GetEntry() );
+      anEntries.push_back( aDepEntry );
     }
     // get dependencies recursively
-    if ( !depList[j]->_is_equivalent( gbo ) &&  /*avoid self-recursion*/
-	 passedEntries.count( depList[j]->GetEntry() ) == 0 /*avoid checking the passed objects*/ ) {
+    if ( !depList[j]->_is_equivalent( gbo ) /*avoid self-recursion*/ ) {
       getUpwardDependency(depList[j], upLevelList, passedEntries, level+1);
     }
   }
@@ -3141,8 +3138,9 @@ void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
 //=======================================================================
 void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
 					GEOMUtils::LevelsList &downLevelList, 
-					std::set<std::string> &passedEntries,
+					std::map< std::string, std::set<std::string> > &passedEntries,
 					int level ) {
+  std::string aGboEntry = gbo->GetEntry();
   Handle(TDocStd_Document) aDoc = GEOM_Engine::GetEngine()->GetDocument(gbo->GetStudyID());
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
@@ -3172,10 +3170,16 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
         if ( depList[i]->_is_nil() )
           continue;
         if ( depList[i]->_is_equivalent( gbo ) ) {
-	  // yes, the current object depends on the given object
+          // yes, the current object depends on the given object
+          if ( passedEntries.count( aGoEntry ) > 0 && 
+               passedEntries[aGoEntry].count( aGboEntry ) > 0 ) {
+            //avoid checking the passed objects
+            continue;
+          }
+          passedEntries[aGoEntry].insert( aGboEntry );
           GEOMUtils::NodeLinks anEntries;
           GEOMUtils::LevelInfo aLevelMap;
-          anEntries.push_back( gbo->GetEntry());
+          anEntries.push_back( aGboEntry );
           if ( level >= downLevelList.size() ) {
             downLevelList.push_back( aLevelMap );
           } else {
