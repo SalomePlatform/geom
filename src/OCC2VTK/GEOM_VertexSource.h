@@ -23,14 +23,12 @@
 #include "OCC2VTK.h" 
  
 #include <TopoDS_Vertex.hxx> 
-#include <NCollection_Set.hxx> 
- 
-typedef NCollection_Set<TopoDS_Vertex> TVertexSet; 
  
 #include <vtkPoints.h> 
 #include <vtkPolyDataAlgorithm.h> 
 
 class vtkPolyData;
+class VertexSourceInternal;
 
 class OCC2VTK_EXPORT GEOM_VertexSource: public vtkPolyDataAlgorithm
 { 
@@ -39,7 +37,7 @@ public:
   static GEOM_VertexSource* New(); 
  
   void AddVertex(const TopoDS_Vertex& theVertex); 
-  void Clear(){ myVertexSet.Clear();} 
+  void Clear();
  
   static  
   void OCC2VTK(const TopoDS_Vertex& theVertex,  
@@ -47,7 +45,7 @@ public:
                vtkPoints* thePts); 
  
 protected: 
-  TVertexSet myVertexSet; 
+  VertexSourceInternal* myData;
  
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
  

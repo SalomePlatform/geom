@@ -18,6 +18,7 @@
 //
 
 #include "GEOM_WireframeFace.h"
+#include "OCC2VTK_internal.h"
 
 #include <GEOMUtils_Hatcher.hxx>
  
@@ -63,7 +64,7 @@ int GEOM_WireframeFace::RequestData(vtkInformation *vtkNotUsed(request),
   aPolyData->SetPoints(aPts);
   aPts->Delete();
 
-  TFaceSet::Iterator anIter(myFaceSet);
+  TFaceSet::Iterator anIter(myData->myFaceSet);
   for(; anIter.More(); anIter.Next()){
     const TopoDS_Face& aFace = anIter.Value();
     OCC2VTK(aFace,aPolyData,aPts,NbIso,Discret);

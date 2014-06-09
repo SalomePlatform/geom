@@ -26,6 +26,8 @@
 #include <GEOMAlgo_RemoverWebs.hxx>
 #include <GEOMAlgo_ShapeAlgo.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Solid.hxx>
@@ -35,7 +37,11 @@
 
 #include <BRepClass3d_SolidClassifier.hxx>
 
+#if OCC_VERSION_LARGE > 0x06070100
+#include <IntTools_Context.hxx>
+#else
 #include <BOPInt_Context.hxx>
+#endif
 
 #include <BOPAlgo_BuilderSolid.hxx>
 
@@ -102,7 +108,11 @@ void GEOMAlgo_RemoverWebs::Perform()
   if (!myContext.IsNull()) {
     myContext.Nullify();
   }
+#if OCC_VERSION_LARGE > 0x06070100
+  myContext=new IntTools_Context;
+#else
   myContext=new BOPInt_Context;
+#endif
   //
   BuildSolid();
   //
@@ -247,9 +257,11 @@ void GEOMAlgo_RemoverWebs::AddInternalShapes(const BOPCol_ListOfShape& aLSR,
   TopoDS_Solid aSd;
   BRep_Builder aBB;
   BOPCol_ListIteratorOfListOfShape aItLS;
-  Handle(BOPInt_Context) aCtx;
-  //
-  aCtx=new BOPInt_Context;
+#if OCC_VERSION_LARGE > 0x06070100
+  Handle(IntTools_Context) aCtx=new IntTools_Context;
+#else
+  Handle(BOPInt_Context) aCtx=new BOPInt_Context;
+#endif
   //
   aNbSI=aMSI.Extent();
   for (i=1; i<=aNbSI; ++i) {

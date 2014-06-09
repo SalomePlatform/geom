@@ -24,14 +24,12 @@
 
 #include <gp_Pnt.hxx>
 #include <TopoDS_Face.hxx> 
-#include <NCollection_Set.hxx> 
- 
-typedef NCollection_Set<TopoDS_Face> TFaceSet; 
  
 #include <vtkPoints.h> 
 #include <vtkPolyDataAlgorithm.h> 
 
 class vtkPolyData;
+class FaceSourceInternal;
 
 class OCC2VTK_EXPORT GEOM_FaceSource: public vtkPolyDataAlgorithm 
 { 
@@ -39,11 +37,11 @@ public:
   vtkTypeMacro(GEOM_FaceSource,vtkPolyDataAlgorithm); 
  
   void AddFace(const TopoDS_Face& theFace); 
-  void Clear(){ myFaceSet.Clear();} 
-  bool IsEmpty(){return myFaceSet.IsEmpty();}
+  void Clear();
+  bool IsEmpty();
  
 protected: 
-  TFaceSet myFaceSet; 
+  FaceSourceInternal* myData;
  
   static 
   void MoveTo(gp_Pnt thePnt, 

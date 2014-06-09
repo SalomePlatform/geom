@@ -28,11 +28,17 @@
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
 #define _GEOMAlgo_ShapeAlgo_HeaderFile
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Standard_Real.hxx>
+#if OCC_VERSION_LARGE > 0x06070100
+#include <Handle_IntTools_Context.hxx>
+#else
 #include <Handle_BOPInt_Context.hxx>
+#endif
 #include <GEOMAlgo_Algo.hxx>
 
 //=======================================================================
@@ -45,11 +51,19 @@ class GEOMAlgo_ShapeAlgo  : public GEOMAlgo_Algo
 
   //! Sets cashed geometrical tools <br>
   Standard_EXPORT
+#if OCC_VERSION_LARGE > 0x06070100
+    void SetContext(const Handle(IntTools_Context)& theContext) ;
+#else
     void SetContext(const Handle(BOPInt_Context)& theContext) ;
+#endif
 
   //! Returns cashed geometrical tools <br>
   Standard_EXPORT
+#if OCC_VERSION_LARGE > 0x06070100
+    const Handle_IntTools_Context& Context() const;
+#else
     const Handle_BOPInt_Context& Context() const;
+#endif
 
   Standard_EXPORT
     void SetShape(const TopoDS_Shape& aS) ;
@@ -80,6 +94,10 @@ protected:
   TopoDS_Shape myShape;
   Standard_Real myTolerance;
   TopoDS_Shape myResult;
+#if OCC_VERSION_LARGE > 0x06070100
+  Handle_IntTools_Context myContext;
+#else
   Handle_BOPInt_Context myContext;
+#endif
 };
 #endif

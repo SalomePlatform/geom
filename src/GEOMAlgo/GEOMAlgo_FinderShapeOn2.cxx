@@ -28,6 +28,7 @@
 #include <GEOMAlgo_FinderShapeOn2.hxx>
 #include <math.h>
 
+#include <Basics_OCCTVersion.hxx>
 
 #include <Precision.hxx>
 #include <TColStd_Array1OfInteger.hxx>
@@ -87,7 +88,11 @@
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <HatchGen_Domain.hxx>
 #include <Geom2dHatch_Hatcher.hxx>
+#if OCC_VERSION_LARGE > 0x06070100
+#include <IntTools_Context.hxx>
+#else
 #include <BOPInt_Context.hxx>
+#endif
 #include <BRepTools.hxx>
 #include <IntTools_Tools.hxx>
 

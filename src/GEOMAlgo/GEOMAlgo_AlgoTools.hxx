@@ -26,10 +26,18 @@
 #ifndef _GEOMAlgo_AlgoTools_HeaderFile
 #define _GEOMAlgo_AlgoTools_HeaderFile
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
 #include <Standard_Boolean.hxx>
+#if OCC_VERSION_LARGE > 0x06070100
+#include <Handle_IntTools_Context.hxx>
+#include <IntTools_Context.hxx>
+#else
 #include <Handle_BOPInt_Context.hxx>
+#include <BOPInt_Context.hxx>
+#endif
 #include <Standard_Integer.hxx>
 
 #include <gp_Pnt.hxx>
@@ -42,8 +50,6 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
-
-#include <BOPInt_Context.hxx>
 
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
@@ -88,20 +94,34 @@ class GEOMAlgo_AlgoTools  {
     static  Standard_Integer RefineSDShapes
       (GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape& aMSD,
        const Standard_Real aTol,
-       const Handle(BOPInt_Context)& aCtx) ;
+#if OCC_VERSION_LARGE > 0x06070100
+       const Handle(IntTools_Context)& aCtx
+#else
+       const Handle(BOPInt_Context)& aCtx
+#endif
+       ) ;
 
   Standard_EXPORT
     static  Standard_Integer FindSDShapes(const TopTools_ListOfShape& aLE,
 					  const Standard_Real aTol,
 					  TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
-					  const Handle(BOPInt_Context)& aCtx) ;
-
+#if OCC_VERSION_LARGE > 0x06070100
+					  const Handle(IntTools_Context)& aCtx
+#else
+					  const Handle(BOPInt_Context)& aCtx
+#endif
+					  ) ;
   Standard_EXPORT
     static  Standard_Integer FindSDShapes(const TopoDS_Shape& aE1,
 					  const TopTools_ListOfShape& aLE,
 					  const Standard_Real aTol,
 					  TopTools_ListOfShape& aLESD,
-					  const Handle(BOPInt_Context)& aCtx) ;
+#if OCC_VERSION_LARGE > 0x06070100
+					  const Handle(IntTools_Context)& aCtx
+#else
+					  const Handle(BOPInt_Context)& aCtx
+#endif
+					  ) ;
 
   Standard_EXPORT
     static  void PointOnShape(const TopoDS_Shape& aS,
@@ -128,7 +148,12 @@ class GEOMAlgo_AlgoTools  {
     static  Standard_Boolean ProjectPointOnShape(const gp_Pnt& aP1,
 						 const TopoDS_Shape& aS,
 						 gp_Pnt& aP2,
-						 const Handle(BOPInt_Context)& aCtx) ;
+#if OCC_VERSION_LARGE > 0x06070100
+						 const Handle(IntTools_Context)& aCtx
+#else
+						 const Handle(BOPInt_Context)& aCtx
+#endif
+						 ) ;
 
   Standard_EXPORT
     static void CorrectTolerances(const TopoDS_Shape& aShape,
@@ -146,7 +171,12 @@ class GEOMAlgo_AlgoTools  {
   Standard_EXPORT
     static Standard_Boolean IsSplitToReverse1 (const TopoDS_Edge& aEF1,
 					       const TopoDS_Edge& aEF2,
-					       const Handle(BOPInt_Context)& aContext);
+#if OCC_VERSION_LARGE > 0x06070100
+					       const Handle(IntTools_Context)& aCtx
+#else
+					       const Handle(BOPInt_Context)& aCtx
+#endif
+					       ) ;
   Standard_EXPORT
     static void RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
 					  const TopoDS_Face& aF,
@@ -163,22 +193,42 @@ class GEOMAlgo_AlgoTools  {
   Standard_EXPORT
     static Standard_Boolean IsSplitToReverse(const TopoDS_Edge& theSplit,
 					     const TopoDS_Edge& theEdge,
-					     const Handle(BOPInt_Context)& theContext);
+#if OCC_VERSION_LARGE > 0x06070100
+					     const Handle(IntTools_Context)& theCtx
+#else
+					     const Handle(BOPInt_Context)& theCtx
+#endif
+					     ) ;
   
   Standard_EXPORT
     static Standard_Boolean IsSplitToReverse  (const TopoDS_Face& theFSp,
 					       const TopoDS_Face& theFSr,
-					       const Handle(BOPInt_Context)& theContext);
+#if OCC_VERSION_LARGE > 0x06070100
+					       const Handle(IntTools_Context)& theCtx
+#else
+					       const Handle(BOPInt_Context)& theCtx
+#endif
+					       ) ;
   
   Standard_EXPORT
     static Standard_Boolean IsSplitToReverse  (const TopoDS_Shape& theSp,
 					       const TopoDS_Shape& theSr,
-					       const Handle(BOPInt_Context)& theCtx);
+#if OCC_VERSION_LARGE > 0x06070100
+					       const Handle(IntTools_Context)& theCtx
+#else
+					       const Handle(BOPInt_Context)& theCtx
+#endif
+					       ) ;
   Standard_EXPORT
     static Standard_Integer BuildPCurveForEdgeOnFace  (const TopoDS_Edge& aEold,
 						       const TopoDS_Edge& aEnew,
 						       const TopoDS_Face& aF,
-						       const Handle(BOPInt_Context)& aCtx);
+#if OCC_VERSION_LARGE > 0x06070100
+						       const Handle(IntTools_Context)& aCtx
+#else
+						       const Handle(BOPInt_Context)& aCtx
+#endif
+						       ) ;
 
 //
   Standard_EXPORT

@@ -18,6 +18,7 @@
 //
 
 #include "GEOM_VertexSource.h" 
+#include "OCC2VTK_internal.h"
  
 #include <vtkObjectFactory.h> 
 
@@ -34,20 +35,29 @@
 vtkStandardNewMacro(GEOM_VertexSource);
  
 GEOM_VertexSource::GEOM_VertexSource() 
-{ 
+{
+  myData = new VertexSourceInternal;
   this->SetNumberOfInputPorts(0);
-} 
+}
  
 GEOM_VertexSource::~GEOM_VertexSource() 
-{ 
-} 
+{
+  delete myData;
+}
  
 void  
 GEOM_VertexSource:: 
 AddVertex(const TopoDS_Vertex& theVertex) 
-{ 
-  myVertexSet.Add(theVertex); 
-} 
+{
+  myData->myVertexSet.Add(theVertex); 
+}
+
+void
+GEOM_VertexSource:: 
+Clear()
+{
+  myData->myVertexSet.Clear();
+}
  
 int GEOM_VertexSource::RequestData(vtkInformation *vtkNotUsed(request),
                                    vtkInformationVector **vtkNotUsed(inputVector),
@@ -62,7 +72,7 @@ int GEOM_VertexSource::RequestData(vtkInformation *vtkNotUsed(request),
   aPolyData->SetPoints(aPts);
   aPts->Delete();
 
-  TVertexSet::Iterator anIter(myVertexSet);
+  TVertexSet::Iterator anIter(myData->myVertexSet);
   for(; anIter.More(); anIter.Next()){
     const TopoDS_Vertex& aVertex = anIter.Value();
     OCC2VTK(aVertex,aPolyData,aPts);

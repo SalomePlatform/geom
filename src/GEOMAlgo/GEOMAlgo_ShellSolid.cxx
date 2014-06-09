@@ -27,6 +27,8 @@
 //
 #include <GEOMAlgo_ShellSolid.hxx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <Standard_Failure.hxx>
 
 #include <gp_Pnt2d.hxx>
@@ -50,7 +52,11 @@
 
 #include <BOPCol_DataMapOfShapeListOfShape.hxx>
 #include <BOPCol_ListOfShape.hxx>
+#if OCC_VERSION_LARGE > 0x06070100
+#include <IntTools_Context.hxx>
+#else
 #include <BOPInt_Context.hxx>
+#endif
 #include <BOPDS_DS.hxx>
 #include <BOPAlgo_Builder.hxx>
 
@@ -231,7 +237,11 @@ void GEOMAlgo_ShellSolid::Perform()
       return;
     }
     //
+#if OCC_VERSION_LARGE > 0x06070100
+    Handle(IntTools_Context) aCtx=myDSFiller->Context();
+#else
     Handle(BOPInt_Context) aCtx=myDSFiller->Context();
+#endif
     const BOPDS_IndexRange& aRange=pDS->Range(iRank);
     aRange.Indices(iBeg, iEnd);
     const TopoDS_Solid& aSolid=(!iRank) ? *((TopoDS_Solid*)&aTool) : *((TopoDS_Solid*)&aObj);

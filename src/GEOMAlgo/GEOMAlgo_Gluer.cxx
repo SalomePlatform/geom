@@ -27,6 +27,7 @@
 //
 #include <GEOMAlgo_Gluer.hxx>
 
+#include <Basics_OCCTVersion.hxx>
 
 #include <NCollection_UBTreeFiller.hxx>
 
@@ -77,7 +78,11 @@
 #include <BRepBndLib.hxx>
 //
 #include <IntTools_Tools.hxx>
+#if OCC_VERSION_LARGE > 0x06070100
+#include <IntTools_Context.hxx>
+#else
 #include <BOPInt_Context.hxx>
+#endif
 #include <BOPTools_AlgoTools.hxx>
 #include <BOPTools_AlgoTools3D.hxx>
 #include <BOPTools_AlgoTools2D.hxx>

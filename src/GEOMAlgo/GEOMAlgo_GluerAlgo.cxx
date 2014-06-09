@@ -25,7 +25,11 @@
 //              <peter@PREFEX>
 //
 #include <GEOMAlgo_GluerAlgo.hxx>
+#if OCC_VERSION_LARGE > 0x06070100
+#include <IntTools_Context.hxx>
+#else
 #include <BOPInt_Context.hxx>
+#endif
 
 
 //=======================================================================
@@ -97,7 +101,11 @@ Standard_Boolean GEOMAlgo_GluerAlgo::CheckGeometry() const
 //function : SetContext
 //purpose  :
 //=======================================================================
+#if OCC_VERSION_LARGE > 0x06070100
+void GEOMAlgo_GluerAlgo::SetContext(const Handle(IntTools_Context)& theContext)
+#else
 void GEOMAlgo_GluerAlgo::SetContext(const Handle(BOPInt_Context)& theContext)
+#endif
 {
   myContext=theContext;
 }
@@ -105,7 +113,11 @@ void GEOMAlgo_GluerAlgo::SetContext(const Handle(BOPInt_Context)& theContext)
 //function : Context
 //purpose  :
 //=======================================================================
+#if OCC_VERSION_LARGE > 0x06070100
+const Handle(IntTools_Context)& GEOMAlgo_GluerAlgo::Context()
+#else
 const Handle(BOPInt_Context)& GEOMAlgo_GluerAlgo::Context()
+#endif
 {
   return myContext;
 }
@@ -141,6 +153,10 @@ void GEOMAlgo_GluerAlgo::Clear()
 void GEOMAlgo_GluerAlgo::Perform()
 {
   if (myContext.IsNull()) {
+#if OCC_VERSION_LARGE > 0x06070100
+    myContext=new IntTools_Context;
+#else
     myContext=new BOPInt_Context;
+#endif
   }
 }

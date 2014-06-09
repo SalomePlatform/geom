@@ -172,16 +172,28 @@ namespace
       const uchar* aImageBytes = anImage.bits();
       
       for ( int aLine = anImage.height() - 1; aLine >= 0; --aLine ) {
-	Image_ColorBGRA* aPixmapBytes = aPixmap->EditData<Image_ColorBGRA>().ChangeRow(aLine);
-	
+#if OCC_VERSION_LARGE > 0x06070100
 	// convert pixels from ARGB to renderer-compatible RGBA
 	for ( int aByte = 0; aByte < anImage.width(); ++aByte ) {
+	  Image_ColorBGRA& aPixmapBytes = aPixmap->ChangeValue<Image_ColorBGRA>(aLine, aByte);
+	
+	  aPixmapBytes.b() = (Standard_Byte) *aImageBytes++;
+	  aPixmapBytes.g() = (Standard_Byte) *aImageBytes++;
+	  aPixmapBytes.r() = (Standard_Byte) *aImageBytes++;
+	  aPixmapBytes.a() = (Standard_Byte) *aImageBytes++;
+	}
+#else
+	Image_ColorBGRA* aPixmapBytes = aPixmap->EditData<Image_ColorBGRA>().ChangeRow(aLine);
+	
+        // convert pixels from ARGB to renderer-compatible RGBA
+        for ( int aByte = 0; aByte < anImage.width(); ++aByte ) {
 	  aPixmapBytes->b() = (Standard_Byte) *aImageBytes++;
 	  aPixmapBytes->g() = (Standard_Byte) *aImageBytes++;
 	  aPixmapBytes->r() = (Standard_Byte) *aImageBytes++;
 	  aPixmapBytes->a() = (Standard_Byte) *aImageBytes++;
 	  aPixmapBytes++;
-	}
+        }
+#endif
       }
     }
     return aPixmap;

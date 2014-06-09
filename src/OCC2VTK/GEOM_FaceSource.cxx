@@ -18,6 +18,7 @@
 //
 
 #include "GEOM_FaceSource.h" 
+#include "OCC2VTK_internal.h"
  
 #include <vtkObjectFactory.h> 
 
@@ -29,19 +30,35 @@
  
 GEOM_FaceSource::GEOM_FaceSource() 
 { 
+  myData = new FaceSourceInternal;
   this->SetNumberOfInputPorts(0);
-} 
+}
  
 GEOM_FaceSource::~GEOM_FaceSource() 
 { 
-} 
+  delete myData;
+}
  
 void  
 GEOM_FaceSource:: 
 AddFace(const TopoDS_Face& theFace) 
 { 
-  myFaceSet.Add(theFace); 
+  myData->myFaceSet.Add(theFace); 
 } 
+
+void
+GEOM_FaceSource:: 
+Clear()
+{
+  myData->myFaceSet.Clear();
+} 
+
+bool
+GEOM_FaceSource:: 
+IsEmpty()
+{
+  return myData->myFaceSet.IsEmpty();
+}
  
 void 
 GEOM_FaceSource::
