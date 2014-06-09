@@ -13,7 +13,7 @@ Tree" view window (only one view is supported) and display a
 dependency tree for the selected object or objects (multiple 
 selection is supported). Also user can rebuild the tree if to select 
 some object(s) right in the "Dependency Tree" view and call 
-"Rebuild the tree" popup item.
+"Rebuild the tree" popup menu item.
 
 \image html tree_example.png
 
@@ -27,7 +27,7 @@ Tree nodes in the Dependency Viewer are named according to the study
 names of the corresponding objects. 
 
 Non-published objects are shown in the tree as "unpublished" and 
-not colored in any color.
+colored in special color.
 
 All nodes have the fixed size, so the long names are cut and shown 
 with ellipsis; full name of the object can be seen in the tooltip 
