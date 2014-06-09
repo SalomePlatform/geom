@@ -422,9 +422,10 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
      break;
   case GEOMOp::OpSortChildren:
     OnSortChildren();
+    break;
   case GEOMOp::OpShowDependencyTree:
     OnShowDependencyTree();
-     break;
+    break;
   default:
     SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;
