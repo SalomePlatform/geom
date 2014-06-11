@@ -36,6 +36,7 @@
 // Qt includes
 #include <QApplication>
 #include <QWidgetAction>
+#include <QWheelEvent>
 
 DependencyTree_View::DependencyTree_View( QWidget* theParent )
 :GraphicsView_ViewPort( theParent ),
@@ -154,6 +155,23 @@ void DependencyTree_View::mouseMoveEvent( QMouseEvent *event )
     if( DependencyTree_Arrow* arrow = myArrows[ i->first ] )
       arrow->update();
   }
+}
+
+//=================================================================================
+// function : wheelEvent()
+// purpose  : add zoom action when wheel is spinning
+//=================================================================================
+void DependencyTree_View::wheelEvent( QWheelEvent* event )
+{
+  int inc = 10; // zoom coefficient
+  double cx = width() / 2;
+  double cy = height() / 2;
+  if( event->delta() > 0 )
+    zoom( cx, cy, cx + inc, cy + inc );
+  else
+    zoom( cx, cy, cx - inc, cy - inc );
+
+  QGraphicsView::wheelEvent( event );
 }
 
 //=================================================================================

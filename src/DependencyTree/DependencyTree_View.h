@@ -54,7 +54,8 @@ public:
   void                    init( GraphicsView_ViewFrame* );
   void                    updateModel( bool = true, bool = true );
 
-  void                    mouseMoveEvent(QMouseEvent *event);
+  void                    mouseMoveEvent(QMouseEvent* event);
+  void                    wheelEvent( QWheelEvent* event );
 
   QString                 getViewName() const;
   int                     getStudyId() const;
