@@ -59,6 +59,7 @@ void GEOM_Operation::startOperation()
   if ( !myIOperation->_is_nil() ) {
     try {
       myIOperation->StartOperation();
+      setState( Running );
     }
     catch ( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools:: QtCatchCorbaException( e );
@@ -74,9 +75,13 @@ void GEOM_Operation::commitOperation()
 {
   SUIT_Operation::commitOperation();
 
+  if ( state() != Running )
+    return;
+  
   if ( !myIOperation->_is_nil() ) {
     try {
       myIOperation->FinishOperation();
+      setState( Waiting );
     }
     catch ( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools:: QtCatchCorbaException( e );
