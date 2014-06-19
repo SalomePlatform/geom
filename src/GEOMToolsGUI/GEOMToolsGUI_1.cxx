@@ -34,6 +34,7 @@
 #include "GEOMToolsGUI_PublishDlg.h"
 #include "GEOMToolsGUI_MaterialPropertiesDlg.h"
 #include "GEOMToolsGUI_LineWidthDlg.h"
+#include "GEOMToolsGUI_ReduceStudyDlg.h"
 #include <Material_Model.h>
 
 #include <GEOM_VTKPropertyMaterial.hxx>
@@ -898,4 +899,28 @@ void GEOMToolsGUI::OnShowDependencyTree()
         svm->getActiveView()->setFocus();
         view->updateModel();
       }
+}
+
+void GEOMToolsGUI::OnReduceStudy()
+{
+  GEOM::string_array_var objectsEntry = new GEOM::string_array();
+  SALOME_ListIO mainObjects;
+  int iter = 0;
+
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+  app->selectionMgr()->selectedObjects( mainObjects );
+  // create a list of selected object entry
+  objectsEntry->length( mainObjects.Extent() );
+  for ( SALOME_ListIteratorOfListIO It( mainObjects ); It.More(); It.Next(), iter++ ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    if( !io->hasEntry() )
+      continue;
+    GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
+    geomObject = GEOMBase::ConvertIOinGEOMObject( io );
+    QString entry = geomObject->GetEntry();
+    objectsEntry[ iter ] = entry.toLatin1().constData();
+  }
+  GEOMToolsGUI_ReduceStudyDlg dlg( objectsEntry, SUIT_Session::session()->activeApplication()->desktop() );
+  dlg.exec();
 }

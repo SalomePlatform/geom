@@ -74,6 +74,7 @@ SET(GEOMToolsGUI_HEADERS
   GEOMToolsGUI_PublishDlg.h
   GEOMToolsGUI_MaterialPropertiesDlg.h
   GEOMToolsGUI_LineWidthDlg.h
+  GEOMToolsGUI_ReduceStudyDlg.h
   )
 
 # header files / to be processed by moc
@@ -86,6 +87,7 @@ SET(_moc_HEADERS
   GEOMToolsGUI_PublishDlg.h
   GEOMToolsGUI_MaterialPropertiesDlg.h
   GEOMToolsGUI_LineWidthDlg.h
+  GEOMToolsGUI_ReduceStudyDlg.h
   )
 
 # --- sources ---
@@ -104,6 +106,7 @@ SET(GEOMToolsGUI_SOURCES
   GEOMToolsGUI_PublishDlg.cxx
   GEOMToolsGUI_MaterialPropertiesDlg.cxx
   GEOMToolsGUI_LineWidthDlg.cxx
+  GEOMToolsGUI_ReduceStudyDlg.cxx
   ${_moc_SOURCES}
   )
 

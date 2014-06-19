@@ -4765,6 +4765,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation type="unfinished">Show dependency tree</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_REDUCE_STUDY</source>
+        <translation type="unfinished">Reduce study</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
         <translation>Afficher les cotations </translation>
     </message>
@@ -6883,6 +6887,49 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_PUBLISH_CLOSE_BTN</source>
         <translation>P&amp;ublier et fermer</translation>
+    </message>
+</context>
+<context>
+    <name>GEOMToolsGUI_ReduceStudyDlg</name>
+    <message>
+        <source>GEOM_REDUCE_STUDY_TITLE</source>
+        <translation type="unfinished">Reduce study</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
+        <translation type="unfinished">Objects to be kept</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
+        <translation type="unfinished">Objects to be removed</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_NAME</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_OPTIONS</source>
+        <translation type="unfinished">Options</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_UNPUB_INTERMEDIATE</source>
+        <translation type="unfinished">Unpublish intermediate objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_INTERMEDIATE</source>
+        <translation type="unfinished">Remove intermediate objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEEP_SUB_OBJECTS</source>
+        <translation type="unfinished">Keep sub-objects in result</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
+        <translation type="unfinished">Remove empty folders</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
+        <translation type="unfinished">Soft removal</translation>
     </message>
 </context>
 <context>
