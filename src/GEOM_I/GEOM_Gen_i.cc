@@ -36,7 +36,6 @@
 #include "Utils_ExceptHandlers.hxx"
 #include "utilities.h"
 
-#include "GEOM_Object_i.hh"
 #include "GEOM_Object.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"
@@ -62,6 +61,7 @@
 #include <OSD.hxx>
 #include <TDataStd_ChildNodeIterator.hxx>
 #include <TDocStd_Owner.hxx>
+#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
 
 #include <SALOMEDS_Tool.hxx>
 #include <SALOMEDS_wrap.hxx>
@@ -3194,6 +3194,172 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
         }
       }
     }
+  }
+}
+
+//==============================================================================
+// function : GetEntriesToCleanStudy
+// purpose  : Fills 3 lists that is used to clean study of redundant objects
+//==============================================================================
+void GEOM_Gen_i::GetEntriesToCleanStudy(SALOMEDS::Study_ptr theStudy,
+					GEOM::string_array& theSelectedEntries,
+					GEOM::string_array& theParentEntries,
+					GEOM::string_array& theSubEntries,
+					GEOM::string_array& theOtherEntries)
+{
+  std::set<std::string> aSelected, aParents, aChildren, anOthers;
+  for ( int i = 0; i < theSelectedEntries.length(); i++ ) {
+    aSelected.insert( CORBA::string_dup( theSelectedEntries[i] ) );
+  }
+
+  Handle(TDocStd_Document) aDoc = GEOM_Engine::GetEngine()->GetDocument(theStudy->StudyId());
+  Handle(TDataStd_TreeNode) aNode, aRoot;
+  Handle(GEOM_Function) aFunction;
+  if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
+    // go through the whole OCAF tree
+    TDF_Label aLabel;
+    std::string anEntry;
+    TCollection_AsciiString anAsciiEntry;
+    TDataStd_ChildNodeIterator Itr( aRoot );
+    for (; Itr.More(); Itr.Next()) {
+      aNode = Itr.Value();
+      aFunction = GEOM_Function::GetFunction(aNode->Label());
+      if (aFunction.IsNull()) {
+        continue;
+      }
+      aLabel = aFunction->GetOwnerEntry();
+      if(aLabel.IsNull())
+        continue;
+      TDF_Tool::Entry(aLabel, anAsciiEntry);
+      anEntry = anAsciiEntry.ToCString();
+      GEOM::GEOM_BaseObject_var geomObj = GetObject( theStudy->StudyId(), anEntry.c_str() );
+      if( CORBA::is_nil( geomObj ) )
+        continue;
+
+      if ( aSelected.count( anEntry ) > 0 &&
+           aParents.count( anEntry ) == 0 ) {
+        getParentDependencies( geomObj, aSelected, aParents, aChildren, anOthers );
+      } else if ( aParents.count( anEntry ) == 0 && 
+                  aChildren.count( anEntry ) == 0 ) {
+        anOthers.insert( geomObj->GetEntry() );
+      }
+    }
+
+    std::set<std::string>::iterator it;
+    std::set<std::string>::iterator foundIt;
+    TCollection_AsciiString stringIOR;
+    GEOM::GEOM_Object_var geomObj;
+
+    // filling list of sub-objects
+    for ( it = aSelected.begin(); it != aSelected.end(); ++it ) {
+      Handle(GEOM_BaseObject) handle_object = _impl->GetObject( theStudy->StudyId(), (*it).c_str(), false);
+      if ( handle_object.IsNull() )
+        continue;
+
+      Handle(GEOM_Function) aShapeFun = handle_object->GetFunction(1);
+      if ( aShapeFun.IsNull() || !aShapeFun->HasSubShapeReferences() )
+        continue;
+
+      const TDataStd_ListOfExtendedString& aListEntries = aShapeFun->GetSubShapeReferences();
+      if ( aListEntries.IsEmpty() )
+        continue;
+
+      TDataStd_ListIteratorOfListOfExtendedString anIt (aListEntries);
+      for ( ; anIt.More(); anIt.Next() ) {
+        TCollection_ExtendedString aSubEntry = anIt.Value();
+        Standard_Integer aStrLen = aSubEntry.LengthOfCString();
+        char* aSubEntryStr = new char[aStrLen+1];
+        aSubEntry.ToUTF8CString( aSubEntryStr );
+        foundIt = aParents.find( aSubEntryStr );
+        if ( foundIt == aParents.end() ) // add to sub-objects if it is not in parents list
+          aChildren.insert( aSubEntryStr );
+      }
+    }
+
+    // if some selected object is not a main shape,
+    // we move it's main shapes into 'selected' list, 
+    // because they could not be modified anyhow.
+    std::set<std::string> aToBeInSelected;
+    for ( it = aSelected.begin(); it != aSelected.end(); ++it ) {
+      Handle(GEOM_BaseObject) handle_object = _impl->GetObject( theStudy->StudyId(), (*it).c_str(), false);
+      if ( handle_object.IsNull() )
+        continue;
+
+      stringIOR = handle_object->GetIOR();
+      if ( !stringIOR.Length() > 1 )
+        continue;
+
+      geomObj = GetIORFromString( stringIOR.ToCString() );
+      while ( !geomObj->IsMainShape() ) {
+        geomObj = geomObj->GetMainShape();
+        anEntry = geomObj->GetEntry();
+
+        foundIt = aParents.find( anEntry );
+        if ( foundIt != aParents.end() )
+          aParents.erase( foundIt );
+
+        foundIt = aChildren.find( anEntry );
+        if ( foundIt != aChildren.end() )
+          aChildren.erase( foundIt );
+
+        foundIt = anOthers.find( anEntry );
+        if ( foundIt != anOthers.end() )
+          anOthers.erase( foundIt );
+
+        aToBeInSelected.insert( anEntry );
+      }
+    }
+    aSelected.insert( aToBeInSelected.begin(), aToBeInSelected.end() );
+
+    // fill the CORBA arrays with values from sets
+    int i;
+    theSelectedEntries.length( aSelected.size() );
+    for ( i = 0, it = aSelected.begin(); it != aSelected.end(); ++it, i++ )
+      theSelectedEntries[i]  = CORBA::string_dup( (*it).c_str() );
+    theParentEntries.length( aParents.size() );
+    for ( i = 0, it = aParents.begin(); it != aParents.end(); ++it, i++ )
+      theParentEntries[i]  = CORBA::string_dup( (*it).c_str() );
+    theSubEntries.length( aChildren.size() );
+    for ( i = 0, it = aChildren.begin(); it != aChildren.end(); ++it, i++ )
+      theSubEntries[i]  = CORBA::string_dup( (*it).c_str() );
+    theOtherEntries.length( anOthers.size() );
+    for ( i = 0, it = anOthers.begin(); it != anOthers.end(); ++it, i++ )
+      theOtherEntries[i]  = CORBA::string_dup( (*it).c_str() );
+  }
+}
+
+void GEOM_Gen_i::getParentDependencies(GEOM::GEOM_BaseObject_ptr geomObj,
+				       std::set<std::string>& aSelected,
+				       std::set<std::string>& aParents,
+				       std::set<std::string>& aChildren,
+				       std::set<std::string>& anOthers)
+{
+  std::string anEntry = geomObj->GetEntry();
+  if ( aSelected.count( anEntry ) == 0 ) {
+    aParents.insert( anEntry );
+    std::set<std::string>::iterator it;
+    it = aChildren.find( anEntry );
+    if ( it != aChildren.end() )
+      aChildren.erase( it );
+    it = anOthers.find( anEntry );
+    if ( it != anOthers.end() )
+      anOthers.erase( it );
+  }
+  // get dependencies for current object in the tree
+  GEOM::ListOfGBO_var depList = geomObj->GetDependency();
+  if( depList->length() == 0 )
+    return;
+  // go through dependencies of current object to check whether it depends on the given object
+  std::string aDepEntry;
+  for( int i = 0; i < depList->length(); i++ ) {
+    aDepEntry = depList[i]->GetEntry();
+    if ( depList[i]->_is_nil() ||
+	 aDepEntry == anEntry ||             // skip self-depending
+	 aSelected.count( aDepEntry ) > 0 || // skip selected objects
+	 aParents.count( aDepEntry ) > 0     // skip already processed objects
+	 )
+      continue;
+    getParentDependencies( depList[i], aSelected, aParents, aChildren, anOthers );
   }
 }
 

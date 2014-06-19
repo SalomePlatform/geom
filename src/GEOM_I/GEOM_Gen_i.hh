@@ -324,6 +324,15 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   // SIMAN-related functions (check out/check in) : get modified data
   virtual Engines::ListOfData* getModifiedData(CORBA::Long studyId);
 
+  /*! \brief Fills 3 lists that is used to clean study of redundant objects.
+   *         To be used from GUI.
+   */
+  void GetEntriesToCleanStudy(SALOMEDS::Study_ptr theStudy,
+			      GEOM::string_array& theSelectedEntries,
+			      GEOM::string_array& theParentEntries,
+			      GEOM::string_array& theSubEntries,
+			      GEOM::string_array& theOtherEntries);
+
   //-----------------------------------------------------------------------//
   // Internal methods                                                      //
   //-----------------------------------------------------------------------//
@@ -381,6 +390,12 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                               GEOMUtils::LevelsList &downLevelList, 
 			      std::map< std::string, std::set<std::string> > &passedEntries,
                               int level = 0 );
+
+  void getParentDependencies(GEOM::GEOM_BaseObject_ptr gbo,
+			     std::set<std::string>& aSelected,
+			     std::set<std::string>& aParents, 
+			     std::set<std::string>& aChildren, 
+			     std::set<std::string>& anOthers);
 
  private:
 

@@ -5100,6 +5100,24 @@ module GEOM
     SALOMEDS::TMPFile GetDependencyTree(in SALOMEDS::Study theStudy,
 					in string_array theListOfEntries);
 
+    /*!
+     * \brief Fills 3 lists that is used to clean study of redundant objects:
+     *  - dependencies of the given objects from other ones;
+     *  - children of the given objects;
+     *  - all other objects in study.
+     * \param theStudy The study in which the object was published
+     * \param theSelectedEntries List of GEOM object entries in OCAF tree
+     * \param theParentEntries List of GEOM object entries on which the given objects depend
+     * \param theSubEntries Children entries list of the given objects
+     * \param theOtherEntries List of GEOM object entries which are in the study, but not in parents and children lists
+     * \note This method is supposed to be used by GUI only.
+     */
+    void GetEntriesToCleanStudy(in SALOMEDS::Study theStudy,
+				inout string_array theSelectedEntries,
+				inout string_array theParentEntries,
+				inout string_array theSubEntries,
+				inout string_array theOtherEntries);
+
   };
 };
 
