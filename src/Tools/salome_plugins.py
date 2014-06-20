@@ -25,6 +25,7 @@ def t_shape_fluid(context):
     import t_shape_builder
     import t_shape_dialog
     import xalome
+    from PyQt4.QtGui import QMessageBox
     activeStudy = context.study
     
     dialog = t_shape_dialog.TShapeDialog()
@@ -33,10 +34,12 @@ def t_shape_fluid(context):
     # closed using the Ok button, then the data are requested from the
     # gui and used to create the shape of the tube.
     dialog.exec_()
-    r1, r2, h1, h2 = dialog.getData()
-    shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2)
-    entry = xalome.addToStudy(activeStudy, shape, "T_shape_fluid" )
-    xalome.displayShape(entry)
+    if dialog.wasOk():
+      r1, r2, h1, h2 = dialog.getData()
+      QMessageBox.about(None, "Building in progress", "building shape, please be patient")
+      shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2)
+      entry = xalome.addToStudy(activeStudy, shape, "T_shape_fluid" )
+      xalome.displayShape(entry)
     #if dialog.wasOk():
         #radius, length, width = dialog.getData()
         #shape = tubebuilder.createGeometry(activeStudy, radius, length, width)

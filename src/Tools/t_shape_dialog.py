@@ -33,6 +33,7 @@ class TShapeDialog(QtGui.QDialog):
       self.ui = Ui_Dialog()
       self.ui.setupUi(self)
       self.show()
+      self._wasOk = False
    
     def accept(self):
       print "DATA ACCEPTED"
@@ -66,13 +67,12 @@ class TShapeDialog(QtGui.QDialog):
         ## We should test here the validity of values
         #QtGui.QDialog.accept(self)
 
-    #def reject(self):
-        #'''Callback function when dialog is rejected (click Cancel)'''
-        #self._wasOk = False
-        #QtGui.QDialog.reject(self)
+    def reject(self):
+        self._wasOk = False
+        QtGui.QDialog.reject(self)
 
-    #def wasOk(self):
-        #return self._wasOk
+    def wasOk(self):
+        return self._wasOk
 
     #def setData(self):
       #pass
