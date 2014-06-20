@@ -336,12 +336,58 @@ void GEOMToolsGUI_ReduceStudyDlg::checkVisibleIcon( QTreeWidget* theWidget )
 
 void GEOMToolsGUI_ReduceStudyDlg::unpublishObjects( std::set<std::string>& theObjects )
 {
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
+  _PTR(Study) aStudy = appStudy->studyDS();
+  _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
+  std::string objectEntry, studyEntry;
+  std::set<std::string>::iterator it;
+  for( it = theObjects.begin(); it != theObjects.end(); ++it ) {
+    objectEntry = *it;
+    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( aStudy->StudyId(), objectEntry.c_str() );
+    studyEntry = GeomBaseObject->GetStudyEntry();
+    if ( studyEntry == "" )
+      continue;
+    _PTR(SObject) obj ( aStudy->FindObjectID( studyEntry.c_str() ) );
+    _PTR(GenericAttribute) anAttr;
+    if ( obj ) {
+      _PTR(AttributeDrawable) aDrw = aStudyBuilder->FindOrCreateAttribute( obj, "AttributeDrawable" );
+      aDrw->SetDrawable( false );
+      myDisplayer.EraseWithChildren( new SALOME_InteractiveObject( studyEntry.c_str(), "GEOM", "TEMP_IO" ) );
+    } // if ( obj )
+  } // iterator
 
+  myApp->updateObjectBrowser( false );
+  myApp->updateActions();
 }
 
 void GEOMToolsGUI_ReduceStudyDlg::removeObjects( std::set<std::string>& theObjects )
 {
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
+  _PTR(Study) aStudy = appStudy->studyDS();
+  _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
+  _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
+  std::string objectEntry, studyEntry;
+  std::set<std::string>::iterator it;
+  for( it = theObjects.begin(); it != theObjects.end(); ++it ) {
+    objectEntry = *it;
+    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( aStudy->StudyId(), objectEntry.c_str() );
+    studyEntry = GeomBaseObject->GetStudyEntry();
+    if ( studyEntry == "" )
+      continue;
+    _PTR(SObject) obj ( aStudy->FindObjectID( studyEntry.c_str() ) );
+    if ( obj ) {
+      //Remove visual properties of the object
+      appStudy->removeObjectFromAll(obj->GetID().c_str());
+      // remove objects from study
+      aStudyBuilder->RemoveObjectWithChildren( obj );
+      // remove object from use case tree
+      aUseCaseBuilder->Remove( obj );
+      myDisplayer.EraseWithChildren( new SALOME_InteractiveObject( studyEntry.c_str(), "GEOM", "TEMP_IO" ) );
+    } // if ( obj )
+  } // iterator
 
+  myApp->updateObjectBrowser( false );
+  myApp->updateActions();
 }
 
 //=================================================================================
