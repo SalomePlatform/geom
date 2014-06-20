@@ -37,8 +37,8 @@ class GEOMToolsGUI_TreeWidgetItem : public QTreeWidgetItem
 {
 
 public:
-  GEOMToolsGUI_TreeWidgetItem( QTreeWidget*, const QStringList&, char*, bool, int = Type );
-  GEOMToolsGUI_TreeWidgetItem( QTreeWidgetItem*, const QStringList&, char*, bool, int = Type );
+  GEOMToolsGUI_TreeWidgetItem( QTreeWidget*, const QStringList&, char*, int = Type );
+  GEOMToolsGUI_TreeWidgetItem( QTreeWidgetItem*, const QStringList&, char*, int = Type );
   ~GEOMToolsGUI_TreeWidgetItem();
 
   bool isVisible();
@@ -47,8 +47,9 @@ public:
   char* getStudyEntry() const;
 
 private:
-  char* myStudyEntry;
   bool myVisible;
+  char* myStudyEntry;
+
 };
 
 class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_ReduceStudyDlg : public QDialog
@@ -60,57 +61,56 @@ public:
   ~GEOMToolsGUI_ReduceStudyDlg();
 
 private slots:
+  void                          onItemClicked(QTreeWidgetItem*, int );
+  void                          onHeaderClicked( int );
 
-  void clickOnOk();
-  void clickOnCancel();
-  void clickOnHelp();
+  void                          selectionChanged();
 
-  void onItemClicked(QTreeWidgetItem*, int );
-  void onHeaderClicked( int );
+  void                          update();
 
-  void selectionChanged();
-
-  void update();
+  void                          clickOnOk();
+  void                          clickOnHelp();
 
 private:
+  void                          init( const std::set<std::string>& theObjectEntries );
+  std::set<std::string>         getSelectedObjects() const;
 
-  void init( const std::set<std::string>& theObjectEntries );
-  void createTreeWidget( QTreeWidget* );
-  QGroupBox* createButtonGroup( QButtonGroup* );
-  void checkVisibleIcon( QTreeWidget* );
-  void sortObjects( QTreeWidget*, std::set<std::string>& );
-  GEOMToolsGUI_TreeWidgetItem* addSubObject( QTreeWidget*, std::set<std::string>&, GEOM::GEOM_Object_var );
-  GEOMToolsGUI_TreeWidgetItem* findObjectInTree( QTreeWidget*, GEOM::GEOM_Object_var );
+  void                          createTreeWidget( QTreeWidget* );
+  QGroupBox*                    createButtonGroup( QButtonGroup* );
 
-  void unpublishObjects( std::set<std::string>& );
-  void removeObjects( std::set<std::string>& );
+  void                          addObjectsToTree( QTreeWidget*, std::set<std::string>& );
+  GEOMToolsGUI_TreeWidgetItem*  addSubObject( QTreeWidget*, std::set<std::string>&, GEOM::GEOM_Object_var );
+  GEOMToolsGUI_TreeWidgetItem*  findObjectInTree( QTreeWidget*, GEOM::GEOM_Object_var );
 
-  std::set<std::string> getSelectedObjects() const;
+  void                          checkVisibleIcon( QTreeWidget* );
 
-  QTreeWidget* myTreeKeptObjects;
-  QTreeWidget* myTreeRemoveObjects;
+  void                          unpublishObjects( std::set<std::string>& );
+  void                          removeObjects( std::set<std::string>& );
 
-  QButtonGroup* myGroupIntermediates;
-  QButtonGroup* myGroupSubObjects;
+  QTreeWidget*                  myTreeKeptObjects;
+  QTreeWidget*                  myTreeRemoveObjects;
+  std::map<QTreeWidget*,bool>   myMapTreeSelectAll;
 
-  QCheckBox* myCBRemoveEmptyFolder;
-  QCheckBox* myCBSoftRemoval;
+  QButtonGroup*                 myGroupIntermediates;
+  QButtonGroup*                 myGroupSubObjects;
 
-  std::set<std::string> myMainEntries;
+  QCheckBox*                    myCBRemoveEmptyFolder;
+  QCheckBox*                    myCBSoftRemoval;
 
-  QIcon myVisible;
-  QIcon myInvisible;
+  std::set<std::string>         myMainEntries;
 
-  GEOM_Displayer myDisplayer;
-  SalomeApp_Application* myApp;
-  SALOMEDS::Study_var myStudy;
+  std::set<std::string>         myKeptObjects;
+  std::set<std::string>         myRemovedObjects;
+  std::set<std::string>         myListParents;
+  std::set<std::string>         myListSubObjects;
 
-  std::set<std::string> myKeptObjects;
-  std::set<std::string> myRemovedObjects;
-  std::set<std::string> myListParents;
-  std::set<std::string> myListSubObjects;
+  QIcon                         myVisible;
+  QIcon                         myInvisible;
 
-  std::map<QTreeWidget*,bool> myMapTreeSelectAll;
+  GEOM_Displayer                myDisplayer;
+  SalomeApp_Application*        myApp;
+  SALOMEDS::Study_var           myStudy;
+
 };
 
 #endif

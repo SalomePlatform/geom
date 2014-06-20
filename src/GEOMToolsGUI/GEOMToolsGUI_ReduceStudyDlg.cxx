@@ -55,8 +55,6 @@ GEOMToolsGUI_ReduceStudyDlg::GEOMToolsGUI_ReduceStudyDlg( QWidget* parent )
 :QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint ),
 myDisplayer(NULL)
 {
-  setAttribute(Qt::WA_DeleteOnClose);
-
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   myVisible = QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_VISIBLE" ) ) );
   myInvisible = QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_INVISIBLE" ) ) );
@@ -68,6 +66,7 @@ myDisplayer(NULL)
   myDisplayer = GEOM_Displayer( study );
 
   setWindowTitle( tr( "GEOM_REDUCE_STUDY_TITLE" ) );
+  setAttribute(Qt::WA_DeleteOnClose);
 
   QGridLayout* topLayout = new QGridLayout( this );
   topLayout->setMargin( 11 ); topLayout->setSpacing( 6 );
@@ -135,11 +134,11 @@ myDisplayer(NULL)
   connect( myGroupSubObjects, SIGNAL( buttonClicked( int ) ), this, SLOT( update() ) );
 
   connect( buttonOk, SIGNAL( clicked() ), this, SLOT( clickOnOk() ) );
-  connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( clickOnCancel() ) );
+  connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
   connect( buttonHelp, SIGNAL( clicked() ), this, SLOT( clickOnHelp() ) );
 
-  connect( myApp->selectionMgr(),
-           SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
+  connect( myApp->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+           this, SLOT( selectionChanged() ) );
 
   init( getSelectedObjects() );
 }
@@ -160,57 +159,54 @@ void GEOMToolsGUI_ReduceStudyDlg::init( const std::set<std::string>& theObjectEn
 
   myMainEntries = theObjectEntries;
 
-  std::cout << "\n\n\n myMainEntries = " << myMainEntries.size() << std::endl;
-
-  GEOM::string_array_var selectedObjects = new GEOM::string_array();
+  GEOM::string_array_var keptObjects = new GEOM::string_array();
   int It = 0;
-  selectedObjects->length( theObjectEntries.size() );
+  keptObjects->length( theObjectEntries.size() );
   std::set<std::string>::iterator iter;
   for( iter=theObjectEntries.begin(); iter!=theObjectEntries.end(); ++iter, It++ )
-    selectedObjects[ It ] = (*iter).c_str();
+    keptObjects[ It ] = (*iter).c_str();
 
   GEOM::string_array_var parentsObjects = new GEOM::string_array();
   GEOM::string_array_var subObjects = new GEOM::string_array();
-  GEOM::string_array_var oters = new GEOM::string_array();
+  GEOM::string_array_var otherObjects = new GEOM::string_array();
 
+  GeometryGUI::GetGeomGen()->GetEntriesToCleanStudy( myStudy, keptObjects, parentsObjects,
+		                                             subObjects, otherObjects );
 
-////// PUT ALGORITHM HERE
-  GeometryGUI::GetGeomGen()->GetEntriesToCleanStudy( myStudy, selectedObjects,
-    parentsObjects, subObjects, oters );
-
-  for ( int i = 0; i < selectedObjects->length(); i++ )
-    myKeptObjects.insert( selectedObjects[i].in() );
-
+  for ( int i = 0; i < keptObjects->length(); i++ )
+    myKeptObjects.insert( keptObjects[i].in() );
+  for( int i = 0; i< otherObjects->length(); i++ )
+    myRemovedObjects.insert( otherObjects[i].in() );
   for( int i = 0; i< parentsObjects->length(); i++ )
     myListParents.insert( parentsObjects[i].in() );
-
   for( int i = 0; i< subObjects->length(); i++ )
     myListSubObjects.insert( subObjects[i].in() );
-
-  for( int i = 0; i< oters->length(); i++ )
-	  myRemovedObjects.insert( oters[i].in() );
-
-//  myParents.insert( "0:1:21" );
-//  myParents.insert( "0:1:17" );
-//  myParents.insert( "0:1:20" );
-//  myParents.insert( "0:1:13" );
-//  myParents.insert( "0:1:12" );
-//
-//  myListSubObjects.insert( "0:1:24" );
-//  myListSubObjects.insert( "0:1:28" );
-//  myListSubObjects.insert( "0:1:29" );
-//  myListSubObjects.insert( "0:1:34" );
-//
-//  myOthers.insert( "0:1:35" );
-//  myOthers.insert( "0:1:36" );
-//  myOthers.insert( "0:1:37" );
-//  myOthers.insert( "0:1:38" );
-//  myOthers.insert( "0:1:39" );
 
   update();
 
   checkVisibleIcon( myTreeKeptObjects );
   checkVisibleIcon( myTreeRemoveObjects );
+}
+
+std::set<std::string> GEOMToolsGUI_ReduceStudyDlg::getSelectedObjects() const
+{
+  std::set<std::string> objects;
+
+  SALOME_ListIO selected;
+  myApp->selectionMgr()->selectedObjects( selected );
+
+  for( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    if( !io->hasEntry() )
+      continue;
+    GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
+    geomObject = GEOMBase::ConvertIOinGEOMObject( io );
+    if( geomObject->_is_nil() )
+      continue;
+    QString entry = geomObject->GetEntry();
+    objects.insert( entry.toStdString().c_str() );
+  }
+  return objects;
 }
 
 void GEOMToolsGUI_ReduceStudyDlg::createTreeWidget( QTreeWidget* theTreeWidget )
@@ -251,14 +247,177 @@ QGroupBox* GEOMToolsGUI_ReduceStudyDlg::createButtonGroup( QButtonGroup* theButt
   return groupObjects;
 }
 
-void GEOMToolsGUI_ReduceStudyDlg::update()
+void GEOMToolsGUI_ReduceStudyDlg::addObjectsToTree( QTreeWidget* theWidget, std::set<std::string>& theObjects )
+{
+  std::set<std::string>::iterator it;
+  for( it = theObjects.begin(); it != theObjects.end(); ++it ) {
+    std::string objectEntry = *it;
+    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( myStudy->StudyId(), objectEntry.c_str() );
+    GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( GeomBaseObject );
+    QString studyEntry = GeomBaseObject->GetStudyEntry();
+    if( GeomObject->_is_nil() || studyEntry.isEmpty() )
+      continue;
+    addSubObject( theWidget, theObjects, GeomObject );
+  }
+}
+
+GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::addSubObject( QTreeWidget* theWidget,
+                                                                        std::set<std::string>& theObjects,
+                                                                        GEOM::GEOM_Object_var theObject )
+{
+  GEOMToolsGUI_TreeWidgetItem* item;
+  if( !theObject->IsMainShape() ) {
+    GEOMToolsGUI_TreeWidgetItem* parentItem = addSubObject( theWidget, theObjects, theObject->GetMainShape() );
+    item = findObjectInTree( theWidget, theObject );
+    if( !item )
+      item = new GEOMToolsGUI_TreeWidgetItem( parentItem, QStringList() << theObject->GetName(), theObject->GetStudyEntry() );
+  }
+  else {
+    item = findObjectInTree( theWidget, theObject );
+    if( !item )
+      item = new GEOMToolsGUI_TreeWidgetItem( theWidget, QStringList() << theObject->GetName(), theObject->GetStudyEntry() );
+  }
+
+  bool isDisplayed = false;
+  if( theObjects.find( theObject->GetEntry() ) != theObjects.end() ) {
+    isDisplayed = myDisplayer.IsDisplayed( theObject->GetStudyEntry() );
+    if ( isDisplayed )
+      item->setVisible( true, myVisible );
+    else
+      item->setVisible( false, myInvisible );
+
+    if( myMainEntries.find( theObject->GetEntry() ) != myMainEntries.end() ) {
+      QFont Textfont = item->font(0);
+      Textfont.setBold( true );
+      item->setFont( 0, Textfont );
+    }
+  }
+  else {
+    item->setFlags( item->flags() & ~Qt::ItemIsSelectable );
+    item->setTextColor( 0, QColor( 150, 150, 150 ) );
+  }
+  return item;
+}
+
+GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::findObjectInTree( QTreeWidget* theWidget, GEOM::GEOM_Object_var theObject )
+{
+  QTreeWidgetItemIterator it( theWidget );
+  while(*it) {
+    GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>(*it);
+    if( QString( item->getStudyEntry() ) == QString( theObject->GetStudyEntry() ) )
+      return item;
+    ++it;
+  }
+  return NULL;
+}
+
+void GEOMToolsGUI_ReduceStudyDlg::checkVisibleIcon( QTreeWidget* theWidget )
+{
+  bool isInvisible = false;
+  QTreeWidgetItemIterator it( theWidget );
+  while(*it) {
+    GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>(*it);
+    const char* entry = item->getStudyEntry();
+    if( item->flags() & Qt::ItemIsSelectable )
+      if( !item->isVisible() )
+        isInvisible = true;
+    ++it;
+  }
+
+  if( isInvisible ) {
+    theWidget->headerItem()->setIcon( 1, myInvisible );
+    myMapTreeSelectAll[ theWidget ] = false;
+  }
+  else {
+    theWidget->headerItem()->setIcon( 1, myVisible );
+    myMapTreeSelectAll[ theWidget ] = true;
+  }
+}
+
+void GEOMToolsGUI_ReduceStudyDlg::unpublishObjects( std::set<std::string>& theObjects )
 {
 
+}
+
+void GEOMToolsGUI_ReduceStudyDlg::removeObjects( std::set<std::string>& theObjects )
+{
+
+}
+
+//=================================================================================
+// function : onItemClicked()
+// purpose  : Called then treeItem clicked
+//=================================================================================
+void GEOMToolsGUI_ReduceStudyDlg::onItemClicked( QTreeWidgetItem* theItem, int theColumn )
+{
+  if( theColumn != 1 || !( theItem->flags() & Qt::ItemIsSelectable ) )
+    return;
+
+  GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>( theItem );
+
+  const char* entry = item->getStudyEntry();
+  Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry, "GEOM", "TEMP_IO" );
+  if( myDisplayer.IsDisplayed( entry ) ) {
+    item->setVisible( false, myInvisible );
+    myDisplayer.Erase( io );
+  }
+  else {
+    item->setVisible( true, myVisible );
+    myDisplayer.Display( io );
+  }
+  myDisplayer.UpdateViewer();
+  checkVisibleIcon( item->treeWidget() );
+}
+
+void GEOMToolsGUI_ReduceStudyDlg::onHeaderClicked( int theColumn )
+{
+  if( theColumn != 1 )
+    return;
+
+  QTreeWidget* treeWidget = dynamic_cast<QTreeWidget*>(sender()->parent());
+  if( myMapTreeSelectAll[ treeWidget ] ) {
+    myMapTreeSelectAll[ treeWidget ] = false;
+    treeWidget->headerItem()->setIcon( 1, myInvisible );
+    QTreeWidgetItemIterator it( treeWidget );
+    while(*it) {
+      GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>(*it);
+      if( ( item->flags() & Qt::ItemIsSelectable ) && item->isVisible() ) {
+        const char* entry = item->getStudyEntry();
+        item->setVisible( false, myInvisible );
+        myDisplayer.Erase( new SALOME_InteractiveObject( entry, "GEOM", "TEMP_IO" ) );
+      }
+      ++it;
+    }
+  }
+  else {
+    myMapTreeSelectAll[ treeWidget ] = true;
+    treeWidget->headerItem()->setIcon( 1, myVisible );
+    QTreeWidgetItemIterator it( treeWidget );
+    while(*it) {
+      GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>(*it);
+      if( ( item->flags() & Qt::ItemIsSelectable ) && !item->isVisible() ) {
+        const char* entry = item->getStudyEntry();
+        item->setVisible( true, myVisible );
+        myDisplayer.Display( new SALOME_InteractiveObject( entry, "GEOM", "TEMP_IO" ) );
+      }
+      ++it;
+    }
+  }
+  myDisplayer.UpdateViewer();
+}
+
+void GEOMToolsGUI_ReduceStudyDlg::selectionChanged()
+{
+  init( getSelectedObjects() );
+}
+
+void GEOMToolsGUI_ReduceStudyDlg::update()
+{
   myTreeKeptObjects->clear();
   myTreeRemoveObjects->clear();
 
-  std::set<std::string> keptObjects(myKeptObjects);
-  std::set<std::string> removeObjects(myRemovedObjects);
+  std::set<std::string> keptObjects( myKeptObjects );
+  std::set<std::string> removeObjects( myRemovedObjects );
 
   // Intermediate objects
   if( myGroupIntermediates->checkedId() == 2 ) { // remove
@@ -284,66 +443,54 @@ void GEOMToolsGUI_ReduceStudyDlg::update()
       keptObjects.insert( *iter );
   }
 
-  std::cout<<"\n\n\n Objects to be kept: ";
-  std::set<std::string>::iterator it_kept;
-  for ( it_kept=keptObjects.begin(); it_kept!=keptObjects.end(); ++it_kept)
-    std::cout << ", " << *it_kept;
-  std::cout << std::endl;
-
-  std::cout<<"\n\n\n Objects to be remove: ";
-  std::set<std::string>::iterator it_remove;
-  for ( it_remove=removeObjects.begin(); it_remove!=removeObjects.end(); ++it_remove)
-    std::cout << ", " << *it_remove;
-  std::cout << std::endl;
-
-  sortObjects( myTreeKeptObjects, keptObjects );
-  sortObjects( myTreeRemoveObjects, removeObjects );
+  addObjectsToTree( myTreeKeptObjects, keptObjects );
+  addObjectsToTree( myTreeRemoveObjects, removeObjects );
 
   myTreeKeptObjects->collapseAll();
   myTreeRemoveObjects->collapseAll();
 
 }
 
-void GEOMToolsGUI_ReduceStudyDlg::selectionChanged()
-{
-  init( getSelectedObjects() );
-}
-
 void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
 {
+  std::set<std::string> objectsToBeRemoved = myRemovedObjects;
+  std::set<std::string> objectsToBeUnpublished;
 
-  std::set<std::string> ObjectsToBeRemove = myRemovedObjects;
-  std::set<std::string> ObjectsToBeUnpublish;
-
-  if( myGroupIntermediates->checkedId() == 2 ) {
-    std::set<std::string>::iterator iter;
-    for( iter=myListParents.begin(); iter!=myListParents.end(); ++iter)
-      ObjectsToBeRemove.insert( *iter );
+  std::set<std::string>::iterator iter;
+  if( myGroupIntermediates->checkedId() == 1 ) { // unpublish
+    for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )
+    objectsToBeUnpublished.insert( *iter );
   }
-  else if( myGroupIntermediates->checkedId() == 1 ) {
-    std::set<std::string>::iterator iter;
-    for( iter=myListParents.begin(); iter!=myListParents.end(); ++iter)
-      ObjectsToBeUnpublish.insert( *iter );
+  if( myGroupIntermediates->checkedId() == 2 ) { // remove
+    for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )
+      objectsToBeRemoved.insert( *iter );
   }
 
-  if( myGroupSubObjects->checkedId() == 2 ) {
-    std::set<std::string>::iterator iter;
-    for( iter=myListSubObjects.begin(); iter!=myListSubObjects.end(); ++iter)
-      ObjectsToBeRemove.insert( *iter );
+  if( myGroupSubObjects->checkedId() == 1 ) { // unpublish
+    for( iter = myListSubObjects.begin(); iter != myListSubObjects.end(); ++iter )
+      objectsToBeUnpublished.insert( *iter );
   }
-  else if( myGroupSubObjects->checkedId() == 1 ) {
-    std::set<std::string>::iterator iter;
-    for( iter=myListSubObjects.begin(); iter!=myListSubObjects.end(); ++iter)
-      ObjectsToBeUnpublish.insert( *iter );
+  else if( myGroupSubObjects->checkedId() == 2 ) { // remove
+    for( iter = myListSubObjects.begin(); iter != myListSubObjects.end(); ++iter )
+      objectsToBeRemoved.insert( *iter );
   }
 
-  unpublishObjects( ObjectsToBeUnpublish );
-  removeObjects( ObjectsToBeRemove );
+  if( myCBSoftRemoval->isChecked() ) {
+    for( iter = objectsToBeRemoved.begin(); iter != objectsToBeRemoved.end(); ++iter )
+      objectsToBeUnpublished.insert( *iter );
+    unpublishObjects( objectsToBeUnpublished );
+  }
+  else {
+    unpublishObjects( objectsToBeUnpublished );
+    removeObjects( objectsToBeRemoved );
+  }
+
+  accept();
 
 
 //  std::cout<< "\n\n REMOVE:" << std::endl;
 //  std::set<std::string>::iterator it;
-//  for( it = ObjectsToBeRemove.begin(); it != ObjectsToBeRemove.end(); ++it )
+//  for( it = objectsToBeRemoved.begin(); it != objectsToBeRemoved.end(); ++it )
 //    std::cout <<"  " << (*it) << std::endl;
 //
 //  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
@@ -428,8 +575,6 @@ void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
 //  aSelMgr->setSelectedObjects(aSelList);
 //  GEOMToolsGUI::OnUnpublishObject();
 
-  accept();
-
 
 
 //  if( myCBRemoveEmptyFolder->isChecked() ) {
@@ -497,213 +642,26 @@ void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
 //  }
 //}
 
-
-void GEOMToolsGUI_ReduceStudyDlg::unpublishObjects( std::set<std::string>& theObjects )
-{
-
-}
-
-void GEOMToolsGUI_ReduceStudyDlg::removeObjects( std::set<std::string>& theObjects )
-{
-
-}
-
-
-void GEOMToolsGUI_ReduceStudyDlg::clickOnCancel()
-{
-  close();
-}
 void GEOMToolsGUI_ReduceStudyDlg::clickOnHelp()
 {
 
 }
 
-//=================================================================================
-// function : onItemClicked()
-// purpose  : Called then treeItem clicked
-//=================================================================================
-void GEOMToolsGUI_ReduceStudyDlg::onItemClicked( QTreeWidgetItem* theItem, int theColumn )
-{
-  if( theColumn != 1 || !( theItem->flags() & Qt::ItemIsSelectable ) )
-    return;
 
-  GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>( theItem );
-
-  const char* entry = item->getStudyEntry();
-  Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry, "GEOM", "TEMP_IO" );
-  if( myDisplayer.IsDisplayed( entry ) ) {
-    item->setVisible( false, myInvisible );
-    myDisplayer.Erase( io );
-  }
-  else {
-    item->setVisible( true, myVisible );
-    myDisplayer.Display( io );
-  }
-  myDisplayer.UpdateViewer();
-  checkVisibleIcon( item->treeWidget() );
-}
-
-void GEOMToolsGUI_ReduceStudyDlg::onHeaderClicked( int theColumn )
-{
-  if( theColumn != 1 )
-    return;
-
-  QTreeWidget* treeData = dynamic_cast<QTreeWidget*>(sender()->parent());
-  if( myMapTreeSelectAll[ treeData ] ) {
-    myMapTreeSelectAll[ treeData ] = false;
-    treeData->headerItem()->setIcon( 1, myInvisible );
-    QTreeWidgetItemIterator it( treeData );
-    while(*it) {
-      GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>(*it);
-      if( ( item->flags() & Qt::ItemIsSelectable ) && item->isVisible() ) {
-        const char* entry = item->getStudyEntry();
-        item->setVisible( false, myInvisible );
-        myDisplayer.Erase( new SALOME_InteractiveObject( entry, "GEOM", "TEMP_IO" ) );
-      }
-      ++it;
-    }
-  }
-  else {
-    myMapTreeSelectAll[ treeData ] = true;
-    treeData->headerItem()->setIcon( 1, myVisible );
-    QTreeWidgetItemIterator it( treeData );
-    while(*it) {
-      GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>(*it);
-      if( ( item->flags() & Qt::ItemIsSelectable ) && !item->isVisible() ) {
-        const char* entry = item->getStudyEntry();
-        item->setVisible( true, myVisible );
-        myDisplayer.Display( new SALOME_InteractiveObject( entry, "GEOM", "TEMP_IO" ) );
-      }
-      ++it;
-    }
-  }
-  myDisplayer.UpdateViewer();
-}
-
-void GEOMToolsGUI_ReduceStudyDlg::checkVisibleIcon( QTreeWidget* theWidget )
-{
-  bool isInvisible = false;
-  QTreeWidgetItemIterator it( theWidget );
-  while(*it) {
-    GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>(*it);
-    const char* entry = item->getStudyEntry();
-    if( item->flags() & Qt::ItemIsSelectable )
-      if( !item->isVisible() )
-        isInvisible = true;
-    ++it;
-  }
-
-  if( isInvisible ) {
-    theWidget->headerItem()->setIcon( 1, myInvisible );
-    myMapTreeSelectAll[ theWidget ] = false;
-  }
-  else {
-    theWidget->headerItem()->setIcon( 1, myVisible );
-    myMapTreeSelectAll[ theWidget ] = true;
-  }
-}
-
-void GEOMToolsGUI_ReduceStudyDlg::sortObjects( QTreeWidget* theWidget, std::set<std::string>& theObjects )
-{
-  std::set<std::string>::iterator it;
-  for( it = theObjects.begin(); it != theObjects.end(); ++it ) {
-    std::string objectEntry = *it;
-    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( myStudy->StudyId(), objectEntry.c_str() );
-    GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( GeomBaseObject );
-    QString studyEntry = GeomBaseObject->GetStudyEntry();
-    if( GeomObject->_is_nil() || studyEntry.isEmpty() )
-      continue;
-    addSubObject( theWidget, theObjects, GeomObject );
-  }
-}
-
-GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::addSubObject( QTreeWidget* theWidget, std::set<std::string>& theObjects, GEOM::GEOM_Object_var theObject )
-{
-  GEOMToolsGUI_TreeWidgetItem* item;
-  if( !theObject->IsMainShape() ) {
-    GEOMToolsGUI_TreeWidgetItem* parentItem = addSubObject( theWidget, theObjects, theObject->GetMainShape() );
-    item = findObjectInTree( theWidget, theObject );
-    if( !item )
-      item = new GEOMToolsGUI_TreeWidgetItem( parentItem, QStringList() << theObject->GetName(), theObject->GetStudyEntry(), false );
-  }
-  else {
-    item = findObjectInTree( theWidget, theObject );
-    if( !item )
-      item = new GEOMToolsGUI_TreeWidgetItem( theWidget, QStringList() << theObject->GetName(), theObject->GetStudyEntry(), false );
-  }
-
-  bool isDisplayed = false;
-  if( theObjects.find( theObject->GetEntry() ) != theObjects.end() ) {
-    isDisplayed = myDisplayer.IsDisplayed( theObject->GetStudyEntry() );
-    if ( isDisplayed ) {
-      item->setVisible( true, myVisible );
-    }
-    else {
-      item->setVisible( false, myInvisible );
-    }
-    if( myMainEntries.find( theObject->GetEntry() ) != myMainEntries.end() ) {
-      QFont Textfont = item->font(0);
-      Textfont.setBold( true );
-      item->setFont( 0, Textfont );
-    }
-
-  }
-  else {
-    item->setFlags( item->flags() & ~Qt::ItemIsSelectable );
-    item->setTextColor( 0, QColor( 150, 150, 150 ) );
-  }
-
-  return item;
-}
-
-GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::findObjectInTree( QTreeWidget* theWidget, GEOM::GEOM_Object_var theObject )
-{
-  QTreeWidgetItemIterator it( theWidget );
-  while(*it) {
-    GEOMToolsGUI_TreeWidgetItem* item = dynamic_cast<GEOMToolsGUI_TreeWidgetItem*>(*it);
-    if( QString( item->getStudyEntry() ) == QString( theObject->GetStudyEntry() ) )
-      return item;
-    ++it;
-  }
-  return NULL;
-}
-
-std::set<std::string> GEOMToolsGUI_ReduceStudyDlg::getSelectedObjects() const
-{
-  std::set<std::string> objects;
-
-  SALOME_ListIO selected;
-  myApp->selectionMgr()->selectedObjects( selected );
-
-  for( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-    Handle( SALOME_InteractiveObject ) io = It.Value();
-    if( !io->hasEntry() )
-      continue;
-    GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
-    geomObject = GEOMBase::ConvertIOinGEOMObject( io );
-    if( geomObject->_is_nil() )
-      continue;
-    QString entry = geomObject->GetEntry();
-    objects.insert( entry.toStdString().c_str() );
-  }
-  return objects;
-}
 GEOMToolsGUI_TreeWidgetItem::GEOMToolsGUI_TreeWidgetItem( QTreeWidget* view, const QStringList &strings,
-                                                          char* studyEntry, bool visible, int type )
+                                                          char* studyEntry, int type )
 :QTreeWidgetItem( view, strings, type ),
  myStudyEntry( studyEntry ),
- myVisible( visible )
+ myVisible( false )
 {
-
 }
 
 GEOMToolsGUI_TreeWidgetItem::GEOMToolsGUI_TreeWidgetItem( QTreeWidgetItem* parent, const QStringList &strings,
-                                                          char* studyEntry, bool visible, int type )
+                                                          char* studyEntry, int type )
 :QTreeWidgetItem( parent, strings, type ),
  myStudyEntry( studyEntry ),
- myVisible( visible )
+ myVisible( false )
 {
-
 }
 
 GEOMToolsGUI_TreeWidgetItem::~GEOMToolsGUI_TreeWidgetItem()
