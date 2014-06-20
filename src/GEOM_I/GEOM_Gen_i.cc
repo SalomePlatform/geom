@@ -3271,8 +3271,12 @@ void GEOM_Gen_i::GetEntriesToCleanStudy(SALOMEDS::Study_ptr theStudy,
         char* aSubEntryStr = new char[aStrLen+1];
         aSubEntry.ToUTF8CString( aSubEntryStr );
         foundIt = aParents.find( aSubEntryStr );
-        if ( foundIt == aParents.end() ) // add to sub-objects if it is not in parents list
+        if ( foundIt == aParents.end() ) { // add to sub-objects if it is not in parents list
           aChildren.insert( aSubEntryStr );
+          foundIt = anOthers.find( aSubEntryStr );
+          if ( foundIt != anOthers.end() )
+            anOthers.erase( foundIt );
+        }
       }
     }
 
