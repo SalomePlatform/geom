@@ -40,7 +40,12 @@ class TShapeDialog(QtGui.QDialog):
       QtGui.QDialog.accept(self)
       
     def getData(self):
-      print "DATA : %f"%(self.ui.doubleSpinBox.value()) 
+      r1 = self.ui.doubleSpinBox.value()
+      r2 = self.ui.doubleSpinBox_2.value()
+      h1 = self.ui.doubleSpinBox_3.value()
+      h2 = self.ui.doubleSpinBox_4.value()
+      
+      return r1, r2, h1, h2
       
     #def setupUi(self):
         #TShapeDialog_UI.setupUi(self)

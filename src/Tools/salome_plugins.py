@@ -22,15 +22,21 @@
 import salome_pluginsmanager
 
 def t_shape_fluid(context):
-    activeStudy = context.study
+    import t_shape_builder
     import t_shape_dialog
+    import xalome
+    activeStudy = context.study
+    
     dialog = t_shape_dialog.TShapeDialog()
 
     # Get the parameter values from a gui dialog box. If the dialog is
     # closed using the Ok button, then the data are requested from the
     # gui and used to create the shape of the tube.
     dialog.exec_()
-    dialog.getData()
+    r1, r2, h1, h2 = dialog.getData()
+    shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2)
+    entry = xalome.addToStudy(activeStudy, shape, "T_shape_fluid" )
+    xalome.displayShape(entry)
     #if dialog.wasOk():
         #radius, length, width = dialog.getData()
         #shape = tubebuilder.createGeometry(activeStudy, radius, length, width)
