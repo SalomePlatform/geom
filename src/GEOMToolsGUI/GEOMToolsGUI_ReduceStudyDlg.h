@@ -56,7 +56,7 @@ class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_ReduceStudyDlg : public QDialog
   Q_OBJECT
 
 public:
-  GEOMToolsGUI_ReduceStudyDlg( const GEOM::string_array&, QWidget* );
+  GEOMToolsGUI_ReduceStudyDlg( QWidget* );
   ~GEOMToolsGUI_ReduceStudyDlg();
 
 private slots:
@@ -74,7 +74,7 @@ private slots:
 
 private:
 
-  void init( const GEOM::string_array& theObjectEntries );
+  void init( const std::set<std::string>& theObjectEntries );
   void createTreeWidget( QTreeWidget* );
   QGroupBox* createButtonGroup( QButtonGroup* );
   void checkVisibleIcon( QTreeWidget* );
@@ -85,11 +85,13 @@ private:
   void unpublishObjects( std::set<std::string>& );
   void removeObjects( std::set<std::string>& );
 
+  std::set<std::string> getSelectedObjects() const;
+
   QTreeWidget* myTreeKeptObjects;
   QTreeWidget* myTreeRemoveObjects;
 
-  QButtonGroup* myIntermediates;
-  QButtonGroup* mySubObjects;
+  QButtonGroup* myGroupIntermediates;
+  QButtonGroup* myGroupSubObjects;
 
   QCheckBox* myCBRemoveEmptyFolder;
   QCheckBox* myCBSoftRemoval;
@@ -100,12 +102,13 @@ private:
   QIcon myInvisible;
 
   GEOM_Displayer myDisplayer;
-  int myStudyId;
+  SalomeApp_Application* myApp;
+  SALOMEDS::Study_var myStudy;
 
   std::set<std::string> myKeptObjects;
-  std::set<std::string> myParents;
+  std::set<std::string> myRemovedObjects;
+  std::set<std::string> myListParents;
   std::set<std::string> myListSubObjects;
-  std::set<std::string> myOthers;
 
   std::map<QTreeWidget*,bool> myMapTreeSelectAll;
 };

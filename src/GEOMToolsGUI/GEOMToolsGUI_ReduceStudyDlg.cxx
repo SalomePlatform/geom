@@ -51,18 +51,20 @@
 
 #include <iostream>
 
-GEOMToolsGUI_ReduceStudyDlg::GEOMToolsGUI_ReduceStudyDlg( const GEOM::string_array& theObjectEntries, QWidget* parent )
+GEOMToolsGUI_ReduceStudyDlg::GEOMToolsGUI_ReduceStudyDlg( QWidget* parent )
 :QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint ),
 myDisplayer(NULL)
 {
+  setAttribute(Qt::WA_DeleteOnClose);
+
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   myVisible = QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_VISIBLE" ) ) );
   myInvisible = QIcon( resMgr->loadPixmap( "SUIT", tr( "ICON_DATAOBJ_INVISIBLE" ) ) );
 
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( !app ) return;
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  myStudyId = GeometryGUI::ClientStudyToStudy( study->studyDS() )->StudyId();
+  myApp = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !myApp ) return;
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
+  myStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   myDisplayer = GEOM_Displayer( study );
 
   setWindowTitle( tr( "GEOM_REDUCE_STUDY_TITLE" ) );
@@ -87,11 +89,11 @@ myDisplayer(NULL)
   QVBoxLayout* layoutOptions = new QVBoxLayout( groupOptions );
 
   // Intermidiate objects
-  QGroupBox* groupIntermediates = createButtonGroup( myIntermediates = new QButtonGroup() );
+  QGroupBox* groupIntermediates = createButtonGroup( myGroupIntermediates = new QButtonGroup() );
   groupIntermediates->setTitle( tr( "GEOM_REDUCE_STUDY_INTERMEDIATES" ) );
 
   // Sub-objects
-  QGroupBox* groupSubObjects = createButtonGroup( mySubObjects = new QButtonGroup() );
+  QGroupBox* groupSubObjects = createButtonGroup( myGroupSubObjects = new QButtonGroup() );
   groupSubObjects->setTitle( tr( "GEOM_REDUCE_STUDY_SUB_OBJECTS" ) );
 
   // Others
@@ -129,17 +131,17 @@ myDisplayer(NULL)
   connect( myTreeKeptObjects->header(), SIGNAL( sectionClicked ( int ) ), this, SLOT( onHeaderClicked( int ) ) );
   connect( myTreeRemoveObjects->header(), SIGNAL( sectionClicked ( int ) ), this, SLOT( onHeaderClicked( int ) ) );
 
-  connect( myIntermediates, SIGNAL( buttonClicked( int ) ), this, SLOT( update() ) );
-  connect( mySubObjects, SIGNAL( buttonClicked( int ) ), this, SLOT( update() ) );
+  connect( myGroupIntermediates, SIGNAL( buttonClicked( int ) ), this, SLOT( update() ) );
+  connect( myGroupSubObjects, SIGNAL( buttonClicked( int ) ), this, SLOT( update() ) );
 
   connect( buttonOk, SIGNAL( clicked() ), this, SLOT( clickOnOk() ) );
   connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( clickOnCancel() ) );
   connect( buttonHelp, SIGNAL( clicked() ), this, SLOT( clickOnHelp() ) );
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+  connect( myApp->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
 
-  init( theObjectEntries );
+  init( getSelectedObjects() );
 }
 
 GEOMToolsGUI_ReduceStudyDlg::~GEOMToolsGUI_ReduceStudyDlg()
@@ -147,51 +149,30 @@ GEOMToolsGUI_ReduceStudyDlg::~GEOMToolsGUI_ReduceStudyDlg()
   // no need to delete child widgets, Qt does it all for us
 }
 
-void GEOMToolsGUI_ReduceStudyDlg::init( const GEOM::string_array& theObjectEntries )
+void GEOMToolsGUI_ReduceStudyDlg::init( const std::set<std::string>& theObjectEntries )
 {
-  for( int i = 0; i < theObjectEntries.length(); i++ )
-    myMainEntries.insert( theObjectEntries[i].in() );
-
-
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( !app ) return;
-
-  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  SALOMEDS::Study_var myStudy = GeometryGUI::ClientStudyToStudy( study->studyDS());
-
+  myMainEntries.clear();
 
   myKeptObjects.clear();
-  myParents.clear();
+  myListParents.clear();
   myListSubObjects.clear();
-  myOthers.clear();
+  myRemovedObjects.clear();
+
+  myMainEntries = theObjectEntries;
+
+  std::cout << "\n\n\n myMainEntries = " << myMainEntries.size() << std::endl;
 
   GEOM::string_array_var selectedObjects = new GEOM::string_array();
-  selectedObjects->length( theObjectEntries.length() );
-  for( int i = 0; i < theObjectEntries.length(); i++ )
-    selectedObjects[ i ] = theObjectEntries[i].in();
+  int It = 0;
+  selectedObjects->length( theObjectEntries.size() );
+  std::set<std::string>::iterator iter;
+  for( iter=theObjectEntries.begin(); iter!=theObjectEntries.end(); ++iter, It++ )
+    selectedObjects[ It ] = (*iter).c_str();
 
   GEOM::string_array_var parentsObjects = new GEOM::string_array();
-//  parentsObjects->length( 5 );
-//  parentsObjects[0] = "0:1:21";
-//  parentsObjects[1] = "0:1:17";
-//  parentsObjects[2] = "0:1:20";
-//  parentsObjects[3] = "0:1:13";
-//  parentsObjects[4] = "0:1:12";
-
   GEOM::string_array_var subObjects = new GEOM::string_array();
-//  subObjects->length( 4 );
-//  subObjects[0] = "0:1:24";
-//  subObjects[1] = "0:1:28";
-//  subObjects[2] = "0:1:29";
-//  subObjects[3] = "0:1:34";
-
   GEOM::string_array_var oters = new GEOM::string_array();
-//  oters->length( 5 );
-//  oters[0] = "0:1:35";
-//  oters[1] = "0:1:36";
-//  oters[2] = "0:1:37";
-//  oters[3] = "0:1:38";
-//  oters[4] = "0:1:39";
+
 
 ////// PUT ALGORITHM HERE
   GeometryGUI::GetGeomGen()->GetEntriesToCleanStudy( myStudy, selectedObjects,
@@ -201,13 +182,13 @@ void GEOMToolsGUI_ReduceStudyDlg::init( const GEOM::string_array& theObjectEntri
     myKeptObjects.insert( selectedObjects[i].in() );
 
   for( int i = 0; i< parentsObjects->length(); i++ )
-    myParents.insert( parentsObjects[i].in() );
+    myListParents.insert( parentsObjects[i].in() );
 
   for( int i = 0; i< subObjects->length(); i++ )
     myListSubObjects.insert( subObjects[i].in() );
 
   for( int i = 0; i< oters->length(); i++ )
-	  myOthers.insert( oters[i].in() );
+	  myRemovedObjects.insert( oters[i].in() );
 
 //  myParents.insert( "0:1:21" );
 //  myParents.insert( "0:1:17" );
@@ -277,22 +258,22 @@ void GEOMToolsGUI_ReduceStudyDlg::update()
   myTreeRemoveObjects->clear();
 
   std::set<std::string> keptObjects(myKeptObjects);
-  std::set<std::string> removeObjects(myOthers);
+  std::set<std::string> removeObjects(myRemovedObjects);
 
   // Intermediate objects
-  if( myIntermediates->checkedId() == 2 ) { // remove
+  if( myGroupIntermediates->checkedId() == 2 ) { // remove
     std::set<std::string>::iterator iter;
-    for( iter=myParents.begin(); iter!=myParents.end(); ++iter)
+    for( iter=myListParents.begin(); iter!=myListParents.end(); ++iter)
       removeObjects.insert( *iter );
   }
   else { // keep or unpublish
     std::set<std::string>::iterator iter;
-    for( iter=myParents.begin(); iter!=myParents.end(); ++iter)
+    for( iter=myListParents.begin(); iter!=myListParents.end(); ++iter)
       keptObjects.insert( *iter );
   }
 
   // Sub-objects
-  if( mySubObjects->checkedId() == 2 ) {
+  if( myGroupSubObjects->checkedId() == 2 ) {
     std::set<std::string>::iterator iter;
     for( iter=myListSubObjects.begin(); iter!=myListSubObjects.end(); ++iter)
       removeObjects.insert( *iter );
@@ -325,51 +306,32 @@ void GEOMToolsGUI_ReduceStudyDlg::update()
 
 void GEOMToolsGUI_ReduceStudyDlg::selectionChanged()
 {
-  myMainEntries.clear();
-  GEOM::string_array_var objectsEntry = new GEOM::string_array();
-  SALOME_ListIO mainObjects;
-  int iter = 0;
-
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( !app ) return;
-  app->selectionMgr()->selectedObjects( mainObjects );
-  // create a list of selected object entry
-  objectsEntry->length( mainObjects.Extent() );
-  for ( SALOME_ListIteratorOfListIO It( mainObjects ); It.More(); It.Next(), iter++ ) {
-	  Handle( SALOME_InteractiveObject ) io = It.Value();
-    if( !io->hasEntry() )
-      continue;
-    GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
-    geomObject = GEOMBase::ConvertIOinGEOMObject( io );
-    QString entry = geomObject->GetEntry();
-    objectsEntry[ iter ] = entry.toLatin1().constData();
-  }
-  init(objectsEntry);
+  init( getSelectedObjects() );
 }
 
 void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
 {
 
-  std::set<std::string> ObjectsToBeRemove = myOthers;
+  std::set<std::string> ObjectsToBeRemove = myRemovedObjects;
   std::set<std::string> ObjectsToBeUnpublish;
 
-  if( myIntermediates->checkedId() == 2 ) {
+  if( myGroupIntermediates->checkedId() == 2 ) {
     std::set<std::string>::iterator iter;
-    for( iter=myParents.begin(); iter!=myParents.end(); ++iter)
+    for( iter=myListParents.begin(); iter!=myListParents.end(); ++iter)
       ObjectsToBeRemove.insert( *iter );
   }
-  else if( myIntermediates->checkedId() == 1 ) {
+  else if( myGroupIntermediates->checkedId() == 1 ) {
     std::set<std::string>::iterator iter;
-    for( iter=myParents.begin(); iter!=myParents.end(); ++iter)
+    for( iter=myListParents.begin(); iter!=myListParents.end(); ++iter)
       ObjectsToBeUnpublish.insert( *iter );
   }
 
-  if( mySubObjects->checkedId() == 2 ) {
+  if( myGroupSubObjects->checkedId() == 2 ) {
     std::set<std::string>::iterator iter;
     for( iter=myListSubObjects.begin(); iter!=myListSubObjects.end(); ++iter)
       ObjectsToBeRemove.insert( *iter );
   }
-  else if( mySubObjects->checkedId() == 1 ) {
+  else if( myGroupSubObjects->checkedId() == 1 ) {
     std::set<std::string>::iterator iter;
     for( iter=myListSubObjects.begin(); iter!=myListSubObjects.end(); ++iter)
       ObjectsToBeUnpublish.insert( *iter );
@@ -646,7 +608,7 @@ void GEOMToolsGUI_ReduceStudyDlg::sortObjects( QTreeWidget* theWidget, std::set<
   std::set<std::string>::iterator it;
   for( it = theObjects.begin(); it != theObjects.end(); ++it ) {
     std::string objectEntry = *it;
-    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( myStudyId, objectEntry.c_str() );
+    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( myStudy->StudyId(), objectEntry.c_str() );
     GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( GeomBaseObject );
     QString studyEntry = GeomBaseObject->GetStudyEntry();
     if( GeomObject->_is_nil() || studyEntry.isEmpty() )
@@ -706,6 +668,26 @@ GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::findObjectInTree( QTre
   return NULL;
 }
 
+std::set<std::string> GEOMToolsGUI_ReduceStudyDlg::getSelectedObjects() const
+{
+  std::set<std::string> objects;
+
+  SALOME_ListIO selected;
+  myApp->selectionMgr()->selectedObjects( selected );
+
+  for( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    if( !io->hasEntry() )
+      continue;
+    GEOM::GEOM_Object_var geomObject = GEOM::GEOM_Object::_nil();
+    geomObject = GEOMBase::ConvertIOinGEOMObject( io );
+    if( geomObject->_is_nil() )
+      continue;
+    QString entry = geomObject->GetEntry();
+    objects.insert( entry.toStdString().c_str() );
+  }
+  return objects;
+}
 GEOMToolsGUI_TreeWidgetItem::GEOMToolsGUI_TreeWidgetItem( QTreeWidget* view, const QStringList &strings,
                                                           char* studyEntry, bool visible, int type )
 :QTreeWidgetItem( view, strings, type ),
