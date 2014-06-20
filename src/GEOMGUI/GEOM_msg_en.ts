@@ -6912,16 +6912,24 @@ Do you want to create new material?</translation>
         <translation>Options</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_UNPUB_INTERMEDIATE</source>
-        <translation>Unpublish intermediate objects</translation>
+        <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
+        <translation>Intermediate objects</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_REMOVE_INTERMEDIATE</source>
-        <translation>Remove intermediate objects</translation>
+        <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
+        <translation>Sub-objects</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_KEEP_SUB_OBJECTS</source>
-        <translation>Keep sub-objects in result</translation>
+        <source>GEOM_REDUCE_STUDY_KEEP</source>
+        <translation>Keep</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
+        <translation>Unpublish</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE</source>
+        <translation>Remove</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>

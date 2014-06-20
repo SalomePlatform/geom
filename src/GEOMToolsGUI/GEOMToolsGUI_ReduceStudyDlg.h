@@ -24,6 +24,8 @@
 #include <QDialog>
 #include <QTreeWidget>
 #include <QCheckBox>
+#include <QButtonGroup>
+#include <QGroupBox>
 
 #include <GEOMUtils.hxx>
 #include <GeometryGUI.h>
@@ -33,6 +35,7 @@
 
 class GEOMToolsGUI_TreeWidgetItem : public QTreeWidgetItem
 {
+
 public:
   GEOMToolsGUI_TreeWidgetItem( QTreeWidget*, const QStringList&, char*, bool, int = Type );
   GEOMToolsGUI_TreeWidgetItem( QTreeWidgetItem*, const QStringList&, char*, bool, int = Type );
@@ -58,36 +61,36 @@ public:
 
 private slots:
 
-  void onUnpublishIntermediate( bool );
-  void onRemoveIntermediate( bool );
-  void onKeepSubObjects( bool );
-  void onRemoveEmptyFolder( bool );
-  void onSoftRemoval( bool );
-
   void clickOnOk();
   void clickOnCancel();
   void clickOnHelp();
 
-  void onSelectionChanged();
   void onItemClicked(QTreeWidgetItem*, int );
   void onHeaderClicked( int );
+
+  void selectionChanged();
 
   void update();
 
 private:
 
-  void onShowOnlySelected();
+  void init( const GEOM::string_array& theObjectEntries );
+  void createTreeWidget( QTreeWidget* );
+  QGroupBox* createButtonGroup( QButtonGroup* );
   void checkVisibleIcon( QTreeWidget* );
   void sortObjects( QTreeWidget*, std::set<std::string>& );
   GEOMToolsGUI_TreeWidgetItem* addSubObject( QTreeWidget*, std::set<std::string>&, GEOM::GEOM_Object_var );
   GEOMToolsGUI_TreeWidgetItem* findObjectInTree( QTreeWidget*, GEOM::GEOM_Object_var );
 
+  void unpublishObjects( std::set<std::string>& );
+  void removeObjects( std::set<std::string>& );
+
   QTreeWidget* myTreeKeptObjects;
   QTreeWidget* myTreeRemoveObjects;
 
-  QCheckBox* myCBUnpublishIntermediate;
-  QCheckBox* myCBRemoveIntermediate;
-  QCheckBox* myCBKeepSubObjects;
+  QButtonGroup* myIntermediates;
+  QButtonGroup* mySubObjects;
+
   QCheckBox* myCBRemoveEmptyFolder;
   QCheckBox* myCBSoftRemoval;
 
@@ -96,12 +99,12 @@ private:
   QIcon myVisible;
   QIcon myInvisible;
 
-  bool mySelectAll;
-
   GEOM_Displayer myDisplayer;
+  int myStudyId;
 
+  std::set<std::string> myKeptObjects;
   std::set<std::string> myParents;
-  std::set<std::string> mySubObjects;
+  std::set<std::string> myListSubObjects;
   std::set<std::string> myOthers;
 
   std::map<QTreeWidget*,bool> myMapTreeSelectAll;

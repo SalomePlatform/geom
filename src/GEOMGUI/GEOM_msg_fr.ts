@@ -6912,16 +6912,24 @@ Voulez-vous en créer un nouveau ?</translation>
         <translation type="unfinished">Options</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_UNPUB_INTERMEDIATE</source>
-        <translation type="unfinished">Unpublish intermediate objects</translation>
+        <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
+        <translation type="unfinished">Intermediate objects</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_REMOVE_INTERMEDIATE</source>
-        <translation type="unfinished">Remove intermediate objects</translation>
+        <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
+        <translation type="unfinished">Sub-objects</translation>
     </message>
     <message>
-        <source>GEOM_REDUCE_STUDY_KEEP_SUB_OBJECTS</source>
-        <translation type="unfinished">Keep sub-objects in result</translation>
+        <source>GEOM_REDUCE_STUDY_KEEP</source>
+        <translation type="unfinished">Keep</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
+        <translation type="unfinished">Unpublish</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE</source>
+        <translation type="unfinished">Remove</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>

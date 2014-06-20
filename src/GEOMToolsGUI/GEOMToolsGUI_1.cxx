@@ -921,6 +921,8 @@ void GEOMToolsGUI::OnReduceStudy()
     QString entry = geomObject->GetEntry();
     objectsEntry[ iter ] = entry.toLatin1().constData();
   }
-  GEOMToolsGUI_ReduceStudyDlg dlg( objectsEntry, SUIT_Session::session()->activeApplication()->desktop() );
-  dlg.exec();
+  QDialog* dlg = new GEOMToolsGUI_ReduceStudyDlg( objectsEntry, SUIT_Session::session()->activeApplication()->desktop() );
+  if ( dlg != NULL )
+    dlg->show();
+
 }
