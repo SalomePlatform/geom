@@ -9,21 +9,6 @@ import math
 import SALOMEDS
 
 
-#O = geompy.MakeVertex(0, 0, 0)
-#OX = geompy.MakeVectorDXDYDZ(1, 0, 0)
-#OY = geompy.MakeVectorDXDYDZ(0, 1, 0)
-#OZ = geompy.MakeVectorDXDYDZ(0, 0, 1)
-
-#geompy.addToStudy( O, 'O' )
-#geompy.addToStudy( OX, 'OX' )
-#geompy.addToStudy( OY, 'OY' )
-#geompy.addToStudy( OZ, 'OZ' )
-
-#r1 = 100.0
-#r2 = 50.0
-#h1 = 200.0
-#h2 = 200.0
-
 def demidisk(study, r1, a1, roty=0):
   geompy = geomBuilder.New(study)
   
@@ -278,5 +263,18 @@ def build_shape(study, r1, r2, h1, h2):
   box = geompy.MakeBox(-1, -(r1+r2), -1, h1, r1+r2, h2)
   geompy.addToStudy(box, "box")
   final = geompy.MakeCommonList([box, assemblage], True)
+  
+  # --- Partie infiérieure
+  v3, l3, arc3, part3 = demidisk(study, r1, a1, 180.0)
+  geompy.addToStudy(part3,"part3")
+  extru3 = geompy.MakePrismVecH(part3, OX, h1)
+  geompy.addToStudy(extru3,"extru3")
+
+  # --- Symétrie
+
+  compound = geompy.MakeCompound([final, extru3])
+  plane = geompy.MakePlane(O,OX,2000)
+  compound_mirrored = geompy.MakeMirrorByPlane(compound, plane)
+  final = geompy.MakeCompound([compound, compound_mirrored])
   
   return final
