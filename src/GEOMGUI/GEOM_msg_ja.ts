@@ -6748,6 +6748,10 @@ Please specify suitable arguments.</translation>
         <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
         <translation type="unfinished">Soft removal</translation>
     </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
+        <translation type="unfinished">Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
+    </message>
   </context>
   <context>
     <name>RepairGUI_UnionFacesDlg</name>

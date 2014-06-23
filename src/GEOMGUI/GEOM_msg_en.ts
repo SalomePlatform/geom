@@ -6939,6 +6939,10 @@ Do you want to create new material?</translation>
         <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
         <translation>Soft removal</translation>
     </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
+        <translation>Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
+    </message>
 </context>
 <context>
     <name>RepairGUI_UnionFacesDlg</name>

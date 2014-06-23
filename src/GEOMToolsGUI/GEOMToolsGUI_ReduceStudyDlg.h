@@ -20,17 +20,22 @@
 #ifndef GEOMTOOLSGUI_REDUCESTUDYDLG_H
 #define GEOMTOOLSGUI_REDUCESTUDYDLG_H
 
+// internal includes
 #include "GEOM_ToolsGUI.hxx"
+
+// GEOM includes
+#include <GEOMUtils.hxx>
+#include <GeometryGUI.h>
+#include <GEOM_Displayer.h>
+
+// Qt includes
 #include <QDialog>
 #include <QTreeWidget>
 #include <QCheckBox>
 #include <QButtonGroup>
 #include <QGroupBox>
 
-#include <GEOMUtils.hxx>
-#include <GeometryGUI.h>
-#include <GEOM_Displayer.h>
-
+// Cpp includes
 #include <set>
 
 class GEOMToolsGUI_TreeWidgetItem : public QTreeWidgetItem
@@ -41,14 +46,14 @@ public:
   GEOMToolsGUI_TreeWidgetItem( QTreeWidgetItem*, const QStringList&, char*, int = Type );
   ~GEOMToolsGUI_TreeWidgetItem();
 
-  bool isVisible();
-  void setVisible( bool, QIcon& );
+  bool    isVisible();
+  void    setVisible( bool, QIcon& );
 
-  char* getStudyEntry() const;
+  char*   getStudyEntry() const;
 
 private:
-  bool myVisible;
-  char* myStudyEntry;
+  bool    myVisible;
+  char*   myStudyEntry;
 
 };
 
@@ -83,9 +88,15 @@ private:
   GEOMToolsGUI_TreeWidgetItem*  findObjectInTree( QTreeWidget*, GEOM::GEOM_Object_var );
 
   void                          checkVisibleIcon( QTreeWidget* );
+  bool                          isObjectDrawable( std::string );
 
   void                          unpublishObjects( std::set<std::string>& );
+
   void                          removeObjects( std::set<std::string>& );
+  void                          removeObject( std::string& );
+
+  void                          removeEmptyFolders();
+  void                          getEmptyFolders( _PTR(SObject), std::set<std::string>& );
 
   QTreeWidget*                  myTreeKeptObjects;
   QTreeWidget*                  myTreeRemoveObjects;
@@ -109,7 +120,7 @@ private:
 
   GEOM_Displayer                myDisplayer;
   SalomeApp_Application*        myApp;
-  SALOMEDS::Study_var           myStudy;
+  _PTR(Study)                   myStudy;
 
 };
 

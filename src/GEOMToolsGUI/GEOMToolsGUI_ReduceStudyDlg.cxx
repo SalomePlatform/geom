@@ -17,39 +17,29 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// internal includes
 #include "GEOMToolsGUI_ReduceStudyDlg.h"
-
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGroupBox>
-#include <QGridLayout>
-#include <QHeaderView>
-#include <QPushButton>
-#include <QRadioButton>
-
-
-// GUI includes
-#include <SUIT_Session.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_DataOwner.h>
-#include <SalomeApp_Application.h>
-#include <SalomeApp_Study.h>
-#include <OCCViewer_ViewManager.h>
-#include <LightApp_DataOwner.h>
-#include <GEOMToolsGUI.h>
-
-// GEOM includes
-#include <SALOMEconfig.h>
-#include CORBA_CLIENT_HEADER(GEOM_Gen)
-#include <GEOMBase_Helper.h>
-
-#include <LightApp_SelectionMgr.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
 
 // GEOM includes
 #include <GEOMBase.h>
 
-#include <iostream>
+// GUI includes
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_MessageBox.h>
+
+#include <LightApp_SelectionMgr.h>
+
+#include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
+
+// Qt includes
+#include <QGridLayout>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QHeaderView>
+#include <QMessageBox>
 
 GEOMToolsGUI_ReduceStudyDlg::GEOMToolsGUI_ReduceStudyDlg( QWidget* parent )
 :QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint ),
@@ -62,7 +52,7 @@ myDisplayer(NULL)
   myApp = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !myApp ) return;
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  myStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
+  myStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() )->studyDS();
   myDisplayer = GEOM_Displayer( study );
 
   setWindowTitle( tr( "GEOM_REDUCE_STUDY_TITLE" ) );
@@ -87,7 +77,7 @@ myDisplayer(NULL)
   QGroupBox* groupOptions = new QGroupBox( tr( "GEOM_REDUCE_STUDY_OPTIONS" ) );
   QVBoxLayout* layoutOptions = new QVBoxLayout( groupOptions );
 
-  // Intermidiate objects
+  // Intermediate objects
   QGroupBox* groupIntermediates = createButtonGroup( myGroupIntermediates = new QButtonGroup() );
   groupIntermediates->setTitle( tr( "GEOM_REDUCE_STUDY_INTERMEDIATES" ) );
 
@@ -148,6 +138,10 @@ GEOMToolsGUI_ReduceStudyDlg::~GEOMToolsGUI_ReduceStudyDlg()
   // no need to delete child widgets, Qt does it all for us
 }
 
+//=================================================================================
+// function : init()
+// purpose  : initialize dialog data
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::init( const std::set<std::string>& theObjectEntries )
 {
   myMainEntries.clear();
@@ -170,7 +164,8 @@ void GEOMToolsGUI_ReduceStudyDlg::init( const std::set<std::string>& theObjectEn
   GEOM::string_array_var subObjects = new GEOM::string_array();
   GEOM::string_array_var otherObjects = new GEOM::string_array();
 
-  GeometryGUI::GetGeomGen()->GetEntriesToCleanStudy( myStudy, keptObjects, parentsObjects,
+  GeometryGUI::GetGeomGen()->GetEntriesToCleanStudy( GeometryGUI::ClientStudyToStudy( myStudy ),
+		                                             keptObjects, parentsObjects,
 		                                             subObjects, otherObjects );
 
   for ( int i = 0; i < keptObjects->length(); i++ )
@@ -188,6 +183,10 @@ void GEOMToolsGUI_ReduceStudyDlg::init( const std::set<std::string>& theObjectEn
   checkVisibleIcon( myTreeRemoveObjects );
 }
 
+//=================================================================================
+// function : getSelectedObjects()
+// purpose  : get selected objects in object browser
+//=================================================================================
 std::set<std::string> GEOMToolsGUI_ReduceStudyDlg::getSelectedObjects() const
 {
   std::set<std::string> objects;
@@ -209,6 +208,10 @@ std::set<std::string> GEOMToolsGUI_ReduceStudyDlg::getSelectedObjects() const
   return objects;
 }
 
+//=================================================================================
+// function : createTreeWidget()
+// purpose  : create tree widget for unpublished or removed objects
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::createTreeWidget( QTreeWidget* theTreeWidget )
 {
   theTreeWidget->setColumnCount( 2 );
@@ -225,6 +228,10 @@ void GEOMToolsGUI_ReduceStudyDlg::createTreeWidget( QTreeWidget* theTreeWidget )
   theTreeWidget->setSelectionMode( QAbstractItemView::ExtendedSelection );
 }
 
+//=================================================================================
+// function : createButtonGroup()
+// purpose  : create button group for intermediate objects or sub-objects
+//=================================================================================
 QGroupBox* GEOMToolsGUI_ReduceStudyDlg::createButtonGroup( QButtonGroup* theButtonGroup )
 {
   QGroupBox* groupObjects = new QGroupBox();
@@ -247,6 +254,10 @@ QGroupBox* GEOMToolsGUI_ReduceStudyDlg::createButtonGroup( QButtonGroup* theButt
   return groupObjects;
 }
 
+//=================================================================================
+// function : addObjectsToTree()
+// purpose  : add the list of objects to tree
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::addObjectsToTree( QTreeWidget* theWidget, std::set<std::string>& theObjects )
 {
   std::set<std::string>::iterator it;
@@ -255,12 +266,16 @@ void GEOMToolsGUI_ReduceStudyDlg::addObjectsToTree( QTreeWidget* theWidget, std:
     GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( myStudy->StudyId(), objectEntry.c_str() );
     GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( GeomBaseObject );
     QString studyEntry = GeomBaseObject->GetStudyEntry();
-    if( GeomObject->_is_nil() || studyEntry.isEmpty() )
+    if( GeomObject->_is_nil() || studyEntry.isEmpty() || !isObjectDrawable( studyEntry.toStdString() ) )
       continue;
     addSubObject( theWidget, theObjects, GeomObject );
   }
 }
 
+//=================================================================================
+// function : addSubObject()
+// purpose  : add sub-object to parent object in the tree
+//=================================================================================
 GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::addSubObject( QTreeWidget* theWidget,
                                                                         std::set<std::string>& theObjects,
                                                                         GEOM::GEOM_Object_var theObject )
@@ -299,6 +314,10 @@ GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::addSubObject( QTreeWid
   return item;
 }
 
+//=================================================================================
+// function : findObjectInTree()
+// purpose  : find object in the tree
+//=================================================================================
 GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::findObjectInTree( QTreeWidget* theWidget, GEOM::GEOM_Object_var theObject )
 {
   QTreeWidgetItemIterator it( theWidget );
@@ -311,6 +330,10 @@ GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::findObjectInTree( QTre
   return NULL;
 }
 
+//=================================================================================
+// function : checkVisibleIcon()
+// purpose  : set visible or invisible icon in the header of tree
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::checkVisibleIcon( QTreeWidget* theWidget )
 {
   bool isInvisible = false;
@@ -334,65 +357,156 @@ void GEOMToolsGUI_ReduceStudyDlg::checkVisibleIcon( QTreeWidget* theWidget )
   }
 }
 
+//=================================================================================
+// function : isObjectDrawable()
+// purpose  : return true if object is drawable, and false if object is hidden in the study
+//=================================================================================
+bool GEOMToolsGUI_ReduceStudyDlg::isObjectDrawable( std::string theStudyEntry )
+{
+  _PTR(StudyBuilder) aStudyBuilder = myStudy->NewBuilder();
+  //If object hasn't "AttributeDrawable" => it visible
+  bool isDrawable = true;
+  _PTR(SObject) SO ( myStudy->FindObjectID( theStudyEntry ) );
+  _PTR(GenericAttribute) anAttr;
+  if ( SO && SO->FindAttribute( anAttr, "AttributeDrawable" ) ) {
+    _PTR(AttributeDrawable) aDrw (anAttr);
+    isDrawable = aDrw->IsDrawable();
+  }
+  return isDrawable;
+}
+
+//=================================================================================
+// function : unpublishObjects()
+// purpose  : unpublish(hide) objects in the study
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::unpublishObjects( std::set<std::string>& theObjects )
 {
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  _PTR(Study) aStudy = appStudy->studyDS();
-  _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
-  std::string objectEntry, studyEntry;
+  _PTR(StudyBuilder) aStudyBuilder = myStudy->NewBuilder();
   std::set<std::string>::iterator it;
   for( it = theObjects.begin(); it != theObjects.end(); ++it ) {
-    objectEntry = *it;
-    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( aStudy->StudyId(), objectEntry.c_str() );
-    studyEntry = GeomBaseObject->GetStudyEntry();
-    if ( studyEntry == "" )
+    std::string objectEntry = *it;
+    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( myStudy->StudyId(),
+                                                                                     objectEntry.c_str() );
+    std::string studyEntry = GeomBaseObject->GetStudyEntry();
+    if ( studyEntry == "" || !isObjectDrawable( studyEntry ) )
       continue;
-    _PTR(SObject) obj ( aStudy->FindObjectID( studyEntry.c_str() ) );
+    _PTR(SObject) obj ( myStudy->FindObjectID( studyEntry.c_str() ) );
     _PTR(GenericAttribute) anAttr;
     if ( obj ) {
       _PTR(AttributeDrawable) aDrw = aStudyBuilder->FindOrCreateAttribute( obj, "AttributeDrawable" );
       aDrw->SetDrawable( false );
       myDisplayer.EraseWithChildren( new SALOME_InteractiveObject( studyEntry.c_str(), "GEOM", "TEMP_IO" ) );
-    } // if ( obj )
-  } // iterator
-
-  myApp->updateObjectBrowser( false );
-  myApp->updateActions();
-}
-
-void GEOMToolsGUI_ReduceStudyDlg::removeObjects( std::set<std::string>& theObjects )
-{
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
-  _PTR(Study) aStudy = appStudy->studyDS();
-  _PTR(StudyBuilder) aStudyBuilder = aStudy->NewBuilder();
-  _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
-  std::string objectEntry, studyEntry;
-  std::set<std::string>::iterator it;
-  for( it = theObjects.begin(); it != theObjects.end(); ++it ) {
-    objectEntry = *it;
-    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( aStudy->StudyId(), objectEntry.c_str() );
-    studyEntry = GeomBaseObject->GetStudyEntry();
-    if ( studyEntry == "" )
-      continue;
-    _PTR(SObject) obj ( aStudy->FindObjectID( studyEntry.c_str() ) );
-    if ( obj ) {
-      //Remove visual properties of the object
-      appStudy->removeObjectFromAll(obj->GetID().c_str());
-      // remove objects from study
-      aStudyBuilder->RemoveObjectWithChildren( obj );
-      // remove object from use case tree
-      aUseCaseBuilder->Remove( obj );
-      myDisplayer.EraseWithChildren( new SALOME_InteractiveObject( studyEntry.c_str(), "GEOM", "TEMP_IO" ) );
-    } // if ( obj )
-  } // iterator
-
+    }
+  }
   myApp->updateObjectBrowser( false );
   myApp->updateActions();
 }
 
 //=================================================================================
+// function : removeObjects()
+// purpose  : remove objects from the study
+//=================================================================================
+void GEOMToolsGUI_ReduceStudyDlg::removeObjects( std::set<std::string>& theObjects )
+{
+  std::set<std::string>::iterator it;
+  for( it = theObjects.begin(); it != theObjects.end(); ++it ) {
+    std::string objectEntry = *it;
+    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( myStudy->StudyId(),
+                                                                                     objectEntry.c_str() );
+    std::string studyEntry = GeomBaseObject->GetStudyEntry();
+    if ( studyEntry == "" )
+      GeometryGUI::GetGeomGen()->RemoveObject( GeomBaseObject );
+    else {
+      if( !isObjectDrawable( studyEntry ) )
+        continue;
+      removeObject( studyEntry );
+    }
+  }
+  myApp->updateObjectBrowser( false );
+  myApp->updateActions();
+}
+
+//=================================================================================
+// function : removeObject()
+// purpose  : remove object with given study entry
+//=================================================================================
+void GEOMToolsGUI_ReduceStudyDlg::removeObject( std::string& theStudyEntry )
+{
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( myApp->activeStudy() );
+  _PTR(StudyBuilder) aStudyBuilder = myStudy->NewBuilder();
+  _PTR(UseCaseBuilder) aUseCaseBuilder = myStudy->GetUseCaseBuilder();
+
+  _PTR(SObject) obj ( myStudy->FindObjectID( theStudyEntry.c_str() ) );
+  if ( obj ) {
+    //Remove visual properties of the object
+    appStudy->removeObjectFromAll(obj->GetID().c_str());
+    // remove objects from study
+    aStudyBuilder->RemoveObjectWithChildren( obj );
+    // remove object from use case tree
+    aUseCaseBuilder->Remove( obj );
+    myDisplayer.EraseWithChildren( new SALOME_InteractiveObject( theStudyEntry.c_str(), "GEOM", "TEMP_IO" ) );
+  }
+}
+
+//=================================================================================
+// function : removeEmptyFolders()
+// purpose  : remove empty folders from the study
+//=================================================================================
+void GEOMToolsGUI_ReduceStudyDlg::removeEmptyFolders()
+{
+  std::set<std::string> emptyFolders;
+
+  _PTR(SComponent) SC ( myStudy->FindComponent( "GEOM" ) );
+  if ( !SC )
+    return;
+  _PTR(ChildIterator) anIter ( myStudy->NewChildIterator( SC ) );
+  anIter->InitEx( true );
+  while( anIter->More() ) {
+    _PTR(SObject) valSO ( anIter->Value() );
+    _PTR(SObject) refSO;
+    if ( !valSO->ReferencedObject( refSO ) )
+      getEmptyFolders( valSO, emptyFolders );
+    anIter->Next();
+  }
+
+  std::set<std::string>::iterator iter;
+  for( iter = emptyFolders.begin(); iter != emptyFolders.end(); ++iter ) {
+    std::string studyEntry = *iter;
+    removeObject( studyEntry );
+  }
+  myApp->updateObjectBrowser( false );
+  myApp->updateActions();
+}
+
+//=================================================================================
+// function : removeEmptyFolders()
+// purpose  : remove empty folders from the study
+//=================================================================================
+void GEOMToolsGUI_ReduceStudyDlg::getEmptyFolders( _PTR(SObject) theSO, std::set<std::string>& theFolders )
+{
+  _PTR(UseCaseBuilder) aUseCaseBuilder = myStudy->GetUseCaseBuilder();
+
+  bool isFolder = false;
+  _PTR(GenericAttribute) anAttr;
+  if ( theSO->FindAttribute(anAttr, "AttributeLocalID") ) {
+    _PTR(AttributeLocalID) aLocalID( anAttr );
+    isFolder = aLocalID->Value() == 999;
+  }
+  QString studyEntry = theSO->GetID().c_str();
+  if ( isFolder ) {
+    if( !aUseCaseBuilder->HasChildren( theSO ) )
+      theFolders.insert( studyEntry.toStdString() );
+    else {
+      _PTR(UseCaseIterator) ucit ( aUseCaseBuilder->GetUseCaseIterator( theSO ) );
+      for ( ucit->Init( false ); ucit->More(); ucit->Next() )
+        getEmptyFolders( ucit->Value(), theFolders );
+    }
+  }
+}
+
+//=================================================================================
 // function : onItemClicked()
-// purpose  : Called then treeItem clicked
+// purpose  : called when tree item was clicked
 //=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::onItemClicked( QTreeWidgetItem* theItem, int theColumn )
 {
@@ -415,6 +529,10 @@ void GEOMToolsGUI_ReduceStudyDlg::onItemClicked( QTreeWidgetItem* theItem, int t
   checkVisibleIcon( item->treeWidget() );
 }
 
+//=================================================================================
+// function : onHeaderClicked()
+// purpose  : called when header item of tree was clicked
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::onHeaderClicked( int theColumn )
 {
   if( theColumn != 1 )
@@ -452,11 +570,19 @@ void GEOMToolsGUI_ReduceStudyDlg::onHeaderClicked( int theColumn )
   myDisplayer.UpdateViewer();
 }
 
+//=================================================================================
+// function : selectionChanged()
+// purpose  : called when selection of object browser was changed
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::selectionChanged()
 {
   init( getSelectedObjects() );
 }
 
+//=================================================================================
+// function : update()
+// purpose  : update tree data
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::update()
 {
   myTreeKeptObjects->clear();
@@ -497,21 +623,40 @@ void GEOMToolsGUI_ReduceStudyDlg::update()
 
 }
 
+//=================================================================================
+// function : clickOnOk()
+// purpose  : called when OK button was clicked
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
 {
   std::set<std::string> objectsToBeRemoved = myRemovedObjects;
   std::set<std::string> objectsToBeUnpublished;
 
+  // Create lists of intermediate objects to be removed or to be unpublished
   std::set<std::string>::iterator iter;
   if( myGroupIntermediates->checkedId() == 1 ) { // unpublish
     for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )
     objectsToBeUnpublished.insert( *iter );
   }
   if( myGroupIntermediates->checkedId() == 2 ) { // remove
-    for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )
-      objectsToBeRemoved.insert( *iter );
+	if( myCBSoftRemoval->isChecked() )
+      for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )
+        objectsToBeRemoved.insert( *iter );
+	else {
+      if ( SUIT_MessageBox::question( this,
+                                      tr( "GEOM_WRN_WARNING" ),
+                                      tr( "GEOM_REDUCE_STUDY_WARNING_DELETE" ),
+                                      QMessageBox::Yes | QMessageBox::No,
+                                      QMessageBox::Yes ) == QMessageBox::Yes ) {
+        for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )
+          objectsToBeRemoved.insert( *iter );
+      }
+      else
+        return;
+	}
   }
 
+  // Create lists of sub-objects to be removed or to be unpublished
   if( myGroupSubObjects->checkedId() == 1 ) { // unpublish
     for( iter = myListSubObjects.begin(); iter != myListSubObjects.end(); ++iter )
       objectsToBeUnpublished.insert( *iter );
@@ -521,6 +666,7 @@ void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
       objectsToBeRemoved.insert( *iter );
   }
 
+  // if user chosen the soft removal
   if( myCBSoftRemoval->isChecked() ) {
     for( iter = objectsToBeRemoved.begin(); iter != objectsToBeRemoved.end(); ++iter )
       objectsToBeUnpublished.insert( *iter );
@@ -531,168 +677,20 @@ void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
     removeObjects( objectsToBeRemoved );
   }
 
+  // if user want to delete the empty folders
+  if( myCBRemoveEmptyFolder->isChecked() )
+    removeEmptyFolders();
+
   accept();
-
-
-//  std::cout<< "\n\n REMOVE:" << std::endl;
-//  std::set<std::string>::iterator it;
-//  for( it = objectsToBeRemoved.begin(); it != objectsToBeRemoved.end(); ++it )
-//    std::cout <<"  " << (*it) << std::endl;
-//
-//  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-//  if ( !app ) return;
-//  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-//  // get currently opened views
-//  QList<SALOME_View*> views;
-//  SALOME_View* view;
-//  ViewManagerList vmans = app->viewManagers();
-//  SUIT_ViewManager* vman;
-//  foreach ( vman, vmans ) {
-//    SUIT_ViewModel* vmod = vman->getViewModel();
-//    view = dynamic_cast<SALOME_View*> ( vmod ); // must work for OCC and VTK views
-//    if ( view )
-//      views.append( view );
-//  }
-//  _PTR(Study) aStudy = study->studyDS();
-
-
-//  _PTR(StudyBuilder) aStudyBuilder (aStudy->NewBuilder());
-//  _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
-//
-//  for( it = ObjectsToBeRemove.begin(); it != ObjectsToBeRemove.end(); ++it ) {
-//    std::string objectEntry = *it;
-//    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( myStudyId, objectEntry.c_str() );
-//    GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( GeomBaseObject );
-//    _PTR(SObject) obj = aStudy->FindObjectID( objectEntry.c_str() );
-//
-//    //Remove visual properties of the object
-//    study->removeObjectFromAll(objectEntry.c_str());
-//
-//    // remove object from study
-//    aStudyBuilder->RemoveObjectWithChildren( obj );
-////    // remove object from use case tree
-////    aUseCaseBuilder->Remove( obj );
-//
-//    // Erase graphical object
-//    QListIterator<SALOME_View*> it( views );
-//    while ( it.hasNext() )
-//      if ( SALOME_View* view = it.next() )
-//        myDisplayer.Erase( GeomObject, true, true, view);
-//
-//    GeometryGUI::GetGeomGen()->RemoveObject( GeomBaseObject );
-//  }
-//
-//  myDisplayer.UpdateViewer();
-//  GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
-//  aGeomGUI->updateObjBrowser();
-//  app->updateActions(); //SRN: To update a Save button in the toolbar
-
-
-//  _PTR(StudyBuilder) B = aStudy->NewBuilder();
-//  for( it = ObjectsToBeUnpublish.begin(); it != ObjectsToBeUnpublish.end(); ++it ) {
-//    std::string objectEntry = *it;
-//    _PTR(SObject) obj ( aStudy->FindObjectID( objectEntry ) );
-//    _PTR(GenericAttribute) anAttr;
-//    if ( obj ) {
-//      _PTR(AttributeDrawable) aDrw = B->FindOrCreateAttribute( obj, "AttributeDrawable" );
-//      aDrw->SetDrawable( false );
-//      myDisplayer.EraseWithChildren( new SALOME_InteractiveObject( objectEntry.c_str(), "GEOM", "TEMP_IO" ) );
-//    } // if ( obj )
-//  } // iterator
-//
-//  app->updateObjectBrowser( false );
-//  app->updateActions();
-//
-
-//  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-//  SALOME_ListIO aSelList;
-//
-//  for( it = ObjectsToBeUnpublish.begin(); it != ObjectsToBeUnpublish.end(); ++it ) {
-//    std::string objectEntry = *it;
-//    GEOM::GEOM_BaseObject_var GeomBaseObject = GeometryGUI::GetGeomGen()->GetObject( myStudyId, objectEntry.c_str() );
-//    GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( GeomBaseObject );
-//    QString studyEntry = GeomBaseObject->GetStudyEntry();
-//    Handle(SALOME_InteractiveObject) tmpIO =
-//      new SALOME_InteractiveObject( studyEntry.toStdString().c_str(), "GEOM", "TEMP_IO");
-//    aSelList.Append(tmpIO);
-//
-//  }
-//  aSelMgr->clearSelected();
-//  aSelMgr->setSelectedObjects(aSelList);
-//  GEOMToolsGUI::OnUnpublishObject();
-
-
-
-//  if( myCBRemoveEmptyFolder->isChecked() ) {
-//
-//	  SALOME_ListIO selected;
-//	  SalomeApp_Application* app =
-//	    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-//	  if ( !app )
-//	    return;
-//
-//	  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-//	  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-//	  if ( !aSelMgr || !appStudy )
-//	    return;
-//
-//	  // get selection
-//	  aSelMgr->selectedObjects( selected, "ObjectBrowser", false );
-//	  if ( selected.IsEmpty() )
-//	    return;
-//
-//	  _PTR(Study) aStudy = appStudy->studyDS();
-//	  _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
-//
-//	    // ... and then delete all folders
-//	    for ( it = toBeDelFolders.begin(); it != toBeDelFolders.end(); ++it ) {
-//	      _PTR(SObject) obj ( aStudy->FindObjectID( it.key().toLatin1().data() ) );
-//	      // remove object from GEOM engine
-//	      removeObjectWithChildren( obj, aStudy, views, disp );
-//	      // remove objects from study
-//	      aStudyBuilder->RemoveObjectWithChildren( obj );
-//	      // remove object from use case tree
-//	      aUseCaseBuilder->Remove( obj );
-//	    }
-//  }
 }
 
-////=======================================================================
-//// function : getGeomChildrenAndFolders
-//// purpose  : Get direct (1-level) GEOM objects under each folder, sub-folder, etc. and these folders itself
-////=======================================================================
-//static void getGeomChildrenAndFolders( _PTR(SObject) theSO,
-//                                       QMap<QString,QString>& geomObjList,
-//                                       QMap<QString,QString>& folderList ) {
-//  if ( !theSO ) return;
-//  _PTR(Study) aStudy = theSO->GetStudy();
-//  if ( !aStudy ) return;
-//  _PTR(UseCaseBuilder) aUseCaseBuilder = aStudy->GetUseCaseBuilder();
-//
-//  bool isFolder = false;
-//  _PTR(GenericAttribute) anAttr;
-//  if ( theSO->FindAttribute(anAttr, "AttributeLocalID") ) {
-//    _PTR(AttributeLocalID) aLocalID( anAttr );
-//    isFolder = aLocalID->Value() == 999;
-//  }
-//  QString anEntry = theSO->GetID().c_str();
-//  QString aName = theSO->GetName().c_str();
-//  if ( isFolder ) {
-//    folderList.insert( anEntry, aName );
-//    _PTR(UseCaseIterator) ucit ( aUseCaseBuilder->GetUseCaseIterator( theSO ) );
-//    for ( ucit->Init( false ); ucit->More(); ucit->Next() ) {
-//      getGeomChildrenAndFolders( ucit->Value(), geomObjList, folderList );
-//    }
-//  } else {
-//    geomObjList.insert( anEntry, aName );
-//  }
-//}
-
+//=================================================================================
+// function : clickOnHelp()
+// purpose  : called when Help button was clicked
+//=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::clickOnHelp()
 {
-
 }
-
 
 GEOMToolsGUI_TreeWidgetItem::GEOMToolsGUI_TreeWidgetItem( QTreeWidget* view, const QStringList &strings,
                                                           char* studyEntry, int type )
