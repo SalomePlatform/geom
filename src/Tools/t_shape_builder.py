@@ -103,19 +103,12 @@ def build_shape(study, r1, r2, h1, h2):
   v1, l1, arc1, part1 = demidisk(study, r1, a1)
   v2, l2, arc2, part2 = demidisk(study, r2, a1, 90.0)
 
-  geompy.addToStudy(part1, 'part1')
-  geompy.addToStudy(part2, 'part2')
-
   # --- extrusion des sections --> demi cylindres de travail, pour en extraire les sections utilisées au niveau du Té
   #     et enveloppe cylindrique du cylindre principal
 
   demicyl1 = geompy.MakePrismVecH(part1, OX, h1)
   demicyl2 = geompy.MakePrismVecH(part2, OZ, h2)
   arcextru = geompy.MakePrismVecH(arc1, OX, h1)
-
-  geompy.addToStudy(demicyl1, 'demicyl1')
-  geompy.addToStudy(demicyl2, 'demicyl2')
-  geompy.addToStudy(arcextru, 'arcextru')
 
   # --- plan de coupe à 45° sur le cylindre principal,
   #     section à 45° du cylndre principal,
@@ -240,25 +233,21 @@ def build_shape(study, r1, r2, h1, h2):
   # --- extrusion droite des faces de jonction, pour reconstituer les demi cylindres
 
   extru1 = geompy.MakePrismVecH(sect45, OX, h1+10)
-  geompy.addToStudy(extru1, "extru1")
 
   base2 = geompy.MakePartition(faci[5:], [], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
   extru2 = geompy.MakePrismVecH(base2, OZ, h2)
-  geompy.addToStudy(extru2, "extru2")
 
   # --- partition et coupe
 
   demiDisque = geompy.MakeFaceWires([arc1, l1[0]], 1)
   demiCylindre = geompy.MakePrismVecH(demiDisque, OX, h1)
-  #geompy.addToStudy(demiCylindre, "demiCylindre")
+
   box = geompy.MakeBox(0, -2*(r1+h1), -2*(r1+h1), 2*(r1+h1), 2*(r1+h1), 2*(r1+h1))
   rot = geompy.MakeRotation(box, OY, 45*math.pi/180.0)
-  #geompy.addToStudy(rot, "rot")
+
   garder = geompy.MakeCutList(demiCylindre, [extru2, rot], True)
-  geompy.addToStudy(garder, "garder")
   raccord = geompy.MakePartition([garder], faci, [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
   assemblage = geompy.MakePartition([raccord, extru1, extru2], [], [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
-  geompy.addToStudy(assemblage, "assemblage")
 
   box = geompy.MakeBox(-1, -(r1+r2), -1, h1, r1+r2, h2)
   geompy.addToStudy(box, "box")

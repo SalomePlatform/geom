@@ -36,7 +36,6 @@ class TShapeDialog(QtGui.QDialog):
       self._wasOk = False
    
     def accept(self):
-      print "DATA ACCEPTED"
       self._wasOk = True
       QtGui.QDialog.accept(self)
       
@@ -47,25 +46,6 @@ class TShapeDialog(QtGui.QDialog):
       h2 = self.ui.doubleSpinBox_4.value()
       
       return r1, r2, h1, h2
-      
-    #def setupUi(self):
-        #TShapeDialog_UI.setupUi(self)
-        #self.handleAcceptWith(self.accept)
-        #self.handleRejectWith(self.reject)
-
-    #def handleAcceptWith(self,callbackFunction):
-        #"""This defines the function to be connected to the signal 'accepted()' (click on Ok)"""
-        #QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), callbackFunction)
-
-    #def handleRejectWith(self,callbackFunction):
-        #"""This defines the function to be connected to the signal 'rejected()' (click on Cancel)"""
-        #QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), callbackFunction)
-
-    #def accept(self):
-        #'''Callback function when dialog is accepted (click Ok)'''
-        #self._wasOk = True
-        ## We should test here the validity of values
-        #QtGui.QDialog.accept(self)
 
     def reject(self):
         self._wasOk = False
@@ -74,11 +54,6 @@ class TShapeDialog(QtGui.QDialog):
     def wasOk(self):
         return self._wasOk
 
-    #def setData(self):
-      #pass
-
-    #def getData(self):
-       #pass
      
 # ================     
 # Tests

@@ -36,7 +36,7 @@ def t_shape_fluid(context):
     dialog.exec_()
     if dialog.wasOk():
       r1, r2, h1, h2 = dialog.getData()
-      QMessageBox.about(None, "Building in progress", "building shape, please be patient")
+      #QMessageBox.about(None, "Building in progress", "building shape, please be patient")
       shape = t_shape_builder.build_shape(activeStudy, r1, r2, h1, h2)
       entry = xalome.addToStudy(activeStudy, shape, "T_shape_fluid" )
       xalome.displayShape(entry)
