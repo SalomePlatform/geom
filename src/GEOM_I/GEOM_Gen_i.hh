@@ -391,11 +391,18 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 			      std::map< std::string, std::set<std::string> > &passedEntries,
                               int level = 0 );
 
-  void getParentDependencies(GEOM::GEOM_BaseObject_ptr gbo,
-			     std::set<std::string>& aSelected,
-			     std::set<std::string>& aParents, 
-			     std::set<std::string>& aChildren, 
-			     std::set<std::string>& anOthers);
+  void includeParentDependencies(GEOM::GEOM_BaseObject_ptr gbo,
+				 std::set<std::string>& aSelected,
+				 std::set<std::string>& aParents, 
+				 std::set<std::string>& aChildren, 
+				 std::set<std::string>& anOthers);
+
+  void includeSubObjects(SALOMEDS::Study_ptr theStudy,
+			 const std::string& aSelectedEntry,
+			 std::set<std::string>& aSelected,
+			 std::set<std::string>& aParents, 
+			 std::set<std::string>& aChildren, 
+			 std::set<std::string>& anOthers);
 
  private:
 

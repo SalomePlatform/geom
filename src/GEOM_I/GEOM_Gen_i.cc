@@ -3238,7 +3238,7 @@ void GEOM_Gen_i::GetEntriesToCleanStudy(SALOMEDS::Study_ptr theStudy,
 
       if ( aSelected.count( anEntry ) > 0 &&
            aParents.count( anEntry ) == 0 ) {
-        getParentDependencies( geomObj, aSelected, aParents, aChildren, anOthers );
+        includeParentDependencies( geomObj, aSelected, aParents, aChildren, anOthers );
       } else if ( aParents.count( anEntry ) == 0 && 
                   aChildren.count( anEntry ) == 0 ) {
         anOthers.insert( geomObj->GetEntry() );
@@ -3252,32 +3252,7 @@ void GEOM_Gen_i::GetEntriesToCleanStudy(SALOMEDS::Study_ptr theStudy,
 
     // filling list of sub-objects
     for ( it = aSelected.begin(); it != aSelected.end(); ++it ) {
-      Handle(GEOM_BaseObject) handle_object = _impl->GetObject( theStudy->StudyId(), (*it).c_str(), false);
-      if ( handle_object.IsNull() )
-        continue;
-
-      Handle(GEOM_Function) aShapeFun = handle_object->GetFunction(1);
-      if ( aShapeFun.IsNull() || !aShapeFun->HasSubShapeReferences() )
-        continue;
-
-      const TDataStd_ListOfExtendedString& aListEntries = aShapeFun->GetSubShapeReferences();
-      if ( aListEntries.IsEmpty() )
-        continue;
-
-      TDataStd_ListIteratorOfListOfExtendedString anIt (aListEntries);
-      for ( ; anIt.More(); anIt.Next() ) {
-        TCollection_ExtendedString aSubEntry = anIt.Value();
-        Standard_Integer aStrLen = aSubEntry.LengthOfCString();
-        char* aSubEntryStr = new char[aStrLen+1];
-        aSubEntry.ToUTF8CString( aSubEntryStr );
-        foundIt = aParents.find( aSubEntryStr );
-        if ( foundIt == aParents.end() ) { // add to sub-objects if it is not in parents list
-          aChildren.insert( aSubEntryStr );
-          foundIt = anOthers.find( aSubEntryStr );
-          if ( foundIt != anOthers.end() )
-            anOthers.erase( foundIt );
-        }
-      }
+      includeSubObjects( theStudy, *it, aSelected, aParents, aChildren, anOthers );
     }
 
     // if some selected object is not a main shape,
@@ -3332,11 +3307,15 @@ void GEOM_Gen_i::GetEntriesToCleanStudy(SALOMEDS::Study_ptr theStudy,
   }
 }
 
-void GEOM_Gen_i::getParentDependencies(GEOM::GEOM_BaseObject_ptr geomObj,
-				       std::set<std::string>& aSelected,
-				       std::set<std::string>& aParents,
-				       std::set<std::string>& aChildren,
-				       std::set<std::string>& anOthers)
+//==============================================================================
+// function : includeParentDependencies
+// purpose  : 
+//==============================================================================
+void GEOM_Gen_i::includeParentDependencies(GEOM::GEOM_BaseObject_ptr geomObj,
+					   std::set<std::string>& aSelected,
+					   std::set<std::string>& aParents,
+					   std::set<std::string>& aChildren,
+					   std::set<std::string>& anOthers)
 {
   std::string anEntry = geomObj->GetEntry();
   if ( aSelected.count( anEntry ) == 0 ) {
@@ -3363,10 +3342,53 @@ void GEOM_Gen_i::getParentDependencies(GEOM::GEOM_BaseObject_ptr geomObj,
 	 aParents.count( aDepEntry ) > 0     // skip already processed objects
 	 )
       continue;
-    getParentDependencies( depList[i], aSelected, aParents, aChildren, anOthers );
+    includeParentDependencies( depList[i], aSelected, aParents, aChildren, anOthers );
   }
 }
 
+//==============================================================================
+// function : includeSubObjects
+// purpose  : 
+//==============================================================================
+void GEOM_Gen_i::includeSubObjects(SALOMEDS::Study_ptr theStudy,
+				   const std::string& aSelectedEntry,
+				   std::set<std::string>& aSelected,
+				   std::set<std::string>& aParents,
+				   std::set<std::string>& aChildren,
+				   std::set<std::string>& anOthers)
+{
+  std::set<std::string>::iterator foundIt;
+  Handle(GEOM_BaseObject) handle_object = _impl->GetObject( theStudy->StudyId(), aSelectedEntry.c_str(), false);
+  if ( handle_object.IsNull() )
+    return;
+
+  Handle(GEOM_Function) aShapeFun = handle_object->GetFunction(1);
+  if ( aShapeFun.IsNull() || !aShapeFun->HasSubShapeReferences() )
+    return;
+
+  const TDataStd_ListOfExtendedString& aListEntries = aShapeFun->GetSubShapeReferences();
+  if ( aListEntries.IsEmpty() )
+    return;
+
+  TDataStd_ListIteratorOfListOfExtendedString anIt (aListEntries);
+  for ( ; anIt.More(); anIt.Next() ) {
+    TCollection_ExtendedString aSubEntry = anIt.Value();
+    Standard_Integer aStrLen = aSubEntry.LengthOfCString();
+    char* aSubEntryStr = new char[aStrLen+1];
+    aSubEntry.ToUTF8CString( aSubEntryStr );
+    foundIt = aParents.find( aSubEntryStr );
+    if ( foundIt == aParents.end() ) { // add to sub-objects if it is not in parents list
+      foundIt = aSelected.find( aSubEntryStr );
+      if ( foundIt == aSelected.end() ) { // add to sub-objects if it is not in selected list
+	    aChildren.insert( aSubEntryStr );
+	    foundIt = anOthers.find( aSubEntryStr );
+	    if ( foundIt != anOthers.end() )
+	      anOthers.erase( foundIt );
+      }
+    }
+    includeSubObjects( theStudy, aSubEntryStr, aSelected, aParents, aChildren, anOthers );
+  }
+}
 //=====================================================================================
 // EXPORTED METHODS
 //=====================================================================================
