@@ -686,10 +686,11 @@ void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
 
 //=================================================================================
 // function : clickOnHelp()
-// purpose  : called when Help button was clicked
+// purpose  : called when Help button was clicked to open a help page
 //=================================================================================
 void GEOMToolsGUI_ReduceStudyDlg::clickOnHelp()
 {
+  myApp->onHelpContextModule( "GEOM", "reduce_study_page.html" );
 }
 
 GEOMToolsGUI_TreeWidgetItem::GEOMToolsGUI_TreeWidgetItem( QTreeWidget* view, const QStringList &strings,

@@ -1,0 +1,56 @@
+/*!
+
+\page reduce_study_page Reduce Study
+
+The user sometimes needs to keep in the study only some objects that 
+present the final result(s) of the design operations and to delete all 
+other objects which do not contribute to these results.
+
+The feature is especially useful when the user designs the whole model 
+through the GUI and wants to generate simplified "clean" Python dump only 
+at the end of the model construction with no "useless" objects in the 
+%GEOM module.
+
+User can open dialog box by selecting desirable object(s) in Object 
+Browser or OCC Viewer and calling "Reduce study" popup item.
+
+\image html reduce_study_dialog.png
+
+<ul>
+
+<li><b> Objects to be kept</b> - objects will be kept in the study after 
+applying operation of reduce study. The list of objects being selected by 
+the user are highlighted in bold font.
+\n Moreover user can show and hide object(s) in current OCC Viewer using 
+"eye" icons near each item of tree. It's possible to click on "eye" icon 
+in the head of tree in order to show/hide all objects.</li>
+
+<li><b> Objects to be removed</b> - objects will be deleted by the 
+function if it is applied.</li>
+
+<li><b> Intermediate objects</b> - allows to choose future action with
+the objects, being in the operations chains to produce final objects:
+<ul>
+<li>Keep - object(s) will be kept in the study;</li>
+<li>Unpublish - object(s) will be automatically unpublished (hidden) 
+from the study;</li>
+<li>Remove - object(s) will be removed from the study. Since using of 
+this option can lead to the broken Dump Python, the warning message 
+will be shown to the user.</li>
+</ul>
+</li>
+
+<li><b> Sub-objects</b> - allows to choose the same operations for 
+sub-objects of selected item(s): keep, unpublish or remove.</li>
+
+<li><b> Remove empty folders</b> - if this option is checked, all folders, 
+which will become empty after removal of the unused objects from the 
+study, will be also removed; otherwise, empty folders will be kept.</li>
+
+<li><b> Soft removal</b> - if this option is checked, operation will just 
+unpublish the redundant objects from the study instead of their hard removal.  
+\n Soft removal would keep all the data in the study to give the user 
+chance to rollback this operation using "Publish Objects" dialog box.</li>
+
+</ul>
+*/

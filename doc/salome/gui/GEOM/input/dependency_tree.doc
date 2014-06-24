@@ -175,7 +175,7 @@ user can select it with left mouse click to change its presentation
 parameters and get access to other useful options by right-clicking on 
 the selected object.
 
-\image html tree_popup_menu.png
+\image html tree_popup_menu1.png
 
 <ul>
 <li>\b Show - allows to show selected object(s) in OCC 3D Viewer;</li>
@@ -183,6 +183,7 @@ the selected object.
 in OCC 3D Viewer;</li>
 <li><b> Rebuild the tree</b> - allows to rebuild the dependency tree 
 for selected object(s);</li>
+<li>\ref reduce_study_page "Reduce study" - allows to reduce study.</li>
 </ul>
 
 Some functionalities are available through right-clicking on 
