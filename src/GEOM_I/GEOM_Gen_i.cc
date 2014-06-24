@@ -3198,10 +3198,10 @@ void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo,
 }
 
 //==============================================================================
-// function : GetEntriesToCleanStudy
+// function : GetEntriesToReduceStudy
 // purpose  : Fills 3 lists that is used to clean study of redundant objects
 //==============================================================================
-void GEOM_Gen_i::GetEntriesToCleanStudy(SALOMEDS::Study_ptr theStudy,
+void GEOM_Gen_i::GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
 					GEOM::string_array& theSelectedEntries,
 					GEOM::string_array& theParentEntries,
 					GEOM::string_array& theSubEntries,

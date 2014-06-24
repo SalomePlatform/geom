@@ -327,11 +327,11 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   /*! \brief Fills 3 lists that is used to clean study of redundant objects.
    *         To be used from GUI.
    */
-  void GetEntriesToCleanStudy(SALOMEDS::Study_ptr theStudy,
-			      GEOM::string_array& theSelectedEntries,
-			      GEOM::string_array& theParentEntries,
-			      GEOM::string_array& theSubEntries,
-			      GEOM::string_array& theOtherEntries);
+  void GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
+			       GEOM::string_array& theSelectedEntries,
+			       GEOM::string_array& theParentEntries,
+			       GEOM::string_array& theSubEntries,
+			       GEOM::string_array& theOtherEntries);
 
   //-----------------------------------------------------------------------//
   // Internal methods                                                      //
