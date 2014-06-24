@@ -440,8 +440,6 @@ void GEOMToolsGUI_ReduceStudyDlg::removeObject( std::string& theStudyEntry )
   if ( obj ) {
     // remove visual properties of the object
     appStudy->removeObjectFromAll(obj->GetID().c_str());
-    // remove references to this object
-    appStudy->deleteReferencesTo( obj );
     // remove objects from study
     aStudyBuilder->RemoveObjectWithChildren( obj );
     // remove object from use case tree
