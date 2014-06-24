@@ -904,7 +904,6 @@ void GEOMToolsGUI::OnShowDependencyTree()
 void GEOMToolsGUI::OnReduceStudy()
 {
   QDialog* dlg = new GEOMToolsGUI_ReduceStudyDlg( SUIT_Session::session()->activeApplication()->desktop() );
-  if ( dlg != NULL )
+  if( dlg != NULL )
     dlg->show();
-
 }

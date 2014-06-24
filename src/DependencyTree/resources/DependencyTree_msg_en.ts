@@ -33,8 +33,12 @@
     </message>
   <name>DependencyTree_ViewModel</name>
     <message>
-      <source>REBUILD_THE_TREE</source>
+      <source>MEN_REBUILD_THE_TREE</source>
       <translation>Rebuild the tree</translation>
+    </message>
+    <message>
+      <source>MEN_REDUCE_STUDY</source>
+      <translation>Reduce study</translation>
     </message>
 </context>
 </TS>

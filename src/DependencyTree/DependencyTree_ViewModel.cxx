@@ -31,6 +31,7 @@
 
 // GEOM includes
 #include <GEOM_Displayer.h>
+#include <GEOMToolsGUI_ReduceStudyDlg.h>
 
 // QT includes
 #include <QMenu>
@@ -113,6 +114,18 @@ void DependencyTree_ViewModel::onShowOnlySelected()
 }
 
 //=================================================================================
+// function : onReduceStudy()
+// purpose  : slot for showing dialog box "Reduce Study"
+//=================================================================================
+void DependencyTree_ViewModel::onReduceStudy()
+{
+  DependencyTree_View* viewPort = dynamic_cast<DependencyTree_View*>( getActiveViewPort() );
+  QDialog* dlg = new GEOMToolsGUI_ReduceStudyDlg( viewPort );
+  if( dlg != NULL )
+    dlg->show();
+}
+
+//=================================================================================
 // function : contextMenuPopup()
 // purpose  : process calling of context menu popup
 //=================================================================================
@@ -127,7 +140,9 @@ void DependencyTree_ViewModel::contextMenuPopup( QMenu* theMenu )
       theMenu->clear();
       theMenu->addAction( tr( "MEN_DISPLAY" ), this, SLOT( onShowSelected() ) );
       theMenu->addAction( tr( "MEN_DISPLAY_ONLY" ), this, SLOT( onShowOnlySelected() ) );
-      theMenu->addAction( tr( "REBUILD_THE_TREE"), viewPort, SLOT( onRebuildModel() ) );
+      theMenu->addAction( tr( "MEN_REBUILD_THE_TREE"), viewPort, SLOT( onRebuildModel() ) );
+      theMenu->addSeparator();
+      theMenu->addAction( tr( "MEN_REDUCE_STUDY" ), this, SLOT( onReduceStudy() ) );
     }
   }
 }
