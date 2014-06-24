@@ -18,39 +18,41 @@ Browser or OCC Viewer and calling "Reduce study" popup item.
 
 <ul>
 
-<li><b> Objects to be kept</b> - objects will be kept in the study after 
+<li><b> Objects to be kept</b> - objects that will be kept in the study after 
 applying operation of reduce study. The list of objects being selected by 
-the user are highlighted in bold font.
-\n Moreover user can show and hide object(s) in current OCC Viewer using 
-"eye" icons near each item of tree. It's possible to click on "eye" icon 
-in the head of tree in order to show/hide all objects.</li>
+the user are highlighted in bold font.</li>
 
-<li><b> Objects to be removed</b> - objects will be deleted by the 
-function if it is applied.</li>
+<li><b> Objects to be removed</b> - objects that will be deleted.</li>
 
-<li><b> Intermediate objects</b> - allows to choose future action with
-the objects, being in the operations chains to produce final objects:
+\note Mentioned views provide possibility to show/hide object(s) in 
+current Viewer using "eye" icon near each item of tree. Also user can 
+show/hide ALL objects in tree by clicking "eye" icon in the head of tree view.
+
+<li><b> Intermediate objects</b> group box allows to choose an action 
+that will be performed with the objects that took part in the operations 
+chain to produce the selected object(s):
 <ul>
 <li>Keep - object(s) will be kept in the study;</li>
-<li>Unpublish - object(s) will be automatically unpublished (hidden) 
-from the study;</li>
-<li>Remove - object(s) will be removed from the study. Since using of 
-this option can lead to the broken Dump Python, the warning message 
-will be shown to the user.</li>
+<li>Unpublish - object(s) will be unpublished (hidden) from the study;</li>
+<li>Remove - object(s) will be removed from the study. \note Since use of 
+this option can lead to the broken Dump Python script, the warning message 
+will be shown at the operation commiting to confirm/reject removing 
+intermediate objects.</li>
 </ul>
 </li>
 
-<li><b> Sub-objects</b> - allows to choose the same operations for 
+<li><b> Sub-objects</b> group box allows to choose the same operations for 
 sub-objects of selected item(s): keep, unpublish or remove.</li>
 
-<li><b> Remove empty folders</b> - if this option is checked, all folders, 
-which will become empty after removal of the unused objects from the 
-study, will be also removed; otherwise, empty folders will be kept.</li>
+<li><b> Remove empty folders</b> - if this option is checked, then all folders, 
+which will become empty after removing unused objects from the study, 
+will be also removed; otherwise, empty folders will be kept.</li>
 
 <li><b> Soft removal</b> - if this option is checked, operation will just 
-unpublish the redundant objects from the study instead of their hard removal.  
-\n Soft removal would keep all the data in the study to give the user 
-chance to rollback this operation using "Publish Objects" dialog box.</li>
+unpublish the redundant objects from the study instead of their hard delete.
+\n Soft removal would keep all the data in the study to give the user a 
+chance to revert this operation using \ref publish_hidden_objects 
+"Publish Objects" dialog box.</li>
 
 </ul>
 */

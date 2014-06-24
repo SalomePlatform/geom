@@ -2,7 +2,18 @@
 
 \page dependency_tree_page Dependency Tree
 
-\n In order to better understand the relations between the %GEOM 
+<ul>
+<li>\ref dependency_tree_general_description_anchor "General description"</li>
+<li>\ref dependency_tree_nodes_anchor "Nodes" </li>
+<li>\ref dependency_tree_links_anchor "Links" </li>
+<li>\ref dependency_tree_operations_anchor "Operations" </li>
+<li>\ref dependency_tree_navigation_anchor "Navigation" </li>
+<li>\ref dependency_tree_popup_menu_anchor "Context menu"</li>
+</ul>
+
+\anchor dependency_tree_general_description_anchor <h2>General description</h2>
+
+In order to better understand the relations between the %GEOM 
 objects in a study the user has a possibility to display the 
 ascendants and descendant of the object(s) in a family tree.
 
@@ -21,7 +32,7 @@ User can change all necessary parameters of Dependency Tree Viewer
 in \ref pref_dependency_tree "Preferences".
 
 <hr>
-\anchor dependency_tree_nodes <h2>Nodes</h2>
+\anchor dependency_tree_nodes_anchor <h2>Nodes</h2>
 
 Tree nodes in the Dependency Viewer are named according to the study 
 names of the corresponding objects. 
@@ -57,7 +68,7 @@ clicks the left mouse button on node.</li></ul>
 \image html tree_selected_node.png
 
 <hr>
-\anchor dependency_tree_links <h2>Links</h2>
+\anchor dependency_tree_links_anchor <h2>Links</h2>
 
 Dependency Tree Viewer shows oriented links between nodes to 
 represent dependency direction. Viewer supports the following states 
@@ -81,7 +92,7 @@ some nodes.</li></ul>
 \image html tree_cycldep_link.png
 
 <hr>
-\anchor dependency_tree_operations <h2>Operations</h2>
+\anchor dependency_tree_operations_anchor <h2>Operations</h2>
 
 The dependency tree of a chosen %GEOM object is displayed in 
 the dedicated 2D view window.
@@ -149,7 +160,7 @@ of descendants.
 \image html tree_button_update.png
 
 <hr>
-\anchor dependency_tree_navigation <h2>Navigation</h2>
+\anchor dependency_tree_navigation_anchor <h2>Navigation</h2>
 
 Dependency Tree 2D Viewer supports the following navigation mode:
 
@@ -168,7 +179,7 @@ the following view transformations:
 </ul>
 
 <hr>
-\anchor dependency_tree_popup_menu <h2>Popup Menu</h2>
+\anchor dependency_tree_popup_menu_anchor <h2>Popup Menu</h2>
 
 After the object has appeared in the Dependency Tree 2D Viewer, 
 user can select it with left mouse click to change its presentation 
