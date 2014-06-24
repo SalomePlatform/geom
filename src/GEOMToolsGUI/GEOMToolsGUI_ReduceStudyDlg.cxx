@@ -164,7 +164,7 @@ void GEOMToolsGUI_ReduceStudyDlg::init( const std::set<std::string>& theObjectEn
   GEOM::string_array_var subObjects = new GEOM::string_array();
   GEOM::string_array_var otherObjects = new GEOM::string_array();
 
-  GeometryGUI::GetGeomGen()->GetEntriesToCleanStudy( GeometryGUI::ClientStudyToStudy( myStudy ),
+  GeometryGUI::GetGeomGen()->GetEntriesToReduceStudy( GeometryGUI::ClientStudyToStudy( myStudy ),
 		                                             keptObjects, parentsObjects,
 		                                             subObjects, otherObjects );
 
@@ -438,8 +438,10 @@ void GEOMToolsGUI_ReduceStudyDlg::removeObject( std::string& theStudyEntry )
 
   _PTR(SObject) obj ( myStudy->FindObjectID( theStudyEntry.c_str() ) );
   if ( obj ) {
-    //Remove visual properties of the object
+    // remove visual properties of the object
     appStudy->removeObjectFromAll(obj->GetID().c_str());
+    // remove references to this object
+    appStudy->deleteReferencesTo( obj );
     // remove objects from study
     aStudyBuilder->RemoveObjectWithChildren( obj );
     // remove object from use case tree
