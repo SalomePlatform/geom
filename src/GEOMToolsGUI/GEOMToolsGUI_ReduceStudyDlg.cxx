@@ -641,21 +641,16 @@ void GEOMToolsGUI_ReduceStudyDlg::clickOnOk()
     objectsToBeUnpublished.insert( *iter );
   }
   if( myGroupIntermediates->checkedId() == 2 ) { // remove
-	if( myCBSoftRemoval->isChecked() )
-      for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )
-        objectsToBeRemoved.insert( *iter );
-	else {
-      if ( SUIT_MessageBox::question( this,
-                                      tr( "GEOM_WRN_WARNING" ),
-                                      tr( "GEOM_REDUCE_STUDY_WARNING_DELETE" ),
-                                      QMessageBox::Yes | QMessageBox::No,
-                                      QMessageBox::Yes ) == QMessageBox::Yes ) {
-        for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )
-          objectsToBeRemoved.insert( *iter );
-      }
-      else
-        return;
-	}
+    if( !myCBSoftRemoval->isChecked() && 
+	SUIT_MessageBox::question( this,
+				   tr( "GEOM_WRN_WARNING" ),
+				   tr( "GEOM_REDUCE_STUDY_WARNING_DELETE" ),
+				   QMessageBox::Yes | QMessageBox::No,
+				   QMessageBox::Yes ) == QMessageBox::No ) {
+      return;
+    }
+    for( iter = myListParents.begin(); iter != myListParents.end(); ++iter )
+      objectsToBeRemoved.insert( *iter );
   }
 
   // Create lists of sub-objects to be removed or to be unpublished
