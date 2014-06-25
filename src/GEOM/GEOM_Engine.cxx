@@ -215,7 +215,7 @@ GEOM_Engine::GEOM_Engine()
   TFunction_DriverTable::Get()->AddDriver(GEOM_Object::GetSubShapeID(), new GEOM_SubShapeDriver());
   
   _OCAFApp = new GEOM_Application();
-  _UndoLimit = 10;
+  _UndoLimit = 0;
 }
 
 /*!
