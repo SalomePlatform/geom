@@ -5089,6 +5089,35 @@ module GEOM
     void Move( in object_list what, 
 	       in SALOMEDS::SObject where, 
 	       in long row );
+
+    /*!
+     * \brief Collects dependencies of the given objects from other ones
+     * \param theStudy The study in which the object is published
+     * \param theListOfEntries List of GEOM object entries in OCAF tree (not in study)
+     * \return Struct of dependent entries and its links as a byte array
+     * \note This method is supposed to be used by GUI only.
+     */
+    SALOMEDS::TMPFile GetDependencyTree(in SALOMEDS::Study theStudy,
+					in string_array theListOfEntries);
+
+    /*!
+     * \brief Fills 3 lists that is used to reduce study of redundant objects:
+     *  - dependencies of the given objects from other ones;
+     *  - children of the given objects;
+     *  - all other objects in study.
+     * \param theStudy The study in which the object was published
+     * \param theSelectedEntries List of GEOM object entries in OCAF tree
+     * \param theParentEntries List of GEOM object entries on which the given objects depend
+     * \param theSubEntries Children entries list of the given objects
+     * \param theOtherEntries List of GEOM object entries which are in the study, but not in parents and children lists
+     * \note This method is supposed to be used by GUI only.
+     */
+    void GetEntriesToReduceStudy(in SALOMEDS::Study theStudy,
+				 inout string_array theSelectedEntries,
+				 inout string_array theParentEntries,
+				 inout string_array theSubEntries,
+				 inout string_array theOtherEntries);
+
   };
 };
 

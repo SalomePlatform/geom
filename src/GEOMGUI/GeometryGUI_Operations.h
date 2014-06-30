@@ -61,6 +61,8 @@ namespace GEOMOp {
     OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
     OpCreateFolder        = 1262,   // POPUP MENU - CREATE FOLDER
     OpSortChildren        = 1263,   // POPUP MENU - SORT CHILD ITEMS
+    OpShowDependencyTree  = 1264,   // POPUP MENU - SHOW DEPENDENCY TREE
+    OpReduceStudy         = 1265,   // POPUP MENU - REDUCE STUDY
     // DisplayGUI ------------------//--------------------------------
     OpSwitchVectors       = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION
     OpShowAll             = 2002,   // MENU VIEW  - SHOW ALL

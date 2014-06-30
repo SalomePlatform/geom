@@ -34,6 +34,7 @@
 #include "GEOMToolsGUI_PublishDlg.h"
 #include "GEOMToolsGUI_MaterialPropertiesDlg.h"
 #include "GEOMToolsGUI_LineWidthDlg.h"
+#include "GEOMToolsGUI_ReduceStudyDlg.h"
 #include <Material_Model.h>
 
 #include <GEOM_VTKPropertyMaterial.hxx>
@@ -45,6 +46,10 @@
 
 #include <GEOMBase.h>
 #include <GEOM_Actor.h>
+
+#include <DependencyTree_ViewModel.h>
+#include <DependencyTree_View.h>
+#include <DependencyTree_Selector.h>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -861,4 +866,44 @@ void GEOMToolsGUI::OnSortChildren()
   aStudy->GetUseCaseBuilder()->SortChildren( aFatherSO, true/*AscendingOrder*/ );
 
   app->updateObjectBrowser( true );
+}
+
+void GEOMToolsGUI::OnShowDependencyTree()
+{
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app ) return;
+
+  SUIT_ViewManager *svm = app->getViewManager( GraphicsView_Viewer::Type(), false );
+
+  if( !svm ) {
+    DependencyTree_View* view = new DependencyTree_View();
+    DependencyTree_ViewModel* viewModel = new DependencyTree_ViewModel( GraphicsView_Viewer::Type(), view );
+    SUIT_ViewManager *svm = app->createViewManager( viewModel );
+
+    LightApp_SelectionMgr* selMgr = app->selectionMgr();
+    new DependencyTree_Selector( viewModel, (SUIT_SelectionMgr*)selMgr );
+
+    SUIT_ViewWindow* svw = svm->getActiveView();
+    GraphicsView_ViewFrame* aViewFrame = 0;
+    if (!svw) svw = svm->createViewWindow();
+    if (svw) aViewFrame = dynamic_cast<GraphicsView_ViewFrame*>(svw);
+
+    view->init( aViewFrame );
+    svm->setTitle( view->getViewName() );
+  }
+  else
+    if( DependencyTree_ViewModel* viewModel = dynamic_cast<DependencyTree_ViewModel*>( svm->getViewModel() ) )
+      if( DependencyTree_View* view = dynamic_cast<DependencyTree_View*>( viewModel->getActiveViewPort() ) ) {
+        svm->getActiveView()->setFocus();
+        view->updateModel();
+      }
+}
+
+void GEOMToolsGUI::OnReduceStudy()
+{
+  QDialog* dlg = new GEOMToolsGUI_ReduceStudyDlg( SUIT_Session::session()->activeApplication()->desktop() );
+  if( dlg != NULL )
+    dlg->show();
 }

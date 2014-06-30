@@ -2,6 +2,8 @@
 
 \page geometry_preferences_page Geometry preferences
 
+\anchor pref_settings <h2>Settings</h2>
+
 In the \b Geometry module you can set preferences for visualisation of
 geometrical figures, which can be used in later sessions with this module.
 There is also a special group of preferences controlling input
@@ -128,5 +130,35 @@ system immediately after the module activation.</li>
 </ul>
 </ul>
 
+\anchor pref_dependency_tree <h2>Dependency Tree</h2>
+
+Also user can set preferences for visualisation of <b>Dependency Tree</b> in 2D Viewer.
+
+\image html pref_dep_tree.png
+
+<ul>
+<li><b>General</b></li>
+<ul>
+<li><b>Hierarchy type</b> - allows to choose default displaying mode of dependency tree.</li>
+<li><b>Possibility to move nodes</b> - enable/disable the possibility of moving nodes by default.</li>
+</ul>
+</ul>
+
+<ul>
+<li><b>Color</b></li>
+<ul>
+<li><b>Background color</b> - allows to select default background color.</li>
+<li><b>Default node color</b> - allows to select default node color.</li>
+<li><b>Main node color</b> - allows to select default main node color.</li>
+<li><b>Unpublished node color</b> - allows to select default node color
+for unpublished objects.</li>
+<li><b>Selected node color</b> - allows to select default selected node color.</li>
+<li><b>Default arrow color</b> - allows to select default arrow color.</li>
+<li><b>Highlighted arrow color</b> - allows to select default highlighted 
+arrow color.</li>
+<li><b>Selected arrow color</b> - allows to select default selected 
+arrow color.</li>
+</ul>
+</ul>
 
 */

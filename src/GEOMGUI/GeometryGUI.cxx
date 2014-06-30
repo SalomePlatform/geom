@@ -502,6 +502,8 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpClsBringToFront:    //
   case GEOMOp::OpCreateFolder:       // POPUP MENU - CREATE FOLDER
   case GEOMOp::OpSortChildren:       // POPUP MENU - SORT CHILD ITEMS
+  case GEOMOp::OpShowDependencyTree: // POPUP MENU - SHOW DEPENDENCY TREE
+  case GEOMOp::OpReduceStudy:        // POPUP MENU - REDUCE STUDY
     libName = "GEOMToolsGUI";
     break;
   case GEOMOp::OpDMWireframe:        // MENU VIEW - WIREFRAME
@@ -1077,6 +1079,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
   createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
+  createGeomAction( GEOMOp::OpShowDependencyTree, "POP_SHOW_DEPENDENCY_TREE" );
+  createGeomAction( GEOMOp::OpReduceStudy,       "POP_REDUCE_STUDY" );
   createGeomAction( GEOMOp::OpShowAllDimensions, "POP_SHOW_ALL_DIMENSIONS" );
   createGeomAction( GEOMOp::OpHideAllDimensions, "POP_HIDE_ALL_DIMENSIONS" );
 
@@ -1621,6 +1625,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpSortChildren ), -1, -1 ); // Sort child items
   mgr->setRule( action( GEOMOp::OpSortChildren ), QString("client='ObjectBrowser' and $component={'GEOM'} and nbChildren>1"), QtxPopupMgr::VisibleRule );
+
+  mgr->insert( separator(), -1, -1 );     // -----------
+  mgr->insert( action(  GEOMOp::OpShowDependencyTree ), -1, -1 ); // Show dependency tree
+  mgr->setRule( action( GEOMOp::OpShowDependencyTree ), clientOCCorVTKorOB + " and selcount>0 and ($component={'GEOM'}) and type='Shape'", QtxPopupMgr::VisibleRule );
+
+  mgr->insert( separator(), -1, -1 );     // -----------
+  mgr->insert( action(  GEOMOp::OpReduceStudy ), -1, -1 ); // Reduce Study
+  mgr->setRule( action( GEOMOp::OpReduceStudy ), clientOCCorVTKorOB + " and selcount>0 and ($component={'GEOM'}) and type='Shape'", QtxPopupMgr::VisibleRule );
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 
@@ -2603,6 +2615,54 @@ void GeometryGUI::createPreferences()
 
   addPreference( tr( "GEOM_PREVIEW" ), operationsGroup,
                  LightApp_Preferences::Bool, "Geometry", "geom_preview" );
+
+  int DependencyViewId = addPreference( tr( "PREF_TAB_DEPENDENCY_VIEW" ) );
+
+  int treeGeneralGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), DependencyViewId );
+
+  int hierarchy_type = addPreference( tr( "PREF_HIERARCHY_TYPE" ), treeGeneralGroup,
+                      LightApp_Preferences::Selector, "Geometry", "dependency_tree_hierarchy_type" );
+
+  QStringList aHierarchyTypeList;
+  aHierarchyTypeList.append( tr("MEN_BOTH_ASCENDANTS_DESCENDANTS") );
+  aHierarchyTypeList.append( tr("MEN_ONLY_ASCENDANTS") );
+  aHierarchyTypeList.append( tr("MEN_ONLY_DESCENDANTS") );
+
+  QList<QVariant> aHierarchyTypeIndexesList;
+  aHierarchyTypeIndexesList.append(0);
+  aHierarchyTypeIndexesList.append(1);
+  aHierarchyTypeIndexesList.append(2);
+
+  setPreferenceProperty( hierarchy_type, "strings", aHierarchyTypeList );
+  setPreferenceProperty( hierarchy_type, "indexes", aHierarchyTypeIndexesList );
+
+  addPreference( tr( "GEOM_MOVE_POSSIBILITY" ), treeGeneralGroup,
+                 LightApp_Preferences::Bool, "Geometry", "dependency_tree_move_nodes" );
+
+  int treeColorGroup = addPreference( tr( "PREF_GROUP_DEPENDENCY_VIEW_COLOR" ), DependencyViewId );
+
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_background_color" );
+
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_NODE_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_node_color" );
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_main_node_color" );
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_unpublish_node_color" );
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_select_node_color" );
+
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_ARROW_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_arrow_color" );
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_highlight_arrow_color" );
+  addPreference( tr( "PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR"), treeColorGroup,
+                 LightApp_Preferences::Color, "Geometry", "dependency_tree_select_arrow_color" );
+
+
+
+
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )
@@ -2673,6 +2733,8 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
 
       aDisplayer.UpdateViewer();
     }
+    else if ( param.startsWith( "dependency_tree") )
+      emit SignalDependencyTreeParamChanged( section, param );
   }
 }
 
@@ -3226,6 +3288,7 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name)
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
       if (!CORBA::is_nil(anObj)) {
         anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
+        emit SignalDependencyTreeRenameObject( anObj->GetEntry() );
       }
       result = true;
     }

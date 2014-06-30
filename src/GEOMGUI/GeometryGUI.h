@@ -182,6 +182,8 @@ signals :
   void                        SignalDeactivateActiveDialog();
   void                        SignalCloseAllDialogs();
   void                        SignalDefaultStepValueChanged( double newVal );
+  void                        SignalDependencyTreeParamChanged( const QString&, const QString& );
+  void                        SignalDependencyTreeRenameObject( const QString& );
 
 protected:
   virtual LightApp_Selection* createSelection() const;

@@ -38,6 +38,8 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
   ${PROJECT_SOURCE_DIR}/src/Material
+  ${PROJECT_SOURCE_DIR}/src/DependencyTree
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -56,6 +58,7 @@ SET(_link_LIBRARIES
   GEOM
   GEOMBase
   Material
+  DependencyTree
   )
 
 # --- headers ---
@@ -71,6 +74,7 @@ SET(GEOMToolsGUI_HEADERS
   GEOMToolsGUI_PublishDlg.h
   GEOMToolsGUI_MaterialPropertiesDlg.h
   GEOMToolsGUI_LineWidthDlg.h
+  GEOMToolsGUI_ReduceStudyDlg.h
   )
 
 # header files / to be processed by moc
@@ -83,6 +87,7 @@ SET(_moc_HEADERS
   GEOMToolsGUI_PublishDlg.h
   GEOMToolsGUI_MaterialPropertiesDlg.h
   GEOMToolsGUI_LineWidthDlg.h
+  GEOMToolsGUI_ReduceStudyDlg.h
   )
 
 # --- sources ---
@@ -101,6 +106,7 @@ SET(GEOMToolsGUI_SOURCES
   GEOMToolsGUI_PublishDlg.cxx
   GEOMToolsGUI_MaterialPropertiesDlg.cxx
   GEOMToolsGUI_LineWidthDlg.cxx
+  GEOMToolsGUI_ReduceStudyDlg.cxx
   ${_moc_SOURCES}
   )
 

@@ -4761,6 +4761,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Manage measurement dimensions of an object</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation>Show dependency tree</translation>
+    </message>
+    <message>
+        <source>MEN_POP_REDUCE_STUDY</source>
+        <translation>Reduce study</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
         <translation>Show all dimensions</translation>
     </message>
@@ -5023,6 +5031,66 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_PREVIEW</source>
         <translation>Preview</translation>
+    </message>
+    <message>
+        <source>PREF_TAB_DEPENDENCY_VIEW</source>
+        <translation>Dependency Tree</translation>
+    </message>
+    <message>
+        <source>PREF_HIERARCHY_TYPE</source>
+        <translation>Hierarchy type</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_ASCENDANTS</source>
+        <translation>Display only ascendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_DESCENDANTS</source>
+        <translation>Display only descendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
+        <translation>Display both ascendants and descendants trees</translation>
+    </message>
+    <message>
+        <source>GEOM_MOVE_POSSIBILITY</source>
+        <translation>Possibility to move nodes</translation>
+    </message>
+    <message>
+        <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
+        <translation>Color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
+        <translation>Background color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
+        <translation>Default node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
+        <translation>Main node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
+        <translation>Unpublished node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
+        <translation>Selected node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
+        <translation>Default arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
+        <translation>Highlighted arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
+        <translation>Selected arrow color</translation>
     </message>
     <message>
         <source>GEOM_ALL_IMPORT_FILES</source>
@@ -6819,6 +6887,61 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_PUBLISH_CLOSE_BTN</source>
         <translation>P&amp;ublish And Close</translation>
+    </message>
+</context>
+<context>
+    <name>GEOMToolsGUI_ReduceStudyDlg</name>
+    <message>
+        <source>GEOM_REDUCE_STUDY_TITLE</source>
+        <translation>Reduce study</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
+        <translation>Objects to be kept</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
+        <translation>Objects to be removed</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_NAME</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_OPTIONS</source>
+        <translation>Options</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
+        <translation>Intermediate objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
+        <translation>Sub-objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEEP</source>
+        <translation>Keep</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
+        <translation>Unpublish</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE</source>
+        <translation>Remove</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
+        <translation>Remove empty folders</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
+        <translation>Soft removal</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
+        <translation>Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
     </message>
 </context>
 <context>
