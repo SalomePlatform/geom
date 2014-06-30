@@ -1829,37 +1829,23 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   getApp()->insertDockWindow( myCreationInfoWdg->getWinID(), myCreationInfoWdg );
   getApp()->placeDockWindow( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
 
+  //NPAL 19674
+  SALOME_ListIO selected;
+  sm->selectedObjects( selected );
+  sm->clearSelected();
+
   SUIT_ViewManager* vm;
   ViewManagerList OCCViewManagers, VTKViewManagers;
 
   application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
   QListIterator<SUIT_ViewManager*> itOCC( OCCViewManagers );
   while ( itOCC.hasNext() && (vm = itOCC.next()) )
-    myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
+    onViewManagerAdded(vm);
 
   application()->viewManagers( SVTK_Viewer::Type(), VTKViewManagers );
   QListIterator<SUIT_ViewManager*> itVTK( VTKViewManagers );
   while ( itVTK.hasNext() && (vm = itVTK.next()) )
-    myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
-
-  //NPAL 19674
-  SALOME_ListIO selected;
-  sm->selectedObjects( selected );
-  sm->clearSelected();
-
-  // disable OCC selectors
-  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
-  QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
-  while ( itOCCSel.hasNext() )
-    if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
-      sr->setEnabled(true);
-
-  // disable VTK selectors
-  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
-  QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
-  while ( itVTKSel.hasNext() )
-    if ( LightApp_VTKSelector* sr = itVTKSel.next() )
-      sr->setEnabled(true);
+    onViewManagerAdded(vm);
 
   sm->setSelectedObjects( selected, true );   //NPAL 19674
 
