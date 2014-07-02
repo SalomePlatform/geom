@@ -44,6 +44,7 @@
     <!-- Other module preferences -->
     <parameter name="SettingsGeomStep"    value="10" />
     <parameter name="display_mode"        value="2"  />
+    <parameter name="transparency"        value="0"  />
     <parameter name="shading_color"       value="#a7a7a7" />
     <parameter name="edges_in_shading_color" value="#000000" />
     <parameter name="wireframe_color"     value="255, 255, 0" />

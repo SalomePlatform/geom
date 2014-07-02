@@ -3144,6 +3144,10 @@
       <translation>表示モード</translation>
     </message>
     <message>
+        <source>PREF_TRANSPARENCY</source>
+        <translation>透明度</translation>
+    </message>
+    <message>
       <source>PREF_FREE_BOUND_COLOR</source>
       <translation>自由境界の色</translation>
     </message>

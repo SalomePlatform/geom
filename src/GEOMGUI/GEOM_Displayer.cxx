@@ -507,6 +507,9 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   int aType = resMgr->integerValue("Geometry", "type_of_marker", (int)Aspect_TOM_PLUS);
   myWidth = resMgr->integerValue("Geometry", "edge_width", -1);
   myIsosWidth = resMgr->integerValue("Geometry", "isolines_width", -1);
+  
+  myTransparency = resMgr->integerValue("Geometry", "transparency", 0) / 100.;
+  myHasTransparency = false;
 
   myTypeOfMarker = (Aspect_TypeOfMarker)(std::min((int)Aspect_TOM_RING3, std::max((int)Aspect_TOM_POINT, aType)));
   myScaleOfMarker = (resMgr->integerValue("Geometry", "marker_scale", 1)-(int)GEOM::MS_10)*0.5 + 1.0;
@@ -519,7 +522,6 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
 
   myWidth = -1;
   myType = -1;
-  myTransparency = -1.0;
   myToActivate = true;
   // This parameter is used for activisation/deactivisation of objects to be displayed
 
@@ -2057,24 +2059,54 @@ void GEOM_Displayer::UnsetColor()
  *  Set transparency for shape displaying.
  */
 //=================================================================
-void GEOM_Displayer::SetTransparency( const double transparency )
+double GEOM_Displayer::SetTransparency( const double transparency )
 {
-  myTransparency = transparency;
+  double aPrevTransparency = myTransparency;
+  if ( transparency < 0 ) {
+    UnsetTransparency();
+  }
+  else {
+    myTransparency = transparency;
+    myHasTransparency = true;
+  }
+  return aPrevTransparency;
 }
 
+//=================================================================
+/*!
+ *  GEOM_Displayer::GetTransparency
+ *  Get transparency for shape displaying.
+ */
+//=================================================================
 double GEOM_Displayer::GetTransparency() const
 {
   return myTransparency;
 }
 
+//=================================================================
+/*!
+ *  GEOM_Displayer::HasTransparency
+ *  Check if transparency for shape displaying is set.
+ */
+//=================================================================
 bool GEOM_Displayer::HasTransparency() const
 {
-  return myTransparency != -1.0;
+  return myHasTransparency;
 }
 
-void GEOM_Displayer::UnsetTransparency()
+//=================================================================
+/*!
+ *  GEOM_Displayer::UnsetTransparency
+ *  Unset transparency for shape displaying.
+ */
+//=================================================================
+double GEOM_Displayer::UnsetTransparency()
 {
-  myTransparency = -1.0;
+  double aPrevTransparency = myTransparency;
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  myTransparency = resMgr->integerValue("Geometry", "transparency", 0) / 100.;
+  myHasTransparency = false;
+  return aPrevTransparency;
 }
 
 
@@ -2452,7 +2484,8 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
                   arg( resMgr->integerValue( "Geometry", "iso_number_v", 1 ) ) );
 
   // - transparency (opacity = 1-transparency)
-  propMap.insert( GEOM::propertyName( GEOM::Transparency ), 0.0 );
+  propMap.insert( GEOM::propertyName( GEOM::Transparency ),
+		  resMgr->integerValue( "Geometry", "transparency", 0 ) / 100. );
 
   // - display mode (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::DisplayMode ),

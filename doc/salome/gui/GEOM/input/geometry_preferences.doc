@@ -33,8 +33,7 @@ default color for edges, vectors and wires (isolated lines).</li>
 vertices.</li>
 <li><b>Color of isolines</b> - allows to select default color for
 isolines.</li>
-<li><b>Step value for spin boxes</b> - allows to define the increment
-of values set in spin boxes.</li>
+<li><b>Transparency</b> - allows to define default transparency value.</li>
 <li><b>Deflection coefficient</b> - allows to define default deflection
 coefficient for lines and surfaces. A smaller coefficient provides
 better quality of a shape in the viewer.</li>
@@ -46,6 +45,8 @@ predefined materials.</li>
 <li><b>Isolines width</b> - allows to define default width of the isolines.</li>
 <li><b>Preview edges width</b> - allows to define width of the edges for preview.</li>
 <li><b>Measures line width</b> - allows to define lines width of measurements tools.</li>
+<li><b>Step value for spin boxes</b> - allows to define the increment
+of values set in spin boxes.</li>
 <li><b>Automatic bring to front</b> - when the option is on, the objects selected by the user automatically become "top-level".</li>
 
 </ul>

@@ -3153,6 +3153,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Mode de visualisation</translation>
     </message>
     <message>
+        <source>PREF_TRANSPARENCY</source>
+        <translation>Transparence</translation>
+    </message>
+    <message>
         <source>PREF_FREE_BOUND_COLOR</source>
         <translation>Couleur des contours libres</translation>
     </message>

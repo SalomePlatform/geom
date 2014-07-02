@@ -3149,6 +3149,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Default display mode</translation>
     </message>
     <message>
+        <source>PREF_TRANSPARENCY</source>
+        <translation>Transparency</translation>
+    </message>
+    <message>
         <source>PREF_FREE_BOUND_COLOR</source>
         <translation>Color of free boundaries</translation>
     </message>

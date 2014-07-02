@@ -139,8 +139,8 @@ public:
   int           GetColor  () const;
   bool          HasColor  () const;
 
-  void          SetTransparency  ( const double );
-  void          UnsetTransparency();
+  double        SetTransparency  ( const double );
+  double        UnsetTransparency();
   double        GetTransparency  () const;
   bool          HasTransparency  () const;
   
@@ -294,6 +294,7 @@ protected:
   Aspect_TypeOfMarker              myTypeOfMarker;
   double                           myScaleOfMarker;
   double                           myTransparency;
+  bool                             myHasTransparency;
 
 private:
   SalomeApp_Application* myApp;

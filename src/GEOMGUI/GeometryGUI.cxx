@@ -2338,8 +2338,8 @@ void GeometryGUI::createPreferences()
   int top_lev_dm = addPreference( tr( "PREF_TOPLEVEL_DM" ), genGroup,
                       LightApp_Preferences::Selector, "Geometry", "toplevel_dm" );
 
-  int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
+  int transparency = addPreference( tr( "PREF_TRANSPARENCY" ), genGroup,
+				    LightApp_Preferences::IntSpin, "Geometry", "transparency" );
 
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
@@ -2374,6 +2374,9 @@ void GeometryGUI::createPreferences()
     setPreferenceProperty( wd[i], "min", 1 );
     setPreferenceProperty( wd[i], "max", 5 );
   }
+
+  int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
+                            LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
 
   addPreference( tr( "PREF_AUTO_BRING_TO_FRONT" ), genGroup,
                  LightApp_Preferences::Bool, "Geometry", "auto_bring_to_front" );
@@ -2522,6 +2525,10 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( step, "min", 1 );
   setPreferenceProperty( step, "max", 10000 );
   setPreferenceProperty( step, "precision", 3 );
+
+  // Set property for trandparency value for spinboxes
+  setPreferenceProperty( transparency, "min", 0 );
+  setPreferenceProperty( transparency, "max", 100 );
 
   // Set property for deflection value for spinboxes
   setPreferenceProperty( defl, "min", GEOM::minDeflection() );
