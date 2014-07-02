@@ -28,7 +28,9 @@
 
 #include <QPen>
 
-class DependencyTree_Object: public GraphicsView_Object
+#include "DependencyTree.h"
+
+class DEPENDENCYTREE_EXPORT DependencyTree_Object: public GraphicsView_Object
 {
 
 public:

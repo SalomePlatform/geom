@@ -25,6 +25,7 @@ INCLUDE(UseQt4Ext)
 INCLUDE_DIRECTORIES(
   ${QT_INCLUDES}
   ${GUI_INCLUDE_DIRS}
+  ${CAS_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
   ${PROJECT_SOURCE_DIR}/src/GEOM
@@ -39,6 +40,7 @@ INCLUDE_DIRECTORIES(
 ADD_DEFINITIONS(
   ${QT_DEFINITIONS}
   ${GUI_DEFINITIONS}
+  ${OMNIORB_DEFINITIONS}
   ${CAS_DEFINITIONS}
   )
 
@@ -49,6 +51,7 @@ SET(_link_LIBRARIES
   ${GUI_GraphicsView}
   GEOM
   GEOMBase
+  GEOMToolsGUI
   )
 
 # --- headers ---
@@ -57,6 +60,7 @@ SET(DependencyTree_HEADERS
   DependencyTree_Arrow.h
   DependencyTree_Object.h
   DependencyTree_Selector.h
+  DependencyTree.h
   )
 
 # header files / to be processed by moc

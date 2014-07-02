@@ -17,33 +17,17 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef DEPENDENCYTREE_SELECTOR_H
-#define DEPENDENCYTREE_SELECTOR_H
+#ifndef DEPENDENCYTREE_H
+#define DEPENDENCYTREE_H
 
-#include <LightApp_GVSelector.h>
-
-#include "DependencyTree.h"
-
-class DependencyTree_ViewModel;
-class DependencyTree_View;
-
-class DEPENDENCYTREE_EXPORT DependencyTree_Selector: public LightApp_GVSelector
-{
-
-public:
-
-  DependencyTree_Selector( DependencyTree_ViewModel*, SUIT_SelectionMgr* );
-  ~DependencyTree_Selector();
-
-protected:
-
-  virtual void          getSelection( SUIT_DataOwnerPtrList& ) const;
-  virtual void          setSelection( const SUIT_DataOwnerPtrList& );
-
-private:
-
-  DependencyTree_View*  myView;
-
-};
-
+#if defined WIN32
+#  if defined DEPENDENCYTREE_EXPORTS || defined DependencyTree_EXPORTS
+#    define DEPENDENCYTREE_EXPORT __declspec( dllexport )
+#  else
+#    define DEPENDENCYTREE_EXPORT __declspec( dllimport )
+#  endif
+#else
+#  define DEPENDENCYTREE_EXPORT
 #endif
+
+#endif // DEPENDENCYTREE_H

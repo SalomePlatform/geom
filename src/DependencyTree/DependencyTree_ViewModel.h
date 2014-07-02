@@ -22,7 +22,9 @@
 
 #include <GraphicsView_Viewer.h>
 
-class DependencyTree_ViewModel: public GraphicsView_Viewer
+#include "DependencyTree.h"
+
+class DEPENDENCYTREE_EXPORT DependencyTree_ViewModel: public GraphicsView_Viewer
 {
 
   Q_OBJECT

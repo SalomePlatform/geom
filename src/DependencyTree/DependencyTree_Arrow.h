@@ -22,9 +22,11 @@
 
 #include <QGraphicsLineItem>
 
+#include "DependencyTree.h"
+
 class DependencyTree_Object;
 
-class DependencyTree_Arrow : public QGraphicsLineItem
+class DEPENDENCYTREE_EXPORT DependencyTree_Arrow : public QGraphicsLineItem
 {
 
 public:

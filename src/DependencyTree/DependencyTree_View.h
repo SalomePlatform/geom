@@ -35,6 +35,8 @@
 #include <QSpinBox>
 #include <QCheckBox>
 
+#include "DependencyTree.h"
+
 class DependencyTree_Object;
 class DependencyTree_Arrow;
 class DependencyTree_View;
@@ -42,7 +44,7 @@ class DependencyTree_View;
 typedef std::map<std::string,DependencyTree_Object*> EntryObjectMap;
 typedef std::map<std::pair<DependencyTree_Object*,DependencyTree_Object*>,DependencyTree_Arrow*> ArrowsInfo;
 
-class DependencyTree_View: public GraphicsView_ViewPort
+class DEPENDENCYTREE_EXPORT DependencyTree_View: public GraphicsView_ViewPort
 {
   Q_OBJECT
 
