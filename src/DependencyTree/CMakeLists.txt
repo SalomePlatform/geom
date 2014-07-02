@@ -32,7 +32,6 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/OBJECT
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${PROJECT_SOURCE_DIR}/src/GEOMClient
-  ${PROJECT_SOURCE_DIR}/src/GEOMToolsGUI
   ${PROJECT_BINARY_DIR}/idl 
   )
 
@@ -51,7 +50,6 @@ SET(_link_LIBRARIES
   ${GUI_GraphicsView}
   GEOM
   GEOMBase
-  GEOMToolsGUI
   )
 
 # --- headers ---

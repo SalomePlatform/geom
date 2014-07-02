@@ -41,7 +41,6 @@ private slots:
 
   void          onShowSelected();
   void          onShowOnlySelected();
-  void          onReduceStudy();
 
 };
 

@@ -65,6 +65,8 @@
 #include <SVTK_InteractorStyle.h>
 #include <SVTK_ViewModel.h>
 
+#include <GraphicsView_Viewer.h>
+
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DataObject.h>
 #include <SalomeApp_Study.h>
@@ -433,6 +435,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   SUIT_ViewWindow* window = desk->activeWindow();
   bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+  bool ViewDep = ( window && window->getViewManager()->getType() == GraphicsView_Viewer::Type() );
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
   QList<int> NotViewerDependentCommands;
@@ -447,7 +450,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
                              << GEOMOp::OpPointMarker
                              << GEOMOp::OpCreateFolder
                              << GEOMOp::OpSortChildren;
-  if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommands.contains( id ) ) {
+  if ( !ViewOCC && !ViewVTK && !ViewDep && !NotViewerDependentCommands.contains( id ) ) {
     // activate OCC viewer
     getApp()->getViewManager(OCCViewer_Viewer::Type(), /*create=*/true);
   }
