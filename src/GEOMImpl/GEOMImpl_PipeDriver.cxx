@@ -681,6 +681,7 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
   TopTools_SequenceOfShape aSeqBases;
   TopTools_SequenceOfShape aSeqLocs;
   TopTools_SequenceOfShape aSeqFaces;
+  Standard_Boolean NeedCreateSolid = Standard_False;
 
   Standard_Integer i = 1;
   for (i = 1; i <= nbBases; i++) {
@@ -697,7 +698,6 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
 
     //if for section was specified face with a few wires then a few
     //    pipes were build and make solid
-    Standard_Boolean NeedCreateSolid = Standard_False;
     if (aTypeBase == TopAbs_SHELL) {
       // create wire as boundary contour if shell is no closed
       // get free boundary shapes
@@ -1015,20 +1015,20 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
         aBuilder.SetTolerance(aTolConf, aTolConf, aTolAng);
 
         aBuilder.Build();
+
+        Standard_Boolean isDone = aBuilder.IsDone();
+
+        if (isDone && NeedCreateSolid) {
+          isDone = aBuilder.MakeSolid();
+        }
+
+        if (!isDone) {
+          Standard_ConstructionError::Raise("Pipe construction failure");
+        }
         aShape = aBuilder.Shape();
         aSeqFaces.Append(aShape);
         for (j = 1; j <=usedBases.Length(); j++)
           aBuilder.Delete(usedBases.Value(j));
-      }
-
-      //for case if section is face
-      if (aSeqFaces.Length() >1) {
-        BRep_Builder aB;
-        TopoDS_Compound aComp;
-        aB.MakeCompound(aComp);
-        for (i = 1; i <= aSeqFaces.Length(); i++)
-          aB.Add(aComp,aSeqFaces.Value(i));
-        aShape = aComp;
       }
   }
 

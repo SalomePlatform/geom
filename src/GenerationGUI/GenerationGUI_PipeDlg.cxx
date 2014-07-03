@@ -165,6 +165,8 @@ void GenerationGUI_PipeDlg::Init()
   connect(GroupMakePoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupMakePoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupMakePoints->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupMakePoints->CheckBox1, SIGNAL(clicked()), this, SLOT(processPreview()));
+  connect(GroupMakePoints->CheckBox2, SIGNAL(clicked()), this, SLOT(processPreview()));
 
   initName(tr("GEOM_PIPE"));
   resize(100,100);
@@ -264,10 +266,7 @@ bool GenerationGUI_PipeDlg::ClickOnApply()
     return false;
 
   initName();
-  if ( getConstructorId() != 1 )
-    ConstructorsClicked( getConstructorId() );
-  // activate selection and connect selection manager
-  //   GroupPoints->PushButton1->click();
+
   return true;
 }
 
