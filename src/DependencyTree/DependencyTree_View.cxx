@@ -594,7 +594,7 @@ void DependencyTree_View::drawTree()
 
   std::map< int, std::vector< std::string > >::const_iterator level;
   for( level = levelObjects.begin(); level != levelObjects.end(); level++ ) {
-    int step = -horDistance * ( level->second.size() - 1 ) / 2;
+    int step = -horDistance * ( int(level->second.size()) - 1 ) / 2;
     for( int objIter = 0; objIter < level->second.size(); objIter++ ) {
       DependencyTree_Object* anObject = myTreeMap[ level->second.at( objIter ) ];
       anObject->setPos( step, verDistance * level->first );

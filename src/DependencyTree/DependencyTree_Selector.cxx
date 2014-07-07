@@ -48,23 +48,25 @@ void DependencyTree_Selector::getSelection( SUIT_DataOwnerPtrList& theList ) con
 {
   for( myView->initSelected(); myView->moreSelected(); myView->nextSelected() )
     if( DependencyTree_Object* treeObject = dynamic_cast<DependencyTree_Object*>( myView->selectedObject() ) ) {
-      const char* entry;
-      const char* name;
+      QString studyEntry;
+      QString name;
       GEOM::GEOM_BaseObject_var anObj = GeometryGUI::GetGeomGen()->GetObject( myView->getStudyId(),
                                                                               treeObject->getEntry().c_str() );
       if( anObj->_is_nil() )
         continue;
-      QString studyEntry = anObj->GetStudyEntry();
+	  CORBA::String_var studyEntryVar = anObj->GetStudyEntry();
+      studyEntry = studyEntryVar.in();
       if( studyEntry.isEmpty() ) {
-        entry = treeObject->getEntry().c_str();
+        studyEntry = treeObject->getEntry().c_str();
         name = "TEMP_IO_UNPUBLISHED";
       }
       else {
-        entry = studyEntry.toStdString().c_str();
         name = "TEMP_IO";
       }
       Handle(SALOME_InteractiveObject) tmpIO =
-        new SALOME_InteractiveObject( entry, "GEOM", name);
+        new SALOME_InteractiveObject( studyEntry.toStdString().c_str(), 
+									  "GEOM", 
+									  name.toStdString().c_str());
 
       theList.append( new LightApp_DataOwner( tmpIO ) );
     }

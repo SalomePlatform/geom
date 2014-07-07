@@ -63,7 +63,8 @@ myIsMainObject( false )
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app ) return;
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-  int studyId = GeometryGUI::ClientStudyToStudy( study->studyDS())->StudyId();
+  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy( study->studyDS() );
+  int studyId = aStudyDS->StudyId();
   myGeomObject = GeometryGUI::GetGeomGen()->GetObject( studyId, myEntry.c_str() );
 
   updateName();
@@ -167,9 +168,9 @@ void DependencyTree_Object::updateName()
 {
 
   QString name = myGeomObject->GetName();
-  QString studyEntry = myGeomObject->GetStudyEntry();
+  CORBA::String_var studyEntryVar = myGeomObject->GetStudyEntry();
 
-  if( studyEntry.isEmpty() ) {
+  if( QString( studyEntryVar.in() ).isEmpty() ) {
 	if( name.isEmpty() )
       name = "unpublished";
     myColor = myUnpublishObjectColor;
@@ -203,8 +204,8 @@ void DependencyTree_Object::updateName()
 //=================================================================================
 void DependencyTree_Object::setColor( const QColor& theColor )
 {
-  QString studyEntry = myGeomObject->GetStudyEntry();
-  if( studyEntry.isEmpty() )
+  CORBA::String_var studyEntryVar = myGeomObject->GetStudyEntry();
+  if( QString( studyEntryVar.in() ).isEmpty() )
     myColor = myUnpublishObjectColor;
   else
     myColor = theColor;
@@ -236,8 +237,8 @@ void DependencyTree_Object::setMainObjectColor( const QColor& theColor )
 void DependencyTree_Object::setUnpublishObjectColor( const QColor& theColor )
 {
   myUnpublishObjectColor = theColor;
-  QString studyEntry = myGeomObject->GetStudyEntry();
-  if( studyEntry.isEmpty() )
+  CORBA::String_var studyEntryVar = myGeomObject->GetStudyEntry();
+  if( QString( studyEntryVar.in() ).isEmpty() )
     myColor = myUnpublishObjectColor;
 }
 
