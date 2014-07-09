@@ -23,26 +23,26 @@
 #include "OCC2VTK.h" 
  
 #include <TopoDS_Edge.hxx> 
+#include <TopTools_ShapeMapHasher.hxx>
+#include <NCollection_Map.hxx> 
+ 
+typedef NCollection_Map<TopoDS_Edge, TopTools_ShapeMapHasher> TEdgeSet; 
  
 #include <vtkPoints.h> 
 #include <vtkPolyDataAlgorithm.h> 
 
 class vtkPolyData;
-class EdgeSourceInternal;
 
 class OCC2VTK_EXPORT GEOM_EdgeSource: public vtkPolyDataAlgorithm 
 { 
 public: 
-  vtkTypeMacro(GEOM_EdgeSource, vtkPolyDataAlgorithm); 
-
+  vtkTypeMacro(GEOM_EdgeSource,vtkPolyDataAlgorithm); 
   static GEOM_EdgeSource* New(); 
  
   void AddEdge (const TopoDS_Edge& theEdge,
                 bool theIsVector = false);
-  void Clear();
+  void Clear(){ myEdgeSet.Clear();}
   
-  bool IsEmpty();
-
   void SetVectorMode(bool);
 
   bool GetVectorMode();
@@ -52,14 +52,17 @@ public:
                vtkPolyData* thePolyData, 
                vtkPoints* thePts,
                bool theIsVector = false); 
+
+  bool IsEmpty(){return myEdgeSet.IsEmpty();}
+
  
 protected: 
-  EdgeSourceInternal* myData;
+  TEdgeSet myEdgeSet;
   // The <myIsVector> flag is common for all edges, because the shape,
   // representing a vector, can have only one edge.
   bool myIsVector, myIsVectorMode;
  
-  virtual int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
  
   GEOM_EdgeSource(); 
   ~GEOM_EdgeSource(); 
@@ -69,5 +72,6 @@ private:
   GEOM_EdgeSource(const GEOM_EdgeSource&); 
   void operator=(const GEOM_EdgeSource&); 
 }; 
+ 
  
 #endif //GEOM_EDGESOURCE_H 

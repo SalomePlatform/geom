@@ -33,7 +33,6 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <GEOMImpl_Types.hxx>

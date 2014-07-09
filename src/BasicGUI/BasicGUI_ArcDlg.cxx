@@ -35,7 +35,6 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
