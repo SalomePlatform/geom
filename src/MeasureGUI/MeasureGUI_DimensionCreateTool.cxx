@@ -407,6 +407,9 @@ Handle(AIS_LengthDimension) MeasureGUI_DimensionCreateTool::LengthByParallelEdge
     return NULL;
   }
 
+  if( aFirstSh == aSecondSh )
+    return NULL;
+
   TopoDS_Edge aFirstEdge  = TopoDS::Edge( aFirstSh );
   TopoDS_Edge aSecondEdge = TopoDS::Edge( aSecondSh );
 
