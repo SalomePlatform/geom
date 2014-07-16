@@ -5788,7 +5788,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Explode a shape on sub-shapes of a given type.
-        #  Sub-shapes will be sorted by coordinates of their gravity centers.
+        #  Sub-shapes will be sorted taking into account their gravity centers,
+        #  to provide stable order of sub-shapes.
         #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
@@ -5803,7 +5804,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def SubShapeAllSortedCentres(self, aShape, aType, theName=None):
             """
             Explode a shape on sub-shapes of a given type.
-            Sub-shapes will be sorted by coordinates of their gravity centers.
+            Sub-shapes will be sorted taking into account their gravity centers,
+            to provide stable order of sub-shapes.
             If the shape itself matches the type, it is also returned.
 
             Parameters:
@@ -5823,7 +5825,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return ListObj
 
         ## Explode a shape on sub-shapes of a given type.
-        #  Sub-shapes will be sorted by coordinates of their gravity centers.
+        #  Sub-shapes will be sorted taking into account their gravity centers,
+        #  to provide stable order of sub-shapes.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
         #  @return List of IDs of sub-shapes.
@@ -5833,7 +5836,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def SubShapeAllSortedCentresIDs(self, aShape, aType):
             """
             Explode a shape on sub-shapes of a given type.
-            Sub-shapes will be sorted by coordinates of their gravity centers.
+            Sub-shapes will be sorted taking into account their gravity centers,
+            to provide stable order of sub-shapes.
 
             Parameters:
                 aShape Shape to be exploded.
