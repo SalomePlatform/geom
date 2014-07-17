@@ -201,15 +201,6 @@ public:
   virtual
   bool
   GetVectorMode();
-  
-  void
-  StoreIsoNumbers();
-
-  void
-  RestoreIsoNumbers();
-  
-  void
-  ResetIsoNumbers();
 
 protected:
   void SetModified();
@@ -221,7 +212,6 @@ protected:
 
 private:
   TopoDS_Shape myShape;
-  int myNbIsos[2];
   bool isOnlyVertex;
 
   float myDeflection;

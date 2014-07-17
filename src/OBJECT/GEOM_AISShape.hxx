@@ -139,12 +139,6 @@ public:
         const Handle(Standard_Type)& DynamicType() const;
         Standard_Boolean             IsKind(const Handle(Standard_Type)&) const;
 
-        void storeIsoNumbers();
-        void restoreIsoNumbers();
-        void resetIsoNumbers();
-
-        void storeBoundaryColors();
-
         static Quantity_Color topLevelColor();
   static void           setTopLevelColor(const Quantity_Color c);
 
@@ -173,8 +167,6 @@ protected:
                    const Handle(Prs3d_Presentation)& aPrs,
                    const Standard_Integer aMode);
 
-  void restoreBoundaryColors();
-
   // Displaying the field data
   void drawField( const Handle(Prs3d_Presentation)& thePrs,
                   const bool theIsText = false,
@@ -185,14 +177,7 @@ protected:
                                              gp_Pnt& theCenter );
 
   Quantity_Color myShadingColor;
-
-  Quantity_Color myFreeBoundaryColor;
-  Quantity_Color myUnFreeBoundaryColor;
-
   Quantity_Color myEdgesInShadingColor;
-
-  int            myUIsoNumber;
-  int            myVIsoNumber;
 
 private: 
   TCollection_AsciiString  myName;

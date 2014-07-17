@@ -158,13 +158,8 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
 
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
   myPrevDisplayMode = 0;
-  storeBoundaryColors();
-
 
   myEdgesInShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
-
-  myUIsoNumber = -1;
-  myVIsoNumber = -1;
 
   myTopLevel = Standard_False;
   Graphic3d_MaterialAspect aMatAspect;
@@ -226,9 +221,6 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     case 0://StdSelect_DM_Wireframe: 
     case CustomHighlight:
     {
-      restoreIsoNumbers();
-      // Restore wireframe edges colors
-      restoreBoundaryColors();
       if(isTopLev) {
               SetColor(topLevelColor());
               Handle(Prs3d_LineAspect) anAspect = Attributes()->WireAspect();
@@ -243,10 +235,16 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     }
     case 1://StdSelect_DM_Shading:
     {
-      restoreIsoNumbers();
       shadingMode(aPresentationManager, aPrs, aMode);
-      // Store wireframe edges colors
-      storeBoundaryColors();
+      break;
+    }
+    case 2: { //ShadingWithEdges
+      //Shaded faces
+      shadingMode(aPresentationManager, aPrs, AIS_Shaded);
+      myDrawer->SetFaceBoundaryDraw( Standard_True );
+      Handle(Prs3d_LineAspect) aBoundaryAspect =
+        new Prs3d_LineAspect ( myEdgesInShadingColor, Aspect_TOL_SOLID, myOwnWidth );
+      myDrawer->SetFaceBoundaryAspect (aBoundaryAspect);
       break;
     }
     case 3: //StdSelect_DM_HLR:
@@ -258,38 +256,6 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       break;
     }
   }
-
-  if ( aMode == ShadingWithEdges ) {
-    // Temporary store number of iso lines in order to recover its later 
-    // when display mode is achnged to 'Wirefame' or 'Shading'.
-    // Iso lines are not displayed in 'Shading with edges' mode.
-    storeIsoNumbers();
-
-    // Reset number of iso lines to 0
-    resetIsoNumbers();
-
-    //Shaded faces
-    shadingMode(aPresentationManager, aPrs, AIS_Shaded);
-
-    // Store wireframe edges colors
-    storeBoundaryColors();
-
-    // Coloring edges
-    Handle(Prs3d_LineAspect) anAspect = myDrawer->UnFreeBoundaryAspect();
-    anAspect->SetColor( myEdgesInShadingColor );
-    myDrawer->SetUnFreeBoundaryAspect( anAspect );
-    
-    anAspect = myDrawer->FreeBoundaryAspect();
-    anAspect->SetColor( myEdgesInShadingColor );
-    myDrawer->SetFreeBoundaryAspect( anAspect );
-
-    // Add edges to presentation
-    if( anIsColorField && myFieldDimension == 1 )
-      drawField( aPrs );
-    else
-      StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
-  }
-
   if (isShowVectors())
   {
     const bool isVector = IsKind(STANDARD_TYPE(GEOM_AISVector));
@@ -427,61 +393,6 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
     AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
   }
 }
-
-void GEOM_AISShape::storeIsoNumbers()
-{
-  myUIsoNumber = myDrawer->UIsoAspect()->Number();
-  myVIsoNumber = myDrawer->VIsoAspect()->Number();
-}
-
-void GEOM_AISShape::restoreIsoNumbers()
-{
-  if ( myUIsoNumber > 0 ) {
-    // Restore number of U iso lines
-    Handle(Prs3d_IsoAspect) anAspect = myDrawer->UIsoAspect();
-    anAspect->SetNumber( myUIsoNumber );
-    myDrawer->SetUIsoAspect( anAspect );
-  }
-  
-  if ( myVIsoNumber > 0 ) {
-    // Restore number of V iso lines
-    Handle(Prs3d_IsoAspect) anAspect = myDrawer->VIsoAspect();
-    anAspect->SetNumber( myVIsoNumber );
-    myDrawer->SetVIsoAspect( anAspect );
-  }
-}
-
-void GEOM_AISShape::resetIsoNumbers()
-{
-  Handle(Prs3d_IsoAspect) anAspect = myDrawer->UIsoAspect();
-  anAspect->SetNumber( 0 );
-  myDrawer->SetUIsoAspect( anAspect );
-  
-  anAspect = myDrawer->VIsoAspect();
-  anAspect->SetNumber( 0 );
-  myDrawer->SetVIsoAspect( anAspect );
-}
-
-void GEOM_AISShape::storeBoundaryColors()
-{
-  Aspect_TypeOfLine aLT;
-  Standard_Real aW;
-
-  myDrawer->FreeBoundaryAspect()->Aspect()->Values( myFreeBoundaryColor, aLT, aW);
-  myDrawer->UnFreeBoundaryAspect()->Aspect()->Values( myUnFreeBoundaryColor, aLT, aW);
-}
- 
-void GEOM_AISShape::restoreBoundaryColors()
-{
-  Handle(Prs3d_LineAspect) anAspect = myDrawer->FreeBoundaryAspect();
-  anAspect->SetColor( myFreeBoundaryColor );
-  myDrawer->SetFreeBoundaryAspect( anAspect );
-
-  anAspect = myDrawer->UnFreeBoundaryAspect();
-  anAspect->SetColor( myUnFreeBoundaryColor );
-  myDrawer->SetUnFreeBoundaryAspect( anAspect );
-}
-
 
 Standard_Boolean GEOM_AISShape::isTopLevel() {
   return myTopLevel;

@@ -853,9 +853,6 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   
   // - color for edges in shading+edges mode
   AISShape->SetEdgesInShadingColor( SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>() ) );
-  
-  // ???
-  AISShape->storeBoundaryColors();
 
   // set display mode
   AISShape->SetDisplayMode( HasDisplayMode() ? 
@@ -863,6 +860,13 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
                             GetDisplayMode() :
                             // display mode from properties
                             propMap.value( GEOM::propertyName( GEOM::DisplayMode ) ).toInt() );
+
+  // - face boundaries color
+  if( AISShape->DisplayMode() == GEOM_AISShape::ShadingWithEdges )
+    AISShape->Attributes()->SetFaceBoundaryDraw( Standard_True );
+  anAspect = AISShape->Attributes()->FaceBoundaryAspect();
+  anAspect->SetColor( SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>() ) );
+  AISShape->Attributes()->SetFaceBoundaryAspect( anAspect );
 
   // set display vectors flag
   AISShape->SetDisplayVectors( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );

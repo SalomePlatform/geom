@@ -186,9 +186,6 @@ GEOM_Actor::GEOM_Actor():
 
   myShadingFaceActor->SetProperty(myShadingFaceProp.GetPointer());
 
-  myNbIsos[0] = -1;
-  myNbIsos[1] = -1;
-
   // Toggle display mode 
   setDisplayMode(0); // WIRE FRAME
   SetVectorMode(0);  //
@@ -296,16 +293,6 @@ setDisplayMode(int theMode)
 #ifdef MYDEBUG
   MESSAGE ( "GEOM_Actor::setDisplayMode = "<<theMode );
 #endif
-  
-  if ( theMode == (int)eShading || theMode == (int)eShadingWithEdges ) {
-    // Temporary store number of iso lines in order to recover its later 
-    // when display mode is changed to 'Wirefame'
-    // Iso lines are not displayed in 'Shading' and 'Shading with edges' modes.
-    StoreIsoNumbers();
-
-    // Reset number of iso lines to 0
-    ResetIsoNumbers();
-  }
 
   if ( theMode == (int)eShadingWithEdges ) {
     // Coloring edges
@@ -320,9 +307,6 @@ setDisplayMode(int theMode)
                                                myEdgesInShadingColor[2]);
   }
   else {
-    // Restore number of iso-lines
-    RestoreIsoNumbers();
-
     // Coloring edges
     myIsolatedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
                                                  myIsolatedEdgeColor[1],
@@ -896,14 +880,6 @@ GEOM_Actor
   MESSAGE ( this << " GEOM_Actor::Highlight myIsSelected="<<myIsSelected );
 #endif
 
-  if ( myDisplayMode == (int)eShading || myDisplayMode == (int)eShadingWithEdges ) {
-    if ( theIsHighlight )
-      RestoreIsoNumbers();
-    else
-      // Reset number of iso lines to 0
-      ResetIsoNumbers();
-  }
-
   SALOME_Actor::Highlight(theIsHighlight); // this method call ::highlight(theIsHighlight) in the end
   SetVisibility(GetVisibility());
 }
@@ -923,14 +899,6 @@ GEOM_Actor
 
   if ( !GetPickable() )
     return false;  
-
-  if ( myDisplayMode == (int)eShading || myDisplayMode == (int)eShadingWithEdges ) {
-    if ( theIsHighlight )
-      RestoreIsoNumbers();
-    else
-      // Reset number of iso lines to 0
-      ResetIsoNumbers();
-  }
 
   myPreHighlightActor->SetVisibility( false );
   bool anIsPreselected = myIsPreselected;
@@ -1081,11 +1049,6 @@ void GEOM_Actor::SetEdgesInShadingColor(double r,double g,double b)
   myEdgesInShadingColor[2] = b;
 }
 
-void GEOM_Actor::StoreIsoNumbers()
-{  
-  myWireframeFaceSource->GetNbIso(myNbIsos[0], myNbIsos[1]);
-}
-
 void GEOM_Actor::SetIsosWidth(const int width) {
   myWireframeFaceActor->GetProperty()->SetLineWidth(width);
 }
@@ -1105,17 +1068,4 @@ void GEOM_Actor::SetWidth(const int width) {
 
 int GEOM_Actor::GetWidth() const {
   return (int)myIsolatedEdgeActor->GetProperty()->GetLineWidth();
-}
-    
-void GEOM_Actor::RestoreIsoNumbers()
-{
-  if ( myNbIsos[0] > 0 || myNbIsos[1] > 0 )
-    // Restore number of U and (or) V iso lines
-    myWireframeFaceSource->SetNbIso(myNbIsos);
-}
-  
-void GEOM_Actor::ResetIsoNumbers()
-{
-  int aNb[2] = {0, 0};
-  myWireframeFaceSource->SetNbIso(aNb);
 }
