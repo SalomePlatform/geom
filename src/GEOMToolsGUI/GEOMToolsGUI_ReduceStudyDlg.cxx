@@ -396,6 +396,13 @@ void GEOMToolsGUI_ReduceStudyDlg::unpublishObjects( std::set<std::string>& theOb
       _PTR(AttributeDrawable) aDrw = aStudyBuilder->FindOrCreateAttribute( obj, "AttributeDrawable" );
       aDrw->SetDrawable( false );
       myDisplayer.EraseWithChildren( new SALOME_InteractiveObject( studyEntry.c_str(), "GEOM", "TEMP_IO" ) );
+      // hide references if any
+      std::vector< _PTR(SObject) > vso = myStudy->FindDependances(obj);
+      for ( int i = 0; i < vso.size(); i++ ) {
+        _PTR(SObject) refObj = vso[i];
+        aDrw = aStudyBuilder->FindOrCreateAttribute( refObj, "AttributeDrawable" );
+        aDrw->SetDrawable( false );
+      }
     }
   }
   myApp->updateObjectBrowser( false );

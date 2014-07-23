@@ -955,6 +955,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 genericAttribute = self.myBuilder.FindOrCreateAttribute(aSObject, "AttributeDrawable")
                 drwAttribute = genericAttribute._narrow(SALOMEDS.AttributeDrawable)
                 drwAttribute.SetDrawable(False)
+                # hide references if any
+                vso = self.myStudy.FindDependances(aSObject);
+                for refObj in vso :
+                    genericAttribute = self.myBuilder.FindOrCreateAttribute(refObj, "AttributeDrawable")
+                    drwAttribute = genericAttribute._narrow(SALOMEDS.AttributeDrawable)
+                    drwAttribute.SetDrawable(False)
+                    pass
                 pass
 
         # end of l1_geomBuilder_auxiliary
