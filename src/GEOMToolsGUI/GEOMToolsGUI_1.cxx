@@ -590,6 +590,13 @@ void GEOMToolsGUI::OnUnpublishObject() {
             _PTR(AttributeDrawable) aDrw = B->FindOrCreateAttribute( obj, "AttributeDrawable" );
             aDrw->SetDrawable( false );
             disp->EraseWithChildren(IObject);
+            // hide references if any
+            std::vector< _PTR(SObject) > vso = aStudy->FindDependances(obj);
+            for ( int i = 0; i < vso.size(); i++ ) {
+              _PTR(SObject) refObj = vso[i];
+              aDrw = B->FindOrCreateAttribute( refObj, "AttributeDrawable" );
+              aDrw->SetDrawable( false );
+            }
           } // if ( obj )
         } // iterator
         aSelMgr->clearSelected();

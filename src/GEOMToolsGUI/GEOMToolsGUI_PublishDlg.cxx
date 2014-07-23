@@ -340,6 +340,13 @@ void GEOMToolsGUI_PublishDlg::clickOnApply() {
           item->setData(0,Qt::CheckStateRole,QVariant());
         }
       }
+      // show references if any
+      std::vector< _PTR(SObject) > vso = aStudy->FindDependances(SO);
+      for ( int i = 0; i < vso.size(); i++ ) {
+	_PTR(SObject) refObj = vso[i];
+	aDrw = aBuilder->FindOrCreateAttribute( refObj, "AttributeDrawable" );
+	aDrw->SetDrawable( true );
+      }
     }
   }
   toProcess.clear();
