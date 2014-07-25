@@ -248,27 +248,27 @@
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_L</source>
-        <translation type="unfinished">Le rayon du tuyau principale ne peut pas être égal à la réduction d&apos;épaisseur à gauche (rL)!</translation>
+        <translation>The main pipe radius can&apos;t be equal to the left thickness reduction radius (rL)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_L</source>
-        <translation type="unfinished">Le rayon extérieur du tuyau principal (Rayon + épaisseur) ne peut pas être égal au rayon externe de la réduction d&apos;épaisseur à gauche (rL + wL)!</translation>
+        <translation>The main pipe external radius (Radius + Width) can&apos;t be equal to the left thickness reduction external radius (rL + wL)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_R</source>
-        <translation type="unfinished">Le rayon du tuyau principal ne peut pas être égal au rayon de la réduction d&apos;épaisseur à droite (rR)!</translation>
+        <translation>The main pipe radius can&apos;t be equal to the right thickness reduction radius (rR)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_R</source>
-        <translation type="unfinished">Le rayon extérieur du tuyau principal (Rayon + épaisseur) ne peut pas être égal au rayon externe de la réduction d&apos;épaisseur à droite (rL + wL)!</translation>
+        <translation>The main pipe external radius (Radius + Width) can&apos;t be equal to the right thickness reduction external radius (rR + wR)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_RADII_I</source>
-        <translation type="unfinished">Le rayon du tuyau incident ne peut pas être égal au rayon de la réduction d&apos;épaisseur du tuyau incident (rI)!</translation>
+        <translation>The incident pipe radius can&apos;t be equal to the incident pipe thickness reduction radius (rI)</translation>
     </message>
     <message>
         <source>GEOM_PIPETSHAPE_ERR_EQUAL_EXT_RADII_I</source>
-        <translation type="unfinished">Le rayon externe du tuyau incident (Rayon + Epaisseur) ne peut pas être égal au rayon extérieur de la réduction du tuyau incident (rI + wI)!</translation>
+        <translation>The incident pipe external radius (Radius + Width) can&apos;t be equal to the incident pipe thickness reduction external radius (rI + wI)</translation>
     </message>
 </context>
 <context>
