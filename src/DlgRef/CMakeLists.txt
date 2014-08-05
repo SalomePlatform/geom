@@ -75,6 +75,7 @@ SET(_uic_files
   DlgRef_2Sel2Spin2Push_QTD.ui
   DlgRef_2Sel2Spin3Check_QTD.ui
   DlgRef_2Sel2Spin_QTD.ui
+  DlgRef_2Sel3Spin1Check_QTD.ui
   DlgRef_2Sel3Spin2Rb_QTD.ui
   DlgRef_2Sel3Spin_QTD.ui
   DlgRef_2SelExt_QTD.ui
@@ -92,6 +93,7 @@ SET(_uic_files
   DlgRef_3Sel4Spin2Check_QTD.ui
   DlgRef_3Sel_QTD.ui
   DlgRef_3Spin1Check_QTD.ui
+  DlgRef_3Spin1CheckCyl_QTD.ui
   DlgRef_3Spin_QTD.ui
   DlgRef_4Sel1List1Check_QTD.ui
   DlgRef_4Sel1List_QTD.ui

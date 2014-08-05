@@ -246,7 +246,8 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskR (CORBA::Double theR,
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRH (CORBA::Double theR,
-                                                                CORBA::Double theH)
+                                                                CORBA::Double theH,
+								CORBA::Double theA)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -254,7 +255,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRH (CORBA::Double th
   GetOperations()->SetNotDone();
 
   //Create the Cylinder
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderRH(theR, theH);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderRH(theR, theH, theA);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -268,7 +269,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRH (CORBA::Double th
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderPntVecRH
                       (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
-                       CORBA::Double theR, CORBA::Double theH)
+                       CORBA::Double theR, CORBA::Double theH, CORBA::Double theA)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -282,7 +283,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderPntVecRH
   if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   //Create the Cylinder
-  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderPntVecRH(aPnt, aVec, theR, theH);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderPntVecRH(aPnt, aVec, theR, theH, theA);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

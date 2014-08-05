@@ -1335,6 +1335,11 @@
                                 <inParameter-type>double</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
+			    <inParameter>
+                                <inParameter-name>theAngle</inParameter-name>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>			    
                         </inParameter-list>
                         <outParameter-list>
                             <outParameter>
@@ -1359,6 +1364,11 @@
                             </inParameter>
                             <inParameter>
                                 <inParameter-name>theH</inParameter-name>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+			    <inParameter>
+                                <inParameter-name>theAngle</inParameter-name>
                                 <inParameter-type>double</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>

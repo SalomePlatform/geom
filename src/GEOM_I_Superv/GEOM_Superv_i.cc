@@ -1049,12 +1049,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskR (CORBA::Double theR,
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr thePnt,
                                                            GEOM::GEOM_Object_ptr theAxis,
                                                            CORBA::Double theRadius,
-                                                           CORBA::Double theHeight)
+                                                           CORBA::Double theHeight,
+							   CORBA::Double theAngle)
 {
   beginService( " GEOM_Superv_i::MakeCylinderPntVecRH" );
   MESSAGE("GEOM_Superv_i::MakeCylinderPntVecRH");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeCylinderPntVecRH(thePnt, theAxis, theRadius, theHeight);
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeCylinderPntVecRH(thePnt, theAxis, theRadius, theHeight, theAngle);
   endService( " GEOM_Superv_i::MakeCylinderPntVecRH" );
   return anObj;
 }
@@ -1063,12 +1064,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr
 //  MakeCylinderRH:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderRH (CORBA::Double theR,
-                                                     CORBA::Double theH)
+                                                     CORBA::Double theH,
+						     CORBA::Double theA)
 {
   beginService( " GEOM_Superv_i::MakeCylinderRH" );
   MESSAGE("GEOM_Superv_i::MakeCylinderRH");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeCylinderRH(theR, theH);
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeCylinderRH(theR, theH, theA);
   endService( " GEOM_Superv_i::MakeCylinderRH" );
   return anObj;
 }

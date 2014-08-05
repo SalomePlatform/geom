@@ -69,13 +69,15 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 				   CORBA::Short  theOrientation);
 
   GEOM::GEOM_Object_ptr MakeCylinderRH (CORBA::Double theR,
-					CORBA::Double theH);
-
+					CORBA::Double theH,
+					CORBA::Double theA);
+  
   GEOM::GEOM_Object_ptr MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr thePnt,
 					      GEOM::GEOM_Object_ptr theVec,
 					      CORBA::Double theR,
-					      CORBA::Double theH);
-
+					      CORBA::Double theH,
+					      CORBA::Double theA);
+  
   GEOM::GEOM_Object_ptr MakeConeR1R2H (CORBA::Double theR1,
 				       CORBA::Double theR2,
 				       CORBA::Double theH);

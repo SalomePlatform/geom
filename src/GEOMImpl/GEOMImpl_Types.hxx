@@ -205,8 +205,8 @@
 #define DISK_THREE_PNT    2
 #define DISK_R            3
 
-#define CYLINDER_R_H         1
-#define CYLINDER_PNT_VEC_R_H 2
+#define CYLINDER_R_H         	1
+#define CYLINDER_PNT_VEC_R_H 	2 
 
 #define CONE_R1_R2_H         1
 #define CONE_PNT_VEC_R1_R2_H 2

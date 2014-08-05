@@ -488,7 +488,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskR (double theR, int theO
  *  MakeCylinderRH
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, double theH)
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, double theH, double theA)
 {
   SetErrorCode(KO);
 
@@ -506,6 +506,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
 
   aCI.SetR(theR);
   aCI.SetH(theH);
+  aCI.SetA(theA);
 
   //Compute the Cylinder value
   try {
@@ -525,7 +526,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCylinder
-    << " = geompy.MakeCylinderRH(" << theR << ", " << theH << ")";
+    << " = geompy.MakeCylinderRH(" << theR << ", " << theH << ", " << theA << ")";
 
   SetErrorCode(OK);
   return aCylinder;
@@ -539,7 +540,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEOM_Object) thePnt,
                                                                       Handle(GEOM_Object) theVec,
-                                                                      double theR, double theH)
+                                                                      double theR, double theH, double theA)
 {
   SetErrorCode(KO);
 
@@ -567,6 +568,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
   aCI.SetVector(aRefVec);
   aCI.SetR(theR);
   aCI.SetH(theH);
+  aCI.SetA(theA);
 
   //Compute the Cylinder value
   try {
@@ -586,7 +588,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCylinder << " = geompy.MakeCylinder("
-    << thePnt << ", " << theVec << ", " << theR << ", " << theH << ")";
+    << thePnt << ", " << theVec << ", " << theR << ", " << theH << ", " << theA << ")";
 
   SetErrorCode(OK);
   return aCylinder;

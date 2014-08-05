@@ -1471,28 +1471,31 @@ module GEOM
     GEOM_Object MakeDiskR (in double theR, in short theOrientation);
 
     /*!
-     *  \brief Create a cylinder with given radius and height at
+     *  \brief Create a cylinder with given radius, height and angle (portion of cylinder) at
      *  the origin of coordinate system.
      *
      *  Axis of the cylinder will be collinear to the OZ axis of the coordinate system.
      *  \param theR Cylinder radius.
      *  \param theH Cylinder height.
+     *  \param theA Cylinder angle.
      *  \return New GEOM_Object, containing the created cylinder.
      */
-    GEOM_Object MakeCylinderRH (in double theR, in double theH);
+    GEOM_Object MakeCylinderRH (in double theR, in double theH, in double theA);
 
     /*!
-     *  \brief Create a cylinder with given base point, axis, radius and height.
+     *  \brief Create a cylinder with given base point, axis, radius, height and angle (portion of cylinder).
      *  \param thePnt Central point of cylinder base.
      *  \param theAxis Cylinder axis.
      *  \param theR Cylinder radius.
      *  \param theH Cylinder height.
+     *  \param theA Cylinder angle.
      *  \return New GEOM_Object, containing the created cylinder.
      */
     GEOM_Object MakeCylinderPntVecRH (in GEOM_Object thePnt,
                                       in GEOM_Object theAxis,
                                       in double      theR,
-                                      in double      theH);
+                                      in double      theH,
+				      in double      theA);
 
     /*!
      *  \brief Create a cone with given height and radiuses at

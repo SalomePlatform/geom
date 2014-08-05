@@ -75,6 +75,8 @@ Standard_Integer GEOMImpl_CylinderDriver::Execute(TFunction_Logbook& log) const
 
   gp_Pnt aP;
   gp_Vec aV;
+  
+  TopoDS_Shape aShape;
 
   if (aType == CYLINDER_R_H) {
     aP = gp::Origin();
@@ -109,14 +111,15 @@ Standard_Integer GEOMImpl_CylinderDriver::Execute(TFunction_Logbook& log) const
 
   if (aCI.GetH() < 0.0) aV.Reverse();
   gp_Ax2 anAxes (aP, aV);
-
-  BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()));
-  MC.Build();
-  if (!MC.IsDone()) {
-    StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters");
-  }
-
-  TopoDS_Shape aShape = MC.Shape();
+  aShape = BRepPrimAPI_MakeCylinder(anAxes, aCI.GetR(), Abs(aCI.GetH())).Shape();
+  if(aCI.GetA() < 360. && aCI.GetA()> 0.){
+    BRepPrimAPI_MakeCylinder MC(anAxes, aCI.GetR(), Abs(aCI.GetH()), aCI.GetA()*M_PI/180.);
+    MC.Build();
+    if (!MC.IsDone()) {
+      StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters");
+    }
+    aShape = MC.Shape();	
+  }    
   if (aShape.IsNull()) return 0;
 
   aFunction->SetValue(aShape);

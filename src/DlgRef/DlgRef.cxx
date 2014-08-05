@@ -471,6 +471,20 @@ DlgRef_2Sel2Spin2Push::~DlgRef_2Sel2Spin2Push()
 }
 
 //////////////////////////////////////////
+// DlgRef_2Sel3Spin1Check
+//////////////////////////////////////////
+
+DlgRef_2Sel3Spin1Check::DlgRef_2Sel3Spin1Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2Sel3Spin1Check::~DlgRef_2Sel3Spin1Check()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_2Sel3Spin2Rb
 //////////////////////////////////////////
 
@@ -753,6 +767,20 @@ DlgRef_3Spin1Check::DlgRef_3Spin1Check( QWidget* parent, Qt::WindowFlags f )
 }
 
 DlgRef_3Spin1Check::~DlgRef_3Spin1Check()
+{
+}
+
+//////////////////////////////////////////
+// DlgRef_3Spin1CheckCyl
+//////////////////////////////////////////
+
+DlgRef_3Spin1CheckCyl::DlgRef_3Spin1CheckCyl( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_3Spin1CheckCyl::~DlgRef_3Spin1CheckCyl()
 {
 }
 
