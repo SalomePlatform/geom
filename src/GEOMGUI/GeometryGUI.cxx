@@ -108,11 +108,7 @@
 #include <OSD_SharedLibrary.hxx>
 #include <NCollection_DataMap.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
-#else
-#include <Graphic3d_HArray1OfBytes.hxx>
-#endif
 
 #include <utilities.h>
 
@@ -1156,9 +1152,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpRevolution, genId, -1 );
   createMenu( GEOMOp::OpFilling,    genId, -1 );
   createMenu( GEOMOp::OpPipe,       genId, -1 );
-#if OCC_VERSION_LARGE > 0x06050300
   createMenu( GEOMOp::OpPipePath,   genId, -1 );
-#endif
 
   //int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
   //createMenu( GEOMOp::OpSmoothingSurface, advId, -1 );
@@ -1383,9 +1377,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpRevolution, genTbId );
   createTool( GEOMOp::OpFilling,    genTbId );
   createTool( GEOMOp::OpPipe,       genTbId );
-#if OCC_VERSION_LARGE > 0x06050300
   createTool( GEOMOp::OpPipePath,   genTbId );
-#endif
 
   int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ) );
   createTool( GEOMOp::OpTranslate,      transTbId );
@@ -1493,7 +1485,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpGroupEdit ),  QString("client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
-#if OCC_VERSION_LARGE > 0x06050200
   //QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and (selcount>0) and isOCC=true and topLevel=false";
   QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and isFolder=false and (selcount>0) and isOCC=true";
   mgr->insert( action(GEOMOp::OpBringToFront ), -1, -1 ); // bring to front
@@ -1501,7 +1492,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule(action(GEOMOp::OpBringToFront), "topLevel=true", QtxPopupMgr::ToggleRule );
   mgr->insert( action(GEOMOp::OpClsBringToFront ), -1, -1 ); // clear bring to front
   mgr->setRule( action(GEOMOp::OpClsBringToFront ), clientOCC + " and autoBringToFront = false", QtxPopupMgr::VisibleRule );
-#endif
   mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  GEOMOp::OpWireframe ), dispmodeId, -1 ); // wireframe
@@ -2179,20 +2169,12 @@ QString GeometryGUI::engineIOR() const
   return "";
 }
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 Handle(TColStd_HArray1OfByte) GeometryGUI::getTexture
-#else
-Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTexture
-#endif
       (SalomeApp_Study* theStudy, int theId, int& theWidth, int& theHeight)
 {
   theWidth = theHeight = 0;
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   Handle(TColStd_HArray1OfByte) aTexture;
-#else
-  Handle(Graphic3d_HArray1OfBytes) aTexture;
-#endif
 
   if (theStudy) {
     TextureMap aTextureMap = myTextureMap[ theStudy->studyDS()->StudyId() ];
@@ -2206,11 +2188,7 @@ Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTexture
           theWidth  = aWidth;
           theHeight = aHeight;
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
           aTexture  = new TColStd_HArray1OfByte (1, aStream->length());
-#else
-          aTexture  = new Graphic3d_HArray1OfBytes (1, aStream->length());
-#endif
 
           for (int i = 0; i < aStream->length(); i++)
             aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );

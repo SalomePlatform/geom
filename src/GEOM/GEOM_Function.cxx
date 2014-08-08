@@ -227,9 +227,7 @@ TopoDS_Shape GEOM_Function::GetValue()
 
     if (!isResult) {
       try {
-#if OCC_VERSION_LARGE > 0x06010000
         OCC_CATCH_SIGNALS;
-#endif
         GEOM_Solver aSolver(GEOM_Engine::GetEngine());
         if (!aSolver.ComputeFunction(this)) {
           MESSAGE("GEOM_Object::GetValue Error : Can't build a sub-shape");

@@ -336,11 +336,7 @@ Standard_Boolean ShHealOper_FillHoles::addFace(const Handle(Geom_Surface)& theSu
                                                const Handle(TColStd_HArray1OfInteger)& theOrders,
                                                const Handle(TColStd_HArray1OfInteger)& theSenses)
 {
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
   BRepBuilderAPI_MakeFace aMakeFace (theSurf, Precision::Confusion());
-#else
-  BRepBuilderAPI_MakeFace aMakeFace (theSurf);
-#endif
   TopoDS_Face aFace = aMakeFace.Face();
   aFace.EmptyCopy();
 

@@ -130,11 +130,7 @@ Standard_Integer GEOMImpl_ArchimedeDriver::Execute(TFunction_Logbook& log) const
 
   Standard_Real u1,u2,v1,v2;
   SurfaceTrimmee->Bounds(u1,u2,v1,v2);
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
   TopoDS_Face tirant = BRepBuilderAPI_MakeFace(SurfaceTrimmee, u1, u2, v1, v2, Precision::Confusion());
-#else
-  TopoDS_Face tirant = BRepBuilderAPI_MakeFace(SurfaceTrimmee, u1, u2, v1, v2);
-#endif
 
   if (tirant.IsNull()) {
     StdFail_NotDone::Raise("Failed to build secant face");

@@ -67,7 +67,6 @@
 #include <gce_MakePln.hxx>
 #include <Prs3d_LineAspect.hxx>
 #include <Prs3d_DimensionAspect.hxx>
-#if OCC_VERSION_LARGE > 0x06050300
 #include <Prs3d_TextAspect.hxx>
 #include <Prs3d_Presentation.hxx>
 #include <Prs3d_Text.hxx>
@@ -75,7 +74,6 @@
 #include <Graphic3d_HorizontalTextAlignment.hxx>
 #include <Graphic3d_AspectText3d.hxx>
 #include <Font_FontAspect.hxx>
-#endif // OCC_VERSION_LARGE > 0x06050300
 
 // This include must be *AFTER* SOCC_ViewModel.h because
 // of the constant ROTATE which is a #define in
@@ -103,7 +101,6 @@ private:
   bool& myLock;
 };
 
-#if OCC_VERSION_LARGE > 0x06050300
 DEFINE_STANDARD_HANDLE(AIS_Text, AIS_InteractiveObject)
 
 class AIS_Text:public AIS_InteractiveObject
@@ -197,7 +194,6 @@ void AIS_Text::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentation
   asp->Aspect()->SetTextFontAspect(aFontAspect);
   Prs3d_Text::Draw(aPresentation, asp, aText, aPosition);
 };
-#endif // OCC_VERSION_LARGE > 0x06050300
 
 bool isSame (double d1, double d2)
 { 
@@ -330,9 +326,7 @@ void EntityGUI_3DSketcherDlg::Init()
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   myAnglePrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
   myLengthPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
-#if OCC_VERSION_LARGE > 0x06050300
   myTextPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
-#endif // OCC_VERSION_LARGE > 0x06050300
 
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
@@ -1626,7 +1620,6 @@ void EntityGUI_3DSketcherDlg::displayText ( std::string theText,
                                             gp_Pnt P,
                                             bool store )
 {
-#if OCC_VERSION_LARGE > 0x06050300
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
     
   Handle(AIS_Text) anIO = new AIS_Text(TCollection_ExtendedString(theText.c_str()), P);
@@ -1653,7 +1646,7 @@ void EntityGUI_3DSketcherDlg::displayText ( std::string theText,
       GEOMBase_Helper::displayPreview(aSPrs, true, true);
     }
   }
-#endif // OCC_VERSION_LARGE > 0x06050300
+
 }
 
 //================================================================

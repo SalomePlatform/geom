@@ -1151,9 +1151,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
   Handle(GEOM_Object) Te3;
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     Handle(GEOM_Object) Vector_Z = myBasicOperations->MakeVectorDXDYDZ(0, 0, 1);
     Vector_Z->GetLastFunction()->SetDescription("");
 
@@ -1991,9 +1989,7 @@ Handle(TColStd_HSequenceOfTransient)
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2155,9 +2151,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2319,9 +2313,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2405,9 +2397,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer
   // Add thickness reduction elements
   // at the three extremities: Left, Right and Incident
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (isTRL || isTRR || isTRI) {
       TopoDS_Shape aResShape =
         MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
@@ -2558,9 +2548,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2642,9 +2630,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition
   // Add thickness reduction elements
   // at the three extremities: Left, Right and Incident
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (isTRL || isTRR || isTRI) {
       TopoDS_Shape aResShape =
         MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
@@ -2787,9 +2773,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2887,9 +2871,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet
   // Add thickness reduction elements
   // at the three extremities: Left, Right and Incident
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (isTRL || isTRR || isTRI) {
       TopoDS_Shape aResShape =
         MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
@@ -3037,9 +3019,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -3136,9 +3116,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition
   // Add thickness reduction elements
   // at the three extremities: Left, Right and Incident
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (isTRL || isTRR || isTRI) {
       TopoDS_Shape aResShape =
         MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,

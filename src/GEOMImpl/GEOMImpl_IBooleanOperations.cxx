@@ -114,9 +114,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeBoolean
 
   //Compute the Boolean value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Boolean driver failed");
       return NULL;
@@ -189,9 +187,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuse
 
   //Compute the Boolean value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Boolean driver failed");
       return NULL;
@@ -254,9 +250,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeFuseList
 
   //Compute the Boolean value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Boolean driver failed");
       return NULL;
@@ -316,9 +310,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCommonList
 
   //Compute the Boolean value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Boolean driver failed");
       return NULL;
@@ -389,9 +381,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeCutList
 
   //Compute the Boolean value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Boolean driver failed");
       return NULL;
@@ -516,9 +506,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
 
   //Compute the Partition
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Partition driver failed");
       return NULL;
@@ -599,9 +587,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakeHalfPartition
 
   //Compute the Partition value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Partition driver failed");
       return NULL;

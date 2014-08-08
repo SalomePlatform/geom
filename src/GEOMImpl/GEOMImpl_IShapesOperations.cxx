@@ -197,9 +197,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
 
   //Compute the Edge value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -258,9 +256,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeOnCurveByLength
 
   //Compute the Edge value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -316,9 +312,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
 
   //Compute the Edge value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -392,9 +386,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
 
   //Compute the shape
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -459,9 +451,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
   //Compute the Face value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to compute a face");
       return NULL;
@@ -530,9 +520,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
   //Compute the shape
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -643,9 +631,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
 
   //Compute the shape
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -712,9 +698,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to glue faces");
       return NULL;
@@ -869,9 +853,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to glue faces");
       return NULL;
@@ -944,9 +926,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdges
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to glue edges");
       return NULL;
@@ -1107,9 +1087,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdgesByList
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to glue edges");
       return NULL;
@@ -1787,9 +1765,7 @@ Standard_Integer GEOMImpl_IShapesOperations::NumberOfSubShapes
   */
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     int iType, nbTypes [TopAbs_SHAPE];
     for (iType = 0; iType < TopAbs_SHAPE; ++iType)
       nbTypes[iType] = 0;
@@ -1859,9 +1835,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
 
   //Compute the sub-shape value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to reverse shape");
       return NULL;
@@ -2670,9 +2644,7 @@ Handle(TColStd_HSequenceOfInteger)
   // Compute tolerance
   Standard_Real T, VertMax = -RealLast();
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     for (TopExp_Explorer ExV (theShape, TopAbs_VERTEX); ExV.More(); ExV.Next()) {
       TopoDS_Vertex Vertex = TopoDS::Vertex(ExV.Current());
       T = BRep_Tool::Tolerance(Vertex);

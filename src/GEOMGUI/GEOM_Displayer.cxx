@@ -122,11 +122,7 @@
 
 #include <GEOMImpl_Types.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
-#else
-#include <Graphic3d_HArray1OfBytes.hxx>
-#endif
 
 // If the next macro is defined, autocolor feature works for all sub-shapes;
 // if it is undefined, autocolor feature works for groups only
@@ -138,7 +134,6 @@
 // Hard-coded value of shape deflection coefficient for VTK viewer
 const double VTK_MIN_DEFLECTION = 0.001;
 
-#if OCC_VERSION_LARGE > 0x06070000
 // Pixmap caching support
 namespace
 {
@@ -298,7 +293,6 @@ namespace
     }
   }
 }
-#endif
 
 //================================================================
 // Function : getActiveStudy
@@ -525,7 +519,6 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myToActivate = true;
   // This parameter is used for activisation/deactivisation of objects to be displayed
 
-  #if OCC_VERSION_LARGE > 0x06050100 // Functionnality available only in OCCT 6.5.2
   // Activate parallel vizualisation only for testing purpose
   // and if the corresponding env variable is set to 1
   char* parallel_visu = getenv("PARALLEL_VISU");
@@ -534,7 +527,6 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
     MESSAGE("Parallel visualisation on");
     BRepMesh_IncrementalMesh::SetParallelDefault(Standard_True);
   }
-  #endif
 
   myViewFrame = 0;
 
@@ -920,7 +912,6 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
     aImagePath = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
   }
 
-#if OCC_VERSION_LARGE > 0x06070000
   Handle(Image_PixMap) aPixmap;
   if ( !aImagePath.isEmpty() )
     aPixmap = cacheTextureFor( aImagePath, AISShape );
@@ -936,13 +927,6 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   else {
     AISShape->SetTextureMapOff();
   }
-#else
-  if ( !aImagePath.isEmpty() ) {
-    AISShape->SetTextureFileName( TCollection_AsciiString( aImagePath.toUtf8().constData() ) );
-    AISShape->SetTextureMapOn();
-    AISShape->DisableTextureModulate();
-  }
-#endif
 
   // set line width
   AISShape->SetWidth( HasWidth() ?
@@ -975,14 +959,9 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
       // custom marker string contains "IdOfTexture"
       int textureId = aList[0].toInt();
       Standard_Integer aWidth, aHeight;
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
       Handle(TColStd_HArray1OfByte) aTexture =
-#else
-        Handle(Graphic3d_HArray1OfBytes) aTexture =
-#endif
         GeometryGUI::getTexture( study, textureId, aWidth, aHeight );
       if ( !aTexture.IsNull() ) {
-#if OCC_VERSION_LARGE > 0x06060000 // Porting to OCCT higher 6.6.0 version
         Handle(Prs3d_PointAspect) aTextureAspect =
           new Prs3d_PointAspect( HasColor() ? 
 				 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
@@ -991,18 +970,6 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
                                  SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ),
                                  aWidth, aHeight,
                                  aTexture );
-#else
-	int TextureId = 0;
-        Handle(Prs3d_PointAspect) aTextureAspect =
-          new Prs3d_PointAspect( HasColor() ? 
-				 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
-				 (Quantity_NameOfColor)GetColor() : 
-				 // color from properties 
-                                 SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ), 
-				 ++TextureId,
-                                 aWidth, aHeight,
-                                 aTexture );
-#endif
         AISShape->Attributes()->SetPointAspect( aTextureAspect );
       }
     }
@@ -2006,13 +1973,11 @@ void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
   UpdateColorScale(false,false);
 }
 
-#if OCC_VERSION_LARGE > 0x06070000
 void GEOM_Displayer::BeforeErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   LightApp_Displayer::BeforeErase( v, p );
   releaseTextures( p );
 }
-#endif
 
 void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
