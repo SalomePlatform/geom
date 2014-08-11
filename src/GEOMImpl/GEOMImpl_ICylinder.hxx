@@ -24,13 +24,11 @@
 //
 #include "GEOM_Function.hxx"
 
-#define CYL_ARG_PNT 1
-#define CYL_ARG_VEC 2
-#define CYL_ARG_R   3
-#define CYL_ARG_H   4
+#define CYL_ARG_R   1
+#define CYL_ARG_H   2
+#define CYL_ARG_PNT 3
+#define CYL_ARG_VEC 4
 #define CYL_ARG_A   5
-
-
 
 class GEOMImpl_ICylinder
 {
@@ -45,10 +43,6 @@ class GEOMImpl_ICylinder
   void SetH(double theH) { _func->SetReal(CYL_ARG_H, theH); }
 
   double GetH() { return _func->GetReal(CYL_ARG_H); }
-  
-  void SetA(double theA) { _func->SetReal(CYL_ARG_A, theA); }
-
-  double GetA() { return _func->GetReal(CYL_ARG_A); }
 
   void SetPoint(Handle(GEOM_Function) theRefPoint) { _func->SetReference(CYL_ARG_PNT, theRefPoint); }
 
@@ -57,6 +51,10 @@ class GEOMImpl_ICylinder
   void SetVector(Handle(GEOM_Function) theRefVector) { _func->SetReference(CYL_ARG_VEC, theRefVector); }
 
   Handle(GEOM_Function) GetVector() { return _func->GetReference(CYL_ARG_VEC); }
+  
+  void SetA(double theA) { _func->SetReal(CYL_ARG_A, theA); }
+
+  double GetA() { return _func->GetReal(CYL_ARG_A); }
 
  private:
 

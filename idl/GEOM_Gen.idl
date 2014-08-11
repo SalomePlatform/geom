@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// // Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -1471,7 +1471,18 @@ module GEOM
     GEOM_Object MakeDiskR (in double theR, in short theOrientation);
 
     /*!
-     *  \brief Create a cylinder with given radius, height and angle (portion of cylinder) at
+     *  \brief Create a cylinder with given radius and height at
+     *  the origin of coordinate system.
+     *
+     *  Axis of the cylinder will be collinear to the OZ axis of the coordinate system.
+     *  \param theR Cylinder radius.
+     *  \param theH Cylinder height.
+     *  \return New GEOM_Object, containing the created cylinder.
+     */
+    GEOM_Object MakeCylinderRH (in double theR, in double theH);
+
+    /*!
+     *  \brief Create a portion of cylinder with given radius, height and angle at
      *  the origin of coordinate system.
      *
      *  Axis of the cylinder will be collinear to the OZ axis of the coordinate system.
@@ -1480,10 +1491,22 @@ module GEOM
      *  \param theA Cylinder angle.
      *  \return New GEOM_Object, containing the created cylinder.
      */
-    GEOM_Object MakeCylinderRH (in double theR, in double theH, in double theA);
+    GEOM_Object MakeCylinderRHA (in double theR, in double theH, in double theA);
 
     /*!
-     *  \brief Create a cylinder with given base point, axis, radius, height and angle (portion of cylinder).
+     *  \brief Create a cylinder with given base point, axis, radius, height and angle.
+     *  \param thePnt Central point of cylinder base.
+     *  \param theAxis Cylinder axis.
+     *  \param theR Cylinder radius.
+     *  \param theH Cylinder height.
+     *  \return New GEOM_Object, containing the created cylinder.
+     */
+    GEOM_Object MakeCylinderPntVecRH (in GEOM_Object thePnt,
+                                      in GEOM_Object theAxis,
+                                      in double      theR,
+                                      in double      theH);
+    /*!
+     *  \brief Create a portion of cylinder with given base point, axis, radius, height and angle.
      *  \param thePnt Central point of cylinder base.
      *  \param theAxis Cylinder axis.
      *  \param theR Cylinder radius.
@@ -1491,7 +1514,7 @@ module GEOM
      *  \param theA Cylinder angle.
      *  \return New GEOM_Object, containing the created cylinder.
      */
-    GEOM_Object MakeCylinderPntVecRH (in GEOM_Object thePnt,
+    GEOM_Object MakeCylinderPntVecRHA (in GEOM_Object thePnt,
                                       in GEOM_Object theAxis,
                                       in double      theR,
                                       in double      theH,

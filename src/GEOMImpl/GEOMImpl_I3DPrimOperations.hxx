@@ -48,10 +48,14 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                                        Handle(GEOM_Object) theVec,
                                                        double theR);
   Standard_EXPORT Handle(GEOM_Object) MakeDiskR (double theR, int theOrientation);
-  Standard_EXPORT Handle(GEOM_Object) MakeCylinderRH       (double theR, double theH, double theA);
+  Standard_EXPORT Handle(GEOM_Object) MakeCylinderRH       (double theR, double theH);
   Standard_EXPORT Handle(GEOM_Object) MakeCylinderPntVecRH (Handle(GEOM_Object) thePnt,
                                             Handle(GEOM_Object) theVec,
-                                            double theR, double theH, double theA);
+                                            double theR, double theH);
+  Standard_EXPORT Handle(GEOM_Object) MakeCylinderRHA       (double theR, double theH, double theA);
+  Standard_EXPORT Handle(GEOM_Object) MakeCylinderPntVecRHA (Handle(GEOM_Object) thePnt,
+                                            Handle(GEOM_Object) theVec,
+                                            double theR, double theH, double theA);					    
 
   Standard_EXPORT Handle(GEOM_Object) MakeConeR1R2H       (double theR1, double theR2, double theH);
   Standard_EXPORT Handle(GEOM_Object) MakeConePntVecR1R2H (Handle(GEOM_Object) thePnt,

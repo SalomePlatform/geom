@@ -488,7 +488,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskR (double theR, int theO
  *  MakeCylinderRH
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, double theH, double theA)
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, double theH)
 {
   SetErrorCode(KO);
 
@@ -497,6 +497,54 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
 
   //Add a new Cylinder function with R and H parameters
   Handle(GEOM_Function) aFunction = aCylinder->AddFunction(GEOMImpl_CylinderDriver::GetID(), CYLINDER_R_H);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_CylinderDriver::GetID()) return NULL;
+
+  GEOMImpl_ICylinder aCI (aFunction);
+
+  aCI.SetR(theR);
+  aCI.SetH(theH);
+
+  //Compute the Cylinder value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Cylinder driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCylinder
+    << " = geompy.MakeCylinderRH(" << theR << ", " << theH << ")";
+
+  SetErrorCode(OK);
+  return aCylinder;
+}
+
+//=============================================================================
+/*!
+ *  MakeCylinderRHA
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRHA (double theR, double theH, double theA)
+{
+  SetErrorCode(KO);
+
+  //Add a new Cylinder object
+  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GetDocID(), GEOM_CYLINDER);
+
+  //Add a new Cylinder function with R and H parameters
+  Handle(GEOM_Function) aFunction = aCylinder->AddFunction(GEOMImpl_CylinderDriver::GetID(), CYLINDER_R_H_A);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -526,12 +574,11 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCylinder
-    << " = geompy.MakeCylinderRH(" << theR << ", " << theH << ", " << theA << ")";
+    << " = geompy.MakeCylinderRHA(" << theR << ", " << theH << ", " << theA*180./M_PI << "*math.pi/180.)";
 
   SetErrorCode(OK);
   return aCylinder;
 }
-
 
 //=============================================================================
 /*!
@@ -539,6 +586,66 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEOM_Object) thePnt,
+                                                                      Handle(GEOM_Object) theVec,
+                                                                      double theR, double theH)
+{
+  SetErrorCode(KO);
+
+  if (thePnt.IsNull() || theVec.IsNull()) return NULL;
+
+  //Add a new Cylinder object
+  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GetDocID(), GEOM_CYLINDER);
+
+  //Add a new Cylinder function for creation a cylinder relatively to point and vector
+  Handle(GEOM_Function) aFunction =
+    aCylinder->AddFunction(GEOMImpl_CylinderDriver::GetID(), CYLINDER_PNT_VEC_R_H);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_CylinderDriver::GetID()) return NULL;
+
+  GEOMImpl_ICylinder aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
+  Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+
+  if (aRefPnt.IsNull() || aRefVec.IsNull()) return NULL;
+
+  aCI.SetPoint(aRefPnt);
+  aCI.SetVector(aRefVec);
+  aCI.SetR(theR);
+  aCI.SetH(theH);
+
+  //Compute the Cylinder value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Cylinder driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCylinder << " = geompy.MakeCylinder("
+    << thePnt << ", " << theVec << ", " << theR << ", " << theH << ")";
+
+  SetErrorCode(OK);
+  return aCylinder;
+}
+
+//=============================================================================
+/*!
+ *  MakeCylinderPntVecRHA
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRHA (Handle(GEOM_Object) thePnt,
                                                                       Handle(GEOM_Object) theVec,
                                                                       double theR, double theH, double theA)
 {
@@ -551,7 +658,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
 
   //Add a new Cylinder function for creation a cylinder relatively to point and vector
   Handle(GEOM_Function) aFunction =
-    aCylinder->AddFunction(GEOMImpl_CylinderDriver::GetID(), CYLINDER_PNT_VEC_R_H);
+    aCylinder->AddFunction(GEOMImpl_CylinderDriver::GetID(), CYLINDER_PNT_VEC_R_H_A);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -587,8 +694,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aCylinder << " = geompy.MakeCylinder("
-    << thePnt << ", " << theVec << ", " << theR << ", " << theH << ", " << theA << ")";
+  GEOM::TPythonDump(aFunction) << aCylinder << " = geompy.MakeCylinderA("
+    << thePnt << ", " << theVec << ", " << theR << ", " << theH << ", " << theA*180./M_PI << "*math.pi/180.)";
 
   SetErrorCode(OK);
   return aCylinder;

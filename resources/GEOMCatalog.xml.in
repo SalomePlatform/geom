@@ -1335,11 +1335,6 @@
                                 <inParameter-type>double</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
-			    <inParameter>
-                                <inParameter-name>theAngle</inParameter-name>
-                                <inParameter-type>double</inParameter-type>
-                                <inParameter-comment>unknown</inParameter-comment>
-                            </inParameter>			    
                         </inParameter-list>
                         <outParameter-list>
                             <outParameter>
@@ -1367,8 +1362,77 @@
                                 <inParameter-type>double</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>return</outParameter-name>
+                                <outParameter-type>GEOM_Object</outParameter-type>
+                                <outParameter-comment>unknown</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
+		    <component-service>
+                        <service-name>MakeCylinderPntVecRHA</service-name>
+                        <service-author></service-author>
+                        <service-version></service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-name>thePnt</inParameter-name>
+                                <inParameter-type>GEOM_Object</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theAxis</inParameter-name>
+                                <inParameter-type>GEOM_Object</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theRadius</inParameter-name>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theHeight</inParameter-name>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
 			    <inParameter>
                                 <inParameter-name>theAngle</inParameter-name>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                        </inParameter-list>
+                        <outParameter-list>
+                            <outParameter>
+                                <outParameter-name>return</outParameter-name>
+                                <outParameter-type>GEOM_Object</outParameter-type>
+                                <outParameter-comment>unknown</outParameter-comment>
+                            </outParameter>
+                        </outParameter-list>
+                        <DataStream-list></DataStream-list>
+                    </component-service>
+                    <component-service>
+                        <service-name>MakeCylinderRHA</service-name>
+                        <service-author></service-author>
+                        <service-version></service-version>
+                        <service-comment>unknown</service-comment>
+                        <service-by-default>0</service-by-default>
+                        <inParameter-list>
+                            <inParameter>
+                                <inParameter-name>theR</inParameter-name>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+                            <inParameter>
+                                <inParameter-name>theH</inParameter-name>
+                                <inParameter-type>double</inParameter-type>
+                                <inParameter-comment>unknown</inParameter-comment>
+                            </inParameter>
+			    <inParameter>
+                                <inParameter-name>theA</inParameter-name>
                                 <inParameter-type>double</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>

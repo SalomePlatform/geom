@@ -243,11 +243,17 @@ public:
   GEOM::GEOM_Object_ptr MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr thePnt,
                                               GEOM::GEOM_Object_ptr theAxis,
                                               CORBA::Double theRadius,
+                                              CORBA::Double theHeight);
+  GEOM::GEOM_Object_ptr MakeCylinderRH (CORBA::Double theR,
+                                        CORBA::Double theH);
+  GEOM::GEOM_Object_ptr MakeCylinderPntVecRHA (GEOM::GEOM_Object_ptr thePnt,
+                                              GEOM::GEOM_Object_ptr theAxis,
+                                              CORBA::Double theRadius,
                                               CORBA::Double theHeight,
 					      CORBA::Double theAngle);
-  GEOM::GEOM_Object_ptr MakeCylinderRH (CORBA::Double theR,
+  GEOM::GEOM_Object_ptr MakeCylinderRHA (CORBA::Double theR,
                                         CORBA::Double theH,
-					CORBA::Double theA);
+					CORBA::Double theA);					
   GEOM::GEOM_Object_ptr MakeSphere (CORBA::Double theX,
                                     CORBA::Double theY,
                                     CORBA::Double theZ,

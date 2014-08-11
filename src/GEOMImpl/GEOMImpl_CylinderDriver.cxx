@@ -75,14 +75,12 @@ Standard_Integer GEOMImpl_CylinderDriver::Execute(TFunction_Logbook& log) const
 
   gp_Pnt aP;
   gp_Vec aV;
-  
-  TopoDS_Shape aShape;
 
-  if (aType == CYLINDER_R_H) {
+  if (aType == CYLINDER_R_H || aType == CYLINDER_R_H_A) {
     aP = gp::Origin();
     aV = gp::DZ();
   }
-  else if (aType == CYLINDER_PNT_VEC_R_H) {
+  else if (aType == CYLINDER_PNT_VEC_R_H || aType == CYLINDER_PNT_VEC_R_H_A) {
     Handle(GEOM_Function) aRefPoint  = aCI.GetPoint();
     Handle(GEOM_Function) aRefVector = aCI.GetVector();
     TopoDS_Shape aShapePnt = aRefPoint->GetValue();
@@ -111,21 +109,41 @@ Standard_Integer GEOMImpl_CylinderDriver::Execute(TFunction_Logbook& log) const
 
   if (aCI.GetH() < 0.0) aV.Reverse();
   gp_Ax2 anAxes (aP, aV);
-  aShape = BRepPrimAPI_MakeCylinder(anAxes, aCI.GetR(), Abs(aCI.GetH())).Shape();
-  if(aCI.GetA() < 360. && aCI.GetA()> 0.){
-    BRepPrimAPI_MakeCylinder MC(anAxes, aCI.GetR(), Abs(aCI.GetH()), aCI.GetA()*M_PI/180.);
+  bool switchAngleVar;
+  if(aType == CYLINDER_R_H || aType == CYLINDER_PNT_VEC_R_H) switchAngleVar = false;
+  else if(aType == CYLINDER_R_H_A || aType == CYLINDER_PNT_VEC_R_H_A) switchAngleVar = true;
+  else return 0;
+  TopoDS_Shape aShape;
+  
+  switch (switchAngleVar) {
+  case false:
+  {
+    BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()));
     MC.Build();
     if (!MC.IsDone()) {
       StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters");
     }
-    aShape = MC.Shape();	
-  }    
+    aShape = MC.Shape();
+    break;
+  }
+  case true:
+  {
+    BRepPrimAPI_MakeCylinder MCA (anAxes, aCI.GetR(), Abs(aCI.GetH()), aCI.GetA());
+    MCA.Build();
+    if (!MCA.IsDone()) {
+      StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters. Failure.");
+      return 0;
+    }
+    aShape = MCA.Shape();
+    break;
+  }
+  default:
+    return 0;
+  }
   if (aShape.IsNull()) return 0;
-
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
-
   return 1;
 }
 
