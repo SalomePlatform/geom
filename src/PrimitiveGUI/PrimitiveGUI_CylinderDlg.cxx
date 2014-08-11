@@ -124,11 +124,11 @@ void PrimitiveGUI_CylinderDlg::Init()
   double SpecificStep = 5;
   initSpinBox(GroupPoints->SpinBox_DX, 0.00001, COORD_MAX, step, "length_precision" );
   initSpinBox(GroupPoints->SpinBox_DY, 0.00001, COORD_MAX, step, "length_precision" );
-  initSpinBox(GroupPoints->SpinBox_DZ, 0.00001, 359.99999, SpecificStep, "angle_precision" );
+  initSpinBox(GroupPoints->SpinBox_DZ, 0., 360., SpecificStep, "angle_precision" );
 
   initSpinBox(GroupDimensions->SpinBox_DX, 0.00001, COORD_MAX, step, "length_precision" );
   initSpinBox(GroupDimensions->SpinBox_DY, 0.00001, COORD_MAX, step, "length_precision" );
-  initSpinBox(GroupDimensions->SpinBox_DZ, 0.00001, 359.99999, SpecificStep, "angle_precision" );
+  initSpinBox(GroupDimensions->SpinBox_DZ, 0., 360., SpecificStep, "angle_precision" );
 
   // init variables
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -218,7 +218,7 @@ void PrimitiveGUI_CylinderDlg::ConstructorsClicked (int constructorId)
   updateGeometry();
   resize(minimumSizeHint());
   SelectionIntoArgument();
-
+  
   displayPreview(true);
 }
 
@@ -298,7 +298,6 @@ void PrimitiveGUI_CylinderDlg::SelectionIntoArgument()
               this, SLOT(SelectionIntoArgument()));
     }
   }
-
   displayPreview(true);
 }
 
@@ -372,6 +371,11 @@ void PrimitiveGUI_CylinderDlg::enterEvent (QEvent*)
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::ValueChangedInSpinBox()
 {
+  QString msg;
+  if (!isValid(msg)) {
+    erasePreview();
+    return;
+  }
   displayPreview(true);
 }
 
@@ -397,12 +401,20 @@ bool PrimitiveGUI_CylinderDlg::isValid (QString& msg)
          GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) &&
          GroupPoints->SpinBox_DZ->isValid( msg, !IsPreview() ) &&
          myPoint && myDir;
+	 if(GroupPoints->SpinBox_DZ->value()<=0. || GroupPoints->SpinBox_DZ->value()>=360.) {
+      msg += tr("GEOM_CYLINDER_ANGLE_ERR") + "\n";
+      ok = false;
+    }
   }
   else if( getConstructorId() == 1 )
   {
     ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) &&
          GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) &&
          GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() );
+	 if(GroupDimensions->SpinBox_DZ->value()<=0. || GroupDimensions->SpinBox_DZ->value()>=360.) {
+	    msg += tr("GEOM_CYLINDER_ANGLE_ERR") + "\n";
+	    ok = false;
+    }
   }
   ok = qAbs( getHeight() ) > Precision::Confusion() && ok;
   ok = qAbs( getRadius() ) > Precision::Confusion() && ok;

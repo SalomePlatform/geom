@@ -536,6 +536,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Cylinder Construction</translation>
     </message>
     <message>
+        <source>GEOM_CYLINDER_ANGLE_ERR</source>
+        <translation>Angle values 0 and 360 are unsafe to build proper volumes. Please uncheck the "Angle" box to use the regular cylinder constructor.</translation>
+    </message>
+    <message>
         <source>GEOM_D1</source>
         <translation>D1 :</translation>
     </message>

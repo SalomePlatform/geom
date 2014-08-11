@@ -548,6 +548,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construction d&apos;un cylindre </translation>
     </message>
     <message>
+        <source>GEOM_CYLINDER_ANGLE_ERR</source>
+        <translation>Les valeurs de l'angle 0 et 360 sont à éviter pour construire des volumes sains. Veuillez décocher la case "Angle" pour utiliser le constructeur de cylindre complet.</translation>
+    </message>
+    <message>
         <source>GEOM_D1</source>
         <translation>D1 :</translation>
     </message>
