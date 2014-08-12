@@ -37,7 +37,8 @@
 GEOMGUI_CreationInfoWdg::GEOMGUI_CreationInfoWdg( SalomeApp_Application* app )
 //:QWidget( app->desktop() )
 {
-  setWindowTitle(tr("CREATION_INFO_TITLE"));
+  setWindowTitle( tr( "CREATION_INFO_TITLE" ) );
+  setObjectName( "geomCreationInformation" );
 
   QFrame* frame = new QFrame( this );
 
