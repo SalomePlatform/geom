@@ -3005,6 +3005,50 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "cylinder")
             return anObj
+            
+        ## Create a portion of cylinder with given base point, axis, radius, height and angle.
+        #  @param thePnt Central point of cylinder base.
+        #  @param theAxis Cylinder axis.
+        #  @param theR Cylinder radius.
+        #  @param theH Cylinder height.
+        #  @param theA Cylinder angle in radians.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created cylinder.
+        #
+        #  @ref tui_creation_cylinder "Example"
+        @ManageTransactions("PrimOp")
+        def MakeCylinderA(self, thePnt, theAxis, theR, theH, theA, theName=None):
+            """
+            Create a a portion of cylinder with given base point, axis, radius, height and angle.
+
+            Parameters:
+                thePnt Central point of cylinder base.
+                theAxis Cylinder axis.
+                theR Cylinder radius.
+                theH Cylinder height.
+                theA Cylinder angle in radians.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created cylinder.
+            """
+            # Example: see GEOM_TestAll.py
+            flag = False
+            if isinstance(theA,str):
+                flag = True
+            theR,theH,theA,Parameters = ParseParameters(theR, theH, theA)
+	    if flag:
+                theA = theA*math.pi/180.
+            anObj = self.PrimOp.MakeCylinderPntVecRHA(thePnt, theAxis, theR, theH, theA)
+            RaiseIfFailed("MakeCylinderPntVecRHA", self.PrimOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "cylinder")
+            return anObj
 
         ## Create a cylinder with given radius and height at
         #  the origin of coordinate system. Axis of the cylinder
@@ -3039,6 +3083,50 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             theR,theH,Parameters = ParseParameters(theR, theH)
             anObj = self.PrimOp.MakeCylinderRH(theR, theH)
             RaiseIfFailed("MakeCylinderRH", self.PrimOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "cylinder")
+            return anObj
+            
+        ## Create a portion of cylinder with given radius, height and angle at
+        #  the origin of coordinate system. Axis of the cylinder
+        #  will be collinear to the OZ axis of the coordinate system.
+        #  @param theR Cylinder radius.
+        #  @param theH Cylinder height.
+        #  @param theA Cylinder angle in radians.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created cylinder.
+        #
+        #  @ref tui_creation_cylinder "Example"
+        @ManageTransactions("PrimOp")
+        def MakeCylinderRHA(self, theR, theH, theA, theName=None):
+            """
+            Create a portion of cylinder with given radius, height and angle at
+            the origin of coordinate system. Axis of the cylinder
+            will be collinear to the OZ axis of the coordinate system.
+
+            Parameters:
+                theR Cylinder radius.
+                theH Cylinder height.
+                theA Cylinder angle in radians.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created cylinder.
+            """
+            # Example: see GEOM_TestAll.py
+            flag = False
+            if isinstance(theA,str):
+                flag = True
+            theR,theH,theA,Parameters = ParseParameters(theR, theH, theA)
+            if flag:
+                theA = theA*math.pi/180.
+            anObj = self.PrimOp.MakeCylinderRHA(theR, theH, theA)
+            RaiseIfFailed("MakeCylinderRHA", self.PrimOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "cylinder")
             return anObj
@@ -7825,7 +7913,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Rotate the given object around the given axis
-        #  on the given angle, creating its copy before the rotatation.
+        #  on the given angle, creating its copy before the rotation.
         #  @param theObject The object to be rotated.
         #  @param theAxis Rotation axis.
         #  @param theAngle Rotation angle in radians.

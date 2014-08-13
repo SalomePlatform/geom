@@ -15,6 +15,11 @@ and its dimensions: the Radius and the Height.
 \n <b>Arguments:</b>  Name + 1 vertex + 1 vector + 2 values
 (Dimensions: radius and height).
 
+\n \b Angle checkbox and field allow defining an angle to create a portion of cylinder.
+\n <b>TUI Command:</b> <em>geompy.MakeCylinderA(Point, Axis, Radius, Height, Angle)</em>
+\n <b>Arguments:</b>  Name + 1 vertex + 1 vector + 3 values
+(Dimensions: radius, height and angle).
+
 \image html cylinder1.png
 
 \n Secondly, you can define a \b Cylinder by the given radius and the
@@ -23,6 +28,11 @@ will be collinear to the OZ axis of the coordinate system.
 \n <b>TUI Command:</b> <em>geompy.MakeCylinderRH(Radius, Height)</em>
 \n <b>Arguments:</b> Name + 2 values (Dimensions at origin: radius and
 height).
+
+\n \b Angle checkbox and field allow defining an angle to create a portion of cylinder at  the origin of coordinate system.
+\n <b>TUI Command:</b> <em>geompy.MakeCylinderRHA(Radius, Height, Angle)</em>
+\n <b>Arguments:</b>  Name + 3 values
+(Dimensions at origin : radius, height and angle).
 
 \image html cylinder2.png
 

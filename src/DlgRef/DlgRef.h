@@ -549,6 +549,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_2Sel3Spin1Check
+//////////////////////////////////////////
+
+#include "ui_DlgRef_2Sel3Spin1Check_QTD.h"
+
+class DLGREF_EXPORT DlgRef_2Sel3Spin1Check : public QWidget, 
+					public Ui::DlgRef_2Sel3Spin1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_2Sel3Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_2Sel3Spin1Check();
+};
+
+//////////////////////////////////////////
 // DlgRef_2Sel3Spin2Rb
 //////////////////////////////////////////
 
@@ -824,6 +840,22 @@ class DLGREF_EXPORT DlgRef_3Spin1Check : public QWidget,
 public:
   DlgRef_3Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_3Spin1Check();
+};
+
+//////////////////////////////////////////
+// DlgRef_3Spin1CheckCyl
+//////////////////////////////////////////
+
+#include "ui_DlgRef_3Spin1CheckCyl_QTD.h"
+
+class DLGREF_EXPORT DlgRef_3Spin1CheckCyl : public QWidget, 
+                                         public Ui::DlgRef_3Spin1CheckCyl_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_3Spin1CheckCyl( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_3Spin1CheckCyl();
 };
 
 //////////////////////////////////////////
