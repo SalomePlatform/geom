@@ -180,6 +180,9 @@
   <tabstop>PushButton2</tabstop>
   <tabstop>LineEdit2</tabstop>
   <tabstop>SpinBox_DX</tabstop>
+  <tabstop>SpinBox_DY</tabstop>
+  <tabstop>SpinBox_DZ</tabstop>
+  <tabstop>checkBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

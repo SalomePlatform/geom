@@ -109,37 +109,36 @@ Standard_Integer GEOMImpl_CylinderDriver::Execute(TFunction_Logbook& log) const
 
   if (aCI.GetH() < 0.0) aV.Reverse();
   gp_Ax2 anAxes (aP, aV);
-  bool switchAngleVar;
-  if(aType == CYLINDER_R_H || aType == CYLINDER_PNT_VEC_R_H) switchAngleVar = false;
-  else if(aType == CYLINDER_R_H_A || aType == CYLINDER_PNT_VEC_R_H_A) switchAngleVar = true;
-  else return 0;
+
   TopoDS_Shape aShape;
   
-  switch (switchAngleVar) {
-  case false:
-  {
-    BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()));
-    MC.Build();
-    if (!MC.IsDone()) {
-      StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters");
+  switch (aType) {
+  case CYLINDER_R_H:
+  case CYLINDER_PNT_VEC_R_H:
+    {
+      BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()));
+      MC.Build();
+      if (!MC.IsDone()) {
+	StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters");
+      }
+      aShape = MC.Shape();
+      break;
     }
-    aShape = MC.Shape();
-    break;
-  }
-  case true:
-  {
-    BRepPrimAPI_MakeCylinder MCA (anAxes, aCI.GetR(), Abs(aCI.GetH()), aCI.GetA());
-    MCA.Build();
-    if (!MCA.IsDone()) {
-      StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters. Failure.");
-      return 0;
+  case CYLINDER_R_H_A:
+  case CYLINDER_PNT_VEC_R_H_A:
+    {
+      BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()), aCI.GetA());
+      MC.Build();
+      if (!MC.IsDone()) {
+	StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters. Failure.");
+      }
+      aShape = MC.Shape();
+      break;
     }
-    aShape = MCA.Shape();
-    break;
-  }
   default:
-    return 0;
+    break;
   }
+  
   if (aShape.IsNull()) return 0;
   aFunction->SetValue(aShape);
 

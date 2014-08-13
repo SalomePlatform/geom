@@ -77,7 +77,7 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox();
   void                               SetDoubleSpinBoxStep( double );
-  void 				     ActivateAngle();
+  void                               ActivateAngle();
 };
 
 #endif // PRIMITIVEGUI_CYLINDERDLG_H

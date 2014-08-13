@@ -1,4 +1,4 @@
-// // Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -1494,7 +1494,7 @@ module GEOM
     GEOM_Object MakeCylinderRHA (in double theR, in double theH, in double theA);
 
     /*!
-     *  \brief Create a cylinder with given base point, axis, radius, height and angle.
+     *  \brief Create a cylinder with given base point, axis, radius and height.
      *  \param thePnt Central point of cylinder base.
      *  \param theAxis Cylinder axis.
      *  \param theR Cylinder radius.
@@ -1518,7 +1518,7 @@ module GEOM
                                       in GEOM_Object theAxis,
                                       in double      theR,
                                       in double      theH,
-				      in double      theA);
+                                      in double      theA);
 
     /*!
      *  \brief Create a cone with given height and radiuses at

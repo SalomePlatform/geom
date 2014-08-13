@@ -1077,10 +1077,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderRH (CORBA::Double theR,
 //  MakeCylinderPntVecRHA:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderPntVecRHA (GEOM::GEOM_Object_ptr thePnt,
-                                                           GEOM::GEOM_Object_ptr theAxis,
-                                                           CORBA::Double theRadius,
-                                                           CORBA::Double theHeight,
-							   CORBA::Double theAngle)
+							    GEOM::GEOM_Object_ptr theAxis,
+							    CORBA::Double theRadius,
+							    CORBA::Double theHeight,
+							    CORBA::Double theAngle)
 {
   beginService( " GEOM_Superv_i::MakeCylinderPntVecRHA" );
   MESSAGE("GEOM_Superv_i::MakeCylinderPntVecRHA");
@@ -1094,8 +1094,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderPntVecRHA (GEOM::GEOM_Object_pt
 //  MakeCylinderRHA:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderRHA (CORBA::Double theR,
-                                                     CORBA::Double theH,
-						     CORBA::Double theA)
+						      CORBA::Double theH,
+						      CORBA::Double theA)
 {
   beginService( " GEOM_Superv_i::MakeCylinderRHA" );
   MESSAGE("GEOM_Superv_i::MakeCylinderRHA");

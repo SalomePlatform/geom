@@ -162,13 +162,13 @@ module GEOM
     GEOM_Object MakeCylinderRH (in double theR,
                                 in double theH) ;
     GEOM_Object MakeCylinderPntVecRHA (in GEOM_Object thePnt,
-                                      in GEOM_Object theAxis,
-                                      in double      theRadius,
-                                      in double      theHeight,
-				      in double      theAngle) ;
+				       in GEOM_Object theAxis,
+				       in double      theRadius,
+				       in double      theHeight,
+				       in double      theAngle) ;
     GEOM_Object MakeCylinderRHA (in double theR,
-                                in double theH,
-				in double theA) ;
+				 in double theH,
+				 in double theA) ;
     GEOM_Object MakeSphere (in double theX,
                             in double theY,
                             in double theZ,

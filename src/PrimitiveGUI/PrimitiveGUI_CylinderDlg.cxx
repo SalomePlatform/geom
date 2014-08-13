@@ -166,7 +166,7 @@ void PrimitiveGUI_CylinderDlg::Init()
 
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
   
-  connect(GroupPoints->checkBox, SIGNAL(toggled(bool)), this, SLOT(ActivateAngle()));
+  connect(GroupPoints->checkBox,     SIGNAL(toggled(bool)), this, SLOT(ActivateAngle()));
   connect(GroupDimensions->checkBox, SIGNAL(toggled(bool)), this, SLOT(ActivateAngle()));
   
   initName(tr("GEOM_CYLINDER"));
@@ -399,9 +399,10 @@ bool PrimitiveGUI_CylinderDlg::isValid (QString& msg)
   {
     ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) &&
          GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) &&
-         GroupPoints->SpinBox_DZ->isValid( msg, !IsPreview() ) &&
+         ( !GroupPoints->checkBox->isChecked() || GroupPoints->SpinBox_DZ->isValid( msg, !IsPreview() ) ) &&
          myPoint && myDir;
-	 if(GroupPoints->SpinBox_DZ->value()<=0. || GroupPoints->SpinBox_DZ->value()>=360.) {
+    if ( GroupPoints->checkBox->isChecked() && 
+	 ( GroupPoints->SpinBox_DZ->value() <= 0. || GroupPoints->SpinBox_DZ->value() >= 360. ) ) {
       msg += tr("GEOM_CYLINDER_ANGLE_ERR") + "\n";
       ok = false;
     }
@@ -410,10 +411,11 @@ bool PrimitiveGUI_CylinderDlg::isValid (QString& msg)
   {
     ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) &&
          GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) &&
-         GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() );
-	 if(GroupDimensions->SpinBox_DZ->value()<=0. || GroupDimensions->SpinBox_DZ->value()>=360.) {
-	    msg += tr("GEOM_CYLINDER_ANGLE_ERR") + "\n";
-	    ok = false;
+         ( GroupDimensions->checkBox->isChecked() || GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) );
+    if ( GroupDimensions->checkBox->isChecked() &&
+	 ( GroupDimensions->SpinBox_DZ->value() <= 0. || GroupDimensions->SpinBox_DZ->value() >= 360. ) ) {
+      msg += tr("GEOM_CYLINDER_ANGLE_ERR") + "\n";
+      ok = false;
     }
   }
   ok = qAbs( getHeight() ) > Precision::Confusion() && ok;
@@ -428,7 +430,6 @@ bool PrimitiveGUI_CylinderDlg::isValid (QString& msg)
 bool PrimitiveGUI_CylinderDlg::execute (ObjectList& objects)
 {
   bool res = false;
-  bool BAngle = false;
   
   GEOM::GEOM_Object_var anObj;
 
@@ -436,20 +437,8 @@ bool PrimitiveGUI_CylinderDlg::execute (ObjectList& objects)
 
   switch (getConstructorId()) {
   case 0:
-    BAngle = GroupPoints->checkBox->isChecked();
     if ( myPoint && myDir ) {
-      if(!BAngle){
-	anObj = anOper->MakeCylinderPntVecRH(myPoint.get(), myDir.get(), getRadius(), getHeight());
-	if (!anObj->_is_nil() && !IsPreview())
-	{
-	  QStringList aParameters;
-	  aParameters << GroupPoints->SpinBox_DX->text();
-	  aParameters << GroupPoints->SpinBox_DY->text();
-	  anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-	}
-	res = true;
-      }
-      else if(BAngle){
+      if ( GroupPoints->checkBox->isChecked() ) {
 	anObj = anOper->MakeCylinderPntVecRHA(myPoint.get(), myDir.get(), getRadius(), getHeight(), getAngle()*M_PI/180.);
 	if (!anObj->_is_nil() && !IsPreview())
 	{
@@ -461,22 +450,21 @@ bool PrimitiveGUI_CylinderDlg::execute (ObjectList& objects)
 	}
 	res = true;
       }
+      else {
+	anObj = anOper->MakeCylinderPntVecRH(myPoint.get(), myDir.get(), getRadius(), getHeight());
+	if (!anObj->_is_nil() && !IsPreview())
+	{
+	  QStringList aParameters;
+	  aParameters << GroupPoints->SpinBox_DX->text();
+	  aParameters << GroupPoints->SpinBox_DY->text();
+	  anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+	}
+	res = true;
+      }
     }
     break;
   case 1:
-    BAngle = GroupDimensions->checkBox->isChecked();
-    if(!BAngle){
-      anObj = anOper->MakeCylinderRH(getRadius(), getHeight());
-      if (!anObj->_is_nil() && !IsPreview())
-      {
-	QStringList aParameters;
-	aParameters << GroupDimensions->SpinBox_DX->text();
-	aParameters << GroupDimensions->SpinBox_DY->text();
-	anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-      }
-      res = true;
-    }
-    else if(BAngle){
+    if ( GroupDimensions->checkBox->isChecked() ) {
       anObj = anOper->MakeCylinderRHA(getRadius(), getHeight(), getAngle()*M_PI/180.);
       if (!anObj->_is_nil() && !IsPreview())
       {
@@ -484,6 +472,17 @@ bool PrimitiveGUI_CylinderDlg::execute (ObjectList& objects)
 	aParameters << GroupDimensions->SpinBox_DX->text();
 	aParameters << GroupDimensions->SpinBox_DY->text();
 	aParameters << GroupDimensions->SpinBox_DZ->text();
+	anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      }
+      res = true;
+    }
+    else {
+      anObj = anOper->MakeCylinderRH(getRadius(), getHeight());
+      if (!anObj->_is_nil() && !IsPreview())
+      {
+	QStringList aParameters;
+	aParameters << GroupDimensions->SpinBox_DX->text();
+	aParameters << GroupDimensions->SpinBox_DY->text();
 	anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       res = true;

@@ -646,8 +646,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRHA (Handle(GEOM_Object) thePnt,
-                                                                      Handle(GEOM_Object) theVec,
-                                                                      double theR, double theH, double theA)
+								       Handle(GEOM_Object) theVec,
+								       double theR, double theH, double theA)
 {
   SetErrorCode(KO);
 

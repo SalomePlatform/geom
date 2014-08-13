@@ -267,8 +267,8 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRH (CORBA::Double th
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRHA (CORBA::Double theR,
-                                                                CORBA::Double theH,
-								CORBA::Double theA)
+								 CORBA::Double theH,
+								 CORBA::Double theA)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 

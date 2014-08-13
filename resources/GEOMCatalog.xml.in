@@ -1372,7 +1372,7 @@
                         </outParameter-list>
                         <DataStream-list></DataStream-list>
                     </component-service>
-		    <component-service>
+                    <component-service>
                         <service-name>MakeCylinderPntVecRHA</service-name>
                         <service-author></service-author>
                         <service-version></service-version>
@@ -1399,7 +1399,7 @@
                                 <inParameter-type>double</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
-			    <inParameter>
+                            <inParameter>
                                 <inParameter-name>theAngle</inParameter-name>
                                 <inParameter-type>double</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
@@ -1431,7 +1431,7 @@
                                 <inParameter-type>double</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
                             </inParameter>
-			    <inParameter>
+                            <inParameter>
                                 <inParameter-name>theA</inParameter-name>
                                 <inParameter-type>double</inParameter-type>
                                 <inParameter-comment>unknown</inParameter-comment>
