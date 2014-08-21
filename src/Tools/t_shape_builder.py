@@ -9,7 +9,12 @@ import math
 import SALOMEDS
 
 
-def demidisk(study, r1, a1, roty=0):
+def demidisk(study, r1, a1, roty=0, solid_thickness=0): # TODO retablir l'épaisseur de solide à 0 par défaut
+  if solid_thickness < 1e-7:
+    with_solid = False
+  else:
+    with_solid = True
+
   geompy = geomBuilder.New(study)
   
   O = geompy.MakeVertex(0, 0, 0)
@@ -42,7 +47,20 @@ def demidisk(study, r1, a1, roty=0):
   arc1 = geompy.MakeArc(v[1], v7, v[3])
   l[0] = geompy.MakeLineTwoPnt(v[1], v[3])
   face1 = geompy.MakeFaceWires([arc1, l[0]], 1)
-  part1 = geompy.MakePartition([face1], [l[2], l[4], l[5], l[6], l[7]], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
+
+  if with_solid:
+    v0  = geompy.MakeVertex(0, r1 + solid_thickness, 0)
+    l0  = geompy.MakeLineTwoPnt(v[1], v0)
+    l2 = geompy.MakeRotation(l0, OX, a1*math.pi/180.0)
+    l3 = geompy.MakeRotation(l0, OX, math.pi - (a1*math.pi/180.0))
+    face2 = geompy.MakeRevolution(l0, OX, a1*math.pi/180.0)
+    face3 = geompy.MakeRevolution(l2, OX, math.pi - 2*a1*math.pi/180.0)
+    face4 = geompy.MakeRevolution(l3, OX, a1*math.pi/180.0)
+    part0 = geompy.MakePartition([face1], [l[2], l[4], l[5], l[6], l[7]], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
+    compound1 = geompy.MakeCompound([part0, face2, face3, face4])
+    part1 = geompy.MakeGlueEdges(compound1,1e-7)
+  else:
+    part1 = geompy.MakePartition([face1], [l[2], l[4], l[5], l[6], l[7]], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
 
   if roty != 0:
     vrot = [ geompy.MakeRotation(vert, OY, roty*math.pi/180.0) for vert in v ]
@@ -109,6 +127,11 @@ def build_shape(study, r1, r2, h1, h2):
   demicyl1 = geompy.MakePrismVecH(part1, OX, h1)
   demicyl2 = geompy.MakePrismVecH(part2, OZ, h2)
   arcextru = geompy.MakePrismVecH(arc1, OX, h1)
+  
+  """
+  res = geompy.MakeCompound([demicyl1,demicyl2])
+  return res
+  """
 
   # --- plan de coupe à 45° sur le cylindre principal,
   #     section à 45° du cylndre principal,
@@ -166,18 +189,21 @@ def build_shape(study, r1, r2, h1, h2):
     #geompy.addToStudy(plan, "plan%d"%i)
     section = geompy.MakeSection(plan, arcextru, True)
     secpart = geompy.MakePartition([section], [sect45, sect90], [], [], geompy.ShapeType["EDGE"], 0, [], 0, True)
-    #geompy.addToStudy(secpart, "secpart%d"%i)
+    geompy.addToStudy(secpart, "secpart%d"%i)
     lsec = geompy.ExtractShapes(secpart, geompy.ShapeType["EDGE"], True)
     #print "len(lsec)", len(lsec)
+
+    # TODO : revoir ça dans le cas avec solide
     for l in lsec:
       pts = geompy.ExtractShapes(l, geompy.ShapeType["VERTEX"], True)
       if (((geompy.MinDistance(pts[0], p0) < 0.001) and (geompy.MinDistance(pts[1], p1) < 0.001)) or
           ((geompy.MinDistance(pts[1], p0) < 0.001) and (geompy.MinDistance(pts[0], p1) < 0.001))):
         curv[i+2] =l
-        #print "curv_%d OK"%i
+        print "curv_%d OK"%i
         break
-  for i,l in enumerate(curv):
-    geompy.addToStudyInFather(arcextru, l, "curv%d"%i)
+  # RNC : commente temporairement
+  #for i,l in enumerate(curv):
+  #  geompy.addToStudyInFather(arcextru, l, "curv%d"%i)
     
   # --- creation des arêtes droites manquantes, des faces et volumes pour les quatre volumes de la jonction
 
@@ -190,8 +216,9 @@ def build_shape(study, r1, r2, h1, h2):
   edges[5] = geompy.MakeLineTwoPnt(vord45[5], vord90[5])
   edges[6] = curv[2]
   edges[7] = curv[3]
-  for i,l in enumerate(edges):
-    geompy.addToStudy( l, "edge%d"%i)
+  #for i,l in enumerate(edges):
+  #  print i
+  #  geompy.addToStudy( l, "edge%d"%i)
 
   ed45 = [None for i in range(8)]
   ed45[0] = geompy.MakeLineTwoPnt(vord45[0], vord45[2])
@@ -253,7 +280,7 @@ def build_shape(study, r1, r2, h1, h2):
   geompy.addToStudy(box, "box")
   final = geompy.MakeCommonList([box, assemblage], True)
   
-  # --- Partie infiérieure
+  # --- Partie inférieure
   v3, l3, arc3, part3 = demidisk(study, r1, a1, 180.0)
   geompy.addToStudy(part3,"part3")
   extru3 = geompy.MakePrismVecH(part3, OX, h1)
@@ -267,3 +294,11 @@ def build_shape(study, r1, r2, h1, h2):
   final = geompy.MakeCompound([compound, compound_mirrored])
   
   return final
+
+if __name__=="__main__":
+  """For testing purpose"""
+  salome.salome_init()
+  theStudy = salome.myStudy
+  geompy = geomBuilder.New(theStudy)
+  res = build_shape(theStudy, 80, 20, 100, 100)
+  geompy.addToStudy(res, "res")
