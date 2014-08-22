@@ -319,7 +319,6 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     }
   }
   else if ( myEditCurrentArgument == GroupMakePoints->LineEdit1 ) {
-    myBaseObjects.clear();
     QList<TopAbs_ShapeEnum> types;
     types << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL;
     QList<GEOM::GeomObjPtr> objects = getSelected( types, -1 );
@@ -330,7 +329,6 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     }
   }
   else if ( myEditCurrentArgument == GroupMakePoints->LineEdit2 ) {
-    myLocations.clear();
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
     QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_VERTEX, -1 );
     GEOMBase::Synchronize( myLocations, objects );
