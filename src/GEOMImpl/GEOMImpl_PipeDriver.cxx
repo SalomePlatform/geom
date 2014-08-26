@@ -152,6 +152,26 @@ static GeomFill_Trihedron EvaluateBestSweepMode(const TopoDS_Shape& Spine)
   return theMode;
 }
 
+//=======================================================================
+//function : BuildPipeShell
+//purpose  : Builds a pipe shell. If failed, try to build in Descrete Trihedron
+//           mode. Returns Standard_True if the building is done successfully.
+//=======================================================================
+static Standard_Boolean BuildPipeShell(BRepOffsetAPI_MakePipeShell &theBuilder)
+{
+  theBuilder.Build();
+
+  Standard_Boolean isDone = theBuilder.IsDone();
+
+  if (!isDone) {
+    // Try to use Descrete Trihedron mode.
+    theBuilder.SetDiscreteMode();
+    theBuilder.Build();
+    isDone = theBuilder.IsDone();
+  }
+
+  return isDone;
+}
 
 //=======================================================================
 //function : FillForOtherEdges
@@ -256,7 +276,9 @@ static bool FillCorrespondingEdges(const TopoDS_Shape& FS1,
   if (!aBuilder.IsReady()) {
     return false;
   }
-  aBuilder.Build();
+
+  BuildPipeShell(aBuilder);
+
   TopoDS_Shape aShape = aBuilder.Shape();
   /*
   TopoDS_Compound C;
@@ -930,7 +952,9 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
         if (!aBuilder.IsReady()) {
           Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
         }
-        aBuilder.Build();
+
+        BuildPipeShell(aBuilder);
+
         TopoDS_Shape resShape = aBuilder.Shape();
         aSeqRes.Append(resShape);
       }
@@ -961,7 +985,9 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
       if (!aBuilder.IsReady()) {
         Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
       }
-      aBuilder.Build();
+
+      BuildPipeShell(aBuilder);
+
       TopoDS_Shape resShape = aBuilder.Shape();
       aSeqRes.Append(resShape);
       // make sewing for result
@@ -1014,9 +1040,7 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
       
         aBuilder.SetTolerance(aTolConf, aTolConf, aTolAng);
 
-        aBuilder.Build();
-
-        Standard_Boolean isDone = aBuilder.IsDone();
+        Standard_Boolean isDone = BuildPipeShell(aBuilder);
 
         if (isDone && NeedCreateSolid) {
           isDone = aBuilder.MakeSolid();
@@ -1512,7 +1536,9 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
           if (aCI) delete aCI;
           Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
         }
-        aBuilder.Build();
+
+        BuildPipeShell(aBuilder);
+
         TopoDS_Shape aShape = aBuilder.Shape();
         TopoDS_Shell aShell;
         B.MakeShell(aShell);
@@ -1750,7 +1776,9 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
             if (aCI) delete aCI;
             Standard_ConstructionError::Raise("Invalid input data for building PIPE: bases are invalid");
           }
-          aBuilder.Build();
+
+          BuildPipeShell(aBuilder);
+
           TopoDS_Shape aShape = aBuilder.Shape();
           TopoDS_Shell aShell;
           B.MakeShell(aShell);
@@ -2333,8 +2361,10 @@ static TopoDS_Shape CreatePipeBiNormalAlongVector(const TopoDS_Wire& aWirePath,
   gp_Vec aVec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
   gp_Dir BiNormal(aVec);
   PipeBuilder.SetMode(BiNormal);
-  PipeBuilder.Build();
-  if (aShapeBase.ShapeType() == TopAbs_FACE) {
+
+  Standard_Boolean isDone = BuildPipeShell(PipeBuilder);
+
+  if (isDone && aShapeBase.ShapeType() == TopAbs_FACE) {
       PipeBuilder.MakeSolid();
   }
 
@@ -2444,9 +2474,10 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
       if (FaceBuilder.IsDone())
         Sweep.SetMode(FaceBuilder.Face());
       Sweep.Add(Profile);
-      Sweep.Build();
-      
-      if (!Sweep.IsDone())
+
+      Standard_Boolean isDone = BuildPipeShell(Sweep);
+
+      if (!isDone)
       {
         if (aCI) delete aCI;
         Standard_ConstructionError::Raise("MakePipeShell failed");
@@ -2458,7 +2489,19 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
     else
     {
       GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(aWirePath);
-      aShape = BRepOffsetAPI_MakePipe(aWirePath, aShapeBase, theBestMode);
+      BRepOffsetAPI_MakePipe aMkPipe(aWirePath, aShapeBase, theBestMode);
+
+      if (aMkPipe.IsDone()) {
+        aShape = aMkPipe.Shape();
+      } else if (theBestMode != GeomFill_IsDiscreteTrihedron) {
+        // Try to use Descrete Trihedron mode.
+        BRepOffsetAPI_MakePipe aMkPipeDescrete
+          (aWirePath, aShapeBase, GeomFill_IsDiscreteTrihedron);
+
+        if (aMkPipeDescrete.IsDone()) {
+          aShape = aMkPipeDescrete.Shape();
+        }
+      }
     }
   }
 
