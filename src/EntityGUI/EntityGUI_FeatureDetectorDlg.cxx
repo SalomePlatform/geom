@@ -84,12 +84,6 @@ enum{
 };
 
 enum {
-  RADIO_BUTTONS,
-  MSG,
-  PUSH_BUTTON,
-};
-
-enum {
   KERNEL_SIZE,
   FIND_CONTOURS_METHOD,
   QUALITY_LEVEL,
