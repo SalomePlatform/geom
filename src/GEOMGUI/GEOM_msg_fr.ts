@@ -3997,54 +3997,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>X</translation>
     </message>
     <message>
-        <source>TOOL_BASIC</source>
-        <translation>Objets de base</translation>
-    </message>
-    <message>
-        <source>TOOL_BLOCKS</source>
-        <translation>Blocs</translation>
-    </message>
-    <message>
-        <source>TOOL_BOOLEAN</source>
-        <translation>Opérations booléennes </translation>
-    </message>
-    <message>
-        <source>TOOL_FEATURES</source>
-        <translation>Modification</translation>
-    </message>
-    <message>
-        <source>TOOL_GENERATION</source>
-        <translation>Génération</translation>
-    </message>
-    <message>
-        <source>TOOL_PRIMITIVES</source>
-        <translation>Primitives</translation>
-    </message>
-    <message>
-        <source>TOOL_TRANSFORMATION</source>
-        <translation>Transformation</translation>
-    </message>
-    <message>
-        <source>TOOL_BUILD</source>
-        <translation>Construire</translation>
-    </message>
-    <message>
-        <source>TOOL_OPERATIONS</source>
-        <translation>Opérations</translation>
-    </message>
-    <message>
-        <source>TOOL_PICTURES</source>
-        <translation>Images</translation>
-    </message>
-    <message>
-        <source>TOOL_ADVANCED</source>
-        <translation>Avancé</translation>
-    </message>
-    <message>
-        <source>TOOL_MEASURES</source>
-        <translation>Informations</translation>
-    </message>
-    <message>
         <source>TOP_ARC</source>
         <translation>Créer un arc</translation>
     </message>
@@ -5166,10 +5118,6 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <translation>Import / Export XAO</translation>
     </message>
     <message>
-        <source>TOOL_IMPORTEXPORT</source>
-        <translation>Import / Export XAO</translation>
-    </message>
-    <message>
         <source>TOP_EXPORTXAO</source>
         <translation>Export XAO</translation>
     </message>
@@ -5220,6 +5168,61 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>CC_PNT_ITEM_X_Y_Z</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+</context>
+<context>
+    <name>GeometryGUI</name>
+    <message>
+        <source>TOOL_BASIC</source>
+        <translation>Objets de base</translation>
+    </message>
+    <message>
+        <source>TOOL_BLOCKS</source>
+        <translation>Blocs</translation>
+    </message>
+    <message>
+        <source>TOOL_BOOLEAN</source>
+        <translation>Opérations booléennes </translation>
+    </message>
+    <message>
+        <source>TOOL_FEATURES</source>
+        <translation>Modification</translation>
+    </message>
+    <message>
+        <source>TOOL_GENERATION</source>
+        <translation>Génération</translation>
+    </message>
+    <message>
+        <source>TOOL_PRIMITIVES</source>
+        <translation>Primitives</translation>
+    </message>
+    <message>
+        <source>TOOL_TRANSFORMATION</source>
+        <translation>Transformation</translation>
+    </message>
+    <message>
+        <source>TOOL_BUILD</source>
+        <translation>Construire</translation>
+    </message>
+    <message>
+        <source>TOOL_OPERATIONS</source>
+        <translation>Opérations</translation>
+    </message>
+    <message>
+        <source>TOOL_PICTURES</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <source>TOOL_ADVANCED</source>
+        <translation>Avancé</translation>
+    </message>
+    <message>
+        <source>TOOL_MEASURES</source>
+        <translation>Informations</translation>
+    </message>
+    <message>
+        <source>TOOL_IMPORTEXPORT</source>
+        <translation>Import / Export XAO</translation>
     </message>
 </context>
 <context>

@@ -3984,54 +3984,6 @@
       <translation>X</translation>
     </message>
     <message>
-      <source>TOOL_BASIC</source>
-      <translation>基礎オブジェクト</translation>
-    </message>
-    <message>
-      <source>TOOL_BLOCKS</source>
-      <translation>ブロック分割</translation>
-    </message>
-    <message>
-      <source>TOOL_BOOLEAN</source>
-      <translation>ブーリアン操作</translation>
-    </message>
-    <message>
-      <source>TOOL_FEATURES</source>
-      <translation>フィーチャー</translation>
-    </message>
-    <message>
-      <source>TOOL_GENERATION</source>
-      <translation>押し出し/回転</translation>
-    </message>
-    <message>
-      <source>TOOL_PRIMITIVES</source>
-      <translation>基本図形</translation>
-    </message>
-    <message>
-      <source>TOOL_TRANSFORMATION</source>
-      <translation>変形/移動/回転</translation>
-    </message>
-    <message>
-      <source>TOOL_BUILD</source>
-      <translation>構築</translation>
-    </message>
-    <message>
-      <source>TOOL_OPERATIONS</source>
-      <translation>操作</translation>
-    </message>
-    <message>
-      <source>TOOL_PICTURES</source>
-      <translation>画像</translation>
-    </message>
-    <message>
-      <source>TOOL_ADVANCED</source>
-      <translation>高度なツール</translation>
-    </message>
-    <message>
-      <source>TOOL_MEASURES</source>
-      <translation>情報/測定</translation>
-    </message>
-    <message>
       <source>TOP_ARC</source>
       <translation>円弧を作成</translation>
     </message>
@@ -5152,10 +5104,6 @@
       <translation>インポート/エクスポート</translation>
     </message>
     <message>
-      <source>TOOL_IMPORTEXPORT</source>
-      <translation>インポート/エクスポート</translation>
-    </message>
-    <message>
       <source>TOP_EXPORTXAO</source>
       <translation>エクスポートしました。</translation>
     </message>
@@ -5206,6 +5154,61 @@
     <message>
       <source>CC_PNT_ITEM_X_Y_Z</source>
       <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+  </context>
+  <context>
+    <name>GeometryGUI</name>
+    <message>
+      <source>TOOL_BASIC</source>
+      <translation>基礎オブジェクト</translation>
+    </message>
+    <message>
+      <source>TOOL_BLOCKS</source>
+      <translation>ブロック分割</translation>
+    </message>
+    <message>
+      <source>TOOL_BOOLEAN</source>
+      <translation>ブーリアン操作</translation>
+    </message>
+    <message>
+      <source>TOOL_FEATURES</source>
+      <translation>フィーチャー</translation>
+    </message>
+    <message>
+      <source>TOOL_GENERATION</source>
+      <translation>押し出し/回転</translation>
+    </message>
+    <message>
+      <source>TOOL_PRIMITIVES</source>
+      <translation>基本図形</translation>
+    </message>
+    <message>
+      <source>TOOL_TRANSFORMATION</source>
+      <translation>変形/移動/回転</translation>
+    </message>
+    <message>
+      <source>TOOL_BUILD</source>
+      <translation>構築</translation>
+    </message>
+    <message>
+      <source>TOOL_OPERATIONS</source>
+      <translation>操作</translation>
+    </message>
+    <message>
+      <source>TOOL_PICTURES</source>
+      <translation>画像</translation>
+    </message>
+    <message>
+      <source>TOOL_ADVANCED</source>
+      <translation>高度なツール</translation>
+    </message>
+    <message>
+      <source>TOOL_MEASURES</source>
+      <translation>情報/測定</translation>
+    </message>
+    <message>
+      <source>TOOL_IMPORTEXPORT</source>
+      <translation>インポート/エクスポート</translation>
     </message>
   </context>
   <context>

@@ -4009,54 +4009,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>X</translation>
     </message>
     <message>
-        <source>TOOL_BASIC</source>
-        <translation>Basic</translation>
-    </message>
-    <message>
-        <source>TOOL_BLOCKS</source>
-        <translation>Blocks</translation>
-    </message>
-    <message>
-        <source>TOOL_BOOLEAN</source>
-        <translation>Boolean operations</translation>
-    </message>
-    <message>
-        <source>TOOL_FEATURES</source>
-        <translation>Modification</translation>
-    </message>
-    <message>
-        <source>TOOL_GENERATION</source>
-        <translation>Generation</translation>
-    </message>
-    <message>
-        <source>TOOL_PRIMITIVES</source>
-        <translation>Primitives</translation>
-    </message>
-    <message>
-        <source>TOOL_TRANSFORMATION</source>
-        <translation>Transformation</translation>
-    </message>
-    <message>
-        <source>TOOL_BUILD</source>
-        <translation>Build</translation>
-    </message>
-    <message>
-        <source>TOOL_OPERATIONS</source>
-        <translation>Operations</translation>
-    </message>
-    <message>
-        <source>TOOL_PICTURES</source>
-        <translation>Pictures</translation>
-    </message>
-    <message>
-        <source>TOOL_ADVANCED</source>
-        <translation>Advanced</translation>
-    </message>
-    <message>
-        <source>TOOL_MEASURES</source>
-        <translation>Measures</translation>
-    </message>
-    <message>
         <source>TOP_ARC</source>
         <translation>Create an arc</translation>
     </message>
@@ -5182,10 +5134,6 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Import / Export XAO</translation>
     </message>
     <message>
-        <source>TOOL_IMPORTEXPORT</source>
-        <translation>Import / Export XAO</translation>
-    </message>
-    <message>
         <source>TOP_EXPORTXAO</source>
         <translation>Export to XAO</translation>
     </message>
@@ -5236,6 +5184,61 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     <message>
         <source>CC_PNT_ITEM_X_Y_Z</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+</context>
+<context>
+    <name>GeometryGUI</name>
+    <message>
+        <source>TOOL_BASIC</source>
+        <translation>Basic</translation>
+    </message>
+    <message>
+        <source>TOOL_BLOCKS</source>
+        <translation>Blocks</translation>
+    </message>
+    <message>
+        <source>TOOL_BOOLEAN</source>
+        <translation>Boolean operations</translation>
+    </message>
+    <message>
+        <source>TOOL_FEATURES</source>
+        <translation>Modification</translation>
+    </message>
+    <message>
+        <source>TOOL_GENERATION</source>
+        <translation>Generation</translation>
+    </message>
+    <message>
+        <source>TOOL_PRIMITIVES</source>
+        <translation>Primitives</translation>
+    </message>
+    <message>
+        <source>TOOL_TRANSFORMATION</source>
+        <translation>Transformation</translation>
+    </message>
+    <message>
+        <source>TOOL_BUILD</source>
+        <translation>Build</translation>
+    </message>
+    <message>
+        <source>TOOL_OPERATIONS</source>
+        <translation>Operations</translation>
+    </message>
+    <message>
+        <source>TOOL_PICTURES</source>
+        <translation>Pictures</translation>
+    </message>
+    <message>
+        <source>TOOL_ADVANCED</source>
+        <translation>Advanced</translation>
+    </message>
+    <message>
+        <source>TOOL_MEASURES</source>
+        <translation>Measures</translation>
+    </message>
+    <message>
+        <source>TOOL_IMPORTEXPORT</source>
+        <translation>Import / Export XAO</translation>
     </message>
 </context>
 <context>

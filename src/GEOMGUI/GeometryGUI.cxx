@@ -1344,7 +1344,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   // ---- create toolbars --------------------------
 
-  int basicTbId = createTool( tr( "TOOL_BASIC" ) );
+  int basicTbId = createTool( tr( "TOOL_BASIC" ), QString( "GEOMBasic" ) );
   createTool( GEOMOp::OpPoint,      basicTbId );
   createTool( GEOMOp::OpLine,       basicTbId );
   createTool( GEOMOp::OpCircle,     basicTbId );
@@ -1359,11 +1359,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpLCS,        basicTbId );
   createTool( GEOMOp::OpOriginAndVectors, basicTbId );
 
-//   int sketchTbId = createTool( tr( "TOOL_SKETCH" ) );
+//   int sketchTbId = createTool( tr( "TOOL_SKETCH" ), QString( "GEOMSketch" ) );
 //   createTool( GEOMOp::Op2dSketcher,  sketchTbId );
 //   createTool( GEOMOp::Op3dSketcher,  sketchTbId );
 
-  int primTbId = createTool( tr( "TOOL_PRIMITIVES" ) );
+  int primTbId = createTool( tr( "TOOL_PRIMITIVES" ), QString( "GEOMPrimitives" ) );
   createTool( GEOMOp::OpBox,        primTbId );
   createTool( GEOMOp::OpCylinder,   primTbId );
   createTool( GEOMOp::OpSphere,     primTbId );
@@ -1373,17 +1373,17 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpDisk,       primTbId );
   //createTool( GEOMOp::OpPipeTShape, primTbId ); //rnc
 
-  //int blocksTbId = createTool( tr( "TOOL_BLOCKS" ) );
+  //int blocksTbId = createTool( tr( "TOOL_BLOCKS" ), QString( "GEOMBlocks" ) );
   //createTool( GEOMOp::OpDividedDisk, blocksTbId );
   //createTool( GEOMOp::OpDividedCylinder, blocksTbId );
 
-  int boolTbId = createTool( tr( "TOOL_BOOLEAN" ) );
+  int boolTbId = createTool( tr( "TOOL_BOOLEAN" ), QString( "GEOMBooleanOperations" ) );
   createTool( GEOMOp::OpFuse,       boolTbId );
   createTool( GEOMOp::OpCommon,     boolTbId );
   createTool( GEOMOp::OpCut,        boolTbId );
   createTool( GEOMOp::OpSection,    boolTbId );
 
-  int genTbId = createTool( tr( "TOOL_GENERATION" ) );
+  int genTbId = createTool( tr( "TOOL_GENERATION" ), QString( "GEOMGeneration" ) );
   createTool( GEOMOp::OpPrism,      genTbId );
   createTool( GEOMOp::OpRevolution, genTbId );
   createTool( GEOMOp::OpFilling,    genTbId );
@@ -1392,7 +1392,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpPipePath,   genTbId );
 #endif
 
-  int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ) );
+  int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ), QString( "GEOMTransformation" ) );
   createTool( GEOMOp::OpTranslate,      transTbId );
   createTool( GEOMOp::OpRotate,         transTbId );
   createTool( GEOMOp::OpChangeLoc,      transTbId );
@@ -1404,14 +1404,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpMultiTranslate, transTbId );
   createTool( GEOMOp::OpMultiRotate,    transTbId );
 
-  int operTbId = createTool( tr( "TOOL_OPERATIONS" ) );
+  int operTbId = createTool( tr( "TOOL_OPERATIONS" ), QString( "GEOMOperations" ) );
   createTool( GEOMOp::OpExplode,         operTbId );
   createTool( GEOMOp::OpPartition,       operTbId );
   createTool( GEOMOp::OpArchimede,       operTbId );
   createTool( GEOMOp::OpShapesOnShape,   operTbId );
   createTool( GEOMOp::OpSharedShapes,    operTbId );
 
-  int featTbId = createTool( tr( "TOOL_FEATURES" ) );
+  int featTbId = createTool( tr( "TOOL_FEATURES" ), QString( "GEOMModification" ) );
   createTool( GEOMOp::OpFillet1d,        featTbId );
   createTool( GEOMOp::OpFillet2d,        featTbId );
   createTool( GEOMOp::OpFillet3d,        featTbId );
@@ -1423,7 +1423,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpCurveCreator,    featTbId ); 
 #endif
 
-  int buildTbId = createTool( tr( "TOOL_BUILD" ) );
+  int buildTbId = createTool( tr( "TOOL_BUILD" ), QString( "GEOMBuild" ) );
   createTool( GEOMOp::OpEdge,     buildTbId );
   createTool( GEOMOp::OpWire,     buildTbId );
   createTool( GEOMOp::OpFace,     buildTbId );
@@ -1431,7 +1431,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpSolid,    buildTbId );
   createTool( GEOMOp::OpCompound, buildTbId );
 
-  int measureTbId = createTool( tr( "TOOL_MEASURES" ) );
+  int measureTbId = createTool( tr( "TOOL_MEASURES" ), QString( "GEOMMeasures" ) );
   createTool( GEOMOp::OpPointCoordinates, measureTbId );
   createTool( GEOMOp::OpProperties,       measureTbId );
   createTool( GEOMOp::OpCenterMass,       measureTbId );
@@ -1452,17 +1452,17 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpGetNonBlocks,     measureTbId );
   createTool( GEOMOp::OpCheckSelfInters,  measureTbId );
 
-  int picturesTbId = createTool( tr( "TOOL_PICTURES" ) );
+  int picturesTbId = createTool( tr( "TOOL_PICTURES" ), QString( "GEOMPictures" ) );
   createTool( GEOMOp::OpPictureImport,    picturesTbId );
 #ifdef WITH_OPENCV
   createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
 #endif
 
-   int impexpTbId = createTool( tr( "TOOL_IMPORTEXPORT" ) );
+   int impexpTbId = createTool( tr( "TOOL_IMPORTEXPORT" ), QString( "GEOMImportExportXAO" ) );
    createTool( GEOMOp::OpExportXAO, impexpTbId );
    createTool( GEOMOp::OpImportXAO, impexpTbId );
 
-  //int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
+  //int advancedTbId = createTool( tr( "TOOL_ADVANCED" ), QString( "GEOMAdvanced" ) );
   //createTool( GEOMOp::OpSmoothingSurface, advancedTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
@@ -1693,7 +1693,7 @@ void GeometryGUI::addPluginActions()
 
   // create "Advanced Operations" menu and corresponding toolbar
   //int advancedMenuId = createMenu(tr("MEN_ADVANCED"), -1, -1, 10);
-  //int advancedTbarId = createTool(tr("TOOL_ADVANCED"));
+  //int advancedTbarId = createTool(tr("TOOL_ADVANCED"), QString( "Advanced" ));
   int id = GEOMOp::OpLastOperationID; // TODO?
 
   // loop on xmlFiles
@@ -1763,7 +1763,7 @@ void GeometryGUI::addPluginActions()
 
           QString subTool = stools[0];
           subTool = subTool.toUpper().prepend("TOOL_");
-          int toolId = createTool(tr(subTool.toLatin1().constData()));
+          int toolId = createTool(tr(subTool.toLatin1().constData()), subTool.toLatin1().constData());
           //createTool(id, advancedTbarId);
           createTool(id, toolId);
 
