@@ -34,6 +34,8 @@
 #include "SALOME_InteractiveObject.hxx"
 #include "GEOM_AISVector.hxx"
 
+#include <Basics_OCCTVersion.hxx>
+
 // Open CASCADE Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_InteractiveContext.hxx>
@@ -53,7 +55,9 @@
 #include <Prs3d_ShadingAspect.hxx>
 #include <Prs3d_Arrow.hxx>
 #include <Prs3d_IsoAspect.hxx>
+#if OCC_VERSION_LARGE > 0x06070200
 #include <Prs3d_VertexDrawMode.hxx>
+#endif
 
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <SelectMgr_EntityOwner.hxx>
@@ -217,8 +221,10 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   bool anIsColorField = anIsField && myFieldDataType != GEOM::FDT_String;
   bool anIsTextField = anIsField && myFieldDataType == GEOM::FDT_String;
 
+#if OCC_VERSION_LARGE > 0x06070200
   if (isShowVertices())
     myDrawer->SetVertexDrawMode(Prs3d_VDM_All);
+#endif
 
   //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
   bool isTopLev = isTopLevel() && switchTopLevel();
