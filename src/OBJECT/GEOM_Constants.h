@@ -39,6 +39,7 @@ namespace GEOM
     NbIsos,
     Color,
     EdgesDirection,
+    Vertices,
     Deflection,
     PointMarker,
     Material,

@@ -71,6 +71,7 @@ namespace GEOMOp {
     OpDMShading           = 2011,   // MENU VIEW  - DISPLAY MODE - SHADING
     OpDMShadingWithEdges  = 2012,   // MENU VIEW  - DISPLAY MODE - SHADING WITH EDGES
     OpDMTexture           = 2013,   // MENU VIEW  - DISPLAY MODE - TEXTURE
+    OpSwitchVertices      = 2014,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE VERTICES
     OpShow                = 2100,   // POPUP MENU - SHOW
     OpShowOnly            = 2101,   // POPUP MENU - SHOW ONLY
     OpHide                = 2102,   // POPUP MENU - HIDE
@@ -82,6 +83,7 @@ namespace GEOMOp {
     OpTexture             = 2204,   // POPUP MENU - DISPLAY MODE - TEXTURE
     OpBringToFront        = 2205,   // POPUP MENU - BRING TO FRONT
     OpClsBringToFront     = 2206,
+    OpVertices            = 2208,   // POPUP MENU - DISPLAY MODE - SHOW VERTICES
     // BasicGUI --------------------//--------------------------------
     OpPoint               = 3000,   // MENU NEW ENTITY - BASIC - POINT
     OpLine                = 3001,   // MENU NEW ENTITY - BASIC - LINE

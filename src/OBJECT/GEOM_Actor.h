@@ -202,6 +202,15 @@ public:
   bool
   GetVectorMode();
 
+  //! Vertices mode management
+  virtual
+  void
+  SetVerticesMode(const bool theMode);
+
+  virtual
+  bool
+  GetVerticesMode();
+
 protected:
   void SetModified();
 
@@ -220,6 +229,7 @@ private:
   //  EDisplayMode myDisplayMode;
   bool myIsSelected;
   bool myVectorMode;
+  bool myVerticesMode;
 
   PDeviceActor myVertexActor;
   PVertexSource myVertexSource;

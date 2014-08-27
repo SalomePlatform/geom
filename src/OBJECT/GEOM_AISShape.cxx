@@ -53,6 +53,7 @@
 #include <Prs3d_ShadingAspect.hxx>
 #include <Prs3d_Arrow.hxx>
 #include <Prs3d_IsoAspect.hxx>
+#include <Prs3d_VertexDrawMode.hxx>
 
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <SelectMgr_EntityOwner.hxx>
@@ -148,6 +149,7 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   : SALOME_AISShape(shape),
     myName(aName),
     myDisplayVectors(false),
+    myDisplayVertices(false),
     myFieldDataType(GEOM::FDT_Double),
     myFieldDimension(0),
     myFieldStepRangeMin(0),
@@ -214,6 +216,9 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   bool anIsField = !myFieldStepData.isEmpty();
   bool anIsColorField = anIsField && myFieldDataType != GEOM::FDT_String;
   bool anIsTextField = anIsField && myFieldDataType == GEOM::FDT_String;
+
+  if (isShowVertices())
+    myDrawer->SetVertexDrawMode(Prs3d_VDM_All);
 
   //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
   bool isTopLev = isTopLevel() && switchTopLevel();
@@ -357,6 +362,11 @@ void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndex
 void GEOM_AISShape::SetDisplayVectors(bool isDisplayed)
 {
   myDisplayVectors = isDisplayed;
+}
+
+void GEOM_AISShape::SetDisplayVertices(bool isDisplayed)
+{
+  myDisplayVertices = isDisplayed;
 }
 
 void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,

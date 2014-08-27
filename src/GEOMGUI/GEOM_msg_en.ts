@@ -2901,6 +2901,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show Edge Direction</translation>
     </message>
     <message>
+        <source>MEN_POP_VERTICES</source>
+        <translation>Show Vertices</translation>
+    </message>
+    <message>
         <source>MEN_PREFERENCES</source>
         <translation>Preferences</translation>
     </message>
@@ -3071,6 +3075,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_VECTOR_MODE_OFF</source>
         <translation>Hide Edge Direction</translation>
+    </message>
+    <message>
+        <source>MEN_VERTICES_MODE_ON</source>
+        <translation>Show Vertices</translation>
+    </message>
+    <message>
+        <source>MEN_VERTICES_MODE_OFF</source>
+        <translation>Hide Vertices</translation>
     </message>
     <message>
         <source>MEN_WIREFRAME</source>
@@ -3767,6 +3779,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_POP_VECTORS</source>
         <translation>Show Edge Direction</translation>
+    </message>
+    <message>
+        <source>STB_POP_VERTICES</source>
+        <translation>Show Vertices</translation>
     </message>
     <message>
         <source>STB_POP_SETTEXTURE</source>

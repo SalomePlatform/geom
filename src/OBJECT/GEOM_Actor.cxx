@@ -82,6 +82,7 @@ GEOM_Actor::GEOM_Actor():
   //  myDisplayMode(eWireframe), 
   myIsSelected(false), 
   myVectorMode(false),
+  myVerticesMode(false),
 
   myVertexActor(GEOM_DeviceActor::New(),true), 
   myVertexSource(GEOM_VertexSource::New(),true), 
@@ -129,13 +130,13 @@ GEOM_Actor::GEOM_Actor():
   myHighlightProp->SetAmbientColor(1, 1, 1);
   myHighlightProp->SetDiffuseColor(1, 1, 1);
   myHighlightProp->SetSpecularColor(0.5, 0.5, 0.5);
-  myHighlightProp->SetPointSize(SALOME_POINT_SIZE);
+  myHighlightProp->SetPointSize(0);
   myHighlightActor->SetProperty(myHighlightProp.GetPointer());
 
   this->myHighlightActor->SetInput(myAppendFilter->GetOutputPort(),false);
 
   myPreHighlightProp->SetColor(0,1,1);
-  myPreHighlightProp->SetPointSize(SALOME_POINT_SIZE+2);
+  myPreHighlightProp->SetPointSize(0);
   myPreHighlightProp->SetLineWidth(SALOME_LINE_WIDTH+1);
   myPreHighlightProp->SetRepresentationToWireframe();
 
@@ -189,6 +190,7 @@ GEOM_Actor::GEOM_Actor():
   // Toggle display mode 
   setDisplayMode(0); // WIRE FRAME
   SetVectorMode(0);  //
+  SetVerticesMode(0);  //
 } 
  
  
@@ -355,7 +357,7 @@ SetVisibility(int theVisibility)
   myOneFaceEdgeActor->SetVisibility(theVisibility && (myDisplayMode == (int)eWireframe || myDisplayMode == (int)eShadingWithEdges) && !myIsSelected);
   myIsolatedEdgeActor->SetVisibility(theVisibility && !myIsSelected);
 
-  myVertexActor->SetVisibility(theVisibility && myDisplayMode == (int)eWireframe && !myIsSelected);// must be added new mode points
+  myVertexActor->SetVisibility(theVisibility && myVerticesMode && (!myIsSelected && !myIsPreselected));// must be added new mode points
 }
  
 
@@ -389,6 +391,23 @@ GEOM_Actor
 ::GetVectorMode()
 {
   return myVectorMode;
+}
+
+void
+GEOM_Actor
+::SetVerticesMode(bool theMode)
+{
+  myVerticesMode = theMode;
+  theMode ? myPreHighlightProp->SetPointSize(SALOME_POINT_SIZE+2) : myPreHighlightProp->SetPointSize(0);
+  theMode ? myHighlightProp->SetPointSize(SALOME_POINT_SIZE) : myHighlightProp->SetPointSize(0);
+  SetModified();
+}
+
+bool
+GEOM_Actor
+::GetVerticesMode()
+{
+  return myVerticesMode;
 }
 
 void  

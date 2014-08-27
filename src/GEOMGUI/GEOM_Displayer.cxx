@@ -871,6 +871,9 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   // set display vectors flag
   AISShape->SetDisplayVectors( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
 
+  // set display vertices flag
+  AISShape->SetDisplayVertices( propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool() );
+
   // set transparency
   if( HasTransparency() ) {
     AISShape->SetTransparency( GetTransparency() );
@@ -1143,6 +1146,9 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
   
   // set display vectors flag
   actor->SetVectorMode( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
+
+  // set display vertices flag
+  actor->SetVerticesMode( propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool() );
 
   // set display mode
   int displayMode = HasDisplayMode() ? 
@@ -2497,6 +2503,9 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
 
   // - show edges direction flag (false by default)
   propMap.insert( GEOM::propertyName( GEOM::EdgesDirection ), false );
+
+  // - show vertices flag (false by default)
+  propMap.insert( GEOM::propertyName( GEOM::Vertices ), false );
 
   // - shading color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),

@@ -124,12 +124,14 @@ public:
         void SetShadingColor(const Quantity_Color &aCol);
         void SetEdgesInShadingColor(const Quantity_Color &aCol);
         void SetDisplayVectors(bool isShow);
+        void SetDisplayVertices(bool isShow);
 
         virtual  void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
                                       const Handle(Prs3d_Presentation)& aPresentation,
                                       const Standard_Integer aMode = 0) ;
 
         virtual  bool isShowVectors () { return myDisplayVectors; }
+        virtual  bool isShowVertices () { return myDisplayVertices; }
                 virtual  Standard_Boolean switchTopLevel();
                 virtual  Standard_Boolean toActivate();
         
@@ -182,6 +184,7 @@ protected:
 private: 
   TCollection_AsciiString  myName;
   bool                     myDisplayVectors;
+  bool                     myDisplayVertices;
   Standard_Boolean         myTopLevel;
   Standard_Integer         myPrevDisplayMode;
 

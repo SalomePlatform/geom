@@ -136,6 +136,12 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
       ( GetVectorMode() ? tr("MEN_VECTOR_MODE_ON") : tr( "MEN_VECTOR_MODE_OFF" ) );
     getGeometryGUI()->menuMgr()->update();
     break;
+  case GEOMOp::OpSwitchVertices:  // MENU VIEW - DISPLAY MODE - SHOW/HIDE VERTICES
+    SetVerticesMode(!GetVerticesMode());
+    getGeometryGUI()->action( GEOMOp::OpSwitchVertices )->setText
+      ( GetVerticesMode() ? tr("MEN_VERTICES_MODE_ON") : tr( "MEN_VERTICES_MODE_OFF" ) );
+    getGeometryGUI()->menuMgr()->update();
+    break;
   case GEOMOp::OpWireframe:      // POPUP MENU - DISPLAY MODE - WIREFRAME
     ChangeDisplayMode( 0 );
     break;
@@ -150,6 +156,9 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     break;
     case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
     ChangeDisplayMode( 4 );
+    break;
+    case GEOMOp::OpVertices:       // POPUP MENU - DISPLAY MODE - SHOW VERTICES
+    ChangeDisplayMode( 5 );
     break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
@@ -486,6 +495,52 @@ int DisplayGUI::GetVectorMode( SUIT_ViewWindow* viewWindow )
 }
 
 //=====================================================================================
+// function : DisplayGUI::SetVerticesMode()
+// purpose  : Set vertices mode for the viewer
+//=====================================================================================
+void DisplayGUI::SetVerticesMode( const bool mode, SUIT_ViewWindow* viewWindow )
+{
+  SUIT_OverrideCursor();
+
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return;
+
+  SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  if ( !aStudy ) return;
+
+  if ( !viewWindow ) 
+    viewWindow = app->desktop()->activeWindow();
+
+  GEOM_Displayer displayer( aStudy );
+
+  viewWindow->setProperty( "VerticesMode", mode );
+
+  int aMgrId = viewWindow->getViewManager()->getGlobalId();
+
+  SALOME_ListIO anIOlst;
+  displayer.GetActiveView()->GetVisible( anIOlst );
+
+  for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    aStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::Vertices ), mode );
+    displayer.Redisplay( io, false );
+  }
+  displayer.UpdateViewer();
+  GeometryGUI::Modified();
+}
+
+//=====================================================================================
+// function : DisplayGUI::GetVerticesMode()
+// purpose  : Get the "show vertices" mode of the viewer
+//=====================================================================================
+int DisplayGUI::GetVerticesMode( SUIT_ViewWindow* viewWindow )
+{
+  if ( !viewWindow ) 
+    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
+  return viewWindow->property( "VerticesMode" ).toBool();
+}
+
+//=====================================================================================
 // function : DisplayGUI::ChangeDisplayMode()
 // purpose  : Set display mode for selected objects in the viewer given
 //            (current viewer if <viewWindow> = 0 )
@@ -516,6 +571,8 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
 
   QVariant v = aStudy->getObjectProperty( mgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::EdgesDirection ), QVariant() );
   bool vectorMode =  v.isValid() ? !v.toBool() : false;
+  v = aStudy->getObjectProperty( mgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::Vertices ), QVariant() );
+  bool verticesMode =  v.isValid() ? !v.toBool() : false;
 
   for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
@@ -524,6 +581,9 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
     }
     else if ( mode == 4 ) {
       aStudy->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::EdgesDirection ), vectorMode );
+    }
+    else if ( mode == 5 ) {
+      aStudy->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::Vertices ), verticesMode );
     }
     displayer.Redisplay( io, false );
   }
