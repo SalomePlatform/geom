@@ -216,6 +216,10 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
 
   Handle(AIS_InteractiveContext) anIC = GetContext();
+  // AKL: use old behavior to avoid keeping object's wireframe
+  //      if to change shape properties (for example: 'Clear Top Level State','Color', 'Isos') 
+  //      calling popup menu over(!) the shape in OCC viewer.
+  anIC->SetToHilightSelected( false );
 
   bool anIsField = !myFieldStepData.isEmpty();
   bool anIsColorField = anIsField && myFieldDataType != GEOM::FDT_String;
