@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 //
 
 #include "CurveCreator_NewSectionDlg.h"
-#include "CurveCreator_Curve.hxx"
+//#include "CurveCreator_Curve.hxx"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -31,21 +31,27 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 
-CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent ) :
-  QWidget(parent)
+CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent, bool enableClosed ) :
+  QWidget(parent), myIsEnableClosed( enableClosed )
 {
+  QVBoxLayout* aMainLayout = new QVBoxLayout( this );
+  aMainLayout->setMargin( 0 );
+
   QFrame* aFrame = new QFrame( this );
+  aMainLayout->addWidget( aFrame );
+
   QVBoxLayout* aLayout = new QVBoxLayout( aFrame );
+  aLayout->setMargin( 0 );
 
   QFrame* aCoordFrame = new QFrame( aFrame );
   QGridLayout* aCoordLayout = new QGridLayout( aCoordFrame );
 
-  QLabel* aLbl = new QLabel(tr("NAME"), this);
+  QLabel* aLbl = new QLabel(tr("SECTION_NAME"), this);
   myName = new QLineEdit(this);
   aCoordLayout->addWidget(aLbl, 0, 0);
   aCoordLayout->addWidget(myName, 0 , 1);
 
-  aLbl = new QLabel(tr("LINE_TYPE"));
+  aLbl = new QLabel(tr("SECTION_LINE_TYPE"));
   myLineType = new QComboBox(this);
 
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -54,22 +60,26 @@ CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent ) :
 
 //  QPixmap aPolylinePixmap = QPixmap(tr(":images/ICON_POLYLINE"));
 //  QPixmap aSplinePixmap = QPixmap(tr(":images/ICON_SPLINE"));
-  myLineType->addItem(aPolylinePixmap, tr("POLYLINE_TYPE"));
-  myLineType->addItem(aSplinePixmap, tr("SPLINE_TYPE"));
+  myLineType->addItem(aPolylinePixmap, tr("SECTION_POLYLINE_TYPE"));
+  myLineType->addItem(aSplinePixmap, tr("SECTION_SPLINE_TYPE"));
   myLineType->setCurrentIndex(0);
   aCoordLayout->addWidget(aLbl, 1, 0);
   aCoordLayout->addWidget(myLineType, 1 , 1);
 
-  aLbl = new QLabel(tr("LINE_CLOSED"));
+  aLbl = new QLabel(tr("SECTION_LINE_CLOSED"));
   myIsClosed = new QCheckBox(this);
   aCoordLayout->addWidget(aLbl, 2, 0);
   aCoordLayout->addWidget(myIsClosed, 2, 1);
+  if ( !myIsEnableClosed ) {
+    aLbl->hide();
+    myIsClosed->hide();
+  }
 
   myBtnFrame = new QFrame( aFrame );
   QHBoxLayout* aBtnsLayout = new QHBoxLayout( myBtnFrame );
 
-  myAddBtn = new QPushButton( tr( "ADD_BTN" ), myBtnFrame );
-  myCancelBtn = new QPushButton( tr( "CANCEL" ), myBtnFrame );
+  myAddBtn = new QPushButton( tr( "SECTION_ADD_BTN" ), myBtnFrame );
+  myCancelBtn = new QPushButton( tr( "SECTION_CANCEL_BTN" ), myBtnFrame );
 
   connect( myAddBtn,  SIGNAL( clicked() ), this, SIGNAL( addSection() ) );
   connect( myCancelBtn, SIGNAL( clicked() ), this, SIGNAL( cancelSection() ) );
@@ -82,7 +92,7 @@ CurveCreator_NewSectionDlg::CurveCreator_NewSectionDlg( QWidget *parent ) :
   aLayout->addWidget( myBtnFrame, 1 );
 }
 
-void CurveCreator_NewSectionDlg::setSectionParameters( const QString& theName, bool isClosed, CurveCreator::Type theType )
+void CurveCreator_NewSectionDlg::setSectionParameters( const QString& theName, bool isClosed, CurveCreator::SectionType theType )
 {
   myName->setText(theName);
   myIsClosed->setChecked(isClosed);
@@ -103,12 +113,12 @@ void CurveCreator_NewSectionDlg::setEditMode( bool isEdit )
 {
   myIsEdit = isEdit;
   if( myIsEdit ){
-    myAddBtn->setText(tr("OK"));
+    myAddBtn->setText(tr("SECTION_OK_BTN"));
     myAddBtn->disconnect( SIGNAL( clicked() ) );
     connect( myAddBtn, SIGNAL( clicked() ), this, SIGNAL( modifySection() ) );
   }
   else{
-    myAddBtn->setText(tr("ADD_BTN"));
+    myAddBtn->setText(tr("SECTION_ADD_BTN"));
     myAddBtn->disconnect( SIGNAL( clicked() ) );
     connect( myAddBtn, SIGNAL( clicked() ), this, SIGNAL( addSection() ) );
   }
@@ -125,12 +135,12 @@ bool CurveCreator_NewSectionDlg::isClosed() const
   return myIsClosed->isChecked();
 }
 
-CurveCreator::Type CurveCreator_NewSectionDlg::getSectionType() const
+CurveCreator::SectionType CurveCreator_NewSectionDlg::getSectionType() const
 {
   if( myLineType->currentIndex() == 0 )
     return CurveCreator::Polyline;
   else
-    return CurveCreator::BSpline;
+    return CurveCreator::Spline;
 }
 
 void CurveCreator_NewSectionDlg::updateTitle()

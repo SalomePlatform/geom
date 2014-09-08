@@ -67,20 +67,7 @@ OPTION(SALOME_BUILD_TESTS "Build SALOME tests" ON)
 OPTION(SALOME_BUILD_GUI "Enable GUI" ON)
 CMAKE_DEPENDENT_OPTION(SALOME_GEOM_USE_OPENCV "Enable shape recognition from picture" OFF
                        "SALOME_BUILD_GUI" OFF)
-CMAKE_DEPENDENT_OPTION(SALOME_GEOM_BUILD_CC "Enable curve creator (experimental)" OFF
-                       "SALOME_BUILD_GUI" OFF)
-MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV SALOME_GEOM_BUILD_CC)
-
-# Debug options (!!! FOR DEVELOPERS ONLY !!! TO BE REMOVED LATER !!!)
-IF(CMAKE_BUILD_TYPE MATCHES "^Debug$")
-  CMAKE_DEPENDENT_OPTION(SALOME_GEOM_DEBUG_CC "Debug curve creator" OFF
-                        "SALOME_GEOM_BUILD_CC" OFF)
-  MARK_AS_ADVANCED(SALOME_GEOM_DEBUG_CC)
-
-  IF(SALOME_GEOM_DEBUG_CC)
-    ADD_DEFINITIONS(-DDEBUG_CURVE_CREATOR)
-  ENDIF(SALOME_GEOM_DEBUG_CC)
-ENDIF()
+MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV)
 
 # Prerequisites
 # =============
@@ -242,7 +229,7 @@ SET(_${PROJECT_NAME}_exposed_targets
 )
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
-    AdvancedGUI BasicGUI BlocksGUI BooleanGUI BuildGUI DisplayGUI DlgRef EntityGUI GEOMBase
+    AdvancedGUI BasicGUI BlocksGUI BooleanGUI BuildGUI DisplayGUI DlgRef CurveCreator EntityGUI GEOMBase
     GEOMFiltersSelection GEOM GEOMToolsGUI GenerationGUI GroupGUI Material MeasureGUI GEOMObject
     OperationGUI PrimitiveGUI RepairGUI TransformationGUI DependencyTree
     STLPluginGUI BREPPluginGUI STEPPluginGUI IGESPluginGUI XAOPluginGUI VTKPluginGUI
@@ -254,12 +241,6 @@ IF(SALOME_GEOM_USE_OPENCV)
     GEOMShapeRec
     )
 ENDIF(SALOME_GEOM_USE_OPENCV)
-
-IF(SALOME_GEOM_BUILD_CC)
-  LIST(APPEND _${PROJECT_NAME}_exposed_targets 
-    CurveCreator
-    )
-ENDIF(SALOME_GEOM_BUILD_CC)
 
 # Add all targets to the build-tree export set
 EXPORT(TARGETS ${_${PROJECT_NAME}_exposed_targets}

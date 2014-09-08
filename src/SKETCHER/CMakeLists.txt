@@ -43,13 +43,16 @@ SET(_link_LIBRARIES
 # --- headers ---
 
 SET(SKETCHER_HEADERS
+  Sketcher.hxx
   Sketcher_Profile.hxx
+  Sketcher_Utils.hxx
   )
 
 # --- sources ---
 
 SET(SKETCHER_SOURCES
   Sketcher_Profile.cxx
+  Sketcher_Utils.cxx
   )
 
 # --- rules ---

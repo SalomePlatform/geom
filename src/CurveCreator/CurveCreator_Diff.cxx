@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -49,9 +49,9 @@ CurveCreator_Diff::~CurveCreator_Diff()
 // function: init
 // purpose:
 //=======================================================================
-bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
-                             const CurveCreator_Operation::Type theType)
+bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve)
 {
+  CurveCreator_Operation::Type aType = CurveCreator_Operation::Clear;
   bool isOK = false;
 
   if (theCurve != NULL) {
@@ -60,36 +60,18 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
     // Set redo.
     myPRedo = new CurveCreator_Operation;
 
-    if (myPRedo->init(theType)) {
+    if (myPRedo->init(aType)) {
       isOK = true;
 
       const int aNbSections = theCurve->getNbSections();
 
-      if (theType == CurveCreator_Operation::Clear) {
-        // Construct undo for Clear command.
-        if (aNbSections > 0) {
-          setNbUndos(aNbSections);
+      // Construct undo for Clear command.
+      if (aNbSections > 0) {
+        setNbUndos(aNbSections);
 
-          for (int i = 0; i < aNbSections && isOK; i++) {
-            // Add AddSection command.
-            isOK = addSectionToUndo(theCurve, i, myPUndo[i]);
-          }
-        }
-      } else { // theType == CurveCreator_Operation::Join
-        // Construct undo for Join command.
-        if (aNbSections > 1) {
-          // Add the RemovePoints command to remove points of
-          // the second section fron the first one.
-          const int aNbPoints = theCurve->getNbPoints(0);
-
-          setNbUndos(aNbSections);
-          isOK = myPUndo[0].init(CurveCreator_Operation::RemovePoints,
-                                 0, aNbPoints, -1);
-
-          for (int i = 1; i < aNbSections && isOK; i++) {
-            // Add AddSection command.
-            isOK = addSectionToUndo(theCurve, i, myPUndo[i]);
-          }
+        for (int i = 0; i < aNbSections && isOK; i++) {
+          // Add AddSection command.
+          isOK = addSectionToUndo(theCurve, i, myPUndo[i]);
         }
       }
     }
@@ -176,33 +158,6 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
           setNbUndos(1);
           isOK = myPUndo[0].init(theType, theIntParam2, theIntParam1);
           break;
-        case CurveCreator_Operation::Join:
-          {
-            // If the last section is removed, one AddSection command is
-            // enough. If not last section is removed, two commands are
-            // requred: AddSection and MoveSection.
-            const int aLastIndex = theCurve->getNbSections() - 1;
-            const int aNbPoints  = theCurve->getNbPoints(theIntParam1);
-
-            if (theIntParam2 == aLastIndex) {
-              setNbUndos(2);
-            } else {
-              setNbUndos(3);
-            }
-
-            isOK = myPUndo[0].init(CurveCreator_Operation::RemovePoints,
-                                   theIntParam1, aNbPoints, -1);
-
-            if (isOK) {
-              isOK = addSectionToUndo(theCurve, theIntParam2, myPUndo[1]);
-
-              if (isOK && theIntParam2 != aLastIndex) {
-                isOK = myPUndo[2].init(CurveCreator_Operation::MoveSection,
-                                       aLastIndex, theIntParam2);
-              }
-            }
-          }
-          break;
         default:
           break;
       }
@@ -222,77 +177,68 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
 //=======================================================================
 bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
                              const CurveCreator_Operation::Type theType,
-                             const int theIntParam1,
-                             const int theIntParam2,
-                             const int theIntParam3)
+                             const std::list<int>& theParams)
 {
   bool isOK = false;
 
-  if (theCurve != NULL) {
+  if (theCurve != NULL || theParams.empty()) {
     clear();
 
     // Set redo.
     myPRedo = new CurveCreator_Operation;
 
-    if (myPRedo->init(theType, theIntParam1, theIntParam2, theIntParam3)) {
-      // Construct undo for RemovePoints command.
-      const CurveCreator::Dimension aDim = theCurve->getDimension();
-      const CurveCreator::Coordinates &aPoints =
-              theCurve->getPoints(theIntParam1);
-      CurveCreator::Coordinates::const_iterator anIterBegin =
-          aPoints.begin() + (aDim*theIntParam2);
-      CurveCreator::Coordinates::const_iterator anIterEnd;
+    if (myPRedo->init(theType, theParams)) {
+      // Construct undo for different commands.
+      switch (theType) {
+        case CurveCreator_Operation::Join:
+          {
+            int aSectionMain = theParams.front();
+            const int aNbPointsMain  = theCurve->getNbPoints(aSectionMain);
 
-      if (theIntParam3 == -1) {
-        anIterEnd = aPoints.end();
-      } else {
-        anIterEnd = anIterBegin + (aDim*theIntParam3);
+            std::list<int> aSectionsToJoin = theParams;
+            aSectionsToJoin.erase( aSectionsToJoin.begin() );
+            // it is important to sort the section indices in order to correct perform undo
+            // for the move sections to the previous positions
+            aSectionsToJoin.sort();
+            // 1rst undo for remove points from the main and n-1 undoes to contain joined sections
+            int aSectionsToJoinNb = aSectionsToJoin.size();
+            int aNbUndos = 2*aSectionsToJoinNb + 1;
+            setNbUndos( aNbUndos );
+
+            // Add joined sections to undo
+            std::list<int>::const_iterator anIt = aSectionsToJoin.begin(),
+                                           aLast = aSectionsToJoin.end();
+            anIt = aSectionsToJoin.begin();
+            int aLastSectionId = -1;
+            for (int i = 0; anIt != aLast && i < aSectionsToJoinNb; anIt++, i++) {
+              int anISection = *anIt;
+              isOK = addSectionToUndo( theCurve, anISection, myPUndo[i*2] );
+              if (isOK) {
+                isOK = myPUndo[i*2+1].init(CurveCreator_Operation::MoveSection,
+                                           aLastSectionId, anISection);
+                if (!isOK)
+                  break;
+              }
+            }
+            // Construct undo for RemovePoints command.
+            if (isOK) {
+              int aNbPointsInJoined = 0;
+              anIt = aSectionsToJoin.begin();
+              for ( ; anIt != aLast; anIt++ )
+                aNbPointsInJoined += theCurve->getNbPoints( *anIt );
+
+              int aJoinedSize = aNbPointsMain + aNbPointsInJoined;
+              CurveCreator_ICurve::SectionToPointList aSectionToPointList;
+              for (int anIPoint = aNbPointsMain; anIPoint < aJoinedSize; anIPoint++)
+                aSectionToPointList.push_back(std::make_pair(aSectionMain, anIPoint));
+
+              isOK = myPUndo[aNbUndos-1].init(CurveCreator_Operation::RemovePoints, aSectionToPointList);
+            }
+          }
+          break;
+        default:
+          break;
       }
-
-      CurveCreator::Coordinates aPointsToAdd;
-
-      setNbUndos(1);
-      aPointsToAdd.insert(aPointsToAdd.end(), anIterBegin, anIterEnd);
-      isOK = myPUndo[0].init(CurveCreator_Operation::InsertPoints,
-                             aPointsToAdd, theIntParam1, theIntParam2);
-    }
-
-    if (!isOK) {
-      clear();
-    }
-  }
-
-  return isOK;
-}
-
-//=======================================================================
-// function: init
-// purpose:
-//=======================================================================
-bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
-                             const CurveCreator_Operation::Type theType,
-                             const CurveCreator::Coordinates &theCoords,
-                             const int theIntParam)
-{
-  bool isOK = false;
-
-  if (theCurve != NULL) {
-    clear();
-
-    // Set redo.
-    myPRedo = new CurveCreator_Operation;
-
-    if (myPRedo->init(theType, theCoords, theIntParam)) {
-      // Construct undo for AddPoints command.
-      const int aSectionInd = getSectionIndex(theCurve, theIntParam);
-      const CurveCreator::Dimension aDim = theCurve->getDimension();
-      const CurveCreator::Coordinates &aPoints =
-              theCurve->getPoints(aSectionInd);
-      const int aNbPoints = (aPoints.size()/aDim);
-
-      setNbUndos(1);
-      isOK = myPUndo[0].init(CurveCreator_Operation::RemovePoints,
-                             aSectionInd, aNbPoints, -1);
     }
 
     if (!isOK) {
@@ -337,68 +283,6 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
     return isOK;
 }
 
-//=======================================================================
-// function: init
-// purpose:
-//=======================================================================
-bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
-                             const CurveCreator_Operation::Type theType,
-                             const CurveCreator::Coordinates &theCoords,
-                             const int theIntParam1,
-                             const int theIntParam2)
-{
-  bool isOK = false;
-
-  if (theCurve != NULL) {
-    clear();
-
-    // Set redo.
-    myPRedo = new CurveCreator_Operation;
-
-    if (myPRedo->init(theType, theCoords, theIntParam1, theIntParam2)) {
-      // Construct undo for different commands.
-      switch (theType) {
-        case CurveCreator_Operation::InsertPoints:
-          {
-            const CurveCreator::Dimension aDim = theCurve->getDimension();
-            const int aNbPoints = (theCoords.size()/aDim);
-            const int aSectionInd = getSectionIndex(theCurve, theIntParam1);
-            int aPointInd;
-
-            if (theIntParam2 == -1) {
-              aPointInd = theCurve->getNbPoints(aSectionInd);
-            } else {
-              aPointInd = theIntParam2;
-            }
-
-            setNbUndos(1);
-            isOK = myPUndo[0].init(CurveCreator_Operation::RemovePoints,
-                                   aSectionInd, aPointInd, aNbPoints);
-          }
-          break;
-        case CurveCreator_Operation::SetCoordinates:
-          {
-            const CurveCreator::Coordinates anOldCoords =
-              theCurve->getCoordinates(theIntParam1, theIntParam2);
-
-            setNbUndos(1);
-            isOK = myPUndo[0].init(CurveCreator_Operation::SetCoordinates,
-                                   anOldCoords, theIntParam1, theIntParam2);
-          }
-          break;
-        default:
-          break;
-      }
-    }
-
-    if (!isOK) {
-      clear();
-    }
-  }
-
-  return isOK;
-}
-
 bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
                              const CurveCreator_Operation::Type theType,
                              const std::string &theName,
@@ -420,6 +304,152 @@ bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
   if( !isOK ){
     clear();
   }
+  return isOK;
+}
+
+bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
+                             const CurveCreator_Operation::Type theType,
+                             const CurveCreator_ICurve::SectionToPointList &theParamList1)
+{
+  bool isOK = false;
+
+  if (theCurve != NULL) {
+    clear();
+
+    // Set redo.
+    myPRedo = new CurveCreator_Operation;
+
+    if (myPRedo->init(theType, theParamList1)) {
+      // Construct undo for different commands.
+      switch (theType) {
+        case CurveCreator_Operation::RemovePoints:
+          {
+            // Construct undo for RemovePoints command.
+            CurveCreator_ICurve::SectionToPointCoordsList aSectionToPointCoords;
+            CurveCreator::Coordinates aPointsToAdd;
+            const CurveCreator::Dimension aDim = theCurve->getDimension();
+            CurveCreator_ICurve::SectionToPointList::const_iterator anIt = theParamList1.begin(), aLast = theParamList1.end();
+            std::list<int> aPoints;
+            int aSectionId, aPointId;
+            for ( ; anIt != aLast; anIt++ ) {
+              aPointsToAdd.clear();
+              aSectionId = anIt->first;
+              aPointId = anIt->second;
+              const CurveCreator::Coordinates &aPoints =
+                      theCurve->getPoints(aSectionId);
+              CurveCreator::Coordinates::const_iterator anIterBegin =
+                  aPoints.begin() + (aDim*aPointId);
+              CurveCreator::Coordinates::const_iterator anIterEnd = 
+                anIterBegin + aDim;
+              aPointsToAdd.insert(aPointsToAdd.end(), anIterBegin, anIterEnd);
+              aSectionToPointCoords.push_back(std::make_pair(*anIt, aPointsToAdd));
+            }
+            setNbUndos(1);
+            isOK = myPUndo[0].init(CurveCreator_Operation::InsertPoints,
+                                   aSectionToPointCoords);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (!isOK) {
+      clear();
+    }
+  }
+
+  return isOK;
+}
+
+bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
+                             const CurveCreator_Operation::Type theType,
+                             const CurveCreator_ICurve::SectionToPointCoordsList &theParamList1)
+{
+  bool isOK = false;
+
+  if (theCurve != NULL) {
+    clear();
+
+    // Set redo.
+    myPRedo = new CurveCreator_Operation;
+
+    if (myPRedo->init(theType, theParamList1)) {
+      // Construct undo for different commands.
+      switch (theType) {
+        case CurveCreator_Operation::InsertPoints:
+          {
+            // Construct undo for RemovePoints command.
+            CurveCreator_ICurve::SectionToPointList aSectionToPointList;
+            CurveCreator_ICurve::SectionToPointCoordsList::const_iterator anIt = theParamList1.begin(), aLast = theParamList1.end();
+            for ( ; anIt != aLast; anIt++ ) {
+              aSectionToPointList.push_back(anIt->first);
+            }
+            setNbUndos(1);
+            isOK = myPUndo[0].init(CurveCreator_Operation::RemovePoints,
+                                   aSectionToPointList);
+          }
+          break;
+        case CurveCreator_Operation::SetCoordinates:
+          {
+            // Construct undo for SetCoordinates command.
+            CurveCreator_ICurve::SectionToPointCoordsList aSectionToPointOldCoords;
+            CurveCreator_ICurve::SectionToPointCoordsList::const_iterator anIt = theParamList1.begin(), aLast = theParamList1.end();
+            for ( ; anIt != aLast; anIt++ ) {
+              CurveCreator::Coordinates anOldCoords = theCurve->getPoint(anIt->first.first, anIt->first.second);
+              aSectionToPointOldCoords.push_back(std::make_pair(anIt->first, anOldCoords));
+            }
+
+            setNbUndos(1);
+            isOK = myPUndo[0].init(CurveCreator_Operation::SetCoordinates,
+                                   aSectionToPointOldCoords);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (!isOK) {
+      clear();
+    }
+  }
+
+  return isOK;
+}
+
+bool CurveCreator_Diff::init(const CurveCreator_Curve *theCurve,
+                             const CurveCreator_ICurve::SectionToPointCoordsList &theOldParamList)
+{
+  bool isOK = false;
+
+  if (theCurve != NULL && theOldParamList.size() > 0) {
+    clear();
+
+    // Set redo.
+    myPRedo = new CurveCreator_Operation;
+
+    // Construct redo for SetCoordinates command.
+    CurveCreator_ICurve::SectionToPointCoordsList aSectionToPointActualCoords;
+    CurveCreator_ICurve::SectionToPointCoordsList::const_iterator anIt = 
+      theOldParamList.begin(), aLast = theOldParamList.end();
+    for ( ; anIt != aLast; anIt++ ) {
+      CurveCreator::Coordinates anActualCoords = theCurve->getPoint(anIt->first.first, anIt->first.second);
+      aSectionToPointActualCoords.push_back(std::make_pair(anIt->first, anActualCoords));
+    }
+
+    if (myPRedo->init(CurveCreator_Operation::SetCoordinates, aSectionToPointActualCoords)) {
+      // Undo for SetCoordinates command.
+      setNbUndos(1);
+      isOK = myPUndo[0].init(CurveCreator_Operation::SetCoordinates,
+                             theOldParamList);
+    }
+
+    if (!isOK) {
+      clear();
+    }
+  }
+
   return isOK;
 }
 
@@ -495,12 +525,13 @@ bool CurveCreator_Diff::addSectionToUndo
                        const int theIndex,
                        CurveCreator_Operation &theOperation) const
 {
+  const std::string aName = theCurve->getSectionName(theIndex);
   const CurveCreator::Coordinates &aPnts = theCurve->getPoints(theIndex);
-  const CurveCreator::Type aType = theCurve->getType(theIndex);
+  const CurveCreator::SectionType aType = theCurve->getSectionType(theIndex);
   const bool isClosed = theCurve->isClosed(theIndex);
 
   bool isOK = theOperation.init(CurveCreator_Operation::AddSection,
-                                aPnts, aType, isClosed);
+                                aName, aPnts, aType, isClosed);
 
   return isOK;
 }
@@ -533,7 +564,7 @@ bool CurveCreator_Diff::setTypeOrClosedToUndo
       // Get sections to be modified.
       for (i = 0; i < aNbSections; i++) {
         if (isSetType) {
-          aValue = theCurve->getType(i);
+          aValue = theCurve->getSectionType(i);
         } else {
           aValue = theCurve->isClosed(i);
         }
@@ -556,7 +587,7 @@ bool CurveCreator_Diff::setTypeOrClosedToUndo
     // There is only particular section modified.
     // Check if there is a real modification required.
     if (isSetType) {
-      aValue = theCurve->getType(theIntParam2);
+      aValue = theCurve->getSectionType(theIntParam2);
     } else {
       aValue = theCurve->isClosed(theIntParam2);
     }
@@ -572,7 +603,7 @@ bool CurveCreator_Diff::setTypeOrClosedToUndo
     std::list<int>::iterator anIter = aListOfInd.begin();
 
     if (isSetType) {
-      aValue = theCurve->getType(*anIter);
+      aValue = theCurve->getSectionType(*anIter);
     } else {
       aValue = theCurve->isClosed(*anIter);
     }

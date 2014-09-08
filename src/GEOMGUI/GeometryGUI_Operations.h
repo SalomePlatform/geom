@@ -119,6 +119,7 @@ namespace GEOMOp {
     OpCreateField         = 3305,   // MENU FIELD - CREATE FIELD
     OpEditField           = 3306,   // MENU FIELD - EDIT FIELD
     OpEditFieldPopup      = 3307,   // POPUP MENU - EDIT FIELD
+    Op2dPolylineEditor    = 3308,   // MENU NEW ENTITY - BASIC - POLYLINE EDITOR
     // BuildGUI --------------------//--------------------------------
     OpEdge                = 3400,   // MENU NEW ENTITY - BUILD - EDGE
     OpWire                = 3401,   // MENU NEW ENTITY - BUILD - WIRE
@@ -154,10 +155,6 @@ namespace GEOMOp {
     OpSharedShapes        = 3708,   // MENU OPERATION - GET SHARED SHAPES
     OpExtrudedBoss        = 3709,   // MENU OPERATION - ETRUDED BOSS
     OpExtrudedCut         = 3710,   // MENU OPERATION - ETRUDED CUT
-#ifdef DEBUG_CURVE_CREATOR
-    OpCurveCreator        = 3799,   // MENU OPERATION - CURVE CREATOR
-#endif
-    // for debug purposes, to be removed
     // RepairGUI -------------------//--------------------------------
     OpSewing              = 4000,   // MENU REPAIR - SEWING
     OpSuppressFaces       = 4001,   // MENU REPAIR - SUPPRESS FACES

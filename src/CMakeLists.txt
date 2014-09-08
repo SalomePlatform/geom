@@ -28,15 +28,6 @@ SET(SUBDIRS_COMMON
   )
 
 ##
-# Curve creator
-##
-IF(SALOME_GEOM_BUILD_CC)
-  SET(SUBDIRS_CC
-    CurveCreator
-    )
-ENDIF()
-
-##
 # OPENCV
 ##
 IF(SALOME_GEOM_USE_OPENCV)
@@ -52,7 +43,7 @@ IF(SALOME_BUILD_GUI)
   SET(SUBDIRS_GUI
     OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI
     GEOMBase DependencyTree GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
-    EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
+    CurveCreator EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
     RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI
     GEOM_SWIG_WITHIHM
     )

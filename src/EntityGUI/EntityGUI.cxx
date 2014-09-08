@@ -59,6 +59,7 @@
 #include "EntityGUI_FeatureDetectorDlg.h" // Feature Detection
 #include "EntityGUI_PictureImportDlg.h"   // Import Picture in viewer
 #include "EntityGUI_FieldDlg.h"           // Create/Edit Field
+#include "EntityGUI_PolylineDlg.h"        // Create/Edit 2d polyline
 
 #include "GEOMImpl_Types.hxx"
 
@@ -188,6 +189,10 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     SUIT_MessageBox::warning(parent, tr("WRN_WARNING"), tr("NO_FIELD"));
     break;
   }
+  case GEOMOp::Op2dPolylineEditor: // POLYLINE EDITOR
+    getGeometryGUI()->ActiveWorkingPlane();
+    aDlg = new EntityGUI_PolylineDlg( getGeometryGUI(), parent );
+    break;
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
     break;

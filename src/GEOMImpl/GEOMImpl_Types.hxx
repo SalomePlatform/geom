@@ -111,6 +111,8 @@
 
 #define GEOM_ISOLINE   55
 
+#define GEOM_POLYLINE2D 56
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -250,7 +252,9 @@
 #define PARTITION_HALF      2
 #define PARTITION_NO_SELF_INTERSECTIONS 3
 
-#define POLYLINE_POINTS 1
+#define POLYLINE_POINTS       1
+#define POLYLINE2D_PLN_COORDS 2
+#define POLYLINE2D_PLN_OBJECT 3
 
 #define SPLINE_BEZIER            1
 #define SPLINE_INTERPOLATION     2

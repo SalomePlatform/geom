@@ -164,7 +164,8 @@ module GEOM
   /*!
    * \brief Kind of the curves.
    *
-   * Used in the functions GEOM_ICurvesOperations.MakeCurveParametric(), GEOM_ICurvesOperations.MakeCurveParametricNew()
+   * Used in the functions GEOM_ICurvesOperations.MakeCurveParametric(), GEOM_ICurvesOperations.MakeCurveParametricNew(),
+   * GEOM_ICurvesOperations.MakePolyline2D, GEOM_ICurvesOperations.MakePolyline2DOnPlane.
    */
   enum curve_type {
     /*! Polyline curve */
@@ -208,11 +209,12 @@ module GEOM
   };
 
 
-  typedef sequence<string>      string_array;
-  typedef sequence<short>       short_array;
-  typedef sequence<boolean>     ListOfBool;
-  typedef sequence<long>        ListOfLong;
-  typedef sequence<double>      ListOfDouble;
+  typedef sequence<string>       string_array;
+  typedef sequence<short>        short_array;
+  typedef sequence<boolean>      ListOfBool;
+  typedef sequence<long>         ListOfLong;
+  typedef sequence<double>       ListOfDouble;
+  typedef sequence<ListOfDouble> ListOfListOfDouble;
 
   interface GEOM_Object;
   interface GEOM_BaseObject;
@@ -3332,6 +3334,72 @@ module GEOM
      *  \return New GEOM_Object, containing the created wire.
      */
     GEOM_Object Make3DSketcher (in ListOfDouble theCoordinates);
+
+    /*!
+     *  \brief Create a 2D polyline (wire or a compound of wires).
+     *
+     *  The polyline can have several sections. Each section represents a set
+     *  of points in the form of list of coordinates of the following order:
+     *  x1, y1, x2, y2, ..., xN, yN
+     *  Each section has its own name, type of curve (can be either
+     *  GEOM::Polyline or GEOM::Interpolation) and Closed flag.
+     *  For each section a wire is created. It represents either a polyline or
+     *  interpolation BSpline either closed or not depending on the Closed flag.
+     *  The result represents a wire if there is only one section is defined.
+     *  Otherwise a compound of wires is returned.
+     *
+     *  \param theCoordsList the list of coordinates list. theCoordsList[0]
+     *         is the coordinates list of the first section. theCoordsList[1]
+     *         is for the second section etc.
+     *  \param theNamesList the list of names. The order corresponds to
+     *         theCoordsList.
+     *  \param theTypesList the list of curve types. The order corresponds to
+     *         theCoordsList.
+     *  \param theClosedList the list of Closed flags. The order corresponds to
+     *         theCoordsList.
+     *  \param theWorkingPlane 9 double values, defining origin,
+     *         OZ and OX directions of the working plane.
+     *  \return New GEOM_Object, containing the created wire or a compound
+     *          of wires.
+     */
+    GEOM_Object MakePolyline2D (in ListOfListOfDouble theCoordsList,
+                                in string_array       theNamesList,
+                                in short_array        theTypesList,
+                                in ListOfBool         theClosedList,
+                                in ListOfDouble       theWorkingPlane);
+
+    /*!
+     *  \brief Create a 2D polyline (wire or a compound of wires).
+     *
+     *  The polyline can have several sections. Each section represents a set
+     *  of points in the form of list of coordinates of the following order:
+     *  x1, y1, x2, y2, ..., xN, yN
+     *  Each section has its own name, type of curve (can be either
+     *  GEOM::Polyline or GEOM::Interpolation) and Closed flag.
+     *  For each section a wire is created. It represents either a polyline or
+     *  interpolation BSpline either closed or not depending on the Closed flag.
+     *  The result represents a wire if there is only one section is defined.
+     *  Otherwise a compound of wires is returned.
+     *
+     *  \param theCoordsList the list of coordinates list. theCoordsList[0]
+     *         is the coordinates list of the first section. theCoordsList[1]
+     *         is for the second section etc.
+     *  \param theNamesList the list of names. The order corresponds to
+     *         theCoordsList.
+     *  \param theTypesList the list of curve types. The order corresponds to
+     *         theCoordsList.
+     *  \param theClosedList the list of Closed flags. The order corresponds to
+     *         theCoordsList.
+     *  \param theWorkingPlane planar Face or LCS(Marker) of the working plane.
+     *  \return New GEOM_Object, containing the created wire or a compound
+     *          of wires.
+     */
+    GEOM_Object MakePolyline2DOnPlane (in ListOfListOfDouble theCoordsList,
+                                       in string_array       theNamesList,
+                                       in short_array        theTypesList,
+                                       in ListOfBool         theClosedList,
+                                       in GEOM_Object        theWorkingPlane);
+
   };
 
  // # GEOM_ILocalOperations:

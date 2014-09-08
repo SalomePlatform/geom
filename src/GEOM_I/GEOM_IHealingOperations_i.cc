@@ -80,25 +80,6 @@ Handle(TColStd_HArray1OfInteger) GEOM_IHealingOperations_i::Convert
 
 //=============================================================================
 /*!
- *  Convert
- */
-//=============================================================================
-Handle(TColStd_HArray1OfExtendedString) GEOM_IHealingOperations_i::Convert
-                                         (const GEOM::string_array& theInArray)
-{
-  Handle(TColStd_HArray1OfExtendedString) anOutArray;
-  int n = theInArray.length();
-  if ( n <= 0 )
-    return anOutArray;
-  anOutArray = new TColStd_HArray1OfExtendedString( 1, n );
-  for ( int i = 0; i < n; i++ )
-    anOutArray->SetValue( i+1, TCollection_ExtendedString( theInArray[i].in() ) );
-
-  return anOutArray;
-}
-
-//=============================================================================
-/*!
  *  ProcessShape
  */
 //=============================================================================
@@ -125,7 +106,8 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ProcessShape (GEOM::GEOM_Object
 
   // Perform
   Handle(GEOM_Object) aNewObject = GetOperations()->ShapeProcess( anObject,
-    Convert( theOperations ), Convert( theParams ), Convert( theValues ) );
+    ConvertStringArray( theOperations ), ConvertStringArray( theParams ),
+    ConvertStringArray( theValues ) );
   if ( !GetOperations()->IsDone() || aNewObject.IsNull() )
     return aGEOMObject._retn();
 

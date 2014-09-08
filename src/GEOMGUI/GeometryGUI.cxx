@@ -561,6 +561,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpCreateField:        // MENU FIELD - CREATE FIELD
   case GEOMOp::OpEditField:          // MENU FIELD - EDIT FIELD
   case GEOMOp::OpEditFieldPopup:     // POPUP MENU - EDIT FIELD
+  case GEOMOp::Op2dPolylineEditor:   // MENU BASIC - POLYLINE EDITOR
     libName = "EntityGUI";
     break;
   case GEOMOp::OpEdge:               // MENU BUILD - EDGE
@@ -600,10 +601,6 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpSharedShapes:       // MENU OPERATION - GET SHARED SHAPES
   case GEOMOp::OpExtrudedBoss:       // MENU OPERATION - EXTRUDED BOSS
   case GEOMOp::OpExtrudedCut:        // MENU OPERATION - EXTRUDED CUT
-#ifdef DEBUG_CURVE_CREATOR  
-  // for debug purposes, to be removed
-  case GEOMOp::OpCurveCreator:       // MENU OPERATION - CURVE CREATOR
-#endif
     libName = "OperationGUI";
     break;
   case GEOMOp::OpSewing:             // MENU REPAIR - SEWING
@@ -941,6 +938,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpFeatureDetect,"FEATURE_DETECTION" );
 #endif
   createGeomAction( GEOMOp::OpPictureImport,"PICTURE_IMPORT" );
+  createGeomAction( GEOMOp::Op2dPolylineEditor, "CURVE_CREATOR" );
 
   createGeomAction( GEOMOp::OpEdge,        "EDGE" );
   createGeomAction( GEOMOp::OpWire,        "WIRE" );
@@ -973,10 +971,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpSharedShapes,   "GET_SHARED_SHAPES" );
   createGeomAction( GEOMOp::OpExtrudedCut,    "EXTRUDED_CUT" );
   createGeomAction( GEOMOp::OpExtrudedBoss,   "EXTRUDED_BOSS" );
-#ifdef DEBUG_CURVE_CREATOR
-  // for debug purposes, to be removed
-  createGeomAction( GEOMOp::OpCurveCreator,   "CURVE_CREATOR" );
-#endif
   createGeomAction( GEOMOp::OpFillet1d,       "FILLET_1D" );
   createGeomAction( GEOMOp::OpFillet2d,       "FILLET_2D" );
 
@@ -1106,19 +1100,20 @@ void GeometryGUI::initialize( CAM_Application* app )
   int newEntId = createMenu( tr( "MEN_NEW_ENTITY" ), -1, -1, 10 );
 
   int basicId = createMenu( tr( "MEN_BASIC" ), newEntId, -1 );
-  createMenu( GEOMOp::OpPoint,   basicId, -1 );
-  createMenu( GEOMOp::OpLine,    basicId, -1 );
-  createMenu( GEOMOp::OpCircle,  basicId, -1 );
-  createMenu( GEOMOp::OpEllipse, basicId, -1 );
-  createMenu( GEOMOp::OpArc,     basicId, -1 );
-  createMenu( GEOMOp::OpCurve,   basicId, -1 );
-  createMenu( GEOMOp::Op2dSketcher, basicId, -1 );
-  createMenu( GEOMOp::Op3dSketcher, basicId, -1 );
-  createMenu( GEOMOp::OpIsoline, basicId, -1 );
-  createMenu( separator(),       basicId, -1 );
-  createMenu( GEOMOp::OpVector,  basicId, -1 );
-  createMenu( GEOMOp::OpPlane,   basicId, -1 );
-  createMenu( GEOMOp::OpLCS,     basicId, -1 );
+  createMenu( GEOMOp::OpPoint,            basicId, -1 );
+  createMenu( GEOMOp::OpLine,             basicId, -1 );
+  createMenu( GEOMOp::OpCircle,           basicId, -1 );
+  createMenu( GEOMOp::OpEllipse,          basicId, -1 );
+  createMenu( GEOMOp::OpArc,              basicId, -1 );
+  createMenu( GEOMOp::OpCurve,            basicId, -1 );
+  createMenu( GEOMOp::Op2dSketcher,       basicId, -1 );
+  createMenu( GEOMOp::Op2dPolylineEditor, basicId, -1 );
+  createMenu( GEOMOp::Op3dSketcher,       basicId, -1 );
+  createMenu( GEOMOp::OpIsoline,          basicId, -1 );
+  createMenu( separator(),                basicId, -1 );
+  createMenu( GEOMOp::OpVector,           basicId, -1 );
+  createMenu( GEOMOp::OpPlane,            basicId, -1 );
+  createMenu( GEOMOp::OpLCS,              basicId, -1 );
   createMenu( GEOMOp::OpOriginAndVectors, basicId, -1 );
 
   int primId = createMenu( tr( "MEN_PRIMITIVES" ), newEntId, -1 );
@@ -1224,11 +1219,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpChamfer,       operId, -1 );
   createMenu( GEOMOp::OpExtrudedBoss,  operId, -1 );
   createMenu( GEOMOp::OpExtrudedCut,   operId, -1 );
-#ifdef DEBUG_CURVE_CREATOR
-  // for debug purposes, to be removed
-  createMenu( separator(), operId, -1 );
-  createMenu( GEOMOp::OpCurveCreator,   operId, -1 );
-#endif
   //createMenu( GEOMOp::OpClipping,      operId, -1 );
 
   int repairId = createMenu( tr( "MEN_REPAIR" ), -1, -1, 10 );
@@ -1319,18 +1309,19 @@ void GeometryGUI::initialize( CAM_Application* app )
   // ---- create toolbars --------------------------
 
   int basicTbId = createTool( tr( "TOOL_BASIC" ), QString( "GEOMBasic" ) );
-  createTool( GEOMOp::OpPoint,      basicTbId );
-  createTool( GEOMOp::OpLine,       basicTbId );
-  createTool( GEOMOp::OpCircle,     basicTbId );
-  createTool( GEOMOp::OpEllipse,    basicTbId );
-  createTool( GEOMOp::OpArc,        basicTbId );
-  createTool( GEOMOp::OpCurve,      basicTbId );
-  createTool( GEOMOp::OpVector,     basicTbId );
-  createTool( GEOMOp::Op2dSketcher, basicTbId ); //rnc
-  createTool( GEOMOp::Op3dSketcher, basicTbId ); //rnc
-  createTool( GEOMOp::OpIsoline,    basicTbId );
-  createTool( GEOMOp::OpPlane,      basicTbId );
-  createTool( GEOMOp::OpLCS,        basicTbId );
+  createTool( GEOMOp::OpPoint,            basicTbId );
+  createTool( GEOMOp::OpLine,             basicTbId );
+  createTool( GEOMOp::OpCircle,           basicTbId );
+  createTool( GEOMOp::OpEllipse,          basicTbId );
+  createTool( GEOMOp::OpArc,              basicTbId );
+  createTool( GEOMOp::OpCurve,            basicTbId );
+  createTool( GEOMOp::OpVector,           basicTbId );
+  createTool( GEOMOp::Op2dSketcher,       basicTbId ); //rnc
+  createTool( GEOMOp::Op2dPolylineEditor, basicTbId ); 
+  createTool( GEOMOp::Op3dSketcher,       basicTbId ); //rnc
+  createTool( GEOMOp::OpIsoline,          basicTbId );
+  createTool( GEOMOp::OpPlane,            basicTbId );
+  createTool( GEOMOp::OpLCS,              basicTbId );
   createTool( GEOMOp::OpOriginAndVectors, basicTbId );
 
 //   int sketchTbId = createTool( tr( "TOOL_SKETCH" ), QString( "GEOMSketch" ) );
@@ -1390,10 +1381,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpChamfer,         featTbId );
   createTool( GEOMOp::OpExtrudedBoss,    featTbId );
   createTool( GEOMOp::OpExtrudedCut,     featTbId );
-#ifdef DEBUG_CURVE_CREATOR
-  // for debug purposes, to be removed
-  createTool( GEOMOp::OpCurveCreator,    featTbId ); 
-#endif
 
   int buildTbId = createTool( tr( "TOOL_BUILD" ), QString( "GEOMBuild" ) );
   createTool( GEOMOp::OpEdge,     buildTbId );

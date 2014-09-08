@@ -32,6 +32,7 @@
 #include <TDataStd_ListOfExtendedString.hxx>
 #include <TopoDS_Shape.hxx>
 
+class Handle_TColStd_HArray1OfByte;
 class Handle_TColStd_HArray1OfReal;
 class Handle_TColStd_HArray1OfInteger;
 class Handle_TColStd_HSequenceOfTransient;
@@ -107,6 +108,18 @@ public:
 
   //Returns an integer array argument at position thePosition
   Standard_EXPORT Handle(TColStd_HArray1OfInteger) GetIntegerArray(int thePosition);
+
+  //Sets a byte array argument at position thePosition
+  Standard_EXPORT void SetByteArray(int thePosition, const Handle(TColStd_HArray1OfByte)& theArray);
+
+  //Returns a byte array argument at position thePosition
+  Standard_EXPORT Handle(TColStd_HArray1OfByte) GetByteArray(int thePosition);
+
+  //Sets a boolean array argument at position thePosition
+  Standard_EXPORT void SetBooleanArray(int thePosition, const Handle(TColStd_HArray1OfByte)& theArray);
+
+  //Returns a boolean array argument at position thePosition
+  Standard_EXPORT Handle(TColStd_HArray1OfByte) GetBooleanArray(int thePosition);
 
   //Sets a reference to other function argument at position thePosition
   Standard_EXPORT void SetReference(int thePosition, Handle(GEOM_Function) theReference);

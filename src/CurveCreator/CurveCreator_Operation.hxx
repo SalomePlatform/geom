@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,8 +24,11 @@
 #define _CurveCreator_Operation_HeaderFile
 
 #include "CurveCreator.hxx"
+#include "CurveCreator_ICurve.hxx"
+#include "CurveCreator_PosPoint.hxx"
 
 #include <string>
+#include <vector>
 
 class CurveCreator_Curve;
 
@@ -74,7 +77,6 @@ public:
    * It is applicable to the following operations:
    * <UL>
    *   <LI>Clear</LI>
-   *   <LI>Join (without arguments)</LI>
    * </UL>
    * @return true in case of success; false otherwise.
    */
@@ -105,15 +107,26 @@ public:
             const int theIntParam2);
 
   /**
-   * This method initializes the object with an operation with three integer
+   * This method initializes the object with an operation with two integer
    * parameters. It is applicable to the following operations:
+   * <UL>
+   *   <LI>Join (with a list of int arguments)</LI>
+   * </UL>
+   * @return true in case of success; false otherwise.
+   */
+  bool init(const Type theType, const std::list<int> theParamList);
+
+  /**
+   * This method initializes the object with an operation with 
+   * list of pairs of integer parameters. 
+   * It is applicable to the following operations:
    * <UL>
    *   <LI>RemovePoints</LI>
    * </UL>
    * @return true in case of success; false otherwise.
    */
-  bool init(const Type theType, const int theIntParam1,
-            const int theIntParam2, const int theIntParam3);
+  bool init(const Type theType, 
+    const CurveCreator_ICurve::SectionToPointList &theParamList1);
 
   /**
    * This method initializes the object with an operation with one
@@ -128,18 +141,16 @@ public:
             const int theIntParam);
 
   /**
-   * This method initializes the object with an operation with one
-   * CurveCreator::Coordinates parameter and two integer parameters.
+   * This method initializes the object with an operation with
+   * list of pairs of integer parameters and CurveCreator::Coordinates parameters.
    * It is applicable to the following operations:
    * <UL>
-   *   <LI>AddSection</LI>
    *   <LI>InsertPoints</LI>
-   *   <LI>SetCoordinates</LI>
    * </UL>
    * @return true in case of success; false otherwise.
    */
-  bool init(const Type theType, const CurveCreator::Coordinates &theCoords,
-            const int theIntParam1, const int theIntParam2);
+  bool init(const Type theType, 
+            const CurveCreator_ICurve::SectionToPointCoordsList &theParamList1);
 
   /**
    * This method initializes the object with an operation with one

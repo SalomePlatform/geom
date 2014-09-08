@@ -256,7 +256,7 @@ import math
 import os
 import functools
 
-from salome.geom.gsketcher import Sketcher3D, Sketcher2D
+from salome.geom.gsketcher import Sketcher3D, Sketcher2D, Polyline2D
 
 # service function
 def _toListOfNames(_names, _size=-1):
@@ -2666,6 +2666,25 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             sk = Sketcher3D (self)
             return sk
+
+        ## Obtain a 2D polyline creation interface
+        #  @return An instance of @ref gsketcher.Polyline2D "Polyline2D" interface
+        #
+        #  @ref tui_3dsketcher_page "Example"
+        def Polyline2D (self):
+            """
+            Obtain a 2D polyline creation interface.
+
+            Example of usage:
+                pl = geompy.Polyline2D()
+                pl.addSection("section 1", GEOM.Polyline, True)
+                pl.addPoints(0, 0, 10, 0, 10, 10)
+                pl.addSection("section 2", GEOM.Interpolation, False)
+                pl.addPoints(20, 0, 30, 0, 30, 10)
+                resultObj = pl.result(WorkingPlane)
+            """
+            pl = Polyline2D (self)
+            return pl
 
         # end of l3_sketcher
         ## @}

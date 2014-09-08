@@ -1,4 +1,7 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -17,25 +20,20 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef CURVE_CREATOR_LISTENER_HXX
-#define CURVE_CREATOR_LISTENER_HXX
+//  File   : Sketcher.hxx
+//  Author : Sergey KHROMOV
 
-class CurveCreator_Listener
-{
-public:
-  CurveCreator_Listener(void){};
-  virtual ~CurveCreator_Listener(void){};
+#ifndef _SKETCHER_HXX_
+#define _SKETCHER_HXX_
 
-  virtual void pointChanged( int theSection, int thePoint ){}
-  virtual void pointRemoved( int theSection, int theFirstPoint, int thePointCnt ){}
-  virtual void pointInserted( int theSection, int theIndx ){}
-
-  virtual void sectionClosed( int theSection, bool isClosed ){}
-  virtual void sectionAdded( int theSection ){}
-  virtual void sectionRemoved( int theSection ){}
-  virtual void sectionTypeChanged( int theSection ){}
-
-  virtual void curveChanged(){}
-};
-
+#if defined WIN32
+#  if defined SKETCHER_SALOME_EXPORTS || defined SKETCHER_EXPORTS || defined GEOMSketcher_EXPORTS || defined GEOMSKETCHER_EXPORTS
+#    define SKETCHER_SALOME_EXPORT _declspec( dllexport )
+#  else
+#    define SKETCHER_SALOME_EXPORT _declspec( dllimport )
+#  endif
+#else
+#  define SKETCHER_SALOME_EXPORT
 #endif
+
+#endif // SKETCHER_HXX

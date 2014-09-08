@@ -74,6 +74,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_PointDriver.hxx
   GEOMImpl_IPoint.hxx
   GEOMImpl_IPolyline.hxx
+  GEOMImpl_IPolyline2D.hxx
   GEOMImpl_ICircle.hxx
   GEOMImpl_ISpline.hxx
   GEOMImpl_IEllipse.hxx
@@ -150,6 +151,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_Block6Explorer.hxx
   GEOMImpl_MeasureDriver.hxx
   GEOMImpl_PolylineDriver.hxx
+  GEOMImpl_PolylineDumper.hxx
   GEOMImpl_CircleDriver.hxx
   GEOMImpl_EllipseDriver.hxx
   GEOMImpl_ArcDriver.hxx
@@ -192,6 +194,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_IGroupOperations.cxx
   GEOMImpl_IFieldOperations.cxx
   GEOMImpl_IBaseIEOperations.cxx
+  GEOMImpl_IPolyline2D.cxx
   GEOMImpl_Gen.cxx
   GEOMImpl_PointDriver.cxx
   GEOMImpl_VectorDriver.cxx
@@ -221,6 +224,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_Block6Explorer.cxx
   GEOMImpl_MeasureDriver.cxx
   GEOMImpl_PolylineDriver.cxx
+  GEOMImpl_PolylineDumper.cxx
   GEOMImpl_CircleDriver.cxx
   GEOMImpl_EllipseDriver.cxx
   GEOMImpl_ArcDriver.cxx

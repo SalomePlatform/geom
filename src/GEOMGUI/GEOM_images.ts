@@ -1216,6 +1216,10 @@
             <translation>build_shell.png</translation>
         </message>
         <message>
+          <source>ICO_CURVE_CREATOR</source>
+          <translation>polyline.png</translation>
+        </message>
+        <message>
             <source>ICO_SKETCH</source>
             <translation>sketch.png</translation>
         </message>

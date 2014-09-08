@@ -112,8 +112,35 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
 
   GEOM::GEOM_Object_ptr Make3DSketcher (const GEOM::ListOfDouble& theCoordinates);
 
+  GEOM::GEOM_Object_ptr MakePolyline2D
+                (const GEOM::ListOfListOfDouble &theCoordsList,
+                 const GEOM::string_array       &theNamesList,
+                 const GEOM::short_array        &theTypesList,
+                 const GEOM::ListOfBool         &theClosedList,
+                 const GEOM::ListOfDouble       &theWorkingPlane);
+
+  GEOM::GEOM_Object_ptr MakePolyline2DOnPlane
+                (const GEOM::ListOfListOfDouble &theCoordsList,
+                 const GEOM::string_array       &theNamesList,
+                 const GEOM::short_array        &theTypesList,
+                 const GEOM::ListOfBool         &theClosedList,
+                 GEOM::GEOM_Object_ptr           theWorkingPlane);
+
   ::GEOMImpl_ICurvesOperations* GetOperations()
   { return (::GEOMImpl_ICurvesOperations*)GetImpl(); }
+
+private:
+
+  Handle(TColStd_HArray1OfByte)
+        ConvertEnumArray(const GEOM::short_array &theInArray);
+
+  Handle(TColStd_HArray1OfByte)
+        ConvertBoolArray(const GEOM::ListOfBool &theInArray);
+
+  void ConvertListListDouble
+            (const GEOM::ListOfListOfDouble        &theCoordsList,
+                   std::list <std::list <double> > &theCoords);
+
 };
 
 #endif
