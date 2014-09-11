@@ -33,6 +33,20 @@ default color for edges, vectors and wires (isolated lines).</li>
 vertices.</li>
 <li><b>Color of isolines</b> - allows to select default color for
 isolines.</li>
+<li><b>Top level color</b> - allows to select default color for objects which 
+were brought to the viewer foreground.</li>
+<li><b>Top level display mode</b> - allows to select default top level display mode between:</li>
+<ul>
+<li><b>Show additional wireframe actor</b> - allows to have the shading actor at its usual 
+place (in the back) and add the additional wireframe actor in the viewer foreground.</li>
+<li><b>Keep current display mode</b> - allows to use current display mode of object.</li>
+<li><b>Wireframe</b> - allows to switch display mode to wireframe mode after 
+"top-level" operation.</li>
+<li><b>Shading</b> - allows to switch display mode to shading mode after 
+"top-level" operation.</li>
+<li><b>Shading With Edges</b> - allows to switch display mode to shading with edges mode after 
+"top-level" operation.</li>
+</ul>
 <li><b>Transparency</b> - allows to define default transparency value.</li>
 <li><b>Deflection coefficient</b> - allows to define default deflection
 coefficient for lines and surfaces. A smaller coefficient provides

@@ -457,11 +457,11 @@ void GEOM_AISShape::setTopLevelDisplayMode(const GEOM_AISShape::TopLevelDispMode
 }
 
 Standard_Boolean GEOM_AISShape::switchTopLevel() {
-        return myTopLevelDm != TopShowAdditionalWActor;
+  return myTopLevelDm != TopShowAdditionalWActor;
 }
 
 Standard_Boolean GEOM_AISShape::toActivate() {
-        return Standard_True;
+  return ( myTopLevel && myTopLevelDm == TopShowAdditionalWActor ) ? false : true;
 }
 
 void GEOM_AISShape::setFieldStepInfo( const GEOM::field_data_type theFieldDataType,
