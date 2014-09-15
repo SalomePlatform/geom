@@ -832,7 +832,8 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->SetDisplayVectors( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
 
   // set display vertices flag
-  AISShape->SetDisplayVertices( propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool() );
+  bool isVerticesMode = propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool();
+  AISShape->SetDisplayVertices( isVerticesMode );
 
   // set transparency
   if( HasTransparency() ) {
@@ -918,7 +919,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->setTopLevel( propMap.value( GEOM::propertyName( GEOM::TopLevel ) ).toBool() );
 
   // set point marker (for vertex / compound of vertices only)
-  if ( onlyVertex ) {
+  if ( onlyVertex || isVerticesMode ) {
     QStringList aList = propMap.value( GEOM::propertyName( GEOM::PointMarker ) ).toString().split( GEOM::subSectionSeparator() );
     if ( aList.size() == 2 ) {
       // standard marker string contains "TypeOfMarker:ScaleOfMarker"
