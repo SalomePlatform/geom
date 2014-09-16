@@ -357,7 +357,7 @@ SetVisibility(int theVisibility)
   myOneFaceEdgeActor->SetVisibility(theVisibility && (myDisplayMode == (int)eWireframe || myDisplayMode == (int)eShadingWithEdges) && !myIsSelected);
   myIsolatedEdgeActor->SetVisibility(theVisibility && !myIsSelected);
 
-  myVertexActor->SetVisibility(theVisibility && myVerticesMode && (!myIsSelected && !myIsPreselected));// must be added new mode points
+  myVertexActor->SetVisibility(theVisibility && (isOnlyVertex || (myVerticesMode && (!myIsSelected && !myIsPreselected))));// must be added new mode points
 }
  
 
@@ -398,8 +398,13 @@ GEOM_Actor
 ::SetVerticesMode(bool theMode)
 {
   myVerticesMode = theMode;
-  theMode ? myPreHighlightProp->SetPointSize(SALOME_POINT_SIZE+2) : myPreHighlightProp->SetPointSize(0);
-  theMode ? myHighlightProp->SetPointSize(SALOME_POINT_SIZE) : myHighlightProp->SetPointSize(0);
+  if ( theMode || isOnlyVertex ) {
+    myPreHighlightProp->SetPointSize(SALOME_POINT_SIZE+2);
+    myHighlightProp->SetPointSize(SALOME_POINT_SIZE);
+  } else {
+    myPreHighlightProp->SetPointSize(0);
+    myHighlightProp->SetPointSize(0);
+  }
   SetModified();
 }
 
