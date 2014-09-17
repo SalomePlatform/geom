@@ -87,6 +87,9 @@ GEOM_Actor::GEOM_Actor():
   myVertexActor(GEOM_DeviceActor::New(),true), 
   myVertexSource(GEOM_VertexSource::New(),true), 
  
+  myStandaloneVertexActor(GEOM_DeviceActor::New(),true), 
+  myStandaloneVertexSource(GEOM_VertexSource::New(),true), 
+
   myIsolatedEdgeActor(GEOM_DeviceActor::New(),true), 
   myIsolatedEdgeSource(GEOM_EdgeSource::New(),true), 
  
@@ -130,19 +133,26 @@ GEOM_Actor::GEOM_Actor():
   myHighlightProp->SetAmbientColor(1, 1, 1);
   myHighlightProp->SetDiffuseColor(1, 1, 1);
   myHighlightProp->SetSpecularColor(0.5, 0.5, 0.5);
-  myHighlightProp->SetPointSize(0);
+  myHighlightProp->SetPointSize(SALOME_POINT_SIZE+2);
   myHighlightActor->SetProperty(myHighlightProp.GetPointer());
 
   this->myHighlightActor->SetInput(myAppendFilter->GetOutputPort(),false);
 
   myPreHighlightProp->SetColor(0,1,1);
-  myPreHighlightProp->SetPointSize(0);
+  myPreHighlightProp->SetPointSize(SALOME_POINT_SIZE);
   myPreHighlightProp->SetLineWidth(SALOME_LINE_WIDTH+1);
   myPreHighlightProp->SetRepresentationToWireframe();
 
   myAppendFilter->AddInputConnection(myVertexSource->GetOutputPort()); 
   myVertexActor->SetInput(myVertexSource->GetOutputPort(),false); 
   aProperty = myVertexActor->GetProperty(); 
+  aProperty->SetRepresentation(VTK_POINTS); 
+  aProperty->SetPointSize(3); 
+  aProperty->SetColor(1, 1, 0);
+ 
+  myAppendFilter->AddInputConnection(myStandaloneVertexSource->GetOutputPort()); 
+  myStandaloneVertexActor->SetInput(myStandaloneVertexSource->GetOutputPort(),false); 
+  aProperty = myStandaloneVertexActor->GetProperty(); 
   aProperty->SetRepresentation(VTK_POINTS); 
   aProperty->SetPointSize(3); 
   aProperty->SetColor(1, 1, 0);
@@ -229,6 +239,7 @@ GEOM_Actor::
 SetModified() 
 { 
   this->myVertexSource->Modified(); 
+  this->myStandaloneVertexSource->Modified(); 
   this->myIsolatedEdgeSource->Modified(); 
   this->myOneFaceEdgeSource->Modified(); 
   this->mySharedEdgeSource->Modified(); 
@@ -262,6 +273,7 @@ AddToRender(vtkRenderer* theRenderer)
   myIsolatedEdgeActor->AddToRender(theRenderer); 
  
   myVertexActor->AddToRender(theRenderer); 
+  myStandaloneVertexActor->AddToRender(theRenderer); 
 }
  
 void 
@@ -282,6 +294,7 @@ RemoveFromRender(vtkRenderer* theRenderer)
   myIsolatedEdgeActor->RemoveFromRender(theRenderer); 
  
   myVertexActor->RemoveFromRender(theRenderer);
+  myStandaloneVertexActor->RemoveFromRender(theRenderer);
 
   
   SetSelected(false);
@@ -358,6 +371,8 @@ SetVisibility(int theVisibility)
   myIsolatedEdgeActor->SetVisibility(theVisibility && !myIsSelected);
 
   myVertexActor->SetVisibility(theVisibility && (isOnlyVertex || (myVerticesMode && (!myIsSelected && !myIsPreselected))));// must be added new mode points
+
+  myStandaloneVertexActor->SetVisibility(theVisibility);
 }
  
 
@@ -399,11 +414,9 @@ GEOM_Actor
 {
   myVerticesMode = theMode;
   if ( theMode || isOnlyVertex ) {
-    myPreHighlightProp->SetPointSize(SALOME_POINT_SIZE+2);
-    myHighlightProp->SetPointSize(SALOME_POINT_SIZE);
+    myAppendFilter->AddInputConnection(myVertexSource->GetOutputPort()); 
   } else {
-    myPreHighlightProp->SetPointSize(0);
-    myHighlightProp->SetPointSize(0);
+    myAppendFilter->RemoveInputConnection(0, myVertexSource->GetOutputPort()); 
   }
   SetModified();
 }
@@ -436,6 +449,7 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   myShape = theShape;
 
   myVertexSource->Clear();
+  myStandaloneVertexSource->Clear();
   myIsolatedEdgeSource->Clear();
   myOneFaceEdgeSource->Clear();
   mySharedEdgeSource->Clear();
@@ -456,6 +470,7 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   TopExp::MapShapesAndAncestors(theShape,TopAbs_EDGE,TopAbs_FACE,anEdgeMap);
   
   GEOM::SetShape(theShape,anEdgeMap,theIsVector,
+                 myStandaloneVertexSource.Get(),
                  myIsolatedEdgeSource.Get(),
                  myOneFaceEdgeSource.Get(),
                  mySharedEdgeSource.Get(),
@@ -471,6 +486,7 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   
   if((bool)myShape.Infinite() || isOnlyVertex ){
     myVertexActor->GetDeviceActor()->SetInfinitive(true);
+    myStandaloneVertexActor->GetDeviceActor()->SetInfinitive(true);
     myHighlightActor->GetDeviceActor()->SetInfinitive(true);
   }
 
@@ -524,6 +540,11 @@ vtkProperty* GEOM_Actor::GetIsolatedEdgeProperty()
 vtkProperty* GEOM_Actor::GetVertexProperty()
 {
   return myVertexActor->GetProperty();
+}
+
+vtkProperty* GEOM_Actor::GetStandaloneVertexProperty()
+{
+  return myStandaloneVertexActor->GetProperty();
 }
 
 vtkProperty* GEOM_Actor::GetSharedEdgeProperty()
@@ -715,6 +736,7 @@ void GEOM_Actor::SetOpacity(double opa)
   myHighlightProp->SetOpacity(opa);
   myPreHighlightProp->SetOpacity(opa);
   myVertexActor->GetProperty()->SetOpacity(opa);
+  myStandaloneVertexActor->GetProperty()->SetOpacity(opa);
 }
 
 double GEOM_Actor::GetOpacity()
@@ -755,6 +777,7 @@ void GEOM_Actor::GetColor(double& r,double& g,double& b)
 void GEOM_Actor::SetPointColor(double r,  double g,  double b)
 {
   myVertexActor->GetProperty()->SetColor(r, g, b);
+  myStandaloneVertexActor->GetProperty()->SetColor(r, g, b);
 }
 
 /*!
@@ -818,6 +841,7 @@ void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
   aCoefnt = theProps[0]->GetAmbient();
   myShadingFaceProp->SetAmbient(aCoefnt);
   myVertexActor->GetProperty()->SetAmbient(aCoefnt);
+  myStandaloneVertexActor->GetProperty()->SetAmbient(aCoefnt);
   if ( aSize == 2 )
     aCoefnt = theProps[1]->GetAmbient();
   myShadingBackFaceProp->SetAmbient(aCoefnt);
@@ -826,6 +850,7 @@ void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
   aCoefnt = theProps[0]->GetDiffuse();
   myShadingFaceProp->SetDiffuse(aCoefnt);
   myVertexActor->GetProperty()->SetDiffuse(aCoefnt);
+  myStandaloneVertexActor->GetProperty()->SetDiffuse(aCoefnt);
   if ( aSize == 2 )
     aCoefnt = theProps[1]->GetDiffuse();
   myShadingBackFaceProp->SetDiffuse(aCoefnt);
@@ -834,6 +859,7 @@ void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
   aCoefnt = theProps[0]->GetSpecular();
   myShadingFaceProp->SetSpecular(aCoefnt);
   myVertexActor->GetProperty()->SetSpecular(aCoefnt);
+  myStandaloneVertexActor->GetProperty()->SetSpecular(aCoefnt);
   if ( aSize == 2 )
     aCoefnt = theProps[1]->GetSpecular();
   myShadingBackFaceProp->SetSpecular(aCoefnt);
@@ -845,6 +871,7 @@ void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
   aColor = theProps[0]->GetAmbientColor();
   myShadingFaceProp->SetAmbientColor(aColor[0], aColor[1], aColor[2]);
   myVertexActor->GetProperty()->SetAmbientColor(aColor[0], aColor[1], aColor[2]);
+  myStandaloneVertexActor->GetProperty()->SetAmbientColor(aColor[0], aColor[1], aColor[2]);
   if ( aSize == 2 )
     aColor = theProps[1]->GetAmbientColor();
   myShadingBackFaceProp->SetAmbientColor(aColor[0], aColor[1], aColor[2]);
@@ -853,6 +880,7 @@ void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
   aColor = theProps[0]->GetDiffuseColor();
   myShadingFaceProp->SetDiffuseColor(aColor[0], aColor[1], aColor[2]);
   myVertexActor->GetProperty()->SetDiffuseColor(aColor[0], aColor[1], aColor[2]);
+  myStandaloneVertexActor->GetProperty()->SetDiffuseColor(aColor[0], aColor[1], aColor[2]);
   if ( aSize == 2 )
     aColor = theProps[1]->GetDiffuseColor();
   myShadingBackFaceProp->SetDiffuseColor(aColor[0], aColor[1], aColor[2]);
@@ -861,6 +889,7 @@ void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
   aColor = theProps[0]->GetSpecularColor();
   myShadingFaceProp->SetSpecularColor(aColor[0], aColor[1], aColor[2]);
   myVertexActor->GetProperty()->SetSpecularColor(aColor[0], aColor[1], aColor[2]);
+  myStandaloneVertexActor->GetProperty()->SetSpecularColor(aColor[0], aColor[1], aColor[2]);
   if ( aSize == 2 )
     aColor = theProps[1]->GetSpecularColor();
   myShadingBackFaceProp->SetSpecularColor(aColor[0], aColor[1], aColor[2]);
@@ -869,6 +898,7 @@ void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
   aCoefnt = theProps[0]->GetSpecularPower();
   myShadingFaceProp->SetSpecularPower(aCoefnt);
   myVertexActor->GetProperty()->SetSpecularPower(aCoefnt);
+  myStandaloneVertexActor->GetProperty()->SetSpecularPower(aCoefnt);
   if ( aSize == 2 )
     aCoefnt = theProps[1]->GetSpecularPower();
   myShadingBackFaceProp->SetSpecularPower(aCoefnt);

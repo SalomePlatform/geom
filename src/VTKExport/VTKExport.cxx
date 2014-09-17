@@ -119,6 +119,7 @@ extern "C"
       GEOM::SetShape( theShape,
                       anEdgeMap,
                       anIsVector,
+                      0, // all vertices were added above
                       myIsolatedEdgeSource,
                       myOneFaceEdgeSource,
                       mySharedEdgeSource,

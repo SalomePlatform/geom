@@ -89,6 +89,7 @@ public:
   vtkProperty* GetShadingProperty();
   vtkProperty* GetIsolatedEdgeProperty();
   vtkProperty* GetVertexProperty();
+  vtkProperty* GetStandaloneVertexProperty();
   vtkProperty* GetSharedEdgeProperty();
   vtkProperty* GetFaceEdgeProperty();
 
@@ -233,6 +234,9 @@ private:
 
   PDeviceActor myVertexActor;
   PVertexSource myVertexSource;
+
+  PDeviceActor myStandaloneVertexActor;
+  PVertexSource myStandaloneVertexSource;
 
   PDeviceActor myIsolatedEdgeActor;
   PEdgeSource myIsolatedEdgeSource;

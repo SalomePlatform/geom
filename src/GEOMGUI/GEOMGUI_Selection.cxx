@@ -721,7 +721,8 @@ bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const
             GEOM_Actor* aGeomGActor = GEOM_Actor::SafeDownCast( actor );
             if ( aGeomGActor ) {
               GEOM_VTKPropertyMaterial* mat  = GEOM_VTKPropertyMaterial::SafeDownCast(aGeomGActor->GetProperty());
-              res = mat->GetPhysical();
+              if ( mat )
+                res = mat->GetPhysical();
             } // if ( salome actor )
           } // if ( actor )
         } // if ( lst == vtkPrs->GetObjects() )
