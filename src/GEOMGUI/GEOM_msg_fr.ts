@@ -2909,6 +2909,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Afficher l&apos;orientation des arêtes</translation>
     </message>
     <message>
+        <source>MEN_POP_VERTICES</source>
+        <translation type="unfinished">Show Vertices</translation>
+    </message>
+    <message>
         <source>MEN_PREFERENCES</source>
         <translation>Préférences</translation>
     </message>
@@ -3075,6 +3079,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_VECTOR_MODE_OFF</source>
         <translation>Cacher l&apos;orientation de l&apos;arête</translation>
+    </message>
+    <message>
+        <source>MEN_VERTICES_MODE_ON</source>
+        <translation type="unfinished">Show Vertices</translation>
+    </message>
+    <message>
+        <source>MEN_VERTICES_MODE_OFF</source>
+        <translation type="unfinished">Hide Vertices</translation>
     </message>
     <message>
         <source>MEN_WIREFRAME</source>
@@ -3771,6 +3783,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_POP_VECTORS</source>
         <translation>Afficher l&apos;orientation des arêtes</translation>
+    </message>
+    <message>
+        <source>STB_POP_VERTICES</source>
+        <translation type="unfinished">Show Vertices</translation>
     </message>
     <message>
         <source>STB_POP_SETTEXTURE</source>

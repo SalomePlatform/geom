@@ -2892,6 +2892,10 @@
       <translation>ベクトル方向表示</translation>
     </message>
     <message>
+      <source>MEN_POP_VERTICES</source>
+      <translation type="unfinished">Show Vertices</translation>
+    </message>
+    <message>
       <source>MEN_PREFERENCES</source>
       <translation>設定</translation>
     </message>
@@ -3062,6 +3066,14 @@
     <message>
       <source>MEN_VECTOR_MODE_OFF</source>
       <translation>エッジの方向を非表示</translation>
+    </message>
+    <message>
+      <source>MEN_VERTICES_MODE_ON</source>
+      <translation type="unfinished">Show Vertices</translation>
+    </message>
+    <message>
+      <source>MEN_VERTICES_MODE_OFF</source>
+      <translation type="unfinished">Hide Vertices</translation>
     </message>
     <message>
       <source>MEN_WIREFRAME</source>
@@ -3758,6 +3770,10 @@
     <message>
       <source>STB_POP_VECTORS</source>
       <translation>エッジの方向を表示します。</translation>
+    </message>
+    <message>
+      <source>STB_POP_VERTICES</source>
+      <translation type="unfinished">Show Vertices</translation>
     </message>
     <message>
       <source>STB_POP_SETTEXTURE</source>
