@@ -33,7 +33,7 @@
 #include "Utils_ExceptHandlers.hxx"
 
 #include "GEOM_Engine.hxx"
-#include "GEOM_Object.hxx"
+#include "GEOM_BaseObject.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -121,11 +121,11 @@ void GEOM_IInsertOperations_i::Export
  *  ImportFile
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IInsertOperations_i::ImportFile
+GEOM::ListOfGBO* GEOM_IInsertOperations_i::ImportFile
                    (const char* theFileName,
                     const char* theFormatName)
 {
-  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+  GEOM::ListOfGBO_var aSeq = new GEOM::ListOfGBO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -142,7 +142,7 @@ GEOM::ListOfGO* GEOM_IInsertOperations_i::ImportFile
 
   aSeq->length(aLength);
   for (Standard_Integer i = 1; i <= aLength; i++)
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+    aSeq[i-1] = GetBaseObject(Handle(GEOM_BaseObject)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }

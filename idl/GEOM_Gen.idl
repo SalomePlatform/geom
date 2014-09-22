@@ -3720,7 +3720,7 @@ module GEOM
      *            file length unit will be ignored (set to 'meter') and result model will be scaled.
      *  \return List of GEOM_Object, containing the created shape and groups of materials.
      */
-    ListOfGO ImportFile (in string theFileName, in string theFormatName);
+    ListOfGBO ImportFile (in string theFileName, in string theFormatName);
 
     /*!
      *  \brief Deprecated method. Use ReadValue (from the corresponding plugin) instead.

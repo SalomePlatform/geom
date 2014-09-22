@@ -2967,7 +2967,7 @@ Engines::ListOfIdentifiers* GEOM_Gen_i::importData(
   aFile.write(aBuffer, aFileStream->length());
   aFile.close();
 
-  GEOM::ListOfGO_var aObjects = aInsOp->ImportFile(aFullPath.c_str(), "XAO");
+  GEOM::ListOfGBO_var aObjects = aInsOp->ImportFile(aFullPath.c_str(), "XAO");
 
   if ( aObjects->length() > 0 && aInsOp->IsDone() ) {
     aResult->length(aObjects->length());

@@ -1715,15 +1715,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportFile (const char* theFileName,
   beginService( " GEOM_Superv_i::ImportFile" );
   MESSAGE("GEOM_Superv_i::ImportFile");
   getInsOp();
-  GEOM::ListOfGO* aSeq = myInsOp->ImportFile(theFileName, theFormatName);
-  GEOM::GEOM_Object_ptr anObj;
+  GEOM::ListOfGBO_var aSeq = myInsOp->ImportFile(theFileName, theFormatName);
+  GEOM::GEOM_Object_var anObj;
   
   if (aSeq->length() > 0) {
-    anObj = aSeq->operator[](0);
+    anObj = GEOM::GEOM_Object::_narrow(aSeq[0]);
   }
 
   endService( " GEOM_Superv_i::ImportFile" );
-  return anObj;
+  return anObj._retn();
 }
 
 //============================= TransformOperations ===========================
