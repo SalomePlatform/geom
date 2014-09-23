@@ -50,8 +50,13 @@ ENDIF()
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
   ${CAS_DEFINITIONS}
+  ${OMNIORB_DEFINITIONS}
   )
-  
+    
+IF(WIN32)
+  ADD_DEFINITIONS(-DNOGDI)
+ENDIF(WIN32)
+
 IF(SALOME_BUILD_GUI)
 ADD_DEFINITIONS(
   ${QT_DEFINITIONS}
@@ -61,6 +66,7 @@ ENDIF()
 # libraries to link to
 SET(_link_engine_LIBRARIES
   ${CAS_TKSTEP}
+  ${CAS_TKSTEPBase}
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_OpUtil}
   SalomeIDLGEOM

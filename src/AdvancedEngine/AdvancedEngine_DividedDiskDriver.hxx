@@ -23,8 +23,6 @@
 #ifndef _AdvancedEngine_DividedDiskDriver_HXX
 #define _AdvancedEngine_DividedDiskDriver_HXX
 
-#include "AdvancedEngine.hxx"
-
 #include "GEOM_BaseDriver.hxx"
 
 #include <TFunction_Driver.hxx>
@@ -37,7 +35,7 @@ class gp_Ax3;
 
 DEFINE_STANDARD_HANDLE( AdvancedEngine_DividedDiskDriver, GEOM_BaseDriver );
 
-class ADVANCEDENGINE_EXPORT AdvancedEngine_DividedDiskDriver : public GEOM_BaseDriver
+class AdvancedEngine_DividedDiskDriver : public GEOM_BaseDriver
 {
 public:
  // Methods PUBLIC

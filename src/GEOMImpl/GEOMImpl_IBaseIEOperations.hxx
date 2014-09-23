@@ -37,7 +37,7 @@ public:
   Standard_EXPORT ~GEOMImpl_IBaseIEOperations();
   
 protected:
-  void MakeMaterialGroups(const Handle(GEOM_Object)                  &theObject,
+  Standard_EXPORT void MakeMaterialGroups(const Handle(GEOM_Object)                  &theObject,
                           const Handle(TColStd_HSequenceOfTransient) &theSeq);
 
   Handle(GEOM_Object) MakeGroup

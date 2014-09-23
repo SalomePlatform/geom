@@ -20,9 +20,6 @@
 #ifndef _BREPPlugin_ImportDriver_HXX
 #define _BREPPlugin_ImportDriver_HXX
 
-// internal includes
-#include "BREPPlugin_Engine.hxx"
-
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
@@ -31,7 +28,7 @@
 
 DEFINE_STANDARD_HANDLE( BREPPlugin_ImportDriver, GEOM_BaseDriver );
 
-class BREPPLUGINENGINE_EXPORT BREPPlugin_ImportDriver : public GEOM_BaseDriver
+class BREPPlugin_ImportDriver : public GEOM_BaseDriver
 {
 public:
   BREPPlugin_ImportDriver();

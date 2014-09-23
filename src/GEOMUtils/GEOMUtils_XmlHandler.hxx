@@ -17,10 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <libxml/parser.h>
-
 #ifndef _GEOMUtils_XmlHandler_HXX_
 #define _GEOMUtils_XmlHandler_HXX_
+
+#include <Standard_Macro.hxx>
 
 #include <string>
 #include <list>
@@ -28,7 +28,7 @@
 namespace GEOMUtils
 {
   //! Plugin action data
-  struct ActionData
+  struct Standard_EXPORT ActionData
   {
     std::string label;       //!< unique ID
     std::string icon;        //!< icon
@@ -39,7 +39,7 @@ namespace GEOMUtils
   };
   
   //! Plugin data
-  struct PluginData
+  struct Standard_EXPORT PluginData
   {
     std::string name;              //!< plugin name
     std::string serverLib;         //!< engine library
@@ -50,7 +50,7 @@ namespace GEOMUtils
   //! Plugins information
   typedef std::list<PluginData> PluginInfo;
 
-  PluginInfo ReadPluginInfo();
+  Standard_EXPORT PluginInfo ReadPluginInfo();
 }
 
 #endif // _GEOMUtils_XmlHandler_HXX_

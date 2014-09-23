@@ -21,7 +21,7 @@
 #define _BREPPLUGIN_ENGINE_HXX_
 
 #ifdef WIN32
- #if defined BREPPLUGINENGINE_EXPORTS || defined BREPPLUGINENGINE_EXPORTS
+ #if defined BREPPluginEngine_EXPORTS
    #define BREPPLUGINENGINE_EXPORT __declspec( dllexport )
  #else
    #define BREPPLUGINENGINE_EXPORT __declspec( dllimport )

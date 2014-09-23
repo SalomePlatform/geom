@@ -20,9 +20,6 @@
 #ifndef _IGESPlugin_ImportDriver_HXX
 #define _IGESPlugin_ImportDriver_HXX
 
-// internal includes
-#include "IGESPlugin_Engine.hxx"
-
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
@@ -31,7 +28,7 @@
 
 DEFINE_STANDARD_HANDLE( IGESPlugin_ImportDriver, GEOM_BaseDriver );
 
-class IGESPLUGINENGINE_EXPORT IGESPlugin_ImportDriver : public GEOM_BaseDriver
+class IGESPlugin_ImportDriver : public GEOM_BaseDriver
 {
 public:
   IGESPlugin_ImportDriver();

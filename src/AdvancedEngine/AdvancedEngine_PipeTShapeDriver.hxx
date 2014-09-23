@@ -20,8 +20,6 @@
 #ifndef _AdvancedEngine_PipeTShapeDriver_HXX
 #define _AdvancedEngine_PipeTShapeDriver_HXX
 
-#include "AdvancedEngine.hxx"
-
 #include "GEOM_BaseDriver.hxx"
 #include "GEOMAlgo_State.hxx"
 
@@ -32,7 +30,7 @@
 
 DEFINE_STANDARD_HANDLE( AdvancedEngine_PipeTShapeDriver, GEOM_BaseDriver );
 
-class ADVANCEDENGINE_EXPORT AdvancedEngine_PipeTShapeDriver : public GEOM_BaseDriver
+class AdvancedEngine_PipeTShapeDriver : public GEOM_BaseDriver
 {
 public:
  // Methods PUBLIC

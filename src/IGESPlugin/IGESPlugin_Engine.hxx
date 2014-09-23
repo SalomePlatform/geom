@@ -21,7 +21,7 @@
 #define _GEOM_IGESPLUGIN_ENGINE_HXX_
 
 #ifdef WIN32
- #if defined IGESPLUGINENGINE_EXPORTS || defined IGESPLUGINENGINE_EXPORTS
+ #if defined IGESPluginEngine_EXPORTS
    #define IGESPLUGINENGINE_EXPORT __declspec( dllexport )
  #else
    #define IGESPLUGINENGINE_EXPORT __declspec( dllimport )

@@ -20,9 +20,6 @@
 #ifndef _STLPlugin_ImportDriver_HXX
 #define _STLPlugin_ImportDriver_HXX
 
-// internal includes
-#include "STLPlugin_Engine.hxx"
-
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
@@ -31,7 +28,7 @@
 
 DEFINE_STANDARD_HANDLE( STLPlugin_ImportDriver, GEOM_BaseDriver );
 
-class STLPLUGINENGINE_EXPORT STLPlugin_ImportDriver : public GEOM_BaseDriver
+class STLPlugin_ImportDriver : public GEOM_BaseDriver
 {
 public:
   STLPlugin_ImportDriver();

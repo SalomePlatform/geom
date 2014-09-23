@@ -20,8 +20,6 @@
 #ifndef _AdvancedEngine_SmoothingSurfaceDriver_HXX
 #define _AdvancedEngine_SmoothingSurfaceDriver_HXX
 
-#include "AdvancedEngine.hxx"
-
 #include "GEOM_BaseDriver.hxx"
 
 #include <TFunction_Logbook.hxx>
@@ -30,7 +28,7 @@
 
 DEFINE_STANDARD_HANDLE( AdvancedEngine_SmoothingSurfaceDriver, GEOM_BaseDriver );
 
-class ADVANCEDENGINE_EXPORT AdvancedEngine_SmoothingSurfaceDriver : public GEOM_BaseDriver
+class AdvancedEngine_SmoothingSurfaceDriver : public GEOM_BaseDriver
 {
 public:
  // Methods PUBLIC

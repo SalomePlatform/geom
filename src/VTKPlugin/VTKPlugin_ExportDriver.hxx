@@ -20,9 +20,6 @@
 #ifndef _VTKPlugin_ExportDriver_HXX
 #define _VTKPlugin_ExportDriver_HXX
 
-// internal includes
-#include "VTKPlugin_Engine.hxx"
-
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
@@ -31,7 +28,7 @@
 
 DEFINE_STANDARD_HANDLE( VTKPlugin_ExportDriver, GEOM_BaseDriver );
 
-class VTKPLUGINENGINE_EXPORT VTKPlugin_ExportDriver : public GEOM_BaseDriver
+class VTKPlugin_ExportDriver : public GEOM_BaseDriver
 {
 public:
   VTKPlugin_ExportDriver();

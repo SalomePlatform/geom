@@ -23,15 +23,12 @@
 #ifndef _XAOPlugin_Driver_HXX
 #define _XAOPlugin_Driver_HXX
 
-// internal includes
-#include "XAOPlugin_Engine.hxx"
-
 // OCCT includes
 #include <TFunction_Driver.hxx>
 
 DEFINE_STANDARD_HANDLE(XAOPlugin_Driver, TFunction_Driver);
 
-class XAOPLUGINENGINE_EXPORT XAOPlugin_Driver: public TFunction_Driver
+class XAOPlugin_Driver: public TFunction_Driver
 {
 public:
   XAOPlugin_Driver();

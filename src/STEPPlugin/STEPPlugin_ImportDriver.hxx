@@ -20,9 +20,6 @@
 #ifndef _STEPPlugin_ImportDriver_HXX
 #define _STEPPlugin_ImportDriver_HXX
 
-// internal includes
-#include "STEPPlugin_Engine.hxx"
-
 // GEOM includes
 #include "GEOM_BaseDriver.hxx"
 
@@ -31,7 +28,7 @@
 
 DEFINE_STANDARD_HANDLE( STEPPlugin_ImportDriver, GEOM_BaseDriver );
 
-class STEPPLUGINENGINE_EXPORT STEPPlugin_ImportDriver : public GEOM_BaseDriver
+class STEPPlugin_ImportDriver : public GEOM_BaseDriver
 {
 public:
   STEPPlugin_ImportDriver();

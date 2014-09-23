@@ -53,12 +53,12 @@ class GEOMImpl_IECallBack
 				      const TCollection_AsciiString& theFormatName,
 				      const TCollection_AsciiString& theParameterName );
 
-  static void Register( const TCollection_AsciiString& theFormatName, GEOMImpl_IECallBack* theCallBack );
+  Standard_EXPORT static void Register( const TCollection_AsciiString& theFormatName, GEOMImpl_IECallBack* theCallBack );
 
   static GEOMImpl_IECallBack* GetCallBack( const TCollection_AsciiString& theFormatName );
 
 protected:
-  GEOMImpl_Gen* GetEngine();
+  Standard_EXPORT GEOMImpl_Gen* GetEngine();
 
 private:
   static std::map<TCollection_AsciiString, GEOMImpl_IECallBack*> myCallBacks;
