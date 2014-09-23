@@ -230,7 +230,7 @@ namespace GEOMUtils
 	} // end root node
 	
 	xmlFreeDoc(doc);
-	xmlCleanupParser();
+	//xmlCleanupParser();//vsr: xmlCleanupParser should not be called from the application
       } // end xml doc
     }
 #ifdef MYDEBUG

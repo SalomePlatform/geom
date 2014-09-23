@@ -310,7 +310,7 @@ namespace {
     parseXaoNode(doc, root, xaoObject);
 
     xmlFreeDoc(doc);       // free document
-    xmlCleanupParser();    // free globals
+    //xmlCleanupParser();    // free globals //vsr: xmlCleanupParser should not be called from the application
   }
 
   void parseXaoNode(xmlDocPtr doc, xmlNodePtr xaoNode, Xao* xaoObject)
