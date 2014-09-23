@@ -22,6 +22,12 @@
 #include <libxml/parser.h>
 #include <algorithm>
 
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
 //#define MYDEBUG
 
 namespace
