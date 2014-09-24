@@ -49,12 +49,8 @@
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 // OCC includes
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
 #include <TColStd_HArray1OfReal.hxx>
-#else
-#include <TDataStd_HArray1OfByte.hxx>
-#endif
 #include <TDataStd_Integer.hxx>
 
 

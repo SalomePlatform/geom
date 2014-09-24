@@ -45,11 +45,7 @@ class GEOMImpl_IShapesOperations;
 class GEOMImpl_IGroupOperations;
 class GEOMImpl_IFieldOperations;
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 class Handle_TColStd_HArray1OfByte;
-#else
-class Handle_TDataStd_HArray1OfByte;
-#endif
 
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:
@@ -76,18 +72,10 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
   Standard_EXPORT int LoadTexture(const TCollection_AsciiString& theTextureFile);
   
   Standard_EXPORT int AddTexture(int theWidth, int theHeight,
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
                                  const Handle(TColStd_HArray1OfByte)& theTexture);
-#else
-                                 const Handle(TDataStd_HArray1OfByte)& theTexture);
-#endif
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   Standard_EXPORT Handle(TColStd_HArray1OfByte) GetTexture(int theTextureId,
-#else
-  Standard_EXPORT Handle(TDataStd_HArray1OfByte) GetTexture(int theTextureId,
-#endif
-							    int& theWidth, int& theHeight);
+							                               int& theWidth, int& theHeight);
 
   Standard_EXPORT std::list<int> GetAllTextures();
 

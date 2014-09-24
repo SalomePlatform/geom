@@ -28,9 +28,7 @@
 
 #include <Basics_OCCTVersion.hxx>
 
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
 #include <Precision.hxx>
-#endif
 
 #include <gp_Pnt.hxx>
 
@@ -393,11 +391,7 @@ void GEOMAlgo_FinderShapeOn::MakeArgument1()
   //
   // Argument 1
   if (!myIsAnalytic) {
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
     aMF.Init(mySurface, Standard_True, Precision::Confusion());
-#else
-    aMF.Init(mySurface, Standard_True);
-#endif
 
     aFErr=aMF.Error();
     if (aFErr!=BRepLib_FaceDone) {

@@ -1149,9 +1149,7 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
   Handle(GEOM_Object) Te3;
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     Handle(GEOM_Object) Vector_Z = myBasicOperations->MakeVectorDXDYDZ(0, 0, 1);
     Vector_Z->GetLastFunction()->SetDescription("");
 
@@ -1989,9 +1987,7 @@ Handle(TColStd_HSequenceOfTransient)
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2153,9 +2149,7 @@ AdvancedEngine_IOperations::MakePipeTShapeWithPosition
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2317,9 +2311,7 @@ AdvancedEngine_IOperations::MakePipeTShapeChamfer
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2403,9 +2395,7 @@ AdvancedEngine_IOperations::MakePipeTShapeChamfer
   // Add thickness reduction elements
   // at the three extremities: Left, Right and Incident
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (isTRL || isTRR || isTRI) {
       TopoDS_Shape aResShape =
         MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
@@ -2556,9 +2546,7 @@ AdvancedEngine_IOperations::MakePipeTShapeChamferWithPosition
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2640,9 +2628,7 @@ AdvancedEngine_IOperations::MakePipeTShapeChamferWithPosition
   // Add thickness reduction elements
   // at the three extremities: Left, Right and Incident
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (isTRL || isTRR || isTRI) {
       TopoDS_Shape aResShape =
         MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
@@ -2785,9 +2771,7 @@ AdvancedEngine_IOperations::MakePipeTShapeFillet
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -2885,9 +2869,7 @@ AdvancedEngine_IOperations::MakePipeTShapeFillet
   // Add thickness reduction elements
   // at the three extremities: Left, Right and Incident
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (isTRL || isTRR || isTRI) {
       TopoDS_Shape aResShape =
         MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
@@ -3035,9 +3017,7 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
 
   //Compute the resulting value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("TShape driver failed");
       return NULL;
@@ -3134,9 +3114,7 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
   // Add thickness reduction elements
   // at the three extremities: Left, Right and Incident
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (isTRL || isTRR || isTRI) {
       TopoDS_Shape aResShape =
         MakePipeTShapeThicknessReduction(aShape->GetValue(), theR1, theW1, theL1, theR2, theW2, theL2,
@@ -3267,9 +3245,7 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDisk (double theR, do
 
   //Compute the resulting value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("DividedDisk driver failed");
       return NULL;
@@ -3344,9 +3320,7 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDiskPntVecR (Handle(G
 
   //Compute the resulting value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("DividedDisk driver failed");
       return NULL;
@@ -3472,9 +3446,7 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeSmoothingSurface (std::list<
 
   //Compute the resulting value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("SmoothingSurface driver failed");
       return NULL;

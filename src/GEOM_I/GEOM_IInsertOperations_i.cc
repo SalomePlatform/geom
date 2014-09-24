@@ -39,11 +39,7 @@
 
 #include <TColStd_HSequenceOfAsciiString.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
-#else
-#include <TDataStd_HArray1OfByte.hxx>
-#endif
 
 //=============================================================================
 /*!
@@ -211,18 +207,10 @@ CORBA::Long GEOM_IInsertOperations_i::AddTexture(CORBA::Long theWidth, CORBA::Lo
 {
   GetOperations()->SetNotDone();
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   Handle(TColStd_HArray1OfByte) aTexture;
-#else
-  Handle(TDataStd_HArray1OfByte) aTexture;
-#endif
 
   if ( theTexture.length() > 0 ) {
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
     aTexture = new TColStd_HArray1OfByte (1, theTexture.length());
-#else
-    aTexture = new TDataStd_HArray1OfByte (1, theTexture.length());
-#endif
 
     for ( int i = 0; i < theTexture.length(); i++ )
       aTexture->SetValue( i+1, (Standard_Byte)theTexture[i] );
@@ -240,11 +228,7 @@ SALOMEDS::TMPFile* GEOM_IInsertOperations_i::GetTexture(CORBA::Long theID,
                                                         CORBA::Long& theHeight)
 {
   int aWidth, aHeight;
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   Handle(TColStd_HArray1OfByte) aTextureImpl =
-#else
-  Handle(TDataStd_HArray1OfByte) aTextureImpl =
-#endif
     GetOperations()->GetTexture(theID, aWidth, aHeight);
   theWidth  = aWidth;
   theHeight = aHeight;

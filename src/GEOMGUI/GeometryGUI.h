@@ -47,11 +47,7 @@
 // OCCT Includes
 #include <gp_Ax3.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
-#else
-#include <Graphic3d_HArray1OfBytes.hxx>
-#endif
 
 // IDL headers
 #include "SALOMEconfig.h"
@@ -88,11 +84,7 @@ public:
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   static Handle(TColStd_HArray1OfByte) getTexture (SalomeApp_Study*, int, int&, int&);
-#else
-  static Handle(Graphic3d_HArray1OfBytes) getTexture (SalomeApp_Study*, int, int&, int&);
-#endif
 
   static bool                 InitGeomGen();
 
@@ -208,11 +200,7 @@ public:
 
 private:  
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   typedef QMap<long, Handle(TColStd_HArray1OfByte)> TextureMap;
-#else
-  typedef QMap<long, Handle(Graphic3d_HArray1OfBytes)> TextureMap;
-#endif
 
   typedef QMap<long, TextureMap> StudyTextureMap;
   typedef QMap<QString, GEOMGUI*> GUIMap;

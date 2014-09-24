@@ -235,9 +235,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
 
   //Compute the Circle value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -295,9 +293,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleCenter2Pnt (Handle(GEO
 
   //Compute the Circle value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -360,9 +356,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 
   //Compute the Circle value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -435,9 +429,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
 
   //Compute the Ellipse value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Ellipse driver failed");
       return NULL;
@@ -502,9 +494,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
 
   //Compute the Arc value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Arc driver failed");
       return NULL;
@@ -563,12 +553,10 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Objec
 
   //Compute the Arc value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
-  SetErrorCode("Arc driver failed");
-  return NULL;
+      SetErrorCode("Arc driver failed");
+      return NULL;
     }
   }
   catch (Standard_Failure) {
@@ -622,9 +610,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Ob
 
   //Compute the Arc value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Arc driver failed");
       return NULL;
@@ -686,9 +672,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (std::list<Handle(G
 
   //Compute the Polyline value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Polyline driver failed");
       return NULL;
@@ -757,9 +741,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
 
   //Compute the Spline value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -829,9 +811,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 
   //Compute the Spline value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -908,9 +888,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolWithTangents
 
   //Compute the Spline value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -1159,9 +1137,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
   //Compute the Curve value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Curve driver failed !!!");
       return NULL;
@@ -1228,9 +1204,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
 
   //Compute the Sketcher value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sketcher driver failed");
       return NULL;
@@ -1292,9 +1266,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
 
   //Compute the Sketcher value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sketcher driver failed");
       return NULL;
@@ -1343,9 +1315,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcherCommand (const cha
 
   //Compute the 3D Sketcher value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("3D Sketcher driver failed");
       return NULL;
@@ -1403,9 +1373,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (std::list<double
 
   //Compute the Sketcher value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("3D Sketcher driver failed");
       return NULL;
@@ -1478,9 +1446,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeIsoline
 
   //Compute the isoline curve
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;

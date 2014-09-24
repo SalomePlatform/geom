@@ -89,9 +89,7 @@ void VTKPlugin_IOperations::ExportVTK( const Handle(GEOM_Object)      theOrigina
 
   //Perform the Export
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if( !GetSolver()->ComputeFunction( aFunction ) ) {
       SetErrorCode( "Not enough space on disk, or you haven't permissions to write this directory" );
       return;

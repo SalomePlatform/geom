@@ -340,11 +340,7 @@ void GEOMToolsGUI_MarkerDlg::addTexture( int id, bool select ) const
   if ( id > 0 && myCustomTypeCombo->index( id ) == -1 ) {
     int tWidth, tHeight;
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
     Handle(TColStd_HArray1OfByte) texture = GeometryGUI::getTexture(getStudy(), id, tWidth, tHeight);
-#else
-    Handle(Graphic3d_HArray1OfBytes) texture = GeometryGUI::getTexture(getStudy(), id, tWidth, tHeight);
-#endif
 
     if ( !texture.IsNull() && texture->Length() == tWidth*tHeight/8 ) {
       QImage image( tWidth, tHeight, QImage::Format_Mono );

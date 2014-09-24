@@ -116,9 +116,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
 
   //Compute the Fillet value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -177,9 +175,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
 
   //Compute the Fillet value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -247,9 +243,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
 
   //Compute the Fillet value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -317,9 +311,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
 
   //Compute the Fillet value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -387,9 +379,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
 
   //Compute the Fillet value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Fillet driver failed");
       return NULL;
@@ -456,9 +446,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet2D
 
   //Compute the Fillet value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("2D Fillet driver failed");
       return NULL;
@@ -527,9 +515,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet1D
 
   //Compute the Fillet value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("1D Fillet driver failed");
       return NULL;
@@ -588,9 +574,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferAll (Handle(GEOM_Objec
 
   //Compute the Chamfer value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -645,9 +629,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdge
 
   //Compute the Chamfer value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -703,9 +685,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgeAD
 
   //Compute the Chamfer value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -766,9 +746,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
 
   //Compute the Chamfer value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -837,9 +815,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
 
   //Compute the Chamfer value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -909,9 +885,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
 
   //Compute the Chamfer value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -981,9 +955,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
 
   //Compute the Chamfer value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Chamfer driver failed");
       return NULL;
@@ -1045,9 +1017,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeArchimede (Handle(GEOM_Object
 
   //Compute the Archimede value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Archimede driver failed");
       return NULL;

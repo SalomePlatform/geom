@@ -219,11 +219,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
        App.SurfUMults(), App.SurfVMults(), App.UDegree(), App.VDegree());
 
     if (GBS.IsNull()) return 0;
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
     aShape = BRepBuilderAPI_MakeFace(GBS, Precision::Confusion());
-#else
-    aShape = BRepBuilderAPI_MakeFace(GBS);
-#endif
   }
   else {
     // implemented by skl 20.03.2008 for bug 16568
@@ -287,11 +283,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     }
     GeomAPI_PointsToBSplineSurface PTB (Points, mindeg, maxdeg, GeomAbs_C2, tol3d);
     Handle(Geom_BSplineSurface) BS = PTB.Surface();
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
     BRepBuilderAPI_MakeFace BB (BS, Precision::Confusion());
-#else
-    BRepBuilderAPI_MakeFace BB (BS);
-#endif
     TopoDS_Face NewF = BB.Face();
     Handle(ShapeFix_Face) sff = new ShapeFix_Face (NewF);
     sff->Perform();

@@ -90,9 +90,7 @@ void BREPPlugin_IOperations::ExportBREP( const Handle(GEOM_Object)      theOrigi
 
   //Perform the Export
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if( !GetSolver()->ComputeFunction( aFunction ) ) {
       SetErrorCode( "Not enough space on disk, or you haven't permissions to write this directory" );
       return;
@@ -144,9 +142,7 @@ BREPPlugin_IOperations::ImportBREP( const TCollection_AsciiString& theFileName )
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if( !GetSolver()->ComputeFunction( aFunction ) ) {
       SetErrorCode( "Import driver failed" );
       return NULL;

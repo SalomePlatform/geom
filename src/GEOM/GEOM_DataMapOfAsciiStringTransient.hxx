@@ -103,10 +103,8 @@ Standard_EXPORT   Handle_Standard_Transient& ChangeFind(const TCollection_AsciiS
   return ChangeFind(K);
 }
 
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
-  Standard_EXPORT Standard_Address Find1 (const TCollection_AsciiString& K) const;
-  Standard_EXPORT Standard_Address ChangeFind1 (const TCollection_AsciiString& K);
-#endif
+Standard_EXPORT Standard_Address Find1 (const TCollection_AsciiString& K) const;
+Standard_EXPORT Standard_Address ChangeFind1 (const TCollection_AsciiString& K);
 
 private: 
  // Methods PRIVATE

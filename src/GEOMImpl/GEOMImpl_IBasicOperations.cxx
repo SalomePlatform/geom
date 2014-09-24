@@ -106,9 +106,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointXYZ
 
   //Compute the point value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Point driver failed");
       return NULL;
@@ -161,9 +159,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointWithReference
 
   //Compute the point value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Point driver failed");
       return NULL;
@@ -264,9 +260,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
   
   //Compute the point value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Point driver failed");
       return NULL;
@@ -422,9 +416,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnLinesIntersection
 
   //Compute the point value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Point driver failed");
       return NULL;
@@ -475,9 +467,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentOnCurve
 
   //Compute the vector value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -526,9 +516,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorDXDYDZ
 
   //Compute the Vector value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -581,9 +569,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeVectorTwoPnt
 
   //Compute the Vector value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -637,9 +623,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLine
 
   //Compute the Line value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Line driver failed");
       return NULL;
@@ -692,9 +676,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoPnt
 
   //Compute the Line value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Line driver failed");
       return NULL;
@@ -747,9 +729,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeLineTwoFaces
 
   //Compute the Line value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Line driver failed");
       return NULL;
@@ -806,9 +786,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneThreePnt
 
   //Compute the Plane value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;
@@ -863,9 +841,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlanePntVec
 
   //Compute the Plane value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;
@@ -917,9 +893,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneFace
 
   //Compute the Plane value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;
@@ -974,9 +948,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlane2Vec
 
   //Compute the Plane value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;
@@ -1028,9 +1000,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneLCS
 
   //Compute the Plane value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;
@@ -1082,9 +1052,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarker
 
   //Compute the marker value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Marker driver failed");
       return NULL;
@@ -1136,9 +1104,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarkerFromShape
 
   //Compute the marker value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Marker driver failed");
       return NULL;
@@ -1193,9 +1159,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarkerPntTwoVec
 
   //Compute the marker value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Marker driver failed");
       return NULL;
@@ -1252,9 +1216,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentPlaneOnFace(const Hand
 
   //Compute the Plane value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Plane driver failed");
       return NULL;

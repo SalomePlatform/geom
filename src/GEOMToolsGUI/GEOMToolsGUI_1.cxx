@@ -95,12 +95,7 @@
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <AIS_ListOfInteractive.hxx>
 
-
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
-#else
-#include <Graphic3d_HArray1OfBytes.hxx>
-#endif
 
 // QT Includes
 #include <QAction>

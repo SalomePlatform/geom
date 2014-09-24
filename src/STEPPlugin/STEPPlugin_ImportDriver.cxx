@@ -568,9 +568,7 @@ STEPPlugin_ImportDriver::GetValue( const TCollection_AsciiString& theFileName,
   Interface_Static::SetIVal( "read.step.nonmanifold", 1 );
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     IFSelect_ReturnStatus status = aReader.ReadFile( theFileName.ToCString() );
     if (status == IFSelect_RetDone) {
       TColStd_SequenceOfAsciiString anUnitLengthNames;

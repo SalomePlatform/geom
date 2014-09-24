@@ -44,11 +44,7 @@
 #include <ShapeFix_Wire.hxx>
 #include <ShapeFix_Edge.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <IntPatch_ImpImpIntersection.hxx>
-#else
-#include <IntPatch_TheIIIntOfIntersection.hxx>
-#endif
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
@@ -703,15 +699,10 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
     Handle(BRepTopAdaptor_TopolTool) aTT2 = new BRepTopAdaptor_TopolTool();
 
     try {
-#if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
-#endif
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
       IntPatch_ImpImpIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
-#else
-      IntPatch_TheIIIntOfIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
-#endif
+
       if (!anIIInt.IsDone() || anIIInt.IsEmpty())
         return false;
 
