@@ -164,7 +164,7 @@ namespace
     if ( aPixmap.IsNull() ) {
       QPixmap px(":images/default_texture.png");
       if ( !px.isNull() )
-	aPixmap = imageToPixmap( px.toImage() );
+	aPixmap = OCCViewer_Utilities::imageToPixmap( px.toImage() );
     }
     return aPixmap;
   }
@@ -198,7 +198,7 @@ namespace
     if ( anImage.isNull() )
       return NULL;
 
-    aPixmap = imageToPixmap( anImage );
+    aPixmap = OCCViewer_Utilities::imageToPixmap( anImage );
 
     aPixmapCacheMap.insert( thePath, aPixmap );
 
