@@ -2,9 +2,24 @@
 
 \page sewing_operation_page Sewing
 
+\b Sewing operation allows uniting several faces (possibly contained
+in a shell, solid or compound) into one shell while geometrically
+coincident (within a specified tolerance) edges (or parts of edges) of
+different faces are replaced by one edge thus producing a shell of
+faces with shared boundaries.<p> 
+This operation is similar to <b>New Entity - > Build - > Shell</b>
+operation, the difference is that with \b Sewing you can specify the
+tolerance and can get a non-manifold result. <p>
+Possibility to create a non-manifold shell can be used e.g. to create a
+shell forming several closed domains and then to create several solids
+with shared boundaries from this shell.
+
+\note Geometrically coincident faces (or part of faces) won't be
+replaced by one face during \b Sewing.
+
 To produce a \b Sewing operation in the <b>Main Menu</b> select <b>Repair - > Sewing</b>.
 
-The \b Result will be a \b GEOM_Object. 
+The \b Result will be a \b GEOM_Object (shell). 
 
 \image html repair6.png
 

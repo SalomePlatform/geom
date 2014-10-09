@@ -103,7 +103,7 @@ Buttons marked with small downward triangles have extended
 functionality which can be accessed by locking on them with left 
 mouse button.
 
-\image tree_tool_bar
+\image html tree_tool_bar.png
 
 <b>Dump View</b> - exports an object from the viewer in bmp, png or
 jpeg image format.

@@ -425,14 +425,33 @@ Standard_Boolean GEOMImpl_HealingDriver::RemoveHoles (GEOMImpl_IHealing* theHI,
 //function :  Sew
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing* theHI,
+Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing*  theHI,
                                               const TopoDS_Shape& theOriginalShape,
-                                              TopoDS_Shape& theOutShape,
-                                              Standard_Boolean isAllowNonManifold) const
+                                              TopoDS_Shape&       theOutShape,
+                                              Standard_Boolean    isAllowNonManifold) const
 {
   Standard_Real aTol = theHI->GetTolerance();
 
-  ShHealOper_Sewing aHealer (theOriginalShape, aTol);
+  TopoDS_Compound faceCompound;
+  BRep_Builder builder;
+  builder.MakeCompound( faceCompound );
+
+  TopExp_Explorer faceExp( theOriginalShape, TopAbs_FACE );
+  for ( ; faceExp.More(); faceExp.Next() )
+    builder.Add( faceCompound, faceExp.Current() );
+  
+  Handle(TColStd_HSequenceOfTransient) otherObjs = theHI->GetShapes();
+  for ( int ind = 1; ind <= otherObjs->Length(); ind++)
+  {
+    Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(otherObjs->Value(ind));
+    TopoDS_Shape aShape = aRefShape->GetValue();
+    if (aShape.IsNull())
+      Standard_NullObject::Raise("Null object given");
+    for ( faceExp.Init( aShape, TopAbs_FACE ); faceExp.More(); faceExp.Next() )
+      builder.Add( faceCompound, faceExp.Current() );
+  }
+
+  ShHealOper_Sewing aHealer (faceCompound, aTol);
 
   // Set non-manifold mode.
   aHealer.SetNonManifoldMode(isAllowNonManifold);
@@ -606,7 +625,7 @@ void GEOMImpl_HealingDriver::FuseCollinearEdges (const TopoDS_Shape& theOriginal
     removeAll = true;
 
   if (!removeAll) {
-    for (unsigned int ind = 1; ind <= aVerts->Length(); ind++) {
+    for ( int ind = 1; ind <= aVerts->Length(); ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aVerts->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
       if (aShape_i.IsNull())
@@ -881,7 +900,7 @@ GetCreationInformation(std::string&             theOperationName,
   case SEWING:
   case SEWING_NON_MANIFOLD:
     theOperationName = "SEWING";
-    AddParam( theParams, "Selected shape", aCI.GetOriginal() );
+    AddParam( theParams, "Selected shapes", aCI.GetOriginalAndShapes() );
     AddParam( theParams, "Allow Non Manifold", ( aType == SEWING_NON_MANIFOLD ));
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
     break;

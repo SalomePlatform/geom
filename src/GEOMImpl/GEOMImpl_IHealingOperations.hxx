@@ -70,9 +70,9 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) FillHoles( Handle(GEOM_Object) theObject,
                                  const Handle(TColStd_HArray1OfInteger)& theWires);
 
-  Standard_EXPORT Handle(GEOM_Object) Sew( Handle(GEOM_Object) theObject,
-                           double theTolerance,
-                           bool isAllowNonManifold);
+  Standard_EXPORT Handle(GEOM_Object) Sew( std::list<Handle(GEOM_Object)> & theObject,
+                                           double                           theTolerance,
+                                           bool                             isAllowNonManifold);
 
   Standard_EXPORT Handle(GEOM_Object) RemoveInternalFaces (Handle(GEOM_Object) theObject);
 
@@ -88,9 +88,9 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
   // this function does not use Function-Driver mechanism, it just computes the free
   // boundary edges and returns them in the sequence.  It is called just for information reasons
   // and it's not intended for history/undo/redo/etc..
-  Standard_EXPORT bool GetFreeBoundary ( Handle(GEOM_Object) theObject,
-                         Handle(TColStd_HSequenceOfTransient)& theOutClosedWires,
-                         Handle(TColStd_HSequenceOfTransient)& theOutOpenWires );
+  Standard_EXPORT bool GetFreeBoundary ( Handle(TColStd_HSequenceOfTransient)& theObjects,
+                                         Handle(TColStd_HSequenceOfTransient)& theOutClosedWires,
+                                         Handle(TColStd_HSequenceOfTransient)& theOutOpenWires );
 
   Standard_EXPORT Handle(GEOM_Object) ChangeOrientation( Handle(GEOM_Object) theObject);
   Standard_EXPORT Handle(GEOM_Object) ChangeOrientationCopy( Handle(GEOM_Object) theObject);

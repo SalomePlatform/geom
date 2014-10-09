@@ -248,15 +248,31 @@ Standard_Boolean ShHealOper_Sewing::getModifications(const TopoDS_Shape& theShap
 
 Standard_Boolean ShHealOper_Sewing::isSewed(const TopoDS_Shape& theShape) const
 {
-  Standard_Integer nbNewShells =0;
-  Standard_Integer nbOldShells =0;
-  TopExp_Explorer aExpShells(theShape,TopAbs_SHELL);
-  for( ; aExpShells.More(); aExpShells.Next())
-    nbNewShells++;
-  for( aExpShells.Init(myInitShape,TopAbs_SHELL); aExpShells.More(); aExpShells.Next())
-    nbOldShells++;
-  return (nbNewShells != nbOldShells);
+  // Standard_Integer nbNewShells =0;
+  // Standard_Integer nbOldShells =0;
+  // TopExp_Explorer aExpShells(theShape,TopAbs_SHELL);
+  // for( ; aExpShells.More(); aExpShells.Next())
+  //   nbNewShells++;
+  // for( aExpShells.Init(myInitShape,TopAbs_SHELL); aExpShells.More(); aExpShells.Next())
+  //   nbOldShells++;
+  // return (nbNewShells != nbOldShells);
+
+  // EAP, 22745: [EDF] Improvement of Sewing operation
+  // now myInitShape is ALWAYS a compound of faces -> no shells
+  int nbNew = 0, nbOld = 0;
+  TopExp_Explorer exp;
+  for ( exp.Init( theShape,    TopAbs_VERTEX ); exp.More(); exp.Next() ) ++nbNew;
+  for ( exp.Init( myInitShape, TopAbs_VERTEX ); exp.More(); exp.Next() ) ++nbOld;
+  if ( nbNew != nbOld )
+    return true;
+  for ( exp.Init( theShape,    TopAbs_EDGE ); exp.More(); exp.Next() ) ++nbNew;
+  for ( exp.Init( myInitShape, TopAbs_EDGE ); exp.More(); exp.Next() ) ++nbOld;
+  if ( nbNew != nbOld )
+    return true;
+
+  return false;
 }
+
 //=======================================================================
 //function : deleteFreeEdges
 //purpose  : 

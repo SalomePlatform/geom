@@ -117,7 +117,7 @@ void RepairGUI_SewingDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myObject = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
 
   //myGeomGUI->SetState( 0 );
   initSelection();
@@ -166,7 +166,7 @@ bool RepairGUI_SewingDlg::ClickOnApply()
   initName();
 
   GroupPoints->LineEdit1->setText( "" );
-  myObject = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
 
   initSelection();
 
@@ -182,17 +182,13 @@ void RepairGUI_SewingDlg::SelectionIntoArgument()
 {
   erasePreview();
   myEditCurrentArgument->setText( "" );
-  myObject = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  myObjects = getSelected( TopAbs_SHAPE, -1 );
 
-  if ( aSelList.Extent() == 1 ) {
-    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    myObject = GEOMBase::ConvertIOinGEOMObject( anIO );
-    if ( !CORBA::is_nil( myObject ) )
-      myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+  if ( !myObjects.isEmpty() ) {
+    QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
+    myEditCurrentArgument->setText( aName );
   }
 }
 
@@ -235,7 +231,7 @@ void RepairGUI_SewingDlg::ActivateThisDialog()
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   GroupPoints->LineEdit1->setText( "" );
-  myObject = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
 
   myClosed = -1;
   myOpen = -1;
@@ -273,7 +269,7 @@ bool RepairGUI_SewingDlg::isValid( QString& msg )
 {
   myClosed = -1;
   bool ok = myTolEdt->isValid( msg, !IsPreview() );
-  return !myObject->_is_nil() && ( IsPreview() || myTolEdt->value() > 0. ) && ok;
+  return !myObjects.isEmpty() && ( IsPreview() || myTolEdt->value() > 0. ) && ok;
 }
 
 //=================================================================================
@@ -285,10 +281,15 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
   bool aResult = false;
   GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
 
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( myObjects.count() );
+  for ( int i = 0; i < myObjects.count(); ++i )
+    objList[i] = myObjects[i].copy();
+
   if ( IsPreview() ) { // called from onDetect(): detect free boundary edges, highlight them (add to objects), display message dialog
     GEOM::ListOfGO_var aClosed, anOpen;
 
-    aResult = anOper->GetFreeBoundary( myObject, aClosed, anOpen );
+    aResult = anOper->GetFreeBoundary( objList, aClosed, anOpen );
 
     if ( aResult ) {
       myClosed = aClosed->length();
@@ -306,9 +307,9 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
     GEOM::GEOM_Object_var anObj;
 
     if (myAllowNonManifoldChk->isChecked()) {
-      anObj = anOper->SewAllowNonManifold( myObject, myTolEdt->value() );
+      anObj = anOper->SewAllowNonManifold( objList, myTolEdt->value() );
     } else {
-      anObj = anOper->Sew( myObject, myTolEdt->value() );
+      anObj = anOper->Sew( objList, myTolEdt->value() );
     }
 
     aResult = !anObj->_is_nil();
@@ -334,6 +335,7 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
 void RepairGUI_SewingDlg::initSelection()
 {
   TColStd_MapOfInteger aTypes;
+  aTypes.Add( GEOM_FACE );
   aTypes.Add( GEOM_SHELL );
   aTypes.Add( GEOM_SOLID );
   aTypes.Add( GEOM_COMPOUND );

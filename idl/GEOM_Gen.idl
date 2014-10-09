@@ -3680,7 +3680,7 @@ module GEOM
      *  \param theTolerance Required tolerance value.
      *  \return New GEOM_Object, containing processed shape.
      */
-    GEOM_Object Sew (in GEOM_Object theObject, in double theTolerance);
+    GEOM_Object Sew (in ListOfGO theObjects, in double theTolerance);
 
     /*!
      *  Sewing of the given object. Allows non-manifold sewing.
@@ -3688,7 +3688,7 @@ module GEOM
      *  \param theTolerance Required tolerance value.
      *  \return New GEOM_Object, containing processed shape.
      */
-    GEOM_Object SewAllowNonManifold(in GEOM_Object theObject, in double theTolerance);
+    GEOM_Object SewAllowNonManifold(in ListOfGO theObjects, in double theTolerance);
 
     /*!
      *  Rebuild the topology of theCompound of solids by removing
@@ -3725,12 +3725,12 @@ module GEOM
     /*!
      *  \brief Get a list of wires (wrapped in GEOM_Object-s),
      *  that constitute a free boundary of the given shape.
-     *  \param theObject Shape to get free boundary of.
+     *  \param theObject Shapes to get free boundary of.
      *  \param theClosedWires Output. Closed wires on the free boundary of the given shape.
      *  \param theOpenWires Output. Open wires on the free boundary of the given shape.
      *  \return FALSE, if an error(s) occured during the method execution.
      */
-    boolean GetFreeBoundary (in GEOM_Object theObject,
+    boolean GetFreeBoundary (in ListOfGO theObjects,
                              out ListOfGO theClosedWires,
                              out ListOfGO theOpenWires);
 

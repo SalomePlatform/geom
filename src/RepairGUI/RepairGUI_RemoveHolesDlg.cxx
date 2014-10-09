@@ -330,8 +330,11 @@ bool RepairGUI_RemoveHolesDlg::execute (ObjectList& objects)
     // highlight them (add to objects), display message dialog
     GEOM::ListOfGO_var aClosed, anOpen;
 
+    GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+    objList->length(1);
+    objList[0] = myObject;
     GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
-    aResult = anOper->GetFreeBoundary(myObject, aClosed, anOpen);
+    aResult = anOper->GetFreeBoundary(objList, aClosed, anOpen);
 
     if (aResult) {
       myClosed = aClosed->length();

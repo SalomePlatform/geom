@@ -69,10 +69,10 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
    GEOM::GEOM_Object_ptr FillHoles (GEOM::GEOM_Object_ptr theObject,
                                     const GEOM::short_array& theWires);
 
-   GEOM::GEOM_Object_ptr Sew (GEOM::GEOM_Object_ptr theObject,
+   GEOM::GEOM_Object_ptr Sew (const GEOM::ListOfGO & theObject,
                               CORBA::Double theTolerance);
 
-   GEOM::GEOM_Object_ptr SewAllowNonManifold (GEOM::GEOM_Object_ptr theObject,
+   GEOM::GEOM_Object_ptr SewAllowNonManifold (const GEOM::ListOfGO & theObject,
                                               CORBA::Double theTolerance);
 
    GEOM::GEOM_Object_ptr RemoveInternalFaces (GEOM::GEOM_Object_ptr theCompound);
@@ -85,9 +85,9 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
    GEOM::GEOM_Object_ptr FuseCollinearEdgesWithinWire (GEOM::GEOM_Object_ptr theWire,
                                                        const GEOM::ListOfGO& theVertices);
 
-   CORBA::Boolean GetFreeBoundary(GEOM::GEOM_Object_ptr theObject,
-                                  GEOM::ListOfGO_out theClosedWires,
-                                  GEOM::ListOfGO_out theOpenWires );
+   CORBA::Boolean GetFreeBoundary(const GEOM::ListOfGO& theObjects,
+                                  GEOM::ListOfGO_out    theClosedWires,
+                                  GEOM::ListOfGO_out    theOpenWires );
 
    GEOM::GEOM_Object_ptr ChangeOrientation (GEOM::GEOM_Object_ptr theObject);
    GEOM::GEOM_Object_ptr ChangeOrientationCopy (GEOM::GEOM_Object_ptr theObject);

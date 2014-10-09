@@ -28,9 +28,7 @@
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IHealingOperations.hxx>
-
 #include <GEOM_PythonDump.hxx>
-
 #include <GEOMImpl_HealingDriver.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_IHealing.hxx>
@@ -40,22 +38,20 @@
 
 #include <Basics_OCCTVersion.hxx>
 
-#include "utilities.h"
+#include <utilities.h>
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
+#include <BRep_Builder.hxx>
 #include <ShHealOper_ShapeProcess.hxx>
-
 #include <ShapeAnalysis_FreeBounds.hxx>
-
-#include <TopoDS_Compound.hxx>
-#include <TopExp_Explorer.hxx>
-
 #include <TColStd_HArray1OfExtendedString.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TCollection_AsciiString.hxx>
-
 #include <TDF_Tool.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_SequenceOfShape.hxx>
+#include <TopoDS_Compound.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -585,27 +581,36 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
  *  Sew
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObject,
-                                                      double theTolerance,
-                                                      bool isAllowNonManifold)
+Handle(GEOM_Object)
+GEOMImpl_IHealingOperations::Sew (std::list<Handle(GEOM_Object)>& theObjects,
+                                  double                          theTolerance,
+                                  bool                            isAllowNonManifold)
 {
   // set error code, check parameters
   SetErrorCode(KO);
 
-  if (theObject.IsNull())
+  if (theObjects.empty())
     return NULL;
 
-  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
-  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
+  Handle(TColStd_HSequenceOfTransient) objects = new TColStd_HSequenceOfTransient;
+  std::list<Handle(GEOM_Object)>::iterator it = theObjects.begin();
+  for (; it != theObjects.end(); it++)
+  {
+    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
+    if (aRefSh.IsNull()) {
+      SetErrorCode("NULL argument shape");
+      return NULL;
+    }
+    objects->Append(aRefSh);
+  }
 
   // Add a new object
   Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
 
   //Add the function
   int aFunctionType = (isAllowNonManifold ? SEWING_NON_MANIFOLD : SEWING);
-
-  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), aFunctionType);
-
+  Handle(GEOM_Function) aFunction =
+    aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), aFunctionType);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -614,7 +619,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   // prepare "data container" class IHealing
   GEOMImpl_IHealing HI(aFunction);
   HI.SetTolerance( theTolerance );
-  HI.SetOriginal( aLastFunction );
+  HI.SetOriginal( theObjects.front()->GetLastFunction() ); objects->Remove(1);
+  HI.SetShapes( objects );
 
   //Compute the result
   try {
@@ -634,7 +640,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   //Make a Python command
   GEOM::TPythonDump pd(aFunction);
   
-  pd << aNewObject << " = geompy.Sew(" << theObject << ", " << theTolerance;
+  pd << aNewObject << " = geompy.Sew(" << theObjects << ", " << theTolerance;
 
   if (isAllowNonManifold) {
     pd << ", true";
@@ -835,19 +841,40 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FuseCollinearEdgesWithinWire
  *  GetFreeBoundary
  */
 //=============================================================================
-bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject,
+bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(TColStd_HSequenceOfTransient)& theObjects,
                                                    Handle(TColStd_HSequenceOfTransient)& theClosed,
                                                    Handle(TColStd_HSequenceOfTransient)& theOpen )
 {
   // set error code, check parameters
   SetErrorCode(KO);
 
-  if ( theObject.IsNull() || theClosed.IsNull() || theOpen.IsNull() )
+  if ( theObjects.IsNull() || theObjects->Length() == 0 ||
+       theClosed.IsNull()  || theOpen.IsNull() )
     return false;
 
-  TopoDS_Shape aShape = theObject->GetValue();
-  if ( aShape.IsNull() )
-    return false;
+  TopoDS_Shape aShape;
+  TopTools_SequenceOfShape shapes;
+  for ( int ind = 1; ind <= theObjects->Length(); ind++)
+  {
+    Handle(GEOM_Object) aRefShape = Handle(GEOM_Object)::DownCast( theObjects->Value(ind));
+    if ( aRefShape.IsNull() )
+      return false;
+    aShape = aRefShape->GetValue();
+    if ( aShape.IsNull() )
+      return false;
+    shapes.Append( aShape );
+  }
+
+  if ( shapes.Length() > 1 )
+  {
+    TopoDS_Compound compound;
+    BRep_Builder builder;
+    builder.MakeCompound( compound );
+    for ( int i = 1; i <= shapes.Length(); ++i )
+      builder.Add( compound, shapes( i ) );
+
+    aShape = compound;
+  }
 
   // get free boundary shapes
 
@@ -906,7 +933,7 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
       pd << "empty_list";
     }
 
-    pd << ") = geompy.GetFreeBoundary(" << theObject << ")";
+    pd << ") = geompy.GetFreeBoundary(" << theObjects << ")";
   }
 
   SetErrorCode(OK);

@@ -140,6 +140,23 @@ namespace GEOM
     }
     return *this;
   }
+  Standard_EXPORT TPythonDump&
+  TPythonDump::operator<< (const std::list<Handle(GEOM_Object)>& theObjects)
+  {
+    Standard_Integer aLength = theObjects.size();
+    if ( aLength > 1 ) {
+      myStream << "[";
+    }
+    std::list<Handle(GEOM_Object)>::const_iterator obj = theObjects.begin();
+    for ( Standard_Integer i = 1; i <= aLength; i++, ++obj ) {
+      *this << *obj;
+      if ( i < aLength ) myStream << ", ";
+    }
+    if ( aLength > 1 ) {
+      myStream << "]";
+    }
+    return *this;
+  }
 
   TPythonDump& TPythonDump::operator<< (const GEOM_BaseObject* theObject)
   {

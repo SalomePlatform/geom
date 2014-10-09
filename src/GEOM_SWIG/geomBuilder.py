@@ -517,6 +517,14 @@ def EnumToLong(theItem):
     if hasattr(theItem, "_v"): ret = theItem._v
     return ret
 
+## Pack an argument into a list
+def ToList( arg ):
+    if isinstance( arg, list ):
+        return arg
+    if hasattr( arg, "__getitem__" ):
+        return list( arg )
+    return [ arg ]
+
 ## Information about closed/unclosed state of shell or wire
 #  @ingroup l1_geomBuilder_auxiliary
 class info:
@@ -4537,7 +4545,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created shell.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.ShapesOp.MakeShell(theFacesAndShells)
+            anObj = self.ShapesOp.MakeShell( ToList( theFacesAndShells ))
             RaiseIfFailed("MakeShell", self.ShapesOp)
             self._autoPublish(anObj, theName, "shell")
             return anObj
@@ -6317,7 +6325,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "suppressFaces")
             return anObj
 
-        ## Sewing of some shapes into single shape.
+        ## Sewing of faces into a single shell.
         #  @param ListShape Shapes to be processed.
         #  @param theTolerance Required tolerance value.
         #  @param AllowNonManifold Flag that allows non-manifold sewing.
@@ -6325,12 +6333,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing processed shape.
+        #  @return New GEOM.GEOM_Object, containing a result shell.
         #
         #  @ref tui_sewing "Example"
         def MakeSewing(self, ListShape, theTolerance, AllowNonManifold=False, theName=None):
             """
-            Sewing of some shapes into single shape.
+            Sewing of faces into a single shell.
 
             Parameters:
                 ListShape Shapes to be processed.
@@ -6341,30 +6349,29 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing processed shape.
+                New GEOM.GEOM_Object, containing containing a result shell.
             """
             # Example: see GEOM_TestHealing.py
-            comp = self.MakeCompound(ListShape)
             # note: auto-publishing is done in self.Sew()
-            anObj = self.Sew(comp, theTolerance, AllowNonManifold, theName)
+            anObj = self.Sew(ListShape, theTolerance, AllowNonManifold, theName)
             return anObj
 
-        ## Sewing of the given object.
-        #  @param theObject Shape to be processed.
+        ## Sewing of faces into a single shell.
+        #  @param ListShape Shapes to be processed.
         #  @param theTolerance Required tolerance value.
         #  @param AllowNonManifold Flag that allows non-manifold sewing.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing processed shape.
+        #  @return New GEOM.GEOM_Object, containing a result shell.
         @ManageTransactions("HealOp")
-        def Sew(self, theObject, theTolerance, AllowNonManifold=False, theName=None):
+        def Sew(self, ListShape, theTolerance, AllowNonManifold=False, theName=None):
             """
-            Sewing of the given object.
+            Sewing of faces into a single shell.
 
             Parameters:
-                theObject Shape to be processed.
+                ListShape Shapes to be processed.
                 theTolerance Required tolerance value.
                 AllowNonManifold Flag that allows non-manifold sewing.
                 theName Object name; when specified, this parameter is used
@@ -6372,17 +6379,18 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing processed shape.
+                New GEOM.GEOM_Object, containing a result shell.
             """
             # Example: see MakeSewing() above
             theTolerance,Parameters = ParseParameters(theTolerance)
             if AllowNonManifold:
-                anObj = self.HealOp.SewAllowNonManifold(theObject, theTolerance)
+                anObj = self.HealOp.SewAllowNonManifold( ToList( ListShape ), theTolerance)
             else:
-                anObj = self.HealOp.Sew(theObject, theTolerance)
+                anObj = self.HealOp.Sew( ToList( ListShape ), theTolerance)
             # To avoid script failure in case of good argument shape
+            # (Fix of test cases geom/bugs11/L7,L8)
             if self.HealOp.GetErrorCode() == "ShHealOper_NotError_msg":
-                return theObject
+                return anObj
             RaiseIfFailed("Sew", self.HealOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "sewed")
@@ -6707,7 +6715,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                  theOpenWires: Open wires on the free boundary of the given shape.
             """
             # Example: see GEOM_TestHealing.py
-            anObj = self.HealOp.GetFreeBoundary(theObject)
+            anObj = self.HealOp.GetFreeBoundary( ToList( theObject ))
             RaiseIfFailed("GetFreeBoundary", self.HealOp)
             self._autoPublish(anObj[1], theName, "closedWire")
             self._autoPublish(anObj[2], theName, "openWire")

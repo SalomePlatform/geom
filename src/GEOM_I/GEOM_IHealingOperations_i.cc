@@ -316,8 +316,8 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::FillHoles (GEOM::GEOM_Object_pt
  *  Sew
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theObject,
-                                                      CORBA::Double theTolerance)
+GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (const GEOM::ListOfGO& theObjects,
+                                                      CORBA::Double         theTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -328,14 +328,18 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theO
   if (theTolerance < 0)
     return aGEOMObject._retn();
 
-  // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
-  if (anObject.IsNull())
-    return aGEOMObject._retn();
+  //Get the shapes
+  std::list<Handle(GEOM_Object)> objects;
+  const int aLen = theObjects.length();
+  for ( int ind = 0; ind < aLen; ind++)
+  {
+    Handle(GEOM_Object) aSh = GetObjectImpl(theObjects[ind]);
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    objects.push_back(aSh);
+  }
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
-    GetOperations()->Sew( anObject, theTolerance, false );
+  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( objects, theTolerance, false );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -347,8 +351,9 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theO
  *  SewAllowNonManifold
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::SewAllowNonManifold (GEOM::GEOM_Object_ptr theObject,
-                                                                      CORBA::Double theTolerance)
+GEOM::GEOM_Object_ptr
+GEOM_IHealingOperations_i::SewAllowNonManifold (const GEOM::ListOfGO& theObjects,
+                                                CORBA::Double         theTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -359,14 +364,18 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::SewAllowNonManifold (GEOM::GEOM
   if (theTolerance < 0)
     return aGEOMObject._retn();
 
-  // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
-  if (anObject.IsNull())
-    return aGEOMObject._retn();
+  //Get the shapes
+  std::list<Handle(GEOM_Object)> objects;
+  const int aLen = theObjects.length();
+  for ( int ind = 0; ind < aLen; ind++)
+  {
+    Handle(GEOM_Object) aSh = GetObjectImpl(theObjects[ind]);
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    objects.push_back(aSh);
+  }
 
   // Perform
-  Handle(GEOM_Object) aNewObject =
-    GetOperations()->Sew( anObject, theTolerance, true );
+  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( objects, theTolerance, true );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -473,9 +482,10 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::FuseCollinearEdgesWithinWire
  *  GetFreeBoundary
  */
 //=============================================================================
-CORBA::Boolean GEOM_IHealingOperations_i::GetFreeBoundary ( GEOM::GEOM_Object_ptr theObject,
-                                                            GEOM::ListOfGO_out theClosedWires,
-                                                            GEOM::ListOfGO_out theOpenWires )
+CORBA::Boolean
+GEOM_IHealingOperations_i::GetFreeBoundary ( const GEOM::ListOfGO & theObjects,
+                                             GEOM::ListOfGO_out     theClosedWires,
+                                             GEOM::ListOfGO_out     theOpenWires )
 {
   theClosedWires = new GEOM::ListOfGO;
   theOpenWires = new GEOM::ListOfGO;
@@ -483,14 +493,19 @@ CORBA::Boolean GEOM_IHealingOperations_i::GetFreeBoundary ( GEOM::GEOM_Object_pt
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Get the object itself
-  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
-  if (anObject.IsNull())
-    return false;
+  // Get the objects
+  Handle(TColStd_HSequenceOfTransient) anObjects = new TColStd_HSequenceOfTransient();
+  for ( size_t i = 0; i < theObjects.length(); ++i )
+  {
+    Handle(GEOM_Object) anObject = GetObjectImpl(theObjects[i]);
+    if (anObject.IsNull())
+      return false;
+    anObjects->Append( anObject );
+  }
 
   Handle(TColStd_HSequenceOfTransient) aClosed = new TColStd_HSequenceOfTransient();
   Handle(TColStd_HSequenceOfTransient) anOpen  = new TColStd_HSequenceOfTransient();
-  bool res = GetOperations()->GetFreeBoundary( anObject, aClosed, anOpen );
+  bool res = GetOperations()->GetFreeBoundary( anObjects, aClosed, anOpen );
 
   if ( !GetOperations()->IsDone() || !res )
     return false;
