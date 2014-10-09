@@ -121,13 +121,9 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
   myGrp->LineEdit1->setReadOnly( true );
 
   myGrp->TextEdit1->setReadOnly( true );
-  // fix height to fit all text
-  myGrp->TextEdit1->setLineWrapMode( QTextEdit::NoWrap );
-  // myGrp->TextEdit1->setTextFormat( Qt::PlainText ); // VSR : TODO
-  QString allLines ("\n\n\n\n\n\n\n\n\n"); // 10 lines
-  myGrp->TextEdit1->setText( allLines );
-  int sbHeight = myGrp->TextEdit1->horizontalScrollBar()->height();
-  myGrp->TextEdit1->setFixedHeight( myGrp->TextEdit1->document()->size().height() + sbHeight );
+  myGrp->TextEdit1->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+  QFontMetrics fm( myGrp->TextEdit1->font() );
+  myGrp->TextEdit1->setMinimumHeight( fm.height()*20 );
 
   myGrp->TextLabel2->setText( tr( "GEOM_KIND_OF_SHAPE" ) );
   myGrp->LineEdit2->setReadOnly( true );

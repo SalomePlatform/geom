@@ -2,8 +2,11 @@
 
 \page whatis_page What Is ?
 
-This operation provides the list of types and quantities of all topological entities, composing
-the selected geometrical object.
+This operation provides the list of types and quantities of all topological
+entities, composing the selected geometrical object.
+
+For the COMPOUND or COMPSOLID shape, additionally the information about
+"flat" content is shown - a number of "simple" top-level shapes enclosed into the compound.
 
 \image html measures8.png
 
