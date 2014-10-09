@@ -27,11 +27,9 @@
 #ifndef REPAIRGUI_FREEFACESDLG_H
 #define REPAIRGUI_FREEFACESDLG_H
 
-#include <QDialog>
-#include <GEOMBase_Helper.h>
+#include <GEOMBase_Skeleton.h>
 
 class GEOM_Displayer;
-class QPushButton;
 class QLineEdit;
 class GeometryGUI;
 
@@ -39,8 +37,7 @@ class GeometryGUI;
 // class    : RepairGUI_FreeFacesDlg
 // purpose  :
 //=================================================================================
-class RepairGUI_FreeFacesDlg : public QDialog,
-                               public GEOMBase_Helper
+class RepairGUI_FreeFacesDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
@@ -53,30 +50,24 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  
+  virtual GEOM::GEOM_Object_ptr      getFather (GEOM::GEOM_Object_ptr);
+
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-  void                               closeEvent( QCloseEvent* );
-  void                               keyPressEvent( QKeyEvent* );
   void                               activateSelection();
   GEOM_Displayer*                    getDisplayer();
 
 private slots:
-  void                               onClose();
-  void                               onHelp(); 
-  void                               onDeactivate();
-  void                               onActivate();
-  void                               onSelectionDone();
-  void                               onSetEditCurrentArgument();
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               SelectionIntoArgument();
+  void                               ActivateThisDialog();
 
 private:
   GEOM_Displayer*                    myDisplayer;
   GEOM::GEOM_Object_var              myObj;
-  QPushButton*                       mySelBtn;
   QLineEdit*                         myEdit;
-  GeometryGUI*                       myGeomGUI;
-  QString                            myHelpFileName;
 };
 
 #endif // REPAIRGUI_FREEFACESDLG_H

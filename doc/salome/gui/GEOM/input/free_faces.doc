@@ -8,6 +8,8 @@ A free face is a face, which is not shared between several sub-shapes of the sha
 
 \image html repair10.png
 
+Press \b Apply or <b>Apply and Close</b> button to publish the corresponding faces in the study. 
+
 <b>TUI Command:</b> <em>GetFreeFacesIDs(Shape),</em> where \em Shape is
 a shape to be checked.
 
