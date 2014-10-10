@@ -113,7 +113,7 @@ MeasureGUI_AngleDlg::MeasureGUI_AngleDlg (GeometryGUI* GUI, QWidget* parent)
   /***************************************************************/
 
   // Help page reference
-  myHelpFileName = "using_measurement_tools_page.html#angle_anchor";
+  myHelpFileName = "angle_page.html";
 
   // Initialisation
   Init();

@@ -87,7 +87,7 @@ MeasureGUI_InertiaDlg::MeasureGUI_InertiaDlg( GeometryGUI* GUI, QWidget* parent 
   
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#inertia_anchor";
+  myHelpFileName = "inertia_page.html";
 
   /* Initialisation */
   Init();

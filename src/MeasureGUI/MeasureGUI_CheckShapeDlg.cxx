@@ -97,7 +97,7 @@ MeasureGUI_CheckShapeDlg::MeasureGUI_CheckShapeDlg( GeometryGUI* GUI, QWidget* p
 
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#check_anchor";
+  myHelpFileName = "check_shape_page.html";
 
   /* Initialisation */
   Init();

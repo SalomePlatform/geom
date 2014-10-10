@@ -80,7 +80,7 @@ MeasureGUI_PointDlg::MeasureGUI_PointDlg( GeometryGUI* GUI, QWidget* parent )
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( myGrp );
 
-  myHelpFileName = "using_measurement_tools_page.html#point_coord_anchor";
+  myHelpFileName = "point_coordinates_page.html";
 
   Init();
 }

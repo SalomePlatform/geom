@@ -77,7 +77,7 @@ MeasureGUI_MaxToleranceDlg::MeasureGUI_MaxToleranceDlg( GeometryGUI* GUI, QWidge
   
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#tolerance_anchor";
+  myHelpFileName = "tolerance_page.html";
   
   /* Initialisation */
   Init();
