@@ -1501,6 +1501,7 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::PrintShapeErrors
 //=============================================================================
 bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
                          (Handle(GEOM_Object)                 theShape,
+                          const SICheckLevel                  theCheckLevel,
                           Handle(TColStd_HSequenceOfInteger)& theIntersections)
 {
   SetErrorCode(KO);
@@ -1534,6 +1535,7 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   //
   BOPAlgo_CheckerSI aCSI; // checker of self-interferences
   aCSI.SetArguments(aLCS);
+  aCSI.SetLevelOfCheck(theCheckLevel);
 
   // 1. Launch the checker
   aCSI.Perform();

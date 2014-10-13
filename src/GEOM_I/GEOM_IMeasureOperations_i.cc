@@ -706,6 +706,7 @@ char* GEOM_IMeasureOperations_i::PrintShapeErrors
  */
 //=============================================================================
 CORBA::Boolean GEOM_IMeasureOperations_i::CheckSelfIntersections (GEOM::GEOM_Object_ptr theShape,
+                                                                  CORBA::Long           theCheckLevel,
                                                                   GEOM::ListOfLong_out  theIntersections)
 {
   // Set a not done flag
@@ -720,10 +721,35 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckSelfIntersections (GEOM::GEOM_Obj
   Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
 
   if (!aShape.IsNull()) {
+    GEOMImpl_IMeasureOperations::SICheckLevel aCheckLevel;
+
+    switch(theCheckLevel) {
+    case GEOM::SI_V_V:
+      aCheckLevel = GEOMImpl_IMeasureOperations::SI_V_V;
+      break;
+    case GEOM::SI_V_E:
+      aCheckLevel = GEOMImpl_IMeasureOperations::SI_V_E;
+      break;
+    case GEOM::SI_E_E:
+      aCheckLevel = GEOMImpl_IMeasureOperations::SI_E_E;
+      break;
+    case GEOM::SI_V_F:
+      aCheckLevel = GEOMImpl_IMeasureOperations::SI_V_F;
+      break;
+    case GEOM::SI_E_F:
+      aCheckLevel = GEOMImpl_IMeasureOperations::SI_E_F;
+      break;
+    case GEOM::SI_ALL:
+    default:
+      aCheckLevel = GEOMImpl_IMeasureOperations::SI_ALL;
+      break;
+    }
+
     Handle(TColStd_HSequenceOfInteger) anIntegers = new TColStd_HSequenceOfInteger;
 
     // Detect self-intersections
-    isGood = GetOperations()->CheckSelfIntersections(aShape, anIntegers);
+    isGood = GetOperations()->CheckSelfIntersections
+      (aShape, aCheckLevel, anIntegers);
 
     int nbInts = anIntegers->Length();
 

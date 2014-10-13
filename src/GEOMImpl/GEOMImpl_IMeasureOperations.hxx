@@ -85,6 +85,20 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
     SK_ADVANCED,     // all advanced shapes (temporary implementation)
   };
 
+  /**
+   * This enumeration represents the level of checking shape on
+   * self-interference. It defines which interferferences will be checked.
+   */
+  enum SICheckLevel
+  {
+    SI_V_V = 0, // only V/V interferences
+    SI_V_E,     // V/V and V/E interferences
+    SI_E_E,     // V/V, V/E and E/E interferences
+    SI_V_F,     // V/V, V/E, E/E and V/F interferences
+    SI_E_F,     // V/V, V/E, E/E, V/F and E/F interferences
+    SI_ALL      // all interferences
+  };
+
   Standard_EXPORT ShapeKind KindOfShape (Handle(GEOM_Object) theShape,
                                          Handle(TColStd_HSequenceOfInteger)& theIntegers,
                                          Handle(TColStd_HSequenceOfReal)&    theDoubles);
@@ -141,6 +155,7 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                    const std::list<ShapeError> &theErrors);
 
   Standard_EXPORT bool CheckSelfIntersections (Handle(GEOM_Object) theShape,
+                                               const SICheckLevel  theCheckLevel,
                                                Handle(TColStd_HSequenceOfInteger)& theIntersections);
 
   Standard_EXPORT TCollection_AsciiString IsGoodForSolid (Handle(GEOM_Object) theShape);

@@ -8,9 +8,16 @@ This operation checks the topology of the selected shape to detect self-intersec
 
 In this dialog:
 
-- \b Object - the checked object. \b Selection button allows picking it in the viewer or in the object browser. 
-- \b Errors list contains the list of intersections. Select the intersection to show <b>Incriminated Sub-shapes</b> in the field to the right. 
-
+- \b Object - the checked object. \b Selection button allows picking it in the viewer or in the object browser.
+- <b>Level of check</b> - The combo box that allows to set the level of checking shape on self-interference.
+  It defines which interferferences will be checked. Default value is "All interferences".
+- <b>Compute self-intersections</b> button computes self-interferences.
+- \b Summary section contains the general report if the object has self-intersections and/or if errors are occured during computation.
+- \b Self-intersections list contains the list of self-intersections detected.
+Select the intersection to show <b>Sub-shapes</b> in the field to the right. 
+- \b Apply and <b>Apply and Close</b> buttons are used to store selected self-intersected shapes in the study for further analysis.
+If no shapes are selected, but an intersection is selected the both of intersected shapes are stored. If no intersections selected
+all shapes of all intersections are stored in the study.
 
 \note This tool is useful for detection of shapes, not suitable for
 arguments of Boolean operations and Partition algorithm.
@@ -18,8 +25,10 @@ For more information about Partition and Boolean Operations Algorithms
 and their limitations refer to <a href="SALOME_BOA_PA.pdf">this document</a>.
 
 \n <b>Result:</b> Boolean.
-\n <b>TUI Command:</b> <em>geompy.CheckSelfIntersections(theShape),</em>
-where \em theShape is the shape checked for validity.
+\n <b>TUI Command:</b> <em>geompy.CheckSelfIntersections(theShape, theCheckLevel = GEOM.SI_ALL),</em> \n
+where: \n
+\em theShape is the shape checked for validity. \n
+\em theCheckLevel is the level of check. Default value is GEOM.SI_ALL to check all interferences.
 
 See also a \ref tui_check_self_intersections_page "TUI example".
 

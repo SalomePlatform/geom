@@ -97,6 +97,7 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
               const GEOM::GEOM_IMeasureOperations::ShapeErrors &theErrors);
 
   CORBA::Boolean CheckSelfIntersections (GEOM::GEOM_Object_ptr theShape,
+                                         CORBA::Long           theCheckLevel,
                                          GEOM::ListOfLong_out  theIntersections);
 
   char* IsGoodForSolid (GEOM::GEOM_Object_ptr theShape);

@@ -416,22 +416,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Detect Self-intersections</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
-        <translation>Detection of self-intersections failed</translation>
-    </message>
-    <message>
-        <source>GEOM_NO_SELF_INTERSECTIONS</source>
-        <translation>There are no self-intersections in the shape</translation>
-    </message>
-    <message>
-        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
-        <translation>Some self-intersections detected</translation>
-    </message>
-    <message>
-        <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
-        <translation>Warning: there were errors during the operation, so the list may be incomplete.</translation>
-    </message>
-    <message>
         <source>GEOM_CIRCLE</source>
         <translation>Circle</translation>
     </message>
@@ -6926,5 +6910,72 @@ Do you want to create new material?</translation>
         <source>GEOM_ISOLINE_V</source>
         <translation>V-Isoline</translation>
     </message>
+</context>
+<context>
+    <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
+    <message>
+        <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
+        <translation>Self-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_SUBSHAPES</source>
+        <translation>Sub-shapes</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_CHECK_LEVEL</source>
+        <translation>Level of check</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_SUMMARY</source>
+        <translation>Summary</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_COMPUTE</source>
+        <translation>Compute self-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTION_NAME</source>
+        <translation>Self_intersection</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SELF_INTERSECTIONS</source>
+        <translation>There are no self-intersections in the shape</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
+        <translation>Some self-intersections detected</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
+        <translation>Detection of self-intersections failed</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
+        <translation>Warning: there were errors during the operation, so the list may be incomplete.</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_V</source>
+        <translation>Vertex to Vertex</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_E</source>
+        <translation>Vertex to Edge + all above</translation>
+    </message>
+  <message>
+    <source>GEOM_CHECK_INTE_E_E</source>
+    <translation>Edge to Edge + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_V_F</source>
+    <translation>Vertex to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_E_F</source>
+    <translation>Edge to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_ALL</source>
+    <translation>All interferences</translation>
+  </message>
 </context>
 </TS>

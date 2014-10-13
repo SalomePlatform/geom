@@ -26,38 +26,70 @@
 #ifndef MEASUREGUI_CHECKSELFINTERDLG_H
 #define MEASUREGUI_CHECKSELFINTERDLG_H
 
-#include <MeasureGUI_Skeleton.h>
+#include <GEOMBase_Skeleton.h>
 
-class MeasureGUI_1Sel1TextView2ListBox;
+class QComboBox;
+class QListWidget;
+class QTextBrowser;
+
 
 //=================================================================================
 // class    : MeasureGUI_CheckSelfIntersectionsDlg
 // purpose  :
 //=================================================================================
 
-class MeasureGUI_CheckSelfIntersectionsDlg : public MeasureGUI_Skeleton
+class MeasureGUI_CheckSelfIntersectionsDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
 public:
+
   MeasureGUI_CheckSelfIntersectionsDlg(GeometryGUI*, QWidget*);
   ~MeasureGUI_CheckSelfIntersectionsDlg();
 
 protected:
-  // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
-  virtual void                        processObject();
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr  createOperation();
+  virtual bool                        isValid(QString &);
+  virtual bool                        execute(ObjectList &);
+  virtual bool                        extractPrefix() const;
+  virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
 
 private slots:
-  void                                onErrorsListSelectionChanged();
+
+  void                                onInteListSelectionChanged();
   void                                onSubShapesListSelectionChanged();
+  void                                clear();
+  void                                onCompute();
+  void                                ClickOnOk();
+  bool                                ClickOnApply();
+  void                                ActivateThisDialog();
+  void                                DeactivateActiveDialog();
+  void                                SelectionIntoArgument();
+  void                                SetEditCurrentArgument();
 
 private:
+
   void                                Init();
+  void                                activateSelection();
+  void                                enterEvent(QEvent *);
+  bool                                findSelfIntersections
+                                                    (bool    &HasSelfInte,
+                                                     QString &theErrMsg);
 
 private:
-  MeasureGUI_1Sel1TextView2ListBox*   myGrp;
 
+  QTextBrowser                       *myTextView;
+  QPushButton                        *mySelButton;
+  QLineEdit                          *myEditObjName;
+  QComboBox                          *myLevelBox;
+  QPushButton                        *myComputeButton;
+  QListWidget                        *myInteList;
+  QListWidget                        *myShapeList;
+  GEOM::GEOM_Object_var               myObj;
   GEOM::ListOfLong_var                myInters;
+  GEOM::GEOM_IShapesOperations_var    myShapesOper;
+
 };
 
 #endif // MEASUREGUI_CHECKSELFINTERDLG_H

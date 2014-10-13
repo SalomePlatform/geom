@@ -10588,22 +10588,38 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Detect self-intersections in the given shape.
         #  @param theShape Shape to check.
+        #  @param theCheckLevel is the level of self-intersection check.
+        #         Possible input values are:
+        #         - GEOM.SI_V_V(0) - only V/V interferences
+        #         - GEOM.SI_V_E(1) - V/V and V/E interferences
+        #         - GEOM.SI_E_E(2) - V/V, V/E and E/E interferences
+        #         - GEOM.SI_V_F(3) - V/V, V/E, E/E and V/F interferences
+        #         - GEOM.SI_E_F(4) - V/V, V/E, E/E, V/F and E/F interferences
+        #         - GEOM.SI_ALL(5) - all interferences.
         #  @return TRUE, if the shape contains no self-intersections.
         #
         #  @ref tui_measurement_tools_page "Example"
         @ManageTransactions("MeasuOp")
-        def CheckSelfIntersections(self, theShape):
+        def CheckSelfIntersections(self, theShape, theCheckLevel = GEOM.SI_ALL):
             """
             Detect self-intersections in the given shape.
 
             Parameters:
                 theShape Shape to check.
-
+                theCheckLevel is the level of self-intersection check.
+                  Possible input values are:
+                   - GEOM.SI_V_V(0) - only V/V interferences
+                   - GEOM.SI_V_E(1) - V/V and V/E interferences
+                   - GEOM.SI_E_E(2) - V/V, V/E and E/E interferences
+                   - GEOM.SI_V_F(3) - V/V, V/E, E/E and V/F interferences
+                   - GEOM.SI_E_F(4) - V/V, V/E, E/E, V/F and E/F interferences
+                   - GEOM.SI_ALL(5) - all interferences.
+ 
             Returns:
                 TRUE, if the shape contains no self-intersections.
             """
             # Example: see GEOM_TestMeasures.py
-            (IsValid, Pairs) = self.MeasuOp.CheckSelfIntersections(theShape)
+            (IsValid, Pairs) = self.MeasuOp.CheckSelfIntersections(theShape, EnumToLong(theCheckLevel))
             RaiseIfFailed("CheckSelfIntersections", self.MeasuOp)
             return IsValid
 

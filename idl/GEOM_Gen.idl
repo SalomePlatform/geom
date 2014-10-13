@@ -188,6 +188,20 @@ module GEOM
     FDT_String
   };
 
+  /**
+   * This enumeration represents the level of checking shape on
+   * self-interference. It defines which interferferences will be checked.
+   */
+  enum si_check_level
+  {
+    SI_V_V,     // only V/V interferences
+    SI_V_E,     // V/V and V/E interferences
+    SI_E_E,     // V/V, V/E and E/E interferences
+    SI_V_F,     // V/V, V/E, E/E and V/F interferences
+    SI_E_F,     // V/V, V/E, E/E, V/F and E/F interferences
+    SI_ALL      // all interferences
+  };
+
 
  /*!
    * \brief Object creation parameters
@@ -4148,10 +4162,12 @@ module GEOM
     /*!
      *  \brief Check a topology of the given shape on self-intersections presence.
      *  \param theShape Shape to check validity of.
+     *  \param theCheckLevel the level of self-interference check.
      *  \param theIntersections Output. List of intersected sub-shapes IDs, it contains pairs of IDs.
      *  \return TRUE, if the shape does not have any self-intersections.
      */
     boolean CheckSelfIntersections (in GEOM_Object theShape,
+                                    in long        theCheckLevel,
                                     out ListOfLong theIntersections);
 
     /*!
