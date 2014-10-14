@@ -73,9 +73,6 @@ private:
 
   void                                ResetStateOfDialog();
 
-  unsigned int                        NumberOfSubShapes (const TopoDS_Shape&,
-                                                         const int) const;
-
   void                                activateSelection();
   int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex);
   void                                updateButtonState();
@@ -86,8 +83,6 @@ private:
   TopoDS_Shape                        myShape;
   GEOM::GEOM_Object_var               myObject;
   int                                 myDmMode;
-
-  bool                                myWithShape;
 
   bool                                myIsHiddenMain;
 

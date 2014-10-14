@@ -2,49 +2,75 @@
 
 \page create_explode_page Explode
 
-\n To \b Explode an object into sub-shapes, in the <b>Main Menu</b>
-select <b>New Entity > Explode</b>.
+To \b Explode an object into sub-shapes, in the <b>Main Menu</b>
+select <b>New Entity > Explode</b>. This operation opens the
+<b>Sub Shapes Selection</b> dialog box.
 
-\n To create a list of  sub-shapes (vertices, edges, wires etc.) of the
+\image html neo-obj1.png
+
+To create a list of  sub-shapes (vertices, edges, wires etc.) of the
 given shape using the \b Explode operation, you need to define the <b>Main
 Object</b>, which will be exploded and the <b>Type of Sub-shapes</b> you wish to
 obtain from it.
-\n The \b Result of the operation will be a List of \b GEOM_Objects
+
+The \b Result of the operation will be a List of \b GEOM_Objects
 (vertexes, edges, wires, faces, shells or solids).
 
-\n Using <b>TUI Commands</b> you can perform this operation in a
+Available choices in the <b>Sub Shapes Type</b> combo box depend on the type
+of selected <b>Main Object</b>:
+- \b Compound: to extract compounds;
+- \b Compsolid: to extract compsolids;
+- \b Solid: to extract solids;
+- \b Shell: to extract shells;
+- \b Face: to extract faces;
+- \b Wire: to extract wires;
+- \b Edge: to extract edges;
+- \b Vertex: to extract vertices;
+- \b Shape: to extract top-level contents of the compound shape;
+- \b Flat: to extract "flat" contents of the compound shape.
+
+Note: "flat" contents means top-level simple-type sub-shapes extracted from
+the compound object recursively (i.e. there is no compounds in the result).
+For example, if a compound C1 contains a solid S1 and another compound C2 that
+contains solids S2 and S3 (see picture below):
+- Explode operation with \b Shape type given as parameter will return S1 and C2;
+- Explode operation with \b Flat type given as parameter will return S1, S2 and S3.
+
+\image html flat_contents.png
+
+Switching on <b>Select Sub-shapes</b> check box allows manual selection of sub-shapes
+to be extracted from the main object. In this mode the user can select sub-shapes
+directly in 3D viewer.
+
+Using <b>TUI Commands</b> you can perform this operation in a
 variety of ways:
-<ul>
-<li><em>geompy.ExtractShapes(Shape, Type, isSorted)</em> explodes a
-Shape into sub-shapes of a given Type and returns a List of sub-shapes.
-This method does not return the Shape itself if it matches the
-Type.</li>
-<li><em>geompy.SubShapeAll(Shape, Type)</em> explodes a Shape on
-sub-shapes of a given Type and returns a List of sub-shapes.</li>
-<li><em>geompy.SubShapeAllIDs(Shape, Type)</em> explodes a Shape on
-sub-shapes of a given Type and returns a List of IDs of
-sub-shapes.</li>
-<li><em>geompy.SubShapeAllSortedCentres(Shape, Type)</em> explodes a
-shape on sub-shapes of a given type and sorts them taking into account
-their gravity centers, to provide stable order of sub-shapes.
-It returns a list of sub-shapes.</li>
-<li><em>geompy.SubShapeAllSortedCentresIDs(Shape, Type)</em> explodes
-a shape on sub-shapes of a given type and sorts them taking into
-account their gravity centers, to provide stable order of sub-shapes.
-It returns a List of IDs of sub-shapes.</li>
-<li><em>geompy.SubShape(Shape, Type, ListOfInd)</em> allows to obtain
-a compound of sub-shapes of  the Shape,  selected by they indices in a
-list of all sub-shapes of the given Type. Each index is in the range
-[1, Nb_Sub-Shapes_Of_Given_Type].</li>
-<li><em>geompy.SubShapeSortedCentres(Shape, Type, ListOfInd)</em>
-allows to obtain a compound of sub-shapes of the Shape, selected by
-they indices in sorted list of all sub-shapes of the given Type. Each
-index is in the range [1, Nb_Sub-Shapes_Of_Given_Type]</li>
-</ul>
+- <em>geompy.ExtractShapes(Shape, Type, isSorted)</em> explodes a
+  Shape into sub-shapes of a given Type and returns a List of sub-shapes.
+  This method does not return the Shape itself if it matches the
+  Type.
+- <em>geompy.SubShapeAll(Shape, Type)</em> explodes a Shape on
+  sub-shapes of a given Type and returns a List of sub-shapes.
+- <em>geompy.SubShapeAllIDs(Shape, Type)</em> explodes a Shape on
+  sub-shapes of a given Type and returns a List of IDs of
+  sub-shapes.
+- <em>geompy.SubShapeAllSortedCentres(Shape, Type)</em> explodes a
+  shape on sub-shapes of a given type and sorts them taking into account
+  their gravity centers, to provide stable order of sub-shapes.
+  It returns a list of sub-shapes.
+- <em>geompy.SubShapeAllSortedCentresIDs(Shape, Type)</em> explodes
+  a shape on sub-shapes of a given type and sorts them taking into
+  account their gravity centers, to provide stable order of sub-shapes.
+  It returns a List of IDs of sub-shapes.
+- <em>geompy.SubShape(Shape, Type, ListOfInd)</em> allows to obtain
+  a compound of sub-shapes of  the Shape,  selected by they indices in a
+  list of all sub-shapes of the given Type. Each index is in the range
+  [1, Nb_Sub-Shapes_Of_Given_Type].
+- <em>geompy.SubShapeSortedCentres(Shape, Type, ListOfInd)</em>
+  allows to obtain a compound of sub-shapes of the Shape, selected by
+  they indices in sorted list of all sub-shapes of the given Type. Each
+  index is in the range [1, Nb_Sub-Shapes_Of_Given_Type]
 
-\n <b>Arguments: </b>1 SHAPE + 1 type of SubShape.
-
-\image html neo-obj1.png
+<b>Arguments: </b>1 SHAPE + 1 type of SubShape.
 
 <b>Example:</b>
 

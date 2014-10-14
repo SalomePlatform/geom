@@ -20,6 +20,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#ifndef GEOMImpl_Types_HXX
+#define GEOMImpl_Types_HXX
+
+#include <TopAbs_ShapeEnum.hxx>
 
 // GEOM_Object types
 
@@ -375,5 +379,10 @@
 #define USER_TYPE_EX 1000 // Base type for GEOM plugins
 
 
-//Plugins specified constants
+// Plugins specified constants
 #define PLUGIN_NAME "Plugin Name"
+
+// Flat type for TopAbs
+enum { TopAbs_FLAT = TopAbs_SHAPE+1 };
+
+#endif // GEOMImpl_Types_HXX

@@ -135,6 +135,63 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+namespace {
+
+  //================================================================================
+  /*!
+   * \brief Return normal to face at extrema point
+   */
+  //================================================================================
+
+  gp_Vec GetNormal (const TopoDS_Face& face, const BRepExtrema_DistShapeShape& extrema)
+  {
+    gp_Vec defaultNorm(1,0,0); // to have same normals on different faces
+    try {
+      // get UV at extrema point
+      Standard_Real u,v, f,l;
+      switch ( extrema.SupportTypeShape2(1) ) {
+      case BRepExtrema_IsInFace: {
+        extrema.ParOnFaceS2(1, u, v );
+        break;
+      }
+      case BRepExtrema_IsOnEdge: {
+        TopoDS_Edge edge = TopoDS::Edge( extrema.SupportOnShape2(1));
+        Handle(Geom2d_Curve) pcurve = BRep_Tool::CurveOnSurface( edge, face, f,l );
+        extrema.ParOnEdgeS2( 1, u );
+        gp_Pnt2d uv = pcurve->Value( u );
+        u = uv.Coord(1);
+        v = uv.Coord(2);
+        break;
+      }
+      case BRepExtrema_IsVertex: return defaultNorm;
+      }
+      // get derivatives
+      BRepAdaptor_Surface surface( face, false );
+      gp_Vec du, dv; gp_Pnt p;
+      surface.D1( u, v, p, du, dv );
+
+      return du ^ dv;
+
+    } catch (Standard_Failure ) {
+    }
+    return defaultNorm;
+  }
+
+  void AddFlatSubShapes(const TopoDS_Shape& S, TopTools_ListOfShape& L, TopTools_MapOfShape& M)
+  {
+    if (S.ShapeType() != TopAbs_COMPOUND) {
+      L.Append(S);
+    }
+    else {
+      TopoDS_Iterator It(S, Standard_True, Standard_True);
+      for (; It.More(); It.Next()) {
+	TopoDS_Shape SS = It.Value();
+	if (M.Add(SS))
+	  AddFlatSubShapes(SS, L, M);
+      }
+    }
+  }
+}
 
 //=============================================================================
 /*!
@@ -1298,17 +1355,20 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   TopTools_ListOfShape listShape;
 
   if (aShape.ShapeType() == TopAbs_COMPOUND &&
-      (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE ||
-       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPSOLID ||
-       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPOUND))
+      (theShapeType == TopAbs_SHAPE || theShapeType == TopAbs_FLAT || theShapeType == TopAbs_COMPOUND))
   {
     TopoDS_Iterator It (aShape, Standard_True, Standard_True);
     for (; It.More(); It.Next()) {
-      if (mapShape.Add(It.Value())) {
-        if (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE ||
-            TopAbs_ShapeEnum(theShapeType) == It.Value().ShapeType()) {
-          listShape.Append(It.Value());
+      TopoDS_Shape SS = It.Value();
+      if (mapShape.Add(SS)) {
+	if (theShapeType == TopAbs_FLAT) {
+          AddFlatSubShapes(SS, listShape, mapShape);
+	}
+        else if (theShapeType == TopAbs_SHAPE || theShapeType == SS.ShapeType()) {
+	  listShape.Append(SS);
         }
+        // VSR: for EXPLODE_NEW_INCLUDE_MAIN and EXPLODE_OLD_INCLUDE_MAIN:
+        // it seems it is necessary to add top-level shape if theShapeType == TopAbs_COMPOUND
       }
     }
   }
@@ -1320,7 +1380,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
         listShape.Append(exp.Current());
   }
 
-  if (listShape.IsEmpty()) {
+  if (listShape.IsEmpty()){
     //SetErrorCode("The given shape has no sub-shapes of the requested type");
     SetErrorCode(NOT_FOUND_ANY); // NPAL18017
     return aSeq;
@@ -1364,16 +1424,15 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
       // Put this subshape in the list of sub-shapes of theMainShape
       aMainShape->AddSubShapeReference(aFunction);
     }
-
     if (!anObj.IsNull()) {
-      aSeq->Append(anObj);
+          aSeq->Append(anObj);
 
-      // for python command
-      TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-      anAsciiList += anEntry;
-      anAsciiList += ",";
-    }
-  }
+          // for python command
+          TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+          anAsciiList += anEntry;
+          anAsciiList += ",";
+        }
+      }
 
   //Make a Python command
   anAsciiList.Trunc(anAsciiList.Length() - 1);
@@ -1422,16 +1481,17 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
   TopTools_ListOfShape listShape;
 
   if (aShape.ShapeType() == TopAbs_COMPOUND &&
-      (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE ||
-       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPSOLID ||
-       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPOUND))
+      (theShapeType == TopAbs_SHAPE || theShapeType == TopAbs_FLAT || theShapeType == TopAbs_COMPOUND))
   {
     TopoDS_Iterator It (aShape, Standard_True, Standard_True);
     for (; It.More(); It.Next()) {
-      if (mapShape.Add(It.Value())) {
-        if (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE ||
-            TopAbs_ShapeEnum(theShapeType) == It.Value().ShapeType()) {
-          listShape.Append(It.Value());
+      TopoDS_Shape SS = It.Value();
+      if (mapShape.Add(SS)) {
+	if (theShapeType == TopAbs_FLAT) {
+          AddFlatSubShapes(SS, listShape, mapShape);
+	}
+        else if (theShapeType == TopAbs_SHAPE || theShapeType == SS.ShapeType()) {
+          listShape.Append(SS);
         }
       }
     }
@@ -1850,33 +1910,41 @@ Standard_Integer GEOMImpl_IShapesOperations::NumberOfSubShapes
   */
 
   try {
-    OCC_CATCH_SIGNALS;
-    int iType, nbTypes [TopAbs_SHAPE];
-    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
-      nbTypes[iType] = 0;
-    nbTypes[aShape.ShapeType()]++;
-
-    TopTools_MapOfShape aMapOfShape;
-    aMapOfShape.Add(aShape);
-    TopTools_ListOfShape aListOfShape;
-    aListOfShape.Append(aShape);
-
-    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
-    for (; itL.More(); itL.Next()) {
-      TopoDS_Iterator it (itL.Value());
-      for (; it.More(); it.Next()) {
-        TopoDS_Shape s = it.Value();
-        if (aMapOfShape.Add(s)) {
-          aListOfShape.Append(s);
-          nbTypes[s.ShapeType()]++;
+    if (theShapeType == TopAbs_FLAT) {
+      TopTools_MapOfShape aMapOfShape;
+      TopTools_ListOfShape aListOfShape;
+      AddFlatSubShapes(aShape, aListOfShape, aMapOfShape);
+      nbShapes = aListOfShape.Extent();
+    }
+    else {
+      OCC_CATCH_SIGNALS;
+      int iType, nbTypes [TopAbs_SHAPE];
+      for (iType = 0; iType < TopAbs_SHAPE; ++iType)
+        nbTypes[iType] = 0;
+      nbTypes[aShape.ShapeType()]++;
+      
+      TopTools_MapOfShape aMapOfShape;
+      aMapOfShape.Add(aShape);
+      TopTools_ListOfShape aListOfShape;
+      aListOfShape.Append(aShape);
+      
+      TopTools_ListIteratorOfListOfShape itL (aListOfShape);
+      for (; itL.More(); itL.Next()) {
+        TopoDS_Iterator it (itL.Value());
+        for (; it.More(); it.Next()) {
+          TopoDS_Shape s = it.Value();
+          if (aMapOfShape.Add(s)) {
+            aListOfShape.Append(s);
+            nbTypes[s.ShapeType()]++;
+          }
         }
       }
+      
+      if (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE)
+        nbShapes = aMapOfShape.Extent();
+      else
+        nbShapes = nbTypes[theShapeType];
     }
-
-    if (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE)
-      nbShapes = aMapOfShape.Extent();
-    else
-      nbShapes = nbTypes[theShapeType];
   }
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
@@ -3848,49 +3916,6 @@ void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, 
   tab[2] = aVertex.Z();
   tab[3] = aShapeSize;
   return;
-}
-
-namespace {
-
-  //================================================================================
-  /*!
-   * \brief Return normal to face at extrema point
-   */
-  //================================================================================
-
-  gp_Vec GetNormal (const TopoDS_Face& face, const BRepExtrema_DistShapeShape& extrema)
-  {
-    gp_Vec defaultNorm(1,0,0); // to have same normals on different faces
-    try {
-      // get UV at extrema point
-      Standard_Real u,v, f,l;
-      switch ( extrema.SupportTypeShape2(1) ) {
-      case BRepExtrema_IsInFace: {
-        extrema.ParOnFaceS2(1, u, v );
-        break;
-      }
-      case BRepExtrema_IsOnEdge: {
-        TopoDS_Edge edge = TopoDS::Edge( extrema.SupportOnShape2(1));
-        Handle(Geom2d_Curve) pcurve = BRep_Tool::CurveOnSurface( edge, face, f,l );
-        extrema.ParOnEdgeS2( 1, u );
-        gp_Pnt2d uv = pcurve->Value( u );
-        u = uv.Coord(1);
-        v = uv.Coord(2);
-        break;
-      }
-      case BRepExtrema_IsVertex: return defaultNorm;
-      }
-      // get derivatives
-      BRepAdaptor_Surface surface( face, false );
-      gp_Vec du, dv; gp_Pnt p;
-      surface.D1( u, v, p, du, dv );
-
-      return du ^ dv;
-
-    } catch (Standard_Failure ) {
-    }
-    return defaultNorm;
-  }
 }
 
 //=============================================================================

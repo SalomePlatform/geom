@@ -559,7 +559,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Enumeration ShapeType as a dictionary. \n
         ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
         #  @ingroup l1_geomBuilder_auxiliary
-        ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
+        ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8, "FLAT":9}
 
         ## Kinds of shape in terms of <VAR>GEOM.GEOM_IKindOfShape.shape_kind</VAR> enumeration
         #  and a list of parameters, describing the shape.

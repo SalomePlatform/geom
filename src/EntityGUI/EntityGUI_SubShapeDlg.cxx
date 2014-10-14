@@ -55,6 +55,62 @@
 
 #include <GEOMImpl_Types.hxx>
 
+namespace
+{
+  const char* const ShapeTypes [] = {
+    "Compound",
+    "Compsolid",
+    "Solid",
+    "Shell",
+    "Face",
+    "Wire",
+    "Edge",
+    "Vertex",
+    "Shape",
+    "Flat"
+  };
+
+  unsigned int NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType, TopTools_MapOfShape& M)
+  {
+    unsigned int index = 0;
+
+    if (!S.IsNull()) {
+      if (S.ShapeType() == TopAbs_COMPOUND &&
+          (shapeType == TopAbs_SHAPE || shapeType == TopAbs_FLAT || shapeType == TopAbs_COMPOUND)) {
+        TopoDS_Iterator It(S, Standard_True, Standard_True);
+        for (; It.More(); It.Next()) {
+          TopoDS_Shape SS = It.Value();
+          if (M.Add(SS)) {
+            if (shapeType == TopAbs_FLAT) {
+              if (SS.ShapeType() != TopAbs_COMPOUND)
+                index++;
+              else
+                index += NumberOfSubShapes(SS, shapeType, M);
+            }
+            else if (shapeType == TopAbs_SHAPE || shapeType == SS.ShapeType()) {
+              index++;
+            }
+          }
+        }
+      }
+      else {
+        TopExp_Explorer Exp (S, TopAbs_ShapeEnum(shapeType));
+        for (; Exp.More(); Exp.Next()) {
+          if (M.Add(Exp.Current())) {
+            index++;
+          }
+        }
+      }
+    }
+    return index;
+  }
+  unsigned int NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType)
+  {
+    TopTools_MapOfShape M;
+    return NumberOfSubShapes(S, shapeType, M);
+  }
+}
+
 //=================================================================================
 // class    : EntityGUI_SubShapeDlg
 // purpose  : Constructs a EntityGUI_SubShapeDlg which is a child of 'parent', with the
@@ -66,7 +122,6 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidge
                                               bool modal, Qt::WindowFlags fl)
   : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
     myDmMode( -1 ),
-    myWithShape(true),
     myIsHiddenMain(false)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_SUBSHAPE")));
@@ -133,18 +188,9 @@ void EntityGUI_SubShapeDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myObject = GEOM::GEOM_Object::_nil();
 
-  myWithShape = true;
-
   /* type for sub-shape selection */
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compound");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compsolid");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Solid");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shell");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Face");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Wire");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Edge");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Vertex");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shape");
+  for ( int i = 0; i <= (int)GEOM::FLAT; i++ )
+    GroupPoints->ComboBox1->addItem(ShapeTypes[i], i);
 
   if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType()
       != OCCViewer_Viewer::Type())
@@ -172,6 +218,7 @@ void EntityGUI_SubShapeDlg::Init()
   updateButtonState();
   resize(100,100);
   SelectionIntoArgument();
+  SubShapeToggled();
 }
 
 //=================================================================================
@@ -282,6 +329,8 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
   if (!isAllSubShapes())
     return;
 
+  int currentType = GroupPoints->ComboBox1->itemData( GroupPoints->ComboBox1->currentIndex() ).toInt();
+
   ResetStateOfDialog();
 
   QString aString = ""; /* name of selection */
@@ -291,87 +340,47 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
-  if (nbSel != 1)
-    return;
-
-  Handle(SALOME_InteractiveObject) IO = aSelList.First();
-  if (!IO->hasEntry()) {
-    SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
-    updateButtonState();
-    return;
-  }
-
-  if (myIsHiddenMain) {
-    GEOM_Displayer* aDisplayer = getDisplayer();
-    aDisplayer->Display(myObject);
-    myIsHiddenMain = false;
-  }
-
-  TopoDS_Shape S = GEOMBase::GetTopoFromSelection(aSelList);
-  if (S.IsNull() || S.ShapeType() == TopAbs_VERTEX) {
-    myObject = GEOM::GEOM_Object::_nil();
-    updateButtonState();
-    return;
-  }
-
-  myObject = GEOMBase::ConvertIOinGEOMObject(IO);
-  if (myObject->_is_nil()) {
-    updateButtonState();
-    return;
-  }
-
-  myShape = S;
-  GroupPoints->LineEdit1->setText(aString);
-
-  int SelectedShapeType = GroupPoints->ComboBox1->currentIndex();
-  int count = GroupPoints->ComboBox1->count();
-
-  if (myWithShape)
-    count = count - 1;
-
-  int i = 0;
-  // Solving PAL5590
-  if (myShape.ShapeType() == TopAbs_COMPOUND) {
-    unsigned int nb = NumberOfSubShapes(myShape, TopAbs_COMPOUND);
-    if (nb > 0)
-      i++;
-  }
-  while (i <= myShape.ShapeType()) {
-    GroupPoints->ComboBox1->removeItem(0);
-    i++;
-  }
-
-  if (myShape.ShapeType() == TopAbs_COMPOUND) {
-    if (myWithShape == false) {
-      GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shape");
-      myWithShape = true;
+  if (nbSel == 1) {
+    Handle(SALOME_InteractiveObject) IO = aSelList.First();
+    if (!IO->hasEntry()) {
+      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_SHAPE_IN_STUDY"));
     }
-  }
-  else {
-    if (myWithShape == true) {
-      GroupPoints->ComboBox1->removeItem(GroupPoints->ComboBox1->count() - 1);
-      myWithShape = false;
-    }
-  }
-
-  int count1 = GroupPoints->ComboBox1->count();
-  if (myWithShape)
-    count1 = count1 - 1;
-
-  if (SelectedShapeType > myShape.ShapeType()) {
-    if (SelectedShapeType == 8) {
-      if (myShape.ShapeType() != TopAbs_COMPOUND) {
-        GroupPoints->ComboBox1->setCurrentIndex(0);
-        ComboTextChanged();
+    else {
+      TopoDS_Shape S = GEOMBase::GetTopoFromSelection(aSelList);
+      if (S.IsNull() || S.ShapeType() == TopAbs_VERTEX) {
+        myObject = GEOM::GEOM_Object::_nil();
       }
-    }
-    else
-      GroupPoints->ComboBox1->setCurrentIndex(count1 - count + SelectedShapeType);
-  }
-  else {
-    GroupPoints->ComboBox1->setCurrentIndex(0);
-    ComboTextChanged();
-  }
+      else {
+        myObject = GEOMBase::ConvertIOinGEOMObject(IO);
+        if (!CORBA::is_nil(myObject)) {
+          myShape = S;
+          GroupPoints->LineEdit1->setText(aString);
+          int i = 0;
+          // Solving PAL5590
+          if (myShape.ShapeType() == TopAbs_COMPOUND) {
+            unsigned int nb = NumberOfSubShapes(myShape, TopAbs_COMPOUND);
+            if (nb > 0)
+              i++;
+          }
+          while (i <= myShape.ShapeType()) {
+            GroupPoints->ComboBox1->removeItem(0);
+            i++;
+          }
+          // remove Shape and Flat types for non-compound shapes
+          if (myShape.ShapeType() != TopAbs_COMPOUND) {
+            int idx = GroupPoints->ComboBox1->findData( (int)GEOM::SHAPE );
+            if ( idx != -1 ) GroupPoints->ComboBox1->removeItem( idx );
+            idx = GroupPoints->ComboBox1->findData( (int)GEOM::FLAT );
+            if ( idx != -1 ) GroupPoints->ComboBox1->removeItem( idx );
+          } // if (myShape.ShapeType() != TopAbs_COMPOUND)
+        } // if (!CORBA::is_nil(myObject))
+      } // if (S.IsNull() || S.ShapeType() == TopAbs_VERTEX)
+    } // if (!IO->hasEntry()) ... else
+  } // if (nbSel == 1)
+
+  int idx = GroupPoints->ComboBox1->findData( currentType );
+  if ( idx != -1 )
+    GroupPoints->ComboBox1->setCurrentIndex( idx );
 
   updateButtonState();
 }
@@ -420,29 +429,10 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
   myShape.Nullify();
   myEditCurrentArgument->setText("");
 
-  int SelectedShapeType = GroupPoints->ComboBox1->currentIndex();
-  int count = GroupPoints->ComboBox1->count();
-  if (myWithShape)
-    count = count - 1;
-
   /* type for sub-shape selection */
   GroupPoints->ComboBox1->clear();
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compound");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compsolid");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Solid");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shell");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Face");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Wire");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Edge");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Vertex");
-  GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Shape");
-
-  myWithShape = true;
-
-  GroupPoints->ComboBox1->setCurrentIndex(8 - count + SelectedShapeType);
-
-  // to avoid recursion: SelectionIntoArgument->ResetStateOfDialog->ComboTextChanged->SubShapeToggled->activateSelection->(currentSelectionChanged)->SelectionIntoArgument
-  //ComboTextChanged();
+  for ( int i = 0; i <= (int)GEOM::FLAT; i++ )
+    GroupPoints->ComboBox1->addItem(ShapeTypes[i], i);
 
   updateButtonState();
 }
@@ -473,58 +463,22 @@ void EntityGUI_SubShapeDlg::ComboTextChanged()
 }
 
 //=================================================================================
-// function : NumberOfSubShapes()
-// purpose  :
-//=================================================================================
-unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes(const TopoDS_Shape& S,
-                                                      const int shapeType) const
-{
-  if (S.IsNull())
-    return 0;
-
-  unsigned int index = 0;
-  TopTools_MapOfShape M;
-
-  if (S.ShapeType() == TopAbs_COMPOUND &&
-       (TopAbs_ShapeEnum(shapeType) == TopAbs_SHAPE ||
-         TopAbs_ShapeEnum(shapeType) == TopAbs_COMPSOLID ||
-         TopAbs_ShapeEnum(shapeType) == TopAbs_COMPOUND)) {
-    TopoDS_Iterator It(S, Standard_True, Standard_True);
-    for (; It.More(); It.Next()) {
-      if (M.Add(It.Value())) {
-        if (TopAbs_ShapeEnum(shapeType) == TopAbs_SHAPE ||
-             TopAbs_ShapeEnum(shapeType) == It.Value().ShapeType()) {
-          index++;
-        }
-      }
-    }
-  }
-  else {
-    TopExp_Explorer Exp (S, TopAbs_ShapeEnum(shapeType));
-    for (; Exp.More(); Exp.Next()) {
-      if (M.Add(Exp.Current())) {
-        index++;
-      }
-    }
-  }
-
-  M.Clear();
-  return index;
-}
-
-//=================================================================================
 // function : updateButtonState
 // purpose  :
 //=================================================================================
 void EntityGUI_SubShapeDlg::updateButtonState()
 {
-  if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() != OCCViewer_Viewer::Type() ||
-      myObject->_is_nil() || shapeType() == TopAbs_SHAPE || shapeType() == TopAbs_COMPOUND) {
-    GroupPoints->CheckButton1->setChecked(false);
-    GroupPoints->CheckButton1->setEnabled(false);
+  bool viewOk = SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() == OCCViewer_Viewer::Type();
+  bool shapeTypeOk = shapeType() != TopAbs_SHAPE && shapeType() != TopAbs_FLAT && shapeType() != TopAbs_COMPOUND;
+  bool objectOK = !CORBA::is_nil( myObject );
+
+  if ( viewOk && objectOK && shapeTypeOk ) {
+    GroupPoints->CheckButton1->setEnabled( true );
   }
-  else
-    GroupPoints->CheckButton1->setEnabled(true);
+  else {
+    GroupPoints->CheckButton1->setChecked( false );
+    GroupPoints->CheckButton1->setEnabled( false );
+  }
 }
 
 //=================================================================================
@@ -533,7 +487,7 @@ void EntityGUI_SubShapeDlg::updateButtonState()
 //=================================================================================
 bool EntityGUI_SubShapeDlg::isAllSubShapes() const
 {
-  return !GroupPoints->CheckButton1->isChecked() || !GroupPoints->CheckButton1->isEnabled();
+  return !GroupPoints->CheckButton1->isEnabled() || !GroupPoints->CheckButton1->isChecked();
 }
 
 //=================================================================================
@@ -542,19 +496,7 @@ bool EntityGUI_SubShapeDlg::isAllSubShapes() const
 //=================================================================================
 int EntityGUI_SubShapeDlg::shapeType() const
 {
-  int type = GroupPoints->ComboBox1->currentIndex();
-
-  if (myObject->_is_nil())
-    return type;
-
-  // Solving PAL5590
-  type += myShape.ShapeType() + 1;
-  if (myShape.ShapeType() == TopAbs_COMPOUND &&
-      NumberOfSubShapes(myShape, TopAbs_COMPOUND) > 0) {
-    type--;
-  }
-
-  return type;
+  return GroupPoints->ComboBox1->itemData(GroupPoints->ComboBox1->currentIndex()).toInt();
 }
 
 //=================================================================================

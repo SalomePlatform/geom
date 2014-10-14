@@ -39,7 +39,7 @@ module GEOM
    */
   enum shape_type 
   { 
-    /*!  */
+    /*! A collection of arbitrary shapes */
     COMPOUND,
     /*! A collection of solids */ 
     COMPSOLID, 
@@ -47,16 +47,19 @@ module GEOM
     SOLID, 
     /*! A collection of faces connected by some edges of their wire boundaries */
     SHELL,
-    /*! Part of a plane (in 2D geometry) or a surface (in 3D geometry) bounded by a close wire */
+    /*! Part of a plane (in 2D geometry) or a surface (in 3D geometry) bounded by a closed wire */
     FACE, 
-    /*!  A sequence of edges connected by their vertices */
+    /*! A sequence of edges connected by their vertices */
     WIRE, 
     /*! Edge, a shape corresponding to a curve, and bound by a vertex at each extremity */
     EDGE, 
     /*! A zero-dimensional shape corresponding to a point in geometry */
     VERTEX,
-    /*!  */ 
-    SHAPE };
+    /*! Arbitrary shape in a Compound (used for processing of Compounds in some operations) */ 
+    SHAPE,
+    /*! Flat (top-level) contents of a Compound (used for processing of Compounds in some operations) */
+    FLAT
+    };
 
   /*!
    * \brief Marker type
