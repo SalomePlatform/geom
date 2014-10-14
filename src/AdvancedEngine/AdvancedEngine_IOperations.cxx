@@ -154,9 +154,9 @@ AdvancedEngine_IOperations::~AdvancedEngine_IOperations()
  */
 //=============================================================================
 gp_Trsf AdvancedEngine_IOperations::GetPositionTrsf(double theL1, double theL2,
-						    Handle(GEOM_Object) theP1,
-						    Handle(GEOM_Object) theP2,
-						    Handle(GEOM_Object) theP3)
+                                                    Handle(GEOM_Object) theP1,
+                                                    Handle(GEOM_Object) theP2,
+                                                    Handle(GEOM_Object) theP3)
 {
   // Old Local Coordinates System oldLCS
   gp_Pnt P0(0, 0, 0);
@@ -195,10 +195,10 @@ gp_Trsf AdvancedEngine_IOperations::GetPositionTrsf(double theL1, double theL2,
  */
 //=============================================================================
 bool AdvancedEngine_IOperations::CheckCompatiblePosition(double& theL1, double& theL2,
-							 Handle(GEOM_Object) theP1,
-							 Handle(GEOM_Object) theP2,
-							 Handle(GEOM_Object) theP3,
-							 double theTolerance)
+                                                         Handle(GEOM_Object) theP1,
+                                                         Handle(GEOM_Object) theP2,
+                                                         Handle(GEOM_Object) theP3,
+                                                         double theTolerance)
 {
   SetErrorCode(KO);
   gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(theP1->GetValue()));
@@ -266,11 +266,11 @@ bool AdvancedEngine_IOperations::CheckCompatiblePosition(double& theL1, double& 
  */
 //=============================================================================
 bool AdvancedEngine_IOperations::MakeGroups(Handle(GEOM_Object) theShape, int shapeType,
-					    double theR1, double theW1, double theL1,
-					    double theR2, double theW2, double theL2,
-					    double theH, double theW, double theRF,
-					    Handle(TColStd_HSequenceOfTransient) theSeq,
-					    gp_Trsf aTrsf)
+                                            double theR1, double theW1, double theL1,
+                                            double theR2, double theW2, double theL2,
+                                            double theH, double theW, double theRF,
+                                            Handle(TColStd_HSequenceOfTransient) theSeq,
+                                            gp_Trsf aTrsf)
 {
   SetErrorCode(KO);
 
@@ -1132,10 +1132,10 @@ bool AdvancedEngine_IOperations::MakeInternalGroup
 }
 
 bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) theShape,
-							 double theR1, double theW1, double theL1,
-							 double theR2, double theW2, double theL2,
-							 double theH, double theW,
-							 double theRF, bool isNormal)
+                                                         double theR1, double theW1, double theL1,
+                                                         double theR2, double theW2, double theL2,
+                                                         double theH, double theW,
+                                                         double theRF, bool isNormal)
 {
   SetErrorCode(KO);
 
@@ -1203,12 +1203,12 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
       if (Abs(aP.X()) <= Precision::Confusion()) {
         if (Abs(aP.Y()) < d1min) {
           vi1 = v;
-	  d1min = Abs(aP.Y());
-	}
+          d1min = Abs(aP.Y());
+        }
       } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-	if (Abs(aP.X()) < d2min) {
-	  vi2 = v;
-	  d2min = Abs(aP.X());
+        if (Abs(aP.X()) < d2min) {
+          vi2 = v;
+          d2min = Abs(aP.X());
         }
       }
     }
@@ -1249,14 +1249,14 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
         if (Abs(aP.X()) <= Precision::Confusion()) {
           if (Abs(aP.Y()) > d1max) {
             ve1 = v;
-	    vertex1 = aVertex;
-	    d1max = Abs(aP.Y());
+            vertex1 = aVertex;
+            d1max = Abs(aP.Y());
           }
         } else if (Abs(aP.Y()) <= Precision::Confusion()) {
           if (Abs(aP.X()) > d2max) {
             ve2 = v;
-	    vertex2 = aVertex;
-	    d2max = Abs(aP.X());
+            vertex2 = aVertex;
+            d2max = Abs(aP.X());
           }
         }
       }
@@ -1281,12 +1281,12 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
       for (int i=1; i<=edges_e->Length();i++) {
         Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
         anObj->GetLastFunction()->SetDescription("");
-	TopoDS_Edge anEdge = TopoDS::Edge(anObj->GetValue());
-	if ( !anEdge.IsNull() && 
-	     (sae.FirstVertex(anEdge).IsSame(vertex1) || sae.LastVertex(anEdge).IsSame(vertex1)) && 
-	     (sae.FirstVertex(anEdge).IsSame(vertex2) || sae.LastVertex(anEdge).IsSame(vertex2))) {
-	  arete_intersect_ext = anObj;
-	}
+        TopoDS_Edge anEdge = TopoDS::Edge(anObj->GetValue());
+        if ( !anEdge.IsNull() && 
+             (sae.FirstVertex(anEdge).IsSame(vertex1) || sae.LastVertex(anEdge).IsSame(vertex1)) && 
+             (sae.FirstVertex(anEdge).IsSame(vertex2) || sae.LastVertex(anEdge).IsSame(vertex2))) {
+          arete_intersect_ext = anObj;
+        }
       }
 
       edge_e1 = myBasicOperations->MakeLineTwoPnt(ve1, vi1);
@@ -1614,8 +1614,8 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
 
 // Mirror and glue faces
 bool AdvancedEngine_IOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object) theShape,
-							     double theR1, double theW1, double theL1,
-							     double theR2, double theW2, double theL2)
+                                                             double theR1, double theW1, double theL1,
+                                                             double theR2, double theW2, double theL2)
 {
   SetErrorCode(KO);
 
@@ -1669,7 +1669,8 @@ bool AdvancedEngine_IOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object)
   TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
   TNaming_CopyShape::CopyTool(Te7->GetValue(), aMapTShapes, aShapeCopy);
 
-  Handle(GEOM_Object) Te8 = myShapesOperations->MakeGlueFaces(Te7, 1e-7, true);
+  std::list<Handle(GEOM_Object)> Te7list( 1, Te7 );
+  Handle(GEOM_Object) Te8 = myShapesOperations->MakeGlueFaces(Te7list, 1e-7, true);
   if (Te8.IsNull()) {
     SetErrorCode("Impossible to glue faces of TShape");
     return false;
@@ -1694,7 +1695,7 @@ bool AdvancedEngine_IOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object)
 
     // Perform gluing
     Te7->GetLastFunction()->SetValue(aShapeCopy);
-    Te8 = myShapesOperations->MakeGlueFaces(Te7, aTolMax, true);
+    Te8 = myShapesOperations->MakeGlueFaces(Te7list, aTolMax, true);
 
     if (Te8.IsNull()) {
       SetErrorCode("Impossible to glue faces of TShape");
@@ -1845,10 +1846,10 @@ TopoDS_Shape AdvancedEngine_IOperations::MakePipeTShapeThicknessReduction
 //purpose  : Static method. Create one thickness reduction element.
 //=======================================================================
 TopoDS_Shape AdvancedEngine_IOperations::MakeThicknessReduction (gp_Ax2 theAxes,
-								 const double R, const double W,
-								 const double Rthin, const double Wthin,
-								 const double Ltrans, const double Lthin,
-								 bool fuse)
+                                                                 const double R, const double W,
+                                                                 const double Rthin, const double Wthin,
+                                                                 const double Ltrans, const double Lthin,
+                                                                 bool fuse)
 {
   double aTol = Precision::Confusion();
   if (Rthin < aTol || Wthin < aTol || Ltrans < aTol) {
@@ -1953,11 +1954,11 @@ TopoDS_Shape AdvancedEngine_IOperations::MakeThicknessReduction (gp_Ax2 theAxes,
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
   AdvancedEngine_IOperations::MakePipeTShape(double theR1, double theW1, double theL1,
-					     double theR2, double theW2, double theL2,
-					     double theRL, double theWL, double theLtransL, double theLthinL,
-					     double theRR, double theWR, double theLtransR, double theLthinR,
-					     double theRI, double theWI, double theLtransI, double theLthinI,
-					     bool theHexMesh)
+                                             double theR2, double theW2, double theL2,
+                                             double theRL, double theWL, double theLtransL, double theLthinL,
+                                             double theRR, double theWR, double theLtransR, double theLthinR,
+                                             double theRI, double theWI, double theLtransI, double theLthinI,
+                                             bool theHexMesh)
 {
   MESSAGE("AdvancedEngine_IOperations::MakePipeTShape");
   SetErrorCode(KO);
@@ -3215,7 +3216,7 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
  */
 //=============================================================================
 Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDisk (double theR, double theRatio, 
-								 int theOrientation, int thePattern)
+                                                                 int theOrientation, int thePattern)
 {
   SetErrorCode(KO);
   
@@ -3287,10 +3288,10 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDisk (double theR, do
  */
 //=============================================================================
 Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDiskPntVecR (Handle(GEOM_Object) thePnt, 
-									Handle(GEOM_Object) theVec, 
-									double theR, 
-									double theRatio,
-									int    thePattern)
+                                                                        Handle(GEOM_Object) theVec, 
+                                                                        double theR, 
+                                                                        double theRatio,
+                                                                        int    thePattern)
 {
   SetErrorCode(KO);
 
@@ -3362,8 +3363,8 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedDiskPntVecR (Handle(G
  */
 //=============================================================================
 Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedCylinder (double theR, 
-								     double theH,
-								     int    thePattern)
+                                                                     double theH,
+                                                                     int    thePattern)
 {
   SetErrorCode(KO);
   
@@ -3409,9 +3410,9 @@ Handle(GEOM_Object) AdvancedEngine_IOperations::MakeDividedCylinder (double theR
  */
 //=============================================================================
 Handle(GEOM_Object) AdvancedEngine_IOperations::MakeSmoothingSurface (std::list<Handle(GEOM_Object)> thelPoints, 
-								      int                            theNbMax,
-								      int                            theDegMax,
-								      double                         theDMax)
+                                                                      int                            theNbMax,
+                                                                      int                            theDegMax,
+                                                                      double                         theDMax)
 {
   SetErrorCode(KO);
 

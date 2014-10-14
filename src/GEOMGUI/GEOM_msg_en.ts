@@ -873,6 +873,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Glue edges</translation>
     </message>
     <message>
+        <source>GEOM_GLUE_EDGES_DETECT_TITLE</source>
+        <translation>Coincident edges detection</translation>
+    </message>
+    <message>
+        <source>GEOM_GLUE_FACES_DETECT_TITLE</source>
+        <translation>Coincident faces detection</translation>
+    </message>
+    <message>
         <source>GLUE_ERROR_STICKED_SHAPES</source>
         <translation>The tolerance value is too big. Sticked shapes are detected.</translation>
     </message>
@@ -1659,6 +1667,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SELECTED_SHAPE</source>
         <translation>Selected shape</translation>
+    </message>
+    <message>
+        <source>GEOM_SELECTED_SHAPES</source>
+        <translation>Selected shapes</translation>
     </message>
     <message>
         <source>GEOM_SELECTION</source>

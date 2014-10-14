@@ -329,17 +329,12 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (const GEOM::ListOfGO& theO
     return aGEOMObject._retn();
 
   //Get the shapes
-  std::list<Handle(GEOM_Object)> objects;
-  const int aLen = theObjects.length();
-  for ( int ind = 0; ind < aLen; ind++)
-  {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theObjects[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    objects.push_back(aSh);
-  }
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theObjects, aShapes ))
+    return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( objects, theTolerance, false );
+  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( aShapes, theTolerance, false );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -365,17 +360,12 @@ GEOM_IHealingOperations_i::SewAllowNonManifold (const GEOM::ListOfGO& theObjects
     return aGEOMObject._retn();
 
   //Get the shapes
-  std::list<Handle(GEOM_Object)> objects;
-  const int aLen = theObjects.length();
-  for ( int ind = 0; ind < aLen; ind++)
-  {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theObjects[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    objects.push_back(aSh);
-  }
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theObjects, aShapes ))
+    return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( objects, theTolerance, true );
+  Handle(GEOM_Object) aNewObject = GetOperations()->Sew( aShapes, theTolerance, true );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 

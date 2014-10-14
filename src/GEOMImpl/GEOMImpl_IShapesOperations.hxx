@@ -91,34 +91,31 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(GEOM_Object) MakeCompound (std::list<Handle(GEOM_Object)> theShapes);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeGlueFaces (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueFaces (std::list< Handle(GEOM_Object) >& theShapes,
                                                      const Standard_Real theTolerance,
                                                      const Standard_Boolean doKeepNonSolids);
 
-  //Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueFaces (Handle(GEOM_Object) theShape,
-  //                                                                   const Standard_Real theTolerance);
-
-  Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (std::list< Handle(GEOM_Object) >& theShapes,
                                                            const Standard_Real theTolerance,
-                                                           std::list<Handle(GEOM_Object)> theFaces,
+                                                           std::list<Handle(GEOM_Object)>& theFaces,
                                                            const Standard_Boolean doKeepNonSolids,
                                                            const Standard_Boolean doGlueAllEdges);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdges (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdges (std::list< Handle(GEOM_Object) >& theShapes,
                                                      const Standard_Real theTolerance);
 
-  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueShapes (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueShapes (std::list< Handle(GEOM_Object) >& theShapes,
                                                                       const Standard_Real theTolerance,
                                                                       const TopAbs_ShapeEnum theType);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdgesByList (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdgesByList (std::list< Handle(GEOM_Object) >& theShapes,
                                                            const Standard_Real theTolerance,
-                                                           std::list<Handle(GEOM_Object)> theEdges);
+                                                           std::list<Handle(GEOM_Object)> & theEdges);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects(Handle(GEOM_Object)    theShape,
-									     const Standard_Boolean theGroupsOnly);
+                                                                             const Standard_Boolean theGroupsOnly);
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects(Handle(GEOM_Object)    theShape,
-									     const Standard_Integer theTypes = All);
+                                                                             const Standard_Integer theTypes = All);
   
   enum ExplodeType {
     EXPLODE_OLD_INCLUDE_MAIN,

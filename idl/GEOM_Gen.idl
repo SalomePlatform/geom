@@ -1941,64 +1941,64 @@ module GEOM
     GEOM_Object MakeCompound (in ListOfGO theShapes);
 
     /*!
-     *  \brief Replace coincident faces in theShape by one face.
-     *  \param theShape Initial shape.
+     *  \brief Replace coincident faces in \a theShapes by one face.
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
      *  \param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
-     *  \return New GEOM_Object, containing a copy of theShape without coincident faces.
+     *  \return New GEOM_Object containing copies of theShapes without coincident faces.
      */
-    GEOM_Object MakeGlueFaces (in GEOM_Object theShape, in double theTolerance, in boolean doKeepNonSolids);
+    GEOM_Object MakeGlueFaces (in ListOfGO theShapes, in double theTolerance, in boolean doKeepNonSolids);
 
     /*!
-     *  Find coincident faces in theShape for possible gluing.
-     *  \param theShape Initial shape.
+     *  Find coincident faces in theShapes for possible gluing.
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
      *  \return ListOfGO
      */
-    ListOfGO GetGlueFaces (in GEOM_Object theShape, in double theTolerance);
+    ListOfGO GetGlueFaces (in ListOfGO theShapes, in double theTolerance);
 
     /*!
-     *  \brief Replace coincident faces in theShape by one face
-     *  in compliance with given list of faces
-     *  \param theShape Initial shape.
+     *  \brief Replace coincident faces in \a theShapes by one face
+     *         in compliance with given list of faces
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
      *  \param theFaces List of faces for gluing.
      *  \param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
      *  \param doGlueAllEdges If TRUE, all coincident edges of <VAR>theShape</VAR>
      *                        will be glued, otherwise only the edges,
      *                        belonging to <VAR>theFaces</VAR>.
-     *  \return New GEOM_Object, containing a copy of theShape without some faces.
+     *  \return New GEOM_Object containing copies of theShapes without coincident faces.
      */
-    GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, in double theTolerance,
-                                     in ListOfGO theFaces, in boolean doKeepNonSolids,
+    GEOM_Object MakeGlueFacesByList (in ListOfGO theShapes, in double theTolerance,
+                                     in ListOfGO theFaces,  in boolean doKeepNonSolids,
                                      in boolean doGlueAllEdges);
 
     /*!
-     *  \brief Replace coincident edges in theShape by one edge.
-     *  \param theShape Initial shape.
+     *  \brief Replace coincident edges in \a theShapes by one edge.
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between edges, which can be considered as coincident.
-     *  \return New GEOM_Object, containing a copy of theShape without coincident edges.
+     *  \return New GEOM_Object containing copies of theShapes without coincident edges.
      */
-    GEOM_Object MakeGlueEdges (in GEOM_Object theShape, in double theTolerance);
+    GEOM_Object MakeGlueEdges (in ListOfGO theShapes, in double theTolerance);
 
     /*!
-     *  Find coincident edges in theShape for possible gluing.
-     *  \param theShape Initial shape.
+     *  Find coincident edges in \a theShapes for possible gluing.
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between edges, which can be considered as coincident.
      *  \return ListOfGO
      */
-    ListOfGO GetGlueEdges (in GEOM_Object theShape, in double theTolerance);
+    ListOfGO GetGlueEdges (in ListOfGO theShapes, in double theTolerance);
 
     /*!
-     *  \brief Replace coincident edges in theShape by one edge
-     *  in compliance with given list of edges
-     *  \param theShape Initial shape.
+     *  \brief Replace coincident edges in \a theShapes by one edge
+     *         in compliance with given list of edges
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between edges, which can be considered as coincident.
      *  \param theEdges List of edges for gluing.
-     *  \return New GEOM_Object, containing a copy of theShape without some edges.
+     *  \return New GEOM_Object containing copies of theShapes without some edges.
      */
-    GEOM_Object MakeGlueEdgesByList (in GEOM_Object theShape,
-                                     in double theTolerance,
+    GEOM_Object MakeGlueEdgesByList (in ListOfGO theShape,
+                                     in double   theTolerance,
                                      in ListOfGO theEdges);
 
     /*!

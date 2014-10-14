@@ -345,8 +345,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShells
  *  MakeCompound
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
-                                      (const GEOM::ListOfGO& theShapes)
+GEOM::GEOM_Object_ptr
+GEOM_IShapesOperations_i::MakeCompound (const GEOM::ListOfGO& theShapes)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -378,10 +378,10 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
  *  MakeGlueFaces
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
-                                           (GEOM::GEOM_Object_ptr theShape,
-                                            CORBA::Double   theTolerance,
-                                            CORBA::Boolean  doKeepNonSolids)
+GEOM::GEOM_Object_ptr
+GEOM_IShapesOperations_i::MakeGlueFaces (const GEOM::ListOfGO& theShapes,
+                                         CORBA::Double         theTolerance,
+                                         CORBA::Boolean  doKeepNonSolids)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -389,12 +389,13 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  if (aShape.IsNull()) return aGEOMObject._retn();
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theShapes, aShapes ))
+    return aGEOMObject._retn();
 
   //Perform the gluing
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeGlueFaces(aShape, theTolerance, doKeepNonSolids);
+    GetOperations()->MakeGlueFaces(aShapes, theTolerance, doKeepNonSolids);
   //if (!GetOperations()->IsDone() || anObject.IsNull())
   // to allow warning
   if (anObject.IsNull())
@@ -408,9 +409,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
  *  GetGlueFaces
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
-                                           (GEOM::GEOM_Object_ptr theShape,
-                                            const CORBA::Double   theTolerance)
+GEOM::ListOfGO*
+GEOM_IShapesOperations_i::GetGlueFaces (const GEOM::ListOfGO& theShapes,
+                                        const CORBA::Double   theTolerance)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
@@ -418,12 +419,12 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  if (aShape.IsNull()) return aSeq._retn();
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theShapes, aShapes ))
+    return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    //GetOperations()->GetGlueFaces(aShape, theTolerance);
-    GetOperations()->GetGlueShapes(aShape, theTolerance, TopAbs_FACE);
+    GetOperations()->GetGlueShapes(aShapes, theTolerance, TopAbs_FACE);
 
   //if (!GetOperations()->IsDone() || aHSeq.IsNull())
   // to allow warning
@@ -443,12 +444,12 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
  *  MakeGlueFacesByList
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
-                                           (GEOM::GEOM_Object_ptr theShape,
-                                            CORBA::Double   theTolerance,
-                                            const GEOM::ListOfGO& theFaces,
-                                            CORBA::Boolean doKeepNonSolids,
-                                            CORBA::Boolean doGlueAllEdges)
+GEOM::GEOM_Object_ptr
+GEOM_IShapesOperations_i::MakeGlueFacesByList (const GEOM::ListOfGO& theShapes,
+                                               CORBA::Double         theTolerance,
+                                               const GEOM::ListOfGO& theFaces,
+                                               CORBA::Boolean        doKeepNonSolids,
+                                               CORBA::Boolean        doGlueAllEdges)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -456,22 +457,19 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  if (aShape.IsNull()) return aGEOMObject._retn();
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theShapes, aShapes ))
+    return aGEOMObject._retn();
 
-  int ind, aLen;
-  std::list<Handle(GEOM_Object)> aFaces;
   //Get the shapes
-  aLen = theFaces.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theFaces[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    aFaces.push_back(aSh);
-  }
+  std::list<Handle(GEOM_Object)> aFaces;
+  if (! GetListOfObjectsImpl( theFaces, aFaces ))
+    return aGEOMObject._retn();
 
   //Perform the gluing
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces, doKeepNonSolids, doGlueAllEdges);
+    GetOperations()->MakeGlueFacesByList(aShapes, theTolerance, aFaces,
+                                         doKeepNonSolids, doGlueAllEdges);
   //if (!GetOperations()->IsDone() || anObject.IsNull())
   // to allow warning
   if (anObject.IsNull())
@@ -485,9 +483,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
  *  MakeGlueEdges
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdges
-                                           (GEOM::GEOM_Object_ptr theShape,
-                                            CORBA::Double   theTolerance)
+GEOM::GEOM_Object_ptr
+GEOM_IShapesOperations_i::MakeGlueEdges (const GEOM::ListOfGO& theShapes,
+                                         CORBA::Double         theTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -495,12 +493,13 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdges
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  if (aShape.IsNull()) return aGEOMObject._retn();
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theShapes, aShapes ))
+    return aGEOMObject._retn();
 
   //Perform the gluing
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeGlueEdges(aShape, theTolerance);
+    GetOperations()->MakeGlueEdges(aShapes, theTolerance);
   //if (!GetOperations()->IsDone() || anObject.IsNull())
   // to allow warning
   if (anObject.IsNull())
@@ -514,9 +513,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdges
  *  GetGlueEdges
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueEdges
-                                           (GEOM::GEOM_Object_ptr theShape,
-                                            const CORBA::Double   theTolerance)
+GEOM::ListOfGO*
+GEOM_IShapesOperations_i::GetGlueEdges (const GEOM::ListOfGO& theShapes,
+                                        const CORBA::Double   theTolerance)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
@@ -524,11 +523,12 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueEdges
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  if (aShape.IsNull()) return aSeq._retn();
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theShapes, aShapes ))
+    return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    GetOperations()->GetGlueShapes(aShape, theTolerance, TopAbs_EDGE);
+    GetOperations()->GetGlueShapes(aShapes, theTolerance, TopAbs_EDGE);
 
   //if (!GetOperations()->IsDone() || aHSeq.IsNull())
   // to allow warning
@@ -548,10 +548,10 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueEdges
  *  MakeGlueEdgesByList
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdgesByList
-                                           (GEOM::GEOM_Object_ptr theShape,
-                                            CORBA::Double   theTolerance,
-                                            const GEOM::ListOfGO& theEdges)
+GEOM::GEOM_Object_ptr
+GEOM_IShapesOperations_i::MakeGlueEdgesByList (const GEOM::ListOfGO& theShapes,
+                                               CORBA::Double         theTolerance,
+                                               const GEOM::ListOfGO& theEdges)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -559,22 +559,18 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdgesByList
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  if (aShape.IsNull()) return aGEOMObject._retn();
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theShapes, aShapes ))
+    return aGEOMObject._retn();
 
-  int ind, aLen;
-  std::list<Handle(GEOM_Object)> anEdges;
   //Get the shapes
-  aLen = theEdges.length();
-  for (ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theEdges[ind]);
-    if (aSh.IsNull()) return aGEOMObject._retn();
-    anEdges.push_back(aSh);
-  }
+  std::list<Handle(GEOM_Object)> anEdges;
+  if (! GetListOfObjectsImpl( theEdges, anEdges ))
+    return aGEOMObject._retn();
 
   //Perform the gluing
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeGlueEdgesByList(aShape, theTolerance, anEdges);
+    GetOperations()->MakeGlueEdgesByList(aShapes, theTolerance, anEdges);
   //if (!GetOperations()->IsDone() || anObject.IsNull())
   // to allow warning
   if (anObject.IsNull())
@@ -588,8 +584,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdgesByList
  *  GetExistingSubObjects
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IShapesOperations_i::GetExistingSubObjects (GEOM::GEOM_Object_ptr theShape,
-                                                                 CORBA::Boolean        theGroupsOnly)
+GEOM::ListOfGO*
+GEOM_IShapesOperations_i::GetExistingSubObjects (GEOM::GEOM_Object_ptr theShape,
+                                                 CORBA::Boolean        theGroupsOnly)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 

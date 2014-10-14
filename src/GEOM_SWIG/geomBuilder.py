@@ -6721,8 +6721,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj[2], theName, "openWire")
             return anObj
 
-        ## Replace coincident faces in theShape by one face.
-        #  @param theShape Initial shape.
+        ## Replace coincident faces in \a theShapes by one face.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between faces, which can be considered as coincident.
         #  @param doKeepNonSolids If FALSE, only solids will present in the result,
         #                         otherwise all initial shapes.
@@ -6730,16 +6730,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing a copy of theShape without coincident faces.
+        #  @return New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
         #
         #  @ref tui_glue_faces "Example"
         @ManageTransactions("ShapesOp")
-        def MakeGlueFaces(self, theShape, theTolerance, doKeepNonSolids=True, theName=None):
+        def MakeGlueFaces(self, theShapes, theTolerance, doKeepNonSolids=True, theName=None):
             """
-            Replace coincident faces in theShape by one face.
+            Replace coincident faces in theShapes by one face.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between faces, which can be considered as coincident.
                 doKeepNonSolids If FALSE, only solids will present in the result,
                                 otherwise all initial shapes.
@@ -6748,19 +6748,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing a copy of theShape without coincident faces.
+                New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
             """
             # Example: see GEOM_Spanner.py
             theTolerance,Parameters = ParseParameters(theTolerance)
-            anObj = self.ShapesOp.MakeGlueFaces(theShape, theTolerance, doKeepNonSolids)
+            anObj = self.ShapesOp.MakeGlueFaces(ToList(theShapes), theTolerance, doKeepNonSolids)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFaces : " + self.ShapesOp.GetErrorCode()
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "glueFaces")
             return anObj
 
-        ## Find coincident faces in theShape for possible gluing.
-        #  @param theShape Initial shape.
+        ## Find coincident faces in \a theShapes for possible gluing.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between faces,
         #                      which can be considered as coincident.
         #  @param theName Object name; when specified, this parameter is used
@@ -6771,12 +6771,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_glue_faces "Example"
         @ManageTransactions("ShapesOp")
-        def GetGlueFaces(self, theShape, theTolerance, theName=None):
+        def GetGlueFaces(self, theShapes, theTolerance, theName=None):
             """
-            Find coincident faces in theShape for possible gluing.
+            Find coincident faces in theShapes for possible gluing.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between faces,
                              which can be considered as coincident.
                 theName Object name; when specified, this parameter is used
@@ -6786,14 +6786,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 GEOM.ListOfGO
             """
-            anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
+            anObj = self.ShapesOp.GetGlueFaces(ToList(theShapes), theTolerance)
             RaiseIfFailed("GetGlueFaces", self.ShapesOp)
             self._autoPublish(anObj, theName, "facesToGlue")
             return anObj
 
-        ## Replace coincident faces in theShape by one face
+        ## Replace coincident faces in \a theShapes by one face
         #  in compliance with given list of faces
-        #  @param theShape Initial shape.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between faces,
         #                      which can be considered as coincident.
         #  @param theFaces List of faces for gluing.
@@ -6806,19 +6806,18 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing a copy of theShape
-        #          without some faces.
+        #  @return New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
         #
         #  @ref tui_glue_faces "Example"
         @ManageTransactions("ShapesOp")
-        def MakeGlueFacesByList(self, theShape, theTolerance, theFaces,
+        def MakeGlueFacesByList(self, theShapes, theTolerance, theFaces,
                                 doKeepNonSolids=True, doGlueAllEdges=True, theName=None):
             """
-            Replace coincident faces in theShape by one face
+            Replace coincident faces in theShapes by one face
             in compliance with given list of faces
 
             Parameters:
-                theShape Initial shape.
+                theShapes theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between faces,
                              which can be considered as coincident.
                 theFaces List of faces for gluing.
@@ -6832,51 +6831,50 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing a copy of theShape
-                    without some faces.
+                New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
             """
-            anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces,
+            anObj = self.ShapesOp.MakeGlueFacesByList(ToList(theShapes), theTolerance, theFaces,
                                                       doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
             self._autoPublish(anObj, theName, "glueFaces")
             return anObj
 
-        ## Replace coincident edges in theShape by one edge.
-        #  @param theShape Initial shape.
+        ## Replace coincident edges in \a theShapes by one edge.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between edges, which can be considered as coincident.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing a copy of theShape without coincident edges.
+        #  @return New GEOM.GEOM_Object, containing copies of theShapes without coincident edges.
         #
         #  @ref tui_glue_edges "Example"
         @ManageTransactions("ShapesOp")
-        def MakeGlueEdges(self, theShape, theTolerance, theName=None):
+        def MakeGlueEdges(self, theShapes, theTolerance, theName=None):
             """
-            Replace coincident edges in theShape by one edge.
+            Replace coincident edges in theShapes by one edge.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between edges, which can be considered as coincident.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing a copy of theShape without coincident edges.
+                New GEOM.GEOM_Object, containing copies of theShapes without coincident edges.
             """
             theTolerance,Parameters = ParseParameters(theTolerance)
-            anObj = self.ShapesOp.MakeGlueEdges(theShape, theTolerance)
+            anObj = self.ShapesOp.MakeGlueEdges(ToList(theShapes), theTolerance)
             if anObj is None:
                 raise RuntimeError, "MakeGlueEdges : " + self.ShapesOp.GetErrorCode()
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "glueEdges")
             return anObj
 
-        ## Find coincident edges in theShape for possible gluing.
-        #  @param theShape Initial shape.
+        ## Find coincident edges in \a theShapes for possible gluing.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between edges,
         #                      which can be considered as coincident.
         #  @param theName Object name; when specified, this parameter is used
@@ -6887,12 +6885,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_glue_edges "Example"
         @ManageTransactions("ShapesOp")
-        def GetGlueEdges(self, theShape, theTolerance, theName=None):
+        def GetGlueEdges(self, theShapes, theTolerance, theName=None):
             """
-            Find coincident edges in theShape for possible gluing.
+            Find coincident edges in theShapes for possible gluing.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between edges,
                              which can be considered as coincident.
                 theName Object name; when specified, this parameter is used
@@ -6902,14 +6900,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 GEOM.ListOfGO
             """
-            anObj = self.ShapesOp.GetGlueEdges(theShape, theTolerance)
+            anObj = self.ShapesOp.GetGlueEdges(ToList(theShapes), theTolerance)
             RaiseIfFailed("GetGlueEdges", self.ShapesOp)
             self._autoPublish(anObj, theName, "edgesToGlue")
             return anObj
 
-        ## Replace coincident edges in theShape by one edge
+        ## Replace coincident edges in theShapes by one edge
         #  in compliance with given list of edges.
-        #  @param theShape Initial shape.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between edges,
         #                      which can be considered as coincident.
         #  @param theEdges List of edges for gluing.
@@ -6917,18 +6915,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing a copy of theShape
-        #          without some edges.
+        #  @return New GEOM.GEOM_Object, containing copies of theShapes without coincident edges.
         #
         #  @ref tui_glue_edges "Example"
         @ManageTransactions("ShapesOp")
-        def MakeGlueEdgesByList(self, theShape, theTolerance, theEdges, theName=None):
+        def MakeGlueEdgesByList(self, theShapes, theTolerance, theEdges, theName=None):
             """
-            Replace coincident edges in theShape by one edge
+            Replace coincident edges in theShapes by one edge
             in compliance with given list of edges.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between edges,
                              which can be considered as coincident.
                 theEdges List of edges for gluing.
@@ -6937,10 +6934,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing a copy of theShape
-                without some edges.
+                New GEOM.GEOM_Object, containing copies of theShapes without coincident edges.
             """
-            anObj = self.ShapesOp.MakeGlueEdgesByList(theShape, theTolerance, theEdges)
+            anObj = self.ShapesOp.MakeGlueEdgesByList(ToList(theShapes), theTolerance, theEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueEdgesByList : " + self.ShapesOp.GetErrorCode()
             self._autoPublish(anObj, theName, "glueEdges")

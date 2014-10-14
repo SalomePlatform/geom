@@ -201,6 +201,11 @@ namespace GEOM
 
     for (i = 1; i <= aLen; i++) {
       anObject = Handle(GEOM_Object)::DownCast(theObjects->Value(i));
+      if ( anObject.IsNull() ) {
+        Handle(GEOM_Function) fun = Handle(GEOM_Function)::DownCast(theObjects->Value(i));
+        if ( !fun.IsNull() )
+          anObject = GEOM_Object::GetObject( fun->GetOwnerEntry() );
+      }
       aLatest = GetCreatedLast(aLatest, anObject);
     }
     return aLatest;

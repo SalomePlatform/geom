@@ -70,7 +70,7 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* 
 
   GroupPoints = new DlgRef_1SelExt( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_SEWING" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_SELECTED_SHAPE" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_SELECTED_SHAPES" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
 

@@ -387,8 +387,125 @@ def TestRemoveWebs (geompy):
   Joined_1 = geompy.RemoveInternalFaces(Partition_1)
   geompy.addToStudy(Joined_1, 'Joined_1')
 
+def TestSewGluing(geompy):
+
+  import GEOM
+  box1 = geompy.MakeBox(0,0,0, 1,1,1)
+  box2 = geompy.MakeBox(1,0,0, 2,1,1)
+  comp = geompy.MakeCompound( [box1, box2] )
+
+  # no sewing with AllowNonManifold=False
+  sew1 = geompy.MakeSewing( [box1,box2], 1e-5, AllowNonManifold=False)
+  assert not sew1
+  sew2 = geompy.MakeSewing( comp, 1e-5, AllowNonManifold=False)
+  assert not sew2
+  sew3 = geompy.MakeSewing( [comp], 1e-5, AllowNonManifold=False)
+  assert not sew3
+  sew1 = geompy.Sew( [box1,box2], 1e-5, AllowNonManifold=False)
+  assert not sew1
+  sew2 = geompy.Sew( comp, 1e-5, AllowNonManifold=False)
+  assert not sew2
+  sew3 = geompy.Sew( [comp], 1e-5, AllowNonManifold=False)
+  assert not sew3
+
+  # check MakeSewing()
+  sew1 = geompy.MakeSewing( [box1,box2], 1e-5, AllowNonManifold=True)
+  assert sew1.GetShapeType() == GEOM.SHELL
+  assert geompy.NumberOfFaces( sew1 ) == geompy.NumberOfFaces( comp )
+  assert geompy.NumberOfEdges( sew1 ) == geompy.NumberOfEdges( comp ) - 4
+  sew2 = geompy.MakeSewing( comp, 1e-5, AllowNonManifold=True)
+  assert sew2.GetShapeType() == GEOM.SHELL
+  assert geompy.NumberOfFaces( sew2 ) == geompy.NumberOfFaces( comp )
+  assert geompy.NumberOfEdges( sew2 ) == geompy.NumberOfEdges( comp ) - 4
+  sew3 = geompy.MakeSewing( [comp], 1e-5, AllowNonManifold=True)
+  assert sew3.GetShapeType() == GEOM.SHELL
+  assert geompy.NumberOfFaces( sew3 ) == geompy.NumberOfFaces( comp )
+  assert geompy.NumberOfEdges( sew3 ) == geompy.NumberOfEdges( comp ) - 4
+  # check Sew()
+  sew1 = geompy.Sew( [box1,box2], 1e-5, AllowNonManifold=True)
+  assert sew1.GetShapeType() == GEOM.SHELL
+  assert geompy.NumberOfFaces( sew1 ) == geompy.NumberOfFaces( comp )
+  assert geompy.NumberOfEdges( sew1 ) == geompy.NumberOfEdges( comp ) - 4
+  sew2 = geompy.Sew( comp, 1e-5, AllowNonManifold=True)
+  assert sew2.GetShapeType() == GEOM.SHELL
+  assert geompy.NumberOfFaces( sew2 ) == geompy.NumberOfFaces( comp )
+  assert geompy.NumberOfEdges( sew2 ) == geompy.NumberOfEdges( comp ) - 4
+  sew3 = geompy.Sew( [comp], 1e-5, AllowNonManifold=True)
+  assert sew3.GetShapeType() == GEOM.SHELL
+  assert geompy.NumberOfFaces( sew3 ) == geompy.NumberOfFaces( comp )
+  assert geompy.NumberOfEdges( sew3 ) == geompy.NumberOfEdges( comp ) - 4
+
+  # check MakeGlueFaces()
+  glueF1 = geompy.MakeGlueFaces( [box1,box2], 1e-5)
+  assert glueF1.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfFaces( glueF1 ) == geompy.NumberOfFaces( comp ) - 1
+  assert geompy.NumberOfEdges( glueF1 ) == geompy.NumberOfEdges( comp ) - 4
+  glueF2 = geompy.MakeGlueFaces( [comp], 1e-5)
+  assert glueF2.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfFaces( glueF2 ) == geompy.NumberOfFaces( comp ) - 1
+  assert geompy.NumberOfEdges( glueF2 ) == geompy.NumberOfEdges( comp ) - 4
+  glueF3 = geompy.MakeGlueFaces( comp, 1e-5)
+  assert glueF3.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfFaces( glueF3 ) == geompy.NumberOfFaces( comp ) - 1
+  assert geompy.NumberOfEdges( glueF3 ) == geompy.NumberOfEdges( comp ) - 4
+
+  # check GetGlueFaces()
+  glueFF1 = geompy.GetGlueFaces( [box1,box2], 1e-5)
+  assert len( glueFF1 ) == 1 and glueFF1[0].GetShapeType() == GEOM.FACE
+  glueFF2 = geompy.GetGlueFaces( [comp], 1e-5)
+  assert len( glueFF2 ) == 1 and glueFF2[0].GetShapeType() == GEOM.FACE
+  glueFF3 = geompy.GetGlueFaces( comp, 1e-5)
+  assert len( glueFF3 ) == 1 and glueFF3[0].GetShapeType() == GEOM.FACE
+
+  #check MakeGlueFacesByList()
+  glueF1 = geompy.MakeGlueFacesByList( [box1,box2], 1e-5, glueFF1)
+  assert glueF1.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfFaces( glueF1 ) == geompy.NumberOfFaces( comp ) - 1
+  assert geompy.NumberOfEdges( glueF1 ) == geompy.NumberOfEdges( comp ) - 4
+  glueF2 = geompy.MakeGlueFacesByList( [comp], 1e-5, glueFF2)
+  assert glueF2.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfFaces( glueF2 ) == geompy.NumberOfFaces( comp ) - 1
+  assert geompy.NumberOfEdges( glueF2 ) == geompy.NumberOfEdges( comp ) - 4
+  glueF3 = geompy.MakeGlueFacesByList( comp, 1e-5, glueFF3 )
+  assert glueF3.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfFaces( glueF3 ) == geompy.NumberOfFaces( comp ) - 1
+  assert geompy.NumberOfEdges( glueF3 ) == geompy.NumberOfEdges( comp ) - 4
+
+  # check MakeGlueEdges()
+  glueE1 = geompy.MakeGlueEdges( [box1,box2], 1e-5)
+  assert glueE1.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfEdges( glueE1 ) == geompy.NumberOfEdges( comp ) - 4
+  glueE2 = geompy.MakeGlueEdges( [comp], 1e-5)
+  assert glueE2.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfEdges( glueE2 ) == geompy.NumberOfEdges( comp ) - 4
+  glueE3 = geompy.MakeGlueEdges( comp, 1e-5)
+  assert glueE3.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfEdges( glueE3 ) == geompy.NumberOfEdges( comp ) - 4
+
+  # check GetGlueEdges()
+  glueEE1 = geompy.GetGlueEdges( [box1,box2], 1e-5)
+  assert len( glueEE1 ) == 4 and glueEE1[0].GetShapeType() == GEOM.EDGE
+  glueEE2 = geompy.GetGlueEdges( [comp], 1e-5)
+  assert len( glueEE2 ) == 4 and glueEE2[0].GetShapeType() == GEOM.EDGE
+  glueEE3 = geompy.GetGlueEdges( comp, 1e-5)
+  assert len( glueEE3 ) == 4 and glueEE3[0].GetShapeType() == GEOM.EDGE
+
+  #check MakeGlueEdgesByList()
+  glueEL1 = geompy.MakeGlueEdgesByList( [box1,box2], 1e-5, glueEE1)
+  assert glueEL1.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfEdges( glueEL1 ) == geompy.NumberOfEdges( comp ) - 4
+  glueEL2 = geompy.MakeGlueEdgesByList( [comp], 1e-5, glueEE2)
+  assert glueEL2.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfEdges( glueEL2 ) == geompy.NumberOfEdges( comp ) - 4
+  glueEL3 = geompy.MakeGlueEdgesByList( comp, 1e-5, glueEE3 )
+  assert glueEL3.GetShapeType() == GEOM.COMPOUND
+  assert geompy.NumberOfEdges( glueEL3 ) == geompy.NumberOfEdges( comp ) - 4
+
+  return
+
 def TestHealingOperations (geompy, math):
 
+  TestSewGluing(geompy)
   TestMakeSewing(geompy, math)
   TestDivideEdge(geompy)
   TestSuppressHoles(geompy)

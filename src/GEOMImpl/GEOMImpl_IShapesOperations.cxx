@@ -67,60 +67,61 @@
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
 
-#include <TFunction_DriverTable.hxx>
-#include <TFunction_Driver.hxx>
-#include <TFunction_Logbook.hxx>
-#include <TDataStd_Integer.hxx>
-#include <TDataStd_IntegerArray.hxx>
-#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
-#include <TDF_Tool.hxx>
-
-#include <BRepExtrema_ExtCF.hxx>
-#include <BRepExtrema_DistShapeShape.hxx>
-
-#include <BRep_Tool.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepTools.hxx>
-#include <BRepGProp.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepBndLib.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
+#include <BRepClass_FaceClassifier.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepExtrema_ExtCF.hxx>
+#include <BRepGProp.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
-
-#include <TopAbs.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopLoc_Location.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Solid.hxx>
-#include <TopoDS_Face.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Compound.hxx>
-#include <TopoDS_Iterator.hxx>
-#include <TopTools_Array1OfShape.hxx>
-#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_MapOfOrientedShape.hxx>
-
-#include <Geom_Surface.hxx>
+#include <BRepTools.hxx>
+#include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
+#include <Bnd_Box.hxx>
+#include <GEOMImpl_IMeasure.hxx>
+#include <GEOMImpl_MeasureDriver.hxx>
+#include <GProp_GProps.hxx>
+#include <Geom2d_Curve.hxx>
+#include <GeomAdaptor_Surface.hxx>
+#include <GeomLib_Tool.hxx>
+#include <Geom_CylindricalSurface.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_SphericalSurface.hxx>
-#include <Geom_CylindricalSurface.hxx>
-#include <GeomAdaptor_Surface.hxx>
-
-#include <GeomLib_Tool.hxx>
-#include <Geom2d_Curve.hxx>
-
-#include <Bnd_Box.hxx>
-#include <GProp_GProps.hxx>
+#include <Geom_Surface.hxx>
+#include <Precision.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
+#include <TDF_Tool.hxx>
+#include <TDataStd_Integer.hxx>
+#include <TDataStd_IntegerArray.hxx>
+#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
+#include <TFunction_Driver.hxx>
+#include <TFunction_DriverTable.hxx>
+#include <TFunction_Logbook.hxx>
+#include <TopAbs.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopLoc_Location.hxx>
+#include <TopTools_Array1OfShape.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_MapOfOrientedShape.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_SequenceOfShape.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Solid.hxx>
+#include <TopoDS_Vertex.hxx>
 #include <gp_Cylinder.hxx>
 #include <gp_Lin.hxx>
 #include <gp_Pnt.hxx>
@@ -133,15 +134,6 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
-// Includes added for GetInPlace algorithm improvement
-
-#include <GEOMImpl_MeasureDriver.hxx>
-#include <GEOMImpl_IMeasure.hxx>
-#include <BRepBuilderAPI_MakeVertex.hxx>
-
-#include <BRepClass_FaceClassifier.hxx>
-#include <BRepClass3d_SolidClassifier.hxx>
-#include <Precision.hxx>
 
 //=============================================================================
 /*!
@@ -666,14 +658,18 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
  *  MakeGlueFaces
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
-                                                (Handle(GEOM_Object) theShape,
-                                                 const Standard_Real theTolerance,
-                                                 const Standard_Boolean doKeepNonSolids)
+Handle(GEOM_Object)
+GEOMImpl_IShapesOperations::MakeGlueFaces (std::list< Handle(GEOM_Object) >& theShapes,
+                                           const Standard_Real               theTolerance,
+                                           const Standard_Boolean            doKeepNonSolids)
 {
   SetErrorCode(KO);
 
-  if (theShape.IsNull()) return NULL;
+  Handle(TColStd_HSequenceOfTransient) objects = GEOM_Object::GetLastFunctions( theShapes );
+  if ( objects.IsNull() || objects->IsEmpty() ) {
+    SetErrorCode("NULL argument shape");
+    return NULL;
+  }
 
   //Add a new Glued object
   Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
@@ -688,10 +684,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
 
   GEOMImpl_IGlue aCI (aFunction);
 
-  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) return NULL;
-
-  aCI.SetBase(aRefShape);
+  aCI.SetBase( objects );
   aCI.SetTolerance(theTolerance);
   aCI.SetKeepNonSolids(doKeepNonSolids);
 
@@ -717,7 +710,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aGlued << " = geompy.MakeGlueFaces("
-    << theShape << ", " << theTolerance << ")";
+    << theShapes << ", " << theTolerance << ")";
 
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
@@ -806,16 +799,25 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
  *  MakeGlueFacesByList
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
-                                                (Handle(GEOM_Object) theShape,
-                                                 const Standard_Real theTolerance,
-                                                 std::list<Handle(GEOM_Object)> theFaces,
-                                                 const Standard_Boolean doKeepNonSolids,
-                                                 const Standard_Boolean doGlueAllEdges)
+Handle(GEOM_Object)
+GEOMImpl_IShapesOperations::MakeGlueFacesByList(std::list< Handle(GEOM_Object) >& theShapes,
+                                                const Standard_Real               theTolerance,
+                                                std::list<Handle(GEOM_Object)> &  theFaces,
+                                                const Standard_Boolean            doKeepNonSolids,
+                                                const Standard_Boolean            doGlueAllEdges)
 {
   SetErrorCode(KO);
 
-  if (theShape.IsNull()) return NULL;
+  Handle(TColStd_HSequenceOfTransient) objects = GEOM_Object::GetLastFunctions( theShapes );
+  if ( objects.IsNull() || objects->IsEmpty() ) {
+    SetErrorCode("NULL argument shape");
+    return NULL;
+  }
+  Handle(TColStd_HSequenceOfTransient) aFaces = GEOM_Object::GetLastFunctions( theFaces );
+  if ( aFaces.IsNull() ) {
+    SetErrorCode("NULL argument shape for the shape construction");
+    return NULL;
+  }
 
   //Add a new Glued object
   Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
@@ -830,24 +832,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
 
   GEOMImpl_IGlue aCI (aFunction);
 
-  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) return NULL;
-
-  aCI.SetBase(aRefShape);
+  aCI.SetBase( objects );
   aCI.SetTolerance(theTolerance);
   aCI.SetKeepNonSolids(doKeepNonSolids);
   aCI.SetGlueAllEdges(doGlueAllEdges);
-
-  Handle(TColStd_HSequenceOfTransient) aFaces = new TColStd_HSequenceOfTransient;
-  std::list<Handle(GEOM_Object)>::iterator it = theFaces.begin();
-  for (; it != theFaces.end(); it++) {
-    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
-    if (aRefSh.IsNull()) {
-      SetErrorCode("NULL argument shape for the shape construction");
-      return NULL;
-    }
-    aFaces->Append(aRefSh);
-  }
   aCI.SetFaces(aFaces);
 
   //Compute the sub-shape value
@@ -874,16 +862,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
 
   GEOM::TPythonDump pd(aFunction);
   pd << aGlued << " = geompy.MakeGlueFacesByList("
-     << theShape << ", " << theTolerance << ", [";
-  // Faces
-  it = theFaces.begin();
-  if (it != theFaces.end()) {
-    pd << (*it++);
-    while (it != theFaces.end()) {
-      pd << ", " << (*it++);
-    }
-  }
-  pd << "], " << (bool)doKeepNonSolids << ", " << (bool)doGlueAllEdges << ")";
+     << theShapes << ", " << theTolerance << ", " << theFaces << ", "
+     << (bool)doKeepNonSolids << ", " << (bool)doGlueAllEdges << ")";
 
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
@@ -895,13 +875,17 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
  *  MakeGlueEdges
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdges
-                                                (Handle(GEOM_Object) theShape,
-                                                 const Standard_Real theTolerance)
+Handle(GEOM_Object)
+GEOMImpl_IShapesOperations::MakeGlueEdges (std::list< Handle(GEOM_Object) >& theShapes,
+                                           const Standard_Real               theTolerance)
 {
   SetErrorCode(KO);
 
-  if (theShape.IsNull()) return NULL;
+  Handle(TColStd_HSequenceOfTransient) objects = GEOM_Object::GetLastFunctions( theShapes );
+  if ( objects.IsNull() || objects->IsEmpty() ) {
+    SetErrorCode("NULL argument shape");
+    return NULL;
+  }
 
   //Add a new Glued object
   Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
@@ -916,10 +900,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdges
 
   GEOMImpl_IGlue aCI (aFunction);
 
-  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) return NULL;
-
-  aCI.SetBase(aRefShape);
+  aCI.SetBase( objects );
   aCI.SetTolerance(theTolerance);
   aCI.SetKeepNonSolids(true);
 
@@ -945,7 +926,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdges
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aGlued << " = geompy.MakeGlueEdges("
-    << theShape << ", " << theTolerance << ")";
+    << theShapes << ", " << theTolerance << ")";
 
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
@@ -957,16 +938,36 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdges
  *  GetGlueShapes
  */
 //=============================================================================
-Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueShapes
-                                                (Handle(GEOM_Object)    theShape,
-                                                 const Standard_Real    theTolerance,
-                                                 const TopAbs_ShapeEnum theType)
+Handle(TColStd_HSequenceOfTransient)
+GEOMImpl_IShapesOperations::GetGlueShapes (std::list< Handle(GEOM_Object) >& theShapes,
+                                           const Standard_Real               theTolerance,
+                                           const TopAbs_ShapeEnum            theType)
 {
   SetErrorCode(KO);
 
-  if (theShape.IsNull()) return NULL;
-  TopoDS_Shape aShape = theShape->GetValue();
-  if (aShape.IsNull()) return NULL;
+  TopoDS_Shape aShape;
+  TopTools_SequenceOfShape shapes;
+  std::list< Handle(GEOM_Object) >::iterator s = theShapes.begin();
+  Handle(GEOM_Object) lastCreatedGO;
+  for ( ; s != theShapes.end(); ++s )
+  {
+    Handle(GEOM_Object) go = *s;
+    if ( go.IsNull() ) return NULL;
+    aShape = go->GetValue();
+    if ( aShape.IsNull() ) return NULL;
+    shapes.Append( aShape );
+    lastCreatedGO = GEOM::GetCreatedLast( lastCreatedGO, go );
+  }
+  if ( shapes.Length() > 1 )
+  {
+    TopoDS_Compound compound;
+    BRep_Builder builder;
+    builder.MakeCompound( compound );
+    for ( int i = 1; i <= shapes.Length(); ++i )
+      builder.Add( compound, shapes( i ) );
+
+    aShape = compound;
+  }
 
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
 
@@ -977,9 +978,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueShapes
   Standard_Integer iErr = aGluer.ErrorStatus();
   if (iErr) return NULL;
 
-  TCollection_AsciiString anAsciiList, anEntry;
-  TopTools_IndexedMapOfShape anIndices;
-  TopExp::MapShapes(aShape, anIndices);
+  std::vector< TopTools_IndexedMapOfShape* > anIndices( shapes.Length(), NULL );
   Handle(TColStd_HArray1OfInteger) anArray;
   Handle(GEOM_Object) anObj;
 
@@ -1006,31 +1005,40 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueShapes
   GEOMUtils::SortShapes(listOnePerSet, Standard_False);
 
   TopTools_ListIteratorOfListOfShape aListIt (listOnePerSet);
-  for (; aListIt.More(); aListIt.Next()) {
+  for (; aListIt.More(); aListIt.Next())
+  {
     TopoDS_Shape aValue = aListIt.Value();
-    anArray = new TColStd_HArray1OfInteger(1,1);
-    anArray->SetValue(1, anIndices.FindIndex(aValue));
-    anObj = GetEngine()->AddSubShape(theShape, anArray);
-    if (!anObj.IsNull()) {
-      aSeq->Append(anObj);
-
-      // for python command
-      TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-      anAsciiList += anEntry;
-      anAsciiList += ",";
+    // find a shape to add aValue as a sub-shape
+    anObj.Nullify();
+    s = theShapes.begin();
+    for ( int i = 0; i < shapes.Length(); ++i, ++s )
+    {
+      Handle(GEOM_Object) object = *s;
+      if ( !anIndices[i] ) {
+        anIndices[i] = new TopTools_IndexedMapOfShape;
+        TopExp::MapShapes( object->GetValue(), *anIndices[i]);
+      }
+      if (int index = anIndices[i]->FindIndex( aValue )) {
+        anArray = new TColStd_HArray1OfInteger(1,1);
+        anArray->SetValue(1, index);
+        anObj = GetEngine()->AddSubShape( object, anArray);
+        break;
+      }
     }
+    if (!anObj.IsNull())
+      aSeq->Append(anObj);
   }
+  for ( size_t i = 0 ; i < anIndices.size(); ++i )
+    delete anIndices[i];
 
   // Make a Python command
-  if (anAsciiList.Length() > 0) {
-    anAsciiList.Trunc(anAsciiList.Length() - 1);
-    Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+  if ( aSeq->Length() > 0)
+  {
+    Handle(GEOM_Function) aFunction = lastCreatedGO->GetLastFunction();
     GEOM::TPythonDump pd (aFunction, /*append=*/true);
-    pd << "[" << anAsciiList.ToCString();
-    if (theType == TopAbs_FACE)
-      pd << "] = geompy.GetGlueFaces(" << theShape << ", " << theTolerance << ")";
-    else if (theType == TopAbs_EDGE)
-      pd << "] = geompy.GetGlueEdges(" << theShape << ", " << theTolerance << ")";
+    pd << aSeq
+       << " = geompy." << (theType == TopAbs_FACE ? "GetGlueFaces" : "GetGlueEdges" )
+       << "( " << theShapes << ", " << theTolerance << ")";
   }
 
   SetErrorCode(OK);
@@ -1043,15 +1051,23 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueShapes
  *  MakeGlueEdgesByList
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdgesByList
-                                                (Handle(GEOM_Object) theShape,
-                                                 const Standard_Real theTolerance,
-                                                 std::list<Handle(GEOM_Object)> theEdges)
+Handle(GEOM_Object)
+GEOMImpl_IShapesOperations::MakeGlueEdgesByList (std::list< Handle(GEOM_Object) >& theShapes,
+                                                 const Standard_Real               theTolerance,
+                                                 std::list<Handle(GEOM_Object)>&   theEdges)
 {
   SetErrorCode(KO);
 
-  if (theShape.IsNull()) return NULL;
-
+  Handle(TColStd_HSequenceOfTransient) objects = GEOM_Object::GetLastFunctions( theShapes );
+  if ( objects.IsNull() || objects->IsEmpty() ) {
+    SetErrorCode("NULL argument shape");
+    return NULL;
+  }
+  Handle(TColStd_HSequenceOfTransient) anEdges = GEOM_Object::GetLastFunctions( theEdges );
+  if ( anEdges.IsNull() ) {
+    SetErrorCode("NULL argument shape for the shape construction");
+    return NULL;
+  }
   //Add a new Glued object
   Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
 
@@ -1065,23 +1081,9 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdgesByList
 
   GEOMImpl_IGlue aCI (aFunction);
 
-  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) return NULL;
-
-  aCI.SetBase(aRefShape);
+  aCI.SetBase( objects );
   aCI.SetTolerance(theTolerance);
   aCI.SetKeepNonSolids(true);
-
-  Handle(TColStd_HSequenceOfTransient) anEdges = new TColStd_HSequenceOfTransient;
-  std::list<Handle(GEOM_Object)>::iterator it = theEdges.begin();
-  for (; it != theEdges.end(); it++) {
-    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
-    if (aRefSh.IsNull()) {
-      SetErrorCode("NULL argument shape for the shape construction");
-      return NULL;
-    }
-    anEdges->Append(aRefSh);
-  }
   aCI.SetFaces(anEdges);
 
   //Compute the sub-shape value
@@ -1108,16 +1110,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdgesByList
 
   GEOM::TPythonDump pd (aFunction);
   pd << aGlued << " = geompy.MakeGlueEdgesByList("
-     << theShape << ", " << theTolerance << ", [";
-  // Edges
-  it = theEdges.begin();
-  if (it != theEdges.end()) {
-    pd << (*it++);
-    while (it != theEdges.end()) {
-      pd << ", " << (*it++);
-    }
-  }
-  pd << "])";
+     << theShapes << ", " << theTolerance << ", " << theEdges << " )";
 
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
@@ -1131,7 +1124,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdgesByList
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
 GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShape,
-						  const Standard_Boolean theGroupsOnly)
+                                                  const Standard_Boolean theGroupsOnly)
 {
   // note: this method does not return fields
 
@@ -1146,7 +1139,7 @@ GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShap
       Handle(GEOM_BaseObject) obj = Handle(GEOM_BaseObject)::DownCast( results->Value(i));
       obj->GetEntryString();
       if ( i < results->Length() )
-	anAsciiList += ",";
+        anAsciiList += ",";
     }
     
     GEOM::TPythonDump pd (theShape->GetLastFunction(), /*append=*/true);
@@ -1160,7 +1153,7 @@ GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShap
 
 Handle(TColStd_HSequenceOfTransient)
 GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShape,
-						  const Standard_Integer theTypes)
+                                                  const Standard_Integer theTypes)
 {
   SetErrorCode(KO);
 
@@ -1190,8 +1183,8 @@ GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShap
       bool isSubShape = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() != GEOM_GROUP;
       bool isField    = anObj->IsKind(STANDARD_TYPE(GEOM_Field));
       if (theTypes & Groups    && isGroup ||
-	  theTypes & SubShapes && isSubShape ||
-	  theTypes & Fields    && isField) {
+          theTypes & SubShapes && isSubShape ||
+          theTypes & Fields    && isField) {
         aSeq->Append(anObj);
       }
     }

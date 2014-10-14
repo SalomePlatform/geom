@@ -592,16 +592,11 @@ GEOMImpl_IHealingOperations::Sew (std::list<Handle(GEOM_Object)>& theObjects,
   if (theObjects.empty())
     return NULL;
 
-  Handle(TColStd_HSequenceOfTransient) objects = new TColStd_HSequenceOfTransient;
-  std::list<Handle(GEOM_Object)>::iterator it = theObjects.begin();
-  for (; it != theObjects.end(); it++)
-  {
-    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
-    if (aRefSh.IsNull()) {
-      SetErrorCode("NULL argument shape");
-      return NULL;
-    }
-    objects->Append(aRefSh);
+  Handle(TColStd_HSequenceOfTransient) objects =
+    GEOM_Object::GetLastFunctions( theObjects );
+  if ( objects.IsNull() || objects->IsEmpty() ) {
+    SetErrorCode("NULL argument shape");
+    return NULL;
   }
 
   // Add a new object
@@ -643,7 +638,7 @@ GEOMImpl_IHealingOperations::Sew (std::list<Handle(GEOM_Object)>& theObjects,
   pd << aNewObject << " = geompy.Sew(" << theObjects << ", " << theTolerance;
 
   if (isAllowNonManifold) {
-    pd << ", true";
+    pd << ", True";
   }
 
   pd << ")";

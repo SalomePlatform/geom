@@ -73,7 +73,7 @@ private:
   void                               selectTmpInViewer();
 
 private:
-  GEOM::GEOM_Object_var              myObject;
+  QList<GEOM::GeomObjPtr>            myObjects;
   QList<GEOM::GeomObjPtr>            myTmpObjs;
 
   DlgRef_1SelExt*                    GroupPoints;

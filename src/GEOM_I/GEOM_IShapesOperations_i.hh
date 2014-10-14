@@ -72,26 +72,26 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   GEOM::GEOM_Object_ptr MakeCompound (const GEOM::ListOfGO& theShapes);
 
-  GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeGlueFaces (const GEOM::ListOfGO& theShape,
                                        CORBA::Double         theTolerance,
                                        CORBA::Boolean        doKeepNonSolids);
 
-  GEOM::ListOfGO* GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
+  GEOM::ListOfGO* GetGlueFaces (const GEOM::ListOfGO& theShape,
                                 CORBA::Double         theTolerance);
 
-  GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeGlueFacesByList (const GEOM::ListOfGO& theShape,
                                              CORBA::Double         theTolerance,
                                              const GEOM::ListOfGO& theFaces,
                                              CORBA::Boolean doKeepNonSolids,
                                              CORBA::Boolean doGlueAllEdges);
 
-  GEOM::GEOM_Object_ptr MakeGlueEdges (GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeGlueEdges (const GEOM::ListOfGO& theShape,
                                        CORBA::Double         theTolerance);
 
-  GEOM::ListOfGO* GetGlueEdges (GEOM::GEOM_Object_ptr theShape,
+  GEOM::ListOfGO* GetGlueEdges (const GEOM::ListOfGO& theShape,
                                 CORBA::Double         theTolerance);
 
-  GEOM::GEOM_Object_ptr MakeGlueEdgesByList (GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeGlueEdgesByList (const GEOM::ListOfGO& theShape,
                                              CORBA::Double         theTolerance,
                                              const GEOM::ListOfGO& theEdges);
 
