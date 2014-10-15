@@ -3725,14 +3725,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "revolution")
             return anObj
 
-        ## Create a filling from the given compound of contours.
-        #  @param theShape the compound of contours
-        #  @param theMinDeg a minimal degree of BSpline surface to create
-        #  @param theMaxDeg a maximal degree of BSpline surface to create
-        #  @param theTol2D a 2d tolerance to be reached
-        #  @param theTol3D a 3d tolerance to be reached
-        #  @param theNbIter a number of iteration of approximation algorithm
-        #  @param theMethod Kind of method to perform filling operation(see GEOM::filling_oper_method())
+        ## Create a face from a given set of contours.
+        #  @param theContours either a list or a compound of edges/wires.
+        #  @param theMinDeg a minimal degree of BSpline surface to create.
+        #  @param theMaxDeg a maximal degree of BSpline surface to create.
+        #  @param theTol2D a 2d tolerance to be reached.
+        #  @param theTol3D a 3d tolerance to be reached.
+        #  @param theNbIter a number of iteration of approximation algorithm.
+        #  @param theMethod Kind of method to perform filling operation
+        #         (see GEOM.filling_oper_method enum).
         #  @param isApprox if True, BSpline curves are generated in the process
         #                  of surface construction. By default it is False, that means
         #                  the surface is created using given curves. The usage of
@@ -3742,41 +3743,42 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created filling surface.
+        #  @return New GEOM.GEOM_Object (face), containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
         @ManageTransactions("PrimOp")
-        def MakeFilling(self, theShape, theMinDeg=2, theMaxDeg=5, theTol2D=0.0001,
+        def MakeFilling(self, theContours, theMinDeg=2, theMaxDeg=5, theTol2D=0.0001,
                         theTol3D=0.0001, theNbIter=0, theMethod=GEOM.FOM_Default, isApprox=0, theName=None):
             """
-            Create a filling from the given compound of contours.
+            Create a face from a given set of contours.
 
             Parameters:
-                theShape the compound of contours
-                theMinDeg a minimal degree of BSpline surface to create
-                theMaxDeg a maximal degree of BSpline surface to create
-                theTol2D a 2d tolerance to be reached
-                theTol3D a 3d tolerance to be reached
-                theNbIter a number of iteration of approximation algorithm
-                theMethod Kind of method to perform filling operation(see GEOM::filling_oper_method())
+                theContours either a list or a compound of edges/wires.
+                theMinDeg a minimal degree of BSpline surface to create.
+                theMaxDeg a maximal degree of BSpline surface to create.
+                theTol2D a 2d tolerance to be reached.
+                theTol3D a 3d tolerance to be reached.
+                theNbIter a number of iteration of approximation algorithm.
+                theMethod Kind of method to perform filling operation
+                          (see GEOM.filling_oper_method enum).
                 isApprox if True, BSpline curves are generated in the process
                          of surface construction. By default it is False, that means
                          the surface is created using given curves. The usage of
                          Approximation makes the algorithm work slower, but allows
-                         building the surface for rather complex cases
+                         building the surface for rather complex cases.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created filling surface.
+                New GEOM.GEOM_Object (face), containing the created filling surface.
 
             Example of usage:
                 filling = geompy.MakeFilling(compound, 2, 5, 0.0001, 0.0001, 5)
             """
             # Example: see GEOM_TestAll.py
             theMinDeg,theMaxDeg,theTol2D,theTol3D,theNbIter,Parameters = ParseParameters(theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter)
-            anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
+            anObj = self.PrimOp.MakeFilling(ToList(theContours), theMinDeg, theMaxDeg,
                                             theTol2D, theTol3D, theNbIter,
                                             theMethod, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
@@ -3785,43 +3787,43 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
 
-        ## Create a filling from the given compound of contours.
-        #  This method corresponds to MakeFilling with isApprox=True
-        #  @param theShape the compound of contours
-        #  @param theMinDeg a minimal degree of BSpline surface to create
-        #  @param theMaxDeg a maximal degree of BSpline surface to create
-        #  @param theTol3D a 3d tolerance to be reached
+        ## Create a face from a given set of contours.
+        #  This method corresponds to MakeFilling() with isApprox=True.
+        #  @param theContours either a list or a compound of edges/wires.
+        #  @param theMinDeg a minimal degree of BSpline surface to create.
+        #  @param theMaxDeg a maximal degree of BSpline surface to create.
+        #  @param theTol3D a 3d tolerance to be reached.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created filling surface.
+        #  @return New GEOM.GEOM_Object (face), containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
         @ManageTransactions("PrimOp")
-        def MakeFillingNew(self, theShape, theMinDeg=2, theMaxDeg=5, theTol3D=0.0001, theName=None):
+        def MakeFillingNew(self, theContours, theMinDeg=2, theMaxDeg=5, theTol3D=0.0001, theName=None):
             """
             Create a filling from the given compound of contours.
-            This method corresponds to MakeFilling with isApprox=True
+            This method corresponds to MakeFilling() with isApprox=True.
 
             Parameters:
-                theShape the compound of contours
-                theMinDeg a minimal degree of BSpline surface to create
-                theMaxDeg a maximal degree of BSpline surface to create
-                theTol3D a 3d tolerance to be reached
+                theContours either a list or a compound of edges/wires.
+                theMinDeg a minimal degree of BSpline surface to create.
+                theMaxDeg a maximal degree of BSpline surface to create.
+                theTol3D a 3d tolerance to be reached.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created filling surface.
+                New GEOM.GEOM_Object (face), containing the created filling surface.
 
             Example of usage:
                 filling = geompy.MakeFillingNew(compound, 2, 5, 0.0001)
             """
             # Example: see GEOM_TestAll.py
             theMinDeg,theMaxDeg,theTol3D,Parameters = ParseParameters(theMinDeg, theMaxDeg, theTol3D)
-            anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
+            anObj = self.PrimOp.MakeFilling(theContours, theMinDeg, theMaxDeg,
                                             0, theTol3D, 0, GEOM.FOM_Default, True)
             RaiseIfFailed("MakeFillingNew", self.PrimOp)
             anObj.SetParameters(Parameters)
@@ -4500,7 +4502,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created face.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.ShapesOp.MakeFaceWires(theWires, isPlanarWanted)
+            anObj = self.ShapesOp.MakeFaceWires(ToList(theWires), isPlanarWanted)
             if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
                 print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
@@ -4574,6 +4576,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created solid.
             """
             # Example: see GEOM_TestAll.py
+            theShells = ToList(theShells)
             if len(theShells) == 1:
                 descr = self._IsGoodForSolid(theShells[0])
                 #if len(descr) > 0:
@@ -4609,7 +4612,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created compound.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.ShapesOp.MakeCompound(theShapes)
+            anObj = self.ShapesOp.MakeCompound(ToList(theShapes))
             RaiseIfFailed("MakeCompound", self.ShapesOp)
             self._autoPublish(anObj, theName, "compound")
             return anObj

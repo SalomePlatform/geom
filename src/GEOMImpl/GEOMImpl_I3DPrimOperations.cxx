@@ -626,8 +626,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRHA (Handle(GEOM_Object) thePnt,
-								       Handle(GEOM_Object) theVec,
-								       double theR, double theH, double theA)
+                                                                       Handle(GEOM_Object) theVec,
+                                                                       double theR, double theH, double theA)
 {
   SetErrorCode(KO);
 
@@ -1615,15 +1615,19 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
  *  MakeFilling
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
-       (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg,
-        double theTol2D, double theTol3D, int theNbIter,
-        int theMethod, bool isApprox)
+Handle(GEOM_Object)
+GEOMImpl_I3DPrimOperations::MakeFilling (std::list< Handle(GEOM_Object)> & theContours,
+                                         int theMinDeg, int theMaxDeg,
+                                         double theTol2D, double theTol3D, int theNbIter,
+                                         int theMethod, bool isApprox)
 {
   SetErrorCode(KO);
 
-  if (theShape.IsNull()) return NULL;
-
+  Handle(TColStd_HSequenceOfTransient) contours = GEOM_Object::GetLastFunctions( theContours );
+  if ( contours.IsNull() || contours->IsEmpty() ) {
+    SetErrorCode("NULL argument shape");
+    return NULL;
+  }
   //Add a new Filling object
   Handle(GEOM_Object) aFilling = GetEngine()->AddObject(GetDocID(), GEOM_FILLING);
 
@@ -1635,12 +1639,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   if (aFunction->GetDriverGUID() != GEOMImpl_FillingDriver::GetID()) return NULL;
 
   GEOMImpl_IFilling aFI (aFunction);
-
-  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-
-  if (aRefShape.IsNull()) return NULL;
-
-  aFI.SetShape(aRefShape);
+  aFI.SetShapes(contours);
   aFI.SetMinDeg(theMinDeg);
   aFI.SetMaxDeg(theMaxDeg);
   aFI.SetTol2D(theTol2D);
@@ -1668,17 +1667,17 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
-  pd << aFilling << " = geompy.MakeFilling(" << theShape ;
+  pd << aFilling << " = geompy.MakeFilling(" << theContours ;
   if ( theMinDeg != 2 )   pd << ", theMinDeg=" << theMinDeg ;
   if ( theMaxDeg != 5 )   pd << ", theMaxDeg=" << theMaxDeg ;
   if ( fabs(theTol2D-0.0001) > Precision::Confusion() )
-                          pd << ", theTol2D=" << theTol2D ;
+  {                       pd << ", theTol2D=" << theTol2D ; }
   if ( fabs(theTol3D-0.0001) > Precision::Confusion() )
-                          pd << ", theTol3D=" << theTol3D ;
+  {                       pd << ", theTol3D=" << theTol3D ; }
   if ( theNbIter != 0 )   pd << ", theNbIter=" << theNbIter ;
   if ( theMethod==1 )     pd << ", theMethod=GEOM.FOM_UseOri";
   else if( theMethod==2 ) pd << ", theMethod=GEOM.FOM_AutoCorrect";
-  if(isApprox)            pd << ", isApprox=" << isApprox ;
+  if ( isApprox )         pd << ", isApprox=" << isApprox ;
   pd << ")";
 
   SetErrorCode(OK);

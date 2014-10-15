@@ -20,14 +20,12 @@ p3 = geompy.MakeVertex(  -30.,  -30.,  10.)
 
 # create an arc from three points
 arc = geompy.MakeArc(p1, p2, p3)
-ShapeListCompound = []
-i = 0
-while i <= 3 :
+ContoursList = []
+for i in range(4):
     S = geompy.MakeTranslation(arc, i * 50., 0., 0.)
-    ShapeListCompound.append(S)
-    i = i + 1
+    ContoursList.append(S)
 
-compound = geompy.MakeCompound(ShapeListCompound)
+compound = geompy.MakeCompound(ContoursList)
 
 # create a filling
 filling = geompy.MakeFilling(compound, mindeg, maxdeg, tol3d, tol2d, nbiter)

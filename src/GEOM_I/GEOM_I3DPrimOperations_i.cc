@@ -880,14 +880,14 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeRevolutionAxisAngle2Ways
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr
-GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_ptr theShape,
-                                      CORBA::Long theMinDeg,
-                                      CORBA::Long theMaxDeg,
-                                      CORBA::Double theTol2D,
-                                      CORBA::Double theTol3D,
-                                      CORBA::Long theNbIter,
+GEOM_I3DPrimOperations_i::MakeFilling(const GEOM::ListOfGO&     theContours,
+                                      CORBA::Long               theMinDeg,
+                                      CORBA::Long               theMaxDeg,
+                                      CORBA::Double             theTol2D,
+                                      CORBA::Double             theTol3D,
+                                      CORBA::Long               theNbIter,
                                       GEOM::filling_oper_method theMethod,
-                                      CORBA::Boolean theApprox)
+                                      CORBA::Boolean            theApprox)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -895,9 +895,9 @@ GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_ptr theShape,
   GetOperations()->SetNotDone();
 
   //Get the reference objects
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-
-  if (aShape.IsNull()) return aGEOMObject._retn();
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theContours, aShapes ))
+    return aGEOMObject._retn();
 
   int aMethod = 0;
   switch (theMethod) {
@@ -925,8 +925,7 @@ GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_ptr theShape,
 
   //Create the Solid
   Handle(GEOM_Object) anObject = GetOperations()->MakeFilling
-    (aShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter,
-     aMethod, theApprox);
+    (aShapes, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, aMethod, theApprox);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

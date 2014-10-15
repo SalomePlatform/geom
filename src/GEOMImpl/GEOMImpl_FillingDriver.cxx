@@ -30,43 +30,42 @@
 
 #include <Basics_OCCTVersion.hxx>
 
+#include <BRepAlgo.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
+
+#include <GeomAPI_PointsToBSpline.hxx>
+#include <GeomAPI_PointsToBSplineSurface.hxx>
+#include <GeomFill_AppSurf.hxx>
+#include <GeomFill_Line.hxx>
+#include <GeomFill_SectionGenerator.hxx>
+#include <Geom_BSplineCurve.hxx>
+#include <Geom_BSplineSurface.hxx>
+#include <Geom_BezierCurve.hxx>
+#include <Geom_Circle.hxx>
+#include <Geom_Curve.hxx>
+#include <Geom_Ellipse.hxx>
+#include <Geom_Line.hxx>
+#include <Geom_Surface.hxx>
+#include <Geom_TrimmedCurve.hxx>
+
+#include <Precision.hxx>
 #include <ShapeFix_Face.hxx>
 
-#include <BRep_Tool.hxx>
-#include <BRepAlgo.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
-#include <BRepBuilderAPI_Copy.hxx>
+#include <TColGeom_SequenceOfCurve.hxx>
+#include <TColgp_Array1OfPnt.hxx>
+#include <TColgp_SequenceOfPnt.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopTools_SequenceOfShape.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
-
-#include <Geom_Curve.hxx>
-#include <Geom_Surface.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <Geom_Line.hxx>
-#include <Geom_Circle.hxx>
-#include <Geom_Ellipse.hxx>
-#include <Geom_BezierCurve.hxx>
-#include <Geom_BSplineCurve.hxx>
-#include <Geom_BSplineSurface.hxx>
-#include <GeomFill_Line.hxx>
-#include <GeomFill_AppSurf.hxx>
-#include <GeomFill_SectionGenerator.hxx>
-#include <GeomAPI_PointsToBSplineSurface.hxx>
-#include <GeomAPI_PointsToBSpline.hxx>
-
-#include <TColGeom_SequenceOfCurve.hxx>
-
-#include <TColgp_SequenceOfPnt.hxx>
-#include <TColgp_Array1OfPnt.hxx>
-
-#include <Precision.hxx>
 
 #include <Standard_ConstructionError.hxx>
 
@@ -101,19 +100,9 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   if (aFunction->GetType() != BASIC_FILLING) return 0;
 
   GEOMImpl_IFilling IF (aFunction);
-  Handle(GEOM_Function) aShapeFunction = IF.GetShape();
-  if (aShapeFunction.IsNull()) return 0;
-
-  TopoDS_Shape aShape;
-  BRepBuilderAPI_Copy Copy (aShapeFunction->GetValue());
-  if (Copy.IsDone())
-    aShape = Copy.Shape();
-
-  if (aShape.IsNull() || aShape.ShapeType() != TopAbs_COMPOUND) return 0;
-
-  Standard_Integer mindeg = IF.GetMinDeg();
-  Standard_Integer maxdeg = IF.GetMaxDeg();
-  Standard_Real tol3d = IF.GetTol3D();
+  Standard_Integer   mindeg = IF.GetMinDeg();
+  Standard_Integer   maxdeg = IF.GetMaxDeg();
+  Standard_Real       tol3d = IF.GetTol3D();
   Standard_Boolean isApprox = IF.GetApprox();
 
   if (mindeg > maxdeg) {
@@ -130,32 +119,56 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   BRep_Builder B;
   B.MakeCompound(aComp);
 
+  // input is either a list or compound of contours
+  TopTools_SequenceOfShape contours;
+  Handle(TColStd_HSequenceOfTransient) aShapeFunctions = IF.GetShapes();
+  if ( aShapeFunctions.IsNull() || aShapeFunctions->IsEmpty() ) return 0;
+  for ( int i = 1; i <= aShapeFunctions->Length(); ++i )
+  {
+    Handle(GEOM_Function) fun = Handle(GEOM_Function)::DownCast( aShapeFunctions->Value( i ));
+    if ( fun.IsNull() ) return 0;
+    TopoDS_Shape s = fun->GetValue();
+    if ( s.IsNull() ) return 0;
+    BRepBuilderAPI_Copy Copy (s);
+    if ( Copy.IsDone() )
+      contours.Append( Copy.Shape() );
+  }
+
   // 1. Convert argument wires, if any, into BSpline edges
-  TopoDS_Iterator It (aShape);
-  for (; It.More(); It.Next()) {
-    Scurrent = It.Value();
+  for ( int i = 1; i <= contours.Length(); ++i )
+  {
+    Scurrent = contours.Value( i );
     if (Scurrent.ShapeType() != TopAbs_EDGE) {
-      TopoDS_Edge NewEdge;
+      
       if (Scurrent.ShapeType() == TopAbs_WIRE)
       {
         const TopoDS_Wire& CurWire = TopoDS::Wire(Scurrent);
-        NewEdge = BRepAlgo::ConcatenateWireC0(CurWire);
+        TopoDS_Edge NewEdge = BRepAlgo::ConcatenateWireC0(CurWire);
+        if (NewEdge.IsNull())
+          Standard_ConstructionError::Raise("Failed to join several edges into one");
+        Scurrent = NewEdge;
       }
-      if (NewEdge.IsNull()) {
-        Standard_ConstructionError::Raise("The argument compound must contain only edges");
+      else if (Scurrent.ShapeType() == TopAbs_COMPOUND)
+      {
+        for ( TopoDS_Iterator It( Scurrent ); It.More(); It.Next() )
+          contours.Append( It.Value() );
+        continue;
       }
-      Scurrent = NewEdge;
+      else
+      {
+        Standard_ConstructionError::Raise("Input must contain only edges or/and wires");
+      }
     }
     B.Add(aComp,Scurrent);
   }
-  aShape = aComp;
+  TopoDS_Shape aShape = aComp;
 
   // 2. The surface construction
   if (!isApprox) {
     // make filling as in old version of SALOME (before 4.1.1)
 
-    Standard_Real tol2d = IF.GetTol2D();
-    Standard_Integer nbiter = IF.GetNbIter();
+    Standard_Real      tol2d = IF.GetTol2D();
+    Standard_Integer  nbiter = IF.GetNbIter();
     Standard_Integer aMethod = IF.GetMethod();
 
     GeomFill_SectionGenerator Section;
@@ -324,7 +337,7 @@ GetCreationInformation(std::string&             theOperationName,
   switch ( aType ) {
   case BASIC_FILLING:
   {
-    AddParam( theParams, "Input compound", aCI.GetShape() );
+    AddParam( theParams, "Input compound", aCI.GetShapes() );
     AddParam( theParams, "Method", aCI.GetMethod() );
     const char* method[3] =
       { "Standard", "Use edges orientation", "Correct edges orientation" };

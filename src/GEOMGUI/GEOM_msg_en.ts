@@ -790,7 +790,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_FILLING_COMPOUND</source>
-        <translation>Input compound</translation>
+        <translation>Input contours</translation>
     </message>
     <message>
         <source>GEOM_FILLING_MAX_DEG</source>

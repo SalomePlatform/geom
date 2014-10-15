@@ -1682,18 +1682,18 @@ module GEOM
                                               in double theAngle);
 
     /*!
-     *  \brief Create a filling from the given compound of contours.
-     *  \param theShape Initial shape on which to perform the feature.
-     *  \param theMinDeg a minimal degree of BSpline surface to create
-     *  \param theMaxDeg a maximal degree of BSpline surface to create
-     *  \param theTol2D a 2d tolerance to be reached
-     *  \param theTol3D a 3d tolerance to be reached
-     *  \param theNbIter a number of iteration of approximation algorithm
+     *  \brief Create a face from a given set of contours.
+     *  \param theContours either a list or a compound of edges/wires.
+     *  \param theMinDeg a minimal degree of BSpline surface to create.
+     *  \param theMaxDeg a maximal degree of BSpline surface to create.
+     *  \param theTol2D a 2d tolerance to be reached.
+     *  \param theTol3D a 3d tolerance to be reached.
+     *  \param theNbIter a number of iteration of approximation algorithm.
      *  \param theMethod Kind of method to perform filling operation.
-     *  \param theApprox Boolean indicating if result should be approximated
-     *  \return New GEOM_Object, containing the created filling surface.
+     *  \param theApprox Boolean indicating if result should be approximated.
+     *  \return New GEOM_Object (face), containing the created filling surface.
      */
-    GEOM_Object MakeFilling (in GEOM_Object theShape,
+    GEOM_Object MakeFilling (in ListOfGO theContours,
                              in long theMinDeg, in long theMaxDeg,
                              in double theTol2D, in double theTol3D,
                              in long theNbIter,

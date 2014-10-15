@@ -1453,8 +1453,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape
   beginService( " GEOM_Superv_i::MakeFilling" );
   MESSAGE("GEOM_Superv_i::MakeFilling");
   get3DPrimOp();
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( 1 );
+  objList[0] = theShape;
   GEOM::GEOM_Object_ptr anObj =
-    my3DPrimOp->MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D,
+    my3DPrimOp->MakeFilling(objList, theMinDeg, theMaxDeg, theTol2D, theTol3D,
                             theNbIter, theMethod, theApprox);
   endService( " GEOM_Superv_i::MakeFilling" );
   return anObj;
@@ -2348,8 +2351,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theSha
   beginService( " GEOM_Superv_i::MakeGlueFaces" );
   MESSAGE("GEOM_Superv_i::MakeGlueFaces");
   getShapesOp();
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( 1 );
+  objList[0] = theShape;
   GEOM::GEOM_Object_ptr anObj =
-    myShapesOp->MakeGlueFaces(theShape, theTolerance, doKeepNonSolids);
+    myShapesOp->MakeGlueFaces(objList, theTolerance, doKeepNonSolids);
   endService( " GEOM_Superv_i::MakeGlueFaces" );
   return anObj;
 }
@@ -2363,7 +2369,10 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
   beginService( " GEOM_Superv_i::GetGlueFaces" );
   MESSAGE("GEOM_Superv_i::GetGlueFaces");
   getShapesOp();
-  GEOM::ListOfGO* aList = myShapesOp->GetGlueFaces(theShape, theTolerance);
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( 1 );
+  objList[0] = theShape;
+  GEOM::ListOfGO* aList = myShapesOp->GetGlueFaces(objList, theTolerance);
   GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aList));
   MESSAGE(" List of "<<aListPtr->GetList().length()<<" element(s)");
   endService( " GEOM_Superv_i::GetGlueFaces" );
@@ -2382,8 +2391,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr 
   beginService( " GEOM_Superv_i::MakeGlueFacesByList" );
   MESSAGE("GEOM_Superv_i::MakeGlueFacesByList");
   getShapesOp();
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( 1 );
+  objList[0] = theShape;
   GEOM::GEOM_Object_ptr anObj =
-    myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces,
+    myShapesOp->MakeGlueFacesByList(objList, theTolerance, theFaces,
                                     doKeepNonSolids, doGlueAllEdges);
   endService( " GEOM_Superv_i::MakeGlueFacesByList" );
   return anObj;
