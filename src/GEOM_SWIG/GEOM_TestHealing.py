@@ -501,6 +501,14 @@ def TestSewGluing(geompy):
   assert glueEL3.GetShapeType() == GEOM.COMPOUND
   assert geompy.NumberOfEdges( glueEL3 ) == geompy.NumberOfEdges( comp ) - 4
 
+  # check GetSharedShapesMulti()
+  sharedEE = geompy.GetSharedShapesMulti( glueEL3, geompy.ShapeType["EDGE"])
+  assert len( sharedEE ) == 4
+  assert sharedEE[0].GetShapeType() == GEOM.EDGE
+  assert sharedEE[1].GetShapeType() == GEOM.EDGE
+  assert sharedEE[2].GetShapeType() == GEOM.EDGE
+  assert sharedEE[3].GetShapeType() == GEOM.EDGE
+
   return
 
 def TestHealingOperations (geompy, math):

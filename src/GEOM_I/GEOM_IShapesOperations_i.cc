@@ -1047,12 +1047,8 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSharedShapesMulti
 
   //Get the shapes
   std::list<Handle(GEOM_Object)> aShapes;
-  int aLen = theShapes.length();
-  for (int ind = 0; ind < aLen; ind++) {
-    Handle(GEOM_Object) aSh = GetObjectImpl(theShapes[ind]);
-    if (aSh.IsNull()) return aSeq._retn();
-    aShapes.push_back(aSh);
-  }
+  if (! GetListOfObjectsImpl( theShapes, aShapes ))
+    return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
     GetOperations()->GetSharedShapes(aShapes, theShapeType);

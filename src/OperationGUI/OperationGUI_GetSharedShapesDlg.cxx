@@ -308,11 +308,16 @@ GEOM::GEOM_IOperations_ptr OperationGUI_GetSharedShapesDlg::createOperation()
 //=================================================================================
 bool OperationGUI_GetSharedShapesDlg::isValid (QString& msg)
 {
+  bool isOK = true;
   if (myListShapes.length() < 2) {
-    msg = tr("MSG_SHARED_SHAPES_TOO_FEW_SHAPES");
-    return false;
+    isOK = false;
+    if ( myListShapes.length() == 1 )
+      isOK = ( myListShapes[0]->GetShapeType() == GEOM::COMPOUND );
   }
-  return true;
+  if ( !isOK )
+    msg = tr("MSG_SHARED_SHAPES_TOO_FEW_SHAPES");
+
+  return isOK;
 }
 
 //=================================================================================

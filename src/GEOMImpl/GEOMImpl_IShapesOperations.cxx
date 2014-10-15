@@ -2001,8 +2001,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
 //purpose  :
 //=======================================================================
 Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
-                                     (std::list<Handle(GEOM_Object)> theShapes,
-                                      const Standard_Integer         theShapeType)
+                                     (std::list<Handle(GEOM_Object)> & theShapes,
+                                      const Standard_Integer           theShapeType)
 {
   SetErrorCode(KO);
 
@@ -2012,18 +2012,33 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
   int ind = 1;
   std::list<Handle(GEOM_Object)>::iterator it = theShapes.begin();
 
-  Handle(GEOM_Object) aMainObj = (*it++);
+  Handle(GEOM_Object) aMainObj = *it;
   Handle(GEOM_Function) aMainShape = aMainObj->GetLastFunction();
-  if (aMainShape.IsNull()) {
-    SetErrorCode("NULL shape for GetSharedShapes");
-    return NULL;
+
+  TopTools_SequenceOfShape shapeSeq;
+  for (; it != theShapes.end(); it++, ind++) {
+    Handle(GEOM_Function) aRefShape = (*it)->GetLastFunction();
+    if (aRefShape.IsNull()) {
+      SetErrorCode("NULL shape for GetSharedShapes");
+      return NULL;
+    }
+    TopoDS_Shape aShape2 = aRefShape->GetValue();
+    if (aShape2.IsNull()) return NULL;
+    shapeSeq.Append( aShape2 );
   }
 
-  TopoDS_Shape aShape1 = aMainShape->GetValue();
-  if (aShape1.IsNull()) return NULL;
+  TopoDS_Shape aShape1 = shapeSeq.First();
+
+  if ( shapeSeq.Length() == 1 )
+  {
+    shapeSeq.Clear();
+    for ( TopoDS_Iterator it( aShape1); it.More(); it.Next() )
+      shapeSeq.Append( it.Value() );
+    aShape1 = shapeSeq.First();
+  }
 
   TopTools_IndexedMapOfShape anIndices;
-  TopExp::MapShapes(aShape1, anIndices);
+  TopExp::MapShapes(aMainShape->GetValue(), anIndices);
 
   TopTools_IndexedMapOfShape mapSelected;
   TopExp::MapShapes(aShape1, TopAbs_ShapeEnum(theShapeType), mapSelected);
@@ -2032,23 +2047,17 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
   BRep_Builder B;
   TopoDS_Compound aCurrSelection;
 
-  for (; it != theShapes.end(); it++, ind++) {
-    Handle(GEOM_Function) aRefShape = (*it)->GetLastFunction();
-    if (aRefShape.IsNull()) {
-      SetErrorCode("NULL shape for GetSharedShapes");
-      return NULL;
-    }
+  for ( ind = 2; ind <= shapeSeq.Length(); ind++) {
 
     TopoDS_Compound aCompound;
     B.MakeCompound(aCompound);
 
-    TopoDS_Shape aShape2 = aRefShape->GetValue();
-    if (aShape2.IsNull()) return NULL;
+    const TopoDS_Shape& aShape2 = shapeSeq.Value( ind );
 
     TopTools_MapOfShape mapShape2;
     TopExp_Explorer exp (aShape2, TopAbs_ShapeEnum(theShapeType));
     for (; exp.More(); exp.Next()) {
-      TopoDS_Shape aSS = exp.Current();
+      const TopoDS_Shape& aSS = exp.Current();
       if (mapShape2.Add(aSS) && mapSelected.Contains(aSS)) {
         B.Add(aCompound, aSS);
       }
@@ -2060,7 +2069,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
   }
 
   // Create GEOM_Object for each found shared shape (collected in aCurrSelection)
-  Handle(GEOM_Object) anObj;
+  Handle(GEOM_Object) anObj, aLastCreated;
   Handle(TColStd_HArray1OfInteger) anArray;
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   TCollection_AsciiString anAsciiList, anEntry;
@@ -2071,6 +2080,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
     anArray->SetValue(1, anIndices.FindIndex(itSel.Value()));
     anObj = GetEngine()->AddSubShape(aMainObj, anArray);
     aSeq->Append(anObj);
+
+    aLastCreated = GEOM::GetCreatedLast( aLastCreated, anObj );
 
     // for python command
     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
@@ -2087,16 +2098,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
   anAsciiList.Trunc(anAsciiList.Length() - 1);
 
   // IPAL22904: TC6.5.0: order of python commands is wrong after dump study
-  Handle(TColStd_HSequenceOfTransient) anObjects = new TColStd_HSequenceOfTransient;
-  for( it = theShapes.begin(); it != theShapes.end(); it++ )
-  {
-    Handle(GEOM_Object) anObj = *it;
-    if( !anObj.IsNull() )
-      anObjects->Append( anObj );
-  }
-
   // Get the function of the latest published object
-  Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast( anObjects )->GetLastFunction();
+  Handle(GEOM_Function) aFunction = aLastCreated->GetLastFunction();
   if( aFunction.IsNull() ) // just in case
     aFunction = aMainShape;
 

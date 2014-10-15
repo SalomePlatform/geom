@@ -4819,7 +4819,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return aList
 
         ## Get all sub-shapes, shared by all shapes in the list <VAR>theShapes</VAR>.
-        #  @param theShapes Shapes to find common sub-shapes of.
+        #  @param theShapes Either a list or compound of shapes to find common sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -4834,7 +4834,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Get all sub-shapes, shared by all shapes in the list theShapes.
 
             Parameters:
-                theShapes Shapes to find common sub-shapes of.
+                theShapes Either a list or compound of shapes to find common sub-shapes of.
                 theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
@@ -4844,7 +4844,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 List of GEOM.GEOM_Object, that are sub-shapes of all given shapes.
             """
             # Example: see GEOM_TestOthers.py
-            aList = self.ShapesOp.GetSharedShapesMulti(theShapes, theShapeType)
+            aList = self.ShapesOp.GetSharedShapesMulti(ToList(theShapes), theShapeType)
             RaiseIfFailed("GetSharedShapesMulti", self.ShapesOp)
             self._autoPublish(aList, theName, "shared")
             return aList
