@@ -85,6 +85,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) MakeFaceWires (std::list<Handle(GEOM_Object)> theWires,
                                                      const bool isPlanarWanted);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeFaceFromSurface
+                                              (Handle(GEOM_Object) theFace,
+                                               Handle(GEOM_Object) theWire);
+
   Standard_EXPORT Handle(GEOM_Object) MakeShell (std::list<Handle(GEOM_Object)> theShapes);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSolidShells (std::list<Handle(GEOM_Object)> theShells);

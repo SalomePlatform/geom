@@ -5,7 +5,10 @@
 To create a \b Face in the <b>Main Menu</b> select <b>New Entity - >
 Build - > Face</b>
 
-\n To create a \b Face you need to select input shape(s). The list of
+There are two algorithms to create a \b Face. In both cases the \b Result
+of the operation will be a GEOM_Object (FACE).
+
+\n Firstly, to create a \b Face you need to select input shape(s). The list of
 input shapes can include shapes of any type except vertices; if the shapes are
 neither wires nor edges, the algorithm extracts all edges from
 the input shapes and works on the obtaineed edges.
@@ -25,6 +28,15 @@ face or nothing if it is impossible.
 \n <b>Arguments:</b> Name + 1 wire.
 
 \image html neo-obj4.png
+
+\n Secondly, it is possible to create a face based on another face's surface and bounded by a wire.
+
+\n The \b Result will be a \b GEOM_Object (FACE).
+
+\n <b>TUI Command:</b> <em>geompy.MakeFaceFromSurface(theFace, theWire)</em>
+\n <b>Arguments:</b> Name + 1 face + 1 wire.
+
+\image html neo-obj4_2.png
 
 \n <b>Example:</b>
 

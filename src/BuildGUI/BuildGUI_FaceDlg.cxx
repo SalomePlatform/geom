@@ -49,18 +49,20 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BuildGUI_FaceDlg::BuildGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
-  : GEOMBase_Skeleton( theGeometryGUI, parent )
+  : GEOMBase_Skeleton( theGeometryGUI, parent ),
+    GroupWire        (0),
+    myGroupSurf      (0)
 {
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_FACE" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_FACE" ) ) );
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_FACE_SURFACE" ) ) );
 
   setWindowTitle( tr( "GEOM_FACE_TITLE" ) );
 
   /***************************************************************/
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_FACE" ) );
-  mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton1->setIcon( image1 );
+  mainFrame()->RadioButton2->setIcon( image2 );
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
@@ -69,11 +71,20 @@ BuildGUI_FaceDlg::BuildGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   GroupWire->GroupBox1->setTitle( tr( "GEOM_FACE_FFW" ) );
   GroupWire->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
   GroupWire->CheckButton1->setText( tr( "GEOM_FACE_OPT" ) );
-  GroupWire->PushButton1->setIcon( image1 );
+  GroupWire->PushButton1->setIcon( image0 );
+
+  myGroupSurf = new DlgRef_2Sel(centralWidget());
+
+  myGroupSurf->GroupBox1->setTitle(tr("GEOM_FACE_FROM_SURFACE" ) );
+  myGroupSurf->TextLabel1->setText(tr("GEOM_FACE"));
+  myGroupSurf->TextLabel2->setText(tr("GEOM_WIRE"));
+  myGroupSurf->PushButton1->setIcon(image0);
+  myGroupSurf->PushButton2->setIcon(image0);
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupWire );
+  layout->addWidget(myGroupSurf);
   /***************************************************************/
 
   setHelpFileName("create_face_page.html");
@@ -102,40 +113,82 @@ void BuildGUI_FaceDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupWire->LineEdit1;
   GroupWire->LineEdit1->setReadOnly( true );
+  myGroupSurf->LineEdit1->setReadOnly( true );
+  myGroupSurf->LineEdit2->setReadOnly( true );
 
   GroupWire->CheckButton1->setChecked( true );
   myWires.clear();
-
-  setGlobalSelection();
+  myFace.nullify();
+  myWire.nullify();
 
   /* signals and slots connections */
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()),        this, SLOT(ClickOnCancel()));
+
+  connect(this,      SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
+
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
   connect( GroupWire->LineEdit1,   SIGNAL( returnPressed()), this, SLOT( LineEditReturnPressed() ) );
   connect( GroupWire->PushButton1, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
+  connect( myGroupSurf->LineEdit1,   SIGNAL( returnPressed()), this, SLOT( LineEditReturnPressed() ) );
+  connect( myGroupSurf->PushButton1, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
+  connect( myGroupSurf->LineEdit2,   SIGNAL( returnPressed()), this, SLOT( LineEditReturnPressed() ) );
+  connect( myGroupSurf->PushButton2, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_FACE" ) );
-  SelectionIntoArgument();
+
+  ConstructorsClicked(0);
 }
 
 //=================================================================================
-// function : setGlobalSelection
-// purpose  :
+// function : ConstructorsClicked()
+// purpose  : Radio button management
 //=================================================================================
-void BuildGUI_FaceDlg::setGlobalSelection()
+void BuildGUI_FaceDlg::ConstructorsClicked(int constructorId)
 {
-  TColStd_MapOfInteger aMap;
+  switch (constructorId) {
+  case 0:
+    {
+      TColStd_MapOfInteger aMap;
 
-  aMap.Add(GEOM_EDGE);
-  aMap.Add(GEOM_WIRE);
-  aMap.Add(GEOM_FACE);
-  aMap.Add(GEOM_SHELL);
-  aMap.Add(GEOM_SOLID);
-  aMap.Add(GEOM_COMPOUND);
+      aMap.Add(GEOM_EDGE);
+      aMap.Add(GEOM_WIRE);
+      aMap.Add(GEOM_FACE);
+      aMap.Add(GEOM_SHELL);
+      aMap.Add(GEOM_SOLID);
+      aMap.Add(GEOM_COMPOUND);
+      globalSelection(aMap);
 
-  globalSelection(aMap);
+      myEditCurrentArgument = GroupWire->LineEdit1;
+      GroupWire->LineEdit1->setText("");
+      GroupWire->show();
+      myGroupSurf->hide();
+      break;
+    }
+  case 1:
+    {
+      globalSelection(GEOM_FACE); // For the first element.
+
+      myEditCurrentArgument = myGroupSurf->LineEdit1;
+      myGroupSurf->LineEdit1->setText("");
+      myGroupSurf->PushButton1->setDown(true);
+      myGroupSurf->PushButton2->setDown(false);
+      GroupWire->hide();
+      myGroupSurf->show();
+      break;
+    }
+  }
+
+  myWires.clear();
+  myFace.nullify();
+  myWire.nullify();
+  qApp->processEvents();
+  updateGeometry();
+  resize(minimumSizeHint());
+  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -170,17 +223,45 @@ bool BuildGUI_FaceDlg::ClickOnApply()
 //=================================================================================
 void BuildGUI_FaceDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText( "" );
+  if (myEditCurrentArgument == GroupWire->LineEdit1) {
+    myEditCurrentArgument->setText( "" );
 
-  QList<TopAbs_ShapeEnum> types;
-  types << TopAbs_EDGE  << TopAbs_WIRE  << TopAbs_FACE
-        << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPOUND;
-  myWires = getSelected( types, -1 );
+    QList<TopAbs_ShapeEnum> types;
+    types << TopAbs_EDGE  << TopAbs_WIRE  << TopAbs_FACE
+          << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPOUND;
+    myWires = getSelected( types, -1 );
 
-  if ( !myWires.isEmpty() ) {
-    QString aName = myWires.count() > 1 ? QString( "%1_objects").arg( myWires.count() ) : GEOMBase::GetName( myWires[0].get() );
-    myEditCurrentArgument->setText( aName );
+    if ( !myWires.isEmpty() ) {
+      QString aName = myWires.count() > 1 ? QString( "%1_objects").arg( myWires.count() ) : GEOMBase::GetName( myWires[0].get() );
+      myEditCurrentArgument->setText( aName );
+    }
+  } else if (myEditCurrentArgument == myGroupSurf->LineEdit1 ||
+             myEditCurrentArgument == myGroupSurf->LineEdit2) {
+    const bool isEditFace = myEditCurrentArgument == myGroupSurf->LineEdit1;
+    const TopAbs_ShapeEnum aType = isEditFace ? TopAbs_FACE : TopAbs_WIRE;
+    GEOM::GeomObjPtr aSelectedObject = getSelected(aType);
+    GEOM::GeomObjPtr &anObj = isEditFace ? myFace : myWire;
+
+    if (aSelectedObject) {
+      myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject.get()));
+      anObj = aSelectedObject;
+    } else {
+      myEditCurrentArgument->setText("");
+      anObj.nullify();
+    }
+
+    if (isEditFace) {
+      if (myFace && !myWire) {
+        myGroupSurf->PushButton2->click();
+      }
+    } else {
+      if (!myFace && myWire) {
+        myGroupSurf->PushButton1->click();
+      }
+    }
   }
+
+  displayPreview(true);
 }
 
 
@@ -191,14 +272,36 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
 void BuildGUI_FaceDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if ( send != GroupWire->PushButton1 )
-    return;
+  if (send == GroupWire->PushButton1) {
+    TColStd_MapOfInteger aMap;
+  
+    aMap.Add(GEOM_EDGE);
+    aMap.Add(GEOM_WIRE);
+    aMap.Add(GEOM_FACE);
+    aMap.Add(GEOM_SHELL);
+    aMap.Add(GEOM_SOLID);
+    aMap.Add(GEOM_COMPOUND);
+    globalSelection(aMap);
+    myEditCurrentArgument = GroupWire->LineEdit1;
+  }
+  else if (send == myGroupSurf->PushButton1) {
+    globalSelection(GEOM_FACE);
+    myEditCurrentArgument = myGroupSurf->LineEdit1;
+    myGroupSurf->PushButton2->setDown(false);
+    myGroupSurf->LineEdit2->setEnabled(false);
+  }
+  else if (send == myGroupSurf->PushButton2) {
+    globalSelection(GEOM_WIRE);
+    myEditCurrentArgument = myGroupSurf->LineEdit2;
+    myGroupSurf->PushButton1->setDown(false);
+    myGroupSurf->LineEdit1->setEnabled(false);
+  }
 
-  setGlobalSelection();
-  myEditCurrentArgument = GroupWire->LineEdit1;
-
+  // enable line edit
+  myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
-  SelectionIntoArgument();
+  send->setDown(true);
+  displayPreview(true);
 }
 
 
@@ -211,7 +314,10 @@ void BuildGUI_FaceDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  setGlobalSelection();
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+           this, SLOT(SelectionIntoArgument()));
+
+  ConstructorsClicked(getConstructorId());
 }
 
 
@@ -240,7 +346,20 @@ GEOM::GEOM_IOperations_ptr BuildGUI_FaceDlg::createOperation()
 //=================================================================================
 bool BuildGUI_FaceDlg::isValid( QString& )
 {
-  return !myWires.isEmpty();
+  bool ok = false;
+
+  switch (getConstructorId()) {
+  case 0:
+    ok = !myWires.isEmpty();
+    break;
+  case 1:
+    ok = myFace && myWire;
+    break;
+  default:
+    break;
+  }
+
+  return ok;
 }
 
 //=================================================================================
@@ -249,14 +368,32 @@ bool BuildGUI_FaceDlg::isValid( QString& )
 //=================================================================================
 bool BuildGUI_FaceDlg::execute( ObjectList& objects )
 {
+  bool res = false;
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj;
 
-  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
-  objlist->length( myWires.count() );
-  for ( int i = 0; i < myWires.count(); i++ )
-    objlist[i] = myWires[i].copy();
+  switch (getConstructorId()) {
+  case 0:
+    {
+      GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+      
+      objlist->length( myWires.count() );
 
-  GEOM::GEOM_Object_var anObj = anOper->MakeFaceWires( objlist.in(), GroupWire->CheckButton1->isChecked() );
+      for ( int i = 0; i < myWires.count(); i++ ) {
+        objlist[i] = myWires[i].copy();
+      }
+
+      anObj = anOper->MakeFaceWires( objlist.in(), GroupWire->CheckButton1->isChecked() );
+      res   = true;
+    }
+    break;
+  case 1:
+    anObj = anOper->MakeFaceFromSurface(myFace.get(), myWire.get());
+    res   = true;
+    break;
+  default:
+    break;
+  }
 
   if (!anObj->_is_nil()) {
     objects.push_back(anObj._retn());
@@ -270,5 +407,5 @@ bool BuildGUI_FaceDlg::execute( ObjectList& objects )
     }
   }
 
-  return true;
+  return res;
 }

@@ -178,6 +178,7 @@ def TestAll (geompy, math):
   Face2    = geompy.MakeFace(Sketcher, WantPlanarFace)
   Face3    = geompy.MakeFaceHW (100., 200., 1)       #(2 Doubles, 1 Int)->GEOM_Object
   Face4    = geompy.MakeFaceObjHW (vz, 200., 100.)   #(1 GEOM_Object, 2 Doubles)->GEOM_Object
+  Face5    = geompy.MakeFaceFromSurface(Face, Sketcher) #(2 GEOM_Objects)->GEOM_Object
   Disk     = geompy.MakeDiskPntVecR (p0, vz, radius) #(2 GEOM_Object, 1 Double)->GEOM_Object
   Disk2    = geompy.MakeDiskThreePnt(p0, p200, pz)   #(3 GEOM_Object)->GEOM_Object
   Disk3    = geompy.MakeDiskR(100., 1)               #(1 Doubles, 1 Int)->GEOM_Object
@@ -397,6 +398,7 @@ def TestAll (geompy, math):
   id_Face2    = geompy.addToStudy(Face2,    "Face from Sketcher")
   id_Face3    = geompy.addToStudy(Face3,    "Face Height Width")
   id_Face4    = geompy.addToStudy(Face4,    "Face Plane_HW")
+  id_Face5    = geompy.addToStudy(Face5,    "Face from surface and wire")
   id_Disk     = geompy.addToStudy(Disk,     "Disk PntVecR")
   id_Disk2    = geompy.addToStudy(Disk2,    "Disk Three Points")
   id_Disk3    = geompy.addToStudy(Disk3,    "Disk OXY Radius")

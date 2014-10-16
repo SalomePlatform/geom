@@ -1926,6 +1926,15 @@ module GEOM
      */
     GEOM_Object MakeFaceWires (in ListOfGO theWires, in boolean isPlanarWanted);
 
+    /**
+     *  \brief Create a face based on surface of theFace limited by theWire.
+     *  \param theFace the face whose surface is used to create a new face.
+     *  \param theWire closed Wire build the face.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeFaceFromSurface(in GEOM_Object theFace,
+                                    in GEOM_Object theWire);
+
     /*!
      *  \brief Create a shell from the set of faces and shells.
      *  \param theFacesAndShells List of faces and/or shells.

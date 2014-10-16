@@ -42,6 +42,7 @@
 #include <BRepAlgo_FaceRestrictor.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeSolid.hxx>
@@ -304,6 +305,44 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       }
 
       aShape = C;
+    }
+  }
+  else if (aType == FACE_FROM_SURFACE) {
+#ifdef RESULT_TYPE_CHECK
+    anExpectedType = TopAbs_FACE;
+#endif
+
+    Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
+
+    if (aShapes.IsNull() == Standard_False) {
+      Standard_Integer aNbShapes = aShapes->Length();
+
+      if (aNbShapes == 2) {
+        Handle(GEOM_Function) aRefFace =
+          Handle(GEOM_Function)::DownCast(aShapes->Value(1));
+        Handle(GEOM_Function) aRefWire =
+          Handle(GEOM_Function)::DownCast(aShapes->Value(2));
+
+        if (aRefFace.IsNull() == Standard_False &&
+            aRefWire.IsNull() == Standard_False) {
+          TopoDS_Shape aShFace = aRefFace->GetValue();
+          TopoDS_Shape aShWire = aRefWire->GetValue();
+
+          if (aShFace.IsNull()    == Standard_False &&
+              aShFace.ShapeType() == TopAbs_FACE    &&
+              aShWire.IsNull()    == Standard_False &&
+              aShWire.ShapeType() == TopAbs_WIRE) {
+            TopoDS_Face             aFace = TopoDS::Face(aShFace);
+            TopoDS_Wire             aWire = TopoDS::Wire(aShWire);
+            Handle(Geom_Surface)    aSurf = BRep_Tool::Surface(aFace);
+            BRepBuilderAPI_MakeFace aMkFace(aSurf, aWire);
+
+            if (aMkFace.IsDone()) {
+              aShape = aMkFace.Shape();
+            }
+          }
+        }
+      }
     }
   }
   else if (aType == SHELL_FACES) {
@@ -1234,6 +1273,25 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam( theParams, "Wires/edges", aCI.GetShapes() );
     AddParam( theParams, "Is planar wanted", aCI.GetIsPlanar() );
     break;
+  case FACE_FROM_SURFACE:
+  {
+    theOperationName = "FACE";
+
+    Handle(TColStd_HSequenceOfTransient) shapes = aCI.GetShapes();
+
+    if (shapes.IsNull() == Standard_False) {
+      Standard_Integer aNbShapes = shapes->Length();
+
+      if (aNbShapes > 0) {
+        AddParam(theParams, "Face", shapes->Value(1));
+
+        if (aNbShapes > 1) {
+          AddParam(theParams, "Wire", shapes->Value(2));
+        }
+      }
+    }
+    break;
+  }
   case SHELL_FACES:
     theOperationName = "SHELL";
     AddParam( theParams, "Objects", aCI.GetShapes() );

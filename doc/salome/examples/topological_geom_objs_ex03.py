@@ -36,11 +36,13 @@ face1 = geompy.MakeFace(wire, isPlanarFace)
 # create faces from two wires
 face2 = geompy.MakeFaceWires([wire, sketcher1],isPlanarFace)
 face3 = geompy.MakeFaces([sketcher2, sketcher3],isPlanarFace)
+face4 = geompy.MakeFaceFromSurface(face1, sketcher1)
 
 # add objects in the study
 id_face1 = geompy.addToStudy(face1,"Face1")
 id_face2 = geompy.addToStudy(face2,"Face2")
 id_face3 = geompy.addToStudy(face3,"Face3")
+id_face4 = geompy.addToStudy(face4,"Face4")
 
 # display the faces
 gg.createAndDisplayGO(id_face1)
@@ -52,3 +54,6 @@ gg.setTransparency(id_face2,0.2)
 gg.createAndDisplayGO(id_face3)
 gg.setDisplayMode(id_face3,1)
 gg.setTransparency(id_face3,0.2) 
+gg.createAndDisplayGO(id_face4)
+gg.setDisplayMode(id_face4,1)
+gg.setTransparency(id_face4,0.2)

@@ -4523,6 +4523,39 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anObj = self.MakeFaceWires(theWires, isPlanarWanted, theName)
             return anObj
 
+        ## Create a face based on a surface from given face bounded
+        #  by given wire.
+        #  @param theFace the face whose surface is used to create a new face.
+        #  @param theWire the wire that will bound a new face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created face.
+        #
+        #  @ref tui_creation_face "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeFaceFromSurface(self, theFace, theWire, theName=None):
+            """
+            Create a face based on a surface from given face bounded
+            by given wire.
+
+            Parameters:
+                theFace the face whose surface is used to create a new face.
+                theWire the wire that will bound a new face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.ShapesOp.MakeFaceFromSurface(theFace, theWire)
+            RaiseIfFailed("MakeFaceFromSurface", self.ShapesOp)
+            self._autoPublish(anObj, theName, "face")
+            return anObj
+
         ## Create a shell from the set of faces and shells.
         #  @param theFacesAndShells List of faces and/or shells.
         #  @param theName Object name; when specified, this parameter is used

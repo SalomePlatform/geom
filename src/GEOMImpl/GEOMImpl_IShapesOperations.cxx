@@ -550,6 +550,77 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
 
 //=============================================================================
 /*!
+ *  MakeFaceFromSurface
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceFromSurface
+                                              (Handle(GEOM_Object) theFace,
+                                               Handle(GEOM_Object) theWire)
+{
+  SetErrorCode(KO);
+
+  //Add a new object
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+
+  //Add a new function
+  Handle(GEOM_Function) aFunction =
+    aShape->AddFunction(GEOMImpl_ShapeDriver::GetID(), FACE_FROM_SURFACE);
+
+  if (aFunction.IsNull()) {
+    return NULL;
+  }
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) {
+    return NULL;
+  }
+
+  GEOMImpl_IShapes aCI (aFunction);
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq =
+    new TColStd_HSequenceOfTransient;
+  Handle(GEOM_Function) aRefFace = theFace->GetLastFunction();
+  Handle(GEOM_Function) aRefWire = theWire->GetLastFunction();
+
+  if (aRefFace.IsNull()) {
+    SetErrorCode("NULL argument face for the face construction");
+    return NULL;
+  }
+
+  if (aRefWire.IsNull()) {
+    SetErrorCode("NULL argument wire for the face construction");
+    return NULL;
+  }
+
+  aShapesSeq->Append(aRefFace);
+  aShapesSeq->Append(aRefWire);
+
+  aCI.SetShapes(aShapesSeq);
+
+  //Compute the face
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump (aFunction) << aShape
+    << " = geompy.MakeFaceFromSurface(" << theFace << ", " << theWire << ")";
+
+  SetErrorCode(OK);
+
+  return aShape;
+}
+
+//=============================================================================
+/*!
  *  MakeShell
  */
 //=============================================================================

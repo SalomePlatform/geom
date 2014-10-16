@@ -248,6 +248,39 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWires
 
 //=============================================================================
 /*!
+ *  MakeFaceFromSurface
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceFromSurface
+                                  (GEOM::GEOM_Object_ptr theFace,
+                                   GEOM::GEOM_Object_ptr theWire)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference face and wire
+  Handle(GEOM_Object) aFace = GetObjectImpl(theFace);
+  Handle(GEOM_Object) aWire = GetObjectImpl(theWire);
+
+  if (aFace.IsNull() || aWire.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  //Create the Face
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeFaceFromSurface(aFace, aWire);
+
+  if (anObject.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeShell
  */
 //=============================================================================

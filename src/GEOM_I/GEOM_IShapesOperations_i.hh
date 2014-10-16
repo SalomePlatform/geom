@@ -64,6 +64,9 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeFaceWires (const GEOM::ListOfGO& theWires,
                                        CORBA::Boolean  isPlanarWanted);
 
+  GEOM::GEOM_Object_ptr MakeFaceFromSurface(GEOM::GEOM_Object_ptr theFace,
+                                            GEOM::GEOM_Object_ptr theWire);
+
   GEOM::GEOM_Object_ptr MakeShell (const GEOM::ListOfGO& theFacesAndShells);
 
   GEOM::GEOM_Object_ptr MakeSolidShell (GEOM::GEOM_Object_ptr theShell);

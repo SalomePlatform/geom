@@ -159,6 +159,10 @@
             <source>ICON_DLG_BUILD_FACE</source>
             <translation>build_face.png</translation>
         </message>
+        <message>
+            <source>ICON_DLG_BUILD_FACE_SURFACE</source>
+            <translation>build_face_surface.png</translation>
+        </message>
 	<message>
             <source>ICON_DLG_FACE_HW</source>
             <translation>face_hw.png</translation>

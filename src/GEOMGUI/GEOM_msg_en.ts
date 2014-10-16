@@ -692,6 +692,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Face creation from wires and/or edges</translation>
     </message>
     <message>
+        <source>GEOM_FACE_FROM_SURFACE</source>
+        <translation>Face creation from surface bounded by wire</translation>
+    </message>
+    <message>
         <source>GEOM_FACE_OPT</source>
         <translation>Try to create a planar face</translation>
     </message>

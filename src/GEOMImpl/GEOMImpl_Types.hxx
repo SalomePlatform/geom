@@ -303,6 +303,7 @@
 #define EDGE_CURVE_LENGTH   12
 #define SHAPES_ON_SHAPE     13
 #define SHAPE_ISOLINE       14
+#define FACE_FROM_SURFACE   15
 
 
 #define ARCHIMEDE_TYPE 1
