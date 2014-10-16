@@ -4590,7 +4590,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_WEBS</source>
-        <translation>Compound of solids</translation>
+        <translation>Solids</translation>
     </message>
     <message>
         <source>REMOVE_WEBS_NEW_OBJ_NAME</source>

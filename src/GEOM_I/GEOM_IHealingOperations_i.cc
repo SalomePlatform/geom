@@ -377,20 +377,21 @@ GEOM_IHealingOperations_i::SewAllowNonManifold (const GEOM::ListOfGO& theObjects
  *  RemoveInternalFaces
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::RemoveInternalFaces (GEOM::GEOM_Object_ptr theCompound)
+GEOM::GEOM_Object_ptr
+GEOM_IHealingOperations_i::RemoveInternalFaces (const GEOM::ListOfGO& theSolids)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Get the object
-  Handle(GEOM_Object) anObject = GetObjectImpl(theCompound);
-  if (anObject.IsNull())
+  // Get the objects
+  std::list< Handle(GEOM_Object) > aShapes;
+  if (! GetListOfObjectsImpl( theSolids, aShapes ))
     return aGEOMObject._retn();
 
   // Perform
-  Handle(GEOM_Object) aNewObject = GetOperations()->RemoveInternalFaces(anObject);
+  Handle(GEOM_Object) aNewObject = GetOperations()->RemoveInternalFaces(aShapes);
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 

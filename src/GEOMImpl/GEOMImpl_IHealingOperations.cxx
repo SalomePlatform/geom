@@ -652,22 +652,27 @@ GEOMImpl_IHealingOperations::Sew (std::list<Handle(GEOM_Object)>& theObjects,
  *  RemoveInternalFaces
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveInternalFaces (Handle(GEOM_Object) theObject)
+Handle(GEOM_Object)
+GEOMImpl_IHealingOperations::RemoveInternalFaces (std::list< Handle(GEOM_Object)> & theSolids)
 {
   // set error code, check parameters
   SetErrorCode(KO);
 
-  if (theObject.IsNull())
+  if (theSolids.empty())
     return NULL;
 
-  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
-  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
+  Handle(TColStd_HSequenceOfTransient) objects = GEOM_Object::GetLastFunctions( theSolids );
+  if ( objects.IsNull() || objects->IsEmpty() ) {
+    SetErrorCode("NULL argument shape");
+    return NULL;
+  }
 
   // Add a new object
   Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add the function
-  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), REMOVE_INTERNAL_FACES);
+  Handle(GEOM_Function)
+    aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), REMOVE_INTERNAL_FACES);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -675,7 +680,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveInternalFaces (Handle(GEO
 
   // prepare "data container" class IHealing
   GEOMImpl_IHealing HI (aFunction);
-  HI.SetOriginal(aLastFunction);
+  HI.SetOriginal( theSolids.front()->GetLastFunction() ); objects->Remove(1);
+  HI.SetShapes( objects );
 
   //Compute the result
   try {
@@ -693,7 +699,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveInternalFaces (Handle(GEO
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.RemoveInternalFaces(" << theObject << ")";
+  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.RemoveInternalFaces(" << theSolids << ")";
 
   SetErrorCode(OK);
   return aNewObject;

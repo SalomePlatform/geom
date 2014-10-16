@@ -6399,9 +6399,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "sewed")
             return anObj
 
-        ## Rebuild the topology of theCompound of solids by removing
-        #  of the faces that are shared by several solids.
-        #  @param theCompound Shape to be processed.
+        ## Rebuild the topology of theSolids by removing
+        #  the faces that are shared by several solids.
+        #  @param theSolids A compound or a list of solids to be processed.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6410,13 +6410,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_remove_webs "Example"
         @ManageTransactions("HealOp")
-        def RemoveInternalFaces (self, theCompound, theName=None):
+        def RemoveInternalFaces (self, theSolids, theName=None):
             """
-            Rebuild the topology of theCompound of solids by removing
-            of the faces that are shared by several solids.
+            Rebuild the topology of theSolids by removing
+            the faces that are shared by several solids.
 
             Parameters:
-                theCompound Shape to be processed.
+                theSolids A compound or a list of solids to be processed.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6425,7 +6425,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
-            anObj = self.HealOp.RemoveInternalFaces(theCompound)
+            anObj = self.HealOp.RemoveInternalFaces(ToList(theSolids))
             RaiseIfFailed("RemoveInternalFaces", self.HealOp)
             self._autoPublish(anObj, theName, "removeWebs")
             return anObj

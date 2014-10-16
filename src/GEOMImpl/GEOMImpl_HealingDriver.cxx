@@ -142,7 +142,7 @@ Standard_Integer GEOMImpl_HealingDriver::Execute(TFunction_Logbook& log) const
     Sew(&HI, anOriginalShape, aShape, true);
     break;
   case REMOVE_INTERNAL_FACES:
-    RemoveInternalFaces(anOriginalShape, aShape);
+    RemoveInternalFaces(&HI, anOriginalShape, aShape);
     break;
   case DIVIDE_EDGE:
     AddPointOnEdge(&HI, anOriginalShape, aShape);
@@ -470,11 +470,44 @@ Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing*  theHI,
 //function : RemoveInternalFaces
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMImpl_HealingDriver::RemoveInternalFaces (const TopoDS_Shape& theOriginalShape,
-                                                              TopoDS_Shape& theOutShape) const
+Standard_Boolean
+GEOMImpl_HealingDriver::RemoveInternalFaces (GEOMImpl_IHealing*  theHI,
+                                             const TopoDS_Shape& theOriginalShape,
+                                             TopoDS_Shape&       theOutShape) const
 {
+  // get all input shapes
+  TopTools_SequenceOfShape shapeSeq;
+  shapeSeq.Append( theOriginalShape );
+  Handle(TColStd_HSequenceOfTransient) otherObjs = theHI->GetShapes();
+  if ( !otherObjs.IsNull() )
+    for ( int ind = 1; ind <= otherObjs->Length(); ind++)
+    {
+      Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(otherObjs->Value(ind));
+      TopoDS_Shape aShape = aRefShape->GetValue();
+      if (aShape.IsNull())
+        Standard_NullObject::Raise("Null object given");
+      shapeSeq.Append( aShape );
+    }
+
+  // pass input shapes to the algorithm
   GEOMAlgo_RemoverWebs aTool;
-  aTool.SetShape(theOriginalShape);
+  if ( shapeSeq.Length() == 1 )
+  {
+    aTool.SetShape( shapeSeq.First() );
+  }
+  else
+  {
+    TopoDS_Compound solidCompound;
+    BRep_Builder builder;
+    builder.MakeCompound( solidCompound );
+    for ( int ind = 1; ind <= shapeSeq.Length(); ++ind )
+      for ( TopExp_Explorer so( shapeSeq( ind ), TopAbs_SOLID ); so.More(); so.Next() )
+        builder.Add( solidCompound, so.Current() );
+
+    aTool.SetShape( solidCompound );
+  }
+
+  // run the algorithm
   aTool.Perform();
 
   if (aTool.ErrorStatus() == 0) { // OK
@@ -929,7 +962,7 @@ GetCreationInformation(std::string&             theOperationName,
     break;
   case REMOVE_INTERNAL_FACES:
     theOperationName = "REMOVE_WEBS";
-    AddParam( theParams, "Selected shape", aCI.GetOriginal() );
+    AddParam( theParams, "Selected shapes", aCI.GetOriginalAndShapes() );
     break;
   default:
     return false;

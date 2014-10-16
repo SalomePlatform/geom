@@ -52,7 +52,7 @@ private:
   void                               activateSelection();
 
 private:
-  GEOM::GEOM_Object_var              myObject;
+  QList<GEOM::GeomObjPtr>            myObjects;
   bool                               myOkObject;
 
   DlgRef_1Sel*                       GroupPoints;

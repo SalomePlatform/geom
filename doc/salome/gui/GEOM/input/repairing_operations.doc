@@ -26,7 +26,7 @@ splits an edge in two.</li>
 <li>\subpage change_orientation_operation_page "Change orientation" -
 reverses the normals of the selected faces.</li>
 <li>\subpage remove_webs_operation_page "Remove internal faces" -
-rebuilds the topology of a compound of solids by removing the faces
+rebuilds the topology of solids by removing the faces
 are shared by several solids.</li>
 <li>\subpage remove_extra_edges_operation_page "Remove extra edges" -
 removes seam and degenerated edges from the given shape.</li>

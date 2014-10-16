@@ -5,12 +5,12 @@
 \n To <b>Remove internal faces</b> in the <b>Main Menu</b> select
 <b>Repair - > Remove internal faces</b>.
 
-This operation removes all shared faces from a compound to obtain
+This operation removes all shared faces from given solids to obtain
 one or more bigger solids from a set of smaller solids.
 
 \image html remove_webs.png
 
-\n <b>Arguments:</b> Name + one shape.
+\n <b>Arguments:</b> Name + one or more shapes containing solids.
 \n <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
@@ -19,8 +19,8 @@ faces will stay as is, use \ref glue_faces_operation_page or \ref partition_page
 <b>Remove Internal Faces</b> if you need to remove them.
 
 \n <b>TUI Command:</b> <br>
-<em>geompy.RemoveInternalFaces( theCompound )</em>,<br>
-where <em>theCompound</em> is a compound of solids.
+<em>geompy.RemoveInternalFaces( theSolids )</em>,<br>
+where <em>theSolids</em> is either a compound or a list of solids.
 
 \n Our <b>TUI Scripts</b> provide you with useful examples of the
 \ref tui_remove_webs "Remove Internal Faces" functionality usage.
