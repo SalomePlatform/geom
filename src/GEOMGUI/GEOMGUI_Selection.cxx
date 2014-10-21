@@ -380,7 +380,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 
 bool GEOMGUI_Selection::autoBringToFront( const int /*index*/ ) const
 {
-  return SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front" );
+  return SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front", "false" );
 }
 
 bool GEOMGUI_Selection::isVectorsMode( const int index ) const

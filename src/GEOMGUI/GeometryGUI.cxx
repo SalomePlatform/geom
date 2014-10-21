@@ -2020,7 +2020,7 @@ void GeometryGUI::updateCreationInfo()
 
 void GeometryGUI::onAutoBringToFront()
 {
-  bool isAutoBringToFront = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front" );
+  bool isAutoBringToFront = SUIT_Session::session()->resourceMgr()->booleanValue( "Geometry", "auto_bring_to_front", "false" );
   if( !isAutoBringToFront )
     return;
   

@@ -85,6 +85,7 @@
     <parameter name="dependency_tree_arrow_color"           value="0, 0, 130" />
     <parameter name="dependency_tree_highlight_arrow_color" value="0, 0, 255" />
     <parameter name="dependency_tree_select_arrow_color"    value="255, 0, 0" />
+    <parameter name="auto_bring_to_front" value="false" />
 
     <!-- Dimension presentation properties -->
     <parameter name="dimensions_color"          value="#ffffff" />
