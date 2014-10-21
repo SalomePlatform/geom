@@ -45,7 +45,7 @@
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 #include <SALOME_Prs.h>
 

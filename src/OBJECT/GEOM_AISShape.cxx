@@ -20,18 +20,12 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  GEOM OBJECT : interactive object for Geometry entities visualization
-//  File   : GEOM_AISShape.cxx
-//  Author : Nicolas REJNERI
-//  Module : GEOM
-
 /*!
   \class GEOM_AISShape GEOM_AISShape.hxx
   \brief ....
 */
 
-#include "GEOM_AISShape.ixx"
-#include "SALOME_InteractiveObject.hxx"
+#include "GEOM_AISShape.hxx"
 #include "GEOM_AISVector.hxx"
 
 #include <Basics_OCCTVersion.hxx>
@@ -39,9 +33,7 @@
 // Open CASCADE Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_InteractiveContext.hxx>
-
 #include <BRep_Tool.hxx>
-
 #include <GCPnts_AbscissaPoint.hxx>
 #include <GeomAdaptor_Curve.hxx>
 #include <gp_Pnt.hxx>
@@ -86,9 +78,11 @@
 #include <V3d_View.hxx>
 
 #include <SalomeApp_Tools.h>
-
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+
+IMPLEMENT_STANDARD_HANDLE (GEOM_AISShape, SALOME_AISShape)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISShape, SALOME_AISShape)
 
 GEOM_AISShape::TopLevelDispMode GEOM_AISShape::myTopLevelDm = GEOM_AISShape::TopKeepCurrent;
 Quantity_Color GEOM_AISShape::myTopLevelColor;
@@ -181,6 +175,10 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   }
 }
 
+GEOM_AISShape::~GEOM_AISShape()
+{
+}
+
 void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
   SetOwner( io );
 }
@@ -233,7 +231,7 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
   bool isTopLev = isTopLevel() && switchTopLevel();
   switch (aMode) {
-    case 0://StdSelect_DM_Wireframe: 
+    case Wireframe:
     case CustomHighlight:
     {
       if(isTopLev) {
@@ -248,26 +246,30 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
         StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);      
       break;
     }
-    case 1://StdSelect_DM_Shading:
+    case Shading:
     {
       shadingMode(aPresentationManager, aPrs, aMode);
       break;
     }
-    case 2: { //ShadingWithEdges
-      //Shaded faces
-      shadingMode(aPresentationManager, aPrs, AIS_Shaded);
+    case ShadingWithEdges:
+    {
+      shadingMode(aPresentationManager, aPrs, Shading);
       myDrawer->SetFaceBoundaryDraw( Standard_True );
       Handle(Prs3d_LineAspect) aBoundaryAspect =
         new Prs3d_LineAspect ( myEdgesInShadingColor, Aspect_TOL_SOLID, myOwnWidth );
       myDrawer->SetFaceBoundaryAspect (aBoundaryAspect);
       break;
     }
-    case 3: //StdSelect_DM_HLR:
+    case TexturedShape:
     {
       if(!isTopLev)
-              AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+#ifdef USE_TEXTURED_SHAPE
+	AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+#else
+	AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+#endif
       else 
-              shadingMode(aPresentationManager, aPrs, AIS_Shaded);
+	shadingMode(aPresentationManager, aPrs, Shading);
       break;
     }
   }
@@ -410,7 +412,11 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
   {
     // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
     //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
+#ifdef USE_TEXTURED_SHAPE
+    AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+#else
     AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+#endif
   }
 }
 
@@ -424,10 +430,10 @@ void GEOM_AISShape::setTopLevel(Standard_Boolean f) {
       myPrevDisplayMode = DisplayMode();
     Standard_Integer dm;
     switch(topLevelDisplayMode()) {
-      case TopKeepCurrent : dm = myPrevDisplayMode; break;
-      case TopWireFrame : dm = AIS_WireFrame; break;     
-      case TopShadingWithEdges : dm = ShadingWithEdges; break;
-      default : dm = AIS_Shaded; break;
+      case TopKeepCurrent :      dm = myPrevDisplayMode; break;
+      case TopWireFrame :        dm = Wireframe;         break;     
+      case TopShadingWithEdges : dm = ShadingWithEdges;  break;
+      default :                  dm = Shading;           break;
     }
     SetDisplayMode(dm);
   } else {

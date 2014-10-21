@@ -36,7 +36,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>

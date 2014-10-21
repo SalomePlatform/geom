@@ -65,7 +65,6 @@
 #include <SalomeApp_TypeFilter.h>
 #include <SalomeApp_Tools.h>
 
-#include <SALOME_ListIteratorOfListIO.hxx>
 #include <SALOME_ListIO.hxx>
 #include <SALOME_Prs.h>
 
@@ -235,6 +234,7 @@ namespace
       if ( aAISShape.IsNull() )
         continue;
 
+#ifdef USE_TEXTURED_SHAPE
       const Handle(Image_PixMap)& aPixmap = aAISShape->TexturePixMap();
       if ( aPixmap.IsNull() )
         continue;
@@ -250,6 +250,7 @@ namespace
         aPixmapUsersMap.UnBind( aPixmap );
         aPixmapCacheMap.remove( aPixmapCacheMap.key( aPixmap ) );
       }
+#endif
     }
   }
 }
@@ -876,6 +877,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
     aImagePath = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
   }
 
+#ifdef USE_TEXTURED_SHAPE
   Handle(Image_PixMap) aPixmap;
   if ( !aImagePath.isEmpty() )
     aPixmap = cacheTextureFor( aImagePath, AISShape );
@@ -891,6 +893,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   else {
     AISShape->SetTextureMapOff();
   }
+#endif
 
   // set line width
   AISShape->SetWidth( HasWidth() ?

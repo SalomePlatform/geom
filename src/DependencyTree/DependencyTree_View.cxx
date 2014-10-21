@@ -28,7 +28,7 @@
 #include <SalomeApp_Study.h>
 #include <QtxActionToolMgr.h>
 #include <LightApp_SelectionMgr.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 // GEOM includes
 #include <GEOMBase.h>

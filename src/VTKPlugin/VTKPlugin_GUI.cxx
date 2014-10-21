@@ -28,7 +28,7 @@
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 // GEOM includes
 #include "GeometryGUI.h"

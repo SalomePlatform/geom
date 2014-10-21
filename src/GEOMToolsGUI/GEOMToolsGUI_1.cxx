@@ -54,7 +54,6 @@
 #include <Basics_OCCTVersion.hxx>
 
 #include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SALOMEDS_SObject.hxx>
 

@@ -32,7 +32,7 @@
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 // Qt includes
 #include <QGridLayout>

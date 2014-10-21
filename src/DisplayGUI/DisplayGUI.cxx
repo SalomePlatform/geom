@@ -40,7 +40,6 @@
 #include <OCCViewer_ViewModel.h>
 
 #include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SVTK_ViewWindow.h>
 #include <SVTK_View.h>

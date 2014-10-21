@@ -78,8 +78,7 @@
 #include <LightApp_Preferences.h>
 
 #include <SALOME_LifeCycleCORBA.hxx>
-// #include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 #include <SALOMEDSClient_ClientFactory.hxx>
 #include <SALOMEDSClient_IParameters.hxx>

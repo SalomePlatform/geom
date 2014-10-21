@@ -26,7 +26,6 @@
 
 #include "GEOM_Engine.hxx"
 
-#include "GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx"
 #include "GEOM_Field.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"

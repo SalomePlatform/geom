@@ -40,7 +40,6 @@
 #include <SOCC_Prs.h>
 
 #include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>

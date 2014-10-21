@@ -42,7 +42,7 @@
 #include <OCCViewer_ViewManager.h>
 #include <SVTK_ViewModel.h>
 #include <SALOME_Prs.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>

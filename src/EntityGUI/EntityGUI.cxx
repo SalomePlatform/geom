@@ -35,7 +35,7 @@
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewWindow.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_Session.h>

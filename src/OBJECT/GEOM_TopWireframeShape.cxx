@@ -32,7 +32,7 @@
 */
 
 //Local includes
-#include "GEOM_TopWireframeShape.ixx"
+#include "GEOM_TopWireframeShape.hxx"
 #include "GEOM_AISShape.hxx"
 
 //GUI includes
@@ -42,6 +42,9 @@
 #include <AIS_Drawer.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Prs3d_IsoAspect.hxx>
+
+IMPLEMENT_STANDARD_HANDLE(GEOM_TopWireframeShape, SALOME_AISShape)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_TopWireframeShape, SALOME_AISShape)
 
 GEOM_TopWireframeShape::GEOM_TopWireframeShape( const TopoDS_Shape& shape )
   :SALOME_AISShape(shape)

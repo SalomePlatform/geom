@@ -38,7 +38,6 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <QButtonGroup>
 #include <QGridLayout>
