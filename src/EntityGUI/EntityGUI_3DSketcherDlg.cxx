@@ -1707,7 +1707,7 @@ Handle(AIS_AngleDimension) EntityGUI_3DSketcherDlg::createAISAngleDimension(doub
 
   Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension( P1, P0, P2 );
 
-  anIO->SetCustomValue( theAngle );
+  //anIO->SetCustomValue( theAngle );
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int w = resMgr->integerValue( "Geometry", "measures_line_width", 1 );
