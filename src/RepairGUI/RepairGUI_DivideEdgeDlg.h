@@ -29,7 +29,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_1SelExt;
+class DlgRef_2SelExt;
 class SalomeApp_DoubleSpinBox;
 class QButtonGroup;
 
@@ -50,7 +50,8 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  
+  virtual void                       addSubshapesToStudy();
+
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
@@ -58,13 +59,16 @@ private:
   
   bool                               getIsByParameter() const;
   int                                myIndex;
-  
+
 private:
   GEOM::GEOM_Object_var              myObject;
-  
-  DlgRef_1SelExt*                    GroupPoints;
+  GEOM::GeomObjPtr                   myPoint;
+  bool                               myProjectionOK;
+
+  DlgRef_2SelExt*                    GroupPoints;
   QButtonGroup*                      myIsParameterGr;
   SalomeApp_DoubleSpinBox*           myValEdt;
+  QLabel*                            myValLbl;
 
 protected slots:
   void                               ClickOnOk();
@@ -76,6 +80,7 @@ protected slots:
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               ConstructorsClicked( int );
 };
 
 #endif // REPAIRGUI_DIVIDEEDGEDLG_H

@@ -27,12 +27,11 @@
 #ifndef ShHealOper_EdgeDivide_HeaderFile
 #define ShHealOper_EdgeDivide_HeaderFile
 
+#include <ShHealOper_Tool.hxx>
 #include <TColStd_HSequenceOfReal.hxx>
+#include <TColStd_SequenceOfReal.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopoDS_Edge.hxx>
-#include <TopoDS_Shape.hxx>
-#include <ShHealOper_Tool.hxx>
-#include <TColStd_SequenceOfReal.hxx>
 
 ///  Class ShHealOper_EdgeDivide
 //Intended for spitting edge in accordance to the specified mode and value.
@@ -59,7 +58,7 @@ class ShHealOper_EdgeDivide : public ShHealOper_Tool
   //specified mode and value.
   //If theDivideParamMode is equal to true edge will be splitted by parameter.
   //Else edge will be spliited by length (default true).
-  //theValue is koefficient for splitting from 0 to 1.
+  //theValue is coefficient for splitting from 0 to 1.
 
   Standard_EXPORT Standard_Boolean Perform(const TopoDS_Shape& theEdge, 
                                            const TColStd_SequenceOfReal& theValues,
@@ -67,7 +66,11 @@ class ShHealOper_EdgeDivide : public ShHealOper_Tool
   //Performs spitting of the specified edge in the accoradnce to
   //specified mode and sequence of values the same way as previous.
 
- protected:
+  Standard_EXPORT Standard_Boolean Perform(const TopoDS_Shape& theEdge, 
+                                           const TopoDS_Shape& thePoint);
+  //Performs spitting of the specified edge by projecting a point to it.
+
+protected:
   // ---------- PROTECTED METHODS ----------
 
 

@@ -145,6 +145,7 @@ SET( _res_files
   planeworkingorigin.png
   point2.png
   pointonedge.png
+  pointonedgebypoint.png
   pointonface.png
   point_line_intersection.png
   polyline.png

@@ -6,6 +6,8 @@ import GEOM
 from salome.geom import geomBuilder
 geompy = geomBuilder.New(salome.myStudy)
 
+# Variant 1: using DivideEdge()
+
 # create vertices
 p1 = geompy.MakeVertex(0,0,50)
 p2 = geompy.MakeVertex(60,0,50)
@@ -26,5 +28,15 @@ id_divide = geompy.addToStudy(divide, "Divided edge")
 edge_points = geompy.SubShapeAllSortedCentres(divide, geompy.ShapeType["VERTEX"])
 for point in edge_points:
     geompy.addToStudyInFather(divide, point, "Edge's point after divide")
+
+
+# Variant 2: using DivideEdgeByPoint()
+ 
+box  = geompy.MakeBox(0,0,0, 10,10,10, theName="box")
+p    = geompy.MakeVertex( 3, -2, 1, theName="point to project" )
+edge = geompy.GetEdgeNearPoint( box, p, theName="edge to split")
+
+div  = geompy.DivideEdgeByPoint( box, edge, p, theName="box (edge divided)")
+
 
 salome.sg.updateObjBrowser(1) 

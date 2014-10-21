@@ -6609,6 +6609,45 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "divideEdge")
             return anObj
 
+        ## Addition of a point to a given edge of \a theObject by projecting
+        #  another point to the given edge.
+        #  @param theObject Shape to be processed.
+        #  @param theEdgeIndex Index of edge to be divided within theObject's shape,
+        #                      if -1, then theObject itself is the edge.
+        #  @param thePoint Point to project to theEdgeIndex-th edge.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing processed shape.
+        #
+        #  @ref tui_add_point_on_edge "Example"
+        @ManageTransactions("HealOp")
+        def DivideEdgeByPoint(self, theObject, theEdgeIndex, thePoint, theName=None):
+            """
+            Addition of a point to a given edge of \a theObject by projecting
+            another point to the given edge.
+
+            Parameters:
+                theObject Shape to be processed.
+                theEdgeIndex The edge or its index to be divided within theObject's shape,
+                             if -1, then theObject itself is the edge.
+                thePoint Point to project to theEdgeIndex-th edge.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing processed shape.
+            """
+            # Example: see GEOM_TestHealing.py
+            if isinstance( theEdgeIndex, GEOM._objref_GEOM_Object ):
+                theEdgeIndex = self.GetSubShapeID( theObject, theEdgeIndex )
+            anObj = self.HealOp.DivideEdgeByPoint(theObject, theEdgeIndex, thePoint)
+            RaiseIfFailed("DivideEdgeByPoint", self.HealOp)
+            self._autoPublish(anObj, theName, "divideEdge")
+            return anObj
+
         ## Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
         #  @param theWire Wire to minimize the number of C1 continuous edges in.
         #  @param theVertices A list of vertices to suppress. If the list
@@ -9707,7 +9746,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Perform an Archimde operation on the given shape with given parameters.
         #  The object presenting the resulting face is returned.
         #  @param theShape Shape to be put in water.
-        #  @param theWeight Weight og the shape.
+        #  @param theWeight Weight of the shape.
         #  @param theWaterDensity Density of the water.
         #  @param theMeshDeflection Deflection of the mesh, using to compute the section.
         #  @param theName Object name; when specified, this parameter is used
@@ -9726,7 +9765,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theShape Shape to be put in water.
-                theWeight Weight og the shape.
+                theWeight Weight of the shape.
                 theWaterDensity Density of the water.
                 theMeshDeflection Deflection of the mesh, using to compute the section.
                 theName Object name; when specified, this parameter is used

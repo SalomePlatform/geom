@@ -323,6 +323,12 @@ def TestDivideEdge (geompy):
   Id_Box    = geompy.addToStudy(Box, "Box")
   Id_Divide = geompy.addToStudy(Divide, "Box with Divided Edge")
 
+  # using geompy.DivideEdgeByPoint()
+  p    = geompy.MakeVertex( 30, -5, 10, theName="Point to project" )
+  edge = geompy.GetEdgeNearPoint( Box, p, theName="Edge to split")
+  div  = geompy.DivideEdgeByPoint( Box, edge, p, theName="Box (edge divided)")
+  assert geompy.NumberOfEdges( Box ) == geompy.NumberOfEdges( div ) - 1
+
 def TestFuseEdges (geompy):
 
   # create vertices

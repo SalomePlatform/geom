@@ -39,6 +39,14 @@ Do you still want to delete these objects?</translation>
         <translation>NewObject</translation>
     </message>
     <message>
+        <source>DEVIDE_EDGE_BAD_PROJ_MSG</source>
+        <translation>Projection outside the edge</translation>
+    </message>
+    <message>
+        <source>DEVIDE_EDGE_BY_PROJ_POINT</source>
+        <translation>Point to project</translation>
+    </message>
+    <message>
         <source>ERROR_SHAPE_TYPE</source>
         <translation>Object of incorrect type selected!
 Please, select face, shell or solid and try again</translation>

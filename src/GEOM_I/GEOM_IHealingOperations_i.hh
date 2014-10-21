@@ -78,9 +78,13 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
    GEOM::GEOM_Object_ptr RemoveInternalFaces (const GEOM::ListOfGO& theSolids);
 
    GEOM::GEOM_Object_ptr DivideEdge (GEOM::GEOM_Object_ptr theObject,
-                                     CORBA::Short theIndex,
-                                     CORBA::Double theValue,
-                                     CORBA::Boolean isByParameter);
+                                     CORBA::Short          theIndex,
+                                     CORBA::Double         theValue,
+                                     CORBA::Boolean        isByParameter);
+
+   GEOM::GEOM_Object_ptr DivideEdgeByPoint (GEOM::GEOM_Object_ptr theObject,
+                                            CORBA::Short          theIndex,
+                                            GEOM::GEOM_Object_ptr thePoint);
 
    GEOM::GEOM_Object_ptr FuseCollinearEdgesWithinWire (GEOM::GEOM_Object_ptr theWire,
                                                        const GEOM::ListOfGO& theVertices);

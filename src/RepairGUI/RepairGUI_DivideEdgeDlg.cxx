@@ -38,16 +38,23 @@
 
 #include <GEOMImpl_Types.hxx>
 
-#include <TopAbs.hxx>
-#include <Geom_Curve.hxx>
-#include <gp_Pnt.hxx>
-#include <TopoDS.hxx>
-#include <TopExp.hxx>
-#include <TopoDS_Edge.hxx>
-#include <BRep_Tool.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <Geom_Curve.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopAbs.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopoDS_Edge.hxx>
+#include <gp_Pnt.hxx>
+
+enum { BY_PARAM, BY_POINT_PROJ };
 
 //=================================================================================
 // class    : RepairGUI_DivideEdgeDlg()
@@ -61,6 +68,7 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_DIVIDE_EDGE" ) ) );
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_DIVIDE_EDGE_BY_PNT" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
   setWindowTitle( tr( "GEOM_DIVIDE_EDGE_TITLE" ) );
@@ -68,16 +76,18 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
   /***************************************************************/
   mainFrame()->GroupConstructors->setTitle(tr("GEOM_DIVIDE_EDGE_TITLE"));
   mainFrame()->RadioButton1->setIcon( image0 );
-  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
-  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton2->setIcon( image2 );
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1SelExt( centralWidget() );
+  GroupPoints = new DlgRef_2SelExt( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_ADD_POINT" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_EDGE" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
+  GroupPoints->TextLabel2->setText( tr( "DEVIDE_EDGE_BY_PROJ_POINT" ) );
+  GroupPoints->PushButton2->setIcon( image1 );
+  GroupPoints->LineEdit2->setReadOnly( true );
 
   QRadioButton* rb1 = new QRadioButton( tr( "GEOM_BY_PARAMETER" ), GroupPoints->Box );
   QRadioButton* rb2 = new QRadioButton( tr( "GEOM_BY_LENGTH" ),    GroupPoints->Box );
@@ -90,13 +100,13 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
   myValEdt = new SalomeApp_DoubleSpinBox( GroupPoints->Box );
   initSpinBox( myValEdt, 0., 1., 0.1, "parametric_precision" );
   myValEdt->setValue( 0.5 );
-  QLabel* aLbl1 = new QLabel( tr( "GEOM_VALUE" ), GroupPoints->Box );
+  myValLbl = new QLabel( tr( "GEOM_VALUE" ), GroupPoints->Box );
 
   QGridLayout* l = new QGridLayout( GroupPoints->Box );
   l->setMargin( 0 ); l->setSpacing( 6 );
   l->addWidget( rb1, 0, 0, 1, 2 );
   l->addWidget( rb2, 1, 0, 1, 2 );
-  l->addWidget( aLbl1, 2, 0 );
+  l->addWidget( myValLbl, 2, 0 );
   l->addWidget( myValEdt, 2, 1 );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
@@ -108,6 +118,29 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
   setHelpFileName( "add_point_on_edge_operation_page.html" );
 
   Init();
+}
+
+//=======================================================================
+//function : ConstructorsClicked
+//purpose  : hide/show widgets depending on a selected constructor
+//=======================================================================
+void RepairGUI_DivideEdgeDlg::ConstructorsClicked( int constructorId )
+{
+  myIsParameterGr->button( 0 )->setShown( constructorId == BY_PARAM );
+  myIsParameterGr->button( 1 )->setShown( constructorId == BY_PARAM );
+  myValEdt                    ->setShown( constructorId == BY_PARAM );
+  myValLbl                    ->setShown( constructorId == BY_PARAM );
+  GroupPoints->TextLabel2     ->setShown( constructorId == BY_POINT_PROJ );
+  GroupPoints->PushButton2    ->setShown( constructorId == BY_POINT_PROJ );
+  GroupPoints->LineEdit2      ->setShown( constructorId == BY_POINT_PROJ );
+
+  initSelection();
+
+  if ( constructorId == BY_PARAM &&
+       !GroupPoints->PushButton1->isDown() )
+    GroupPoints->PushButton1->click();
+
+  displayPreview();
 }
 
 //=================================================================================
@@ -128,25 +161,31 @@ void RepairGUI_DivideEdgeDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
   myObject = GEOM::GEOM_Object::_nil();
-  myIndex = -1;
+  myPoint.nullify();
+  myIndex  = -1;
+  myProjectionOK = false;
 
   //myGeomGUI->SetState( 0 );
-  initSelection();
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
+  connect(this,           SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
+
   connect( myValEdt,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
 
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupPoints->PushButton2, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "DEVIDE_EDGE_NEW_OBJECT_NAME" ) );
   resize(100,100);
+  ConstructorsClicked( BY_PARAM );
   SelectionIntoArgument();
 }
 
@@ -165,6 +204,7 @@ void RepairGUI_DivideEdgeDlg::ValueChangedInSpinBox()
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::displayPreview()
 {
+  myProjectionOK = false;
   erasePreview();
   if ( myObject->_is_nil() )
     return;
@@ -173,7 +213,7 @@ void RepairGUI_DivideEdgeDlg::displayPreview()
   gp_Pnt aPnt;
   GEOMBase::GetShape( myObject, aShape, TopAbs_SHAPE );
 
-  if ( myIndex != -1) {
+  if ( myIndex != -1 ) {
     TopTools_IndexedMapOfShape aShapes;
     TopExp::MapShapes(aShape, aShapes);
     aShape = aShapes.FindKey(myIndex);
@@ -182,15 +222,55 @@ void RepairGUI_DivideEdgeDlg::displayPreview()
   if (aShape.ShapeType() == TopAbs_EDGE) {
     Standard_Real aFP, aLP, aP;
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(aShape), aFP, aLP);
-    aP = aFP + (aLP - aFP) * myValEdt->value();
-    aPnt = aCurve->Value(aP);
-    BRepBuilderAPI_MakeVertex mkVertex (aPnt);
-    aShape = mkVertex.Shape();
+    if ( aCurve.IsNull() ) return;
+
+    if ( getConstructorId() == BY_PARAM )
+    {
+      aP = aFP + (aLP - aFP) * myValEdt->value();
+      aPnt = aCurve->Value(aP);
+      BRepBuilderAPI_MakeVertex mkVertex (aPnt);
+      aShape = mkVertex.Shape();
+    }
+    else if ( getConstructorId() == BY_POINT_PROJ && myPoint )
+    {
+      TopoDS_Shape aPoints;
+      GEOMBase::GetShape( myPoint.get(), aPoints, TopAbs_SHAPE );
+
+      BRep_Builder builder;
+      TopoDS_Compound compoundOfVV;
+      builder.MakeCompound(compoundOfVV);
+      aShape = compoundOfVV;
+
+      GeomAPI_ProjectPointOnCurve aProjector;
+      aProjector.Init( aCurve, aFP, aLP );
+
+      TopTools_MapOfShape vMap;
+      TopExp_Explorer vertex( aPoints, TopAbs_VERTEX );
+      for ( ; vertex.More(); vertex.Next() )
+      {
+        if ( !vMap.Add( vertex.Current() )) continue;
+        gp_Pnt p = BRep_Tool::Pnt( TopoDS::Vertex( vertex.Current() ));
+        aProjector.Perform( p );
+        if ( aProjector.NbPoints() > 0 )
+        {
+          double u = aProjector.LowerDistanceParameter();
+          if ( Min( u - aFP, aLP - u ) > Precision::Confusion() )
+          {
+            builder.Add( compoundOfVV, BRepBuilderAPI_MakeVertex( aProjector.NearestPoint()));
+            myProjectionOK = true;
+          }
+        }
+      }
+    }
+    else
+    {
+      return;
+    }
     // Build prs
     SALOME_Prs* aPrs = getDisplayer()->BuildPrs( aShape );
     if ( aPrs != 0 && !aPrs->IsNull() )
       GEOMBase_Helper::displayPreview( aPrs, false, true );
-  } 
+  }
 }
 
 //=================================================================================
@@ -218,9 +298,11 @@ bool RepairGUI_DivideEdgeDlg::ClickOnApply()
 
   myEditCurrentArgument->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
+  myPoint.nullify();
   myIndex = -1;
+  myProjectionOK = false;
 
-  initSelection();
+  ConstructorsClicked(getConstructorId());
 
   return true;
 }
@@ -235,8 +317,17 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
 
-  myObject = GEOM::GEOM_Object::_nil();
-  myIndex = -1;
+  const bool toSelectObject = ( myEditCurrentArgument == GroupPoints->LineEdit1 );
+  if ( toSelectObject )
+  {
+    myObject = GEOM::GEOM_Object::_nil();
+    myIndex = -1;
+  }
+  else //if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+  {
+    myPoint.nullify();
+    myProjectionOK = false;
+  }
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
@@ -252,7 +343,7 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
       if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) )
       {
         const int aType = aShape.ShapeType();
-        if ( aType <= TopAbs_EDGE ) // edge, wire, face, shell, solid, compound
+        if ( aType <= TopAbs_EDGE || !toSelectObject ) // edge, wire, face, shell, solid, compound
         {
           GEOM::short_array anIndexes;
 
@@ -263,20 +354,29 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
 
           if ( !aMap.IsEmpty() ) // sub-shape selection
           {
-            myIndex = aMap( 1 );
-            myObject = aSelectedObj;
-            myEditCurrentArgument->setText( aName += QString( ":edge_%1" ).arg( myIndex ) );
+            if ( toSelectObject ) {
+              myIndex = aMap( 1 );
+              myObject = aSelectedObj;
+              myEditCurrentArgument->setText( aName += QString( ":edge_%1" ).arg( myIndex ) );
+            }
+            else if (( myPoint = getSelected( TopAbs_VERTEX )))
+            {
+              myEditCurrentArgument->setText( aName += QString( ":vertex_%1" ).arg( aMap( 1 )));
+            }
           }
-          else if ( aType == TopAbs_EDGE ) // single shape selection
+          else if ( aType == TopAbs_EDGE && toSelectObject ) // single shape selection
           {
             myIndex = -1;
             myObject = aSelectedObj;
-            myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
+            myEditCurrentArgument->setText( aName );
+          }
+          else if ( aType == TopAbs_VERTEX && !toSelectObject ) // single shape selection
+          {
+            myPoint = aSelectedObj;
+            myEditCurrentArgument->setText( aName );
           }
           else // face, shell, solid or compound was selected, and NOT its sub-shape.
           {
-            myIndex = -1;
-            myObject = GEOM::GEOM_Object::_nil();
           }
         }
       }
@@ -292,10 +392,29 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::SetEditCurrentArgument()
 {
-  if ( sender() == GroupPoints->PushButton1 ) {
+  QPushButton* send = (QPushButton*)sender();
+
+  if ( send == GroupPoints->PushButton1 ) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
+
+    GroupPoints->PushButton2->setDown(false);
+    GroupPoints->LineEdit2->setEnabled(false);
   }
+  if ( send == GroupPoints->PushButton2 ) {
+    GroupPoints->LineEdit2->setFocus();
+    myEditCurrentArgument = GroupPoints->LineEdit2;
+
+    GroupPoints->PushButton1->setDown(false);
+    GroupPoints->LineEdit1->setEnabled(false);
+  }
+  // enable line edit
+  myEditCurrentArgument->setEnabled(true);
+  myEditCurrentArgument->setFocus();
+  // after setFocus(), because it will be setDown(false) when loses focus
+  send->setDown(true);
+
+  initSelection();
   SelectionIntoArgument();
 }
 
@@ -308,6 +427,11 @@ void RepairGUI_DivideEdgeDlg::LineEditReturnPressed()
 {
   if ( sender() == GroupPoints->LineEdit1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
+    GEOMBase_Skeleton::LineEditReturnPressed();
+  }
+  if ( sender() == GroupPoints->LineEdit2 &&
+       !GroupPoints->LineEdit2->isHidden() ) {
+    myEditCurrentArgument = GroupPoints->LineEdit2;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
 }
@@ -327,7 +451,7 @@ void RepairGUI_DivideEdgeDlg::ActivateThisDialog()
   myIndex = -1;
 
   //myGeomGUI->SetState( 0 );
-  initSelection();
+  ConstructorsClicked(getConstructorId());
 }
 
 //=================================================================================
@@ -356,7 +480,16 @@ GEOM::GEOM_IOperations_ptr RepairGUI_DivideEdgeDlg::createOperation()
 //=================================================================================
 bool RepairGUI_DivideEdgeDlg::isValid( QString& msg )
 {
-  bool ok = myValEdt->isValid( msg, !IsPreview() );
+  bool ok = false;
+  if ( getConstructorId() == BY_PARAM )
+  {
+    ok = myValEdt->isValid( msg, !IsPreview() );
+  }
+  else if ( getConstructorId() == BY_POINT_PROJ )
+  {
+    if (( ok = myPoint ) && !( ok = myProjectionOK ))
+      msg = tr("DEVIDE_EDGE_BAD_PROJ_MSG");
+  }
   return !myObject->_is_nil() && ok;
 }
 
@@ -367,11 +500,16 @@ bool RepairGUI_DivideEdgeDlg::isValid( QString& msg )
 bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
-  GEOM::GEOM_Object_var anObj = anOper->DivideEdge( myObject, myIndex, myValEdt->value(), getIsByParameter() );
+  GEOM::GEOM_Object_var anObj;
+  if ( getConstructorId() == BY_PARAM )
+    anObj = anOper->DivideEdge( myObject, myIndex, myValEdt->value(), getIsByParameter() );
+  else
+    anObj = anOper->DivideEdgeByPoint( myObject, myIndex, myPoint.get() );
+
   bool aResult = !anObj->_is_nil();
   if ( aResult )
   {
-    if ( !IsPreview() )
+    if ( !IsPreview() && ( getConstructorId() == BY_PARAM ))
     {
       QStringList aParameters;
       aParameters << "";
@@ -400,6 +538,19 @@ bool RepairGUI_DivideEdgeDlg::getIsByParameter() const
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::initSelection()
 {
-  GEOM::GEOM_Object_var aNullGeomObject;
-  localSelection( aNullGeomObject, TopAbs_EDGE ); // load local selection on ALL objects
+  TopAbs_ShapeEnum type = TopAbs_EDGE;
+  if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+    type = TopAbs_VERTEX;
+
+  globalSelection(); // close local contexts, if any
+  localSelection( GEOM::GEOM_Object::_nil(), type ); // load local selection on ALL objects
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void RepairGUI_DivideEdgeDlg::addSubshapesToStudy()
+{
+  GEOMBase::PublishSubObject( myPoint.get() );
 }

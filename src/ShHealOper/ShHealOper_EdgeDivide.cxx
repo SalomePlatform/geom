@@ -24,24 +24,28 @@
 // Created:   30.04.04 16:44:47
 // Author:    Galina KULIKOVA
 //
-#include <ShHealOper_EdgeDivide.hxx>
-#include <ShapeUpgrade_WireDivide.hxx>
-#include <ShHealOper_SplitCurve3d.hxx>
-#include <ShHealOper_SplitCurve2d.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <BRep_Tool.hxx>
-#include <ShapeFix_Edge.hxx>
-#include <ShapeAnalysis_Edge.hxx>
-#include <GeomAdaptor_Curve.hxx>
-#include <Geom2dAdaptor_Curve.hxx>
-#include <TopoDS.hxx>
-#include <Geom_Curve.hxx>
-#include <TopoDS_Face.hxx>
-#include <Geom2d_Curve.hxx>
 #include <GCPnts_AbscissaPoint.hxx>
-#include <TopExp.hxx>
+#include <Geom2dAdaptor_Curve.hxx>
+#include <Geom2d_Curve.hxx>
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <GeomAdaptor_Curve.hxx>
+#include <Geom_Curve.hxx>
 #include <Precision.hxx>
+#include <ShHealOper_EdgeDivide.hxx>
+#include <ShHealOper_SplitCurve2d.hxx>
+#include <ShHealOper_SplitCurve3d.hxx>
+#include <ShapeAnalysis_Edge.hxx>
+#include <ShapeFix_Edge.hxx>
+#include <ShapeUpgrade_WireDivide.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Face.hxx>
+
 //#include <.hxx>
 //#include <.hxx>
 //=======================================================================
@@ -113,8 +117,49 @@ Standard_Boolean ShHealOper_EdgeDivide::Perform(const TopoDS_Shape& theEdge,
   return myDone;
 }
 //=======================================================================
-//function : build
+//function : Perform
 //purpose  : 
+//=======================================================================
+
+Standard_Boolean ShHealOper_EdgeDivide::Perform(const TopoDS_Shape& theEdge, 
+                                                const TopoDS_Shape& thePoints)
+{
+  myDone = Standard_False;
+  myErrorStatus = ShHealOper_NotError;
+  if(theEdge.ShapeType() != TopAbs_EDGE) {
+    myErrorStatus = ShHealOper_InvalidParameters;
+    return myDone;
+  }
+  myDivideParamMode = true;
+  myEdge = TopoDS::Edge(theEdge);
+  Handle(TColStd_HSequenceOfReal) aSeqValues = new TColStd_HSequenceOfReal;
+
+  double aFirst,aLast;
+  Handle(Geom_Curve) aCurve = BRep_Tool::Curve(myEdge,aFirst,aLast);
+  if ( aCurve.IsNull() ) return false;
+  GeomAPI_ProjectPointOnCurve aProjector;
+  aProjector.Init( aCurve, aFirst, aLast );
+
+  TopTools_MapOfShape vMap;
+  TopExp_Explorer vertex( thePoints, TopAbs_VERTEX );
+  for ( ; vertex.More(); vertex.Next() )
+  {
+    if ( !vMap.Add( vertex.Current() )) continue;
+    gp_Pnt p = BRep_Tool::Pnt( TopoDS::Vertex( vertex.Current() ));
+    aProjector.Perform( p );
+    if ( aProjector.NbPoints() > 0 )
+    {
+      double     u = double( aProjector.LowerDistanceParameter() );
+      double param = ( u - aFirst ) / ( aLast - aFirst );
+      aSeqValues->Append( param );
+    }
+  }
+  myDone = build(aSeqValues);
+  return myDone;
+}
+//=======================================================================
+//function : build
+//purpose  :
 //=======================================================================
 
 Standard_Boolean ShHealOper_EdgeDivide::build(const Handle(TColStd_HSequenceOfReal)& theValues)
@@ -124,16 +169,16 @@ Standard_Boolean ShHealOper_EdgeDivide::build(const Handle(TColStd_HSequenceOfRe
     return Standard_False;
   }
 
-  Standard_Boolean has3d = Standard_False, 
-  has2d = Standard_False, 
-  hasPCurves = Standard_False;
-  
+  Standard_Boolean has3d = Standard_False,
+    has2d = Standard_False,
+    hasPCurves = Standard_False;
+
   //computation of the split values in dependance from specified mode and values.
   if(!computeValues(theValues, has3d,has2d,hasPCurves)) {
     myErrorStatus = ShHealOper_InvalidParameters;
     return Standard_False;
   }
-  
+
   //setting split values in the splitting curve tools.
   Handle(ShapeUpgrade_WireDivide) aSplitTool = new ShapeUpgrade_WireDivide;
   aSplitTool->Load(myEdge);
@@ -152,7 +197,7 @@ Standard_Boolean ShHealOper_EdgeDivide::build(const Handle(TColStd_HSequenceOfRe
     myErrorStatus = ShHealOper_InvalidParameters;
     return Standard_False;
   }
-  
+
   //split 3d curve and pcurve for each face reffering to edge.
   Standard_Boolean isDone = Standard_True;
   if(hasPCurves) {

@@ -433,6 +433,40 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::DivideEdge (GEOM::GEOM_Object_p
 
 //=============================================================================
 /*!
+ *  DivideEdgeByPoint
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr
+GEOM_IHealingOperations_i::DivideEdgeByPoint (GEOM::GEOM_Object_ptr theObject,
+                                              CORBA::Short          theIndex,
+                                              GEOM::GEOM_Object_ptr thePoint)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Get the object itself
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  // Get the point
+  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  if (aPoint.IsNull())
+    return aGEOMObject._retn();
+
+  // Perform
+  Handle(GEOM_Object) aNewObject =
+    GetOperations()->DivideEdgeByPoint( anObject, theIndex, aPoint );
+  if (!GetOperations()->IsDone() || aNewObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(aNewObject);
+}
+
+//=============================================================================
+/*!
  *  FuseCollinearEdgesWithinWire
  */
 //=============================================================================

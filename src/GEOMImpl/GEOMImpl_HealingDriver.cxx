@@ -145,6 +145,7 @@ Standard_Integer GEOMImpl_HealingDriver::Execute(TFunction_Logbook& log) const
     RemoveInternalFaces(&HI, anOriginalShape, aShape);
     break;
   case DIVIDE_EDGE:
+  case DIVIDE_EDGE_BY_POINT:
     AddPointOnEdge(&HI, anOriginalShape, aShape);
     break;
   case CHANGE_ORIENTATION:
@@ -533,26 +534,44 @@ GEOMImpl_HealingDriver::RemoveInternalFaces (GEOMImpl_IHealing*  theHI,
 //function :  AddPointOnEdge
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMImpl_HealingDriver::AddPointOnEdge (GEOMImpl_IHealing* theHI,
+Standard_Boolean GEOMImpl_HealingDriver::AddPointOnEdge (GEOMImpl_IHealing*  theHI,
                                                          const TopoDS_Shape& theOriginalShape,
-                                                         TopoDS_Shape& theOutShape) const
+                                                         TopoDS_Shape&       theOutShape) const
 {
   Standard_Boolean isByParameter = theHI->GetIsByParameter();
-  Standard_Integer anIndex = theHI->GetIndex();
-  Standard_Real aValue = theHI->GetDevideEdgeValue();
+  Standard_Integer       anIndex = theHI->GetIndex();
+  Standard_Real           aValue = theHI->GetDevideEdgeValue();
 
+  TopoDS_Shape pointToProject;
+  {
+    Handle(TColStd_HSequenceOfTransient) funs = theHI->GetShapes();
+    if ( !funs.IsNull() && funs->Length() > 0 ) {
+      Handle(GEOM_Function) fun = Handle(GEOM_Function)::DownCast( funs->Value(1) );
+      if ( !fun.IsNull() )
+        pointToProject = fun->GetValue();
+    }
+  }
+  
   ShHealOper_EdgeDivide aHealer (theOriginalShape);
 
   Standard_Boolean aResult = Standard_False;
-  if (anIndex == -1) { // apply algorythm for the whole shape which is EDGE
-    if (theOriginalShape.ShapeType() == TopAbs_EDGE)
-      aResult = aHealer.Perform(TopoDS::Edge(theOriginalShape), aValue, isByParameter);
+  if (anIndex == -1) { // apply algorithm for the whole shape which is EDGE
+    if (theOriginalShape.ShapeType() == TopAbs_EDGE) {
+      if ( pointToProject.IsNull() )
+        aResult = aHealer.Perform(TopoDS::Edge(theOriginalShape), aValue, isByParameter);
+      else
+        aResult = aHealer.Perform(TopoDS::Edge(theOriginalShape), pointToProject);
+    }
   } else {
     TopTools_IndexedMapOfShape aShapes;
     TopExp::MapShapes(theOriginalShape, aShapes);
     TopoDS_Shape aEdgeShape = aShapes.FindKey(anIndex);
-    if (aEdgeShape.ShapeType() == TopAbs_EDGE)
-      aResult = aHealer.Perform(TopoDS::Edge(aEdgeShape), aValue, isByParameter);
+    if (aEdgeShape.ShapeType() == TopAbs_EDGE) {
+      if ( pointToProject.IsNull() )
+        aResult = aHealer.Perform(TopoDS::Edge(aEdgeShape), aValue, isByParameter);
+      else
+        aResult = aHealer.Perform(TopoDS::Edge(aEdgeShape), pointToProject);
+    }
   }
 
   if (aResult)
@@ -945,6 +964,14 @@ GetCreationInformation(std::string&             theOperationName,
       AddParam( theParams, "Edge", aCI.GetOriginal() );
     AddParam( theParams, "By parameter", aCI.GetIsByParameter() );
     AddParam( theParams, "Value", aCI.GetDevideEdgeValue() );
+    break;
+  case DIVIDE_EDGE_BY_POINT:
+    theOperationName = "POINT_ON_EDGE";
+    if ( aCI.GetIndex() > 0 )
+      AddParam( theParams, "Edge", "#" ) << aCI.GetIndex() << " of " << aCI.GetOriginal();
+    else
+      AddParam( theParams, "Edge", aCI.GetOriginal() );
+    AddParam( theParams, "Point", aCI.GetShapes() );
     break;
   case CHANGE_ORIENTATION:
     theOperationName = "CHANGE_ORIENTATION";

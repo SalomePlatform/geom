@@ -77,9 +77,13 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) RemoveInternalFaces (std::list< Handle(GEOM_Object)> & theSolids);
 
   Standard_EXPORT Handle(GEOM_Object) DivideEdge( Handle(GEOM_Object) theObject,
-                                                  int theIndex,
-                                                  double theValue,
-                                                  bool isByParameter );
+                                                  int                 theIndex,
+                                                  double              theValue,
+                                                  bool                isByParameter );
+
+  Standard_EXPORT Handle(GEOM_Object) DivideEdgeByPoint( Handle(GEOM_Object) theObject,
+                                                         int                 theIndex,
+                                                         Handle(GEOM_Object) thePoint );
 
   Standard_EXPORT Handle(GEOM_Object) FuseCollinearEdgesWithinWire
                                      (Handle(GEOM_Object) theWire,

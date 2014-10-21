@@ -292,6 +292,10 @@
             <translation>pointonedge.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_DIVIDE_EDGE_BY_PNT</source>
+            <translation>pointonedgebypoint.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_ELLIPSE_PV</source>
             <translation>ellipsepointvector.png</translation>
         </message>

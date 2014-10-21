@@ -766,6 +766,70 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
 
 //=============================================================================
 /*!
+ *  DivideEdgeByPoint
+ */
+//=============================================================================
+Handle(GEOM_Object)
+GEOMImpl_IHealingOperations::DivideEdgeByPoint (Handle(GEOM_Object) theObject,
+                                                int theIndex,
+                                                Handle(GEOM_Object) thePoint)
+{
+  // set error code, check parameters
+  SetErrorCode(KO);
+
+  if (theObject.IsNull() || thePoint.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  Handle(GEOM_Function) aPointFunc = thePoint->GetLastFunction();
+  if (aLastFunction.IsNull() || aPointFunc.IsNull())
+    return NULL; //There is no function which creates an object to be processed
+
+  // Add a new object
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+
+  //Add the function
+  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), DIVIDE_EDGE_BY_POINT);
+
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+  // prepare "data container" class IHealing
+  GEOMImpl_IHealing HI(aFunction);
+  HI.SetIndex( theIndex );
+  HI.SetOriginal( aLastFunction );
+
+  Handle(TColStd_HSequenceOfTransient) funSeq = new TColStd_HSequenceOfTransient;
+  funSeq->Append( aPointFunc );
+  HI.SetShapes( funSeq );
+
+  //Compute the translation
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Healing driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction)
+    << aNewObject << " = geompy.DivideEdgeByPoint(" << theObject
+    << ", " << theIndex << ", " << thePoint << ")";
+
+  SetErrorCode(OK);
+  return aNewObject;
+}
+
+//=============================================================================
+/*!
  *  FuseCollinearEdgesWithinWire
  */
 //=============================================================================

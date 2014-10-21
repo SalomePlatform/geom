@@ -3722,7 +3722,7 @@ module GEOM
     GEOM_Object RemoveInternalFaces (in ListOfGO theSolids);
 
     /*!
-     *  \brief Addition of a point to a given edge object.
+     *  \brief Addition of a point to a given edge of \a theObject.
      *  \param theObject Shape to be processed.
      *  \param theEdgeIndex Index of edge to be divided within theObject's shape,
      *                      if -1, then theObject itself is the edge.
@@ -3730,10 +3730,23 @@ module GEOM
      *                  depending on \a isByParameter.
      *  \param isByParameter If TRUE : \a theValue is treated as a curve parameter [0..1],
      *                       if FALSE : \a theValue is treated as a length parameter [0..1]
-     *  \return New GEOM_Object, containing processed shape.
+     *  \return New GEOM_Object, containing the processed shape.
      */
     GEOM_Object DivideEdge (in GEOM_Object theObject, in short theEdgeIndex,
                             in double theValue, in boolean isByParameter);
+
+    /*!
+     *  \brief Addition of a point to a given edge of \a theObject by projecting
+     *         another point to the given edge.
+     *  \param theObject Shape to be processed.
+     *  \param theEdgeIndex Index of edge to be divided within theObject's shape,
+     *                      if -1, then theObject itself is the edge.
+     *  \param thePoint Point to project to theEdgeIndex-th edge.
+     *  \return New GEOM_Object, containing the processed shape.
+     */
+    GEOM_Object DivideEdgeByPoint (in GEOM_Object theObject,
+                                   in short       theEdgeIndex,
+                                   in GEOM_Object thePoint);
 
     /*!
      *  \brief Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
