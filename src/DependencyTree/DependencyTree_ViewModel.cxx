@@ -67,7 +67,7 @@ void DependencyTree_ViewModel::onShowSelected()
   aSelMgr->selectedObjects(aSelList);
 
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  GEOM_Displayer* disp = new GEOM_Displayer( appStudy );
+  GEOM_Displayer disp( appStudy );
 
   OCCViewer_ViewManager* anOCCVM = ( OCCViewer_ViewManager* ) app->getViewManager( OCCViewer_Viewer::Type(), /*create=*/ true );
 
@@ -75,7 +75,7 @@ void DependencyTree_ViewModel::onShowSelected()
     if ( SALOME_View* viewFrame = dynamic_cast<SALOME_View*>( viewModel ) ) {
       SALOME_ListIteratorOfListIO Iter( aSelList );
       for ( ; Iter.More(); Iter.Next() )
-        disp->Display( Iter.Value(), false, viewFrame );
+        disp.Display( Iter.Value(), false, viewFrame );
       viewFrame->Repaint();
     }
   }
@@ -97,16 +97,16 @@ void DependencyTree_ViewModel::onShowOnlySelected()
   aSelMgr->selectedObjects( aSelList );
 
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  GEOM_Displayer* disp = new GEOM_Displayer( appStudy );
+  GEOM_Displayer disp( appStudy );
 
   OCCViewer_ViewManager* anOCCVM = (OCCViewer_ViewManager*) app->getViewManager( OCCViewer_Viewer::Type(), /*create=*/ true );
 
   if ( SUIT_ViewModel* viewModel = anOCCVM->getViewModel() ) {
     if ( SALOME_View* viewFrame = dynamic_cast<SALOME_View*>( viewModel ) ) {
-      disp->EraseAll( true, false, viewFrame );
+      disp.EraseAll( true, false, viewFrame );
       SALOME_ListIteratorOfListIO Iter( aSelList );
       for ( ; Iter.More(); Iter.Next() )
-        disp->Display( Iter.Value(), false, viewFrame );
+        disp.Display( Iter.Value(), false, viewFrame );
       viewFrame->Repaint();
     }
   }
