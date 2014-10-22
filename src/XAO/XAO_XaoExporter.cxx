@@ -317,7 +317,7 @@ namespace {
   {
     std::string version = readStringProp(xaoNode, C_ATTR_XAO_VERSION, false, "");
     if (version != "")
-        xaoObject->setAuthor(version);
+        xaoObject->setVersion(version);
 
     std::string author = readStringProp(xaoNode, C_ATTR_XAO_AUTHOR, false, "");
     xaoObject->setAuthor(author);
@@ -592,7 +592,7 @@ namespace {
             int component = readIntegerProp(valNode, C_ATTR_VALUE_COMPONENT, true, -1);
             xmlChar* data = xmlNodeGetContent(valNode->children);
 
-            std::string value = (char*)data;
+            std::string value;
             if (data != NULL)
             {
                 value = (char*)data;
