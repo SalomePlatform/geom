@@ -39,6 +39,7 @@
 #include <SalomeApp_Study.h>
 #include <SALOME_ListIO.hxx>
 
+#include "TransformationGUI_ExtensionDlg.h"          // Method EXTENSION
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION
 #include "TransformationGUI_TranslationDlg.h"        // Method TRANSLATION
@@ -150,6 +151,9 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
         }
       } // for (; aSelIt.More(); aSelIt.Next())
     }
+    break;
+  case GEOMOp::OpExtension:     // EXTENSION
+    aDlg = new TransformationGUI_ExtensionDlg( getGeometryGUI(), parent );
     break;
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );

@@ -5686,6 +5686,93 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetSameIDs", self.ShapesOp)
             return anObj
 
+        ## Resize the input edge with the new Min and Max parameters.
+        #  The input edge parameters range is [0, 1]. If theMin parameter is
+        #  negative, the input edge is extended, otherwise it is shrinked by
+        #  theMin parameter. If theMax is greater than 1, the edge is extended,
+        #  otherwise it is shrinked by theMax parameter.
+        #  @param theEdge the input edge to be resized.
+        #  @param theMin the minimal parameter value.
+        #  @param theMax the maximal parameter value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return New GEOM.GEOM_Object, containing the created edge.
+        #
+        #  @ref tui_extend "Example"
+        @ManageTransactions("ShapesOp")
+        def ExtendEdge(self, theEdge, theMin, theMax, theName=None):
+            """
+            Resize the input edge with the new Min and Max parameters.
+            The input edge parameters range is [0, 1]. If theMin parameter is
+            negative, the input edge is extended, otherwise it is shrinked by
+            theMin parameter. If theMax is greater than 1, the edge is extended,
+            otherwise it is shrinked by theMax parameter.
+
+            Parameters:
+                theEdge the input edge to be resized.
+                theMin the minimal parameter value.
+                theMax the maximal parameter value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created edge.
+            """
+            anObj = self.ShapesOp.ExtendEdge(theEdge, theMin, theMax)
+            RaiseIfFailed("ExtendEdge", self.ShapesOp)
+            self._autoPublish(anObj, theName, "edge")
+            return anObj
+
+        ## Resize the input face with the new UMin, UMax, VMin and VMax
+        #  parameters. The input face U and V parameters range is [0, 1]. If
+        #  theUMin parameter is negative, the input face is extended, otherwise
+        #  it is shrinked along U direction by theUMin parameter. If theUMax is
+        #  greater than 1, the face is extended, otherwise it is shrinked along
+        #  U direction by theUMax parameter. So as for theVMin, theVMax and
+        #  V direction of the input face.
+        #  @param theFace the input face to be resized.
+        #  @param theUMin the minimal U parameter value.
+        #  @param theUMax the maximal U parameter value.
+        #  @param theVMin the minimal V parameter value.
+        #  @param theVMax the maximal V parameter value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return New GEOM.GEOM_Object, containing the created face.
+        #
+        #  @ref tui_extend "Example"
+        @ManageTransactions("ShapesOp")
+        def ExtendFace(self, theFace, theUMin, theUMax,
+                       theVMin, theVMax, theName=None):
+            """
+            Resize the input face with the new UMin, UMax, VMin and VMax
+            parameters. The input face U and V parameters range is [0, 1]. If
+            theUMin parameter is negative, the input face is extended, otherwise
+            it is shrinked along U direction by theUMin parameter. If theUMax is
+            greater than 1, the face is extended, otherwise it is shrinked along
+            U direction by theUMax parameter. So as for theVMin, theVMax and
+            V direction of the input face.
+
+            Parameters:
+                theFace the input face to be resized.
+                theUMin the minimal U parameter value.
+                theUMax the maximal U parameter value.
+                theVMin the minimal V parameter value.
+                theVMax the maximal V parameter value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            anObj = self.ShapesOp.ExtendFace(theFace, theUMin, theUMax,
+                                             theVMin, theVMax)
+            RaiseIfFailed("ExtendFace", self.ShapesOp)
+            self._autoPublish(anObj, theName, "face")
+            return anObj
 
         # end of l4_obtain
         ## @}

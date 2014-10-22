@@ -143,6 +143,7 @@ namespace GEOMOp {
     OpMultiRotate         = 3607,   // MENU OPERATIONS - TRANSFORMATION - MULTI-ROTATION
     OpReimport            = 3608,   // POPUP MENU - RELOAD IMPORTED
     OpProjection          = 3609,   // MENU OPERATIONS - TRANSFORMATION - PROJECTION
+    OpExtension           = 3610,   // MENU OPERATIONS - TRANSFORMATION - EXTENSION
     // OperationGUI ----------------//--------------------------------
     OpPartition           = 3700,   // MENU OPERATION - PARTITION
     OpArchimede           = 3701,   // MENU OPERATION - ARCHIMEDE

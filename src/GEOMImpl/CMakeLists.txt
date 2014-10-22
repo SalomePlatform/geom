@@ -116,6 +116,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_IRevolution.hxx
   GEOMImpl_IMeasure.hxx
   GEOMImpl_IShapes.hxx
+  GEOMImpl_IShapeExtend.hxx
   GEOMImpl_IFilling.hxx
   GEOMImpl_IThruSections.hxx
   GEOMImpl_IPartition.hxx

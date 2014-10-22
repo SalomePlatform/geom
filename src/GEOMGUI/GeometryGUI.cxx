@@ -587,6 +587,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpMultiTranslate:     // MENU TRANSFORMATION - MULTI-TRANSLATION
   case GEOMOp::OpMultiRotate:        // MENU TRANSFORMATION - MULTI-ROTATION
   case GEOMOp::OpReimport:           // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
+  case GEOMOp::OpExtension:          // MENU TRANSFORMATION - EXTENSION
     libName = "TransformationGUI";
     break;
   case GEOMOp::OpPartition:          // MENU OPERATION - PARTITION
@@ -960,6 +961,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpProjection,     "PROJECTION" );
   createGeomAction( GEOMOp::OpMultiTranslate, "MUL_TRANSLATION" );
   createGeomAction( GEOMOp::OpMultiRotate,    "MUL_ROTATION" );
+  createGeomAction( GEOMOp::OpExtension,      "EXTENSION" );
 
   createGeomAction( GEOMOp::OpPartition,      "PARTITION" );
   createGeomAction( GEOMOp::OpArchimede,      "ARCHIMEDE" );
@@ -1194,6 +1196,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpScale,          transId, -1 );
   createMenu( GEOMOp::OpOffset,         transId, -1 );
   createMenu( GEOMOp::OpProjection,     transId, -1 );
+  createMenu( GEOMOp::OpExtension,      transId, -1 );
   createMenu( separator(),              transId, -1 );
   createMenu( GEOMOp::OpMultiTranslate, transId, -1 );
   createMenu( GEOMOp::OpMultiRotate,    transId, -1 );
@@ -1362,6 +1365,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpScale,          transTbId );
   createTool( GEOMOp::OpOffset,         transTbId );
   createTool( GEOMOp::OpProjection,     transTbId );
+  createTool( GEOMOp::OpExtension,      transTbId );
   createTool( separator(),              transTbId );
   createTool( GEOMOp::OpMultiTranslate, transTbId );
   createTool( GEOMOp::OpMultiRotate,    transTbId );

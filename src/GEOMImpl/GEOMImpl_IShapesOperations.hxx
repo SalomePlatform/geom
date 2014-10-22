@@ -384,6 +384,18 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                        const Standard_Integer theShapeType,
                                        GEOMAlgo_State theState);
 
+  Standard_EXPORT Handle(GEOM_Object)
+                            ExtendEdge(const Handle(GEOM_Object) &theEdge,
+                                       const Standard_Real        theMin,
+                                       const Standard_Real        theMax);
+
+  Standard_EXPORT Handle(GEOM_Object)
+                            ExtendFace(const Handle(GEOM_Object) &theFace,
+                                       const Standard_Real        theUMin,
+                                       const Standard_Real        theUMax,
+                                       const Standard_Real        theVMin,
+                                       const Standard_Real        theVMax);
+
  private:
   Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,
                                  const Standard_Integer         theObjectType,

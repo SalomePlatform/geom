@@ -24,6 +24,7 @@
 
 #include <GEOMImpl_IIsoline.hxx>
 #include <GEOMImpl_IShapes.hxx>
+#include <GEOMImpl_IShapeExtend.hxx>
 #include <GEOMImpl_IVector.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
@@ -77,6 +78,7 @@
 #include <GCPnts_AbscissaPoint.hxx>
 
 #include <Geom_TrimmedCurve.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_Surface.hxx>
 #include <GeomAbs_CurveType.hxx>
 #include <GeomConvert_CompCurveToBSplineCurve.hxx>
@@ -571,6 +573,35 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     } else {
       Standard_NullObject::Raise
         ("Shape for isoline construction is not a face");
+    }
+  } else if (aType == EDGE_UV) {
+#ifdef RESULT_TYPE_CHECK
+    anExpectedType = TopAbs_EDGE;
+#endif
+    GEOMImpl_IShapeExtend aSE (aFunction);
+    Handle(GEOM_Function) aRefEdge   = aSE.GetShape();
+    TopoDS_Shape          aShapeEdge = aRefEdge->GetValue();
+
+    if (aShapeEdge.ShapeType() == TopAbs_EDGE) {
+      TopoDS_Edge anEdge = TopoDS::Edge(aShapeEdge);
+
+      aShape = ExtendEdge(anEdge, aSE.GetUMin(), aSE.GetUMax());
+    }
+  } else if (aType == FACE_UV) {
+#ifdef RESULT_TYPE_CHECK
+    anExpectedType = TopAbs_FACE;
+#endif
+
+    GEOMImpl_IShapeExtend aSE (aFunction);
+    Handle(GEOM_Function) aRefFace   = aSE.GetShape();
+    TopoDS_Shape          aShapeFace = aRefFace->GetValue();
+
+    if (aShapeFace.ShapeType() == TopAbs_FACE) {
+      TopoDS_Face aFace = TopoDS::Face(aShapeFace);
+
+      aFace.Orientation(TopAbs_FORWARD);
+      aShape = ExtendFace(aFace, aSE.GetUMin(), aSE.GetUMax(),
+                          aSE.GetVMin(), aSE.GetVMax()); 
     }
   }
   else {
@@ -1241,6 +1272,150 @@ TopoDS_Shape GEOMImpl_ShapeDriver::MakeIsoline
   return aResult;
 }
 
+//=============================================================================
+/*!
+ * \brief Returns an extended edge.
+ */
+//=============================================================================
+
+TopoDS_Shape GEOMImpl_ShapeDriver::ExtendEdge
+                         (const TopoDS_Edge   &theEdge,
+                          const Standard_Real  theMin,
+                          const Standard_Real  theMax) const
+{
+  TopoDS_Shape        aResult;
+  Standard_Real       aF;
+  Standard_Real       aL;
+  Handle(Geom_Curve)  aCurve   = BRep_Tool::Curve(theEdge, aF, aL);
+  const Standard_Real aTol     = BRep_Tool::Tolerance(theEdge);
+  Standard_Real       aRange2d = aL - aF;
+
+  if (aCurve.IsNull() == Standard_False && aRange2d > aTol) {
+    Standard_Real aMin = aF + aRange2d*theMin;
+    Standard_Real aMax = aF + aRange2d*theMax;
+
+    Handle(Standard_Type) aType = aCurve->DynamicType();
+
+    // Get the curve of original type
+    while (aType == STANDARD_TYPE(Geom_TrimmedCurve)) {
+      Handle(Geom_TrimmedCurve) aTrCurve =
+        Handle(Geom_TrimmedCurve)::DownCast(aCurve);
+
+      aCurve = aTrCurve->BasisCurve();
+      aType  = aCurve->DynamicType();
+    }
+
+    if (aCurve->IsPeriodic()) {
+      // The curve is periodic. Check if a new range is less then a period.
+      if (aMax - aMin > aCurve->Period()) {
+        aMax = aMin + aCurve->Period();
+      }
+    } else {
+      // The curve is not periodic. Check if aMin and aMax within bounds.
+      aMin = Max(aMin, aCurve->FirstParameter());
+      aMax = Min(aMax, aCurve->LastParameter());
+    }
+
+    if (aMax - aMin > aTol) {
+      // Create a new edge.
+      BRepBuilderAPI_MakeEdge aME (aCurve, aMin, aMax);
+
+      if (aME.IsDone()) {
+        aResult = aME.Shape();
+      }
+    }
+  }
+
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ * \brief Returns an extended face.
+ */
+//=============================================================================
+
+TopoDS_Shape GEOMImpl_ShapeDriver::ExtendFace
+                         (const TopoDS_Face   &theFace,
+                          const Standard_Real  theUMin,
+                          const Standard_Real  theUMax,
+                          const Standard_Real  theVMin,
+                          const Standard_Real  theVMax) const
+{
+  TopoDS_Shape         aResult;
+  Handle(Geom_Surface) aSurface = BRep_Tool::Surface(theFace);
+  const Standard_Real  aTol     = BRep_Tool::Tolerance(theFace);
+  Standard_Real        aU1;
+  Standard_Real        aU2;
+  Standard_Real        aV1;
+  Standard_Real        aV2;
+
+  // Get U, V bounds of the face.
+  ShapeAnalysis::GetFaceUVBounds(theFace, aU1, aU2, aV1, aV2);
+
+  const Standard_Real aURange = aU2 - aU1;
+  const Standard_Real aVRange = aV2 - aV1;
+
+  if (aSurface.IsNull() == Standard_False &&
+      aURange > aTol && aURange > aTol) {
+    Handle(Standard_Type) aType = aSurface->DynamicType();
+
+    // Get the surface of original type
+    while (aType == STANDARD_TYPE(Geom_RectangularTrimmedSurface)) {
+      Handle(Geom_RectangularTrimmedSurface) aTrSurface =
+        Handle(Geom_RectangularTrimmedSurface)::DownCast(aSurface);
+
+      aSurface = aTrSurface->BasisSurface();
+      aType    = aSurface->DynamicType();
+    }
+
+    Standard_Real aUMin = aU1 + aURange*theUMin;
+    Standard_Real aUMax = aU1 + aURange*theUMax;
+    Standard_Real aVMin = aV1 + aVRange*theVMin;
+    Standard_Real aVMax = aV1 + aVRange*theVMax;
+
+    aSurface->Bounds(aU1, aU2, aV1, aV2);
+
+    if (aSurface->IsUPeriodic()) {
+      // The surface is U-periodic. Check if a new U range is less
+      // then a period.
+      if (aUMax - aUMin > aSurface->UPeriod()) {
+        aUMax = aUMin + aSurface->UPeriod();
+      }
+    } else {
+      // The surface is not V-periodic. Check if aUMin and aUMax
+      // within bounds.
+      aUMin = Max(aUMin, aU1);
+      aUMax = Min(aUMax, aU2);
+    }
+
+    if (aSurface->IsVPeriodic()) {
+      // The surface is V-periodic. Check if a new V range is less
+      // then a period.
+      if (aVMax - aVMin > aSurface->VPeriod()) {
+        aVMax = aVMin + aSurface->VPeriod();
+      }
+    } else {
+      // The surface is not V-periodic. Check if aVMin and aVMax
+      // within bounds.
+      aVMin = Max(aVMin, aV1);
+      aVMax = Min(aVMax, aV2);
+    }
+
+    if (aUMax - aUMin > aTol && aVMax - aVMin > aTol) {
+      // Create a new edge.
+      BRepBuilderAPI_MakeFace aMF
+        (aSurface, aUMin, aUMax, aVMin, aVMax, aTol);
+    
+      if (aMF.IsDone()) {
+        aResult = aMF.Shape();
+      }
+    }
+  }
+
+  return aResult;
+}
+
 //================================================================================
 /*!
  * \brief Returns a name of creation operation and names and values of creation parameters
@@ -1339,6 +1514,28 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam(theParams, "Face", aII.GetFace());
     AddParam(theParams, "Isoline type", (aII.GetIsUIso() ? "U" : "V"));
     AddParam(theParams, "Parameter", aII.GetParameter());
+    break;
+  }
+  case EDGE_UV:
+  {
+    GEOMImpl_IShapeExtend aSE (function);
+
+    theOperationName = "EDGE_EXTEND";
+    AddParam(theParams, "Edge", aSE.GetShape());
+    AddParam(theParams, "Min", aSE.GetUMin());
+    AddParam(theParams, "Max", aSE.GetUMax());
+    break;
+  }
+  case FACE_UV:
+  {
+    GEOMImpl_IShapeExtend aSE (function);
+
+    theOperationName = "FACE_EXTEND";
+    AddParam(theParams, "Face", aSE.GetShape());
+    AddParam(theParams, "UMin", aSE.GetUMin());
+    AddParam(theParams, "UMax", aSE.GetUMax());
+    AddParam(theParams, "VMin", aSE.GetVMin());
+    AddParam(theParams, "VMax", aSE.GetVMax());
     break;
   }
   default:

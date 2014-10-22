@@ -89,10 +89,12 @@ SET( _res_files
   displayonly.png
   displayall.png
   draft.png
+  edgeextension.png
   erase.png
   eraseall.png
   extruded_boss.png
   extruded_cut.png
+  faceextension.png
   face_hw.png
   face_vechw.png
   feature_detect.png

@@ -255,6 +255,8 @@ def TestAll (geompy, math):
   Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object, Double)->GEOM_Object
   Orientation = geompy.ChangeOrientation(Box)
   ProjOnWire  = geompy.MakeProjectionOnWire(p0, Wire)
+  ExtEdge     = geompy.ExtendEdge(Edge1, -0.3, 1.3)
+  ExtFace     = geompy.ExtendFace(Face5, -0.3, 1.3, -0.1, 1.1)
 
   #IDList for Fillet/Chamfer
   prism_edges = geompy.ExtractShapes(Prism, geompy.ShapeType["EDGE"], True)
@@ -469,6 +471,8 @@ def TestAll (geompy, math):
   id_Offset      = geompy.addToStudy(Offset,        "Offset")
   id_Orientation = geompy.addToStudy(Orientation,   "Orientation")
   id_ProjOnWire  = geompy.addToStudy(ProjOnWire[1], "ProjOnWire")
+  id_ExtEdge     = geompy.addToStudy(ExtEdge,       "ExtendedEdge")
+  id_ExtFace     = geompy.addToStudy(ExtFace,       "ExtendedFace")
 
   id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
   id_Fillet2  = geompy.addToStudy(Fillet2,  "Fillet2")

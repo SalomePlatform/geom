@@ -304,6 +304,8 @@
 #define SHAPES_ON_SHAPE     13
 #define SHAPE_ISOLINE       14
 #define FACE_FROM_SURFACE   15
+#define EDGE_UV             16
+#define FACE_UV             17
 
 
 #define ARCHIMEDE_TYPE 1

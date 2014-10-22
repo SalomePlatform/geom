@@ -274,6 +274,16 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::ListOfLong* GetSameIDs  (GEOM::GEOM_Object_ptr theShapeWhere,
                                  GEOM::GEOM_Object_ptr theShapeWhat);
 
+  GEOM::GEOM_Object_ptr ExtendEdge(GEOM::GEOM_Object_ptr theEdge,
+                                   CORBA::Double         theMin,
+                                   CORBA::Double         theMax);
+
+  GEOM::GEOM_Object_ptr ExtendFace(GEOM::GEOM_Object_ptr theFace,
+                                   CORBA::Double         theUMin,
+                                   CORBA::Double         theUMax,
+                                   CORBA::Double         theVMin,
+                                   CORBA::Double         theVMax);
+
   ::GEOMImpl_IShapesOperations* GetOperations()
   { return (::GEOMImpl_IShapesOperations*)GetImpl(); }
 };

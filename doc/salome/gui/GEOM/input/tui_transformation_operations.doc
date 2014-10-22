@@ -54,4 +54,8 @@
 <br><h2>Chamfer</h2>
 \tui_script{transformation_operations_ex13.py}
 
+\anchor tui_extend
+<br><h2>Extend Edge and Face</h2>
+\tui_script{transformation_operations_ex14.py}
+
 */

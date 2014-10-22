@@ -114,6 +114,7 @@ SET(GOOD_TESTS
   transformation_operations_ex11.py  
   transformation_operations_ex12.py  
   transformation_operations_ex13.py  
+  transformation_operations_ex14.py  
   viewing_geom_objs_ex01.py  
   viewing_geom_objs_ex02.py  
   viewing_geom_objs_ex03.py  

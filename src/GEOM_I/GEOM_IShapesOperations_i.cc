@@ -1932,3 +1932,71 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetSameIDs
 
   return aSeq._retn();
 }
+
+//=============================================================================
+/*!
+ *  ExtendEdge
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::ExtendEdge
+                                  (GEOM::GEOM_Object_ptr theEdge,
+                                   CORBA::Double         theMin,
+                                   CORBA::Double         theMax)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) anEdge = GetObjectImpl(theEdge);
+
+  if (anEdge.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  //Get Shapes in place of aShapeWhat
+  Handle(GEOM_Object) aNewEdge =
+    GetOperations()->ExtendEdge(anEdge, theMin, theMax);
+
+  if (!GetOperations()->IsDone() || aNewEdge.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  return GetObject(aNewEdge);
+}
+
+//=============================================================================
+/*!
+ *  ExtendFace
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::ExtendFace
+                                  (GEOM::GEOM_Object_ptr theFace,
+                                   CORBA::Double         theUMin,
+                                   CORBA::Double         theUMax,
+                                   CORBA::Double         theVMin,
+                                   CORBA::Double         theVMax)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aFace = GetObjectImpl(theFace);
+
+  if (aFace.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  //Get Shapes in place of aShapeWhat
+  Handle(GEOM_Object) aNewFace =
+    GetOperations()->ExtendFace(aFace, theUMin, theUMax, theVMin, theVMax);
+
+  if (!GetOperations()->IsDone() || aNewFace.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  return GetObject(aNewFace);
+}

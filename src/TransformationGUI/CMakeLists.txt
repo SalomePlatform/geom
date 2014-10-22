@@ -66,6 +66,7 @@ SET(_uic_files
 
 SET(TransformationGUI_HEADERS
   TransformationGUI.h
+  TransformationGUI_ExtensionDlg.h
   TransformationGUI_MultiTranslationDlg.h
   TransformationGUI_MultiRotationDlg.h
   TransformationGUI_TranslationDlg.h
@@ -79,6 +80,7 @@ SET(TransformationGUI_HEADERS
 
 # header files / to be processed by moc
 SET(_moc_HEADERS
+  TransformationGUI_ExtensionDlg.h
   TransformationGUI_MultiTranslationDlg.h
   TransformationGUI_MultiRotationDlg.h
   TransformationGUI_TranslationDlg.h
@@ -100,6 +102,7 @@ QT4_WRAP_CPP(_moc_SOURCES ${_moc_HEADERS})
 
 SET(TransformationGUI_SOURCES
   TransformationGUI.cxx
+  TransformationGUI_ExtensionDlg.cxx
   TransformationGUI_MultiTranslationDlg.cxx
   TransformationGUI_MultiRotationDlg.cxx
   TransformationGUI_TranslationDlg.cxx

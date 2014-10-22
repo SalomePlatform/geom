@@ -37,6 +37,7 @@
 
 #include "GEOMImpl_IVector.hxx"
 #include "GEOMImpl_IShapes.hxx"
+#include "GEOMImpl_IShapeExtend.hxx"
 #include "GEOMImpl_IGlue.hxx"
 
 #include "GEOMImpl_Block6Explorer.hxx"
@@ -4784,4 +4785,139 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs
     SetErrorCode(NOT_FOUND_ANY);
     return NULL;
   }
+}
+
+//=======================================================================
+//function : ExtendEdge
+//purpose  :
+//=======================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::ExtendEdge
+                                      (const Handle(GEOM_Object) &theEdge,
+                                       const Standard_Real        theMin,
+                                       const Standard_Real        theMax)
+{
+  SetErrorCode(KO);
+
+  if (theEdge.IsNull()) {
+    return NULL;
+  }
+
+  //Add a new Edge object
+  Handle(GEOM_Object) aResEdge = GetEngine()->AddObject(GetDocID(), GEOM_EDGE);
+
+  //Add a new Vector function
+  Handle(GEOM_Function) aFunction =
+    aResEdge->AddFunction(GEOMImpl_ShapeDriver::GetID(), EDGE_UV);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) {
+    return NULL;
+  }
+
+  GEOMImpl_IShapeExtend aCI (aFunction);
+
+  Handle(GEOM_Function) anEdge = theEdge->GetLastFunction();
+
+  if (anEdge.IsNull()) {
+    return NULL;
+  }
+
+  aCI.SetShape(anEdge);
+  aCI.SetUMin(theMin);
+  aCI.SetUMax(theMax);
+
+  //Compute the Edge value
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction)
+             << aResEdge  << " = geompy.ExtendEdge("
+             << theEdge << ", " << theMin << ", " << theMax << ")";
+
+  SetErrorCode(OK);
+
+  return aResEdge;
+}
+
+//=======================================================================
+//function : ExtendFace
+//purpose  :
+//=======================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::ExtendFace
+                                      (const Handle(GEOM_Object) &theFace,
+                                       const Standard_Real        theUMin,
+                                       const Standard_Real        theUMax,
+                                       const Standard_Real        theVMin,
+                                       const Standard_Real        theVMax)
+{
+  SetErrorCode(KO);
+
+  if (theFace.IsNull()) {
+    return NULL;
+  }
+
+  //Add a new Face object
+  Handle(GEOM_Object) aResFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+
+  //Add a new Vector function
+  Handle(GEOM_Function) aFunction =
+    aResFace->AddFunction(GEOMImpl_ShapeDriver::GetID(), FACE_UV);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) {
+    return NULL;
+  }
+
+  GEOMImpl_IShapeExtend aCI (aFunction);
+
+  Handle(GEOM_Function) aFace = theFace->GetLastFunction();
+
+  if (aFace.IsNull()) {
+    return NULL;
+  }
+
+  aCI.SetShape(aFace);
+  aCI.SetUMin(theUMin);
+  aCI.SetUMax(theUMax);
+  aCI.SetVMin(theVMin);
+  aCI.SetVMax(theVMax);
+
+  //Compute the Face value
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction)
+             << aResFace  << " = geompy.ExtendFace("
+             << theFace << ", " << theUMin << ", " << theUMax << ", "
+             << theVMin << ", " << theVMax << ")";
+
+  SetErrorCode(OK);
+
+  return aResFace;
 }
