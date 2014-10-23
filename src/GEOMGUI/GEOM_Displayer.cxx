@@ -525,17 +525,11 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
     if ( prs )
     {
       vf->BeforeDisplay( this, prs );
-      vf->Display( prs );
+      vf->Display( this, prs );
       vf->AfterDisplay( this, prs );
 
       if ( updateViewer )
         vf->Repaint();
-
-      int aMgrId = getViewManagerId(vf);
-      SalomeApp_Study* aStudy = getStudy();
-      aStudy->setObjectProperty(aMgrId, theIO->getEntry(), GEOM::propertyName( GEOM::Visibility ), 1 );
-
-      setVisibilityState(theIO->getEntry(), Qtx::ShownState);
 
       delete prs;  // delete presentation because displayer is its owner
     }
@@ -581,17 +575,11 @@ void GEOM_Displayer::Erase( const Handle(SALOME_InteractiveObject)& theIO,
     SALOME_Prs* prs = vf->CreatePrs( theIO->getEntry() );
     if ( prs ) {
       vf->BeforeErase( this, prs );
-      vf->Erase( prs, forced );
+      vf->Erase( this, prs, forced );
       vf->AfterErase( this, prs );
       if ( updateViewer )
         vf->Repaint();
       delete prs;  // delete presentation because displayer is its owner
-
-      int aMgrId = getViewManagerId(vf);
-      SalomeApp_Study* aStudy = getStudy();
-      aStudy->setObjectProperty(aMgrId, theIO->getEntry(), GEOM::propertyName( GEOM::Visibility ), 0 );
-
-      setVisibilityState(theIO->getEntry(), Qtx::HiddenState);
     }
   }
 }
@@ -692,6 +680,27 @@ void GEOM_Displayer::Display( const SALOME_ListIO& theIOList, const bool updateV
   }
   if ( updateViewer )
     UpdateViewer();
+}
+
+void GEOM_Displayer::UpdateVisibility( SALOME_View* v, const SALOME_Prs* p, bool on )
+{
+  SalomeApp_Study* aStudy = getStudy();
+  int vId = -1;
+  if ( v ) vId = getViewManagerId( v );
+
+  if ( p ) {
+    QString entry = p->GetEntry();
+    if ( !entry.isEmpty() ) {
+      if ( vId != -1 )
+	aStudy->setObjectProperty( vId, entry, GEOM::propertyName( GEOM::Visibility ), on );
+      setVisibilityState( entry, on ? Qtx::ShownState : Qtx::HiddenState );
+    }
+  }
+  else {
+    if ( vId != -1 ) {
+      aStudy->setObjectProperty( vId, GEOM::propertyName( GEOM::Visibility ), on );
+    }
+  }
 }
 
 Quantity_Color GEOM_Displayer::qColorFromResources( const QString& property, const QColor& defColor )
@@ -952,7 +961,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
 
   if ( create && !isTemporary && aMgrId != -1 ) {
     // set properties to the study
-    study->setObjectPropMap( aMgrId, entry, propMap );
+    study->setObjectProperties( aMgrId, entry, propMap );
   }
 
   // AISShape->SetName(???); ??? necessary to set name ???
@@ -1106,7 +1115,7 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
 
   if ( create && !isTemporary && aMgrId != -1 ) {
     // set properties to the study
-    study->setObjectPropMap( aMgrId, entry, propMap );
+    study->setObjectProperties( aMgrId, entry, propMap );
   }
 }
 
@@ -2336,7 +2345,7 @@ PropMap GEOM_Displayer::getObjectProperties( SalomeApp_Study* study,
   
     if ( viewModel && viewId != -1 ) {
       // get properties from the study
-      PropMap storedMap = study->getObjectPropMap( viewId, entry );
+      PropMap storedMap = study->getObjectProperties( viewId, entry );
       // overwrite default properties from stored ones (that are specified)
       for ( int prop = GEOM::Visibility; prop <= GEOM::LastProperty; prop++ ) {
         if ( storedMap.contains( GEOM::propertyName( (GEOM::Property)prop ) ) )
@@ -2946,7 +2955,7 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
     {
       if( SUIT_ViewManager* aViewManager = *vmIt )
       {
-        const ObjMap anObjects = aStudy->getObjectMap( aViewManager->getGlobalId() );
+        const ObjMap& anObjects = aStudy->getObjectProperties( aViewManager->getGlobalId() );
         for( ObjMap::ConstIterator objIt = anObjects.begin(); objIt != anObjects.end(); objIt++ )
         {
           _PTR(SObject) aSObj( aStudyDS->FindObjectID( objIt.key().toLatin1().constData() ) );

@@ -328,7 +328,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
         SUIT_ViewWindow* window = app->desktop()->activeWindow();
         if ( window ) {
           int mgrId = window->getViewManager()->getGlobalId();
-          PropMap propMap = study->getObjectPropMap( mgrId, io->getEntry() );
+          PropMap propMap = study->getObjectProperties( mgrId, io->getEntry() );
           QString matProp = propMap.value(GEOM::propertyName( GEOM::Material )).toString();         
           if ( !matProp.isEmpty() )
             myCurrentModel.fromProperties( matProp );

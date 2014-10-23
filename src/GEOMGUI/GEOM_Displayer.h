@@ -128,6 +128,9 @@ public:
                             const bool theUpdateViewer,
                             SALOME_View* theViewFrame );
 
+  /* Update visibility state */
+  void          UpdateVisibility( SALOME_View*, const SALOME_Prs*, bool );
+
   /* build presentation accordint to the current viewer type*/
   SALOME_Prs*   BuildPrs  ( GEOM::GEOM_Object_ptr );
   SALOME_Prs*   BuildPrs  ( const TopoDS_Shape& );

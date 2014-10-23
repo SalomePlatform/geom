@@ -446,7 +446,7 @@ void GEOMToolsGUI_ReduceStudyDlg::removeObject( std::string& theStudyEntry )
   _PTR(SObject) obj ( myStudy->FindObjectID( theStudyEntry.c_str() ) );
   if ( obj ) {
     // remove visual properties of the object
-    appStudy->removeObjectFromAll(obj->GetID().c_str());
+    appStudy->removeObjectProperties(obj->GetID().c_str());
     // remove references to this object
     appStudy->deleteReferencesTo( obj );
     // remove objects from study

@@ -543,7 +543,7 @@ void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
     if (!CORBA::is_nil(geomObj)) {
 
       //Remove visual properties of the object
-      appStudy->removeObjectFromAll(obj->GetID().c_str());
+      appStudy->removeObjectProperties(obj->GetID().c_str());
 
       // Erase graphical object
       QListIterator<SALOME_View*> it( views );

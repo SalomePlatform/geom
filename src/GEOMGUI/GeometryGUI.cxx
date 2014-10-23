@@ -2702,10 +2702,10 @@ void GeometryGUI::storeVisualParameters (int savePoint)
     // saving VTK actors properties
     QVector<SUIT_ViewWindow*> views = vman->getViews();
     for (int i = 0, iEnd = vman->getViewsCount(); i < iEnd; i++) {
-      const ObjMap anObjects = appStudy->getObjectMap(aMgrId);
+      const ObjMap& anObjects = appStudy->getObjectProperties(aMgrId);
       ObjMap::ConstIterator o_it = anObjects.begin();
       for (; o_it != anObjects.end(); o_it++) {
-        const PropMap aProps = o_it.value();
+        const PropMap& aProps = o_it.value();
 
         //Check that object exists in the study
         _PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toLatin1().data() ) );
@@ -2977,8 +2977,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
     QList<SUIT_ViewManager*> lst = getApp()->viewManagers();
 
     for (int index = 0; index < aListOfMap.count(); index++) {
-
-      appStudy->setObjectPropMap(index, entry, aListOfMap[index]);
+      appStudy->setObjectProperties(index, entry, aListOfMap[index]);
 
       //Get Visibility property of the current PropMap
       if (aListOfMap[index].value(GEOM::propertyName( GEOM::Visibility )) == 1) {
