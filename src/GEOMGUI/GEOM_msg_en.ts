@@ -909,14 +909,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Matrix And Moments Of Inertia</translation>
     </message>
     <message>
-        <source>GEOM_INERTIA_I</source>
-        <translation>%1:1 :</translation>
-    </message>
-    <message>
-        <source>GEOM_INERTIA_IXYZ</source>
-        <translation>IX &amp; IY &amp; IZ :</translation>
-    </message>
-    <message>
         <source>GEOM_INERTIA_TITLE</source>
         <translation>Calculs Of Inertia</translation>
     </message>

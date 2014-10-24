@@ -921,14 +921,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Matrice et moment d&apos;inertie</translation>
     </message>
     <message>
-        <source>GEOM_INERTIA_I</source>
-        <translation>%1:1 :</translation>
-    </message>
-    <message>
-        <source>GEOM_INERTIA_IXYZ</source>
-        <translation>IX &amp; IY &amp; IZ :</translation>
-    </message>
-    <message>
         <source>GEOM_INERTIA_TITLE</source>
         <translation>Calcul de l&apos;inertie</translation>
     </message>
