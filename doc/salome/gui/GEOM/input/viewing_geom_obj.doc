@@ -64,10 +64,9 @@ geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em></li>
 
 <li><b>Show all dimensions</b> - shows all of the persistent dimensions created for the selected geometrical object.</li>
 <li><b>Hide all dimensions</b> - hides all of the persistent dimensions created for the selected geometrical object.</li>
-<li>\subpage dependency_tree_page "Show dependency tree" - shows dependency tree of selected objects
-in new 2D View Window.</li>
-<li>\subpage reduce_study_page "Reduce study" - allows to reduce study
-by automatic removing objects according to user's options.</li>
+<li>\subpage dependency_tree_page "Show dependency tree" - shows the dependency tree with parents and children of the selected object
+in a new 2D View Window.</li>
+<li>\subpage reduce_study_page "Reduce study" - allows reducing the study by removing objects from it.</li>
 <li><b>Dump view</b> - exports an object from the viewer in bmp, png,
 jpg or jpeg image format.</li>
 <li><b>Change background</b> - allows to redefine the background
