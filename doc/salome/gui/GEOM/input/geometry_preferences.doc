@@ -4,10 +4,9 @@
 
 \anchor pref_settings <h2>Settings</h2>
 
-In the \b Geometry module you can set preferences for visualisation of
+In the \b Geometry module you can set preferences for visualization of
 geometrical figures, which can be used in later sessions with this module.
-There is also a special group of preferences controlling input
-precision for floating-point data.
+
 
 \image html pref15.png
 
@@ -67,7 +66,7 @@ of values set in spin boxes.</li>
 </ul>
 
 <ul>
-<li><b>Dimensions (Measurements)</b></li>
+<li><b>Dimensions (Measurements)</b> - a group of preferences controlling the presentation of dimensions.</li>
 <ul>
 <li><b>Color</b> - allows to define color for persistent dimension presentations.</li>
 <li><b>Line width</b> - allows to define pixel width of dimension lines.</li>
@@ -91,7 +90,8 @@ By default <b>Along U</b> and <b>Along V</b> are null and isolines are not drawn
 </ul>
 
 <ul>
-<li><b>Input fields precision</b></li>
+<li><b>Input fields precision</b> - a group of preferences controlling input
+precision for floating-point data.</li>
 <ul>
 <li><b>Length precision</b> - allows to adjust input precision of coordinates and dimensions.</li>
 <li><b>Angular precision</b> - allows to adjust input precision of angles.</li>
@@ -147,32 +147,29 @@ system immediately after the module activation.</li>
 
 \anchor pref_dependency_tree <h2>Dependency Tree</h2>
 
-Also user can set preferences for visualisation of <b>Dependency Tree</b> in 2D Viewer.
+This tab groups preferences for visualization of <b>Dependency Tree</b> in the 2D Viewer.
 
 \image html pref_dep_tree.png
 
 <ul>
 <li><b>General</b></li>
 <ul>
-<li><b>Hierarchy type</b> - allows to choose default displaying mode of dependency tree.</li>
-<li><b>Possibility to move nodes</b> - enable/disable the possibility of moving nodes by default.</li>
+<li><b>Hierarchy type</b> - allows to choose the default display mode of the dependency tree.</li>
+<li><b>Possibility to move nodes</b> - enables/disables the possibility of moving nodes by default.</li>
 </ul>
 </ul>
 
 <ul>
 <li><b>Color</b></li>
 <ul>
-<li><b>Background color</b> - allows to select default background color.</li>
-<li><b>Default node color</b> - allows to select default node color.</li>
-<li><b>Main node color</b> - allows to select default main node color.</li>
-<li><b>Unpublished node color</b> - allows to select default node color
-for unpublished objects.</li>
-<li><b>Selected node color</b> - allows to select default selected node color.</li>
-<li><b>Default arrow color</b> - allows to select default arrow color.</li>
-<li><b>Highlighted arrow color</b> - allows to select default highlighted 
-arrow color.</li>
-<li><b>Selected arrow color</b> - allows to select default selected 
-arrow color.</li>
+<li><b>Background color</b> - allows to select the default background color.</li>
+<li><b>Default node color</b> - allows to select the default node color.</li>
+<li><b>Main node color</b> - allows to select the default main node color.</li>
+<li><b>Unpublished node color</b> - allows to select the default node color for unpublished objects.</li>
+<li><b>Selected node color</b> - allows to select the default selected node color.</li>
+<li><b>Default arrow color</b> - allows to select the default arrow color.</li>
+<li><b>Highlighted arrow color</b> - allows to select the default highlighted arrow color.</li>
+<li><b>Selected arrow color</b> - allows to select the default selected arrow color.</li>
 </ul>
 </ul>
 

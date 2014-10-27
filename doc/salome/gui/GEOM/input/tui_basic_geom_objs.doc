@@ -38,4 +38,7 @@
 <br><h2>Creation of a Local Coordinate System</h2>
 \tui_script{basic_geom_objs_ex09.py}
 
+\page tui_polyline_page 2D Polyline
+\tui_script{polyline.py}
+
 */
