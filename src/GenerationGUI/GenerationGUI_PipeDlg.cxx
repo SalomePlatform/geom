@@ -38,7 +38,6 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
 #include <TopExp.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_MapOfInteger.hxx>
@@ -165,6 +164,8 @@ void GenerationGUI_PipeDlg::Init()
   connect(GroupMakePoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupMakePoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupMakePoints->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupMakePoints->CheckBox1, SIGNAL(clicked()), this, SLOT(processPreview()));
+  connect(GroupMakePoints->CheckBox2, SIGNAL(clicked()), this, SLOT(processPreview()));
 
   initName(tr("GEOM_PIPE"));
   resize(100,100);
@@ -264,10 +265,7 @@ bool GenerationGUI_PipeDlg::ClickOnApply()
     return false;
 
   initName();
-  if ( getConstructorId() != 1 )
-    ConstructorsClicked( getConstructorId() );
-  // activate selection and connect selection manager
-  //   GroupPoints->PushButton1->click();
+
   return true;
 }
 
@@ -321,7 +319,6 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     }
   }
   else if ( myEditCurrentArgument == GroupMakePoints->LineEdit1 ) {
-    myBaseObjects.clear();
     QList<TopAbs_ShapeEnum> types;
     types << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL;
     QList<GEOM::GeomObjPtr> objects = getSelected( types, -1 );
@@ -332,7 +329,6 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     }
   }
   else if ( myEditCurrentArgument == GroupMakePoints->LineEdit2 ) {
-    myLocations.clear();
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
     QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_VERTEX, -1 );
     GEOMBase::Synchronize( myLocations, objects );

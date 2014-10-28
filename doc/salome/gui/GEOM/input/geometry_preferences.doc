@@ -2,6 +2,8 @@
 
 \page geometry_preferences_page Geometry preferences
 
+\anchor pref_settings <h2>Settings</h2>
+
 In the \b Geometry module you can set preferences for visualisation of
 geometrical figures, which can be used in later sessions with this module.
 There is also a special group of preferences controlling input
@@ -31,8 +33,21 @@ default color for edges, vectors and wires (isolated lines).</li>
 vertices.</li>
 <li><b>Color of isolines</b> - allows to select default color for
 isolines.</li>
-<li><b>Step value for spin boxes</b> - allows to define the increment
-of values set in spin boxes.</li>
+<li><b>Top level color</b> - allows to select default color for objects which 
+were brought to the viewer foreground.</li>
+<li><b>Top level display mode</b> - allows to select default top level display mode between:</li>
+<ul>
+<li><b>Show additional wireframe actor</b> - allows to have the shading actor at its usual 
+place (in the back) and add the additional wireframe actor in the viewer foreground.</li>
+<li><b>Keep current display mode</b> - allows to use current display mode of object.</li>
+<li><b>Wireframe</b> - allows to switch display mode to wireframe mode after 
+"top-level" operation.</li>
+<li><b>Shading</b> - allows to switch display mode to shading mode after 
+"top-level" operation.</li>
+<li><b>Shading With Edges</b> - allows to switch display mode to shading with edges mode after 
+"top-level" operation.</li>
+</ul>
+<li><b>Transparency</b> - allows to define default transparency value.</li>
 <li><b>Deflection coefficient</b> - allows to define default deflection
 coefficient for lines and surfaces. A smaller coefficient provides
 better quality of a shape in the viewer.</li>
@@ -44,6 +59,8 @@ predefined materials.</li>
 <li><b>Isolines width</b> - allows to define default width of the isolines.</li>
 <li><b>Preview edges width</b> - allows to define width of the edges for preview.</li>
 <li><b>Measures line width</b> - allows to define lines width of measurements tools.</li>
+<li><b>Step value for spin boxes</b> - allows to define the increment
+of values set in spin boxes.</li>
 <li><b>Automatic bring to front</b> - when the option is on, the objects selected by the user automatically become "top-level".</li>
 
 </ul>
@@ -128,5 +145,35 @@ system immediately after the module activation.</li>
 </ul>
 </ul>
 
+\anchor pref_dependency_tree <h2>Dependency Tree</h2>
+
+Also user can set preferences for visualisation of <b>Dependency Tree</b> in 2D Viewer.
+
+\image html pref_dep_tree.png
+
+<ul>
+<li><b>General</b></li>
+<ul>
+<li><b>Hierarchy type</b> - allows to choose default displaying mode of dependency tree.</li>
+<li><b>Possibility to move nodes</b> - enable/disable the possibility of moving nodes by default.</li>
+</ul>
+</ul>
+
+<ul>
+<li><b>Color</b></li>
+<ul>
+<li><b>Background color</b> - allows to select default background color.</li>
+<li><b>Default node color</b> - allows to select default node color.</li>
+<li><b>Main node color</b> - allows to select default main node color.</li>
+<li><b>Unpublished node color</b> - allows to select default node color
+for unpublished objects.</li>
+<li><b>Selected node color</b> - allows to select default selected node color.</li>
+<li><b>Default arrow color</b> - allows to select default arrow color.</li>
+<li><b>Highlighted arrow color</b> - allows to select default highlighted 
+arrow color.</li>
+<li><b>Selected arrow color</b> - allows to select default selected 
+arrow color.</li>
+</ul>
+</ul>
 
 */

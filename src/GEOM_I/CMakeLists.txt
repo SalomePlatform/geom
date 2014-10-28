@@ -28,7 +28,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOM
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
-  ${PROJECT_SOURCE_DIR}/src/XAO
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${PROJECT_BINARY_DIR}/idl
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${PROJECT_BINARY_DIR}
@@ -44,6 +44,7 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   GEOMImpl
+  GEOMUtils
   SalomeIDLGEOM
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_SalomeGenericObj}
@@ -55,6 +56,8 @@ SET(_link_LIBRARIES
 # --- headers ---
 
 SET(GEOMEngine_HEADERS
+  GEOM_IFieldOperations_i.hh
+  GEOM_BaseObject_i.hh
   GEOM_Object_i.hh
   GEOM_IOperations_i.hh
   GEOM_IBasicOperations_i.hh

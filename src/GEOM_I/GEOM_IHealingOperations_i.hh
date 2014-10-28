@@ -33,9 +33,6 @@
 
 #include "GEOMImpl_IHealingOperations.hxx"
 
-#include <TColStd_HArray1OfExtendedString.hxx>
-#include <TColStd_HArray1OfInteger.hxx>
-
 class GEOM_I_EXPORT GEOM_IHealingOperations_i :
     public virtual POA_GEOM::GEOM_IHealingOperations,
     public virtual GEOM_IOperations_i
@@ -101,7 +98,6 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
    ::GEOMImpl_IHealingOperations* GetOperations() { return (::GEOMImpl_IHealingOperations*)GetImpl(); }
 
 private:
-         Handle(TColStd_HArray1OfExtendedString) Convert( const GEOM::string_array& );
          Handle(TColStd_HArray1OfInteger)        Convert( const GEOM::short_array& );
 
 };

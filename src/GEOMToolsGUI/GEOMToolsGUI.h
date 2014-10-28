@@ -61,9 +61,6 @@ public:
   enum ActionType { SHOWDLG, INCR, DECR };
 
 private:
-  // Import and export topology methods
-  bool         Import();
-  bool         Export();
 
   void         OnEditDelete();
   void         OnCheckGeometry();
@@ -90,6 +87,8 @@ private:
   void         OnClsBringToFront();
   void         OnCreateFolder();
   void         OnSortChildren();
+  void         OnShowDependencyTree();
+  void         OnReduceStudy();
 
   // Shortcut commands
   void         OnChangeTransparency( bool );

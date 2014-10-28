@@ -77,7 +77,7 @@ MeasureGUI_PropertiesDlg::MeasureGUI_PropertiesDlg( GeometryGUI* GUI, QWidget* p
   
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#basic_prop_anchor";
+  myHelpFileName = "basic_prop_page.html";
 
   /* Initialisation */
   Init();

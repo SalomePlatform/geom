@@ -37,7 +37,7 @@
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 #include "TransformationGUI_MultiTranslationDlg.h"   // Method MULTI TRANSLATION
 #include "TransformationGUI_MultiRotationDlg.h"      // Method MULTI ROTATION

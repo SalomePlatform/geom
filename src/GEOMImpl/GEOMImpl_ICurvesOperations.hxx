@@ -100,6 +100,19 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
                    const bool                 IsUIso,
                    const double               theParameter);
 
+  Standard_EXPORT Handle(GEOM_Object) MakePolyline2D
+            (const std::list <std::list <double> >         &theCoords,
+             const Handle(TColStd_HArray1OfExtendedString) &theNames,
+             const Handle(TColStd_HArray1OfByte)           &theTypes,
+             const Handle(TColStd_HArray1OfByte)           &theCloseds,
+             const Handle(TColStd_HArray1OfReal)           &theWorkingPlane);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePolyline2DOnPlane
+            (const std::list <std::list <double> >         &theCoords,
+             const Handle(TColStd_HArray1OfExtendedString) &theNames,
+             const Handle(TColStd_HArray1OfByte)           &theTypes,
+             const Handle(TColStd_HArray1OfByte)           &theCloseds,
+             const Handle(GEOM_Object)                     &theWorkingPlane);
 };
 
 #endif

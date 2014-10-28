@@ -29,11 +29,7 @@
 
 #include <Basics_OCCTVersion.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_DataMapOfIntegerTransient.hxx>
-#else
-#include <Interface_DataMapOfIntegerTransient.hxx>
-#endif
 
 #include <Resource_DataMapOfAsciiStringAsciiString.hxx>
 #include <TDocStd_Document.hxx>
@@ -59,11 +55,7 @@ struct TObjectData
   bool                    _unpublished;
 };
   
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 class Handle_TColStd_HArray1OfByte;
-#else
-class Handle_TDataStd_HArray1OfByte;
-#endif
 
 struct TVariable{
   TCollection_AsciiString myVariable;

@@ -64,6 +64,55 @@ SET(_python_SCRIPTS
   gsketcher.py
   )
 
+# Advanced scripts
+
+SET(_python_advanced_SCRIPTS
+  AdvancedGEOMBuilder.py
+  __init__.py
+)
+
+# STL plugin scripts
+
+SET(_python_STL_SCRIPTS
+  STLPluginBuilder.py
+  __init__.py
+)
+
+# BREP plugin scripts
+
+SET(_python_BREP_SCRIPTS
+  BREPPluginBuilder.py
+  __init__.py
+)
+
+# STEP plugin scripts
+
+SET(_python_STEP_SCRIPTS
+  STEPPluginBuilder.py
+  __init__.py
+)
+
+# IGES plugin scripts
+
+SET(_python_IGES_SCRIPTS
+  IGESPluginBuilder.py
+  __init__.py
+)
+
+# XAO plugin scripts
+
+SET(_python_XAO_SCRIPTS
+  XAOPluginBuilder.py
+  __init__.py
+)
+
+# VTK plugin scripts
+
+SET(_python_VTK_SCRIPTS
+  VTKPluginBuilder.py
+  __init__.py
+)
+
 # scripts / shared
 
 SET(_shared_SCRIPTS
@@ -75,3 +124,12 @@ SET(_shared_SCRIPTS
 SALOME_INSTALL_SCRIPTS("${_other_SCRIPTS}" ${SALOME_INSTALL_SCRIPT_DATA} DEF_PERMS)
 SALOME_INSTALL_SCRIPTS("${_shared_SCRIPTS}" ${SALOME_INSTALL_PYTHON_SHARED} DEF_PERMS)
 SALOME_INSTALL_SCRIPTS("${_python_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/geom DEF_PERMS)
+
+# Install plugin scripts
+SALOME_INSTALL_SCRIPTS("${_python_advanced_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/AdvancedGEOM DEF_PERMS)
+SALOME_INSTALL_SCRIPTS("${_python_STL_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/STLPlugin DEF_PERMS)
+SALOME_INSTALL_SCRIPTS("${_python_BREP_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/BREPPlugin DEF_PERMS)
+SALOME_INSTALL_SCRIPTS("${_python_STEP_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/STEPPlugin DEF_PERMS)
+SALOME_INSTALL_SCRIPTS("${_python_IGES_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/IGESPlugin DEF_PERMS)
+SALOME_INSTALL_SCRIPTS("${_python_XAO_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/XAOPlugin DEF_PERMS)
+SALOME_INSTALL_SCRIPTS("${_python_VTK_SCRIPTS}" ${SALOME_INSTALL_PYTHON}/salome/VTKPlugin DEF_PERMS)

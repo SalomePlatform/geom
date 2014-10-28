@@ -26,23 +26,6 @@
 #ifndef _GEOMImpl_ExportDriver_HeaderFile
 #define _GEOMImpl_ExportDriver_HeaderFile
 
-#ifndef _TColStd_SequenceOfExtendedString_HeaderFile
-#include <TColStd_SequenceOfExtendedString.hxx>
-#endif
-#ifndef _Standard_TypeMismatch_HeaderFile
-#include <Standard_TypeMismatch.hxx>
-#endif
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
 #ifndef _Standard_GUID_HeaderFile
 #include <Standard_GUID.hxx>
 #endif 

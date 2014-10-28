@@ -80,7 +80,7 @@ MeasureGUI_NormaleDlg::MeasureGUI_NormaleDlg (GeometryGUI* theGeometryGUI, QWidg
   layout->addWidget(GroupArgs);
   /***************************************************************/
 
-  setHelpFileName("using_measurement_tools_page.html#normale_anchor");
+  setHelpFileName("normal_page.html");
 
   Init();
 }

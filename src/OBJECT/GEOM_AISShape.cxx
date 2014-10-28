@@ -20,26 +20,20 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  GEOM OBJECT : interactive object for Geometry entities visualization
-//  File   : GEOM_AISShape.cxx
-//  Author : Nicolas REJNERI
-//  Module : GEOM
-
 /*!
   \class GEOM_AISShape GEOM_AISShape.hxx
   \brief ....
 */
 
-#include "GEOM_AISShape.ixx"
-#include "SALOME_InteractiveObject.hxx"
+#include "GEOM_AISShape.hxx"
 #include "GEOM_AISVector.hxx"
+
+#include <Basics_OCCTVersion.hxx>
 
 // Open CASCADE Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_InteractiveContext.hxx>
-
 #include <BRep_Tool.hxx>
-
 #include <GCPnts_AbscissaPoint.hxx>
 #include <GeomAdaptor_Curve.hxx>
 #include <gp_Pnt.hxx>
@@ -53,6 +47,9 @@
 #include <Prs3d_ShadingAspect.hxx>
 #include <Prs3d_Arrow.hxx>
 #include <Prs3d_IsoAspect.hxx>
+#if OCC_VERSION_LARGE > 0x06070200
+#include <Prs3d_VertexDrawMode.hxx>
+#endif
 
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <SelectMgr_EntityOwner.hxx>
@@ -81,9 +78,11 @@
 #include <V3d_View.hxx>
 
 #include <SalomeApp_Tools.h>
-
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+
+IMPLEMENT_STANDARD_HANDLE (GEOM_AISShape, SALOME_AISShape)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISShape, SALOME_AISShape)
 
 GEOM_AISShape::TopLevelDispMode GEOM_AISShape::myTopLevelDm = GEOM_AISShape::TopKeepCurrent;
 Quantity_Color GEOM_AISShape::myTopLevelColor;
@@ -148,6 +147,7 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   : SALOME_AISShape(shape),
     myName(aName),
     myDisplayVectors(false),
+    myDisplayVertices(false),
     myFieldDataType(GEOM::FDT_Double),
     myFieldDimension(0),
     myFieldStepRangeMin(0),
@@ -158,13 +158,8 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
 
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
   myPrevDisplayMode = 0;
-  storeBoundaryColors();
-
 
   myEdgesInShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
-
-  myUIsoNumber = -1;
-  myVIsoNumber = -1;
 
   myTopLevel = Standard_False;
   Graphic3d_MaterialAspect aMatAspect;
@@ -178,6 +173,10 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
         myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
         myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
   }
+}
+
+GEOM_AISShape::~GEOM_AISShape()
+{
 }
 
 void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
@@ -215,20 +214,26 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
 
   Handle(AIS_InteractiveContext) anIC = GetContext();
+  // AKL: use old behavior to avoid keeping object's wireframe
+  //      if to change shape properties (for example: 'Clear Top Level State','Color', 'Isos') 
+  //      calling popup menu over(!) the shape in OCC viewer.
+  anIC->SetToHilightSelected( false );
 
   bool anIsField = !myFieldStepData.isEmpty();
   bool anIsColorField = anIsField && myFieldDataType != GEOM::FDT_String;
   bool anIsTextField = anIsField && myFieldDataType == GEOM::FDT_String;
 
+#if OCC_VERSION_LARGE > 0x06070200
+  if (isShowVertices())
+    myDrawer->SetVertexDrawMode(Prs3d_VDM_All);
+#endif
+
   //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
   bool isTopLev = isTopLevel() && switchTopLevel();
   switch (aMode) {
-    case 0://StdSelect_DM_Wireframe: 
+    case Wireframe:
     case CustomHighlight:
     {
-      restoreIsoNumbers();
-      // Restore wireframe edges colors
-      restoreBoundaryColors();
       if(isTopLev) {
               SetColor(topLevelColor());
               Handle(Prs3d_LineAspect) anAspect = Attributes()->WireAspect();
@@ -241,55 +246,33 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
         StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);      
       break;
     }
-    case 1://StdSelect_DM_Shading:
+    case Shading:
     {
-      restoreIsoNumbers();
       shadingMode(aPresentationManager, aPrs, aMode);
-      // Store wireframe edges colors
-      storeBoundaryColors();
       break;
     }
-    case 3: //StdSelect_DM_HLR:
+    case ShadingWithEdges:
+    {
+      shadingMode(aPresentationManager, aPrs, Shading);
+      myDrawer->SetFaceBoundaryDraw( Standard_True );
+      Handle(Prs3d_LineAspect) aBoundaryAspect =
+        new Prs3d_LineAspect ( myEdgesInShadingColor, Aspect_TOL_SOLID, myOwnWidth );
+      myDrawer->SetFaceBoundaryAspect (aBoundaryAspect);
+      break;
+    }
+    case TexturedShape:
     {
       if(!isTopLev)
-              AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+#ifdef USE_TEXTURED_SHAPE
+	AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+#else
+	AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+#endif
       else 
-              shadingMode(aPresentationManager, aPrs, AIS_Shaded);
+	shadingMode(aPresentationManager, aPrs, Shading);
       break;
     }
   }
-
-  if ( aMode == ShadingWithEdges ) {
-    // Temporary store number of iso lines in order to recover its later 
-    // when display mode is achnged to 'Wirefame' or 'Shading'.
-    // Iso lines are not displayed in 'Shading with edges' mode.
-    storeIsoNumbers();
-
-    // Reset number of iso lines to 0
-    resetIsoNumbers();
-
-    //Shaded faces
-    shadingMode(aPresentationManager, aPrs, AIS_Shaded);
-
-    // Store wireframe edges colors
-    storeBoundaryColors();
-
-    // Coloring edges
-    Handle(Prs3d_LineAspect) anAspect = myDrawer->UnFreeBoundaryAspect();
-    anAspect->SetColor( myEdgesInShadingColor );
-    myDrawer->SetUnFreeBoundaryAspect( anAspect );
-    
-    anAspect = myDrawer->FreeBoundaryAspect();
-    anAspect->SetColor( myEdgesInShadingColor );
-    myDrawer->SetFreeBoundaryAspect( anAspect );
-
-    // Add edges to presentation
-    if( anIsColorField && myFieldDimension == 1 )
-      drawField( aPrs );
-    else
-      StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
-  }
-
   if (isShowVectors())
   {
     const bool isVector = IsKind(STANDARD_TYPE(GEOM_AISVector));
@@ -393,6 +376,11 @@ void GEOM_AISShape::SetDisplayVectors(bool isDisplayed)
   myDisplayVectors = isDisplayed;
 }
 
+void GEOM_AISShape::SetDisplayVertices(bool isDisplayed)
+{
+  myDisplayVertices = isDisplayed;
+}
+
 void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
                                 const Handle(Prs3d_Presentation)& aPrs,
                                 const Standard_Integer aMode)
@@ -424,64 +412,13 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
   {
     // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
     //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
+#ifdef USE_TEXTURED_SHAPE
+    AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+#else
     AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+#endif
   }
 }
-
-void GEOM_AISShape::storeIsoNumbers()
-{
-  myUIsoNumber = myDrawer->UIsoAspect()->Number();
-  myVIsoNumber = myDrawer->VIsoAspect()->Number();
-}
-
-void GEOM_AISShape::restoreIsoNumbers()
-{
-  if ( myUIsoNumber > 0 ) {
-    // Restore number of U iso lines
-    Handle(Prs3d_IsoAspect) anAspect = myDrawer->UIsoAspect();
-    anAspect->SetNumber( myUIsoNumber );
-    myDrawer->SetUIsoAspect( anAspect );
-  }
-  
-  if ( myVIsoNumber > 0 ) {
-    // Restore number of V iso lines
-    Handle(Prs3d_IsoAspect) anAspect = myDrawer->VIsoAspect();
-    anAspect->SetNumber( myVIsoNumber );
-    myDrawer->SetVIsoAspect( anAspect );
-  }
-}
-
-void GEOM_AISShape::resetIsoNumbers()
-{
-  Handle(Prs3d_IsoAspect) anAspect = myDrawer->UIsoAspect();
-  anAspect->SetNumber( 0 );
-  myDrawer->SetUIsoAspect( anAspect );
-  
-  anAspect = myDrawer->VIsoAspect();
-  anAspect->SetNumber( 0 );
-  myDrawer->SetVIsoAspect( anAspect );
-}
-
-void GEOM_AISShape::storeBoundaryColors()
-{
-  Aspect_TypeOfLine aLT;
-  Standard_Real aW;
-
-  myDrawer->FreeBoundaryAspect()->Aspect()->Values( myFreeBoundaryColor, aLT, aW);
-  myDrawer->UnFreeBoundaryAspect()->Aspect()->Values( myUnFreeBoundaryColor, aLT, aW);
-}
- 
-void GEOM_AISShape::restoreBoundaryColors()
-{
-  Handle(Prs3d_LineAspect) anAspect = myDrawer->FreeBoundaryAspect();
-  anAspect->SetColor( myFreeBoundaryColor );
-  myDrawer->SetFreeBoundaryAspect( anAspect );
-
-  anAspect = myDrawer->UnFreeBoundaryAspect();
-  anAspect->SetColor( myUnFreeBoundaryColor );
-  myDrawer->SetUnFreeBoundaryAspect( anAspect );
-}
-
 
 Standard_Boolean GEOM_AISShape::isTopLevel() {
   return myTopLevel;
@@ -493,10 +430,10 @@ void GEOM_AISShape::setTopLevel(Standard_Boolean f) {
       myPrevDisplayMode = DisplayMode();
     Standard_Integer dm;
     switch(topLevelDisplayMode()) {
-      case TopKeepCurrent : dm = myPrevDisplayMode; break;
-      case TopWireFrame : dm = AIS_WireFrame; break;     
-      case TopShadingWithEdges : dm = ShadingWithEdges; break;
-      default : dm = AIS_Shaded; break;
+      case TopKeepCurrent :      dm = myPrevDisplayMode; break;
+      case TopWireFrame :        dm = Wireframe;         break;     
+      case TopShadingWithEdges : dm = ShadingWithEdges;  break;
+      default :                  dm = Shading;           break;
     }
     SetDisplayMode(dm);
   } else {
@@ -526,11 +463,11 @@ void GEOM_AISShape::setTopLevelDisplayMode(const GEOM_AISShape::TopLevelDispMode
 }
 
 Standard_Boolean GEOM_AISShape::switchTopLevel() {
-        return myTopLevelDm != TopShowAdditionalWActor;
+  return myTopLevelDm != TopShowAdditionalWActor;
 }
 
 Standard_Boolean GEOM_AISShape::toActivate() {
-        return Standard_True;
+  return ( myTopLevel && myTopLevelDm == TopShowAdditionalWActor ) ? false : true;
 }
 
 void GEOM_AISShape::setFieldStepInfo( const GEOM::field_data_type theFieldDataType,

@@ -25,7 +25,7 @@ print "UnitName2 = ", UnitName2
 # import shapes
 Shape1 = geompy.ImportIGES(theFileName1)
 Shape2 = geompy.ImportIGES(theFileName2)
-Shape3 = geompy.ImportFile(theFileName2,"IGES_SCALE")
+Shape3 = geompy.ImportIGES(theFileName2, True)
 [Xmin1,Xmax1, Ymin1,Ymax1, Zmin1,Zmax1] = geompy.BoundingBox(Shape1)
 [Xmin2,Xmax2, Ymin2,Ymax2, Zmin2,Zmax2] = geompy.BoundingBox(Shape2)
 [Xmin3,Xmax3, Ymin3,Ymax3, Zmin3,Zmax3] = geompy.BoundingBox(Shape3)

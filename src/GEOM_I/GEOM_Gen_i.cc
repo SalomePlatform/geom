@@ -36,7 +36,6 @@
 #include "Utils_ExceptHandlers.hxx"
 #include "utilities.h"
 
-#include "GEOM_Object_i.hh"
 #include "GEOM_Object.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"
@@ -45,6 +44,7 @@
 #include "GEOMImpl_CopyDriver.hxx"
 #include "GEOMImpl_IInsertOperations.hxx"
 #include "GEOM_wrap.hxx"
+#include "GEOMUtils_XmlHandler.hxx"
 
 // Cascade headers
 #include <BRep_Builder.hxx>
@@ -60,6 +60,9 @@
 #include <TopExp.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 #include <OSD.hxx>
+#include <TDataStd_ChildNodeIterator.hxx>
+#include <TDocStd_Owner.hxx>
+#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
 
 #include <SALOMEDS_Tool.hxx>
 #include <SALOMEDS_wrap.hxx>
@@ -118,6 +121,18 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
       raiseFPE = true;
 #endif
     OSD::SetSignal( raiseFPE );
+  }
+
+  GEOMUtils::PluginInfo plugins = GEOMUtils::ReadPluginInfo();
+  GEOMUtils::PluginInfo::const_iterator it;
+  for (it = plugins.begin(); it != plugins.end(); ++it)
+  {
+    try {
+      LoadPlugin((*it).serverLib);
+    }
+    catch (...)  {
+      MESSAGE("Warning: can't load plugin library " << (*it).serverLib);
+    }
   }
 }
 
@@ -301,7 +316,26 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
   } else if ( mytype == GEOM_MARKER ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_LCS");
     aNamePrefix = "LocalCS_";
-  } else if ( mytype > ADVANCED_BASE ) {
+  }  else if ( mytype >= USER_TYPE_EX ) {
+      char buf[20];
+      sprintf( buf, "%d", aBaseObj->GetType() );
+      GEOM::CreationInformation_var info = aBaseObj->GetCreationInformation();
+      std::string plgId;
+      for ( size_t i = 0; i < info->params.length(); ++i ) {
+	std::string param_name = info->params[i].name.in();
+	std::string param_value = info->params[i].value.in();	
+	if( param_name == PLUGIN_NAME) {
+	  plgId = param_value;
+	  break;
+	}
+      }
+      if(plgId.length() > 0 ) {
+	plgId += "::";
+      }
+      plgId +="ICON_OBJBROWSER_"; 
+      plgId += buf;
+      aResultSO->SetAttrString("AttributePixMap",plgId.c_str());
+  } else if ( mytype > USER_TYPE ) {
     char buf[20];
     sprintf( buf, "%d", aBaseObj->GetType() );
     std::string advId = "ICON_OBJBROWSER_ADVANCED_"; advId += buf;
@@ -2403,6 +2437,40 @@ GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(CORBA::Long theStudyI
                                                            const char* theLibName)
      throw ( SALOME::SALOME_Exception )
 {
+  Unexpect aCatch(SALOME_SalomeException);
+  MESSAGE( "GEOM_Gen_i::GetPluginOperations" );
+
+  GEOM::GEOM_Gen_ptr engine = _this();
+
+  GEOM::GEOM_IOperations_var operations;
+
+  std::string aLibName = theLibName;
+
+  try {
+    // load plugin library
+    LoadPlugin(aLibName);
+    // create a new operations object, store its ref. in engine
+    if ( myOpCreatorMap.find(aLibName) != myOpCreatorMap.end() ) {
+      GEOM_IOperations_i* aServant = 0;
+      aServant = myOpCreatorMap[aLibName]->Create(_poa, theStudyID, engine, _impl);
+      // activate the CORBA servant
+      if (aServant)
+	operations = aServant->_this();
+    }
+  }
+  catch (SALOME_Exception& S_ex) {
+    THROW_SALOME_CORBA_EXCEPTION(S_ex.what(), SALOME::BAD_PARAM);
+  }
+
+  return operations._retn();
+}
+
+//============================================================================
+// function : LoadPlugin
+// purpose  : load plugin library and retrieve an instance of operations creator
+//============================================================================
+void GEOM_Gen_i::LoadPlugin(const std::string& theLibName)
+{
   std::string aPlatformLibName;
 #ifdef WIN32
   aPlatformLibName = theLibName;
@@ -2412,63 +2480,39 @@ GEOM::GEOM_IOperations_ptr GEOM_Gen_i::GetPluginOperations(CORBA::Long theStudyI
   aPlatformLibName += theLibName;
   aPlatformLibName += ".so";
 #endif
-
-  Unexpect aCatch(SALOME_SalomeException);
-  MESSAGE( "GEOM_Gen_i::GetPluginOperations" );
-
-  GEOM::GEOM_Gen_ptr engine = _this();
-
-  GEOM_IOperations_i* aServant = 0;
-  GEOM::GEOM_IOperations_var operations;
-
-  try {
-    // check, if corresponding operations are already created
-    if (myOpCreatorMap.find(std::string(theLibName)) == myOpCreatorMap.end()) {
-      // load plugin library
-      LibHandle libHandle = LoadLib( aPlatformLibName.c_str()/*theLibName*/ );
-      if (!libHandle) {
-        // report any error, if occured
+  
+  // check, if corresponding operations are already created
+  if (myOpCreatorMap.find(theLibName) == myOpCreatorMap.end()) {
+    // load plugin library
+    LibHandle libHandle = LoadLib( aPlatformLibName.c_str() );
+    if (!libHandle) {
+      // report any error, if occured
 #ifndef WIN32
-        const char* anError = dlerror();
-        throw(SALOME_Exception(anError));
+      throw(SALOME_Exception(dlerror()));
 #else
-        throw(SALOME_Exception(LOCALIZED( "Can't load server geometry plugin library" )));
+      throw(SALOME_Exception(LOCALIZED( "Can't load server geometry plugin library" )));
 #endif
-      }
-
-      // get method, returning operations creator
-      typedef GEOM_GenericOperationsCreator* (*GetOperationsCreator)();
-      GetOperationsCreator procHandle =
-        (GetOperationsCreator)GetProc( libHandle, "GetOperationsCreator" );
-      if (!procHandle) {
-        throw(SALOME_Exception(LOCALIZED("bad geometry plugin library")));
-        UnLoadLib(libHandle);
-      }
-
-      // get operations creator
-      GEOM_GenericOperationsCreator* aCreator = procHandle();
-      if (!aCreator) {
-        throw(SALOME_Exception(LOCALIZED("bad geometry plugin library implementation")));
-      }
-
-      // map operations creator to a plugin name
-      myOpCreatorMap[std::string(theLibName)] = aCreator;
     }
-
-    // create a new operations object, store its ref. in engine
-    aServant = myOpCreatorMap[std::string(theLibName)]->Create(_poa, theStudyID, engine, _impl);
-    //??? aServant->SetLibName(aPlatformLibName/*theLibName*/); // for persistency assurance
+    
+    // get method, returning operations creator
+    typedef GEOM_GenericOperationsCreator* (*GetOperationsCreator)();
+    GetOperationsCreator procHandle =
+      (GetOperationsCreator)GetProc( libHandle, "GetOperationsCreator" );
+    if (!procHandle) {
+      UnLoadLib(libHandle);
+      throw(SALOME_Exception(LOCALIZED("bad geometry plugin library")));
+    }
+    
+    // get operations creator
+    GEOM_GenericOperationsCreator* aCreator = procHandle();
+    if (aCreator) {
+      // map operations creator to a plugin name
+      myOpCreatorMap[theLibName] = aCreator;
+    }
+    else {
+      throw(SALOME_Exception(LOCALIZED("bad geometry plugin library implementation")));
+    }
   }
-  catch (SALOME_Exception& S_ex) {
-    THROW_SALOME_CORBA_EXCEPTION(S_ex.what(), SALOME::BAD_PARAM);
-  }
-
-  if (!aServant)
-    return operations._retn();
-
-  // activate the CORBA servant
-  operations = GEOM::GEOM_IOperations::_narrow( aServant->_this() );
-  return operations._retn();
 }
 
 //=============================================================================
@@ -2923,30 +2967,26 @@ Engines::ListOfIdentifiers* GEOM_Gen_i::importData(
   aFile.write(aBuffer, aFileStream->length());
   aFile.close();
 
-  GEOM::GEOM_Object_var aShapeObj;
-  GEOM::ListOfGO_var aSubShape = new GEOM::ListOfGO;
-  GEOM::ListOfGO_var aGroups = new GEOM::ListOfGO;
-  GEOM::ListOfFields_var aFields = new GEOM::ListOfFields;
+  GEOM::ListOfGBO_var aObjects = aInsOp->ImportFile(aFullPath.c_str(), "XAO");
 
-  CORBA::Boolean isResultOK = aInsOp->ImportXAO(aFullPath.c_str(), aShapeObj.out(), aSubShape.out(), aGroups.out(), aFields.out());
-
-  if ( isResultOK && !aShapeObj->_is_nil() && aInsOp->IsDone() ) {
-    SALOMEDS::SObject_var aSO = PublishInStudy(aStudy, SALOMEDS::SObject::_nil(), aShapeObj, aShapeObj->GetName());
-    aResult->length(aGroups->length() + 1);
-    aResult[0] = aSO->GetID(); // unioque identifer of the object in GEOM is entry of SObject
-    //Iteration for objects of the group.
-    for (int i = 0; i < aGroups->length(); i++) {
-      SALOMEDS::SObject_var aSOChild = AddInStudy(aStudy, aGroups[i], aGroups[i]->GetName(), aShapeObj);
-      aResult[i+1] = aSOChild->GetID();
+  if ( aObjects->length() > 0 && aInsOp->IsDone() ) {
+    aResult->length(aObjects->length());
+    // publish main object (first in the list of returned geom objects)
+    CORBA::String_var aName = aObjects[0]->GetName();
+    SALOMEDS::SObject_var aSO = PublishInStudy(aStudy.in(), SALOMEDS::SObject::_nil(), aObjects[0].in(), aName.in());
+    aResult[0] = aSO->GetID();
+    // publish groups && fields
+    for (int i = 1; i < aObjects->length(); i++ ) {
+      aName = aObjects[i]->GetName();
+      aSO = AddInStudy(aStudy.in(), aObjects[0].in(), aName.in(), aObjects[0].in());
+      aResult[i] = aSO->GetID();
     }
   }
   else {
-    if (aShapeObj->_is_nil())
-      MESSAGE("Result of the import operation is incorrect for file "<<aFullPath.c_str());
+    if (aObjects->length() == 0)
+      MESSAGE("ImportXAO operation is failed for file "<<aFullPath.c_str());
     if (!aInsOp->IsDone())
       MESSAGE("Import operation is not done for file "<<aFullPath.c_str());
-    if (!isResultOK)
-      MESSAGE("ImportXAO operation is failed for file "<<aFullPath.c_str());
     return aResult._retn();
   }
 
@@ -2975,21 +3015,24 @@ Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
 
   CORBA::Object_var aSMObject = name_service->Resolve("/myStudyManager");
   SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow( aSMObject );
+  if (CORBA::is_nil(aStudyManager))
+    return aResult._retn();
   SALOMEDS::Study_var aStudy = aStudyManager->GetStudyByID( studyId );
+  if (CORBA::is_nil(aStudy))
+    return aResult._retn();
   SALOMEDS::SComponent_var aComponent = aStudy->FindComponent("GEOM");
   if (CORBA::is_nil(aComponent))
     return aResult._retn();
   SALOMEDS::ChildIterator_var anIter = aStudy->NewChildIterator(aComponent); // check only published shapes
 
-  GEOM::GEOM_Object_var shapeObj;
-  GEOM::ListOfGO_var groups = new GEOM::ListOfGO;
-  GEOM::ListOfFields_var fields = new GEOM::ListOfFields;
-  std::string anAuthorName = "SIMAN Author";
-  
-  GEOM::GEOM_IShapesOperations_var  aShapesOp = GetIShapesOperations(aStudy->StudyId());
-  GEOM::GEOM_IInsertOperations_var aInsOp = GetIInsertOperations(aStudy->StudyId());
+  GEOM::GEOM_IInsertOperations_var aInsOp    = GetIInsertOperations(aStudy->StudyId());
+  if (aInsOp->_is_nil()) {
+    MESSAGE("No insert operations!");
+    return aResult._retn();
+  }
 
-  int aSeqLength = 0; // the sequence length
+  GEOM::GEOM_Object_var shapeObj;
+  
   for(; anIter->More(); anIter->Next()) {
     SALOMEDS::SObject_var aSO = anIter->Value();
     SALOMEDS::SObject_var aRefSO;
@@ -3004,13 +3047,7 @@ Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
 
           GEOM::shape_type aCORBAShapeType = aCORBAMainShape->GetShapeType();
           if (!aMainShape.IsNull() && !(aCORBAShapeType == GEOM::VERTEX) && !(aCORBAShapeType == GEOM::EDGE)) {
-            aSeqLength++;
             shapeObj = aCORBAMainShape;
-            if (aShapesOp->_is_nil()) {
-              MESSAGE("No shapes operations!");
-              return aResult._retn();
-            }
-            groups = aShapesOp->GetExistingSubObjects(aCORBAMainShape, true);
             break;
           }
         }
@@ -3018,19 +3055,12 @@ Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
     }
   }
 
-  if (aInsOp->_is_nil()) {
-    MESSAGE("No insert operations!");
-    return aResult._retn();
-  }
-
-  if (aSeqLength > 0) { // Shape is correct, write it to the temporary file
-
-    std::string aFullXaoPath = Kernel_Utils::GetTmpFileName() + ".xao";
-    CORBA::Boolean isResultOK = aInsOp->ExportXAO(shapeObj.in(), groups.in(), fields.in(), anAuthorName.c_str(), aFullXaoPath.c_str());
-
+  if (!CORBA::is_nil(shapeObj)) { // Shape is correct, write it to the temporary file
+    std::string aPath = Kernel_Utils::GetTmpFileName() + ".xao";
+    aInsOp->Export(shapeObj.in(), aPath.c_str(), "XAO");
     aResult->length(1);
     Engines::DataContainer_var aData = (new Engines_DataContainer_i(
-                    aFullXaoPath.c_str(), "", "", true))->_this();
+                    aPath.c_str(), "", "", true))->_this();
     aResult[0] = aData;
   } else {
     MESSAGE("No shapes to export");
@@ -3039,6 +3069,354 @@ Engines::ListOfData* GEOM_Gen_i::getModifiedData(CORBA::Long studyId)
   return aResult._retn();
 }
                                                                
+//=======================================================================
+// function : GetDependencyTree
+// purpose  : Collects dependencies of the given objects from other ones
+//=======================================================================
+SALOMEDS::TMPFile* GEOM_Gen_i::GetDependencyTree( SALOMEDS::Study_ptr theStudy,
+						  const GEOM::string_array& theObjectEntries ) {
+  // fill in the tree structure
+  GEOMUtils::TreeModel tree;
+
+  std::string entry;
+  for ( int i = 0; i < theObjectEntries.length(); i++ ) {
+    // process objects one-by-one
+    entry = theObjectEntries[i].in();
+    GEOM::GEOM_BaseObject_var anObj = GetObject( theStudy->StudyId(), entry.c_str() );
+    if ( anObj->_is_nil() )
+      continue;
+    std::map< std::string, std::set<std::string> > passedEntries;
+    GEOMUtils::LevelsList upLevelList;
+    // get objects from which current one depends on recursively
+    getUpwardDependency( anObj, upLevelList, passedEntries );
+    GEOMUtils::LevelsList downLevelList;
+    // get objects that depends on current one recursively
+    getDownwardDependency( anObj, downLevelList, passedEntries );
+    tree.insert( std::pair<std::string, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList> >(entry, std::pair<GEOMUtils::LevelsList,GEOMUtils::LevelsList>( upLevelList, downLevelList ) ) );
+  }
+
+  // translation the tree into string
+  std::string treeStr;
+  GEOMUtils::ConvertTreeToString( tree, treeStr );
+  
+  // put string into stream
+  char* aBuffer = (char*)CORBA::string_dup(treeStr.c_str());
+  int aBufferSize = strlen((char*)aBuffer);
+
+  CORBA::Octet* anOctetBuf =  (CORBA::Octet*)aBuffer;
+
+  SALOMEDS::TMPFile_var aStream = new SALOMEDS::TMPFile(aBufferSize, aBufferSize, anOctetBuf, 1);
+
+  return aStream._retn();
+}
+
+//=======================================================================
+// function : getUpwardDependency
+// purpose  : Collects the entries of objects on that the given one depends
+//=======================================================================
+void GEOM_Gen_i::getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+				      GEOMUtils::LevelsList &upLevelList, 
+				      std::map< std::string, std::set<std::string> > &passedEntries,
+				      int level ) {
+  std::string aGboEntry = gbo->GetEntry();
+  GEOMUtils::NodeLinks anEntries;
+  GEOMUtils::LevelInfo aLevelMap;
+  if ( level > 0 ) {
+    if ( level-1 >= upLevelList.size() ) {
+      // create a new map
+      upLevelList.push_back( aLevelMap );
+    } else {
+      // get the existent map
+      aLevelMap = upLevelList.at(level-1);
+      if ( aLevelMap.count( aGboEntry ) > 0 ) {
+	anEntries = aLevelMap[ aGboEntry ];
+      }
+    }
+  }
+  // get objects on that the current one depends
+  GEOM::ListOfGBO_var depList = gbo->GetDependency();
+  std::string aDepEntry;
+  for( int j = 0; j < depList->length(); j++ ) {
+    if ( depList[j]->_is_nil() )
+      continue;
+    aDepEntry = depList[j]->GetEntry();
+    if ( passedEntries.count( aGboEntry ) > 0 && 
+         passedEntries[aGboEntry].count( aDepEntry ) > 0 ) {
+      //avoid checking the passed objects
+      continue;
+    }
+    passedEntries[aGboEntry].insert( aDepEntry );
+    if ( level > 0 ) {
+      anEntries.push_back( aDepEntry );
+    }
+    // get dependencies recursively
+    getUpwardDependency(depList[j], upLevelList, passedEntries, level+1);
+  }
+  if ( level > 0 ) {
+    aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGboEntry, anEntries) );
+    upLevelList[level-1] = aLevelMap;
+  }
+}
+
+//=======================================================================
+// function : getDownwardDependency
+// purpose  : Collects the entries of objects that depends on the given one
+//=======================================================================
+void GEOM_Gen_i::getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+					GEOMUtils::LevelsList &downLevelList, 
+					std::map< std::string, std::set<std::string> > &passedEntries,
+					int level ) {
+  std::string aGboEntry = gbo->GetEntry();
+  Handle(TDocStd_Document) aDoc = GEOM_Engine::GetEngine()->GetDocument(gbo->GetStudyID());
+  Handle(TDataStd_TreeNode) aNode, aRoot;
+  Handle(GEOM_Function) aFunction;
+  if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
+    // go through the whole OCAF tree
+    TDataStd_ChildNodeIterator Itr( aRoot );
+    for (; Itr.More(); Itr.Next()) {
+      aNode = Itr.Value();
+      aFunction = GEOM_Function::GetFunction(aNode->Label());
+      if (aFunction.IsNull()) {
+        continue;
+      }
+      TDF_Label aLabel  = aFunction->GetOwnerEntry();
+      if(aLabel.IsNull()) continue;
+      TCollection_AsciiString anEntry;
+      TDF_Tool::Entry(aLabel, anEntry);
+      GEOM::GEOM_BaseObject_var geomObj = GetObject( gbo->GetStudyID(), anEntry.ToCString() );
+      if( CORBA::is_nil( geomObj ) )
+        continue;
+      // get dependencies for current object in the tree
+      GEOM::ListOfGBO_var depList = geomObj->GetDependency();
+      if( depList->length() == 0 )
+        continue;
+      std::string aGoEntry = geomObj->GetEntry();
+      // go through dependencies of current object to check whether it depends on the given object
+      for( int i = 0; i < depList->length(); i++ ) {
+        if ( depList[i]->_is_nil() )
+          continue;
+        if ( depList[i]->_is_equivalent( gbo ) ) {
+          // yes, the current object depends on the given object
+          if ( passedEntries.count( aGoEntry ) > 0 && 
+               passedEntries[aGoEntry].count( aGboEntry ) > 0 ) {
+            //avoid checking the passed objects
+            continue;
+          }
+          passedEntries[aGoEntry].insert( aGboEntry );
+          GEOMUtils::NodeLinks anEntries;
+          GEOMUtils::LevelInfo aLevelMap;
+          anEntries.push_back( aGboEntry );
+          if ( level >= downLevelList.size() ) {
+            downLevelList.push_back( aLevelMap );
+          } else {
+            aLevelMap = downLevelList.at(level);
+            if ( aLevelMap.count( aGoEntry ) > 0 ) {
+              anEntries = aLevelMap[ aGoEntry ];
+            }
+          }
+          aLevelMap.insert( std::pair<std::string, GEOMUtils::NodeLinks>(aGoEntry, anEntries) );
+          downLevelList[level] = aLevelMap;
+          // get dependencies of the current object recursively
+          getDownwardDependency(geomObj, downLevelList, passedEntries, level+1);
+          break;
+        }
+      }
+    }
+  }
+}
+
+//==============================================================================
+// function : GetEntriesToReduceStudy
+// purpose  : Fills 3 lists that is used to clean study of redundant objects
+//==============================================================================
+void GEOM_Gen_i::GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
+					GEOM::string_array& theSelectedEntries,
+					GEOM::string_array& theParentEntries,
+					GEOM::string_array& theSubEntries,
+					GEOM::string_array& theOtherEntries)
+{
+  std::set<std::string> aSelected, aParents, aChildren, anOthers;
+  for ( int i = 0; i < theSelectedEntries.length(); i++ ) {
+    aSelected.insert( CORBA::string_dup( theSelectedEntries[i] ) );
+  }
+
+  Handle(TDocStd_Document) aDoc = GEOM_Engine::GetEngine()->GetDocument(theStudy->StudyId());
+  Handle(TDataStd_TreeNode) aNode, aRoot;
+  Handle(GEOM_Function) aFunction;
+  if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
+    // go through the whole OCAF tree
+    TDF_Label aLabel;
+    std::string anEntry;
+    TCollection_AsciiString anAsciiEntry;
+    TDataStd_ChildNodeIterator Itr( aRoot );
+    for (; Itr.More(); Itr.Next()) {
+      aNode = Itr.Value();
+      aFunction = GEOM_Function::GetFunction(aNode->Label());
+      if (aFunction.IsNull()) {
+        continue;
+      }
+      aLabel = aFunction->GetOwnerEntry();
+      if(aLabel.IsNull())
+        continue;
+      TDF_Tool::Entry(aLabel, anAsciiEntry);
+      anEntry = anAsciiEntry.ToCString();
+      GEOM::GEOM_BaseObject_var geomObj = GetObject( theStudy->StudyId(), anEntry.c_str() );
+      if( CORBA::is_nil( geomObj ) )
+        continue;
+
+      if ( aSelected.count( anEntry ) > 0 &&
+           aParents.count( anEntry ) == 0 ) {
+        includeParentDependencies( geomObj, aSelected, aParents, aChildren, anOthers );
+      } else if ( aParents.count( anEntry ) == 0 && 
+                  aChildren.count( anEntry ) == 0 ) {
+        anOthers.insert( geomObj->GetEntry() );
+      }
+    }
+
+    std::set<std::string>::iterator it;
+    std::set<std::string>::iterator foundIt;
+    TCollection_AsciiString stringIOR;
+    GEOM::GEOM_Object_var geomObj;
+
+    // filling list of sub-objects
+    for ( it = aSelected.begin(); it != aSelected.end(); ++it ) {
+      includeSubObjects( theStudy, *it, aSelected, aParents, aChildren, anOthers );
+    }
+
+    // if some selected object is not a main shape,
+    // we move it's main shapes into 'selected' list, 
+    // because they could not be modified anyhow.
+    std::set<std::string> aToBeInSelected;
+    for ( it = aSelected.begin(); it != aSelected.end(); ++it ) {
+      Handle(GEOM_BaseObject) handle_object = _impl->GetObject( theStudy->StudyId(), (*it).c_str(), false);
+      if ( handle_object.IsNull() )
+        continue;
+
+      stringIOR = handle_object->GetIOR();
+      if ( !stringIOR.Length() > 1 )
+        continue;
+
+      geomObj = GetIORFromString( stringIOR.ToCString() );
+      while ( !geomObj->IsMainShape() ) {
+        geomObj = geomObj->GetMainShape();
+        anEntry = geomObj->GetEntry();
+
+        foundIt = aParents.find( anEntry );
+        if ( foundIt != aParents.end() )
+          aParents.erase( foundIt );
+
+        foundIt = aChildren.find( anEntry );
+        if ( foundIt != aChildren.end() )
+          aChildren.erase( foundIt );
+
+        foundIt = anOthers.find( anEntry );
+        if ( foundIt != anOthers.end() )
+          anOthers.erase( foundIt );
+
+        aToBeInSelected.insert( anEntry );
+      }
+    }
+    aSelected.insert( aToBeInSelected.begin(), aToBeInSelected.end() );
+
+    // fill the CORBA arrays with values from sets
+    int i;
+    theSelectedEntries.length( aSelected.size() );
+    for ( i = 0, it = aSelected.begin(); it != aSelected.end(); ++it, i++ )
+      theSelectedEntries[i]  = CORBA::string_dup( (*it).c_str() );
+    theParentEntries.length( aParents.size() );
+    for ( i = 0, it = aParents.begin(); it != aParents.end(); ++it, i++ )
+      theParentEntries[i]  = CORBA::string_dup( (*it).c_str() );
+    theSubEntries.length( aChildren.size() );
+    for ( i = 0, it = aChildren.begin(); it != aChildren.end(); ++it, i++ )
+      theSubEntries[i]  = CORBA::string_dup( (*it).c_str() );
+    theOtherEntries.length( anOthers.size() );
+    for ( i = 0, it = anOthers.begin(); it != anOthers.end(); ++it, i++ )
+      theOtherEntries[i]  = CORBA::string_dup( (*it).c_str() );
+  }
+}
+
+//==============================================================================
+// function : includeParentDependencies
+// purpose  : 
+//==============================================================================
+void GEOM_Gen_i::includeParentDependencies(GEOM::GEOM_BaseObject_ptr geomObj,
+					   std::set<std::string>& aSelected,
+					   std::set<std::string>& aParents,
+					   std::set<std::string>& aChildren,
+					   std::set<std::string>& anOthers)
+{
+  std::string anEntry = geomObj->GetEntry();
+  if ( aSelected.count( anEntry ) == 0 ) {
+    aParents.insert( anEntry );
+    std::set<std::string>::iterator it;
+    it = aChildren.find( anEntry );
+    if ( it != aChildren.end() )
+      aChildren.erase( it );
+    it = anOthers.find( anEntry );
+    if ( it != anOthers.end() )
+      anOthers.erase( it );
+  }
+  // get dependencies for current object in the tree
+  GEOM::ListOfGBO_var depList = geomObj->GetDependency();
+  if( depList->length() == 0 )
+    return;
+  // go through dependencies of current object to check whether it depends on the given object
+  std::string aDepEntry;
+  for( int i = 0; i < depList->length(); i++ ) {
+    aDepEntry = depList[i]->GetEntry();
+    if ( depList[i]->_is_nil() ||
+	 aDepEntry == anEntry ||             // skip self-depending
+	 aSelected.count( aDepEntry ) > 0 || // skip selected objects
+	 aParents.count( aDepEntry ) > 0     // skip already processed objects
+	 )
+      continue;
+    includeParentDependencies( depList[i], aSelected, aParents, aChildren, anOthers );
+  }
+}
+
+//==============================================================================
+// function : includeSubObjects
+// purpose  : 
+//==============================================================================
+void GEOM_Gen_i::includeSubObjects(SALOMEDS::Study_ptr theStudy,
+				   const std::string& aSelectedEntry,
+				   std::set<std::string>& aSelected,
+				   std::set<std::string>& aParents,
+				   std::set<std::string>& aChildren,
+				   std::set<std::string>& anOthers)
+{
+  std::set<std::string>::iterator foundIt;
+  Handle(GEOM_BaseObject) handle_object = _impl->GetObject( theStudy->StudyId(), aSelectedEntry.c_str(), false);
+  if ( handle_object.IsNull() )
+    return;
+
+  Handle(GEOM_Function) aShapeFun = handle_object->GetFunction(1);
+  if ( aShapeFun.IsNull() || !aShapeFun->HasSubShapeReferences() )
+    return;
+
+  const TDataStd_ListOfExtendedString& aListEntries = aShapeFun->GetSubShapeReferences();
+  if ( aListEntries.IsEmpty() )
+    return;
+
+  TDataStd_ListIteratorOfListOfExtendedString anIt (aListEntries);
+  for ( ; anIt.More(); anIt.Next() ) {
+    TCollection_ExtendedString aSubEntry = anIt.Value();
+    Standard_Integer aStrLen = aSubEntry.LengthOfCString();
+    char* aSubEntryStr = new char[aStrLen+1];
+    aSubEntry.ToUTF8CString( aSubEntryStr );
+    foundIt = aParents.find( aSubEntryStr );
+    if ( foundIt == aParents.end() ) { // add to sub-objects if it is not in parents list
+      foundIt = aSelected.find( aSubEntryStr );
+      if ( foundIt == aSelected.end() ) { // add to sub-objects if it is not in selected list
+	    aChildren.insert( aSubEntryStr );
+	    foundIt = anOthers.find( aSubEntryStr );
+	    if ( foundIt != anOthers.end() )
+	      anOthers.erase( foundIt );
+      }
+    }
+    includeSubObjects( theStudy, aSubEntryStr, aSelected, aParents, aChildren, anOthers );
+  }
+}
 //=====================================================================================
 // EXPORTED METHODS
 //=====================================================================================

@@ -21,20 +21,11 @@
 # Common packages
 ##
 SET(SUBDIRS_COMMON
-  ARCHIMEDE BlockFix GEOMAlgo SKETCHER GEOM BREPExport
-  BREPImport IGESExport IGESImport STEPExport STEPImport STLExport STLImport
-  ShHealOper GEOMUtils XAO XAO_Swig GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
-  AdvancedEngine OCC2VTK VTKExport
+  ARCHIMEDE BlockFix GEOMAlgo SKETCHER GEOM ShHealOper GEOMUtils XAO XAO_Swig 
+  GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
+  AdvancedEngine OCC2VTK
+  STLPlugin BREPPlugin STEPPlugin IGESPlugin XAOPlugin VTKPlugin
   )
-
-##
-# Curve creator
-##
-IF(SALOME_GEOM_BUILD_CC)
-  SET(SUBDIRS_CC
-    CurveCreator
-    )
-ENDIF()
 
 ##
 # OPENCV
@@ -51,9 +42,9 @@ ENDIF()
 IF(SALOME_BUILD_GUI)
   SET(SUBDIRS_GUI
     OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI
-    GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
-    EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
-    RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI ImportExportGUI
+    GEOMBase DependencyTree GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
+    CurveCreator EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
+    RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI
     GEOM_SWIG_WITHIHM
     )
 ENDIF()

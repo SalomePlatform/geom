@@ -20,48 +20,18 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
+// internal includes
+#include "GEOMImpl_ImportDriver.hxx"
+#include "GEOMImpl_IImportExport.hxx"
+#include "GEOMImpl_IECallBack.hxx"
+#include "GEOMImpl_Types.hxx"
 
-#include <GEOMImpl_ImportDriver.hxx>
-#include <GEOMImpl_IImportExport.hxx>
-#include <GEOMImpl_Types.hxx>
+// GEOM includes
 #include <GEOM_Function.hxx>
 
+// OCC includes
+#include <Standard_Stream.hxx>
 #include <TopoDS_Shape.hxx>
-
-#include <TCollection_HAsciiString.hxx>
-
-#include "utilities.h"
-
-#include <Standard_Failure.hxx>
-#include <StdFail_NotDone.hxx>
-
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <dlfcn.h>
-#endif
-
-#ifdef WIN32
-#define LibHandle HMODULE
-#define LoadLib( name ) LoadLibrary( name )
-#define GetProc GetProcAddress
-#define UnLoadLib( handle ) FreeLibrary( handle );
-#else
-#define LibHandle void*
-#define LoadLib( name ) dlopen( name, RTLD_LAZY )
-#define GetProc dlsym
-#define UnLoadLib( handle ) dlclose( handle );
-#endif
-
-typedef TopoDS_Shape (*funcPoint)(const TCollection_AsciiString&,
-                                  const TCollection_AsciiString&,
-                                  TCollection_AsciiString&,
-                                  const TDF_Label&);
-
-typedef Handle(TCollection_HAsciiString) (*pGetValue)(const TCollection_AsciiString&,
-                                                      const TCollection_AsciiString&,
-                                                      TCollection_AsciiString&);
 
 //=======================================================================
 //function : GetID
@@ -91,103 +61,25 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
   GEOMImpl_IImportExport aCI (aFunction);
-  //Standard_Integer aType = aFunction->GetType();
 
   // retrieve the file and plugin library names
   TCollection_AsciiString aFileName   = aCI.GetFileName();
   TCollection_AsciiString aFormatName = aCI.GetFormatName();
-  TCollection_AsciiString aLibName    = aCI.GetPluginName();
-  if (aFileName.IsEmpty() || aFormatName.IsEmpty() || aLibName.IsEmpty())
+  if (aFileName.IsEmpty() || aFormatName.IsEmpty() )
     return 0;
 
-  // load plugin library
-  LibHandle anImportLib = LoadLib( aLibName.ToCString() ); //This is workaround of BUG OCC13051
-
-  // Get Import method
-  funcPoint fp = 0;
-  if ( anImportLib )
-    fp = (funcPoint)GetProc( anImportLib, "Import" );
-
-  if ( !fp ) {
-    TCollection_AsciiString aMsg = aFormatName.SubString(1,4);
-    aMsg += " plugin was not installed";
-    Standard_Failure::Raise(aMsg.ToCString());
-  }
-
-  // perform the import
-  TCollection_AsciiString anError;
-  TopoDS_Shape aShape = fp(aFileName, aFormatName, anError, aFunction->GetNamingEntry());
-
-  // unload plugin library
-  // commented by enk:
-  // the bug was occured: using ACIS Import/Export plugin
-  //UnLoadLib( anImportLib ); //This is workaround of BUG OCC13051
-
-  if ( aShape.IsNull() ) {
-    StdFail_NotDone::Raise(anError.ToCString());
+  Handle(TColStd_HSequenceOfTransient) aSeq =
+    GEOMImpl_IECallBack::GetCallBack( aFormatName )->Import( GetDocID(), aFormatName, aFileName );
+  if( aSeq.IsNull() )
     return 0;
-  }
 
-  // set the function result
-  aFunction->SetValue(aShape);
-
+  Handle(GEOM_Object) anImported = Handle(GEOM_Object)::DownCast( aSeq->Value(1) );
+  TopoDS_Shape aShape = anImported->GetValue();
+  aFunction->SetValue( aShape );
   log.SetTouched(Label());
 
   return 1;
 }
-
-//=======================================================================
-//function : ReadValue
-//purpose  :
-//=======================================================================
-TCollection_AsciiString GEOMImpl_ImportDriver::ReadValue(const TCollection_AsciiString& theFileName,
-                                                         const TCollection_AsciiString& theLibName,
-                                                         const TCollection_AsciiString& theParameterName,
-                                                         TCollection_AsciiString& theError)
-{
-  TCollection_AsciiString aValue;
-
-  if (theFileName.IsEmpty() || theLibName.IsEmpty() || theParameterName.IsEmpty())
-    return aValue;
-
-  // load plugin library
-  LibHandle anImportLib = LoadLib(theLibName.ToCString()); //This is workaround of BUG OCC13051
-  if (!anImportLib) {
-    theError = theLibName + " library was not installed";
-    return aValue;
-  }
-
-  // Get GetValue method
-  pGetValue pGV = (pGetValue)GetProc(anImportLib, "GetValue");
-
-  if (!pGV) {
-    theError = theLibName + " library doesn't support GetValue method";
-    return aValue;
-  }
-
-  Handle(TCollection_HAsciiString) aHValue = pGV(theFileName, theParameterName, theError);
-
-  if (aHValue.IsNull()) {
-    if (theError.IsEmpty())
-      theError = theFileName + " doesn't contain requested parameter";
-    return aValue;
-  }
-
-  aValue = aHValue->String();
-
-  // unload plugin library
-  // commented by enk:
-  // the bug was occured: using ACIS Import/Export plugin
-  //UnLoadLib( anImportLib ); //This is workaround of BUG OCC13051
-
-  return aValue;
-}
-
-//================================================================================
-/*!
- * \brief Returns a name of creation operation and names and values of creation parameters
- */
-//================================================================================
 
 bool GEOMImpl_ImportDriver::
 GetCreationInformation(std::string&             theOperationName,

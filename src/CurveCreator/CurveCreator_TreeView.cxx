@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 //
 
 #include "CurveCreator_TreeView.h"
-#include "CurveCreator_Curve.hxx"
+#include "CurveCreator_ICurve.hxx"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -28,7 +28,7 @@
 
 #define ID_SECTION -1
 
-CurveCreator_TreeViewModel::CurveCreator_TreeViewModel( CurveCreator_Curve* theCurve, QObject* parent ) :
+CurveCreator_TreeViewModel::CurveCreator_TreeViewModel( CurveCreator_ICurve* theCurve, QObject* parent ) :
   QAbstractItemModel(parent), myCurve(theCurve)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -86,7 +86,7 @@ QVariant	CurveCreator_TreeViewModel::data(const QModelIndex & index, int role ) 
       }
       else if( role == Qt::DecorationRole ){
         if( aColumn == 0 ){
-          CurveCreator::Type aSectionType = myCurve->getType(aRow);
+          CurveCreator::SectionType aSectionType = myCurve->getSectionType(aRow);
           if( aSectionType == CurveCreator::Polyline ){
             if( myCurve->isClosed(aRow) ){
               return myCachedIcons[ICON_CLOSED_POLYLINE];
@@ -161,12 +161,12 @@ int	CurveCreator_TreeViewModel::rowCount(const QModelIndex & parent ) const
   int aRowCnt = 0;
   if( myCurve != NULL ){
     if( !parent.isValid() ){
-      //Points level
+      //Section level
       aRowCnt =  myCurve->getNbSections();
     }
     else{
-      //Section level
       if( parent.internalId() == ID_SECTION ){
+        //Points level
         aRowCnt = myCurve->getNbPoints(parent.row());
       }
     }
@@ -210,14 +210,14 @@ int CurveCreator_TreeViewModel::getPoint( const QModelIndex& theIndx ) const
   return theIndx.row();
 }
 
-void CurveCreator_TreeViewModel::setCurve( CurveCreator_Curve* theCurve )
+void CurveCreator_TreeViewModel::setCurve( CurveCreator_ICurve* theCurve )
 {
   myCurve = theCurve;
   reset();
 }
 
 /*****************************************************************************************/
-CurveCreator_TreeView::CurveCreator_TreeView( CurveCreator_Curve* theCurve, QWidget *parent) :
+CurveCreator_TreeView::CurveCreator_TreeView( CurveCreator_ICurve* theCurve, QWidget *parent) :
   QTreeView(parent)
 {
   header()->hide();
@@ -249,7 +249,6 @@ QList<int> CurveCreator_TreeView::getSelectedSections() const
       aSect << aModel->getSection( anIndxs[i] );
     }
   }
-  qSort(aSect.begin(), aSect.end());
   return aSect;
 }
 
@@ -290,7 +289,11 @@ void CurveCreator_TreeView::sectionAdded( int theSection )
 {
   CurveCreator_TreeViewModel* aModel = dynamic_cast<CurveCreator_TreeViewModel*>(model());
   if( aModel ){
-    rowsInserted(QModelIndex(), theSection, theSection );
+    int nbRows = aModel->rowCount();
+    int aSection = (theSection == -1 ? (nbRows==0 ? 0 : nbRows-1) : theSection);
+    rowsInserted(QModelIndex(), aSection, aSection );
+    QModelIndex aSectIndx = aModel->sectionIndex(aSection);
+    selectionModel()->select(aSectIndx, QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
   }
 }
 
@@ -361,16 +364,6 @@ void CurveCreator_TreeView::sectionsSwapped( int theSection, int theOffset )
   }
 }
 
-void CurveCreator_TreeView::pointsSwapped( int theSection, int thePointNum, int theOffset )
-{
-  CurveCreator_TreeViewModel* aModel = dynamic_cast<CurveCreator_TreeViewModel*>(model());
-  if( aModel ){
-    QModelIndex aFirstIndex = aModel->pointIndex( theSection, thePointNum );
-    QModelIndex aSecondIndex = aModel->pointIndex( theSection, thePointNum + theOffset );
-    swapIndexes( aFirstIndex, aSecondIndex );
-  }
-}
-
 void CurveCreator_TreeView::setSelectedSections( const QList<int>& theList )
 {
   CurveCreator_TreeViewModel* aModel = dynamic_cast<CurveCreator_TreeViewModel*>(model());
@@ -378,19 +371,7 @@ void CurveCreator_TreeView::setSelectedSections( const QList<int>& theList )
     selectionModel()->clearSelection();
     for( int i = 0 ; i < theList.size() ; i++ ){
       QModelIndex aSectIndx = aModel->sectionIndex(theList[i]);
-      selectionModel()->select(aSectIndx, QItemSelectionModel::Select );
-    }
-  }
-}
-
-void CurveCreator_TreeView::setSelectedPoints( const QList< QPair<int, int> >& thePointsList )
-{
-  CurveCreator_TreeViewModel* aModel = dynamic_cast<CurveCreator_TreeViewModel*>(model());
-  if( aModel ){
-    selectionModel()->clearSelection();
-    for( int i = 0 ; i < thePointsList.size() ; i++ ){
-      QModelIndex aSectIndx = aModel->pointIndex( thePointsList[i].first, thePointsList[i].second );
-      selectionModel()->select(aSectIndx, QItemSelectionModel::Select );
+      selectionModel()->select(aSectIndx, QItemSelectionModel::Select | QItemSelectionModel::Rows );
     }
   }
 }
@@ -402,25 +383,6 @@ bool pointLessThan(const QPair<int,int> &s1, const QPair<int,int> &s2)
   if( s1.first > s2.first )
     return false;
   return s1.second < s2.second;
-}
-
-QList< QPair< int, int > > CurveCreator_TreeView::getSelectedPoints() const
-{
-  QList< QPair< int, int > > aPoints;
-  CurveCreator_TreeViewModel* aModel = dynamic_cast<CurveCreator_TreeViewModel*>(model());
-  if( !aModel )
-    return aPoints;
-  QModelIndexList anIndxs = selectionModel()->selectedIndexes();
-  for( int i = 0 ; i < anIndxs.size() ; i++ ){
-    if( !aModel->isSection( anIndxs[i] ) ){
-      int aSect = aModel->getSection(anIndxs[i]);
-      int aPointNum = aModel->getPoint(anIndxs[i]);
-      QPair< int, int > aPoint = QPair<int,int>( aSect, aPointNum );
-      aPoints.push_back( aPoint );
-    }
-  }
-  qSort( aPoints.begin(), aPoints.end(), pointLessThan );
-  return aPoints;
 }
 
 CurveCreator_TreeView::SelectionType CurveCreator_TreeView::getSelectionType() const
@@ -470,16 +432,20 @@ void CurveCreator_TreeView::onActivated( QModelIndex theIndx )
   int aSect = aModel->getSection(theIndx);
   if( aModel->isSection(theIndx) ){
     emit sectionEntered( aSect );
-    return;
   }
-  int aPointNum = aModel->getPoint( theIndx );
-  emit pointEntered( aSect, aPointNum );
 }
 
-void CurveCreator_TreeView::setCurve( CurveCreator_Curve* theCurve )
+void CurveCreator_TreeView::setCurve( CurveCreator_ICurve* theCurve )
 {
   CurveCreator_TreeViewModel* aModel = dynamic_cast<CurveCreator_TreeViewModel*>(model());
   if( aModel )
     aModel->setCurve(theCurve);
   reset();
+}
+
+void CurveCreator_TreeView::reset()
+{
+  QList<int> aSelSections = getSelectedSections();
+  QTreeView::reset();
+  setSelectedSections(aSelSections);
 }

@@ -46,7 +46,7 @@
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 #include <SalomeApp_Study.h>
 
@@ -81,12 +81,6 @@ enum{
   CONTOURS,
   CORNERS,
   LINES
-};
-
-enum {
-  RADIO_BUTTONS,
-  MSG,
-  PUSH_BUTTON,
 };
 
 enum {
@@ -859,11 +853,11 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
                 double u_v_det = (it->x - it_previous->x) * (it_next->y - it->y) - 
                                  (it->y - it_previous->y) * (it_next->x - it->x);
                                           
-                double norme_u = sqrt ( (it->x - it_previous->x)*(it->x - it_previous->x) +
-                                        (it->y - it_previous->y)*(it->y - it_previous->y) );
+                double norme_u = sqrt ( double(it->x - it_previous->x) * double(it->x - it_previous->x) +
+                                        double(it->y - it_previous->y) * double(it->y - it_previous->y) );
                 
-                double norme_v = sqrt ( (it->x - it_next->x)*(it->x - it_next->x) +
-                                        (it->y - it_next->y)*(it->y - it_next->y) );
+                double norme_v = sqrt ( double(it->x - it_next->x) * double(it->x - it_next->x) +
+                                        double(it->y - it_next->y) * double(it->y - it_next->y) );
                                                                                                 
                 double u_v_sinus = u_v_det / (norme_u * norme_v);
                 

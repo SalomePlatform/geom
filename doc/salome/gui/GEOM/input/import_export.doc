@@ -2,48 +2,49 @@
 
 \page import_export_geom_obj_page Importing/exporting geometrical objects
 
-In Geometry module you can import and export geometrical objects
-from/into BREP, IGES, STEP, ACIS and STL files. The mechanisms of import and export
-are implemented via plug-ins, which gives the opportunity to
-expand the range of available formats by adding more plug-ins (for
-example, CATIA 5).
+\tableofcontents
 
-The \subpage xao_format_page "import and export of shapes in XAO format" is implemented differently.
+\section io_general General information
+
+In Geometry module you can import and export geometrical objects
+from/into \b BREP, \b IGES, \b STEP, \b STL, \b XAO, \b VTK (only export)
+and others files. 
+The mechanisms of import and export are implemented via plugins, 
+which gives the opportunity to expand the range of available formats 
+by adding more plugins (for example, CATIA 5 or ACIS).
 
 \note If a plugin supports import of materials associated with shapes, these
 shapes are grouped corresponding to the imported materials. For the moment STEP
 import is the only plugin that supports this feature.
 
-<em>To import geometrical objects from a BREP, IGES, STEP, ACIS or STL file:</em>
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_import_export_page
+
+\section io_import Import file
+
+<em>To import geometrical objects from a BREP, IGES, STEP or STL file:</em>
 
 \par
-From the \b File menu choose \b Import. In the opening dialog box \b Import
-select the required format of the file for importation and search for
-a *.brep, *.iges, *.step, *.sat or *.stl file.
+From the \b File menu choose <b>Import/<FormatName></b>, where <b><FormatName></b> is a name
+of desirable format. In the <b>Import <FormatName></b> dialog box select the file to import
+and press \b Open. The file will be imported in the module and its contents (geometrical object)
+will be displayed in the <b>Object Browser</b>.
+
+The dialog box to import the file can provide additional parameters.
+
+For example, dialog box for importing files in STL format:
 
 \image html geomimport.png
 
-\par 
-Select the required file and click \b Open. Your file will be imported in
-the module and its contents (geometrical object) will be displayed in
-the <b>Object Browser</b>.
+\par
 
-\note If the selected file is in IGES or STEP format and the length
-is not expressed in meters, it will be asked whether to take or not these
+\note If the selected file is in IGES or STEP format and the model size
+is not expressed in meters, the user will be asked whether to take or not the
 units into account (see the picture below). This feature can be
 helpful if some wrong units have been written to the IGES or STEP file by a
 3rd-party software.
 
 \image html iges_unit.png
-
-\par
-
-\note If the selected file is in ACIS format (the use of this format
-requires licensing) and the file contains names for some shapes, it
-will be suggested to create groups by types (solid, face, edge and
-vertex) for all named shapes:
-
-\image html sat_named_shapes.png
 
 \par
 
@@ -55,21 +56,52 @@ as before this operation.
 
 \image html geomimport_reopen.png
 
-\n <em>To export geometrical objects into a BREP, IGES, STEP, ACIS or STL
+\section io_export Export file
+
+\n <em>To export geometrical objects into a BREP, IGES, STEP, STL or VTK
 file:</em>
 
 \par
 Select the object you wish to export, then from the \b File menu choose
-\b Export. In the opening dialog box \b Export define the required format,
-the name and the location of the file for exportation.
+<b>Export/<FormatName></b>, where <b><FormatName></b> is a name of desirable format.
+In the <b>Export <FormatName></b> dialog box define the name and the location 
+of the file to export and press \b Save.
+
+The dialog box to export the file can provide additional advanced parameters.
+
+For example, dialog box for exporting files in STL format:
 
 \image html geomexport.png
 
 \par
-Click \b Save to confirm your exportation.
 
-Our <b>TUI Scripts</b> provide you with useful examples of the use of
-\ref tui_import_export_page
+\section io_xao Import and export of shapes in XAO format
+
+XAO is a file format which describes a shape with its topology, groups and fields.
+
+<em>To import a shape in the \b XAO format:</em>
+
+\par
+In the \b File menu select <b>Import/XAO</b>.
+
+\image html importxao_dlg.png 
+
+\par
+
+<em>To export a shape in the \b XAO format:</em>
+
+\par
+In the \b File menu select <b>Export/XAO</b>.
+
+\image html exportxao_dlg.png 
+
+In this dialog:
+- Click the arrow button and select in the Object Browser or in the Viewer the <b>Shape</b> to be exported.
+- Input the <b>File name</b> to create a new file or click browse button to save in an existing file.
+- Select the \b Groups of the chosen shape to be exported.
+- Select the \b Fields of the chosen shape to be exported.
+- Press "Apply" or "Apply & Close" button to get the result.
+
+It also possible to export a shape using the TUI Command: <em>geompy.ExportXAO(Shape, FileName, Groups, Fields)</em>
 
 */
-

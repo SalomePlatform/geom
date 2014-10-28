@@ -197,9 +197,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
 
   //Compute the Edge value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -258,9 +256,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeOnCurveByLength
 
   //Compute the Edge value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vector driver failed");
       return NULL;
@@ -316,9 +312,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
 
   //Compute the Edge value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -392,9 +386,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
 
   //Compute the shape
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -459,9 +451,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
   //Compute the Face value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to compute a face");
       return NULL;
@@ -530,9 +520,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
   //Compute the shape
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -643,9 +631,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
 
   //Compute the shape
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -712,9 +698,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to glue faces");
       return NULL;
@@ -869,9 +853,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to glue faces");
       return NULL;
@@ -944,9 +926,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdges
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to glue edges");
       return NULL;
@@ -1107,9 +1087,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdgesByList
   //Compute the sub-shape value
   Standard_Boolean isWarning = Standard_False;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to glue edges");
       return NULL;
@@ -1151,9 +1129,38 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdgesByList
  *  GetExistingSubObjects
  */
 //=============================================================================
-Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubObjects
-                                          (Handle(GEOM_Object)    theShape,
-                                           const Standard_Boolean theGroupsOnly)
+Handle(TColStd_HSequenceOfTransient)
+GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShape,
+						  const Standard_Boolean theGroupsOnly)
+{
+  // note: this method does not return fields
+
+  Standard_Integer types = theGroupsOnly ? Groups : Groups|SubShapes;
+  Handle(TColStd_HSequenceOfTransient) results = GetExistingSubObjects(theShape, types);
+
+  if (results->Length() > 0) {
+    //Make a Python command
+    TCollection_AsciiString anAsciiList;
+    for (int i = 1; i <= results->Length(); i++)
+    {
+      Handle(GEOM_BaseObject) obj = Handle(GEOM_BaseObject)::DownCast( results->Value(i));
+      obj->GetEntryString();
+      if ( i < results->Length() )
+	anAsciiList += ",";
+    }
+    
+    GEOM::TPythonDump pd (theShape->GetLastFunction(), /*append=*/true);
+    pd << "[" << anAsciiList.ToCString();
+    pd << "] = geompy.GetExistingSubObjects(";
+    pd << theShape << ", " << (bool)theGroupsOnly << ")";
+  }
+
+  return results;
+}
+
+Handle(TColStd_HSequenceOfTransient)
+GEOMImpl_IShapesOperations::GetExistingSubObjects(Handle(GEOM_Object)    theShape,
+						  const Standard_Integer theTypes)
 {
   SetErrorCode(KO);
 
@@ -1171,8 +1178,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
 
   SetErrorCode(KO);
 
-  TCollection_AsciiString anAsciiList;
-
   TDataStd_ListIteratorOfListOfExtendedString anIt (aListEntries);
   for (; anIt.More(); anIt.Next()) {
     TCollection_ExtendedString anEntry = anIt.Value();
@@ -1180,13 +1185,14 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
     char* anEntryStr = new char[aStrLen+1];
     anEntry.ToUTF8CString(anEntryStr);
     Handle(GEOM_BaseObject) anObj = GetEngine()->GetObject(GetDocID(), anEntryStr, false);
-    if (!anObj.IsNull() && anObj->IsKind(STANDARD_TYPE(GEOM_Object))) {
-      if (!theGroupsOnly || anObj->GetType() == GEOM_GROUP) {
+    if (!anObj.IsNull() ) {
+      bool isGroup    = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() == GEOM_GROUP;
+      bool isSubShape = anObj->IsKind(STANDARD_TYPE(GEOM_Object)) && anObj->GetType() != GEOM_GROUP;
+      bool isField    = anObj->IsKind(STANDARD_TYPE(GEOM_Field));
+      if (theTypes & Groups    && isGroup ||
+	  theTypes & SubShapes && isSubShape ||
+	  theTypes & Fields    && isField) {
         aSeq->Append(anObj);
-
-        // for python command
-        anAsciiList += anEntryStr;
-        anAsciiList += ",";
       }
     }
     delete [] anEntryStr;
@@ -1196,14 +1202,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
     SetErrorCode(NOT_FOUND_ANY);
     return aSeq;
   }
-
-  //Make a Python command
-  anAsciiList.Trunc(anAsciiList.Length() - 1);
-
-  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
-  pd << "[" << anAsciiList.ToCString();
-  pd << "] = geompy.GetExistingSubObjects(";
-  pd << theShape << ", " << (bool)theGroupsOnly << ")";
 
   SetErrorCode(OK);
 
@@ -1787,9 +1785,7 @@ Standard_Integer GEOMImpl_IShapesOperations::NumberOfSubShapes
   */
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     int iType, nbTypes [TopAbs_SHAPE];
     for (iType = 0; iType < TopAbs_SHAPE; ++iType)
       nbTypes[iType] = 0;
@@ -1859,9 +1855,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
 
   //Compute the sub-shape value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed to reverse shape");
       return NULL;
@@ -2670,9 +2664,7 @@ Handle(TColStd_HSequenceOfInteger)
   // Compute tolerance
   Standard_Real T, VertMax = -RealLast();
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     for (TopExp_Explorer ExV (theShape, TopAbs_VERTEX); ExV.More(); ExV.Next()) {
       TopoDS_Vertex Vertex = TopoDS::Vertex(ExV.Current());
       T = BRep_Tool::Tolerance(Vertex);

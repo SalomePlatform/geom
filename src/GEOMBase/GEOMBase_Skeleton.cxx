@@ -25,6 +25,7 @@
 // Author : Damien COQUERET, Open CASCADE S.A.S.
 
 #include "GEOMBase_Skeleton.h"
+#include "GEOMBase_DlgSkeleton.h"
 #include "GEOMBase.h"
 
 #include <DlgRef.h>
@@ -62,7 +63,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* pare
 
   setModal( modal );
 
-  myMainFrame = new DlgRef_Skeleton( this );
+  myMainFrame = new GEOMBase_DlgSkeleton( this );
   QVBoxLayout* topLayout = new QVBoxLayout( this );
   topLayout->setMargin( 0 ); topLayout->setSpacing( 0 );
   topLayout->addWidget( myMainFrame );
@@ -347,8 +348,15 @@ void GEOMBase_Skeleton::unsetConstructorId()
 void GEOMBase_Skeleton::ClickOnHelp()
 {
   LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
+
+  QString context;
+  if(myHelpContext.isEmpty()) {
+    context = myGeomGUI ? app->moduleName( myGeomGUI->moduleName() ) : QString("");
+  } else {
+    context = myHelpContext;
+  }
   if ( app ) 
-    app->onHelpContextModule( myGeomGUI ? app->moduleName( myGeomGUI->moduleName() ) : QString(""), myHelpFileName );
+    app->onHelpContextModule( context , myHelpFileName );
   else {
     QString platform;
 #ifdef WIN32
@@ -372,7 +380,7 @@ void GEOMBase_Skeleton::setHelpFileName( const QString& theName )
   myHelpFileName = theName;
 }
 
-DlgRef_Skeleton* GEOMBase_Skeleton::mainFrame()
+GEOMBase_DlgSkeleton* GEOMBase_Skeleton::mainFrame()
 {
   return myMainFrame;
 }

@@ -1,0 +1,107 @@
+/*!
+
+\page create_polyline_page 2D Polyline
+
+The 2D Polyline allows drawing arbitrary 2D shapes. 
+
+To create a <b>2D Polyline</b> select in the main menu  <b>New Entity -> Basic -> 2D Polyline</b>.
+
+\image html polyline_dlg.png
+
+A polyline represents a section or a set of sections. Each section is constructed from a sequence of 2D points
+connected either by linear setgments or an interpolation curve. Every section has its own attributes:
+- \b Name, 
+- \b Type (Polyline or Spline),
+- \b Closed flag.
+
+A Polyline created represents a shape that lies on the XOY plane. It can have the following types:
+- \b Vertex for a single section with only 1 point.
+- \b Wire for a single section with 2 or more points. A Wire can have multiple edges for more then 2 points if the section type is Polyline.
+A single edge in the result wire is obtained for a Spline or Polyline with 2 points.
+- \b Compound of Wires and/or Vertices if there are several sections.
+
+For the moment only one reference coordinate system for polyline creation is supported. The XOY plane of the <b>Global coordinate system</b>
+is suggested. Implementation of another reference coordinate system is a subject of further development of this functionality.
+Restore button orientates the viewer correspondingly to the chosen working plane and fits the scene to show all objects.
+For the moment this button works with only one plane.
+
+It is possible to import a shape in this dialog using <b>Import polyline</b> selection button. To do it an imported object should satisfy conditions
+for polyline shapes mentioned above. If a valid shape is selected, when dialog is opened, it is initialized by this shape.
+Though the shape can be on any plane, an imported polyline will be defined on XOY plane only due to the limitation.
+
+The group \b Sections in this dialog represents the Polyline construction framework. Its toolbar has the following operations:
+- \b Undo
+- \b Redo
+- <b>Insert new section</b>
+- <b>Addition mode</b>
+- <b>Modification mode</b> - not implemented
+- <b>Detection mode</b> - not implemented
+- \b Remove
+- <b>Join selected sections</b>
+
+<b>Undo/Redo</b> buttons allows to undo/redo changes of the polyline.
+
+<b>Insert new section</b> button opens a dialog that allows to add a new section:
+
+\image html polyline_dlg_add_section.png
+
+In this dialog it is possible to choose:
+- \b Name of section
+- \b Type of section
+- \b Closed flag
+
+To create a new section \b Add button should be clicked. \b Cancel button is used to cancel this operation.
+After clicking \b Add button a new section is appeared on the list. Its name supplemented by its type and closedness
+information (see icon) and the number of points (equal to 0 after creation).
+
+To modify section parameters it is possible to double-click on a section in the list. In this case the following dialog appears:
+
+\image html polyline_dlg_edit_section.png
+
+To apply modifications the button \b Ok should be clicked.
+
+<b>Addition mode</b> allows to add points to a section. It is necessary to select a particular section in a list of sections
+and make some mouse clicks in the viewer. A section preview is recomputed after each click.
+
+<b>Modification mode</b> and <b>Detection mode</b> are not implemented for the moment.
+
+\b Remove button allows to remove a section. It is available if all modes are deactivated and one section is selected.
+
+<b>Join selected sections</b> button is available in modification mode if two or more sections are selected. It is used to
+merge several sections into the first one from selection list. Joined section has parameters of the first selected one. Points of
+the other sections are appended at the end of the list of the first section points.
+
+Some actions are available via popup menu by right mouse button click.
+
+If all modes are deactivated:
+- <b>Join all sections</b> - join all defined sections into the first one.
+- \b Join - join sections. Available if two or more sections are selected.
+
+In <b>Addition mode</b>:
+- <b>Join all sections</b> - join all defined sections into the first one.
+
+In <b>Modification mode</b>:
+- <b>Join all sections</b> - join all defined sections into the first one.
+- \b Join - join sections. Available if two or more sections are selected.
+- <b>Clear all</b> - remove all sections. Available if at least one section is selected.
+- <b>Set closed</b> - set all selected section's Closed flag. Available if at least one section is selected.
+- <b>Set open</b>  - reset all selected section's Closed flag. Available if at least one section is selected.
+- <b>Set polyline</b> - set all selected section's type to Polyline. Available if at least one section is selected.
+- <b>Set spline</b>  - set all selected section's type to Spline. Available if at least one section is selected.
+
+In <b>Detection mode</b>:
+- <b>Join all sections</b> - join all defined sections into the first one.
+- \b Join - join sections. Available if two or more sections are selected.
+
+<h2>TUI Commands</h2>
+
+
+To create the 2D polyline in TUI Polyline2D interface is used.
+
+<em>pl = geompy.Polyline2D()</em> - returns an instance of Polyline2D interface <i>pl</i>.
+
+See the \ref gsketcher.Polyline2D "Polyline2D" interface documentation for more information.
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_polyline_page "2D Polyline".
+*/

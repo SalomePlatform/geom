@@ -87,12 +87,242 @@
 #include <ElSLib.hxx>
 
 #include <vector>
+#include <sstream>
 
 #include <Standard_Failure.hxx>
 #include <Standard_NullObject.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #define STD_SORT_ALGO 1
+
+namespace
+{
+  /**
+   * This function constructs and returns modified shape from the original one
+   * for singular cases. It is used for the method GetMinDistanceSingular.
+   *
+   * \param theShape the original shape
+   * \param theModifiedShape output parameter. The modified shape.
+   * \param theAddDist output parameter. The added distance for modified shape.
+   * \retval true if the shape is modified; false otherwise.
+   *
+   * \internal
+   */
+  Standard_Boolean ModifyShape(const TopoDS_Shape  &theShape,
+                               TopoDS_Shape  &theModifiedShape,
+                               Standard_Real &theAddDist)
+  {
+    Standard_Boolean isModified = Standard_False;
+    TopExp_Explorer anExp;
+    int nbf = 0;
+
+    theAddDist = 0.;
+    theModifiedShape.Nullify();
+
+    for ( anExp.Init( theShape, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
+      nbf++;
+      theModifiedShape = anExp.Current();
+    }
+    if(nbf==1) {
+      TopoDS_Shape sh = theShape;
+      while(sh.ShapeType()==TopAbs_COMPOUND) {
+        TopoDS_Iterator it(sh);
+        sh = it.Value();
+      }
+      Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(theModifiedShape));
+      if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
+          S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ||
+          S->IsUPeriodic()) {
+        const Standard_Boolean isShell =
+          (sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE);
+
+        if( isShell || S->IsUPeriodic() ) {
+          // non solid case or any periodic surface (Mantis 22454).
+          double U1,U2,V1,V2;
+          // changes for 0020677: EDF 1219 GEOM: MinDistance gives 0 instead of 20.88
+          //S->Bounds(U1,U2,V1,V2); changed by
+          ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(theModifiedShape),U1,U2,V1,V2);
+          // end of changes for 020677 (dmv)
+          Handle(Geom_RectangularTrimmedSurface) TrS1 =
+            new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
+          Handle(Geom_RectangularTrimmedSurface) TrS2 =
+            new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+          BRep_Builder B;
+          TopoDS_Face F1,F2;
+          TopoDS_Shape aMShape;
+
+          if (isShell) {
+            B.MakeCompound(TopoDS::Compound(aMShape));
+          } else {
+            B.MakeShell(TopoDS::Shell(aMShape));
+          }
+
+          B.MakeFace(F1,TrS1,1.e-7);
+          B.Add(aMShape,F1);
+          B.MakeFace(F2,TrS2,1.e-7);
+          B.Add(aMShape,F2);
+          Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+
+          if (!isShell) {
+            // The original shape is a solid.
+            TopoDS_Solid aSolid;
+
+            B.MakeSolid(aSolid);
+            B.Add(aSolid, aMShape);
+            aMShape = aSolid;
+          }
+
+          sfs->Init(aMShape);
+          sfs->SetPrecision(1.e-6);
+          sfs->SetMaxTolerance(1.0);
+          sfs->Perform();
+          theModifiedShape = sfs->Shape();
+          isModified = Standard_True;
+        }
+        else {
+          if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
+            Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+            gp_Pnt PC = SS->Location();
+            BRep_Builder B;
+            TopoDS_Vertex V;
+            B.MakeVertex(V,PC,1.e-7);
+            theModifiedShape = V;
+            theAddDist = SS->Radius();
+            isModified = Standard_True;
+          }
+          else {
+            Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+            gp_Ax3 ax3 = TS->Position();
+            Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
+            BRep_Builder B;
+            TopoDS_Edge E;
+            B.MakeEdge(E,C,1.e-7);
+            theModifiedShape = E;
+            theAddDist = TS->MinorRadius();
+            isModified = Standard_True;
+          }
+        }
+      } else {
+        theModifiedShape = theShape;
+      }
+    }
+    else
+      theModifiedShape = theShape;
+
+    return isModified;
+  }
+
+  //=======================================================================
+  //function : ShapeToDouble
+  //purpose  : used by CompareShapes::operator()
+  //=======================================================================
+  std::pair<double, double> ShapeToDouble (const TopoDS_Shape& S, bool isOldSorting)
+  {
+    // Computing of CentreOfMass
+    gp_Pnt GPoint;
+    double Len;
+
+    if (S.ShapeType() == TopAbs_VERTEX) {
+      GPoint = BRep_Tool::Pnt(TopoDS::Vertex(S));
+      Len = (double)S.Orientation();
+    }
+    else {
+      GProp_GProps GPr;
+      // BEGIN: fix for Mantis issue 0020842
+      if (isOldSorting) {
+        BRepGProp::LinearProperties(S, GPr);
+      }
+      else {
+        if (S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE) {
+          BRepGProp::LinearProperties(S, GPr);
+        }
+        else if (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL) {
+          BRepGProp::SurfaceProperties(S, GPr);
+        }
+        else {
+          BRepGProp::VolumeProperties(S, GPr);
+        }
+      }
+      // END: fix for Mantis issue 0020842
+      GPoint = GPr.CentreOfMass();
+      Len = GPr.Mass();
+    }
+
+    double dMidXYZ = GPoint.X() * 999.0 + GPoint.Y() * 99.0 + GPoint.Z() * 0.9;
+    return std::make_pair(dMidXYZ, Len);
+  }
+
+  void parseWard( const GEOMUtils::LevelsList &theLevelList, std::string &treeStr )
+  {
+    treeStr.append( "{" );
+    for( GEOMUtils::LevelsList::const_iterator j = theLevelList.begin(); 
+         j != theLevelList.end(); ++j ) {
+      if ( j != theLevelList.begin() ) {
+        treeStr.append( ";" );
+      }
+      GEOMUtils::LevelInfo level = (*j);
+      GEOMUtils::LevelInfo::iterator upIter;
+      for ( upIter = level.begin(); upIter != level.end(); ++upIter ) {
+        if ( upIter != level.begin() ) {
+          treeStr.append( "," );
+        }
+        treeStr.append( upIter->first );
+        for ( std::vector<std::string>::iterator k = upIter->second.begin(); k != upIter->second.end(); ++k ) {
+          treeStr.append( "_" );
+          treeStr.append( *k );
+        }
+      }
+    }
+    treeStr.append( "}" );
+  }
+
+  GEOMUtils::LevelsList parseWard( const std::string& theData, std::size_t& theCursor )
+  {
+    std::size_t indexStart = theData.find( "{", theCursor ) + 1;
+    std::size_t indexEnd = theData.find( "}", indexStart );
+
+    std::string ward = theData.substr( indexStart, indexEnd - indexStart );
+    std::stringstream ss(ward);
+    std::string substr;
+    std::vector<std::string> levelsListStr;
+    while ( std::getline( ss, substr, ';' ) ) {
+      if ( !substr.empty() )
+        levelsListStr.push_back( substr );
+    }
+    GEOMUtils::LevelsList levelsListData;
+    for( int level = 0; level < levelsListStr.size(); level++ ) {
+      std::vector<std::string> namesListStr;
+      std::stringstream ss1( levelsListStr[level] );
+      while ( std::getline( ss1, substr, ',' ) ) {
+        if ( !substr.empty() )
+          namesListStr.push_back( substr );
+      }
+      GEOMUtils::LevelInfo levelInfoData;
+      for( int node = 0; node < namesListStr.size(); node++ ) {
+        std::vector<std::string> linksListStr;
+        std::stringstream ss2( namesListStr[node] );
+        while ( std::getline( ss2, substr, '_' ) ) {
+          if ( !substr.empty() )
+            linksListStr.push_back( substr );
+        }
+        std::string nodeItem = linksListStr[0];
+        if( !nodeItem.empty() ) {
+          GEOMUtils::NodeLinks linksListData;
+          for( int link = 1; link < linksListStr.size(); link++ ) {
+            std::string linkItem = linksListStr[link];
+            linksListData.push_back( linkItem );
+          }// Links
+          levelInfoData[nodeItem] = linksListData;
+        }
+      }// Level's objects
+      levelsListData.push_back(levelInfoData);
+    }// Levels
+
+    theCursor = indexEnd + 1;
+    return levelsListData;
+  }
+
+}
 
 //=======================================================================
 //function : GetPosition
@@ -181,46 +411,6 @@ gp_Vec GEOMUtils::GetVector (const TopoDS_Shape& theShape,
   }
 
   return aV;
-}
-
-//=======================================================================
-//function : ShapeToDouble
-//purpose  : used by CompareShapes::operator()
-//=======================================================================
-std::pair<double, double> ShapeToDouble (const TopoDS_Shape& S, bool isOldSorting)
-{
-  // Computing of CentreOfMass
-  gp_Pnt GPoint;
-  double Len;
-
-  if (S.ShapeType() == TopAbs_VERTEX) {
-    GPoint = BRep_Tool::Pnt(TopoDS::Vertex(S));
-    Len = (double)S.Orientation();
-  }
-  else {
-    GProp_GProps GPr;
-    // BEGIN: fix for Mantis issue 0020842
-    if (isOldSorting) {
-      BRepGProp::LinearProperties(S, GPr);
-    }
-    else {
-      if (S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE) {
-        BRepGProp::LinearProperties(S, GPr);
-      }
-      else if (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL) {
-        BRepGProp::SurfaceProperties(S, GPr);
-      }
-      else {
-        BRepGProp::VolumeProperties(S, GPr);
-      }
-    }
-    // END: fix for Mantis issue 0020842
-    GPoint = GPr.CentreOfMass();
-    Len = GPr.Mass();
-  }
-
-  double dMidXYZ = GPoint.X() * 999.0 + GPoint.Y() * 99.0 + GPoint.Z() * 0.9;
-  return std::make_pair(dMidXYZ, Len);
 }
 
 //=======================================================================
@@ -622,8 +812,9 @@ TopoDS_Shape GEOMUtils::GetEdgeNearPoint (const TopoDS_Shape& theShape,
 Standard_Boolean GEOMUtils::PreciseBoundingBox
                           (const TopoDS_Shape &theShape, Bnd_Box &theBox)
 {
-  Standard_Real aBound[6];
+  if ( theBox.IsVoid() ) BRepBndLib::Add( theShape, theBox );
 
+  Standard_Real aBound[6];
   theBox.Get(aBound[0], aBound[2], aBound[4], aBound[1], aBound[3], aBound[5]);
 
   Standard_Integer i;
@@ -655,7 +846,7 @@ Standard_Boolean GEOMUtils::PreciseBoundingBox
     const Standard_Integer iHalf = i/2;
     const gp_Pln aPln(aPnt[i], aDir[iHalf]);
     BRepBuilderAPI_MakeFace aMkFace(aPln, -aPlnSize[iHalf], aPlnSize[iHalf],
-                                          -aPlnSize[iHalf], aPlnSize[iHalf]);
+                                    -aPlnSize[iHalf], aPlnSize[iHalf]);
 
     if (!aMkFace.IsDone()) {
       return Standard_False;
@@ -693,8 +884,8 @@ double GEOMUtils::GetMinDistanceSingular(const TopoDS_Shape& aSh1,
   TopoDS_Shape     tmpSh2;
   Standard_Real    AddDist1 = 0.;
   Standard_Real    AddDist2 = 0.;
-  Standard_Boolean IsChange1 = GEOMUtils::ModifyShape(aSh1, tmpSh1, AddDist1);
-  Standard_Boolean IsChange2 = GEOMUtils::ModifyShape(aSh2, tmpSh2, AddDist2);
+  Standard_Boolean IsChange1 = ModifyShape(aSh1, tmpSh1, AddDist1);
+  Standard_Boolean IsChange2 = ModifyShape(aSh2, tmpSh2, AddDist2);
 
   if( !IsChange1 && !IsChange2 )
     return -2.0;
@@ -844,109 +1035,46 @@ gp_Pnt GEOMUtils::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
 }
 
 //=======================================================================
-// function : ModifyShape
-// purpose  : 
+// function : ConvertTreeToString()
+// purpose  : Returns the string representation of dependency tree
 //=======================================================================
-Standard_Boolean GEOMUtils::ModifyShape(const TopoDS_Shape  &theShape,
-                                              TopoDS_Shape  &theModifiedShape,
-                                              Standard_Real &theAddDist)
+void GEOMUtils::ConvertTreeToString( const TreeModel &tree,
+                                     std::string &treeStr )
 {
-  Standard_Boolean isModified = Standard_False;
-  TopExp_Explorer anExp;
-  int nbf = 0;
-
-  theAddDist = 0.;
-  theModifiedShape.Nullify();
-
-  for ( anExp.Init( theShape, TopAbs_FACE ); anExp.More(); anExp.Next() ) {
-    nbf++;
-    theModifiedShape = anExp.Current();
+  TreeModel::const_iterator i;
+  for ( i = tree.begin(); i != tree.end(); ++i ) {
+    treeStr.append( i->first );
+    treeStr.append( "-" );
+    std::vector<LevelInfo> upLevelList = i->second.first;
+    treeStr.append( "upward" );
+    parseWard( upLevelList, treeStr );
+    std::vector<LevelInfo> downLevelList = i->second.second;
+    treeStr.append( "downward" );
+    parseWard( downLevelList, treeStr );
   }
-  if(nbf==1) {
-    TopoDS_Shape sh = theShape;
-    while(sh.ShapeType()==TopAbs_COMPOUND) {
-      TopoDS_Iterator it(sh);
-      sh = it.Value();
-    }
-    Handle(Geom_Surface) S = BRep_Tool::Surface(TopoDS::Face(theModifiedShape));
-    if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
-        S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ||
-        S->IsUPeriodic()) {
-      const Standard_Boolean isShell =
-        (sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE);
+}
 
-      if( isShell || S->IsUPeriodic() ) {
-        // non solid case or any periodic surface (Mantis 22454).
-        double U1,U2,V1,V2;
-        // changes for 0020677: EDF 1219 GEOM: MinDistance gives 0 instead of 20.88
-        //S->Bounds(U1,U2,V1,V2); changed by
-        ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(theModifiedShape),U1,U2,V1,V2);
-        // end of changes for 020677 (dmv)
-        Handle(Geom_RectangularTrimmedSurface) TrS1 =
-          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
-        Handle(Geom_RectangularTrimmedSurface) TrS2 =
-          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
-        BRep_Builder B;
-        TopoDS_Face F1,F2;
-        TopoDS_Shape aMShape;
+//=======================================================================
+// function : ConvertStringToTree()
+// purpose  : Returns the dependency tree
+//=======================================================================
+void GEOMUtils::ConvertStringToTree( const std::string &theData,
+                                     TreeModel &tree )
+{
+  std::size_t cursor = 0;
 
-        if (isShell) {
-          B.MakeCompound(TopoDS::Compound(aMShape));
-        } else {
-          B.MakeShell(TopoDS::Shell(aMShape));
-        }
+  while( theData.find('-',cursor) != std::string::npos ) //find next selected object
+  {
+    std::size_t objectIndex = theData.find( '-', cursor );
+    std::string objectEntry = theData.substr( cursor, objectIndex - cursor );
+    cursor = objectIndex;
 
-        B.MakeFace(F1,TrS1,1.e-7);
-        B.Add(aMShape,F1);
-        B.MakeFace(F2,TrS2,1.e-7);
-        B.Add(aMShape,F2);
-        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+    std::size_t upwardIndexBegin = theData.find("{",cursor) + 1;
+    std::size_t upwardIndexFinish = theData.find("}",upwardIndexBegin);
+    LevelsList upwardList = parseWard( theData, cursor );
 
-        if (!isShell) {
-          // The original shape is a solid.
-          TopoDS_Solid aSolid;
+    LevelsList downwardList = parseWard( theData, cursor );
 
-          B.MakeSolid(aSolid);
-          B.Add(aSolid, aMShape);
-          aMShape = aSolid;
-        }
-
-        sfs->Init(aMShape);
-        sfs->SetPrecision(1.e-6);
-        sfs->SetMaxTolerance(1.0);
-        sfs->Perform();
-        theModifiedShape = sfs->Shape();
-        isModified = Standard_True;
-      }
-      else {
-        if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
-          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
-          gp_Pnt PC = SS->Location();
-          BRep_Builder B;
-          TopoDS_Vertex V;
-          B.MakeVertex(V,PC,1.e-7);
-          theModifiedShape = V;
-          theAddDist = SS->Radius();
-          isModified = Standard_True;
-        }
-        else {
-          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
-          gp_Ax3 ax3 = TS->Position();
-          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
-          BRep_Builder B;
-          TopoDS_Edge E;
-          B.MakeEdge(E,C,1.e-7);
-          theModifiedShape = E;
-          theAddDist = TS->MinorRadius();
-          isModified = Standard_True;
-        }
-      }
-    } else {
-      theModifiedShape = theShape;
-    }
+    tree[objectEntry] = std::pair<LevelsList,LevelsList>( upwardList, downwardList );
   }
-  else
-    theModifiedShape = theShape;
-
-  return isModified;
 }

@@ -900,14 +900,6 @@
       <translation>行列とモーメント</translation>
     </message>
     <message>
-      <source>GEOM_INERTIA_I</source>
-      <translation>%1:1。</translation>
-    </message>
-    <message>
-      <source>GEOM_INERTIA_IXYZ</source>
-      <translation>IX &amp; IY &amp; IZ :</translation>
-    </message>
-    <message>
       <source>GEOM_INERTIA_TITLE</source>
       <translation>慣性の計算</translation>
     </message>
@@ -1002,14 +994,6 @@
     <message>
       <source>GEOM_MEN_ENTER_ANGLE</source>
       <translation>角度を度数で指定します</translation>
-    </message>
-    <message>
-      <source>GEOM_MEN_EXPORT</source>
-      <translation>エクスポート</translation>
-    </message>
-    <message>
-      <source>GEOM_MEN_IMPORT</source>
-      <translation>インポート</translation>
     </message>
     <message>
       <source>GEOM_MEN_ISOS</source>
@@ -1465,7 +1449,7 @@
     </message>
     <message>
       <source>GEOM_PRP_EXPORT</source>
-      <translation>ジオメトリを %1 にエクスポート...</translation>
+      <translation>ジオメトリを %1 にエクスポート</translation>
     </message>
     <message>
       <source>GEOM_PRP_LOADING</source>
@@ -2693,7 +2677,7 @@
     </message>
     <message>
       <source>MEN_IMPORT</source>
-      <translation>インポート...</translation>
+      <translation>インポート</translation>
     </message>
     <message>
       <source>MEN_INERTIA</source>
@@ -2892,6 +2876,10 @@
       <translation>ベクトル方向表示</translation>
     </message>
     <message>
+      <source>MEN_POP_VERTICES</source>
+      <translation type="unfinished">Show Vertices</translation>
+    </message>
+    <message>
       <source>MEN_PREFERENCES</source>
       <translation>設定</translation>
     </message>
@@ -3064,6 +3052,14 @@
       <translation>エッジの方向を非表示</translation>
     </message>
     <message>
+      <source>MEN_VERTICES_MODE_ON</source>
+      <translation type="unfinished">Show Vertices</translation>
+    </message>
+    <message>
+      <source>MEN_VERTICES_MODE_OFF</source>
+      <translation type="unfinished">Hide Vertices</translation>
+    </message>
+    <message>
       <source>MEN_WIREFRAME</source>
       <translation>ワイヤ フレーム</translation>
     </message>
@@ -3142,6 +3138,10 @@
     <message>
       <source>PREF_DISPLAY_MODE</source>
       <translation>表示モード</translation>
+    </message>
+    <message>
+        <source>PREF_TRANSPARENCY</source>
+        <translation>透明度</translation>
     </message>
     <message>
       <source>PREF_FREE_BOUND_COLOR</source>
@@ -3520,10 +3520,6 @@
       <translation>ブロックで展開</translation>
     </message>
     <message>
-      <source>STB_EXPORT</source>
-      <translation>ジオメトリをBREPファイルにエクスポート</translation>
-    </message>
-    <message>
       <source>STB_EXTRUSION</source>
       <translation>押し出しを作成</translation>
     </message>
@@ -3606,10 +3602,6 @@
     <message>
       <source>STB_HEX_SOLID</source>
       <translation>Hexahedral_Solid</translation>
-    </message>
-    <message>
-      <source>STB_IMPORT</source>
-      <translation>BREPファイルをジオメトリにインポート</translation>
     </message>
     <message>
       <source>STB_INERTIA</source>
@@ -3754,6 +3746,10 @@
     <message>
       <source>STB_POP_VECTORS</source>
       <translation>エッジの方向を表示します。</translation>
+    </message>
+    <message>
+      <source>STB_POP_VERTICES</source>
+      <translation type="unfinished">Show Vertices</translation>
     </message>
     <message>
       <source>STB_POP_SETTEXTURE</source>
@@ -3980,54 +3976,6 @@
       <translation>X</translation>
     </message>
     <message>
-      <source>TOOL_BASIC</source>
-      <translation>基礎オブジェクト</translation>
-    </message>
-    <message>
-      <source>TOOL_BLOCKS</source>
-      <translation>ブロック分割</translation>
-    </message>
-    <message>
-      <source>TOOL_BOOLEAN</source>
-      <translation>ブーリアン操作</translation>
-    </message>
-    <message>
-      <source>TOOL_FEATURES</source>
-      <translation>フィーチャー</translation>
-    </message>
-    <message>
-      <source>TOOL_GENERATION</source>
-      <translation>押し出し/回転</translation>
-    </message>
-    <message>
-      <source>TOOL_PRIMITIVES</source>
-      <translation>基本図形</translation>
-    </message>
-    <message>
-      <source>TOOL_TRANSFORMATION</source>
-      <translation>変形/移動/回転</translation>
-    </message>
-    <message>
-      <source>TOOL_BUILD</source>
-      <translation>構築</translation>
-    </message>
-    <message>
-      <source>TOOL_OPERATIONS</source>
-      <translation>操作</translation>
-    </message>
-    <message>
-      <source>TOOL_PICTURES</source>
-      <translation>画像</translation>
-    </message>
-    <message>
-      <source>TOOL_ADVANCED</source>
-      <translation>高度なツール</translation>
-    </message>
-    <message>
-      <source>TOOL_MEASURES</source>
-      <translation>情報/測定</translation>
-    </message>
-    <message>
       <source>TOP_ARC</source>
       <translation>円弧を作成</translation>
     </message>
@@ -4172,10 +4120,6 @@
       <translation>ブロックで展開</translation>
     </message>
     <message>
-      <source>TOP_EXPORT</source>
-      <translation>ジオメトリをBREPファイルでエクスポート</translation>
-    </message>
-    <message>
       <source>TOP_EXTRUSION</source>
       <translation>押し出しを作成</translation>
     </message>
@@ -4250,10 +4194,6 @@
     <message>
       <source>TOP_HEX_SOLID</source>
       <translation>Hexahedral_Solid</translation>
-    </message>
-    <message>
-      <source>TOP_IMPORT</source>
-      <translation>BREPファイルをジオメトリにインポート</translation>
     </message>
     <message>
       <source>TOP_INERTIA</source>
@@ -4756,6 +4696,14 @@
       <translation>オブジェクトの基準寸法を管理</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation type="unfinished">Show dependency tree</translation>
+    </message>
+    <message>
+        <source>MEN_POP_SHOW_REDUCE_STUDY</source>
+        <translation type="unfinished">Reduce study</translation>
+    </message>
+    <message>
       <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
       <translation>すべての寸法を表示</translation>
     </message>
@@ -5020,6 +4968,66 @@
       <translation>プレビュー</translation>
     </message>
     <message>
+        <source>PREF_TAB_DEPENDENCY_VIEW</source>
+        <translation type="unfinished">Dependency Tree</translation>
+    </message>
+    <message>
+        <source>PREF_HIERARCHY_TYPE</source>
+        <translation type="unfinished">Hierarchy type</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_ASCENDANTS</source>
+        <translation type="unfinished">Display only ascendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_DESCENDANTS</source>
+        <translation type="unfinished">Display only descendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
+        <translation type="unfinished">Display both ascendants and descendants trees</translation>
+    </message>
+    <message>
+        <source>GEOM_MOVE_POSSIBILITY</source>
+        <translation type="unfinished">Possibility to move nodes</translation>
+    </message>
+    <message>
+        <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
+        <translation type="unfinished">Color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
+        <translation type="unfinished">Background color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
+        <translation type="unfinished">Default node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
+        <translation type="unfinished">Main node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
+        <translation type="unfinished">Unpublished node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
+        <translation type="unfinished">Selected node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
+        <translation type="unfinished">Arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
+        <translation type="unfinished">Highlighted arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
+        <translation type="unfinished">Selected arrow color</translation>
+    </message>
+    <message>
       <source>GEOM_ALL_IMPORT_FILES</source>
       <translation>サポートされているすべての形式 (%1)</translation>
     </message>
@@ -5042,10 +5050,6 @@
     <message>
       <source>GEOM_PUBLISH_NAMED_SHAPES</source>
       <translation>指定したオブジェクトのグループ(存在する場合)を作成しますか？</translation>
-    </message>
-    <message>
-      <source>GEOM_SCALE_DIMENSIONS</source>
-      <translation>インポートしたファイルの単位をミリメートルからメートルに変換しますか？いいえを選んだ場合、メートル単位として解釈します。</translation>
     </message>
     <message>
       <source>GEOM_PRECISION_HINT</source>
@@ -5076,64 +5080,67 @@
       <translation>イメージの選択.</translation>
     </message>
     <message>
-      <source>MEN_IMPORTEXPORT</source>
-      <translation>インポート/エクスポート</translation>
-    </message>
-    <message>
-      <source>TOOL_IMPORTEXPORT</source>
-      <translation>インポート/エクスポート</translation>
-    </message>
-    <message>
-      <source>TOP_EXPORTXAO</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>MEN_EXPORTXAO</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>STB_EXPORTXAO</source>
-      <translation>ソテーした形式でフォームをエクスポートします。</translation>
-    </message>
-    <message>
-      <source>TOP_IMPORTXAO</source>
-      <translation>インポートしました。</translation>
-    </message>
-    <message>
-      <source>MEN_IMPORTXAO</source>
-      <translation>インポートしました。</translation>
-    </message>
-    <message>
-      <source>STB_IMPORTXAO</source>
-      <translation>ソテーしたフォームをインポートします。</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTEXPORT_204</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_SELECT_IMPORT_XAO</source>
-      <translation>XAOからインポート</translation>
-    </message>
-    <message>
-      <source>GEOM_SELECT_EXPORT_XAO</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>XAO_FILES</source>
-      <translation>ファイルした (*.xao)</translation>
-    </message>
-    <message>
-      <source>TOOLS_IMPORTEXPORT</source>
-      <translation>インポート/エクスポート</translation>
-    </message>
-    <message>
       <source>CC_PNT_ITEM_X_Y</source>
       <translation>X=%1, Y=%2</translation>
     </message>
     <message>
       <source>CC_PNT_ITEM_X_Y_Z</source>
       <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+  </context>
+  <context>
+    <name>GeometryGUI</name>
+    <message>
+      <source>TOOL_BASIC</source>
+      <translation>基礎オブジェクト</translation>
+    </message>
+    <message>
+      <source>TOOL_BLOCKS</source>
+      <translation>ブロック分割</translation>
+    </message>
+    <message>
+      <source>TOOL_BOOLEAN</source>
+      <translation>ブーリアン操作</translation>
+    </message>
+    <message>
+      <source>TOOL_FEATURES</source>
+      <translation>フィーチャー</translation>
+    </message>
+    <message>
+      <source>TOOL_GENERATION</source>
+      <translation>押し出し/回転</translation>
+    </message>
+    <message>
+      <source>TOOL_PRIMITIVES</source>
+      <translation>基本図形</translation>
+    </message>
+    <message>
+      <source>TOOL_TRANSFORMATION</source>
+      <translation>変形/移動/回転</translation>
+    </message>
+    <message>
+      <source>TOOL_BUILD</source>
+      <translation>構築</translation>
+    </message>
+    <message>
+      <source>TOOL_OPERATIONS</source>
+      <translation>操作</translation>
+    </message>
+    <message>
+      <source>TOOL_PICTURES</source>
+      <translation>画像</translation>
+    </message>
+    <message>
+      <source>TOOL_ADVANCED</source>
+      <translation>高度なツール</translation>
+    </message>
+    <message>
+      <source>TOOL_MEASURES</source>
+      <translation>情報/測定</translation>
+    </message>
+    <message>
+      <source>TOOL_IMPORTEXPORT</source>
+      <translation>インポート/エクスポート</translation>
     </message>
   </context>
   <context>
@@ -6802,6 +6809,61 @@
     </message>
   </context>
   <context>
+    <name>GEOMToolsGUI_ReduceStudyDlg</name>
+    <message>
+        <source>GEOM_REDUCE_STUDY_TITLE</source>
+        <translation type="unfinished">Reduce study</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
+        <translation type="unfinished">Objects to be kept</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
+        <translation type="unfinished">Objects to be removed</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_NAME</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_OPTIONS</source>
+        <translation type="unfinished">Options</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
+        <translation type="unfinished">Intermediate objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
+        <translation type="unfinished">Sub-objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEEP</source>
+        <translation type="unfinished">Keep</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
+        <translation type="unfinished">Unpublish</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE</source>
+        <translation type="unfinished">Remove</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
+        <translation type="unfinished">Remove empty folders</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
+        <translation type="unfinished">Soft removal</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
+        <translation type="unfinished">Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
+    </message>
+  </context>
+  <context>
     <name>RepairGUI_UnionFacesDlg</name>
     <message>
       <source>GEOM_UNION_FACES_TITLE</source>
@@ -6837,72 +6899,6 @@
     <message>
       <source>NO_INFO</source>
       <translation>(有効情報なし)</translation>
-    </message>
-  </context>
-  <context>
-    <name>ImportExportGUI_ExportXAODlg</name>
-    <message>
-      <source>GEOM_EXPORTXAO_TITLE</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO</source>
-      <translation>エクスポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
-      <translation>オブジェクト</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_FILENAME</source>
-      <translation>ファイル</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_AUTHOR</source>
-      <translation>作成者</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_LGROUPS</source>
-      <translation>グループ</translation>
-    </message>
-    <message>
-      <source>GEOM_EXPORTXAO_LFIELDS</source>
-      <translation>フィールド</translation>
-    </message>
-    <message>
-      <source>EXPORT_DLG_ACCEPT</source>
-      <translation>OK</translation>
-    </message>
-  </context>
-  <context>
-    <name>ImportExportGUI_ImportXAODlg</name>
-    <message>
-      <source>GEOM_IMPORTXAO_TITLE</source>
-      <translation>インポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO</source>
-      <translation>インポートしました。</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO_IMPORTINGSHAPE</source>
-      <translation>オブジェクト</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO_FILENAME</source>
-      <translation>ファイル</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO_LGROUPS</source>
-      <translation>グループ</translation>
-    </message>
-    <message>
-      <source>GEOM_IMPORTXAO_LFIELDS</source>
-      <translation>フィールド</translation>
-    </message>
-    <message>
-      <source>STEP</source>
-      <translation>Step</translation>
     </message>
   </context>
   <context>

@@ -26,7 +26,6 @@
 
 #include "GEOM_Engine.hxx"
 
-#include "GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx"
 #include "GEOM_Field.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"
@@ -215,7 +214,7 @@ GEOM_Engine::GEOM_Engine()
   TFunction_DriverTable::Get()->AddDriver(GEOM_Object::GetSubShapeID(), new GEOM_SubShapeDriver());
   
   _OCAFApp = new GEOM_Application();
-  _UndoLimit = 10;
+  _UndoLimit = 0;
 }
 
 /*!
@@ -408,9 +407,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object)              th
   aSSI.SetIndices(theIndices);
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     GEOM_Solver aSolver (GEOM_Engine::GetEngine());
     if (!aSolver.ComputeFunction(aFunction)) {
       MESSAGE("GEOM_Engine::AddSubShape Error: Can't build a sub shape");
@@ -860,11 +857,7 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 #define TEXTURE_LABEL_DATA     5
 
 int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
                             const Handle(TColStd_HArray1OfByte)& theTexture,
-#else
-                            const Handle(TDataStd_HArray1OfByte)& theTexture,
-#endif
                             const TCollection_AsciiString& theFileName)
 {
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
@@ -909,19 +902,11 @@ int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
   return aTextureID;
 }
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 Handle(TColStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theTextureID,
-#else
-Handle(TDataStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theTextureID,
-#endif
                                                       int& theWidth, int& theHeight,
                                                       TCollection_AsciiString& theFileName)
 {
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   Handle(TColStd_HArray1OfByte) anArray;
-#else
-  Handle(TDataStd_HArray1OfByte) anArray;
-#endif
   theWidth = theHeight = 0;
 
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
@@ -1661,11 +1646,7 @@ void AddObjectColors (int                      theDocID,
   }
 }
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 static TCollection_AsciiString pack_data (const Handle(TColStd_HArray1OfByte)& aData)
-#else
-static TCollection_AsciiString pack_data (const Handle(TDataStd_HArray1OfByte)& aData)
-#endif
 {
   TCollection_AsciiString stream;
   if (!aData.IsNull()) {
@@ -1693,11 +1674,7 @@ void AddTextures (int theDocID, TCollection_AsciiString& theScript)
       if (*it <= 0) continue;
       Standard_Integer aWidth, aHeight;
       TCollection_AsciiString aFileName;
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
       Handle(TColStd_HArray1OfByte) aTexture =
-#else
-      Handle(TDataStd_HArray1OfByte) aTexture =
-#endif
         engine->getTexture(theDocID, *it, aWidth, aHeight, aFileName);
       if (aWidth > 0 && aHeight > 0 && !aTexture.IsNull() && aTexture->Length() > 0 ) {
         TCollection_AsciiString aCommand = "\n\t";

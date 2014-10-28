@@ -88,6 +88,7 @@ namespace GEOM
   void SetShape(const TopoDS_Shape& theShape,
                 const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
                 bool theIsVector,
+                GEOM_VertexSource* theStandaloneVertexSource,
                 GEOM_EdgeSource* theIsolatedEdgeSource,
                 GEOM_EdgeSource* theOneFaceEdgeSource,
                 GEOM_EdgeSource* theSharedEdgeSource,
@@ -98,6 +99,7 @@ namespace GEOM
       TopoDS_Iterator anItr(theShape);
       for (; anItr.More(); anItr.Next()) {
         SetShape(anItr.Value(),theEdgeMap,theIsVector,
+                 theStandaloneVertexSource,
                  theIsolatedEdgeSource,
                  theOneFaceEdgeSource,
                  theSharedEdgeSource,
@@ -123,6 +125,10 @@ namespace GEOM
         break;
       }
       case TopAbs_VERTEX: {
+        if ( theStandaloneVertexSource ) {
+          const TopoDS_Vertex& aVertex = TopoDS::Vertex(theShape);
+          theStandaloneVertexSource->AddVertex(aVertex);
+        }
         break;
       }
       default: {

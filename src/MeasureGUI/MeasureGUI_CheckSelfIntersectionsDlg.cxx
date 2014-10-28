@@ -87,7 +87,7 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
 
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#check_self_intersections_anchor";
+  myHelpFileName = "check_self_intersections_page.html";
 
   /* Initialisation */
   Init();

@@ -62,7 +62,6 @@ SET(_link_LIBRARIES
   ${KERNEL_SalomeDS}
   ${KERNEL_SalomeDSClient}
   ${GUI_SalomeApp}
-  ${QT_QTXML_LIBRARY}
   )
 
 # --- headers ---
@@ -72,7 +71,6 @@ SET(GEOMGUI_HEADERS
   GeometryGUI_Operations.h
   GEOMGUI.h
   GEOMPluginGUI.h
-  GEOMGUI_XmlHandler.h
   GEOM_Displayer.h
   GEOMGUI_OCCSelector.h
   GEOMGUI_Selection.h
@@ -112,7 +110,6 @@ SET(GEOMGUI_SOURCES
   GeometryGUI.cxx
   GEOMGUI.cxx
   GEOMPluginGUI.cxx
-  GEOMGUI_XmlHandler.cxx
   GEOM_Displayer.cxx
   GEOMGUI_OCCSelector.cxx
   GEOMGUI_Selection.cxx

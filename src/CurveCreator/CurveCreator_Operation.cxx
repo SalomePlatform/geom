@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,6 +22,7 @@
 
 #include "CurveCreator_Operation.hxx"
 #include "CurveCreator_Curve.hxx"
+#include "CurveCreator.hxx"
 
 #include <string>
 #include <stdlib.h>
@@ -46,6 +47,11 @@ CurveCreator_Operation::~CurveCreator_Operation()
   clear();
 }
 
+bool compId(CurveCreator_PosPoint* p1, CurveCreator_PosPoint* p2)
+{
+  return p1->myID < p2->myID;
+}
+
 //=======================================================================
 // function: Constructor
 // purpose:
@@ -54,8 +60,7 @@ bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType)
 {
   bool isOK = false;
 
-  if (theType == CurveCreator_Operation::Clear ||
-      theType == CurveCreator_Operation::Join) {
+  if (theType == CurveCreator_Operation::Clear) {
     clear();
     myType = theType;
     isOK   = true;
@@ -113,23 +118,28 @@ bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
 // function: Constructor
 // purpose:
 //=======================================================================
-bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
-                                  const int theIntParam1,
-                                  const int theIntParam2,
-                                  const int theIntParam3)
+bool CurveCreator_Operation::init(const Type theType, const std::list<int> theParamList)
 {
   bool isOK = false;
 
-  if (theType == CurveCreator_Operation::RemovePoints) {
-    int *pData = (int *)allocate(3*sizeof(int));
+  if (theType == CurveCreator_Operation::Join)
+  {
+    const int aNbPoints = theParamList.size();
 
-    pData[0] = theIntParam1;
-    pData[1] = theIntParam2;
-    pData[2] = theIntParam3;
+    const size_t aSize =
+      sizeof(aNbPoints) +
+      aNbPoints * (sizeof(int));
+
+    int *pIntData = (int *)allocate(aSize);
+
+    *pIntData++ = aNbPoints;
+    std::list<int>::const_iterator anIt = theParamList.begin(), aLast = theParamList.end();
+    for ( ; anIt != aLast; anIt++ )
+      *pIntData++ = *anIt;
+
     myType   = theType;
-    isOK     = true;
+    isOK   = true;
   }
-
   return isOK;
 }
 
@@ -150,43 +160,6 @@ bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
     int *pIntData = (int *)allocate(aSize);
 
     *pIntData++ = theIntParam;
-    *pIntData++ = aNbCoords;
-
-    CurveCreator::TypeCoord *pRealData = (CurveCreator::TypeCoord *)pIntData;
-    int i = 0;
-
-    for (; i < aNbCoords; i++) {
-      *pRealData++ = theCoords[i];
-    }
-
-    myType = theType;
-    isOK   = true;
-  }
-
-  return isOK;
-}
-
-//=======================================================================
-// function: Constructor
-// purpose:
-//=======================================================================
-bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
-                                  const CurveCreator::Coordinates &theCoords,
-                                  const int theIntParam1,
-                                  const int theIntParam2)
-{
-  bool isOK = false;
-
-  if (theType == CurveCreator_Operation::AddSection   ||
-      theType == CurveCreator_Operation::InsertPoints ||
-      theType == CurveCreator_Operation::SetCoordinates) {
-    const int aNbCoords = theCoords.size();
-    const size_t aSize =
-      3*sizeof(theIntParam1) + aNbCoords*sizeof(CurveCreator::TypeCoord);
-    int *pIntData = (int *)allocate(aSize);
-
-    *pIntData++ = theIntParam1;
-    *pIntData++ = theIntParam2;
     *pIntData++ = aNbCoords;
 
     CurveCreator::TypeCoord *pRealData = (CurveCreator::TypeCoord *)pIntData;
@@ -234,7 +207,7 @@ bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
     pIntData = (int*)aStrPtr;
     *pIntData++ = aNbCoords;
 
-    CurveCreator::TypeCoord *pRealData = (CurveCreator::TypeCoord *)aStrPtr;
+    CurveCreator::TypeCoord *pRealData = (CurveCreator::TypeCoord *)pIntData;
     int i = 0;
 
     for (; i < aNbCoords; i++) {
@@ -269,6 +242,84 @@ bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
     return false;
 }
 
+bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
+                                  const CurveCreator_ICurve::SectionToPointCoordsList &theParamList1)
+{
+  bool isOK = false;
+
+  if (theType == CurveCreator_Operation::InsertPoints ||
+      theType == CurveCreator_Operation::SetCoordinates ) {
+
+    const int aNbPoints = theParamList1.size();
+
+    CurveCreator_ICurve::SectionToPointCoordsList::const_iterator anIt = 
+      theParamList1.begin();
+    const int aNbCoords = anIt->second.size();
+
+    const size_t aSize =
+      sizeof(aNbPoints) + sizeof(aNbCoords) + 
+      aNbPoints * (3*sizeof(int) + aNbCoords*sizeof(CurveCreator::TypeCoord));
+    int *pIntData = (int *)allocate(aSize);
+
+    *pIntData++ = aNbPoints;
+    *pIntData++ = aNbCoords;
+    int aSectionId, aPointId;
+    for ( ; anIt != theParamList1.end(); anIt++ ) {
+      aSectionId = anIt->first.first;
+      aPointId = anIt->first.second;
+
+      *pIntData++ = aSectionId;
+      *pIntData++ = aPointId;
+      *pIntData++ = aNbCoords;
+
+      const CurveCreator::Coordinates &aCoords = anIt->second;
+      CurveCreator::TypeCoord *pRealData = (CurveCreator::TypeCoord *)pIntData;
+      for (int i = 0; i < aNbCoords; i++) {
+        *pRealData++ = aCoords[i];
+      }
+      pIntData = (int *)pRealData;
+    }
+
+    myType = theType;
+    isOK   = true;
+  }
+
+  return isOK;
+}
+
+bool CurveCreator_Operation::init(const CurveCreator_Operation::Type theType,
+                                  const CurveCreator_ICurve::SectionToPointList &theParamList1)
+{
+  bool isOK = false;
+
+  if (theType == CurveCreator_Operation::RemovePoints) {
+    const int aNbPoints = theParamList1.size();
+
+    CurveCreator_ICurve::SectionToPointList::const_iterator anIt = 
+      theParamList1.begin();
+
+    const size_t aSize =
+      sizeof(aNbPoints) +
+      aNbPoints * (2*sizeof(int));
+    int *pIntData = (int *)allocate(aSize);
+
+    *pIntData++ = aNbPoints;
+    int aSectionId, aPointId;
+    for ( ; anIt != theParamList1.end(); anIt++ ) {
+      aSectionId = anIt->first;
+      aPointId = anIt->second;
+
+      *pIntData++ = aSectionId;
+      *pIntData++ = aPointId;
+    }
+
+    myType = theType;
+    isOK   = true;
+  }
+
+  return isOK;
+}
+
 //=======================================================================
 // function: apply
 // purpose:
@@ -280,58 +331,81 @@ void CurveCreator_Operation::apply(CurveCreator_Curve *theCurve)
 
     switch (myType) {
       case CurveCreator_Operation::AddPoints:
+      case CurveCreator_Operation::InsertPoints:
+      case CurveCreator_Operation::SetCoordinates:
         {
+          int aSectionId, aPointId;
+          CurveCreator::SectionsMap aSectionsMap;
+          CurveCreator::PosPointsList aPoints;
           CurveCreator::Coordinates aCoords;
 
-          getCoords(&pInt[1], aCoords);
-          theCurve->addPoints(aCoords, pInt[0]);
+          int nbPoints = pInt[0];
+          int nbCoords = pInt[1];
+          int nbParams = 3+nbCoords;
+          for (int i = 0; i < nbPoints*nbParams; i=i+nbParams) {
+            aCoords.clear();
+            aPoints.clear();
+            getCoords(&pInt[4+i], aCoords);
+            aSectionId = pInt[2+i];
+            aPointId = pInt[3+i];
+            if ( aSectionsMap.find( aSectionId ) != aSectionsMap.end() )
+              aPoints = aSectionsMap[aSectionId];
+            CurveCreator_PosPoint* aPosPoint = new CurveCreator_PosPoint( aPointId, aCoords );
+            aPoints.push_back( aPosPoint );
+            aPoints.sort(compId);
+            aSectionsMap[aSectionId] = aPoints;
+          }
+          switch (myType) {
+            case CurveCreator_Operation::AddPoints:
+            case CurveCreator_Operation::InsertPoints:
+              theCurve->addPointsInternal( aSectionsMap );
+              break;
+            case CurveCreator_Operation::SetCoordinates:
+              theCurve->setPointInternal( aSectionsMap );
+              break;
+          }
         }
         break;
       case CurveCreator_Operation::RemovePoints:
-        theCurve->removePoints(pInt[0], pInt[1], pInt[2]);
-        break;
-      case CurveCreator_Operation::InsertPoints:
         {
-          CurveCreator::Coordinates aCoords;
-
-          getCoords(&pInt[2], aCoords);
-          theCurve->insertPoints(aCoords, pInt[0], pInt[1]);
+          CurveCreator_ICurve::SectionToPointList aListOfSectionsToPoints;
+          int nbPoints = pInt[0];
+          for (int i = 1; i < nbPoints*2; i=i+2) {
+            aListOfSectionsToPoints.push_back(std::make_pair(pInt[i], pInt[i+1]));
+          }
+          theCurve->removePointsInternal(aListOfSectionsToPoints);
         }
         break;
       case CurveCreator_Operation::SetType:
         {
-          const CurveCreator::Type aType = (CurveCreator::Type) pInt[0];
+          const CurveCreator::SectionType aType = (CurveCreator::SectionType) pInt[0];
 
-          theCurve->setType(aType, pInt[1]);
+          theCurve->setSectionTypeInternal( pInt[1], aType );
         }
         break;
       case CurveCreator_Operation::Clear:
-        theCurve->clear();
-        break;
-      case CurveCreator_Operation::SetCoordinates:
-        {
-          CurveCreator::Coordinates aCoords;
-
-          getCoords(&pInt[2], aCoords);
-          theCurve->setCoordinates(aCoords, pInt[0], pInt[1]);
-        }
+        theCurve->clearInternal();
         break;
       case CurveCreator_Operation::SetClosed:
-        theCurve->setClosed((pInt[0] != 0), pInt[1]);
+        theCurve->setClosedInternal(pInt[1], (pInt[0] != 0));
         break;
       case CurveCreator_Operation::MoveSection:
-        theCurve->moveSection(pInt[0], pInt[1]);
+        theCurve->moveSectionInternal(pInt[0], pInt[1]);
         break;
       case CurveCreator_Operation::Join:
-        if (myPData == NULL) {
-          theCurve->join();
-        } else {
-          theCurve->join(pInt[0], pInt[1]);
+        if (myPData != NULL)
+        {
+          std::list<int> aListOfSections;
+          int nbSections = pInt[0];
+          for (int i = 1; i < nbSections+1; i++) {
+            aListOfSections.push_back(pInt[i]);
+          }
+          theCurve->joinInternal(aListOfSections);
         }
         break;
       case CurveCreator_Operation::AddSection:
         {
-          const CurveCreator::Type aType = (CurveCreator::Type) pInt[0];
+          const CurveCreator::SectionType aType = (CurveCreator::SectionType) pInt[0];
 
           std::string aName = std::string((char*)&pInt[2]);
 
@@ -340,16 +414,16 @@ void CurveCreator_Operation::apply(CurveCreator_Curve *theCurve)
           char* aPtr =  ((char*)&pInt[2]);
           aPtr += (aName.length()) + 1;
           getCoords((int*)aPtr, aCoords);
-          theCurve->addSection(aName, aType, (pInt[1] != 0), aCoords);
+          theCurve->addSectionInternal(aName, aType, (pInt[1] != 0), aCoords);
         }
         break;
       case CurveCreator_Operation::RemoveSection:
-        theCurve->removeSection(pInt[0]);
+        theCurve->removeSectionInternal(pInt[0]);
         break;
       case CurveCreator_Operation::RenameSection:
         {
             std::string aName = std::string((char*)&pInt[1]);
-            theCurve->setName(aName, pInt[0]);
+            theCurve->setSectionNameInternal(pInt[0], aName);
         }
         break;
       default:

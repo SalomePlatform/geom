@@ -23,6 +23,7 @@
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
   ${PTHREAD_INCLUDE_DIR}
+  ${LIBXML2_INCLUDE_DIR}
   ${KERNEL_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
@@ -30,6 +31,7 @@ INCLUDE_DIRECTORIES(
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
   ${CAS_DEFINITIONS}
+  ${LIBXML2_DEFINITIONS}
   )
 
 # libraries to link to
@@ -40,6 +42,7 @@ SET(_link_LIBRARIES
   ${CAS_TKG3d}
   ${CAS_TKV3d}
   ${CAS_TKGeomBase}
+  ${LIBXML2_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   )
 
@@ -48,12 +51,14 @@ SET(_link_LIBRARIES
 SET(GEOMUtils_HEADERS
   GEOMUtils.hxx
   GEOMUtils_Hatcher.hxx
+  GEOMUtils_XmlHandler.hxx
   )
 # --- sources ---
 
 SET(GEOMUtils_SOURCES
   GEOMUtils.cxx
   GEOMUtils_Hatcher.cxx
+  GEOMUtils_XmlHandler.cxx
   )
 
 # --- rules ---

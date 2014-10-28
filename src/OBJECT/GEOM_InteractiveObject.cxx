@@ -20,17 +20,15 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  GEOM OBJECT : interactive object for Geometry entities visualization
-//  File   : GEOM_InteractiveObject.cxx
-//  Author : Christophe ATTANASIO
-//  Module : GEOM
-//
 /*!
   \class GEOM_InteractiveObject GEOM_InteractiveObject.hxx
   \brief ....
 */
 
-#include "GEOM_InteractiveObject.ixx"
+#include "GEOM_InteractiveObject.hxx"
+
+IMPLEMENT_STANDARD_HANDLE (GEOM_InteractiveObject, SALOME_InteractiveObject)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_InteractiveObject, SALOME_InteractiveObject)
 
 GEOM_InteractiveObject::GEOM_InteractiveObject()
   : SALOME_InteractiveObject()
@@ -49,15 +47,22 @@ GEOM_InteractiveObject::GEOM_InteractiveObject(const char* anIOR,
   myFatherIOR = aFatherIOR;
 }
 
-const char* GEOM_InteractiveObject::getIOR(){
+GEOM_InteractiveObject::~GEOM_InteractiveObject()
+{
+}
+
+const char* GEOM_InteractiveObject::getIOR()
+{
   return myIOR.c_str();
 }
 
-const char* GEOM_InteractiveObject::getFatherIOR(){
+const char* GEOM_InteractiveObject::getFatherIOR()
+{
   return myFatherIOR.c_str();
 }
 
-Standard_Boolean GEOM_InteractiveObject::isSame(const Handle(SALOME_InteractiveObject)& anIO ){
+Standard_Boolean GEOM_InteractiveObject::isSame(const Handle(SALOME_InteractiveObject)& anIO )
+{
   if ( anIO->hasEntry() && this->hasEntry() ) {
     if ( myEntry == anIO->getEntry() )
       return Standard_True;

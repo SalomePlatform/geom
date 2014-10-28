@@ -31,10 +31,10 @@ STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UC)
 
 SET(${PROJECT_NAME_UC}_MAJOR_VERSION 7)
 SET(${PROJECT_NAME_UC}_MINOR_VERSION 4)
-SET(${PROJECT_NAME_UC}_PATCH_VERSION 0)
+SET(${PROJECT_NAME_UC}_PATCH_VERSION 1)
 SET(${PROJECT_NAME_UC}_VERSION
   ${${PROJECT_NAME_UC}_MAJOR_VERSION}.${${PROJECT_NAME_UC}_MINOR_VERSION}.${${PROJECT_NAME_UC}_PATCH_VERSION})
-SET(${PROJECT_NAME_UC}_VERSION_DEV 0)
+SET(${PROJECT_NAME_UC}_VERSION_DEV 1)
 
 # Find KERNEL
 # ===========
@@ -67,20 +67,7 @@ OPTION(SALOME_BUILD_TESTS "Build SALOME tests" ON)
 OPTION(SALOME_BUILD_GUI "Enable GUI" ON)
 CMAKE_DEPENDENT_OPTION(SALOME_GEOM_USE_OPENCV "Enable shape recognition from picture" OFF
                        "SALOME_BUILD_GUI" OFF)
-CMAKE_DEPENDENT_OPTION(SALOME_GEOM_BUILD_CC "Enable curve creator (experimental)" OFF
-                       "SALOME_BUILD_GUI" OFF)
-MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV SALOME_GEOM_BUILD_CC)
-
-# Debug options (!!! FOR DEVELOPERS ONLY !!! TO BE REMOVED LATER !!!)
-IF(CMAKE_BUILD_TYPE MATCHES "^Debug$")
-  CMAKE_DEPENDENT_OPTION(SALOME_GEOM_DEBUG_CC "Debug curve creator" OFF
-                        "SALOME_GEOM_BUILD_CC" OFF)
-  MARK_AS_ADVANCED(SALOME_GEOM_DEBUG_CC)
-
-  IF(SALOME_GEOM_DEBUG_CC)
-    ADD_DEFINITIONS(-DDEBUG_CURVE_CREATOR)
-  ENDIF(SALOME_GEOM_DEBUG_CC)
-ENDIF()
+MARK_AS_ADVANCED(SALOME_BUILD_GUI SALOME_GEOM_USE_OPENCV)
 
 # Prerequisites
 # =============
@@ -151,7 +138,7 @@ ENDIF(SALOME_BUILD_GUI)
 ##
 
 FIND_PACKAGE(SalomeCAS REQUIRED)
-FIND_PACKAGE(SalomeVTK 6.1 REQUIRED)
+FIND_PACKAGE(SalomeVTK REQUIRED)
 
 # OpenCV
 IF(SALOME_GEOM_USE_OPENCV)
@@ -234,16 +221,18 @@ INCLUDE(CMakePackageConfigHelpers)
 # List of targets in this project we want to make visible to the rest of the world.
 # They all have to be INSTALL'd with the option "EXPORT ${PROJECT_NAME}TargetGroup"
 SET(_${PROJECT_NAME}_exposed_targets 
-  GEOMArchimede BREPExport BREPImport BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
-  GEOMUtils GEOMEngine GEOM_SupervEngine IGESExport IGESImport GEOMSketcher
-  SalomeIDLGEOM STEPExport STEPImport STLExport STLImport ShHealOper XAO AdvancedEngine OCC2VTK
-  VTKExport
+  GEOMArchimede BlockFix GEOMbasic GEOMAlgo GEOMClient GEOMImpl
+  GEOMUtils GEOMEngine GEOM_SupervEngine GEOMSketcher
+  SalomeIDLGEOM SalomeIDLGEOMSuperv SalomeIDLAdvancedGEOM ShHealOper XAO AdvancedEngine OCC2VTK
+  SalomeIDLSTLPlugin SalomeIDLBREPPlugin SalomeIDLSTEPPlugin SalomeIDLIGESPlugin SalomeIDLXAOPlugin SalomeIDLVTKPlugin
+  STLPluginEngine BREPPluginEngine STEPPluginEngine IGESPluginEngine XAOPluginEngine VTKPluginEngine
 )
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
-    AdvancedGUI BasicGUI BlocksGUI BooleanGUI BuildGUI DisplayGUI DlgRef EntityGUI GEOMBase
+    AdvancedGUI BasicGUI BlocksGUI BooleanGUI BuildGUI DisplayGUI DlgRef CurveCreator EntityGUI GEOMBase
     GEOMFiltersSelection GEOM GEOMToolsGUI GenerationGUI GroupGUI Material MeasureGUI GEOMObject
-    OperationGUI PrimitiveGUI RepairGUI TransformationGUI ImportExportGUI
+    OperationGUI PrimitiveGUI RepairGUI TransformationGUI DependencyTree
+    STLPluginGUI BREPPluginGUI STEPPluginGUI IGESPluginGUI XAOPluginGUI VTKPluginGUI
     )
 ENDIF(SALOME_BUILD_GUI)
 
@@ -252,12 +241,6 @@ IF(SALOME_GEOM_USE_OPENCV)
     GEOMShapeRec
     )
 ENDIF(SALOME_GEOM_USE_OPENCV)
-
-IF(SALOME_GEOM_BUILD_CC)
-  LIST(APPEND _${PROJECT_NAME}_exposed_targets 
-    CurveCreator
-    )
-ENDIF(SALOME_GEOM_BUILD_CC)
 
 # Add all targets to the build-tree export set
 EXPORT(TARGETS ${_${PROJECT_NAME}_exposed_targets}

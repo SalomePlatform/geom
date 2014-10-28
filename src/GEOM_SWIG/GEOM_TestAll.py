@@ -147,18 +147,20 @@ def TestAll (geompy, math):
   tan_on_face = geompy.MakeTangentPlaneOnFace(tan_extrusion, 0.7, 0.5, 150)
 
   #Create base geometry 3D
-  Box      = geompy.MakeBoxTwoPnt(p0, p200)                   #(2 GEOM_Object)->GEOM_Object
-  Box1     = geompy.MakeBoxDXDYDZ(10, 20, 30)                 #(3 Doubles)->GEOM_Object
-  Box2     = geompy.MakeBox(10,20,30, 15,25,35)               #(6 Doubles)->GEOM_Object
-  Cylinder = geompy.MakeCylinder(p0, vz, radius1, height)     #(2 GEOM_Object, 2 Doubles)->GEOM_Object
-  Cyl1     = geompy.MakeCylinderRH(radius2, height)           #(2 Doubles)->GEOM_Object
-  Sphere   = geompy.MakeSpherePntR(p0, radius1)               #(GEOM_Object, Double)->GEOM_Object
-  Sphere1  = geompy.MakeSphereR(radius)                       #(Double)->GEOM_Object
-  Sphere2  = geompy.MakeSphere(50, 70, 30, radius)            #(4 Doubles)->GEOM_Object
-  Cone     = geompy.MakeCone(p0, vz, radius2, radius, height) #(2 GEOM_Object, 3 Doubles)->GEOM_Object
-  Cone1    = geompy.MakeConeR1R2H(radius1, radius, height)    #(3 Doubles)->GEOM_Object
-  Torus    = geompy.MakeTorus(p0, vz, radius2, radius)        #(2 GEOM_Object, 2 Doubles)->GEOM_Object
-  Torus1   = geompy.MakeTorusRR(radius2, radius1)             #(2 Doubles)->GEOM_Object
+  Box      = geompy.MakeBoxTwoPnt(p0, p200)                             #(2 GEOM_Object)->GEOM_Object
+  Box1     = geompy.MakeBoxDXDYDZ(10, 20, 30)                           #(3 Doubles)->GEOM_Object
+  Box2     = geompy.MakeBox(10,20,30, 15,25,35)                         #(6 Doubles)->GEOM_Object
+  Cylinder = geompy.MakeCylinder(p0, vz, radius1, height)               #(2 GEOM_Object, 2 Doubles)->GEOM_Object
+  Cyl1     = geompy.MakeCylinderRH(radius2, height)                     #(2 Doubles)->GEOM_Object
+  Cylinder1= geompy.MakeCylinderA(p0, vz, radius1, height, angle1)      #(2 GEOM_Object, 3 Doubles)->GEOM_Object
+  Cyl2     = geompy.MakeCylinderRHA(radius2, height, angle2)            #(3 Doubles)->GEOM_Object
+  Sphere   = geompy.MakeSpherePntR(p0, radius1)                         #(GEOM_Object, Double)->GEOM_Object
+  Sphere1  = geompy.MakeSphereR(radius)                                 #(Double)->GEOM_Object
+  Sphere2  = geompy.MakeSphere(50, 70, 30, radius)                      #(4 Doubles)->GEOM_Object
+  Cone     = geompy.MakeCone(p0, vz, radius2, radius, height)           #(2 GEOM_Object, 3 Doubles)->GEOM_Object
+  Cone1    = geompy.MakeConeR1R2H(radius1, radius, height)              #(3 Doubles)->GEOM_Object
+  Torus    = geompy.MakeTorus(p0, vz, radius2, radius)                  #(2 GEOM_Object, 2 Doubles)->GEOM_Object
+  Torus1   = geompy.MakeTorusRR(radius2, radius1)                       #(2 Doubles)->GEOM_Object
 
   #Boolean (Common, Cut, Fuse, Section)
   Common  = geompy.MakeBoolean(Box, Sphere, 1) #(2 GEOM_Object, Short)->GEOM_Object
@@ -372,6 +374,8 @@ def TestAll (geompy, math):
   id_Box2     = geompy.addToStudy(Box2,     "Box (10,20,30)-(15,25,35)")
   id_Cylinder = geompy.addToStudy(Cylinder, "Cylinder")
   id_Cyl1     = geompy.addToStudy(Cyl1,     "Cylinder RH")
+  id_Cylinder1= geompy.addToStudy(Cylinder1,"CylinderA")
+  id_Cyl2     = geompy.addToStudy(Cyl2,     "Cylinder RHA")
   id_Sphere   = geompy.addToStudy(Sphere,   "Sphere Pnt R")
   id_Sphere1  = geompy.addToStudy(Sphere1,  "Sphere R")
   id_Sphere2  = geompy.addToStudy(Sphere2,  "Sphere")

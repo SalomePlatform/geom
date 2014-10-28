@@ -20,183 +20,122 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-//  GEOM OBJECT : interactive object for Geometry entities visualization
-//  File   : GEOM_AISShape.hxx
-//  Module : GEOM
-//
 #ifndef _GEOM_AISShape_HeaderFile
 #define _GEOM_AISShape_HeaderFile
 
-#include "GEOM_OBJECT_defs.hxx"
+#include <SALOME_AISShape.hxx>
+#include <SALOME_InteractiveObject.hxx>
 
-#include <GEOM_Gen.hh>
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Handle_GEOM_AISShape_HeaderFile
-#include "Handle_GEOM_AISShape.hxx"
-#endif
-
-#ifndef _Handle_SALOME_InteractiveObject_HeaderFile
-#include "Handle_SALOME_InteractiveObject.hxx"
-#endif
-#ifndef _Standard_CString_HeaderFile
-#include <Standard_CString.hxx>
-#endif
-#ifndef _SALOME_AISShape_HeaderFile
-#include "SALOME_AISShape.hxx"
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-#ifndef _PrsMgr_PresentationManager_HeaderFile
+#include <Standard_DefineHandle.hxx>
 #include <PrsMgr_PresentationManager.hxx>
-#endif
-#ifndef _Handle_Prs3d_Presentation_HeaderFile
 #include <Handle_Prs3d_Presentation.hxx>
-#endif
-
 #include <TCollection_AsciiString.hxx>
-
 #include <AIS_DisplayMode.hxx>
-#include <Graphic3d_MaterialAspect.hxx>
 
 #include <QList>
 #include <QVariant>
 
-class Prs3d_Presentation;
-class SALOME_InteractiveObject;
+#include <SALOMEconfig.h>
+#include CORBA_SERVER_HEADER(GEOM_Gen)
+
 class TopoDS_Shape;
 
-class GEOM_OBJECT_EXPORT GEOM_AISShape : public SALOME_AISShape {
-
+class GEOM_AISShape : public SALOME_AISShape
+{
 public:
+  //! Enumeration of display modes
+  typedef enum {
+    Wireframe        = AIS_WireFrame,       //!< wireframe
+    Shading          = AIS_Shaded,          //!< shadin
+    ShadingWithEdges,                       //!< shading with edges
+    TexturedShape,                          //!< texture
+    CustomHighlight                         //!< fields
+  } DispMode;
 
-    //! Enumeration of display modes
-    typedef enum {
-      //WireFrame,       //!< the same as AIS_WireFrame
-      //Shading,         //!< the same as AIS_Shaded
-      ShadingWithEdges = AIS_Shaded+1, //!< shading with edges
-      TexturedShape = ShadingWithEdges+1, //!< the same as AIS_ExactHLR
-      CustomHighlight = TexturedShape+1
-    } DispMode;
+  //! Enumeration of top level display modes
+  typedef enum {
+    TopShowAdditionalWActor = 0,
+    TopKeepCurrent, //!< Keep current display mode
+    TopWireFrame, 
+    TopShading, 
+    TopShadingWithEdges,
+  } TopLevelDispMode;
+  
+  Standard_EXPORT GEOM_AISShape(const TopoDS_Shape& shape, const Standard_CString aName);
+  Standard_EXPORT ~GEOM_AISShape();
 
-    //! Enumeration of top level display modes
-    typedef enum {
-      TopShowAdditionalWActor = 0,
-      TopKeepCurrent, //!< Keep current display mode
-      TopWireFrame, 
-      TopShading, 
-      TopShadingWithEdges,
-    } TopLevelDispMode;
+  Standard_EXPORT Standard_Boolean                 hasIO();
+  Standard_EXPORT void                             setIO(const Handle(SALOME_InteractiveObject)& name);
+  Standard_EXPORT Handle(SALOME_InteractiveObject) getIO();
 
+  Standard_EXPORT void             setName(const Standard_CString aName);
+  Standard_EXPORT Standard_CString getName();
 
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
-//    inline void  operator delete(void *anAddress, size_t size) 
-//      { 
-//        if (anAddress) Standard::Free((Standard_Address&)anAddress,size); 
-//      }
- // Methods PUBLIC
- // 
-        GEOM_AISShape(const TopoDS_Shape& shape, const Standard_CString aName);
-        Standard_Boolean hasIO() ;
-        void setIO(const Handle(SALOME_InteractiveObject)& name) ;
-        void setName(const Standard_CString aName) ;
-        Standard_CString getName() ;
-        Standard_Boolean isTopLevel();
-        void setTopLevel(Standard_Boolean);
-        Handle_SALOME_InteractiveObject getIO() ;
-        void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
-        ~GEOM_AISShape();
+  Standard_EXPORT Standard_Boolean isTopLevel();
+  Standard_EXPORT void setTopLevel(Standard_Boolean);
 
-        void SetShadingColor(const Quantity_Color &aCol);
-        void SetEdgesInShadingColor(const Quantity_Color &aCol);
-        void SetDisplayVectors(bool isShow);
+  Standard_EXPORT void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
+  
+  Standard_EXPORT void SetShadingColor(const Quantity_Color &aCol);
+  Standard_EXPORT void SetEdgesInShadingColor(const Quantity_Color &aCol);
+  Standard_EXPORT void SetDisplayVectors(bool isShow);
+  Standard_EXPORT void SetDisplayVertices(bool isShow);
 
-        virtual  void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
-                                      const Handle(Prs3d_Presentation)& aPresentation,
-                                      const Standard_Integer aMode = 0) ;
+  Standard_EXPORT virtual void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+				       const Handle(Prs3d_Presentation)& aPresentation,
+				       const Standard_Integer aMode = 0);
+  
+  Standard_EXPORT virtual bool isShowVectors() { return myDisplayVectors; }
+  Standard_EXPORT virtual bool isShowVertices() { return myDisplayVertices; }
 
-        virtual  bool isShowVectors () { return myDisplayVectors; }
-                virtual  Standard_Boolean switchTopLevel();
-                virtual  Standard_Boolean toActivate();
+  Standard_EXPORT virtual Standard_Boolean switchTopLevel();
+  Standard_EXPORT virtual Standard_Boolean toActivate();
         
- // Type management
- //
-        friend Handle_Standard_Type& GEOM_AISShape_Type_();
-        const Handle(Standard_Type)& DynamicType() const;
-        Standard_Boolean             IsKind(const Handle(Standard_Type)&) const;
+  Standard_EXPORT static Quantity_Color topLevelColor();
+  Standard_EXPORT static void           setTopLevelColor(const Quantity_Color c);
 
-        void storeIsoNumbers();
-        void restoreIsoNumbers();
-        void resetIsoNumbers();
+  Standard_EXPORT static TopLevelDispMode topLevelDisplayMode();
+  Standard_EXPORT static void             setTopLevelDisplayMode(const TopLevelDispMode dm);
 
-        void storeBoundaryColors();
-
-        static Quantity_Color topLevelColor();
-  static void           setTopLevelColor(const Quantity_Color c);
-
-  static TopLevelDispMode topLevelDisplayMode();
-  static void             setTopLevelDisplayMode(const TopLevelDispMode dm);
-
-  void setPrevDisplayMode(const Standard_Integer mode);
-  Standard_Integer prevDisplayMode() const {return myPrevDisplayMode;}
+  Standard_EXPORT void setPrevDisplayMode(const Standard_Integer mode);
+  Standard_EXPORT Standard_Integer prevDisplayMode() const {return myPrevDisplayMode;}
 
   // Field step information
-  void setFieldStepInfo( const GEOM::field_data_type theFieldDataType,
-                         const int theFieldDimension,
-                         const QList<QVariant>& theFieldStepData,
-                         const TCollection_AsciiString& theFieldStepName,
-                         const double theFieldStepRangeMin,
-                         const double theFieldStepRangeMax );
-  void getFieldStepInfo( GEOM::field_data_type& theFieldDataType,
-                         int& theFieldDimension,
-                         QList<QVariant>& theFieldStepData,
-                         TCollection_AsciiString& theFieldStepName,
-                         double& theFieldStepRangeMin,
-                         double& theFieldStepRangeMax ) const;
+  Standard_EXPORT void setFieldStepInfo( const GEOM::field_data_type theFieldDataType,
+					 const int theFieldDimension,
+					 const QList<QVariant>& theFieldStepData,
+					 const TCollection_AsciiString& theFieldStepName,
+					 const double theFieldStepRangeMin,
+					 const double theFieldStepRangeMax );
+  Standard_EXPORT void getFieldStepInfo( GEOM::field_data_type& theFieldDataType,
+					 int& theFieldDimension,
+					 QList<QVariant>& theFieldStepData,
+					 TCollection_AsciiString& theFieldStepName,
+					 double& theFieldStepRangeMin,
+					 double& theFieldStepRangeMax ) const;
 
 protected: 
-  void shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
-                   const Handle(Prs3d_Presentation)& aPrs,
-                   const Standard_Integer aMode);
-
-  void restoreBoundaryColors();
-
+  Standard_EXPORT void shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+				   const Handle(Prs3d_Presentation)& aPrs,
+				   const Standard_Integer aMode);
+  
   // Displaying the field data
-  void drawField( const Handle(Prs3d_Presentation)& thePrs,
-                  const bool theIsText = false,
-                  const bool theIsHighlight = false );
-
+  Standard_EXPORT void drawField( const Handle(Prs3d_Presentation)& thePrs,
+				  const bool theIsText = false,
+				  const bool theIsHighlight = false );
+  
   // Auxiliary method to compute a center of mass for the specified shape
-  static Standard_Boolean computeMassCenter( const TopoDS_Shape& theShape,
-                                             gp_Pnt& theCenter );
-
-  Quantity_Color myShadingColor;
-
-  Quantity_Color myFreeBoundaryColor;
-  Quantity_Color myUnFreeBoundaryColor;
-
-  Quantity_Color myEdgesInShadingColor;
-
-  int            myUIsoNumber;
-  int            myVIsoNumber;
-
+  Standard_EXPORT static Standard_Boolean computeMassCenter( const TopoDS_Shape& theShape,
+							     gp_Pnt& theCenter );
+  
 private: 
+  Quantity_Color           myShadingColor;
+  Quantity_Color           myEdgesInShadingColor;
+
   TCollection_AsciiString  myName;
   bool                     myDisplayVectors;
+  bool                     myDisplayVertices;
   Standard_Boolean         myTopLevel;
   Standard_Integer         myPrevDisplayMode;
 
@@ -207,13 +146,13 @@ private:
   double                   myFieldStepRangeMin;
   double                   myFieldStepRangeMax;
 
-  static TopLevelDispMode myTopLevelDm;
-  static Quantity_Color   myTopLevelColor;
+  static TopLevelDispMode  myTopLevelDm;
+  static Quantity_Color    myTopLevelColor;
+
+public:
+  DEFINE_STANDARD_RTTI(GEOM_AISShape);
 };
 
-
-// other inline functions and methods (like "C++: function call" methods)
-//
-
+DEFINE_STANDARD_HANDLE(GEOM_AISShape, SALOME_AISShape)
 
 #endif

@@ -43,7 +43,7 @@
 #include <SUIT_ViewWindow.h>
 #include <SUIT_ViewManager.h>
 #include <OCCViewer_ViewModel.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 #include <GEOMImpl_Types.hxx>
 

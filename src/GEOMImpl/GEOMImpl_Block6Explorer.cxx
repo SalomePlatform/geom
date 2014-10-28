@@ -1365,7 +1365,6 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
 // VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN
 // the following block, when enabled, leads to extra vertices generation by partition algorithm
 // in some cases, for example when fillet is made on a PipeTShape
-//#if OCC_VERSION_LARGE > 0x06050200
 #if 0
 // VSR: debug issues 0021568 and 0021550 (15/05/2012) - END
   BRep_Builder BB;

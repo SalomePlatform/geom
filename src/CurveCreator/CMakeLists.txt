@@ -57,9 +57,8 @@ IF(SALOME_BUILD_GUI)
   # header files / to be processed by moc
   SET(_moc_HEADERS
     CurveCreator_NewSectionDlg.h
-    CurveCreator_NewPointDlg.h
+    CurveCreator_TableView.h
     CurveCreator_TreeView.h
-#    CurveCreator_UndoOptsDlg.h
     CurveCreator_Widget.h
   )
 ENDIF(SALOME_BUILD_GUI)
@@ -68,13 +67,15 @@ ENDIF(SALOME_BUILD_GUI)
 SET(_other_HEADERS
   CurveCreator.hxx
   CurveCreator_Curve.hxx
-  CurveCreator_CurveEditor.hxx
   CurveCreator_Diff.hxx
+  CurveCreator_Displayer.hxx
   CurveCreator_ICurve.hxx
-  CurveCreator_Listener.hxx
   CurveCreator_Macro.hxx
   CurveCreator_Operation.hxx
+  CurveCreator_PosPoint.hxx
   CurveCreator_Section.hxx
+  CurveCreator_UtilsICurve.hxx
+  CurveCreator_Utils.hxx
 )
 
 # header files / to install
@@ -90,17 +91,17 @@ ENDIF(SALOME_BUILD_GUI)
 # sources / static
 SET(_other_SOURCES
   CurveCreator_Curve.cxx
-  CurveCreator_CurveEditor.cxx
   CurveCreator_Diff.cxx
-  CurveCreator_ICurve.cxx
+  CurveCreator_Displayer.cxx
   CurveCreator_Operation.cxx
+  CurveCreator_Utils.cxx
+  CurveCreator_UtilsICurve.cxx
 )
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _other_SOURCES
-    CurveCreator_NewPointDlg.cxx
     CurveCreator_NewSectionDlg.cxx
+    CurveCreator_TableView.cxx
     CurveCreator_TreeView.cxx
-#    CurveCreator_UndoOptsDlg.cxx
     CurveCreator_Widget.cxx
   )
 ENDIF(SALOME_BUILD_GUI)

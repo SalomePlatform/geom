@@ -39,16 +39,16 @@
 ## by means of \ref geomBuilder.geomBuilder.addToStudy() "addToStudy()"
 ## or \ref geomBuilder.geomBuilder.addToStudyInFather() "addToStudyInFather()"
 ## functions.
-## 
+##
 ## However, it is possible to publish result data in the study
 ## automatically. For this, almost each function of
 ## \ref geomBuilder.geomBuilder "geomBuilder" class has
 ## an additional @a theName parameter (@c None by default).
 ## As soon as non-empty string value is passed to this parameter,
 ## the result object is published in the study automatically.
-## 
+##
 ## For example, consider the following Python script:
-## 
+##
 ## @code
 ## import salome
 ## from salome.geom import geomBuilder
@@ -56,15 +56,15 @@
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100) # box is not published in the study yet
 ## geompy.addToStudy(box, "box")             # explicit publishing
 ## @endcode
-## 
+##
 ## Last two lines can be replaced by one-line instruction:
-## 
+##
 ## @code
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100, theName="box") # box is published in the study with "box" name
 ## @endcode
-## 
+##
 ## ... or simply
-## 
+##
 ## @code
 ## box = geompy.MakeBoxDXDYDZ(100, 100, 100, "box") # box is published in the study with "box" name
 ## @endcode
@@ -102,8 +102,8 @@
 ##   value passed as parameter has the same effect.
 ## - if @a maxNbSubShapes is any positive value, automatic publishing is enabled and
 ##   maximum number of sub-shapes allowed for publishing is set to specified value.
-## 
-## When automatic publishing is enabled, you even do not need to pass @a theName parameter 
+##
+## When automatic publishing is enabled, you even do not need to pass @a theName parameter
 ## to the functions creating objects, instead default names will be used. However, you
 ## can always change the behavior, by passing explicit name to the @a theName parameter
 ## and it will be used instead default one.
@@ -117,7 +117,7 @@
 ## from salome.geom import geomBuilder
 ## geompy = geomBuilder.New(salome.myStudy)
 ## geompy.addToStudyAuto() # enable automatic publication
-## box = geompy.MakeBoxDXDYDZ(100, 100, 100) 
+## box = geompy.MakeBoxDXDYDZ(100, 100, 100)
 ## # the box is created and published in the study with default name
 ## geompy.addToStudyAuto(5) # set max allowed number of sub-shapes to 5
 ## vertices = geompy.SubShapeAll(box, geomBuilder.ShapeType['VERTEX'])
@@ -146,44 +146,44 @@
 ##
 ## It is possible to customize the representation of the geometrical
 ## data in the data tree; this can be done by using folders. A folder can
-## be created in the study tree using function 
-## \ref geomBuilder.geomBuilder.NewFolder() "NewFolder()" 
-## (by default it is created under the "Geometry" root object). 
-## As soon as folder is created, any published geometry object 
+## be created in the study tree using function
+## \ref geomBuilder.geomBuilder.NewFolder() "NewFolder()"
+## (by default it is created under the "Geometry" root object).
+## As soon as folder is created, any published geometry object
 ## can be moved into it.
-##  
+##
 ## For example:
-## 
+##
 ## @code
 ## import salome
 ## from salome.geom import geomBuilder
 ## geompy = geomBuilder.New(salome.myStudy)
-## box = geompy.MakeBoxDXDYDZ(100, 100, 100, "Box") 
+## box = geompy.MakeBoxDXDYDZ(100, 100, 100, "Box")
 ## # the box was created and published in the study
 ## folder = geompy.NewFolder("Primitives")
 ## # an empty "Primitives" folder was created under default "Geometry" root object
 ## geompy.PutToFolder(box, folder)
 ## # the box was moved into "Primitives" folder
 ## @endcode
-## 
+##
 ## Subfolders are also can be created by specifying another folder as a parent:
-## 
+##
 ## @code
 ## subfolder = geompy.NewFolder("3D", folder)
 ## # "3D" folder was created under "Primitives" folder
 ## @endcode
-## 
+##
 ## @note
 ## - Folder container is just a representation layer object that
-## deals with already published objects only. So, any geometry object 
-## should be published in the study (for example, with 
+## deals with already published objects only. So, any geometry object
+## should be published in the study (for example, with
 ## \ref geomBuilder.geomBuilder.PutToFolder() "addToStudy()" function)
 ## BEFORE moving it into any existing folder.
 ## - \ref geomBuilder.geomBuilder.PutToFolder() "PutToFolder()" function
 ## does not change physical position of geometry object in the study tree,
 ## it only affects on the representation of the data tree.
 ## - It is impossible to publish geometry object using any folder as father.
-## 
+##
 ##  \defgroup l1_publish_data
 ##  \defgroup l1_geomBuilder_auxiliary
 ##  \defgroup l1_geomBuilder_purpose
@@ -254,8 +254,9 @@ from salome_notebook import *
 import GEOM
 import math
 import os
+import functools
 
-from salome.geom.gsketcher import Sketcher3D, Sketcher2D
+from salome.geom.gsketcher import Sketcher3D, Sketcher2D, Polyline2D
 
 # service function
 def _toListOfNames(_names, _size=-1):
@@ -269,15 +270,33 @@ def _toListOfNames(_names, _size=-1):
         for i in range(len(l), _size): l.append("%s_%d"%(l[0],i))
     return l
 
+# Decorator function to manage transactions for all geometric operations.
+def ManageTransactions(theOpeName):
+    def MTDecorator(theFunction):
+        # To keep the original function name an documentation.
+        @functools.wraps(theFunction)
+        def OpenCallClose(self, *args, **kwargs):
+            # Open transaction
+            anOperation = getattr(self, theOpeName)
+            anOperation.StartOperation()
+            try:
+                # Call the function
+                res = theFunction(self, *args, **kwargs)
+                # Commit transaction
+                anOperation.FinishOperation()
+                return res
+            except:
+                # Abort transaction
+                anOperation.AbortOperation()
+                raise
+        return OpenCallClose
+    return MTDecorator
+
 ## Raise an Error, containing the Method_name, if Operation is Failed
 ## @ingroup l1_geomBuilder_auxiliary
 def RaiseIfFailed (Method_name, Operation):
     if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
-        Operation.AbortOperation()
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
-    else:
-        Operation.FinishOperation()
-        pass
 
 ## Return list of variables value from salome notebook
 ## @ingroup l1_geomBuilder_auxiliary
@@ -385,7 +404,7 @@ def PackData(data):
 
     Returns:
         data packed to the byte stream
-        
+
     Example of usage:
         val = PackData("10001110") # val = 0xAE
         val = PackData("1")        # val = 0x80
@@ -436,13 +455,13 @@ def ReadTexture(fname):
     texture bitmap itself.
     This function can be used to read the texture to the byte stream in order to pass it to
     the AddTexture() function of geomBuilder class.
-    
+
     Parameters:
         fname texture file name
 
     Returns:
         sequence of tree values: texture's width, height in pixels and its byte stream
-    
+
     Example of usage:
         from salome.geom import geomBuilder
         geompy = geomBuilder.New(salome.myStudy)
@@ -515,6 +534,7 @@ class PluginOperation:
     self.function = function
     pass
 
+  @ManageTransactions("operation")
   def __call__(self, *args):
     res = self.function(self.operation, *args)
     RaiseIfFailed(self.function.__name__, self.operation)
@@ -637,7 +657,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
               self.MeasuOp  = None
               self.BlocksOp = None
               self.GroupOp  = None
-              self.AdvOp    = None
               self.FieldOp  = None
             pass
 
@@ -754,14 +773,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
             self.FieldOp  = self.GetIFieldOperations    (self.myStudyId)
 
-            # The below line is a right way to map all plugin functions to geomBuilder,
-            # but AdvancedOperations are already mapped, that is why this line is commented
-            # and presents here only as an axample
-            #self.AdvOp    = self.GetPluginOperations (self.myStudyId, "AdvancedEngine")
-
-            # self.AdvOp is used by functions MakePipeTShape*, MakeDividedDisk, etc.
-            self.AdvOp = GEOM._objref_GEOM_Gen.GetPluginOperations (self, self.myStudyId, "AdvancedEngine")
-
             # set GEOM as root in the use case tree
             self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
             self.myUseCaseBuilder.SetRootCurrent()
@@ -770,20 +781,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         def GetPluginOperations(self, studyID, libraryName):
             op = GEOM._objref_GEOM_Gen.GetPluginOperations(self, studyID, libraryName)
-            if op:
-                # bind methods of operations to self
-                methods = op.__class__.__dict__['__methods__']
-                avoid_methods = self.BasicOp.__class__.__dict__['__methods__']
-                for meth_name in methods:
-                    if not meth_name in avoid_methods: # avoid basic methods
-                        function = getattr(op.__class__, meth_name)
-                        if callable(function):
-                            #self.__dict__[meth_name] = self.__PluginOperation(op, function)
-                            self.__dict__[meth_name] = PluginOperation(op, function)
             return op
 
         ## Enable / disable results auto-publishing
-        # 
+        #
         #  The automatic publishing is managed in the following way:
         #  - if @a maxNbSubShapes = 0, automatic publishing is disabled.
         #  - if @a maxNbSubShapes = -1 (default), automatic publishing is enabled and
@@ -829,6 +830,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Get name for sub-shape aSubObj of shape aMainObj
         #
         # @ref swig_SubShapeName "Example"
+        @ManageTransactions("ShapesOp")
         def SubShapeName(self,aSubObj, aMainObj):
             """
             Get name for sub-shape aSubObj of shape aMainObj
@@ -934,6 +936,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 genericAttribute = self.myBuilder.FindOrCreateAttribute(aSObject, "AttributeDrawable")
                 drwAttribute = genericAttribute._narrow(SALOMEDS.AttributeDrawable)
                 drwAttribute.SetDrawable(False)
+                # hide references if any
+                vso = self.myStudy.FindDependances(aSObject);
+                for refObj in vso :
+                    genericAttribute = self.myBuilder.FindOrCreateAttribute(refObj, "AttributeDrawable")
+                    drwAttribute = genericAttribute._narrow(SALOMEDS.AttributeDrawable)
+                    drwAttribute.SetDrawable(False)
+                    pass
                 pass
 
         # end of l1_geomBuilder_auxiliary
@@ -1038,7 +1047,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theAddPrefix add prefix "from_" to names of restored sub-shapes,
                              and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
 
-            Returns: 
+            Returns:
                 list of published sub-shapes
             """
             # Example: see GEOM_TestAll.py
@@ -1062,6 +1071,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
+        @ManageTransactions("BasicOp")
         def MakeVertex(self, theX, theY, theZ, theName=None):
             """
             Create point by three coordinates.
@@ -1073,8 +1083,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
-                
-            Returns: 
+
+            Returns:
                 New GEOM.GEOM_Object, containing the created point.
             """
             # Example: see GEOM_TestAll.py
@@ -1098,6 +1108,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
+        @ManageTransactions("BasicOp")
         def MakeVertexWithRef(self, theReference, theX, theY, theZ, theName=None):
             """
             Create a point, distant from the referenced point
@@ -1133,6 +1144,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
+        @ManageTransactions("BasicOp")
         def MakeVertexOnCurve(self, theRefCurve, theParameter, theName=None):
             """
             Create a point, corresponding to the given parameter on the given curve.
@@ -1170,10 +1182,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
+        @ManageTransactions("BasicOp")
         def MakeVertexOnCurveByCoord(self, theRefCurve, theX, theY, theZ, theName=None):
             """
             Create a point by projection give coordinates on the given curve
-            
+
             Parameters:
                 theRefCurve The referenced curve.
                 theX X-coordinate in 3D space
@@ -1209,6 +1222,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
+        @ManageTransactions("BasicOp")
         def MakeVertexOnCurveByLength(self, theRefCurve, theLength, theStartPoint = None, theName=None):
             """
             Create a point, corresponding to the given length on the given curve.
@@ -1245,6 +1259,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref swig_MakeVertexOnSurface "Example"
+        @ManageTransactions("BasicOp")
         def MakeVertexOnSurface(self, theRefSurf, theUParameter, theVParameter, theName=None):
             """
             Create a point, corresponding to the given parameters on the
@@ -1284,6 +1299,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref swig_MakeVertexOnSurfaceByCoord "Example"
+        @ManageTransactions("BasicOp")
         def MakeVertexOnSurfaceByCoord(self, theRefSurf, theX, theY, theZ, theName=None):
             """
             Create a point by projection give coordinates on the given surface
@@ -1324,6 +1340,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref swig_MakeVertexInsideFace "Example"
+        @ManageTransactions("BasicOp")
         def MakeVertexInsideFace (self, theFace, theName=None):
             """
             Create a point, which lays on the given face.
@@ -1359,6 +1376,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref swig_MakeVertexOnLinesIntersection "Example"
+        @ManageTransactions("BasicOp")
         def MakeVertexOnLinesIntersection(self, theRefLine1, theRefLine2, theName=None):
             """
             Create a point on intersection of two lines.
@@ -1388,6 +1406,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created tangent.
         #
         #  @ref swig_MakeTangentOnCurve "Example"
+        @ManageTransactions("BasicOp")
         def MakeTangentOnCurve(self, theRefCurve, theParameter, theName=None):
             """
             Create a tangent, corresponding to the given parameter on the given curve.
@@ -1422,6 +1441,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created tangent.
         #
         #  @ref swig_MakeTangentPlaneOnFace "Example"
+        @ManageTransactions("BasicOp")
         def MakeTangentPlaneOnFace(self, theFace, theParameterU, theParameterV, theTrimSize, theName=None):
             """
             Create a tangent plane, corresponding to the given parameter on the given face.
@@ -1435,7 +1455,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-           Returns: 
+           Returns:
                 New GEOM.GEOM_Object, containing the created tangent.
 
            Example of usage:
@@ -1457,6 +1477,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created vector.
         #
         #  @ref tui_creation_vector "Example"
+        @ManageTransactions("BasicOp")
         def MakeVectorDXDYDZ(self, theDX, theDY, theDZ, theName=None):
             """
             Create a vector with the given components.
@@ -1469,7 +1490,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:     
+            Returns:
                 New GEOM.GEOM_Object, containing the created vector.
             """
             # Example: see GEOM_TestAll.py
@@ -1490,6 +1511,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created vector.
         #
         #  @ref tui_creation_vector "Example"
+        @ManageTransactions("BasicOp")
         def MakeVector(self, thePnt1, thePnt2, theName=None):
             """
             Create a vector between two points.
@@ -1501,7 +1523,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:        
+            Returns:
                 New GEOM.GEOM_Object, containing the created vector.
             """
             # Example: see GEOM_TestAll.py
@@ -1521,6 +1543,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created line.
         #
         #  @ref tui_creation_line "Example"
+        @ManageTransactions("BasicOp")
         def MakeLine(self, thePnt, theDir, theName=None):
             """
             Create a line, passing through the given point
@@ -1552,6 +1575,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created line.
         #
         #  @ref tui_creation_line "Example"
+        @ManageTransactions("BasicOp")
         def MakeLineTwoPnt(self, thePnt1, thePnt2, theName=None):
             """
             Create a line, passing through the given points
@@ -1582,6 +1606,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created line.
         #
         #  @ref swig_MakeLineTwoFaces "Example"
+        @ManageTransactions("BasicOp")
         def MakeLineTwoFaces(self, theFace1, theFace2, theName=None):
             """
             Create a line on two faces intersection.
@@ -1614,6 +1639,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
+        @ManageTransactions("BasicOp")
         def MakePlane(self, thePnt, theVec, theTrimSize, theName=None):
             """
             Create a plane, passing through the given point
@@ -1627,7 +1653,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created plane.
             """
             # Example: see GEOM_TestAll.py
@@ -1650,6 +1676,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
+        @ManageTransactions("BasicOp")
         def MakePlaneThreePnt(self, thePnt1, thePnt2, thePnt3, theTrimSize, theName=None):
             """
             Create a plane, passing through the three given points
@@ -1684,6 +1711,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
+        @ManageTransactions("BasicOp")
         def MakePlaneFace(self, theFace, theTrimSize, theName=None):
             """
             Create a plane, similar to the existing one, but with another size of representing face.
@@ -1718,6 +1746,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
+        @ManageTransactions("BasicOp")
         def MakePlane2Vec(self, theVec1, theVec2, theTrimSize, theName=None):
             """
             Create a plane, passing through the 2 vectors
@@ -1731,7 +1760,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created plane.
             """
             # Example: see GEOM_TestAll.py
@@ -1753,11 +1782,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
+        @ManageTransactions("BasicOp")
         def MakePlaneLCS(self, theLCS, theTrimSize, theOrientation, theName=None):
             """
             Create a plane, based on a Local coordinate system.
 
-           Parameters: 
+           Parameters:
                 theLCS  coordinate system, defining plane.
                 theTrimSize Half size of a side of quadrangle face, representing the plane.
                 theOrientation OXY, OYZ or OZX orientation - (1, 2 or 3)
@@ -1765,7 +1795,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created plane.
             """
             # Example: see GEOM_TestAll.py
@@ -1787,11 +1817,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created coordinate system.
         #
         #  @ref swig_MakeMarker "Example"
+        @ManageTransactions("BasicOp")
         def MakeMarker(self, OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ, theName=None):
             """
             Create a local coordinate system.
 
-            Parameters: 
+            Parameters:
                 OX,OY,OZ Three coordinates of coordinate system origin.
                 XDX,XDY,XDZ Three components of OX direction
                 YDX,YDY,YDZ Three components of OY direction
@@ -1799,7 +1830,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created coordinate system.
             """
             # Example: see GEOM_TestAll.py
@@ -1819,6 +1850,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created coordinate system.
         #
         #  @ref tui_creation_lcs "Example"
+        @ManageTransactions("BasicOp")
         def MakeMarkerFromShape(self, theShape, theName=None):
             """
             Create a local coordinate system from shape.
@@ -1828,8 +1860,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
-                
-            Returns: 
+
+            Returns:
                 New GEOM.GEOM_Object, containing the created coordinate system.
             """
             anObj = self.BasicOp.MakeMarkerFromShape(theShape)
@@ -1848,6 +1880,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created coordinate system.
         #
         #  @ref tui_creation_lcs "Example"
+        @ManageTransactions("BasicOp")
         def MakeMarkerPntTwoVec(self, theOrigin, theXVec, theYVec, theName=None):
             """
             Create a local coordinate system from point and two vectors.
@@ -1860,7 +1893,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created coordinate system.
 
             """
@@ -1886,6 +1919,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created arc.
         #
         #  @ref swig_MakeArc "Example"
+        @ManageTransactions("CurvesOp")
         def MakeArc(self, thePnt1, thePnt2, thePnt3, theName=None):
             """
             Create an arc of circle, passing through three given points.
@@ -1898,7 +1932,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created arc.
             """
             # Example: see GEOM_TestAll.py
@@ -1919,6 +1953,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created arc.
         #
         #  @ref swig_MakeArc "Example"
+        @ManageTransactions("CurvesOp")
         def MakeArcCenter(self, thePnt1, thePnt2, thePnt3, theSense=False, theName=None):
             """
             Create an arc of circle from a center and 2 points.
@@ -1952,6 +1987,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created arc.
         #
         #  @ref swig_MakeArc "Example"
+        @ManageTransactions("CurvesOp")
         def MakeArcOfEllipse(self, theCenter, thePnt1, thePnt2, theName=None):
             """
             Create an arc of ellipse, of center and two points.
@@ -1984,6 +2020,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created circle.
         #
         #  @ref tui_creation_circle "Example"
+        @ManageTransactions("CurvesOp")
         def MakeCircle(self, thePnt, theVec, theR, theName=None):
             """
             Create a circle with given center, normal vector and radius.
@@ -2016,6 +2053,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing the created circle.
+        @ManageTransactions("CurvesOp")
         def MakeCircleR(self, theR, theName=None):
             """
             Create a circle with given radius.
@@ -2045,6 +2083,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created circle.
         #
         #  @ref tui_creation_circle "Example"
+        @ManageTransactions("CurvesOp")
         def MakeCircleThreePnt(self, thePnt1, thePnt2, thePnt3, theName=None):
             """
             Create a circle, passing through three given points
@@ -2075,6 +2114,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created circle.
         #
         #  @ref swig_MakeCircle "Example"
+        @ManageTransactions("CurvesOp")
         def MakeCircleCenter2Pnt(self, thePnt1, thePnt2, thePnt3, theName=None):
             """
             Create a circle, with given point1 as center,
@@ -2109,6 +2149,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created ellipse.
         #
         #  @ref tui_creation_ellipse "Example"
+        @ManageTransactions("CurvesOp")
         def MakeEllipse(self, thePnt, theVec, theRMajor, theRMinor, theVecMaj=None, theName=None):
             """
             Create an ellipse with given center, normal vector and radiuses.
@@ -2123,7 +2164,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created ellipse.
             """
             # Example: see GEOM_TestAll.py
@@ -2148,6 +2189,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing the created ellipse.
+        @ManageTransactions("CurvesOp")
         def MakeEllipseRR(self, theRMajor, theRMinor, theName=None):
             """
             Create an ellipse with given radiuses.
@@ -2179,6 +2221,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created polyline.
         #
         #  @ref tui_creation_curve "Example"
+        @ManageTransactions("CurvesOp")
         def MakePolyline(self, thePoints, theIsClosed=False, theName=None):
             """
             Create a polyline on the set of points.
@@ -2209,6 +2252,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created bezier curve.
         #
         #  @ref tui_creation_curve "Example"
+        @ManageTransactions("CurvesOp")
         def MakeBezier(self, thePoints, theIsClosed=False, theName=None):
             """
             Create bezier curve on the set of points.
@@ -2241,6 +2285,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created B-Spline curve.
         #
         #  @ref tui_creation_curve "Example"
+        @ManageTransactions("CurvesOp")
         def MakeInterpol(self, thePoints, theIsClosed=False, theDoReordering=False, theName=None):
             """
             Create B-Spline curve on the set of points.
@@ -2254,7 +2299,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:                     
+            Returns:
                 New GEOM.GEOM_Object, containing the created B-Spline curve.
             """
             # Example: see GEOM_TestAll.py
@@ -2274,6 +2319,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created B-Spline curve.
         #
         #  @ref tui_creation_curve "Example"
+        @ManageTransactions("CurvesOp")
         def MakeInterpolWithTangents(self, thePoints, theFirstVec, theLastVec, theName=None):
             """
             Create B-Spline curve on the set of points.
@@ -2286,7 +2332,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:                     
+            Returns:
                 New GEOM.GEOM_Object, containing the created B-Spline curve.
             """
             # Example: see GEOM_TestAll.py
@@ -2312,6 +2358,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created curve.
         #
         #  @ref tui_creation_curve "Example"
+        @ManageTransactions("CurvesOp")
         def MakeCurveParametric(self, thexExpr, theyExpr, thezExpr,
                                 theParamMin, theParamMax, theParamStep, theCurveType, theNewMethod=False, theName=None ):
             """
@@ -2339,7 +2386,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if theNewMethod:
               anObj = self.CurvesOp.MakeCurveParametricNew(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
             else:
-              anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)   
+              anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "curve")
@@ -2359,6 +2406,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          a compound of edges.
         #
         #  @ref tui_creation_curve "Example"
+        @ManageTransactions("CurvesOp")
         def MakeIsoline(self, theFace, IsUIsoline, theParameter, theName=None):
             """
             Create an isoline curve on a face.
@@ -2447,6 +2495,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
         #  @ref tui_sketcher_page "Example"
+        @ManageTransactions("CurvesOp")
         def MakeSketcher(self, theCommand, theWorkingPlane = [0,0,0, 0,0,1, 1,0,0], theName=None):
             """
             Create a sketcher (wire or face), following the textual description, passed
@@ -2459,7 +2508,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             - CMD is one of
                - "R angle" : Set the direction by angle
                - "D dx dy" : Set the direction by DX & DY
-               
+
                - "TT x y" : Create segment by point at X & Y
                - "T dx dy" : Create segment by point with DX & DY
                - "L length" : Create segment by direction & Length
@@ -2476,11 +2525,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
                - "WW" : Close Wire (to finish)
                - "WF" : Close Wire and build face (to finish)
-            
+
             - Flag1 (= reverse) is 0 or 2 ...
                - if 0 the drawn arc is the one of lower angle (< Pi)
                - if 2 the drawn arc ius the one of greater angle (> Pi)
-        
+
             - Flag2 (= control tolerance) is 0 or 1 ...
                - if 0 the specified end point can be at a distance of the arc greater than the tolerance (10^-7)
                - if 1 the wire is built only if the end point is on the arc
@@ -2519,6 +2568,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
         #  @ref tui_sketcher_page "Example"
+        @ManageTransactions("CurvesOp")
         def MakeSketcherOnPlane(self, theCommand, theWorkingPlane, theName=None):
             """
             Create a sketcher (wire or face), following the textual description,
@@ -2544,7 +2594,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Obtain a 2D sketcher interface
-        #  @return An instance of @ref gsketcher.Sketcher2D "Sketcher2D" interface      
+        #  @return An instance of @ref gsketcher.Sketcher2D "Sketcher2D" interface
         def Sketcher2D (self):
             """
             Obtain a 2D sketcher interface.
@@ -2562,7 +2612,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             sk = Sketcher2D (self)
             return sk
-        
+
         ## Create a sketcher wire, following the numerical description,
         #  passed through <VAR>theCoordinates</VAR> argument. \n
         #  @param theCoordinates double values, defining points to create a wire,
@@ -2574,6 +2624,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
         #  @ref tui_3dsketcher_page "Example"
+        @ManageTransactions("CurvesOp")
         def Make3DSketcher(self, theCoordinates, theName=None):
             """
             Create a sketcher wire, following the numerical description,
@@ -2616,6 +2667,25 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             sk = Sketcher3D (self)
             return sk
 
+        ## Obtain a 2D polyline creation interface
+        #  @return An instance of @ref gsketcher.Polyline2D "Polyline2D" interface
+        #
+        #  @ref tui_3dsketcher_page "Example"
+        def Polyline2D (self):
+            """
+            Obtain a 2D polyline creation interface.
+
+            Example of usage:
+                pl = geompy.Polyline2D()
+                pl.addSection("section 1", GEOM.Polyline, True)
+                pl.addPoints(0, 0, 10, 0, 10, 10)
+                pl.addSection("section 2", GEOM.Interpolation, False)
+                pl.addPoints(20, 0, 30, 0, 30, 10)
+                resultObj = pl.result(WorkingPlane)
+            """
+            pl = Polyline2D (self)
+            return pl
+
         # end of l3_sketcher
         ## @}
 
@@ -2636,14 +2706,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def MakeBox(self, x1, y1, z1, x2, y2, z2, theName=None):
             """
             Create a box by coordinates of two opposite vertices.
-            
+
             Parameters:
                 x1,y1,z1 double values, defining first point.
                 x2,y2,z2 double values, defining second point.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
-                
+
             Returns:
                 New GEOM.GEOM_Object, containing the created box.
             """
@@ -2666,6 +2736,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created box.
         #
         #  @ref tui_creation_box "Example"
+        @ManageTransactions("PrimOp")
         def MakeBoxDXDYDZ(self, theDX, theDY, theDZ, theName=None):
             """
             Create a box with specified dimensions along the coordinate axes
@@ -2680,7 +2751,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the created box.
             """
             # Example: see GEOM_TestAll.py
@@ -2702,6 +2773,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created box.
         #
         #  @ref tui_creation_box "Example"
+        @ManageTransactions("PrimOp")
         def MakeBoxTwoPnt(self, thePnt1, thePnt2, theName=None):
             """
             Create a box with two specified opposite vertices,
@@ -2734,6 +2806,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
+        @ManageTransactions("PrimOp")
         def MakeFaceHW(self, theH, theW, theOrientation, theName=None):
             """
             Create a face with specified dimensions with edges parallel to coordinate axes.
@@ -2770,6 +2843,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
+        @ManageTransactions("PrimOp")
         def MakeFaceObjHW(self, theObj, theH, theW, theName=None):
             """
             Create a face from another plane and two sizes,
@@ -2806,6 +2880,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created disk.
         #
         #  @ref tui_creation_disk "Example"
+        @ManageTransactions("PrimOp")
         def MakeDiskPntVecR(self, thePnt, theVec, theR, theName=None):
             """
             Create a disk with given center, normal vector and radius.
@@ -2818,7 +2893,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created disk.
             """
             # Example: see GEOM_TestAll.py
@@ -2838,6 +2913,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created disk.
         #
         #  @ref tui_creation_disk "Example"
+        @ManageTransactions("PrimOp")
         def MakeDiskThreePnt(self, thePnt1, thePnt2, thePnt3, theName=None):
             """
             Create a disk, passing through three given points
@@ -2848,7 +2924,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created disk.
             """
             # Example: see GEOM_TestAll.py
@@ -2867,6 +2943,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created disk.
         #
         #  @ref tui_creation_face "Example"
+        @ManageTransactions("PrimOp")
         def MakeDiskR(self, theR, theOrientation, theName=None):
             """
             Create a disk with specified dimensions along OX-OY coordinate axes.
@@ -2878,7 +2955,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created disk.
 
             Example of usage:
@@ -2904,6 +2981,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created cylinder.
         #
         #  @ref tui_creation_cylinder "Example"
+        @ManageTransactions("PrimOp")
         def MakeCylinder(self, thePnt, theAxis, theR, theH, theName=None):
             """
             Create a cylinder with given base point, axis, radius and height.
@@ -2917,13 +2995,57 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created cylinder.
             """
             # Example: see GEOM_TestAll.py
             theR,theH,Parameters = ParseParameters(theR, theH)
             anObj = self.PrimOp.MakeCylinderPntVecRH(thePnt, theAxis, theR, theH)
             RaiseIfFailed("MakeCylinderPntVecRH", self.PrimOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "cylinder")
+            return anObj
+            
+        ## Create a portion of cylinder with given base point, axis, radius, height and angle.
+        #  @param thePnt Central point of cylinder base.
+        #  @param theAxis Cylinder axis.
+        #  @param theR Cylinder radius.
+        #  @param theH Cylinder height.
+        #  @param theA Cylinder angle in radians.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created cylinder.
+        #
+        #  @ref tui_creation_cylinder "Example"
+        @ManageTransactions("PrimOp")
+        def MakeCylinderA(self, thePnt, theAxis, theR, theH, theA, theName=None):
+            """
+            Create a a portion of cylinder with given base point, axis, radius, height and angle.
+
+            Parameters:
+                thePnt Central point of cylinder base.
+                theAxis Cylinder axis.
+                theR Cylinder radius.
+                theH Cylinder height.
+                theA Cylinder angle in radians.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created cylinder.
+            """
+            # Example: see GEOM_TestAll.py
+            flag = False
+            if isinstance(theA,str):
+                flag = True
+            theR,theH,theA,Parameters = ParseParameters(theR, theH, theA)
+	    if flag:
+                theA = theA*math.pi/180.
+            anObj = self.PrimOp.MakeCylinderPntVecRHA(thePnt, theAxis, theR, theH, theA)
+            RaiseIfFailed("MakeCylinderPntVecRHA", self.PrimOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "cylinder")
             return anObj
@@ -2940,6 +3062,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created cylinder.
         #
         #  @ref tui_creation_cylinder "Example"
+        @ManageTransactions("PrimOp")
         def MakeCylinderRH(self, theR, theH, theName=None):
             """
             Create a cylinder with given radius and height at
@@ -2953,13 +3076,57 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created cylinder.
             """
             # Example: see GEOM_TestAll.py
             theR,theH,Parameters = ParseParameters(theR, theH)
             anObj = self.PrimOp.MakeCylinderRH(theR, theH)
             RaiseIfFailed("MakeCylinderRH", self.PrimOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "cylinder")
+            return anObj
+            
+        ## Create a portion of cylinder with given radius, height and angle at
+        #  the origin of coordinate system. Axis of the cylinder
+        #  will be collinear to the OZ axis of the coordinate system.
+        #  @param theR Cylinder radius.
+        #  @param theH Cylinder height.
+        #  @param theA Cylinder angle in radians.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created cylinder.
+        #
+        #  @ref tui_creation_cylinder "Example"
+        @ManageTransactions("PrimOp")
+        def MakeCylinderRHA(self, theR, theH, theA, theName=None):
+            """
+            Create a portion of cylinder with given radius, height and angle at
+            the origin of coordinate system. Axis of the cylinder
+            will be collinear to the OZ axis of the coordinate system.
+
+            Parameters:
+                theR Cylinder radius.
+                theH Cylinder height.
+                theA Cylinder angle in radians.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created cylinder.
+            """
+            # Example: see GEOM_TestAll.py
+            flag = False
+            if isinstance(theA,str):
+                flag = True
+            theR,theH,theA,Parameters = ParseParameters(theR, theH, theA)
+            if flag:
+                theA = theA*math.pi/180.
+            anObj = self.PrimOp.MakeCylinderRHA(theR, theH, theA)
+            RaiseIfFailed("MakeCylinderRHA", self.PrimOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "cylinder")
             return anObj
@@ -2974,6 +3141,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created sphere.
         #
         #  @ref tui_creation_sphere "Example"
+        @ManageTransactions("PrimOp")
         def MakeSpherePntR(self, thePnt, theR, theName=None):
             """
             Create a sphere with given center and radius.
@@ -2985,8 +3153,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
-                New GEOM.GEOM_Object, containing the created sphere.            
+            Returns:
+                New GEOM.GEOM_Object, containing the created sphere.
             """
             # Example: see GEOM_TestAll.py
             theR,Parameters = ParseParameters(theR)
@@ -3010,7 +3178,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Create a sphere with given center and radius.
 
-            Parameters: 
+            Parameters:
                 x,y,z Coordinates of sphere center.
                 theR Sphere radius.
                 theName Object name; when specified, this parameter is used
@@ -3035,18 +3203,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created sphere.
         #
         #  @ref tui_creation_sphere "Example"
+        @ManageTransactions("PrimOp")
         def MakeSphereR(self, theR, theName=None):
             """
             Create a sphere with given radius at the origin of coordinate system.
 
-            Parameters: 
+            Parameters:
                 theR Sphere radius.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created sphere.            
+                New GEOM.GEOM_Object, containing the created sphere.
             """
             # Example: see GEOM_TestAll.py
             theR,Parameters = ParseParameters(theR)
@@ -3071,11 +3240,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created cone.
         #
         #  @ref tui_creation_cone "Example"
+        @ManageTransactions("PrimOp")
         def MakeCone(self, thePnt, theAxis, theR1, theR2, theH, theName=None):
             """
             Create a cone with given base point, axis, height and radiuses.
 
-            Parameters: 
+            Parameters:
                 thePnt Central point of the first cone base.
                 theAxis Cone axis.
                 theR1 Radius of the first cone base.
@@ -3115,13 +3285,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created cone.
         #
         #  @ref tui_creation_cone "Example"
+        @ManageTransactions("PrimOp")
         def MakeConeR1R2H(self, theR1, theR2, theH, theName=None):
             """
             Create a cone with given height and radiuses at
             the origin of coordinate system. Axis of the cone will
             be collinear to the OZ axis of the coordinate system.
 
-            Parameters: 
+            Parameters:
                 theR1 Radius of the first cone base.
                 theR2 Radius of the second cone base.
                 theH Cone height.
@@ -3156,11 +3327,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created torus.
         #
         #  @ref tui_creation_torus "Example"
+        @ManageTransactions("PrimOp")
         def MakeTorus(self, thePnt, theVec, theRMajor, theRMinor, theName=None):
             """
             Create a torus with given center, normal vector and radiuses.
 
-            Parameters: 
+            Parameters:
                 thePnt Torus central point.
                 theVec Torus axis of symmetry.
                 theRMajor Torus major radius.
@@ -3190,11 +3362,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created torus.
         #
         #  @ref tui_creation_torus "Example"
+        @ManageTransactions("PrimOp")
         def MakeTorusRR(self, theRMajor, theRMinor, theName=None):
             """
            Create a torus with given radiuses at the origin of coordinate system.
 
-           Parameters: 
+           Parameters:
                 theRMajor Torus major radius.
                 theRMinor Torus minor radius.
                 theName Object name; when specified, this parameter is used
@@ -3202,7 +3375,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
            Returns:
-                New GEOM.GEOM_Object, containing the created torus.            
+                New GEOM.GEOM_Object, containing the created torus.
             """
             # Example: see GEOM_TestAll.py
             theRMajor,theRMinor,Parameters = ParseParameters(theRMajor,theRMinor)
@@ -3231,11 +3404,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
+        @ManageTransactions("PrimOp")
         def MakePrism(self, theBase, thePoint1, thePoint2, theScaleFactor = -1.0, theName=None):
             """
             Create a shape by extrusion of the base shape along a vector, defined by two points.
 
-            Parameters: 
+            Parameters:
                 theBase Base shape to be extruded.
                 thePoint1 First end of extrusion vector.
                 thePoint2 Second end of extrusion vector.
@@ -3273,12 +3447,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
+        @ManageTransactions("PrimOp")
         def MakePrism2Ways(self, theBase, thePoint1, thePoint2, theName=None):
             """
             Create a shape by extrusion of the base shape along a
             vector, defined by two points, in 2 Ways (forward/backward).
 
-            Parameters: 
+            Parameters:
                 theBase Base shape to be extruded.
                 thePoint1 First end of extrusion vector.
                 thePoint2 Second end of extrusion vector.
@@ -3310,13 +3485,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
+        @ManageTransactions("PrimOp")
         def MakePrismVecH(self, theBase, theVec, theH, theScaleFactor = -1.0, theName=None):
             """
             Create a shape by extrusion of the base shape along the vector,
             i.e. all the space, transfixed by the base shape during its translation
             along the vector on the given distance.
 
-            Parameters: 
+            Parameters:
                 theBase Base shape to be extruded.
                 theVec Direction of extrusion.
                 theH Prism dimension along theVec.
@@ -3356,6 +3532,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
+        @ManageTransactions("PrimOp")
         def MakePrismVecH2Ways(self, theBase, theVec, theH, theName=None):
             """
             Create a shape by extrusion of the base shape along the vector,
@@ -3393,6 +3570,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
+        @ManageTransactions("PrimOp")
         def MakePrismDXDYDZ(self, theBase, theDX, theDY, theDZ, theScaleFactor = -1.0, theName=None):
             """
             Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -3406,7 +3584,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created prism.
             """
             # Example: see GEOM_TestAll.py
@@ -3435,6 +3613,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
+        @ManageTransactions("PrimOp")
         def MakePrismDXDYDZ2Ways(self, theBase, theDX, theDY, theDZ, theName=None):
             """
             Create a shape by extrusion of the base shape along the dx, dy, dz direction
@@ -3472,6 +3651,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created revolution.
         #
         #  @ref tui_creation_revolution "Example"
+        @ManageTransactions("PrimOp")
         def MakeRevolution(self, theBase, theAxis, theAngle, theName=None):
             """
             Create a shape by revolution of the base shape around the axis
@@ -3486,7 +3666,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created revolution.
             """
             # Example: see GEOM_TestAll.py
@@ -3511,6 +3691,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created revolution.
         #
         #  @ref tui_creation_revolution "Example"
+        @ManageTransactions("PrimOp")
         def MakeRevolution2Ways(self, theBase, theAxis, theAngle, theName=None):
             """
             Create a shape by revolution of the base shape around the axis
@@ -3526,7 +3707,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created revolution.
             """
             theAngle,Parameters = ParseParameters(theAngle)
@@ -3556,6 +3737,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
+        @ManageTransactions("PrimOp")
         def MakeFilling(self, theShape, theMinDeg=2, theMaxDeg=5, theTol2D=0.0001,
                         theTol3D=0.0001, theNbIter=0, theMethod=GEOM.FOM_Default, isApprox=0, theName=None):
             """
@@ -3578,7 +3760,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created filling surface.
 
             Example of usage:
@@ -3608,6 +3790,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
+        @ManageTransactions("PrimOp")
         def MakeFillingNew(self, theShape, theMinDeg=2, theMaxDeg=5, theTol3D=0.0001, theName=None):
             """
             Create a filling from the given compound of contours.
@@ -3622,7 +3805,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created filling surface.
 
             Example of usage:
@@ -3649,6 +3832,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created shell or solid.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("PrimOp")
         def MakeThruSections(self, theSeqSections, theModeSolid, thePreci, theRuled, theName=None):
             """
             Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
@@ -3682,6 +3866,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created pipe.
         #
         #  @ref tui_creation_pipe "Example"
+        @ManageTransactions("PrimOp")
         def MakePipe(self, theBase, thePath, theName=None):
             """
             Create a shape by extrusion of the base shape along
@@ -3722,6 +3907,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created pipe.
         #
         #  @ref tui_creation_pipe_with_diff_sec "Example"
+        @ManageTransactions("PrimOp")
         def MakePipeWithDifferentSections(self, theSeqBases,
                                           theLocations, thePath,
                                           theWithContact, theWithCorrection, theName=None):
@@ -3782,6 +3968,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created solids.
         #
         #  @ref tui_creation_pipe_with_shell_sec "Example"
+        @ManageTransactions("PrimOp")
         def MakePipeWithShellSections(self, theSeqBases, theSeqSubBases,
                                       theLocations, thePath,
                                       theWithContact, theWithCorrection, theName=None):
@@ -3813,7 +4000,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:                           
+            Returns:
                 New GEOM.GEOM_Object, containing the created solids.
             """
             anObj = self.PrimOp.MakePipeWithShellSections(theSeqBases, theSeqSubBases,
@@ -3828,6 +4015,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  functionality - it is a version of function MakePipeWithShellSections()
         #  which give a possibility to recieve information about
         #  creating pipe between each pair of sections step by step.
+        @ManageTransactions("PrimOp")
         def MakePipeWithShellSectionsBySteps(self, theSeqBases, theSeqSubBases,
                                              theLocations, thePath,
                                              theWithContact, theWithCorrection, theName=None):
@@ -3878,6 +4066,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created solids.
         #
         #  @ref tui_creation_pipe_without_path "Example"
+        @ManageTransactions("PrimOp")
         def MakePipeShellsWithoutPath(self, theSeqBases, theLocations, theName=None):
             """
             Create solids between given sections
@@ -3912,6 +4101,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created pipe.
         #
         #  @ref tui_creation_pipe "Example"
+        @ManageTransactions("PrimOp")
         def MakePipeBiNormalAlongVector(self, theBase, thePath, theVec, theName=None):
             """
             Create a shape by extrusion of the base shape along
@@ -3928,7 +4118,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:              
+            Returns:
                 New GEOM.GEOM_Object, containing the created pipe.
             """
             # Example: see GEOM_TestAll.py
@@ -3936,7 +4126,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePipeBiNormalAlongVector", self.PrimOp)
             self._autoPublish(anObj, theName, "pipe")
             return anObj
-              
+
         ## Makes a thick solid from a face or a shell
         #  @param theShape Face or Shell to be thicken
         #  @param theThickness Thickness of the resulting solid
@@ -3946,6 +4136,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM.GEOM_Object, containing the created solid
         #
+        @ManageTransactions("PrimOp")
         def MakeThickSolid(self, theShape, theThickness, theName=None):
             """
             Make a thick solid from a face or a shell
@@ -3956,7 +4147,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                  theName Object name; when specified, this parameter is used
                  for result publication in the study. Otherwise, if automatic
                  publication is switched on, default value is used for result name.
-                 
+
             Returns:
                 New GEOM.GEOM_Object, containing the created solid
             """
@@ -3965,7 +4156,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeThickening", self.PrimOp)
             self._autoPublish(anObj, theName, "pipe")
             return anObj
-            
+
 
         ## Modifies a face or a shell to make it a thick solid
         #  @param theShape Face or Shell to be thicken
@@ -3973,6 +4164,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @return The modified shape
         #
+        @ManageTransactions("PrimOp")
         def Thicken(self, theShape, theThickness):
             """
             Modifies a face or a shell to make it a thick solid
@@ -4013,6 +4205,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                                source pipe's "path".
         #
         #  @ref tui_creation_pipe_path "Example"
+        @ManageTransactions("PrimOp")
         def RestorePath (self, theShape, theBase1, theBase2, theName=None):
             """
             Build a middle path of a pipe-like shape.
@@ -4057,6 +4250,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                                source pipe's "path".
         #
         #  @ref tui_creation_pipe_path "Example"
+        @ManageTransactions("PrimOp")
         def RestorePathEdges (self, theShape, listEdges1, listEdges2, theName=None):
             """
             Build a middle path of a pipe-like shape.
@@ -4096,6 +4290,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created edge.
         #
         #  @ref tui_creation_edge "Example"
+        @ManageTransactions("ShapesOp")
         def MakeEdge(self, thePnt1, thePnt2, theName=None):
             """
             Create a linear edge with specified ends.
@@ -4107,7 +4302,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:           
+            Returns:
                 New GEOM.GEOM_Object, containing the created edge.
             """
             # Example: see GEOM_TestAll.py
@@ -4129,6 +4324,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created edge.
         #
         #  @ref tui_creation_edge "Example"
+        @ManageTransactions("ShapesOp")
         def MakeEdgeOnCurveByLength(self, theRefCurve, theLength, theStartPoint = None, theName=None):
             """
             Create a new edge, corresponding to the given length on the given curve.
@@ -4143,7 +4339,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:              
+            Returns:
                 New GEOM.GEOM_Object, containing the created edge.
             """
             # Example: see GEOM_TestAll.py
@@ -4165,6 +4361,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created edge.
         #
         #  @ref tui_creation_edge "Example"
+        @ManageTransactions("ShapesOp")
         def MakeEdgeWire(self, theWire, theLinearTolerance = 1e-07, theAngularTolerance = 1e-12, theName=None):
             """
             Create an edge from specified wire.
@@ -4197,6 +4394,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created wire.
         #
         #  @ref tui_creation_wire "Example"
+        @ManageTransactions("ShapesOp")
         def MakeWire(self, theEdgesAndWires, theTolerance = 1e-07, theName=None):
             """
             Create a wire from the set of edges and wires.
@@ -4209,7 +4407,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:                    
+            Returns:
                 New GEOM.GEOM_Object, containing the created wire.
             """
             # Example: see GEOM_TestAll.py
@@ -4232,6 +4430,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
+        @ManageTransactions("ShapesOp")
         def MakeFace(self, theWire, isPlanarWanted, theName=None):
             """
             Create a face on the given wire.
@@ -4273,6 +4472,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
+        @ManageTransactions("ShapesOp")
         def MakeFaceWires(self, theWires, isPlanarWanted, theName=None):
             """
             Create a face on the given wires set.
@@ -4288,7 +4488,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created face.
             """
             # Example: see GEOM_TestAll.py
@@ -4322,6 +4522,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created shell.
         #
         #  @ref tui_creation_shell "Example"
+        @ManageTransactions("ShapesOp")
         def MakeShell(self, theFacesAndShells, theName=None):
             """
             Create a shell from the set of faces and shells.
@@ -4350,6 +4551,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created solid.
         #
         #  @ref tui_creation_solid "Example"
+        @ManageTransactions("ShapesOp")
         def MakeSolid(self, theShells, theName=None):
             """
             Create a solid, bounded by the given shells.
@@ -4365,7 +4567,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             if len(theShells) == 1:
-                descr = self.MeasuOp.IsGoodForSolid(theShells[0])
+                descr = self._IsGoodForSolid(theShells[0])
                 #if len(descr) > 0:
                 #    raise RuntimeError, "MakeSolidShells : " + descr
                 if descr == "WRN_SHAPE_UNCLOSED":
@@ -4384,6 +4586,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created compound.
         #
         #  @ref tui_creation_compound "Example"
+        @ManageTransactions("ShapesOp")
         def MakeCompound(self, theShapes, theName=None):
             """
             Create a compound of the given shapes.
@@ -4398,7 +4601,6 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created compound.
             """
             # Example: see GEOM_TestAll.py
-            self.ShapesOp.StartOperation()
             anObj = self.ShapesOp.MakeCompound(theShapes)
             RaiseIfFailed("MakeCompound", self.ShapesOp)
             self._autoPublish(anObj, theName, "compound")
@@ -4415,6 +4617,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Quantity of faces.
         #
         #  @ref swig_NumberOf "Example"
+        @ManageTransactions("ShapesOp")
         def NumberOfFaces(self, theShape):
             """
             Gives quantity of faces in the given shape.
@@ -4422,7 +4625,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Parameters:
                 theShape Shape to count faces of.
 
-            Returns:    
+            Returns:
                 Quantity of faces.
             """
             # Example: see GEOM_TestOthers.py
@@ -4435,6 +4638,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Quantity of edges.
         #
         #  @ref swig_NumberOf "Example"
+        @ManageTransactions("ShapesOp")
         def NumberOfEdges(self, theShape):
             """
             Gives quantity of edges in the given shape.
@@ -4442,7 +4646,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Parameters:
                 theShape Shape to count edges of.
 
-            Returns:    
+            Returns:
                 Quantity of edges.
             """
             # Example: see GEOM_TestOthers.py
@@ -4456,6 +4660,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Quantity of sub-shapes of given type.
         #
         #  @ref swig_NumberOf "Example"
+        @ManageTransactions("ShapesOp")
         def NumberOfSubShapes(self, theShape, theShapeType):
             """
             Gives quantity of sub-shapes of type theShapeType in the given shape.
@@ -4477,6 +4682,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Quantity of solids.
         #
         #  @ref swig_NumberOf "Example"
+        @ManageTransactions("ShapesOp")
         def NumberOfSolids(self, theShape):
             """
             Gives quantity of solids in the given shape.
@@ -4507,6 +4713,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return The reversed copy of theShape.
         #
         #  @ref swig_ChangeOrientation "Example"
+        @ManageTransactions("ShapesOp")
         def ChangeOrientation(self, theShape, theName=None):
             """
             Reverses an orientation the given shape.
@@ -4517,7 +4724,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:   
+            Returns:
                 The reversed copy of theShape.
             """
             # Example: see GEOM_TestAll.py
@@ -4550,6 +4757,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of IDs of all free faces, contained in theShape.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("ShapesOp")
         def GetFreeFacesIDs(self,theShape):
             """
             Retrieve all free faces from the given shape.
@@ -4577,6 +4785,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of sub-shapes of theShape1, shared with theShape2.
         #
         #  @ref swig_GetSharedShapes "Example"
+        @ManageTransactions("ShapesOp")
         def GetSharedShapes(self, theShape1, theShape2, theShapeType, theName=None):
             """
             Get all sub-shapes of theShape1 of the given type, shared with theShape2.
@@ -4608,6 +4817,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of objects, that are sub-shapes of all given shapes.
         #
         #  @ref swig_GetSharedShapes "Example"
+        @ManageTransactions("ShapesOp")
         def GetSharedShapesMulti(self, theShapes, theShapeType, theName=None):
             """
             Get all sub-shapes, shared by all shapes in the list theShapes.
@@ -4619,7 +4829,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 List of GEOM.GEOM_Object, that are sub-shapes of all given shapes.
             """
             # Example: see GEOM_TestOthers.py
@@ -4643,6 +4853,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnPlane "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnPlane(self, theShape, theShapeType, theAx1, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType,
@@ -4680,6 +4891,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnPlaneIDs "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnPlaneIDs(self, theShape, theShapeType, theAx1, theState):
             """
             Find in theShape all sub-shapes of type theShapeType,
@@ -4717,6 +4929,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnPlaneWithLocation "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnPlaneWithLocation(self, theShape, theShapeType, theAx1, thePnt, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType,
@@ -4757,6 +4970,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnPlaneWithLocationIDs "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnPlaneWithLocationIDs(self, theShape, theShapeType, theAx1, thePnt, theState):
             """
             Find in theShape all sub-shapes of type theShapeType,
@@ -4795,6 +5009,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnCylinder "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnCylinder(self, theShape, theShapeType, theAxis, theRadius, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
@@ -4832,6 +5047,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnCylinderIDs "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnCylinderIDs(self, theShape, theShapeType, theAxis, theRadius, theState):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
@@ -4869,6 +5085,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnCylinderWithLocation "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnCylinderWithLocation(self, theShape, theShapeType, theAxis, thePnt, theRadius, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
@@ -4907,6 +5124,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes indices
         #
         #  @ref swig_GetShapesOnCylinderWithLocationIDs "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnCylinderWithLocationIDs(self, theShape, theShapeType, theAxis, thePnt, theRadius, theState):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
@@ -4921,7 +5139,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theState The state of the sub-shapes to find (see GEOM::shape_state)
 
             Returns:
-                List of all found sub-shapes indices.            
+                List of all found sub-shapes indices.
             """
             # Example: see GEOM_TestOthers.py
             aList = self.ShapesOp.GetShapesOnCylinderWithLocationIDs(theShape, theShapeType, theAxis, thePnt, theRadius, theState)
@@ -4942,6 +5160,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnSphere "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnSphere(self, theShape, theShapeType, theCenter, theRadius, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
@@ -4977,6 +5196,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnSphereIDs "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnSphereIDs(self, theShape, theShapeType, theCenter, theRadius, theState):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
@@ -5013,6 +5233,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnQuadrangle "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnQuadrangle(self, theShape, theShapeType,
                                   theTopLeftPoint, theTopRigthPoint,
                                   theBottomLeftPoint, theBottomRigthPoint, theState, theName=None):
@@ -5056,6 +5277,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnQuadrangleIDs "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnQuadrangleIDs(self, theShape, theShapeType,
                                      theTopLeftPoint, theTopRigthPoint,
                                      theBottomLeftPoint, theBottomRigthPoint, theState):
@@ -5096,6 +5318,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnBox "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnBox(self, theBox, theShape, theShapeType, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
@@ -5129,6 +5352,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnBoxIDs "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnBoxIDs(self, theBox, theShape, theShapeType, theState):
             """
             Find in theShape all sub-shapes of type theShapeType, situated relatively
@@ -5153,7 +5377,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  certain way, defined through \a theState parameter.
         #  @param theCheckShape Shape for relative comparing. It must be a solid.
         #  @param theShape Shape to find sub-shapes of.
-        #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType()) 
+        #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theState The state of the sub-shapes to find (see GEOM::shape_state)
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
@@ -5162,6 +5386,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes.
         #
         #  @ref swig_GetShapesOnShape "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnShape(self, theCheckShape, theShape, theShapeType, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType,
@@ -5201,6 +5426,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return All found sub-shapes as compound.
         #
         #  @ref swig_GetShapesOnShapeAsCompound "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnShapeAsCompound(self, theCheckShape, theShape, theShapeType, theState, theName=None):
             """
             Find in theShape all sub-shapes of type theShapeType,
@@ -5237,6 +5463,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetShapesOnShapeIDs "Example"
+        @ManageTransactions("ShapesOp")
         def GetShapesOnShapeIDs(self, theCheckShape, theShape, theShapeType, theState):
             """
             Find in theShape all sub-shapes of type theShapeType,
@@ -5277,6 +5504,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #        @image html get_in_place_lost_part.png
         #
         #  @ref swig_GetInPlace "Example"
+        @ManageTransactions("ShapesOp")
         def GetInPlace(self, theShapeWhere, theShapeWhat, isNewImplementation = False, theName=None):
             """
             Get sub-shape(s) of theShapeWhere, which are
@@ -5294,7 +5522,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 Group of all found sub-shapes or a single found sub-shape.
 
-                
+
             Note:
                 This function has a restriction on argument shapes.
                 If theShapeWhere has curved parts with significantly
@@ -5331,6 +5559,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Group of all found sub-shapes or a single found sub-shape.
         #
         #  @ref swig_GetInPlace "Example"
+        @ManageTransactions("ShapesOp")
         def GetInPlaceByHistory(self, theShapeWhere, theShapeWhat, theName=None):
             """
             Implementation of this method is based on a saved history of an operation,
@@ -5367,6 +5596,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object for found sub-shape.
         #
         #  @ref swig_GetSame "Example"
+        @ManageTransactions("ShapesOp")
         def GetSame(self, theShapeWhere, theShapeWhat, theName=None):
             """
             Get sub-shape of theShapeWhere, which is
@@ -5392,9 +5622,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  equal to \a theShapeWhat.
         #  @param theShapeWhere Shape to find sub-shape of.
         #  @param theShapeWhat Shape, specifying what to find.
-        #  @return List of all found sub-shapes indices. 
+        #  @return List of all found sub-shapes indices.
         #
         #  @ref swig_GetSame "Example"
+        @ManageTransactions("ShapesOp")
         def GetSameIDs(self, theShapeWhere, theShapeWhat):
             """
             Get sub-shape indices of theShapeWhere, which is
@@ -5456,6 +5687,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return ID of found sub-shape.
         #
         #  @ref swig_all_decompose "Example"
+        @ManageTransactions("LocalOp")
         def GetSubShapeID(self, aShape, aSubShape):
             """
             Obtain unique ID of sub-shape aSubShape inside aShape
@@ -5472,7 +5704,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anID = self.LocalOp.GetSubShapeIndex(aShape, aSubShape)
             RaiseIfFailed("GetSubShapeIndex", self.LocalOp)
             return anID
-            
+
         ## Obtain unique IDs of sub-shapes <VAR>aSubShapes</VAR> inside <VAR>aShape</VAR>
         #  This function is provided for performance purpose. The complexity is O(n) with n
         #  the number of subobjects of aShape
@@ -5481,6 +5713,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return list of IDs of found sub-shapes.
         #
         #  @ref swig_all_decompose "Example"
+        @ManageTransactions("ShapesOp")
         def GetSubShapesIDs(self, aShape, aSubShapes):
             """
             Obtain a list of IDs of sub-shapes aSubShapes inside aShape
@@ -5513,6 +5746,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of existing sub-objects of \a theShape.
         #
         #  @ref swig_all_decompose "Example"
+        @ManageTransactions("ShapesOp")
         def GetExistingSubObjects(self, theShape, theGroupsOnly = False):
             """
             Get all sub-shapes and groups of theShape,
@@ -5537,6 +5771,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of existing groups of \a theShape.
         #
         #  @ref swig_all_decompose "Example"
+        @ManageTransactions("ShapesOp")
         def GetGroups(self, theShape):
             """
             Get all groups of theShape,
@@ -5556,7 +5791,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Explode a shape on sub-shapes of a given type.
         #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
-        #  @param aType Type of sub-shapes to be retrieved (see ShapeType()) 
+        #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -5564,6 +5799,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of sub-shapes of type theShapeType, contained in theShape.
         #
         #  @ref swig_all_decompose "Example"
+        @ManageTransactions("ShapesOp")
         def SubShapeAll(self, aShape, aType, theName=None):
             """
             Explode a shape on sub-shapes of a given type.
@@ -5571,7 +5807,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Parameters:
                 aShape Shape to be exploded.
-                aType Type of sub-shapes to be retrieved (see geompy.ShapeType) 
+                aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -5591,6 +5827,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of IDs of sub-shapes.
         #
         #  @ref swig_all_decompose "Example"
+        @ManageTransactions("ShapesOp")
         def SubShapeAllIDs(self, aShape, aType):
             """
             Explode a shape on sub-shapes of a given type.
@@ -5624,7 +5861,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Obtain a compound of sub-shapes of aShape,
             selected by their indices in list of all sub-shapes of type aType.
             Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
-            
+
             Parameters:
                 aShape Shape to get sub-shape of.
                 ListOfID List of sub-shapes indices.
@@ -5646,7 +5883,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Explode a shape on sub-shapes of a given type.
-        #  Sub-shapes will be sorted by coordinates of their gravity centers.
+        #  Sub-shapes will be sorted taking into account their gravity centers,
+        #  to provide stable order of sub-shapes.
         #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
@@ -5657,20 +5895,22 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of sub-shapes of type theShapeType, contained in theShape.
         #
         #  @ref swig_SubShapeAllSorted "Example"
+        @ManageTransactions("ShapesOp")
         def SubShapeAllSortedCentres(self, aShape, aType, theName=None):
             """
             Explode a shape on sub-shapes of a given type.
-            Sub-shapes will be sorted by coordinates of their gravity centers.
+            Sub-shapes will be sorted taking into account their gravity centers,
+            to provide stable order of sub-shapes.
             If the shape itself matches the type, it is also returned.
 
-            Parameters: 
+            Parameters:
                 aShape Shape to be exploded.
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 List of sub-shapes of type theShapeType, contained in theShape.
             """
             # Example: see GEOM_TestAll.py
@@ -5680,22 +5920,25 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return ListObj
 
         ## Explode a shape on sub-shapes of a given type.
-        #  Sub-shapes will be sorted by coordinates of their gravity centers.
+        #  Sub-shapes will be sorted taking into account their gravity centers,
+        #  to provide stable order of sub-shapes.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
         #  @return List of IDs of sub-shapes.
         #
         #  @ref swig_all_decompose "Example"
+        @ManageTransactions("ShapesOp")
         def SubShapeAllSortedCentresIDs(self, aShape, aType):
             """
             Explode a shape on sub-shapes of a given type.
-            Sub-shapes will be sorted by coordinates of their gravity centers.
+            Sub-shapes will be sorted taking into account their gravity centers,
+            to provide stable order of sub-shapes.
 
-            Parameters: 
+            Parameters:
                 aShape Shape to be exploded.
                 aType Type of sub-shapes to be retrieved (see geompy.ShapeType)
 
-            Returns: 
+            Returns:
                 List of IDs of sub-shapes.
             """
             ListIDs = self.ShapesOp.GetAllSubShapesIDs(aShape, EnumToLong( aType ), True)
@@ -5752,6 +5995,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of sub-shapes of type aType, contained in aShape.
         #
         #  @ref swig_FilletChamfer "Example"
+        @ManageTransactions("ShapesOp")
         def ExtractShapes(self, aShape, aType, isSorted = False, theName=None):
             """
             Extract shapes (excluding the main shape) of given type.
@@ -5764,7 +6008,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:     
+            Returns:
                 List of sub-shapes of type aType, contained in aShape.
             """
             # Example: see GEOM_TestAll.py
@@ -5782,6 +6026,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of GEOM.GEOM_Object, corresponding to found sub-shapes.
         #
         #  @ref swig_all_decompose "Example"
+        @ManageTransactions("ShapesOp")
         def SubShapes(self, aShape, anIDs, theName=None):
             """
             Get a set of sub-shapes defined by their unique IDs inside theMainShape
@@ -5793,7 +6038,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:      
+            Returns:
                 List of GEOM.GEOM_Object, corresponding to found sub-shapes.
             """
             # Example: see GEOM_TestAll.py
@@ -5811,6 +6056,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Deprecated method
         #  It works like SubShapeAllSortedCentres(), but wrongly
         #  defines centres of faces, shells and solids.
+        @ManageTransactions("ShapesOp")
         def SubShapeAllSorted(self, aShape, aType, theName=None):
             """
             Deprecated method
@@ -5825,6 +6071,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Deprecated method
         #  It works like SubShapeAllSortedCentresIDs(), but wrongly
         #  defines centres of faces, shells and solids.
+        @ManageTransactions("ShapesOp")
         def SubShapeAllSortedIDs(self, aShape, aType):
             """
             Deprecated method
@@ -5900,7 +6147,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #   are coincidental. The curves or surfaces may still meet at an angle, giving rise to a sharp corner or edge).\n
         #   \b C1 (Tangential Continuity): first derivatives are equal (the end vectors of curves or surfaces are parallel,
         #    ruling out sharp edges).\n
-        #   \b C2 (Curvature Continuity): first and second derivatives are equal (the end vectors of curves or surfaces 
+        #   \b C2 (Curvature Continuity): first and second derivatives are equal (the end vectors of curves or surfaces
         #       are of the same magnitude).\n
         #   \b CN N-th derivatives are equal (both the direction and the magnitude of the Nth derivatives of curves
         #    or surfaces (d/du C(u)) are the same at junction. \n
@@ -5939,6 +6186,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  \n @ref tui_shape_processing "Example"
+        @ManageTransactions("HealOp")
         def ProcessShape(self, theShape, theOperators, theParameters, theValues, theName=None):
             """
             Apply a sequence of Shape Healing operators to the given object.
@@ -5976,7 +6224,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                      * SplitContinuity.SurfaceContinuity - required continuity for surfaces.
                      * SplitContinuity.CurveContinuity - required continuity for curves.
                        This and the previous parameters can take the following values:
-                       
+
                        Parametric Continuity:
                        C0 (Positional Continuity): curves are joined (the end positions of curves or surfaces are
                                                    coincidental. The curves or surfaces may still meet at an angle,
@@ -5987,7 +6235,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                                   or surfaces are of the same magnitude).
                        CN N-th derivatives are equal (both the direction and the magnitude of the Nth derivatives of
                           curves or surfaces (d/du C(u)) are the same at junction.
-                          
+
                        Geometric Continuity:
                        G1: first derivatives are proportional at junction.
                            The curve tangents thus have the same direction, but not necessarily the same magnitude.
@@ -6047,6 +6295,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_suppress_faces "Example"
+        @ManageTransactions("HealOp")
         def SuppressFaces(self, theObject, theFaces, theName=None):
             """
             Remove faces from the given object (shape).
@@ -6109,6 +6358,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing processed shape.
+        @ManageTransactions("HealOp")
         def Sew(self, theObject, theTolerance, AllowNonManifold=False, theName=None):
             """
             Sewing of the given object.
@@ -6148,6 +6398,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_remove_webs "Example"
+        @ManageTransactions("HealOp")
         def RemoveInternalFaces (self, theCompound, theName=None):
             """
             Rebuild the topology of theCompound of solids by removing
@@ -6179,6 +6430,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_suppress_internal_wires "Example"
+        @ManageTransactions("HealOp")
         def SuppressInternalWires(self, theObject, theWires, theName=None):
             """
             Remove internal wires and edges from the given object (face).
@@ -6191,7 +6443,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:                
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
@@ -6211,6 +6463,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_suppress_holes "Example"
+        @ManageTransactions("HealOp")
         def SuppressHoles(self, theObject, theWires, theName=None):
             """
             Remove internal closed contours (holes) from the given object.
@@ -6223,7 +6476,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
@@ -6245,11 +6498,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_close_contour "Example"
+        @ManageTransactions("HealOp")
         def CloseContour(self,theObject, theWires, isCommonVertex, theName=None):
             """
             Close an open wire.
 
-            Parameters: 
+            Parameters:
                 theObject Shape to be processed.
                 theWires Indexes of edge(s) and wire(s) to be closed within theObject's shape,
                          if [ ], then theObject itself is a wire.
@@ -6259,8 +6513,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:                      
-                New GEOM.GEOM_Object, containing processed shape. 
+            Returns:
+                New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
             anObj = self.HealOp.CloseContour(theObject, theWires, isCommonVertex)
@@ -6283,11 +6537,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_add_point_on_edge "Example"
+        @ManageTransactions("HealOp")
         def DivideEdge(self, theObject, theEdgeIndex, theValue, isByParameter, theName=None):
             """
             Addition of a point to a given edge object.
 
-            Parameters: 
+            Parameters:
                 theObject Shape to be processed.
                 theEdgeIndex Index of edge to be divided within theObject's shape,
                              if -1, then theObject itself is the edge.
@@ -6299,7 +6554,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
@@ -6321,11 +6576,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object with modified wire.
         #
         #  @ref tui_fuse_collinear_edges "Example"
+        @ManageTransactions("HealOp")
         def FuseCollinearEdgesWithinWire(self, theWire, theVertices = [], theName=None):
             """
             Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
 
-            Parameters: 
+            Parameters:
                 theWire Wire to minimize the number of C1 continuous edges in.
                 theVertices A list of vertices to suppress. If the list
                             is empty, all vertices in a wire will be assumed.
@@ -6333,7 +6589,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object with modified wire.
             """
             anObj = self.HealOp.FuseCollinearEdgesWithinWire(theWire, theVertices)
@@ -6346,14 +6602,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Updated <var>theObject</var>
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("HealOp")
         def ChangeOrientationShell(self,theObject):
             """
             Change orientation of the given object. Updates given shape.
 
-            Parameters: 
+            Parameters:
                 theObject Shape to be processed.
 
-            Returns:  
+            Returns:
                 Updated theObject
             """
             theObject = self.HealOp.ChangeOrientation(theObject)
@@ -6369,6 +6626,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("HealOp")
         def ChangeOrientationShellCopy(self, theObject, theName=None):
             """
             Change orientation of the given object.
@@ -6379,7 +6637,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             anObj = self.HealOp.ChangeOrientationCopy(theObject)
@@ -6397,6 +6655,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing processed shape.
         #
         #  @ref tui_limit_tolerance "Example"
+        @ManageTransactions("HealOp")
         def LimitTolerance(self, theObject, theTolerance = 1e-07, theName=None):
             """
             Try to limit tolerance of the given object by value theTolerance.
@@ -6408,7 +6667,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing processed shape.
             """
             anObj = self.HealOp.LimitTolerance(theObject, theTolerance)
@@ -6429,6 +6688,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  \n \a theOpenWires: Open wires on the free boundary of the given shape.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("HealOp")
         def GetFreeBoundary(self, theObject, theName=None):
             """
             Get a list of wires (wrapped in GEOM.GEOM_Object-s),
@@ -6440,7 +6700,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 [status, theClosedWires, theOpenWires]
                  status: FALSE, if an error(s) occured during the method execution.
                  theClosedWires: Closed wires on the free boundary of the given shape.
@@ -6465,6 +6725,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing a copy of theShape without coincident faces.
         #
         #  @ref tui_glue_faces "Example"
+        @ManageTransactions("ShapesOp")
         def MakeGlueFaces(self, theShape, theTolerance, doKeepNonSolids=True, theName=None):
             """
             Replace coincident faces in theShape by one face.
@@ -6501,6 +6762,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return GEOM.ListOfGO
         #
         #  @ref tui_glue_faces "Example"
+        @ManageTransactions("ShapesOp")
         def GetGlueFaces(self, theShape, theTolerance, theName=None):
             """
             Find coincident faces in theShape for possible gluing.
@@ -6513,7 +6775,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:                    
+            Returns:
                 GEOM.ListOfGO
             """
             anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
@@ -6540,6 +6802,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          without some faces.
         #
         #  @ref tui_glue_faces "Example"
+        @ManageTransactions("ShapesOp")
         def MakeGlueFacesByList(self, theShape, theTolerance, theFaces,
                                 doKeepNonSolids=True, doGlueAllEdges=True, theName=None):
             """
@@ -6581,6 +6844,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing a copy of theShape without coincident edges.
         #
         #  @ref tui_glue_edges "Example"
+        @ManageTransactions("ShapesOp")
         def MakeGlueEdges(self, theShape, theTolerance, theName=None):
             """
             Replace coincident edges in theShape by one edge.
@@ -6592,7 +6856,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing a copy of theShape without coincident edges.
             """
             theTolerance,Parameters = ParseParameters(theTolerance)
@@ -6614,6 +6878,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return GEOM.ListOfGO
         #
         #  @ref tui_glue_edges "Example"
+        @ManageTransactions("ShapesOp")
         def GetGlueEdges(self, theShape, theTolerance, theName=None):
             """
             Find coincident edges in theShape for possible gluing.
@@ -6626,7 +6891,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:                         
+            Returns:
                 GEOM.ListOfGO
             """
             anObj = self.ShapesOp.GetGlueEdges(theShape, theTolerance)
@@ -6648,6 +6913,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          without some edges.
         #
         #  @ref tui_glue_edges "Example"
+        @ManageTransactions("ShapesOp")
         def MakeGlueEdgesByList(self, theShape, theTolerance, theEdges, theName=None):
             """
             Replace coincident edges in theShape by one edge
@@ -6662,7 +6928,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing a copy of theShape
                 without some edges.
             """
@@ -6704,11 +6970,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fuse "Example"
+        @ManageTransactions("BoolOp")
         def MakeBoolean(self, theShape1, theShape2, theOperation, checkSelfInte=False, theName=None):
             """
             Perform one of boolean operations on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
                 theOperation Indicates the operation to be done:
@@ -6729,7 +6996,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     To find all self-intersections please use
                     CheckSelfIntersections() method.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
@@ -6764,7 +7031,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Perform Common boolean operation on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
                 checkSelfInte The flag that tells if the arguments should
@@ -6783,7 +7050,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     To find all self-intersections please use
                     CheckSelfIntersections() method.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestOthers.py
@@ -6815,7 +7082,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Perform Cut boolean operation on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
                 checkSelfInte The flag that tells if the arguments should
@@ -6834,9 +7101,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     To find all self-intersections please use
                     CheckSelfIntersections() method.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
-            
+
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeBoolean()
@@ -6865,12 +7132,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_fuse "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
+        @ManageTransactions("BoolOp")
         def MakeFuse(self, theShape1, theShape2, checkSelfInte=False,
                      rmExtraEdges=False, theName=None):
             """
             Perform Fuse boolean operation on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
                 checkSelfInte The flag that tells if the arguments should
@@ -6891,9 +7159,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     To find all self-intersections please use
                     CheckSelfIntersections() method.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
-            
+
             """
             # Example: see GEOM_TestOthers.py
             anObj = self.BoolOp.MakeFuse(theShape1, theShape2,
@@ -6927,7 +7195,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Perform Section boolean operation on two given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
                 checkSelfInte The flag that tells if the arguments should
@@ -6946,9 +7214,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     To find all self-intersections please use
                     CheckSelfIntersections() method.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
-            
+
             """
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeBoolean()
@@ -6976,12 +7244,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_fuse "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
+        @ManageTransactions("BoolOp")
         def MakeFuseList(self, theShapesList, checkSelfInte=False,
                          rmExtraEdges=False, theName=None):
             """
             Perform Fuse boolean operation on the list of shapes.
 
-            Parameters: 
+            Parameters:
                 theShapesList Shapes to be fused.
                 checkSelfInte The flag that tells if the arguments should
                               be checked for self-intersection prior to
@@ -7001,9 +7270,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     To find all self-intersections please use
                     CheckSelfIntersections() method.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
-            
+
             """
             # Example: see GEOM_TestOthers.py
             anObj = self.BoolOp.MakeFuseList(theShapesList, checkSelfInte,
@@ -7032,11 +7301,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_common "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
+        @ManageTransactions("BoolOp")
         def MakeCommonList(self, theShapesList, checkSelfInte=False, theName=None):
             """
             Perform Common boolean operation on the list of shapes.
 
-            Parameters: 
+            Parameters:
                 theShapesList Shapes for Common operation.
                 checkSelfInte The flag that tells if the arguments should
                               be checked for self-intersection prior to
@@ -7054,9 +7324,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     To find all self-intersections please use
                     CheckSelfIntersections() method.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
-            
+
             """
             # Example: see GEOM_TestOthers.py
             anObj = self.BoolOp.MakeCommonList(theShapesList, checkSelfInte)
@@ -7085,11 +7355,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_cut "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
+        @ManageTransactions("BoolOp")
         def MakeCutList(self, theMainShape, theShapesList, checkSelfInte=False, theName=None):
             """
             Perform Cut boolean operation on one object and the list of tools.
 
-            Parameters: 
+            Parameters:
                 theMainShape The object of the operation.
                 theShapesList The list of tools of the operation.
                 checkSelfInte The flag that tells if the arguments should
@@ -7108,9 +7379,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     To find all self-intersections please use
                     CheckSelfIntersections() method.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
-            
+
             """
             # Example: see GEOM_TestOthers.py
             anObj = self.BoolOp.MakeCutList(theMainShape, theShapesList, checkSelfInte)
@@ -7156,13 +7427,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shapes.
         #
         #  @ref tui_partition "Example"
+        @ManageTransactions("BoolOp")
         def MakePartition(self, ListShapes, ListTools=[], ListKeepInside=[], ListRemoveInside=[],
                           Limit=ShapeType["AUTO"], RemoveWebs=0, ListMaterials=[],
                           KeepNonlimitShapes=0, theName=None):
             """
             Perform partition operation.
 
-            Parameters: 
+            Parameters:
                 ListShapes Shapes to be intersected.
                 ListTools Shapes to intersect theShapes.
                 Limit Type of resulting shapes (see geompy.ShapeType)
@@ -7180,11 +7452,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     Each compound from ListShapes and ListTools will be exploded
                     in order to avoid possible intersection between shapes from
                     this compound.
-                    
+
             After implementation new version of PartitionAlgo (October 2006) other
             parameters are ignored by current functionality. They are kept in this
             function only for support old versions.
-            
+
             Ignored parameters:
                 ListKeepInside Shapes, outside which the results will be deleted.
                                Each shape from theKeepInside must belong to theShapes also.
@@ -7193,7 +7465,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 RemoveWebs If TRUE, perform Glue 3D algorithm.
                 ListMaterials Material indices for each shape. Make sence, only if theRemoveWebs is TRUE.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shapes.
             """
             # Example: see GEOM_TestAll.py
@@ -7235,6 +7507,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shapes.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("BoolOp")
         def MakePartitionNonSelfIntersectedShape(self, ListShapes, ListTools=[],
                                                  ListKeepInside=[], ListRemoveInside=[],
                                                  Limit=ShapeType["AUTO"], RemoveWebs=0,
@@ -7246,7 +7519,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             compound contains nonintersected shapes. Performance will be better
             since intersection between shapes from compound is not performed.
 
-            Parameters: 
+            Parameters:
                 Description of all parameters as in method geompy.MakePartition.
                 One additional parameter is provided:
                 checkSelfInte The flag that tells if the arguments should
@@ -7261,12 +7534,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                     time-consuming operation that gives an impact on performance.
                     To find all self-intersections please use
                     CheckSelfIntersections() method.
-        
+
             NOTE:
                 Passed compounds (via ListShapes or via ListTools)
                 have to consist of nonintersecting shapes.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the result shapes.
             """
             if Limit == self.ShapeType["AUTO"]:
@@ -7311,18 +7584,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_partition "Example"
+        @ManageTransactions("BoolOp")
         def MakeHalfPartition(self, theShape, thePlane, theName=None):
             """
             Perform partition of the Shape with the Plane
 
-            Parameters: 
+            Parameters:
                 theShape Shape to be intersected.
                 thePlane Tool shape, to intersect theShape.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
@@ -7345,17 +7619,18 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to translate object itself or create a copy.
         #  @return Translated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def TranslateTwoPoints(self, theObject, thePoint1, thePoint2, theCopy=False):
             """
             Translate the given object along the vector, specified by its end points.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 thePoint1 Start point of translation vector.
                 thePoint2 End point of translation vector.
                 theCopy Flag used to translate object itself or create a copy.
 
-            Returns: 
+            Returns:
                 Translated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
                 new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
             """
@@ -7379,12 +7654,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_translation "Example 1"
         #  \n @ref swig_MakeTranslationTwoPoints "Example 2"
+        @ManageTransactions("TrsfOp")
         def MakeTranslationTwoPoints(self, theObject, thePoint1, thePoint2, theName=None):
             """
             Translate the given object along the vector, specified
             by its end points, creating its copy before the translation.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 thePoint1 Start point of translation vector.
                 thePoint2 End point of translation vector.
@@ -7392,7 +7668,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
@@ -7409,16 +7685,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
         #
         #  @ref tui_translation "Example"
+        @ManageTransactions("TrsfOp")
         def TranslateDXDYDZ(self, theObject, theDX, theDY, theDZ, theCopy=False):
             """
             Translate the given object along the vector, specified by its components.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 theDX,theDY,theDZ Components of translation vector.
                 theCopy Flag used to translate object itself or create a copy.
 
-            Returns: 
+            Returns:
                 Translated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
                 new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
             """
@@ -7443,19 +7720,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the translated object.
         #
         #  @ref tui_translation "Example"
+        @ManageTransactions("TrsfOp")
         def MakeTranslation(self,theObject, theDX, theDY, theDZ, theName=None):
             """
             Translate the given object along the vector, specified
             by its components, creating its copy before the translation.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 theDX,theDY,theDZ Components of translation vector.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
@@ -7472,16 +7750,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to translate object itself or create a copy.
         #  @return Translated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def TranslateVector(self, theObject, theVector, theCopy=False):
             """
             Translate the given object along the given vector.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 theVector The translation vector.
                 theCopy Flag used to translate object itself or create a copy.
 
-            Returns: 
+            Returns:
                 Translated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
                 new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
             """
@@ -7503,19 +7782,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the translated object.
         #
         #  @ref tui_translation "Example"
+        @ManageTransactions("TrsfOp")
         def MakeTranslationVector(self, theObject, theVector, theName=None):
             """
             Translate the given object along the given vector,
             creating its copy before the translation.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 theVector The translation vector.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
@@ -7533,17 +7813,18 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  new GEOM.GEOM_Object, containing the translated object if @a theCopy flag is @c True.
         #
         #  @ref tui_translation "Example"
+        @ManageTransactions("TrsfOp")
         def TranslateVectorDistance(self, theObject, theVector, theDistance, theCopy=False):
             """
             Translate the given object along the given vector on given distance.
 
-            Parameters: 
+            Parameters:
                 theObject The object to be translated.
                 theVector The translation vector.
                 theDistance The translation distance.
                 theCopy Flag used to translate object itself or create a copy.
 
-            Returns: 
+            Returns:
                 Translated theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
                 new GEOM.GEOM_Object, containing the translated object if theCopy flag is True.
             """
@@ -7566,6 +7847,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the translated object.
         #
         #  @ref tui_translation "Example"
+        @ManageTransactions("TrsfOp")
         def MakeTranslationVectorDistance(self, theObject, theVector, theDistance, theName=None):
             """
             Translate the given object along the given vector on given distance,
@@ -7579,7 +7861,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the translated object.
             """
             # Example: see GEOM_TestAll.py
@@ -7600,6 +7882,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  new GEOM.GEOM_Object, containing the rotated object if @a theCopy flag is @c True.
         #
         #  @ref tui_rotation "Example"
+        @ManageTransactions("TrsfOp")
         def Rotate(self, theObject, theAxis, theAngle, theCopy=False):
             """
             Rotate the given object around the given axis on the given angle.
@@ -7630,7 +7913,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Rotate the given object around the given axis
-        #  on the given angle, creating its copy before the rotatation.
+        #  on the given angle, creating its copy before the rotation.
         #  @param theObject The object to be rotated.
         #  @param theAxis Rotation axis.
         #  @param theAngle Rotation angle in radians.
@@ -7641,6 +7924,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the rotated object.
         #
         #  @ref tui_rotation "Example"
+        @ManageTransactions("TrsfOp")
         def MakeRotation(self, theObject, theAxis, theAngle, theName=None):
             """
             Rotate the given object around the given axis
@@ -7679,6 +7963,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to rotate object itself or create a copy.
         #  @return Rotated @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the rotated object if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def RotateThreePoints(self, theObject, theCentPoint, thePoint1, thePoint2, theCopy=False):
             """
             Rotate given object around vector perpendicular to plane
@@ -7715,6 +8000,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the rotated object.
         #
         #  @ref tui_rotation "Example"
+        @ManageTransactions("TrsfOp")
         def MakeRotationThreePoints(self, theObject, theCentPoint, thePoint1, thePoint2, theName=None):
             """
             Rotate given object around vector perpendicular to plane
@@ -7746,6 +8032,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to scale object itself or create a copy.
         #  @return Scaled @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the scaled object if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def Scale(self, theObject, thePoint, theFactor, theCopy=False):
             """
             Scale the given object by the specified factor.
@@ -7757,7 +8044,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theFactor Scaling factor value.
                 theCopy Flag used to scale object itself or create a copy.
 
-            Returns:    
+            Returns:
                 Scaled theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
                 new GEOM.GEOM_Object, containing the scaled object if theCopy flag is True.
             """
@@ -7783,6 +8070,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the scaled shape.
         #
         #  @ref tui_scale "Example"
+        @ManageTransactions("TrsfOp")
         def MakeScaleTransform(self, theObject, thePoint, theFactor, theName=None):
             """
             Scale the given object by the factor, creating its copy before the scaling.
@@ -7796,7 +8084,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the scaled shape.
             """
             # Example: see GEOM_TestAll.py
@@ -7815,6 +8103,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to scale object itself or create a copy.
         #  @return Scaled @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the scaled object if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def ScaleAlongAxes(self, theObject, thePoint, theFactorX, theFactorY, theFactorZ, theCopy=False):
             """
             Scale the given object by different factors along coordinate axes.
@@ -7826,7 +8115,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
                 theCopy Flag used to scale object itself or create a copy.
 
-            Returns:    
+            Returns:
                 Scaled theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
                 new GEOM.GEOM_Object, containing the scaled object if theCopy flag is True.
             """
@@ -7855,6 +8144,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the scaled shape.
         #
         #  @ref swig_scale "Example"
+        @ManageTransactions("TrsfOp")
         def MakeScaleAlongAxes(self, theObject, thePoint, theFactorX, theFactorY, theFactorZ, theName=None):
             """
             Scale the given object by different factors along coordinate axes,
@@ -7887,6 +8177,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to mirror object itself or create a copy.
         #  @return Mirrored @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the mirrored object if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def MirrorByPlane(self, theObject, thePlane, theCopy=False):
             """
             Mirror an object relatively the given plane.
@@ -7918,6 +8209,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the mirrored shape.
         #
         #  @ref tui_mirror "Example"
+        @ManageTransactions("TrsfOp")
         def MakeMirrorByPlane(self, theObject, thePlane, theName=None):
             """
             Create an object, symmetrical to the given one relatively the given plane.
@@ -7944,6 +8236,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to mirror object itself or create a copy.
         #  @return Mirrored @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the mirrored object if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def MirrorByAxis(self, theObject, theAxis, theCopy=False):
             """
             Mirror an object relatively the given axis.
@@ -7975,6 +8268,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the mirrored shape.
         #
         #  @ref tui_mirror "Example"
+        @ManageTransactions("TrsfOp")
         def MakeMirrorByAxis(self, theObject, theAxis, theName=None):
             """
             Create an object, symmetrical to the given one relatively the given axis.
@@ -7986,7 +8280,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the mirrored shape.
             """
             # Example: see GEOM_TestAll.py
@@ -8001,6 +8295,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to mirror object itself or create a copy.
         #  @return Mirrored @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the mirrored object if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def MirrorByPoint(self, theObject, thePoint, theCopy=False):
             """
             Mirror an object relatively the given point.
@@ -8033,6 +8328,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the mirrored shape.
         #
         #  @ref tui_mirror "Example"
+        @ManageTransactions("TrsfOp")
         def MakeMirrorByPoint(self, theObject, thePoint, theName=None):
             """
             Create an object, symmetrical
@@ -8045,7 +8341,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the mirrored shape.
             """
             # Example: see GEOM_TestAll.py
@@ -8065,6 +8361,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to displace object itself or create a copy.
         #  @return Displaced @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the displaced object if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def Position(self, theObject, theStartLCS, theEndLCS, theCopy=False):
             """
             Modify the Location of the given object by LCS, creating its copy before the setting.
@@ -8107,6 +8404,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the displaced shape.
         #
         #  @ref tui_modify_location "Example"
+        @ManageTransactions("TrsfOp")
         def MakePosition(self, theObject, theStartLCS, theEndLCS, theName=None):
             """
             Modify the Location of the given object by LCS, creating its copy before the setting.
@@ -8123,7 +8421,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the displaced shape.
 
             Example of usage:
@@ -8149,6 +8447,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          new GEOM.GEOM_Object, containing the displaced shape if @a theCopy is @c True.
         #
         #  @ref tui_modify_location "Example"
+        @ManageTransactions("TrsfOp")
         def PositionAlongPath(self,theObject, thePath, theDistance, theCopy, theReverse):
             """
             Modify the Location of the given object by Path.
@@ -8160,7 +8459,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                  theCopy is to create a copy objects if true.
                  theReverse  0 - for usual direction, 1 - to reverse path direction.
 
-            Returns:  
+            Returns:
                  Displaced theObject (GEOM.GEOM_Object) if theCopy is False or
                  new GEOM.GEOM_Object, containing the displaced shape if theCopy is True.
 
@@ -8182,6 +8481,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         publication is switched on, default value is used for result name.
         #
         #  @return New GEOM.GEOM_Object, containing the displaced shape.
+        @ManageTransactions("TrsfOp")
         def MakePositionAlongPath(self, theObject, thePath, theDistance, theReverse, theName=None):
             """
             Modify the Location of the given object by Path, creating its copy before the operation.
@@ -8195,7 +8495,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                          for result publication in the study. Otherwise, if automatic
                          publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the displaced shape.
             """
             # Example: see GEOM_TestAll.py
@@ -8210,6 +8510,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theCopy Flag used to offset object itself or create a copy.
         #  @return Modified @a theObject (GEOM.GEOM_Object) if @a theCopy flag is @c False (default) or
         #  new GEOM.GEOM_Object, containing the result of offset operation if @a theCopy flag is @c True.
+        @ManageTransactions("TrsfOp")
         def Offset(self, theObject, theOffset, theCopy=False):
             """
             Offset given shape.
@@ -8219,7 +8520,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theOffset Offset value.
                 theCopy Flag used to offset object itself or create a copy.
 
-            Returns: 
+            Returns:
                 Modified theObject (GEOM.GEOM_Object) if theCopy flag is False (default) or
                 new GEOM.GEOM_Object, containing the result of offset operation if theCopy flag is True.
             """
@@ -8242,6 +8543,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the offset object.
         #
         #  @ref tui_offset "Example"
+        @ManageTransactions("TrsfOp")
         def MakeOffset(self, theObject, theOffset, theName=None):
             """
             Create new object as offset of the given one.
@@ -8253,7 +8555,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the offset object.
 
             Example of usage:
@@ -8279,6 +8581,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the projection.
         #
         #  @ref tui_projection "Example"
+        @ManageTransactions("TrsfOp")
         def MakeProjection(self, theSource, theTarget, theName=None):
             """
             Create new object as projection of the given one on a 2D surface.
@@ -8290,7 +8593,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the projection.
             """
             # Example: see GEOM_TestAll.py
@@ -8298,7 +8601,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("ProjectShapeCopy", self.TrsfOp)
             self._autoPublish(anObj, theName, "projection")
             return anObj
-            
+
         ## Create a projection projection of the given point on a wire or an edge.
         #  If there are no solutions or there are 2 or more solutions It throws an
         #  exception.
@@ -8314,19 +8617,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  \n \a EdgeInWireIndex: The index of an edge in a wire.
         #
         #  @ref tui_projection "Example"
+        @ManageTransactions("TrsfOp")
         def MakeProjectionOnWire(self, thePoint, theWire, theName=None):
             """
             Create a projection projection of the given point on a wire or an edge.
             If there are no solutions or there are 2 or more solutions It throws an
             exception.
-            
+
             Parameters:
                 thePoint the point to be projected.
                 theWire the wire. The edge is accepted as well.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
-          
+
             Returns:
                 [u, PointOnEdge, EdgeInWireIndex]
                  u: The parameter of projection point on edge.
@@ -8356,6 +8660,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          the shapes, obtained after each translation.
         #
         #  @ref tui_multi_translation "Example"
+        @ManageTransactions("TrsfOp")
         def MakeMultiTranslation1D(self, theObject, theVector, theStep, theNbTimes, theName=None):
             """
             Translate the given object along the given vector a given number times
@@ -8369,7 +8674,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:     
+            Returns:
                 New GEOM.GEOM_Object, containing compound of all
                 the shapes, obtained after each translation.
 
@@ -8400,6 +8705,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          the shapes, obtained after each translation.
         #
         #  @ref tui_multi_translation "Example"
+        @ManageTransactions("TrsfOp")
         def MakeMultiTranslation2D(self, theObject, theVector1, theStep1, theNbTimes1,
                                    theVector2, theStep2, theNbTimes2, theName=None):
             """
@@ -8446,6 +8752,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          shapes, obtained after each rotation.
         #
         #  @ref tui_multi_rotation "Example"
+        @ManageTransactions("TrsfOp")
         def MultiRotate1DNbTimes (self, theObject, theAxis, theNbTimes, theName=None):
             """
             Rotate the given object around the given axis a given number times.
@@ -8459,7 +8766,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:     
+            Returns:
                 New GEOM.GEOM_Object, containing compound of all the
                 shapes, obtained after each rotation.
 
@@ -8488,6 +8795,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          shapes, obtained after each rotation.
         #
         #  @ref tui_multi_rotation "Example"
+        @ManageTransactions("TrsfOp")
         def MultiRotate1DByStep(self, theObject, theAxis, theAngleStep, theNbTimes, theName=None):
             """
             Rotate the given object around the given axis
@@ -8502,7 +8810,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:     
+            Returns:
                 New GEOM.GEOM_Object, containing compound of all the
                 shapes, obtained after each rotation.
 
@@ -8535,6 +8843,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          shapes, obtained after each transformation.
         #
         #  @ref tui_multi_rotation "Example"
+        @ManageTransactions("TrsfOp")
         def MultiRotate2DNbTimes(self, theObject, theAxis, theNbTimes1, theRadialStep, theNbTimes2, theName=None):
             """
             Rotate the given object around the
@@ -8553,7 +8862,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing compound of all the
                 shapes, obtained after each transformation.
 
@@ -8587,6 +8896,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          shapes, obtained after each transformation.
         #
         #  @ref tui_multi_rotation "Example"
+        @ManageTransactions("TrsfOp")
         def MultiRotate2DByStep (self, theObject, theAxis, theAngleStep, theNbTimes1, theRadialStep, theNbTimes2, theName=None):
             """
             Rotate the given object around the
@@ -8606,7 +8916,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing compound of all the
                 shapes, obtained after each transformation.
 
@@ -8663,7 +8973,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def MakeMultiRotation2DNbTimes(self, aShape, aDir, aPoint, nbtimes1, aStep, nbtimes2, theName=None):
             """
             The same, as MultiRotate2DNbTimes(), but axis is given by direction and point
-            
+
             Example of usage:
                 pz = geompy.MakeVertex(0, 0, 100)
                 vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
@@ -8681,7 +8991,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def MakeMultiRotation2DByStep(self, aShape, aDir, aPoint, anAngle, nbtimes1, aStep, nbtimes2, theName=None):
             """
             The same, as MultiRotate2DByStep(), but axis is given by direction and point
-            
+
             Example of usage:
                 pz = geompy.MakeVertex(0, 0, 100)
                 vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
@@ -8709,6 +9019,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## The same, as MultiRotate2DByStep(), but theAngle is in degrees.
         #  This method is DEPRECATED. Use MultiRotate2DByStep() instead.
+        @ManageTransactions("TrsfOp")
         def MultiRotate2D(self, theObject, theAxis, theAngle, theNbTimes1, theStep, theNbTimes2, theName=None):
             """
             The same, as MultiRotate2DByStep(), but theAngle is in degrees.
@@ -8749,7 +9060,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             The same, as MultiRotate2D(), but axis is given by direction and point
             This method is DEPRECATED. Use MakeMultiRotation2DByStep instead.
-            
+
             Example of usage:
                 pz = geompy.MakeVertex(0, 0, 100)
                 vy = geompy.MakeVectorDXDYDZ(0, 100, 0)
@@ -8778,6 +9089,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_fillet "Example 1"
         #  \n @ref swig_MakeFilletAll "Example 2"
+        @ManageTransactions("LocalOp")
         def MakeFilletAll(self, theShape, theR, theName=None):
             """
             Perform a fillet on all edges of the given shape.
@@ -8789,10 +9101,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
-            Example of usage: 
+            Example of usage:
                filletall = geompy.MakeFilletAll(prism, 10.)
             """
             # Example: see GEOM_TestOthers.py
@@ -8817,6 +9129,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fillet "Example"
+        @ManageTransactions("LocalOp")
         def MakeFillet(self, theShape, theR, theShapeType, theListShapes, theName=None):
             """
             Perform a fillet on the specified edges/faces of the given shape
@@ -8833,7 +9146,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -8860,6 +9173,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## The same that MakeFillet() but with two Fillet Radius R1 and R2
+        @ManageTransactions("LocalOp")
         def MakeFilletR1R2(self, theShape, theR1, theR2, theShapeType, theListShapes, theName=None):
             """
             The same that geompy.MakeFillet but with two Fillet Radius R1 and R2
@@ -8906,6 +9220,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fillet2d "Example"
+        @ManageTransactions("LocalOp")
         def MakeFillet1D(self, theShape, theR, theListOfVertexes, doIgnoreSecantVertices = True, theName=None):
             """
             Perform a fillet on the specified edges of the given shape
@@ -8928,10 +9243,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
                 The list of vertices could be empty,in this case fillet will done done at all vertices in wire
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
-            Example of usage:  
+            Example of usage:
                 # create wire
                 Wire_1 = geompy.MakeWire([Edge_12, Edge_7, Edge_11, Edge_6, Edge_1,Edge_4])
                 # make fillet at given wire vertices with giver radius
@@ -8958,6 +9273,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fillet2d "Example"
+        @ManageTransactions("LocalOp")
         def MakeFillet2D(self, theShape, theR, theListOfVertexes, theName=None):
             """
             Perform a fillet at the specified vertices of the given face/shell.
@@ -8972,7 +9288,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -8998,6 +9314,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_chamfer "Example 1"
         #  \n @ref swig_MakeChamferAll "Example 2"
+        @ManageTransactions("LocalOp")
         def MakeChamferAll(self, theShape, theD, theName=None):
             """
             Perform a symmetric chamfer on all edges of the given shape.
@@ -9009,7 +9326,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:     
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -9038,6 +9355,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_chamfer "Example"
+        @ManageTransactions("LocalOp")
         def MakeChamferEdge(self, theShape, theD1, theD2, theFace1, theFace2, theName=None):
             """
             Perform a chamfer on edges, common to the specified faces,
@@ -9055,7 +9373,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
-            Returns:      
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -9084,6 +9402,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @note Global index of sub-shape can be obtained, using method GetSubShapeID().
         #
         #  @return New GEOM.GEOM_Object, containing the result shape.
+        @ManageTransactions("LocalOp")
         def MakeChamferEdgeAD(self, theShape, theD, theAngle, theFace1, theFace2, theName=None):
             """
             Perform a chamfer on edges
@@ -9100,7 +9419,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
-            Returns:      
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
             Example of usage:
@@ -9139,6 +9458,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_chamfer "Example"
+        @ManageTransactions("LocalOp")
         def MakeChamferFaces(self, theShape, theD1, theD2, theFaces, theName=None):
             """
             Perform a chamfer on all edges of the specified faces,
@@ -9154,10 +9474,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
-                
+
             Note: Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
 
-            Returns:  
+            Returns:
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestAll.py
@@ -9172,6 +9492,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
         #
         #  @ref swig_FilletChamfer "Example"
+        @ManageTransactions("LocalOp")
         def MakeChamferFacesAD(self, theShape, theD, theAngle, theFaces, theName=None):
             """
             The Same that geompy.MakeChamferFaces but with params theD is chamfer lenght and
@@ -9201,11 +9522,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref swig_FilletChamfer "Example"
+        @ManageTransactions("LocalOp")
         def MakeChamferEdges(self, theShape, theD1, theD2, theEdges, theName=None):
             """
             Perform a chamfer on edges,
             with distance D1 on the first specified face (if several for one edge)
-            
+
             Parameters:
                 theShape Shape, to perform chamfer on.
                 theD1,theD2 Chamfer size
@@ -9226,6 +9548,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## The Same that MakeChamferEdges() but with params theD is chamfer lenght and
         #  theAngle is Angle of chamfer (angle in radians or a name of variable which defines angle in degrees)
+        @ManageTransactions("LocalOp")
         def MakeChamferEdgesAD(self, theShape, theD, theAngle, theEdges, theName=None):
             """
             The Same that geompy.MakeChamferEdges but with params theD is chamfer lenght and
@@ -9258,9 +9581,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             else:
                 anObj = self.MakeChamferFaces(aShape,d1,d2,ListShape,theName)
             return anObj
-            
+
         ## Remove material from a solid by extrusion of the base shape on the given distance.
-        #  @param theInit Shape to remove material from. It must be a solid or 
+        #  @param theInit Shape to remove material from. It must be a solid or
         #  a compound made of a single solid.
         #  @param theBase Closed edge or wire defining the base shape to be extruded.
         #  @param theH Prism dimension along the normal to theBase
@@ -9269,9 +9592,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the initial shape with removed material 
+        #  @return New GEOM.GEOM_Object, containing the initial shape with removed material
         #
         #  @ref tui_creation_prism "Example"
+        @ManageTransactions("PrimOp")
         def MakeExtrudedCut(self, theInit, theBase, theH, theAngle, theName=None):
             """
             Add material to a solid by extrusion of the base shape on the given distance.
@@ -9294,10 +9618,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
             #anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "extrudedCut")
-            return anObj   
-            
+            return anObj
+
         ## Add material to a solid by extrusion of the base shape on the given distance.
-        #  @param theInit Shape to add material to. It must be a solid or 
+        #  @param theInit Shape to add material to. It must be a solid or
         #  a compound made of a single solid.
         #  @param theBase Closed edge or wire defining the base shape to be extruded.
         #  @param theH Prism dimension along the normal to theBase
@@ -9306,9 +9630,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the initial shape with added material 
+        #  @return New GEOM.GEOM_Object, containing the initial shape with added material
         #
         #  @ref tui_creation_prism "Example"
+        @ManageTransactions("PrimOp")
         def MakeExtrudedBoss(self, theInit, theBase, theH, theAngle, theName=None):
             """
             Add material to a solid by extrusion of the base shape on the given distance.
@@ -9331,7 +9656,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
             #anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "extrudedBoss")
-            return anObj   
+            return anObj
 
         # end of l3_local
         ## @}
@@ -9353,12 +9678,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          by a plane, corresponding to water level.
         #
         #  @ref tui_archimede "Example"
+        @ManageTransactions("LocalOp")
         def Archimede(self, theShape, theWeight, theWaterDensity, theMeshDeflection, theName=None):
             """
             Perform an Archimde operation on the given shape with given parameters.
             The object presenting the resulting face is returned.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to be put in water.
                 theWeight Weight og the shape.
                 theWaterDensity Density of the water.
@@ -9367,7 +9693,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing a section of theShape
                 by a plane, corresponding to water level.
             """
@@ -9390,6 +9716,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return [x, y, z]
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def PointCoordinates(self,Point):
             """
             Get point coordinates
@@ -9400,8 +9727,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             aTuple = self.MeasuOp.PointCoordinates(Point)
             RaiseIfFailed("PointCoordinates", self.MeasuOp)
-            return aTuple 
-        
+            return aTuple
+
         ## Get vector coordinates
         #  @return [x, y, z]
         #
@@ -9416,7 +9743,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             p1=self.GetFirstVertex(Vector)
             p2=self.GetLastVertex(Vector)
-            
+
             X1=self.PointCoordinates(p1)
             X2=self.PointCoordinates(p2)
 
@@ -9428,31 +9755,31 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_measurement_tools_page "Example"
         def CrossProduct(self, Vector1, Vector2):
-            """ 
+            """
             Compute cross product
-            
+
             Returns: vector w=u^v
             """
             u=self.VectorCoordinates(Vector1)
             v=self.VectorCoordinates(Vector2)
             w=self.MakeVectorDXDYDZ(u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0])
-            
+
             return w
-        
+
         ## Compute cross product
         #  @return dot product  p=u.v
         #
         #  @ref tui_measurement_tools_page "Example"
         def DotProduct(self, Vector1, Vector2):
-            """ 
+            """
             Compute cross product
-            
+
             Returns: dot product  p=u.v
             """
             u=self.VectorCoordinates(Vector1)
             v=self.VectorCoordinates(Vector2)
             p=u[0]*v[0]+u[1]*v[1]+u[2]*v[2]
-            
+
             return p
 
 
@@ -9465,12 +9792,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  theVolume:   Volume of the given shape.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def BasicProperties(self,theShape):
             """
             Get summarized length of all wires,
             area of surface and volume of the given shape.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to define properties of.
 
             Returns:
@@ -9493,11 +9821,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  Zmin,Zmax: Limits of shape along OZ axis.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def BoundingBox (self, theShape, precise=False):
             """
             Get parameters of bounding box of the given shape
 
-            Parameters: 
+            Parameters:
                 theShape Shape to obtain bounding box of.
                 precise TRUE for precise computation; FALSE for fast one.
 
@@ -9522,11 +9851,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created box.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def MakeBoundingBox (self, theShape, precise=False, theName=None):
             """
             Get bounding box of the given shape
 
-            Parameters: 
+            Parameters:
                 theShape Shape to obtain bounding box of.
                 precise TRUE for precise computation; FALSE for fast one.
                 theName Object name; when specified, this parameter is used
@@ -9549,11 +9879,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  Ix,Iy,Iz:    Moments of inertia of the given shape.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def Inertia(self,theShape):
             """
             Get inertia matrix and moments of inertia of theShape.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to calculate inertia of.
 
             Returns:
@@ -9571,11 +9902,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param coords list of points coordinates [x1, y1, z1, x2, y2, z2, ...]
         #  @param tolerance to be used (default is 1.0e-7)
         #  @return list_of_boolean = [res1, res2, ...]
+        @ManageTransactions("MeasuOp")
         def AreCoordsInside(self, theShape, coords, tolerance=1.e-7):
             """
             Get if coords are included in the shape (ST_IN or ST_ON)
-            
-            Parameters: 
+
+            Parameters:
                 theShape Shape
                 coords list of points coordinates [x1, y1, z1, x2, y2, z2, ...]
                 tolerance to be used (default is 1.0e-7)
@@ -9590,14 +9922,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Value of the minimal distance between the given shapes.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def MinDistance(self, theShape1, theShape2):
             """
             Get minimal distance between the given shapes.
-            
-            Parameters: 
+
+            Parameters:
                 theShape1,theShape2 Shapes to find minimal distance between.
 
-            Returns:    
+            Returns:
                 Value of the minimal distance between the given shapes.
             """
             # Example: see GEOM_TestMeasures.py
@@ -9611,14 +9944,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          [Distance, DX, DY, DZ].
         #
         #  @ref swig_all_measure "Example"
+        @ManageTransactions("MeasuOp")
         def MinDistanceComponents(self, theShape1, theShape2):
             """
             Get minimal distance between the given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Shapes to find minimal distance between.
 
-            Returns:  
+            Returns:
                 Value of the minimal distance between the given shapes, in form of list
                 [Distance, DX, DY, DZ]
             """
@@ -9634,14 +9968,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          solutions) and a list of (X, Y, Z) coordinates for all couples of points.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def ClosestPoints (self, theShape1, theShape2):
             """
             Get closest points of the given shapes.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Shapes to find closest points of.
 
-            Returns:    
+            Returns:
                 The number of found solutions (-1 in case of infinite number of
                 solutions) and a list of (X, Y, Z) coordinates for all couples of points.
             """
@@ -9657,18 +9992,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Value of the angle between the given shapes in degrees.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def GetAngle(self, theShape1, theShape2):
             """
             Get angle between the given shapes in degrees.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Lines or linear edges to find angle between.
 
             Note:
                 If both arguments are vectors, the angle is computed in accordance
                 with their orientations, otherwise the minimum angle is computed.
 
-            Returns:  
+            Returns:
                 Value of the angle between the given shapes in degrees.
             """
             # Example: see GEOM_TestMeasures.py
@@ -9683,19 +10019,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Value of the angle between the given shapes in radians.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def GetAngleRadians(self, theShape1, theShape2):
             """
             Get angle between the given shapes in radians.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Lines or linear edges to find angle between.
 
-                
+
             Note:
                 If both arguments are vectors, the angle is computed in accordance
                 with their orientations, otherwise the minimum angle is computed.
 
-            Returns:  
+            Returns:
                 Value of the angle between the given shapes in radians.
             """
             # Example: see GEOM_TestMeasures.py
@@ -9710,16 +10047,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Value of the angle between the given vectors in degrees.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def GetAngleVectors(self, theShape1, theShape2, theFlag = True):
             """
             Get angle between the given vectors in degrees.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Vectors to find angle between.
                 theFlag If True, the normal vector is defined by the two vectors cross,
                         if False, the opposite vector to the normal vector is used.
 
-            Returns:  
+            Returns:
                 Value of the angle between the given vectors in degrees.
             """
             anAngle = self.MeasuOp.GetAngleBtwVectors(theShape1, theShape2)
@@ -9733,12 +10071,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Get angle between the given vectors in radians.
 
-            Parameters: 
+            Parameters:
                 theShape1,theShape2 Vectors to find angle between.
                 theFlag If True, the normal vector is defined by the two vectors cross,
                         if False, the opposite vector to the normal vector is used.
 
-            Returns:  
+            Returns:
                 Value of the angle between the given vectors in radians.
             """
             anAngle = self.GetAngleVectors(theShape1, theShape2, theFlag)*math.pi/180.
@@ -9755,15 +10093,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return radius of curvature of \a theCurve.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
         def CurveCurvatureByParam(self, theCurve, theParam):
             """
             Measure curvature of a curve at a point, set by parameter.
 
-            Parameters: 
+            Parameters:
                 theCurve a curve.
                 theParam parameter.
 
-            Returns: 
+            Returns:
                 radius of curvature of theCurve.
             """
             # Example: see GEOM_TestMeasures.py
@@ -9777,16 +10116,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return radius of curvature of \a theCurve.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
         def CurveCurvatureByPoint(self, theCurve, thePoint):
             """
             Measure curvature of a curve at a point.
 
-            Parameters: 
+            Parameters:
                 theCurve a curve.
                 thePoint given point.
 
-            Returns: 
-                radius of curvature of theCurve.           
+            Returns:
+                radius of curvature of theCurve.
             """
             aCurv = self.MeasuOp.CurveCurvatureByPoint(theCurve,thePoint)
             RaiseIfFailed("CurveCurvatureByPoint", self.MeasuOp)
@@ -9805,16 +10145,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return max radius of curvature of theSurf.
         #
         ## @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
         def MaxSurfaceCurvatureByParam(self, theSurf, theUParam, theVParam):
             """
             Measure max radius of curvature of surface.
 
-            Parameters: 
+            Parameters:
                 theSurf the given surface.
                 theUParam Value of U-parameter on the referenced surface.
                 theVParam Value of V-parameter on the referenced surface.
-                
-            Returns:     
+
+            Returns:
                 max radius of curvature of theSurf.
             """
             # Example: see GEOM_TestMeasures.py
@@ -9828,16 +10169,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return max radius of curvature of theSurf.
         #
         ## @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
         def MaxSurfaceCurvatureByPoint(self, theSurf, thePoint):
             """
             Measure max radius of curvature of surface in the given point.
 
-            Parameters: 
+            Parameters:
                 theSurf the given surface.
                 thePoint given point.
-                
-            Returns:     
-                max radius of curvature of theSurf.          
+
+            Returns:
+                max radius of curvature of theSurf.
             """
             aSurf = self.MeasuOp.MaxSurfaceCurvatureByPoint(theSurf,thePoint)
             RaiseIfFailed("MaxSurfaceCurvatureByPoint", self.MeasuOp)
@@ -9848,18 +10190,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theUParam Value of U-parameter on the referenced surface.
         #  @param theVParam Value of V-parameter on the referenced surface.
         #  @return min radius of curvature of theSurf.
-        #   
+        #
         ## @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
         def MinSurfaceCurvatureByParam(self, theSurf, theUParam, theVParam):
             """
             Measure min radius of curvature of surface.
 
-            Parameters: 
+            Parameters:
                 theSurf the given surface.
                 theUParam Value of U-parameter on the referenced surface.
                 theVParam Value of V-parameter on the referenced surface.
-                
-            Returns:     
+
+            Returns:
                 Min radius of curvature of theSurf.
             """
             aSurf = self.MeasuOp.MinSurfaceCurvatureByParam(theSurf,theUParam,theVParam)
@@ -9872,16 +10215,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return min radius of curvature of theSurf.
         #
         ## @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
         def MinSurfaceCurvatureByPoint(self, theSurf, thePoint):
             """
             Measure min radius of curvature of surface in the given point.
 
-            Parameters: 
+            Parameters:
                 theSurf the given surface.
                 thePoint given point.
-                
-            Returns:     
-                Min radius of curvature of theSurf.          
+
+            Returns:
+                Min radius of curvature of theSurf.
             """
             aSurf = self.MeasuOp.MinSurfaceCurvatureByPoint(theSurf,thePoint)
             RaiseIfFailed("MinSurfaceCurvatureByPoint", self.MeasuOp)
@@ -9896,14 +10240,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  VertMin,VertMax: Min and max tolerances of the vertices.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def Tolerance(self,theShape):
             """
             Get min and max tolerances of sub-shapes of theShape
 
-            Parameters: 
+            Parameters:
                 theShape Shape, to get tolerances of.
 
-            Returns:    
+            Returns:
                 [FaceMin,FaceMax, EdgeMin,EdgeMax, VertMin,VertMax]
                  FaceMin,FaceMax: Min and max tolerances of the faces.
                  EdgeMin,EdgeMax: Min and max tolerances of the edges.
@@ -9919,6 +10264,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Description of the given shape.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def WhatIs(self,theShape):
             """
             Obtain description of the given shape (number of sub-shapes of each type)
@@ -10005,6 +10351,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def MakeCDG(self, theShape, theName=None):
             """
             Get a point, situated at the centre of mass of theShape.
@@ -10034,6 +10381,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created vertex.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def GetVertexByIndex(self, theShape, theIndex, theName=None):
             """
             Get a vertex sub-shape by index depended with orientation.
@@ -10073,14 +10421,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created vertex.
             """
             # Example: see GEOM_TestMeasures.py
             # note: auto-publishing is done in self.GetVertexByIndex()
-            anObj = self.GetVertexByIndex(theShape, 0, theName)
-            RaiseIfFailed("GetFirstVertex", self.MeasuOp)
-            return anObj
+            return self.GetVertexByIndex(theShape, 0, theName)
 
         ## Get the last vertex of wire/edge depended orientation.
         #  @param theShape Shape to find last vertex.
@@ -10095,21 +10441,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Get the last vertex of wire/edge depended orientation.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to find last vertex.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the created vertex.
             """
             # Example: see GEOM_TestMeasures.py
-            nb_vert =  self.ShapesOp.NumberOfSubShapes(theShape, self.ShapeType["VERTEX"])
+            nb_vert =  self.NumberOfSubShapes(theShape, self.ShapeType["VERTEX"])
             # note: auto-publishing is done in self.GetVertexByIndex()
-            anObj = self.GetVertexByIndex(theShape, (nb_vert-1), theName)
-            RaiseIfFailed("GetLastVertex", self.MeasuOp)
-            return anObj
+            return self.GetVertexByIndex(theShape, (nb_vert-1), theName)
 
         ## Get a normale to the given face. If the point is not given,
         #  the normale is calculated at the center of mass.
@@ -10122,19 +10466,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created vector.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
         def GetNormal(self, theFace, theOptionalPoint = None, theName=None):
             """
             Get a normale to the given face. If the point is not given,
             the normale is calculated at the center of mass.
-            
-            Parameters: 
+
+            Parameters:
                 theFace Face to define normale of.
                 theOptionalPoint Point to compute the normale at.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:   
+            Returns:
                 New GEOM.GEOM_Object, containing the created vector.
             """
             # Example: see GEOM_TestMeasures.py
@@ -10152,6 +10497,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          Otherwise doesn't return anything.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def PrintShapeErrors(self, theShape, theShapeErrors, theReturnStatus = 0):
             """
             Print shape errors obtained from CheckShape.
@@ -10191,11 +10537,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          returned along with IsValid flag.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def CheckShape(self,theShape, theIsCheckGeom = 0, theReturnStatus = 0):
             """
             Check a topology of the given shape.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to check validity of.
                 theIsCheckGeom If FALSE, only the shape's topology will be checked,
                                if TRUE, the shape's geometry will be checked also.
@@ -10206,7 +10553,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                 If 2 IsValid flag and the list of error data
                                 is returned.
 
-            Returns:   
+            Returns:
                 TRUE, if the shape "seems to be valid".
                 If theShape is invalid, prints a description of problem.
                 If theReturnStatus is equal to 1 the description is returned
@@ -10237,14 +10584,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return TRUE, if the shape contains no self-intersections.
         #
         #  @ref tui_measurement_tools_page "Example"
+        @ManageTransactions("MeasuOp")
         def CheckSelfIntersections(self, theShape):
             """
             Detect self-intersections in the given shape.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to check.
 
-            Returns:   
+            Returns:
                 TRUE, if the shape contains no self-intersections.
             """
             # Example: see GEOM_TestMeasures.py
@@ -10265,6 +10613,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          Xx,Xy,Xz: Coordinates of shape's LCS X direction.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
         def GetPosition(self,theShape):
             """
             Get position (LCS) of theShape.
@@ -10272,10 +10621,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Axes of the LCS are obtained from shape's location or,
             if the shape is a planar face, from position of its plane.
 
-            Parameters: 
+            Parameters:
                 theShape Shape to calculate position of.
 
-            Returns:  
+            Returns:
                 [Ox,Oy,Oz, Zx,Zy,Zz, Xx,Xy,Xz].
                  Ox,Oy,Oz: Coordinates of shape's LCS origin.
                  Zx,Zy,Zz: Coordinates of shape's LCS normal(main) direction.
@@ -10295,11 +10644,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         or \a theDoubles list depends on the kind() of the shape.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("MeasuOp")
         def KindOfShape(self,theShape):
             """
             Get kind of theShape.
-         
-            Parameters: 
+
+            Parameters:
                 theShape Shape to get a kind of.
 
             Returns:
@@ -10328,14 +10678,40 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             return aKindTuple
 
+        ## Returns the string that describes if the shell is good for solid.
+        #  This is a support method for MakeSolid.
+        #
+        #  @param theShell the shell to be checked.
+        #  @return Returns a string that describes the shell validity for
+        #          solid construction.
+        @ManageTransactions("MeasuOp")
+        def _IsGoodForSolid(self, theShell):
+            """
+            Returns the string that describes if the shell is good for solid.
+            This is a support method for MakeSolid.
+
+            Parameter:
+                theShell the shell to be checked.
+
+            Returns:
+                Returns a string that describes the shell validity for
+                solid construction.
+            """
+            aDescr = self.MeasuOp.IsGoodForSolid(theShell)
+            return aDescr
+
         # end of l2_measure
         ## @}
 
         ## @addtogroup l2_import_export
         ## @{
 
-        ## Import a shape from the BREP or IGES or STEP file
+        ## Import a shape from the BREP, IGES, STEP or other file
         #  (depends on given format) with given name.
+        #
+        #  Note: this function is deprecated, it is kept for backward compatibility only
+        #  Use Import<FormatName> instead, where <FormatName> is a name of desirable format to import.
+        #
         #  @param theFileName The file, containing the shape.
         #  @param theFormatName Specify format for the file reading.
         #         Available formats can be obtained with InsertOp.ImportTranslators() method.
@@ -10354,10 +10730,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #        material groups are not automatically published.
         #
         #  @ref swig_Import_Export "Example"
+        @ManageTransactions("InsertOp")
         def ImportFile(self, theFileName, theFormatName, theName=None):
             """
-            Import a shape from the BREP or IGES or STEP file
+            Import a shape from the BREP, IGES, STEP or other file
             (depends on given format) with given name.
+
+            Note: this function is deprecated, it is kept for backward compatibility only
+            Use Import<FormatName> instead, where <FormatName> is a name of desirable format to import.
 
             Parameters: 
                 theFileName The file, containing the shape.
@@ -10380,6 +10760,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 material groups are not automatically published.
             """
             # Example: see GEOM_TestOthers.py
+            print """
+            WARNING: Function ImportFile is deprecated, use Import<FormatName> instead,
+            where <FormatName> is a name of desirable format for importing.
+            """
             aListObj = self.InsertOp.ImportFile(theFileName, theFormatName)
             RaiseIfFailed("ImportFile", self.InsertOp)
             aNbObj = len(aListObj)
@@ -10394,156 +10778,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Deprecated analog of geompy.ImportFile, kept for backward compatibility only.
             """
-            print "WARNING: Function Import is deprecated, use ImportFile instead"
             # note: auto-publishing is done in self.ImportFile()
             return self.ImportFile(theFileName, theFormatName, theName)
-
-        ## Shortcut to ImportFile() for BREP format.
-        #  Import a shape from the BREP file with given name.
-        #  @param theFileName The file, containing the shape.
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM.GEOM_Object, containing the imported shape.
-        #
-        #  @ref swig_Import_Export "Example"
-        def ImportBREP(self, theFileName, theName=None):
-            """
-            geompy.ImportFile(...) function for BREP format
-            Import a shape from the BREP file with given name.
-
-            Parameters: 
-                theFileName The file, containing the shape.
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM.GEOM_Object, containing the imported shape.
-            """
-            # Example: see GEOM_TestOthers.py
-            # note: auto-publishing is done in self.ImportFile()
-            return self.ImportFile(theFileName, "BREP", theName)
-
-        ## Shortcut to ImportFile() for IGES format
-        #  Import a shape from the IGES file with given name.
-        #  @param theFileName The file, containing the shape.
-        #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
-        #                     and result model will be scaled, if its units are not meters.
-        #                     If False (default), file length units will be taken into account.
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM.GEOM_Object, containing the imported shape.
-        #
-        #  @ref swig_Import_Export "Example"
-        def ImportIGES(self, theFileName, ignoreUnits = False, theName=None):
-            """
-            geompy.ImportFile(...) function for IGES format
-
-            Parameters:
-                theFileName The file, containing the shape.
-                ignoreUnits If True, file length units will be ignored (set to 'meter')
-                            and result model will be scaled, if its units are not meters.
-                            If False (default), file length units will be taken into account.
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM.GEOM_Object, containing the imported shape.
-            """
-            # Example: see GEOM_TestOthers.py
-            # note: auto-publishing is done in self.ImportFile()
-            if ignoreUnits:
-                return self.ImportFile(theFileName, "IGES_SCALE", theName)
-            return self.ImportFile(theFileName, "IGES", theName)
-
-        ## Return length unit from given IGES file
-        #  @param theFileName The file, containing the shape.
-        #  @return String, containing the units name.
-        #
-        #  @ref swig_Import_Export "Example"
-        def GetIGESUnit(self, theFileName):
-            """
-            Return length units from given IGES file
-
-            Parameters:
-                theFileName The file, containing the shape.
-
-            Returns:
-                String, containing the units name.
-            """
-            # Example: see GEOM_TestOthers.py
-            aUnitName = self.InsertOp.ReadValue(theFileName, "IGES", "LEN_UNITS")
-            return aUnitName
-
-        ## Shortcut to ImportFile() for STEP format
-        #  Import a shape from the STEP file with given name.
-        #  @param theFileName The file, containing the shape.
-        #  @param ignoreUnits If True, file length units will be ignored (set to 'meter')
-        #                     and result model will be scaled, if its units are not meters.
-        #                     If False (default), file length units will be taken into account.
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM.GEOM_Object, containing the imported shape.
-        #          If material names are imported it returns the list of
-        #          objects. The first one is the imported object followed by
-        #          material groups.
-        #  @note Auto publishing is allowed for the shape itself. Imported
-        #        material groups are not automatically published.
-        #
-        #  @ref swig_Import_Export "Example"
-        def ImportSTEP(self, theFileName, ignoreUnits = False, theName=None):
-            """
-            geompy.ImportFile(...) function for STEP format
-
-            Parameters:
-                theFileName The file, containing the shape.
-                ignoreUnits If True, file length units will be ignored (set to 'meter')
-                            and result model will be scaled, if its units are not meters.
-                            If False (default), file length units will be taken into account.
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM.GEOM_Object, containing the imported shape.
-                If material names are imported it returns the list of
-                objects. The first one is the imported object followed by
-                material groups.
-            Note:
-                Auto publishing is allowed for the shape itself. Imported
-                material groups are not automatically published.
-            """
-            # Example: see GEOM_TestOthers.py
-            # note: auto-publishing is done in self.ImportFile()
-            if ignoreUnits:
-                return self.ImportFile(theFileName, "STEP_SCALE", theName)
-            return self.ImportFile(theFileName, "STEP", theName)
-
-        ## Return length unit from given IGES or STEP file
-        #  @param theFileName The file, containing the shape.
-        #  @return String, containing the units name.
-        #
-        #  @ref swig_Import_Export "Example"
-        def GetSTEPUnit(self, theFileName):
-            """
-            Return length units from given STEP file
-
-            Parameters:
-                theFileName The file, containing the shape.
-
-            Returns:
-                String, containing the units name.
-            """
-            # Example: see GEOM_TestOthers.py
-            aUnitName = self.InsertOp.ReadValue(theFileName, "STEP", "LEN_UNITS")
-            return aUnitName
 
         ## Read a shape from the binary stream, containing its bounding representation (BRep).
         #  @note This method will not be dumped to the python script by DumpStudy functionality.
@@ -10556,6 +10792,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the shape, read from theStream.
         #
         #  @ref swig_Import_Export "Example"
+        @ManageTransactions("InsertOp")
         def RestoreShape (self, theStream, theName=None):
             """
             Read a shape from the binary stream, containing its bounding representation (BRep).
@@ -10563,7 +10800,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Note:
                 shape.GetShapeStream() method can be used to obtain the shape's BRep stream.
 
-            Parameters: 
+            Parameters:
                 theStream The BRep binary stream.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
@@ -10579,6 +10816,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Export the given shape into a file with given name.
+        #
+        #  Note: this function is deprecated, it is kept for backward compatibility only
+        #  Use Export<FormatName> instead, where <FormatName> is a name of desirable format to export.
+        #
         #  @param theObject Shape to be stored in the file.
         #  @param theFileName Name of the file to store the given shape in.
         #  @param theFormatName Specify format for the shape storage.
@@ -10586,10 +10827,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         geompy.InsertOp.ExportTranslators()[0] method.
         #
         #  @ref swig_Import_Export "Example"
+        @ManageTransactions("InsertOp")
         def Export(self, theObject, theFileName, theFormatName):
             """
             Export the given shape into a file with given name.
 
+            Note: this function is deprecated, it is kept for backward compatibility only
+            Use Export<FormatName> instead, where <FormatName> is a name of desirable format to export.
+            
             Parameters: 
                 theObject Shape to be stored in the file.
                 theFileName Name of the file to store the given shape in.
@@ -10598,41 +10843,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                               geompy.InsertOp.ExportTranslators()[0] method.
             """
             # Example: see GEOM_TestOthers.py
+            print """
+            WARNING: Function Export is deprecated, use Export<FormatName> instead,
+            where <FormatName> is a name of desirable format for exporting.
+            """
             self.InsertOp.Export(theObject, theFileName, theFormatName)
             if self.InsertOp.IsDone() == 0:
                 raise RuntimeError,  "Export : " + self.InsertOp.GetErrorCode()
                 pass
             pass
-
-        ## Shortcut to Export() for BREP format
-        #
-        #  @ref swig_Import_Export "Example"
-        def ExportBREP(self,theObject, theFileName):
-            """
-            geompy.Export(...) function for BREP format
-            """
-            # Example: see GEOM_TestOthers.py
-            return self.Export(theObject, theFileName, "BREP")
-
-        ## Shortcut to Export() for IGES format
-        #
-        #  @ref swig_Import_Export "Example"
-        def ExportIGES(self,theObject, theFileName):
-            """
-            geompy.Export(...) function for IGES format
-            """
-            # Example: see GEOM_TestOthers.py
-            return self.Export(theObject, theFileName, "IGES")
-
-        ## Shortcut to Export() for STEP format
-        #
-        #  @ref swig_Import_Export "Example"
-        def ExportSTEP(self,theObject, theFileName):
-            """
-            geompy.Export(...) function for STEP format
-            """
-            # Example: see GEOM_TestOthers.py
-            return self.Export(theObject, theFileName, "STEP")
 
         # end of l2_import_export
         ## @}
@@ -10650,21 +10869,22 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_building_by_blocks_page "Example"
+        @ManageTransactions("BlocksOp")
         def MakeQuad(self, E1, E2, E3, E4, theName=None):
             """
             Create a quadrangle face from four edges. Order of Edges is not
             important. It is  not necessary that edges share the same vertex.
 
-            Parameters: 
+            Parameters:
                 E1,E2,E3,E4 Edges for the face bound.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created face.
 
-            Example of usage:               
+            Example of usage:
                 qface1 = geompy.MakeQuad(edge1, edge2, edge3, edge4)
             """
             # Example: see GEOM_Spanner.py
@@ -10683,20 +10903,21 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_building_by_blocks_page "Example"
+        @ManageTransactions("BlocksOp")
         def MakeQuad2Edges(self, E1, E2, theName=None):
             """
             Create a quadrangle face on two edges.
             The missing edges will be built by creating the shortest ones.
 
-            Parameters: 
+            Parameters:
                 E1,E2 Two opposite edges for the face.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created face.
-            
+
             Example of usage:
                 # create vertices
                 p1 = geompy.MakeVertex(  0.,   0.,   0.)
@@ -10726,18 +10947,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_building_by_blocks_page "Example 1"
         #  \n @ref swig_MakeQuad4Vertices "Example 2"
+        @ManageTransactions("BlocksOp")
         def MakeQuad4Vertices(self, V1, V2, V3, V4, theName=None):
             """
             Create a quadrangle face with specified corners.
             The missing edges will be built by creating the shortest ones.
 
-            Parameters: 
+            Parameters:
                 V1,V2,V3,V4 Corner vertices for the face.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the created face.
 
             Example of usage:
@@ -10766,18 +10988,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_building_by_blocks_page "Example 1"
         #  \n @ref swig_MakeHexa "Example 2"
+        @ManageTransactions("BlocksOp")
         def MakeHexa(self, F1, F2, F3, F4, F5, F6, theName=None):
             """
             Create a hexahedral solid, bounded by the six given faces. Order of
             faces is not important. It is  not necessary that Faces share the same edge.
 
-            Parameters: 
+            Parameters:
                 F1,F2,F3,F4,F5,F6 Faces for the hexahedral solid.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:    
+            Returns:
                 New GEOM.GEOM_Object, containing the created solid.
 
             Example of usage:
@@ -10800,12 +11023,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_building_by_blocks_page "Example 1"
         #  \n @ref swig_MakeHexa2Faces "Example 2"
+        @ManageTransactions("BlocksOp")
         def MakeHexa2Faces(self, F1, F2, theName=None):
             """
             Create a hexahedral solid between two given faces.
             The missing faces will be built by creating the smallest ones.
 
-            Parameters: 
+            Parameters:
                 F1,F2 Two opposite faces for the hexahedral solid.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
@@ -10841,11 +11065,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found vertex.
         #
         #  @ref swig_GetPoint "Example"
+        @ManageTransactions("BlocksOp")
         def GetPoint(self, theShape, theX, theY, theZ, theEpsilon, theName=None):
             """
             Get a vertex, found in the given shape by its coordinates.
 
-            Parameters: 
+            Parameters:
                 theShape Block or a compound of blocks.
                 theX,theY,theZ Coordinates of the sought vertex.
                 theEpsilon Maximum allowed distance between the resulting
@@ -10854,7 +11079,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns:                  
+            Returns:
                 New GEOM.GEOM_Object, containing the found vertex.
 
             Example of usage:
@@ -10876,11 +11101,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found vertex.
         #
         #  @ref swig_GetVertexNearPoint "Example"
+        @ManageTransactions("BlocksOp")
         def GetVertexNearPoint(self, theShape, thePoint, theName=None):
             """
             Find a vertex of the given shape, which has minimal distance to the given point.
 
-            Parameters: 
+            Parameters:
                 theShape Any shape.
                 thePoint Point, close to the desired vertex.
                 theName Object name; when specified, this parameter is used
@@ -10910,11 +11136,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found edge.
         #
         #  @ref swig_GetEdge "Example"
+        @ManageTransactions("BlocksOp")
         def GetEdge(self, theShape, thePoint1, thePoint2, theName=None):
             """
             Get an edge, found in the given shape by two given vertices.
 
-            Parameters: 
+            Parameters:
                 theShape Block or a compound of blocks.
                 thePoint1,thePoint2 Points, close to the ends of the desired edge.
                 theName Object name; when specified, this parameter is used
@@ -10940,11 +11167,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found edge.
         #
         #  @ref swig_GetEdgeNearPoint "Example"
+        @ManageTransactions("BlocksOp")
         def GetEdgeNearPoint(self, theShape, thePoint, theName=None):
             """
             Find an edge of the given shape, which has minimal distance to the given point.
 
-            Parameters: 
+            Parameters:
                 theShape Block or a compound of blocks.
                 thePoint Point, close to the desired edge.
                 theName Object name; when specified, this parameter is used
@@ -10970,6 +11198,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("BlocksOp")
         def GetFaceByPoints(self, theShape, thePoint1, thePoint2, thePoint3, thePoint4, theName=None):
             """
             Returns a face, found in the given shape by four given corner vertices.
@@ -11000,6 +11229,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("BlocksOp")
         def GetFaceByEdges(self, theShape, theEdge1, theEdge2, theName=None):
             """
             Get a face of block, found in the given shape by two given edges.
@@ -11030,6 +11260,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_GetOppositeFace "Example"
+        @ManageTransactions("BlocksOp")
         def GetOppositeFace(self, theBlock, theFace, theName=None):
             """
             Find a face, opposite to the given one in the given block.
@@ -11041,7 +11272,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM.GEOM_Object, containing the found face.
             """
             # Example: see GEOM_Spanner.py
@@ -11060,6 +11291,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_GetFaceNearPoint "Example"
+        @ManageTransactions("BlocksOp")
         def GetFaceNearPoint(self, theShape, thePoint, theName=None):
             """
             Find a face of the given shape, which has minimal distance to the given point.
@@ -11090,6 +11322,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found face.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("BlocksOp")
         def GetFaceByNormale(self, theBlock, theVector, theName=None):
             """
             Find a face of block, whose outside normale has minimal angle with the given vector.
@@ -11125,6 +11358,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing a group of all found shapes.
         #
         #  @ref swig_GetShapesNearPoint "Example"
+        @ManageTransactions("BlocksOp")
         def GetShapesNearPoint(self, theShape, thePoint, theShapeType, theTolerance = 1e-07, theName=None):
             """
             Find all sub-shapes of type theShapeType of the given shape,
@@ -11169,6 +11403,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_measurement_tools_page "Example 1"
         #  \n @ref swig_CheckCompoundOfBlocks "Example 2"
+        @ManageTransactions("BlocksOp")
         def CheckCompoundOfBlocks(self,theCompound):
             """
             Check, if the compound of blocks is given.
@@ -11184,7 +11419,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Returns:
                 TRUE, if the given shape is a compound of blocks.
-                If theCompound is not valid, prints all discovered errors.            
+                If theCompound is not valid, prints all discovered errors.
             """
             # Example: see GEOM_Spanner.py
             (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound)
@@ -11207,6 +11442,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_measurement_tools_page "Example 1"
         #  \n @ref swig_GetNonBlocks "Example 2"
+        @ManageTransactions("BlocksOp")
         def GetNonBlocks (self, theShape, theName=None):
             """
             Retrieve all non blocks solids and faces from theShape.
@@ -11245,6 +11481,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Improved shape.
         #
         #  @ref swig_RemoveExtraEdges "Example"
+        @ManageTransactions("BlocksOp")
         def RemoveExtraEdges(self, theShape, doUnionFaces=False, theName=None):
             """
             Remove all seam and degenerated edges from theShape.
@@ -11259,7 +11496,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 Improved shape.
             """
             # Example: see GEOM_TestOthers.py
@@ -11282,6 +11519,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Improved shape.
         #
         #  @ref swig_UnionFaces "Example"
+        @ManageTransactions("BlocksOp")
         def UnionFaces(self, theShape, theName=None):
             """
             Performs union faces of theShape.
@@ -11295,7 +11533,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 Improved shape.
             """
             # Example: see GEOM_TestOthers.py
@@ -11315,6 +11553,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Improved compound.
         #
         #  @ref swig_CheckAndImprove "Example"
+        @ManageTransactions("BlocksOp")
         def CheckAndImprove(self, theShape, theName=None):
             """
             Check, if the given shape is a blocks compound.
@@ -11329,7 +11568,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 Improved compound.
             """
             # Example: see GEOM_TestOthers.py
@@ -11358,6 +11597,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_explode_on_blocks "Example 1"
         #  \n @ref swig_MakeBlockExplode "Example 2"
+        @ManageTransactions("BlocksOp")
         def MakeBlockExplode(self, theCompound, theMinNbFaces, theMaxNbFaces, theName=None):
             """
             Get all the blocks, contained in the given compound.
@@ -11373,7 +11613,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Note:
                 If theMaxNbFaces = 0, the maximum number of faces is not restricted.
 
-            Returns:  
+            Returns:
                 List of GEOM.GEOM_Object, containing the retrieved blocks.
             """
             # Example: see GEOM_TestOthers.py
@@ -11397,6 +11637,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found block.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("BlocksOp")
         def GetBlockNearPoint(self, theCompound, thePoint, theName=None):
             """
             Find block, containing the given point inside its volume or on boundary.
@@ -11428,6 +11669,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the found block.
         #
         #  @ref swig_GetBlockByParts "Example"
+        @ManageTransactions("BlocksOp")
         def GetBlockByParts(self, theCompound, theParts, theName=None):
             """
              Find block, containing all the elements, passed as the parts, or maximum quantity of them.
@@ -11439,7 +11681,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
-            Returns: 
+            Returns:
                 New GEOM_Object, containing the found block.
             """
             # Example: see GEOM_TestOthers.py
@@ -11458,6 +11700,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of GEOM.GEOM_Object, containing the found blocks.
         #
         #  @ref swig_todo "Example"
+        @ManageTransactions("BlocksOp")
         def GetBlocksByParts(self, theCompound, theParts, theName=None):
             """
             Return all blocks, containing all the elements, passed as the parts.
@@ -11493,6 +11736,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_multi_transformation "Example"
+        @ManageTransactions("BlocksOp")
         def MakeMultiTransformation1D(self, Block, DirFace1, DirFace2, NbTimes, theName=None):
             """
             Multi-transformate block and glue the result.
@@ -11533,6 +11777,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_multi_transformation "Example"
+        @ManageTransactions("BlocksOp")
         def MakeMultiTransformation2D(self, Block, DirFace1U, DirFace2U, NbTimesU,
                                       DirFace1V, DirFace2V, NbTimesV, theName=None):
             """
@@ -11572,6 +11817,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return List of GEOM.GEOM_Object, each of them is a propagation group.
         #
         #  @ref swig_Propagate "Example"
+        @ManageTransactions("BlocksOp")
         def Propagate(self, theShape, theName=None):
             """
             Build all possible propagation groups.
@@ -11611,6 +11857,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_working_with_groups_page "Example 1"
         #  \n @ref swig_CreateGroup "Example 2"
+        @ManageTransactions("GroupOp")
         def CreateGroup(self, theMainShape, theShapeType, theName=None):
             """
             Creates a new group which will store sub-shapes of theMainShape
@@ -11628,7 +11875,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Example of usage:
                 group = geompy.CreateGroup(Box, geompy.ShapeType["FACE"])
-                
+
             """
             # Example: see GEOM_TestOthers.py
             anObj = self.GroupOp.CreateGroup(theMainShape, theShapeType)
@@ -11642,6 +11889,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  \note Use method GetSubShapeID() to get an unique ID of the sub-shape
         #
         #  @ref tui_working_with_groups_page "Example"
+        @ManageTransactions("GroupOp")
         def AddObject(self,theGroup, theSubShapeID):
             """
             Adds a sub-object with ID theSubShapeId to the group
@@ -11651,7 +11899,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theSubShapeID  is a sub-shape ID in the main object.
 
             Note:
-                Use method GetSubShapeID() to get an unique ID of the sub-shape 
+                Use method GetSubShapeID() to get an unique ID of the sub-shape
             """
             # Example: see GEOM_TestOthers.py
             self.GroupOp.AddObject(theGroup, theSubShapeID)
@@ -11666,6 +11914,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  \note Use method GetSubShapeID() to get an unique ID of the sub-shape
         #
         #  @ref tui_working_with_groups_page "Example"
+        @ManageTransactions("GroupOp")
         def RemoveObject(self,theGroup, theSubShapeID):
             """
             Removes a sub-object with ID theSubShapeId from the group
@@ -11687,6 +11936,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theSubShapes is a list of sub-shapes to be added.
         #
         #  @ref tui_working_with_groups_page "Example"
+        @ManageTransactions("GroupOp")
         def UnionList (self,theGroup, theSubShapes):
             """
             Adds to the group all the given shapes. No errors, if some shapes are alredy included.
@@ -11705,6 +11955,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theSubShapes is a list of indices of sub-shapes to be added.
         #
         #  @ref swig_UnionIDs "Example"
+        @ManageTransactions("GroupOp")
         def UnionIDs(self,theGroup, theSubShapes):
             """
             Adds to the group all the given shapes. No errors, if some shapes are alredy included.
@@ -11723,6 +11974,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theSubShapes is a list of sub-shapes to be removed.
         #
         #  @ref tui_working_with_groups_page "Example"
+        @ManageTransactions("GroupOp")
         def DifferenceList (self,theGroup, theSubShapes):
             """
             Removes from the group all the given shapes. No errors, if some shapes are not included.
@@ -11741,6 +11993,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theSubShapes is a list of indices of sub-shapes to be removed.
         #
         #  @ref swig_DifferenceIDs "Example"
+        @ManageTransactions("GroupOp")
         def DifferenceIDs(self,theGroup, theSubShapes):
             """
             Removes from the group all the given shapes. No errors, if some shapes are not included.
@@ -11748,7 +12001,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Parameters:
                 theGroup is a GEOM group from which the sub-shapes are removed.
                 theSubShapes is a list of indices of sub-shapes to be removed.
-            """            
+            """
             # Example: see GEOM_TestOthers.py
             self.GroupOp.DifferenceIDs(theGroup, theSubShapes)
             RaiseIfFailed("DifferenceIDs", self.GroupOp)
@@ -11766,6 +12019,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return a newly created GEOM group.
         #
         #  @ref tui_union_groups_anchor "Example"
+        @ManageTransactions("GroupOp")
         def UnionGroups (self, theGroup1, theGroup2, theName=None):
             """
             Union of two groups.
@@ -11799,6 +12053,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return a newly created GEOM group.
         #
         #  @ref tui_intersect_groups_anchor "Example"
+        @ManageTransactions("GroupOp")
         def IntersectGroups (self, theGroup1, theGroup2, theName=None):
             """
             Intersection of two groups.
@@ -11832,6 +12087,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return a newly created GEOM group.
         #
         #  @ref tui_cut_groups_anchor "Example"
+        @ManageTransactions("GroupOp")
         def CutGroups (self, theGroup1, theGroup2, theName=None):
             """
             Cut of two groups.
@@ -11865,6 +12121,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return a newly created GEOM group.
         #
         #  @ref tui_union_groups_anchor "Example"
+        @ManageTransactions("GroupOp")
         def UnionListOfGroups (self, theGList, theName=None):
             """
             Union of list of groups.
@@ -11897,6 +12154,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return a newly created GEOM group.
         #
         #  @ref tui_intersect_groups_anchor "Example"
+        @ManageTransactions("GroupOp")
         def IntersectListOfGroups (self, theGList, theName=None):
             """
             Cut of lists of groups.
@@ -11920,7 +12178,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Cut of lists of groups.
         #  New group is created. It will contain only entities
-        #  which are present in groups listed in theGList1 but 
+        #  which are present in groups listed in theGList1 but
         #  are not present in groups from theGList2.
         #  @param theGList1 is a list of GEOM groups to include elements of.
         #  @param theGList2 is a list of GEOM groups to exclude elements of.
@@ -11931,11 +12189,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return a newly created GEOM group.
         #
         #  @ref tui_cut_groups_anchor "Example"
+        @ManageTransactions("GroupOp")
         def CutListOfGroups (self, theGList1, theGList2, theName=None):
             """
             Cut of lists of groups.
             New group is created. It will contain only entities
-            which are present in groups listed in theGList1 but 
+            which are present in groups listed in theGList1 but
             are not present in groups from theGList2.
 
             Parameters:
@@ -11958,6 +12217,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theGroup is a GEOM group for which a list of IDs is requested
         #
         #  @ref swig_GetObjectIDs "Example"
+        @ManageTransactions("GroupOp")
         def GetObjectIDs(self,theGroup):
             """
             Returns a list of sub-objects ID stored in the group
@@ -11974,6 +12234,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theGroup is a GEOM group which type is returned.
         #
         #  @ref swig_GetType "Example"
+        @ManageTransactions("GroupOp")
         def GetType(self,theGroup):
             """
             Returns a type of sub-objects stored in the group
@@ -11996,7 +12257,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theId is a GEOM obect type id.
-                
+
             Returns:
                 type of geom object (POINT, VECTOR, PLANE, LINE, TORUS, ... )
             """
@@ -12103,6 +12364,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return a GEOM object which is a main shape for theGroup
         #
         #  @ref swig_GetMainShape "Example"
+        @ManageTransactions("GroupOp")
         def GetMainShape(self,theGroup):
             """
             Returns a main shape associated with the group
@@ -12225,556 +12487,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         # end of l3_groups
         ## @}
 
-        ## @addtogroup l4_advanced
-        ## @{
-
-        ## Create a T-shape object with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length).
-        #  The extremities of the main pipe are located on junctions points P1 and P2.
-        #  The extremity of the incident pipe is located on junction point P3.
-        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-        #  the main plane of the T-shape is XOY.
-        #
-        #  @param theR1 Internal radius of main pipe
-        #  @param theW1 Width of main pipe
-        #  @param theL1 Half-length of main pipe
-        #  @param theR2 Internal radius of incident pipe (R2 < R1)
-        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
-        #  @param theL2 Half-length of incident pipe
-        #
-        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-        #  @param theP1 1st junction point of main pipe
-        #  @param theP2 2nd junction point of main pipe
-        #  @param theP3 Junction point of incident pipe
-        #
-        #  @param theRL Internal radius of left thickness reduction
-        #  @param theWL Width of left thickness reduction
-        #  @param theLtransL Length of left transition part
-        #  @param theLthinL Length of left thin part
-        #
-        #  @param theRR Internal radius of right thickness reduction
-        #  @param theWR Width of right thickness reduction
-        #  @param theLtransR Length of right transition part
-        #  @param theLthinR Length of right thin part
-        #
-        #  @param theRI Internal radius of incident thickness reduction
-        #  @param theWI Width of incident thickness reduction
-        #  @param theLtransI Length of incident transition part
-        #  @param theLthinI Length of incident thin part
-        #
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
-        #
-        #  @ref tui_creation_pipetshape "Example"
-        def MakePipeTShape (self, theR1, theW1, theL1, theR2, theW2, theL2,
-                            theHexMesh=True, theP1=None, theP2=None, theP3=None,
-                            theRL=0, theWL=0, theLtransL=0, theLthinL=0,
-                            theRR=0, theWR=0, theLtransR=0, theLthinR=0,
-                            theRI=0, theWI=0, theLtransI=0, theLthinI=0,
-                            theName=None):
-            """
-            Create a T-shape object with specified caracteristics for the main
-            and the incident pipes (radius, width, half-length).
-            The extremities of the main pipe are located on junctions points P1 and P2.
-            The extremity of the incident pipe is located on junction point P3.
-            If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-            the main plane of the T-shape is XOY.
-
-            Parameters:
-                theR1 Internal radius of main pipe
-                theW1 Width of main pipe
-                theL1 Half-length of main pipe
-                theR2 Internal radius of incident pipe (R2 < R1)
-                theW2 Width of incident pipe (R2+W2 < R1+W1)
-                theL2 Half-length of incident pipe
-                theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-                theP1 1st junction point of main pipe
-                theP2 2nd junction point of main pipe
-                theP3 Junction point of incident pipe
-
-                theRL Internal radius of left thickness reduction
-                theWL Width of left thickness reduction
-                theLtransL Length of left transition part
-                theLthinL Length of left thin part
-
-                theRR Internal radius of right thickness reduction
-                theWR Width of right thickness reduction
-                theLtransR Length of right transition part
-                theLthinR Length of right thin part
-
-                theRI Internal radius of incident thickness reduction
-                theWI Width of incident thickness reduction
-                theLtransI Length of incident transition part
-                theLthinI Length of incident thin part
-
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                List of GEOM_Object, containing the created shape and propagation groups.
-
-            Example of usage:
-                # create PipeTShape object
-                pipetshape = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0)
-                # create PipeTShape object with position
-                pipetshape_position = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, True, P1, P2, P3)
-                # create PipeTShape object with left thickness reduction
-                pipetshape_thr = geompy.MakePipeTShape(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, theRL=60, theWL=20, theLtransL=40, theLthinL=20)
-            """
-            theR1, theW1, theL1, theR2, theW2, theL2, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI)
-            if (theP1 and theP2 and theP3):
-                anObj = self.AdvOp.MakePipeTShapeTRWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                                theRL, theWL, theLtransL, theLthinL,
-                                                                theRR, theWR, theLtransR, theLthinR,
-                                                                theRI, theWI, theLtransI, theLthinI,
-                                                                theHexMesh, theP1, theP2, theP3)
-            else:
-                anObj = self.AdvOp.MakePipeTShapeTR(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                    theRL, theWL, theLtransL, theLthinL,
-                                                    theRR, theWR, theLtransR, theLthinR,
-                                                    theRI, theWI, theLtransI, theLthinI,
-                                                    theHexMesh)
-            RaiseIfFailed("MakePipeTShape", self.AdvOp)
-            if Parameters: anObj[0].SetParameters(Parameters)
-            def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
-            self._autoPublish(anObj, _toListOfNames(theName, len(anObj)), def_names)
-            return anObj
-
-        ## Create a T-shape object with chamfer and with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length). The chamfer is
-        #  created on the junction of the pipes.
-        #  The extremities of the main pipe are located on junctions points P1 and P2.
-        #  The extremity of the incident pipe is located on junction point P3.
-        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-        #  the main plane of the T-shape is XOY.
-        #  @param theR1 Internal radius of main pipe
-        #  @param theW1 Width of main pipe
-        #  @param theL1 Half-length of main pipe
-        #  @param theR2 Internal radius of incident pipe (R2 < R1)
-        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
-        #  @param theL2 Half-length of incident pipe
-        #  @param theH Height of the chamfer.
-        #  @param theW Width of the chamfer.
-        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-        #  @param theP1 1st junction point of main pipe
-        #  @param theP2 2nd junction point of main pipe
-        #  @param theP3 Junction point of incident pipe
-        #
-        #  @param theRL Internal radius of left thickness reduction
-        #  @param theWL Width of left thickness reduction
-        #  @param theLtransL Length of left transition part
-        #  @param theLthinL Length of left thin part
-        #
-        #  @param theRR Internal radius of right thickness reduction
-        #  @param theWR Width of right thickness reduction
-        #  @param theLtransR Length of right transition part
-        #  @param theLthinR Length of right thin part
-        #
-        #  @param theRI Internal radius of incident thickness reduction
-        #  @param theWI Width of incident thickness reduction
-        #  @param theLtransI Length of incident transition part
-        #  @param theLthinI Length of incident thin part
-        #
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
-        #
-        #  @ref tui_creation_pipetshape "Example"
-        def MakePipeTShapeChamfer (self, theR1, theW1, theL1, theR2, theW2, theL2,
-                                   theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None,
-                                   theRL=0, theWL=0, theLtransL=0, theLthinL=0,
-                                   theRR=0, theWR=0, theLtransR=0, theLthinR=0,
-                                   theRI=0, theWI=0, theLtransI=0, theLthinI=0,
-                                   theName=None):
-            """
-            Create a T-shape object with chamfer and with specified caracteristics for the main
-            and the incident pipes (radius, width, half-length). The chamfer is
-            created on the junction of the pipes.
-            The extremities of the main pipe are located on junctions points P1 and P2.
-            The extremity of the incident pipe is located on junction point P3.
-            If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-            the main plane of the T-shape is XOY.
-
-            Parameters:
-                theR1 Internal radius of main pipe
-                theW1 Width of main pipe
-                theL1 Half-length of main pipe
-                theR2 Internal radius of incident pipe (R2 < R1)
-                theW2 Width of incident pipe (R2+W2 < R1+W1)
-                theL2 Half-length of incident pipe
-                theH Height of the chamfer.
-                theW Width of the chamfer.
-                theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-                theP1 1st junction point of main pipe
-                theP2 2nd junction point of main pipe
-                theP3 Junction point of incident pipe
-
-                theRL Internal radius of left thickness reduction
-                theWL Width of left thickness reduction
-                theLtransL Length of left transition part
-                theLthinL Length of left thin part
-
-                theRR Internal radius of right thickness reduction
-                theWR Width of right thickness reduction
-                theLtransR Length of right transition part
-                theLthinR Length of right thin part
-
-                theRI Internal radius of incident thickness reduction
-                theWI Width of incident thickness reduction
-                theLtransI Length of incident transition part
-                theLthinI Length of incident thin part
-
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                List of GEOM_Object, containing the created shape and propagation groups.
-
-            Example of usage:
-                # create PipeTShape with chamfer object
-                pipetshapechamfer = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0)
-                # create PipeTShape with chamfer object with position
-                pipetshapechamfer_position = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0, True, P1, P2, P3)
-                # create PipeTShape with chamfer object with left thickness reduction
-                pipetshapechamfer_thr = geompy.MakePipeTShapeChamfer(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 20.0, 20.0, theRL=60, theWL=20, theLtransL=40, theLthinL=20)
-            """
-            theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI)
-            if (theP1 and theP2 and theP3):
-              anObj = self.AdvOp.MakePipeTShapeTRChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                                     theRL, theWL, theLtransL, theLthinL,
-                                                                     theRR, theWR, theLtransR, theLthinR,
-                                                                     theRI, theWI, theLtransI, theLthinI,
-                                                                     theH, theW, theHexMesh, theP1, theP2, theP3)
-            else:
-              anObj = self.AdvOp.MakePipeTShapeTRChamfer(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                         theRL, theWL, theLtransL, theLthinL,
-                                                         theRR, theWR, theLtransR, theLthinR,
-                                                         theRI, theWI, theLtransI, theLthinI,
-                                                         theH, theW, theHexMesh)
-            RaiseIfFailed("MakePipeTShapeChamfer", self.AdvOp)
-            if Parameters: anObj[0].SetParameters(Parameters)
-            def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
-            self._autoPublish(anObj, _toListOfNames(theName, len(anObj)), def_names)
-            return anObj
-
-        ## Create a T-shape object with fillet and with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length). The fillet is
-        #  created on the junction of the pipes.
-        #  The extremities of the main pipe are located on junctions points P1 and P2.
-        #  The extremity of the incident pipe is located on junction point P3.
-        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-        #  the main plane of the T-shape is XOY.
-        #  @param theR1 Internal radius of main pipe
-        #  @param theW1 Width of main pipe
-        #  @param theL1 Half-length of main pipe
-        #  @param theR2 Internal radius of incident pipe (R2 < R1)
-        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
-        #  @param theL2 Half-length of incident pipe
-        #  @param theRF Radius of curvature of fillet.
-        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-        #  @param theP1 1st junction point of main pipe
-        #  @param theP2 2nd junction point of main pipe
-        #  @param theP3 Junction point of incident pipe
-        #
-        #  @param theRL Internal radius of left thickness reduction
-        #  @param theWL Width of left thickness reduction
-        #  @param theLtransL Length of left transition part
-        #  @param theLthinL Length of left thin part
-        #
-        #  @param theRR Internal radius of right thickness reduction
-        #  @param theWR Width of right thickness reduction
-        #  @param theLtransR Length of right transition part
-        #  @param theLthinR Length of right thin part
-        #
-        #  @param theRI Internal radius of incident thickness reduction
-        #  @param theWI Width of incident thickness reduction
-        #  @param theLtransI Length of incident transition part
-        #  @param theLthinI Length of incident thin part
-        #
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return List of GEOM.GEOM_Object, containing the created shape and propagation groups.
-        #
-        #  @ref tui_creation_pipetshape "Example"
-        def MakePipeTShapeFillet (self, theR1, theW1, theL1, theR2, theW2, theL2,
-                                  theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None,
-                                  theRL=0, theWL=0, theLtransL=0, theLthinL=0,
-                                  theRR=0, theWR=0, theLtransR=0, theLthinR=0,
-                                  theRI=0, theWI=0, theLtransI=0, theLthinI=0,
-                                  theName=None):
-            """
-            Create a T-shape object with fillet and with specified caracteristics for the main
-            and the incident pipes (radius, width, half-length). The fillet is
-            created on the junction of the pipes.
-            The extremities of the main pipe are located on junctions points P1 and P2.
-            The extremity of the incident pipe is located on junction point P3.
-
-            Parameters:
-                If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
-                the main plane of the T-shape is XOY.
-                theR1 Internal radius of main pipe
-                theW1 Width of main pipe
-                heL1 Half-length of main pipe
-                theR2 Internal radius of incident pipe (R2 < R1)
-                theW2 Width of incident pipe (R2+W2 < R1+W1)
-                theL2 Half-length of incident pipe
-                theRF Radius of curvature of fillet.
-                theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
-                theP1 1st junction point of main pipe
-                theP2 2nd junction point of main pipe
-                theP3 Junction point of incident pipe
-
-                theRL Internal radius of left thickness reduction
-                theWL Width of left thickness reduction
-                theLtransL Length of left transition part
-                theLthinL Length of left thin part
-
-                theRR Internal radius of right thickness reduction
-                theWR Width of right thickness reduction
-                theLtransR Length of right transition part
-                theLthinR Length of right thin part
-
-                theRI Internal radius of incident thickness reduction
-                theWI Width of incident thickness reduction
-                theLtransI Length of incident transition part
-                theLthinI Length of incident thin part
-
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-                
-            Returns:
-                List of GEOM_Object, containing the created shape and propagation groups.
-                
-            Example of usage:
-                # create PipeTShape with fillet object
-                pipetshapefillet = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0)
-                # create PipeTShape with fillet object with position
-                pipetshapefillet_position = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0, True, P1, P2, P3)
-                # create PipeTShape with fillet object with left thickness reduction
-                pipetshapefillet_thr = geompy.MakePipeTShapeFillet(80.0, 20.0, 200.0, 50.0, 20.0, 200.0, 5.0, theRL=60, theWL=20, theLtransL=40, theLthinL=20)
-            """
-            theR1, theW1, theL1, theR2, theW2, theL2, theRF, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theRL, theWL, theLtransL, theLthinL, theRR, theWR, theLtransR, theLthinR, theRI, theWI, theLtransI, theLthinI)
-            if (theP1 and theP2 and theP3):
-              anObj = self.AdvOp.MakePipeTShapeTRFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                                    theRL, theWL, theLtransL, theLthinL,
-                                                                    theRR, theWR, theLtransR, theLthinR,
-                                                                    theRI, theWI, theLtransI, theLthinI,
-                                                                    theRF, theHexMesh, theP1, theP2, theP3)
-            else:
-              anObj = self.AdvOp.MakePipeTShapeTRFillet(theR1, theW1, theL1, theR2, theW2, theL2,
-                                                        theRL, theWL, theLtransL, theLthinL,
-                                                        theRR, theWR, theLtransR, theLthinR,
-                                                        theRI, theWI, theLtransI, theLthinI,
-                                                        theRF, theHexMesh)
-            RaiseIfFailed("MakePipeTShapeFillet", self.AdvOp)
-            if Parameters: anObj[0].SetParameters(Parameters)
-            def_names = [ "pipeTShape" ] + [ "pipeTShape_grp_%d" % i for i in range(1, len(anObj)) ]
-            self._autoPublish(anObj, _toListOfNames(theName, len(anObj)), def_names)
-            return anObj
-
-        ## This function allows creating a disk already divided into blocks. It
-        #  can be used to create divided pipes for later meshing in hexaedra.
-        #  @param theR Radius of the disk
-        #  @param theOrientation Orientation of the plane on which the disk will be built
-        #         1 = XOY, 2 = OYZ, 3 = OZX
-        #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM_Object, containing the created shape.
-        #
-        #  @ref tui_creation_divideddisk "Example"
-        def MakeDividedDisk(self, theR, theOrientation, thePattern, theName=None):
-            """
-            Creates a disk, divided into blocks. It can be used to create divided pipes
-            for later meshing in hexaedra.
-
-            Parameters:
-                theR Radius of the disk
-                theOrientation Orientation of the plane on which the disk will be built:
-                               1 = XOY, 2 = OYZ, 3 = OZX
-                thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM_Object, containing the created shape.
-            """
-            theR, Parameters = ParseParameters(theR)
-            anObj = self.AdvOp.MakeDividedDisk(theR, 67.0, theOrientation, thePattern)
-            RaiseIfFailed("MakeDividedDisk", self.AdvOp)
-            if Parameters: anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "dividedDisk")
-            return anObj
-            
-        ## This function allows creating a disk already divided into blocks. It
-        #  can be used to create divided pipes for later meshing in hexaedra.
-        #  @param theCenter Center of the disk
-        #  @param theVector Normal vector to the plane of the created disk
-        #  @param theRadius Radius of the disk
-        #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM_Object, containing the created shape.
-        #
-        #  @ref tui_creation_divideddisk "Example"
-        def MakeDividedDiskPntVecR(self, theCenter, theVector, theRadius, thePattern, theName=None):
-            """
-            Creates a disk already divided into blocks. It can be used to create divided pipes
-            for later meshing in hexaedra.
-
-            Parameters:
-                theCenter Center of the disk
-                theVector Normal vector to the plane of the created disk
-                theRadius Radius of the disk
-                thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM_Object, containing the created shape.
-            """
-            theRadius, Parameters = ParseParameters(theRadius)
-            anObj = self.AdvOp.MakeDividedDiskPntVecR(theCenter, theVector, theRadius, 67.0, thePattern)
-            RaiseIfFailed("MakeDividedDiskPntVecR", self.AdvOp)
-            if Parameters: anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "dividedDisk")
-            return anObj
-
-        ## Builds a cylinder prepared for hexa meshes
-        #  @param theR Radius of the cylinder
-        #  @param theH Height of the cylinder
-        #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #
-        #  @return New GEOM_Object, containing the created shape.
-        #
-        #  @ref tui_creation_dividedcylinder "Example"
-        def MakeDividedCylinder(self, theR, theH, thePattern, theName=None):
-            """
-            Builds a cylinder prepared for hexa meshes
-
-            Parameters:
-                theR Radius of the cylinder
-                theH Height of the cylinder
-                thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM_Object, containing the created shape.
-            """
-            theR, theH, Parameters = ParseParameters(theR, theH)
-            anObj = self.AdvOp.MakeDividedCylinder(theR, theH, thePattern)
-            RaiseIfFailed("MakeDividedCylinder", self.AdvOp)
-            if Parameters: anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "dividedCylinder")
-            return anObj
-
-        ## Create a surface from a cloud of points
-        #  @param thelPoints list of points. Compounds of points are
-        #         accepted as well.
-        #  @param theNbMax maximum number of Bezier pieces in the resulting
-        #         surface.
-        #  @param theDegMax maximum degree of the resulting BSpline surface.
-        #  @param theDMax 3D tolerance of initial approximation.
-        #  @param theName Object name; when specified, this parameter is used
-        #         for result publication in the study. Otherwise, if automatic
-        #         publication is switched on, default value is used for result name.
-        #  @return New GEOM_Object, containing the created shape.
-        #  @note 3D tolerance of initial approximation represents a tolerance of
-        #        initial plate surface approximation. If this parameter is equal
-        #        to 0 (default value) it is computed. In this case an error of
-        #        initial plate surface computation is used as the approximation
-        #        tolerance. This error represents a maximal distance between
-        #        computed plate surface and given points.
-        #
-        #  @ref tui_creation_smoothingsurface "Example"
-        def MakeSmoothingSurface(self, thelPoints, theNbMax=2, theDegMax=8,
-                                 theDMax=0.0, theName=None):
-            """
-            Create a surface from a cloud of points
-
-            Parameters:
-                thelPoints list of points. Compounds of points are
-                           accepted as well.
-                theNbMax maximum number of Bezier pieces in the resulting
-                         surface.
-                theDegMax maximum degree of the resulting BSpline surface.
-                theDMax 3D tolerance of initial approximation.
-                theName Object name; when specified, this parameter is used
-                        for result publication in the study. Otherwise, if automatic
-                        publication is switched on, default value is used for result name.
-
-            Returns:
-                New GEOM_Object, containing the created shape.
-
-            Note:
-                3D tolerance of initial approximation represents a tolerance of
-                initial plate surface approximation. If this parameter is equal
-                to 0 (default value) it is computed. In this case an error of
-                initial plate surface computation is used as the approximation
-                tolerance. This error represents a maximal distance between
-                computed plate surface and given points.
-            """
-            anObj = self.AdvOp.MakeSmoothingSurface(thelPoints, theNbMax,
-                                                    theDegMax, theDMax)
-            RaiseIfFailed("MakeSmoothingSurface", self.AdvOp)
-            self._autoPublish(anObj, theName, "smoothing")
-            return anObj
-
-        ## Export a shape to XAO format
-        #  @param shape The shape to export
-        #  @param groups The list of groups to export
-        #  @param fields The list of fields to export
-        #  @param author The author of the export
-        #  @param fileName The name of the file to export
-        #  @return boolean
-        #
-        #  @ref tui_exportxao "Example"
-        def ExportXAO(self, shape, groups, fields, author, fileName):
-            res = self.InsertOp.ExportXAO(shape, groups, fields, author, fileName)
-            RaiseIfFailed("ExportXAO", self.InsertOp)
-            return res
-
-        ## Import a shape from XAO format
-        #  @param shape Shape to export
-        #  @param fileName The name of the file to import
-        #  @return tuple (res, shape, subShapes, groups, fields)
-        #       res Flag indicating if the import was successful
-        #       shape The imported shape
-        #       subShapes The list of imported subShapes
-        #       groups The list of imported groups
-        #       fields The list of imported fields
-        #
-        #  @ref tui_importxao "Example"
-        def ImportXAO(self, fileName):
-            res = self.InsertOp.ImportXAO(fileName)
-            RaiseIfFailed("ImportXAO", self.InsertOp)
-            return res
-
         #@@ insert new functions before this line @@ do not remove this line @@#
-
-        # end of l4_advanced
-        ## @}
 
         ## Create a copy of the given object
         #
@@ -12787,6 +12500,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ingroup l1_geomBuilder_auxiliary
         #  @ref swig_MakeCopy "Example"
+        @ManageTransactions("InsertOp")
         def MakeCopy(self, theOriginal, theName=None):
             """
             Create a copy of the given object
@@ -12827,13 +12541,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param Path a path to the texture file
         #  @return unique texture identifier
         #  @ingroup l1_geomBuilder_auxiliary
+        @ManageTransactions("InsertOp")
         def LoadTexture(self, Path):
             """
             Load marker texture from the file
-            
+
             Parameters:
                 Path a path to the texture file
-                
+
             Returns:
                 unique texture identifier
             """
@@ -12844,7 +12559,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Get internal name of the object based on its study entry
         #  @note This method does not provide an unique identifier of the geometry object.
-        #  @note This is internal function of GEOM component, though it can be used outside it for 
+        #  @note This is internal function of GEOM component, though it can be used outside it for
         #  appropriate reason (e.g. for identification of geometry object).
         #  @param obj geometry object
         #  @return unique object identifier
@@ -12853,7 +12568,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Get internal name of the object based on its study entry.
             Note: this method does not provide an unique identifier of the geometry object.
-            It is an internal function of GEOM component, though it can be used outside GEOM for 
+            It is an internal function of GEOM component, though it can be used outside GEOM for
             appropriate reason (e.g. for identification of geometry object).
 
             Parameters:
@@ -12867,11 +12582,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             if entry is not None:
                 lst = entry.split(":")
                 if len(lst) > 0:
-                    ID = lst[-1] # -1 means last item in the list            
+                    ID = lst[-1] # -1 means last item in the list
                     return "GEOM_" + ID
             return ID
-                
-            
+
+
 
         ## Add marker texture. @a Width and @a Height parameters
         #  specify width and height of the texture in pixels.
@@ -12886,6 +12601,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param RowData if @c True, @a Texture data are packed in the byte stream
         #  @return unique texture identifier
         #  @ingroup l1_geomBuilder_auxiliary
+        @ManageTransactions("InsertOp")
         def AddTexture(self, Width, Height, Texture, RowData=False):
             """
             Add marker texture. Width and Height parameters
@@ -12911,19 +12627,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Creates a new folder object. It is a container for any GEOM objects.
         #  @param Name name of the container
-        #  @param Father parent object. If None, 
+        #  @param Father parent object. If None,
         #         folder under 'Geometry' root object will be created.
         #  @return a new created folder
         #  @ingroup l1_publish_data
         def NewFolder(self, Name, Father=None):
             """
             Create a new folder object. It is an auxiliary container for any GEOM objects.
-            
+
             Parameters:
                 Name name of the container
-                Father parent object. If None, 
+                Father parent object. If None,
                 folder under 'Geometry' root object will be created.
-            
+
             Returns:
                 a new created folder
             """
@@ -12937,7 +12653,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def PutToFolder(self, Object, Folder):
             """
             Move object to the specified folder
-            
+
             Parameters:
                 Object object to move
                 Folder target folder
@@ -12952,7 +12668,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         def PutListToFolder(self, ListOfSO, Folder):
             """
             Move list of objects to the specified folder
-            
+
             Parameters:
                 ListOfSO list of objects to move
                 Folder target folder
@@ -12971,6 +12687,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         0 - VERTEX, 1 - EDGE, 2 - FACE, 3 - SOLID, -1 - whole shape
         #  @param componentNames names of components
         #  @return a created field
+        @ManageTransactions("FieldOp")
         def CreateField(self, shape, name, type, dimension, componentNames):
             """
             Creates a field
@@ -12982,7 +12699,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 dimension dimension of the shape the field lies on
                           0 - VERTEX, 1 - EDGE, 2 - FACE, 3 - SOLID, -1 - whole shape
                 componentNames names of components
-            
+
             Returns:
                 a created field
             """
@@ -13011,6 +12728,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return
 
         ## Returns number of fields on a shape
+        @ManageTransactions("FieldOp")
         def CountFields(self, shape):
             "Returns number of fields on a shape"
             nb = self.FieldOp.CountFields( shape )
@@ -13018,6 +12736,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return nb
 
         ## Returns all fields on a shape
+        @ManageTransactions("FieldOp")
         def GetFields(self, shape):
             "Returns all fields on a shape"
             ff = self.FieldOp.GetFields( shape )
@@ -13025,6 +12744,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return ff
 
         ## Returns a field on a shape by its name
+        @ManageTransactions("FieldOp")
         def GetField(self, shape, name):
             "Returns a field on a shape by its name"
             f = self.FieldOp.GetField( shape, name )
@@ -13216,3 +12936,36 @@ def New( study, instance=None):
     assert isinstance(geom,geomBuilder), "Geom engine class is %s but should be geomBuilder.geomBuilder. Import geomBuilder before creating the instance."%geom.__class__
     geom.init_geom(study)
     return geom
+
+
+# Register methods from the plug-ins in the geomBuilder class 
+plugins_var = os.environ.get( "GEOM_PluginsList" )
+
+plugins = None
+if plugins_var is not None:
+    plugins = plugins_var.split( ":" )
+    plugins=filter(lambda x: len(x)>0, plugins)
+if plugins is not None:
+    for pluginName in plugins:
+        pluginBuilderName = pluginName + "Builder"
+        try:
+            exec( "from salome.%s.%s import *" % (pluginName, pluginBuilderName))
+        except Exception, e:
+            from salome_utils import verbose
+            print "Exception while loading %s: %s" % ( pluginBuilderName, e )
+            continue
+        exec( "from salome.%s import %s" % (pluginName, pluginBuilderName))
+        plugin = eval( pluginBuilderName )
+        
+        # add methods from plugin module to the geomBuilder class
+        for k in dir( plugin ):
+            if k[0] == '_': continue
+            method = getattr( plugin, k )
+            if type( method ).__name__ == 'function':
+                if not hasattr( geomBuilder, k ):
+                    setattr( geomBuilder, k, method )
+                pass
+            pass
+        del pluginName
+        pass
+    pass   

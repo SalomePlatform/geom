@@ -36,7 +36,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
@@ -328,7 +328,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
         SUIT_ViewWindow* window = app->desktop()->activeWindow();
         if ( window ) {
           int mgrId = window->getViewManager()->getGlobalId();
-          PropMap propMap = study->getObjectPropMap( mgrId, io->getEntry() );
+          PropMap propMap = study->getObjectProperties( mgrId, io->getEntry() );
           QString matProp = propMap.value(GEOM::propertyName( GEOM::Material )).toString();         
           if ( !matProp.isEmpty() )
             myCurrentModel.fromProperties( matProp );

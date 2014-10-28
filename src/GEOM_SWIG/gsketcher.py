@@ -1211,3 +1211,145 @@ class Sketcher2D:
         self.myCommand = "Sketcher"
         self.geompyD._autoPublish(face, theName, "face")
         return face
+
+## An interface to build a 2D polyline step-by-step. The polyline can contain
+#  several sections. Each section represents a list of 2d points. As well it
+#  has a name, curve type, either polyline or interpolation (BSpline curve) and
+#  Closed flag.
+#  Use geompy.Polyline2D() method to obtain an instance of this class.
+#  @ingroup sketcher
+class Polyline2D:
+    """
+    An interface to build a 2D polyline step-by-step. The polyline can contain
+    several sections. Each section represents a list of 2d points. As well it
+    has a name, curve type, either polyline or interpolation (BSpline curve) and
+    Closed flag.
+    Use geompy.Polyline2D() method to obtain an instance of this class.
+
+    Example of usage:
+        pl = geompy.Polyline2D()
+        pl.addSection("section 1", GEOM.Polyline, True, [0, 0, 10, 0, 10, 10])
+        pl.addSection("section 2", GEOM.Interpolation, False)
+        pl.addPoints([20, 0, 30, 0, 30, 10])
+        resultObj = pl.result(WorkingPlane)
+    """
+
+    def __init__(self, geompyD):
+        self.geompyD      = geompyD
+        self.myNameList   = []
+        self.myTypeList   = []
+        self.myClosedList = []
+        self.myCoordsList = []
+        pass
+
+    ## Add a new section to the polyline.
+    #
+    #  @param theName the name
+    #  @param theType the type. It can have either CORBA enumeration type
+    #         GEOM.curve_type or a value of type long. Possible input values
+    #         are: GEOM.Polyline(0) and GEOM.Interpolation(2).
+    #  @param theClosed True for closed section; False otherwise
+    #  @param thePoints the list of 2D points coordinates in the form:
+    #         [x1, y1, x2, y2, ..., xN, yN] for N points.
+    def addSection(self, theName, theType, theClosed, thePoints = None):
+        """
+        Add a new section to the polyline.
+
+        Parameters:
+            theName the name
+            theType the type. It can have either CORBA enumeration type
+                    GEOM.curve_type or a value of type long. Possible input
+                    values are: GEOM.Polyline(0) and GEOM.Interpolation(2).
+            theClosed True for closed section; False otherwise
+            thePoints the list of 2D points coordinates in the form:
+                      [x1, y1, x2, y2, ..., xN, yN] for N points.
+
+        Example of usage:
+            pl = geompy.Polyline2D()
+            pl.addSection("section 1", GEOM.Polyline, True, [0, 0, 10, 0, 10, 10])
+            resultObj = pl.result(WorkingPlane)
+        """
+        from salome.geom.geomBuilder import EnumToLong
+        self.myNameList.append(theName)
+        self.myTypeList.append(EnumToLong(theType))
+        self.myClosedList.append(theClosed)
+        if thePoints is None:
+            self.myCoordsList.append([])
+        else:
+            self.myCoordsList.append(thePoints)
+        pass
+
+    ## Add a points to the last added section of the polyline. If there are
+    #  no sections in the polyline it does nothing.
+    #
+    #  @param thePoints the list of 2D points coordinates in the form:
+    #         [x1, y1, x2, y2, ..., xN, yN] for N points.
+    def addPoints(self, thePoints):
+        """
+        Add a points to the last added section of the polyline. If there are
+        no sections in the polyline it does nothing.
+
+        Parameters:
+            thePoints the list of 2D points coordinates in the form:
+                      [x1, y1, x2, y2, ..., xN, yN] for N points.
+
+        Example of usage:
+            pl = geompy.Polyline2D()
+            pl.addSection("section 1", GEOM.Polyline, True)
+            pl.addPoints([0, 0, 10, 0, 10, 10])
+            pl.addPoints([20, 0, 30, 0, 30, 10])
+            resultObj = pl.result(WorkingPlane)
+        """
+        if self.myNameList:
+            self.myCoordsList[-1].extend(thePoints)
+        pass
+
+    ## Obtain the 2D polyline result as a wire or a compound of wires in case
+    #  of several sections defined.
+    #
+    #  @param theWorkingPlane - current Working Plane used for this 2D polyline
+    #  @param theName Object name; when specified, this parameter is used
+    #         for result publication in the study. Otherwise, if automatic
+    #         publication is switched on, default value is used for result name.
+    #
+    #  @return New GEOM_Object, containing the created shape.
+    def result(self, theWorkingPlane=[0, 0, 0, 0, 0, 1, 1, 0, 0], theName=None):
+        """
+        Obtain the 2D polyline result as a wire or a compound of wires in case
+        of several sections defined.
+
+        Parameters:
+            theWorkingPlane current Working Plane used for this 2D polyline
+            theName Object name; when specified, this parameter is used
+                    for result publication in the study. Otherwise, if automatic
+                    publication is switched on, default value is used for result name.
+
+        Returns:
+            New GEOM_Object, containing the created shape.
+
+        Example of usage:
+            pl = geompy.Polyline2D()
+            pl.addSection("section 1", GEOM.Polyline, True, [0, 0, 10, 0, 10, 10])
+            pl.addSection("section 2", GEOM.Interpolation, False)
+            pl.addPoints([20, 0, 30, 0, 30, 10])
+            resultObj = pl.result(WorkingPlane)
+        """
+        from salome.geom.geomBuilder import RaiseIfFailed
+        import GEOM
+        if isinstance(theWorkingPlane, list):
+            aResult = self.geompyD.CurvesOp.MakePolyline2D(
+                         self.myCoordsList, self.myNameList, self.myTypeList,
+                         self.myClosedList, theWorkingPlane)
+        if isinstance(theWorkingPlane, GEOM._objref_GEOM_Object):
+            aResult = self.geompyD.CurvesOp.MakePolyline2DOnPlane(
+                        self.myCoordsList, self.myNameList, self.myTypeList,
+                        self.myClosedList, theWorkingPlane)
+
+        self.myNameList   = []
+        self.myTypeList   = []
+        self.myClosedList = []
+        self.myCoordsList = []
+        RaiseIfFailed("Polyline2D.result", self.geompyD.CurvesOp)
+        self.geompyD._autoPublish(aResult, theName, "polyline")
+
+        return aResult

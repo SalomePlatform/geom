@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,12 +23,12 @@
 #include <QTreeView>
 #include <QAbstractItemModel>
 
-class CurveCreator_Curve;
+class CurveCreator_ICurve;
 
 class CurveCreator_TreeViewModel : public QAbstractItemModel
 {
 public:
-  CurveCreator_TreeViewModel( CurveCreator_Curve* theCurve, QObject* parent );
+  CurveCreator_TreeViewModel( CurveCreator_ICurve* theCurve, QObject* parent );
   virtual int	columnCount(const QModelIndex & parent = QModelIndex()) const;
   virtual int	rowCount(const QModelIndex & parent = QModelIndex()) const;
   virtual QVariant	data(const QModelIndex & index, int role = Qt::DisplayRole) const;
@@ -44,12 +44,12 @@ public:
   int     getSection( const QModelIndex& theIndx ) const;
   int     getPoint( const QModelIndex& theIndx ) const;
 
-  void    setCurve( CurveCreator_Curve* theCurve );
+  void    setCurve( CurveCreator_ICurve* theCurve );
 
 private:
   enum IconType{ ICON_POLYLINE, ICON_SPLINE, ICON_CLOSED_SPLINE, ICON_CLOSED_POLYLINE, ICON_POINT };
 private:
-  CurveCreator_Curve*          myCurve;
+  CurveCreator_ICurve*          myCurve;
   QMap<IconType, QPixmap>      myCachedIcons;
 };
 
@@ -59,15 +59,13 @@ class CurveCreator_TreeView : public QTreeView
 public:
   enum SelectionType{ ST_NOSEL, ST_POINTS, ST_POINTS_ONE_SECTION, ST_SECTIONS, ST_MIXED };
 public:
-  explicit CurveCreator_TreeView( CurveCreator_Curve* theCurve, QWidget *parent = 0);
+  explicit CurveCreator_TreeView( CurveCreator_ICurve* theCurve, QWidget *parent = 0);
   SelectionType getSelectionType() const;
   QList<int> getSelectedSections() const;
-  QList< QPair< int, int > > getSelectedPoints() const;
 
   void    pointsAdded( int theSection, int thePoint, int thePointsCnt=1 );
   void    pointDataChanged( int theSection, int thePoint );
   void    pointsRemoved(int theSection, int thePoint, int thePointsCnt=1 );
-  void    pointsSwapped( int theSection, int thePointNum, int theOffset );
 
   void    sectionAdded( int theSection );
   void    sectionChanged(int theSection , int aSectCnt = 1);
@@ -75,15 +73,15 @@ public:
   void    sectionsSwapped( int theSection, int theOffset );
 
   void    setSelectedSections( const QList<int>& theList );
-  void    setSelectedPoints( const QList< QPair<int, int> >& thePointsList );
 
-  void    setCurve( CurveCreator_Curve* theCurve );
+  void    setCurve( CurveCreator_ICurve* theCurve );
+
+  void    reset();
 
 signals:
   void    selectionChanged();
   void    sectionEntered(int);
-  void    pointEntered(int,int);
-public slots:
+
 protected slots:
   void onActivated( QModelIndex theIndx );
 protected:

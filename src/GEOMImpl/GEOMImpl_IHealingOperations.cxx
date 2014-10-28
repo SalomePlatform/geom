@@ -141,9 +141,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
 
   //Compute the translation
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Shape Healing algorithm failed");
@@ -350,9 +348,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
 
   //Compute the translation
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -420,9 +416,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
 
   //Compute the translation
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -489,9 +483,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires
 
   //Compute the translation
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -557,9 +549,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
 
   //Compute the translation
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -628,9 +618,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
 
   //Compute the result
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -690,9 +678,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveInternalFaces (Handle(GEO
 
   //Compute the result
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction))
     {
       SetErrorCode("Healing driver failed");
@@ -751,9 +737,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
 
   //Compute the translation
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Healing driver failed");
       return NULL;
@@ -817,9 +801,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FuseCollinearEdgesWithinWire
 
   // Compute the new wire
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Healing driver failed");
       return NULL;
@@ -869,12 +851,8 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
 
   // get free boundary shapes
 
-#if OCC_VERSION_LARGE > 0x06030008
   ShapeAnalysis_FreeBounds anAnalizer(aShape, Standard_False,
                                       Standard_True, Standard_True);
-#else
-  ShapeAnalysis_FreeBounds anAnalizer(aShape);
-#endif
   TopoDS_Compound aClosed = anAnalizer.GetClosedWires();
   TopoDS_Compound anOpen = anAnalizer.GetOpenWires();
 
@@ -985,9 +963,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
 
   //Compute the translation
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Healing driver failed");
       return NULL;
@@ -1054,9 +1030,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
 
   // Compute the result
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Healing driver failed");
       return NULL;
@@ -1113,9 +1087,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Obj
 
   // Compute
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Healing driver failed");
       return NULL;

@@ -45,11 +45,6 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 
-IF(SALOME_GEOM_DEBUG_CC)
-  # for debug purposes, to be removed
-  INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/CurveCreator)
-ENDIF()
-
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
   ${CAS_DEFINITIONS}
@@ -61,10 +56,6 @@ ADD_DEFINITIONS(
 SET(_link_LIBRARIES
   GEOMBase
   )
-IF(SALOME_GEOM_DEBUG_CC)
-  # for debug purposes, to be removed
-  LIST(APPEND _link_LIBRARIES CurveCreator) 
-ENDIF()
 
 # --- resources ---
 
