@@ -2222,7 +2222,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_VERTEXES</source>
-        <translation>Vertexes</translation>
+        <translation>Vertices</translation>
     </message>
     <message>
         <source>GEOM_WATER_DENSITY</source>
