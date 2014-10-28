@@ -37,6 +37,7 @@ SET(GOOD_TESTS
   basic_geom_objs_ex07.py  
   basic_geom_objs_ex08.py  
   basic_geom_objs_ex09.py  
+  basic_geom_objs_ex10.py  
   basic_operations_ex01.py  
   basic_operations_ex02.py  
   basic_operations_ex03.py  

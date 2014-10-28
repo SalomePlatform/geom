@@ -2000,3 +2000,33 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::ExtendFace
 
   return GetObject(aNewFace);
 }
+
+//=============================================================================
+/*!
+ *  MakeSurfaceFromFace
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSurfaceFromFace
+                                  (GEOM::GEOM_Object_ptr theFace)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference object
+  Handle(GEOM_Object) aFace = GetObjectImpl(theFace);
+
+  if (aFace.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  //Get Shapes in place of aShapeWhat
+  Handle(GEOM_Object) aNewFace = GetOperations()->MakeSurfaceFromFace(aFace);
+
+  if (!GetOperations()->IsDone() || aNewFace.IsNull()) {
+    return aGEOMObject._retn();
+  }
+
+  return GetObject(aNewFace);
+}

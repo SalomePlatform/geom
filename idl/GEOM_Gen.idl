@@ -2575,6 +2575,17 @@ module GEOM
                            in double      theVMin,
                            in double      theVMax);
 
+    /*!
+     *  \brief Make a surface from a face. This function takes some face as
+     *  input parameter and creates new GEOM_Object, i.e. topological shape
+     *  by extracting underlying surface of the source face and limiting it
+     *  by the Umin, Umax, Vmin, Vmax parameters of the source face (in the
+     *  parametrical space).
+     *  \param theFace the input face.
+     *  \return a newly created face.
+     */
+    GEOM_Object MakeSurfaceFromFace(in GEOM_Object theFace);
+
   };
 
  // # GEOM_IBlocksOperations: 

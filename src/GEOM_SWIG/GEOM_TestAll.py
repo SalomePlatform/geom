@@ -257,6 +257,7 @@ def TestAll (geompy, math):
   ProjOnWire  = geompy.MakeProjectionOnWire(p0, Wire)
   ExtEdge     = geompy.ExtendEdge(Edge1, -0.3, 1.3)
   ExtFace     = geompy.ExtendFace(Face5, -0.3, 1.3, -0.1, 1.1)
+  Surface     = geompy.MakeSurfaceFromFace(Face5)
 
   #IDList for Fillet/Chamfer
   prism_edges = geompy.ExtractShapes(Prism, geompy.ShapeType["EDGE"], True)
@@ -473,6 +474,7 @@ def TestAll (geompy, math):
   id_ProjOnWire  = geompy.addToStudy(ProjOnWire[1], "ProjOnWire")
   id_ExtEdge     = geompy.addToStudy(ExtEdge,       "ExtendedEdge")
   id_ExtFace     = geompy.addToStudy(ExtFace,       "ExtendedFace")
+  id_Surface     = geompy.addToStudy(Surface,       "Surface From Face")
 
   id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
   id_Fillet2  = geompy.addToStudy(Fillet2,  "Fillet2")

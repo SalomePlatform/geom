@@ -4921,3 +4921,64 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ExtendFace
 
   return aResFace;
 }
+
+//=======================================================================
+//function : MakeSurfaceFromFace
+//purpose  :
+//=======================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSurfaceFromFace
+                                      (const Handle(GEOM_Object) &theFace)
+{
+  SetErrorCode(KO);
+
+  if (theFace.IsNull()) {
+    return NULL;
+  }
+
+  //Add a new Face object
+  Handle(GEOM_Object) aResFace = GetEngine()->AddObject(GetDocID(), GEOM_FACE);
+
+  //Add a new Vector function
+  Handle(GEOM_Function) aFunction =
+    aResFace->AddFunction(GEOMImpl_ShapeDriver::GetID(), SURFACE_FROM_FACE);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) {
+    return NULL;
+  }
+
+  GEOMImpl_IShapeExtend aCI (aFunction);
+
+  Handle(GEOM_Function) aFace = theFace->GetLastFunction();
+
+  if (aFace.IsNull()) {
+    return NULL;
+  }
+
+  aCI.SetShape(aFace);
+
+  //Compute the Face value
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction)
+             << aResFace  << " = geompy.MakeSurfaceFromFace("
+             << theFace << ")";
+
+  SetErrorCode(OK);
+
+  return aResFace;
+}

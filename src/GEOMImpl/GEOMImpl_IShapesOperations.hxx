@@ -396,6 +396,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                        const Standard_Real        theVMin,
                                        const Standard_Real        theVMax);
 
+  Standard_EXPORT Handle(GEOM_Object)
+                   MakeSurfaceFromFace(const Handle(GEOM_Object) &theFace);
+
  private:
   Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,
                                  const Standard_Integer         theObjectType,

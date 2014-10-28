@@ -2997,6 +2997,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Isoline</translation>
     </message>
     <message>
+        <source>MEN_SURFACE_FROM_FACE</source>
+        <translation>Surface From Face</translation>
+    </message>
+    <message>
         <source>MEN_SOLID</source>
         <translation>Solid</translation>
     </message>
@@ -3881,6 +3885,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create U- or V-Isoline</translation>
     </message>
     <message>
+        <source>STB_SURFACE_FROM_FACE</source>
+        <translation>Create a Surface From Face</translation>
+    </message>
+    <message>
         <source>STB_SOLID</source>
         <translation>Build a solid</translation>
     </message>
@@ -4443,6 +4451,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_ISOLINE</source>
         <translation>Isoline</translation>
+    </message>
+    <message>
+        <source>TOP_SURFACE_FROM_FACE</source>
+        <translation>Surface From Face</translation>
     </message>
     <message>
         <source>TOP_SOLID</source>
@@ -7051,6 +7063,21 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_EXTENSION_FACE_NAME</source>
         <translation>ExtendedFace</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_SurfFromFaceDlg</name>
+    <message>
+        <source>GEOM_SURF_FROM_FACE_TITLE</source>
+        <translation>Surface From Face Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_SURF_FROM_FACE</source>
+        <translation>Surface From Face</translation>
+    </message>
+    <message>
+        <source>GEOM_SURF_FROM_FACE_NAME</source>
+        <translation>SurfaceFromFace</translation>
     </message>
 </context>
 </TS>

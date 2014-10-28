@@ -603,6 +603,47 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aShape = ExtendFace(aFace, aSE.GetUMin(), aSE.GetUMax(),
                           aSE.GetVMin(), aSE.GetVMax()); 
     }
+  } else if (aType == SURFACE_FROM_FACE) {
+#ifdef RESULT_TYPE_CHECK
+    anExpectedType = TopAbs_FACE;
+#endif
+
+    GEOMImpl_IShapeExtend aSE (aFunction);
+    Handle(GEOM_Function) aRefFace   = aSE.GetShape();
+    TopoDS_Shape          aShapeFace = aRefFace->GetValue();
+
+    if (aShapeFace.ShapeType() == TopAbs_FACE) {
+      TopoDS_Face          aFace    = TopoDS::Face(aShapeFace);
+      Handle(Geom_Surface) aSurface = BRep_Tool::Surface(aFace);
+
+      if (aSurface.IsNull() == Standard_False) {
+        Handle(Standard_Type) aType = aSurface->DynamicType();
+        Standard_Real         aU1;
+        Standard_Real         aU2;
+        Standard_Real         aV1;
+        Standard_Real         aV2;
+
+         // Get U, V bounds of the face.
+        aFace.Orientation(TopAbs_FORWARD);
+        ShapeAnalysis::GetFaceUVBounds(aFace, aU1, aU2, aV1, aV2);
+
+        // Get the surface of original type
+        while (aType == STANDARD_TYPE(Geom_RectangularTrimmedSurface)) {
+          Handle(Geom_RectangularTrimmedSurface) aTrSurface =
+            Handle(Geom_RectangularTrimmedSurface)::DownCast(aSurface);
+
+          aSurface = aTrSurface->BasisSurface();
+          aType    = aSurface->DynamicType();
+        }
+
+        const Standard_Real     aTol = BRep_Tool::Tolerance(aFace);
+        BRepBuilderAPI_MakeFace aMF(aSurface, aU1, aU2, aV1, aV2, aTol);
+
+        if (aMF.IsDone()) {
+          aShape = aMF.Shape();
+        }
+      }
+    }
   }
   else {
   }
@@ -1536,6 +1577,14 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam(theParams, "UMax", aSE.GetUMax());
     AddParam(theParams, "VMin", aSE.GetVMin());
     AddParam(theParams, "VMax", aSE.GetVMax());
+    break;
+  }
+  case SURFACE_FROM_FACE:
+  {
+    GEOMImpl_IShapeExtend aSE (function);
+
+    theOperationName = "SURFACE_FROM_FACE";
+    AddParam(theParams, "Face", aSE.GetShape());
     break;
   }
   default:

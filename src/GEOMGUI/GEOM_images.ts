@@ -820,6 +820,10 @@
             <translation>marker_13.png</translation>
         </message>
         <message>
+            <source>ICON_SURFACE_FROM_FACE</source>
+            <translation>facetosurface.png</translation>
+        </message>
+        <message>
             <source>ICO_ARC</source>
             <translation>arc.png</translation>
         </message>
@@ -1254,6 +1258,10 @@
         <message>
             <source>ICO_ISOLINE_V</source>
             <translation>isoline_v.png</translation>
+        </message>
+        <message>
+            <source>ICO_SURFACE_FROM_FACE</source>
+            <translation>facetosurface.png</translation>
         </message>
         <message>
             <source>ICO_SOLID</source>

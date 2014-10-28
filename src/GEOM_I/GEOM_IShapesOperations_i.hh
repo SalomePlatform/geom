@@ -284,6 +284,8 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                    CORBA::Double         theVMin,
                                    CORBA::Double         theVMax);
 
+  GEOM::GEOM_Object_ptr MakeSurfaceFromFace(GEOM::GEOM_Object_ptr theFace);
+
   ::GEOMImpl_IShapesOperations* GetOperations()
   { return (::GEOMImpl_IShapesOperations*)GetImpl(); }
 };

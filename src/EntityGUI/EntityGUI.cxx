@@ -55,6 +55,7 @@
 #include "EntityGUI_SketcherDlg.h"        // Sketcher
 #include "EntityGUI_3DSketcherDlg.h"      // Sketcher
 #include "EntityGUI_IsolineDlg.h"         // Isoline
+#include "EntityGUI_SurfFromFaceDlg.h"    // Surface From Face
 #include "EntityGUI_SubShapeDlg.h"        // Method SUBSHAPE
 #include "EntityGUI_FeatureDetectorDlg.h" // Feature Detection
 #include "EntityGUI_PictureImportDlg.h"   // Import Picture in viewer
@@ -105,6 +106,9 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     break;
   case GEOMOp::OpIsoline:    // ISOLINE
     aDlg = new EntityGUI_IsolineDlg( getGeometryGUI(), parent );
+    break;
+  case GEOMOp::OpSurfaceFromFace:    // SURFACE FROM FACE
+    aDlg = new EntityGUI_SurfFromFaceDlg( getGeometryGUI(), parent );
     break;
   case GEOMOp::OpExplode:    // EXPLODE
     aDlg = new EntityGUI_SubShapeDlg( getGeometryGUI(), parent );

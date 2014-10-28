@@ -5774,6 +5774,39 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "face")
             return anObj
 
+        ## This function takes some face as input parameter and creates new
+        #  GEOM_Object, i.e. topological shape by extracting underlying surface
+        #  of the source face and limiting it by the Umin, Umax, Vmin, Vmax
+        #  parameters of the source face (in the parametrical space).
+        #  @param theFace the input face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return New GEOM.GEOM_Object, containing the created face.
+        #
+        #  @ref tui_creation_surface "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeSurfaceFromFace(self, theFace, theName=None):
+            """
+            This function takes some face as input parameter and creates new
+            GEOM_Object, i.e. topological shape by extracting underlying surface
+            of the source face and limiting it by the Umin, Umax, Vmin, Vmax
+            parameters of the source face (in the parametrical space).
+
+            Parameters:
+                theFace the input face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            anObj = self.ShapesOp.MakeSurfaceFromFace(theFace)
+            RaiseIfFailed("MakeSurfaceFromFace", self.ShapesOp)
+            self._autoPublish(anObj, theName, "surface")
+            return anObj
+
         # end of l4_obtain
         ## @}
 
