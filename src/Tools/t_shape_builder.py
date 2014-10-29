@@ -9,7 +9,7 @@ import math
 import SALOMEDS
 
 
-def demidisk(study, r1, a1, roty=0, solid_thickness=0): # TODO retablir l'épaisseur de solide à 0 par défaut
+def demidisk(study, r1, a1, roty=0, solid_thickness=0):
   if solid_thickness < 1e-7:
     with_solid = False
   else:
@@ -49,8 +49,13 @@ def demidisk(study, r1, a1, roty=0, solid_thickness=0): # TODO retablir l'épais
   face1 = geompy.MakeFaceWires([arc1, l[0]], 1)
 
   if with_solid:
-    v0  = geompy.MakeVertex(0, r1 + solid_thickness, 0)
-    l0  = geompy.MakeLineTwoPnt(v[1], v0)
+    # Vertices
+    v0 = geompy.MakeVertex(0, r1 + solid_thickness, 0)
+    v1 = geompy.MakeRotation(v0, OX, a1*math.pi/180.0)
+    v2 = geompy.MakeRotation(v0, OX, math.pi - (a1*math.pi/180.0))
+    v3 = geompy.MakeRotation(v0, OX, math.pi)
+    v.extend([v0,v1,v3,v2]) # The order is important for use in pointsProjetes
+    l0 = geompy.MakeLineTwoPnt(v[1], v0)
     l2 = geompy.MakeRotation(l0, OX, a1*math.pi/180.0)
     l3 = geompy.MakeRotation(l0, OX, math.pi - (a1*math.pi/180.0))
     face2 = geompy.MakeRevolution(l0, OX, a1*math.pi/180.0)
@@ -101,7 +106,12 @@ def arcsProjetes(study, vf, face):
     pass
   return lord
  
-def build_shape(study, r1, r2, h1, h2):
+def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
+  if solid_thickness < 1e-7:
+    with_solid = False
+  else:
+    with_solid = True
+  
   geompy = geomBuilder.New(study)
   
   O = geompy.MakeVertex(0, 0, 0)
@@ -118,8 +128,8 @@ def build_shape(study, r1, r2, h1, h2):
     
   # --- sections droites des deux demi cylindres avec le partionnement
 
-  v1, l1, arc1, part1 = demidisk(study, r1, a1)
-  v2, l2, arc2, part2 = demidisk(study, r2, a1, 90.0)
+  v1, l1, arc1, part1 = demidisk(study, r1, a1, 0, solid_thickness)
+  v2, l2, arc2, part2 = demidisk(study, r2, a1, 90.0, solid_thickness)
 
   # --- extrusion des sections --> demi cylindres de travail, pour en extraire les sections utilisées au niveau du Té
   #     et enveloppe cylindrique du cylindre principal
@@ -135,7 +145,7 @@ def build_shape(study, r1, r2, h1, h2):
 
   # --- plan de coupe à 45° sur le cylindre principal,
   #     section à 45° du cylndre principal,
-  #     section du cylindre secondaire par l'enveloppe cylindique du cylindre principal
+  #     section du cylindre secondaire par l'enveloppe cylindrique du cylindre principal
 
   plan1 = geompy.MakePlane(O, OX, 4*r1)
   planr = geompy.MakeRotation(plan1, OY, 45*math.pi/180.0)
@@ -171,6 +181,15 @@ def build_shape(study, r1, r2, h1, h2):
   for i in (0, 2, 4, 5):
     vord90[i] = geompy.TranslateDXDYDZ(vord90[i], 0, 0, dz, True)
     geompy.addToStudyInFather(sect90, vord90[i], 'vm%d'%i)
+  if with_solid:
+    print dz
+    print "dz*solid_thickness/(r2+solid_thickness) = "
+    print dz*solid_thickness/(r2+solid_thickness)
+    for i in (1, 3, 6, 7):
+      vord90[i] = geompy.TranslateDXDYDZ(vord90[i], 0, 0, dz*solid_thickness/(r2+solid_thickness), True)
+  
+  res=vord90
+  return res
     
   # --- création des deux arêtes curvilignes sur l'enveloppe cylindrique du cylindre principal, à la jonction
 
@@ -300,5 +319,13 @@ if __name__=="__main__":
   salome.salome_init()
   theStudy = salome.myStudy
   geompy = geomBuilder.New(theStudy)
-  res = build_shape(theStudy, 80, 20, 100, 100)
-  geompy.addToStudy(res, "res")
+  res = build_shape(theStudy, 80., 20., 100., 100., 10.)
+  for i,v in enumerate(res):
+    geompy.addToStudy(v,"v%d"%i)
+ 
+  #res = demidisk(theStudy, 80, 45, 0, 10)
+  #geompy.addToStudy(res[3], "res")
+  #for i,v in enumerate(res[0]):
+  #  geompy.addToStudy(v,"v%d"%i)
+  #geompy.addToStudy(res, "res")
+  
