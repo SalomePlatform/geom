@@ -20,39 +20,19 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
+// internal includes
+#include "GEOMImpl_ExportDriver.hxx"
+#include "GEOMImpl_IImportExport.hxx"
+#include "GEOMImpl_IECallBack.hxx"
+#include "GEOMImpl_Types.hxx"
 
-#include <GEOMImpl_ExportDriver.hxx>
-#include <GEOMImpl_IImportExport.hxx>
-#include <GEOMImpl_Types.hxx>
+// GEOM includes
 #include <GEOM_Function.hxx>
 
+// OCC includes
+#include <Standard_Stream.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TCollection_AsciiString.hxx>
 
-#include <Standard_Failure.hxx>
-
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <dlfcn.h>
-#endif
-
-#ifdef WIN32
-#define LibHandle HMODULE
-#define LoadLib( name ) LoadLibrary( name )
-#define GetProc GetProcAddress
-#define UnLoadLib( handle ) FreeLibrary( handle );
-#else
-#define LibHandle void*
-#define LoadLib( name ) dlopen( name, RTLD_LAZY )
-#define GetProc dlsym
-#define UnLoadLib( handle ) dlclose( handle );
-#endif
-
-typedef int (*funcPoint)(const TopoDS_Shape&,
-                         const TCollection_AsciiString&,
-                         const TCollection_AsciiString&);
 
 //=======================================================================
 //function : GetID
@@ -93,6 +73,11 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
   // !!! set the result of function to be used by next operations
   aFunction->SetValue(aShape);
 
+  TDF_Label aLabel = aRefFunction->GetOwnerEntry();
+  if (aLabel.IsRoot()) return 0;
+  Handle(GEOM_Object) obj = GEOM_Object::GetObject( aLabel );
+  if ( obj.IsNull() ) return 0;
+
   // retrieve the file and format names
   TCollection_AsciiString aFileName   = aCI.GetFileName();
   TCollection_AsciiString aFormatName = aCI.GetFormatName();
@@ -100,30 +85,12 @@ Standard_Integer GEOMImpl_ExportDriver::Execute(TFunction_Logbook& log) const
   if (aFileName.IsEmpty() || aFormatName.IsEmpty() || aLibName.IsEmpty())
     return 0;
 
-  // load plugin library
-  LibHandle anExportLib = LoadLib( aLibName.ToCString() ); //This is workaround of BUG OCC13051
-  funcPoint fp = 0;
-  if ( anExportLib )
-    fp = (funcPoint)GetProc( anExportLib, "Export" );
+  if( !GEOMImpl_IECallBack::GetCallBack( aFormatName )->Export( GetDocID(), obj, aFileName, aFormatName ) );
+    return 0;
 
-  if ( !fp ) {
-    TCollection_AsciiString aMsg = aFormatName;
-    aMsg += " plugin was not installed";
-    Standard_Failure::Raise(aMsg.ToCString());
-  }
+  log.SetTouched(Label());
 
-  // perform the export
-  int res = fp( aShape, aFileName, aFormatName );
-
-  // unload plugin library
-  // commented by enk:
-  // the bug was occured: using ACIS Import/Export plugin
-  // UnLoadLib( anExportLib );
-
-  if ( res )
-    log.SetTouched(Label()); 
-
-  return res;
+  return 1;
 }
 
 //================================================================================

@@ -548,6 +548,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construction d&apos;un cylindre </translation>
     </message>
     <message>
+        <source>GEOM_CYLINDER_ANGLE_ERR</source>
+        <translation>Les valeurs de l'angle 0 et 360 sont à éviter pour construire des volumes sains. Veuillez décocher la case "Angle" pour utiliser le constructeur de cylindre complet.</translation>
+    </message>
+    <message>
         <source>GEOM_D1</source>
         <translation>D1 :</translation>
     </message>
@@ -917,14 +921,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Matrice et moment d&apos;inertie</translation>
     </message>
     <message>
-        <source>GEOM_INERTIA_I</source>
-        <translation>%1:1 :</translation>
-    </message>
-    <message>
-        <source>GEOM_INERTIA_IXYZ</source>
-        <translation>IX &amp; IY &amp; IZ :</translation>
-    </message>
-    <message>
         <source>GEOM_INERTIA_TITLE</source>
         <translation>Calcul de l&apos;inertie</translation>
     </message>
@@ -1019,14 +1015,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_MEN_ENTER_ANGLE</source>
         <translation>Indiquez l&apos;angle en degrés</translation>
-    </message>
-    <message>
-        <source>GEOM_MEN_EXPORT</source>
-        <translation>Exporter</translation>
-    </message>
-    <message>
-        <source>GEOM_MEN_IMPORT</source>
-        <translation>Importer</translation>
     </message>
     <message>
         <source>GEOM_MEN_ISOS</source>
@@ -2598,7 +2586,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_EXPORT</source>
-        <translation>Exporter...</translation>
+        <translation>Exporter</translation>
     </message>
     <message>
         <source>MEN_EXTRUSION</source>
@@ -2706,7 +2694,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_IMPORT</source>
-        <translation>Importer...</translation>
+        <translation>Importer</translation>
     </message>
     <message>
         <source>MEN_INERTIA</source>
@@ -2905,6 +2893,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Afficher l&apos;orientation des arêtes</translation>
     </message>
     <message>
+        <source>MEN_POP_VERTICES</source>
+        <translation type="unfinished">Show Vertices</translation>
+    </message>
+    <message>
         <source>MEN_PREFERENCES</source>
         <translation>Préférences</translation>
     </message>
@@ -3073,6 +3065,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Cacher l&apos;orientation de l&apos;arête</translation>
     </message>
     <message>
+        <source>MEN_VERTICES_MODE_ON</source>
+        <translation type="unfinished">Show Vertices</translation>
+    </message>
+    <message>
+        <source>MEN_VERTICES_MODE_OFF</source>
+        <translation type="unfinished">Hide Vertices</translation>
+    </message>
+    <message>
         <source>MEN_WIREFRAME</source>
         <translation>Filaire</translation>
     </message>
@@ -3151,6 +3151,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>PREF_DISPLAY_MODE</source>
         <translation>Mode de visualisation</translation>
+    </message>
+    <message>
+        <source>PREF_TRANSPARENCY</source>
+        <translation>Transparence</translation>
     </message>
     <message>
         <source>PREF_FREE_BOUND_COLOR</source>
@@ -3529,10 +3533,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Eclater en blocs</translation>
     </message>
     <message>
-        <source>STB_EXPORT</source>
-        <translation>Exporter la géométrie au fichier BREP</translation>
-    </message>
-    <message>
         <source>STB_EXTRUSION</source>
         <translation>Créer une extrusion</translation>
     </message>
@@ -3615,10 +3615,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_HEX_SOLID</source>
         <translation>Solide hexaédrique</translation>
-    </message>
-    <message>
-        <source>STB_IMPORT</source>
-        <translation>Importer une géométrie d&apos;un fichier BREP</translation>
     </message>
     <message>
         <source>STB_INERTIA</source>
@@ -3763,6 +3759,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_POP_VECTORS</source>
         <translation>Afficher l&apos;orientation des arêtes</translation>
+    </message>
+    <message>
+        <source>STB_POP_VERTICES</source>
+        <translation type="unfinished">Show Vertices</translation>
     </message>
     <message>
         <source>STB_POP_SETTEXTURE</source>
@@ -3989,54 +3989,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>X</translation>
     </message>
     <message>
-        <source>TOOL_BASIC</source>
-        <translation>Objets de base</translation>
-    </message>
-    <message>
-        <source>TOOL_BLOCKS</source>
-        <translation>Blocs</translation>
-    </message>
-    <message>
-        <source>TOOL_BOOLEAN</source>
-        <translation>Opérations booléennes </translation>
-    </message>
-    <message>
-        <source>TOOL_FEATURES</source>
-        <translation>Modification</translation>
-    </message>
-    <message>
-        <source>TOOL_GENERATION</source>
-        <translation>Génération</translation>
-    </message>
-    <message>
-        <source>TOOL_PRIMITIVES</source>
-        <translation>Primitives</translation>
-    </message>
-    <message>
-        <source>TOOL_TRANSFORMATION</source>
-        <translation>Transformation</translation>
-    </message>
-    <message>
-        <source>TOOL_BUILD</source>
-        <translation>Construire</translation>
-    </message>
-    <message>
-        <source>TOOL_OPERATIONS</source>
-        <translation>Opérations</translation>
-    </message>
-    <message>
-        <source>TOOL_PICTURES</source>
-        <translation>Images</translation>
-    </message>
-    <message>
-        <source>TOOL_ADVANCED</source>
-        <translation>Avancé</translation>
-    </message>
-    <message>
-        <source>TOOL_MEASURES</source>
-        <translation>Informations</translation>
-    </message>
-    <message>
         <source>TOP_ARC</source>
         <translation>Créer un arc</translation>
     </message>
@@ -4181,10 +4133,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Eclater en blocs</translation>
     </message>
     <message>
-        <source>TOP_EXPORT</source>
-        <translation>Exporter une géométrie au format BREP</translation>
-    </message>
-    <message>
         <source>TOP_EXTRUSION</source>
         <translation>Créer une extrusion</translation>
     </message>
@@ -4259,10 +4207,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_HEX_SOLID</source>
         <translation>Solide hexaédrique</translation>
-    </message>
-    <message>
-        <source>TOP_IMPORT</source>
-        <translation>Importer une géométrie d&apos;un fichier BREP</translation>
     </message>
     <message>
         <source>TOP_INERTIA</source>
@@ -4761,6 +4705,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Gérer la cotation d&apos;un objet</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation type="unfinished">Show dependency tree</translation>
+    </message>
+    <message>
+        <source>MEN_POP_SHOW_REDUCE_STUDY</source>
+        <translation type="unfinished">Reduce study</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
         <translation>Afficher les cotations </translation>
     </message>
@@ -5025,6 +4977,66 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Prévisualiser</translation>
     </message>
     <message>
+        <source>PREF_TAB_DEPENDENCY_VIEW</source>
+        <translation type="unfinished">Dependency Tree</translation>
+    </message>
+    <message>
+        <source>PREF_HIERARCHY_TYPE</source>
+        <translation type="unfinished">Hierarchy type</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_ASCENDANTS</source>
+        <translation type="unfinished">Display only ascendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_DESCENDANTS</source>
+        <translation type="unfinished">Display only descendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
+        <translation type="unfinished">Display both ascendants and descendants trees</translation>
+    </message>
+    <message>
+        <source>GEOM_MOVE_POSSIBILITY</source>
+        <translation type="unfinished">Possibility to move nodes</translation>
+    </message>
+    <message>
+        <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
+        <translation type="unfinished">Color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
+        <translation type="unfinished">Background color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
+        <translation type="unfinished">Default node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
+        <translation type="unfinished">Main node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
+        <translation type="unfinished">Unpublished node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
+        <translation type="unfinished">Selected node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
+        <translation type="unfinished">Arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
+        <translation type="unfinished">Highlighted arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
+        <translation type="unfinished">Selected arrow color</translation>
+    </message>
+    <message>
         <source>GEOM_ALL_IMPORT_FILES</source>
         <translation>Tous les formats supportés ( %1 )</translation>
     </message>
@@ -5050,11 +5062,6 @@ les coques et solides d&apos;un autre.</translation>
     <message>
         <source>GEOM_PUBLISH_NAMED_SHAPES</source>
         <translation>Créer des groupes pour les objets indiqués (s&apos;ils existent)?</translation>
-    </message>
-    <message>
-        <source>GEOM_SCALE_DIMENSIONS</source>
-        <translation>Voulez-vous prendre les unités du fichier (%1) en considération?
-Sinon le modèle sera mis à l&apos;échelle GEOM (unités interprétées comme des mètres).</translation>
     </message>
     <message>
         <source>GEOM_PRECISION_HINT</source>
@@ -5086,64 +5093,67 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <translation>Sélectionner une image...</translation>
     </message>
     <message>
-        <source>MEN_IMPORTEXPORT</source>
-        <translation>Import / Export XAO</translation>
-    </message>
-    <message>
-        <source>TOOL_IMPORTEXPORT</source>
-        <translation>Import / Export XAO</translation>
-    </message>
-    <message>
-        <source>TOP_EXPORTXAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>MEN_EXPORTXAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>STB_EXPORTXAO</source>
-        <translation>Exporter une forme au format XAO</translation>
-    </message>
-    <message>
-        <source>TOP_IMPORTXAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>MEN_IMPORTXAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>STB_IMPORTXAO</source>
-        <translation>Importer une forme au format XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTEXPORT_204</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_SELECT_IMPORT_XAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_SELECT_EXPORT_XAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>XAO_FILES</source>
-        <translation>Fichiers XAO (*.xao)</translation>
-    </message>
-    <message>
-        <source>TOOLS_IMPORTEXPORT</source>
-        <translation>Import / Export XAO</translation>
-    </message>
-    <message>
         <source>CC_PNT_ITEM_X_Y</source>
         <translation>X=%1, Y=%2</translation>
     </message>
     <message>
         <source>CC_PNT_ITEM_X_Y_Z</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+</context>
+<context>
+    <name>GeometryGUI</name>
+    <message>
+        <source>TOOL_BASIC</source>
+        <translation>Objets de base</translation>
+    </message>
+    <message>
+        <source>TOOL_BLOCKS</source>
+        <translation>Blocs</translation>
+    </message>
+    <message>
+        <source>TOOL_BOOLEAN</source>
+        <translation>Opérations booléennes </translation>
+    </message>
+    <message>
+        <source>TOOL_FEATURES</source>
+        <translation>Modification</translation>
+    </message>
+    <message>
+        <source>TOOL_GENERATION</source>
+        <translation>Génération</translation>
+    </message>
+    <message>
+        <source>TOOL_PRIMITIVES</source>
+        <translation>Primitives</translation>
+    </message>
+    <message>
+        <source>TOOL_TRANSFORMATION</source>
+        <translation>Transformation</translation>
+    </message>
+    <message>
+        <source>TOOL_BUILD</source>
+        <translation>Construire</translation>
+    </message>
+    <message>
+        <source>TOOL_OPERATIONS</source>
+        <translation>Opérations</translation>
+    </message>
+    <message>
+        <source>TOOL_PICTURES</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <source>TOOL_ADVANCED</source>
+        <translation>Avancé</translation>
+    </message>
+    <message>
+        <source>TOOL_MEASURES</source>
+        <translation>Informations</translation>
+    </message>
+    <message>
+        <source>TOOL_IMPORTEXPORT</source>
+        <translation>Import / Export XAO</translation>
     </message>
 </context>
 <context>
@@ -6822,6 +6832,61 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
 </context>
 <context>
+    <name>GEOMToolsGUI_ReduceStudyDlg</name>
+    <message>
+        <source>GEOM_REDUCE_STUDY_TITLE</source>
+        <translation type="unfinished">Reduce study</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
+        <translation type="unfinished">Objects to be kept</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
+        <translation type="unfinished">Objects to be removed</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_NAME</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_OPTIONS</source>
+        <translation type="unfinished">Options</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
+        <translation type="unfinished">Intermediate objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
+        <translation type="unfinished">Sub-objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEEP</source>
+        <translation type="unfinished">Keep</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
+        <translation type="unfinished">Unpublish</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE</source>
+        <translation type="unfinished">Remove</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
+        <translation type="unfinished">Remove empty folders</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
+        <translation type="unfinished">Soft removal</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
+        <translation type="unfinished">Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
+    </message>
+</context>
+<context>
     <name>RepairGUI_UnionFacesDlg</name>
     <message>
         <source>GEOM_UNION_FACES_TITLE</source>
@@ -6857,72 +6922,6 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>NO_INFO</source>
         <translation>(aucune information disponible)</translation>
-    </message>
-</context>
-<context>
-    <name>ImportExportGUI_ExportXAODlg</name>
-    <message>
-        <source>GEOM_EXPORTXAO_TITLE</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
-        <translation>Objet</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_FILENAME</source>
-        <translation>Fichier</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_AUTHOR</source>
-        <translation>Auteur</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_LGROUPS</source>
-        <translation>Groupes</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_LFIELDS</source>
-        <translation>Champs</translation>
-    </message>
-    <message>
-        <source>EXPORT_DLG_ACCEPT</source>
-        <translation>OK</translation>
-    </message>
-</context>
-<context>
-    <name>ImportExportGUI_ImportXAODlg</name>
-    <message>
-        <source>GEOM_IMPORTXAO_TITLE</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_IMPORTINGSHAPE</source>
-        <translation>Objet</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_FILENAME</source>
-        <translation>Fichier</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_LGROUPS</source>
-        <translation>Groupes</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_LFIELDS</source>
-        <translation>Champs</translation>
-    </message>
-    <message>
-        <source>STEP</source>
-        <translation>Pas</translation>
     </message>
 </context>
 <context>

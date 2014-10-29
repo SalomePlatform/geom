@@ -35,7 +35,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 // VSR 22/08/2012: issue 0021787: remove "Preview" button from BOP and Partition operations
 // Comment next line to enable preview in BOP dialog box

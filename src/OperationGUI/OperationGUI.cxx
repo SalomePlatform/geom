@@ -27,15 +27,8 @@
 #include <GeometryGUI.h>
 #include "GeometryGUI_Operations.h"
 
-#include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
-#include <SUIT_ViewManager.h>
 #include <SalomeApp_Application.h>
-#include <OCCViewer_ViewWindow.h>
-
-#include <TopTools_MapOfShape.hxx>
-#include <TopExp_Explorer.hxx>
-#include <Precision.hxx>
 
 #include "OperationGUI_PartitionDlg.h"   // Method PARTITION
 #include "OperationGUI_ArchimedeDlg.h"   // Method ARCHIMEDE
@@ -46,13 +39,6 @@
 #include "OperationGUI_GetShapesOnShapeDlg.h"
 #include "OperationGUI_GetSharedShapesDlg.h"
 #include "OperationGUI_ExtrudedFeatureDlg.h" // Methods EXTRUDED BOSS / CUT
-
-#ifdef DEBUG_CURVE_CREATOR
-// for debug purposes, to be removed
-#include "CurveCreator_Widget.h"
-#include <QVBoxLayout>
-#include <QPushButton>
-#endif
 
 //=======================================================================
 // function : OperationGUI()
@@ -95,36 +81,6 @@ bool OperationGUI::OnGUIEvent (int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpExtrudedCut:   (new OperationGUI_ExtrudedFeatureDlg (CUT, getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpFillet1d:      (new OperationGUI_Fillet1d2dDlg      (getGeometryGUI(), parent, true))->show(); break;
   case GEOMOp::OpFillet2d:      (new OperationGUI_Fillet1d2dDlg      (getGeometryGUI(), parent, false))->show(); break;
-#ifdef DEBUG_CURVE_CREATOR
-  // for debug purposes, to be removed
-  case GEOMOp::OpCurveCreator:
-    {
-      static CurveCreator_Curve *aStaticCurve = NULL;
-
-      if (aStaticCurve == NULL) {
-        aStaticCurve = new CurveCreator_Curve(CurveCreator::Dim2d);
-      }
-      if (CurveCreator::Dim2d == aStaticCurve->getDimension()) {
-        OCCViewer_ViewWindow* vw = (OCCViewer_ViewWindow*)getGeometryGUI()->getApp()->activeViewManager()->getActiveView();
-        vw->onTopView();
-      }
-
-      QDialog     *aDialog     = new QDialog(parent);
-      QVBoxLayout *aMainLO     = new QVBoxLayout;
-      QPushButton *aQuitButton = new QPushButton(tr("Close"));
-      CurveCreator_Widget *aWidget =
-        new CurveCreator_Widget (aDialog, aStaticCurve);
-
-      connect(aQuitButton, SIGNAL(clicked()), aDialog, SLOT(close()));
-      aMainLO->addWidget(aWidget);
-      aMainLO->addWidget(aQuitButton);
-
-      aDialog->setLayout(aMainLO);
-      aDialog->setAttribute(Qt::WA_DeleteOnClose);
-      aDialog->show();
-    }
-    break;
-#endif
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
   }

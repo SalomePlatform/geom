@@ -392,7 +392,6 @@ void AdvancedGUI_DividedDiskDlg::ValueChangedInSpinBox()
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_DividedDiskDlg::createOperation()
 {
-  //return getGeomEngine()->GetIAdvancedOperations(getStudyId());
   return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
 }
 
@@ -419,7 +418,8 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
-  GEOM::GEOM_IAdvancedOperations_var anOper = GEOM::GEOM_IAdvancedOperations::_narrow(getOperation());
+  GEOM::IAdvancedOperations_var anOper = GEOM::IAdvancedOperations::_narrow(getOperation());
+
   CORBA::Double theRatio = 67; // About  2/3  
   CORBA::Double theR = 0;
   

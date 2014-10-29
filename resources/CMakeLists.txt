@@ -23,12 +23,17 @@
 
 # These files are data, module or lib files
 SET( _res_files
-  GEOMActions.xml
+  AdvancedGEOM.xml
+  STLPlugin.xml
+  BREPPlugin.xml
+  STEPPlugin.xml
+  IGESPlugin.xml
+  XAOPlugin.xml
+  VTKPlugin.xml
   GEOM_en.xml
   GEOM_fr.xml
   GEOM.config
   GEOMDS_Resources
-  ImportExport
   ShHealing
   3dsketch.png
   isoline.png

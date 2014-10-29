@@ -83,7 +83,6 @@
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_MeasureDriver.hxx>
 #include <GEOMImpl_FieldDriver.hxx>
-#include <GEOMImpl_XAODriver.hxx>
 
 //=============================================================================
 /*!
@@ -167,9 +166,6 @@ GEOMImpl_Gen::GEOMImpl_Gen()
 
    // Field
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FieldDriver::GetID(), new GEOMImpl_FieldDriver());
-
-   // XAO operations
-   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_XAODriver::GetID(), new GEOMImpl_XAODriver());
 
    /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 

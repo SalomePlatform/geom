@@ -186,11 +186,7 @@ void GEOMAlgo_WireSolid::BuildResult()
     }
     else if (aNbPB==1) {
       const Handle(BOPDS_PaveBlock)& aPB=aLPB.First();
-#if OCC_VERSION_LARGE > 0x06060000 // Porting to OCCT higher 6.6.0 version
       if (pDS->IsCommonBlock(aPB)) {
-#else
-      if (aPB->IsCommonBlock()) {
-#endif
 	aState=TopAbs_ON;
       }
       else{

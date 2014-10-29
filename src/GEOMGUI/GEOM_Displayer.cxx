@@ -65,7 +65,6 @@
 #include <SalomeApp_TypeFilter.h>
 #include <SalomeApp_Tools.h>
 
-#include <SALOME_ListIteratorOfListIO.hxx>
 #include <SALOME_ListIO.hxx>
 #include <SALOME_Prs.h>
 
@@ -77,6 +76,7 @@
 
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewPort3d.h>
+#include <OCCViewer_Utilities.h>
 
 // OCCT Includes
 #include <AIS_Drawer.hxx>
@@ -122,11 +122,7 @@
 
 #include <GEOMImpl_Types.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
-#else
-#include <Graphic3d_HArray1OfBytes.hxx>
-#endif
 
 // If the next macro is defined, autocolor feature works for all sub-shapes;
 // if it is undefined, autocolor feature works for groups only
@@ -138,7 +134,6 @@
 // Hard-coded value of shape deflection coefficient for VTK viewer
 const double VTK_MIN_DEFLECTION = 0.001;
 
-#if OCC_VERSION_LARGE > 0x06070000
 // Pixmap caching support
 namespace
 {
@@ -159,47 +154,6 @@ namespace
   }
 
   //===========================================================================
-  // Function : imageToPixmap
-  // Purpose  : Concert QImage to OCCT pixmap
-  //===========================================================================
-  static inline Handle(Image_PixMap) imageToPixmap( const QImage& anImage )
-  { 
-    Handle(Image_PixMap) aPixmap = new Image_PixMap();
-    if ( !anImage.isNull() ) {
-      aPixmap->InitTrash( Image_PixMap::ImgBGRA, anImage.width(), anImage.height() );
-      aPixmap->SetTopDown( Standard_True );
-      
-      const uchar* aImageBytes = anImage.bits();
-      
-      for ( int aLine = anImage.height() - 1; aLine >= 0; --aLine ) {
-#if OCC_VERSION_LARGE > 0x06070100
-	// convert pixels from ARGB to renderer-compatible RGBA
-	for ( int aByte = 0; aByte < anImage.width(); ++aByte ) {
-	  Image_ColorBGRA& aPixmapBytes = aPixmap->ChangeValue<Image_ColorBGRA>(aLine, aByte);
-	
-	  aPixmapBytes.b() = (Standard_Byte) *aImageBytes++;
-	  aPixmapBytes.g() = (Standard_Byte) *aImageBytes++;
-	  aPixmapBytes.r() = (Standard_Byte) *aImageBytes++;
-	  aPixmapBytes.a() = (Standard_Byte) *aImageBytes++;
-	}
-#else
-	Image_ColorBGRA* aPixmapBytes = aPixmap->EditData<Image_ColorBGRA>().ChangeRow(aLine);
-	
-        // convert pixels from ARGB to renderer-compatible RGBA
-        for ( int aByte = 0; aByte < anImage.width(); ++aByte ) {
-	  aPixmapBytes->b() = (Standard_Byte) *aImageBytes++;
-	  aPixmapBytes->g() = (Standard_Byte) *aImageBytes++;
-	  aPixmapBytes->r() = (Standard_Byte) *aImageBytes++;
-	  aPixmapBytes->a() = (Standard_Byte) *aImageBytes++;
-	  aPixmapBytes++;
-        }
-#endif
-      }
-    }
-    return aPixmap;
-  }
-  
-  //===========================================================================
   // Function : getDefaultTexture
   // Purpose  : Get default texture
   //===========================================================================
@@ -209,7 +163,7 @@ namespace
     if ( aPixmap.IsNull() ) {
       QPixmap px(":images/default_texture.png");
       if ( !px.isNull() )
-	aPixmap = imageToPixmap( px.toImage() );
+	aPixmap = OCCViewer_Utilities::imageToPixmap( px.toImage() );
     }
     return aPixmap;
   }
@@ -243,7 +197,7 @@ namespace
     if ( anImage.isNull() )
       return NULL;
 
-    aPixmap = imageToPixmap( anImage );
+    aPixmap = OCCViewer_Utilities::imageToPixmap( anImage );
 
     aPixmapCacheMap.insert( thePath, aPixmap );
 
@@ -280,6 +234,7 @@ namespace
       if ( aAISShape.IsNull() )
         continue;
 
+#ifdef USE_TEXTURED_SHAPE
       const Handle(Image_PixMap)& aPixmap = aAISShape->TexturePixMap();
       if ( aPixmap.IsNull() )
         continue;
@@ -295,10 +250,10 @@ namespace
         aPixmapUsersMap.UnBind( aPixmap );
         aPixmapCacheMap.remove( aPixmapCacheMap.key( aPixmap ) );
       }
+#endif
     }
   }
 }
-#endif
 
 //================================================================
 // Function : getActiveStudy
@@ -507,6 +462,9 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   int aType = resMgr->integerValue("Geometry", "type_of_marker", (int)Aspect_TOM_PLUS);
   myWidth = resMgr->integerValue("Geometry", "edge_width", -1);
   myIsosWidth = resMgr->integerValue("Geometry", "isolines_width", -1);
+  
+  myTransparency = resMgr->integerValue("Geometry", "transparency", 0) / 100.;
+  myHasTransparency = false;
 
   myTypeOfMarker = (Aspect_TypeOfMarker)(std::min((int)Aspect_TOM_RING3, std::max((int)Aspect_TOM_POINT, aType)));
   myScaleOfMarker = (resMgr->integerValue("Geometry", "marker_scale", 1)-(int)GEOM::MS_10)*0.5 + 1.0;
@@ -519,11 +477,9 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
 
   myWidth = -1;
   myType = -1;
-  myTransparency = -1.0;
   myToActivate = true;
   // This parameter is used for activisation/deactivisation of objects to be displayed
 
-  #if OCC_VERSION_LARGE > 0x06050100 // Functionnality available only in OCCT 6.5.2
   // Activate parallel vizualisation only for testing purpose
   // and if the corresponding env variable is set to 1
   char* parallel_visu = getenv("PARALLEL_VISU");
@@ -532,7 +488,6 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
     MESSAGE("Parallel visualisation on");
     BRepMesh_IncrementalMesh::SetParallelDefault(Standard_True);
   }
-  #endif
 
   myViewFrame = 0;
 
@@ -570,17 +525,11 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
     if ( prs )
     {
       vf->BeforeDisplay( this, prs );
-      vf->Display( prs );
+      vf->Display( this, prs );
       vf->AfterDisplay( this, prs );
 
       if ( updateViewer )
         vf->Repaint();
-
-      int aMgrId = getViewManagerId(vf);
-      SalomeApp_Study* aStudy = getStudy();
-      aStudy->setObjectProperty(aMgrId, theIO->getEntry(), GEOM::propertyName( GEOM::Visibility ), 1 );
-
-      setVisibilityState(theIO->getEntry(), Qtx::ShownState);
 
       delete prs;  // delete presentation because displayer is its owner
     }
@@ -626,17 +575,11 @@ void GEOM_Displayer::Erase( const Handle(SALOME_InteractiveObject)& theIO,
     SALOME_Prs* prs = vf->CreatePrs( theIO->getEntry() );
     if ( prs ) {
       vf->BeforeErase( this, prs );
-      vf->Erase( prs, forced );
+      vf->Erase( this, prs, forced );
       vf->AfterErase( this, prs );
       if ( updateViewer )
         vf->Repaint();
       delete prs;  // delete presentation because displayer is its owner
-
-      int aMgrId = getViewManagerId(vf);
-      SalomeApp_Study* aStudy = getStudy();
-      aStudy->setObjectProperty(aMgrId, theIO->getEntry(), GEOM::propertyName( GEOM::Visibility ), 0 );
-
-      setVisibilityState(theIO->getEntry(), Qtx::HiddenState);
     }
   }
 }
@@ -737,6 +680,27 @@ void GEOM_Displayer::Display( const SALOME_ListIO& theIOList, const bool updateV
   }
   if ( updateViewer )
     UpdateViewer();
+}
+
+void GEOM_Displayer::UpdateVisibility( SALOME_View* v, const SALOME_Prs* p, bool on )
+{
+  SalomeApp_Study* aStudy = getStudy();
+  int vId = -1;
+  if ( v ) vId = getViewManagerId( v );
+
+  if ( p ) {
+    QString entry = p->GetEntry();
+    if ( !entry.isEmpty() ) {
+      if ( vId != -1 )
+	aStudy->setObjectProperty( vId, entry, GEOM::propertyName( GEOM::Visibility ), on );
+      setVisibilityState( entry, on ? Qtx::ShownState : Qtx::HiddenState );
+    }
+  }
+  else {
+    if ( vId != -1 ) {
+      aStudy->setObjectProperty( vId, GEOM::propertyName( GEOM::Visibility ), on );
+    }
+  }
 }
 
 Quantity_Color GEOM_Displayer::qColorFromResources( const QString& property, const QColor& defColor )
@@ -851,9 +815,6 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   
   // - color for edges in shading+edges mode
   AISShape->SetEdgesInShadingColor( SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>() ) );
-  
-  // ???
-  AISShape->storeBoundaryColors();
 
   // set display mode
   AISShape->SetDisplayMode( HasDisplayMode() ? 
@@ -862,8 +823,19 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
                             // display mode from properties
                             propMap.value( GEOM::propertyName( GEOM::DisplayMode ) ).toInt() );
 
+  // - face boundaries color
+  if( AISShape->DisplayMode() == GEOM_AISShape::ShadingWithEdges )
+    AISShape->Attributes()->SetFaceBoundaryDraw( Standard_True );
+  anAspect = AISShape->Attributes()->FaceBoundaryAspect();
+  anAspect->SetColor( SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>() ) );
+  AISShape->Attributes()->SetFaceBoundaryAspect( anAspect );
+
   // set display vectors flag
   AISShape->SetDisplayVectors( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
+
+  // set display vertices flag
+  bool isVerticesMode = propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool();
+  AISShape->SetDisplayVertices( isVerticesMode );
 
   // set transparency
   if( HasTransparency() ) {
@@ -914,7 +886,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
     aImagePath = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
   }
 
-#if OCC_VERSION_LARGE > 0x06070000
+#ifdef USE_TEXTURED_SHAPE
   Handle(Image_PixMap) aPixmap;
   if ( !aImagePath.isEmpty() )
     aPixmap = cacheTextureFor( aImagePath, AISShape );
@@ -930,12 +902,6 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   else {
     AISShape->SetTextureMapOff();
   }
-#else
-  if ( !aImagePath.isEmpty() ) {
-    AISShape->SetTextureFileName( TCollection_AsciiString( aImagePath.toUtf8().constData() ) );
-    AISShape->SetTextureMapOn();
-    AISShape->DisableTextureModulate();
-  }
 #endif
 
   // set line width
@@ -949,7 +915,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   AISShape->setTopLevel( propMap.value( GEOM::propertyName( GEOM::TopLevel ) ).toBool() );
 
   // set point marker (for vertex / compound of vertices only)
-  if ( onlyVertex ) {
+  if ( onlyVertex || isVerticesMode ) {
     QStringList aList = propMap.value( GEOM::propertyName( GEOM::PointMarker ) ).toString().split( GEOM::subSectionSeparator() );
     if ( aList.size() == 2 ) {
       // standard marker string contains "TypeOfMarker:ScaleOfMarker"
@@ -969,14 +935,9 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
       // custom marker string contains "IdOfTexture"
       int textureId = aList[0].toInt();
       Standard_Integer aWidth, aHeight;
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
       Handle(TColStd_HArray1OfByte) aTexture =
-#else
-        Handle(Graphic3d_HArray1OfBytes) aTexture =
-#endif
         GeometryGUI::getTexture( study, textureId, aWidth, aHeight );
       if ( !aTexture.IsNull() ) {
-#if OCC_VERSION_LARGE > 0x06060000 // Porting to OCCT higher 6.6.0 version
         Handle(Prs3d_PointAspect) aTextureAspect =
           new Prs3d_PointAspect( HasColor() ? 
 				 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
@@ -985,18 +946,6 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
                                  SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ),
                                  aWidth, aHeight,
                                  aTexture );
-#else
-	int TextureId = 0;
-        Handle(Prs3d_PointAspect) aTextureAspect =
-          new Prs3d_PointAspect( HasColor() ? 
-				 // predefined color, manually set to displayer via GEOM_Displayer::SetColor() function
-				 (Quantity_NameOfColor)GetColor() : 
-				 // color from properties 
-                                 SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::PointColor ) ).value<QColor>() ), 
-				 ++TextureId,
-                                 aWidth, aHeight,
-                                 aTexture );
-#endif
         AISShape->Attributes()->SetPointAspect( aTextureAspect );
       }
     }
@@ -1012,7 +961,7 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
 
   if ( create && !isTemporary && aMgrId != -1 ) {
     // set properties to the study
-    study->setObjectPropMap( aMgrId, entry, propMap );
+    study->setObjectProperties( aMgrId, entry, propMap );
   }
 
   // AISShape->SetName(???); ??? necessary to set name ???
@@ -1138,6 +1087,9 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
   // set display vectors flag
   actor->SetVectorMode( propMap.value( GEOM::propertyName( GEOM::EdgesDirection ) ).toBool() );
 
+  // set display vertices flag
+  actor->SetVerticesMode( propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool() );
+
   // set display mode
   int displayMode = HasDisplayMode() ? 
     // predefined display mode, manually set to displayer via GEOM_Displayer::SetDisplayMode() function 
@@ -1163,7 +1115,7 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
 
   if ( create && !isTemporary && aMgrId != -1 ) {
     // set properties to the study
-    study->setObjectPropMap( aMgrId, entry, propMap );
+    study->setObjectProperties( aMgrId, entry, propMap );
   }
 }
 
@@ -2000,13 +1952,11 @@ void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
   UpdateColorScale(false,false);
 }
 
-#if OCC_VERSION_LARGE > 0x06070000
 void GEOM_Displayer::BeforeErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
   LightApp_Displayer::BeforeErase( v, p );
   releaseTextures( p );
 }
-#endif
 
 void GEOM_Displayer::AfterErase( SALOME_View* v, const SALOME_OCCPrs* p )
 {
@@ -2057,24 +2007,54 @@ void GEOM_Displayer::UnsetColor()
  *  Set transparency for shape displaying.
  */
 //=================================================================
-void GEOM_Displayer::SetTransparency( const double transparency )
+double GEOM_Displayer::SetTransparency( const double transparency )
 {
-  myTransparency = transparency;
+  double aPrevTransparency = myTransparency;
+  if ( transparency < 0 ) {
+    UnsetTransparency();
+  }
+  else {
+    myTransparency = transparency;
+    myHasTransparency = true;
+  }
+  return aPrevTransparency;
 }
 
+//=================================================================
+/*!
+ *  GEOM_Displayer::GetTransparency
+ *  Get transparency for shape displaying.
+ */
+//=================================================================
 double GEOM_Displayer::GetTransparency() const
 {
   return myTransparency;
 }
 
+//=================================================================
+/*!
+ *  GEOM_Displayer::HasTransparency
+ *  Check if transparency for shape displaying is set.
+ */
+//=================================================================
 bool GEOM_Displayer::HasTransparency() const
 {
-  return myTransparency != -1.0;
+  return myHasTransparency;
 }
 
-void GEOM_Displayer::UnsetTransparency()
+//=================================================================
+/*!
+ *  GEOM_Displayer::UnsetTransparency
+ *  Unset transparency for shape displaying.
+ */
+//=================================================================
+double GEOM_Displayer::UnsetTransparency()
 {
-  myTransparency = -1.0;
+  double aPrevTransparency = myTransparency;
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  myTransparency = resMgr->integerValue("Geometry", "transparency", 0) / 100.;
+  myHasTransparency = false;
+  return aPrevTransparency;
 }
 
 
@@ -2365,7 +2345,7 @@ PropMap GEOM_Displayer::getObjectProperties( SalomeApp_Study* study,
   
     if ( viewModel && viewId != -1 ) {
       // get properties from the study
-      PropMap storedMap = study->getObjectPropMap( viewId, entry );
+      PropMap storedMap = study->getObjectProperties( viewId, entry );
       // overwrite default properties from stored ones (that are specified)
       for ( int prop = GEOM::Visibility; prop <= GEOM::LastProperty; prop++ ) {
         if ( storedMap.contains( GEOM::propertyName( (GEOM::Property)prop ) ) )
@@ -2452,7 +2432,8 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
                   arg( resMgr->integerValue( "Geometry", "iso_number_v", 1 ) ) );
 
   // - transparency (opacity = 1-transparency)
-  propMap.insert( GEOM::propertyName( GEOM::Transparency ), 0.0 );
+  propMap.insert( GEOM::propertyName( GEOM::Transparency ),
+		  resMgr->integerValue( "Geometry", "transparency", 0 ) / 100. );
 
   // - display mode (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::DisplayMode ),
@@ -2460,6 +2441,9 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
 
   // - show edges direction flag (false by default)
   propMap.insert( GEOM::propertyName( GEOM::EdgesDirection ), false );
+
+  // - show vertices flag (false by default)
+  propMap.insert( GEOM::propertyName( GEOM::Vertices ), false );
 
   // - shading color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),
@@ -2971,7 +2955,7 @@ void GEOM_Displayer::UpdateColorScale( const bool theIsRedisplayFieldSteps, cons
     {
       if( SUIT_ViewManager* aViewManager = *vmIt )
       {
-        const ObjMap anObjects = aStudy->getObjectMap( aViewManager->getGlobalId() );
+        const ObjMap& anObjects = aStudy->getObjectProperties( aViewManager->getGlobalId() );
         for( ObjMap::ConstIterator objIt = anObjects.begin(); objIt != anObjects.end(); objIt++ )
         {
           _PTR(SObject) aSObj( aStudyDS->FindObjectID( objIt.key().toLatin1().constData() ) );

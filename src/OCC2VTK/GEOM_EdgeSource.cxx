@@ -18,7 +18,6 @@
 //
 
 #include "GEOM_EdgeSource.h" 
-#include "OCC2VTK_internal.h"
  
 #include <vtkObjectFactory.h> 
 
@@ -43,30 +42,18 @@ vtkStandardNewMacro(GEOM_EdgeSource);
 GEOM_EdgeSource::GEOM_EdgeSource() :
   myIsVector(false)
 { 
-  myData = new EdgeSourceInternal;
   this->SetNumberOfInputPorts(0);
 } 
  
 GEOM_EdgeSource::~GEOM_EdgeSource() 
-{
-  delete myData;
+{ 
 } 
 
 void GEOM_EdgeSource::AddEdge (const TopoDS_Edge& theEdge,
                                bool theIsVector)
 {
-  myData->myEdgeSet.Add(theEdge);
+  myEdgeSet.Add(theEdge);
   myIsVector = theIsVector;
-}
-
-void GEOM_EdgeSource::Clear()
-{
-  myData->myEdgeSet.Clear();
-}
-
-bool GEOM_EdgeSource::IsEmpty()
-{
-  return myData->myEdgeSet.IsEmpty();
 }
 
 int GEOM_EdgeSource::RequestData(vtkInformation *vtkNotUsed(request),
@@ -82,7 +69,7 @@ int GEOM_EdgeSource::RequestData(vtkInformation *vtkNotUsed(request),
   aPolyData->SetPoints(aPts);
   aPts->Delete();
 
-  TEdgeSet::Iterator anIter (myData->myEdgeSet);
+  TEdgeSet::Iterator anIter (myEdgeSet);
   for (; anIter.More(); anIter.Next()) {
     TopoDS_Edge anEdge = anIter.Value();
     if ( !myIsVector )

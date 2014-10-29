@@ -46,7 +46,7 @@ static float         InfiniteValue        = 1e38;
 //function : GEOMUtils_Hatcher
 //purpose  :
 //=======================================================================
-GEOMUtils_Hatcher::GEOMUtils_Hatcher(const TopoDS_Face &theFace)
+GEOMUtils::Hatcher::Hatcher(const TopoDS_Face &theFace)
 : myHatcher(Geom2dHatch_Intersector (IntersectorConfusion, IntersectorTangency),
             HatcherConfusion2d, HatcherConfusion3d,
             Standard_True, Standard_False),
@@ -140,7 +140,7 @@ GEOMUtils_Hatcher::GEOMUtils_Hatcher(const TopoDS_Face &theFace)
 //function : Init
 //purpose  :
 //=======================================================================
-void GEOMUtils_Hatcher::Init(const Standard_Integer theNbIsos)
+void GEOMUtils::Hatcher::Init(const Standard_Integer theNbIsos)
 {
   Init(theNbIsos, theNbIsos);
 }
@@ -149,8 +149,8 @@ void GEOMUtils_Hatcher::Init(const Standard_Integer theNbIsos)
 //function : Init
 //purpose  :
 //=======================================================================
-void GEOMUtils_Hatcher::Init(const Standard_Integer theNbIsoU,
-                             const Standard_Integer theNbIsoV)
+void GEOMUtils::Hatcher::Init(const Standard_Integer theNbIsoU,
+			      const Standard_Integer theNbIsoV)
 {
   // Initialize data.
   Clear();
@@ -209,8 +209,8 @@ void GEOMUtils_Hatcher::Init(const Standard_Integer theNbIsoU,
 //function : Init
 //purpose  :
 //=======================================================================
-void GEOMUtils_Hatcher::Init(const GeomAbs_IsoType theIsoType,
-                             const Standard_Real   theParameter)
+void GEOMUtils::Hatcher::Init(const GeomAbs_IsoType theIsoType,
+			      const Standard_Real   theParameter)
 {
   // Initialize data.
   Clear();
@@ -249,7 +249,7 @@ void GEOMUtils_Hatcher::Init(const GeomAbs_IsoType theIsoType,
 //function : Perform
 //purpose  :
 //=======================================================================
-void GEOMUtils_Hatcher::Perform()
+void GEOMUtils::Hatcher::Perform()
 {
   myHatcher.Trim();
 
@@ -294,7 +294,7 @@ void GEOMUtils_Hatcher::Perform()
 //function : GetNbDomains
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMUtils_Hatcher::GetNbDomains
+Standard_Integer GEOMUtils::Hatcher::GetNbDomains
               (const Standard_Integer theHatchingIndex) const
 {
   Standard_Integer aResult = -1;
@@ -310,7 +310,7 @@ Standard_Integer GEOMUtils_Hatcher::GetNbDomains
 //function : GetDomain
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMUtils_Hatcher::GetDomain
+Standard_Boolean GEOMUtils::Hatcher::GetDomain
                            (const Standard_Integer  theHatchingIndex,
                             const Standard_Integer  theDomainIndex,
                                   Standard_Real    &theParam1,
@@ -348,7 +348,7 @@ Standard_Boolean GEOMUtils_Hatcher::GetDomain
 //function : IsDomainInfinite
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMUtils_Hatcher::IsDomainInfinite
+Standard_Boolean GEOMUtils::Hatcher::IsDomainInfinite
                            (const Standard_Integer  theHatchingIndex,
                             const Standard_Integer  theDomainIndex) const
 {
@@ -374,7 +374,7 @@ Standard_Boolean GEOMUtils_Hatcher::IsDomainInfinite
 //function : GetHatching
 //purpose  :
 //=======================================================================
-const Handle(Geom2d_Curve) &GEOMUtils_Hatcher::GetHatching
+const Handle(Geom2d_Curve) &GEOMUtils::Hatcher::GetHatching
                       (const Standard_Integer theHatchingIndex) const
 {
   const Geom2dAdaptor_Curve &aGACurve =
@@ -387,7 +387,7 @@ const Handle(Geom2d_Curve) &GEOMUtils_Hatcher::GetHatching
 //function : Clear
 //purpose  :
 //=======================================================================
-void GEOMUtils_Hatcher::Clear()
+void GEOMUtils::Hatcher::Clear()
 {
   myIsDone = Standard_False;
   myUPrm.Nullify();

@@ -30,8 +30,8 @@
 #include "GEOMBase_Skeleton.h"
 #include "GEOM_GenericObjPtr.h"
 
-class DlgRef_2Sel2Spin;
-class DlgRef_2Spin;
+class DlgRef_2Sel3Spin1Check;
+class DlgRef_3Spin1CheckCyl;
 
 //=================================================================================
 // class    : PrimitiveGUI_CylinderDlg
@@ -57,6 +57,7 @@ private:
   void                               enterEvent( QEvent* );
   double                             getRadius() const;
   double                             getHeight() const;
+  double                             getAngle() const;
   
 private:
   GEOM::GeomObjPtr                   myPoint, myDir;
@@ -64,8 +65,8 @@ private:
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;
   
-  DlgRef_2Sel2Spin*                  GroupPoints;
-  DlgRef_2Spin*                      GroupDimensions;
+  DlgRef_2Sel3Spin1Check*            GroupPoints;
+  DlgRef_3Spin1CheckCyl*             GroupDimensions;
 
 private slots:
   void                               ClickOnOk();
@@ -76,6 +77,7 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox();
   void                               SetDoubleSpinBoxStep( double );
+  void                               ActivateAngle();
 };
 
 #endif // PRIMITIVEGUI_CYLINDERDLG_H

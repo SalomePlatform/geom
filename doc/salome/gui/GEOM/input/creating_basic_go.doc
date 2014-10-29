@@ -15,6 +15,7 @@ geometrical objects as:
 <li>\subpage create_isoline_page</li>
 <li>\subpage create_sketcher_page</li>
 <li>\subpage create_3dsketcher_page</li>
+<li>\subpage create_polyline_page</li>
 <li>\subpage create_vector_page</li>
 <li>\subpage create_plane_page</li>
 <li>\subpage create_lcs_page</li>

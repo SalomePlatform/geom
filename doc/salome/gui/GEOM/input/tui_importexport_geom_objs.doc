@@ -10,7 +10,7 @@ geompy = geomBuilder.New(salome.myStudy)
 gg = salome.ImportComponentGUI("GEOM")
 
 # create ExportXAO object
-exportxao = geompy.MakeExportXAO([value], [value], [value], [value])
+exportxao = geompy.ExportXAO([value], [value], [value], [value])
 
 # add object in the study
 id_exportxao = geompy.addToStudy(exportxao,"ExportXAO")

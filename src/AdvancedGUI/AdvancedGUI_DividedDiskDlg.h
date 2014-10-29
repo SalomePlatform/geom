@@ -25,6 +25,9 @@
 
 #include <GEOMBase_Skeleton.h>
 
+#include <SALOMEconfig.h>
+#include CORBA_SERVER_HEADER(AdvancedGEOM)
+
 class DlgRef_1Spin;
 class DlgRef_3Radio;
 class DlgRef_2Sel1Spin;

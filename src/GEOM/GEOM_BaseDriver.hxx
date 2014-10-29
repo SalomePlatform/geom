@@ -67,7 +67,9 @@ struct GEOM_Param
 class GEOM_BaseDriver : public TFunction_Driver
 {
 public:
-
+  // Returns document id
+  Standard_EXPORT int GetDocID() const;
+  
   // Returns a name of creation operation and names and values of creation parameters
   // (Use AddParam() methods declared below to fill params vector while implementing
   // this method in derived drivers)

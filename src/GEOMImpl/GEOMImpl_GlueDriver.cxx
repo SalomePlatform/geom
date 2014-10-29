@@ -436,12 +436,10 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
   aGA.Detect();
 
   //modified by NIZNHY-PKV Tue Mar 13 14:07:12 2012f
-#if OCC_VERSION_LARGE > 0x06050200
   Standard_Integer iWrnDetect = aGA.WarningStatus();
   if (iWrnDetect == 2) {
     Standard_Failure::Raise("GLUE_ERROR_STICKED_SHAPES");
   }
-#endif
   //modified by NIZNHY-PKV Tue Mar 13 14:07:14 2012t
 
   Standard_Integer iErr = aGA.ErrorStatus();
@@ -596,7 +594,6 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueByList (const TopoDS_Shape& theShape,
   aGA.Detect();
 
   //modified by NIZNHY-PKV Tue Mar 13 14:07:12 2012f
-#if OCC_VERSION_LARGE > 0x06050200
   Standard_Integer iWrnDetect = aGA.WarningStatus();
   if (iWrnDetect == 2) {
     /*
@@ -622,7 +619,6 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueByList (const TopoDS_Shape& theShape,
     */
     Standard_Failure::Raise("GLUE_ERROR_STICKED_SHAPES");
   }
-#endif
   //modified by NIZNHY-PKV Tue Mar 13 14:07:14 2012t
 
   Standard_Integer iErr = aGA.ErrorStatus();

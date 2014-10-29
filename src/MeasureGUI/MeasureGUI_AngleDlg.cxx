@@ -113,7 +113,7 @@ MeasureGUI_AngleDlg::MeasureGUI_AngleDlg (GeometryGUI* GUI, QWidget* parent)
   /***************************************************************/
 
   // Help page reference
-  myHelpFileName = "using_measurement_tools_page.html#angle_anchor";
+  myHelpFileName = "angle_page.html";
 
   // Initialisation
   Init();
@@ -313,9 +313,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
 
   if (anAngle > Precision::Angular()) {
     try {
-#if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
-#endif
       TopoDS_Shape S1, S2;
       if (GEOMBase::GetShape(myObj , S1, TopAbs_EDGE) &&
            GEOMBase::GetShape(myObj2, S2, TopAbs_EDGE)) {

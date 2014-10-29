@@ -1,0 +1,67 @@
+// Copyright (C) 2014  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+
+#ifndef __IGESPlugin_IDL__
+#define __IGESPlugin_IDL__
+
+#include "GEOM_Gen.idl"
+
+module GEOM
+{
+  /*!
+   *  \brief Interface for IGESPlugin modeling functions.
+   */
+  interface IIGESOperations : GEOM::GEOM_IOperations
+  {
+    /*!
+     *  \brief Export the given shape into a file with given name in IGES format.
+     *
+     *  \param theObject Shape to be stored in the file.
+     *  \param theFileName Name of the file to store the given shape in.
+     *  \param theVersion Version of IGES format which defines, whether to write 
+     *         only faces (5.1 IGES format) or shells and solids also (5.3 IGES format).
+     */
+    void ExportIGES( in GEOM::GEOM_Object theObject, 
+                     in string            theFileName,
+                     in string            theVersion );
+      
+    /*!
+     *  \brief Import a shape from the IGES file.
+     *
+     *  \param theFileName The file, containing the shape.
+     *  \param theIsIgnoreUnits If True, file length units will be ignored (set to 'meter')
+     *                          and result model will be scaled, if its units are not meters.
+     *                          If False (default), file length units will be taken into account.
+     *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+     */              
+    GEOM::ListOfGO ImportIGES( in string  theFileName,
+                               in boolean theIsIgnoreUnits );
+                               
+    /*!
+     *  \brief Read a value of parameter from a file, containing a shape.
+     *  \param theFileName The file, containing the shape.
+     *  \param theParameterName Specify the parameter. For example, pass "LEN_UNITS"
+     *                          to obtain length units, in which the file is written.
+     *  \return Value of requested parameter in form of text string.
+     */
+    string ReadValue( in string theFileName, in string theParameterName);
+  };
+};
+
+#endif // __IGESPlugin_IDL__

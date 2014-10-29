@@ -36,6 +36,8 @@
 #include <TDF_Data.hxx>
 #include <TDF_ChildIterator.hxx>
 #include <TDF_Reference.hxx>
+#include <TDataStd_BooleanArray.hxx>
+#include <TDataStd_ByteArray.hxx>
 #include <TDataStd_Integer.hxx>
 #include <TDataStd_IntegerArray.hxx>
 #include <TDataStd_Real.hxx>
@@ -227,9 +229,7 @@ TopoDS_Shape GEOM_Function::GetValue()
 
     if (!isResult) {
       try {
-#if OCC_VERSION_LARGE > 0x06010000
         OCC_CATCH_SIGNALS;
-#endif
         GEOM_Solver aSolver(GEOM_Engine::GetEngine());
         if (!aSolver.ComputeFunction(this)) {
           MESSAGE("GEOM_Object::GetValue Error : Can't build a sub-shape");
@@ -474,6 +474,74 @@ Handle(TColStd_HArray1OfInteger) GEOM_Function::GetIntegerArray(int thePosition)
 
   _isDone = true;
   return anIntegerArray->Array();
+}
+
+//=============================================================================
+/*!
+ *  SetByteArray
+ */
+//=============================================================================
+void GEOM_Function::SetByteArray (int thePosition,
+                                  const Handle(TColStd_HArray1OfByte)& theArray)
+{
+  _isDone = false;
+  if(thePosition <= 0) return;
+  TDF_Label anArgLabel = ARGUMENT(thePosition);
+  Handle(TDataStd_ByteArray) anAttr =
+    TDataStd_ByteArray::Set(anArgLabel, theArray->Lower(), theArray->Upper());
+  anAttr->ChangeArray(theArray);
+  _isDone = true;
+}
+
+//=============================================================================
+/*!
+ *  GetByteArray
+ */
+//=============================================================================
+Handle(TColStd_HArray1OfByte) GEOM_Function::GetByteArray(int thePosition)
+{
+  _isDone = false;
+  if(thePosition <= 0) return 0;
+  Handle(TDataStd_ByteArray) aByteArray;
+  TDF_Label anArgLabel = ARGUMENT(thePosition);
+  if(!anArgLabel.FindAttribute(TDataStd_ByteArray::GetID(), aByteArray)) return 0;
+
+  _isDone = true;
+  return aByteArray->InternalArray();
+}
+
+//=============================================================================
+/*!
+ *  SetBooleanArray
+ */
+//=============================================================================
+void GEOM_Function::SetBooleanArray (int thePosition,
+                                     const Handle(TColStd_HArray1OfByte)& theArray)
+{
+  _isDone = false;
+  if(thePosition <= 0) return;
+  TDF_Label anArgLabel = ARGUMENT(thePosition);
+  Handle(TDataStd_BooleanArray) anAttr =
+    TDataStd_BooleanArray::Set(anArgLabel, theArray->Lower(), theArray->Upper());
+  anAttr->SetInternalArray(theArray);
+  _isDone = true;
+}
+
+//=============================================================================
+/*!
+ *  GetBooleanArray
+ */
+//=============================================================================
+Handle(TColStd_HArray1OfByte) GEOM_Function::GetBooleanArray(int thePosition)
+{
+  _isDone = false;
+  if(thePosition <= 0) return 0;
+  Handle(TDataStd_BooleanArray) aBooleanArray;
+  TDF_Label anArgLabel = ARGUMENT(thePosition);
+  if(!anArgLabel.FindAttribute(TDataStd_BooleanArray::GetID(), aBooleanArray)) return 0;
+
+  _isDone = true;
+  return aBooleanArray->InternalArray();
 }
 
 //=============================================================================

@@ -36,28 +36,28 @@ def set_env( args ):
 
     csf_list = ["Plugin", "GEOMDS_Resources", "ShHealing"]
 
-    for csf_file in csf_list:
-       uniteFiles( os.path.join( res_dir, csf_file ), os.path.join( env_dir, csf_file ) )
-       pass
-
-    for csf_string in csf_list:
-        csf_var = "CSF_" + csf_string + "Defaults"
+    for csf in csf_list:
+        uniteFiles( os.path.join( res_dir, csf ), os.path.join( env_dir, csf ) )
+        csf_var = "CSF_%sDefaults" % csf
         if not os.getenv( csf_var ):
             os.environ[ csf_var ] = env_dir
             pass
         pass
 
-    # find plugins
+    # collect plugins
     plugin_list = []
     resource_path_list = []
-    plugins_dir_var = "GEOM_ENGINE_RESOURCES_DIR"
-    if os.environ.has_key(plugins_dir_var):
-        # reverse the user's paths list, because the used 'add_path' prepends a new path,
-        # but we want to append it: [a, b, c] => [c, b, a]
-        plugins_dirs = os.environ[plugins_dir_var].split(os.pathsep)
-        plugins_dirs.reverse()
-        os.environ[plugins_dir_var] = string.join(plugins_dirs, os.pathsep)
-        pass
+
+    # standard plugins
+    plugin_list.append("BREPPlugin")
+    plugin_list.append("STEPPlugin")
+    plugin_list.append("IGESPlugin")
+    plugin_list.append("STLPlugin")
+    plugin_list.append("XAOPlugin")
+    plugin_list.append("VTKPlugin")
+    plugin_list.append("AdvancedGEOM")
+
+    # find additional plugins
     for env_var in os.environ.keys():
         value = os.environ[env_var]
         if env_var[-9:] == "_ROOT_DIR" and value:
@@ -65,61 +65,48 @@ def set_env( args ):
             plugin = env_var[:-9] # plugin name may have wrong case
 
             # look for NAMEOFPlugin.xml file among resource files
-            resource_dir = os.path.join(plugin_root,"share",salome_subdir,"resources",plugin.lower())
-            if not os.access( resource_dir, os.F_OK ): continue
-            for resource_file in os.listdir( resource_dir ):
-                if resource_file.endswith( ".xml") and \
+            resource_dir = os.path.join(plugin_root, "share", salome_subdir, "resources", plugin.lower())
+            if not os.access(resource_dir, os.F_OK): continue
+
+            for resource_file in os.listdir(resource_dir):
+                if resource_file.endswith(".xml") and \
                    resource_file.lower() == plugin.lower() + ".xml":
                     # use "name" attribute of "geom-plugin" as name of plugin in a right case
-                    from xml.dom.minidom import parse
                     try:
-                        xml_doc = parse( os.path.join( resource_dir, resource_file ))
+                        from xml.dom.minidom import parse
+                        xml_doc = parse(os.path.join(resource_dir, resource_file))
                         plugin_nodes = xml_doc.getElementsByTagName("geom-plugin")
-                    except:
-                        continue
-                    if not plugin_nodes or not plugin_nodes[0].hasAttribute("name"): continue
-                    plugin = plugin_nodes[0].getAttribute("name")
-                    if plugin in plugin_list: continue
+                        if not plugin_nodes or not plugin_nodes[0].hasAttribute("name"): continue
 
-                    # add paths of plugin
-                    plugin_list.append(plugin)
-                    if not os.environ.has_key("SALOME_"+plugin+"Resources"):
-                        resource_path = os.path.join(plugin_root,"share",salome_subdir,"resources",plugin.lower())
-                        os.environ["SALOME_"+plugin+"Resources"] = resource_path
-                        resource_path_list.append( resource_path )
-                        add_path(os.path.join(plugin_root,get_lib_dir(),python_version, "site-packages",salome_subdir), "PYTHONPATH")
-                        add_path(os.path.join(plugin_root,get_lib_dir(),salome_subdir), "PYTHONPATH")
+                        plugin = plugin_nodes[0].getAttribute("name")
+                        if plugin in plugin_list: continue
 
-                        if sys.platform == "win32":
-                            add_path(os.path.join(plugin_root,get_lib_dir(),salome_subdir), "PATH")
-                            add_path(os.path.join(plugin_root,"bin",salome_subdir), "PYTHONPATH")
-                        else:
-                            add_path(os.path.join(plugin_root,get_lib_dir(),salome_subdir), "LD_LIBRARY_PATH")
-                            add_path(os.path.join(plugin_root,"bin",salome_subdir), "PYTHONPATH")
-                            add_path(os.path.join(plugin_root,"bin",salome_subdir), "PATH")
+                        plugin_list.append(plugin)
+
+                        # add paths of plugin
+                        if not os.environ.has_key("SALOME_"+plugin+"Resources"):
+                            resource_path = os.path.join(plugin_root, "share", salome_subdir, "resources", plugin.lower())
+                            os.environ["SALOME_"+plugin+"Resources"] = resource_path
+                            resource_path_list.append(resource_path)
+                            add_path(os.path.join(plugin_root, get_lib_dir(), python_version, "site-packages", salome_subdir), "PYTHONPATH")
+                            add_path(os.path.join(plugin_root, get_lib_dir(), salome_subdir), "PYTHONPATH")
+                            if sys.platform == "win32":
+                                add_path(os.path.join(plugin_root, get_lib_dir(), salome_subdir), "PATH")
+                                add_path(os.path.join(plugin_root, "bin", salome_subdir), "PYTHONPATH")
+                            else:
+                                add_path(os.path.join(plugin_root, get_lib_dir(), salome_subdir), "LD_LIBRARY_PATH")
+                                add_path(os.path.join(plugin_root, "bin", salome_subdir), "PYTHONPATH")
+                                add_path(os.path.join(plugin_root, "bin", salome_subdir), "PATH")
+                                pass
                             pass
                         pass
-                    pass
-                elif resource_file == "ImportExport" and plugin.upper() != "GEOM":
-                    # add 'ImportExport' plugin file path into variable
-                    add_path(resource_dir, plugins_dir_var)
-                    # add plugin's library path into environment
-                    if sys.platform == "win32":
-                        add_path(os.path.join(plugin_root,get_lib_dir(),salome_subdir), "PATH")
-                    else:
-                        add_path(os.path.join(plugin_root,get_lib_dir(),salome_subdir), "LD_LIBRARY_PATH")
-                        pass
+                    except:
+                        continue
                     pass
                 pass
-    plugin_list.append("GEOMActions")
+            pass
+        pass
+
     os.environ["GEOM_PluginsList"] = ":".join(plugin_list)
     os.environ["SalomeAppConfig"] = os.environ["SalomeAppConfig"] + psep + psep.join(resource_path_list)
-
-    if os.environ.has_key(plugins_dir_var):
-        # reverse back the plugin paths:
-        # [f, e, d, c, b, a] => [a, b, c, d, e, f]
-        plugins_dirs = os.environ[plugins_dir_var].split(os.pathsep)
-        plugins_dirs.reverse()
-        os.environ[plugins_dir_var] = string.join(plugins_dirs, os.pathsep)
-        pass
     pass

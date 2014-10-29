@@ -31,7 +31,6 @@
 #include <GEOM_Constants.h>
 
 #include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>

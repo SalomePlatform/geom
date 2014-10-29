@@ -237,3 +237,28 @@ void GEOM_IOperations_i::UpdateGUIForObject(GEOM::GEOM_Object_ptr theObj)
     }
   }
 }
+
+//=============================================================================
+/*!
+ *  ConvertStringArray
+ */
+//=============================================================================
+Handle(TColStd_HArray1OfExtendedString) GEOM_IOperations_i::ConvertStringArray
+        (const GEOM::string_array &theInArray)
+{
+  Handle(TColStd_HArray1OfExtendedString) anOutArray;
+  const int                               n = theInArray.length();
+  int                                     i;
+
+  if (n <= 0) {
+    return anOutArray;
+  }
+
+  anOutArray = new TColStd_HArray1OfExtendedString( 1, n );
+
+  for (i = 0; i < n; i++) {
+    anOutArray->SetValue(i + 1, TCollection_ExtendedString(theInArray[i].in()));
+  }
+
+  return anOutArray;
+}

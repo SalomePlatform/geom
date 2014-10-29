@@ -33,17 +33,13 @@
 #include "Utils_ExceptHandlers.hxx"
 
 #include "GEOM_Engine.hxx"
-#include "GEOM_Object.hxx"
+#include "GEOM_BaseObject.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
 #include <TColStd_HSequenceOfAsciiString.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
-#else
-#include <TDataStd_HArray1OfByte.hxx>
-#endif
 
 //=============================================================================
 /*!
@@ -113,11 +109,7 @@ void GEOM_IInsertOperations_i::Export
   if (anOriginal.IsNull()) return;
 
   //Export the shape to the file
-  char* aFileName   = strdup(theFileName);
-  char* aFormatName = strdup(theFormatName);
-  GetOperations()->Export(anOriginal, aFileName, aFormatName);
-  free(aFileName);
-  free(aFormatName);
+  GetOperations()->Export(anOriginal, theFileName, theFormatName);
 }
 
 //=============================================================================
@@ -125,28 +117,17 @@ void GEOM_IInsertOperations_i::Export
  *  ImportFile
  */
 //=============================================================================
-GEOM::ListOfGO* GEOM_IInsertOperations_i::ImportFile
+GEOM::ListOfGBO* GEOM_IInsertOperations_i::ImportFile
                    (const char* theFileName,
                     const char* theFormatName)
 {
-  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+  GEOM::ListOfGBO_var aSeq = new GEOM::ListOfGBO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
   //Import the shape from the file
-  char* aFileName   = strdup(theFileName);
-  char* aFormatName = strdup(theFormatName);
-  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->Import(aFileName, aFormatName);
-
-  if( strcmp(aFormatName,"IGES_UNIT")==0 && !aHSeq.IsNull() ) {
-    free(aFileName);
-    free(aFormatName);
-    return aSeq._retn();
-  }
-
-  free(aFileName);
-  free(aFormatName);
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->Import(theFileName, theFormatName);
 
   if (!GetOperations()->IsDone() || aHSeq.IsNull()) {
     return aSeq._retn();
@@ -156,10 +137,8 @@ GEOM::ListOfGO* GEOM_IInsertOperations_i::ImportFile
   Standard_Integer aLength = aHSeq->Length();
 
   aSeq->length(aLength);
-
-  for (Standard_Integer i = 1; i <= aLength; i++) {
-    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
-  }
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetBaseObject(Handle(GEOM_BaseObject)::DownCast(aHSeq->Value(i)));
 
   return aSeq._retn();
 }
@@ -176,88 +155,10 @@ char* GEOM_IInsertOperations_i::ReadValue(const char* theFileName,
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  char* aFileName      = strdup(theFileName);
-  char* aFormatName    = strdup(theFormatName);
-  char* aParameterName = strdup(theParameterName);
-
   TCollection_AsciiString aUnits = GetOperations()->ReadValue
-    (aFileName, aFormatName, aParameterName);
-
-  free(aFileName);
-  free(aFormatName);
-  free(aParameterName);
+    (theFileName, theFormatName, theParameterName);
 
   return CORBA::string_dup(aUnits.ToCString());
-}
-
-//=============================================================================
-/*!
- *  ImportTranslators
- */
-//=============================================================================
-void GEOM_IInsertOperations_i::ImportTranslators
-  (GEOM::string_array_out theFormats, GEOM::string_array_out thePatterns)
-{
-  // allocate the CORBA arrays
-  GEOM::string_array_var aFormatsArray  = new GEOM::string_array();
-  GEOM::string_array_var aPatternsArray = new GEOM::string_array();
-
-  // Get sequences of available formats
-  Handle(TColStd_HSequenceOfAsciiString) aFormats  = new TColStd_HSequenceOfAsciiString;
-  Handle(TColStd_HSequenceOfAsciiString) aPatterns = new TColStd_HSequenceOfAsciiString;
-  if (GetOperations()->ImportTranslators(aFormats, aPatterns)) {
-    const int formSize = aFormats->Length();
-    if (formSize == aPatterns->Length()) {
-      aFormatsArray->length(formSize);
-      aPatternsArray->length(formSize);
-
-      // fill the local CORBA arrays with values from sequences
-      CORBA::Long i = 1;
-      for (; i <= formSize; i++) {
-        aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
-        aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
-      }
-    }
-  }
-
-  // initialize out-parameters with local arrays
-  theFormats  = aFormatsArray._retn();
-  thePatterns = aPatternsArray._retn();
-}
-
-//=============================================================================
-/*!
- *  ExportTranslators
- */
-//=============================================================================
-void GEOM_IInsertOperations_i::ExportTranslators
-  (GEOM::string_array_out theFormats, GEOM::string_array_out thePatterns)
-{
-  // allocate the CORBA arrays
-  GEOM::string_array_var aFormatsArray  = new GEOM::string_array();
-  GEOM::string_array_var aPatternsArray = new GEOM::string_array();
-
-  // Get sequences of available formats
-  Handle(TColStd_HSequenceOfAsciiString) aFormats  = new TColStd_HSequenceOfAsciiString;
-  Handle(TColStd_HSequenceOfAsciiString) aPatterns = new TColStd_HSequenceOfAsciiString;
-  if (GetOperations()->ExportTranslators(aFormats, aPatterns)) {
-    const int formSize = aFormats->Length();
-    if (formSize == aPatterns->Length()) {
-      aFormatsArray->length(formSize);
-      aPatternsArray->length(formSize);
-
-      // fill the local CORBA arrays with values from sequences
-      CORBA::Long i = 1;
-      for (; i <= formSize; i++) {
-        aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
-        aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
-      }
-    }
-  }
-
-  // initialize out-parameters with local arrays
-  theFormats  = aFormatsArray._retn();
-  thePatterns = aPatternsArray._retn();
 }
 
 //=============================================================================
@@ -306,18 +207,10 @@ CORBA::Long GEOM_IInsertOperations_i::AddTexture(CORBA::Long theWidth, CORBA::Lo
 {
   GetOperations()->SetNotDone();
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   Handle(TColStd_HArray1OfByte) aTexture;
-#else
-  Handle(TDataStd_HArray1OfByte) aTexture;
-#endif
 
   if ( theTexture.length() > 0 ) {
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
     aTexture = new TColStd_HArray1OfByte (1, theTexture.length());
-#else
-    aTexture = new TDataStd_HArray1OfByte (1, theTexture.length());
-#endif
 
     for ( int i = 0; i < theTexture.length(); i++ )
       aTexture->SetValue( i+1, (Standard_Byte)theTexture[i] );
@@ -335,11 +228,7 @@ SALOMEDS::TMPFile* GEOM_IInsertOperations_i::GetTexture(CORBA::Long theID,
                                                         CORBA::Long& theHeight)
 {
   int aWidth, aHeight;
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
   Handle(TColStd_HArray1OfByte) aTextureImpl =
-#else
-  Handle(TDataStd_HArray1OfByte) aTextureImpl =
-#endif
     GetOperations()->GetTexture(theID, aWidth, aHeight);
   theWidth  = aWidth;
   theHeight = aHeight;
@@ -370,121 +259,4 @@ GEOM::ListOfLong* GEOM_IInsertOperations_i::GetAllTextures()
   return anIDs._retn();
 }
 
-//=============================================================================
-/*!
- *  Export a shape to XAO format
- *  \param shape The shape to export
- *  \param groups The list of groups to export
- *  \param fields The list of fields to export
- *  \param author The author of the export
- *  \param fileName The name of the exported file
- *  \return boolean indicating if export was succeful.
- */
-//=============================================================================
-CORBA::Boolean GEOM_IInsertOperations_i::ExportXAO(GEOM::GEOM_Object_ptr shape,
-                                                   const GEOM::ListOfGO& groups,
-                                                   const GEOM::ListOfFields&  fields,
-                                                   const char* author,
-                                                   const char* fileName)
-{
-  bool isGood = false;
-  // Set a not done flag
-  GetOperations()->SetNotDone();
-  
-  // Get the reference shape
-  Handle(GEOM_Object) reference = GetObjectImpl(shape);
-  
-  // Get the reference groups
-  int ind = 0;
-  std::list<Handle(GEOM_Object)> groupsObj;
-  for (; ind < groups.length(); ind++)
-  {
-    Handle(GEOM_Object) gobj = GetObjectImpl(groups[ind]);
-    if (gobj.IsNull()) return false;
-    groupsObj.push_back(gobj);
-  }
 
-  // Get the reference fields
-  ind = 0;
-  std::list<Handle(GEOM_Field)> fieldsObj;
-  for (; ind < fields.length(); ind++)
-  {
-    Handle(GEOM_Field) fobj = Handle(GEOM_Field)::DownCast(GetBaseObjectImpl(fields[ind]));
-    if (fobj.IsNull()) return false;
-    fieldsObj.push_back(fobj);
-  }
-  
-  if (!reference.IsNull())
-  {
-    // Export XAO
-    isGood = GetOperations()->ExportXAO(reference, groupsObj, fieldsObj, author, fileName);
-  }
-  
-  return isGood;
-}
-
-//=============================================================================
-/*!
- *  Import a shape from XAO format
- *  \param fileName The name of the file to import
- *  \param shape The imported shape
- *  \param subShapes The list of imported subShapes
- *  \param groups The list of imported groups
- *  \param fields The list of imported fields
- *  \return boolean indicating if import was succeful.
- */
-//=============================================================================
-CORBA::Boolean GEOM_IInsertOperations_i::ImportXAO(const char* fileName,
-                                                   GEOM::GEOM_Object_out shape,
-                                                   GEOM::ListOfGO_out subShapes,
-                                                   GEOM::ListOfGO_out groups,
-                                                   GEOM::ListOfFields_out fields)
-{
-  GEOM::GEOM_Object_var vshape;
-  shape = vshape._retn();
-  
-  subShapes = new GEOM::ListOfGO;
-  groups = new GEOM::ListOfGO;
-  fields = new GEOM::ListOfFields;
-  
-  // Set a not done flag
-  GetOperations()->SetNotDone();
-  
-  Handle(TColStd_HSequenceOfTransient) importedSubShapes = new TColStd_HSequenceOfTransient();
-  Handle(TColStd_HSequenceOfTransient) importedGroups = new TColStd_HSequenceOfTransient();
-  Handle(TColStd_HSequenceOfTransient) importedFields = new TColStd_HSequenceOfTransient();
-  Handle(GEOM_Object) hshape;
-  bool res = GetOperations()->ImportXAO(fileName, hshape, importedSubShapes, importedGroups, importedFields);
-  
-  if (!GetOperations()->IsDone() || !res)
-    return false;
-  
-  // parse fields
-  int n = importedSubShapes->Length();
-  subShapes->length(n);
-  for (int i = 1; i <= n; i++)
-  {
-    (*subShapes)[i - 1] = GetObject(Handle(GEOM_Object)::DownCast(importedSubShapes->Value(i)));
-  }
-  
-  // parse groups
-  n = importedGroups->Length();
-  groups->length(n);
-  for (int i = 1; i <= n; i++)
-  {
-    (*groups)[i - 1] = GetObject(Handle(GEOM_Object)::DownCast(importedGroups->Value(i)));
-  }
-  
-  // parse fields
-  n = importedFields->Length();
-  fields->length(n);
-  for (int i = 1; i <= n; i++)
-  {
-        (*fields)[i - 1] = GEOM::GEOM_Field::_narrow(
-                GetBaseObject(Handle(GEOM_Field)::DownCast(importedFields->Value(i))));
-  }
-  
-  shape = GetObject(hshape);
-  
-  return res;
-}

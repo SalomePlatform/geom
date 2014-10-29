@@ -50,9 +50,7 @@
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
 
-#if OCC_VERSION_LARGE > 0x06050300
 #include <BRepOffsetAPI_MiddlePath.hxx>
-#endif
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -145,15 +143,11 @@ Standard_Integer GEOMImpl_PipePathDriver::Execute (TFunction_Logbook& log) const
     if (aShape.IsNull() || aBase1.IsNull() || aBase2.IsNull())
       Standard_NullObject::Raise("RestorePath aborted : null argument");
 
-#if OCC_VERSION_LARGE > 0x06050300
     BRepOffsetAPI_MiddlePath aMPB (aShape, aBase1, aBase2);
     aMPB.Build();
     if (aMPB.IsDone()) {
       aRes = aMPB.Shape();
     }
-#else
-    Standard_NullObject::Raise("RestorePath is not implemented in used OCCT version");
-#endif
   }
   else if (aType == PIPE_PATH_TWO_SEQS) {
     GEOMImpl_IPipePath aPI (aFunction);
@@ -181,15 +175,11 @@ Standard_Integer GEOMImpl_PipePathDriver::Execute (TFunction_Logbook& log) const
     if (aShape.IsNull() || aBase1.IsNull() || aBase2.IsNull())
       Standard_NullObject::Raise("RestorePath aborted : null argument");
 
-#if OCC_VERSION_LARGE > 0x06050300
     BRepOffsetAPI_MiddlePath aMPB (aShape, aBase1, aBase2);
     aMPB.Build();
     if (aMPB.IsDone()) {
       aRes = aMPB.Shape();
     }
-#else
-    Standard_NullObject::Raise("RestorePath is not implemented in used OCCT version");
-#endif
   }
   else {
   }

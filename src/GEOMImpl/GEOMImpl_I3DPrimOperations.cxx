@@ -128,9 +128,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxDXDYDZ (double theDX, dou
 
   //Compute the box value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Box driver failed");
       return NULL;
@@ -185,9 +183,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeBoxTwoPnt (Handle(GEOM_Objec
 
   //Compute the Box value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Box driver failed");
       return NULL;
@@ -236,9 +232,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double 
 
   //Compute the Face
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Face driver failed");
       return NULL;
@@ -293,9 +287,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceObjHW (Handle(GEOM_Objec
 
   //Compute the Face
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Face driver failed");
       return NULL;
@@ -351,9 +343,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskPntVecR
 
   //Compute the Disk value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Disk driver failed");
       return NULL;
@@ -411,9 +401,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskThreePnt (Handle(GEOM_Ob
 
   //Compute the Disk value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Disk driver failed");
       return NULL;
@@ -461,9 +449,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskR (double theR, int theO
 
   //Compute the Disk
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Disk driver failed");
       return NULL;
@@ -509,9 +495,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
 
   //Compute the Cylinder value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Cylinder driver failed");
       return NULL;
@@ -531,6 +515,52 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRH (double theR, dou
   return aCylinder;
 }
 
+//=============================================================================
+/*!
+ *  MakeCylinderRHA
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderRHA (double theR, double theH, double theA)
+{
+  SetErrorCode(KO);
+
+  //Add a new Cylinder object
+  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GetDocID(), GEOM_CYLINDER);
+
+  //Add a new Cylinder function with R and H parameters
+  Handle(GEOM_Function) aFunction = aCylinder->AddFunction(GEOMImpl_CylinderDriver::GetID(), CYLINDER_R_H_A);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_CylinderDriver::GetID()) return NULL;
+
+  GEOMImpl_ICylinder aCI (aFunction);
+
+  aCI.SetR(theR);
+  aCI.SetH(theH);
+  aCI.SetA(theA);
+
+  //Compute the Cylinder value
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Cylinder driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCylinder
+    << " = geompy.MakeCylinderRHA(" << theR << ", " << theH << ", " << theA*180./M_PI << "*math.pi/180.)";
+
+  SetErrorCode(OK);
+  return aCylinder;
+}
 
 //=============================================================================
 /*!
@@ -570,9 +600,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
 
   //Compute the Cylinder value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Cylinder driver failed");
       return NULL;
@@ -587,6 +615,65 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRH (Handle(GEO
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCylinder << " = geompy.MakeCylinder("
     << thePnt << ", " << theVec << ", " << theR << ", " << theH << ")";
+
+  SetErrorCode(OK);
+  return aCylinder;
+}
+
+//=============================================================================
+/*!
+ *  MakeCylinderPntVecRHA
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeCylinderPntVecRHA (Handle(GEOM_Object) thePnt,
+								       Handle(GEOM_Object) theVec,
+								       double theR, double theH, double theA)
+{
+  SetErrorCode(KO);
+
+  if (thePnt.IsNull() || theVec.IsNull()) return NULL;
+
+  //Add a new Cylinder object
+  Handle(GEOM_Object) aCylinder = GetEngine()->AddObject(GetDocID(), GEOM_CYLINDER);
+
+  //Add a new Cylinder function for creation a cylinder relatively to point and vector
+  Handle(GEOM_Function) aFunction =
+    aCylinder->AddFunction(GEOMImpl_CylinderDriver::GetID(), CYLINDER_PNT_VEC_R_H_A);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_CylinderDriver::GetID()) return NULL;
+
+  GEOMImpl_ICylinder aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
+  Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+
+  if (aRefPnt.IsNull() || aRefVec.IsNull()) return NULL;
+
+  aCI.SetPoint(aRefPnt);
+  aCI.SetVector(aRefVec);
+  aCI.SetR(theR);
+  aCI.SetH(theH);
+  aCI.SetA(theA);
+
+  //Compute the Cylinder value
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Cylinder driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCylinder << " = geompy.MakeCylinderA("
+    << thePnt << ", " << theVec << ", " << theR << ", " << theH << ", " << theA*180./M_PI << "*math.pi/180.)";
 
   SetErrorCode(OK);
   return aCylinder;
@@ -622,9 +709,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConeR1R2H (double theR1, dou
 
   //Compute the Cone value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Cone driver failed");
       return NULL;
@@ -685,9 +770,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeConePntVecR1R2H (Handle(GEOM
 
   //Compute the Cone value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Cone driver failed");
       return NULL;
@@ -733,9 +816,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSphereR (double theR)
 
   //Compute the Sphere value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sphere driver failed");
       return NULL;
@@ -788,9 +869,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeSpherePntR (Handle(GEOM_Obje
 
   //Compute the Sphere value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sphere driver failed");
       return NULL;
@@ -839,9 +918,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusRR
 
   //Compute the Torus value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Torus driver failed");
       return NULL;
@@ -899,9 +976,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeTorusPntVecRR
 
   //Compute the Torus value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Torus driver failed");
       return NULL;
@@ -960,9 +1035,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
 
   //Compute the Prism value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       //SetErrorCode("Prism driver failed");
       SetErrorCode("Extrusion can not be created, check input data");
@@ -1024,9 +1097,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH2Ways (Handle(GEOM_
 
   //Compute the Prism value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       //SetErrorCode("Prism driver failed");
       SetErrorCode("Extrusion can not be created, check input data");
@@ -1087,9 +1158,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt
 
   //Compute the Prism value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       //SetErrorCode("Prism driver failed");
       SetErrorCode("Extrusion can not be created, check input data");
@@ -1152,9 +1221,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismTwoPnt2Ways
 
   //Compute the Prism value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       //SetErrorCode("Prism driver failed");
       SetErrorCode("Extrusion can not be created, check input data");
@@ -1213,9 +1280,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ
 
   //Compute the Prism value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Extrusion can not be created, check input data");
       return NULL;
@@ -1276,9 +1341,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ2Ways
 
   //Compute the Prism value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Extrusion can not be created, check input data");
       return NULL;
@@ -1350,9 +1413,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDraftPrism
   
   //Compute the Draft Prism Feature value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Extrusion can not be created, check input data");
       return NULL;
@@ -1415,9 +1476,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipe (Handle(GEOM_Object) th
 
   //Compute the Pipe value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Pipe driver failed");
       return NULL;
@@ -1475,9 +1534,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
 
   //Compute the Revolution value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Revolution driver failed");
       return NULL;
@@ -1533,9 +1590,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
 
   //Compute the Revolution value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Revolution driver failed");
       return NULL;
@@ -1596,9 +1651,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
 
   //Compute the Solid value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Filling driver failed");
       return NULL;
@@ -1695,9 +1748,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
 
   //Compute the ThruSections value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("ThruSections driver failed");
       return anObj;
@@ -1819,9 +1870,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
 
   //Compute the Pipe value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Pipe with defferent section driver failed");
       return anObj;
@@ -1978,9 +2027,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
 
   //Compute the Pipe value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Pipe with shell sections driver failed");
       return anObj;
@@ -2125,9 +2172,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
 
   //Compute the Pipe value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Pipe with shell sections without path driver failed");
       return anObj;
@@ -2218,9 +2263,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeBiNormalAlongVector (Han
 
   //Compute the Pipe value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Pipe driver failed");
       return NULL;
@@ -2279,9 +2322,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening(Handle(GEOM_Objec
 
   //Compute the offset
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Offset driver failed");
       return NULL;
@@ -2348,9 +2389,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::RestorePath (Handle(GEOM_Object)
 
   // Compute the Path value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("PipePath driver failed");
       return NULL;
@@ -2440,9 +2479,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::RestorePath
 
   // Compute the Path value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("PipePath driver failed");
       return NULL;

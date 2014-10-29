@@ -38,7 +38,11 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
+  ${PROJECT_SOURCE_DIR}/src/GEOM
+  ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
   ${PROJECT_SOURCE_DIR}/src/DlgRef
+  ${PROJECT_SOURCE_DIR}/src/AdvancedEngine
+  ${PROJECT_SOURCE_DIR}/src/GEOM_I
   ${PROJECT_BINARY_DIR}/src/DlgRef
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -54,6 +58,7 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   GEOMBase
+  SalomeIDLAdvancedGEOM
   )
 
 # --- resources ---
@@ -64,10 +69,10 @@ SET(_uic_files
 
 # resource files / to be processed by lrelease
 SET(AdvancedGUI_RESOURCES
-  AdvancedGUI_images.ts
-  AdvancedGUI_msg_en.ts
-  AdvancedGUI_msg_fr.ts
-  AdvancedGUI_msg_ja.ts
+  AdvancedGEOM_images.ts
+  AdvancedGEOM_msg_en.ts
+  AdvancedGEOM_msg_fr.ts
+  AdvancedGEOM_msg_ja.ts
   )
 
 # --- headers ---

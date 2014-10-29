@@ -76,11 +76,11 @@ Standard_Integer GEOMImpl_CylinderDriver::Execute(TFunction_Logbook& log) const
   gp_Pnt aP;
   gp_Vec aV;
 
-  if (aType == CYLINDER_R_H) {
+  if (aType == CYLINDER_R_H || aType == CYLINDER_R_H_A) {
     aP = gp::Origin();
     aV = gp::DZ();
   }
-  else if (aType == CYLINDER_PNT_VEC_R_H) {
+  else if (aType == CYLINDER_PNT_VEC_R_H || aType == CYLINDER_PNT_VEC_R_H_A) {
     Handle(GEOM_Function) aRefPoint  = aCI.GetPoint();
     Handle(GEOM_Function) aRefVector = aCI.GetVector();
     TopoDS_Shape aShapePnt = aRefPoint->GetValue();
@@ -110,19 +110,39 @@ Standard_Integer GEOMImpl_CylinderDriver::Execute(TFunction_Logbook& log) const
   if (aCI.GetH() < 0.0) aV.Reverse();
   gp_Ax2 anAxes (aP, aV);
 
-  BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()));
-  MC.Build();
-  if (!MC.IsDone()) {
-    StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters");
+  TopoDS_Shape aShape;
+  
+  switch (aType) {
+  case CYLINDER_R_H:
+  case CYLINDER_PNT_VEC_R_H:
+    {
+      BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()));
+      MC.Build();
+      if (!MC.IsDone()) {
+	StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters");
+      }
+      aShape = MC.Shape();
+      break;
+    }
+  case CYLINDER_R_H_A:
+  case CYLINDER_PNT_VEC_R_H_A:
+    {
+      BRepPrimAPI_MakeCylinder MC (anAxes, aCI.GetR(), Abs(aCI.GetH()), aCI.GetA());
+      MC.Build();
+      if (!MC.IsDone()) {
+	StdFail_NotDone::Raise("Cylinder can't be computed from the given parameters. Failure.");
+      }
+      aShape = MC.Shape();
+      break;
+    }
+  default:
+    break;
   }
-
-  TopoDS_Shape aShape = MC.Shape();
+  
   if (aShape.IsNull()) return 0;
-
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
-
   return 1;
 }
 

@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,29 +24,30 @@
 #define _CurveCreator_HeaderFile
 
 #include <deque>
+#include <map>
+#include <list>
+
+struct CurveCreator_Section;
+struct CurveCreator_PosPoint;
 
 namespace CurveCreator
 {
-
-  //! Dimension of the curve
-  enum Dimension
-  {
-    Dim2d = 2,
-    Dim3d = 3
-  };
-
-  //! Type of the section
-  enum Type
-  {
-    Polyline,
-    BSpline
-  };
-
   //! Points coordinates
   typedef float TypeCoord;
 
+  /** List of coordinates in format depends on section dimension:
+   *  2D: [x1, y1,     x2, y2,     x3, y3,     ..]
+   *  3D: [x1, y1, z1, x2, y2, z2, x3, y3, z3, ..]
+   */
   typedef std::deque<TypeCoord> Coordinates;
 
+  //! List of sections
+  typedef std::deque<CurveCreator_Section *> Sections;
+
+  // List of positioned points (points with coordinates)
+  typedef std::list<CurveCreator_PosPoint*> PosPointsList;
+  //! Map of sections with positioned points
+  typedef std::map<int,PosPointsList> SectionsMap;
 };
 
 #endif

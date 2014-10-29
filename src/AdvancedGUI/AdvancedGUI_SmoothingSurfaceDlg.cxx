@@ -19,6 +19,9 @@
 
 #include "AdvancedGUI_SmoothingSurfaceDlg.h"
 
+#include <SALOMEconfig.h>
+#include CORBA_SERVER_HEADER(AdvancedGEOM)
+
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
@@ -33,7 +36,6 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopExp.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <GEOMImpl_Types.hxx>
@@ -188,7 +190,6 @@ void AdvancedGUI_SmoothingSurfaceDlg::enterEvent (QEvent*)
 //=================================================================================
 GEOM::GEOM_IOperations_ptr AdvancedGUI_SmoothingSurfaceDlg::createOperation()
 {
-  //return getGeomEngine()->GetIAdvancedOperations(getStudyId());
   return getGeomEngine()->GetPluginOperations(getStudyId(), "AdvancedEngine");
 }
 
@@ -220,7 +221,7 @@ bool AdvancedGUI_SmoothingSurfaceDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
-  GEOM::GEOM_IAdvancedOperations_var anOper = GEOM::GEOM_IAdvancedOperations::_narrow(getOperation());
+  GEOM::IAdvancedOperations_var anOper = GEOM::IAdvancedOperations::_narrow(getOperation());
 
   //@@ retrieve input values from the widgets here @@//
   GEOM::ListOfGO_var points = new GEOM::ListOfGO();

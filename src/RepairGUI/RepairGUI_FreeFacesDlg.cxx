@@ -124,7 +124,7 @@ RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg( GeometryGUI* GUI, QWidget* paren
   aLay->addStretch();
   aLay->addWidget( aFrame );
 
-  myHelpFileName = "using_measurement_tools_page.html#faces_anchor";
+  myHelpFileName = "free_faces_page.html";
 
   connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
   connect( aHelpBtn,  SIGNAL( clicked() ), SLOT( onHelp() ) );

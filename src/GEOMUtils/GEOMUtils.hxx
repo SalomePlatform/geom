@@ -40,6 +40,11 @@
 
 #include <functional>
 
+#include <map>
+#include <vector>
+#include <string>
+#include <utility>
+
 class Bnd_Box;
 
 inline Standard_Boolean IsEqual (const TopoDS_Shape& S1, const TopoDS_Shape& S2)
@@ -47,9 +52,14 @@ inline Standard_Boolean IsEqual (const TopoDS_Shape& S1, const TopoDS_Shape& S2)
   return S1.IsSame(S2);
 }
 
-class GEOMUtils {
+namespace GEOMUtils
+{
 
- public:
+  typedef std::vector<std::string> NodeLinks;
+  typedef std::map<std::string, NodeLinks> LevelInfo;
+  typedef std::vector<LevelInfo> LevelsList;
+  typedef std::map<std::string,std::pair<LevelsList,LevelsList> > TreeModel;
+
   /*!
    * \brief Get Local Coordinate System, corresponding to the given shape.
    *
@@ -57,7 +67,7 @@ class GEOMUtils {
    * Axes of the LCS are obtained from shape's location or,
    * if the shape is a planar face, from position of its plane.
    */
-  Standard_EXPORT static gp_Ax3 GetPosition (const TopoDS_Shape& theShape);
+  Standard_EXPORT gp_Ax3 GetPosition (const TopoDS_Shape& theShape);
 
   /*!
    * \brief Get vector, defined by the given edge.
@@ -67,8 +77,8 @@ class GEOMUtils {
    *       the same edge can have different orientation depending on the way it was
    *       extracted from a shape.
    */
-  Standard_EXPORT static gp_Vec GetVector (const TopoDS_Shape& theShape,
-                                           Standard_Boolean doConsiderOrientation);
+  Standard_EXPORT gp_Vec GetVector (const TopoDS_Shape& theShape,
+				    Standard_Boolean doConsiderOrientation);
 
   /*!
    * \brief Sort shapes in the list by their coordinates.
@@ -89,8 +99,8 @@ class GEOMUtils {
   /*!
    * \brief Sort shapes by their centers of mass, using formula X*999 + Y*99 + Z*0.9
    */
-  Standard_EXPORT static void SortShapes (TopTools_ListOfShape& SL,
-                                          const Standard_Boolean isOldSorting = Standard_True);
+  Standard_EXPORT void SortShapes (TopTools_ListOfShape& SL,
+				   const Standard_Boolean isOldSorting = Standard_True);
 
   /*!
    * \brief Convert TopoDS_COMPSOLID to TopoDS_COMPOUND.
@@ -100,7 +110,7 @@ class GEOMUtils {
    * \param theCompsolid The compsolid to be converted.
    * \retval TopoDS_Shape Returns the resulting compound.
    */
-  Standard_EXPORT static TopoDS_Shape CompsolidToCompound (const TopoDS_Shape& theCompsolid);
+  Standard_EXPORT TopoDS_Shape CompsolidToCompound (const TopoDS_Shape& theCompsolid);
 
   /*!
    * \brief Recursively extract all shapes from compounds and compsolids of the given shape into theList.
@@ -110,22 +120,22 @@ class GEOMUtils {
    * \param theShape The shape to be exploded.
    * \param theList Output parameter.
    */
-  Standard_EXPORT static void AddSimpleShapes (const TopoDS_Shape& theShape,
-                                               TopTools_ListOfShape& theList);
+  Standard_EXPORT void AddSimpleShapes (const TopoDS_Shape& theShape,
+					TopTools_ListOfShape& theList);
 
   /*!
    * \brief Build a triangulation on \a theShape if it is absent.
    * \param theShape The shape to check/build triangulation on.
    * \retval bool Returns false if the shape has no faces, i.e. impossible to build triangulation.
    */
-  Standard_EXPORT static bool CheckTriangulation (const TopoDS_Shape& theShape);
-
+  Standard_EXPORT bool CheckTriangulation (const TopoDS_Shape& theShape);
+  
   /*!
    * \brief Return type of shape for explode. In case of compound it will be a type of its first sub shape.
    * \param theShape The shape to get type of.
    * \retval TopAbs_ShapeEnum Return type of shape for explode.
    */
-  Standard_EXPORT static TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape);
+  Standard_EXPORT TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape);
 
   /*!
    * \brief Find an edge of theShape, closest to thePoint.
@@ -134,8 +144,8 @@ class GEOMUtils {
    * \param thePoint The point near the required edge.
    * \retval TopoDS_Shape Returns the found edge or an empty shape if multiple edges found.
    */
-  Standard_EXPORT static TopoDS_Shape GetEdgeNearPoint (const TopoDS_Shape&  theShape,
-                                                        const TopoDS_Vertex& thePoint);
+  Standard_EXPORT TopoDS_Shape GetEdgeNearPoint (const TopoDS_Shape&  theShape,
+						 const TopoDS_Vertex& thePoint);
 
   /*!
    * \brief Compute precise bounding box of the shape based on the rough bounding box.
@@ -144,8 +154,7 @@ class GEOMUtils {
    * \param theBox rough bounding box on input; precise bounding box on output.
    * \retval Standard_True in case of success; Standard_False otherwise.
    */
-  Standard_EXPORT static Standard_Boolean PreciseBoundingBox
-                          (const TopoDS_Shape &theShape, Bnd_Box &theBox);
+  Standard_EXPORT Standard_Boolean PreciseBoundingBox(const TopoDS_Shape &theShape, Bnd_Box &theBox);
 
   /*!
    * \brief Computes minumal distance between two shapes for singular cases
@@ -157,11 +166,10 @@ class GEOMUtils {
    * \param Ptmp2 the output result point on the second shape
    * \retval negative value if it is not a singular case; actual distance for singular case.
    */
-  Standard_EXPORT static Standard_Real GetMinDistanceSingular
-                               (const TopoDS_Shape& aSh1,
-                                const TopoDS_Shape& aSh2,
-                                gp_Pnt& Ptmp1, gp_Pnt& Ptmp2);
-
+  Standard_EXPORT Standard_Real GetMinDistanceSingular(const TopoDS_Shape& aSh1,
+						       const TopoDS_Shape& aSh2,
+						       gp_Pnt& Ptmp1, gp_Pnt& Ptmp2);
+  
   /*!
    * \brief Computes minumal distance between two shapes.
    *
@@ -171,11 +179,10 @@ class GEOMUtils {
    * \param thePnt2 the output result point on the second shape
    * \retval negative value in case of failure; otherwise the real distance.
    */
-  Standard_EXPORT static Standard_Real GetMinDistance
-                               (const TopoDS_Shape& theShape1,
-                                const TopoDS_Shape& theShape2,
-                                gp_Pnt& thePnt1, gp_Pnt& thePnt2);
-
+  Standard_EXPORT Standard_Real GetMinDistance(const TopoDS_Shape& theShape1,
+					       const TopoDS_Shape& theShape2,
+					       gp_Pnt& thePnt1, gp_Pnt& thePnt2);
+  
   /*!
    * \brief Returns the point clicked in 3D view.
    *
@@ -184,23 +191,13 @@ class GEOMUtils {
    * \param theView View where the given point takes place.
    * \retval gp_Pnt Returns the point clicked in 3D view
    */
-  Standard_EXPORT static gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) theView );
+  Standard_EXPORT gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) theView );
 
-private:
+  Standard_EXPORT void ConvertTreeToString( const TreeModel &theTree,
+					    std::string &DependencyStr );
 
-  /**
-   * This function constructs and returns modified shape from the original one
-   * for singular cases. It is used for the method GetMinDistanceSingular.
-   *
-   * \param theShape the original shape
-   * \param theModifiedShape output parameter. The modified shape.
-   * \param theAddDist output parameter. The added distance for modified shape.
-   * \retval true if the shape is modified; false otherwise.
-   */
-  static Standard_Boolean ModifyShape(const TopoDS_Shape  &theShape,
-                                            TopoDS_Shape  &theModifiedShape,
-                                            Standard_Real &theAddDist);
-
+  Standard_EXPORT void ConvertStringToTree( const std::string &theDependencyStr,
+					    TreeModel &tree );
 
 };
 

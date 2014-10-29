@@ -69,6 +69,12 @@ public:
   int  GetVectorMode( SUIT_ViewWindow* = 0 );
   // Invert vector mode ( shadin <-> wireframe ) for the viewer 
 
+  // VERTICES MODE methods
+  // Set vertices mode for the viewer
+  void SetVerticesMode( const bool, SUIT_ViewWindow* = 0 );
+  // Get vertices mode of the viewer
+  int  GetVerticesMode( SUIT_ViewWindow* = 0 );
+  
   // Set display mode for selected objects in the viewer given
   // (current viewer if <viewWindow> = 0 )
   void ChangeDisplayMode( const int, SUIT_ViewWindow* = 0 );

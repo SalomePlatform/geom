@@ -128,6 +128,9 @@ public:
                             const bool theUpdateViewer,
                             SALOME_View* theViewFrame );
 
+  /* Update visibility state */
+  void          UpdateVisibility( SALOME_View*, const SALOME_Prs*, bool );
+
   /* build presentation accordint to the current viewer type*/
   SALOME_Prs*   BuildPrs  ( GEOM::GEOM_Object_ptr );
   SALOME_Prs*   BuildPrs  ( const TopoDS_Shape& );
@@ -139,8 +142,8 @@ public:
   int           GetColor  () const;
   bool          HasColor  () const;
 
-  void          SetTransparency  ( const double );
-  void          UnsetTransparency();
+  double        SetTransparency  ( const double );
+  double        UnsetTransparency();
   double        GetTransparency  () const;
   bool          HasTransparency  () const;
   
@@ -175,9 +178,7 @@ public:
   virtual void  Update( SALOME_VTKPrs* );
   virtual void  BeforeDisplay( SALOME_View*, const SALOME_OCCPrs* );
   virtual void  AfterDisplay ( SALOME_View*, const SALOME_OCCPrs* );
-#if OCC_VERSION_LARGE > 0x06070000
   virtual void  BeforeErase  ( SALOME_View*, const SALOME_OCCPrs* );
-#endif
   virtual void  AfterErase   ( SALOME_View*, const SALOME_OCCPrs* );
 
   /* This methos is used for activisation/deactivisation of objects to be displayed*/
@@ -294,6 +295,7 @@ protected:
   Aspect_TypeOfMarker              myTypeOfMarker;
   double                           myScaleOfMarker;
   double                           myTransparency;
+  bool                             myHasTransparency;
 
 private:
   SalomeApp_Application* myApp;

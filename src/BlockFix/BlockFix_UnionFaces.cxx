@@ -44,11 +44,7 @@
 #include <ShapeFix_Wire.hxx>
 #include <ShapeFix_Edge.hxx>
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <IntPatch_ImpImpIntersection.hxx>
-#else
-#include <IntPatch_TheIIIntOfIntersection.hxx>
-#endif
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
@@ -274,9 +270,6 @@ static Standard_Boolean IsEdgeValidToMerge(const TopoDS_Edge &theEdge,
 //=======================================================================
 TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 {
-  Handle(ShapeBuild_ReShape) myContext = new ShapeBuild_ReShape;
-  TopoDS_Shape aResShape = myContext->Apply(Shape);
-
   // Fill Map of faces as keys and list of solids or shells as items.
   TopTools_IndexedDataMapOfShapeListOfShape aMapFaceSoOrSh;
 
@@ -290,6 +283,8 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
     (Shape, TopAbs_FACE, aType, aMapFaceSoOrSh);
 
   // processing each solid
+  Handle(ShapeBuild_ReShape) aContext = new ShapeBuild_ReShape;
+  TopTools_MapOfShape aProcessed;
   TopExp_Explorer exps;
   for (exps.Init(Shape, aType); exps.More(); exps.Next()) {
     TopoDS_Shape aSoOrSh = exps.Current();
@@ -297,11 +292,6 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
     // creating map of edge faces
     TopTools_IndexedDataMapOfShapeListOfShape aMapEdgeFaces;
     TopExp::MapShapesAndAncestors(aSoOrSh, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces);
-
-    // map of processed shapes
-    TopTools_MapOfShape aProcessed;
-
-    Handle(ShapeBuild_ReShape) aContext = new ShapeBuild_ReShape;
 
     Standard_Integer NbModif = 0;
     Standard_Boolean hasFailed = Standard_False;
@@ -324,8 +314,9 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
     for (exp.Init(aSoOrSh, TopAbs_FACE); exp.More() && doUnion; exp.Next()) {
       TopoDS_Face aFace = TopoDS::Face(exp.Current().Oriented(TopAbs_FORWARD));
 
-      if (aProcessed.Contains(aFace))
+      if (aProcessed.Contains(aFace)) {
         continue;
+      }
 
       Standard_Integer dummy;
       TopTools_SequenceOfShape edges;
@@ -338,6 +329,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
       TopLoc_Location aBaseLocation;
       Handle(Geom_Surface) aBaseSurface = BRep_Tool::Surface(aFace,aBaseLocation);
       aBaseSurface = ClearRts(aBaseSurface);
+      aBaseSurface = Handle(Geom_Surface)::DownCast(aBaseSurface->Copy());
 
       // find adjacent faces to union
       Standard_Integer i;
@@ -439,8 +431,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
           // sorting any type of edges
           aWire = TopoDS::Wire(aContext->Apply(aWire));
 
-          TopoDS_Face tmpF = TopoDS::Face(aContext->Apply(faces(1).Oriented(TopAbs_FORWARD)));
-          Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire(aWire,tmpF,Precision::Confusion());
+          Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire(aWire,aResult,Precision::Confusion());
           sfw->FixReorder();
           Standard_Boolean isDegRemoved = Standard_False;
           if(!sfw->StatusReorder ( ShapeExtend_FAIL )) {
@@ -478,7 +469,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
               Standard_Real f,l;
               //smh protection on NULL pcurve
               Handle(Geom2d_Curve) c2d;
-              if(!sae.PCurve(sbwd->Edge(j),tmpF,c2d,f,l)) {
+              if(!sae.PCurve(sbwd->Edge(j),aResult,c2d,f,l)) {
                 aLastEdge--;
                 continue;
               }
@@ -499,8 +490,8 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
             gp_XY aVec = anEnd-aStart;
             Handle(Geom2d_Line) aLine = new Geom2d_Line(aStart,gp_Dir2d(anEnd-aStart));
 
-            B.UpdateEdge(E,aLine,tmpF,0.);
-            B.Range(E,tmpF,0.,aVec.Modulus());
+            B.UpdateEdge(E,aLine,aResult,0.);
+            B.Range(E,aResult,0.,aVec.Modulus());
             Handle(Geom_Curve) C3d;
             B.UpdateEdge(E,C3d,0.);
             B.Degenerated(E,Standard_True);
@@ -585,30 +576,27 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
         // ptv add fix same parameter
         sfe.FixSameParameter(E, myTolerance);
       }
-
-      myContext->Replace(aSoOrSh, aResult);
     }
-    //else
-    {
-      for (exp.Init(aSoOrSh, TopAbs_FACE); exp.More(); exp.Next()) {
-        TopoDS_Face aFace = TopoDS::Face(exp.Current().Oriented(TopAbs_FORWARD));
-        Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire;
-        sfw->SetContext(myContext);
-        sfw->SetPrecision(myTolerance);
-        sfw->SetMinTolerance(myTolerance);
-        sfw->SetMaxTolerance(Max(1.,myTolerance*1000.));
-        sfw->SetFace(aFace);
-        for (TopoDS_Iterator iter (aFace,Standard_False); iter.More(); iter.Next()) {
-          TopoDS_Wire wire = TopoDS::Wire(iter.Value());
-          sfw->Load(wire);
-          sfw->FixReorder();
-          sfw->FixShifted();
-        }
+
+    for (exp.Init(aSoOrSh, TopAbs_FACE); exp.More(); exp.Next()) {
+      TopoDS_Face aFace = TopoDS::Face(exp.Current().Oriented(TopAbs_FORWARD));
+      Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire;
+      sfw->SetContext(aContext);
+      sfw->SetPrecision(myTolerance);
+      sfw->SetMinTolerance(myTolerance);
+      sfw->SetMaxTolerance(Max(1.,myTolerance*1000.));
+      sfw->SetFace(aFace);
+      for (TopoDS_Iterator iter (aFace,Standard_False); iter.More(); iter.Next()) {
+        TopoDS_Wire wire = TopoDS::Wire(iter.Value());
+        sfw->Load(wire);
+        sfw->FixReorder();
+        sfw->FixShifted();
       }
     }
   } // end processing each solid
 
-  aResShape = myContext->Apply(Shape);
+  const TopoDS_Shape aResShape = aContext->Apply(Shape);
+
   return aResShape;
 }
 
@@ -711,15 +699,10 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
     Handle(BRepTopAdaptor_TopolTool) aTT2 = new BRepTopAdaptor_TopolTool();
 
     try {
-#if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
-#endif
 
-#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
       IntPatch_ImpImpIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
-#else
-      IntPatch_TheIIIntOfIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
-#endif
+
       if (!anIIInt.IsDone() || anIIInt.IsEmpty())
         return false;
 

@@ -121,7 +121,7 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
   int geom_type = theShape->GetType();
 
   // check if it's advanced shape
-  if ( geom_type > ADVANCED_BASE ) {
+  if ( geom_type > USER_TYPE ) {
     SetErrorCode(OK);
     return SK_ADVANCED;
   }
@@ -742,9 +742,7 @@ void GEOMImpl_IMeasureOperations::GetPosition
   }
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
 
     gp_Ax3 anAx3 = GEOMUtils::GetPosition(aShape);
 
@@ -798,9 +796,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
 
   //Compute the CentreOfMass value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Measure driver failed to compute centre of mass");
       return NULL;
@@ -852,9 +848,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetVertexByIndex
 
   //Compute
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Vertex by index driver failed.");
       return NULL;
@@ -911,9 +905,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetNormal
 
   //Compute the Normale value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Measure driver failed to compute normake of face");
       return NULL;
@@ -963,9 +955,7 @@ void GEOMImpl_IMeasureOperations::GetBasicProperties (Handle(GEOM_Object) theSha
   //Compute the parameters
   GProp_GProps LProps, SProps;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     BRepGProp::LinearProperties(aShape, LProps);
     theLength = LProps.Mass();
 
@@ -1019,9 +1009,7 @@ void GEOMImpl_IMeasureOperations::GetInertia
   GProp_GProps System;
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (aShape.ShapeType() == TopAbs_VERTEX ||
         aShape.ShapeType() == TopAbs_EDGE ||
         aShape.ShapeType() == TopAbs_WIRE) {
@@ -1087,9 +1075,7 @@ void GEOMImpl_IMeasureOperations::GetBoundingBox
   Bnd_Box B;
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     BRepBuilderAPI_Copy aCopyTool (aShape);
     if (!aCopyTool.IsDone()) {
       SetErrorCode("GetBoundingBox Error: Bad shape detected");
@@ -1155,9 +1141,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetBoundingBox
 
   //Compute the BoundingBox value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Measure driver failed to compute a bounding box");
       return NULL;
@@ -1214,9 +1198,7 @@ void GEOMImpl_IMeasureOperations::GetTolerance
   FaceMax = EdgeMax = VertMax = -RealLast();
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     for (TopExp_Explorer ExF (aShape, TopAbs_FACE); ExF.More(); ExF.Next()) {
       TopoDS_Face Face = TopoDS::Face(ExF.Current());
       T = BRep_Tool::Tolerance(Face);
@@ -1277,9 +1259,7 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)     theShape,
   //Compute the parameters
   bool isValid = false;
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     BRepCheck_Analyzer ana (aShape, theIsCheckGeom);
     if (ana.IsValid()) {
       isValid = true;
@@ -1673,9 +1653,7 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
   Astr = Astr + " Number of sub-shapes : \n";
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     int iType, nbTypes [TopAbs_SHAPE];
     for (iType = 0; iType < TopAbs_SHAPE; ++iType)
       nbTypes[iType] = 0;
@@ -1868,9 +1846,7 @@ GEOMImpl_IMeasureOperations::GetMinDistance (Handle(GEOM_Object) theShape1,
 
   //Compute the parameters
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
 
     gp_Pnt aPnt1, aPnt2;
 
@@ -1920,9 +1896,7 @@ Standard_Integer GEOMImpl_IMeasureOperations::ClosestPoints (Handle(GEOM_Object)
 
   // Compute the extremities
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
 
     // skl 30.06.2008
     // additional workaround for bugs 19899, 19908 and 19910 from Mantis
@@ -1996,9 +1970,7 @@ void GEOMImpl_IMeasureOperations::PointCoordinates (Handle(GEOM_Object) theShape
   }
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
     theX = aPnt.X();
     theY = aPnt.Y();
@@ -2048,9 +2020,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine
   }
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     TopoDS_Edge E1 = TopoDS::Edge(aLine1);
     TopoDS_Edge E2 = TopoDS::Edge(aLine2);
 
@@ -2126,9 +2096,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngleBtwVectors (Handle(GEOM_Objec
   }
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     TopoDS_Edge aE1 = TopoDS::Edge(aVec1);
     TopoDS_Edge aE2 = TopoDS::Edge(aVec2);
 
@@ -2188,9 +2156,7 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByParam
 
   //Compute curvature
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     GeomLProp_CLProps Prop = GeomLProp_CLProps
       (aCurve, aP, 2, Precision::Confusion());
     aRes = fabs(Prop.Curvature());
@@ -2242,9 +2208,7 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByPoint
 
   //Compute curvature
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     GeomAPI_ProjectPointOnCurve PPCurve(aPoint, aCurve, aFP, aLP);
     if(PPCurve.NbPoints()>0) {
       GeomLProp_CLProps Prop = GeomLProp_CLProps
@@ -2285,9 +2249,7 @@ Standard_Real GEOMImpl_IMeasureOperations::getSurfaceCurvatures
   if (aSurf.IsNull()) return aRes;
 
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     GeomLProp_SLProps Prop = GeomLProp_SLProps
       (aSurf, theUParam, theVParam, 2, Precision::Confusion());
     if(Prop.IsCurvatureDefined()) {

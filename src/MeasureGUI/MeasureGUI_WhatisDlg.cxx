@@ -145,7 +145,7 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
 
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#whatis_anchor";
+  myHelpFileName = "whatis_page.html";
 
   /* Initialisation */
   Init();

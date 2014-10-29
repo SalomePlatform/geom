@@ -62,10 +62,18 @@ MeasureGUI_InertiaDlg::MeasureGUI_InertiaDlg( GeometryGUI* GUI, QWidget* parent 
   myGrp = new MeasureGUI_1Sel12LineEdit( centralWidget() );
   myGrp->GroupBox1->setTitle( tr( "GEOM_MATRIX" ) );
   myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
-  myGrp->TextLabel2->setText( tr( "GEOM_INERTIA_I" ).arg( "1" ) );
-  myGrp->TextLabel3->setText( tr( "GEOM_INERTIA_I" ).arg( "2" ) );
-  myGrp->TextLabel4->setText( tr( "GEOM_INERTIA_I" ).arg( "3" ) );
-  myGrp->TextLabel5->setText( tr( "GEOM_INERTIA_IXYZ" ) );
+  myGrp->TextLabel2_1->setText( "1:1" );
+  myGrp->TextLabel2_2->setText( "1:2" );
+  myGrp->TextLabel2_3->setText( "1:3" );
+  myGrp->TextLabel3_1->setText( "2:1" );
+  myGrp->TextLabel3_2->setText( "2:2" );
+  myGrp->TextLabel3_3->setText( "2:3" );
+  myGrp->TextLabel4_1->setText( "3:1" );
+  myGrp->TextLabel4_2->setText( "3:2" );
+  myGrp->TextLabel4_3->setText( "3:3" );
+  myGrp->TextLabel5_1->setText( "IX" );
+  myGrp->TextLabel5_2->setText( "IY" );
+  myGrp->TextLabel5_3->setText( "IZ" );
   myGrp->LineEdit11->setReadOnly( true );
   myGrp->LineEdit12->setReadOnly( true );
   myGrp->LineEdit13->setReadOnly( true );
@@ -87,7 +95,7 @@ MeasureGUI_InertiaDlg::MeasureGUI_InertiaDlg( GeometryGUI* GUI, QWidget* parent 
   
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#inertia_anchor";
+  myHelpFileName = "inertia_page.html";
 
   /* Initialisation */
   Init();

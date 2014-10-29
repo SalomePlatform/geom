@@ -99,7 +99,14 @@ EXAMPLE_RECURSIVE      = NO
 #---------------------------------------------------------------------------
 #Input related options
 #---------------------------------------------------------------------------
-INPUT             = tmp @CMAKE_SOURCE_DIR@/idl/GEOM_Gen.idl
+INPUT             = tmp tmp1 @CMAKE_SOURCE_DIR@/idl/GEOM_Gen.idl \ 
+                    @CMAKE_SOURCE_DIR@/idl/AdvancedGEOM_Gen.idl \
+                    @CMAKE_SOURCE_DIR@/idl/STLPlugin.idl \
+                    @CMAKE_SOURCE_DIR@/idl/BREPPlugin.idl \
+                    @CMAKE_SOURCE_DIR@/idl/STEPPlugin.idl \
+                    @CMAKE_SOURCE_DIR@/idl/IGESPlugin.idl \
+                    @CMAKE_SOURCE_DIR@/idl/XAOPlugin.idl \
+                    @CMAKE_SOURCE_DIR@/idl/VTKPlugin.idl
 FILE_PATTERNS     = 
 IMAGE_PATH        = @CMAKE_CURRENT_SOURCE_DIR@/images
 EXAMPLE_PATH      = @CMAKE_SOURCE_DIR@/src/GEOM_SWIG

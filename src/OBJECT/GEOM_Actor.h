@@ -89,6 +89,7 @@ public:
   vtkProperty* GetShadingProperty();
   vtkProperty* GetIsolatedEdgeProperty();
   vtkProperty* GetVertexProperty();
+  vtkProperty* GetStandaloneVertexProperty();
   vtkProperty* GetSharedEdgeProperty();
   vtkProperty* GetFaceEdgeProperty();
 
@@ -201,15 +202,15 @@ public:
   virtual
   bool
   GetVectorMode();
-  
-  void
-  StoreIsoNumbers();
 
+  //! Vertices mode management
+  virtual
   void
-  RestoreIsoNumbers();
-  
-  void
-  ResetIsoNumbers();
+  SetVerticesMode(const bool theMode);
+
+  virtual
+  bool
+  GetVerticesMode();
 
 protected:
   void SetModified();
@@ -221,7 +222,6 @@ protected:
 
 private:
   TopoDS_Shape myShape;
-  int myNbIsos[2];
   bool isOnlyVertex;
 
   float myDeflection;
@@ -230,9 +230,13 @@ private:
   //  EDisplayMode myDisplayMode;
   bool myIsSelected;
   bool myVectorMode;
+  bool myVerticesMode;
 
   PDeviceActor myVertexActor;
   PVertexSource myVertexSource;
+
+  PDeviceActor myStandaloneVertexActor;
+  PVertexSource myStandaloneVertexSource;
 
   PDeviceActor myIsolatedEdgeActor;
   PEdgeSource myIsolatedEdgeSource;

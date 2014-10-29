@@ -51,11 +51,13 @@
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
 #include "GEOM_IFieldOperations_i.hh"
+#include "GEOMUtils.hxx"
 
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <map>
 #include <set>
+#include <list>
 #include <string>
 
 //#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -197,6 +199,10 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                                       CORBA::Boolean          theInheritFirstArg,
                                       CORBA::Boolean          theAddPrefix);
 
+  //Collects dependencies of the given objects from other ones
+  SALOMEDS::TMPFile* GetDependencyTree(SALOMEDS::Study_ptr theStudy,
+				       const GEOM::string_array& theObjectEntries);
+
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
   //-----------------------------------------------------------------------//
@@ -318,6 +324,15 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   // SIMAN-related functions (check out/check in) : get modified data
   virtual Engines::ListOfData* getModifiedData(CORBA::Long studyId);
 
+  /*! \brief Fills 3 lists that is used to clean study of redundant objects.
+   *         To be used from GUI.
+   */
+  void GetEntriesToReduceStudy(SALOMEDS::Study_ptr theStudy,
+			       GEOM::string_array& theSelectedEntries,
+			       GEOM::string_array& theParentEntries,
+			       GEOM::string_array& theSubEntries,
+			       GEOM::string_array& theOtherEntries);
+
   //-----------------------------------------------------------------------//
   // Internal methods                                                      //
   //-----------------------------------------------------------------------//
@@ -365,6 +380,31 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
                              const TColStd_SequenceOfAsciiString& SeqN,
                              const Standard_CString& GrName,
                              GEOM::ListOfGO_var aResList);
+
+  void getUpwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+                            GEOMUtils::LevelsList &upLevelList,  
+			    std::map< std::string, std::set<std::string> > &passedEntries,
+                            int level = 0 );
+
+  void getDownwardDependency( GEOM::GEOM_BaseObject_ptr gbo, 
+                              GEOMUtils::LevelsList &downLevelList, 
+			      std::map< std::string, std::set<std::string> > &passedEntries,
+                              int level = 0 );
+
+  void includeParentDependencies(GEOM::GEOM_BaseObject_ptr gbo,
+				 std::set<std::string>& aSelected,
+				 std::set<std::string>& aParents, 
+				 std::set<std::string>& aChildren, 
+				 std::set<std::string>& anOthers);
+
+  void includeSubObjects(SALOMEDS::Study_ptr theStudy,
+			 const std::string& aSelectedEntry,
+			 std::set<std::string>& aSelected,
+			 std::set<std::string>& aParents, 
+			 std::set<std::string>& aChildren, 
+			 std::set<std::string>& anOthers);
+
+  void LoadPlugin(const std::string& theLibName);
 
  private:
 

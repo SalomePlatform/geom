@@ -25,8 +25,6 @@
 namespace GEOMOp {
   enum {
     // ToolsGUI --------------------//--------------------------------
-    OpImport              = 1000,   // MENU FILE  - IMPORT
-    OpExport              = 1001,   // MENU FILE  - EXPORT
     OpDelete              = 1020,   // MENU EDIT  - DELETE
     OpCheckGeom           = 1030,   // MENU TOOLS - CHECK GEOMETRY
     OpMaterialsLibrary    = 1040,   // MENU TOOLS - MATERIALS LIBRARY
@@ -61,6 +59,8 @@ namespace GEOMOp {
     OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
     OpCreateFolder        = 1262,   // POPUP MENU - CREATE FOLDER
     OpSortChildren        = 1263,   // POPUP MENU - SORT CHILD ITEMS
+    OpShowDependencyTree  = 1264,   // POPUP MENU - SHOW DEPENDENCY TREE
+    OpReduceStudy         = 1265,   // POPUP MENU - REDUCE STUDY
     // DisplayGUI ------------------//--------------------------------
     OpSwitchVectors       = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION
     OpShowAll             = 2002,   // MENU VIEW  - SHOW ALL
@@ -69,6 +69,7 @@ namespace GEOMOp {
     OpDMShading           = 2011,   // MENU VIEW  - DISPLAY MODE - SHADING
     OpDMShadingWithEdges  = 2012,   // MENU VIEW  - DISPLAY MODE - SHADING WITH EDGES
     OpDMTexture           = 2013,   // MENU VIEW  - DISPLAY MODE - TEXTURE
+    OpSwitchVertices      = 2014,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE VERTICES
     OpShow                = 2100,   // POPUP MENU - SHOW
     OpShowOnly            = 2101,   // POPUP MENU - SHOW ONLY
     OpHide                = 2102,   // POPUP MENU - HIDE
@@ -80,6 +81,7 @@ namespace GEOMOp {
     OpTexture             = 2204,   // POPUP MENU - DISPLAY MODE - TEXTURE
     OpBringToFront        = 2205,   // POPUP MENU - BRING TO FRONT
     OpClsBringToFront     = 2206,
+    OpVertices            = 2208,   // POPUP MENU - DISPLAY MODE - SHOW VERTICES
     // BasicGUI --------------------//--------------------------------
     OpPoint               = 3000,   // MENU NEW ENTITY - BASIC - POINT
     OpLine                = 3001,   // MENU NEW ENTITY - BASIC - LINE
@@ -117,6 +119,7 @@ namespace GEOMOp {
     OpCreateField         = 3305,   // MENU FIELD - CREATE FIELD
     OpEditField           = 3306,   // MENU FIELD - EDIT FIELD
     OpEditFieldPopup      = 3307,   // POPUP MENU - EDIT FIELD
+    Op2dPolylineEditor    = 3308,   // MENU NEW ENTITY - BASIC - POLYLINE EDITOR
     // BuildGUI --------------------//--------------------------------
     OpEdge                = 3400,   // MENU NEW ENTITY - BUILD - EDGE
     OpWire                = 3401,   // MENU NEW ENTITY - BUILD - WIRE
@@ -152,10 +155,6 @@ namespace GEOMOp {
     OpSharedShapes        = 3708,   // MENU OPERATION - GET SHARED SHAPES
     OpExtrudedBoss        = 3709,   // MENU OPERATION - ETRUDED BOSS
     OpExtrudedCut         = 3710,   // MENU OPERATION - ETRUDED CUT
-#ifdef DEBUG_CURVE_CREATOR
-    OpCurveCreator        = 3799,   // MENU OPERATION - CURVE CREATOR
-#endif
-    // for debug purposes, to be removed
     // RepairGUI -------------------//--------------------------------
     OpSewing              = 4000,   // MENU REPAIR - SEWING
     OpSuppressFaces       = 4001,   // MENU REPAIR - SUPPRESS FACES
@@ -205,9 +204,6 @@ namespace GEOMOp {
     OpQuadFace            = 6102,   // MENU BLOCKS - QUADRANGLE FACE
     OpPropagate           = 6103,   // MENU BLOCKS - PROPAGATE
     OpExplodeBlock        = 6104,   // MENU BLOCKS - EXPLODE ON BLOCKS
-    // ImportExport ----------------//--------------------------------
-    OpExportXAO           = 6200,   // MENU NEW ENTITY - IMPORTEXPORT - EXPORTXAO
-    OpImportXAO           = 6201,   // MENU NEW ENTITY - IMPORTEXPORT - IMPORTXAO
     // AdvancedGUI -----------------//--------------------------------
     OpAdvancedNoOp        = 10000,  // NO OPERATION (advanced operations base)
     //OpPipeTShape          = 10001,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE

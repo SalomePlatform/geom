@@ -109,17 +109,17 @@
 #define GEOM_FIELD      52  // == GEOM_FIELD_OBJTYPE constant
 #define GEOM_FIELD_STEP 53  // == GEOM_FIELD_STEP_OBJTYPE constant
 
-#define GEOM_EXPORTXAO 54
-
 #define GEOM_ISOLINE   55
+
+#define GEOM_POLYLINE2D 56
 
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
 #define COPY_WITHOUT_REF 2
 
-#define EXPORT_SHAPE 1
 #define IMPORT_SHAPE 1
+#define EXPORT_SHAPE 2
 
 #define POINT_XYZ                1
 #define POINT_XYZ_REF            2
@@ -205,8 +205,10 @@
 #define DISK_THREE_PNT    2
 #define DISK_R            3
 
-#define CYLINDER_R_H         1
-#define CYLINDER_PNT_VEC_R_H 2
+#define CYLINDER_R_H         	1
+#define CYLINDER_PNT_VEC_R_H 	2
+#define CYLINDER_R_H_A       	3
+#define CYLINDER_PNT_VEC_R_H_A 	4
 
 #define CONE_R1_R2_H         1
 #define CONE_PNT_VEC_R1_R2_H 2
@@ -250,7 +252,9 @@
 #define PARTITION_HALF      2
 #define PARTITION_NO_SELF_INTERSECTIONS 3
 
-#define POLYLINE_POINTS 1
+#define POLYLINE_POINTS       1
+#define POLYLINE2D_PLN_COORDS 2
+#define POLYLINE2D_PLN_OBJECT 3
 
 #define SPLINE_BEZIER            1
 #define SPLINE_INTERPOLATION     2
@@ -361,9 +365,10 @@
 #define MARKER_SHAPE   2
 #define MARKER_PNT2VEC 3
 
-// import/export XAO
-#define IMPORTEXPORT_EXPORTXAO 1
-#define IMPORTEXPORT_IMPORTXAO 2
+// Advanced functions
+#define USER_TYPE 200     // Base type for GEOM advanced shapes
+#define USER_TYPE_EX 1000 // Base type for GEOM plugins
 
-// Advanced functions (base = 200)
-#define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)
+
+//Plugins specified constants
+#define PLUGIN_NAME "Plugin Name"

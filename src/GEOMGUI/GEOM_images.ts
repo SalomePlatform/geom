@@ -1216,6 +1216,10 @@
             <translation>build_shell.png</translation>
         </message>
         <message>
+          <source>ICO_CURVE_CREATOR</source>
+          <translation>polyline.png</translation>
+        </message>
+        <message>
             <source>ICO_SKETCH</source>
             <translation>sketch.png</translation>
         </message>
@@ -1314,26 +1318,6 @@
         <message>
             <source>ICON_DLG_SCALE_ALONG_AXES</source>
             <translation>scale_along_axes.png</translation>
-        </message>
-        <message>
-            <source>ICON_DLG_EXPORTXAO</source>
-            <translation>exportxao.png</translation>
-        </message>
-        <message>
-            <source>ICO_EXPORTXAO</source>
-            <translation>exportxao.png</translation>
-        </message>
-        <message>
-            <source>ICON_DLG_IMPORTXAO</source>
-            <translation>importxao.png</translation>
-        </message>
-        <message>
-            <source>ICO_IMPORTXAO</source>
-            <translation>importxao.png</translation>
-        </message>
-        <message>
-            <source>ICON_OBJBROWSER_IMPORTEXPORT_204</source>
-            <translation>tree_exportxao.png</translation>
         </message>
 	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>

@@ -48,9 +48,6 @@ SET(_link_LIBRARIES
 
 SET(GEOM_HEADERS
   GEOM_Application.hxx
-  GEOM_Application.ixx
-  GEOM_Application.jxx
-  Handle_GEOM_Application.hxx
   GEOM_Engine.hxx
   GEOM_Function.hxx
   GEOM_Object.hxx
@@ -61,10 +58,8 @@ SET(GEOM_HEADERS
   GEOM_ISubShape.hxx
   GEOM_Solver.hxx
   GEOM_PythonDump.hxx
-  GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx
-  GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx
   GEOM_DataMapOfAsciiStringTransient.hxx
-  Handle_GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx
+  GEOM_BaseObject.hxx
   )
 
 # --- sources ---
@@ -81,9 +76,6 @@ SET(GEOM_SOURCES
   GEOM_BaseDriver.cxx
   GEOM_SubShapeDriver.cxx
   GEOM_PythonDump.cxx
-  GEOM_DataMapNodeOfDataMapOfAsciiStringTransient_0.cxx
-  GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient_0.cxx
-  GEOM_DataMapOfAsciiStringTransient_0.cxx
   )
 
 # --- rules ---

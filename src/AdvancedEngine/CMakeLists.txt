@@ -45,6 +45,7 @@ ADD_DEFINITIONS(
 SET(_link_LIBRARIES
   GEOMEngine
   SalomeIDLGEOM
+  SalomeIDLAdvancedGEOM
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_SalomeGenericObj}
   ${KERNEL_TOOLSDS}
@@ -55,30 +56,28 @@ SET(_link_LIBRARIES
 # --- headers ---
 
 SET(AdvancedEngine_HEADERS
+  AdvancedEngine.hxx
   AdvancedEngine_Types.hxx
-  # AdvancedEngine_OperationsCreator.hh
-  # GEOM_AdvancedEngine.hxx
-  # GEOMImpl_IAdvancedOperations.hxx
-  # GEOM_IAdvancedOperations_i.hh
-  # #ADVANCED_INCLUDES:
-  # GEOMImpl_IPipeTShape.hxx GEOMImpl_PipeTShapeDriver.hxx
-  # GEOMImpl_IDividedDisk.hxx GEOMImpl_DividedDiskDriver.hxx
-  # GEOMImpl_IDividedCylinder.hxx GEOMImpl_DividedCylinderDriver.hxx
-  # GEOMImpl_ISmoothingSurface.hxx GEOMImpl_SmoothingSurfaceDriver.hxx
+  AdvancedEngine_DividedDiskDriver.hxx
+  AdvancedEngine_PipeTShapeDriver.hxx
+  AdvancedEngine_SmoothingSurfaceDriver.hxx
+  AdvancedEngine_IPipeTShape.hxx
+  AdvancedEngine_ISmoothingSurface.hxx
+  AdvancedEngine_IDividedDisk.hxx
+  AdvancedEngine_IOperations.hxx
+  AdvancedEngine_IOperations_i.hh
+  AdvancedEngine_OperationsCreator.hxx
   )
 # --- sources ---
 
 SET(AdvancedEngine_SOURCES
   AdvancedEngine.cxx
-  AdvancedEngine_OperationsCreator.cc
-  GEOMImpl_IAdvancedOperations.cxx
-  GEOM_IAdvancedOperations_i.cc
-  # ADVANCED_SOURCES:
-  GEOMImpl_PipeTShapeDriver.cxx
-  GEOMImpl_DividedDiskDriver.cxx
-  #GEOMImpl_DividedCylinderDriver.cxx
-  GEOMImpl_SmoothingSurfaceDriver.cxx
-  ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
+  AdvancedEngine_DividedDiskDriver.cxx
+  AdvancedEngine_PipeTShapeDriver.cxx
+  AdvancedEngine_SmoothingSurfaceDriver.cxx
+  AdvancedEngine_IOperations.cxx
+  AdvancedEngine_IOperations_i.cc
+  AdvancedEngine_OperationsCreator.cxx
   )
 
 # --- rules ---

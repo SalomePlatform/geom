@@ -32,7 +32,17 @@
 // Qt
 #include <QRect>
 
-class ShapeRec_Parameters
+#ifdef WIN32
+  #if defined GEOM_SHAPEREC_EXPORTS || defined GEOMShapeRec_EXPORTS
+    #define GEOM_SHAPEREC_EXPORT __declspec( dllexport )
+  #else
+    #define GEOM_SHAPEREC_EXPORT __declspec( dllimport )
+  #endif
+#else
+   #define GEOM_SHAPEREC_EXPORT
+#endif
+
+class GEOM_SHAPEREC_EXPORT ShapeRec_Parameters
 {
 public:
   ShapeRec_Parameters();
@@ -42,7 +52,7 @@ public:
   int findContoursMethod;
 };
 
-class ShapeRec_CornersParameters : public ShapeRec_Parameters
+class GEOM_SHAPEREC_EXPORT ShapeRec_CornersParameters : public ShapeRec_Parameters
 {
 public:
   ShapeRec_CornersParameters();
@@ -55,7 +65,7 @@ public:
   double epsilon;
 };
 
-class ShapeRec_CannyParameters : public ShapeRec_Parameters
+class GEOM_SHAPEREC_EXPORT ShapeRec_CannyParameters : public ShapeRec_Parameters
 {
 public:
   ShapeRec_CannyParameters();
@@ -66,7 +76,7 @@ public:
   bool L2gradient;
 };
 
-class ShapeRec_ColorFilterParameters : public ShapeRec_Parameters
+class GEOM_SHAPEREC_EXPORT ShapeRec_ColorFilterParameters : public ShapeRec_Parameters
 {
 public:
   ShapeRec_ColorFilterParameters();
@@ -79,7 +89,7 @@ public:
   double maxThreshold;
 };
 
-class ShapeRec_FeatureDetector
+class GEOM_SHAPEREC_EXPORT ShapeRec_FeatureDetector
 {
 public:
   

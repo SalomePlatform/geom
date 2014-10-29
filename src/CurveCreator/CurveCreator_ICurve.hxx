@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,170 +17,189 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        CurveCreator_Curve.hxx
-// Author:      Sergey KHROMOV
+// File:        CurveCreator_ICurve.hxx
+// Author:      Alexander KOVALEV and Alexander SOLOVYOV
 
 #ifndef _CurveCreator_ICurve_HeaderFile
 #define _CurveCreator_ICurve_HeaderFile
 
-#include "CurveCreator.hxx"
 #include "CurveCreator_Macro.hxx"
-#include "CurveCreator_Operation.hxx"
+#include <deque>
+#include <vector>
+#include <string>
+#include <list>
 
-class CurveCreator_Section;
-class CurveCreator_Listener;
+class Handle_AIS_InteractiveObject;
+
+namespace CurveCreator
+{
+  //! Type of the section
+  enum SectionType
+  {
+    Polyline,
+    Spline,
+  };
+
+  //! Dimension of the curve
+  enum Dimension
+  {
+    Dim2d = 2,
+    Dim3d = 3
+  };
+
+};
 
 /**
  *  The CurveCreator_ICurve object is represented as one or more sets of
  *  connected points; thus CurveCreator_ICurve object can contain several
  *  not connected curves (polylines or b-splines), each such curve has two
- *  only ends � start and end points � in other words non-manifold curves
+ *  only ends "start and end points" in other words non-manifold curves
  *  are not supported.
  */
 class CURVECREATOR_EXPORT CurveCreator_ICurve
 {
+public:
+  typedef std::pair<int,int> SectionToPoint;
+  typedef std::deque<SectionToPoint> SectionToPointList;
 
-  //! List of curves
-  typedef std::deque<CurveCreator_Section *> Sections;
+  typedef std::deque< std::pair< SectionToPoint,std::deque< float > > > SectionToPointCoordsList;
 
 public:
-  //! Constructor of the curve.
-  /** The dimension is explicitly specified in the constructor
-   *  and cannot be changed later.
-   */
-  CurveCreator_ICurve(const CurveCreator::Dimension theDimension);
+  /***********************************************/
+  /***          Undo/Redo methods              ***/
+  /***********************************************/
 
-  //! Destructor.
-  virtual ~CurveCreator_ICurve();
+  //! Get number of available undo operations
+  virtual int getNbUndo() const = 0;
 
-  //! Returns true if this curve is locked by a curve editor.
-  virtual bool isLocked() const;
+  //! Undo previous operation
+  virtual bool undo() = 0;
 
-  //! Get the dimension.
-  virtual CurveCreator::Dimension getDimension() const;
+  //! Get number of available redo operations
+  virtual int getNbRedo() const = 0;
 
-  //! Get number of sections.
-  virtual int getNbSections() const;
+  //! Redo last previously "undone" operation
+  virtual bool redo() = 0;
 
-  /** Get number of points in specified section or (the total number of points
-   *  in Curve if theISection is equal to -1).
-   */
-  virtual int getNbPoints(const int theISection = -1) const;
 
-  //! Get coordinates of specified point
-  virtual CurveCreator::Coordinates getCoordinates
-                  (const int theISection, const int theIPnt) const;
+  /***********************************************/
+  /***           Section methods               ***/
+  /***********************************************/
 
-  //! Get points of a section.
-  virtual const CurveCreator::Coordinates &getPoints(const int theISection) const;
+  //! Clear the polyline (remove all sections)
+  virtual bool clear() = 0;
 
-  //! Get type of the specified section
-  virtual CurveCreator::Type getType(const int theISection) const;
+  //! Join list of sections to one section (join all if the list is empty)
+  // The first section in the list is a leader, another sections are joined to it
+  virtual bool join( const std::list<int>& theSections ) = 0;
 
-  //! Get �closed� flag of the specified section
-  virtual bool isClosed(const int theISection) const;
-
-  //! Returns specifyed section name
-  virtual std::string   getSectionName(const int theISection) const;
-
-  /**
-   * Return unic section name
-   */
-  virtual std::string getUnicSectionName();
-
-  /**
-   * Set curve creator listener object
-   */
-  virtual void setListener( CurveCreator_Listener*   myWatcher );
-
-  /**
-   * Remove curve creator listener object
-   */
-  virtual void removeListener();
-
-protected:
-
-  /** Set type of the specified section (or all sections
-   *  if \a theISection is -1).
-   */
-  virtual void setType(const CurveCreator::Type theType, const int theISection = -1);
-
-  /** Add points to the specified section (or last section
-   *  if \a theISection is -1).
-   */
-  virtual void addPoints
-    (const CurveCreator::Coordinates &thePoints, const int theISection = -1) = 0;
+  //! Get number of sections
+  virtual int getNbSections() const = 0;
 
   //! Add a new section.
-  virtual void addSection (const std::string &theName, const CurveCreator::Type theType,
-                   const bool theIsClosed,
-                   const CurveCreator::Coordinates &thePoints);
+  virtual int addSection( const std::string& theName, 
+                           const CurveCreator::SectionType theType,
+                           const bool theIsClosed ) = 0;
 
-  //! Removes the section. If theISection equals -1, removes the last section.
-  virtual void removeSection(const int theISection = -1);
+  //! Removes the given sections.
+  virtual bool removeSection( const int theISection ) = 0;
 
-  /** Insert points in the given position (add to the end of list
-   *  if \a theIPnt parameter is -1) of the specified section
-   *  (or last section if \a theISection parameter is -1).
-   */
-  virtual void insertPoints(const CurveCreator::Coordinates &thePoints,
-                    const int theISection = -1,
-                    const int theIPnt = -1);
-
-  /** Remove \a nbPoints points from given \a theISection,
-   *  starting from given \a theIPnt (of all points up to the end of
-   *  section if \a theNbPoints is -1).
-   */
-  virtual void removePoints(const int theISection,
-                    const int theIPnt,
-                    const int theNbPoints = -1);
-
-  /** Move specified  point within section to new position
-   */
-  virtual void movePoint(const int theISection,
-                 const int theIPointFrom,
-                 const int theNewIndex);
-
-  //! Remove all sections.
-  virtual void clear();
-
-  //! Set coordinates of specified point
-  virtual void setCoordinates(const CurveCreator::Coordinates &theCoords,
-                      const int theISection,
-                      const int theIPnt);
-
-  /** Set �closed� flag of the specified section (all sections if
-   *  \a theISection is -1).
-   */
-  virtual void setClosed(const bool theIsClosed, const int theISection = -1);
-
-  /** Set name of the specified section.
-   */
-  virtual void setName( const std::string& theName, const int theISection );
-
-  /** Move specified \a theISection to the specified position
-   *  in the sections list.
-   */
-  virtual void moveSection(const int theISection, const int theNewIndex);
-
-  //! Join two sections to one section
-  virtual void join(const int theISectionTo, const int theISectionFrom);
-
-  //! Join all sections to the single curve
-  virtual void join();
+  //! Get "closed" flag of the specified section
+  virtual bool isClosed( const int theISection ) const = 0;
 
   /**
-   * This method converts the point index to the index in
-   * an array of coordinates.
+   *  Set "closed" flag of the specified section (all sections if
+   *  \a theISection is -1).
    */
-  virtual int toICoord(const int theIPnt) const;
+  virtual bool setClosed( const int theISection, 
+                          const bool theIsClosed ) = 0;
 
-public:
+  //! Returns specifyed section name
+  virtual std::string getSectionName( const int theISection ) const = 0;
 
-  bool                    myIsLocked;
-  Sections                mySections;   //!< curve data
-  CurveCreator::Dimension myDimension;  //!< curve dimension
-  CurveCreator_Listener*  myListener;   //!< listener
+  /** Set name of the specified section */
+  virtual bool setSectionName( const int theISection, 
+                               const std::string& theName ) = 0;
+
+  //! Get type of the specified section
+  virtual CurveCreator::SectionType getSectionType( const int theISection ) const = 0;
+
+  /**
+   *  Set type of the specified section (or all sections
+   *  if \a theISection is -1).
+   */
+  virtual bool setSectionType( const int theISection, 
+                               const CurveCreator::SectionType theType ) = 0;
+
+
+  /***********************************************/
+  /***           Point methods                 ***/
+  /***********************************************/
+
+  //! Get the dimension.
+  virtual CurveCreator::Dimension getDimension() const = 0;
+
+  /**
+   *  Insert one or several points to the specified section starting from the given theIPnt index
+   *  (or add these at the end of section points if \a theIPnt is -1).
+   */
+  virtual bool addPoints( const std::deque<float>& theCoords,
+                          const int theISection,
+                          const int theIPnt = -1 ) = 0;
+
+  //! Set coordinates of specified point
+  virtual bool setPoint( const int theISection,
+                         const int theIPnt,
+                         const std::deque<float>& theNewCoords ) = 0;
+  
+  //! Set coordinates of specified points from different sections
+  virtual bool setSeveralPoints( const SectionToPointCoordsList &theSectionToPntCoords,
+                                 const bool theIsToSaveDiff = true ) = 0;
+
+  //! Remove point with given id
+  virtual bool removePoint( const int theISection, const int theIPnt = -1 ) = 0;
+  //! Remove several points from different sections
+  virtual bool removeSeveralPoints( const SectionToPointList &theSectionToPntIDs) = 0;
+
+  //! Get coordinates of specified point
+  virtual std::deque<float> getPoint( const int theISection, 
+                                      const int theIPnt ) const = 0;
+
+  /**
+   * Get points of a section (the total points in Curve if theISection is equal to -1)..
+   */
+  virtual std::deque<float> getPoints( const int theISection = -1 ) const = 0;
+
+  /**
+   *  Get number of points in specified section or (the total number of points
+   *  in Curve if theISection is equal to -1).
+   */
+  virtual int getNbPoints( const int theISection ) const = 0;
+
+  /**
+   * Set skip sorting flag. If the flag is true - points sorting will be skipped.
+   */
+  virtual void setSkipSorting( const bool ) = 0;
+
+  /**
+   * Indicates whether the points can be sorted.
+   */
+  virtual bool canPointsBeSorted() = 0;
+
+  /**
+   * Saves points coordinates difference.
+   * \param theOldCoords the old points coordinates
+   */
+  virtual void saveCoordDiff( const SectionToPointCoordsList &theOldCoords ) = 0;
+
+  /***********************************************/
+  /***       Presentation methods              ***/
+  /***********************************************/
+
+  virtual Handle_AIS_InteractiveObject getAISObject( const bool theNeedToBuild = false ) const = 0;
+
+protected:
+  virtual void constructAISObject() = 0;
 
 };
 

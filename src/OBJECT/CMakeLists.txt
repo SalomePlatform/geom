@@ -65,17 +65,8 @@ SET(_link_LIBRARIES
 SET(OBJECT_HEADERS
   GEOM_Actor.h
   GEOM_AISShape.hxx
-  GEOM_AISShape.ixx
-  GEOM_AISShape.jxx
-  Handle_GEOM_AISShape.hxx
   GEOM_TopWireframeShape.hxx
-  GEOM_TopWireframeShape.ixx
-  GEOM_TopWireframeShape.jxx
-  Handle_GEOM_TopWireframeShape.hxx
   GEOM_InteractiveObject.hxx
-  GEOM_InteractiveObject.ixx
-  GEOM_InteractiveObject.jxx
-  Handle_GEOM_InteractiveObject.hxx
   GEOM_AISTrihedron.hxx
   GEOM_VTKTrihedron.hxx
   GEOM_VTKPropertyMaterial.hxx

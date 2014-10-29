@@ -20,8 +20,12 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-#include <GEOM_Application.ixx>
+#include <GEOM_Application.hxx>
+
+#include <TColStd_SequenceOfExtendedString.hxx>
+
+IMPLEMENT_STANDARD_HANDLE (GEOM_Application, TDocStd_Application)
+IMPLEMENT_STANDARD_RTTIEXT(GEOM_Application, TDocStd_Application)
 
 //=======================================================================
 //function : GEOM_Application
@@ -32,6 +36,14 @@ GEOM_Application::GEOM_Application()
 {
 }
 
+//=======================================================================
+//function : ~GEOM_Application
+//purpose  : 
+//=======================================================================
+
+GEOM_Application::~GEOM_Application() 
+{
+}
 
 //=======================================================================
 //function : Formats
@@ -53,8 +65,3 @@ Standard_CString GEOM_Application::ResourcesName()
 {
   return Standard_CString ("GEOMDS_Resources");
 }
-
-
-
-
-

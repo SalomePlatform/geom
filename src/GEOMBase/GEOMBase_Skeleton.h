@@ -28,13 +28,14 @@
 #define GEOMBASE_SKELETON_H
 
 #include "GEOM_GEOMBase.hxx"
+#include "GEOMBase_DlgSkeleton.h"
 #include "GEOMBase_Helper.h"
 
 #include <QDialog>
 
 class SalomeApp_DoubleSpinBox;
 class GeometryGUI;
-class DlgRef_Skeleton;
+class GEOMBase_DlgSkeleton;
 class QSpinBox;
 class QDoubleSpinBox;
 class QLineEdit;
@@ -90,7 +91,7 @@ protected:
     
     void                setHelpFileName( const QString& );
 
-    DlgRef_Skeleton*    mainFrame();
+    GEOMBase_DlgSkeleton* mainFrame();
     QWidget*            centralWidget();
     QPushButton*        buttonCancel() const;
     QPushButton*        buttonOk() const;
@@ -103,7 +104,9 @@ protected:
     QString             myHelpFileName;        //!< Associated HTML help file name
     
     QButtonGroup*       myRBGroup;             //!< radio button group
-    DlgRef_Skeleton*    myMainFrame;           //!< dialog box's mainframe widgetx
+    GEOMBase_DlgSkeleton*    myMainFrame;      //!< dialog box's mainframe widget
+    QString             myHelpContext;         //!< Help context, needed for the customization 
+                                               //!< path where located plugins help HTML pages
 
 protected slots:
     virtual void        ClickOnCancel();
@@ -111,7 +114,7 @@ protected slots:
     void                LineEditReturnPressed();
     void                DeactivateActiveDialog();
     void                ActivateThisDialog();
-    void                ClickOnHelp();
+    virtual void        ClickOnHelp();
 
 signals:
     void                constructorsClicked( int );

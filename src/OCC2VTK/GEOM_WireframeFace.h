@@ -27,7 +27,11 @@
 #include <BRepAdaptor_Surface.hxx>
  
 class vtkPolyData;
-class GEOMUtils_Hatcher;
+
+namespace GEOMUtils
+{
+  class Hatcher;
+}
 
 class OCC2VTK_EXPORT GEOM_WireframeFace: public GEOM_FaceSource 
 { 
@@ -67,11 +71,11 @@ protected:
 
   static
   void
-  CreateIso(const GEOMUtils_Hatcher &theHatcher,
-            const Standard_Boolean   IsUIso,
-            const int                theDiscret,
-                  vtkPolyData       *thePolyData,
-                  vtkPoints         *thePts);
+    CreateIso(const GEOMUtils::Hatcher &theHatcher,
+	      const Standard_Boolean   IsUIso,
+	      const int                theDiscret,
+	      vtkPolyData              *thePolyData,
+	      vtkPoints                *thePts);
 
   static  
   void 

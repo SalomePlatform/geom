@@ -51,6 +51,7 @@
 #include "GEOMImpl_3DSketcherDriver.hxx"
 
 #include "GEOMImpl_IPolyline.hxx"
+#include "GEOMImpl_IPolyline2D.hxx"
 #include "GEOMImpl_ICircle.hxx"
 #include "GEOMImpl_ISpline.hxx"
 #include "GEOMImpl_IEllipse.hxx"
@@ -59,12 +60,14 @@
 #include "GEOMImpl_I3DSketcher.hxx"
 #include "GEOMImpl_ICurveParametric.hxx"
 #include "GEOMImpl_IIsoline.hxx"
+#include "GEOMImpl_PolylineDumper.hxx"
 
 #include <Basics_OCCTVersion.hxx>
 
 #include "utilities.h"
 
 #include <TDF_Tool.hxx>
+#include <TColStd_HArray1OfByte.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 
 #include <Standard_Failure.hxx>
@@ -235,9 +238,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
 
   //Compute the Circle value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -295,9 +296,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleCenter2Pnt (Handle(GEO
 
   //Compute the Circle value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -360,9 +359,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 
   //Compute the Circle value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Circle driver failed");
       return NULL;
@@ -435,9 +432,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
 
   //Compute the Ellipse value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Ellipse driver failed");
       return NULL;
@@ -502,9 +497,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
 
   //Compute the Arc value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Arc driver failed");
       return NULL;
@@ -563,12 +556,10 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Objec
 
   //Compute the Arc value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
-  SetErrorCode("Arc driver failed");
-  return NULL;
+      SetErrorCode("Arc driver failed");
+      return NULL;
     }
   }
   catch (Standard_Failure) {
@@ -622,9 +613,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Ob
 
   //Compute the Arc value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Arc driver failed");
       return NULL;
@@ -686,9 +675,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (std::list<Handle(G
 
   //Compute the Polyline value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Polyline driver failed");
       return NULL;
@@ -757,9 +744,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
 
   //Compute the Spline value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -829,9 +814,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 
   //Compute the Spline value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -908,9 +891,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolWithTangents
 
   //Compute the Spline value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Spline driver failed");
       return NULL;
@@ -1159,9 +1140,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
   //Compute the Curve value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Curve driver failed !!!");
       return NULL;
@@ -1228,9 +1207,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
 
   //Compute the Sketcher value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sketcher driver failed");
       return NULL;
@@ -1292,9 +1269,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
 
   //Compute the Sketcher value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Sketcher driver failed");
       return NULL;
@@ -1343,9 +1318,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcherCommand (const cha
 
   //Compute the 3D Sketcher value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("3D Sketcher driver failed");
       return NULL;
@@ -1403,9 +1376,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (std::list<double
 
   //Compute the Sketcher value
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("3D Sketcher driver failed");
       return NULL;
@@ -1478,9 +1449,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeIsoline
 
   //Compute the isoline curve
   try {
-#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
-#endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Shape driver failed");
       return NULL;
@@ -1498,4 +1467,156 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeIsoline
 
   SetErrorCode(OK);
   return anIsoline;
+}
+
+//=============================================================================
+/*!
+ *  MakePolyline2D
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2D
+            (const std::list <std::list <double> >         &theCoords,
+             const Handle(TColStd_HArray1OfExtendedString) &theNames,
+             const Handle(TColStd_HArray1OfByte)           &theTypes,
+             const Handle(TColStd_HArray1OfByte)           &theCloseds,
+             const Handle(TColStd_HArray1OfReal)           &theWorkingPlane)
+{
+  SetErrorCode(KO);
+
+  if (theCoords.empty()   || theNames.IsNull() || theTypes.IsNull() ||
+      theCloseds.IsNull() || theWorkingPlane.IsNull()) {
+    return NULL;
+  }
+
+  // Add a new Polyline object
+  Handle(GEOM_Object)   aResult   =
+    GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE2D);
+  Handle(GEOM_Function) aFunction = aResult->AddFunction
+    (GEOMImpl_PolylineDriver::GetID(), POLYLINE2D_PLN_COORDS);
+
+  if (aFunction.IsNull()) {
+    return NULL;
+  }
+
+  // Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PolylineDriver::GetID()) {
+    return NULL;
+  }
+
+  GEOMImpl_IPolyline2D aCI(aFunction);
+
+  aCI.SetCoords(theCoords);
+  aCI.SetNames(theNames);
+  aCI.SetTypes(theTypes);
+  aCI.SetClosedFlags(theCloseds);
+  aCI.SetWorkingPlaneDbls(theWorkingPlane);
+
+  // Compute the isoline curve
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Polyline driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOMImpl_PolylineDumper aDumper(theCoords, theNames, theTypes,
+                                  theCloseds, theWorkingPlane);
+
+  aDumper.Dump(aResult);
+
+  if (aDumper.IsDone() == Standard_False) {
+    SetErrorCode("Python dump failed");
+    return NULL;
+  }
+
+  SetErrorCode(OK);
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ *  MakePolyline2DOnPlane
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline2DOnPlane
+            (const std::list <std::list <double> >         &theCoords,
+             const Handle(TColStd_HArray1OfExtendedString) &theNames,
+             const Handle(TColStd_HArray1OfByte)           &theTypes,
+             const Handle(TColStd_HArray1OfByte)           &theCloseds,
+             const Handle(GEOM_Object)                     &theWorkingPlane)
+{
+  SetErrorCode(KO);
+
+  if (theCoords.empty()   || theNames.IsNull() || theTypes.IsNull() ||
+      theCloseds.IsNull() || theWorkingPlane.IsNull()) {
+    return NULL;
+  }
+
+  //Add a new Polyline object
+  Handle(GEOM_Object) aResult =
+    GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE2D);
+  Handle(GEOM_Function) aFunction = aResult->AddFunction
+    (GEOMImpl_PolylineDriver::GetID(), POLYLINE2D_PLN_OBJECT);
+
+  if (aFunction.IsNull()) {
+    return NULL;
+  }
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PolylineDriver::GetID()) {
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aRefPlane = theWorkingPlane->GetLastFunction();
+
+  if (aRefPlane.IsNull()) {
+    return NULL;
+  }
+
+  GEOMImpl_IPolyline2D aCI(aFunction);
+
+  aCI.SetCoords(theCoords);
+  aCI.SetNames(theNames);
+  aCI.SetTypes(theTypes);
+  aCI.SetClosedFlags(theCloseds);
+  aCI.SetWorkingPlane(aRefPlane);
+
+  //Compute the isoline curve
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Polyline driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOMImpl_PolylineDumper aDumper(theCoords, theNames, theTypes,
+                                  theCloseds, theWorkingPlane);
+
+  aDumper.Dump(aResult);
+
+  if (aDumper.IsDone() == Standard_False) {
+    SetErrorCode("Python dump failed");
+    return NULL;
+  }
+
+  SetErrorCode(OK);
+  return aResult;
 }

@@ -39,7 +39,7 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <OCCViewer_ViewModel.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 //=================================================================================
 // class    : BlocksGUI_ExplodeDlg()

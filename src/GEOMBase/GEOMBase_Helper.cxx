@@ -45,7 +45,7 @@
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
 
 #include <SALOME_Prs.h>
 
@@ -381,7 +381,7 @@ void GEOMBase_Helper::displayPreview( const SALOME_Prs* prs,
       SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
       SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
       if (aView)
-        aView->Display( prs );
+        aView->Display( getDisplayer(), prs );
     }
 
   // Add prs to the preview list
@@ -401,19 +401,20 @@ void GEOMBase_Helper::erasePreview( const bool update )
   // check view frame where the preview was displayed
   bool vfOK = checkViewWindow() && myViewWindow;
   // Iterate through presentations and delete them
-  for ( PrsList::iterator anIter = myPreview.begin(); anIter != myPreview.end(); ++anIter ) {
+  for ( PrsList::iterator anIter = myPreview.begin(); anIter != myPreview.end(); ++anIter )
+  {
     if ( vfOK )
+    {
+      SUIT_ViewManager* aViewManager = myViewWindow->getViewManager();
+      if ( aViewManager->getType() == OCCViewer_Viewer::Type() ||
+	   aViewManager->getType() == SVTK_Viewer::Type() )
       {
-         SUIT_ViewManager* aViewManager = myViewWindow->getViewManager();
-         if ( aViewManager->getType() == OCCViewer_Viewer::Type() ||
-              aViewManager->getType() == SVTK_Viewer::Type() )
-           {
-             SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
-             SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
-             if (aView)
-               aView->Erase( *anIter, true );
-           }
+	SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
+	SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
+	if (aView)
+	  aView->Erase( getDisplayer(), *anIter, true );
       }
+    }
     delete *anIter;
   }
   myPreview.clear();

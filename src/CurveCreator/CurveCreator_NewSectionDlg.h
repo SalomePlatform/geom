@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2014  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2013  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// version 2.1 of the License.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,10 +21,11 @@
 #define CURVECREATOR_NEWSECTION_H
 
 #include "CurveCreator.hxx"
+#include "CurveCreator_ICurve.hxx"
 
 #include <QDockWidget>
 
-class CurveCreator_Curve;
+//class CurveCreator_Curve;
 
 class QLineEdit;
 class QComboBox;
@@ -38,16 +39,17 @@ class CurveCreator_NewSectionDlg : public QWidget
 {
   Q_OBJECT
 public:
-  explicit CurveCreator_NewSectionDlg(QWidget *parent = 0);
+  explicit CurveCreator_NewSectionDlg(QWidget *parent = 0, bool enableClosed = true );
 
   QString getName() const;
   bool    isClosed() const;
-  CurveCreator::Type getSectionType() const;
+  CurveCreator::SectionType getSectionType() const;
 
-  void    setSectionParameters( const QString& theName, bool isClosed, CurveCreator::Type theType );
+  void    setSectionParameters( const QString& theName, bool isClosed, CurveCreator::SectionType theType );
   void    setSectionName(const QString& theName );
   void    clear();
   void    setEditMode( bool isEdit );
+  bool    isEnableClosed() const { return myIsEnableClosed; }
 
 signals:
   void    addSection();
@@ -63,6 +65,7 @@ private:
   QComboBox*          myLineType;
   QCheckBox*          myIsClosed;
   bool                myIsEdit;
+  bool                myIsEnableClosed;
   QPushButton*        myAddBtn;
   QPushButton*        myCancelBtn;
 };

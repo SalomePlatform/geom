@@ -536,6 +536,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Cylinder Construction</translation>
     </message>
     <message>
+        <source>GEOM_CYLINDER_ANGLE_ERR</source>
+        <translation>Angle values 0 and 360 are unsafe to build proper volumes. Please uncheck the "Angle" box to use the regular cylinder constructor.</translation>
+    </message>
+    <message>
         <source>GEOM_D1</source>
         <translation>D1 :</translation>
     </message>
@@ -905,14 +909,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Matrix And Moments Of Inertia</translation>
     </message>
     <message>
-        <source>GEOM_INERTIA_I</source>
-        <translation>%1:1 :</translation>
-    </message>
-    <message>
-        <source>GEOM_INERTIA_IXYZ</source>
-        <translation>IX &amp; IY &amp; IZ :</translation>
-    </message>
-    <message>
         <source>GEOM_INERTIA_TITLE</source>
         <translation>Calculs Of Inertia</translation>
     </message>
@@ -1007,14 +1003,6 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_MEN_ENTER_ANGLE</source>
         <translation>Enter An Angle In Degrees</translation>
-    </message>
-    <message>
-        <source>GEOM_MEN_EXPORT</source>
-        <translation>Export</translation>
-    </message>
-    <message>
-        <source>GEOM_MEN_IMPORT</source>
-        <translation>Import</translation>
     </message>
     <message>
         <source>GEOM_MEN_ISOS</source>
@@ -2234,7 +2222,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_VERTEXES</source>
-        <translation>Vertexes</translation>
+        <translation>Vertices</translation>
     </message>
     <message>
         <source>GEOM_WATER_DENSITY</source>
@@ -2370,7 +2358,15 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_CURVE_CREATOR</source>
-        <translation>Curve creator</translation>
+        <translation>2D Polyline</translation>
+    </message>
+    <message>
+      <source>TOP_CURVE_CREATOR</source>
+      <translation>Create 2D polyline</translation>
+    </message>
+    <message>
+      <source>STB_CURVE_CREATOR</source>
+      <translation>Create 2D polyline</translation>
     </message>
     <message>
         <source>MEN_ALL_SEL_ONLY</source>
@@ -2590,7 +2586,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_EXPORT</source>
-        <translation>Export...</translation>
+        <translation>Export</translation>
     </message>
     <message>
         <source>MEN_EXTRUSION</source>
@@ -2698,7 +2694,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_IMPORT</source>
-        <translation>Import...</translation>
+        <translation>Import</translation>
     </message>
     <message>
         <source>MEN_INERTIA</source>
@@ -2897,6 +2893,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show Edge Direction</translation>
     </message>
     <message>
+        <source>MEN_POP_VERTICES</source>
+        <translation>Show Vertices</translation>
+    </message>
+    <message>
         <source>MEN_PREFERENCES</source>
         <translation>Preferences</translation>
     </message>
@@ -3069,6 +3069,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Hide Edge Direction</translation>
     </message>
     <message>
+        <source>MEN_VERTICES_MODE_ON</source>
+        <translation>Show Vertices</translation>
+    </message>
+    <message>
+        <source>MEN_VERTICES_MODE_OFF</source>
+        <translation>Hide Vertices</translation>
+    </message>
+    <message>
         <source>MEN_WIREFRAME</source>
         <translation>Wireframe</translation>
     </message>
@@ -3147,6 +3155,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>PREF_DISPLAY_MODE</source>
         <translation>Default display mode</translation>
+    </message>
+    <message>
+        <source>PREF_TRANSPARENCY</source>
+        <translation>Transparency</translation>
     </message>
     <message>
         <source>PREF_FREE_BOUND_COLOR</source>
@@ -3525,10 +3537,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Explode on Blocks</translation>
     </message>
     <message>
-        <source>STB_EXPORT</source>
-        <translation>Export geometry to BREP file</translation>
-    </message>
-    <message>
         <source>STB_EXTRUSION</source>
         <translation>Create an extrusion</translation>
     </message>
@@ -3611,10 +3619,6 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_HEX_SOLID</source>
         <translation>Hexahedral Solid</translation>
-    </message>
-    <message>
-        <source>STB_IMPORT</source>
-        <translation>Import geometry from BREP file</translation>
     </message>
     <message>
         <source>STB_INERTIA</source>
@@ -3759,6 +3763,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_POP_VECTORS</source>
         <translation>Show Edge Direction</translation>
+    </message>
+    <message>
+        <source>STB_POP_VERTICES</source>
+        <translation>Show Vertices</translation>
     </message>
     <message>
         <source>STB_POP_SETTEXTURE</source>
@@ -3985,54 +3993,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>X</translation>
     </message>
     <message>
-        <source>TOOL_BASIC</source>
-        <translation>Basic</translation>
-    </message>
-    <message>
-        <source>TOOL_BLOCKS</source>
-        <translation>Blocks</translation>
-    </message>
-    <message>
-        <source>TOOL_BOOLEAN</source>
-        <translation>Boolean operations</translation>
-    </message>
-    <message>
-        <source>TOOL_FEATURES</source>
-        <translation>Modification</translation>
-    </message>
-    <message>
-        <source>TOOL_GENERATION</source>
-        <translation>Generation</translation>
-    </message>
-    <message>
-        <source>TOOL_PRIMITIVES</source>
-        <translation>Primitives</translation>
-    </message>
-    <message>
-        <source>TOOL_TRANSFORMATION</source>
-        <translation>Transformation</translation>
-    </message>
-    <message>
-        <source>TOOL_BUILD</source>
-        <translation>Build</translation>
-    </message>
-    <message>
-        <source>TOOL_OPERATIONS</source>
-        <translation>Operations</translation>
-    </message>
-    <message>
-        <source>TOOL_PICTURES</source>
-        <translation>Pictures</translation>
-    </message>
-    <message>
-        <source>TOOL_ADVANCED</source>
-        <translation>Advanced</translation>
-    </message>
-    <message>
-        <source>TOOL_MEASURES</source>
-        <translation>Measures</translation>
-    </message>
-    <message>
         <source>TOP_ARC</source>
         <translation>Create an arc</translation>
     </message>
@@ -4177,10 +4137,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Explode on Blocks</translation>
     </message>
     <message>
-        <source>TOP_EXPORT</source>
-        <translation>Export geometry to BREP file</translation>
-    </message>
-    <message>
         <source>TOP_EXTRUSION</source>
         <translation>Create an extrusion</translation>
     </message>
@@ -4255,10 +4211,6 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_HEX_SOLID</source>
         <translation>Hexahedral Solid</translation>
-    </message>
-    <message>
-        <source>TOP_IMPORT</source>
-        <translation>Import geometry from BREP file</translation>
     </message>
     <message>
         <source>TOP_INERTIA</source>
@@ -4761,6 +4713,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Manage measurement dimensions of an object</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
+        <translation>Show dependency tree</translation>
+    </message>
+    <message>
+        <source>MEN_POP_REDUCE_STUDY</source>
+        <translation>Reduce study</translation>
+    </message>
+    <message>
         <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
         <translation>Show all dimensions</translation>
     </message>
@@ -5025,6 +4985,66 @@ Please, select face, shell or solid and try again</translation>
         <translation>Preview</translation>
     </message>
     <message>
+        <source>PREF_TAB_DEPENDENCY_VIEW</source>
+        <translation>Dependency Tree</translation>
+    </message>
+    <message>
+        <source>PREF_HIERARCHY_TYPE</source>
+        <translation>Hierarchy type</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_ASCENDANTS</source>
+        <translation>Display only ascendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_ONLY_DESCENDANTS</source>
+        <translation>Display only descendants tree</translation>
+    </message>
+    <message>
+        <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
+        <translation>Display both ascendants and descendants trees</translation>
+    </message>
+    <message>
+        <source>GEOM_MOVE_POSSIBILITY</source>
+        <translation>Possibility to move nodes</translation>
+    </message>
+    <message>
+        <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
+        <translation>Color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
+        <translation>Background color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
+        <translation>Default node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
+        <translation>Main node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
+        <translation>Unpublished node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
+        <translation>Selected node color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
+        <translation>Default arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
+        <translation>Highlighted arrow color</translation>
+    </message>
+    <message>
+        <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
+        <translation>Selected arrow color</translation>
+    </message>
+    <message>
         <source>GEOM_ALL_IMPORT_FILES</source>
         <translation>All supported formats ( %1 )</translation>
     </message>
@@ -5050,11 +5070,6 @@ shells and solids on the other hand.</translation>
     <message>
         <source>GEOM_PUBLISH_NAMED_SHAPES</source>
         <translation>Create groups for named shapes (if there are any)?</translation>
-    </message>
-    <message>
-        <source>GEOM_SCALE_DIMENSIONS</source>
-        <translation>Take into account the units (%1) embedded to the file?
-Ignoring units will cause model scaling (as dimensions are supposed to be specified in meters).</translation>
     </message>
     <message>
         <source>GEOM_PRECISION_HINT</source>
@@ -5086,64 +5101,83 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Select image...</translation>
     </message>
     <message>
-        <source>MEN_IMPORTEXPORT</source>
-        <translation>Import / Export XAO</translation>
-    </message>
-    <message>
-        <source>TOOL_IMPORTEXPORT</source>
-        <translation>Import / Export XAO</translation>
-    </message>
-    <message>
-        <source>TOP_EXPORTXAO</source>
-        <translation>Export to XAO</translation>
-    </message>
-    <message>
-        <source>MEN_EXPORTXAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>STB_EXPORTXAO</source>
-        <translation>Export shape to XAO format</translation>
-    </message>
-    <message>
-        <source>TOP_IMPORTXAO</source>
-        <translation>Import from XAO</translation>
-    </message>
-    <message>
-        <source>MEN_IMPORTXAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>STB_IMPORTXAO</source>
-        <translation>Import shape from XAO format</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTEXPORT_204</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_SELECT_IMPORT_XAO</source>
-        <translation>Import from XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_SELECT_EXPORT_XAO</source>
-        <translation>Export to XAO</translation>
-    </message>
-    <message>
-        <source>XAO_FILES</source>
-        <translation>XAO files (*.xao)</translation>
-    </message>
-    <message>
-        <source>TOOLS_IMPORTEXPORT</source>
-        <translation>Import / Export</translation>
-    </message>
-    <message>
         <source>CC_PNT_ITEM_X_Y</source>
         <translation>X=%1, Y=%2</translation>
     </message>
     <message>
         <source>CC_PNT_ITEM_X_Y_Z</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+</context>
+<context>
+    <name>GeometryGUI</name>
+    <message>
+        <source>TOOL_BASIC</source>
+        <translation>Basic</translation>
+    </message>
+    <message>
+        <source>TOOL_BLOCKS</source>
+        <translation>Blocks</translation>
+    </message>
+    <message>
+        <source>TOOL_BOOLEAN</source>
+        <translation>Boolean operations</translation>
+    </message>
+    <message>
+        <source>TOOL_FEATURES</source>
+        <translation>Modification</translation>
+    </message>
+    <message>
+        <source>TOOL_GENERATION</source>
+        <translation>Generation</translation>
+    </message>
+    <message>
+        <source>TOOL_PRIMITIVES</source>
+        <translation>Primitives</translation>
+    </message>
+    <message>
+        <source>TOOL_TRANSFORMATION</source>
+        <translation>Transformation</translation>
+    </message>
+    <message>
+        <source>TOOL_BUILD</source>
+        <translation>Build</translation>
+    </message>
+    <message>
+        <source>TOOL_OPERATIONS</source>
+        <translation>Operations</translation>
+    </message>
+    <message>
+        <source>TOOL_PICTURES</source>
+        <translation>Pictures</translation>
+    </message>
+    <message>
+        <source>TOOL_ADVANCED</source>
+        <translation>Advanced</translation>
+    </message>
+    <message>
+        <source>TOOL_MEASURES</source>
+        <translation>Measures</translation>
+    </message>
+    <message>
+        <source>TOOL_IMPORTEXPORT</source>
+        <translation>Import / Export XAO</translation>
+    </message>
+    <message>
+        <source>TABLE_SECTION</source>
+        <translation>Section</translation>
+    </message>
+    <message>
+        <source>TABLE_INDEX</source>
+        <translation>Index</translation>
+    </message>
+    <message>
+        <source>TABLE_X</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <source>TABLE_Y</source>
+        <translation>Y</translation>
     </message>
 </context>
 <context>
@@ -5387,73 +5421,38 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     </message>
 </context>
 <context>
-    <name>CurveCreator_NewPointDlg</name>
-    <message>
-        <source>ADD_NEW_POINT</source>
-        <translation>Add new points</translation>
-    </message>
-    <message>
-        <source>X_COORD</source>
-        <translation>X</translation>
-    </message>
-    <message>
-        <source>Y_COORD</source>
-        <translation>Y</translation>
-    </message>
-    <message>
-        <source>Z_COORD</source>
-        <translation>Z</translation>
-    </message>
-    <message>
-        <source>ADD_BTN</source>
-        <translation>Add</translation>
-    </message>
-    <message>
-        <source>ADD_CONTINUE_BTN</source>
-        <translation>Add and continue</translation>
-    </message>
-    <message>
-        <source>ADD_NEW_POINT_TO_%1</source>
-        <translation>Add new point to %1</translation>
-    </message>
-    <message>
-        <source>SET_POINT_COORDINATES</source>
-        <translation>Set point coordinates</translation>
-    </message>
-</context>
-<context>
     <name>CurveCreator_NewSectionDlg</name>
     <message>
-        <source>NAME</source>
+        <source>SECTION_NAME</source>
         <translation>Name</translation>
     </message>
     <message>
-        <source>LINE_TYPE</source>
+        <source>SECTION_LINE_TYPE</source>
         <translation>Type</translation>
     </message>
     <message>
-        <source>POLYLINE_TYPE</source>
+        <source>SECTION_POLYLINE_TYPE</source>
         <translation>Polyline</translation>
     </message>
     <message>
-        <source>SPLINE_TYPE</source>
+        <source>SECTION_SPLINE_TYPE</source>
         <translation>Spline</translation>
     </message>
     <message>
-        <source>LINE_CLOSED</source>
+        <source>SECTION_LINE_CLOSED</source>
         <translation>Closed</translation>
     </message>
     <message>
-        <source>OK</source>
-        <translation>Ok</translation>
-    </message>
-    <message>
-        <source>ADD_BTN</source>
+        <source>SECTION_ADD_BTN</source>
         <translation>Add</translation>
     </message>
     <message>
-        <source>ADD_CONTINUE_BTN</source>
-        <translation>Add and continue</translation>
+        <source>SECTION_OK_BTN</source>
+        <translation>Ok</translation>
+    </message>
+    <message>
+        <source>SECTION_CANCEL_BTN</source>
+        <translation>Cancel</translation>
     </message>
     <message>
         <source>ADD_NEW_SECTION</source>
@@ -5478,11 +5477,7 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
 <context>
     <name>CurveCreator_Widget</name>
     <message>
-        <source>CURVE_NAME_TLT</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <source>SECTION_GROUP_TLT</source>
+        <source>SECTION_GROUP_TITLE</source>
         <translation>Sections</translation>
     </message>
     <message>
@@ -5510,22 +5505,6 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Insert new section</translation>
     </message>
     <message>
-        <source>INSERT_SECTION_BEFORE</source>
-        <translation>Insert section before</translation>
-    </message>
-    <message>
-        <source>INSERT_SECTION_BEFORE_TLT</source>
-        <translation>Insert section before</translation>
-    </message>
-    <message>
-        <source>INSERT_SECTION_AFTER</source>
-        <translation>Insert section after</translation>
-    </message>
-    <message>
-        <source>INSERT_SECTION_AFTER_TLT</source>
-        <translation>Insert section after</translation>
-    </message>
-    <message>
         <source>ADDITION_MODE</source>
         <translation>Addition mode</translation>
     </message>
@@ -5548,18 +5527,6 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     <message>
         <source>DETECTION_MODE_TLT</source>
         <translation>Detection mode</translation>
-    </message>
-    <message>
-        <source>INSERT_POINT_BEFORE</source>
-        <translation>Insert point before</translation>
-    </message>
-    <message>
-        <source>INSERT_POINT_BEFORE_TLT</source>
-        <translation>Insert point before</translation>
-    </message>
-    <message>
-        <source>INSERT_POINT_AFTER</source>
-        <translation>Insert point after</translation>
     </message>
     <message>
         <source>CLOSE_SECTIONS</source>
@@ -5610,22 +5577,6 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
         <translation>Join selected sections</translation>
     </message>
     <message>
-        <source>STEP_UP</source>
-        <translation>Move up</translation>
-    </message>
-    <message>
-        <source>STEP_UP_TLT</source>
-        <translation>Move selected objects up</translation>
-    </message>
-    <message>
-        <source>STEP_DOWN</source>
-        <translation>Move down</translation>
-    </message>
-    <message>
-        <source>STEP_DOWN_TLT</source>
-        <translation>Move selected objects down</translation>
-    </message>
-    <message>
         <source>CLEAR_ALL</source>
         <translation>Clear all</translation>
     </message>
@@ -5640,6 +5591,33 @@ Ignoring units will cause model scaling (as dimensions are supposed to be specif
     <message>
         <source>JOIN_ALL_TLT</source>
         <translation>Join all sections</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_PolylineDlg</name>
+    <message>
+        <source>POLYLINE_DLG_TITLE</source>
+        <translation>Polyline Construction</translation>
+    </message>
+    <message>
+        <source>POLYLINE_TITLE</source>
+        <translation>Polyline</translation>
+    </message>
+    <message>
+        <source>POLYLINE_NAME</source>
+        <translation>Polyline</translation>
+    </message>
+    <message>
+        <source>POLYLINE_IMPORT</source>
+        <translation>Import polyline</translation>
+    </message>
+    <message>
+        <source>POLYLINE_ADD_SECTION</source>
+        <translation>Add section</translation>
+    </message>
+    <message>
+        <source>POLYLINE_EDIT_SECTION</source>
+        <translation>Edit section</translation>
     </message>
 </context>
 <context>
@@ -6822,6 +6800,61 @@ Do you want to create new material?</translation>
     </message>
 </context>
 <context>
+    <name>GEOMToolsGUI_ReduceStudyDlg</name>
+    <message>
+        <source>GEOM_REDUCE_STUDY_TITLE</source>
+        <translation>Reduce study</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
+        <translation>Objects to be kept</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
+        <translation>Objects to be removed</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_NAME</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_OPTIONS</source>
+        <translation>Options</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
+        <translation>Intermediate objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
+        <translation>Sub-objects</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_KEEP</source>
+        <translation>Keep</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
+        <translation>Unpublish</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE</source>
+        <translation>Remove</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
+        <translation>Remove empty folders</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
+        <translation>Soft removal</translation>
+    </message>
+    <message>
+        <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
+        <translation>Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
+    </message>
+</context>
+<context>
     <name>RepairGUI_UnionFacesDlg</name>
     <message>
         <source>GEOM_UNION_FACES_TITLE</source>
@@ -6857,72 +6890,6 @@ Do you want to create new material?</translation>
     <message>
         <source>NO_INFO</source>
         <translation>(No info available)</translation>
-    </message>
-</context>
-<context>
-    <name>ImportExportGUI_ExportXAODlg</name>
-    <message>
-        <source>GEOM_EXPORTXAO_TITLE</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO</source>
-        <translation>Export XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_EXPORTINGSHAPE</source>
-        <translation>Shape</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_FILENAME</source>
-        <translation>File Name</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_AUTHOR</source>
-        <translation>Author</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_LGROUPS</source>
-        <translation>Groups</translation>
-    </message>
-    <message>
-        <source>GEOM_EXPORTXAO_LFIELDS</source>
-        <translation>Fields</translation>
-    </message>
-    <message>
-        <source>EXPORT_DLG_ACCEPT</source>
-        <translation>OK</translation>
-    </message>
-</context>
-<context>
-    <name>ImportExportGUI_ImportXAODlg</name>
-    <message>
-        <source>GEOM_IMPORTXAO_TITLE</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO</source>
-        <translation>Import XAO</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_IMPORTINGSHAPE</source>
-        <translation>Shape</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_FILENAME</source>
-        <translation>File Name</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_LGROUPS</source>
-        <translation>Groups</translation>
-    </message>
-    <message>
-        <source>GEOM_IMPORTXAO_LFIELDS</source>
-        <translation>Fields</translation>
-    </message>
-    <message>
-        <source>STEP</source>
-        <translation>Step</translation>
     </message>
 </context>
 <context>

@@ -392,6 +392,18 @@ void GEOM_Swig::setVectorsMode( const char* theEntry, bool theOn, bool theUpdate
 }
 
 /*!
+  \brief Show / hide vertices for the presentation
+  \param theEntry geometry object's entry
+  \param theOn \c true to show vertices or \c false otherwise
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setVerticesMode( const char* theEntry, bool theOn, bool theUpdateViewer )
+{
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::Vertices ), 
+                                           theOn, theUpdateViewer ) );
+}
+
+/*!
   \brief Change color of the presentation
   \param theEntry geometry object's entry
   \param theRed red component of the component (0-255)

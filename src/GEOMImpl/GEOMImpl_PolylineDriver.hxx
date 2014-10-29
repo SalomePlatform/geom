@@ -80,6 +80,9 @@ Standard_EXPORT ~GEOMImpl_PolylineDriver() {};
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
+private:
+
+  Standard_Integer MakePolyline2D(TFunction_Logbook& log) const;
 
 DEFINE_STANDARD_RTTI( GEOMImpl_PolylineDriver )
 };

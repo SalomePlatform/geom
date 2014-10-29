@@ -263,6 +263,28 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRH (CORBA::Double th
 
 //=============================================================================
 /*!
+ *  MakeCylinderRHA
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderRHA (CORBA::Double theR,
+								 CORBA::Double theH,
+								 CORBA::Double theA)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Create the Cylinder
+  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderRHA(theR, theH, theA);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeCylinderPntVecRH
  */
 //=============================================================================
@@ -283,6 +305,34 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderPntVecRH
 
   //Create the Cylinder
   Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderPntVecRH(aPnt, aVec, theR, theH);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeCylinderPntVecRHA
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeCylinderPntVecRHA
+                      (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
+                       CORBA::Double theR, CORBA::Double theH, CORBA::Double theA)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference points
+  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+
+  if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+
+  //Create the Cylinder
+  Handle(GEOM_Object) anObject = GetOperations()->MakeCylinderPntVecRHA(aPnt, aVec, theR, theH, theA);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

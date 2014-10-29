@@ -96,7 +96,7 @@ MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( Geomet
 
   /***************************************************************/
 
-  myHelpFileName = "using_measurement_tools_page.html#check_compound_anchor";
+  myHelpFileName = "check_compound_of_blocks_page.html";
 
   /* Initialisation */
   Init();

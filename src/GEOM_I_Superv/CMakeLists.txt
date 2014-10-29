@@ -37,6 +37,14 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   SalomeIDLGEOM
+  SalomeIDLGEOMSuperv
+  SalomeIDLAdvancedGEOM
+  SalomeIDLBREPPlugin
+  SalomeIDLIGESPlugin
+  SalomeIDLSTEPPlugin
+  SalomeIDLSTLPlugin
+  SalomeIDLVTKPlugin
+  SalomeIDLXAOPlugin
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_SalomeDSClient}
   ${KERNEL_SalomeLifeCycleCORBA}

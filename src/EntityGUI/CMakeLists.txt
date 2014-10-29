@@ -40,6 +40,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
   ${PROJECT_SOURCE_DIR}/src/GEOMBase
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
+  ${PROJECT_SOURCE_DIR}/src/CurveCreator
   ${PROJECT_SOURCE_DIR}/src/ShapeRecognition
   ${PROJECT_SOURCE_DIR}/src/DlgRef
   ${PROJECT_BINARY_DIR}/src/DlgRef
@@ -65,6 +66,7 @@ SET(_link_LIBRARIES
   GEOM
   DlgRef
   GEOMSketcher
+  CurveCreator
   )
 
 # optional sources
@@ -103,6 +105,7 @@ SET(EntityGUI_HEADERS
   EntityGUI.h
   EntityGUI_Widgets.h
   EntityGUI_SketcherDlg.h
+  EntityGUI_PolylineDlg.h
   EntityGUI_3DSketcherDlg.h
   EntityGUI_IsolineDlg.h
   EntityGUI_SubShapeDlg.h
@@ -115,6 +118,7 @@ SET(_moc_HEADERS
   EntityGUI_Widgets.h
   EntityGUI_FieldDlg.h
   EntityGUI_SketcherDlg.h
+  EntityGUI_PolylineDlg.h
   EntityGUI_3DSketcherDlg.h
   EntityGUI_IsolineDlg.h
   EntityGUI_SubShapeDlg.h
@@ -135,6 +139,7 @@ SET(EntityGUI_SOURCES
   EntityGUI_Widgets.cxx
   EntityGUI_FieldDlg.cxx
   EntityGUI_SketcherDlg.cxx
+  EntityGUI_PolylineDlg.cxx
   EntityGUI_3DSketcherDlg.cxx
   EntityGUI_IsolineDlg.cxx
   EntityGUI_SubShapeDlg.cxx

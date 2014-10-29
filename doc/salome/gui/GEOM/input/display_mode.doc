@@ -29,6 +29,17 @@ functionality for all objects in the current view via the main menu
 
 \n <b>TUI Command:</b> <em>gg.setVectorsMode(ID, Bool)</em>
 
+\n Also it is possible to show the vertices of the selected
+shape. For this, choose in the context menu of the shape
+<b>Display mode -> Show Vertices</b>, or apply this
+functionality for all objects in the current view via the main menu
+<b> View -> Display Mode -> Show/Hide Vertices.</b>
+
+\image html vertices_mode.png
+<center><em>Vertices Mode (Show Vertices)</em></center>
+
+\n <b>TUI Command:</b> <em>gg.setVerticesMode(ID, Bool)</em>
+
 Our <b>TUI Scripts</b> provide you with useful examples of 
 \ref tui_change_disp_mode "Changing Display Parameters".
 

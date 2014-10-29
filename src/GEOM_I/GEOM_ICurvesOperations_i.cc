@@ -30,6 +30,9 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#include <TColStd_HArray1OfByte.hxx>
+#include <TColStd_HArray1OfReal.hxx>
+
 //=============================================================================
 /*!
  *   constructor:
@@ -666,4 +669,190 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcher
     return GEOM::GEOM_Object::_nil();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePolyline2D
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline2D
+                (const GEOM::ListOfListOfDouble &theCoordsList,
+                 const GEOM::string_array       &theNamesList,
+                 const GEOM::short_array        &theTypesList,
+                 const GEOM::ListOfBool         &theClosedList,
+                 const GEOM::ListOfDouble       &theWorkingPlane)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Convert input data
+  Handle(TColStd_HArray1OfExtendedString) aNames   =
+    ConvertStringArray(theNamesList);
+  Handle(TColStd_HArray1OfByte)           aTypes   =
+    ConvertEnumArray(theTypesList);
+  Handle(TColStd_HArray1OfByte)           aCloseds =
+    ConvertBoolArray(theClosedList);
+  std::list <std::list <double> >         aCoords;
+
+  ConvertListListDouble(theCoordsList, aCoords);
+
+  Handle(TColStd_HArray1OfReal) aWorkingPlane;
+  const int                     n = theWorkingPlane.length();
+  int                           i;
+
+  if (n > 0) {
+    aWorkingPlane = new TColStd_HArray1OfReal(1, n);
+
+    for (i = 0; i < n; i++) {
+      aWorkingPlane->SetValue(i + 1, theWorkingPlane[i]);
+    }
+  }
+
+  // Make Polyline
+  Handle(GEOM_Object) anObject = GetOperations()->MakePolyline2D
+            (aCoords, aNames, aTypes, aCloseds, aWorkingPlane);
+
+  if (!GetOperations()->IsDone() || anObject.IsNull()) {
+    return GEOM::GEOM_Object::_nil();
+  }
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePolylineOnPlane
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline2DOnPlane
+                (const GEOM::ListOfListOfDouble &theCoordsList,
+                 const GEOM::string_array       &theNamesList,
+                 const GEOM::short_array        &theTypesList,
+                 const GEOM::ListOfBool         &theClosedList,
+                 GEOM::GEOM_Object_ptr           theWorkingPlane)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Convert input data
+  Handle(TColStd_HArray1OfExtendedString) aNames        =
+    ConvertStringArray(theNamesList);
+  Handle(TColStd_HArray1OfByte)           aTypes        =
+    ConvertEnumArray(theTypesList);
+  Handle(TColStd_HArray1OfByte)           aCloseds      =
+    ConvertBoolArray(theClosedList);
+  std::list <std::list <double> >         aCoords;
+  Handle(GEOM_Object)                     aWorkingPlane =
+    GetObjectImpl(theWorkingPlane);
+
+  ConvertListListDouble(theCoordsList, aCoords);
+
+  // Make Polyline
+  Handle(GEOM_Object) anObject = GetOperations()->MakePolyline2DOnPlane
+            (aCoords, aNames, aTypes, aCloseds, aWorkingPlane);
+
+  if (!GetOperations()->IsDone() || anObject.IsNull()) {
+    return GEOM::GEOM_Object::_nil();
+  }
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  ConvertEnumArray
+ */
+//=============================================================================
+Handle(TColStd_HArray1OfByte) GEOM_ICurvesOperations_i::ConvertEnumArray
+                (const GEOM::short_array &theInArray)
+{
+  Handle(TColStd_HArray1OfByte) anOutArray;
+  const int                     n = theInArray.length();
+  int                           i;
+
+  if (n <= 0) {
+    return anOutArray;
+  }
+
+  anOutArray = new TColStd_HArray1OfByte(1, n);
+
+  for (i = 0; i < n; i++) {
+    bool                                  isOK = true;
+    GEOMImpl_ICurvesOperations::CurveType aType;
+
+    switch(theInArray[i]) {
+      case GEOM::Polyline:
+        aType = GEOMImpl_ICurvesOperations::Polyline;
+        break;
+      case GEOM::Bezier:
+        aType = GEOMImpl_ICurvesOperations::Bezier;
+        break;
+      case GEOM::Interpolation:
+        aType = GEOMImpl_ICurvesOperations::Interpolation;
+        break;
+      default:
+        isOK = false;
+        break;
+    }
+
+    if (isOK) {
+      anOutArray->SetValue(i + 1, aType);
+    } else {
+      anOutArray.Nullify();
+      break;
+    }
+  }
+
+  return anOutArray;
+}
+
+//=============================================================================
+/*!
+ *  ConvertBoolArray
+ */
+//=============================================================================
+Handle(TColStd_HArray1OfByte) GEOM_ICurvesOperations_i::ConvertBoolArray
+                (const GEOM::ListOfBool &theInArray)
+{
+  Handle(TColStd_HArray1OfByte) anOutArray;
+  const int                     n = theInArray.length();
+  int                           i;
+
+  if (n <= 0) {
+    return anOutArray;
+  }
+
+  anOutArray = new TColStd_HArray1OfByte(1, n);
+
+  for (i = 0; i < n; i++) {
+    anOutArray->SetValue(i + 1, theInArray[i]);
+  }
+
+  return anOutArray;
+}
+
+//=============================================================================
+/*!
+ *  ConvertListListDouble
+ */
+//=============================================================================
+void GEOM_ICurvesOperations_i::ConvertListListDouble
+            (const GEOM::ListOfListOfDouble        &theInList,
+                   std::list <std::list <double> > &theOutList)
+{
+  const int          n = theInList.length();
+  int                i;
+  std::list <double> anEmptyList;
+
+  for (i = 0; i < n; i++) {
+    theOutList.push_back(anEmptyList);
+
+    const int m = theInList[i].length();
+    int       j;
+
+    for (j = 0; j < m; j++) {
+      theOutList.back().push_back(theInList[i][j]);
+    }
+  }
 }

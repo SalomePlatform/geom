@@ -25,6 +25,7 @@
 #include <TopoDS_Shape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
+class GEOM_VertexSource;
 class GEOM_EdgeSource;
 class GEOM_WireframeFace;
 class GEOM_ShadingFace;
@@ -40,6 +41,7 @@ namespace GEOM
   OCC2VTK_EXPORT void SetShape(const TopoDS_Shape& theShape,
                                const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
                                bool theIsVector,
+                               GEOM_VertexSource* theStandaloneVertexSource,
                                GEOM_EdgeSource* theIsolatedEdgeSource,
                                GEOM_EdgeSource* theOneFaceEdgeSource,
                                GEOM_EdgeSource* theSharedEdgeSource,
