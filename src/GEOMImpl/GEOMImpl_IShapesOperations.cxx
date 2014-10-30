@@ -3840,88 +3840,46 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
 
   TopoDS_Shape aWhere = theShapeWhere->GetValue();
   TopoDS_Shape aWhat  = theShapeWhat->GetValue();
-  TopoDS_Shape aPntShape;
-  TopoDS_Vertex aVertex;
 
   if (aWhere.IsNull() || aWhat.IsNull()) {
     SetErrorCode("Error: aWhere and aWhat TopoDS_Shape are Null.");
     return NULL;
   }
 
-  Handle(GEOM_Function) aWhereFunction = theShapeWhere->GetLastFunction();
-  if (aWhereFunction.IsNull()) {
-    SetErrorCode("Error: aWhereFunction is Null.");
-    return NULL;
-  }
+  // Compute confusion tolerance.
+  Standard_Real    aTolConf = Precision::Confusion();
+  Standard_Integer i;
 
-  TopTools_IndexedMapOfShape aWhereIndices;
-  TopExp::MapShapes(aWhere, aWhereIndices);
+  for (i = 0; i < 2; ++i) {
+    TopExp_Explorer anExp(i == 0 ? aWhere : aWhat, TopAbs_VERTEX);
 
-  TopAbs_ShapeEnum iType = TopAbs_SOLID;
-  Standard_Real    dl_l = 1e-3;
-  Standard_Real    min_l, Tol_0D, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
-  Standard_Real    aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-  Bnd_Box          BoundingBox;
-  gp_Pnt           aPnt, aPnt_aWhat, tab_Pnt[2];
-  GProp_GProps     aProps;
+    for (; anExp.More(); anExp.Next()) {
+      const TopoDS_Vertex aVtx = TopoDS::Vertex(anExp.Current());
+      const Standard_Real aTolVtx = BRep_Tool::Tolerance(aVtx);
 
-  // Find the iType of the aWhat shape
-  iType = GEOMUtils::GetTypeOfSimplePart(aWhat);
-  if (iType == TopAbs_SHAPE) {
-    SetErrorCode("Error: An attempt to extract a shape of not supported type.");
-    return NULL;
-  }
-
-  TopExp_Explorer Exp_aWhat  ( aWhat,  iType );
-  TopExp_Explorer Exp_aWhere ( aWhere, iType );
-  TopExp_Explorer Exp_Edge   ( aWhere, TopAbs_EDGE );
-
-  // Find the shortest edge in theShapeWhere shape
-  BRepBndLib::Add(aWhere, BoundingBox);
-  BoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-  min_l = fabs(aXmax - aXmin);
-  if( min_l < fabs(aYmax - aYmin) ) min_l = fabs(aYmax - aYmin);
-  if( min_l < fabs(aZmax - aZmin) ) min_l = fabs(aZmax - aZmin);
-
-  // Mantis issue 0020908 BEGIN
-  if (!Exp_Edge.More()) {
-    min_l = Precision::Confusion();
-  }
-  // Mantis issue 0020908 END
-  for ( Standard_Integer nbEdge = 0; Exp_Edge.More(); Exp_Edge.Next(), nbEdge++ ) {
-    TopExp_Explorer Exp_Vertex( Exp_Edge.Current(), TopAbs_VERTEX);
-    for ( Standard_Integer nbVertex = 0; Exp_Vertex.More(); Exp_Vertex.Next(), nbVertex++ ) {
-      aPnt = BRep_Tool::Pnt( TopoDS::Vertex( Exp_Vertex.Current() ) );
-      tab_Pnt[nbVertex] = aPnt;
-    }
-    if ( ! tab_Pnt[0].IsEqual(tab_Pnt[1], dl_l) ) {
-      BRepGProp::LinearProperties(Exp_Edge.Current(), aProps);
-      if ( aProps.Mass() < min_l ) min_l = aProps.Mass();
+      if (aTolVtx > aTolConf) {
+        aTolConf = aTolVtx;
+      }
     }
   }
-  min_l *= dl_l;
 
-  // Compute tolerances
-  Tol_0D = dl_l;
-  Tol_1D = dl_l * min_l;
-  Tol_2D = dl_l * ( min_l * min_l) * ( 2. + dl_l);
-  Tol_3D = dl_l * ( min_l * min_l * min_l ) * ( 3. + (3 * dl_l) + (dl_l * dl_l) );
+  // Compute mass tolerance.
+  Bnd_Box       aBoundingBox;
+  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+  Standard_Real aMassTol;
 
-  if (Tol_0D < Precision::Confusion()) Tol_0D = Precision::Confusion();
-  if (Tol_1D < Precision::Confusion()) Tol_1D = Precision::Confusion();
-  if (Tol_2D < Precision::Confusion()) Tol_2D = Precision::Confusion();
-  if (Tol_3D < Precision::Confusion()) Tol_3D = Precision::Confusion();
-
-  Tol_Mass = Tol_3D;
-  if ( iType == TopAbs_VERTEX )    Tol_Mass = Tol_0D;
-  else if ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
-  else if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
+  BRepBndLib::Add(aWhere, aBoundingBox);
+  BRepBndLib::Add(aWhat,  aBoundingBox);
+  aBoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+  aMassTol = Max(aXmax - aXmin, aYmax - aYmin);
+  aMassTol = Max(aMassTol, aZmax - aZmin);
+  aMassTol *= aTolConf;
 
   // Searching for the sub-shapes inside the ShapeWhere shape
   GEOMAlgo_GetInPlace aGIP;
-  aGIP.SetTolerance(Tol_1D);
-  aGIP.SetTolMass(Tol_Mass);
-  aGIP.SetTolCG(Tol_1D);
+  aGIP.SetTolerance(aTolConf);
+  aGIP.SetTolMass(aMassTol);
+  aGIP.SetTolCG(aTolConf);
 
   aGIP.SetArgument(aWhat);
   aGIP.SetShapeWhere(aWhere);
@@ -3933,18 +3891,13 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     return NULL;
   }
 
-  // aGIP.IsFound() returns true only when the whole theShapeWhat
-  // is found (as one shape or several parts). But we are also interested
-  // in the partial result, that is why this check is commented.
-  //if (!aGIP.IsFound()) {
-  //  SetErrorCode(NOT_FOUND_ANY);
-  //  return NULL;
-  //}
-
   // Add direct result.
-  TopTools_ListOfShape  aLSA;
-  const TopoDS_Shape   &aShapeResult = aGIP.Result();
-  TopTools_MapOfShape   aMFence;
+  TopTools_ListOfShape        aLSA;
+  const TopoDS_Shape         &aShapeResult = aGIP.Result();
+  TopTools_MapOfShape         aMFence;
+  TopTools_IndexedMapOfShape  aWhereIndices;
+
+  TopExp::MapShapes(aWhere, aWhereIndices);
 
   if (aShapeResult.IsNull() == Standard_False) {
     TopoDS_Iterator anIt(aShapeResult);
