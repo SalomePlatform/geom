@@ -477,7 +477,7 @@ void DependencyTree_View::parseTree()
       GEOMUtils::LevelInfo::const_iterator node;
       for( node = Levelup.begin(); node != Levelup.end(); node++ ) {
         DependencyTree_Object* object = myTreeMap[ node->first ];
-        addArrow( Main_object, object );
+        addArrow( object, Main_object );
       }
     }
     parseTreeWardArrow( i->second.first );
@@ -515,7 +515,7 @@ void DependencyTree_View::parseTreeWardArrow( const GEOMUtils::LevelsList& theWa
       for( int link = 0; link < Links.size(); link++ ) {
         DependencyTree_Object* LinkObject = myTreeMap[ Links[ link ] ];
         if( object && LinkObject )
-          addArrow( object, LinkObject );
+          addArrow( LinkObject, object );
       }
     }
   }
@@ -613,7 +613,7 @@ void DependencyTree_View::drawTree()
         for( node = Levelup.begin(); node != Levelup.end(); node++ ) {
           DependencyTree_Object* object = myTreeMap[ node->first ];
           DependencyTree_Arrow* arrow =
-            myArrows[ std::pair<DependencyTree_Object*,DependencyTree_Object*>( Main_object, object )];
+            myArrows[ std::pair<DependencyTree_Object*,DependencyTree_Object*>( object, Main_object )];
           if( arrow && !isItemAdded( arrow ) )
             addItem( arrow );
         }
@@ -670,7 +670,7 @@ void DependencyTree_View::drawWardArrows( const GEOMUtils::LevelsList& theWard )
       for( int link = 0; link < Links.size(); link++ ) {
         DependencyTree_Object* LinkObject = myTreeMap[ Links[ link ] ];
         if( isItemAdded( object ) && isItemAdded( LinkObject ) ) {
-          DependencyTree_Arrow* arrow = myArrows[ std::pair<DependencyTree_Object*,DependencyTree_Object*>( object, LinkObject ) ];
+          DependencyTree_Arrow* arrow = myArrows[ std::pair<DependencyTree_Object*,DependencyTree_Object*>( LinkObject, object ) ];
           if( arrow && !isItemAdded( arrow ) )
             addItem( arrow );
         }
