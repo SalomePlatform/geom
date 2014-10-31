@@ -124,12 +124,101 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   ratio = float(r2)/float(r1)
   if ratio > (1.0 -seuilmax):
     a1 = 45.0*(1.0 -ratio)/seuilmax
-    
-    
-  # --- sections droites des deux demi cylindres avec le partionnement
+  
+  """
+  res = geompy.MakeCompound([demicyl1,demicyl2])
+  return res
+  """
 
-  v1, l1, arc1, part1 = demidisk(study, r1, a1, 0, solid_thickness)
-  v2, l2, arc2, part2 = demidisk(study, r2, a1, 90.0, solid_thickness)
+  # --- creation des faces de la jonction
+  [faci, sect45, arc1, l1, lord90, lord45, edges] = jonction(study, r1, r2,\
+                                              h1, h2, a1)
+  if with_solid:
+    [faci_ext, sect45_ext, arc1_ext, l1_ext, lord90_ext, lord45_ext, edges_ext] = jonction(study, r1 + solid_thickness, r2 + solid_thickness,\
+                                                                    h1, h2, a1)
+    faces_jonction_ext = []
+    for i,l in enumerate(lord90):
+      faces_jonction_ext.append(geompy.MakeQuad2Edges(lord90[i],lord90_ext[i]))
+    for i in [1, 3, 6, 7]:
+      faces_jonction_ext.append(geompy.MakeQuad2Edges(edges[i],edges_ext[i]))
+    for i,l in enumerate(lord45):
+      faces_jonction_ext.append(geompy.MakeQuad2Edges(lord45[i],lord45_ext[i]))
+   
+    for i,face in enumerate(faces_jonction_ext):
+      geompy.addToStudy(faces_jonction_ext[i], "faci_ext_%d"%i)
+
+  # --- extrusion droite des faces de jonction, pour reconstituer les demi cylindres
+  # TODO : ajouter les faces nécessaires à sect45 dans le cas avec solide
+  if with_solid:    
+    sect45 = geompy.MakePartition([sect45]+faces_jonction_ext[-7:])
+  extru1 = geompy.MakePrismVecH(sect45, OX, h1+10)
+
+  #base2 = geompy.MakeCompound(faci[5:])
+  #base2 = geompy.MakeGlueEdges(base2, 1e-7)
+  # RNC : perf
+  faces_coupe = faci[5:]
+  if with_solid:
+    faces_coupe = faci[5:]+faces_jonction_ext[:3]
+  base2 = geompy.MakePartition(faces_coupe, [], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
+  extru2 = geompy.MakePrismVecH(base2, OZ, h2)
+
+  # --- partition et coupe
+
+  if with_solid:
+     demiDisque = geompy.MakeFaceWires([arc1_ext, l1_ext[0]], 1)
+  else:
+     demiDisque = geompy.MakeFaceWires([arc1, l1[0]], 1)
+  demiCylindre = geompy.MakePrismVecH(demiDisque, OX, h1)
+
+  box = geompy.MakeBox(0, -2*(r1+h1), -2*(r1+h1), 2*(r1+h1), 2*(r1+h1), 2*(r1+h1))
+  rot = geompy.MakeRotation(box, OY, 45*math.pi/180.0)
+
+  garder = geompy.MakeCutList(demiCylindre, [extru2, rot], True)
+  geompy.addToStudy(garder,"garder")
+  
+  faces_coupe = faci[:5]
+  if with_solid:
+    faces_coupe.extend(faces_jonction_ext[-7:])
+  raccord = geompy.MakePartition([garder], faces_coupe, [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
+  assemblage = geompy.MakeCompound([raccord, extru1, extru2])
+  assemblage = geompy.MakeGlueFaces(assemblage, 1e-7)
+  # RNC : perf
+  #assemblage = geompy.MakePartition([raccord, extru1, extru2], [], [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
+  
+  #return extru2, garder, raccord
+
+  box = geompy.MakeBox(-1, -(r1+r2+2*solid_thickness), -1, h1, r1+r2+2*solid_thickness, h2)
+  geompy.addToStudy(box, "box")
+  final = geompy.MakeCommonList([box, assemblage], True)
+  
+  # --- Partie inférieure
+  v3, l3, arc3, part3 = demidisk(study, r1, a1, 180.0, solid_thickness)
+  geompy.addToStudy(part3,"part3")
+  extru3 = geompy.MakePrismVecH(part3, OX, h1)
+  geompy.addToStudy(extru3,"extru3")
+
+  # --- Symétrie
+
+  compound = geompy.MakeCompound([final, extru3])
+  plane = geompy.MakePlane(O,OX,2000)
+  compound_mirrored = geompy.MakeMirrorByPlane(compound, plane)
+  final = geompy.MakeCompound([compound, compound_mirrored])
+  
+  return final
+
+
+def jonction(study, r1, r2, h1, h2, a1):
+  
+  O = geompy.MakeVertex(0, 0, 0)
+  OX = geompy.MakeVectorDXDYDZ(1, 0, 0) 
+  OY = geompy.MakeVectorDXDYDZ(0, 1, 0)
+  OZ = geompy.MakeVectorDXDYDZ(0, 0, 1)
+  
+  # --- sections droites des deux demi cylindres avec le partionnement
+  v1, l1, arc1, part1 = demidisk(study, r1, a1, 0.)
+  v2, l2, arc2, part2 = demidisk(study, r2, a1, 90.0)
+  #elems_disk1 = [v1, l1, arc1, part1]
+  #elems_disk2 = [v2, l2, arc2, part2]
 
   # --- extrusion des sections --> demi cylindres de travail, pour en extraire les sections utilisées au niveau du Té
   #     et enveloppe cylindrique du cylindre principal
@@ -138,11 +227,6 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   demicyl2 = geompy.MakePrismVecH(part2, OZ, h2)
   arcextru = geompy.MakePrismVecH(arc1, OX, h1)
   
-  """
-  res = geompy.MakeCompound([demicyl1,demicyl2])
-  return res
-  """
-
   # --- plan de coupe à 45° sur le cylindre principal,
   #     section à 45° du cylndre principal,
   #     section du cylindre secondaire par l'enveloppe cylindrique du cylindre principal
@@ -156,7 +240,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
 
   sect90 = geompy.MakeCommonList([demicyl2, arcextru], True)
   geompy.addToStudy(sect90, 'sect90')
-
+  
   # --- liste ordonnée des points projetés sur les deux sections
 
   vord45 = pointsProjetes(study, v1, sect45)
@@ -177,19 +261,22 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
 
   # --- abaissement des quatre points centraux de la section du cylindre secondaire
 
+  #if with_solid:
+    #dz = -(r2 + solid_thickness)/2.0
+  #else:
+    #dz = -r2/2.0
   dz = -r2/2.0
   for i in (0, 2, 4, 5):
     vord90[i] = geompy.TranslateDXDYDZ(vord90[i], 0, 0, dz, True)
     geompy.addToStudyInFather(sect90, vord90[i], 'vm%d'%i)
-  if with_solid:
-    print dz
-    print "dz*solid_thickness/(r2+solid_thickness) = "
-    print dz*solid_thickness/(r2+solid_thickness)
-    for i in (1, 3, 6, 7):
-      vord90[i] = geompy.TranslateDXDYDZ(vord90[i], 0, 0, dz*solid_thickness/(r2+solid_thickness), True)
-  
+  #if with_solid:
+    #for i in (1, 3, 6, 7):
+      #vord90[i] = geompy.TranslateDXDYDZ(vord90[i], 0, 0, dz*solid_thickness/(r2+solid_thickness), True)
+
+  """
   res=vord90
   return res
+  """
     
   # --- création des deux arêtes curvilignes sur l'enveloppe cylindrique du cylindre principal, à la jonction
 
@@ -235,9 +322,9 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   edges[5] = geompy.MakeLineTwoPnt(vord45[5], vord90[5])
   edges[6] = curv[2]
   edges[7] = curv[3]
-  #for i,l in enumerate(edges):
-  #  print i
-  #  geompy.addToStudy( l, "edge%d"%i)
+  for i,l in enumerate(edges):
+    print i
+    geompy.addToStudy( l, "edge%d"%i)
 
   ed45 = [None for i in range(8)]
   ed45[0] = geompy.MakeLineTwoPnt(vord45[0], vord45[2])
@@ -276,43 +363,7 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   for i,f in enumerate(faci):
     geompy.addToStudy(f, "faci_%d"%i)
 
-  # --- extrusion droite des faces de jonction, pour reconstituer les demi cylindres
-
-  extru1 = geompy.MakePrismVecH(sect45, OX, h1+10)
-
-  base2 = geompy.MakePartition(faci[5:], [], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
-  extru2 = geompy.MakePrismVecH(base2, OZ, h2)
-
-  # --- partition et coupe
-
-  demiDisque = geompy.MakeFaceWires([arc1, l1[0]], 1)
-  demiCylindre = geompy.MakePrismVecH(demiDisque, OX, h1)
-
-  box = geompy.MakeBox(0, -2*(r1+h1), -2*(r1+h1), 2*(r1+h1), 2*(r1+h1), 2*(r1+h1))
-  rot = geompy.MakeRotation(box, OY, 45*math.pi/180.0)
-
-  garder = geompy.MakeCutList(demiCylindre, [extru2, rot], True)
-  raccord = geompy.MakePartition([garder], faci, [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
-  assemblage = geompy.MakePartition([raccord, extru1, extru2], [], [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
-
-  box = geompy.MakeBox(-1, -(r1+r2), -1, h1, r1+r2, h2)
-  geompy.addToStudy(box, "box")
-  final = geompy.MakeCommonList([box, assemblage], True)
-  
-  # --- Partie inférieure
-  v3, l3, arc3, part3 = demidisk(study, r1, a1, 180.0)
-  geompy.addToStudy(part3,"part3")
-  extru3 = geompy.MakePrismVecH(part3, OX, h1)
-  geompy.addToStudy(extru3,"extru3")
-
-  # --- Symétrie
-
-  compound = geompy.MakeCompound([final, extru3])
-  plane = geompy.MakePlane(O,OX,2000)
-  compound_mirrored = geompy.MakeMirrorByPlane(compound, plane)
-  final = geompy.MakeCompound([compound, compound_mirrored])
-  
-  return final
+  return faci, sect45, arc1, l1, lord90, lord45, edges
 
 if __name__=="__main__":
   """For testing purpose"""
@@ -320,12 +371,14 @@ if __name__=="__main__":
   theStudy = salome.myStudy
   geompy = geomBuilder.New(theStudy)
   res = build_shape(theStudy, 80., 20., 100., 100., 10.)
+  """
   for i,v in enumerate(res):
     geompy.addToStudy(v,"v%d"%i)
- 
+  """
+
   #res = demidisk(theStudy, 80, 45, 0, 10)
   #geompy.addToStudy(res[3], "res")
   #for i,v in enumerate(res[0]):
   #  geompy.addToStudy(v,"v%d"%i)
-  #geompy.addToStudy(res, "res")
+  geompy.addToStudy(res, "res")
   
