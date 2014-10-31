@@ -813,6 +813,7 @@ Standard_Boolean GEOMUtils::PreciseBoundingBox
                           (const TopoDS_Shape &theShape, Bnd_Box &theBox)
 {
   if ( theBox.IsVoid() ) BRepBndLib::Add( theShape, theBox );
+  if ( theBox.IsVoid() ) return Standard_False;
 
   Standard_Real aBound[6];
   theBox.Get(aBound[0], aBound[2], aBound[4], aBound[1], aBound[3], aBound[5]);
