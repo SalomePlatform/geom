@@ -187,7 +187,7 @@ void GEOMToolsGUI::OnAutoColor()
 
     SUIT_OverrideCursor();
     
-    appStudy->setObjectProperty( aMgrId, aChildObject->GetEntry(), GEOM::propertyName( GEOM::Color ), c );
+    appStudy->setObjectProperty( aMgrId, aChildObject->GetStudyEntry(), GEOM::propertyName( GEOM::Color ), c );
     Handle( SALOME_InteractiveObject ) io = new SALOME_InteractiveObject( aChildObject->GetStudyEntry(), "GEOM", "" );
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }
@@ -260,10 +260,17 @@ void GEOMToolsGUI::OnColor()
   color = QColorDialog::getColor( v.value<QColor>(), app->desktop() );
   if ( !color.isValid() ) return;
 
+  SALOMEDS::Color aSColor;
+  aSColor.R = (double)color.red() / 255.0;
+  aSColor.G = (double)color.green() / 255.0;
+  aSColor.B = (double)color.blue() / 255.0;
+
   // iterate through list of objects and assign new color
   SUIT_OverrideCursor();
   for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
+    GEOM::GEOM_Object_var aObject = GEOMBase::ConvertIOinGEOMObject( io );
+    if ( !CORBA::is_nil( aObject ) ) aObject->SetColor( aSColor );
     appStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::Color ), color );
     if ( window->isVisible( io ) ) displayer.Redisplay( io, false );
   }

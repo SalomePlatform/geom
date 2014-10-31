@@ -1433,7 +1433,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   QString clientOCCorOB_AndSomeVisible = clientOCCorOB + " and selcount>0 and isVisible";
 
   QString autoColorPrefix =
-    "(client='ObjectBrowser' or client='OCCViewer') and type='Shape' and selcount=1 and isOCC=true";
+    "(client='ObjectBrowser' or client='OCCViewer' or client='VTKViewer') and type='Shape' and selcount=1";
 
   QtxPopupMgr* mgr = popupMgr();
 
