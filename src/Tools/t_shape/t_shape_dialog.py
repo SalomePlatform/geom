@@ -44,8 +44,9 @@ class TShapeDialog(QtGui.QDialog):
       r2 = self.ui.doubleSpinBox_2.value()
       h1 = self.ui.doubleSpinBox_3.value()
       h2 = self.ui.doubleSpinBox_4.value()
+      thickness = self.ui.doubleSpinBox_5.value()
       
-      return r1, r2, h1, h2
+      return r1, r2, h1, h2, thickness
 
     def reject(self):
         self._wasOk = False

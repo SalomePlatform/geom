@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 't_shape_dialog.ui'
 #
-# Created: Thu Jun 19 11:13:43 2014
+# Created: Tue Nov  4 16:52:09 2014
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,9 +26,9 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(331, 242)
-        self.verticalLayout = QtGui.QVBoxLayout(Dialog)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        Dialog.resize(349, 283)
+        self.gridLayout_3 = QtGui.QGridLayout(Dialog)
+        self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.doubleSpinBox_2 = QtGui.QDoubleSpinBox(Dialog)
@@ -55,19 +55,30 @@ class Ui_Dialog(object):
         self.label_4 = QtGui.QLabel(Dialog)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.gridLayout.addWidget(self.label_4, 4, 0, 1, 1)
-        self.verticalLayout.addLayout(self.gridLayout)
+        self.gridLayout_3.addLayout(self.gridLayout, 0, 0, 1, 1)
+        self.gridLayout_2 = QtGui.QGridLayout()
+        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.checkBox = QtGui.QCheckBox(Dialog)
         self.checkBox.setObjectName(_fromUtf8("checkBox"))
-        self.verticalLayout.addWidget(self.checkBox)
+        self.gridLayout_2.addWidget(self.checkBox, 0, 0, 1, 1)
+        self.label_5 = QtGui.QLabel(Dialog)
+        self.label_5.setObjectName(_fromUtf8("label_5"))
+        self.gridLayout_2.addWidget(self.label_5, 1, 0, 1, 1)
+        self.doubleSpinBox_5 = QtGui.QDoubleSpinBox(Dialog)
+        self.doubleSpinBox_5.setObjectName(_fromUtf8("doubleSpinBox_5"))
+        self.gridLayout_2.addWidget(self.doubleSpinBox_5, 1, 1, 1, 1)
+        self.gridLayout_3.addLayout(self.gridLayout_2, 1, 0, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.verticalLayout.addWidget(self.buttonBox)
+        self.gridLayout_3.addWidget(self.buttonBox, 2, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+        QtCore.QObject.connect(self.checkBox, QtCore.SIGNAL(_fromUtf8("clicked(bool)")), self.label_5.setEnabled)
+        QtCore.QObject.connect(self.checkBox, QtCore.SIGNAL(_fromUtf8("clicked(bool)")), self.doubleSpinBox_5.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -77,8 +88,8 @@ class Ui_Dialog(object):
         self.label_2.setText(_translate("Dialog", "Small pipe  radius", None))
         self.label_4.setText(_translate("Dialog", "Small  pipe height", None))
         self.checkBox.setText(_translate("Dialog", "Build solid part", None))
-
-
+        self.label_5.setText(_translate("Dialog", "Solid thickness", None))
+        
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
@@ -88,3 +99,5 @@ if __name__ == "__main__":
     Dialog.show()
     sys.exit(app.exec_())
 
+
+ 

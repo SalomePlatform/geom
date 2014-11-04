@@ -7,6 +7,7 @@ import GEOM
 from salome.geom import geomBuilder
 import math
 import SALOMEDS
+import time
 
 
 def demidisk(study, r1, a1, roty=0, solid_thickness=0):
@@ -47,26 +48,31 @@ def demidisk(study, r1, a1, roty=0, solid_thickness=0):
   arc1 = geompy.MakeArc(v[1], v7, v[3])
   l[0] = geompy.MakeLineTwoPnt(v[1], v[3])
   face1 = geompy.MakeFaceWires([arc1, l[0]], 1)
-
+  part1 = geompy.MakePartition([face1], [l[2], l[4], l[5], l[6], l[7]], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
+  
   if with_solid:
-    # Vertices
+    # Add some faces corresponding to the solid layer outside
+    # the fluid part
+    
+    # --- Vertices
     v0 = geompy.MakeVertex(0, r1 + solid_thickness, 0)
     v1 = geompy.MakeRotation(v0, OX, a1*math.pi/180.0)
     v2 = geompy.MakeRotation(v0, OX, math.pi - (a1*math.pi/180.0))
     v3 = geompy.MakeRotation(v0, OX, math.pi)
     v.extend([v0,v1,v3,v2]) # The order is important for use in pointsProjetes
+    # --- Lines
     l0 = geompy.MakeLineTwoPnt(v[1], v0)
     l2 = geompy.MakeRotation(l0, OX, a1*math.pi/180.0)
     l3 = geompy.MakeRotation(l0, OX, math.pi - (a1*math.pi/180.0))
+    # --- Faces
     face2 = geompy.MakeRevolution(l0, OX, a1*math.pi/180.0)
     face3 = geompy.MakeRevolution(l2, OX, math.pi - 2*a1*math.pi/180.0)
     face4 = geompy.MakeRevolution(l3, OX, a1*math.pi/180.0)
-    part0 = geompy.MakePartition([face1], [l[2], l[4], l[5], l[6], l[7]], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
-    compound1 = geompy.MakeCompound([part0, face2, face3, face4])
+    # --- Compound of the "fluid part" of the divided disk and the additional faces
+    compound1 = geompy.MakeCompound([part1, face2, face3, face4])
+    # --- Glue edges
     part1 = geompy.MakeGlueEdges(compound1,1e-7)
-  else:
-    part1 = geompy.MakePartition([face1], [l[2], l[4], l[5], l[6], l[7]], [], [], geompy.ShapeType["FACE"], 0, [], 0, True)
-
+ 
   if roty != 0:
     vrot = [ geompy.MakeRotation(vert, OY, roty*math.pi/180.0) for vert in v ]
     lrot = [ geompy.MakeRotation(lin, OY, roty*math.pi/180.0) for lin in l ]
@@ -85,7 +91,6 @@ def pointsProjetes(study, vref, face):
   for i,v in enumerate(vproj):
     dist = [ (geompy.MinDistance(v, vr), j) for j,vr in enumerate(vref) ]
     dist.sort()
-    #print dist
     if dist[0][0] < 1.e-3:
       vord[dist[0][1]] = vface[i]
   return vord
@@ -107,6 +112,8 @@ def arcsProjetes(study, vf, face):
   return lord
  
 def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
+  """ Builds the final shape """
+  
   if solid_thickness < 1e-7:
     with_solid = False
   else:
@@ -124,16 +131,13 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   ratio = float(r2)/float(r1)
   if ratio > (1.0 -seuilmax):
     a1 = 45.0*(1.0 -ratio)/seuilmax
-  
-  """
-  res = geompy.MakeCompound([demicyl1,demicyl2])
-  return res
-  """
 
-  # --- creation des faces de la jonction
+  # --- Creation of the jonction faces
   [faci, sect45, arc1, l1, lord90, lord45, edges, arcextru] = jonction(study, r1, r2,\
                                                                        h1, h2, a1)
   if with_solid:
+    # The same code is executed again with different external radiuses in order
+    # to get the needed faces and edges to build the solid layer of the pipe
     [faci_ext, sect45_ext, arc1_ext, l1_ext, \
      lord90_ext, lord45_ext, edges_ext, arcextru_ext] = jonction(study, r1 + solid_thickness, r2 + solid_thickness,\
                                                                  h1, h2, a1)
@@ -149,17 +153,12 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
       geompy.addToStudy(faces_jonction_ext[i], "faci_ext_%d"%i)
 
   # --- extrusion droite des faces de jonction, pour reconstituer les demi cylindres
-  # TODO : ajouter les faces nécessaires à sect45 dans le cas avec solide
   if with_solid:    
     sect45 = geompy.MakeCompound([sect45]+faces_jonction_ext[-3:])
     sect45 = geompy.MakeGlueEdges(sect45, 1e-7)
     
-  #return sect45, faces_jonction_ext[-3:]
   extru1 = geompy.MakePrismVecH(sect45, OX, h1+10)
 
-  #base2 = geompy.MakeCompound(faci[5:])
-  #base2 = geompy.MakeGlueEdges(base2, 1e-7)
-  # RNC : perf
   faces_coupe = faci[5:]
   if with_solid:
     faces_coupe = faci[5:]+faces_jonction_ext[:3]
@@ -177,22 +176,22 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
   box = geompy.MakeBox(0, -2*(r1+h1), -2*(r1+h1), 2*(r1+h1), 2*(r1+h1), 2*(r1+h1))
   rot = geompy.MakeRotation(box, OY, 45*math.pi/180.0)
 
+  # NOTE: The following Cut takes almost half of the total execution time
   garder = geompy.MakeCutList(demiCylindre, [extru2, rot], True)
   geompy.addToStudy(garder,"garder")
   
   faces_coupe = faci[:5]
   if with_solid:
     faces_coupe.extend(faces_jonction_ext[-7:])
+  t4=time.time()
   raccord = geompy.MakePartition([garder], faces_coupe + [arcextru], [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
   assemblage = geompy.MakeCompound([raccord, extru1, extru2])
   assemblage = geompy.MakeGlueFaces(assemblage, 1e-7)
-  # RNC : perf
-  #assemblage = geompy.MakePartition([raccord, extru1, extru2], [], [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
   
-  #return extru2, garder, raccord
-
   box = geompy.MakeBox(-1, -(r1+r2+2*solid_thickness), -1, h1, r1+r2+2*solid_thickness, h2)
   geompy.addToStudy(box, "box")
+  
+  # NOTE: This operation takes about 1/4 of the total execution time
   final = geompy.MakeCommonList([box, assemblage], True)
   
   # --- Partie inférieure
@@ -212,6 +211,9 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
 
 
 def jonction(study, r1, r2, h1, h2, a1):
+  """ Builds the jonction faces and
+  returns what is needed to build the whole pipe
+  """
   
   O = geompy.MakeVertex(0, 0, 0)
   OX = geompy.MakeVectorDXDYDZ(1, 0, 0) 
@@ -221,9 +223,7 @@ def jonction(study, r1, r2, h1, h2, a1):
   # --- sections droites des deux demi cylindres avec le partionnement
   v1, l1, arc1, part1 = demidisk(study, r1, a1, 0.)
   v2, l2, arc2, part2 = demidisk(study, r2, a1, 90.0)
-  #elems_disk1 = [v1, l1, arc1, part1]
-  #elems_disk2 = [v2, l2, arc2, part2]
-
+ 
   # --- extrusion des sections --> demi cylindres de travail, pour en extraire les sections utilisées au niveau du Té
   #     et enveloppe cylindrique du cylindre principal
 
@@ -264,23 +264,11 @@ def jonction(study, r1, r2, h1, h2, a1):
     geompy.addToStudyInFather(sect90, l, 'l%d'%i)
 
   # --- abaissement des quatre points centraux de la section du cylindre secondaire
-
-  #if with_solid:
-    #dz = -(r2 + solid_thickness)/2.0
-  #else:
-    #dz = -r2/2.0
+  
   dz = -r2/2.0
   for i in (0, 2, 4, 5):
     vord90[i] = geompy.TranslateDXDYDZ(vord90[i], 0, 0, dz, True)
     geompy.addToStudyInFather(sect90, vord90[i], 'vm%d'%i)
-  #if with_solid:
-    #for i in (1, 3, 6, 7):
-      #vord90[i] = geompy.TranslateDXDYDZ(vord90[i], 0, 0, dz*solid_thickness/(r2+solid_thickness), True)
-
-  """
-  res=vord90
-  return res
-  """
     
   # --- création des deux arêtes curvilignes sur l'enveloppe cylindrique du cylindre principal, à la jonction
 
@@ -301,9 +289,7 @@ def jonction(study, r1, r2, h1, h2, a1):
     secpart = geompy.MakePartition([section], [sect45, sect90], [], [], geompy.ShapeType["EDGE"], 0, [], 0, True)
     geompy.addToStudy(secpart, "secpart%d"%i)
     lsec = geompy.ExtractShapes(secpart, geompy.ShapeType["EDGE"], True)
-    #print "len(lsec)", len(lsec)
 
-    # TODO : revoir ça dans le cas avec solide
     for l in lsec:
       pts = geompy.ExtractShapes(l, geompy.ShapeType["VERTEX"], True)
       if (((geompy.MinDistance(pts[0], p0) < 0.001) and (geompy.MinDistance(pts[1], p1) < 0.001)) or
@@ -311,9 +297,6 @@ def jonction(study, r1, r2, h1, h2, a1):
         curv[i+2] =l
         print "curv_%d OK"%i
         break
-  # RNC : commente temporairement
-  #for i,l in enumerate(curv):
-  #  geompy.addToStudyInFather(arcextru, l, "curv%d"%i)
     
   # --- creation des arêtes droites manquantes, des faces et volumes pour les quatre volumes de la jonction
 
