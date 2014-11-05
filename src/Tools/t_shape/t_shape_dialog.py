@@ -34,6 +34,8 @@ class TShapeDialog(QtGui.QDialog):
       self.ui.setupUi(self)
       self.show()
       self._wasOk = False
+      self.ui.doubleSpinBox_5.setEnabled(False)
+      self.ui.label_5.setEnabled(False)
    
     def accept(self):
       self._wasOk = True

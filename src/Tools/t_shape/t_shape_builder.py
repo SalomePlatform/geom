@@ -7,8 +7,6 @@ import GEOM
 from salome.geom import geomBuilder
 import math
 import SALOMEDS
-import time
-
 
 def demidisk(study, r1, a1, roty=0, solid_thickness=0):
   if solid_thickness < 1e-7:
@@ -149,9 +147,6 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
     for i,l in enumerate(lord45):
       faces_jonction_ext.append(geompy.MakeQuad2Edges(lord45[i],lord45_ext[i]))
    
-    for i,face in enumerate(faces_jonction_ext):
-      geompy.addToStudy(faces_jonction_ext[i], "faci_ext_%d"%i)
-
   # --- extrusion droite des faces de jonction, pour reconstituer les demi cylindres
   if with_solid:    
     sect45 = geompy.MakeCompound([sect45]+faces_jonction_ext[-3:])
@@ -178,27 +173,23 @@ def build_shape(study, r1, r2, h1, h2, solid_thickness=0):
 
   # NOTE: The following Cut takes almost half of the total execution time
   garder = geompy.MakeCutList(demiCylindre, [extru2, rot], True)
-  geompy.addToStudy(garder,"garder")
   
   faces_coupe = faci[:5]
   if with_solid:
     faces_coupe.extend(faces_jonction_ext[-7:])
-  t4=time.time()
   raccord = geompy.MakePartition([garder], faces_coupe + [arcextru], [], [], geompy.ShapeType["SOLID"], 0, [], 0, True)
   assemblage = geompy.MakeCompound([raccord, extru1, extru2])
   assemblage = geompy.MakeGlueFaces(assemblage, 1e-7)
   
   box = geompy.MakeBox(-1, -(r1+r2+2*solid_thickness), -1, h1, r1+r2+2*solid_thickness, h2)
-  geompy.addToStudy(box, "box")
   
   # NOTE: This operation takes about 1/4 of the total execution time
   final = geompy.MakeCommonList([box, assemblage], True)
   
   # --- Partie inférieure
+  
   v3, l3, arc3, part3 = demidisk(study, r1, a1, 180.0, solid_thickness)
-  geompy.addToStudy(part3,"part3")
   extru3 = geompy.MakePrismVecH(part3, OX, h1)
-  geompy.addToStudy(extru3,"extru3")
 
   # --- Symétrie
 
@@ -214,6 +205,7 @@ def jonction(study, r1, r2, h1, h2, a1):
   """ Builds the jonction faces and
   returns what is needed to build the whole pipe
   """
+  geompy = geomBuilder.New(study)
   
   O = geompy.MakeVertex(0, 0, 0)
   OX = geompy.MakeVectorDXDYDZ(1, 0, 0) 
@@ -237,32 +229,20 @@ def jonction(study, r1, r2, h1, h2, a1):
 
   plan1 = geompy.MakePlane(O, OX, 4*r1)
   planr = geompy.MakeRotation(plan1, OY, 45*math.pi/180.0)
-  geompy.addToStudy(planr, 'planr')
 
   sect45 = geompy.MakeCommonList([demicyl1, planr], True)
-  geompy.addToStudy(sect45, 'sect45')
-
   sect90 = geompy.MakeCommonList([demicyl2, arcextru], True)
-  geompy.addToStudy(sect90, 'sect90')
-  
+
   # --- liste ordonnée des points projetés sur les deux sections
 
   vord45 = pointsProjetes(study, v1, sect45)
   vord90 = pointsProjetes(study, v2, sect90)
-  for i,v in enumerate(vord45):
-    geompy.addToStudyInFather(sect45, v, 'v%d'%i)
-  for i,v in enumerate(vord90):
-    geompy.addToStudyInFather(sect90, v, 'v%d'%i)
 
   # --- identification des projections des trois arcs de cercle, sur les deux sections.
-
+  
   lord45 = arcsProjetes(study, vord45, sect45)
   lord90 = arcsProjetes(study, vord90, sect90)
-  for i,l in enumerate(lord45):
-    geompy.addToStudyInFather(sect45, l, 'l%d'%i)
-  for i,l in enumerate(lord90):
-    geompy.addToStudyInFather(sect90, l, 'l%d'%i)
-
+ 
   # --- abaissement des quatre points centraux de la section du cylindre secondaire
   
   dz = -r2/2.0
@@ -309,10 +289,7 @@ def jonction(study, r1, r2, h1, h2, a1):
   edges[5] = geompy.MakeLineTwoPnt(vord45[5], vord90[5])
   edges[6] = curv[2]
   edges[7] = curv[3]
-  for i,l in enumerate(edges):
-    print i
-    geompy.addToStudy( l, "edge%d"%i)
-
+ 
   ed45 = [None for i in range(8)]
   ed45[0] = geompy.MakeLineTwoPnt(vord45[0], vord45[2])
   ed45[1] = geompy.MakeLineTwoPnt(vord45[0], vord45[1])
@@ -322,9 +299,7 @@ def jonction(study, r1, r2, h1, h2, a1):
   ed45[5] = geompy.MakeLineTwoPnt(vord45[4], vord45[5])
   ed45[6] = geompy.MakeLineTwoPnt(vord45[0], vord45[4])
   ed45[7] = geompy.MakeLineTwoPnt(vord45[2], vord45[5])
-  for i,l in enumerate(ed45):
-    geompy.addToStudyInFather(sect45, l, "ed45_%d"%i)
-
+ 
   ed90 = [None for i in range(8)]
   ed90[0] = geompy.MakeLineTwoPnt(vord90[0], vord90[2])
   ed90[1] = geompy.MakeLineTwoPnt(vord90[0], vord90[1])
@@ -334,8 +309,6 @@ def jonction(study, r1, r2, h1, h2, a1):
   ed90[5] = geompy.MakeLineTwoPnt(vord90[4], vord90[5])
   ed90[6] = geompy.MakeLineTwoPnt(vord90[0], vord90[4])
   ed90[7] = geompy.MakeLineTwoPnt(vord90[2], vord90[5])
-  for i,l in enumerate(ed90):
-    geompy.addToStudyInFather(sect90, l, "ed90_%d"%i)
 
   faci = []
   faci.append(geompy.MakeFaceWires([ed45[6], edges[0], ed90[6], edges[4]], 0))
@@ -343,13 +316,11 @@ def jonction(study, r1, r2, h1, h2, a1):
   faci.append(geompy.MakeFaceWires([ed45[2], edges[4], ed90[2], edges[6]], 0))
   faci.append(geompy.MakeFaceWires([ed45[5], edges[4], ed90[5], edges[5]], 0))
   faci.append(geompy.MakeFaceWires([ed45[4], edges[5], ed90[4], edges[7]], 0))
-  faci.append(geompy.MakeFaceWires([ed90[0], ed90[6], ed90[5], ed90[7]], 0))
-  faci.append(geompy.MakeFaceWires([ed90[1], ed90[6], ed90[2], lord90[0]], 0))
-  faci.append(geompy.MakeFaceWires([ed90[2], ed90[5], ed90[4], lord90[1]], 0))
-  faci.append(geompy.MakeFaceWires([ed90[3], ed90[7], ed90[4], lord90[2]], 0))
-  for i,f in enumerate(faci):
-    geompy.addToStudy(f, "faci_%d"%i)
-
+  faci.append(geompy.MakeFaceWires([ed90[0], ed90[6],  ed90[5], ed90[7]], 0))
+  faci.append(geompy.MakeFaceWires([ed90[1], ed90[6],  ed90[2], lord90[0]], 0))
+  faci.append(geompy.MakeFaceWires([ed90[2], ed90[5],  ed90[4], lord90[1]], 0))
+  faci.append(geompy.MakeFaceWires([ed90[3], ed90[7],  ed90[4], lord90[2]], 0))
+ 
   return faci, sect45, arc1, l1, lord90, lord45, edges, arcextru
 
 if __name__=="__main__":
@@ -357,15 +328,11 @@ if __name__=="__main__":
   salome.salome_init()
   theStudy = salome.myStudy
   geompy = geomBuilder.New(theStudy)
-  res = build_shape(theStudy, 80., 20., 100., 100., 10.)
-  """
-  for i,v in enumerate(res):
-    geompy.addToStudy(v,"v%d"%i)
-  """
-
-  #res = demidisk(theStudy, 80, 45, 0, 10)
-  #geompy.addToStudy(res[3], "res")
-  #for i,v in enumerate(res[0]):
-  #  geompy.addToStudy(v,"v%d"%i)
-  geompy.addToStudy(res, "res")
+  for r1 in [1, 100, 10000]:
+    for r2 in [0.75*r1, 0.3*r1, 0.1*r1]:
+      for thickness in [(r1-r2)/10.0, (r1-r2) /2.0, 0.75*(r1-r2)]:
+        h1 = r1 * 1.5
+        h2 = h1
+        res = build_shape(theStudy, r1, r2, h1, h2, thickness)
+        geompy.addToStudy(res, "res_%f_%f_%f"%(r1,r2, thickness))
   
