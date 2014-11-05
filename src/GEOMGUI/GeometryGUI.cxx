@@ -1840,8 +1840,8 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
   if ( !win )
     return;
 
-  const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-  //const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
+  const bool ViewOCC = ( win->getViewManager() ? win->getViewManager()->getType() == OCCViewer_Viewer::Type() : false );
+  //const bool ViewVTK = ( win->getViewManager() ? win->getViewManager()->getType() == SVTK_Viewer::Type() : false );
 
   // disable non-OCC viewframe menu commands
 //  action( GEOMOp::Op2dSketcher )->setEnabled( ViewOCC ); // SKETCHER
