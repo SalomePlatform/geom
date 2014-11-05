@@ -74,6 +74,10 @@
 #include <SUIT_MessageBox.h>
 #include <SUIT_Tools.h>
 
+#include <STD_TabDesktop.h>
+
+#include <QtxWorkstack.h>
+
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Module.h>
@@ -98,6 +102,7 @@
 
 // QT Includes
 #include <QAction>
+#include <QApplication>
 #include <QColorDialog>
 #include <QInputDialog>
 #include <QFileDialog>
@@ -112,13 +117,15 @@
 // VTK includes
 #include <vtkRenderer.h>
 
-class QtxDialog;
 // If the next macro is defined, autocolor feature works for all sub-shapes;
 // if it is undefined, autocolor feature works for groups only
 #define GENERAL_AUTOCOLOR
 // Below macro, when uncommented, switches on simplified (more performant) algorithm
 // of auto-color picking up
 #define SIMPLE_AUTOCOLOR
+// Below macro, when defined, switches on automatic layouting of OCC and Dependecy views
+// on Show Dependencies operation
+#define LAYOUT_DEPVIEW
 
 void GEOMToolsGUI::OnCheckGeometry()
 {
@@ -883,30 +890,48 @@ void GEOMToolsGUI::OnShowDependencyTree()
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app ) return;
 
-  SUIT_ViewManager *svm = app->getViewManager( GraphicsView_Viewer::Type(), false );
+#ifdef LAYOUT_DEPVIEW
+  SUIT_ViewManager* occVm = app->getViewManager( OCCViewer_Viewer::Type(), true );
+  SUIT_ViewWindow* occVw = occVm->getActiveView();
+#endif
+  SUIT_ViewManager* depVm = app->getViewManager( GraphicsView_Viewer::Type(), false );
+  SUIT_ViewWindow* depVw = 0;
 
-  if( !svm ) {
+  if ( !depVm ) {
     DependencyTree_View* view = new DependencyTree_View();
     DependencyTree_ViewModel* viewModel = new DependencyTree_ViewModel( GraphicsView_Viewer::Type(), view );
-    SUIT_ViewManager *svm = app->createViewManager( viewModel );
+    depVm = app->createViewManager( viewModel );
 
     LightApp_SelectionMgr* selMgr = app->selectionMgr();
     new DependencyTree_Selector( viewModel, (SUIT_SelectionMgr*)selMgr );
 
-    SUIT_ViewWindow* svw = svm->getActiveView();
+    depVw = depVm->getActiveView();
     GraphicsView_ViewFrame* aViewFrame = 0;
-    if (!svw) svw = svm->createViewWindow();
-    if (svw) aViewFrame = dynamic_cast<GraphicsView_ViewFrame*>(svw);
+    if ( !depVw ) depVw = depVm->createViewWindow();
+    if ( depVw ) aViewFrame = dynamic_cast<GraphicsView_ViewFrame*>( depVw );
 
     view->init( aViewFrame );
-    svm->setTitle( view->getViewName() );
+    depVm->setTitle( view->getViewName() );
   }
-  else
-    if( DependencyTree_ViewModel* viewModel = dynamic_cast<DependencyTree_ViewModel*>( svm->getViewModel() ) )
-      if( DependencyTree_View* view = dynamic_cast<DependencyTree_View*>( viewModel->getActiveViewPort() ) ) {
-        svm->getActiveView()->setFocus();
-        view->updateModel();
-      }
+  else if ( DependencyTree_ViewModel* viewModel = dynamic_cast<DependencyTree_ViewModel*>( depVm->getViewModel() ) ) {
+    if ( DependencyTree_View* view = dynamic_cast<DependencyTree_View*>( viewModel->getActiveViewPort() ) ) {
+      depVw = depVm->getActiveView();
+      view->updateModel();
+    }
+  }
+
+#ifdef LAYOUT_DEPVIEW
+  // layout views properly
+  STD_TabDesktop* d = dynamic_cast<STD_TabDesktop*>( app->desktop() );
+  if ( d && depVw && occVw ) {
+    QtxWorkstack* ws = d->workstack();
+    ws->stack();
+    QApplication::instance()->processEvents();
+    ws->Split( depVw, Qt::Horizontal, QtxWorkstack::SplitMove );
+    occVw->setFocus();
+  }
+#endif
+  depVw->setFocus();
 }
 
 void GEOMToolsGUI::OnReduceStudy()
