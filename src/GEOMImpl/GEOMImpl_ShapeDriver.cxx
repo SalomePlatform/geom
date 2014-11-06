@@ -95,11 +95,6 @@
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
 
-// Uncomment this definition to check if type of created shape is the same
-// as expected. For further details please see the Mantis issue
-// http://salome.mantis.opencascade.com/view.php?id=22674 
-//#define RESULT_TYPE_CHECK
-
 //modified by NIZNHY-PKV Wed Dec 28 13:48:20 2011f
 //static
 //  void KeepEdgesOrder(const Handle(TopTools_HSequenceOfShape)& aEdges,
@@ -139,16 +134,12 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   TopoDS_Shape aShape;
   TCollection_AsciiString aWarning;
-#ifdef RESULT_TYPE_CHECK
   TopAbs_ShapeEnum anExpectedType = TopAbs_SHAPE;
-#endif
 
   BRep_Builder B;
 
   if (aType == WIRE_EDGES) {
-#ifdef RESULT_TYPE_CHECK
     anExpectedType = TopAbs_WIRE;
-#endif
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
 
@@ -159,9 +150,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aShape = MakeWireFromEdges(aShapes, aTolerance);
   }
   else if (aType == FACE_WIRE) {
-#ifdef RESULT_TYPE_CHECK
     anExpectedType = TopAbs_FACE;
-#endif
 
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
@@ -196,9 +185,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     }
   }
   else if (aType == FACE_WIRES) {
-#ifdef RESULT_TYPE_CHECK
     anExpectedType = TopAbs_FACE;
-#endif
 
     // Try to build a face from a set of wires and edges
     int ind;
@@ -316,9 +303,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     }
   }
   else if (aType == SHELL_FACES) {
-#ifdef RESULT_TYPE_CHECK
     anExpectedType = TopAbs_SHELL;
-#endif
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
@@ -377,9 +362,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   }
   else if (aType == SOLID_SHELL) {
-#ifdef RESULT_TYPE_CHECK
     anExpectedType = TopAbs_SOLID;
-#endif
 
     Handle(GEOM_Function) aRefShell = aCI.GetBase();
     TopoDS_Shape aShapeShell = aRefShell->GetValue();
@@ -408,9 +391,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   }
   else if (aType == SOLID_SHELLS) {
-#ifdef RESULT_TYPE_CHECK
     anExpectedType = TopAbs_SOLID;
-#endif
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
@@ -444,9 +425,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aShape = Sol;
   }
   else if (aType == COMPOUND_SHAPES) {
-#ifdef RESULT_TYPE_CHECK
     anExpectedType = TopAbs_COMPOUND;
-#endif
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
@@ -491,9 +470,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   }
   */
   else if (aType == EDGE_WIRE) {
-#ifdef RESULT_TYPE_CHECK
     anExpectedType = TopAbs_EDGE;
-#endif
 
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aWire = aRefBase->GetValue();
@@ -504,9 +481,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aShape = MakeEdgeFromWire(aWire, LinTol, AngTol);
   }
   else if (aType == EDGE_CURVE_LENGTH) {
-#ifdef RESULT_TYPE_CHECK
     anExpectedType = TopAbs_EDGE;
-#endif
 
     GEOMImpl_IVector aVI (aFunction);
 
@@ -582,10 +557,6 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     if (aME.IsDone())
       aShape = aME.Shape();
   } else if (aType == SHAPE_ISOLINE) {
-#ifdef RESULT_TYPE_CHECK
-    anExpectedType = TopAbs_EDGE;
-#endif
-
     GEOMImpl_IIsoline     aII (aFunction);
     Handle(GEOM_Function) aRefFace = aII.GetFace();
     TopoDS_Shape          aShapeFace = aRefFace->GetValue();
@@ -627,34 +598,12 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aShape = aSfs->Shape();
   }
 
-#ifdef RESULT_TYPE_CHECK
   // Check if the result shape type is compatible with the expected.
   const TopAbs_ShapeEnum aShType = aShape.ShapeType();
 
   if (anExpectedType != TopAbs_SHAPE && anExpectedType != aShType) {
-    if (aShType == TopAbs_COMPOUND) {
-      // The result is compound. Check its sub-shapes.
-      TopoDS_Iterator anIter(aShape);
-
-      if (!anIter.More()) {
-        // The result is an empty compound.
-        Standard_ConstructionError::Raise("Result type check failed");
-      }
-
-      for (; anIter.More(); anIter.Next()) {
-        const TopAbs_ShapeEnum aSubType = anIter.Value().ShapeType();
-
-        if (anExpectedType != aSubType) {
-          // There is an incompatible type.
-          Standard_ConstructionError::Raise("Result type check failed");
-        }
-      }
-    } else {
-      // There is an incompatible type.
-      Standard_ConstructionError::Raise("Result type check failed");
-    }
+    Standard_ConstructionError::Raise("Result type check failed");
   }
-#endif
 
   aFunction->SetValue(aShape);
 
