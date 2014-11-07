@@ -354,8 +354,13 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
       aFace = anIndices.FindKey( aFaceLst[i] );
       try {
         getDisplayer()->SetColor( Quantity_NOC_RED );
-        getDisplayer()->SetToActivate( false );
 	getDisplayer()->SetTransparency( transparency );
+	getDisplayer()->SetWidth( 2 );
+	getDisplayer()->SetNbIsos( 1 );
+	getDisplayer()->SetIsosWidth( 1 );
+	getDisplayer()->SetIsosColor( Quantity_NOC_RED );
+	getDisplayer()->SetDisplayMode( 0 );
+        getDisplayer()->SetToActivate( false );
         aPrs = !aFace.IsNull() ? getDisplayer()->BuildPrs( aFace ) : 0;
         if ( aPrs )
           displayPreview( aPrs, true );

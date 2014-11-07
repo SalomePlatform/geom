@@ -473,25 +473,24 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myHasDisplayMode = false;
 
   int aType = resMgr->integerValue("Geometry", "type_of_marker", (int)Aspect_TOM_PLUS);
-  myWidth = resMgr->integerValue("Geometry", "edge_width", -1);
-  myIsosWidth = resMgr->integerValue("Geometry", "isolines_width", -1);
   
-  myTransparency = resMgr->integerValue("Geometry", "transparency", 0) / 100.;
-  myHasTransparency = false;
-
   myTypeOfMarker = (Aspect_TypeOfMarker)(std::min((int)Aspect_TOM_RING3, std::max((int)Aspect_TOM_POINT, aType)));
   myScaleOfMarker = (resMgr->integerValue("Geometry", "marker_scale", 1)-(int)GEOM::MS_10)*0.5 + 1.0;
   myScaleOfMarker = std::min(7.0, std::max(1., myScaleOfMarker));
 
+  // Next properties provide a way to customize displaying of presentations;
+  // for instance, this is useful for preview
   myColor = -1;
-  // This color is used for shape displaying. If it is equal -1 then
-  // default color is used.
   myTexture = "";
-
+  myNbIsos = -1;
   myWidth = -1;
+  myTransparency = -1;
   myType = -1;
+  myIsosColor = -1;
+  myIsosWidth = -1;
+
+  // This parameter is used for activisation/deactivisation (selection) of objects to be displayed
   myToActivate = true;
-  // This parameter is used for activisation/deactivisation of objects to be displayed
 
   // Activate parallel vizualisation only for testing purpose
   // and if the corresponding env variable is set to 1
@@ -864,12 +863,34 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   int isosWidth = propMap.value( GEOM::propertyName( GEOM::IsosWidth ) ).toInt();
   Handle(Prs3d_IsoAspect) uIsoAspect = AISShape->Attributes()->UIsoAspect();
   Handle(Prs3d_IsoAspect) vIsoAspect = AISShape->Attributes()->VIsoAspect();
-  uIsoAspect->SetColor( isosColor );
-  uIsoAspect->SetWidth( isosWidth );
-  uIsoAspect->SetNumber( uIsos );
-  vIsoAspect->SetColor( isosColor );
-  vIsoAspect->SetWidth( isosWidth );
-  vIsoAspect->SetNumber( vIsos );
+
+  if ( HasIsosColor() ) {
+    uIsoAspect->SetColor( (Quantity_NameOfColor)GetIsosColor() );
+    vIsoAspect->SetColor( (Quantity_NameOfColor)GetIsosColor() );
+  }
+  else {
+    uIsoAspect->SetColor( isosColor );
+    vIsoAspect->SetColor( isosColor );
+  }
+
+  if ( HasIsosWidth() ) {
+    uIsoAspect->SetWidth( GetIsosWidth() );
+    vIsoAspect->SetWidth( GetIsosWidth() );
+  }
+  else {
+    uIsoAspect->SetWidth( isosWidth );
+    vIsoAspect->SetWidth( isosWidth );
+  }
+  
+  if ( HasNbIsos() ) {
+    uIsoAspect->SetNumber( GetNbIsos() );
+    vIsoAspect->SetNumber( GetNbIsos() );
+  }
+  else {
+    uIsoAspect->SetNumber( uIsos );
+    vIsoAspect->SetNumber( vIsos );
+  }
+
   AISShape->Attributes()->SetUIsoAspect( uIsoAspect );
   AISShape->Attributes()->SetVIsoAspect( vIsoAspect );
 
@@ -1035,16 +1056,25 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
 
   // - set number of iso-lines
   int nbIsos[2]= { 1, 1 };
-  QStringList isos = propMap.value( GEOM::propertyName( GEOM::NbIsos ) ).toString().split( GEOM::subSectionSeparator() );
-  nbIsos[0] = isos[0].toInt();
-  nbIsos[1] = isos[1].toInt();
+  if ( HasNbIsos() ) {
+    nbIsos[0] = GetNbIsos();
+    nbIsos[1] = GetNbIsos();
+  }
+  else {
+    QStringList isos = propMap.value( GEOM::propertyName( GEOM::NbIsos ) ).toString().split( GEOM::subSectionSeparator() );
+    nbIsos[0] = isos[0].toInt();
+    nbIsos[1] = isos[1].toInt();
+  }
   actor->SetNbIsos( nbIsos );
 
   // - set iso-lines width
-  actor->SetIsosWidth( propMap.value( GEOM::propertyName( GEOM::IsosWidth ) ).toInt() );
+  actor->SetIsosWidth( HasIsosWidth() ? GetIsosWidth() : propMap.value( GEOM::propertyName( GEOM::IsosWidth ) ).toInt() );
 
   // - set iso-lines color
-  c = propMap.value( GEOM::propertyName( GEOM::IsosColor ) ).value<QColor>();
+  if ( HasIsosColor() )
+    c = SalomeApp_Tools::color( Quantity_Color((Quantity_NameOfColor)GetIsosColor()) );
+  else
+    c = propMap.value( GEOM::propertyName( GEOM::IsosColor ) ).value<QColor>();
   actor->SetIsosColor( c.redF(), c.greenF(), c.blueF() );
 
   // set colors
@@ -2022,15 +2052,9 @@ void GEOM_Displayer::UnsetColor()
 //=================================================================
 double GEOM_Displayer::SetTransparency( const double transparency )
 {
-  double aPrevTransparency = myTransparency;
-  if ( transparency < 0 ) {
-    UnsetTransparency();
-  }
-  else {
-    myTransparency = transparency;
-    myHasTransparency = true;
-  }
-  return aPrevTransparency;
+  double prevTransparency = myTransparency;
+  myTransparency = transparency;
+  return prevTransparency;
 }
 
 //=================================================================
@@ -2052,7 +2076,7 @@ double GEOM_Displayer::GetTransparency() const
 //=================================================================
 bool GEOM_Displayer::HasTransparency() const
 {
-  return myHasTransparency;
+  return myTransparency >= 0;
 }
 
 //=================================================================
@@ -2063,27 +2087,17 @@ bool GEOM_Displayer::HasTransparency() const
 //=================================================================
 double GEOM_Displayer::UnsetTransparency()
 {
-  double aPrevTransparency = myTransparency;
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  myTransparency = resMgr->integerValue("Geometry", "transparency", 0) / 100.;
-  myHasTransparency = false;
-  return aPrevTransparency;
+  return SetTransparency( -1 );
 }
-
 
 //=================================================================
 /*!
  *  GEOM_Displayer::SetTexture
- *  Set color for shape displaying. If it is equal -1 then default color is used.
- *  Available values are from Quantity_NameOfColor enumeration
  */
 //=================================================================
 void GEOM_Displayer::SetTexture( const std::string& texureFileName )
 {
-  if(texureFileName!="")
-  {
-    myTexture = texureFileName;
-  }
+  myTexture = texureFileName;
 }
 
 bool GEOM_Displayer::HasTexture() const
@@ -2122,7 +2136,6 @@ void GEOM_Displayer::UnsetWidth()
   myWidth = -1;
 }
 
-
 int GEOM_Displayer::GetIsosWidth() const
 {
   return myIsosWidth;
@@ -2138,6 +2151,49 @@ bool GEOM_Displayer::HasIsosWidth() const
   return myIsosWidth != -1;
 }
 
+int GEOM_Displayer::SetNbIsos( const int nbIsos )
+{
+  int prevNbIsos = myNbIsos;
+  myNbIsos = nbIsos;
+  return prevNbIsos;
+}
+
+int GEOM_Displayer::UnsetNbIsos()
+{
+  return SetNbIsos( -1 );
+}
+
+int GEOM_Displayer::GetNbIsos() const
+{
+  return myNbIsos;
+}
+
+bool GEOM_Displayer::HasNbIsos() const
+{
+  return myNbIsos >= 0;
+}
+
+int GEOM_Displayer::SetIsosColor( const int color )
+{
+  int prevColor = myIsosColor;
+  myIsosColor = color;
+  return prevColor;
+}
+
+int GEOM_Displayer::GetIsosColor() const
+{
+  return myIsosColor;
+}
+
+bool GEOM_Displayer::HasIsosColor() const
+{
+  return myIsosColor != -1;
+}
+
+int GEOM_Displayer::UnsetIsosColor()
+{
+  return SetIsosColor( -1 );
+}
 
 //=================================================================
 /*!

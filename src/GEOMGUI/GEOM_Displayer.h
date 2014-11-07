@@ -162,7 +162,20 @@ public:
   void          SetIsosWidth  ( const int );
   int           GetIsosWidth  () const;
   bool          HasIsosWidth  () const;
+ 
+  /* Set nb iso-libes for displaying. Use -1 to set default values. */
+  int           SetNbIsos( const int );
+  int           UnsetNbIsos();
+  int           GetNbIsos() const;
+  bool          HasNbIsos() const;
   
+  /* Set color for iso-lines displaying. If it is equal -1 then default color is used.
+     Available values are from Quantity_NameOfColor enumeration */
+  int           SetIsosColor  ( const int );
+  int           UnsetIsosColor();
+  int           GetIsosColor  () const;
+  bool          HasIsosColor  () const;
+ 
   /* Set display mode shape displaying. If it is equal -1 then display mode is used. */
   int           SetDisplayMode( const int );
   int           GetDisplayMode() const;
@@ -289,13 +302,14 @@ protected:
   int                              myColor;
   double                           myWidth;
   int                              myIsosWidth;
+  int                              myNbIsos;
+  int                              myIsosColor;
   bool                             myToActivate;
   int                              myDisplayMode;
   bool                             myHasDisplayMode;
   Aspect_TypeOfMarker              myTypeOfMarker;
   double                           myScaleOfMarker;
   double                           myTransparency;
-  bool                             myHasTransparency;
 
 private:
   SalomeApp_Application* myApp;
