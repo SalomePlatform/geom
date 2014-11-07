@@ -361,35 +361,6 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     }
 
   }
-  else if (aType == SOLID_SHELL) {
-    anExpectedType = TopAbs_SOLID;
-
-    Handle(GEOM_Function) aRefShell = aCI.GetBase();
-    TopoDS_Shape aShapeShell = aRefShell->GetValue();
-    if (!aShapeShell.IsNull() && aShapeShell.ShapeType() == TopAbs_COMPOUND) {
-      TopoDS_Iterator It (aShapeShell, Standard_True, Standard_True);
-      if (It.More()) aShapeShell = It.Value();
-    }
-    if (aShapeShell.IsNull() || aShapeShell.ShapeType() != TopAbs_SHELL) {
-      Standard_NullObject::Raise("Shape for solid construction is null or not a shell");
-    }
-
-    BRepCheck_Shell chkShell(TopoDS::Shell(aShapeShell));
-    if (chkShell.Closed() == BRepCheck_NotClosed) return 0;
-
-    TopoDS_Solid Sol;
-    B.MakeSolid(Sol);
-    B.Add(Sol, aShapeShell);
-    BRepClass3d_SolidClassifier SC (Sol);
-    SC.PerformInfinitePoint(Precision::Confusion());
-    if (SC.State() == TopAbs_IN) {
-      B.MakeSolid(Sol);
-      B.Add(Sol, aShapeShell.Reversed());
-    }
-
-    aShape = Sol;
-
-  }
   else if (aType == SOLID_SHELLS) {
     anExpectedType = TopAbs_SOLID;
 
@@ -445,30 +416,6 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aShape = C;
 
   }
-  /*
-  else if (aType == REVERSE_ORIENTATION) {
-    Handle(GEOM_Function) aRefShape = aCI.GetBase();
-    TopoDS_Shape aShape_i = aRefShape->GetValue();
-    if (aShape_i.IsNull()) {
-       Standard_NullObject::Raise("Shape for reverse is null");
-    }
-
-    BRepBuilderAPI_Copy Copy(aShape_i);
-    if( Copy.IsDone() ) {
-      TopoDS_Shape tds = Copy.Shape();
-      if( tds.IsNull() ) {
-        Standard_ConstructionError::Raise("Orientation aborted : Can not reverse the shape");
-      }
-
-      if( tds.Orientation() == TopAbs_FORWARD)
-        tds.Orientation(TopAbs_REVERSED);
-      else
-        tds.Orientation(TopAbs_FORWARD);
-
-      aShape = tds;
-    }
-  }
-  */
   else if (aType == EDGE_WIRE) {
     anExpectedType = TopAbs_EDGE;
 
@@ -1221,7 +1168,6 @@ GetCreationInformation(std::string&             theOperationName,
     theOperationName = "SHELL";
     AddParam( theParams, "Objects", aCI.GetShapes() );
     break;
-  case SOLID_SHELL:
   case SOLID_SHELLS:
     theOperationName = "SOLID";
     AddParam( theParams, "Objects", aCI.GetShapes() );

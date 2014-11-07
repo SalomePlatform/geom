@@ -352,6 +352,18 @@ void DependencyTree_View::onRebuildModel()
 }
 
 //=================================================================================
+// function : resizeEvent()
+// purpose  : reimplemented from QGraphicsView::resizeEvent()
+//=================================================================================
+void DependencyTree_View::resizeEvent(QResizeEvent *event)
+{
+  QPointF aCenter = mapToScene( event->oldSize().width()/2,
+                                event->oldSize().height()/2 );
+  QGraphicsView::resizeEvent( event );
+  centerOn( aCenter.x(),aCenter.y() );
+}
+
+//=================================================================================
 // function : onUpdateModel()
 // purpose  : slot for updating tree model for main objects in viewer
 //=================================================================================
@@ -689,7 +701,7 @@ void DependencyTree_View::updateView()
     return;
 
   drawTree();
-  fitAll();
+  fitWindow();
 }
 
 //=================================================================================
@@ -732,6 +744,23 @@ void DependencyTree_View::clearView( bool isClearModel )
     myMaxUpwardLevelsNumber = 0;
     myIsUpdate = true;
   }
+}
+
+//=================================================================================
+// function : fitWindow()
+// purpose  : scale the window considering a size of scene
+//=================================================================================
+void DependencyTree_View::fitWindow()
+{
+  int sizeFactor = 4;
+  if( objectsBoundingRect(true).width() > sizeFactor*size().width() ||
+      objectsBoundingRect(true).height() > sizeFactor*size().width() ) {
+    QRectF aRect = QRectF( -sizeFactor*size().width()/2, -sizeFactor*size().height()/2,
+                           sizeFactor*size().width(), sizeFactor*size().height() );
+    fitInView( aRect, Qt::KeepAspectRatio );
+  }
+  else
+    fitAll();
 }
 
 //=================================================================================

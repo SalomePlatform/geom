@@ -5,7 +5,7 @@
 \n To create a \b Compound in the <b>Main Menu</b> select <b>New
 Entity - > Build - > Compound</b>.
 
-\n You can create a compound from a list of shells.
+\n You can create a compound from a list of shapes.
 \n The \b Result will be a \b GEOM_Object (COMPOUND).
 
 \n <b>TUI Command:</b> <em>geompy.MakeCompound(ListOfShape)</em>

@@ -68,6 +68,10 @@ public slots:
 
   void                    onRebuildModel();
 
+protected:
+
+  void                    resizeEvent( QResizeEvent *event );
+
 private slots:
 
   void                    onUpdateModel();
@@ -92,6 +96,8 @@ private:
 
   void                    updateView();
   void                    clearView( bool );
+
+  void                    fitWindow();
 
   int                     checkMaxLevelsNumber();
 

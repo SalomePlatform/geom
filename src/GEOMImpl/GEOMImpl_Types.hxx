@@ -292,7 +292,7 @@
 #define WIRE_EDGES          1
 #define FACE_WIRE           2
 #define SHELL_FACES         3
-#define SOLID_SHELL         4
+//#define SOLID_SHELL         4
 #define SOLID_SHELLS        5
 #define COMPOUND_SHAPES     6
 #define SUBSHAPE_SORTED     7
