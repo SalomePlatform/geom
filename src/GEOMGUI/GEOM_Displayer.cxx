@@ -133,6 +133,9 @@
 
 // Hard-coded value of shape deflection coefficient for VTK viewer
 const double VTK_MIN_DEFLECTION = 0.001;
+// If the next macro is defined, the deflection coefficient for VTK presentation
+// is limited by VTK_MIN_DEFLECTION
+//#define LIMIT_DEFLECTION_FOR_VTK
 
 // Pixmap caching support
 namespace
@@ -1042,7 +1045,11 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
   // actor->SetShape(myShape,aDefPropMap.value(GEOM::propertyName( GEOM::Deflection )).toDouble(),myType == GEOM_VECTOR);
   /////////////////////////////////////////////////////////////////////////
   if ( !actor->getTopo().IsSame( myShape ) )
+#ifdef LIMIT_DEFLECTION_FOR_VTK
     actor->SetShape( myShape, VTK_MIN_DEFLECTION, myType == GEOM_VECTOR );
+#else
+    actor->SetShape( myShape, qMax( propMap.value( GEOM::propertyName( GEOM::Deflection ) ).toDouble(), GEOM::minDeflection() ), myType == GEOM_VECTOR );
+#endif
 
   // set material
   Material_Model material;
