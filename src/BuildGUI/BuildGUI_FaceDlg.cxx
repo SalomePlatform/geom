@@ -106,10 +106,7 @@ void BuildGUI_FaceDlg::Init()
   GroupWire->CheckButton1->setChecked( true );
   myWires.clear();
 
-  TColStd_MapOfInteger aMap;
-  aMap.Add( GEOM_EDGE );
-  aMap.Add( GEOM_WIRE );
-  globalSelection( aMap );
+  setGlobalSelection();
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -123,6 +120,23 @@ void BuildGUI_FaceDlg::Init()
   SelectionIntoArgument();
 }
 
+//=================================================================================
+// function : setGlobalSelection
+// purpose  :
+//=================================================================================
+void BuildGUI_FaceDlg::setGlobalSelection()
+{
+  TColStd_MapOfInteger aMap;
+
+  aMap.Add(GEOM_EDGE);
+  aMap.Add(GEOM_WIRE);
+  aMap.Add(GEOM_FACE);
+  aMap.Add(GEOM_SHELL);
+  aMap.Add(GEOM_SOLID);
+  aMap.Add(GEOM_COMPOUND);
+
+  globalSelection(aMap);
+}
 
 //=================================================================================
 // function : ClickOnOk()
@@ -159,7 +173,8 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
 
   QList<TopAbs_ShapeEnum> types;
-  types << TopAbs_EDGE << TopAbs_WIRE;
+  types << TopAbs_EDGE  << TopAbs_WIRE  << TopAbs_FACE
+        << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPOUND;
   myWires = getSelected( types, -1 );
 
   if ( !myWires.isEmpty() ) {
@@ -178,12 +193,8 @@ void BuildGUI_FaceDlg::SetEditCurrentArgument()
   QPushButton* send = (QPushButton*)sender();
   if ( send != GroupWire->PushButton1 )
     return;
-  
-  TColStd_MapOfInteger aMap;
-  aMap.Add( GEOM_EDGE );
-  aMap.Add( GEOM_WIRE );
-  globalSelection( aMap );
 
+  setGlobalSelection();
   myEditCurrentArgument = GroupWire->LineEdit1;
 
   myEditCurrentArgument->setFocus();
@@ -200,10 +211,7 @@ void BuildGUI_FaceDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  TColStd_MapOfInteger aMap;
-  aMap.Add( GEOM_EDGE );
-  aMap.Add( GEOM_WIRE );
-  globalSelection( aMap );
+  setGlobalSelection();
 }
 
 

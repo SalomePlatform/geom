@@ -53,6 +53,7 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  void                               setGlobalSelection();
   
 private:
   QList<GEOM::GeomObjPtr>            myWires;
