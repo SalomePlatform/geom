@@ -74,6 +74,7 @@ SET(GOOD_TESTS
   min_distance.py  
   normal_face.py  
   notebook_geom.py  
+  polyline.py
   point_coordinates.py  
   primitives_ex01.py  
   primitives_ex02.py  

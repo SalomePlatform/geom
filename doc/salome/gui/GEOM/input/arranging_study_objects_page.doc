@@ -36,11 +36,10 @@ and then displays only the children of the selected object(s).
   to change the order (ascending / descending) by clicking the corresponding title bar of the objects list.
 </li>
 
-<li>\ref dependency_tree_page "Show dependency tree" - shows dependency tree of selected objects
-in new 2D View Window.</li>
+<li>\ref dependency_tree_page "Show dependency tree" - shows the dependency tree with parents and children of the selected object
+in a new 2D View Window.</li>
 
-<li>\ref reduce_study_page "Reduce study" - allows to reduce study
-by automatic removing objects according to user's options.</li>
+<li>\ref reduce_study_page "Reduce study" - allows reducing the study by removing objects from it.</li>
 </ul>
 
 <h2> Folders </h2>

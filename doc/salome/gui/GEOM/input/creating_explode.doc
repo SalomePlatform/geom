@@ -26,11 +26,11 @@ sub-shapes of a given Type and returns a List of IDs of
 sub-shapes.</li>
 <li><em>geompy.SubShapeAllSortedCentres(Shape, Type)</em> explodes a
 shape on sub-shapes of a given type and sorts them taking into account
-their gravity centers, to provide stable order of sub-shapes.
+their gravity centers, to provide a stable order of sub-shapes.
 It returns a list of sub-shapes.</li>
 <li><em>geompy.SubShapeAllSortedCentresIDs(Shape, Type)</em> explodes
 a shape on sub-shapes of a given type and sorts them taking into
-account their gravity centers, to provide stable order of sub-shapes.
+account their gravity centers, to provide a stable order of sub-shapes.
 It returns a List of IDs of sub-shapes.</li>
 <li><em>geompy.SubShape(Shape, Type, ListOfInd)</em> allows to obtain
 a compound of sub-shapes of  the Shape,  selected by they indices in a
