@@ -212,6 +212,10 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       }
     }
 
+    if (aSeqEdgesIn->IsEmpty()) {
+      Standard_ConstructionError::Raise("No edges given");
+    }
+
     // 2. Connect edges to wires of maximum length
     Handle(TopTools_HSequenceOfShape) aSeqWiresOut;
     ShapeAnalysis_FreeBounds::ConnectEdgesToWires(aSeqEdgesIn, Precision::Confusion(),
