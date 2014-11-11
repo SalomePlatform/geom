@@ -653,6 +653,7 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
     TColStd_SequenceOfReal TolSeq;
     GeomAbs_CurveType CurType;
     TopoDS_Vertex FirstVertex, LastVertex;
+    Standard_Real aPntShiftDist = 0.;
 
     BRepTools_WireExplorer wexp(theWire) ;
     for (; wexp.More(); wexp.Next())
@@ -730,6 +731,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, aLine);
                 NewFpar = ElCLib::Parameter(PrevLine, P1);
                 NewLpar = ElCLib::Parameter(PrevLine, P2);
+
+                // Compute shift
+                if (ConnectByOrigin == TopAbs_FORWARD) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevLine);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevLine);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                 {
                   Standard_Real MemNewFpar = NewFpar;
@@ -749,6 +762,8 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                   Abs(aCircle.Radius() - PrevCircle.Radius()) <= LinTol &&
                   aCircle.Axis().IsParallel(PrevCircle.Axis(), AngTol))
               {
+                const Standard_Boolean isFwd = ConnectByOrigin == TopAbs_FORWARD;
+
                 if (aCircle.Axis().Direction() * PrevCircle.Axis().Direction() < 0.)
                 {
                   Standard_Real memfpar = fpar;
@@ -760,6 +775,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, aCircle);
                 NewFpar = ElCLib::Parameter(PrevCircle, P1);
                 NewLpar = ElCLib::Parameter(PrevCircle, P2);
+
+                // Compute shift
+                if (isFwd) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevCircle);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevCircle);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                   NewLpar += 2.*M_PI;
                 //Standard_Real MemNewFpar = NewFpar, MemNewLpar =  NewLpar;
@@ -785,6 +812,8 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                   Abs(anEllipse.MinorRadius() - PrevEllipse.MinorRadius()) <= LinTol &&
                   anEllipse.Axis().IsParallel(PrevEllipse.Axis(), AngTol))
               {
+                const Standard_Boolean isFwd = ConnectByOrigin == TopAbs_FORWARD;
+
                 if (anEllipse.Axis().Direction() * PrevEllipse.Axis().Direction() < 0.)
                 {
                   Standard_Real memfpar = fpar;
@@ -796,6 +825,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, anEllipse);
                 NewFpar = ElCLib::Parameter(PrevEllipse, P1);
                 NewLpar = ElCLib::Parameter(PrevEllipse, P2);
+
+                // Compute shift
+                if (isFwd) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevEllipse);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevEllipse);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                   NewLpar += 2.*M_PI;
                 if (ConnectByOrigin == TopAbs_FORWARD)
@@ -824,6 +865,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, aHypr);
                 NewFpar = ElCLib::Parameter(PrevHypr, P1);
                 NewLpar = ElCLib::Parameter(PrevHypr, P2);
+
+                // Compute shift
+                if (ConnectByOrigin == TopAbs_FORWARD) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevHypr);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevHypr);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                 {
                   Standard_Real MemNewFpar = NewFpar;
@@ -848,6 +901,18 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
                 gp_Pnt P2 = ElCLib::Value(lpar, aParab);
                 NewFpar = ElCLib::Parameter(PrevParab, P1);
                 NewLpar = ElCLib::Parameter(PrevParab, P2);
+
+                // Compute shift
+                if (ConnectByOrigin == TopAbs_FORWARD) {
+                  gp_Pnt aNewP2 = ElCLib::Value(NewLpar, PrevParab);
+
+                  aPntShiftDist += P2.Distance(aNewP2);
+                } else {
+                  gp_Pnt aNewP1 = ElCLib::Value(NewFpar, PrevParab);
+
+                  aPntShiftDist += P1.Distance(aNewP1);
+                }
+
                 if (NewLpar < NewFpar)
                 {
                   Standard_Real MemNewFpar = NewFpar;
@@ -877,14 +942,15 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
           LocSeq.Append(aLocShape);
           FparSeq.Append(fpar);
           LparSeq.Append(lpar);
-          TolSeq.Append(BRep_Tool::Tolerance(CurVertex));
+          TolSeq.Append(aPntShiftDist + BRep_Tool::Tolerance(CurVertex));
+          aPntShiftDist = 0.;
           CurType = aType;
         }
       } // end of else (CurveSeq.IsEmpty()) -> not first time
     } // end for (; wexp.More(); wexp.Next())
 
     LastVertex = wexp.CurrentVertex();
-    TolSeq.Append(BRep_Tool::Tolerance(LastVertex));
+    TolSeq.Append(aPntShiftDist + BRep_Tool::Tolerance(LastVertex));
 
     FirstVertex.Orientation(TopAbs_FORWARD);
     LastVertex.Orientation(TopAbs_REVERSED);
