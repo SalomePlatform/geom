@@ -57,7 +57,7 @@ to the main and the second shape.</li>
 <li><b>Hide selected</b> - hides the sub-shapes selected in the list box.</li>
 <li><b>Show all sub-shapes</b> - displays only the sub-shapes of the Main Shape.</li>
 </ul>
-<li> You can select the elements of your group in two ways:
+<li> You can select the elements of your group in several ways:
 <ul>
 <li>You can select them manually in the 3D Viewer, and add to the
 group by clicking the \b Add button (keep down the Shift button on the
@@ -70,7 +70,9 @@ elements of a certain type in the list of the elements of the
 group. If the <b>Second Shape</b> is used, the elements are added 
 according to <b>Main Shape Selection restriction</b> settings. To delete elements 
 from the list, select them and click \b Remove button.
-</li></ul>
+</li>
+<li>Filtering out some entities according to the specified threshold value or values
+(see below).</li></ul>
 </li>
 <li>Finally, confirm your selection by clicking <b>Apply and Close
 </b> (also closes the Menu) or \b Apply (leaves the Menu open for 
@@ -78,6 +80,26 @@ creation of other groups), or skip it by clicking \b Close button.
 </li></ul>
 
 \n The Result of the operation will be a \b GEOM_Object.
+
+The \b Filter controls allow to automatically pick up entites which satisfy specified 
+threshold value(s). The numerical functor for each sub-shape that is compared with
+threshold value(s) is computed according to the shape's topological properties:
+- length for edges and wires
+- area for faces and shells
+- volume for solids, compounds, compsolids
+
+Filtering capabilities are not available for vertices.
+
+In order to filter out some entities:
+- Activate one or two filtering controls by switching on corresponding check boxes;
+- Select required threshold comparator type; the following choices are available:
+  - <b>Less Than</b> or <b>Equal or Less Than</b> for the first comparator;
+  - <b>Greater Than</b> or <b>Equal or Greater Than</b> for the second comparator;
+- Enter required threshold value (values);
+- Press \b Apply button in the \b Filter group.
+
+The entities which satisfy entered filtering parameters will be automatically highlighted
+in the 3D viewer.
 
 \n <b>TUI Command:</b> <em>geompy.CreateGroup(MainShape,
 ShapeType),</em> where MainShape is a shape for which the group is

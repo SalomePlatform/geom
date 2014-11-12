@@ -42,6 +42,27 @@ Switching on <b>Select Sub-shapes</b> check box allows manual selection of sub-s
 to be extracted from the main object. In this mode the user can select sub-shapes
 directly in 3D viewer.
 
+When <b>Select Sub-shapes</b> check box is switched on, additional \b Filter controls
+allow to automatically pick up entites which satisfy specified threshold value(s).
+The numerical functor for each sub-shape that is compared with threshold value(s)
+is computed according to the shape's topological properties:
+- length for edges and wires
+- area for faces and shells
+- volume for solids, compounds, compsolids
+
+Filtering capabilities are not available for vertices.
+
+In order to filter out some entities:
+- Activate one or two filtering controls by switching on corresponding check boxes;
+- Select required threshold comparator type; the following choices are available:
+  - <b>Less Than</b> or <b>Equal or Less Than</b> for the first comparator;
+  - <b>Greater Than</b> or <b>Equal or Greater Than</b> for the second comparator;
+- Enter required threshold value (values);
+- Press \b Apply button in the \b Filter group.
+
+The entities which satisfy entered filtering parameters will be automatically highlighted
+in the 3D viewer.
+
 Using <b>TUI Commands</b> you can perform this operation in a
 variety of ways:
 - <em>geompy.ExtractShapes(Shape, Type, isSorted)</em> explodes a

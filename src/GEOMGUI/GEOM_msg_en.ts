@@ -5152,6 +5152,34 @@ shells and solids on the other hand.</translation>
         <source>CC_PNT_ITEM_X_Y_Z</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
     </message>
+    <message>
+        <source>GEOM_FILTER</source>
+        <translation>Filter</translation>
+    </message>
+    <message>
+        <source>GEOM_LESS_THAN</source>
+        <translation>Less Than</translation>
+    </message>
+    <message>
+        <source>GEOM_LESSOREQUAL_THAN</source>
+        <translation>Equal or Less Than</translation>
+    </message>
+    <message>
+        <source>GEOM_GREAT_THAN</source>
+        <translation>Greater Than</translation>
+    </message>
+    <message>
+        <source>GEOM_GREATOREQUAL_THAN</source>
+        <translation>Equal or Greater Than</translation>
+    </message>
+    <message>
+        <source>GEOM_SOME_SHAPES_SELECTED</source>
+        <translation>%1 shape(s) has(have) been selected</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SHAPES_SELECTED</source>
+        <translation>There are no shapes that meet filtering parameters</translation>
+    </message>
 </context>
 <context>
     <name>GeometryGUI</name>

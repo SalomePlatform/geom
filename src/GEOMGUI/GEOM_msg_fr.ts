@@ -5100,6 +5100,34 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>CC_PNT_ITEM_X_Y_Z</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
     </message>
+    <message>
+        <source>GEOM_FILTER</source>
+        <translation type="unfinished">Filter</translation>
+    </message>
+    <message>
+        <source>GEOM_LESS_THAN</source>
+        <translation type="unfinished">Less Than</translation>
+    </message>
+    <message>
+        <source>GEOM_LESSOREQUAL_THAN</source>
+        <translation type="unfinished">Equal or Less Than</translation>
+    </message>
+    <message>
+        <source>GEOM_GREAT_THAN</source>
+        <translation type="unfinished">Greater Than</translation>
+    </message>
+    <message>
+        <source>GEOM_GREATOREQUAL_THAN</source>
+        <translation type="unfinished">Equal or Greater Than</translation>
+    </message>
+    <message>
+        <source>GEOM_SOME_SHAPES_SELECTED</source>
+        <translation type="unfinished">%1 shape(s) has(have) been selected</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SHAPES_SELECTED</source>
+        <translation type="unfinished">There are no shapes that meet filtering parameters</translation>
+    </message>
 </context>
 <context>
     <name>GeometryGUI</name>

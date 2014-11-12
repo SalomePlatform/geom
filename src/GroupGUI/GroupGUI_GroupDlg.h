@@ -33,10 +33,14 @@
 #include <TColStd_DataMapOfIntegerInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 
+class QCheckBox;
+class QComboBox;
+class QPushButton;
 class QGroupBox;
 class QLineEdit;
 class QListWidget;
 class QButtonGroup;
+class SalomeApp_DoubleSpinBox;
 
 //=================================================================================
 // class    : GroupGUI_GroupDlg
@@ -77,6 +81,8 @@ private slots:
   void                                remove();
   void                                showOnlySelected();
   void                                selectionChanged();
+  void                                ClickOnOkFilter();
+  void                                MeasureToggled();
 
 private:
   void                                Init();
@@ -119,6 +125,14 @@ private:
   QPushButton*                        myHideSelBtn;
   QPushButton*                        myShowAllBtn;
   QListWidget*                        myIdList;
+  QCheckBox*                          myLessFilterCheck;
+  QCheckBox*                          myGreaterFilterCheck;
+  QComboBox*                          myLessFilterCombo;
+  QComboBox*                          myGreaterFilterCombo;
+  SalomeApp_DoubleSpinBox*            myLessFilterSpin;
+  SalomeApp_DoubleSpinBox*            myGreaterFilterSpin;
+  QPushButton*                        myApplyFilterButton;
+  QGroupBox*                          myFilterGrp;
 };
 
 #endif

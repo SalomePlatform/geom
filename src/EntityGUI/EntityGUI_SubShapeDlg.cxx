@@ -29,6 +29,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include <GEOMUtils.hxx>
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
@@ -36,6 +37,7 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <SALOME_ListIO.hxx>
+#include <SUIT_MessageBox.h>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
@@ -50,8 +52,6 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
-
-#include <QMessageBox>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -69,6 +69,8 @@ namespace
     "Shape",
     "Flat"
   };
+
+  enum { Filter_LT, Filter_LE, Filter_GT, Filter_GE };
 
   unsigned int NumberOfSubShapes(const TopoDS_Shape& S, const int shapeType, TopTools_MapOfShape& M)
   {
@@ -149,9 +151,34 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidge
   GroupPoints->PushButton4->setText(tr("SHOW_ALL_SUB_SHAPES"));
   GroupPoints->LineEdit1->setReadOnly(true);
 
+  //filter group
+
+  myFilterGrp = new QGroupBox(tr("GEOM_FILTER"), centralWidget());
+  myLessFilterCheck = new QCheckBox(myFilterGrp);
+  myLessFilterCombo = new QComboBox(myFilterGrp);
+  myLessFilterCombo->addItem( tr("GEOM_LESS_THAN"), Filter_LT );
+  myLessFilterCombo->addItem( tr("GEOM_LESSOREQUAL_THAN"), Filter_LE );
+  myGreaterFilterCheck = new QCheckBox(myFilterGrp);
+  myGreaterFilterCombo = new QComboBox(myFilterGrp);
+  myGreaterFilterCombo->addItem( tr("GEOM_GREAT_THAN"), Filter_GT );
+  myGreaterFilterCombo->addItem( tr("GEOM_GREATOREQUAL_THAN"), Filter_GE );
+  myLessFilterSpin = new SalomeApp_DoubleSpinBox(myFilterGrp);
+  myGreaterFilterSpin = new SalomeApp_DoubleSpinBox(myFilterGrp);
+  myApplyFilterButton = new QPushButton(tr("GEOM_BUT_APPLY"), myFilterGrp);
+
+  QGridLayout* filterLayout = new QGridLayout(myFilterGrp);
+  filterLayout->addWidget(myLessFilterCheck,    0, 0);
+  filterLayout->addWidget(myLessFilterCombo,    0, 1);
+  filterLayout->addWidget(myLessFilterSpin,     0, 2);
+  filterLayout->addWidget(myGreaterFilterCheck, 1, 0);
+  filterLayout->addWidget(myGreaterFilterCombo, 1, 1);
+  filterLayout->addWidget(myGreaterFilterSpin,  1, 2);
+  filterLayout->addWidget(myApplyFilterButton,  0, 3);
+
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
   layout->addWidget(GroupPoints);
+  layout->addWidget(myFilterGrp);
   /***************************************************************/
 
   setIsOptimizedBrowsing(true);
@@ -183,6 +210,16 @@ EntityGUI_SubShapeDlg::~EntityGUI_SubShapeDlg()
 //=================================================================================
 void EntityGUI_SubShapeDlg::Init()
 {
+  // Get setting of step value from file configuration
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
+
+  // min, max, step and decimals for spin boxes
+  initSpinBox(myLessFilterSpin, 0., COORD_MAX, step, "length_precision" );
+  initSpinBox(myGreaterFilterSpin, 0., COORD_MAX, step, "length_precision" );
+  myLessFilterSpin->setValue( 0. );
+  myGreaterFilterSpin->setValue( 0. );
+
   /* init variables */
   myDmMode = -1;
   myEditCurrentArgument = GroupPoints->LineEdit1;
@@ -212,6 +249,10 @@ void EntityGUI_SubShapeDlg::Init()
   connect(GroupPoints->PushButton3, SIGNAL(clicked()), this, SLOT(showOnlySelected()));
   connect(GroupPoints->PushButton4, SIGNAL(clicked()), this, SLOT(showOnlySelected()));
 
+  connect(myApplyFilterButton, SIGNAL(clicked()),         this, SLOT(ClickOnOkFilter()));
+  connect(myLessFilterCheck,   SIGNAL(stateChanged(int)), this, SLOT(MeasureToggled()));
+  connect(myGreaterFilterCheck,   SIGNAL(stateChanged(int)), this, SLOT(MeasureToggled()));
+
   connect(myGeomGUI->getApp()->selectionMgr(),
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
@@ -219,6 +260,7 @@ void EntityGUI_SubShapeDlg::Init()
   resize(100,100);
   SelectionIntoArgument();
   SubShapeToggled();
+  MeasureToggled();
 }
 
 //=================================================================================
@@ -270,12 +312,11 @@ void EntityGUI_SubShapeDlg::ClickOnOk()
     /* More than 30 sub-shapes : ask confirmation */
     unsigned int nb = NumberOfSubShapes(myShape, shapeType());
     if (nb > 30) {
-      const QString caption = tr("GEOM_CONFIRM");
-      const QString text = tr("GEOM_CONFIRM_INFO").arg(nb);
-      const QString button0 = tr("GEOM_BUT_EXPLODE");
-      const QString button1 = tr("GEOM_BUT_CANCEL");
-
-      if (QMessageBox::warning(this, caption, text, button0, button1) != 0)
+      if (SUIT_MessageBox::question( this,
+                                     tr("GEOM_CONFIRM"),
+                                     tr("GEOM_CONFIRM_INFO").arg(nb),
+                                     tr("GEOM_BUT_EXPLODE"),
+                                     tr("GEOM_BUT_CANCEL") ) != 0 )
         isOk = false;  /* aborted */
     }
   }
@@ -300,12 +341,11 @@ bool EntityGUI_SubShapeDlg::ClickOnApply()
     /* More than 30 sub-shapes : ask confirmation */
     unsigned int nb = NumberOfSubShapes(myShape, shapeType());
     if (nb > 30) {
-      const QString caption = tr("GEOM_CONFIRM");
-      const QString text = tr("GEOM_CONFIRM_INFO").arg(nb);
-      const QString button0 = tr("GEOM_BUT_EXPLODE");
-      const QString button1 = tr("GEOM_BUT_CANCEL");
-
-      if (QMessageBox::warning(this, caption, text, button0, button1) != 0)
+      if (SUIT_MessageBox::question( this,
+                                     tr("GEOM_CONFIRM"),
+                                     tr("GEOM_CONFIRM_INFO").arg(nb),
+                                     tr("GEOM_BUT_EXPLODE"),
+                                     tr("GEOM_BUT_CANCEL") ) != 0 )
         return false;  /* aborted */
     }
   }
@@ -447,6 +487,9 @@ void EntityGUI_SubShapeDlg::SubShapeToggled()
   GroupPoints->PushButton2->setEnabled(!isAllSubShapes());
   GroupPoints->PushButton3->setEnabled(!isAllSubShapes());
   GroupPoints->PushButton4->setEnabled(!isAllSubShapes());
+  myFilterGrp->setEnabled(GroupPoints->CheckButton1->isEnabled() &&
+                          GroupPoints->CheckButton1->isChecked() &&
+                          shapeType() < GEOM::VERTEX);
 
   activateSelection();
 }
@@ -479,6 +522,7 @@ void EntityGUI_SubShapeDlg::updateButtonState()
     GroupPoints->CheckButton1->setChecked( false );
     GroupPoints->CheckButton1->setEnabled( false );
   }
+  myFilterGrp->setEnabled(GroupPoints->CheckButton1->isEnabled() && GroupPoints->CheckButton1->isChecked());
 }
 
 //=================================================================================
@@ -833,4 +877,74 @@ GEOM::GEOM_Object_ptr EntityGUI_SubShapeDlg::getFather(GEOM::GEOM_Object_ptr)
 QString EntityGUI_SubShapeDlg::getNewObjectName (int) const
 {
   return QString::null;
+}
+
+//=================================================================================
+// function : ClickOnOkFilter()
+// purpose  : highlight and select entities which parameters (length, area or volume) are less than the value specified by the user
+//=================================================================================
+void EntityGUI_SubShapeDlg::ClickOnOkFilter()
+{
+  if (CORBA::is_nil(myObject) || isAllSubShapes() || shapeType() >= GEOM::VERTEX)
+    return;
+  
+  TopTools_IndexedMapOfShape aSubShapesMap;
+  TopExp::MapShapes(myShape, aSubShapesMap);
+  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  getDisplayer()->Erase(myObject, false, false);
+  CORBA::String_var aMainEntry = myObject->GetStudyEntry();
+  QString anEntryBase = aMainEntry.in();
+
+  SALOME_ListIO toSelect;
+
+  TopExp_Explorer anExp (myShape, (TopAbs_ShapeEnum)shapeType());
+  for (; anExp.More(); anExp.Next())
+  {
+    TopoDS_Shape aSubShape = anExp.Current();
+    int index = aSubShapesMap.FindIndex(aSubShape);
+    QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
+    if ( !getDisplayer()->IsDisplayed( anEntry ) )
+      continue;
+
+    double factor = GEOMUtils::ShapeToDouble(aSubShape).second;
+    double v1 = myLessFilterSpin->value();
+    double v2 = myGreaterFilterSpin->value();
+    bool isLess = myLessFilterCombo->itemData(myLessFilterCombo->currentIndex()).toInt() == Filter_LT ? factor < v1 : factor <= v1;
+    bool isGreater = myGreaterFilterCombo->itemData(myGreaterFilterCombo->currentIndex()).toInt() == Filter_GT ? factor > v2 : factor >= v2;
+    if ( ( myLessFilterCheck->isChecked() && myGreaterFilterCheck->isChecked() && isLess && isGreater ) ||
+         ( myLessFilterCheck->isChecked() && !myGreaterFilterCheck->isChecked() && isLess ) ||
+         ( myGreaterFilterCheck->isChecked() && !myLessFilterCheck->isChecked() && isGreater ) ) {
+      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject();
+      io->setEntry( anEntry.toLatin1().constData() );
+      toSelect.Append(io);
+    }
+  }
+  if ( toSelect.Extent() > 0 ) {
+    myGeomGUI->getApp()->selectionMgr()->setSelectedObjects(toSelect);
+    SUIT_MessageBox::information( this,
+                                  tr( "INF_INFO" ),
+                                  tr( "GEOM_SOME_SHAPES_SELECTED").arg( toSelect.Extent() ),
+                                  tr( "BUT_OK" ) );
+  }
+  else {
+    SUIT_MessageBox::information( this,
+                                  tr( "INF_INFO" ),
+                                  tr( "GEOM_NO_SHAPES_SELECTED" ),
+                                  tr( "BUT_OK" ) );
+  }
+  updateButtonState();
+}
+
+//=================================================================================
+// function : MeasureToggled()
+// purpose  :
+//          : Called when 'myLessFilterCheck' or 'myGreaterFilterCheck' state change
+//=================================================================================
+void EntityGUI_SubShapeDlg::MeasureToggled()
+{
+  myLessFilterSpin->setEnabled(myLessFilterCheck->isChecked());
+  myLessFilterCombo->setEnabled(myLessFilterCheck->isChecked());
+  myGreaterFilterSpin->setEnabled(myGreaterFilterCheck->isChecked());
+  myGreaterFilterCombo->setEnabled(myGreaterFilterCheck->isChecked());
+  myApplyFilterButton->setEnabled(myLessFilterCheck->isChecked() || myGreaterFilterCheck->isChecked());
 }

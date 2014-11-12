@@ -31,6 +31,11 @@
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 
+class QCheckBox;
+class QComboBox;
+class QGroupBox;
+class QPushButton;
+class SalomeApp_DoubleSpinBox;
 class DlgRef_1Sel1List1Check3Btn;
 
 //=================================================================================
@@ -66,6 +71,8 @@ private slots:
   void                                ComboTextChanged();
 
   void                                showOnlySelected();
+  void                                ClickOnOkFilter();
+  void                                MeasureToggled();
 
 private:
   void                                Init();
@@ -87,6 +94,14 @@ private:
   bool                                myIsHiddenMain;
 
   DlgRef_1Sel1List1Check3Btn*         GroupPoints;
+  QCheckBox*                          myLessFilterCheck;
+  QCheckBox*                          myGreaterFilterCheck;
+  QComboBox*                          myLessFilterCombo;
+  QComboBox*                          myGreaterFilterCombo;
+  SalomeApp_DoubleSpinBox*            myLessFilterSpin;
+  SalomeApp_DoubleSpinBox*            myGreaterFilterSpin;
+  QPushButton*                        myApplyFilterButton;
+  QGroupBox*                          myFilterGrp;
 };
 
 #endif // ENTITYGUI_SUBSHAPEDLG_H

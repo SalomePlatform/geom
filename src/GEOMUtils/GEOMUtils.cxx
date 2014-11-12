@@ -212,46 +212,6 @@ namespace
     return isModified;
   }
 
-  //=======================================================================
-  //function : ShapeToDouble
-  //purpose  : used by CompareShapes::operator()
-  //=======================================================================
-  std::pair<double, double> ShapeToDouble (const TopoDS_Shape& S, bool isOldSorting)
-  {
-    // Computing of CentreOfMass
-    gp_Pnt GPoint;
-    double Len;
-
-    if (S.ShapeType() == TopAbs_VERTEX) {
-      GPoint = BRep_Tool::Pnt(TopoDS::Vertex(S));
-      Len = (double)S.Orientation();
-    }
-    else {
-      GProp_GProps GPr;
-      // BEGIN: fix for Mantis issue 0020842
-      if (isOldSorting) {
-        BRepGProp::LinearProperties(S, GPr);
-      }
-      else {
-        if (S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE) {
-          BRepGProp::LinearProperties(S, GPr);
-        }
-        else if (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL) {
-          BRepGProp::SurfaceProperties(S, GPr);
-        }
-        else {
-          BRepGProp::VolumeProperties(S, GPr);
-        }
-      }
-      // END: fix for Mantis issue 0020842
-      GPoint = GPr.CentreOfMass();
-      Len = GPr.Mass();
-    }
-
-    double dMidXYZ = GPoint.X() * 999.0 + GPoint.Y() * 99.0 + GPoint.Z() * 0.9;
-    return std::make_pair(dMidXYZ, Len);
-  }
-
   void parseWard( const GEOMUtils::LevelsList &theLevelList, std::string &treeStr )
   {
     treeStr.append( "{" );
@@ -322,6 +282,46 @@ namespace
     return levelsListData;
   }
 
+}
+
+//=======================================================================
+//function : ShapeToDouble
+//purpose  : used by CompareShapes::operator()
+//=======================================================================
+std::pair<double, double> GEOMUtils::ShapeToDouble (const TopoDS_Shape& S, bool isOldSorting)
+{
+  // Computing of CentreOfMass
+  gp_Pnt GPoint;
+  double Len;
+
+  if (S.ShapeType() == TopAbs_VERTEX) {
+    GPoint = BRep_Tool::Pnt(TopoDS::Vertex(S));
+    Len = (double)S.Orientation();
+  }
+  else {
+    GProp_GProps GPr;
+    // BEGIN: fix for Mantis issue 0020842
+    if (isOldSorting) {
+      BRepGProp::LinearProperties(S, GPr);
+    }
+    else {
+      if (S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE) {
+        BRepGProp::LinearProperties(S, GPr);
+      }
+      else if (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL) {
+        BRepGProp::SurfaceProperties(S, GPr);
+      }
+      else {
+        BRepGProp::VolumeProperties(S, GPr);
+      }
+    }
+    // END: fix for Mantis issue 0020842
+    GPoint = GPr.CentreOfMass();
+    Len = GPr.Mass();
+  }
+
+  double dMidXYZ = GPoint.X() * 999.0 + GPoint.Y() * 99.0 + GPoint.Z() * 0.9;
+  return std::make_pair(dMidXYZ, Len);
 }
 
 //=======================================================================
