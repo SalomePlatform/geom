@@ -3022,7 +3022,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         @ManageTransactions("PrimOp")
         def MakeCylinderA(self, thePnt, theAxis, theR, theH, theA, theName=None):
             """
-            Create a a portion of cylinder with given base point, axis, radius, height and angle.
+            Create a portion of cylinder with given base point, axis, radius, height and angle.
 
             Parameters:
                 thePnt Central point of cylinder base.
