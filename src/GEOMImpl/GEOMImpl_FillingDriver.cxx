@@ -205,7 +205,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     }
 
     /* a 'tolerance' is used to compare 2 knots : see GeomFill_Generator.cdl */
-    Section.Perform(Precision::Confusion());
+    Section.Perform(Precision::PConfusion());
     Handle(GeomFill_Line) Line = new GeomFill_Line(i);
 
     GeomFill_AppSurf App (mindeg, maxdeg, tol3d, tol2d, nbiter); /* user parameters */
