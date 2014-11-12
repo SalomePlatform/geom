@@ -73,7 +73,7 @@
 //=============================================================================
 
 TopoDS_Shape GetShape(const Handle(Standard_Transient)        &theEnti,
-		      const Handle(Transfer_TransientProcess) &theTP)
+                      const Handle(Transfer_TransientProcess) &theTP)
 {
   TopoDS_Shape            aResult;
   Handle(Transfer_Binder) aBinder = theTP->Find(theEnti);
@@ -94,8 +94,8 @@ TopoDS_Shape GetShape(const Handle(Standard_Transient)        &theEnti,
 //=============================================================================
 
 TDF_Label GetLabel(const Handle(Standard_Transient) &theEnti,
-		   const TDF_Label                  &theShapeLabel,
-		   const TopoDS_Shape               &aShape)
+                   const TDF_Label                  &theShapeLabel,
+                   const TopoDS_Shape               &aShape)
 {
   TDF_Label aResult;
 
@@ -443,7 +443,7 @@ Standard_Integer STEPPlugin_ImportDriver::Execute( TFunction_Logbook& log ) cons
 
       // Check if any BRep entity has been read, there must be at least a vertex
       if ( !TopExp_Explorer( aResShape, TopAbs_VERTEX ).More() )
-        anError = "No geometrical data in the imported file.";
+        StdFail_NotDone::Raise( "No geometrical data in the imported file." );
 
       // BEGIN: Store names and materials of sub-shapes from file
       TopTools_IndexedMapOfShape anIndices;
