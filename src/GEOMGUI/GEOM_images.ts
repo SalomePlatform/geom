@@ -176,6 +176,10 @@
             <translation>build_shell.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_SOLID_FROM_FACES</source>
+            <translation>solid_from_faces.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_BUILD_SOLID</source>
             <translation>build_solid.png</translation>
         </message>
@@ -1266,6 +1270,10 @@
         <message>
             <source>ICO_SOLID</source>
             <translation>build_solid.png</translation>
+        </message>
+        <message>
+            <source>ICO_SOLID_FROM_FACES</source>
+            <translation>solid_from_face.png</translation>
         </message>
         <message>
             <source>ICO_SOLID_SEL_ONLY</source>

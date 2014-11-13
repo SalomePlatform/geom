@@ -98,6 +98,11 @@
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
 
+#include <BOPAlgo_PaveFiller.hxx>
+#include <BOPAlgo_MakerVolume.hxx>
+
+#include <list>
+
 //modified by NIZNHY-PKV Wed Dec 28 13:48:20 2011f
 //static
 //  void KeepEdgesOrder(const Handle(TopTools_HSequenceOfShape)& aEdges,
@@ -137,12 +142,12 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   TopoDS_Shape aShape;
   TCollection_AsciiString aWarning;
-  TopAbs_ShapeEnum anExpectedType = TopAbs_SHAPE;
+  std::list<TopAbs_ShapeEnum> anExpectedType;
 
   BRep_Builder B;
 
   if (aType == WIRE_EDGES) {
-    anExpectedType = TopAbs_WIRE;
+    anExpectedType.push_back(TopAbs_WIRE);
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
 
@@ -153,7 +158,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aShape = MakeWireFromEdges(aShapes, aTolerance);
   }
   else if (aType == FACE_WIRE) {
-    anExpectedType = TopAbs_FACE;
+    anExpectedType.push_back(TopAbs_FACE);
 
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
@@ -188,7 +193,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     }
   }
   else if (aType == FACE_WIRES) {
-    anExpectedType = TopAbs_FACE;
+    anExpectedType.push_back(TopAbs_FACE);
 
     // Try to build a face from a set of wires and edges
     int ind;
@@ -310,9 +315,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     }
   }
   else if (aType == FACE_FROM_SURFACE) {
-#ifdef RESULT_TYPE_CHECK
-    anExpectedType = TopAbs_FACE;
-#endif
+    anExpectedType.push_back(TopAbs_FACE);
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
 
@@ -348,7 +351,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     }
   }
   else if (aType == SHELL_FACES) {
-    anExpectedType = TopAbs_SHELL;
+    anExpectedType.push_back(TopAbs_SHELL);
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
@@ -407,7 +410,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   }
   else if (aType == SOLID_SHELLS) {
-    anExpectedType = TopAbs_SOLID;
+    anExpectedType.push_back(TopAbs_SOLID);
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
@@ -441,7 +444,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aShape = Sol;
   }
   else if (aType == COMPOUND_SHAPES) {
-    anExpectedType = TopAbs_COMPOUND;
+    anExpectedType.push_back(TopAbs_COMPOUND);
 
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
     unsigned int ind, nbshapes = aShapes->Length();
@@ -462,7 +465,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   }
   else if (aType == EDGE_WIRE) {
-    anExpectedType = TopAbs_EDGE;
+    anExpectedType.push_back(TopAbs_EDGE);
 
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aWire = aRefBase->GetValue();
@@ -472,8 +475,35 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     aShape = MakeEdgeFromWire(aWire, LinTol, AngTol);
   }
+  else if (aType == SOLID_FACES) {
+    anExpectedType.push_back(TopAbs_SOLID);
+    anExpectedType.push_back(TopAbs_COMPOUND);
+    anExpectedType.push_back(TopAbs_COMPSOLID);
+    
+    Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
+    unsigned int ind, nbshapes = aShapes->Length();
+    
+    // add faces
+    BOPCol_ListOfShape aLS;
+    for (ind = 1; ind <= nbshapes; ind++) {
+      Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
+      TopoDS_Shape aShape_i = aRefShape->GetValue();
+      if (aShape_i.IsNull()) {
+        Standard_NullObject::Raise("Shape for solid construction is null");
+      }
+      aLS.Append(aShape_i);
+    }
+
+    BOPAlgo_MakerVolume aMV;
+    aMV.SetArguments(aLS);
+    aMV.SetIntersect(aCI.GetIsIntersect());
+    aMV.Perform();
+    if (aMV.ErrorStatus()) return 0;
+
+    aShape = aMV.Shape();
+  }
   else if (aType == EDGE_CURVE_LENGTH) {
-    anExpectedType = TopAbs_EDGE;
+    anExpectedType.push_back(TopAbs_EDGE);
 
     GEOMImpl_IVector aVI (aFunction);
 
@@ -575,9 +605,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         ("Shape for isoline construction is not a face");
     }
   } else if (aType == EDGE_UV) {
-#ifdef RESULT_TYPE_CHECK
-    anExpectedType = TopAbs_EDGE;
-#endif
+    anExpectedType.push_back(TopAbs_EDGE);
     GEOMImpl_IShapeExtend aSE (aFunction);
     Handle(GEOM_Function) aRefEdge   = aSE.GetShape();
     TopoDS_Shape          aShapeEdge = aRefEdge->GetValue();
@@ -588,9 +616,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aShape = ExtendEdge(anEdge, aSE.GetUMin(), aSE.GetUMax());
     }
   } else if (aType == FACE_UV) {
-#ifdef RESULT_TYPE_CHECK
-    anExpectedType = TopAbs_FACE;
-#endif
+    anExpectedType.push_back(TopAbs_FACE);
 
     GEOMImpl_IShapeExtend aSE (aFunction);
     Handle(GEOM_Function) aRefFace   = aSE.GetShape();
@@ -604,9 +630,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
                           aSE.GetVMin(), aSE.GetVMax()); 
     }
   } else if (aType == SURFACE_FROM_FACE) {
-#ifdef RESULT_TYPE_CHECK
-    anExpectedType = TopAbs_FACE;
-#endif
+    anExpectedType.push_back(TopAbs_FACE);
 
     GEOMImpl_IShapeExtend aSE (aFunction);
     Handle(GEOM_Function) aRefFace   = aSE.GetShape();
@@ -663,8 +687,13 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   // Check if the result shape type is compatible with the expected.
   const TopAbs_ShapeEnum aShType = aShape.ShapeType();
 
-  if (anExpectedType != TopAbs_SHAPE && anExpectedType != aShType) {
-    Standard_ConstructionError::Raise("Result type check failed");
+  if (!anExpectedType.empty()) {
+    bool ok = false;
+    std::list<TopAbs_ShapeEnum>::const_iterator it;
+    for (it = anExpectedType.begin(); it != anExpectedType.end() && !ok; ++it)
+      ok = (*it == TopAbs_SHAPE || *it == aShType);
+    if (!ok)
+      Standard_ConstructionError::Raise("Result type check failed");
   }
 
   aFunction->SetValue(aShape);
@@ -1515,6 +1544,11 @@ GetCreationInformation(std::string&             theOperationName,
   case SOLID_SHELLS:
     theOperationName = "SOLID";
     AddParam( theParams, "Objects", aCI.GetShapes() );
+    break;
+  case SOLID_FACES:
+    theOperationName = "SOLID_FROM_FACES";
+    AddParam( theParams, "Objects", aCI.GetShapes() );
+    AddParam( theParams, "Is intersect", aCI.GetIsIntersect() );
     break;
   case COMPOUND_SHAPES:
     theOperationName = "COMPOUND";

@@ -95,6 +95,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(GEOM_Object) MakeCompound (std::list<Handle(GEOM_Object)> theShapes);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeSolidFromConnectedFaces (std::list<Handle(GEOM_Object)> theFacesOrShells,
+                                                                   const Standard_Boolean isIntersect);
+
   Standard_EXPORT Handle(GEOM_Object) MakeGlueFaces (std::list< Handle(GEOM_Object) >& theShapes,
                                                      const Standard_Real theTolerance,
                                                      const Standard_Boolean doKeepNonSolids);

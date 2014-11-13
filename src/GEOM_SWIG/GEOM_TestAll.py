@@ -190,7 +190,13 @@ def TestAll (geompy, math):
                                prism1_faces[3], prism1_faces[4],
                                prism1_faces[5], prism1_faces[2]])
   Solid    = geompy.MakeSolid([Shell1])              #(List of GEOM_Object)->GEOM_Object
-
+  
+  Box1_translation = geompy.MakeTranslation(Box1, 10, 0, 0)
+  Box1_shell = geompy.SubShapeAllSorted(Box1, geompy.ShapeType["SHELL"])[0]
+  Box1_translation_shell = geompy.SubShapeAllSorted(Box1_translation, geompy.ShapeType["SHELL"])[0]
+  
+  Solid_from_shells = geompy.MakeSolidFromConnectedFaces([Box1_shell, Box1_translation_shell], 1) #(List of GEOM_Object, Boolean)->GEOM_Object
+  
   # Create Isoline
   Isoline = geompy.MakeIsoline(Face1, True, 0.5)     #(1 GEOM_Object, Boolean, Double)->GEOM_Object
 
@@ -416,6 +422,8 @@ def TestAll (geompy, math):
   id_Prism1   = geompy.addToStudy(Prism1,     "Prism by Two Pnt")
   id_Shell1   = geompy.addToStudy(Shell1,   "Shell from Prism1 faces")
   id_Solid    = geompy.addToStudy(Solid,    "Solid")
+  id_Solid1   = geompy.addToStudy(Solid_from_shells,   "Solid1")
+  
   id_Compound = geompy.addToStudy(Compound, "Compound")
 
   id_Plane2   = geompy.addToStudy(Plane2,   "Plane on Face")
@@ -497,7 +505,7 @@ def TestAll (geompy, math):
 
   id_Partition  = geompy.addToStudy(Partition, "Partition")
   id_Partition1 = geompy.addToStudy(Partition1, "Half Partition")
-
+  
   #Decompose objects
 
   # SubShape

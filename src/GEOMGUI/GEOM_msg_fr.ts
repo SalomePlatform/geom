@@ -724,6 +724,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Privilégier la création d&apos;une face plane</translation>
     </message>
     <message>
+        <source>GEOM_SOLID_FROM_FACE_OPT</source>
+        <translation type="unfinished">Intersect shapes</translation>
+    </message>
+    <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
         <translation>Impossible de construire une face plane: 
         la face créée a une tolérance trop élevée</translation>
@@ -1945,6 +1949,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construction d&apos;un solide</translation>
     </message>
     <message>
+        <source>GEOM_SOLID_SHELLS</source>
+        <translation type="unfinished">Make Solid From Shells</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLID_FACES</source>
+        <translation type="unfinished">Make Solid From Connected Set Of Faces/Shells</translation>
+    </message>
+    <message>
         <source>GEOM_SPHERE</source>
         <translation>Sphère</translation>
     </message>
@@ -2987,6 +2999,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_SOLID</source>
         <translation>Solide</translation>
+    </message>
+    <message>
+        <source>MEN_SOLID_FROM_FACES</source>
+        <translation type="unfinished">Solid from connected faces</translation>
     </message>
     <message>
         <source>MEN_SOLID_SEL_ONLY</source>

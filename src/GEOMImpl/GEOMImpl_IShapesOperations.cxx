@@ -784,6 +784,77 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
 
 //=============================================================================
 /*!
+ *  MakeSolidFromConnectedFaces
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidFromConnectedFaces
+                             (std::list<Handle(GEOM_Object)> theFacesOrShells,
+                              const Standard_Boolean isIntersect)
+{
+  SetErrorCode(KO);
+
+  //Add a new object
+  Handle(GEOM_Object) aSolid = GetEngine()->AddObject(GetDocID(), GEOM_SOLID);
+
+  //Add a new function
+  Handle(GEOM_Function) aFunction =
+    aSolid->AddFunction(GEOMImpl_ShapeDriver::GetID(), SOLID_FACES);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) return NULL;
+
+  GEOMImpl_IShapes aCI (aFunction);
+
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq = new TColStd_HSequenceOfTransient;
+
+  // Shapes
+  std::list<Handle(GEOM_Object)>::iterator it = theFacesOrShells.begin();
+  for (; it != theFacesOrShells.end(); it++) {
+    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
+    if (aRefSh.IsNull()) {
+      SetErrorCode("NULL argument shape for the shape construction");
+      return NULL;
+    }
+    aShapesSeq->Append(aRefSh);
+  }
+  aCI.SetShapes(aShapesSeq);
+  aCI.SetIsIntersect(isIntersect);
+
+  //Compute the shape
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aSolid << " = geompy.MakeSolidFromConnectedFaces([";
+
+  // Shapes
+  it = theFacesOrShells.begin();
+  if (it != theFacesOrShells.end()) {
+    pd << (*it++);
+    while (it != theFacesOrShells.end()) {
+      pd << ", " << (*it++);
+    }
+  }
+  pd << "]," << (isIntersect ? "True" : "False") << ")";
+
+  SetErrorCode(OK);
+  return aSolid;
+}
+
+//=============================================================================
+/*!
  *  MakeGlueFaces
  */
 //=============================================================================

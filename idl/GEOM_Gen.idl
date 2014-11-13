@@ -1967,6 +1967,15 @@ module GEOM
     GEOM_Object MakeCompound (in ListOfGO theShapes);
 
     /*!
+     *  \brief Make a solid (or solids) from connected set of faces and/or shells.
+     *  \param theFacesOrShells List of faces and/or shells.
+     *  \param isIntersect If TRUE, forces performing intersections between arguments.
+     *
+     *  \return New GEOM_Object, containing the created solid (or compound of solids).
+     */
+    GEOM_Object MakeSolidFromConnectedFaces (in ListOfGO theFacesOrShells, in boolean isIntersect);
+    
+    /*!
      *  \brief Replace coincident faces in \a theShapes by one face.
      *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.

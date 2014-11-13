@@ -59,12 +59,14 @@ private:
   QList<GEOM::GeomObjPtr>            myShells;
 
   DlgRef_1Sel1Check*                 GroupSolid;
+  DlgRef_1Sel1Check*                 GroupFaces;
 
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               SetEditCurrentArgument();
   void                               SelectionIntoArgument();
+  void                               ConstructorsClicked( int );
   void                               ActivateThisDialog();
   void                               EnableNameField( bool );
 };

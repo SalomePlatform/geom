@@ -704,6 +704,10 @@
       <translation>平らなフェースを作成</translation>
     </message>
     <message>
+        <source>GEOM_SOLID_FROM_FACE_OPT</source>
+        <translation type="unfinished">Intersect shapes</translation>
+    </message>
+    <message>
       <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
       <translation>平坦な面を作成できません: 作成された顔があまりにも高い耐性</translation>
     </message>
@@ -1924,6 +1928,14 @@
       <translation>ソリッドの構築</translation>
     </message>
     <message>
+      <source>GEOM_SOLID_SHELLS</source>
+      <translation type="unfinished">Make Solid From Shells</translation>
+    </message>
+    <message>
+      <source>GEOM_SOLID_FACES</source>
+      <translation type="unfinished">Make Solid From Connected Set Of Faces/Shells</translation>
+    </message>
+    <message>
       <source>GEOM_SPHERE</source>
       <translation>Sphere</translation>
     </message>
@@ -2970,6 +2982,10 @@
     <message>
       <source>MEN_SOLID</source>
       <translation>ソリッド</translation>
+    </message>
+    <message>
+        <source>MEN_SOLID_FROM_FACES</source>
+        <translation type="unfinished">Solid from connected faces</translation>
     </message>
     <message>
       <source>MEN_SOLID_SEL_ONLY</source>

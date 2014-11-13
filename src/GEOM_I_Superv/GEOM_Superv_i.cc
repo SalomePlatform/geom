@@ -2342,6 +2342,25 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
 }
 
 //=============================================================================
+//  MakeSolidFromConnectedFaces:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSolidFromConnectedFaces (GEOM::GEOM_List_ptr theFacesOrShells,
+                                                                  CORBA::Boolean isIntersect)
+{
+  beginService( " GEOM_Superv_i::MakeSolidFromConnectedFaces" );
+  MESSAGE("GEOM_Superv_i::MakeSolidFromConnectedFaces");
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImpl =
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theFacesOrShells, myPOA).in())) {
+    getShapesOp();
+    GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeSolidFromConnectedFaces(aListImpl->GetList(), isIntersect);
+    endService( " GEOM_Superv_i::MakeSolidFromConnectedFaces" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeSolidFromConnectedFaces" );
+  return NULL;
+}
+
+//=============================================================================
 //  MakeGlueFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,

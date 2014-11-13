@@ -169,6 +169,7 @@ SET( _res_files
   shapesonshape.png
   shared_shapes.png
   sketch.png
+  solid_from_faces.png
   sphere.png
   spheredxyz.png
   spherepoint.png

@@ -4649,6 +4649,39 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeCompound", self.ShapesOp)
             self._autoPublish(anObj, theName, "compound")
             return anObj
+        
+        ## Create a solid (or solids) from the set of faces and/or shells.
+        #  @param theFacesOrShells List of faces and/or shells.
+        #  @param isIntersect If TRUE, forces performing intersections
+        #         between arguments; otherwise (default) intersection is not performed.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created solid (or compound of solids).
+        #
+        #  @ref tui_creation_solid_from_faces "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeSolidFromConnectedFaces(self, theFacesOrShells, isIntersect = False, theName=None):
+            """
+            Create a solid (or solids) from the set of connected faces and/or shells.
+
+            Parameters:
+                theFacesOrShells List of faces and/or shells.
+                isIntersect If TRUE, forces performing intersections
+                        between arguments; otherwise (default) intersection is not performed
+                theName Object name; when specified, this parameter is used.
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created solid (or compound of solids).
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.ShapesOp.MakeSolidFromConnectedFaces(theFacesOrShells, isIntersect)
+            RaiseIfFailed("MakeSolidFromConnectedFaces", self.ShapesOp)
+            self._autoPublish(anObj, theName, "solid")
+            return anObj
 
         # end of l3_advanced
         ## @}

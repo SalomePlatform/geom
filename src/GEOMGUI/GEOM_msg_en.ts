@@ -708,6 +708,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Try to create a planar face</translation>
     </message>
     <message>
+        <source>GEOM_SOLID_FROM_FACE_OPT</source>
+        <translation>Intersect shapes</translation>
+    </message>
+    <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
         <translation>Cannot build a planar face: required tolerance is
         too big. Non-planar face is built.</translation>
@@ -1945,6 +1949,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Solid Construction</translation>
     </message>
     <message>
+        <source>GEOM_SOLID_SHELLS</source>
+        <translation>Make Solid From Shells</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLID_FACES</source>
+        <translation>Make Solid From Connected Set Of Faces/Shells</translation>
+    </message>
+    <message>
         <source>GEOM_SPHERE</source>
         <translation>Sphere</translation>
     </message>
@@ -3003,6 +3015,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_SOLID</source>
         <translation>Solid</translation>
+    </message>
+    <message>
+        <source>MEN_SOLID_FROM_FACES</source>
+        <translation>Solid from connected faces</translation>
     </message>
     <message>
         <source>MEN_SOLID_SEL_ONLY</source>

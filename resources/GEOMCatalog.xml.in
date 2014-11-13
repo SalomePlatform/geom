@@ -4328,6 +4328,33 @@
             <DataStream-list></DataStream-list>
           </component-service>
           <component-service>
+            <service-name>MakeSolidFromConnectedFaces</service-name>
+            <service-author>SALOME team</service-author>
+            <service-version>@SALOMEGEOM_VERSION@</service-version>
+            <service-comment>unknown</service-comment>
+            <service-by-default>0</service-by-default>
+            <inParameter-list>
+              <inParameter>
+                <inParameter-name>theFacesOrShells</inParameter-name>
+                <inParameter-type>GEOM/GEOM_List</inParameter-type>
+                <inParameter-comment>unknown</inParameter-comment>
+              </inParameter>
+              <inParameter>
+                <inParameter-name>isIntersect</inParameter-name>
+                <inParameter-type>boolean</inParameter-type>
+                <inParameter-comment>unknown</inParameter-comment>
+              </inParameter>
+            </inParameter-list>
+            <outParameter-list>
+              <outParameter>
+                <outParameter-name>return</outParameter-name>
+                <outParameter-type>GEOM/GEOM_Object</outParameter-type>
+                <outParameter-comment>unknown</outParameter-comment>
+              </outParameter>
+            </outParameter-list>
+            <DataStream-list></DataStream-list>
+          </component-service>
+          <component-service>
             <service-name>MakeCompound</service-name>
             <service-author>SALOME team</service-author>
             <service-version>@SALOMEGEOM_VERSION@</service-version>

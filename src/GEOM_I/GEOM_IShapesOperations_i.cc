@@ -408,6 +408,40 @@ GEOM_IShapesOperations_i::MakeCompound (const GEOM::ListOfGO& theShapes)
 
 //=============================================================================
 /*!
+ *  MakeSolidFromConnectedFaces
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidFromConnectedFaces
+                                      (const GEOM::ListOfGO& theFacesOrShells,
+                                       const CORBA::Boolean  isIntersect)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  int ind, aLen;
+  std::list<Handle(GEOM_Object)> aShapes;
+
+  //Get the shapes
+  aLen = theFacesOrShells.length();
+  for (ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aSh = GetObjectImpl(theFacesOrShells[ind]);
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    aShapes.push_back(aSh);
+  }
+
+  // Make Solid
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeSolidFromConnectedFaces(aShapes, isIntersect);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeGlueFaces
  */
 //=============================================================================

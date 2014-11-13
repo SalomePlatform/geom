@@ -311,7 +311,7 @@
 #define EDGE_UV             16
 #define FACE_UV             17
 #define SURFACE_FROM_FACE   18
-
+#define SOLID_FACES         19
 
 #define ARCHIMEDE_TYPE 1
 

@@ -75,6 +75,9 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   GEOM::GEOM_Object_ptr MakeCompound (const GEOM::ListOfGO& theShapes);
 
+  GEOM::GEOM_Object_ptr MakeSolidFromConnectedFaces (const GEOM::ListOfGO& theFacesOrShells,
+                                                     CORBA::Boolean isIntersect);
+
   GEOM::GEOM_Object_ptr MakeGlueFaces (const GEOM::ListOfGO& theShape,
                                        CORBA::Double         theTolerance,
                                        CORBA::Boolean        doKeepNonSolids);

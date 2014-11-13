@@ -395,6 +395,8 @@ module GEOM
     GEOM_Object MakeSolidShell (in GEOM_Object theShell) ;
     GEOM_Object MakeSolidShells (in GEOM_List theShells) ;
     GEOM_Object MakeCompound (in GEOM_List theShapes) ;
+    GEOM_Object MakeSolidFromConnectedFaces (in GEOM_List theFacesOrShells,
+					     in boolean isIntersect);
     GEOM_Object MakeGlueFaces (in GEOM_Object theShape,
                                in double theTolerance,
                                in boolean doKeepNonSolids);

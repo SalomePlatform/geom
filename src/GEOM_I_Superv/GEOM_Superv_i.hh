@@ -507,6 +507,8 @@ public:
   GEOM::GEOM_Object_ptr MakeSolidShell (GEOM::GEOM_Object_ptr theShell);
   GEOM::GEOM_Object_ptr MakeSolidShells (GEOM::GEOM_List_ptr theShells);
   GEOM::GEOM_Object_ptr MakeCompound (GEOM::GEOM_List_ptr theShapes);
+  GEOM::GEOM_Object_ptr MakeSolidFromConnectedFaces (GEOM::GEOM_List_ptr theFacesOrShells,
+                                                     CORBA::Boolean isIntersect);
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
                                        CORBA::Double theTolerance,
                                        CORBA::Boolean doKeepNonSolids);
@@ -533,7 +535,6 @@ public:
                                           GEOM::GEOM_Object_ptr theShape,
                                           CORBA::Short theShapeType,
                                           GEOM::shape_state theState);
-
 
   //-----------------------------------------------------------//
   // BlocksOperations                                          //
