@@ -41,6 +41,7 @@
 #include <SALOME_ListIO.hxx>
 
 #include <Basics_Utils.hxx>
+#include "utilities.h"
 
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_MapOfInteger.hxx>

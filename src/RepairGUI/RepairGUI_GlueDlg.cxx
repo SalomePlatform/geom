@@ -30,6 +30,7 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 #include <SalomeApp_DoubleSpinBox.h>
+#include "utilities.h"
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>

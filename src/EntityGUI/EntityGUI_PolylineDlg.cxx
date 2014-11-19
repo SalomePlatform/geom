@@ -28,6 +28,8 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
+#include "utilities.h"
+
 #include <OCCViewer_ViewManager.h>
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Application.h>

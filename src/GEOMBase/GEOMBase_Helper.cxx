@@ -48,6 +48,7 @@
 #include <SALOME_ListIO.hxx>
 
 #include <SALOME_Prs.h>
+#include "utilities.h"
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>

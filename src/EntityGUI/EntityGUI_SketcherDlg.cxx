@@ -64,6 +64,7 @@
 
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Tools.h>
+#include "utilities.h"
 
 #include <gp_Pln.hxx>
 

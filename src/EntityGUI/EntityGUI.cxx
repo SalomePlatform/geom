@@ -42,6 +42,7 @@
 #include <SUIT_ViewWindow.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
+#include "utilities.h"
 
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>

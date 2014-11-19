@@ -67,6 +67,7 @@
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_Prs.h>
+#include "utilities.h"
 
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
