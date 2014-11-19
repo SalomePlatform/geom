@@ -16,6 +16,14 @@ In this dialog:
 - Activate \ref restore_presentation_parameters_page "Advanced options" if required.
 - Press "Apply" or "Apply & Close" button to get the result (VERTEX, EDGE, WIRE or COMPOUND).
 
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
 This operation can be performed using a <b>TUI Command:</b> 
 
 <em>geompy.MakeSection(s1, s2, checkSelfInte)</em>

@@ -46,9 +46,11 @@ public:
 protected:
   // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
   virtual void                        processObject();
+  virtual void                        SelectionIntoArgument();
 
 private:
   void                                Init();
+  void                                activateSelection();
   bool                                getParameters( double&, double&, double&, 
                                                      double&, double&, double& );
   

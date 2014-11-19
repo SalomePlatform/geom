@@ -26,6 +26,7 @@
 //
 #include "MeasureGUI_MaxToleranceDlg.h"
 #include "MeasureGUI_Widgets.h"
+#include <GEOMBase.h>
 #include "DlgRef.h"
 
 #include <SUIT_Session.h>
@@ -163,7 +164,7 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
   else {
     GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      anOper->GetTolerance( myObj, 
+      anOper->GetTolerance( myObj.get(), 
                             theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
                             theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
     }
@@ -174,4 +175,36 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
 
     return anOper->IsDone();
   }
+}
+
+//=================================================================================
+// function : activateSelection()
+// purpose  :
+//=================================================================================
+void MeasureGUI_MaxToleranceDlg::activateSelection()
+{
+  globalSelection( GEOM_ALLSHAPES );
+  std::list<int> needTypes;
+  needTypes.push_back( TopAbs_SHAPE ), needTypes.push_back( TopAbs_EDGE ); 
+  needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL );
+  needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPSOLID ), needTypes.push_back( TopAbs_COMPOUND );  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+}
+
+void MeasureGUI_MaxToleranceDlg::SelectionIntoArgument()
+{
+  myObj.nullify();
+  QList<TopAbs_ShapeEnum> aTypes;
+  aTypes << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPSOLID << TopAbs_COMPOUND << TopAbs_SHAPE;
+  myObj = getSelected( aTypes );
+ 
+  if (!myObj) {
+    mySelEdit->setText("");
+    processObject();
+    erasePreview();
+    return;
+  }
+
+  mySelEdit->setText(GEOMBase::GetName(myObj.get()));
+  processObject();
+  redisplayPreview();
 }

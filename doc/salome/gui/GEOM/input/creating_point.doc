@@ -53,8 +53,8 @@ projected on the given edge to produce the resulting point.
 projected point.
 \image html point3_2.png
 
-\n Fourthly, we can define a point by intersection of two \b Lines or \b Wires (or a Wire and a Line). 
-If they intersect only once, a point will be created. If there are several intersections, a compound of points will be created. The type of the selected object (Line or Wire) can be changed in the popup menu, after clicking the corresponding selection button. 
+\n Fourthly, we can define a point by intersection of two \b Lines or \b Wires (or a Wire and a Line).
+If they intersect only once, a point will be created. If there are several intersections, a compound of points will be created.
 \n <b>TUI Command:</b> <em>geompy.MakePointOnLinesIntersection(myLine1,myWire1).</em>
 \n <b>Arguments:</b> Name + 2 1D objects
 
@@ -74,6 +74,14 @@ The position of the point on it can be defined in one of two ways:
 \n <b>Arguments:</b> Name + 1 face  + 3 coordinate values to project point on the given face.
 
 \image html point5_2.png
+
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
 
 <b>Example:</b>
 

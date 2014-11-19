@@ -461,9 +461,9 @@ void GEOMBase_Helper::activate( const int theType )
 //================================================================
 // Function : localSelection
 // Purpose  : Activate selection of sub-shapes in accordance with mode
-//            theMode is from TopAbs_ShapeEnum
+//            modes are from TopAbs_ShapeEnum
 //================================================================
-void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMode )
+void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const std::list<int> modes )
 {
   SALOME_ListIO aListOfIO;
 
@@ -479,7 +479,7 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
         anEntry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( anObj ).toLatin1().constData() ) ) );
   }
 
-  getDisplayer()->LocalSelection( aListOfIO, theMode );
+  getDisplayer()->LocalSelection( aListOfIO, modes );
 }
 
 //================================================================
@@ -487,19 +487,42 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
 // Purpose  : Activate selection of sub-shapes in accordance with mode
 //            theMode is from TopAbs_ShapeEnum
 //================================================================
-void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode )
+void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMode )
+{
+  std::list<int> modes;
+  modes.push_back( theMode );
+  localSelection( theObjs, modes );
+}
+
+//================================================================
+// Function : localSelection
+// Purpose  : Activate selection of sub-shapes in accordance with mode
+//            modes are from TopAbs_ShapeEnum
+//================================================================
+void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const std::list<int> modes )
 {
   // If object is null local selection for all objects is activated
   if ( obj->_is_nil() ) {
-    getDisplayer()->LocalSelection( Handle(SALOME_InteractiveObject)(), mode );
+    getDisplayer()->LocalSelection( Handle(SALOME_InteractiveObject)(), modes );
     return;
   }
 
   ObjectList objList;
   objList.push_back( obj );
-  localSelection( objList, mode );
+  localSelection( objList, modes );
 }
 
+//================================================================
+// Function : localSelection
+// Purpose  : Activate selection of sub-shapes in accordance with mode
+//            mode is from TopAbs_ShapeEnum
+//================================================================
+void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode )
+{
+  std::list<int> modes;
+  modes.push_back( mode );
+  localSelection( obj, modes );
+}
 
 //================================================================
 // Function : globalSelection

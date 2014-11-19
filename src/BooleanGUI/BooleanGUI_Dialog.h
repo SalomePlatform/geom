@@ -51,6 +51,7 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   virtual void                       restoreSubShapes( SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr );
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
@@ -63,7 +64,7 @@ private:
   int                                myOperation;
   
   GEOM::GeomObjPtr                   myObject1;
-  GEOM::ListOfGO_var                 myObjects;
+  QList<GEOM::GeomObjPtr>            myObjects;
   
   DlgRef_2Sel2Spin3Check*            myGroup;
 

@@ -237,6 +237,9 @@ void TransformationGUI_ProjectionDlg::SetEditCurrentArgument()
       aMap.Add( GEOM_EDGE );
       aMap.Add( GEOM_WIRE );
       globalSelection( aMap );
+      std::list<int> needTypes;
+      needTypes.push_back( TopAbs_VERTEX ), needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE );
+      localSelection(GEOM::GEOM_Object::_nil(), needTypes );
       break;
     }
     case PROJ_ON_WIRE:

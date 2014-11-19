@@ -99,6 +99,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
   virtual bool                        isValid (QString&);
   virtual bool                        execute (ObjectList&);
+  virtual void                        addSubshapesToStudy();
   virtual QString                     getNewObjectName (int CurrObj = -1) const; 
 
   void                                redisplayPreview();
@@ -108,10 +109,11 @@ protected:
 private:
   void                                Init();
   void                                enterEvent (QEvent*);
+  void                                activateSelection();
 
 private:
-  GEOM::GEOM_Object_var               myObj1;
-  GEOM::GEOM_Object_var               myObj2;
+  GEOM::GeomObjPtr                    myObj1;
+  GEOM::GeomObjPtr                    myObj2;
 
   MeasureGUI_DistanceGroup*           myGrp;
   GEOM::ListOfDouble_var              myDbls;

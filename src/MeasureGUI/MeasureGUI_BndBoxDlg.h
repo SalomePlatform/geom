@@ -48,7 +48,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid (QString&);
   virtual bool                       execute (ObjectList&);
-
+  virtual void                       addSubshapesToStudy();
   void                               redisplayPreview();
   virtual void                       processObject();
   virtual SALOME_Prs*                buildPrs();
@@ -56,10 +56,11 @@ protected:
 private:
   void                               Init();
   void                               enterEvent (QEvent*);
+  void                               activateSelection();
   bool                               getParameters (double&, double&, double&, double&, double&, double&);
 
 private:
-  GEOM::GEOM_Object_var              myObj;
+  GEOM::GeomObjPtr                   myObj;
   MeasureGUI_1Sel6LineEdit*          myGrp;
 
 private slots:

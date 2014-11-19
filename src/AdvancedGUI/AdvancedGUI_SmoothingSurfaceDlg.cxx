@@ -119,6 +119,8 @@ void AdvancedGUI_SmoothingSurfaceDlg::Init()
 
   showOnlyPreviewControl();
 
+  globalSelection();
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   //@@ initialize dialog box widgets here @@//
 
   // Signal/slot connections
@@ -160,7 +162,8 @@ bool AdvancedGUI_SmoothingSurfaceDlg::ClickOnApply()
     return false;
 
   initName();
-
+  globalSelection();
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   return true;
 }
 
@@ -171,6 +174,8 @@ bool AdvancedGUI_SmoothingSurfaceDlg::ClickOnApply()
 void AdvancedGUI_SmoothingSurfaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  globalSelection();
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   //displayPreview();
 }
 
@@ -247,6 +252,16 @@ bool AdvancedGUI_SmoothingSurfaceDlg::execute (ObjectList& objects)
     objects.push_back(anObj._retn());
 
   return res;
+}
+
+//=================================================================================
+// function : addSubshapesToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void AdvancedGUI_SmoothingSurfaceDlg::addSubshapesToStudy()
+{
+  for ( int i = 0; i < myPoints.count(); i++ )
+    GEOMBase::PublishSubObject( myPoints[i].get() );
 }
 
 //=================================================================================
@@ -337,5 +352,7 @@ void AdvancedGUI_SmoothingSurfaceDlg::SetEditCurrentArgument()
   if ( sender() == GroupPoints->PushButton1 )
     myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
+  globalSelection();
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   SelectionIntoArgument();
 }

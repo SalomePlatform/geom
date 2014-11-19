@@ -99,7 +99,6 @@ private:
   QGroupBox*                         myParamGroup;
   QButtonGroup*                      myParamCoord;
 
-  QMenu*                             myBtnPopup;
   QMap<QAction*, int>                myActions;
 
   TopAbs_ShapeEnum                   myNeedType;
@@ -116,7 +115,6 @@ private slots:
   void                               SetDoubleSpinBoxStep( double );
   void                               ClickParamCoord( int );
   void                               CheckBoxClicked( int );
-  void                               onBtnPopup( QAction* );
   void                               updateSize();
 };
 

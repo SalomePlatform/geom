@@ -122,7 +122,7 @@ void MeasureGUI_PointDlg::activateSelection()
 void MeasureGUI_PointDlg::SelectionIntoArgument()
 {
   try {
-    myObj = GEOM::GEOM_Object::_nil();
+    myObj.nullify();
     myGrp->LineEdit1->setText( "" );
     myGrp->LineEdit2->setText( "" );
     myGrp->LineEdit3->setText( "" );
@@ -135,23 +135,20 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     if (aSelList.Extent() < 1)
       return;
 
-    GEOM::GEOM_Object_var aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    myObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-    if ( aSelectedObject->_is_nil() )
+    if ( !myObj )
       return;
-
-    myObj = aSelectedObject;
 
     TColStd_IndexedMapOfInteger anIndexes;
     aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
     TopoDS_Shape aShape;
-    if ( anIndexes.Extent() > 1 || !GEOMBase::GetShape( myObj, aShape ) || aShape.IsNull() )
+    if ( anIndexes.Extent() > 1 || !GEOMBase::GetShape( myObj.get(), aShape ) || aShape.IsNull() )
       return;
 
     TopoDS_Vertex aPoint;
-    QString aName = GEOMBase::GetName( myObj );
+    QString aName = GEOMBase::GetName( myObj.get() );
     if ( anIndexes.Extent() == 0 ) {
       if ( aShape.ShapeType() == TopAbs_VERTEX )
         aPoint = TopoDS::Vertex( aShape );
@@ -180,7 +177,7 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
   }
   catch( ... )
   {
-    myObj = GEOM::GEOM_Object::_nil();
+    myObj.nullify();
     myGrp->LineEdit1->setText( "" );
     myGrp->LineEdit2->setText( "" );
     myGrp->LineEdit3->setText( "" );

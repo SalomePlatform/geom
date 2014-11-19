@@ -52,6 +52,7 @@ protected:
 private:
   void                          Init();
   bool                          getParameters( double& );
+  void                          activateSelection();
 
 private:
   QLineEdit*                    myEditCurrentArgument;
@@ -59,7 +60,7 @@ private:
   QPushButton*                  mySelBtn2;
   MeasureGUI_2Sel1LineEdit*     myGrp;
 
-  GEOM::GEOM_Object_var         myObj2;
+  GEOM::GeomObjPtr              myObj2;
 };
 
 #endif // MEASUREGUI_ANGLEDLG_H

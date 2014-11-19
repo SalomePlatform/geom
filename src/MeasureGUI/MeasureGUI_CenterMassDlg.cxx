@@ -120,10 +120,23 @@ void MeasureGUI_CenterMassDlg::Init()
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_POINT") );
-  globalSelection();
+  activateSelection();
   SelectionIntoArgument();
 }
 
+//=================================================================================
+// function : activateSelection
+// purpose  : 
+//=================================================================================
+void MeasureGUI_CenterMassDlg::activateSelection()
+{
+  globalSelection( GEOM_ALLSHAPES );
+  std::list<int> needTypes;
+  needTypes.push_back( TopAbs_SHAPE ), needTypes.push_back( TopAbs_VERTEX ), needTypes.push_back( TopAbs_EDGE ); 
+  needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL );
+  needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPSOLID ), needTypes.push_back( TopAbs_COMPOUND );
+  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+}
 
 //=================================================================================
 // function : ClickOnOk()
@@ -146,6 +159,7 @@ bool MeasureGUI_CenterMassDlg::ClickOnApply()
     return false;
 
   initName();
+  activateSelection();
   return true;
 
 //    myMeasureGUI->MakeCDGAndDisplay( myGeomShape );
@@ -159,26 +173,17 @@ bool MeasureGUI_CenterMassDlg::ClickOnApply()
 void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myObj = GEOM::GEOM_Object::_nil();
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  myObj.nullify();
+  QList<TopAbs_ShapeEnum> aTypes;
+  aTypes << TopAbs_VERTEX << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPSOLID << TopAbs_COMPOUND << TopAbs_SHAPE;
+  myObj = getSelected( aTypes );
 
-  if (aSelList.Extent() != 1) {
+  if ( !myObj ) {
     processObject();
     return;
   }
 
-  GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-
-  if ( aSelectedObject->_is_nil() ) {
-    processObject();
-    return;
-  }
-
-  myObj = aSelectedObject;
   processObject();
   displayPreview(true);
 }
@@ -220,7 +225,7 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
            SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  globalSelection();
+  activateSelection();
   displayPreview(true);
 }
 
@@ -230,7 +235,7 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
 //=================================================================================
 void MeasureGUI_CenterMassDlg::processObject()
 {
-  if ( myObj->_is_nil() ) {
+  if ( !myObj ) {
     myGrp->LineEdit1->setText( "" );
     myGrp->LineEdit2->setText( "" );
     myGrp->LineEdit3->setText( "" );
@@ -242,7 +247,7 @@ void MeasureGUI_CenterMassDlg::processObject()
     
     getParameters( x, y, z );
     
-    myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
+    myGrp->LineEdit1->setText( GEOMBase::GetName( myObj.get() ) );
 
     SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
     int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
@@ -280,7 +285,7 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_CenterMassDlg::createOperation()
 //=================================================================================
 bool MeasureGUI_CenterMassDlg::isValid( QString& )
 {
-  return !myObj->_is_nil();
+  return myObj;
 }
 
 //=================================================================================
@@ -289,12 +294,12 @@ bool MeasureGUI_CenterMassDlg::isValid( QString& )
 //=================================================================================
 bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double& theZ )
 {
-  if ( myObj->_is_nil() )
+  if ( !myObj )
     return false;
   else {
     try {
       GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
-      GEOM::GEOM_Object_var anObj = anOper->GetCentreOfMass( myObj );
+      GEOM::GEOM_Object_var anObj = anOper->GetCentreOfMass( myObj.get() );
       if ( !anOper->IsDone() )
         return false;
 
@@ -328,10 +333,19 @@ bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double
 bool MeasureGUI_CenterMassDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
-  GEOM::GEOM_Object_var anObj = anOper->GetCentreOfMass( myObj );
+  GEOM::GEOM_Object_var anObj = anOper->GetCentreOfMass( myObj.get() );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
 
   return true;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void MeasureGUI_CenterMassDlg::addSubshapesToStudy()
+{
+  GEOMBase::PublishSubObject( myObj.get() );
 }

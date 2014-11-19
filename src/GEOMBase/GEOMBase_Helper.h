@@ -95,7 +95,9 @@ protected:
                          const bool = true );
   void erasePreview    ( const bool = true );
 
+  void localSelection( const ObjectList&, const std::list<int> );
   void localSelection( const ObjectList&, const int );
+  void localSelection( GEOM::GEOM_Object_ptr, const std::list<int> );
   void localSelection( GEOM::GEOM_Object_ptr, const int );
   void activate( const int );
   void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );

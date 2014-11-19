@@ -10,7 +10,15 @@ The table displays:
 - 3*3 matrix of its own moments of inertia (in rows <b> 1:1, 2:1</b> and <b>3:1</b>) and  
 - the relative moments of inertia (in row <b>IX & IY & IZ</b>)
 
-\n <b>TUI Command:</b> <em>geompy.Inertia(Shape),</em> where \em Shape is
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
+<b>TUI Command:</b> <em>geompy.Inertia(Shape),</em> where \em Shape is
 a shape for which the own matrix of inertia and the relative moments of inertia are
 returned.
 

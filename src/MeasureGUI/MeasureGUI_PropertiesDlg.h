@@ -48,6 +48,7 @@ protected:
   // redefined from GEOMBase_Helper and MeasureGUI_Skeleton
   virtual void                        processObject();
   virtual void                        activateSelection();
+  virtual void                        SelectionIntoArgument();
   virtual SALOME_Prs*                 buildPrs();
 
 private:

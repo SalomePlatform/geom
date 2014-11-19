@@ -202,7 +202,14 @@ void GenerationGUI_FillingDlg::initSelection()
   aTypes.Add( GEOM_EDGE );
   aTypes.Add( GEOM_WIRE );
   aTypes.Add( GEOM_COMPOUND );
+
+  std::list<int> needTypes;
+  needTypes.push_back( TopAbs_EDGE );
+  needTypes.push_back( TopAbs_WIRE );
+  needTypes.push_back( TopAbs_COMPOUND );
+
   globalSelection( aTypes );
+  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
 }
 
 //=================================================================================
@@ -232,12 +239,11 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
 void GenerationGUI_FillingDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  globalSelection(GEOM_ALLSHAPES);
 
   if (send == GroupPoints->PushButton1) {
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
-    globalSelection(GEOM_COMPOUND);
+    initSelection();
     this->SelectionIntoArgument();
   }
 }
@@ -387,4 +393,14 @@ bool GenerationGUI_FillingDlg::execute(ObjectList& objects)
   }
 
   return true;
+}
+
+//=================================================================================
+// function : addSubshapesToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void GenerationGUI_FillingDlg::addSubshapesToStudy()
+{
+  foreach( GEOM::GeomObjPtr o, myObjects )
+    GEOMBase::PublishSubObject( o.get() );
 }
