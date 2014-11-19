@@ -43,6 +43,21 @@
 
 #include <Standard_ConstructionError.hxx>
 
+namespace
+{
+  Handle(GEOM_Object) GetOwner( const TDF_Label& l )
+  {
+    TDF_Label label = l;
+    // object is stored on a grandfather label of a driver label
+    if ( !label.IsNull() )
+      label = label.Father();
+    if ( !label.IsNull() )
+      label = label.Father();
+    
+    return GEOM_Object::GetObject( label );
+  }
+}
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -179,8 +194,7 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam( theParams, "Dz", aCI.GetDZ() );
     break;
   case VECTOR_TWO_PNT: {
-    TDF_Label label = Label();
-    Handle(GEOM_Object) obj = GEOM_Object::GetObject( label );
+    Handle(GEOM_Object) obj = GetOwner( Label() );
     if ( !obj.IsNull() && obj->GetType() == GEOM_EDGE )
       theOperationName = "EDGE";
     else
