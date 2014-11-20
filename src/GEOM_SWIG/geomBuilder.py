@@ -7407,18 +7407,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape2 Second argument for boolean operation.
         #  @param checkSelfInte The flag that tells if the arguments should
         #         be checked for self-intersection prior to the operation.
+        #         If a self-intersection detected the operation fails.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
-        #
-        #  @note This algorithm doesn't find all types of self-intersections.
-        #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
-        #        vertex/face and edge/face intersections. Face/face
-        #        intersections detection is switched off as it is a
-        #        time-consuming operation that gives an impact on performance.
-        #        To find all self-intersections please use
-        #        CheckSelfIntersections() method.
-        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_section "Example 1"
@@ -7431,21 +7423,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
                 checkSelfInte The flag that tells if the arguments should
-                              be checked for self-intersection prior to
-                              the operation.
+                              be checked for self-intersection prior to the operation.
+                              If a self-intersection detected the operation fails.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
-
-            Note:
-                    This algorithm doesn't find all types of self-intersections.
-                    It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
-                    vertex/face and edge/face intersections. Face/face
-                    intersections detection is switched off as it is a
-                    time-consuming operation that gives an impact on performance.
-                    To find all self-intersections please use
-                    CheckSelfIntersections() method.
-
             Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
