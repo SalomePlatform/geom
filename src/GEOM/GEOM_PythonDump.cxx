@@ -44,11 +44,11 @@ namespace GEOM
   {
     if (--myCounter == 0) {
       TCollection_AsciiString aDescr;
-      if ( myAppend ) {
+      if ( myAppend )
         aDescr = myFunction->GetDescription();
-        if ( !aDescr.IsEmpty() ) aDescr += "\n\t";
-      }
       std::string aString = myStream.str();
+      if ( !aDescr.IsEmpty() && !aString.empty())
+        aDescr += "\n\t";
       aDescr += (char *)aString.c_str();
       myFunction->SetDescription( aDescr );
     }

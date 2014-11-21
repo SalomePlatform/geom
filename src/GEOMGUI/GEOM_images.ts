@@ -432,8 +432,16 @@
             <translation>offset.png</translation>
         </message>
         <message>
-            <source>ICON_DLG_PROJECTION</source>
+            <source>ICON_DLG_PROJECTION_ON_FACE</source>
             <translation>projection.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_PROJECTION_ON_WIRE</source>
+            <translation>projection_on_wire.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_PROJECTION_ON_EDGE</source>
+            <translation>projection_on_edge.png</translation>
         </message>
         <message>
             <source>ICON_DLG_EXTEND_EDGE</source>

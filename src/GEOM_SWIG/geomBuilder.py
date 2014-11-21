@@ -8785,9 +8785,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "offset")
             return anObj
 
-        ## Create new object as projection of the given one on a 2D surface.
+        ## Create new object as projection of the given one on another.
         #  @param theSource The source object for the projection. It can be a point, edge or wire.
-        #  @param theTarget The target object. It can be planar or cylindrical face.
+        #         Edge and wire are acceptable if @a theTarget is a face.
+        #  @param theTarget The target object. It can be planar or cylindrical face, edge or wire.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -8798,11 +8799,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         @ManageTransactions("TrsfOp")
         def MakeProjection(self, theSource, theTarget, theName=None):
             """
-            Create new object as projection of the given one on a 2D surface.
+            Create new object as projection of the given one on another.
 
             Parameters:
                 theSource The source object for the projection. It can be a point, edge or wire.
-                theTarget The target object. It can be planar or cylindrical face.
+                          Edge and wire are acceptable if theTarget is a face.
+                theTarget The target object. It can be planar or cylindrical face, edge or wire.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.

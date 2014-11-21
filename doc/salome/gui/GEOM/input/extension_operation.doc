@@ -27,7 +27,7 @@ parameter value, \em theMax the maximal parameter value.
 \note The input Edge parameters range is [0, 1]. If \b theMin parameter is
       negative, the input Edge is extended, otherwise it is shrinked by
       \b theMin parameter. If \b theMax is greater than 1, the Edge is
-      extended, otherwise it is shrinked by \btheMax parameter.
+      extended, otherwise it is shrinked by \b theMax parameter.
 
 Secondly it is possible to resize a \b Face.
 \n <b>TUI Command:</b> <em>geompy.ExtendFace(theFace, theUMin, theUMax,

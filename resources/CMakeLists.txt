@@ -131,6 +131,8 @@ SET( _res_files
   normale.png
   offset.png
   projection.png
+  projection_on_edge.png
+  projection_on_wire.png
   origin_and_vectors.png
   partition.png
   partitionkeep.png

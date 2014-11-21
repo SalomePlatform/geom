@@ -1213,16 +1213,44 @@ Please, select face, shell or solid and try again</translation>
         <translation>Division pattern</translation>
     </message>
     <message>
-        <source>GEOM_PROJECTION</source>
-        <translation>Projection</translation>
-    </message>
-    <message>
-        <source>GEOM_PROJECTION_TITLE</source>
+        <source>GEOM_PROJECTION_ON_FACE</source>
         <translation>Projection on Face</translation>
     </message>
     <message>
-        <source>GEOM_SOURCE_OBJECT</source>
+        <source>GEOM_PROJECTION_ON_WIRE</source>
+        <translation>Projection on Wire</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_ON_EDGE</source>
+        <translation>Projection on Edge</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_TITLE</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_FACE_SOURCE</source>
         <translation>Source vertex, edge or wire</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_FACE_TARGET</source>
+        <translation>Target face</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_WIRE_SOURCE</source>
+        <translation>Source vertex</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_WIRE_TARGET</source>
+        <translation>Target wire</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_EDGE_SOURCE</source>
+        <translation>Source vertex</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_EDGE_TARGET</source>
+        <translation>Target edge</translation>
     </message>
     <message>
         <source>GEOM_SOLUTION</source>
@@ -1231,10 +1259,6 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SOLUTION_I</source>
         <translation>Solution %1</translation>
-    </message>
-    <message>
-        <source>GEOM_TARGET_OBJECT</source>
-        <translation>Target face</translation>
     </message>
     <message>
         <source>GEOM_WITH_CONTACT</source>

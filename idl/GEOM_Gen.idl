@@ -3860,8 +3860,8 @@ module GEOM
     GEOM_Object MakeCopy (in GEOM_Object theOriginal);
 
     /*!
-     *  \brief Deprecated method. Use Export<FormatName> (from the
-     *  corresponding plugin) instead; here <FormatName> is a name of format.
+     *  \brief Deprecated method. Use Export\<FormatName\> (from the
+     *  corresponding plugin) instead; here \<FormatName\> is a name of format.
      *
      *  \brief Export the given shape into a file with given name.
      *  \param theObject Shape to be stored in the file.
@@ -3871,8 +3871,8 @@ module GEOM
     void Export (in GEOM_Object theObject, in string theFileName, in string theFormatName);
 
     /*!
-     *  \brief Deprecated method. Use Import<FormatName> (from the
-     *  corresponding plugin) instead; here <FormatName> is a name of format.
+     *  \brief Deprecated method. Use Import\<FormatName\> (from the
+     *  corresponding plugin) instead; here \<FormatName\> is a name of format.
      *
      *  \brief Import a shape from the STL, BREP, IGES or STEP file
      *  (depends on given format) with given name.

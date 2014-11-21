@@ -49,6 +49,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid (QString&);
   virtual bool                       execute (ObjectList&);
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
@@ -66,6 +67,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               SelectionIntoArgument();
   void                               ActivateThisDialog();
+  void                               ConstructorsClicked( int constructorId );
 };
 
 #endif // TRANSFORMATIONGUI_PROJECTIONDLG_H
