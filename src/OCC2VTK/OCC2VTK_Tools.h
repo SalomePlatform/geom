@@ -29,7 +29,7 @@ class GEOM_VertexSource;
 class GEOM_EdgeSource;
 class GEOM_WireframeFace;
 class GEOM_ShadingFace;
-
+class vtkPolyData;
 namespace GEOM
 {
   // moved from GEOM_AssemblyBuilder
@@ -47,6 +47,8 @@ namespace GEOM
                                GEOM_EdgeSource* theSharedEdgeSource,
                                GEOM_WireframeFace* theWireframeFaceSource,
                                GEOM_ShadingFace* theShadingFaceSource);
+
+  OCC2VTK_EXPORT vtkPolyData* GetData(const TopoDS_Shape& theShape, float theDeflection);
 }
 
 #endif // OCC2VTK_TOOLS_H
