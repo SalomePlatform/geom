@@ -111,6 +111,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ICone.hxx
   GEOMImpl_ISphere.hxx
   GEOMImpl_ITorus.hxx
+  GEOMImpl_ITransferData.hxx
   GEOMImpl_IPrism.hxx
   GEOMImpl_IPipe.hxx
   GEOMImpl_IPipePath.hxx
@@ -197,6 +198,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_IFieldOperations.cxx
   GEOMImpl_IBaseIEOperations.cxx
   GEOMImpl_IPolyline2D.cxx
+  GEOMImpl_ITransferData.cxx
   GEOMImpl_Gen.cxx
   GEOMImpl_PointDriver.cxx
   GEOMImpl_VectorDriver.cxx

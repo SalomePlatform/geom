@@ -12934,6 +12934,46 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("AddTexture", self.InsertOp)
             return ID
 
+        ## Transfer not topological data from one GEOM object to another.
+        #
+        #  @param theObjectFrom the source object of non-topological data
+        #  @param theObjectTo the destination object of non-topological data
+        #  @param theFindMethod method to search sub-shapes of theObjectFrom
+        #         in shape theObjectTo. Possible values are: GEOM.FSM_GetInPlace,
+        #         GEOM.FSM_GetInPlaceByHistory and GEOM.FSM_GetInPlace_Old.
+        #         Other values of GEOM.find_shape_method are not supported.
+        #
+        #  @return True in case of success; False otherwise.
+        #
+        #  @ingroup l1_geomBuilder_auxiliary
+        #
+        #  @ref swig_TransferData "Example"
+        @ManageTransactions("InsertOp")
+        def TransferData(self, theObjectFrom, theObjectTo,
+                         theFindMethod=GEOM.FSM_GetInPlace):
+            """
+            Transfer not topological data from one GEOM object to another.
+
+            Parameters:
+                theObjectFrom the source object of non-topological data
+                theObjectTo the destination object of non-topological data
+                theFindMethod method to search sub-shapes of theObjectFrom
+                              in shape theObjectTo. Possible values are:
+                              GEOM.FSM_GetInPlace, GEOM.FSM_GetInPlaceByHistory
+                              and GEOM.FSM_GetInPlace_Old. Other values of
+                              GEOM.find_shape_method are not supported.
+
+            Returns:
+                True in case of success; False otherwise.
+
+            # Example: see GEOM_TestOthers.py
+            """
+            # Example: see GEOM_TestAll.py
+            isOk = self.InsertOp.TransferData(theObjectFrom,
+                                               theObjectTo, theFindMethod)
+            RaiseIfFailed("TransferData", self.InsertOp)
+            return isOk
+
         ## Creates a new folder object. It is a container for any GEOM objects.
         #  @param Name name of the container
         #  @param Father parent object. If None,

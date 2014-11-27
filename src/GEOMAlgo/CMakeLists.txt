@@ -23,6 +23,8 @@
 INCLUDE_DIRECTORIES(
   ${CAS_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
+  ${PROJECT_SOURCE_DIR}/src/GEOM
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -34,6 +36,7 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   ${CAS_KERNEL} ${CAS_TKBool} ${CAS_TKBO} ${CAS_TKMesh}
+  GEOMbasic GEOMUtils
   ${KERNEL_SALOMELocalTrace}
   )
 
@@ -60,6 +63,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_FinderShapeOn2.hxx
   GEOMAlgo_FinderShapeOnQuad.hxx
   GEOMAlgo_GetInPlace.hxx
+  GEOMAlgo_GetInPlaceAPI.hxx
   GEOMAlgo_GlueAnalyser.hxx
   GEOMAlgo_GlueDetector.hxx
   GEOMAlgo_Gluer.hxx
@@ -123,6 +127,7 @@ SET(GEOMAlgo_SOURCES
   GEOMAlgo_GetInPlace_1.cxx
   GEOMAlgo_GetInPlace_2.cxx
   GEOMAlgo_GetInPlace_3.cxx
+  GEOMAlgo_GetInPlaceAPI.cxx
   GEOMAlgo_GlueAnalyser.cxx
   GEOMAlgo_GlueDetector.cxx
   GEOMAlgo_Gluer.cxx
@@ -142,7 +147,7 @@ SET(GEOMAlgo_SOURCES
   GEOMAlgo_ShapeInfoFiller.cxx
   GEOMAlgo_ShapeInfoFiller_1.cxx
   GEOMAlgo_ShapeSolid.cxx
-  GEOMAlgo_ShellSolid.cxx	
+  GEOMAlgo_ShellSolid.cxx
   GEOMAlgo_SolidSolid.cxx
   GEOMAlgo_Splitter.cxx
   GEOMAlgo_StateCollector.cxx

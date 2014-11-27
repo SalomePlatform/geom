@@ -1352,6 +1352,10 @@
             <translation>shared_shapes.png</translation>
         </message>
         <message>
+            <source>ICO_TRANSFER_DATA</source>
+            <translation>transfer_data.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_POINT_FACE</source>
             <translation>pointonface.png</translation>
         </message>
@@ -1362,6 +1366,10 @@
         <message>
             <source>ICON_DLG_SHARED_SHAPES</source>
             <translation>shared_shapes.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_TRANSFER_DATA</source>
+            <translation>transfer_data.png</translation>
         </message>
         <message>
             <source>ICON_DLG_SCALE_ALONG_AXES</source>

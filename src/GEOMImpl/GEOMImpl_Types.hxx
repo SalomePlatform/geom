@@ -117,10 +117,13 @@
 
 #define GEOM_POLYLINE2D 56
 
+#define GEOM_TRANSFER_DATA 57
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
 #define COPY_WITHOUT_REF 2
+#define TRANSFER_DATA    3
 
 #define IMPORT_SHAPE 1
 #define EXPORT_SHAPE 2
@@ -379,6 +382,10 @@
 #define USER_TYPE 200     // Base type for GEOM advanced shapes
 #define USER_TYPE_EX 1000 // Base type for GEOM plugins
 
+// Transfer data method type
+#define TD_GET_IN_PLACE            1
+#define TD_GET_IN_PLACE_OLD        2
+#define TD_GET_IN_PLACE_BY_HISTORY 3
 
 // Plugins specified constants
 #define PLUGIN_NAME "Plugin Name"

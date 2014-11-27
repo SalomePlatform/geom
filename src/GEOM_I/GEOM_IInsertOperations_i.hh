@@ -66,7 +66,13 @@ class GEOM_I_EXPORT GEOM_IInsertOperations_i :
                                 CORBA::Long& theHeight);
 
   GEOM::ListOfLong* GetAllTextures();
-  
+
+  CORBA::Boolean TransferData
+        (GEOM::GEOM_Object_ptr                                 theObjectFrom,
+         GEOM::GEOM_Object_ptr                                 theObjectTo,
+         GEOM::find_shape_method                               theFindMethod,
+         GEOM::GEOM_IInsertOperations::ListOfTransferDatum_out theResult);
+
   ::GEOMImpl_IInsertOperations* GetOperations()
   { return (::GEOMImpl_IInsertOperations*)GetImpl(); }
 };

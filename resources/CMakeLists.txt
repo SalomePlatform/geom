@@ -184,6 +184,7 @@ SET( _res_files
   torus.png
   torusdxyz.png
   toruspointvector.png
+  transfer_data.png
   translationDxyz.png
   translationPoints.png
   translationVector.png

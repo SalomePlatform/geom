@@ -115,7 +115,8 @@ module GEOM
    *  \brief Kind of method to find inside one main shape some sub-shapes,
    *  corresponding to other given shape (its argument)
    *
-   *  Is used in functions GEOM_Gen.RestoreSubShapesO(), GEOM_Gen.RestoreSubShapesSO()
+   *  Is used in functions GEOM_Gen.RestoreSubShapesO(), GEOM_Gen.RestoreSubShapesSO(),
+   *  TransferNames()
    */
   enum find_shape_method
   {
@@ -139,7 +140,10 @@ module GEOM
     /*! To be used only for multi-transformation result.
      *  Only this method can be used after multi-transformation.
      */
-    FSM_MultiTransformed
+    FSM_MultiTransformed,
+
+    /*! Use old GetInPlace functionality. */
+    FSM_GetInPlace_Old
   };
 
   /*!
@@ -3976,7 +3980,41 @@ module GEOM
      * \return list of all texture IDs avaiable for the current study
      */
     ListOfLong GetAllTextures();
-    
+
+    /*!
+     *  \brief Non-topological information transfer datum.
+     */
+    struct TransferDatum
+    {
+      string myName;
+      long   myNumber;
+      long   myMaxNumber;
+    };
+
+    /*!
+     *  \brief Sequence of non-topological information tranfer data.
+     */
+    typedef sequence<TransferDatum> ListOfTransferDatum;
+
+    /*!
+     *  \brief Transfer non-topological data from one object to another
+     *  \param theObjectFrom the source object of non-topological data
+     *  \param theObjectTo the destination object of non-topological data
+     *  \param theFindMethod method to search sub-shapes of theObjectFrom
+     *         in shape theObjectTo. Possible values are: GEOM::FSM_GetInPlace,
+     *         GEOM::FSM_GetInPlaceByHistory and GEOM::FSM_GetInPlace_Old.
+     *         Other values of GEOM::find_shape_method are not supported.
+     *  \param theResult statistics of the operation. Output parameter. It
+     *         represents a sequence of Transfer Datum. A datum has the type
+     *         (string code), the total number of items of this type and
+     *         the number of transfered items.
+     *  \return true in case of success; otherwise false.
+     */
+    boolean TransferData(in  GEOM_Object         theObjectFrom,
+                         in  GEOM_Object         theObjectTo,
+                         in  find_shape_method   theFindMethod,
+                         out ListOfTransferDatum theResult);
+
   };
 
  // # GEOM_IKindOfShape:

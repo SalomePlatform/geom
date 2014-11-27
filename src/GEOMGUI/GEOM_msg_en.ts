@@ -5053,6 +5053,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Get shared shapes</translation>
     </message>
     <message>
+        <source>TOP_TRANSFER_DATA</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
+        <source>MEN_TRANSFER_DATA</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
+        <source>STB_TRANSFER_DATA</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
         <source>TOP_EXTENSION</source>
         <translation>Extend Edge or Face</translation>
     </message>
@@ -7182,6 +7194,61 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_SURF_FROM_FACE_NAME</source>
         <translation>SurfaceFromFace</translation>
+    </message>
+</context>
+<context>
+    <name>OperationGUI_TransferDataDlg</name>
+    <message>
+        <source>GEOM_TRANSFER_DATA_TITLE</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA</source>
+        <translation>Transfer Data</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_FROM</source>
+        <translation>Source Shape</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_TO</source>
+        <translation>Destination Shape</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_METHOD</source>
+        <translation>Type of Detection Operation</translation>
+    </message>
+    <message>
+        <source>GEOM_TD_METHOD_GETINPLACE</source>
+        <translation>Get In Place</translation>
+    </message>
+    <message>
+        <source>GEOM_TD_METHOD_GETINPLACE_OLD</source>
+        <translation>Get In Place (old)</translation>
+    </message>
+    <message>
+        <source>GEOM_TD_METHOD_GETINPLACE_HISTORY</source>
+        <translation>Get In Place By History</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_INFO</source>
+        <translation>Transfer Data: Information</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_NOT_COPIED</source>
+        <translation>There is nothing to be copied.</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_COPIED</source>
+        <translation>The following data are copied:</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_NAMES</source>
+        <translation>Names: %1 of %2</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_MATERIALS</source>
+        <translation>Materials: %1 of %2</translation>
     </message>
 </context>
 </TS>

@@ -602,6 +602,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpSharedShapes:       // MENU OPERATION - GET SHARED SHAPES
   case GEOMOp::OpExtrudedBoss:       // MENU OPERATION - EXTRUDED BOSS
   case GEOMOp::OpExtrudedCut:        // MENU OPERATION - EXTRUDED CUT
+  case GEOMOp::OpTransferData:       // MENU OPERATION - TRANSFER DATA
     libName = "OperationGUI";
     break;
   case GEOMOp::OpSewing:             // MENU REPAIR - SEWING
@@ -971,6 +972,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   //createGeomAction( GEOMOp::OpClipping,        "CLIPPING" );
   createGeomAction( GEOMOp::OpShapesOnShape,  "GET_SHAPES_ON_SHAPE" );
   createGeomAction( GEOMOp::OpSharedShapes,   "GET_SHARED_SHAPES" );
+  createGeomAction( GEOMOp::OpTransferData,   "TRANSFER_DATA" );
   createGeomAction( GEOMOp::OpExtrudedCut,    "EXTRUDED_CUT" );
   createGeomAction( GEOMOp::OpExtrudedBoss,   "EXTRUDED_BOSS" );
   createGeomAction( GEOMOp::OpFillet1d,       "FILLET_1D" );
@@ -1214,6 +1216,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpArchimede,     operId, -1 );
   createMenu( GEOMOp::OpShapesOnShape, operId, -1 );
   createMenu( GEOMOp::OpSharedShapes,  operId, -1 );
+  createMenu( GEOMOp::OpTransferData,  operId, -1 );
 
   createMenu( separator(), operId, -1 );
 
@@ -1379,6 +1382,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpArchimede,       operTbId );
   createTool( GEOMOp::OpShapesOnShape,   operTbId );
   createTool( GEOMOp::OpSharedShapes,    operTbId );
+  createTool( GEOMOp::OpTransferData,    operTbId );
 
   int featTbId = createTool( tr( "TOOL_FEATURES" ), QString( "GEOMModification" ) );
   createTool( GEOMOp::OpFillet1d,        featTbId );

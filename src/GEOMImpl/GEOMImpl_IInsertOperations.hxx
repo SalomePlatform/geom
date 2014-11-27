@@ -49,6 +49,14 @@ class Handle_TColStd_HArray1OfByte;
 
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:
+
+  struct TransferDatum
+  {
+    TCollection_AsciiString myName;
+    long                    myNumber;
+    long                    myMaxNumber;
+  };
+
   Standard_EXPORT GEOMImpl_IInsertOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_IInsertOperations();
 
@@ -78,6 +86,12 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
 							                               int& theWidth, int& theHeight);
 
   Standard_EXPORT std::list<int> GetAllTextures();
+
+  Standard_EXPORT bool TransferData
+                          (const Handle(GEOM_Object)      &theObjectFrom,
+                           const Handle(GEOM_Object)      &theObjectTo,
+                           const int                       theFindMethod,
+                                 std::list<TransferDatum> &theResult);
 
  private:
   std::vector<Handle(Resource_Manager)> myResMgrList;
