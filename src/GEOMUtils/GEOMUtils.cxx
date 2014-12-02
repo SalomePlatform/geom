@@ -44,6 +44,7 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 
 #include <Bnd_Box.hxx>
 
@@ -112,7 +113,6 @@ namespace
                                TopoDS_Shape  &theModifiedShape,
                                Standard_Real &theAddDist)
   {
-    Standard_Boolean isModified = Standard_False;
     TopExp_Explorer anExp;
     int nbf = 0;
 
@@ -136,80 +136,74 @@ namespace
         const Standard_Boolean isShell =
           (sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE);
 
-        if( isShell || S->IsUPeriodic() ) {
-          // non solid case or any periodic surface (Mantis 22454).
-          double U1,U2,V1,V2;
-          // changes for 0020677: EDF 1219 GEOM: MinDistance gives 0 instead of 20.88
-          //S->Bounds(U1,U2,V1,V2); changed by
-          ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(theModifiedShape),U1,U2,V1,V2);
-          // end of changes for 020677 (dmv)
-          Handle(Geom_RectangularTrimmedSurface) TrS1 =
-            new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
-          Handle(Geom_RectangularTrimmedSurface) TrS2 =
-            new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+        if ( !isShell && S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
+          Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
+          gp_Pnt PC = SS->Location();
           BRep_Builder B;
-          TopoDS_Face F1,F2;
-          TopoDS_Shape aMShape;
-
-          if (isShell) {
-            B.MakeCompound(TopoDS::Compound(aMShape));
-          } else {
-            B.MakeShell(TopoDS::Shell(aMShape));
-          }
-
-          B.MakeFace(F1,TrS1,1.e-7);
-          B.Add(aMShape,F1);
-          B.MakeFace(F2,TrS2,1.e-7);
-          B.Add(aMShape,F2);
-          Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
-
-          if (!isShell) {
-            // The original shape is a solid.
-            TopoDS_Solid aSolid;
-
-            B.MakeSolid(aSolid);
-            B.Add(aSolid, aMShape);
-            aMShape = aSolid;
-          }
-
-          sfs->Init(aMShape);
-          sfs->SetPrecision(1.e-6);
-          sfs->SetMaxTolerance(1.0);
-          sfs->Perform();
-          theModifiedShape = sfs->Shape();
-          isModified = Standard_True;
+          TopoDS_Vertex V;
+          B.MakeVertex(V,PC,1.e-7);
+          theModifiedShape = V;
+          theAddDist = SS->Radius();
+          return Standard_True;
         }
-        else {
-          if( S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ) {
-            Handle(Geom_SphericalSurface) SS = Handle(Geom_SphericalSurface)::DownCast(S);
-            gp_Pnt PC = SS->Location();
-            BRep_Builder B;
-            TopoDS_Vertex V;
-            B.MakeVertex(V,PC,1.e-7);
-            theModifiedShape = V;
-            theAddDist = SS->Radius();
-            isModified = Standard_True;
-          }
-          else {
-            Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
-            gp_Ax3 ax3 = TS->Position();
-            Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
-            BRep_Builder B;
-            TopoDS_Edge E;
-            B.MakeEdge(E,C,1.e-7);
-            theModifiedShape = E;
-            theAddDist = TS->MinorRadius();
-            isModified = Standard_True;
-          }
+        if ( !isShell && S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
+          Handle(Geom_ToroidalSurface) TS = Handle(Geom_ToroidalSurface)::DownCast(S);
+          gp_Ax3 ax3 = TS->Position();
+          Handle(Geom_Circle) C = new Geom_Circle(ax3.Ax2(),TS->MajorRadius());
+          BRep_Builder B;
+          TopoDS_Edge E;
+          B.MakeEdge(E,C,1.e-7);
+          theModifiedShape = E;
+          theAddDist = TS->MinorRadius();
+          return Standard_True;
         }
-      } else {
-        theModifiedShape = theShape;
+
+        // non solid case or any periodic surface (Mantis 22454).
+        double U1,U2,V1,V2;
+        // changes for 0020677: EDF 1219 GEOM: MinDistance gives 0 instead of 20.88
+        //S->Bounds(U1,U2,V1,V2); changed by
+        ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(theModifiedShape),U1,U2,V1,V2);
+        // end of changes for 020677 (dmv)
+        Handle(Geom_RectangularTrimmedSurface) TrS1 =
+          new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
+        Handle(Geom_RectangularTrimmedSurface) TrS2 =
+          new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
+        TopoDS_Shape aMShape;
+        
+        TopoDS_Face F1 = BRepBuilderAPI_MakeFace(TrS1, Precision::Confusion());
+        TopoDS_Face F2 = BRepBuilderAPI_MakeFace(TrS2, Precision::Confusion());
+        
+        if (isShell) {
+          BRep_Builder B;
+          B.MakeCompound(TopoDS::Compound(aMShape));
+          B.Add(aMShape, F1);
+          B.Add(aMShape, F2);
+        } else {
+          // The original shape is a solid.
+          BRepBuilderAPI_Sewing aSewing (Precision::Confusion()*10.0);
+          aSewing.Add(F1);
+          aSewing.Add(F2);
+          aSewing.Perform();
+          aMShape = aSewing.SewedShape();
+          BRep_Builder B;
+          TopoDS_Solid aSolid;
+          B.MakeSolid(aSolid);
+          B.Add(aSolid, aMShape);
+          aMShape = aSolid;
+        }
+        
+        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;
+        sfs->Init(aMShape);
+        sfs->SetPrecision(1.e-6);
+        sfs->SetMaxTolerance(1.0);
+        sfs->Perform();
+        theModifiedShape = sfs->Shape();
+        return Standard_True;
       }
     }
-    else
-      theModifiedShape = theShape;
-
-    return isModified;
+    
+    theModifiedShape = theShape;
+    return Standard_False;
   }
 
   //=======================================================================
