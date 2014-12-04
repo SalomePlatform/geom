@@ -43,6 +43,14 @@ iterations, Method, Approximation).
 
 \image html filling.png
 
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
 <b>Example:</b>
 
 \image html filling_compoundsn.png "Initial edges"
