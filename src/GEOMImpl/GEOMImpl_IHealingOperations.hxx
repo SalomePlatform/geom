@@ -27,6 +27,7 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#include <TopAbs.hxx>
 #include <TColStd_HArray1OfExtendedString.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 
@@ -96,7 +97,8 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) ChangeOrientationCopy( Handle(GEOM_Object) theObject);
 
   Standard_EXPORT Handle(GEOM_Object) LimitTolerance( Handle(GEOM_Object) theObject,
-                                                      double theTolerance );
+                                                      double theTolerance,
+                                                      TopAbs_ShapeEnum theType = TopAbs_SHAPE );
 
 };
 

@@ -45,6 +45,26 @@
 #include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
 
+// VSR 08/12/2014: debug PipeTShape function
+// Uncomment the macro below to correct tolerance of resulting face after creating fillet
+#define FIX_FACE_TOLERANCE
+
+namespace
+{
+  bool FixShape( TopoDS_Shape& shape,
+                 TopAbs_ShapeEnum type = TopAbs_SHAPE,
+                 Standard_Real tolerance = Precision::Confusion() )
+  {
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance( shape, tolerance, tolerance, type );
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape( shape );
+    aSfs->Perform();
+    shape = aSfs->Shape();
+    BRepCheck_Analyzer ana( shape, false );
+    return ana.IsValid();
+  }
+}
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -135,20 +155,16 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
 
   if (aShape.IsNull()) return 0;
 
+#ifdef FIX_FACE_TOLERANCE
+  bool isOk = FixShape(aShape, TopAbs_FACE);
+#else
   // Check shape validity
-  BRepCheck_Analyzer ana (aShape, false);
-  if (!ana.IsValid()) {
-    // 08.07.2008 added by skl during fixing bug 19761 from Mantis
-    ShapeFix_ShapeTolerance aSFT;
-    aSFT.LimitTolerance(aShape, Precision::Confusion(),
-                        Precision::Confusion(), TopAbs_SHAPE);
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-    aSfs->Perform();
-    aShape = aSfs->Shape();
-    ana.Init(aShape);
-    if (!ana.IsValid())
-      StdFail_NotDone::Raise("Fillet algorithm have produced an invalid shape result");
-  }
+  BRepCheck_Analyzer ana(aShape, false);
+  // 08.07.2008 added by skl during fixing bug 19761 from Mantis
+  bool isOk = ana.IsValid() || FixShape(aShape);
+#endif
+  if ( !isOk )
+    StdFail_NotDone::Raise("Fillet algorithm have produced an invalid shape result");
 
   aFunction->SetValue(aShape);
 

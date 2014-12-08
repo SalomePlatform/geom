@@ -24,7 +24,8 @@
 
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HArray1OfExtendedString.hxx>
-#include "TColStd_HSequenceOfTransient.hxx"
+#include <TColStd_HSequenceOfTransient.hxx>
+#include <TopAbs.hxx>
 
 class GEOMImpl_IHealing
 {
@@ -41,7 +42,8 @@ public:
     ARG_DEV_EDGE_VALUE          =  8,
     ARG_IS_BY_PARAMETER         =  9,
     ARG_SUBSHAPE_INDEX          = 10,
-    ARG_LIST_SHAPES             = 11
+    ARG_LIST_SHAPES             = 11,
+    ARG_TYPE                    = 12
   };
 
   GEOMImpl_IHealing(Handle(GEOM_Function) theFunction): _func(theFunction) {}
@@ -72,6 +74,9 @@ public:
 
   void SetTolerance( Standard_Real val ) { _func->SetReal(ARG_TOLERANCE, val); }
   Standard_Real GetTolerance() { return _func->GetReal(ARG_TOLERANCE); }
+
+  void SetType( TopAbs_ShapeEnum val ) { _func->SetInteger(ARG_TYPE, (Standard_Integer)val); }
+  TopAbs_ShapeEnum GetType() { TopAbs_ShapeEnum type = (TopAbs_ShapeEnum)(_func->GetInteger(ARG_TYPE)); return _func->IsDone() ? type : TopAbs_SHAPE; }
 
   void SetDevideEdgeValue( Standard_Real val ) { _func->SetReal(ARG_DEV_EDGE_VALUE, val); }
   Standard_Real GetDevideEdgeValue() { return _func->GetReal(ARG_DEV_EDGE_VALUE); }

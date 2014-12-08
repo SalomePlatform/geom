@@ -541,6 +541,8 @@ void GEOMImpl_HealingDriver::LimitTolerance (GEOMImpl_IHealing* theHI,
                                              TopoDS_Shape& theOutShape) const
 {
   Standard_Real aTol = theHI->GetTolerance();
+  TopAbs_ShapeEnum aType = theHI->GetType();
+
   if (aTol < Precision::Confusion())
     aTol = Precision::Confusion();
 
@@ -551,7 +553,7 @@ void GEOMImpl_HealingDriver::LimitTolerance (GEOMImpl_IHealing* theHI,
 
   // 2. Limit tolerance.
   ShapeFix_ShapeTolerance aSFT;
-  aSFT.LimitTolerance(aShapeCopy, aTol, aTol, TopAbs_SHAPE);
+  aSFT.LimitTolerance(aShapeCopy, aTol, aTol, aType);
 
   // 3. Fix obtained shape.
   Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape (aShapeCopy);
@@ -902,6 +904,7 @@ GetCreationInformation(std::string&             theOperationName,
     theOperationName = "LIMIT_TOLERANCE";
     AddParam( theParams, "Selected shape", aCI.GetOriginal() );
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
+    AddParam( theParams, "Type", aCI.GetType() );
     break;
   case FUSE_COLLINEAR_EDGES:
     theOperationName = "FUSE_EDGES";
