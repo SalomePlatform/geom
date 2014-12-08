@@ -88,6 +88,8 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) MakeFaceFromSurface
                                               (Handle(GEOM_Object) theFace,
                                                Handle(GEOM_Object) theWire);
+                                               
+  Standard_EXPORT Handle(GEOM_Object) MakeFaceWithConstraints (std::list<Handle(GEOM_Object)> theConstraints);
 
   Standard_EXPORT Handle(GEOM_Object) MakeShell (std::list<Handle(GEOM_Object)> theShapes);
 
@@ -159,6 +161,11 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                      Handle(GEOM_Object) theSubShape);
 
   Standard_EXPORT TCollection_AsciiString GetShapeTypeString (Handle(GEOM_Object) theShape);
+
+  Standard_EXPORT Standard_Boolean IsSubShapeBelongsTo(Handle(GEOM_Object) theSubObject,
+                                                       const Standard_Integer theSubObjectIndex,
+                                                       Handle(GEOM_Object) theObject,
+                                                       const Standard_Integer theObjectIndex);
 
   Standard_EXPORT Standard_Integer NumberOfSubShapes (Handle(GEOM_Object)    theShape,
                                                       const Standard_Integer theShapeType);

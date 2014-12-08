@@ -503,6 +503,7 @@ public:
                                   CORBA::Boolean isPlanarWanted);
   GEOM::GEOM_Object_ptr MakeFaceWires (GEOM::GEOM_List_ptr theWires,
                                        CORBA::Boolean isPlanarWanted);
+  GEOM::GEOM_Object_ptr MakeFaceWithConstraints (GEOM::GEOM_List_ptr theConstraints);
   GEOM::GEOM_Object_ptr MakeShell (GEOM::GEOM_List_ptr theFacesAndShells);
   GEOM::GEOM_Object_ptr MakeSolidShell (GEOM::GEOM_Object_ptr theShell);
   GEOM::GEOM_Object_ptr MakeSolidShells (GEOM::GEOM_List_ptr theShells);

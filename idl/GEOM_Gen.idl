@@ -1939,6 +1939,16 @@ module GEOM
                                     in GEOM_Object theWire);
 
     /*!
+     *  \brief Create a face from a set of edges with the given constraints.
+     *  \param theConstraints List of edges and constraint faces (as a sequence of a Edge + Face couples):
+     *         - edges should form a closed wire;
+     *         - for each edge, constraint face is optional: if a constraint face is missing
+     *           for some edge, this means that there no constraint associated with this edge.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeFaceWithConstraints(in ListOfGO theConstraints);
+
+    /*!
      *  \brief Create a shell from the set of faces and shells.
      *  \param theFacesAndShells List of faces and/or shells.
      *  \return New GEOM_Object, containing the created shell.
@@ -2165,6 +2175,23 @@ module GEOM
      */
     string GetShapeTypeString (in GEOM_Object theShape);
 
+    /*!
+     *  \brief Check if the object is a sub-object of another GEOM object.
+     *
+     *  \param theSubObject Checked sub-object (or its parent object, in case if
+     *                      \a theSubObjectIndex is non-zero).
+     *  \param theSubObjectIndex When non-zero, specifies a sub-shape index that
+     *                           identifies a sub-object within its parent specified via \a theSubObject.
+     *  \param theObject An object that is checked for ownership (or its parent object,
+     *                   in case if \a theObjectIndex is non-zero).
+     *  \param theObjectIndex When non-zero, specifies a sub-shape index that
+     *                        identifies an object within its parent specified via \a theObject.
+     *  \return TRUE, if the given object contains sub-object.
+     */
+    boolean IsSubShapeBelongsTo( in GEOM_Object theSubObject,
+                                 in long        theSubObjectIndex,
+                                 in GEOM_Object theObject,
+                                 in long        theObjectIndex);
     /*!
      *  \brief Count number of faces in the given shape.
      *  \param theShape Shape to count faces in.

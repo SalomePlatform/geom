@@ -79,7 +79,8 @@ protected:
                                 const bool   toRemoveFromEngine = true,
                                 const double lineWidth = -1,
                                 const int    displayMode = -1,
-                                const int    color  = -1 );
+                                const int    color  = -1,
+                                const bool   append = false );
   // This is the easiest way to show preview. It is based on execute() method.
   // It removes temporary GEOM::GEOM_Objects automatically.
 

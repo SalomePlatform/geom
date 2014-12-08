@@ -331,6 +331,7 @@
 #define DIVIDE_EDGE_BY_POINT  13
 
 #define BASIC_FILLING 1
+#define FILLING_ON_CONSTRAINTS 2
 
 #define GLUE_FACES         1
 #define GLUE_FACES_BY_LIST 2

@@ -55,6 +55,7 @@ SET( _res_files
   build_edge_curve.png
   build_face.png
   build_face_surface.png
+  build_face_constraints.png
   build_shell.png
   build_solid.png
   build_wire.png

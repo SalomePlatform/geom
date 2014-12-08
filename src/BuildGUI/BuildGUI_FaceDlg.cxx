@@ -41,6 +41,62 @@
 #include <SUIT_MessageBox.h>
 #include <SUIT_OverrideCursor.h>
 
+#include <QTreeWidget>
+
+//=================================================================================
+// class    : BuildGUI_TreeWidgetItem
+// purpose  : class for constraint(Edge-Face) creation
+//=================================================================================
+class BuildGUI_FaceDlg::TreeWidgetItem : public QTreeWidgetItem
+{
+public:
+  TreeWidgetItem( QTreeWidget*, const GEOM::GeomObjPtr, int = Type );
+  TreeWidgetItem( QTreeWidgetItem*, const GEOM::GeomObjPtr, int = Type );
+  ~TreeWidgetItem();
+  void             setFace( const GEOM::GeomObjPtr );
+  GEOM::GeomObjPtr getFace() const;
+  GEOM::GeomObjPtr getEdge() const;
+private:
+  GEOM::GeomObjPtr myEdge;
+  GEOM::GeomObjPtr myFace;
+};
+
+BuildGUI_FaceDlg::TreeWidgetItem::TreeWidgetItem( QTreeWidget* view, const GEOM::GeomObjPtr edge, int type )
+:QTreeWidgetItem( view, QStringList()<<GEOMBase::GetName( edge.get() ), type ),
+  myEdge( edge ),
+  myFace( 0 )
+{
+}
+
+BuildGUI_FaceDlg::TreeWidgetItem::TreeWidgetItem( QTreeWidgetItem* parent, const GEOM::GeomObjPtr edge, int type )
+:QTreeWidgetItem( parent, QStringList()<<GEOMBase::GetName( edge.get() ), type ),
+  myEdge( edge ),
+  myFace( 0 )
+{
+}
+
+BuildGUI_FaceDlg::TreeWidgetItem::~TreeWidgetItem()
+{
+}
+
+void BuildGUI_FaceDlg::TreeWidgetItem::setFace( const GEOM::GeomObjPtr face )
+{
+  QString aName = GEOMBase::GetName( face.get() );
+  setText( 1, aName );
+  treeWidget()->resizeColumnToContents(1);
+  myFace = face;
+}
+
+GEOM::GeomObjPtr BuildGUI_FaceDlg::TreeWidgetItem::getFace() const
+{
+  return myFace;
+}
+
+GEOM::GeomObjPtr BuildGUI_FaceDlg::TreeWidgetItem::getEdge() const
+{
+  return myEdge;
+}
+
 //=================================================================================
 // class    : BuildGUI_FaceDlg()
 // purpose  : Constructs a BuildGUI_FaceDlg which is a child of 'parent', with the 
@@ -50,12 +106,14 @@
 //=================================================================================
 BuildGUI_FaceDlg::BuildGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
   : GEOMBase_Skeleton( theGeometryGUI, parent ),
-    GroupWire        (0),
-    myGroupSurf      (0)
+    myGroupWire(0),
+    myGroupSurf(0),
+    myGroupWireConstraints(0)
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_FACE" ) ) );
   QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_FACE_SURFACE" ) ) );
+  QPixmap image3( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_FACE_CONSTRAINTS" ) ) );
 
   setWindowTitle( tr( "GEOM_FACE_TITLE" ) );
 
@@ -63,15 +121,18 @@ BuildGUI_FaceDlg::BuildGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_FACE" ) );
   mainFrame()->RadioButton1->setIcon( image1 );
   mainFrame()->RadioButton2->setIcon( image2 );
-  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  mainFrame()->RadioButton3->close();
+  mainFrame()->RadioButton3->setIcon( image3 );
 
-  GroupWire = new DlgRef_1Sel1Check( centralWidget() );
+  // Face creation from wires and/or edges
 
-  GroupWire->GroupBox1->setTitle( tr( "GEOM_FACE_FFW" ) );
-  GroupWire->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
-  GroupWire->CheckButton1->setText( tr( "GEOM_FACE_OPT" ) );
-  GroupWire->PushButton1->setIcon( image0 );
+  myGroupWire = new DlgRef_1Sel1Check( centralWidget() );
+
+  myGroupWire->GroupBox1->setTitle( tr( "GEOM_FACE_FFW" ) );
+  myGroupWire->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
+  myGroupWire->CheckButton1->setText( tr( "GEOM_FACE_OPT" ) );
+  myGroupWire->PushButton1->setIcon( image0 );
+
+  // Face creation from surface
 
   myGroupSurf = new DlgRef_2Sel(centralWidget());
 
@@ -80,11 +141,35 @@ BuildGUI_FaceDlg::BuildGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   myGroupSurf->TextLabel2->setText(tr("GEOM_WIRE"));
   myGroupSurf->PushButton1->setIcon(image0);
   myGroupSurf->PushButton2->setIcon(image0);
+  
+  // Face creation from wire and constraints
+
+  myGroupWireConstraints = new DlgRef_1SelExt( centralWidget() );
+  myGroupWireConstraints->GroupBox1->setTitle( tr( "GEOM_FACE_FFWC" ) );
+  myGroupWireConstraints->TextLabel1->setText( tr( "GEOM_WIRE" ) );
+  myGroupWireConstraints->PushButton1->setIcon( image0 );
+
+  QLabel* aLabel = new QLabel( tr( "GEOM_CONSTRAINTS" ) );
+  myTreeConstraints = new QTreeWidget( myGroupWireConstraints->Box );
+  myTreeConstraints->setColumnCount(2);
+  QStringList columnNames;
+  columnNames.append( tr( "GEOM_EDGE" ));
+  columnNames.append( tr( "GEOM_FACE_CONSTRAINT" ) );
+  myTreeConstraints->setHeaderLabels( columnNames );
+  myTreeConstraints->header()->setMovable( false );
+  myTreeConstraints->header()->setResizeMode( QHeaderView::ResizeToContents );
+  myTreeConstraints->setMinimumHeight( 140 );
+
+  QHBoxLayout* l = new QHBoxLayout( myGroupWireConstraints->Box );
+  l->setMargin( 0 ); l->setSpacing( 6 );
+  l->addWidget( aLabel);
+  l->addWidget( myTreeConstraints );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( GroupWire );
-  layout->addWidget(myGroupSurf);
+  layout->addWidget( myGroupWire );
+  layout->addWidget( myGroupSurf );
+  layout->addWidget( myGroupWireConstraints );
   /***************************************************************/
 
   setHelpFileName("create_face_page.html");
@@ -111,32 +196,38 @@ BuildGUI_FaceDlg::~BuildGUI_FaceDlg()
 void BuildGUI_FaceDlg::Init()
 {
   /* init variables */
-  myEditCurrentArgument = GroupWire->LineEdit1;
-  GroupWire->LineEdit1->setReadOnly( true );
+  myEditCurrentArgument = myGroupWire->LineEdit1;
+  myGroupWire->LineEdit1->setReadOnly( true );
   myGroupSurf->LineEdit1->setReadOnly( true );
   myGroupSurf->LineEdit2->setReadOnly( true );
+  myGroupWireConstraints->LineEdit1->setReadOnly( true );
 
-  GroupWire->CheckButton1->setChecked( true );
+  myGroupWire->CheckButton1->setChecked( true );
   myWires.clear();
   myFace.nullify();
   myWire.nullify();
+  myCurrentItem = 0;
 
   /* signals and slots connections */
   connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
   connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()),        this, SLOT(ClickOnCancel()));
 
-  connect(this,      SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
+  connect(this, SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( GroupWire->LineEdit1,   SIGNAL( returnPressed()), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupWire->PushButton1, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
+  connect( myGroupWire->LineEdit1,   SIGNAL( returnPressed()), this, SLOT( LineEditReturnPressed() ) );
+  connect( myGroupWire->PushButton1, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
   connect( myGroupSurf->LineEdit1,   SIGNAL( returnPressed()), this, SLOT( LineEditReturnPressed() ) );
   connect( myGroupSurf->PushButton1, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
   connect( myGroupSurf->LineEdit2,   SIGNAL( returnPressed()), this, SLOT( LineEditReturnPressed() ) );
   connect( myGroupSurf->PushButton2, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
+  connect( myGroupWireConstraints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( myGroupWireConstraints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
+  connect( myTreeConstraints, SIGNAL( itemClicked( QTreeWidgetItem*, int) ), this, SLOT( onItemClicked( QTreeWidgetItem*, int ) ) );
 
   initName( tr( "GEOM_FACE" ) );
 
@@ -162,22 +253,40 @@ void BuildGUI_FaceDlg::ConstructorsClicked(int constructorId)
       aMap.Add(GEOM_COMPOUND);
       globalSelection(aMap);
 
-      myEditCurrentArgument = GroupWire->LineEdit1;
-      GroupWire->LineEdit1->setText("");
-      GroupWire->show();
+      myEditCurrentArgument = myGroupWire->LineEdit1;
+      myGroupWire->LineEdit1->setText("");
+      myGroupWire->show();
       myGroupSurf->hide();
+      myGroupWireConstraints->hide();
       break;
     }
   case 1:
     {
       globalSelection(GEOM_FACE); // For the first element.
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
 
       myEditCurrentArgument = myGroupSurf->LineEdit1;
       myGroupSurf->LineEdit1->setText("");
       myGroupSurf->PushButton1->setDown(true);
       myGroupSurf->PushButton2->setDown(false);
-      GroupWire->hide();
+      myGroupWire->hide();
       myGroupSurf->show();
+      myGroupWireConstraints->hide();
+      break;
+    }
+  case 2:
+    {
+      globalSelection();
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_WIRE );
+    
+      myTreeConstraints->clear();
+      myCurrentItem = 0;
+      myEditCurrentArgument = myGroupWireConstraints->LineEdit1;
+      myGroupWireConstraints->LineEdit1->setText("");
+      myGroupWireConstraints->LineEdit1->setEnabled(true);
+      myGroupWire->hide();
+      myGroupSurf->hide();
+      myGroupWireConstraints->show();
       break;
     }
   }
@@ -189,6 +298,84 @@ void BuildGUI_FaceDlg::ConstructorsClicked(int constructorId)
   updateGeometry();
   resize(minimumSizeHint());
   SelectionIntoArgument();
+}
+
+//=================================================================================
+// function : updateConstraintsTree
+// purpose  :
+//=================================================================================
+void BuildGUI_FaceDlg::updateConstraintsTree()
+{
+  if ( myEditCurrentArgument != myGroupWireConstraints->LineEdit1 || myWire.isNull() )
+    return;
+
+  myTreeConstraints->clear();
+
+  GEOM::GEOM_IShapesOperations_ptr anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
+  GEOM::ListOfGO_var aList = anOper->ExtractSubShapes( myWire.get(), TopAbs_EDGE, false );
+  if ( !aList->length() )
+    return;
+
+  for ( int i = 0, n = aList->length(); i < n; i++ ) {
+    TreeWidgetItem* item = new TreeWidgetItem( myTreeConstraints,
+                                               GEOM::GeomObjPtr( aList[i] ) );
+  }
+
+  myEditCurrentArgument->setEnabled(false);
+  globalSelection();
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+  
+  myTreeConstraints->resizeColumnToContents(0);
+  QTreeWidgetItem* firstItem = myTreeConstraints->topLevelItem(0);
+  firstItem->setSelected( true );
+  onItemClicked( firstItem, 0 );
+}
+
+//=================================================================================
+// function : findEmptyTreeItem()
+// purpose  :
+//=================================================================================
+void BuildGUI_FaceDlg::findEmptyTreeItem()
+{
+  if ( isTreeFull() )
+    return;
+
+  QTreeWidgetItem* nextItem = 0;
+  QTreeWidgetItem* item;
+  for ( item = myTreeConstraints->itemBelow( myCurrentItem );
+        item && !nextItem;
+        item = myTreeConstraints->itemBelow( item ) ) {
+    if ( (dynamic_cast<TreeWidgetItem*>(item))->getFace().isNull() )
+      nextItem = item;
+  }
+  for ( item = myTreeConstraints->topLevelItem(0);
+        item && item != myCurrentItem && !nextItem;
+        item = myTreeConstraints->itemBelow( item ) ) {
+    if ( (dynamic_cast<TreeWidgetItem*>(item))->getFace().isNull() )
+      nextItem = item;
+  }
+
+  if ( nextItem && nextItem != myCurrentItem ) {
+    myCurrentItem->setSelected( false );
+    nextItem->setSelected( true );
+    onItemClicked( nextItem, 0 );
+  }
+}
+
+//=================================================================================
+// function : isTreeFull()
+// purpose  :
+//=================================================================================
+bool BuildGUI_FaceDlg::isTreeFull()
+{
+  bool ok = true;
+  QTreeWidgetItem* item;
+  for ( item = myTreeConstraints->topLevelItem(0);
+        item && ok;
+        item = myTreeConstraints->itemBelow( item ) ) {
+    ok = !(dynamic_cast<TreeWidgetItem*>(item))->getFace().isNull();
+  }
+  return ok;
 }
 
 //=================================================================================
@@ -213,6 +400,9 @@ bool BuildGUI_FaceDlg::ClickOnApply()
     return false;
 
   initName();
+
+  myEditCurrentArgument->setText("");
+  ConstructorsClicked( getConstructorId() );
   return true;
 }
 
@@ -223,7 +413,8 @@ bool BuildGUI_FaceDlg::ClickOnApply()
 //=================================================================================
 void BuildGUI_FaceDlg::SelectionIntoArgument()
 {
-  if (myEditCurrentArgument == GroupWire->LineEdit1) {
+  erasePreview();
+  if ( myEditCurrentArgument == myGroupWire->LineEdit1 ) {
     myEditCurrentArgument->setText( "" );
 
     QList<TopAbs_ShapeEnum> types;
@@ -235,8 +426,9 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
       QString aName = myWires.count() > 1 ? QString( "%1_objects").arg( myWires.count() ) : GEOMBase::GetName( myWires[0].get() );
       myEditCurrentArgument->setText( aName );
     }
-  } else if (myEditCurrentArgument == myGroupSurf->LineEdit1 ||
-             myEditCurrentArgument == myGroupSurf->LineEdit2) {
+  }
+  else if (myEditCurrentArgument == myGroupSurf->LineEdit1 ||
+           myEditCurrentArgument == myGroupSurf->LineEdit2) {
     const bool isEditFace = myEditCurrentArgument == myGroupSurf->LineEdit1;
     const TopAbs_ShapeEnum aType = isEditFace ? TopAbs_FACE : TopAbs_WIRE;
     GEOM::GeomObjPtr aSelectedObject = getSelected(aType);
@@ -260,8 +452,39 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
       }
     }
   }
-
-  displayPreview(true);
+  else if ( myEditCurrentArgument == myGroupWireConstraints->LineEdit1 ) {
+    if ( myCurrentItem ) {
+      GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_FACE );
+      TopoDS_Shape aFaceShape;
+      GEOM::GEOM_IShapesOperations_ptr anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
+      if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aFaceShape ) && !aFaceShape.IsNull()
+          && anOper->IsSubShapeBelongsTo( myCurrentItem->getEdge().get(), 0, aSelectedObject.get(), 0 ) ) {
+        myCurrentItem->setFace( aSelectedObject );
+        findEmptyTreeItem();
+      }
+      else {
+        myCurrentItem->setFace( 0 );
+        displayPreview( myCurrentItem->getEdge().get(), true, false, true, 5, -1, Quantity_NOC_RED );
+      }
+    }
+    else {
+      myWire.nullify();
+      myEditCurrentArgument->setText( "" );
+      GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_WIRE );
+      TopoDS_Shape aWireShape;
+      if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aWireShape ) && !aWireShape.IsNull() ) {
+        QString aName = GEOMBase::GetName( aSelectedObject.get() );
+        myEditCurrentArgument->setText( aName );
+        myWire = aSelectedObject;
+        updateConstraintsTree();
+      }
+      else {
+        myTreeConstraints->clear();
+        erasePreview( true );
+      }
+    }
+  }
+  displayPreview( true, false, true, true, -1, -1, -1, true );
 }
 
 
@@ -272,7 +495,7 @@ void BuildGUI_FaceDlg::SelectionIntoArgument()
 void BuildGUI_FaceDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if (send == GroupWire->PushButton1) {
+  if ( send == myGroupWire->PushButton1 ) {
     TColStd_MapOfInteger aMap;
   
     aMap.Add(GEOM_EDGE);
@@ -282,26 +505,33 @@ void BuildGUI_FaceDlg::SetEditCurrentArgument()
     aMap.Add(GEOM_SOLID);
     aMap.Add(GEOM_COMPOUND);
     globalSelection(aMap);
-    myEditCurrentArgument = GroupWire->LineEdit1;
+    myEditCurrentArgument = myGroupWire->LineEdit1;
   }
   else if (send == myGroupSurf->PushButton1) {
     globalSelection(GEOM_FACE);
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
     myEditCurrentArgument = myGroupSurf->LineEdit1;
     myGroupSurf->PushButton2->setDown(false);
     myGroupSurf->LineEdit2->setEnabled(false);
   }
   else if (send == myGroupSurf->PushButton2) {
     globalSelection(GEOM_WIRE);
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_WIRE );
     myEditCurrentArgument = myGroupSurf->LineEdit2;
     myGroupSurf->PushButton1->setDown(false);
     myGroupSurf->LineEdit1->setEnabled(false);
+  }
+  else if (send == myGroupWireConstraints->PushButton1) {
+    globalSelection();
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_WIRE );
+    myEditCurrentArgument = myGroupWireConstraints->LineEdit1;
+    myCurrentItem = 0;
   }
 
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
-  send->setDown(true);
-  displayPreview(true);
+  SelectionIntoArgument();
 }
 
 
@@ -320,6 +550,19 @@ void BuildGUI_FaceDlg::ActivateThisDialog()
   ConstructorsClicked(getConstructorId());
 }
 
+//=================================================================================
+// function : onItemClicked()
+// purpose  : called when tree item was clicked
+//=================================================================================
+void BuildGUI_FaceDlg::onItemClicked( QTreeWidgetItem* theItem, int theColumn )
+{
+  if ( !theItem || !( theItem->flags() & Qt::ItemIsSelectable ) )
+    return;
+
+  myCurrentItem = dynamic_cast<TreeWidgetItem*>( theItem );
+  displayPreview( true );
+  displayPreview( myCurrentItem->getEdge().get(), true, false, true, 5, -1, Quantity_NOC_RED );
+}
 
 //=================================================================================
 // function : enterEvent()
@@ -355,6 +598,9 @@ bool BuildGUI_FaceDlg::isValid( QString& )
   case 1:
     ok = myFace && myWire;
     break;
+  case 2:
+    ok = myWire;
+    break;
   default:
     break;
   }
@@ -383,13 +629,30 @@ bool BuildGUI_FaceDlg::execute( ObjectList& objects )
         objlist[i] = myWires[i].copy();
       }
 
-      anObj = anOper->MakeFaceWires( objlist.in(), GroupWire->CheckButton1->isChecked() );
-      res   = true;
+      anObj = anOper->MakeFaceWires( objlist.in(), myGroupWire->CheckButton1->isChecked() );
+      res = true;
     }
     break;
   case 1:
     anObj = anOper->MakeFaceFromSurface(myFace.get(), myWire.get());
-    res   = true;
+    res = true;
+    break;
+  case 2:
+    {
+      int numberOfItems = myTreeConstraints->topLevelItemCount();
+      GEOM::ListOfGO_var constraints = new GEOM::ListOfGO();
+      constraints->length( 2 * numberOfItems );
+      int j = 0;
+      for ( int i = 0; i < numberOfItems; i++ ) {
+        TreeWidgetItem* item = dynamic_cast<TreeWidgetItem*>( myTreeConstraints->topLevelItem(i) );
+        constraints[j++] = item->getEdge().copy();
+        if ( item->getFace() )
+          constraints[j++] = item->getFace().copy();
+      }
+      constraints->length(j);
+      anObj = anOper->MakeFaceWithConstraints( constraints.in() );
+      res = true;
+    }
     break;
   default:
     break;
@@ -398,14 +661,40 @@ bool BuildGUI_FaceDlg::execute( ObjectList& objects )
   if (!anObj->_is_nil()) {
     objects.push_back(anObj._retn());
 
-    if (!anOper->IsDone() && QString(anOper->GetErrorCode()) == "MAKE_FACE_TOLERANCE_TOO_BIG") {
-      SUIT_OverrideCursor wc;
-      wc.suspend();
-      QString msgw = QObject::tr(anOper->GetErrorCode());
-      SUIT_MessageBox::warning(this, tr("WRN_WARNING"), msgw, tr("BUT_OK"));
+    if ( !anOper->IsDone() && QString(anOper->GetErrorCode()) == "MAKE_FACE_TOLERANCE_TOO_BIG") {
+      if ( !IsPreview() ) {
+        SUIT_OverrideCursor wc;
+        wc.suspend();
+        QString msgw = QObject::tr(anOper->GetErrorCode());
+        SUIT_MessageBox::warning(this, tr("WRN_WARNING"), msgw, tr("BUT_OK"));
+      }
       anOper->SetErrorCode("PAL_NO_ERROR");
     }
   }
 
   return res;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BuildGUI_FaceDlg::addSubshapesToStudy()
+{
+  switch (getConstructorId()) {
+  case 0:
+    break;
+  case 1:
+    break;
+  case 2:
+    for( int i = 0; i < myTreeConstraints->topLevelItemCount(); i++ ) {
+      TreeWidgetItem* item = dynamic_cast<TreeWidgetItem*>( myTreeConstraints->topLevelItem(i) );
+      if ( item->getFace().get() )
+        GEOMBase::PublishSubObject( item->getFace().get() );
+      GEOMBase::PublishSubObject( myWire.get() );
+    }
+    break;
+  default:
+    break;
+  }
 }

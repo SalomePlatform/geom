@@ -708,6 +708,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Try to create a planar face</translation>
     </message>
     <message>
+        <source>GEOM_FACE_FFWC</source>
+        <translation>Face creation from wire and constraints</translation>
+    </message>
+    <message>
+        <source>GEOM_CONSTRAINTS</source>
+        <translation>Constraints</translation>
+    </message>
+    <message>
+        <source>GEOM_FACE_CONSTRAINT</source>
+        <translation>Constraint Face</translation>
+    </message>
+    <message>
         <source>GEOM_SOLID_FROM_FACE_OPT</source>
         <translation>Intersect shapes</translation>
     </message>

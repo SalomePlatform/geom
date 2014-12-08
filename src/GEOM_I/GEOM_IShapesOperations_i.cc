@@ -281,6 +281,37 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceFromSurface
 
 //=============================================================================
 /*!
+ *  MakeFaceWithConstraints
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWithConstraints
+                                                (const GEOM::ListOfGO& theConstraints)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the shapes
+  std::list<Handle(GEOM_Object)> aConstraints;
+  for( int ind = 0; ind < theConstraints.length(); ind++ ) {
+    Handle(GEOM_Object) anObject = GetObjectImpl( theConstraints[ind] );
+    aConstraints.push_back(anObject);
+  }
+
+  // Make Face
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeFaceWithConstraints( aConstraints );
+
+  // enable warning status
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeShell
  */
 //=============================================================================
@@ -974,6 +1005,25 @@ char* GEOM_IShapesOperations_i::GetShapeTypeString (GEOM::GEOM_Object_ptr theSha
   // Get shape parameters
   TCollection_AsciiString aDescription = GetOperations()->GetShapeTypeString(aShape);
   return CORBA::string_dup(aDescription.ToCString());
+}
+
+//=============================================================================
+/*!
+ *  IsSubShapeBelongsTo
+ */
+//=============================================================================
+CORBA::Boolean GEOM_IShapesOperations_i::IsSubShapeBelongsTo( GEOM::GEOM_Object_ptr theSubObject,
+                                                              const CORBA::Long theSubObjectIndex,
+                                                              GEOM::GEOM_Object_ptr theObject,
+                                                              const CORBA::Long theObjectIndex)
+{
+  Handle(GEOM_Object) aSubObject = GetObjectImpl( theSubObject );
+  Handle(GEOM_Object) anObject = GetObjectImpl( theObject );
+  if( anObject.IsNull() || aSubObject.IsNull() )
+    return false;
+
+  // Get parameters
+  return GetOperations()->IsSubShapeBelongsTo( aSubObject, theSubObjectIndex, anObject, theObjectIndex );
 }
 
 //=============================================================================

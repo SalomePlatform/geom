@@ -259,7 +259,8 @@ void GEOMBase_Helper::displayPreview( const bool   display,
                                       const bool   toRemoveFromEngine,
                                       const double lineWidth,
                                       const int    displayMode,
-                                      const int    color )
+                                      const int    color,
+                                      const bool   append )
 {
   if(!display) {
     erasePreview( update );
@@ -275,7 +276,8 @@ void GEOMBase_Helper::displayPreview( const bool   display,
     return;
   }
 
-  erasePreview( false );
+  if( !append )
+    erasePreview( false );
 
   try {
     SUIT_OverrideCursor wc;

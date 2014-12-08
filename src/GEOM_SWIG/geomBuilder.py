@@ -4555,6 +4555,42 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeFaceFromSurface", self.ShapesOp)
             self._autoPublish(anObj, theName, "face")
             return anObj
+          
+        ## Create a face from a set of edges with the given constraints.
+        #  @param theConstraints List of edges and constraint faces (as a sequence of a Edge + Face couples):
+        #         - edges should form a closed wire;
+        #         - for each edge, constraint face is optional: if a constraint face is missing
+        #           for some edge, this means that there no constraint associated with this edge.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        # 
+        # @return New GEOM.GEOM_Object, containing the created face.
+        # 
+        # @ref tui_creation_face "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeFaceWithConstraints(self, theConstraints, theName=None):
+            """
+            Create a face from a set of edges with the given constraints.
+
+            Parameters:
+                theConstraints List of edges and constraint faces (as a sequence of a Edge + Face couples):
+                        - edges should form a closed wire;
+                        - for each edge, constraint face is optional: if a constraint face is missing
+                          for some edge, this means that there no constraint associated with this edge.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.ShapesOp.MakeFaceWithConstraints(theConstraints)
+            if anObj is None:
+                RaiseIfFailed("MakeFaceWithConstraints", self.ShapesOp)
+            self._autoPublish(anObj, theName, "face")
+            return anObj
 
         ## Create a shell from the set of faces and shells.
         #  @param theFacesAndShells List of faces and/or shells.
@@ -6243,6 +6279,38 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("SubShapes", self.ShapesOp)
             self._autoPublish(ListObj, theName, "subshape")
             return ListObj
+
+        ## Check if the object is a sub-object of another GEOM object.
+        #  @param aSubObject Checked sub-object (or its parent object, in case if
+        #         \a theSubObjectIndex is non-zero).
+        #  @param anObject An object that is checked for ownership (or its parent object,
+        #         in case if \a theObjectIndex is non-zero).
+        #  @param aSubObjectIndex When non-zero, specifies a sub-shape index that
+        #         identifies a sub-object within its parent specified via \a theSubObject.
+        #  @param anObjectIndex When non-zero, specifies a sub-shape index that
+        #         identifies an object within its parent specified via \a theObject.
+        #  @return TRUE, if the given object contains sub-object.
+        @ManageTransactions("ShapesOp")
+        def IsSubShapeBelongsTo(self, aSubObject, anObject, aSubObjectIndex = 0, anObjectIndex = 0):
+            """
+            Check if the object is a sub-object of another GEOM object.
+            
+            Parameters:
+                aSubObject Checked sub-object (or its parent object, in case if
+                    \a theSubObjectIndex is non-zero).
+                anObject An object that is checked for ownership (or its parent object,
+                    in case if \a theObjectIndex is non-zero).
+                aSubObjectIndex When non-zero, specifies a sub-shape index that
+                    identifies a sub-object within its parent specified via \a theSubObject.
+                anObjectIndex When non-zero, specifies a sub-shape index that
+                    identifies an object within its parent specified via \a theObject.
+
+            Returns
+                TRUE, if the given object contains sub-object.
+            """
+            IsOk = self.ShapesOp.IsSubShapeBelongsTo(aSubObject, aSubObjectIndex, anObject, anObjectIndex)
+            RaiseIfFailed("IsSubShapeBelongsTo", self.ShapesOp)
+            return IsOk
 
         # end of l4_decompose
         ## @}

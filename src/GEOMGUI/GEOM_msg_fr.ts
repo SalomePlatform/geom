@@ -724,6 +724,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Privilégier la création d&apos;une face plane</translation>
     </message>
     <message>
+        <source>GEOM_FACE_FFWC</source>
+        <translation type="unfinished">Face creation from wire and constraints</translation>
+    </message>
+    <message>
+        <source>GEOM_CONSTRAINTS</source>
+        <translation type="unfinished">Constraints</translation>
+    </message>
+    <message>
+        <source>GEOM_FACE_CONSTRAINT</source>
+        <translation type="unfinished">Constraint Face</translation>
+    </message>
+    <message>
         <source>GEOM_SOLID_FROM_FACE_OPT</source>
         <translation type="unfinished">Intersect shapes</translation>
     </message>

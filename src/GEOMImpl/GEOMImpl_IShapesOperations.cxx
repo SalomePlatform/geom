@@ -34,11 +34,13 @@
 #include "GEOMImpl_VectorDriver.hxx"
 #include "GEOMImpl_ShapeDriver.hxx"
 #include "GEOMImpl_GlueDriver.hxx"
+#include "GEOMImpl_FillingDriver.hxx"
 
 #include "GEOMImpl_IVector.hxx"
 #include "GEOMImpl_IShapes.hxx"
 #include "GEOMImpl_IShapeExtend.hxx"
 #include "GEOMImpl_IGlue.hxx"
+#include "GEOMImpl_IFilling.hxx"
 
 #include "GEOMImpl_Block6Explorer.hxx"
 #include "GEOMImpl_IHealingOperations.hxx"
@@ -674,6 +676,107 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceFromSurface
 
   SetErrorCode(OK);
 
+  return aShape;
+}
+
+//=============================================================================
+/*!
+ *  MakeFaceWithConstraints
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWithConstraints
+                             (std::list<Handle(GEOM_Object)> theConstraints)
+{
+  SetErrorCode(KO);
+
+  //Add a new object
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_FILLING);
+
+  //Add a new function
+  Handle(GEOM_Function) aFunction =
+    aShape->AddFunction(GEOMImpl_FillingDriver::GetID(), FILLING_ON_CONSTRAINTS);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_FillingDriver::GetID()) return NULL;
+
+  GEOMImpl_IFilling aCI (aFunction);
+  Handle(TColStd_HSequenceOfTransient) aConstraints = new TColStd_HSequenceOfTransient;
+
+  // Shapes
+  std::list<Handle(GEOM_Object)>::iterator it = theConstraints.begin();
+  while (it != theConstraints.end()) {
+    Handle(GEOM_Object) anObject = (*it);
+    if ( anObject.IsNull() || anObject->GetValue().ShapeType() != TopAbs_EDGE ) {
+      SetErrorCode("NULL argument edge for the face construction");
+      return NULL;
+    }
+    Handle(GEOM_Function) aRefSh = anObject->GetLastFunction();
+    aConstraints->Append(aRefSh);
+    it++;
+    if ( it != theConstraints.end() ) {
+      Handle(GEOM_Object) aFace = (*it);
+      if ( aFace.IsNull() ) {
+        // null constraint face - it is a valid case
+        it++;
+        continue;
+      }
+      if ( aFace->GetValue().ShapeType() != TopAbs_FACE )
+        // constraint face can be omitted - it is a valid case
+        continue;
+      if ( IsSubShapeBelongsTo( anObject, 0, aFace, 0 ) ) {
+        // valid constraint
+        aRefSh = aFace->GetLastFunction();
+        aConstraints->Append(aRefSh);
+        it++;
+      }
+      else {
+        // bad constraint
+        SetErrorCode("Face is NULL or not connected to the Edge");
+        return NULL;
+      }
+    }
+  }
+  aCI.SetShapes( aConstraints );
+
+  //Compute the shape
+  Standard_Boolean isWarning = Standard_False;
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    // to provide warning
+    if (!aFunction->GetValue().IsNull()) {
+      isWarning = Standard_True;
+    } else {
+      return NULL;
+    }
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aShape << " = geompy.MakeFaceWithConstraints([";
+
+  // Constraints
+  it = theConstraints.begin();
+  if (it != theConstraints.end() ) {
+    pd << (*it++);
+    while (it != theConstraints.end()) {
+      Handle(GEOM_Object) anObject = (*it++);
+      if( !anObject.IsNull() )
+        pd << ", " << anObject;
+    }
+  }
+  pd << "])";
+
+  // to provide warning
+  if (!isWarning) SetErrorCode(OK);
   return aShape;
 }
 
@@ -1938,6 +2041,39 @@ TCollection_AsciiString GEOMImpl_IShapesOperations::GetShapeTypeString (Handle(G
   }
 
   return aTypeName;
+}
+
+//=============================================================================
+/*!
+ *  IsSubShapeBelongsTo
+ */
+//=============================================================================
+Standard_Boolean GEOMImpl_IShapesOperations::IsSubShapeBelongsTo( Handle(GEOM_Object) theSubObject,
+                                                                  const Standard_Integer theSubObjectIndex,
+                                                                  Handle(GEOM_Object) theObject,
+                                                                  const Standard_Integer theObjectIndex)
+{
+  if ( theObject.IsNull() || theSubObject.IsNull() )
+    return false;
+
+  TopoDS_Shape shape    = theObject->GetValue();
+  TopoDS_Shape subShape = theSubObject->GetValue();
+
+  if ( shape.IsNull() || subShape.IsNull() )
+    return false;
+
+  TopTools_IndexedMapOfShape anIndices;
+  if ( theObjectIndex > 0 ) {
+    TopExp::MapShapes( shape, anIndices );
+    shape = anIndices.FindKey(theObjectIndex);
+  }
+  if ( theSubObjectIndex > 0 ) {
+    TopExp::MapShapes( subShape, anIndices );
+    subShape = anIndices.FindKey(theSubObjectIndex);
+  }
+
+  TopExp::MapShapes( shape, anIndices );
+  return anIndices.Contains( subShape );
 }
 
 //=============================================================================

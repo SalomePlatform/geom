@@ -2275,6 +2275,24 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceWires (GEOM::GEOM_List_ptr theWires
 }
 
 //=============================================================================
+//  MakeFaceWithConstraints:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceWithConstraints (GEOM::GEOM_List_ptr theConstraints)
+{
+  beginService( " GEOM_Superv_i::MakeFaceWithConstraints" );
+  MESSAGE("GEOM_Superv_i::MakeFaceWithConstraints");
+  if (GEOM_List_i<GEOM::ListOfGO>* aConstraints =
+      dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theConstraints, myPOA).in())) {
+    getShapesOp();
+    GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeFaceWithConstraints(aConstraints->GetList());
+    endService( " GEOM_Superv_i::MakeFaceWithConstraints" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeFaceWithConstraints" );
+  return NULL;
+}
+
+//=============================================================================
 //  MakeShell:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeShell (GEOM::GEOM_List_ptr theFacesAndShells)

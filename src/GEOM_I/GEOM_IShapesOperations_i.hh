@@ -67,6 +67,8 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeFaceFromSurface(GEOM::GEOM_Object_ptr theFace,
                                             GEOM::GEOM_Object_ptr theWire);
 
+  GEOM::GEOM_Object_ptr MakeFaceWithConstraints (const GEOM::ListOfGO& theConstraints);
+  
   GEOM::GEOM_Object_ptr MakeShell (const GEOM::ListOfGO& theFacesAndShells);
 
   GEOM::GEOM_Object_ptr MakeSolidShell (GEOM::GEOM_Object_ptr theShell);
@@ -143,6 +145,11 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                 GEOM::GEOM_Object_ptr theSubShape);
 
   char* GetShapeTypeString (GEOM::GEOM_Object_ptr theShape);
+
+  CORBA::Boolean IsSubShapeBelongsTo( GEOM::GEOM_Object_ptr theSubobject,
+                                      const CORBA::Long theSubObjectIndex,
+                                      GEOM::GEOM_Object_ptr theObject,
+                                      const CORBA::Long theObjectIndex );
 
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);

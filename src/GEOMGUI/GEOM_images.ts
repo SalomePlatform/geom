@@ -163,6 +163,10 @@
             <source>ICON_DLG_BUILD_FACE_SURFACE</source>
             <translation>build_face_surface.png</translation>
         </message>
+        <message>
+            <source>ICON_DLG_BUILD_FACE_CONSTRAINTS</source>
+            <translation>build_face_constraints.png</translation>
+        </message>
 	<message>
             <source>ICON_DLG_FACE_HW</source>
             <translation>face_hw.png</translation>

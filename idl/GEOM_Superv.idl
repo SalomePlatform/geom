@@ -391,6 +391,7 @@ module GEOM
                           in boolean     isPlanarWanted) ;
     GEOM_Object MakeFaceWires (in GEOM_List theWires,
                                in boolean   isPlanarWanted) ;
+    GEOM_Object MakeFaceWithConstraints(in GEOM_List theConstraints);
     GEOM_Object MakeShell (in GEOM_List theFacesAndShells) ;
     GEOM_Object MakeSolidShell (in GEOM_Object theShell) ;
     GEOM_Object MakeSolidShells (in GEOM_List theShells) ;
