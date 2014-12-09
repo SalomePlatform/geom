@@ -1,13 +1,13 @@
 /*!
 
-\page section_opeartion_page Section
+\page section_opeartion_page Intersection
 
-\b Section operation creates a vertex, an edge, a wire or a compound
+\b Intersection operation creates a vertex, an edge, a wire or a compound
 of them representing the intersection of two shapes.
 
-To produce it, select in the main menu <b>Operations - > Boolean - > Section</b>
+To produce it, select in the main menu <b>Operations - > Boolean - > Intersection</b>
 
-\image html neo-section.png "Section dialog"
+\image html neo-section.png "Intersection dialog"
 
 In this dialog:
 - Input or accept the default \b Name of the resulting shape. 

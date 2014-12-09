@@ -1674,11 +1674,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SECTION</source>
-        <translation>Section</translation>
+        <translation>Intersection</translation>
     </message>
     <message>
         <source>GEOM_SECTION_TITLE</source>
-        <translation>Section Of Two Objects</translation>
+        <translation>Intersection Of Two Objects</translation>
     </message>
     <message>
         <source>GEOM_SELECTED_FACE</source>
@@ -2986,7 +2986,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_SECTION</source>
-        <translation>Section</translation>
+        <translation>Intersection</translation>
     </message>
     <message>
         <source>MEN_SELECT_ONLY</source>
@@ -3874,7 +3874,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>STB_SECTION</source>
-        <translation>Section</translation>
+        <translation>Intersection</translation>
     </message>
     <message>
         <source>STB_SEWING</source>
@@ -4458,7 +4458,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>TOP_SECTION</source>
-        <translation>Section</translation>
+        <translation>Intersection</translation>
     </message>
     <message>
         <source>TOP_SEWING</source>
