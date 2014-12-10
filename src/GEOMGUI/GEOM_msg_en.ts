@@ -44,7 +44,7 @@ Do you still want to delete these objects?</translation>
     </message>
     <message>
         <source>DEVIDE_EDGE_BY_PROJ_POINT</source>
-        <translation>Point to project</translation>
+        <translation>Points to project</translation>
     </message>
     <message>
         <source>ERROR_SHAPE_TYPE</source>
@@ -569,7 +569,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_DIVIDE_EDGE_TITLE</source>
-        <translation>Addition of point</translation>
+        <translation>Addition of points</translation>
     </message>
     <message>
         <source>GEOM_DX</source>
@@ -5231,6 +5231,18 @@ shells and solids on the other hand.</translation>
     <message>
         <source>GEOM_NO_SHAPES_SELECTED</source>
         <translation>There are no shapes that meet filtering parameters</translation>
+    </message>
+    <message>
+        <source>GEOM_HEALING_STATS_TITLE</source>
+        <translation>What is done</translation>
+    </message>
+    <message>
+        <source>GEOM_HEALING_STATS_COL_1</source>
+        <translation>Count</translation>
+    </message>
+    <message>
+        <source>GEOM_HEALING_STATS_COL_2</source>
+        <translation>Modication</translation>
     </message>
 </context>
 <context>

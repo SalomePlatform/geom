@@ -73,6 +73,7 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
     while (itr.More()) {
       B.Add(myResultShape,itr.Value().Reversed());
       itr.Next();
+      myStatistics.AddModif("Face reversed");
     }
   }
   else if (myInitShape.ShapeType() == TopAbs_FACE)
@@ -82,6 +83,7 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
     while (itr.More()) {
       B.Add(myResultShape,itr.Value());
       itr.Next();
+      myStatistics.AddModif("Wire reversed");
     }
     myResultShape.Reverse();
   }
@@ -105,12 +107,14 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
     if ( myInitShape.ShapeType() == TopAbs_EDGE )
     {
       myResultShape = reversedEdges.First();
+      myStatistics.AddModif("Edge reversed");
     }
     else
     {
       BRepBuilderAPI_MakeWire wire;
       wire.Add( reversedEdges );
       myResultShape = wire;
+      myStatistics.AddModif("Wire reversed");
     }
     // myResultShape = myInitShape.EmptyCopied();
     // TopoDS_Iterator itr (myInitShape);
@@ -132,6 +136,13 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
       myResultShape.Orientation(TopAbs_REVERSED);
     else
       myResultShape.Orientation(TopAbs_FORWARD);
+
+    switch( myResultShape.ShapeType() ) {
+    case TopAbs_SOLID    : myStatistics.AddModif("Solid reversed"); break;
+    case TopAbs_COMPSOLID: myStatistics.AddModif("Compsolid reversed"); break;
+    case TopAbs_COMPOUND : myStatistics.AddModif("Compound reversed"); break;
+    default:;
+    }
   }
 
   return true;

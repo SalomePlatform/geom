@@ -84,7 +84,7 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
 
    GEOM::GEOM_Object_ptr DivideEdgeByPoint (GEOM::GEOM_Object_ptr theObject,
                                             CORBA::Short          theIndex,
-                                            GEOM::GEOM_Object_ptr thePoint);
+                                            const GEOM::ListOfGO& thePoints);
 
    GEOM::GEOM_Object_ptr FuseCollinearEdgesWithinWire (GEOM::GEOM_Object_ptr theWire,
                                                        const GEOM::ListOfGO& theVertices);
@@ -101,6 +101,8 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
 
    ::GEOMImpl_IHealingOperations* GetOperations() { return (::GEOMImpl_IHealingOperations*)GetImpl(); }
 
+   GEOM::ModifStatistics* GetStatistics();
+   
 private:
          Handle(TColStd_HArray1OfInteger)        Convert( const GEOM::short_array& );
 

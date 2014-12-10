@@ -121,3 +121,98 @@ extern "C"
     return new RepairGUI( parent );
   }
 }
+
+//=====================================================================================
+// Statistics dialog
+//=====================================================================================
+
+#include <QDialog>
+#include <QHBoxLayout>
+#include <QHeaderView>
+#include <QPushButton>
+#include <QString>
+#include <QStringList>
+#include <QTableWidget>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QVBoxLayout>
+
+namespace
+{
+  class StatsDlg : public QDialog
+  {
+  public:
+    StatsDlg( GEOM::ModifStatistics_var stats, QWidget* parent );
+  };
+
+  StatsDlg::StatsDlg( GEOM::ModifStatistics_var stats, QWidget* parent ): QDialog( parent )
+  {
+    setModal( false );
+    setAttribute( Qt::WA_DeleteOnClose, true );
+    setWindowTitle( tr( "GEOM_HEALING_STATS_TITLE" ) );
+    setMinimumWidth( 500 );
+
+    const int nbRows = stats->length();
+    const int nbCols = 2;
+    QTableWidget* table = new QTableWidget( nbRows, nbCols, this );
+    table->setEditTriggers( QAbstractItemView::NoEditTriggers );
+    table->horizontalHeader()->setResizeMode( 1, QHeaderView::Interactive );
+    table->horizontalHeader()->setStretchLastSection( true );
+
+    QStringList headers;
+    headers << tr( "GEOM_HEALING_STATS_COL_1" );
+    headers << tr( "GEOM_HEALING_STATS_COL_2" );
+    table->setHorizontalHeaderLabels( headers );
+
+    // buttons
+
+    QPushButton* okBtn = new QPushButton( tr( "GEOM_BUT_OK" ), this );
+    okBtn->setAutoDefault( true );
+    okBtn->setDefault( true );
+    okBtn->setFocus();
+    // QPushButton* helpBtn = new QPushButton( tr( "GEOM_BUT_HELP" ), this );
+    // helpBtn->setAutoDefault( true );
+
+    QHBoxLayout* btnLayout = new QHBoxLayout;
+    btnLayout->setMargin( 9 );
+    btnLayout->setSpacing( 6 );
+
+    btnLayout->addWidget( okBtn );
+    btnLayout->addStretch( 10 );
+    // btnLayout->addWidget( helpBtn );
+
+    QVBoxLayout* aLay = new QVBoxLayout( this );
+    aLay->setMargin( 9 );
+    aLay->setSpacing( 6 );
+    aLay->addWidget( table );
+    aLay->addLayout( btnLayout );
+
+    // fill the table
+    for ( int row = 0; row < nbRows; ++row )
+    {
+      table->setItem( row, 0, new QTableWidgetItem( QString::number( stats[ row ].count )));
+      table->setItem( row, 1, new QTableWidgetItem( tr( stats[ row ].name.in() )));
+    }
+
+    connect( okBtn,       SIGNAL( clicked() ), this, SLOT( reject() ));
+    //connect( helpBtn,     SIGNAL( clicked() ), this, SLOT( help() ));
+
+  }
+}
+
+//================================================================================
+/*!
+ * \brief Show a dialog providing info on what is done by healing
+ */
+//================================================================================
+
+void RepairGUI::ShowStatistics( GEOM::GEOM_IHealingOperations_var anOper, QWidget* parent )
+{
+  GEOM::ModifStatistics_var stats = anOper->GetStatistics();
+
+  if ( ! &stats.in() || stats->length() == 0 )
+    return;
+
+  StatsDlg* dlg = new StatsDlg( stats, parent );
+  dlg->exec();
+}

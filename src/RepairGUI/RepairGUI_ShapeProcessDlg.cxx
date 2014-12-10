@@ -26,10 +26,11 @@
 
 #include "RepairGUI_ShapeProcessDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
-#include <GEOMImpl_Types.hxx>
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "GEOMImpl_Types.hxx"
+#include "RepairGUI.h"
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DoubleSpinBox.h>
@@ -652,6 +653,8 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
 
         aParameters << getTexts( aParams );
         anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+
+        RepairGUI::ShowStatistics( anOper, this );
       }
       objects.push_back( anObj._retn() );
     }

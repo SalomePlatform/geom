@@ -61,10 +61,12 @@
 #include <Standard_CString.hxx>
 #endif
 
-class GEOMImpl_IHealing;
-
-
 #include "GEOM_BaseDriver.hxx"
+
+class GEOMImpl_IHealing;
+class ShHealOper_Tool;
+class TopTools_SequenceOfShape;
+
 
 DEFINE_STANDARD_HANDLE( GEOMImpl_HealingDriver, GEOM_BaseDriver );
 
@@ -99,6 +101,9 @@ DEFINE_STANDARD_RTTI( GEOMImpl_HealingDriver )
 private:
   Standard_Boolean ShapeProcess  ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
   Standard_Boolean SuppressFaces ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  void             SuppressFacesRec (const TopTools_SequenceOfShape& theShapesFaces,
+                                     const TopoDS_Shape&             theOriginalShape,
+                                     TopoDS_Shape&                   theOutShape) const;
   Standard_Boolean CloseContour  ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
   Standard_Boolean RemoveIntWires( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
   Standard_Boolean RemoveHoles   ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
@@ -108,6 +113,7 @@ private:
   Standard_Boolean ChangeOrientation( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
   void             LimitTolerance( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
 
+  void             SaveStatistics( const ShHealOper_Tool& healer, bool add=false ) const;
 };
 
 #endif

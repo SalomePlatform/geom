@@ -26,9 +26,10 @@
 //
 #include "RepairGUI_RemoveHolesDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "RepairGUI.h"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -353,7 +354,11 @@ bool RepairGUI_RemoveHolesDlg::execute (ObjectList& objects)
     GEOM::GEOM_Object_var anObj = anOper->FillHoles(myObject, myWiresInd);
     aResult = !anObj->_is_nil();
     if (aResult)
+    {
+      if ( !IsPreview() )
+        RepairGUI::ShowStatistics( anOper, this );
       objects.push_back(anObj._retn());
+    }
   }
 
   return aResult;

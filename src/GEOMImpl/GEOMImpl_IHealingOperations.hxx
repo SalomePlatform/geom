@@ -32,6 +32,8 @@
 
 #include <list>
 
+class ShHealOper_ModifStats;
+
 class GEOMImpl_IHealingOperations : public GEOM_IOperations {
  public:
   Standard_EXPORT GEOMImpl_IHealingOperations(GEOM_Engine* theEngine, int theDocID);
@@ -81,9 +83,9 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                                                   double              theValue,
                                                   bool                isByParameter );
 
-  Standard_EXPORT Handle(GEOM_Object) DivideEdgeByPoint( Handle(GEOM_Object) theObject,
-                                                         int                 theIndex,
-                                                         Handle(GEOM_Object) thePoint );
+  Standard_EXPORT Handle(GEOM_Object) DivideEdgeByPoint( Handle(GEOM_Object)             theObject,
+                                                         int                             theIndex,
+                                                         std::list<Handle(GEOM_Object)>& thePoint );
 
   Standard_EXPORT Handle(GEOM_Object) FuseCollinearEdgesWithinWire
                                      (Handle(GEOM_Object) theWire,
@@ -102,6 +104,11 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) LimitTolerance( Handle(GEOM_Object) theObject,
                                                       double theTolerance );
 
+  const ShHealOper_ModifStats* GetStatistics() { return myModifStats; }
+
+private:
+
+  ShHealOper_ModifStats* myModifStats;
 };
 
 #endif

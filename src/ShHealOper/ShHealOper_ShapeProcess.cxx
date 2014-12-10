@@ -39,6 +39,13 @@
 #include <TopoDS_Iterator.hxx>
 #include <TColStd_IndexedDataMapOfTransientTransient.hxx>
 #include <TNaming_CopyShape.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeShape.hxx>
+#include <ShapeExtend_MsgRegistrator.hxx>
+#include <ShapeExtend_DataMapOfShapeListOfMsg.hxx>
+#include <ShapeExtend_DataMapIteratorOfDataMapOfShapeListOfMsg.hxx>
+#include <Message_ListOfMsg.hxx>
+#include <Message_ListIteratorOfListOfMsg.hxx>
+#include <Message_Msg.hxx>
 
 //=======================================================================
 //function : ShHealOper_ShapeProcess()
@@ -52,8 +59,10 @@ ShHealOper_ShapeProcess::ShHealOper_ShapeProcess (  ) :
    //myResource = new Resource_Manager("ShHealing");
    myPrefix = "ShapeProcess";
    mySaveHistoryMode = Standard_False;
-   myLevel = TopAbs_FACE;
+   myLevel = TopAbs_EDGE;
    myDone = Standard_False;
+   myOperations.Context()->SetDetalisation ( TopAbs_EDGE );
+   myOperations.Context()->SetTraceLevel( 3 );
 }
 
 //=======================================================================
@@ -63,23 +72,22 @@ ShHealOper_ShapeProcess::ShHealOper_ShapeProcess (  ) :
 
 ShHealOper_ShapeProcess::ShHealOper_ShapeProcess (const TCollection_AsciiString& theNameResource,
                                                   const TCollection_AsciiString& thePrefix ) :
-       myOperations(theNameResource.ToCString(),thePrefix.ToCString())
+  myOperations(theNameResource.ToCString(),thePrefix.ToCString())
 {
   //myResource = new Resource_Manager(theNameResource);
   myPrefix = thePrefix;
   mySaveHistoryMode = Standard_False;
-  myLevel = TopAbs_FACE;
+  myLevel = TopAbs_EDGE;
   myDone = Standard_False;
 }
 
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
-void ShHealOper_ShapeProcess::Perform(const TopoDS_Shape& theOldShape, 
-                                           TopoDS_Shape& theNewShape)
+void ShHealOper_ShapeProcess::Perform(const TopoDS_Shape& theOldShape,
+                                      TopoDS_Shape&       theNewShape)
 {
-  
   myMapModifications.Clear();
   //ShapeProcessAPI_ApplySequence aOperations(myResource,myPrefix.ToCString());
   //myDone = Standard_False;
@@ -99,12 +107,50 @@ void ShHealOper_ShapeProcess::Perform(const TopoDS_Shape& theOldShape,
   myDone = !anOldShape.IsSame(theNewShape);
   if(!myDone) {
     Standard_Real aendTol =aSatol.Tolerance(theNewShape,0);
-    myDone = (fabs(ainitTol - aendTol) > Precision::Confusion()); 
+    myDone = (fabs(ainitTol - aendTol) > Precision::Confusion());
+    if ( myDone ) {
+      if ( ainitTol > aendTol )
+        myStatistics.AddModif( "Tolerance fixed (decreased)" );
+      else
+        myStatistics.AddModif( "Tolerance fixed (increased)" );
+    }
   }
+
+  // fill myStatistics with messages
+  Handle(ShapeExtend_MsgRegistrator) msg = myOperations.Context()->Messages();
+  const ShapeExtend_DataMapOfShapeListOfMsg& shape2msg = msg->MapShape();
+  ShapeExtend_DataMapIteratorOfDataMapOfShapeListOfMsg s2msg( shape2msg );
+  for ( ; s2msg.More(); s2msg.Next() )
+  {
+    const Message_ListOfMsg & msgList = s2msg.Value();
+    Message_ListIteratorOfListOfMsg mIt( msgList );
+    for ( ; mIt.More(); mIt.Next() )
+    {
+      Message_Msg& m = mIt.Value();
+      TCollection_AsciiString txt = m.Get();
+      myStatistics.AddModif( txt.ToCString() );
+    }
+  }
+
+//   for (TopTools_DataMapIteratorOfDataMapOfShapeShape It (myOperations.Context()->Map()); It.More(); It.Next()) {
+//     TopoDS_Shape keyshape = It.Key(), valueshape = It.Value();
+// /*    if (keyshape.ShapeType() == TopAbs_SHELL) {
+//       if (valueshape.IsNull()) SN++;
+//       else SS++;
+//     }
+//     else if (keyshape.ShapeType() == TopAbs_FACE)*/ {
+//       if (valueshape.IsNull()) cout << "Removed" << endl;
+//       else {
+//         TopAbs::Print( keyshape.ShapeType(), cout ) << " -> ";
+//         TopAbs::Print( valueshape.ShapeType(), cout ) << " IsSame()=" << keyshape.IsSame(valueshape) << endl;
+//       }
+//     }
+//   }
+  
 }
 //=======================================================================
 //function : SetOperators
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void ShHealOper_ShapeProcess::SetOperators(const TColStd_SequenceOfAsciiString& theSeqOperators)
@@ -127,8 +173,8 @@ void ShHealOper_ShapeProcess::SetOperators(const TColStd_SequenceOfAsciiString& 
 //purpose  : 
 //=======================================================================
 
-void  ShHealOper_ShapeProcess::SetParameter(const TCollection_AsciiString& theNameParam,
-                                    const TCollection_AsciiString& theVal)
+void ShHealOper_ShapeProcess::SetParameter(const TCollection_AsciiString& theNameParam,
+                                           const TCollection_AsciiString& theVal)
 {
   TCollection_AsciiString anameParam(myPrefix);
   anameParam += ".";
@@ -171,14 +217,14 @@ Standard_Boolean ShHealOper_ShapeProcess::GetOperators(TColStd_SequenceOfAsciiSt
 //=======================================================================
 
 Standard_Boolean ShHealOper_ShapeProcess::GetParameter(const TCollection_AsciiString& theNameParam,
-                                       TCollection_AsciiString& theVal)
+                                                       TCollection_AsciiString& theVal)
 {
   TCollection_AsciiString namePar(myPrefix);
   namePar += ".";
   namePar += theNameParam;
   if(!myOperations.Context()->ResourceManager()->Find(namePar.ToCString()))
     return Standard_False;
-  
+
   theVal = myOperations.Context()->ResourceManager()->Value(namePar.ToCString());
   return Standard_True;
 }

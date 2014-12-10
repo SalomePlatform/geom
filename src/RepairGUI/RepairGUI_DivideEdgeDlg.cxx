@@ -26,11 +26,12 @@
 //
 #include "RepairGUI_DivideEdgeDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
-#include <SalomeApp_DoubleSpinBox.h>
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "RepairGUI.h"
 
+#include <SalomeApp_DoubleSpinBox.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <SUIT_Session.h>
@@ -161,7 +162,7 @@ void RepairGUI_DivideEdgeDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
   myObject = GEOM::GEOM_Object::_nil();
-  myPoint.nullify();
+  myPoints.clear();
   myIndex  = -1;
   myProjectionOK = false;
 
@@ -231,11 +232,8 @@ void RepairGUI_DivideEdgeDlg::displayPreview()
       BRepBuilderAPI_MakeVertex mkVertex (aPnt);
       aShape = mkVertex.Shape();
     }
-    else if ( getConstructorId() == BY_POINT_PROJ && myPoint )
+    else if ( getConstructorId() == BY_POINT_PROJ && !myPoints.empty() )
     {
-      TopoDS_Shape aPoints;
-      GEOMBase::GetShape( myPoint.get(), aPoints, TopAbs_SHAPE );
-
       BRep_Builder builder;
       TopoDS_Compound compoundOfVV;
       builder.MakeCompound(compoundOfVV);
@@ -245,11 +243,13 @@ void RepairGUI_DivideEdgeDlg::displayPreview()
       aProjector.Init( aCurve, aFP, aLP );
 
       TopTools_MapOfShape vMap;
-      TopExp_Explorer vertex( aPoints, TopAbs_VERTEX );
-      for ( ; vertex.More(); vertex.Next() )
+      for ( int i = 0; i < myPoints.count(); ++i )
       {
-        if ( !vMap.Add( vertex.Current() )) continue;
-        gp_Pnt p = BRep_Tool::Pnt( TopoDS::Vertex( vertex.Current() ));
+        TopoDS_Shape aPoint;
+        GEOMBase::GetShape( myPoints[i].get(), aPoint, TopAbs_VERTEX );
+        if ( !vMap.Add( aPoint )) continue;
+
+        gp_Pnt p = BRep_Tool::Pnt( TopoDS::Vertex( aPoint ));
         aProjector.Perform( p );
         if ( aProjector.NbPoints() > 0 )
         {
@@ -296,13 +296,14 @@ bool RepairGUI_DivideEdgeDlg::ClickOnApply()
 
   initName();
 
-  myEditCurrentArgument->setText( "" );
+  GroupPoints->LineEdit1->setText( "" );
+  GroupPoints->LineEdit2->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
-  myPoint.nullify();
+  myPoints.clear();
   myIndex = -1;
   myProjectionOK = false;
 
-  ConstructorsClicked(getConstructorId());
+  GroupPoints->PushButton1->click();
 
   return true;
 }
@@ -322,10 +323,11 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
   {
     myObject = GEOM::GEOM_Object::_nil();
     myIndex = -1;
+    myProjectionOK = false;
   }
   else //if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
   {
-    myPoint.nullify();
+    myPoints.clear();
     myProjectionOK = false;
   }
 
@@ -333,7 +335,7 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  if ( aSelList.Extent() == 1 ) {
+  if ( toSelectObject && aSelList.Extent() == 1 ) {
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
     GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO );
     if ( !CORBA::is_nil( aSelectedObj ) )
@@ -343,7 +345,7 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
       if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) )
       {
         const int aType = aShape.ShapeType();
-        if ( aType <= TopAbs_EDGE || !toSelectObject ) // edge, wire, face, shell, solid, compound
+        if ( aType <= TopAbs_EDGE ) // edge, wire, face, shell, solid, compound
         {
           GEOM::short_array anIndexes;
 
@@ -354,33 +356,34 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
 
           if ( !aMap.IsEmpty() ) // sub-shape selection
           {
-            if ( toSelectObject ) {
-              myIndex = aMap( 1 );
-              myObject = aSelectedObj;
-              myEditCurrentArgument->setText( aName += QString( ":edge_%1" ).arg( myIndex ) );
-            }
-            else if (( myPoint = getSelected( TopAbs_VERTEX )))
-            {
-              myEditCurrentArgument->setText( aName += QString( ":vertex_%1" ).arg( aMap( 1 )));
-            }
+            myIndex = aMap( 1 );
+            myObject = aSelectedObj;
+            myEditCurrentArgument->setText( aName += QString( ":edge_%1" ).arg( myIndex ) );
           }
-          else if ( aType == TopAbs_EDGE && toSelectObject ) // single shape selection
+          else if ( aType == TopAbs_EDGE ) // single shape selection
           {
             myIndex = -1;
             myObject = aSelectedObj;
-            myEditCurrentArgument->setText( aName );
-          }
-          else if ( aType == TopAbs_VERTEX && !toSelectObject ) // single shape selection
-          {
-            myPoint = aSelectedObj;
-            myEditCurrentArgument->setText( aName );
+            myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
           }
           else // face, shell, solid or compound was selected, and NOT its sub-shape.
           {
+            myIndex = -1;
+            myObject = GEOM::GEOM_Object::_nil();
           }
         }
       }
     }
+  }
+  if ( !toSelectObject )
+  {
+    myPoints = getSelected( TopAbs_VERTEX, -1, /*strict=*/true );
+    if ( myPoints.empty() )
+      myEditCurrentArgument->setText( "" );
+    else if ( myPoints.count() == 1 )
+      myEditCurrentArgument->setText( GEOMBase::GetName( myPoints[0].get() ));
+    else
+      myEditCurrentArgument->setText( QObject::tr( "%1_vertices" ).arg( myPoints.count() ));
   }
 
   displayPreview();
@@ -487,7 +490,7 @@ bool RepairGUI_DivideEdgeDlg::isValid( QString& msg )
   }
   else if ( getConstructorId() == BY_POINT_PROJ )
   {
-    if (( ok = myPoint ) && !( ok = myProjectionOK ))
+    if (( ok = myPoints.count() ) && !( ok = myProjectionOK ))
       msg = tr("DEVIDE_EDGE_BAD_PROJ_MSG");
   }
   return !myObject->_is_nil() && ok;
@@ -502,10 +505,17 @@ bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
   GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
   GEOM::GEOM_Object_var anObj;
   if ( getConstructorId() == BY_PARAM )
+  {
     anObj = anOper->DivideEdge( myObject, myIndex, myValEdt->value(), getIsByParameter() );
+  }
   else
-    anObj = anOper->DivideEdgeByPoint( myObject, myIndex, myPoint.get() );
-
+  {
+    GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+    objList->length( myPoints.count() );
+    for ( int i = 0; i < myPoints.count(); ++i )
+      objList[i] = myPoints[i].copy();
+    anObj = anOper->DivideEdgeByPoint( myObject, myIndex, objList );
+  }
   bool aResult = !anObj->_is_nil();
   if ( aResult )
   {
@@ -517,6 +527,8 @@ bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
       aParameters << "";
       anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
+    if ( !IsPreview() )
+      RepairGUI::ShowStatistics( anOper, this );
     objects.push_back( anObj._retn() );
   }
 
@@ -552,5 +564,6 @@ void RepairGUI_DivideEdgeDlg::initSelection()
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::addSubshapesToStudy()
 {
-  GEOMBase::PublishSubObject( myPoint.get() );
+  for ( int i = 0; i < myPoints.count(); ++i )
+    GEOMBase::PublishSubObject( myPoints[i].get() );
 }

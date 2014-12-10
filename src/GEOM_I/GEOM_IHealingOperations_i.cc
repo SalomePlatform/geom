@@ -27,10 +27,11 @@
 #include "GEOM_IHealingOperations_i.hh"
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
+#include "ShHealOper_ModifStats.hxx"
 
-#include "utilities.h"
-#include "OpUtil.hxx"
-#include "Utils_ExceptHandlers.hxx"
+#include <utilities.h>
+#include <OpUtil.hxx>
+#include <Utils_ExceptHandlers.hxx>
 #include <Basics_Utils.hxx>
 
 #include <TColStd_HSequenceOfTransient.hxx>
@@ -439,7 +440,7 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::DivideEdge (GEOM::GEOM_Object_p
 GEOM::GEOM_Object_ptr
 GEOM_IHealingOperations_i::DivideEdgeByPoint (GEOM::GEOM_Object_ptr theObject,
                                               CORBA::Short          theIndex,
-                                              GEOM::GEOM_Object_ptr thePoint)
+                                              const GEOM::ListOfGO& thePoints)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -451,14 +452,14 @@ GEOM_IHealingOperations_i::DivideEdgeByPoint (GEOM::GEOM_Object_ptr theObject,
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
-  // Get the point
-  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
-  if (aPoint.IsNull())
+  // Get the points
+  std::list< Handle(GEOM_Object) > aPoints;
+  if (! GetListOfObjectsImpl( thePoints, aPoints ))
     return aGEOMObject._retn();
 
   // Perform
   Handle(GEOM_Object) aNewObject =
-    GetOperations()->DivideEdgeByPoint( anObject, theIndex, aPoint );
+    GetOperations()->DivideEdgeByPoint( anObject, theIndex, aPoints );
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 
@@ -634,4 +635,27 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::LimitTolerance (GEOM::GEOM_Obje
     return aGEOMObject._retn();
 
   return GetObject(aNewObject);
+}
+
+//================================================================================
+/*!
+ * \brief Return information on what has been done by the last called healing method
+ */
+//================================================================================
+
+GEOM::ModifStatistics* GEOM_IHealingOperations_i::GetStatistics()
+{
+  const ShHealOper_ModifStats& stats = * GetOperations()->GetStatistics();
+  const std::set< ShHealOper_ModifStats::Datum >& modifs = stats.GetData();
+  std::set< ShHealOper_ModifStats::Datum >::const_iterator modif = modifs.begin();
+
+  GEOM::ModifStatistics_var statsVar = new GEOM::ModifStatistics();
+  statsVar->length( modifs.size() );
+  for ( int i = 0; modif != modifs.end(); ++modif, ++i )
+  {
+    statsVar[ i ].name = modif->myModif.c_str();
+    statsVar[ i ].count = modif->myCount;
+  }
+
+  return statsVar._retn();
 }

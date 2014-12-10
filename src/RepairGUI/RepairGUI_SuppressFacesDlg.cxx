@@ -24,9 +24,10 @@
 
 #include "RepairGUI_SuppressFacesDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "RepairGUI.h"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -376,8 +377,11 @@ bool RepairGUI_SuppressFacesDlg::execute (ObjectList& objects)
 
   bool aResult = !anObj->_is_nil();
   if (aResult)
+  {
+    if ( !IsPreview() )
+      RepairGUI::ShowStatistics( anOper, this );
     objects.push_back(anObj._retn());
-
+  }
   return aResult;
 }
 

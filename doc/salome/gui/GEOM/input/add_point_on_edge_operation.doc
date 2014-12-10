@@ -5,7 +5,7 @@
 \n To <b>Add Point on Edge</b> in the <b>Main Menu</b> select
 <b>Repair - > Add Point on Edge</b>.
 
-This operation splits an edge in two new edges.
+This operation splits an edge in two or more new edges.
 This operation is available in <b>OCC Viewer</b> only.
 
 The \b Result will be a \b GEOM_Object.
@@ -41,17 +41,17 @@ The \b Result will be a \b GEOM_Object.
     \image html repair8.png
     \n\n
   </li>
-  <li>We can select a point that will be projected to the selected
-    edge to find the location of the new vertex.
+  <li>We can select several points that will be projected to the selected
+    edge to find the location of new vertices.
     <p>
-    <b>TUI Command:</b> <em>geompy.DivideEdgeByPoint(Shape, Edge, Point)</em>
+    <b>TUI Command:</b> <em>geompy.DivideEdgeByPoint(Shape, Edge, Points)</em>
     <ul>
       <li> \em Shape is a shape which contains an edge to be divided</li>
       <li>\em Edge is an edge to be divided (or it's ID, if it is = -1,
         then \em Shape should be an edge itself).</li>
-      <li> \em Point is a point to project to \a Edge. </li>
+      <li> \em Points is a list of points to project to \a Edge. </li>
     </ul>
-    \b Arguments: Name + 1 Edge + 1 Point.
+    \b Arguments: Name + 1 Edge + 1 or more Points.
 
     \image html divedgebypoint.png
 

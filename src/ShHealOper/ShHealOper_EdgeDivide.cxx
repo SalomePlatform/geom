@@ -142,6 +142,7 @@ Standard_Boolean ShHealOper_EdgeDivide::Perform(const TopoDS_Shape& theEdge,
 
   TopTools_MapOfShape vMap;
   TopExp_Explorer vertex( thePoints, TopAbs_VERTEX );
+  std::set< double > params; // to exclude equal params
   for ( ; vertex.More(); vertex.Next() )
   {
     if ( !vMap.Add( vertex.Current() )) continue;
@@ -151,9 +152,24 @@ Standard_Boolean ShHealOper_EdgeDivide::Perform(const TopoDS_Shape& theEdge,
     {
       double     u = double( aProjector.LowerDistanceParameter() );
       double param = ( u - aFirst ) / ( aLast - aFirst );
-      aSeqValues->Append( param );
+      params.insert( param );
     }
   }
+  // remove too close params
+  params.insert( 0 );
+  params.insert( 1 );
+  std::set< double >::iterator p2 = params.begin(), p1 = p2++;
+  while ( p2 != params.end() )
+  {
+    if ( Abs( *p2 - *p1 ) < 1e-3 ) // compare normalized params 
+      params.erase( p1 );
+    p1 = p2++;
+  }
+  p1 = params.begin(); ++p1; // skip aFirst
+  p2 = params.end();   --p2; // skip aLast
+  for ( ; p1 != p2; ++p1 )
+    aSeqValues->Append( *p1 );
+
   myDone = build(aSeqValues);
   return myDone;
 }
@@ -219,7 +235,10 @@ Standard_Boolean ShHealOper_EdgeDivide::build(const Handle(TColStd_HSequenceOfRe
         myErrorStatus = ShHealOper_ErrorExecution;
   }
   if(isDone)
+  {
     myResultShape = myContext->Apply(myInitShape);
+    myStatistics.AddModif("Vertex added on edge", theValues->Length() );
+  }
   return isDone;
   
 }

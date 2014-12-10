@@ -25,7 +25,6 @@
 #endif
 
 #include <Standard_Version.hxx>
-#include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IHealingOperations.hxx>
 #include <GEOM_PythonDump.hxx>
@@ -35,6 +34,8 @@
 #include <GEOMImpl_IVector.hxx>
 #include <GEOMImpl_VectorDriver.hxx>
 #include <GEOMImpl_CopyDriver.hxx>
+#include <ShHealOper_ModifStats.hxx>
+#include <ShHealOper_ShapeProcess.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -43,12 +44,10 @@
 #include <Utils_ExceptHandlers.hxx>
 
 #include <BRep_Builder.hxx>
-#include <ShHealOper_ShapeProcess.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <TColStd_HArray1OfExtendedString.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TCollection_AsciiString.hxx>
-#include <TDF_Tool.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 #include <TopoDS_Compound.hxx>
@@ -64,6 +63,7 @@
 GEOMImpl_IHealingOperations::GEOMImpl_IHealingOperations (GEOM_Engine* theEngine, int theDocID)
 : GEOM_IOperations(theEngine, theDocID)
 {
+  myModifStats = new ShHealOper_ModifStats;
   MESSAGE("GEOMImpl_IHealingOperations::GEOMImpl_IHealingOperations");
 }
 
@@ -74,6 +74,7 @@ GEOMImpl_IHealingOperations::GEOMImpl_IHealingOperations (GEOM_Engine* theEngine
 //=============================================================================
 GEOMImpl_IHealingOperations::~GEOMImpl_IHealingOperations()
 {
+  delete myModifStats;
   MESSAGE("GEOMImpl_IHealingOperations::~GEOMImpl_IHealingOperations");
 }
 
@@ -134,6 +135,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
     HI.SetParameters( theParams );
     HI.SetValues( theValues );
   }
+  HI.SetStatistics( myModifStats );
 
   //Compute the translation
   try {
@@ -341,6 +343,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   GEOMImpl_IHealing HI (aFunction);
   HI.SetFaces(theFaces);
   HI.SetOriginal(aLastFunction);
+  HI.SetStatistics( myModifStats );
 
   //Compute the translation
   try {
@@ -409,6 +412,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
   HI.SetWires( theWires );
   HI.SetIsCommonVertex( isCommonVertex );
   HI.SetOriginal( aLastFunction );
+  HI.SetStatistics( myModifStats );
 
   //Compute the translation
   try {
@@ -476,6 +480,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::RemoveIntWires
   GEOMImpl_IHealing HI(aFunction);
   HI.SetWires( theWires );
   HI.SetOriginal( aLastFunction );
+  HI.SetStatistics( myModifStats );
 
   //Compute the translation
   try {
@@ -542,6 +547,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
   GEOMImpl_IHealing HI(aFunction);
   HI.SetWires( theWires );
   HI.SetOriginal( aLastFunction );
+  HI.SetStatistics( myModifStats );
 
   //Compute the translation
   try {
@@ -616,6 +622,7 @@ GEOMImpl_IHealingOperations::Sew (std::list<Handle(GEOM_Object)>& theObjects,
   HI.SetTolerance( theTolerance );
   HI.SetOriginal( theObjects.front()->GetLastFunction() ); objects->Remove(1);
   HI.SetShapes( objects );
+  HI.SetStatistics( myModifStats );
 
   //Compute the result
   try {
@@ -682,6 +689,7 @@ GEOMImpl_IHealingOperations::RemoveInternalFaces (std::list< Handle(GEOM_Object)
   GEOMImpl_IHealing HI (aFunction);
   HI.SetOriginal( theSolids.front()->GetLastFunction() ); objects->Remove(1);
   HI.SetShapes( objects );
+  HI.SetStatistics( myModifStats );
 
   //Compute the result
   try {
@@ -741,6 +749,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
   HI.SetDevideEdgeValue( theValue );
   HI.SetIsByParameter( isByParameter );
   HI.SetOriginal( aLastFunction );
+  HI.SetStatistics( myModifStats );
 
   //Compute the translation
   try {
@@ -770,20 +779,25 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
  */
 //=============================================================================
 Handle(GEOM_Object)
-GEOMImpl_IHealingOperations::DivideEdgeByPoint (Handle(GEOM_Object) theObject,
-                                                int theIndex,
-                                                Handle(GEOM_Object) thePoint)
+GEOMImpl_IHealingOperations::DivideEdgeByPoint (Handle(GEOM_Object)               theObject,
+                                                int                               theIndex,
+                                                std::list< Handle(GEOM_Object)> & thePoints)
 {
   // set error code, check parameters
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || thePoint.IsNull())
+  if (theObject.IsNull() || thePoints.empty() )
     return NULL;
 
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
-  Handle(GEOM_Function) aPointFunc = thePoint->GetLastFunction();
-  if (aLastFunction.IsNull() || aPointFunc.IsNull())
+  if (aLastFunction.IsNull() )
     return NULL; //There is no function which creates an object to be processed
+
+  Handle(TColStd_HSequenceOfTransient) aPointFunc = GEOM_Object::GetLastFunctions( thePoints );
+  if ( aPointFunc.IsNull() || aPointFunc->IsEmpty() ) {
+    SetErrorCode("NULL argument points");
+    return NULL;
+  }
 
   // Add a new object
   Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
@@ -798,12 +812,11 @@ GEOMImpl_IHealingOperations::DivideEdgeByPoint (Handle(GEOM_Object) theObject,
 
   // prepare "data container" class IHealing
   GEOMImpl_IHealing HI(aFunction);
-  HI.SetIndex( theIndex );
-  HI.SetOriginal( aLastFunction );
+  HI.SetIndex     ( theIndex );
+  HI.SetOriginal  ( aLastFunction );
+  HI.SetShapes    ( aPointFunc );
 
-  Handle(TColStd_HSequenceOfTransient) funSeq = new TColStd_HSequenceOfTransient;
-  funSeq->Append( aPointFunc );
-  HI.SetShapes( funSeq );
+  HI.SetStatistics( myModifStats );
 
   //Compute the translation
   try {
@@ -822,7 +835,7 @@ GEOMImpl_IHealingOperations::DivideEdgeByPoint (Handle(GEOM_Object) theObject,
   //Make a Python command
   GEOM::TPythonDump(aFunction)
     << aNewObject << " = geompy.DivideEdgeByPoint(" << theObject
-    << ", " << theIndex << ", " << thePoint << ")";
+    << ", " << theIndex << ", " << thePoints << ")";
 
   SetErrorCode(OK);
   return aNewObject;
@@ -853,6 +866,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FuseCollinearEdgesWithinWire
   if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
 
   GEOMImpl_IHealing aCI (aFunction);
+  aCI.SetStatistics( myModifStats );
 
   Handle(GEOM_Function) aRefShape = theWire->GetLastFunction();
   if (aRefShape.IsNull()) return NULL;
@@ -1039,6 +1053,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
     // prepare "data container" class IVector
     GEOMImpl_IVector aVI (aFunction);
     aVI.SetCurve(aLastFunction);
+
+    myModifStats->Clear();
+    myModifStats->AddModif( "Vector reversed" );
   }
   else {
     //Add the function
@@ -1051,6 +1068,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
     // prepare "data container" class IHealing
     GEOMImpl_IHealing HI (aFunction);
     HI.SetOriginal(aLastFunction);
+    HI.SetStatistics( myModifStats );
   }
 
   //Compute the translation
@@ -1106,6 +1124,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
     // prepare "data container" class IVector
     GEOMImpl_IVector aVI (aFunction);
     aVI.SetCurve(aLastFunction);
+
+    myModifStats->Clear();
+    myModifStats->AddModif( "Vector reversed" );
   }
   else {
     //Add the function
@@ -1118,6 +1139,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
     // prepare "data container" class IHealing
     GEOMImpl_IHealing aHI (aFunction);
     aHI.SetOriginal(aLastFunction);
+    aHI.SetStatistics( myModifStats );
   }
 
   // Compute the result
@@ -1176,6 +1198,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Obj
   GEOMImpl_IHealing HI (aFunction);
   HI.SetOriginal(aLastFunction);
   HI.SetTolerance(theTolerance);
+  HI.SetStatistics( myModifStats );
 
   // Compute
   try {

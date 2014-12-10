@@ -62,7 +62,7 @@ private:
 
 private:
   GEOM::GEOM_Object_var              myObject;
-  GEOM::GeomObjPtr                   myPoint;
+  QList<GEOM::GeomObjPtr>            myPoints;
   bool                               myProjectionOK;
 
   DlgRef_2SelExt*                    GroupPoints;

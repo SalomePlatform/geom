@@ -25,6 +25,7 @@
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HArray1OfExtendedString.hxx>
 #include "TColStd_HSequenceOfTransient.hxx"
+#include <ShHealOper_ModifStats.hxx>
 
 class GEOMImpl_IHealing
 {
@@ -41,7 +42,8 @@ public:
     ARG_DEV_EDGE_VALUE          =  8,
     ARG_IS_BY_PARAMETER         =  9,
     ARG_SUBSHAPE_INDEX          = 10,
-    ARG_LIST_SHAPES             = 11
+    ARG_LIST_SHAPES             = 11,
+    ARG_STATISTICS              =  4
   };
 
   GEOMImpl_IHealing(Handle(GEOM_Function) theFunction): _func(theFunction) {}
@@ -91,6 +93,17 @@ public:
     funs->Prepend( GetOriginal() );
     return funs;
   }
+
+  void SetStatistics( ShHealOper_ModifStats * ms )
+  {
+    if ( ms ) ms->Clear();
+    _func->SetCallBackData( (void*) ms );
+  }
+  ShHealOper_ModifStats * GetStatistics()
+  {
+    return (ShHealOper_ModifStats*) _func->GetCallBackData();
+  }
+
 private:
   Handle(GEOM_Function) _func;
 };

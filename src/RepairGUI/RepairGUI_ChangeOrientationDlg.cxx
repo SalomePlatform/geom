@@ -26,18 +26,19 @@
 //
 #include "RepairGUI_ChangeOrientationDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "RepairGUI.h"
 
-#include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
-#include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
-
-#include <GEOMImpl_Types.hxx>
-
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
 #include <TopAbs.hxx>
+
+#include "GEOMImpl_Types.hxx"
+
 
 //=================================================================================
 // class    : RepairGUI_ChangeOrientationDlg()
@@ -280,7 +281,11 @@ bool RepairGUI_ChangeOrientationDlg::execute( ObjectList& objects )
   }
 
   if ( !anObj->_is_nil() )
+  {
+    if ( !IsPreview() )
+      RepairGUI::ShowStatistics( anOper, this );
     objects.push_back( anObj._retn() );
+  }
 
   return true;
 }

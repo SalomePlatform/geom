@@ -33,10 +33,11 @@ for point in edge_points:
 # Variant 2: using DivideEdgeByPoint()
  
 box  = geompy.MakeBox(0,0,0, 10,10,10, theName="box")
-p    = geompy.MakeVertex( 3, -2, 1, theName="point to project" )
-edge = geompy.GetEdgeNearPoint( box, p, theName="edge to split")
+p1   = geompy.MakeVertex( 3, -2, 1, theName="point 1 to project" )
+p2   = geompy.MakeVertex( 7, -2, 1, theName="point 2 to project" )
+edge = geompy.GetEdgeNearPoint( box, p1, theName="edge to split")
 
-div  = geompy.DivideEdgeByPoint( box, edge, p, theName="box (edge divided)")
+div  = geompy.DivideEdgeByPoint( box, edge, [p1, p2], theName="box (edge divided)")
 
 
 salome.sg.updateObjBrowser(1) 

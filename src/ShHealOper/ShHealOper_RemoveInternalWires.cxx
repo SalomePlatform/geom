@@ -137,6 +137,9 @@ Standard_Boolean ShHealOper_RemoveInternalWires::removeWire(const TopoDS_Face& t
       }
     }
   }
+  if ( isremove )
+    myStatistics.AddModif( "Wire removed" );
+
   return isremove;
 }
 //=======================================================================

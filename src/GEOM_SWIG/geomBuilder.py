@@ -6830,12 +6830,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "divideEdge")
             return anObj
 
-        ## Addition of a point to a given edge of \a theObject by projecting
-        #  another point to the given edge.
+        ## Addition of points to a given edge of \a theObject by projecting
+        #  other points to the given edge.
         #  @param theObject Shape to be processed.
         #  @param theEdgeIndex Index of edge to be divided within theObject's shape,
         #                      if -1, then theObject itself is the edge.
-        #  @param thePoint Point to project to theEdgeIndex-th edge.
+        #  @param thePoints List of points to project to theEdgeIndex-th edge.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6844,16 +6844,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_add_point_on_edge "Example"
         @ManageTransactions("HealOp")
-        def DivideEdgeByPoint(self, theObject, theEdgeIndex, thePoint, theName=None):
+        def DivideEdgeByPoint(self, theObject, theEdgeIndex, thePoints, theName=None):
             """
-            Addition of a point to a given edge of \a theObject by projecting
-            another point to the given edge.
+            Addition of points to a given edge of \a theObject by projecting
+            other points to the given edge.
 
             Parameters:
                 theObject Shape to be processed.
                 theEdgeIndex The edge or its index to be divided within theObject's shape,
                              if -1, then theObject itself is the edge.
-                thePoint Point to project to theEdgeIndex-th edge.
+                thePoints List of points to project to theEdgeIndex-th edge.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6864,7 +6864,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestHealing.py
             if isinstance( theEdgeIndex, GEOM._objref_GEOM_Object ):
                 theEdgeIndex = self.GetSubShapeID( theObject, theEdgeIndex )
-            anObj = self.HealOp.DivideEdgeByPoint(theObject, theEdgeIndex, thePoint)
+            anObj = self.HealOp.DivideEdgeByPoint(theObject, theEdgeIndex, ToList( thePoints ))
             RaiseIfFailed("DivideEdgeByPoint", self.HealOp)
             self._autoPublish(anObj, theName, "divideEdge")
             return anObj

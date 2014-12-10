@@ -35,10 +35,12 @@
 #include <ShapeProcessAPI_ApplySequence.hxx>
 #include <ShapeProcess_ShapeContext.hxx>
 
+#include "ShHealOper_Tool.hxx"
+
 ///  Class ShHealOper_ShapeProcess
 //Class for performing Shape healing operations on the shape.
 
-class ShHealOper_ShapeProcess 
+class ShHealOper_ShapeProcess : public ShHealOper_Tool
 {
  public:
   // ---------- PUBLIC METHODS ----------

@@ -205,7 +205,6 @@ module GEOM
     SI_ALL      // all interferences
   };
 
-
  /*!
    * \brief Object creation parameters
    *
@@ -214,7 +213,6 @@ module GEOM
   struct Parameter
   {
     string name;
-    //any value;
     string value;
   };
   typedef sequence<Parameter> Parameters;
@@ -224,6 +222,16 @@ module GEOM
     string     operationName;
     Parameters params;
   };
+
+  /*!
+   * \brief Reporting on shape healing
+   */
+  struct ModifInfo
+  {
+    string name;  // what changed
+    long   count; // how many times
+  };
+  typedef sequence<ModifInfo> ModifStatistics;
 
 
   typedef sequence<string>       string_array;
@@ -2042,7 +2050,7 @@ module GEOM
      *  \param theEdges List of edges for gluing.
      *  \return New GEOM_Object containing copies of theShapes without some edges.
      */
-    GEOM_Object MakeGlueEdgesByList (in ListOfGO theShape,
+    GEOM_Object MakeGlueEdgesByList (in ListOfGO theShapes,
                                      in double   theTolerance,
                                      in ListOfGO theEdges);
 
@@ -3785,7 +3793,7 @@ module GEOM
 
     /*!
      *  Sewing of the given object.
-     *  \param theObject Shape to be processed.
+     *  \param theObjects Shapes to be processed.
      *  \param theTolerance Required tolerance value.
      *  \return New GEOM_Object, containing processed shape.
      */
@@ -3793,7 +3801,7 @@ module GEOM
 
     /*!
      *  Sewing of the given object. Allows non-manifold sewing.
-     *  \param theObject Shape to be processed.
+     *  \param theObjects Shapes to be processed.
      *  \param theTolerance Required tolerance value.
      *  \return New GEOM_Object, containing processed shape.
      */
@@ -3822,17 +3830,17 @@ module GEOM
                             in double theValue, in boolean isByParameter);
 
     /*!
-     *  \brief Addition of a point to a given edge of \a theObject by projecting
-     *         another point to the given edge.
+     *  \brief Addition of points to a given edge of \a theObject by projecting
+     *         other points to the given edge.
      *  \param theObject Shape to be processed.
      *  \param theEdgeIndex Index of edge to be divided within theObject's shape,
      *                      if -1, then theObject itself is the edge.
-     *  \param thePoint Point to project to theEdgeIndex-th edge.
+     *  \param thePoints Points to project to theEdgeIndex-th edge.
      *  \return New GEOM_Object, containing the processed shape.
      */
     GEOM_Object DivideEdgeByPoint (in GEOM_Object theObject,
                                    in short       theEdgeIndex,
-                                   in GEOM_Object thePoint);
+                                   in ListOfGO    thePoints);
 
     /*!
      *  \brief Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
@@ -3846,13 +3854,13 @@ module GEOM
 
     /*!
      *  \brief Get a list of wires (wrapped in GEOM_Object-s),
-     *  that constitute a free boundary of the given shape.
-     *  \param theObject Shapes to get free boundary of.
+     *  that constitute a free boundary of the given shapes.
+     *  \param theObjects Shapes to get free boundary of.
      *  \param theClosedWires Output. Closed wires on the free boundary of the given shape.
      *  \param theOpenWires Output. Open wires on the free boundary of the given shape.
      *  \return FALSE, if an error(s) occured during the method execution.
      */
-    boolean GetFreeBoundary (in ListOfGO theObjects,
+    boolean GetFreeBoundary (in  ListOfGO theObjects,
                              out ListOfGO theClosedWires,
                              out ListOfGO theOpenWires);
 
@@ -3872,6 +3880,12 @@ module GEOM
      */
     GEOM_Object LimitTolerance (in GEOM_Object theObject, in double theTolerance);
 
+
+    /*!
+     *  \brief Return information on what has been done by the last called healing method.
+     *  \return ModifStatistics, information container.
+     */
+    ModifStatistics GetStatistics();
   };
 
  // # GEOM_IInsertOperations:
