@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="ja" sourcelanguage="en">
-<context>
+  <context>
     <name>@default</name>
     <message>
       <source>MEN_EXPORTXAO</source>
       <translation>エクスポートしました。</translation>
     </message>
     <message>
-        <source>TOP_EXPORTXAO</source>
-        <translation>エクスポートしました。</translation>
+      <source>TOP_EXPORTXAO</source>
+      <translation>エクスポートしました。</translation>
     </message>
     <message>
       <source>STB_EXPORTXAO</source>
@@ -39,8 +39,8 @@
       <source>XAOPLUGIN_FILES</source>
       <translation>ファイルした (*.xao)</translation>
     </message>
-</context>
-<context>
+  </context>
+  <context>
     <name>XAOPlugin_ExportDlg</name>
     <message>
       <source>XAOPLUGIN_EXPORT_TITLE</source>
@@ -70,8 +70,8 @@
       <source>XAOPLUGIN_EXPORT_LFIELDS</source>
       <translation>フィールド</translation>
     </message>
-</context>
-<context>
+  </context>
+  <context>
     <name>XAOPlugin_ImportDlg</name>
     <message>
       <source>XAOPLUGIN_IMPORT_TITLE</source>
@@ -101,5 +101,5 @@
       <source>XAOPLUGIN_STEP</source>
       <translation>Step</translation>
     </message>
-</context>
+  </context>
 </TS>
