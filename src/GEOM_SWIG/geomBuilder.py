@@ -6391,6 +6391,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  - \b FixFaceSize.Tolerance - defines minimum possible face size. \n
         #  - \b DropSmallEdges - removes edges, which merge with neighbouring edges. \n
         #  - \b DropSmallEdges.Tolerance3d - defines minimum possible distance between two parallel edges.\n
+        #  - \b DropSmallSolids - either removes small solids or merges them with neighboring ones. \n
+        #  - \b DropSmallSolids.WidthFactorThreshold - defines maximum value of <em>2V/S</em> of a solid which is considered small, where \a V is volume and \a S is surface area of the solid. \n
+        #  - \b DropSmallSolids.VolumeThreshold - defines maximum volume of a solid which is considered small. If the both tolerances are privided a solid is considered small if it meets the both criteria. \n
+        #  - \b DropSmallSolids.MergeSolids - if "1", small solids are removed; if "0" small solids are merged to adjacent non-small solids or left untouched if cannot be merged. \n
         #
         #  * \b SplitAngle - splits faces based on conical surfaces, surfaces of revolution and cylindrical
         #    surfaces in segments using a certain angle. \n
@@ -6460,9 +6464,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theShape Shape to be processed.
                 theValues List of values of parameters, in the same order
                           as parameters are listed in theParameters list.
-                theOperators List of names of operators ("FixShape", "SplitClosedFaces", etc.).
+                theOperators List of names of operators ('FixShape', 'SplitClosedFaces', etc.).
                 theParameters List of names of parameters
-                              ("FixShape.Tolerance3d", "SplitClosedFaces.NbSplitPoints", etc.).
+                              ('FixShape.Tolerance3d', 'SplitClosedFaces.NbSplitPoints', etc.).
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6474,8 +6478,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                      * FixShape.MaxTolerance3d - maximal possible tolerance of the shape after correction.
                  * FixFaceSize - removes small faces, such as spots and strips.
                      * FixFaceSize.Tolerance - defines minimum possible face size.
-                     * DropSmallEdges - removes edges, which merge with neighbouring edges.
+                 * DropSmallEdges - removes edges, which merge with neighbouring edges.
                      * DropSmallEdges.Tolerance3d - defines minimum possible distance between two parallel edges.
+                 * DropSmallSolids - either removes small solids or merges them with neighboring ones.
+                     * DropSmallSolids.WidthFactorThreshold - defines maximum value of 2V/S of a solid which is considered small, where V is volume and S is surface area of the solid.
+                     * DropSmallSolids.VolumeThreshold - defines maximum volume of a solid which is considered small. If the both tolerances are privided a solid is considered small if it meets the both criteria.
+                     * DropSmallSolids.MergeSolids - if '1', small solids are removed; if '0' small solids are merged to adjacent non-small solids or left untouched if cannot be merged.
+
                  * SplitAngle - splits faces based on conical surfaces, surfaces of revolution and cylindrical surfaces
                                 in segments using a certain angle.
                      * SplitAngle.Angle - the central angle of the resulting segments (i.e. we obtain two segments
