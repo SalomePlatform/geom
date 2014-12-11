@@ -62,7 +62,6 @@ ShHealOper_ShapeProcess::ShHealOper_ShapeProcess (  ) :
    myLevel = TopAbs_EDGE;
    myDone = Standard_False;
    myOperations.Context()->SetDetalisation ( TopAbs_EDGE );
-   myOperations.Context()->SetTraceLevel( 3 );
 }
 
 //=======================================================================
@@ -131,23 +130,8 @@ void ShHealOper_ShapeProcess::Perform(const TopoDS_Shape& theOldShape,
       myStatistics.AddModif( txt.ToCString() );
     }
   }
-
-//   for (TopTools_DataMapIteratorOfDataMapOfShapeShape It (myOperations.Context()->Map()); It.More(); It.Next()) {
-//     TopoDS_Shape keyshape = It.Key(), valueshape = It.Value();
-// /*    if (keyshape.ShapeType() == TopAbs_SHELL) {
-//       if (valueshape.IsNull()) SN++;
-//       else SS++;
-//     }
-//     else if (keyshape.ShapeType() == TopAbs_FACE)*/ {
-//       if (valueshape.IsNull()) cout << "Removed" << endl;
-//       else {
-//         TopAbs::Print( keyshape.ShapeType(), cout ) << " -> ";
-//         TopAbs::Print( valueshape.ShapeType(), cout ) << " IsSame()=" << keyshape.IsSame(valueshape) << endl;
-//       }
-//     }
-//   }
-  
 }
+
 //=======================================================================
 //function : SetOperators
 //purpose  :

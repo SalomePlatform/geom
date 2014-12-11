@@ -6716,6 +6716,18 @@ Please close this message box and select edges for gluing</translation>
         <translation>Enabling this option may result in a very time-consuming operation for some input shapes.
 Would you like to continue?</translation>
     </message>
+    <message>
+        <source>WIDTH_FACTOR_TOL</source>
+        <translation>Width factor tol.</translation>
+    </message>
+    <message>
+        <source>VOLUME_TOL</source>
+        <translation>Volume tol.</translation>
+    </message>
+    <message>
+        <source>TO_MERGE_SOLIDS</source>
+        <translation>To merge solids</translation>
+    </message>
 </context>
 <context>
     <name>GEOMToolsGUI_DeleteDlg</name>

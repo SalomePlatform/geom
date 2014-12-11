@@ -34,9 +34,11 @@
 class DlgRef_1Sel;
 class SalomeApp_IntSpinBox;
 class SalomeApp_DoubleSpinBox;
-class QComboBox;
 class QCheckBox;
+class QComboBox;
 class QListWidget;
+class QListWidgetItem;
+class QStackedLayout;
 
 //=================================================================================
 // class    : RepairGUI_ShapeProcessDlg
@@ -87,6 +89,7 @@ private:
   
   DlgRef_1Sel*                       mySelectWdgt;
   QListWidget*                       myOpList;
+  QStackedLayout*                    myStack;
   
   SalomeApp_DoubleSpinBox*           myFixShapeTol3D;
   SalomeApp_DoubleSpinBox*           myFixShapeMaxTol3D;
@@ -120,7 +123,13 @@ private:
   SalomeApp_DoubleSpinBox*           myToBezierMaxTol;
   
   SalomeApp_DoubleSpinBox*           mySameParameterTol3D;
-  
+
+  QCheckBox*                         myDropSmallSolidsWidChk;
+  QCheckBox*                         myDropSmallSolidsVolChk;
+  SalomeApp_DoubleSpinBox*           myDropSmallSolidsWidTol;
+  SalomeApp_DoubleSpinBox*           myDropSmallSolidsVolTol;
+  QCheckBox*                         myDropSmallSolidsMergeChk;
+
 private slots:
   void                               onOk();
   bool                               onApply();
@@ -131,6 +140,7 @@ private slots:
   void                               selectionChanged();
   void                               selectClicked();
   void                               advOptionToggled( bool );
-};             
+  void                               operatorChecked( QListWidgetItem * item );
+};
 
 #endif // REPAIRGUI_SHAPEPROCESSDLG_H
