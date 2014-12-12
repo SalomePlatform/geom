@@ -18,6 +18,7 @@
 <li>\subpage tolerance_page "Tolerance"</li>
 <li>\subpage managing_dimensions_page "Dimensions"</li>
 <li>\subpage whatis_page "WhatIs"</li>
+<li>\subpage inspect_object_operation_page "Inspect Object"</li>
 </ul>
 
 \n To check their integrity:

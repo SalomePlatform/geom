@@ -4713,6 +4713,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Unir les faces</translation>
     </message>
     <message>
+        <source>TOP_INSPECT_OBJECT</source>
+        <translation type="unfinished">Inspect Object</translation>
+    </message>
+    <message>
+        <source>MEN_INSPECT_OBJECT</source>
+        <translation type="unfinished">Inspect Object</translation>
+    </message>
+    <message>
+        <source>STB_INSPECT_OBJECT</source>
+        <translation type="unfinished">Inspect Object</translation>
+    </message>
+    <message>
         <source>TOP_NORMALE</source>
         <translation>Vecteur normal à une face</translation>
     </message>
@@ -6971,6 +6983,37 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>UNION_FACES_NEW_OBJ_NAME</source>
         <translation>UnirFaces</translation>
+    </message>
+</context>
+<context>
+    <name>RepairGUI_InspectObjectDlg</name>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_TITLE</source>
+        <translation type="unfinished">Inspect object</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_MAIN_SHAPE</source>
+        <translation type="unfinished">Main shape</translation>
+    </message>
+    <message>
+    <source>GEOM_INSPECT_OBJECT_SHOW</source>
+        <translation type="unfinished">Show Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_SHOW_ONLY</source>
+        <translation type="unfinished">Show Only Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_HIDE</source>
+        <translation type="unfinished">Hide Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_PUBLISH</source>
+        <translation type="unfinished">Publish Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_NAME</source>
+        <translation type="unfinished">Name</translation>
     </message>
 </context>
 <context>

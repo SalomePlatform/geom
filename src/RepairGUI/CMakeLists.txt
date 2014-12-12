@@ -83,6 +83,7 @@ SET(RepairGUI_HEADERS
   RepairGUI_RemoveExtraEdgesDlg.h
   RepairGUI_UnionFacesDlg.h
   RepairGUI_FuseEdgesDlg.h
+  RepairGUI_InspectObjectDlg.h
   )
 
 # header files / to be processed by moc
@@ -103,6 +104,7 @@ SET(_moc_HEADERS
   RepairGUI_RemoveExtraEdgesDlg.h
   RepairGUI_UnionFacesDlg.h
   RepairGUI_FuseEdgesDlg.h
+  RepairGUI_InspectObjectDlg.h
   )
 
 # header files / uic wrappings
@@ -131,6 +133,7 @@ SET(RepairGUI_SOURCES
   RepairGUI_RemoveExtraEdgesDlg.cxx
   RepairGUI_UnionFacesDlg.cxx
   RepairGUI_FuseEdgesDlg.cxx
+  RepairGUI_InspectObjectDlg.cxx
   ${_moc_SOURCES}
   ${_uic_files}
   )

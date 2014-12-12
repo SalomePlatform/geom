@@ -808,7 +808,7 @@ bool GEOMBase::IsShape( GEOM::GEOM_Object_ptr object )
 // function : TypeName()
 // purpose  : Get string representation for the shape type
 //=======================================================================
-QString GEOMBase::TypeName( TopAbs_ShapeEnum type )
+QString GEOMBase::TypeName( TopAbs_ShapeEnum type, bool capitalize )
 {
   QString name = "shape";
   switch( type ) {
@@ -831,6 +831,8 @@ QString GEOMBase::TypeName( TopAbs_ShapeEnum type )
   default:
     break;
   }
+  if ( capitalize && !name.isEmpty() )
+    name = name.left(1).toUpper() + name.mid(1);
   return name;
 }
 

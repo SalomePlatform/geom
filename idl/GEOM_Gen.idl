@@ -395,6 +395,18 @@ module GEOM
     shape_type GetMaxShapeType();
 
     /*!
+     *  \brief Returns a name of a sub-shape if the sub-shape is published in the study
+     *  \param subID - sub-shape ID
+     *  \return string - the found name or an empty string if the sub-shape does not
+     *          exits or is not published in the study
+     *
+     * \note Only sub-shapes directly retrieved (using e.g. ExtractSubShapes() or
+     *       via group creation) can be found. Also, as sub-shape can be published in the study
+     *       many times, only the first found name is returned.
+     */
+    string GetSubShapeName(in long subID);
+
+    /*!
      *  \brief Set color of the object.
      *
      *  \param theColor is a color of the object.

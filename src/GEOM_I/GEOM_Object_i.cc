@@ -36,6 +36,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TDF_Label.hxx>
 #include <TDF_Tool.hxx>
+#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
 #include <TopAbs.hxx>
 #include <TopoDS_Iterator.hxx>
 
@@ -156,6 +157,47 @@ GEOM::shape_type GEOM_Object_i::GetMinShapeType()
 GEOM::shape_type GEOM_Object_i::GetMaxShapeType()
 {
   return getMinMaxShapeType( _impl->GetValue(), false );
+}
+
+//================================================================================
+/*!
+ * GetSubShapeName
+ */
+//================================================================================
+
+char* GEOM_Object_i::GetSubShapeName(CORBA::Long subID)
+{
+  CORBA::String_var name("");
+
+  Handle(GEOM_Function) aMainFun = _impl->GetLastFunction();
+  if ( aMainFun.IsNull() ) return name._retn();
+
+  const TDataStd_ListOfExtendedString& aListEntries = aMainFun->GetSubShapeReferences();
+  TDataStd_ListIteratorOfListOfExtendedString anIt( aListEntries );
+  for (; anIt.More(); anIt.Next())
+  {
+    TCollection_AsciiString anEntry = anIt.Value();
+    Handle(GEOM_BaseObject) anObj =
+      GEOM_Engine::GetEngine()->GetObject( _impl->GetDocID(), anEntry.ToCString(), false );
+    if ( anObj.IsNull() ) continue;
+
+    TCollection_AsciiString aSubName = anObj->GetName();
+    if ( aSubName.IsEmpty() ) continue;
+
+    Handle(GEOM_Function) aFun = anObj->GetLastFunction();
+    if ( aFun.IsNull() ) continue;
+  
+    GEOM_ISubShape ISS( aFun );
+    Handle(TColStd_HArray1OfInteger) subIDs = ISS.GetIndices();
+    if ( subIDs.IsNull() || subIDs->Length() != 1 ) continue;
+
+    if ( subIDs->Value( subIDs->Lower() ) == subID )
+    {
+      name = aSubName.ToCString();
+      break;
+    }
+  }
+  return name._retn();
 }
 
 //=============================================================================

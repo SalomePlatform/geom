@@ -240,6 +240,10 @@
             <translation>union_faces.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_INSPECT_OBJECT</source>
+            <translation>inspect_object.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_CHECKSHAPE</source>
             <translation>check.png</translation>
         </message>
