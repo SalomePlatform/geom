@@ -655,6 +655,13 @@ GEOM::ModifStatistics* GEOM_IHealingOperations_i::GetStatistics()
   {
     statsVar[ i ].name = modif->myModif.c_str();
     statsVar[ i ].count = modif->myCount;
+
+    // Cut off "Unknown message invoked with the keyword " at the beginning
+    const char* toRm = "Unknown message invoked with the keyword ";
+    const size_t lenToRm = strlen( toRm );
+    if ( modif->myModif.size() > lenToRm &&
+         modif->myModif.compare( 0, lenToRm, toRm ) == 0 )
+      statsVar[ i ].name = modif->myModif.substr( lenToRm ).c_str();
   }
 
   return statsVar._retn();
