@@ -4331,6 +4331,26 @@ module GEOM
                                     out ListOfLong theIntersections);
 
     /*!
+     *  \brief Detect intersections of the given shapes with algorithm based on mesh intersections.
+     *  \param theShape1 First source object
+     *  \param theShape2 Second source object
+     *  \param theTolerance Specifies a distance between shapes used for detecting gaps:
+     *                       - if \a theTolerance <= 0, algorithm detects intersections
+     *                       - if \a theTolerance > 0, algorithm detects gaps
+     *  \param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+     *                       - if \a theDeflection <= 0, default deflection 0.001 is used
+     *  \param theIntersections1 Output: contains list of sub-shapes IDs from 1st shape that localize intersection
+     *  \param theIntersections2 Output: contains list of sub-shapes IDs from 2nd shape that localize intersection
+     *  \return TRUE, if the are intersections (gaps) between source shapes
+     */
+    boolean FastIntersect (in GEOM_Object theShape1,
+			   in GEOM_Object theShape2,
+			   in double      theTolerance,
+			   in float       theDeflection,
+			   out ListOfLong theIntersections1,
+			   out ListOfLong theIntersections2);
+
+    /*!
      *  \brief Check if the given shape can be an argument for MakeSolid operation
      *  \param theShape Shape to be described.
      *  \return Empty string if a solid can be made on this shape, error code otherwise.

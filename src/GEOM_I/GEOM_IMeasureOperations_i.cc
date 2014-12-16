@@ -767,6 +767,59 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckSelfIntersections (GEOM::GEOM_Obj
 
 //=============================================================================
 /*!
+ *  FastIntersect
+ */
+//=============================================================================
+CORBA::Boolean GEOM_IMeasureOperations_i::FastIntersect (GEOM::GEOM_Object_ptr theShape1,
+                                                         GEOM::GEOM_Object_ptr theShape2,
+                                                         CORBA::Double         theTolerance,
+                                                         CORBA::Float          theDeflection,
+                                                         GEOM::ListOfLong_out  theIntersections1,
+                                                         GEOM::ListOfLong_out  theIntersections2)
+{
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  bool isGood = false;
+
+  // Allocate the CORBA arrays
+  GEOM::ListOfLong_var anIntegersArray1 = new GEOM::ListOfLong();
+  GEOM::ListOfLong_var anIntegersArray2 = new GEOM::ListOfLong();
+
+  // Get the reference shape
+  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+  
+  if (!aShape1.IsNull() && !aShape2.IsNull()) {
+    Handle(TColStd_HSequenceOfInteger) anIntegers1 = new TColStd_HSequenceOfInteger;
+    Handle(TColStd_HSequenceOfInteger) anIntegers2 = new TColStd_HSequenceOfInteger;
+
+    // Detect intersections
+    isGood = GetOperations()->FastIntersect
+      (aShape1, aShape2, theTolerance, theDeflection, anIntegers1, anIntegers2);
+
+    int nbInts1 = anIntegers1->Length();
+    int nbInts2 = anIntegers2->Length();
+
+    anIntegersArray1->length(nbInts1);
+    anIntegersArray2->length(nbInts2);
+
+    for (int ii = 0; ii < nbInts1; ii++) {
+      anIntegersArray1[ii] = anIntegers1->Value(ii + 1);
+    }
+    for (int ii = 0; ii < nbInts2; ii++) {
+      anIntegersArray2[ii] = anIntegers2->Value(ii + 1);
+    }
+  }
+
+  // Initialize out-parameters with local arrays
+  theIntersections1 = anIntegersArray1._retn();
+  theIntersections2 = anIntegersArray2._retn();
+  return isGood;
+}
+
+//=============================================================================
+/*!
  *  IsGoodForSolid
  */
 //=============================================================================

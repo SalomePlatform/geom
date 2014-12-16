@@ -638,6 +638,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpGetNonBlocks:       // MENU MEASURE - Get NON BLOCKS
   case GEOMOp::OpPointCoordinates:   // MENU MEASURE - POINT COORDINATES
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
+  case GEOMOp::OpFastCheckInters:    // MENU MEASURE - FAST CHECK INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
   case GEOMOp::OpShowAllDimensions:  // POPUP MENU - SHOW ALL DIMENSIONS
   case GEOMOp::OpHideAllDimensions:  // POPUP MENU - HIDE ALL DIMENSIONS
@@ -1016,6 +1017,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpCheckCompound,    "CHECK_COMPOUND" );
   createGeomAction( GEOMOp::OpGetNonBlocks,     "GET_NON_BLOCKS" );
   createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
+  createGeomAction( GEOMOp::OpFastCheckInters,  "FAST_CHECK_INTERSECTIONS" );
 
 #ifdef _DEBUG_ // PAL16821
   createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
@@ -1273,6 +1275,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpCheckCompound,   measurId, -1 );
   createMenu( GEOMOp::OpGetNonBlocks,    measurId, -1 );
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
+  createMenu( GEOMOp::OpFastCheckInters, measurId, -1 );
 
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
 #if defined(_DEBUG_) || defined(_DEBUG) // PAL16821
@@ -1420,6 +1423,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpCheckCompound,    measureTbId );
   createTool( GEOMOp::OpGetNonBlocks,     measureTbId );
   createTool( GEOMOp::OpCheckSelfInters,  measureTbId );
+  createTool( GEOMOp::OpFastCheckInters,  measureTbId );
 
   int picturesTbId = createTool( tr( "TOOL_PICTURES" ), QString( "GEOMPictures" ) );
   createTool( GEOMOp::OpPictureImport,    picturesTbId );

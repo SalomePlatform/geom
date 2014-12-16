@@ -30,6 +30,7 @@
 #include <GEOMAlgo_AlgoTools.hxx>
 #include <GEOMAlgo_KindOfName.hxx>
 #include <GEOMAlgo_ShapeInfoFiller.hxx>
+#include <OCC2VTK_Tools.h>
 
 #include <GEOM_PythonDump.hxx>
 
@@ -48,6 +49,7 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepExtrema_ShapeProximity.hxx>
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
 #include <BRep_Tool.hxx>
@@ -1575,6 +1577,88 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   return isGood;
 }
 
+//=============================================================================
+/*!
+ *  FastIntersect
+ */
+//=============================================================================
+bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, Handle(GEOM_Object) theShape2,
+                                                 double theTolerance, float theDeflection,
+                                                 Handle(TColStd_HSequenceOfInteger)& theIntersections1,
+                                                 Handle(TColStd_HSequenceOfInteger)& theIntersections2)
+{
+  SetErrorCode(KO);
+  bool isGood = false;
+
+  if (theIntersections1.IsNull())
+    theIntersections1 = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections1->Clear();
+
+  if (theIntersections2.IsNull())
+    theIntersections2 = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections2->Clear();
+
+  if (theShape1.IsNull() || theShape2.IsNull()) {
+    SetErrorCode("Objects have NULL Shape");
+    return isGood;
+  }
+
+  if (theShape1 == theShape2) {
+    SetErrorCode("Objects are equal");
+    return isGood;
+  }
+  Handle(GEOM_Function) aRefShape1 = theShape1->GetLastFunction();
+  Handle(GEOM_Function) aRefShape2 = theShape2->GetLastFunction();
+  if (aRefShape1.IsNull() || aRefShape2.IsNull()) return isGood;
+
+  TopoDS_Shape aShape1 = aRefShape1->GetValue();
+  TopoDS_Shape aShape2 = aRefShape2->GetValue();
+  if (aShape1.IsNull() || aShape2.IsNull()) return isGood;
+
+  // 0. Prepare data
+  TopoDS_Shape aScopy1, aScopy2;
+  GEOMAlgo_AlgoTools::CopyShape(aShape1, aScopy1);
+  GEOMAlgo_AlgoTools::CopyShape(aShape2, aScopy2);
+
+  float aDeflection = (theDeflection <= 0.) ? 0.001 : theDeflection;
+  GEOM::MeshShape(aScopy1, aDeflection);
+  GEOM::MeshShape(aScopy2, aDeflection);
+  //
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices1, anIndices2;
+  TopExp::MapShapes(aScopy1, anIndices1);
+  TopExp::MapShapes(aScopy2, anIndices2);
+
+  BOPCol_ListOfShape aLCS1, aLCS2;
+  aLCS1.Append(aScopy1); aLCS2.Append(aScopy2);
+  //
+  BRepExtrema_ShapeProximity aBSP; // checker of fast interferences
+  aBSP.LoadShape1(aScopy1); aBSP.LoadShape2(aScopy2);
+  aBSP.SetTolerance((theTolerance <= 0.) ? 0.0 : theTolerance);
+
+  // 1. Launch the checker
+  aBSP.Perform();
+ 
+  // 2. Get sets of IDs of overlapped faces
+  for (BRepExtrema_OverlappedSubShapes::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next()) {
+    const TopoDS_Shape& aS1 = aBSP.GetSubShape1(anIt1.Key());
+    theIntersections1->Append(anIndices1.FindIndex(aS1));
+  }
+  
+  for (BRepExtrema_OverlappedSubShapes::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next()) {
+    const TopoDS_Shape& aS2 = aBSP.GetSubShape2(anIt2.Key());
+    theIntersections2->Append(anIndices2.FindIndex(aS2));
+  }
+
+  isGood = !theIntersections1->IsEmpty() && !theIntersections1->IsEmpty();
+
+  if (aBSP.IsDone())
+    SetErrorCode(OK);
+
+  return isGood;
+}
 //=============================================================================
 /*!
  *  IsGoodForSolid

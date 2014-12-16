@@ -29,6 +29,7 @@
 <li>\subpage check_compound_of_blocks_page "Check compound of blocks"</li>
 <li>\subpage get_non_blocks_page "Get non blocks"</li>
 <li>\subpage check_self_intersections_page "Detect Self-intersections"</li>
+<li>\subpage fast_intersection_page "Fast intersection"</li>
 </ul>
 
 \n Our <b>TUI Scripts</b> show how to use

@@ -4869,7 +4869,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to find free faces in.
         #  @return List of IDs of all free faces, contained in theShape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_free_faces_page "Example"
         @ManageTransactions("ShapesOp")
         def GetFreeFacesIDs(self,theShape):
             """
@@ -7000,7 +7000,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  \n \a theClosedWires: Closed wires on the free boundary of the given shape.
         #  \n \a theOpenWires: Open wires on the free boundary of the given shape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_free_boundaries_page "Example"
         @ManageTransactions("HealOp")
         def GetFreeBoundary(self, theObject, theName=None):
             """
@@ -10008,7 +10008,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Get point coordinates
         #  @return [x, y, z]
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_point_coordinates_page "Example"
         @ManageTransactions("MeasuOp")
         def PointCoordinates(self,Point):
             """
@@ -10084,7 +10084,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  theSurfArea: Area of surface of the given shape.\n
         #  theVolume:   Volume of the given shape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_basic_properties_page "Example"
         @ManageTransactions("MeasuOp")
         def BasicProperties(self,theShape):
             """
@@ -10113,7 +10113,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  Ymin,Ymax: Limits of shape along OY axis.
         #  Zmin,Zmax: Limits of shape along OZ axis.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_bounding_box_page "Example"
         @ManageTransactions("MeasuOp")
         def BoundingBox (self, theShape, precise=False):
             """
@@ -10143,7 +10143,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM.GEOM_Object, containing the created box.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_bounding_box_page "Example"
         @ManageTransactions("MeasuOp")
         def MakeBoundingBox (self, theShape, precise=False, theName=None):
             """
@@ -10171,7 +10171,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  I(1-3)(1-3): Components of the inertia matrix of the given shape.
         #  Ix,Iy,Iz:    Moments of inertia of the given shape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_inertia_page "Example"
         @ManageTransactions("MeasuOp")
         def Inertia(self,theShape):
             """
@@ -10214,7 +10214,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape1,theShape2 Shapes to find minimal distance between.
         #  @return Value of the minimal distance between the given shapes.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_min_distance_page "Example"
         @ManageTransactions("MeasuOp")
         def MinDistance(self, theShape1, theShape2):
             """
@@ -10236,7 +10236,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Value of the minimal distance between the given shapes, in form of list
         #          [Distance, DX, DY, DZ].
         #
-        #  @ref swig_all_measure "Example"
+        #  @ref tui_min_distance_page "Example"
         @ManageTransactions("MeasuOp")
         def MinDistanceComponents(self, theShape1, theShape2):
             """
@@ -10260,7 +10260,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return The number of found solutions (-1 in case of infinite number of
         #          solutions) and a list of (X, Y, Z) coordinates for all couples of points.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_min_distance_page "Example"
         @ManageTransactions("MeasuOp")
         def ClosestPoints (self, theShape1, theShape2):
             """
@@ -10284,7 +10284,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #        with their orientations, otherwise the minimum angle is computed.
         #  @return Value of the angle between the given shapes in degrees.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_angle_page "Example"
         @ManageTransactions("MeasuOp")
         def GetAngle(self, theShape1, theShape2):
             """
@@ -10311,7 +10311,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #        with their orientations, otherwise the minimum angle is computed.
         #  @return Value of the angle between the given shapes in radians.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_angle_page "Example"
         @ManageTransactions("MeasuOp")
         def GetAngleRadians(self, theShape1, theShape2):
             """
@@ -10339,7 +10339,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                 if False, the opposite vector to the normal vector is used.
         #  @return Value of the angle between the given vectors in degrees.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_angle_page "Example"
         @ManageTransactions("MeasuOp")
         def GetAngleVectors(self, theShape1, theShape2, theFlag = True):
             """
@@ -10532,7 +10532,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  EdgeMin,EdgeMax: Min and max tolerances of the edges.\n
         #  VertMin,VertMax: Min and max tolerances of the vertices.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_tolerance_page "Example"
         @ManageTransactions("MeasuOp")
         def Tolerance(self,theShape):
             """
@@ -10556,7 +10556,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to be described.
         #  @return Description of the given shape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_whatis_page "Example"
         @ManageTransactions("MeasuOp")
         def WhatIs(self,theShape):
             """
@@ -10643,7 +10643,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_center_of_mass_page "Example"
         @ManageTransactions("MeasuOp")
         def MakeCDG(self, theShape, theName=None):
             """
@@ -10789,7 +10789,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return If theReturnStatus is equal to 1 the description is returned.
         #          Otherwise doesn't return anything.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_check_shape_page "Example"
         @ManageTransactions("MeasuOp")
         def PrintShapeErrors(self, theShape, theShapeErrors, theReturnStatus = 0):
             """
@@ -10829,7 +10829,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          If theReturnStatus is equal to 2 the list of error data is
         #          returned along with IsValid flag.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_check_shape_page "Example"
         @ManageTransactions("MeasuOp")
         def CheckShape(self,theShape, theIsCheckGeom = 0, theReturnStatus = 0):
             """
@@ -10884,7 +10884,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         - GEOM.SI_ALL(5) - all interferences.
         #  @return TRUE, if the shape contains no self-intersections.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_check_self_intersections_page "Example"
         @ManageTransactions("MeasuOp")
         def CheckSelfIntersections(self, theShape, theCheckLevel = GEOM.SI_ALL):
             """
@@ -10908,6 +10908,43 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             (IsValid, Pairs) = self.MeasuOp.CheckSelfIntersections(theShape, EnumToLong(theCheckLevel))
             RaiseIfFailed("CheckSelfIntersections", self.MeasuOp)
             return IsValid
+
+        ## Detect intersections of the given shapes with algorithm based on mesh intersections.
+        #  @param theShape1 First source object
+        #  @param theShape2 Second source object
+        #  @param theTolerance Specifies a distance between shapes used for detecting gaps:
+        #         - if \a theTolerance <= 0, algorithm detects intersections (default behavior)
+        #         - if \a theTolerance > 0, algorithm detects gaps
+        #  @param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+        #         - if \a theDeflection <= 0, default deflection 0.001 is used
+        #  @return TRUE, if there are intersections (gaps) between source shapes
+        #  @return List of sub-shapes IDs from 1st shape that localize intersection.
+        #  @return List of sub-shapes IDs from 2nd shape that localize intersection.
+        #
+        #  @ref tui_fast_intersection_page "Example"
+        @ManageTransactions("MeasuOp")
+        def FastIntersect(self, theShape1, theShape2, theTolerance = 0.0, theDeflection = 0.001):
+            """
+            Detect intersections of the given shapes with algorithm based on mesh intersections.
+
+            Parameters:
+                theShape1 First source object
+                theShape2 Second source object
+                theTolerance Specifies a distance between shapes used for detecting gaps:
+                    - if theTolerance <= 0, algorithm detects intersections (default behavior)
+                    - if theTolerance > 0, algorithm detects gaps
+                theDeflection Linear deflection coefficient that specifies quality of tesselation:
+                    - if theDeflection <= 0, default deflection 0.001 is used
+ 
+            Returns:
+                TRUE, if there are intersections (gaps) between source shapes
+                List of sub-shapes IDs from 1st shape that localize intersection.
+                List of sub-shapes IDs from 2nd shape that localize intersection.
+            """
+            # Example: see GEOM_TestMeasures.py
+            IsOk, Res1, Res2 = self.MeasuOp.FastIntersect(theShape1, theShape2, theTolerance, theDeflection)
+            RaiseIfFailed("FastIntersect", self.MeasuOp)
+            return IsOk, Res1, Res2
 
         ## Get position (LCS) of theShape.
         #
@@ -11710,7 +11747,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return TRUE, if the given shape is a compound of blocks.
         #  If theCompound is not valid, prints all discovered errors.
         #
-        #  @ref tui_measurement_tools_page "Example 1"
+        #  @ref tui_check_compound_of_blocks_page "Example 1"
         #  \n @ref swig_CheckCompoundOfBlocks "Example 2"
         @ManageTransactions("BlocksOp")
         def CheckCompoundOfBlocks(self,theCompound):
@@ -11749,7 +11786,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          presence of non-quadrangular faces). The second object is a
         #          group of all non quadrangular faces.
         #
-        #  @ref tui_measurement_tools_page "Example 1"
+        #  @ref tui_get_non_blocks_page "Example 1"
         #  \n @ref swig_GetNonBlocks "Example 2"
         @ManageTransactions("BlocksOp")
         def GetNonBlocks (self, theShape, theName=None):

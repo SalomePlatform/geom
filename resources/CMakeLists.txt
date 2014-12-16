@@ -259,6 +259,7 @@ SET( _res_files
   check_blocks_compound.png
   get_non_blocks.png
   check_self_intersections.png
+  fast_intersect.png
   free_faces.png
   propagate.png
   redo.png

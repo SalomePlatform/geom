@@ -157,6 +157,11 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
   Standard_EXPORT bool CheckSelfIntersections (Handle(GEOM_Object) theShape,
                                                const SICheckLevel  theCheckLevel,
                                                Handle(TColStd_HSequenceOfInteger)& theIntersections);
+  
+  Standard_EXPORT bool FastIntersect (Handle(GEOM_Object) theShape1, Handle(GEOM_Object) theShape2,
+                                      double tolerance, float deflection,
+                                      Handle(TColStd_HSequenceOfInteger)& theIntersections1,
+                                      Handle(TColStd_HSequenceOfInteger)& theIntersections2);
 
   Standard_EXPORT TCollection_AsciiString IsGoodForSolid (Handle(GEOM_Object) theShape);
 

@@ -432,6 +432,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Détecter les auto-intersections</translation>
     </message>
     <message>
+        <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
+        <translation type="unfinished">Fast intersection</translation>
+    </message>
+    <message>
         <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
         <translation>La détection d&apos;auto-intersections a échoué</translation>
     </message>
@@ -2465,6 +2469,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Détections des auto-intersections</translation>
     </message>
     <message>
+        <source>MEN_FAST_CHECK_INTERSECTIONS</source>
+        <translation type="unfinished">Fast intersection</translation>
+    </message>
+    <message>
         <source>MEN_CHECK_FREE_BNDS</source>
         <translation>Contrôler les contours libres</translation>
     </message>
@@ -3453,6 +3461,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Détecte les auto-intersections</translation>
     </message>
     <message>
+        <source>STB_FAST_CHECK_INTERSECTIONS</source>
+        <translation type="unfinished">Fast intersection</translation>
+   </message>
+    <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Vérifier les contours libres</translation>
     </message>
@@ -4059,6 +4071,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_CHECK_SELF_INTERSECTIONS</source>
         <translation>Détection des auto-intersections</translation>
+    </message>
+    <message>
+        <source>TOP_FAST_CHECK_INTERSECTIONS</source>
+        <translation type="unfinished">Fast intersection</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -6997,6 +7013,162 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_ISOLINE_V</source>
         <translation>V-Isoligne</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
+    <message>
+        <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
+        <translation type="unfinished">Self-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_SUBSHAPES</source>
+        <translation type="unfinished">Sub-shapes</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_CHECK_LEVEL</source>
+        <translation type="unfinished">Level of check</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_SUMMARY</source>
+        <translation type="unfinished">Summary</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_COMPUTE</source>
+        <translation type="unfinished">Compute self-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTION_NAME</source>
+        <translation type="unfinished">Self_intersection</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SELF_INTERSECTIONS</source>
+        <translation type="unfinished">There are no self-intersections in the shape</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
+        <translation type="unfinished">Some self-intersections detected</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
+        <translation type="unfinished">Detection of self-intersections failed</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
+        <translation type="unfinished">Warning: there were errors during the operation, so the list may be incomplete.</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_V</source>
+        <translation type="unfinished">Vertex to Vertex</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_E</source>
+        <translation type="unfinished">Vertex to Edge + all above</translation>
+    </message>
+  <message>
+    <source>GEOM_CHECK_INTE_E_E</source>
+    <translation type="unfinished">Edge to Edge + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_V_F</source>
+    <translation type="unfinished">Vertex to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_E_F</source>
+    <translation type="unfinished">Edge to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_ALL</source>
+    <translation type="unfinished">All interferences</translation>
+  </message>
+</context>
+<context>
+    <name>MeasureGUI_FastCheckIntersectionsDlg</name>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_DEFLECT</source>
+        <translation type="unfinished">Deflection coefficient</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_DETECT_GAPS</source>
+        <translation type="unfinished">Detect gaps with tolerance</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_SUBSHAPES</source>
+        <translation type="unfinished">Sub-shapes of Object %1:</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_COMPUTE</source>
+        <translation type="unfinished">Compute intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_INTERSECTION_NAME</source>
+        <translation type="unfinished">Fast_intersection</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_INTERSECTION_FAILS</source>
+        <translation type="unfinished">No intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_OBJ</source>
+        <translation type="unfinished">Objects And Results</translation>
+    </message>
+</context>
+<context>
+    <name>TransformationGUI_ExtensionDlg</name>
+    <message>
+        <source>GEOM_EXTENSION_TITLE</source>
+        <translation type="unfinished">Extension of Edge or Face</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION</source>
+        <translation type="unfinished">Extension</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN</source>
+        <translation type="unfinished">First Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX</source>
+        <translation type="unfinished">Last Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN_U</source>
+        <translation type="unfinished">First U-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX_U</source>
+        <translation type="unfinished">Last U-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN_V</source>
+        <translation type="unfinished">First V-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX_V</source>
+        <translation type="unfinished">Last V-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_EDGE_NAME</source>
+        <translation type="unfinished">ExtendedEdge</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_FACE_NAME</source>
+        <translation type="unfinished">ExtendedFace</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_SurfFromFaceDlg</name>
+    <message>
+        <source>GEOM_SURF_FROM_FACE_TITLE</source>
+        <translation type="unfinished">Surface From Face Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_SURF_FROM_FACE</source>
+        <translation type="unfinished">Surface From Face</translation>
+    </message>
+    <message>
+        <source>GEOM_SURF_FROM_FACE_NAME</source>
+        <translation type="unfinished">SurfaceFromFace</translation>
     </message>
 </context>
 </TS>

@@ -424,6 +424,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Detect Self-intersections</translation>
     </message>
     <message>
+        <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
+        <translation>Fast intersection</translation>
+    </message>
+    <message>
         <source>GEOM_CIRCLE</source>
         <translation>Circle</translation>
     </message>
@@ -2501,6 +2505,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Detect Self-intersections</translation>
     </message>
     <message>
+        <source>MEN_FAST_CHECK_INTERSECTIONS</source>
+        <translation>Fast intersection</translation>
+    </message>
+    <message>
         <source>MEN_CHECK_FREE_BNDS</source>
         <translation>Check Free Boundaries</translation>
     </message>
@@ -3505,6 +3513,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Detect Self-intersections</translation>
     </message>
     <message>
+        <source>STB_FAST_CHECK_INTERSECTIONS</source>
+        <translation>Fast intersection</translation>
+   </message>
+   <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Check free boundaries</translation>
     </message>
@@ -4115,6 +4127,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_CHECK_SELF_INTERSECTIONS</source>
         <translation>Detect Self-intersections</translation>
+    </message>
+    <message>
+        <source>TOP_FAST_CHECK_INTERSECTIONS</source>
+        <translation>Fast intersection</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -7137,6 +7153,37 @@ Do you want to create new material?</translation>
     <source>GEOM_CHECK_INTE_ALL</source>
     <translation>All interferences</translation>
   </message>
+</context>
+<context>
+    <name>MeasureGUI_FastCheckIntersectionsDlg</name>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_DEFLECT</source>
+        <translation>Deflection coefficient</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_DETECT_GAPS</source>
+        <translation>Detect gaps with tolerance</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_SUBSHAPES</source>
+        <translation>Sub-shapes of Object %1:</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_COMPUTE</source>
+        <translation>Compute intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_INTERSECTION_NAME</source>
+        <translation>Fast_intersection</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_INTERSECTION_FAILS</source>
+        <translation>No intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_OBJ</source>
+        <translation>Objects And Results</translation>
+    </message>
 </context>
 <context>
     <name>TransformationGUI_ExtensionDlg</name>

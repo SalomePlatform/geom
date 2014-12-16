@@ -30,6 +30,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/BlockFix
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo 
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
+  ${PROJECT_SOURCE_DIR}/src/OCC2VTK
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
   ${PROJECT_SOURCE_DIR}/src/ARCHIMEDE
   ${PROJECT_SOURCE_DIR}/src/XAO
@@ -48,7 +49,7 @@ SET(_link_LIBRARIES
   ${CAS_TKFeat}
   ${CAS_TKFillet}
   ${PYTHON_LIBRARIES}
-  ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede XAO
+  ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede XAO OCC2VTK
   ${KERNEL_SALOMELocalTrace}
   )
 
