@@ -162,10 +162,10 @@ void RepairGUI_ShapeProcessDlg::init()
       myDropSmallSolidsVolChk = new QCheckBox( tr("VOLUME_TOL"), w );
       myDropSmallSolidsWidTol = new SalomeApp_DoubleSpinBox( w );
       myDropSmallSolidsVolTol = new SalomeApp_DoubleSpinBox( w );
-      initSpinBox( myDropSmallSolidsWidTol, 0., 100., 1e-7, "len_tol_precision" );
-      initSpinBox( myDropSmallSolidsVolTol, 0., 100., 1e-7, "len_tol_precision" );
-      myDropSmallSolidsWidTol->setValue( 1e-7 );
-      myDropSmallSolidsVolTol->setValue( 1e-7 );
+      initSpinBox( myDropSmallSolidsWidTol, 0., 1e3, 1., "len_tol_precision" );
+      initSpinBox( myDropSmallSolidsVolTol, 0., 1e9, 1., "len_tol_precision" );
+      myDropSmallSolidsWidTol->setValue( 1 );
+      myDropSmallSolidsVolTol->setValue( 1e3 );
       myDropSmallSolidsVolChk->setChecked( true );
       myDropSmallSolidsWidTol->setEnabled( false );
       myDropSmallSolidsMergeChk = new QCheckBox( tr("TO_MERGE_SOLIDS"), w );
@@ -563,14 +563,23 @@ void RepairGUI_ShapeProcessDlg::setValue( QWidget* theControl, const QString& th
 QString RepairGUI_ShapeProcessDlg::getValue( QWidget* theControl ) const
 {
   if ( theControl ) {
-    if ( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl ))
+    if ( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl )) {
+      if ( ( theControl == myDropSmallSolidsWidTol || theControl == myDropSmallSolidsVolTol ) && !theControl->isEnabled() ) {
+        // VSR: stupid workaround about ShapeProcessAPI:
+        // specific processing for optional parameters of DropSmallSolids operator
+        return QString::number( Precision::Infinite() );
+      }
       return QString::number( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl )->value() );
-    else if ( qobject_cast<SalomeApp_IntSpinBox*>( theControl ))
+    }
+    else if ( qobject_cast<SalomeApp_IntSpinBox*>( theControl )) {
       return QString::number( qobject_cast<SalomeApp_IntSpinBox*>( theControl )->value() );
-    else if ( qobject_cast<QComboBox*>( theControl ))
+    }
+    else if ( qobject_cast<QComboBox*>( theControl )) {
       return qobject_cast<QComboBox*>( theControl )->currentText();
-    else if ( qobject_cast<QCheckBox*>( theControl ))
+    }
+    else if ( qobject_cast<QCheckBox*>( theControl )) {
       return qobject_cast<QCheckBox*>( theControl )->isChecked() ? "1" : "0";
+    }
   }   
   return 0;
 }
@@ -705,17 +714,14 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
 GEOM::string_array* RepairGUI_ShapeProcessDlg::getActiveOperators()
 {
   GEOM::string_array_var anOperators = new GEOM::string_array();
-  QStringList aCheckedList;
 
-  for ( int i = 0; i < myOpList->count(); i++ ) {
+  int j = 0, n = myOpList->count();
+  anOperators->length( n );
+  for ( int i = 0; i < n; i++ ) {
     if ( myOpList->item( i )->checkState() == Qt::Checked )
-      aCheckedList << myOpList->item( i )->text();
+      anOperators[j++] = myOpList->item( i )->text().toLatin1().constData();
   }
-
-  anOperators->length( aCheckedList.count() );
-
-  for ( int i = 0; i < aCheckedList.count(); i++ )
-    anOperators[i] = aCheckedList[i].toLatin1().constData();
+  anOperators->length( j );
 
   return anOperators._retn();
 }
@@ -732,7 +738,7 @@ QWidget* RepairGUI_ShapeProcessDlg::getControl( const QString& theParam )
   else if ( theParam == "FixFaceSize.Tolerance" )                 return myFixFaceSizeTol;
   else if ( theParam == "DropSmallEdges.Tolerance3d" )            return myDropSmallEdgesTol3D;
   else if ( theParam == "DropSmallSolids.WidthFactorThreshold" )  return myDropSmallSolidsWidTol;
-  else if ( theParam == "DropSmallSolids.VolumeThreshold" )       return myDropSmallSolidsWidTol;
+  else if ( theParam == "DropSmallSolids.VolumeThreshold" )       return myDropSmallSolidsVolTol;
   else if ( theParam == "DropSmallSolids.MergeSolids" )           return myDropSmallSolidsMergeChk;
   else if ( theParam == "BSplineRestriction.SurfaceMode" )        return myBSplineSurfModeChk;
   else if ( theParam == "BSplineRestriction.Curve3dMode" )        return myBSpline3DCurveChk;
@@ -824,17 +830,20 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getParameters( const GEOM::string
 
   // calculate the length of parameters
   for ( i = 0, j = 0; i < theOperators.length(); i++ )
-    j += myValMap[ QString( theOperators[i] ) ].size();
+    j += myValMap[ QString( theOperators[i].in() ) ].size();
   
   // set the new length of paremeters
   aParams->length( j );
 
   // fill the parameters
   for ( i = 0, j = 0; i < theOperators.length(); i++ ) {
-    QStringList aValLst = myValMap[ QString( theOperators[i] ) ];
-    for ( QStringList::Iterator it = aValLst.begin(); it != aValLst.end(); ++it )
-      aParams[j++] = CORBA::string_dup( (*it).toLatin1().constData() );
+    QStringList aParamLst = myValMap[ QString( theOperators[i].in() ) ];
+    foreach ( QString aParam, aParamLst ) {
+      aParams[j++] = CORBA::string_dup( aParam.toLatin1().constData() );
+    }
   }
+
+  aParams->length( j );
 
   return aParams._retn();
 }
@@ -851,7 +860,7 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getValues( const GEOM::string_arr
 
   for ( int i = 0; i < theParams.length(); i++ ) {
     QWidget* aCtrl = getControl( (const char*)theParams[i] );
-    if ( aCtrl && aCtrl->isEnabled() )
+    if ( aCtrl )
       aValues[i] = get_convert( (const char*)theParams[i], getValue( aCtrl ));
   }
 

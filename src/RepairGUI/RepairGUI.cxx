@@ -29,6 +29,7 @@
 
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
+#include <SUIT_OverrideCursor.h>
 #include <SalomeApp_Application.h>
 
 #include "RepairGUI_SewingDlg.h"        // Method SEWING
@@ -147,8 +148,7 @@ namespace
 
   StatsDlg::StatsDlg( GEOM::ModifStatistics_var stats, QWidget* parent ): QDialog( parent )
   {
-    setModal( false );
-    setAttribute( Qt::WA_DeleteOnClose, true );
+    setModal( true );
     setWindowTitle( tr( "GEOM_HEALING_STATS_TITLE" ) );
     setMinimumWidth( 500 );
 
@@ -174,11 +174,12 @@ namespace
     // helpBtn->setAutoDefault( true );
 
     QHBoxLayout* btnLayout = new QHBoxLayout;
-    btnLayout->setMargin( 9 );
+    btnLayout->setMargin( 0 );
     btnLayout->setSpacing( 6 );
 
+    btnLayout->addStretch();
     btnLayout->addWidget( okBtn );
-    btnLayout->addStretch( 10 );
+    btnLayout->addStretch();
     // btnLayout->addWidget( helpBtn );
 
     QVBoxLayout* aLay = new QVBoxLayout( this );
@@ -196,7 +197,6 @@ namespace
 
     connect( okBtn,       SIGNAL( clicked() ), this, SLOT( reject() ));
     //connect( helpBtn,     SIGNAL( clicked() ), this, SLOT( help() ));
-
   }
 }
 
@@ -213,6 +213,9 @@ void RepairGUI::ShowStatistics( GEOM::GEOM_IHealingOperations_var anOper, QWidge
   if ( ! &stats.in() || stats->length() == 0 )
     return;
 
-  StatsDlg* dlg = new StatsDlg( stats, parent );
-  dlg->exec();
+  SUIT_OverrideCursor wc;
+  wc.suspend();
+
+  StatsDlg dlg( stats, parent );
+  dlg.exec();
 }

@@ -275,6 +275,11 @@ bool GEOMImpl_IHealingOperations::GetParameters (const std::string theOperation,
   } else if( theOperation == "DropSmallEdges" ) {
     theParams.push_back( "DropSmallEdges.Tolerance3d" );
 
+  } else if( theOperation == "DropSmallSolids" ) {
+    theParams.push_back( "DropSmallSolids.WidthFactorThreshold" );
+    theParams.push_back( "DropSmallSolids.VolumeThreshold" );
+    theParams.push_back( "DropSmallSolids.MergeSolids" );
+
   } else if( theOperation == "BSplineRestriction" ) {
     theParams.push_back( "BSplineRestriction.SurfaceMode" );
     theParams.push_back( "BSplineRestriction.Curve3dMode" );

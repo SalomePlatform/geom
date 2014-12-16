@@ -163,12 +163,12 @@ void ShHealOper_ShapeProcess::SetParameter(const TCollection_AsciiString& theNam
   TCollection_AsciiString anameParam(myPrefix);
   anameParam += ".";
   anameParam+= theNameParam;
-  if(theVal.IsIntegerValue())
-    myOperations.Context()->ResourceManager()->
-      SetResource(anameParam.ToCString(),theVal.IntegerValue());
-  else if(theVal.IsRealValue())
+  if(theVal.IsRealValue())
     myOperations.Context()->ResourceManager()->
       SetResource(anameParam.ToCString(),theVal.RealValue());
+  else if(theVal.IsIntegerValue())
+    myOperations.Context()->ResourceManager()->
+      SetResource(anameParam.ToCString(),theVal.IntegerValue());
   else
     myOperations.Context()->ResourceManager()->
       SetResource(anameParam.ToCString(),theVal.ToCString());
