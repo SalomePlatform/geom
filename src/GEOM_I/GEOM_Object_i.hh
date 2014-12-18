@@ -75,7 +75,7 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual GEOM::GEOM_Object_ptr GetMainShape();
 
-  virtual bool IsSame(GEOM::GEOM_Object_ptr other);
+  virtual bool IsSame(GEOM::GEOM_BaseObject_ptr other);
 
   virtual bool IsShape();
 
