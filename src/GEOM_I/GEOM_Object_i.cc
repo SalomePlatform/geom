@@ -366,14 +366,17 @@ bool GEOM_Object_i::IsShape()
 
 bool GEOM_Object_i::IsSame(GEOM::GEOM_BaseObject_ptr other)
 {
-  GEOM::GEOM_Object_ptr shapePtr = GEOM::GEOM_Object::_narrow( other );
-  if ( CORBA::is_nil( shapePtr ) )
-    return false;
-  TopoDS_Shape thisShape  = _impl->GetValue();
-  TopoDS_Shape otherShape;
-  Handle(GEOM_Object) otherObject = Handle(GEOM_Object)::DownCast
-    ( GEOM_Engine::GetEngine()->GetObject( shapePtr->GetStudyID(), shapePtr->GetEntry(), false ));
-  if ( !otherObject.IsNull() )
-    otherShape = otherObject->GetValue();
-  return thisShape.IsSame( otherShape );
+  bool result = false;
+
+  GEOM::GEOM_Object_var shapePtr = GEOM::GEOM_Object::_narrow( other );
+  if ( !CORBA::is_nil( shapePtr ) ) {
+    Handle(GEOM_Object) otherObject = Handle(GEOM_Object)::DownCast
+      ( GEOM_Engine::GetEngine()->GetObject( shapePtr->GetStudyID(), shapePtr->GetEntry(), false ));
+    if ( !otherObject.IsNull() ) {
+      TopoDS_Shape thisShape  = _impl->GetValue();
+      TopoDS_Shape otherShape = otherObject->GetValue();
+      result = !thisShape.IsNull() && !otherShape.IsNull() && thisShape.IsSame( otherShape );
+    }
+  }
+  return result;
 }
