@@ -56,17 +56,7 @@
 //            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_FastCheckIntersectionsDlg::MeasureGUI_FastCheckIntersectionsDlg (GeometryGUI* GUI, QWidget* parent)
-  : GEOMBase_Skeleton (GUI, parent, false),
-    mySelButton1       (0),
-    mySelButton2       (0),
-    myEditObjName1     (0),
-    myEditObjName2     (0),
-    myDetGaps          (0),
-    myTolerance        (0),
-    myDeflection       (0),
-    myComputeButton    (0),
-    myShapeList1       (0),
-    myShapeList2       (0)
+  : GEOMBase_Skeleton (GUI, parent, false)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_FAST_CHECK_INTERSECTIONS")));
@@ -82,33 +72,30 @@ MeasureGUI_FastCheckIntersectionsDlg::MeasureGUI_FastCheckIntersectionsDlg (Geom
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  QGroupBox *aGrp      = new QGroupBox(tr("GEOM_FAST_CHECK_OBJ"));
-  QLabel    *anObjLbl1  = new QLabel(tr("GEOM_OBJECT_I").arg("1"));
-  QLabel    *anObjLbl2  = new QLabel(tr("GEOM_OBJECT_I").arg("2"));
-  QLabel    *aShapeLbl1 = new QLabel(tr("GEOM_FAST_CHECK_INT_SUBSHAPES").arg("1"));
-  QLabel    *aShapeLbl2 = new QLabel(tr("GEOM_FAST_CHECK_INT_SUBSHAPES").arg("2"));
-  QLabel    *aDeflectLbl = new QLabel(tr("GEOM_FAST_CHECK_INT_DEFLECT"));
-  QFont      aFont (TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE);
+  QGroupBox* aGrp        = new QGroupBox(tr("GEOM_FAST_CHECK_OBJ"), centralWidget());
+  QLabel*    anObjLbl1   = new QLabel(tr("GEOM_OBJECT_I").arg("1"), aGrp);
+  QLabel*    anObjLbl2   = new QLabel(tr("GEOM_OBJECT_I").arg("2"), aGrp);
+  QLabel*    aShapeLbl1  = new QLabel(tr("GEOM_FAST_CHECK_INT_SUBSHAPES").arg("1"), aGrp);
+  QLabel*    aShapeLbl2  = new QLabel(tr("GEOM_FAST_CHECK_INT_SUBSHAPES").arg("2"), aGrp);
+  QLabel*    aDeflectLbl = new QLabel(tr("GEOM_FAST_CHECK_INT_DEFLECT"), aGrp);
 
-  aFont.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
-
-  mySelButton1 = new QPushButton;
+  mySelButton1 = new QPushButton(aGrp);
   mySelButton1->setIcon(image1);
   mySelButton1->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  mySelButton2 = new QPushButton;
+  mySelButton2 = new QPushButton(aGrp);
   mySelButton2->setIcon(image1);
   mySelButton2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-  myEditObjName1 = new QLineEdit;
+  myEditObjName1 = new QLineEdit(aGrp);
   myEditObjName1->setReadOnly(true);
-  myEditObjName2 = new QLineEdit;
+  myEditObjName2 = new QLineEdit(aGrp);
   myEditObjName2->setReadOnly(true);
 
-  myDetGaps = new QCheckBox( tr( "GEOM_FAST_CHECK_INT_DETECT_GAPS" ));
-  myTolerance = new SalomeApp_DoubleSpinBox;
-  myDeflection = new SalomeApp_DoubleSpinBox;
-  myShapeList1  = new QListWidget;
-  myShapeList2 = new QListWidget;
+  myDetGaps = new QCheckBox(tr( "GEOM_FAST_CHECK_INT_DETECT_GAPS" ));
+  myTolerance = new SalomeApp_DoubleSpinBox(aGrp);
+  myDeflection = new SalomeApp_DoubleSpinBox(aGrp);
+  myShapeList1  = new QListWidget(aGrp);
+  myShapeList2 = new QListWidget(aGrp);
   myShapeList1->setSelectionMode(QAbstractItemView::ExtendedSelection);
   myShapeList2->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -170,18 +157,14 @@ void MeasureGUI_FastCheckIntersectionsDlg::Init()
   myEditObjName2->setEnabled(false);
 
   myDetGaps->setChecked(false);
-  double SpecificStep = 0.001;
-  double prec = Precision::Confusion();
-  initSpinBox(myTolerance, prec, MAX_NUMBER, SpecificStep);
-  myTolerance->setValue(SpecificStep);
+  initSpinBox(myTolerance, 0, MAX_NUMBER, 1);
+  myTolerance->setValue(0);
   myTolerance->setEnabled(false);
 
   // Obtain deflection from preferences
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  const char* quantity = "deflection_coeff";
-  double aDeflection = resMgr->doubleValue("Geometry", quantity, 0.00001); 
-  initSpinBox(myDeflection, prec, 1.0, aDeflection);
-  myDeflection->setValue(aDeflection);
+  initSpinBox(myDeflection, 1e-3, 1.0, 1e-3);
+  myDeflection->setValue(qMax(1e-3, resMgr->doubleValue("Geometry", "deflection_coeff", 1e-3)));
 
   myEditCurrentArgument = myEditObjName1;
 
@@ -560,12 +543,12 @@ void MeasureGUI_FastCheckIntersectionsDlg::previewSubShapesListSelection(QListWi
     SALOME_Prs* aPrs = 0;
     TopExp::MapShapes(aSelShape, anIndices);
     QList<int>::iterator it;
+    getDisplayer()->SetColor(theWidget == myShapeList1 ? Quantity_NOC_RED : Quantity_NOC_GREEN);
+    getDisplayer()->SetWidth(3);
+    getDisplayer()->SetToActivate(false);
     for (it = aIds.begin(); it != aIds.end(); ++it) {
       aSubShape = anIndices.FindKey(anInters[(*it)]);
       try {
-        getDisplayer()->SetColor(Quantity_NOC_RED);
-        getDisplayer()->SetWidth(3);
-        getDisplayer()->SetToActivate(false);
         aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs(aSubShape) : 0;
         if (aPrs)
           displayPreview(aPrs, true);
