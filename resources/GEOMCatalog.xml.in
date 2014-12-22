@@ -135,7 +135,7 @@
       <member name="error" type="GEOM/ShapeErrorType" />
       <member name="incriminated" type="GEOM/ListOfLong" />
     </struct>
-    <sequence name="GEOM/ShapeError"  content="GEOM/ShapeErrors" />
+    <sequence name="GEOM/ShapeErrors"  content="GEOM/ShapeError" />
 
     <!-- From GEOM_Superv.idl -->
     <objref name="GEOM/GEOM_Superv"  id="IDL:GEOM/GEOM_Superv:1.0" />
