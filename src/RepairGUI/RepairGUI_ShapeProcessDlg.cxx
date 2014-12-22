@@ -259,6 +259,7 @@ void RepairGUI_ShapeProcessDlg::init()
 
       myBSplineDegree = new SalomeApp_IntSpinBox( w );
       myBSplineSegments = new SalomeApp_IntSpinBox( w );
+      initSpinBox( myBSplineSegments, 1, 1000, 1);      
       myBSpline2DCont = new QComboBox( w );
       myBSpline2DCont->addItems( aContinueties );
       myBSpline3DCont = new QComboBox( w );
