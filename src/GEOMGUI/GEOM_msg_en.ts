@@ -7194,7 +7194,7 @@ Do you want to create new material?</translation>
   </message>
   <message>
     <source>GEOM_CHECK_INTE_ALL</source>
-    <translation>All interferences</translation>
+    <translation>Face to Face + all above</translation>
   </message>
 </context>
 <context>

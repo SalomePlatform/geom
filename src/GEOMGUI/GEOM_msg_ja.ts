@@ -7099,7 +7099,7 @@
   </message>
   <message>
     <source>GEOM_CHECK_INTE_ALL</source>
-    <translation type="unfinished">All interferences</translation>
+    <translation type="unfinished">Face to Face + all above</translation>
   </message>
 </context>
 <context>
