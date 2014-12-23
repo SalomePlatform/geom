@@ -187,7 +187,7 @@ void BooleanGUI_Dialog::Init()
   }
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
-           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+          SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()), Qt::UniqueConnection);
 
   initName(mainFrame()->GroupConstructors->title());
 
@@ -204,7 +204,6 @@ void BooleanGUI_Dialog::Init()
   localSelection(GEOM::GEOM_Object::_nil(), needTypes );
   
   myGroup->PushButton1->click();
-  SelectionIntoArgument();
   resize(100,100);
 }
 
@@ -261,7 +260,7 @@ void BooleanGUI_Dialog::singleSelection()
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     myGeomGUI->getApp()->selectionMgr()->clearSelected();
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-            this, SLOT(SelectionIntoArgument()));
+            this, SLOT(SelectionIntoArgument()), Qt::UniqueConnection);
 
     if (myEditCurrentArgument == myGroup->LineEdit1) {
       myObject1 = aSelectedObject;
@@ -269,6 +268,7 @@ void BooleanGUI_Dialog::singleSelection()
         myGroup->PushButton2->click();
     }
     else if (myEditCurrentArgument == myGroup->LineEdit2) {
+      myObjects.clear();
       myObjects << aSelectedObject;
       if (!myObject1)
         myGroup->PushButton1->click();
@@ -364,7 +364,7 @@ void BooleanGUI_Dialog::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-           this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ), Qt::UniqueConnection );
   processPreview();
 }
 
