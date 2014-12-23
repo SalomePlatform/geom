@@ -14,10 +14,10 @@ In this dialog:
 - <b>Compute self-intersections</b> button computes self-interferences.
 - \b Summary section contains the general report if the object has self-intersections and/or if errors are occured during computation.
 - \b Self-intersections list contains the list of self-intersections detected.
-Select the intersection to show <b>Sub-shapes</b> in the field to the right. 
-- \b Apply and <b>Apply and Close</b> buttons are used to store selected self-intersected shapes in the study for further analysis.
-If no shapes are selected, but an intersection is selected the both of intersected shapes are stored. If no intersections selected
-all shapes of all intersections are stored in the study.
+Select the intersection(s) to show <b>Sub-shapes</b> in the field to the right. 
+- \b Apply and <b>Apply and Close</b> buttons are used to store interferences selected in the "Self-intersections" list box in the study for further analysis.
+If no any interference is selected, all interferences are published in the study. Each interference is published as a child
+compound of the source shape and contains a couple of intersecting sub-shapes.
 
 \note This tool is useful for detection of shapes, not suitable for
 arguments of Boolean operations and Partition algorithm.

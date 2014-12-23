@@ -88,8 +88,6 @@ private:
   QListWidget                        *myShapeList;
   GEOM::GEOM_Object_var               myObj;
   GEOM::ListOfLong_var                myInters;
-  GEOM::GEOM_IShapesOperations_var    myShapesOper;
-
 };
 
 #endif // MEASUREGUI_CHECKSELFINTERDLG_H

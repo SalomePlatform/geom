@@ -42,6 +42,7 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
+#include <GEOM_GenericObjPtr.h>
 
 #include <QListWidget>
 
@@ -105,6 +106,7 @@ MeasureGUI_CheckSelfIntersectionsDlg::MeasureGUI_CheckSelfIntersectionsDlg (Geom
 
 
   myInteList  = new QListWidget;
+  myInteList->setSelectionMode(QAbstractItemView::ExtendedSelection);
   myShapeList = new QListWidget;
   myShapeList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -196,15 +198,16 @@ void MeasureGUI_CheckSelfIntersectionsDlg::Init()
 void MeasureGUI_CheckSelfIntersectionsDlg::clear()
 {
   myTextView->setText("");
-  disconnect(myInteList, SIGNAL(itemSelectionChanged()), this, 0);
-  disconnect(myShapeList, SIGNAL(itemSelectionChanged()), this, 0);
+
+  myInteList->blockSignals(true);
+  myShapeList->blockSignals(true);
   myInteList->clear();
   myShapeList->clear();
-  connect(myInteList,    SIGNAL(itemSelectionChanged()),
-          SLOT(onInteListSelectionChanged()));
-  connect(myShapeList,    SIGNAL(itemSelectionChanged()),
-          SLOT(onSubShapesListSelectionChanged()));
+  myInteList->blockSignals(false);
+  myShapeList->blockSignals(false);
+
   erasePreview();
+
   buttonOk()->setEnabled(false);
   buttonApply()->setEnabled(false);
   myComputeButton->setEnabled(true);
@@ -442,28 +445,28 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
 void MeasureGUI_CheckSelfIntersectionsDlg::onInteListSelectionChanged()
 {
   erasePreview();
-  int aCurItem = myInteList->currentRow();
+  myShapeList->clear();
 
-  if (aCurItem < 0)
-    return;
-
-  QStringList aSubShapeList;
   TopoDS_Shape aSelShape;
   if (!myObj->_is_nil() && GEOMBase::GetShape(myObj, aSelShape)) {
     TopTools_IndexedMapOfShape anIndices;
     TopExp::MapShapes(aSelShape, anIndices);
 
-    TopoDS_Shape aSubShape = anIndices.FindKey(myInters[aCurItem*2]);
-    QString aType = GEOMBase::GetShapeTypeString(aSubShape);
-    if (!aType.isEmpty())
-      aSubShapeList.append(QString("%1_%2").arg(aType).arg(myInters[aCurItem*2]));
-    aSubShape = anIndices.FindKey(myInters[aCurItem*2 + 1]);
-    aType = GEOMBase::GetShapeTypeString(aSubShape);
-    if (!aType.isEmpty())
-      aSubShapeList.append(QString("%1_%2").arg(aType).arg(myInters[aCurItem*2 + 1]));
+    int nbSelected = myInteList->selectedItems().size();
+
+    for (int i = 0; i < myInteList->count(); i++) {
+      if ( myInteList->item(i)->isSelected() ) {
+        if ( nbSelected > 1 )
+          myShapeList->addItem(QString("--- #%1 ---").arg(i+1));
+        for (int j = 0; j < 2; j++) {
+          TopoDS_Shape aSubShape = anIndices.FindKey(myInters[i*2+j]);
+          QString aType = GEOMBase::GetShapeTypeString(aSubShape);
+          myShapeList->addItem(QString("%1_%2").arg(aType).arg(myInters[i*2+j]));
+          myShapeList->item(myShapeList->count()-1)->setData(Qt::UserRole, myInters[i*2+j]);
+        }
+      }
+    }
   }
-  myShapeList->clear();
-  myShapeList->addItems(aSubShapeList);
 }
 
 //=================================================================================
@@ -474,36 +477,29 @@ void MeasureGUI_CheckSelfIntersectionsDlg::onSubShapesListSelectionChanged()
 {
   erasePreview();
 
-  // Current pair
-  int aErrCurItem = myInteList->currentRow();
-  if (aErrCurItem < 0)
-    return;
-
   // Selected IDs
+  QList<QListWidgetItem*> selected = myShapeList->selectedItems();
   QList<int> aIds;
-  for (int i = 0, n = myShapeList->count(); i < n; i++) {
-    if (myShapeList->item(i)->isSelected())
-      aIds.append(i);
+  foreach(QListWidgetItem* item, selected) {
+    int idx = item->data(Qt::UserRole).toInt();
+    if (idx > 0 && aIds.indexOf(idx) < 0) aIds.append(idx);
   }
-  if (aIds.count() < 1)
-    return;
+
+  if (aIds.empty()) return;
 
   TopoDS_Shape aSelShape;
   TopoDS_Shape aSubShape;
   TopTools_IndexedMapOfShape anIndices;
   if (!myObj->_is_nil() && GEOMBase::GetShape(myObj, aSelShape)) {
-    SALOME_Prs* aPrs = 0;
     TopExp::MapShapes(aSelShape, anIndices);
-    QList<int>::iterator it;
-    for (it = aIds.begin(); it != aIds.end(); ++it) {
-      aSubShape = anIndices.FindKey(myInters[aErrCurItem*2 + (*it)]);
+    getDisplayer()->SetColor(Quantity_NOC_RED);
+    getDisplayer()->SetWidth(3);
+    getDisplayer()->SetToActivate(false);
+    foreach(int idx, aIds) {
+      aSubShape = anIndices.FindKey(idx);
       try {
-        getDisplayer()->SetColor(Quantity_NOC_RED);
-        getDisplayer()->SetWidth(3);
-        getDisplayer()->SetToActivate(false);
-        aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs(aSubShape) : 0;
-        if (aPrs)
-          displayPreview(aPrs, true);
+        SALOME_Prs* aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs(aSubShape) : 0;
+        if (aPrs) displayPreview(aPrs, true);
       }
       catch (const SALOME::SALOME_Exception& e) {
         SalomeApp_Tools::QtCatchCorbaException(e);
@@ -525,56 +521,40 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::execute(ObjectList& objects)
     return false;
   }
 
-  const int  aNbInteSelected    = myInteList->selectedItems().size();
-  const bool isPublishAllInte   = (aNbInteSelected < 1);
-  const bool isPublishAllShapes =
-    (aNbInteSelected != 1 || myShapeList->selectedItems().empty());
-  int        i;
-  const int  n = myInteList->count();
   TColStd_IndexedMapOfInteger aMapIndex;
+  QList<int> pairs;
 
-  // Collect the map of indices.
-  for (i = 0; i < n; i++) {
-    if (isPublishAllInte) {
-      // Collect the both of two indices.
+  int nbSelected = myInteList->selectedItems().size();
+
+  // Collect the map of indices
+  for (int i = 0; i < myInteList->count(); i++) {
+    if ( nbSelected < 1 || myInteList->item(i)->isSelected() ) {
       aMapIndex.Add(myInters[i*2]);
       aMapIndex.Add(myInters[i*2 + 1]);
-    } else if (myInteList->item(i)->isSelected()) {
-      if (isPublishAllShapes) {
-        // Collect the both of two indices.
-        aMapIndex.Add(myInters[i*2]);
-        aMapIndex.Add(myInters[i*2 + 1]);
-      } else if (myShapeList->count() == 2) {
-        // Collect only selected items.
-        if (myShapeList->item(0)->isSelected()) {
-          aMapIndex.Add(myInters[i*2]);
-        }
-        if (myShapeList->item(1)->isSelected()) {
-          aMapIndex.Add(myInters[i*2 + 1]);
-        }
-      }
+      pairs << myInters[i*2];
+      pairs << myInters[i*2 + 1];
     }
   }
 
-  // Create objects.
+  GEOM::ShapesOpPtr shapesOper = getGeomEngine()->GetIShapesOperations(getStudyId());
+  
+  // Explode sub-shapes
   GEOM::ListOfLong_var anArray   = new GEOM::ListOfLong;
-  const int            aNbShapes = aMapIndex.Extent();
+  anArray->length(aMapIndex.Extent());
 
-  anArray->length(aNbShapes);
+  for (int i = 1; i <= aMapIndex.Extent(); i++)
+    anArray[i-1] = aMapIndex.FindKey(i);
 
-  for (i = 1; i <= aNbShapes; i++) {
-    anArray[i - 1] = aMapIndex.FindKey(i);
-  }
+  GEOM::ListOfGO_var aList = shapesOper->MakeSubShapes(myObj, anArray);
 
-  if (myShapesOper->_is_nil()) {
-    myShapesOper = getGeomEngine()->GetIShapesOperations(getStudyId());
-  }
-
-  GEOM::ListOfGO_var aList = myShapesOper->MakeSubShapes(myObj, anArray);
-  const int aNbObj = aList->length();
-
-  for (i = 0; i < aNbObj; i++) {
-    objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
+  // Make compounds
+  for (int i = 0; i < pairs.count()/2; i++) {
+    GEOM::ListOfGO_var aPair = new GEOM::ListOfGO();
+    aPair->length(2);
+    aPair[0] = aList[ aMapIndex.FindIndex(pairs[i*2]) - 1 ];
+    aPair[1] = aList[ aMapIndex.FindIndex(pairs[i*2+1]) - 1 ];
+    GEOM::GEOM_Object_var aCompound = shapesOper->MakeCompound( aPair );
+    objects.push_back(aCompound._retn());
   }
 
   return true;
