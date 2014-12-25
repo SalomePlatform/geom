@@ -49,7 +49,6 @@ private slots:
   void                    onItemSelectionChanged();
   void                    onItemExpanded( QTreeWidgetItem* );
   void                    onHeaderClicked( int );
-  void                    onItemDoubleClicked( QTreeWidgetItem*, int );
 
   void                    onViewSelectionChanged();
 
