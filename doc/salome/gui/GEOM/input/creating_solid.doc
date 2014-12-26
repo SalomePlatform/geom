@@ -27,7 +27,7 @@ The \b Result will be a \b GEOM_Object (SOLID or COMPOUND).
 
 <b>TUI Command:</b> <em>geompy.MakeSolidFromConnectedFaces(ListOfShape, isIntersect),</em> where
 \c ListOfShape is a list of faces and/or shells from which the solid is constructed and 
-\c isIntersect is a boolean flag which, when set to \c True, forces performing intersection
+\c isIntersect is a boolean flag which, when set to \c True, forces performing intersection/sewing
 between arguments
 
 <b>Arguments:</b> Name + A set of connected faces and/or shells + Boolean flag.

@@ -725,7 +725,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SOLID_FROM_FACE_OPT</source>
-        <translation>Intersect shapes</translation>
+        <translation>Intersect/sew shapes</translation>
     </message>
     <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>

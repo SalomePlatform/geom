@@ -741,7 +741,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SOLID_FROM_FACE_OPT</source>
-        <translation type="unfinished">Intersect shapes</translation>
+        <translation type="unfinished">Intersect/sew shapes</translation>
     </message>
     <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
