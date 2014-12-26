@@ -6674,6 +6674,22 @@
       <source>TIME_CONSUMING</source>
       <translation>このオプションを有効にすると、特定のオブジェクトを時間の無駄が可能性があります。続行しますか。</translation>
     </message>
+    <message>
+      <source>WIDTH_FACTOR_TOL</source>
+      <translation type="unfinished">Width factor tol.</translation>
+    </message>
+    <message>
+      <source>VOLUME_TOL</source>
+      <translation type="unfinished">Volume tol.</translation>
+    </message>
+    <message>
+      <source>TO_MERGE_SOLIDS</source>
+      <translation type="unfinished">To merge solids</translation>
+    </message>
+    <message>
+      <source>SELECT_ALL</source>
+      <translation>全選択</translation>
+    </message>
   </context>
   <context>
     <name>GEOMToolsGUI_DeleteDlg</name>

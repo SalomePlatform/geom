@@ -6768,6 +6768,10 @@ Would you like to continue?</translation>
         <source>TO_MERGE_SOLIDS</source>
         <translation>To merge solids</translation>
     </message>
+    <message>
+        <source>SELECT_ALL</source>
+        <translation>Select All</translation>
+    </message>
 </context>
 <context>
     <name>GEOMToolsGUI_DeleteDlg</name>

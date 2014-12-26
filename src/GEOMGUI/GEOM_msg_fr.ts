@@ -6696,6 +6696,22 @@ Fermez cette boîte d&apos;alerte et choisissez les arêtes à recoller.</transl
         <translation>L&apos;activation de cette option peut résulter en une perte de temps sur certains objets.
 Voulez-vous continuer?</translation>
     </message>
+    <message>
+        <source>WIDTH_FACTOR_TOL</source>
+        <translation type="unfinished">Width factor tol.</translation>
+    </message>
+    <message>
+        <source>VOLUME_TOL</source>
+        <translation type="unfinished">Volume tol.</translation>
+    </message>
+    <message>
+        <source>TO_MERGE_SOLIDS</source>
+        <translation type="unfinished">To merge solids</translation>
+    </message>
+    <message>
+        <source>SELECT_ALL</source>
+        <translation>Tout sélectionner</translation>
+    </message>
 </context>
 <context>
     <name>GEOMToolsGUI_DeleteDlg</name>

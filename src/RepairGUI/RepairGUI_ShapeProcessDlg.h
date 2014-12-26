@@ -80,6 +80,7 @@ private:
   //QDict<QString,QWidget*>            myCtrlMap;  // map of controls (values) of parameters
   void                               initParamsValues(); // initialize the data structures
   void                               initSelection();
+  void                               updateSelectAll();
 
 private:
   QStringList                        myOpLst; // list of available Shape Healing Operators
@@ -88,6 +89,7 @@ private:
   GEOM::ListOfGO_var                 myObjects;  // selected objects
   
   DlgRef_1Sel*                       mySelectWdgt;
+  QCheckBox*                         mySelectAll;
   QListWidget*                       myOpList;
   QStackedLayout*                    myStack;
   
@@ -141,6 +143,7 @@ private slots:
   void                               selectClicked();
   void                               advOptionToggled( bool );
   void                               operatorChecked( QListWidgetItem * item );
+  void                               onSelectAll( int );
 };
 
 #endif // REPAIRGUI_SHAPEPROCESSDLG_H

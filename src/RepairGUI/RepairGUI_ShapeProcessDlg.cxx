@@ -97,6 +97,10 @@ void RepairGUI_ShapeProcessDlg::init()
   // layout the two group boxes in the middle, add a list of operations
   QGroupBox* anOperGr = new QGroupBox( tr( "GEOM_OPERATIONS" ), centralWidget() );
 
+  // "select all" button
+  mySelectAll = new QCheckBox( tr( "SELECT_ALL" ), anOperGr );
+  mySelectAll->setTristate( true );
+  
   // operations list widget
   myOpList = new QListWidget( anOperGr );
   myOpList->setSortingEnabled( false );
@@ -104,6 +108,7 @@ void RepairGUI_ShapeProcessDlg::init()
 
   QVBoxLayout* aOperLay = new QVBoxLayout( anOperGr );
   aOperLay->setMargin( 9 );
+  aOperLay->addWidget( mySelectAll );
   aOperLay->addWidget( myOpList );
 
   QGroupBox* aParamsGr = new QGroupBox( tr( "GEOM_PARAMETERS" ), centralWidget() );
@@ -347,6 +352,7 @@ void RepairGUI_ShapeProcessDlg::init()
 
   connect( myOpList, SIGNAL( currentRowChanged( int )),      myStack, SLOT( setCurrentIndex( int )));
   connect( myOpList, SIGNAL( itemChanged( QListWidgetItem* )),  this, SLOT( operatorChecked( QListWidgetItem* )));
+  connect( mySelectAll, SIGNAL( stateChanged( int ) ), this, SLOT( onSelectAll( int )));
 
   adjustSize();
   loadDefaults(); // init dialog fields with values from resource file
@@ -357,6 +363,7 @@ void RepairGUI_ShapeProcessDlg::init()
 
   initName( tr( "PROCESS_SHAPE_NEW_OBJ_NAME" ));
   selectionChanged();
+  updateSelectAll();
 }
 
 //=================================================================================
@@ -952,4 +959,32 @@ void RepairGUI_ShapeProcessDlg::operatorChecked( QListWidgetItem * item )
   {
     myStack->setCurrentIndex( myOpList->row( item ));
   }
+  updateSelectAll();
+}
+
+void RepairGUI_ShapeProcessDlg::updateSelectAll()
+{
+  Qt::CheckState state = myOpList->count() > 0 ? myOpList->item(0)->checkState() : Qt::Unchecked;
+  for ( int i = 1; i < myOpList->count(); i++ ) {
+    if ( myOpList->item(i)->checkState() != state ) {
+      state = Qt::PartiallyChecked;
+      break;
+    }
+  }
+  mySelectAll->blockSignals( true );
+  mySelectAll->setCheckState( state );
+  mySelectAll->blockSignals( false );
+}
+
+void RepairGUI_ShapeProcessDlg::onSelectAll( int state )
+{
+  if ( state == Qt::PartiallyChecked ) { 
+    mySelectAll->setCheckState( Qt::Checked );
+    return;
+  }
+  myOpList->blockSignals( true );
+  for ( int i = 0; i < myOpList->count(); i++ ) {
+    myOpList->item(i)->setCheckState( (Qt::CheckState)state  );
+  }
+  myOpList->blockSignals( false );
 }
