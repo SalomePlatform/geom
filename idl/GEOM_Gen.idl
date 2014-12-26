@@ -2267,13 +2267,21 @@ module GEOM
                               in long        theShapeType);
 
     /*!
-     *  \brief Get all sub-shapes, shared by all shapes in the list \a theShapes.
+     *  \brief Get sub-shapes, shared by input shapes.
      *  \param theShapes Shapes to find common sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
-     *  \return List of objects, that are sub-shapes of all given shapes.
+     *  \param theMultiShare Specifies what type of shares should be checked:
+     *         - \c TRUE: search sub-shapes from 1st input shape shared with all other input shapes;
+     *         - \c FALSE: causes to search sub-shapes shared between couples of input shapes.
+     *  \note If \a theShapes contains single compound, the shares between all possible couples of 
+     *        its top-level shapes are returned; otherwise, only shares between 1st input shape
+     *        and all rest input shapes are returned.
+     *              
+     *  \return List of all found sub-shapes.
      */
     ListOfGO GetSharedShapesMulti (in ListOfGO theShapes,
-                                   in long     theShapeType);
+                                   in long     theShapeType,
+				   in boolean  theMultiShare);
 
     /*!
      *  \brief Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively

@@ -4920,33 +4920,49 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(aList, theName, "shared")
             return aList
 
-        ## Get all sub-shapes, shared by all shapes in the list <VAR>theShapes</VAR>.
+        ## Get sub-shapes, shared by input shapes.
         #  @param theShapes Either a list or compound of shapes to find common sub-shapes of.
-        #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
+        #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType()).
+        #  @param theMultiShare Specifies what type of shares should be checked:
+        #         - @c True (default): search sub-shapes from 1st input shape shared with all other input shapes;
+        #         - @c False: causes to search sub-shapes shared between couples of input shapes.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return List of objects, that are sub-shapes of all given shapes.
+        #  @note If @a theShapes contains single compound, the shares between all possible couples of 
+        #        its top-level shapes are returned; otherwise, only shares between 1st input shape
+        #        and all rest input shapes are returned.
         #
-        #  @ref swig_GetSharedShapes "Example"
+        #  @return List of all found sub-shapes.
+        #
+        #  Examples:
+        #  - @ref tui_shared_shapes "Example 1"
+        #  - @ref swig_GetSharedShapes "Example 2"
         @ManageTransactions("ShapesOp")
-        def GetSharedShapesMulti(self, theShapes, theShapeType, theName=None):
+        def GetSharedShapesMulti(self, theShapes, theShapeType, theMultiShare=True, theName=None):
             """
-            Get all sub-shapes, shared by all shapes in the list theShapes.
+            Get sub-shapes, shared by input shapes.
 
             Parameters:
                 theShapes Either a list or compound of shapes to find common sub-shapes of.
-                theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
+                theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType).
+                theMultiShare Specifies what type of shares should be checked:
+                  - True (default): search sub-shapes from 1st input shape shared with all other input shapes;
+                  - False: causes to search sub-shapes shared between couples of input shapes.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
+            Note: if theShapes contains single compound, the shares between all possible couples of 
+                  its top-level shapes are returned; otherwise, only shares between 1st input shape
+                  and all rest input shapes are returned.
+
             Returns:
-                List of GEOM.GEOM_Object, that are sub-shapes of all given shapes.
+                List of all found sub-shapes.
             """
             # Example: see GEOM_TestOthers.py
-            aList = self.ShapesOp.GetSharedShapesMulti(ToList(theShapes), theShapeType)
+            aList = self.ShapesOp.GetSharedShapesMulti(ToList(theShapes), theShapeType, theMultiShare)
             RaiseIfFailed("GetSharedShapesMulti", self.ShapesOp)
             self._autoPublish(aList, theName, "shared")
             return aList

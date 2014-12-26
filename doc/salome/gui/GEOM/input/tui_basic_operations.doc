@@ -14,4 +14,8 @@
 <br><h2>Restore presentation parameters and sub-shapes</h2>
 \tui_script{basic_operations_ex03.py}
 
+\anchor tui_shared_shapes
+<br><h2>Get shared shapes</h2>
+\tui_script{basic_operations_ex04.py}
+
 */

@@ -176,7 +176,8 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
     GetSharedShapes (std::list<Handle(GEOM_Object)>& theShapes,
-                     const Standard_Integer          theShapeType);
+                     const Standard_Integer          theShapeType,
+                     const bool                      theMultiShare = true);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
     GetShapesOnPlane (const Handle(GEOM_Object)& theShape,

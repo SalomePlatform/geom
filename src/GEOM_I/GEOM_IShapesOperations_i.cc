@@ -1155,7 +1155,8 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSharedShapes
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSharedShapesMulti
                                           (const GEOM::ListOfGO& theShapes,
-                                           const CORBA::Long     theShapeType)
+                                           const CORBA::Long     theShapeType,
+                                           CORBA::Boolean        theMultiShare)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -1168,7 +1169,7 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSharedShapesMulti
     return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    GetOperations()->GetSharedShapes(aShapes, theShapeType);
+    GetOperations()->GetSharedShapes(aShapes, theShapeType, theMultiShare);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 

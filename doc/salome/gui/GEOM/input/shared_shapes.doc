@@ -4,7 +4,7 @@
 
 This operation is a special case of <b>Explode</b> operation. It
 produces sub-shapes of the exploded shape (the first shape in the list
-of argument shapes), which are shared with all other shapes in the
+of argument shapes), which are shared with other shapes in the
 arguments. The argument shapes can also be contained in a compound or
 group.
 
@@ -13,19 +13,28 @@ Shared Shapes.</b> The following dialog box will appear.
 
 \image html shared_shapes.png
 
-<ul>
-<li> <b>Name</b> is the base name of the resulting shapes. </li>
-<li> <b>Shapes</b> are the shapes to fing shared sub-shapes of. </li>
-<li> <b>Sub-shapes Type</b> is the type of required sub-shapes. </li>
-</ul>
+In this dialog:
+- <b>Name</b> is the base name of the resulting shapes.
+- <b>Shapes</b> are the shapes to fing shared sub-shapes of.
+- <b>Sub-shapes Type</b> is the type of required sub-shapes.
+- <b>Multi-shares only</b> option specifies what type of shared sub-shapes should be checked:
+  - \b On: causes to search sub-shapes from the first input shape shared with all other input shapes;
+  - \b Off: causes to search sub-shapes shared between couples of input shapes.
 
-\n <b>Advanced options:</b> \ref preview_anchor "Preview"
-<p>
+\note For the case when "Multi-shares only" option is switched off - if an input list of shapes
+contains single compound, the sub-shapes shared between all possible couples of its top-level shapes
+are searched; otherwise, only sub-shapes that are shared between first input shape and all rest input
+shapes are searched.
+
+<b>Advanced options:</b> \ref preview_anchor "Preview"
+
 <b>TUI Command:</b> <em> geompy.GetSharedShapesMulti( Shapes, Type ),</em> 
 <br> where \em Shapes is a list or compound of shapes to fing shared sub-
 shapes of and \em Type is the type of required sub-shapes.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
-\ref swig_GetSharedShapes "Get Shared Shapes" functionality.
+Get Shared Shapes functionality:
+- \ref tui_shared_shapes "Example 1"
+- \ref swig_GetSharedShapes "Example 2"
  
 */

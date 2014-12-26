@@ -165,7 +165,8 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                    CORBA::Long           theShapeType);
 
   GEOM::ListOfGO* GetSharedShapesMulti (const GEOM::ListOfGO& theShapes,
-                                        CORBA::Long           theShapeType);
+                                        CORBA::Long           theShapeType,
+                                        CORBA::Boolean        theMultiShare);
 
   GEOM::ListOfGO* GetShapesOnPlane (GEOM::GEOM_Object_ptr theShape,
                                     CORBA::Long           theShapeType,

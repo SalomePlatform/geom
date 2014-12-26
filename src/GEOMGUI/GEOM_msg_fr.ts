@@ -6883,6 +6883,10 @@ Voulez-vous en créer un nouveau ?</translation>
         <source>GEOM_SHARED_SHAPE</source>
         <translation>Partagé_%1</translation>
     </message>
+    <message>
+        <source>GEOM_SHARED_SHAPES_MULTISHARE</source>
+        <translation type="unfinished">Multi-shares only</translation>
+    </message>
 </context>
 <context>
     <name>GEOMToolsGUI_PublishDlg</name>

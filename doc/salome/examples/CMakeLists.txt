@@ -41,6 +41,7 @@ SET(GOOD_TESTS
   basic_operations_ex01.py  
   basic_operations_ex02.py  
   basic_operations_ex03.py  
+  basic_operations_ex04.py  
   basic_properties.py  
   blocks_operations_ex01.py  
   blocks_operations_ex02.py  

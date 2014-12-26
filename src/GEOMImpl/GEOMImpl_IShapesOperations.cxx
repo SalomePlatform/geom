@@ -2252,7 +2252,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
   }
 
   if (aSeq->IsEmpty()) {
-    SetErrorCode("The given shapes have no shared sub-shapes of the requested type");
+    SetErrorCode(NOT_FOUND_ANY);
     return aSeq;
   }
 
@@ -2272,121 +2272,168 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
 //=======================================================================
 //function : GetSharedShapes
 //purpose  :
+//
+// NOTE on the implementation
+// 
+// 1) Resulting sub-shapes are published as a children of the 1st input shape
+//    from theShapes list. Due to this reason only direct sub-shapes of the 1st
+//    shape can be contained in the result of the operation (i.e. shares between
+//    2nd/3rd, etc couples cannot be retrieved.
+// 2) An exception from above case is when a single compound is specified as an
+//    input. In this case we search shares between its top-level content, so we
+//    are able to search shares between all possible couples of shapes.
+// 3) Parameter theMultiShare controls what types of shares to search:
+//    - True: get sub-shapes that are shared between ALL input shapes;
+//    - False: get shares between couples of input sub-shapes (see points 1 and 2).
+//
+// Thus, we have the following cases:
+// [1] theShapes = N shapes (N>1), theMultiShare = True
+//     Result: sub-shapes that are shared by all theShapes
+// [2] theShapes = N shapes (N>1), theMultiShare = False
+//     Result: sub-shapes of 1st shape from theShapes that are shared with any shape
+//     from theShapes
+// [3] theShapes = 1 shape, theMultiShare = True
+//     Result: sub-shapes that are shared by all top-level sub-objects of theShapes[0]
+// [4] theShapes = 1 shape, theMultiShare = False
+//     Result: sub-shapes of all possible couples of all top-level sub-objects of
+//     theShapes[0].
 //=======================================================================
 Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
                                      (std::list<Handle(GEOM_Object)> & theShapes,
-                                      const Standard_Integer           theShapeType)
+                                      const Standard_Integer           theShapeType,
+                                      const bool                       theMultiShare)
 {
   SetErrorCode(KO);
 
   int aLen = theShapes.size();
   if (aLen < 1) return NULL;
 
-  int ind = 1;
   std::list<Handle(GEOM_Object)>::iterator it = theShapes.begin();
 
+  // main object is always first in the input list
+  // it is the object from which sub-shapes indices are taken
+  // and where results are published
   Handle(GEOM_Object) aMainObj = *it;
   Handle(GEOM_Function) aMainShape = aMainObj->GetLastFunction();
 
+  // collect all shapes from the input list (including first one) for processing
   TopTools_SequenceOfShape shapeSeq;
-  for (; it != theShapes.end(); it++, ind++) {
+  for (; it != theShapes.end(); it++) {
     Handle(GEOM_Function) aRefShape = (*it)->GetLastFunction();
     if (aRefShape.IsNull()) {
       SetErrorCode("NULL shape for GetSharedShapes");
       return NULL;
     }
-    TopoDS_Shape aShape2 = aRefShape->GetValue();
-    if (aShape2.IsNull()) return NULL;
-    shapeSeq.Append( aShape2 );
+    TopoDS_Shape aShape = aRefShape->GetValue();
+    if (aShape.IsNull()) {
+      SetErrorCode("NULL shape for GetSharedShapes");
+      return NULL;
+    }
+    shapeSeq.Append( aShape );
   }
 
-  TopoDS_Shape aShape1 = shapeSeq.First();
-
+  // if only single shape is specified as input
+  // collect all ites top-level sub-shapes for processing
   if ( shapeSeq.Length() == 1 )
   {
+    TopoDS_Shape aShape = shapeSeq.First();
     shapeSeq.Clear();
-    for ( TopoDS_Iterator it( aShape1); it.More(); it.Next() )
+    for ( TopoDS_Iterator it( aShape ); it.More(); it.Next() )
       shapeSeq.Append( it.Value() );
-    aShape1 = shapeSeq.First();
   }
 
+  // map all sub-shapes in a main shape to their indices
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aMainShape->GetValue(), anIndices);
+  TopTools_MapOfShape mapShape;
 
-  TopTools_IndexedMapOfShape mapSelected;
-  TopExp::MapShapes(aShape1, TopAbs_ShapeEnum(theShapeType), mapSelected);
+  // find shared shapes
 
-  // Find shared shapes
-  BRep_Builder B;
-  TopoDS_Compound aCurrSelection;
+  // here we will collect all shares
+  TopTools_ListOfShape aShared;
 
-  for ( ind = 2; ind <= shapeSeq.Length(); ind++) {
-
-    TopoDS_Compound aCompound;
-    B.MakeCompound(aCompound);
-
-    const TopoDS_Shape& aShape2 = shapeSeq.Value( ind );
-
-    TopTools_MapOfShape mapShape2;
-    TopExp_Explorer exp (aShape2, TopAbs_ShapeEnum(theShapeType));
-    for (; exp.More(); exp.Next()) {
-      const TopoDS_Shape& aSS = exp.Current();
-      if (mapShape2.Add(aSS) && mapSelected.Contains(aSS)) {
-        B.Add(aCompound, aSS);
+  // number of iterations
+  int nbIters  =  theMultiShare || theShapes.size() > 1 ? 1 : shapeSeq.Length()-1;
+  // numShares factor to search (i.e. by what nb of shapes each found sub-shape should be shared)
+  int nbShares =  theMultiShare ? shapeSeq.Length()-1 : 1;
+    
+  for ( int iter = 1; iter <= nbIters; iter++) {
+    for ( int ind = iter+1; ind <= shapeSeq.Length(); ind++) {
+      if ( ind-1+nbShares > shapeSeq.Length() ) break;
+      TopoDS_Compound aCurrSelection;
+      TopoDS_Shape aShape1 = shapeSeq.Value( iter );
+      TopTools_IndexedMapOfShape mapSelected;
+      TopExp::MapShapes(aShape1, TopAbs_ShapeEnum(theShapeType), mapSelected);
+      for ( int s = 0; s < nbShares; s++ ) {
+        BRep_Builder B;
+        TopoDS_Compound aCompound;
+        B.MakeCompound(aCompound);
+        const TopoDS_Shape& aShape2 = shapeSeq.Value( ind+s );
+        TopTools_MapOfShape mapShape2;
+        TopExp_Explorer exp (aShape2, TopAbs_ShapeEnum(theShapeType));
+        for (; exp.More(); exp.Next()) {
+          const TopoDS_Shape& aSS = exp.Current();
+          if (mapShape2.Add(aSS) && mapSelected.Contains(aSS)) {
+            B.Add(aCompound, aSS);
+          }
+        }
+        mapSelected.Clear();
+        aCurrSelection = aCompound;
+        TopExp::MapShapes(aCurrSelection, TopAbs_ShapeEnum(theShapeType), mapSelected);
+      }
+      TopoDS_Iterator itSel(aCurrSelection, Standard_True, Standard_True);
+      for (; itSel.More(); itSel.Next()) {
+        const TopoDS_Shape& aSS = itSel.Value();
+        if (mapShape.Add(aSS) )
+	  aShared.Append(aSS);
       }
     }
-
-    mapSelected.Clear();
-    TopExp::MapShapes(aCompound, TopAbs_ShapeEnum(theShapeType), mapSelected);
-    aCurrSelection = aCompound;
   }
 
-  // Create GEOM_Object for each found shared shape (collected in aCurrSelection)
-  Handle(GEOM_Object) anObj, aLastCreated;
-  Handle(TColStd_HArray1OfInteger) anArray;
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
-  TCollection_AsciiString anAsciiList, anEntry;
 
-  TopoDS_Iterator itSel (aCurrSelection, Standard_True, Standard_True);
-  for (; itSel.More(); itSel.Next()) {
-    anArray = new TColStd_HArray1OfInteger(1,1);
-    anArray->SetValue(1, anIndices.FindIndex(itSel.Value()));
+  if (aShared.IsEmpty()){
+    SetErrorCode(NOT_FOUND_ANY);
+    return aSeq;
+  }
+
+  // create GEOM_Object for each found shared shape (collected in aShared)
+  TCollection_AsciiString anAsciiList;
+  Handle(GEOM_Object) anObj;
+  TopTools_ListIteratorOfListOfShape itSub (aShared);
+  for (; itSub.More(); itSub.Next()) {
+    TopoDS_Shape aValue = itSub.Value();
+    Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
+    anArray->SetValue(1, anIndices.FindIndex(aValue));
     anObj = GetEngine()->AddSubShape(aMainObj, anArray);
     aSeq->Append(anObj);
 
-    aLastCreated = GEOM::GetCreatedLast( aLastCreated, anObj );
-
     // for python command
+    TCollection_AsciiString anEntry;
     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
     anAsciiList += anEntry;
     anAsciiList += ",";
   }
 
-  if (aSeq->IsEmpty()) {
-    SetErrorCode("The given shapes have no shared sub-shapes of the requested type");
-    return aSeq;
-  }
-
-  // Make a Python command
+  // make a Python command
   anAsciiList.Trunc(anAsciiList.Length() - 1);
 
-  // IPAL22904: TC6.5.0: order of python commands is wrong after dump study
-  // Get the function of the latest published object
-  Handle(GEOM_Function) aFunction = aLastCreated->GetLastFunction();
-  if( aFunction.IsNull() ) // just in case
-    aFunction = aMainShape;
-
-  GEOM::TPythonDump pd (aFunction, /*append=*/true);
+  GEOM::TPythonDump pd (anObj->GetLastFunction());
   pd << "[" << anAsciiList.ToCString()
-     << "] = geompy.GetSharedShapesMulti([";
+     << "] = geompy.GetSharedShapesMulti(";
+
+  if ( aLen > 1 )
+    pd << "[";
 
   it = theShapes.begin();
   pd << (*it++);
   while (it != theShapes.end()) {
     pd << ", " << (*it++);
   }
+  if ( aLen > 1 )
+    pd << "]";
 
-  pd << "], " << TopAbs_ShapeEnum(theShapeType) << ")";
+  pd << ", " << TopAbs_ShapeEnum(theShapeType) << ", " << theMultiShare << ")";
 
   SetErrorCode(OK);
   return aSeq;

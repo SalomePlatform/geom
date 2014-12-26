@@ -75,7 +75,7 @@ OperationGUI_GetSharedShapesDlg::OperationGUI_GetSharedShapesDlg
   GroupPoints->LineEdit1->setReadOnly(true);
   GroupPoints->LineEdit2->hide();
   GroupPoints->LineEdit1->setEnabled(true);
-  GroupPoints->CheckButton1->hide();
+  GroupPoints->CheckButton1->setText(tr("GEOM_SHARED_SHAPES_MULTISHARE"));
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -308,12 +308,9 @@ GEOM::GEOM_IOperations_ptr OperationGUI_GetSharedShapesDlg::createOperation()
 //=================================================================================
 bool OperationGUI_GetSharedShapesDlg::isValid (QString& msg)
 {
-  bool isOK = true;
-  if (myListShapes.length() < 2) {
-    isOK = false;
-    if ( myListShapes.length() == 1 )
-      isOK = ( myListShapes[0]->GetShapeType() == GEOM::COMPOUND );
-  }
+  bool isOK = myListShapes.length() > 1 ||
+    ( myListShapes.length() > 0 && myListShapes[0]->GetShapeType() == GEOM::COMPOUND );
+
   if ( !isOK )
     msg = tr("MSG_SHARED_SHAPES_TOO_FEW_SHAPES");
 
@@ -327,7 +324,7 @@ bool OperationGUI_GetSharedShapesDlg::isValid (QString& msg)
 bool OperationGUI_GetSharedShapesDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
-  GEOM::ListOfGO_var aList = anOper->GetSharedShapesMulti(myListShapes, GetType());
+  GEOM::ListOfGO_var aList = anOper->GetSharedShapesMulti(myListShapes, GetType(), GroupPoints->CheckButton1->isChecked());
 
   if (!aList->length())
     return false;
