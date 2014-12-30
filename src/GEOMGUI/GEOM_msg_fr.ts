@@ -6901,7 +6901,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_SHARED_SHAPES_MULTISHARE</source>
-        <translation type="unfinished">Multi-shares only</translation>
+        <translation type="unfinished">Shared by all</translation>
     </message>
 </context>
 <context>

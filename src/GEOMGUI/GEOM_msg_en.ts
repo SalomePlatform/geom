@@ -6961,7 +6961,7 @@ Do you want to create new material?</translation>
     </message>
     <message>
         <source>GEOM_SHARED_SHAPES_MULTISHARE</source>
-        <translation>Multi-shares only</translation>
+        <translation>Shared by all</translation>
     </message>
 </context>
 <context>
