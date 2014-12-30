@@ -26,28 +26,15 @@
 #include <GEOMImpl_IOffset.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
+#include <GEOMUtils.hxx>
 
 #include <BRepOffsetAPI_MakeOffsetShape.hxx>
-#include <BRep_Tool.hxx>
-#include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
 #include <TopAbs.hxx>
-#include <TopExp.hxx>
-
 #include <BRepClass3d_SolidClassifier.hxx>
-
 #include <Precision.hxx>
-#include <gp_Pnt.hxx>
-
-#include <BRepCheck_Analyzer.hxx>
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <ShapeFix_Shape.hxx>
-
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
-
-#include "utilities.h"
 
 //=======================================================================
 //function : GetID
@@ -58,7 +45,6 @@ const Standard_GUID& GEOMImpl_OffsetDriver::GetID()
   static Standard_GUID aOffsetDriver("FF1BBB51-5D14-4df2-980B-3A668264EA16");
   return aOffsetDriver;
 }
-
 
 //=======================================================================
 //function : GEOMImpl_OffsetDriver
@@ -100,20 +86,8 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(TFunction_Logbook& log) const
                                       aTol);
     if (MO.IsDone()) {
       aShape = MO.Shape();
-      // 23.04.2010 skl for bug 21699 from Mantis
-      BRepCheck_Analyzer ana (aShape, Standard_True);
-      ana.Init(aShape);
-      if (!ana.IsValid()) {
-        ShapeFix_ShapeTolerance aSFT;
-        aSFT.LimitTolerance(aShape, Precision::Confusion(),
-                            Precision::Confusion(), TopAbs_SHAPE);
-        Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-        aSfs->Perform();
-        aShape = aSfs->Shape();
-        ana.Init(aShape);
-        if (!ana.IsValid())
-          Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
-      }
+      if ( !GEOMUtils::CheckShape(aShape, true) && !GEOMUtils::FixShapeTolerance(aShape) )
+        Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
     }
     else {
       StdFail_NotDone::Raise("Offset construction failed");

@@ -38,8 +38,6 @@
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeFix_Face.hxx>
 #include <ShapeFix_Shell.hxx>
-#include <ShapeFix_Shape.hxx>
-#include <ShapeFix_ShapeTolerance.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
@@ -47,7 +45,6 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
-#include <BRepCheck_Analyzer.hxx>
 #include <BRepGProp.hxx>
 #include <GeomFill_Trihedron.hxx>
 #include <GeomFill_CorrectedFrenet.hxx>
@@ -2573,19 +2570,8 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
 
   if (aShape.IsNull()) return 0;
 
-  BRepCheck_Analyzer ana (aShape, Standard_False);
-  if (!ana.IsValid()) {
-    ShapeFix_ShapeTolerance aSFT;
-    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
-    aSfs->SetPrecision(Precision::Confusion());
-    aSfs->Perform();
-    aShape = aSfs->Shape();
-
-    ana.Init(aShape, Standard_False);
-    if (!ana.IsValid())
-      Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
-  }
+  if ( !GEOMUtils::CheckShape(aShape) && !GEOMUtils::FixShapeTolerance(aShape) ) 
+    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
 
   if (aType != PIPE_BASE_PATH &&
       aType != PIPE_SHELLS_WITHOUT_PATH) {

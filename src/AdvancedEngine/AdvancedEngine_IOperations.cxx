@@ -109,6 +109,10 @@
 
 #define FIND_GROUPS_BY_POINTS 1
 
+// Undefine below macro to enable workaround about fillet problem in MakePipeTShapeFillet
+// VSR 30/12/2014: macro enabled
+#define FILLET_FIX_TOLERANCE
+
 //=============================================================================
 /*!
  *  Constructor
@@ -2842,6 +2846,17 @@ AdvancedEngine_IOperations::MakePipeTShapeFillet
   aFillet->GetLastFunction()->SetDescription("");
 
   TopoDS_Shape aFilletShape = aFillet->GetValue();
+
+#ifdef FILLET_FIX_TOLERANCE
+  // VSR: 30/12/2014: temporary workaround about Fillet problem
+  if (theHexMesh) {
+    GEOMUtils::FixShapeTolerance(aFilletShape, TopAbs_FACE);
+  }
+  else {
+    GEOMUtils::FixShapeCurves(aFilletShape);
+  }
+#endif
+
   aFunction->SetValue(aFilletShape);
   // END of fillet
 
@@ -3087,6 +3102,17 @@ AdvancedEngine_IOperations::MakePipeTShapeFilletWithPosition
   aFillet->GetLastFunction()->SetDescription("");
 
   TopoDS_Shape aFilletShape = aFillet->GetValue();
+
+#ifdef FILLET_FIX_TOLERANCE
+  // VSR: 30/12/2014: temporary workaround about Fillet problem
+  if (theHexMesh) {
+    GEOMUtils::FixShapeTolerance(aFilletShape, TopAbs_FACE);
+  }
+  else {
+    GEOMUtils::FixShapeCurves(aFilletShape);
+  }
+#endif
+
   aFunction->SetValue(aFilletShape);
   // END of fillet
 

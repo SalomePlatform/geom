@@ -193,12 +193,80 @@ namespace GEOMUtils
    */
   Standard_EXPORT gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) theView );
 
-  Standard_EXPORT void ConvertTreeToString( const TreeModel &theTree,
-					    std::string &DependencyStr );
+  /*!
+   * \brief Convert dependency tree data to the string representation
+   *
+   * \param tree dependency tree data
+   * \param dependencyStr output string
+   */
+  Standard_EXPORT void ConvertTreeToString( const TreeModel& tree,
+					    std::string& dependencyStr );
 
-  Standard_EXPORT void ConvertStringToTree( const std::string &theDependencyStr,
-					    TreeModel &tree );
+  /*!
+   * \brief Restore dependency tree data from the string representation
+   *
+   * \param dependencyStr string representation of tree data
+   * \param tree output dependency tree data
+   */
+  Standard_EXPORT void ConvertStringToTree( const std::string& dependencyStr,
+					    TreeModel& tree );
 
+  /*!
+   * \brief Check shape
+   *
+   * \param shape input shape object
+   * \param checkGeometry when set to \c true, causes check of underlying geometry
+   *        in addition to the topology
+   * \return \c true if shape is valid or \c false otherwise
+   */
+  Standard_EXPORT bool CheckShape( TopoDS_Shape& shape, bool checkGeometry = false );
+  
+  /*!
+   * \brief Limit shape tolerance to the given value
+   *
+   * \param shape shape being fixed
+   * \param type topology type which tolerance is to be limited; TopAbs_SHAPE means
+   *             all types of topology
+   * \param tolerance expected tolerance value (1e-7 by default)
+   * \return \c true if resulting shape is valid
+   *
+   * \note Resulting tolerance of the shape is not mandatory equal to requested value
+   *       as it might be changed by fixshape operation in order to get valid shape where possible
+   */
+  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
+                                          TopAbs_ShapeEnum type,
+                                          Standard_Real tolerance = Precision::Confusion() );
+
+  /*!
+   * \brief Limit shape tolerance to the given value
+   * This is overloaded function, it behaves exactly as previous one
+   */
+  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
+                                          Standard_Real tolerance = Precision::Confusion() );
+  
+
+  /*!
+   * \brief Fix curves of the given shape
+   * 
+   * The function checks each curve of the input shape in the following way:
+   * - compute deviation of the curve from the underlying surface in a set of points
+   *   computed with the certain discretization step value
+   * - find maximum tolerance between computed deviation values
+   * - limit tolerance of the curve with the computed maximum value
+   * 
+   * \param shape shape being fixed
+   * \return \c true if resulting shape is valid
+   */
+  Standard_EXPORT bool FixShapeCurves( TopoDS_Shape& shape );
+
+  /*!
+   * \brief Write shape to the BREP file
+   *
+   * \param source shape
+   * \return \c true if file was written or \c false otherwise
+   */
+  Standard_EXPORT bool Write( const TopoDS_Shape& shape,
+                              const char* fileName );
 };
 
 #endif

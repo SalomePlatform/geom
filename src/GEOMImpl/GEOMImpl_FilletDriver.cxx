@@ -20,50 +20,29 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_FilletDriver.hxx>
 #include <GEOMImpl_IFillet.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_ILocalOperations.hxx>
+#include <GEOMUtils.hxx>
 #include <GEOM_Function.hxx>
 
 #include <BRepFilletAPI_MakeFillet.hxx>
-#include <BRepCheck_Analyzer.hxx>
-#include <BRep_Tool.hxx>
-
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopAbs.hxx>
 #include <TopExp_Explorer.hxx>
-
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <ShapeFix_Shape.hxx>
-
-#include <Precision.hxx>
-#include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
 
-// VSR 08/12/2014: debug PipeTShape function
-// Uncomment the macro below to correct tolerance of resulting face after creating fillet
-#define FIX_FACE_TOLERANCE
-
-namespace
-{
-  bool FixShape( TopoDS_Shape& shape,
-                 TopAbs_ShapeEnum type = TopAbs_SHAPE,
-                 Standard_Real tolerance = Precision::Confusion() )
-  {
-    ShapeFix_ShapeTolerance aSFT;
-    aSFT.LimitTolerance( shape, tolerance, tolerance, type );
-    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape( shape );
-    aSfs->Perform();
-    shape = aSfs->Shape();
-    BRepCheck_Analyzer ana( shape, false );
-    return ana.IsValid();
-  }
-}
+// Debug PipeTShape function: uncomment the macro below to correct tolerance
+// of resulting face after fillet creation
+// VSR 30/12/2014: macro disabled
+//#define FIX_FACE_TOLERANCE
+// Debug PipeTShape function: uncomment the macro below to correct tolerance
+// of resulting curves after fillet creation
+// VSR 30/12/2014: macro disabled
+//#define FIX_CURVES_TOLERANCES
 
 //=======================================================================
 //function : GetID
@@ -155,13 +134,13 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
 
   if (aShape.IsNull()) return 0;
 
-#ifdef FIX_FACE_TOLERANCE
-  bool isOk = FixShape(aShape, TopAbs_FACE);
+#if defined(FIX_CURVES_TOLERANCES)
+  bool isOk = GEOMUtils::FixShapeCurves(aShape);
+#elif defined(FIX_FACE_TOLERANCE)
+  bool isOk = GEOMUtils::FixShapeTolerance(aShape, TopAbs_FACE);
 #else
-  // Check shape validity
-  BRepCheck_Analyzer ana(aShape, false);
   // 08.07.2008 added by skl during fixing bug 19761 from Mantis
-  bool isOk = ana.IsValid() || FixShape(aShape);
+  bool isOk = GEOMUtils::CheckShape(aShape) || GEOMUtils::FixShapeTolerance(aShape);
 #endif
   if ( !isOk )
     StdFail_NotDone::Raise("Fillet algorithm have produced an invalid shape result");
