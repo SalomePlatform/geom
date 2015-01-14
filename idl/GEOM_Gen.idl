@@ -2516,6 +2516,15 @@ module GEOM
     ListOfLong GetSameIDs (in GEOM_Object theShapeWhere,
                            in GEOM_Object theShapeWhat);
 
+    /*!
+     * \brief Explode a shape into edges sorted in a row from a starting point.
+     * \param theShape - the shape to be exploded on edges.
+     * \param theStartPoint - the starting point.
+     * \return Ordered list of edges sorted in a row from a starting point.
+     */
+    ListOfGO GetSubShapeEdgeSorted (in GEOM_Object theShape,
+                                    in GEOM_Object theStartPoint);
+
   };
 
  // # GEOM_IBlocksOperations: 

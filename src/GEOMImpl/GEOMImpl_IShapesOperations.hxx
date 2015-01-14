@@ -383,6 +383,16 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                        const Standard_Integer theShapeType,
                                        GEOMAlgo_State theState);
 
+  /*!
+   * \brief Explode a shape into edges sorted in a row from a starting point.
+   * \param theShape - the shape to be exploded on edges.
+   * \param theStartPoint - the starting point.
+   * \return Ordered list of edges sorted in a row from a starting point.
+   */
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
+    GetSubShapeEdgeSorted (const Handle(GEOM_Object) &theShape,
+                           const Handle(GEOM_Object) &theStartPoint);
+
  private:
   Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,
                                  const Standard_Integer         theObjectType,
@@ -504,6 +514,16 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
     getObjectsShapesOn(const Handle(GEOM_Object)&                theShape,
                        const Handle(TColStd_HSequenceOfInteger)& theShapeIDs,
                        TCollection_AsciiString &                 theShapeEntries);
+
+  /*!
+   * \brief Explode a shape into edges sorted in a row from a starting point.
+   * \param theShape - the shape to be exploded on edges.
+   * \param theStartPoint - the starting point.
+   * \return Ordered list of edges sorted in a row from a starting point.
+   */
+  Handle(TColStd_HSequenceOfInteger) getSubShapeEdgeSortedIDs
+                                (const Handle(GEOM_Object) &theShape,
+                                 const Handle(GEOM_Object) &theStartPoint);
 
   /*!
    * \brief Select the object created last

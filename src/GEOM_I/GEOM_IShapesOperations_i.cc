@@ -1906,3 +1906,44 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetSameIDs
 
   return aSeq._retn();
 }
+
+//=============================================================================
+/*!
+ *  GetSubShapeEdgeSorted
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSubShapeEdgeSorted
+                                        (GEOM::GEOM_Object_ptr theShape,
+                                         GEOM::GEOM_Object_ptr theStartPoint)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape      = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aStartPoint = GetObjectImpl(theStartPoint);
+
+  if (aShape.IsNull() || aStartPoint.IsNull()) {
+    return aSeq._retn();
+  }
+
+  //Get Shapes On Shape
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+      GetOperations()->GetSubShapeEdgeSorted(aShape, aStartPoint);
+
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  const Standard_Integer aLength = aHSeq->Length();
+  Standard_Integer       i;
+
+  aSeq->length(aLength);
+
+  for (i = 1; i <= aLength; i++) {
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+  }
+
+  return aSeq._retn();
+}

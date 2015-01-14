@@ -216,7 +216,6 @@ def TestAll (geompy, math):
   Line3 = geompy.MakeLineTwoFaces(prism1_faces[0], prism1_faces[1]) #(2 GEOM_Object)->GEOM_Object
 
   #Create advanced objects
-  Copy             = geompy.MakeCopy(Box)                      #(GEOM_Object)->GEOM_Object
   Prism            = geompy.MakePrismVecH(Face, vz, 100.0)     #(2 GEOM_Object, Double)->GEOM_Object
   Prism2Ways       = geompy.MakePrismVecH2Ways(Face, vz, 10.0) #(2 GEOM_Object, Double)->GEOM_Object
   PrismTwoPnt      = geompy.MakePrism(Face2, p0, pxyz)         #(3 GEOM_Object)->GEOM_Object
@@ -229,6 +228,7 @@ def TestAll (geompy, math):
                                         tol2d, tol3d, nbiter)  #(GEOM_Object, 4 Doubles, Short)->GEOM_Object
   Pipe             = geompy.MakePipe(Wire, Edge)               #(2 GEOM_Object)->GEOM_Object
   Sewing           = geompy.MakeSewing([Face, S], precision)   #(List Of GEOM_Object, Double)->GEOM_Object
+  Copy             = geompy.MakeCopy(Box)                      #(GEOM_Object)->GEOM_Object
 
   #Transform objects
   Translation = geompy.MakeTranslationTwoPoints(Box, px, pz)    #(3 GEOM_Object)->GEOM_Object
@@ -252,8 +252,8 @@ def TestAll (geompy, math):
   Position    = geompy.MakePosition(Box, cs1, cs2)   #(3 GEOM_Object)->GEOM_Object
   Position2   = geompy.PositionAlongPath(Box, Arc, 0.5, 1, 0)  #(2 GEOM_Object, 1 Double, 2 Bool)->GEOM_Object
   Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object, Double)->GEOM_Object
-  Orientation = geompy.ChangeOrientation(Box)
   ProjOnWire  = geompy.MakeProjectionOnWire(p0, Wire)
+  Orientation = geompy.ChangeOrientation(Box)
 
   #IDList for Fillet/Chamfer
   prism_edges = geompy.ExtractShapes(Prism, geompy.ShapeType["EDGE"], True)
@@ -540,5 +540,14 @@ def TestAll (geompy, math):
   geompy.RestoreSubShapes(RotatPnt, [], GEOM.FSM_Transformed)
   geompy.RestoreSubShapes(Partition, [Box])
   geompy.RestoreSubShapes(Partition1)
+
+  # GetSubShapeEdgeSorted
+  p1 = geompy.GetFirstVertex(Sketcher)
+  p2 = geompy.GetFirstVertex(Sketcher3d_1)
+  p3 = geompy.GetFirstVertex(Sketcher3d_2)
+  geompy.GetSubShapeEdgeSorted(Sketcher, p1, "OrderedEdges")
+  geompy.GetSubShapeEdgeSorted(Sketcher3d_1, p2, "OrderedEdges")
+  geompy.GetSubShapeEdgeSorted(Sketcher3d_2, p3, "OrderedEdges")
+
 
   print "DONE"

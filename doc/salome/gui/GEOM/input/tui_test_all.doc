@@ -61,7 +61,7 @@
 \until Scale4
 
 \anchor swig_all_trsf_more
-\until MakeOffset
+\until MakeProjectionOnWire
 
 \anchor swig_ChangeOrientation
 \until ChangeOrientation
@@ -69,11 +69,13 @@
 \anchor swig_ExtractShapes
 \until prism_edges
 
+\until IDlist_f
+
 \anchor swig_FilletChamfer
 \until End of Local operations
 
 \anchor swig_all_patterns
-\until MultiRot2D
+\until MultiRot2Ds
 
 \anchor swig_all_measure
 \until "CheckShape(Prism) = "
@@ -91,6 +93,9 @@
 \until nameS
 
 \anchor swig_all_decompose
+\until geompy.RestoreSubShapes(Partition1)
+
+\anchor swig_GetSubShapeEdgeSorted
 \until print "DONE"
 
 */

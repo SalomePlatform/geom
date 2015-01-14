@@ -143,6 +143,46 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <Precision.hxx>
 
+namespace
+{
+  const double MAX_TOLERANCE = 1.e-7;
+
+  /**
+   * \brief Returns the vertex from theWhere shape that is coincident with
+   * theVertex.
+   *
+   * \param theWhere the shape where the coinsident vertex is searched.
+   * \param theVertex the vertex to be searched.
+   * \return the coincident vertex if it is found. Otherwise null object.
+   */
+  static TopoDS_Vertex getSameVertex(const TopoDS_Shape  &theWhere,
+                                     const TopoDS_Vertex &theVertex)
+  {
+    TopoDS_Vertex       aResult;
+    gp_Pnt              aPoint = BRep_Tool::Pnt(theVertex);
+    TopExp_Explorer     anExp(theWhere, TopAbs_VERTEX);
+    TopTools_MapOfShape aMap;
+    
+    for(; anExp.More(); anExp.Next()) {
+      const TopoDS_Shape &aLocalShape = anExp.Current();
+
+      if(!aMap.Add(aLocalShape)) {
+        continue;
+      }
+
+      TopoDS_Vertex aVertex = TopoDS::Vertex(aLocalShape);
+      gp_Pnt        aPoint2 = BRep_Tool::Pnt(aVertex);
+
+      if(aPoint.Distance(aPoint2) <= MAX_TOLERANCE) {
+        aResult = aVertex;
+        break;
+      }
+    }
+
+    return aResult;
+  }
+} // end of namespace
+
 //=============================================================================
 /*!
  *   constructor:
@@ -2635,6 +2675,44 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnShapeAsCompound
   return aRes;
 }
 
+//=============================================================================
+/*!
+ *  GetSubShapeEdgeSorted
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient)
+    GEOMImpl_IShapesOperations::GetSubShapeEdgeSorted
+                          (const Handle(GEOM_Object) &theShape,
+                           const Handle(GEOM_Object) &theStartPoint)
+{
+  // Get the sorted edges indices.
+  Handle(TColStd_HSequenceOfInteger) aSortedIDs =
+    getSubShapeEdgeSortedIDs(theShape, theStartPoint);
+
+  // Get object by indices.
+  TCollection_AsciiString              anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq =
+    getObjectsShapesOn(theShape, aSortedIDs, anAsciiList);
+
+  if (aSeq.IsNull() || aSeq->IsEmpty()) {
+    SetErrorCode("Empty sequence of edges");
+    return NULL;
+  }
+
+  // Make a Python command
+  Handle(GEOM_Object)   anObj     =
+    Handle(GEOM_Object)::DownCast(aSeq->Value(1));
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction)
+    << "[" << anAsciiList.ToCString() << "] = geompy.GetSubShapeEdgeSorted("
+    << theShape << ", " << theStartPoint << ")";
+
+  SetErrorCode(OK);
+
+  return aSeq;
+}
+
 //=======================================================================
 //function : getShapesOnSurfaceIDs
   /*!
@@ -2774,6 +2852,152 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::
     }
   }
   return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  getSubShapeEdgeSortedIDs
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfInteger)
+    GEOMImpl_IShapesOperations::getSubShapeEdgeSortedIDs
+                               (const Handle(GEOM_Object) &theShape,
+                                const Handle(GEOM_Object) &theStartPoint)
+{
+  Handle(TColStd_HSequenceOfInteger) aResult;
+
+  if (theShape.IsNull() || theStartPoint.IsNull()) {
+    SetErrorCode("NULL GEOM object");
+    return aResult;
+  }
+
+  const TopoDS_Shape aShape      = theShape->GetValue();
+  const TopoDS_Shape aStartPoint = theStartPoint->GetValue();
+
+  if (aShape.IsNull() || aStartPoint.IsNull()) {
+    SetErrorCode("NULL Shape");
+    return aResult;
+  }
+
+  if (aStartPoint.ShapeType() != TopAbs_VERTEX) {
+    SetErrorCode("Starting point is not a vertex");
+    return aResult;
+  }
+
+  TopExp_Explorer      anExp(aShape, TopAbs_EDGE);
+  TopTools_MapOfShape  aMapFence;
+  TopTools_ListOfShape anEdges;
+
+  for (; anExp.More(); anExp.Next()) {
+    const TopoDS_Shape &anEdge = anExp.Current();
+
+    if (aMapFence.Add(anEdge)) {
+      anEdges.Append(anEdge);
+    }
+  }
+
+  if (anEdges.IsEmpty()) {
+    SetErrorCode("Shape doesn't contain edges");
+    return aResult;
+  }
+
+  // Step 1: Sort edges
+  GEOMUtils::SortShapes(anEdges, Standard_False);
+
+  TopTools_ListIteratorOfListOfShape anIter(anEdges);
+  TopoDS_Vertex                      aV[2];
+  TopTools_DataMapOfShapeListOfShape aMapVE;
+
+  // Step 2: Fill the map vertex - list of edges.
+  for (; anIter.More(); anIter.Next()) {
+    TopoDS_Edge anEdge = TopoDS::Edge(anIter.Value());
+
+    TopExp::Vertices(anEdge, aV[0], aV[1]);
+
+    const Standard_Integer aNbV = aV[0].IsSame(aV[1]) ? 1 : 2;
+    Standard_Integer       i;
+
+    for (i = 0; i < aNbV; ++i) {
+      if (aV[i].IsNull() == Standard_False) {
+        if (!aMapVE.IsBound(aV[i])) {
+          // There is no this vertex in the map.
+          aMapVE.Bind(aV[i], TopTools_ListOfShape());
+        }
+
+        // Add the edge to the list bound with the vertex aV[i].
+        TopTools_ListOfShape &aLEdges = aMapVE.ChangeFind(aV[i]);
+
+        aLEdges.Append(anEdge);
+      }
+    }
+  }
+
+  // Step 3: Find starting point in aMapVE.
+  TopoDS_Vertex aStartVtx = TopoDS::Vertex(aStartPoint);
+
+  if (!aMapVE.IsBound(aStartVtx)) {
+    aStartVtx = getSameVertex(aShape, aStartVtx);
+
+    if (aStartVtx.IsNull()) {
+      SetErrorCode("Invalid Starting point");
+      return aResult;
+    }
+  }
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopTools_MapOfShape        aMapVFence;
+  TopoDS_Shape               aCurVtx  = aStartVtx;
+  TopoDS_Edge                aCurEdge =
+    TopoDS::Edge(aMapVE.Find(aCurVtx).First());
+
+  aResult = new TColStd_HSequenceOfInteger;
+  TopExp::MapShapes(aShape, anIndices);
+
+  // Step 4: Fill the list of sorted edges.
+  while (aMapVFence.Add(aCurVtx)) {
+    // Append the ID of the current edge to the list of sorted.
+    aResult->Append(anIndices.FindIndex(aCurEdge));
+    TopExp::Vertices(aCurEdge, aV[0], aV[1]);
+
+    // Get the next vertex.
+    if (aCurVtx.IsSame(aV[0])) {
+      if (aCurVtx.IsSame(aV[1])) {
+        // There is no next vertex.
+        break;
+      } else {
+        aCurVtx = aV[1];
+      }
+    } else {
+      aCurVtx = aV[0];
+    }
+
+    if (aCurVtx.IsNull()) {
+      // There is no next vertex.
+      break;
+    }
+
+    // Get the next edge.
+    const TopTools_ListOfShape         &aLEdges = aMapVE.Find(aCurVtx);
+    TopTools_ListIteratorOfListOfShape  anEIter(aLEdges);
+
+    for (; anEIter.More(); anEIter.Next()) {
+      const TopoDS_Shape &aLocalEdge = anEIter.Value();
+
+      if (aLocalEdge.IsNull() == Standard_False) {
+        if (!aCurEdge.IsSame(aLocalEdge)) {
+          aCurEdge = TopoDS::Edge(aLocalEdge);
+          break;
+        }
+      }
+    }
+
+    if (!anEIter.More()) {
+      // There is no next edge.
+      break;
+    }
+  }
+
+  return aResult;
 }
 
 //=======================================================================
@@ -4281,8 +4505,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
   return aResult;
 }
 
-#define MAX_TOLERANCE 1.e-7
-
 //=======================================================================
 //function : isSameEdge
 //purpose  : Returns True if two edges coincide
@@ -4534,17 +4756,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSame(const Handle(GEOM_Object
 
   switch (aWhat.ShapeType()) {
     case TopAbs_VERTEX: {
-      gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(aWhat));
-      TopExp_Explorer E(aWhere, TopAbs_VERTEX);
-      for(; E.More(); E.Next()) {
-        if(!aMap.Add(E.Current())) continue;
-        gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(E.Current()));
-        if(P.Distance(P2) <= MAX_TOLERANCE) {
-          isFound = true;
-          aSubShape = E.Current();
-          break;
-        }
-      }
+      aSubShape = getSameVertex(aWhere, TopoDS::Vertex(aWhat));
+      isFound   = !aSubShape.IsNull();
       break;
                         }
     case TopAbs_EDGE: {

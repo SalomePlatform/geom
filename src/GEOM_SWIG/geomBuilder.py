@@ -6047,6 +6047,38 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(ListObj, theName, "subshape")
             return ListObj
 
+        ## Explode a shape into edges sorted in a row from a starting point.
+        #  @param theShape the shape to be exploded on edges.
+        #  @param theStartPoint the starting point.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return List of GEOM.GEOM_Object that is actually an ordered list
+        #          of edges sorted in a row from a starting point.
+        #
+        #  @ref swig_GetSubShapeEdgeSorted "Example"
+        @ManageTransactions("ShapesOp")
+        def GetSubShapeEdgeSorted(self, theShape, theStartPoint, theName=None):
+            """
+            Explode a shape into edges sorted in a row from a starting point.
+
+            Parameters:
+                theShape the shape to be exploded on edges.
+                theStartPoint the starting point.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                List of GEOM.GEOM_Object that is actually an ordered list
+                of edges sorted in a row from a starting point.
+            """
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.GetSubShapeEdgeSorted(theShape, theStartPoint)
+            RaiseIfFailed("GetSubShapeEdgeSorted", self.ShapesOp)
+            self._autoPublish(ListObj, theName, "SortedEdges")
+            return ListObj
+
         # end of l4_decompose
         ## @}
 
