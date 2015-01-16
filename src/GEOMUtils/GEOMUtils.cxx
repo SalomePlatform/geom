@@ -1094,20 +1094,28 @@ bool GEOMUtils::CheckShape( TopoDS_Shape& shape,
 
 bool GEOMUtils::FixShapeTolerance( TopoDS_Shape& shape,
                                    TopAbs_ShapeEnum type,
-                                   Standard_Real tolerance )
+                                   Standard_Real tolerance,
+                                   bool checkGeometry )
 {
   ShapeFix_ShapeTolerance aSft;
   aSft.LimitTolerance( shape, tolerance, tolerance, type );
   Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape( shape );
   aSfs->Perform();
   shape = aSfs->Shape();
-  return CheckShape( shape );
+  return CheckShape( shape, checkGeometry );
 }
 
 bool GEOMUtils::FixShapeTolerance( TopoDS_Shape& shape,
-                                   Standard_Real tolerance )
+                                   Standard_Real tolerance,
+                                   bool checkGeometry )
 {
-  return FixShapeTolerance( shape, TopAbs_SHAPE, tolerance );
+  return FixShapeTolerance( shape, TopAbs_SHAPE, tolerance, checkGeometry );
+}
+
+bool GEOMUtils::FixShapeTolerance( TopoDS_Shape& shape,
+                                   bool checkGeometry )
+{
+  return FixShapeTolerance( shape, Precision::Confusion(), checkGeometry );
 }
 
 bool GEOMUtils::FixShapeCurves( TopoDS_Shape& shape )

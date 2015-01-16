@@ -228,22 +228,33 @@ namespace GEOMUtils
    * \param type topology type which tolerance is to be limited; TopAbs_SHAPE means
    *             all types of topology
    * \param tolerance expected tolerance value (1e-7 by default)
+   * \param checkGeometry check geometry validity of result
    * \return \c true if resulting shape is valid
    *
    * \note Resulting tolerance of the shape is not mandatory equal to requested value
    *       as it might be changed by fixshape operation in order to get valid shape where possible
+   * \note By default, result only checked for topology validity; check of geometry can be done by
+   *       passing \c true to \a checkGeometry parameter
    */
   Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
                                           TopAbs_ShapeEnum type,
-                                          Standard_Real tolerance = Precision::Confusion() );
+                                          Standard_Real tolerance = Precision::Confusion(),
+                                          bool checkGeometry = false );
 
   /*!
    * \brief Limit shape tolerance to the given value
    * This is overloaded function, it behaves exactly as previous one
    */
   Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
-                                          Standard_Real tolerance = Precision::Confusion() );
-  
+                                          Standard_Real tolerance = Precision::Confusion(),
+                                          bool checkGeometry = false );
+
+  /*!
+   * \brief Limit shape tolerance to the given value
+   * This is overloaded function, it behaves exactly as previous one
+   */
+  Standard_EXPORT bool FixShapeTolerance( TopoDS_Shape& shape,
+                                          bool checkGeometry );
 
   /*!
    * \brief Fix curves of the given shape

@@ -579,7 +579,7 @@ TopoDS_Shape GEOMImpl_BooleanDriver::performOperation
   TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
   TNaming_CopyShape::CopyTool(aShape, aMapTShapes, aShapeCopy);
 
-  if ( GEOMUtils::FixShapeTolerance(aShapeCopy) ) {
+  if ( GEOMUtils::FixShapeTolerance(aShapeCopy, true) ) {
     int iType, nbTypesCopy [TopAbs_SHAPE];
 
     for (iType = 0; iType < TopAbs_SHAPE; ++iType)
