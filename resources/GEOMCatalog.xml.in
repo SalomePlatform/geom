@@ -33,6 +33,7 @@
   <!-- Geom data types  -->
   <type-list>
     <!-- From GEOM_Gen.idl -->
+    <objref name="CORBA/Object" id="" />
     <objref name="GEOM/GEOM_Gen" id="IDL:GEOM/GEOM_Gen:1.0" />
     <objref name="GEOM/GEOM_BaseObject" id="IDL:GEOM/GEOM_BaseObject:1.0" />
     <objref name="GEOM/GEOM_Object" id="IDL:GEOM/GEOM_Object:1.0">
@@ -875,7 +876,7 @@
               </inParameter>
               <inParameter>
                 <inParameter-name>theObject</inParameter-name>
-                <inParameter-type>Object</inParameter-type>
+                <inParameter-type>CORBA/Object</inParameter-type>
                 <inParameter-comment>unknown</inParameter-comment>
               </inParameter>
             </inParameter-list>
