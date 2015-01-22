@@ -2770,10 +2770,14 @@ module GEOM
      *  - The glue between two quadrangle faces should be applied.
      *    \note Single block is also accepted as a valid compound of blocks.
      *  \param theCompound The compound to check.
+     *  \param theToleranceC1 the tolerance to check if two neighbor edges are
+     *         collinear in the common vertex with this tolerance. Negative
+     *         value means that C1 criterion is not used (old implementation).
      *  \param theErrors Structure, containing discovered errors and incriminated sub-shapes.
      *  \return TRUE, if the given shape is a compound of blocks.
      */
     boolean CheckCompoundOfBlocks (in GEOM_Object theCompound,
+                                   in double      theToleranceC1,
                                    out BCErrors   theErrors);
 
     /*!
@@ -2790,12 +2794,17 @@ module GEOM
      *  \brief Retrieve all non blocks solids and faces from a shape.
      *
      *  \param theShape The shape to explore.
+     *  \param theToleranceC1 the tolerance to check if two neighbor edges are
+     *         collinear in the common vertex with this tolerance. Negative
+     *         value means that C1 criterion is not used (old implementation).
      *  \param theNonQuads Output parameter. Group of all non quadrangular faces.
      *
      *  \return Group of all non block solids (= not 6 faces, or with 6
      *          faces, but with the presence of non-quadrangular faces).
      */
-    GEOM_Object GetNonBlocks (in GEOM_Object theShape, out GEOM_Object theNonQuads);
+    GEOM_Object GetNonBlocks (in GEOM_Object  theShape,
+                              in double       theToleranceC1,
+                              out GEOM_Object theNonQuads);
 
     /*!
      *  \brief Remove all seam and degenerated edges from \a theShape.

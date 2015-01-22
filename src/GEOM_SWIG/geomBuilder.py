@@ -80,7 +80,7 @@
 ## # create and publish cylinder
 ## cyl = geompy.MakeCylinderRH(100, 100, "cylinder")
 ## # get non blocks from cylinder
-## g1, g2 = geompy.GetNonBlocks(cyl, "nonblock")
+## g1, g2 = geompy.GetNonBlocks(cyl, theName="nonblock")
 ## @endcode
 ##
 ## Above example will publish both result compounds (first with non-hexa solids and
@@ -88,7 +88,7 @@
 ## However, if second command is invoked as
 ##
 ## @code
-## g1, g2 = geompy.GetNonBlocks(cyl, ("nonhexa", "nonquad"))
+## g1, g2 = geompy.GetNonBlocks(cyl, theName=("nonhexa", "nonquad"))
 ## @endcode
 ##
 ## ... the first compound will be published with "nonhexa" name, and second will be named "nonquad".
@@ -11425,36 +11425,62 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Check, if the compound of blocks is given.
         #  To be considered as a compound of blocks, the
         #  given shape must satisfy the following conditions:
-        #  - Each element of the compound should be a Block (6 faces and 12 edges).
+        #  - Each element of the compound should be a Block (6 faces).
+        #  - Each face should be a quadrangle, i.e. it should have only 1 wire
+        #       with 4 edges. If <VAR>theIsUseC1</VAR> is set to True and
+        #       there are more than 4 edges in the only wire of a face,
+        #       this face is considered to be quadrangle if it has 4 bounds
+        #       (1 or more edge) of C1 continuity.
         #  - A connection between two Blocks should be an entire quadrangle face or an entire edge.
         #  - The compound should be connexe.
         #  - The glue between two quadrangle faces should be applied.
         #  @param theCompound The compound to check.
+        #  @param theIsUseC1 Flag to check if there are 4 bounds on a face
+        #         taking into account C1 continuity.
+        #  @param theAngTolerance the angular tolerance to check if two neighbor
+        #         edges are codirectional in the common vertex with this
+        #         tolerance. This parameter is used only if
+        #         <VAR>theIsUseC1</VAR> is set to True.
         #  @return TRUE, if the given shape is a compound of blocks.
         #  If theCompound is not valid, prints all discovered errors.
         #
         #  @ref tui_measurement_tools_page "Example 1"
         #  \n @ref swig_CheckCompoundOfBlocks "Example 2"
         @ManageTransactions("BlocksOp")
-        def CheckCompoundOfBlocks(self,theCompound):
+        def CheckCompoundOfBlocks(self,theCompound, theIsUseC1 = False,
+                                  theAngTolerance = 1.e-12):
             """
             Check, if the compound of blocks is given.
             To be considered as a compound of blocks, the
             given shape must satisfy the following conditions:
-            - Each element of the compound should be a Block (6 faces and 12 edges).
+            - Each element of the compound should be a Block (6 faces).
+            - Each face should be a quadrangle, i.e. it should have only 1 wire
+                 with 4 edges. If theIsUseC1 is set to True and
+                 there are more than 4 edges in the only wire of a face,
+                 this face is considered to be quadrangle if it has 4 bounds
+                 (1 or more edge) of C1 continuity.
             - A connection between two Blocks should be an entire quadrangle face or an entire edge.
             - The compound should be connexe.
             - The glue between two quadrangle faces should be applied.
 
             Parameters:
                 theCompound The compound to check.
+                theIsUseC1 Flag to check if there are 4 bounds on a face
+                           taking into account C1 continuity.
+                theAngTolerance the angular tolerance to check if two neighbor
+                           edges are codirectional in the common vertex with this
+                           tolerance. This parameter is used only if
+                           theIsUseC1 is set to True.
 
             Returns:
                 TRUE, if the given shape is a compound of blocks.
                 If theCompound is not valid, prints all discovered errors.
             """
             # Example: see GEOM_Spanner.py
-            (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound)
+            aTolerance = -1.0
+            if theIsUseC1:
+                aTolerance = theAngTolerance
+            (IsValid, BCErrors) = self.BlocksOp.CheckCompoundOfBlocks(theCompound, aTolerance)
             RaiseIfFailed("CheckCompoundOfBlocks", self.BlocksOp)
             if IsValid == 0:
                 Descr = self.BlocksOp.PrintBCErrors(theCompound, BCErrors)
@@ -11463,6 +11489,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Retrieve all non blocks solids and faces from \a theShape.
         #  @param theShape The shape to explore.
+        #  @param theIsUseC1 Flag to check if there are 4 bounds on a face
+        #         taking into account C1 continuity.
+        #  @param theAngTolerance the angular tolerance to check if two neighbor
+        #         edges are codirectional in the common vertex with this
+        #         tolerance. This parameter is used only if
+        #         <VAR>theIsUseC1</VAR> is set to True.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -11470,17 +11502,27 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return A tuple of two GEOM_Objects. The first object is a group of all
         #          non block solids (= not 6 faces, or with 6 faces, but with the
         #          presence of non-quadrangular faces). The second object is a
-        #          group of all non quadrangular faces.
+        #          group of all non quadrangular faces (= faces with more then
+        #          1 wire or, if <VAR>theIsUseC1</VAR> is set to True, faces
+        #          with 1 wire with not 4 edges that do not form 4 bounds of
+        #          C1 continuity).
         #
         #  @ref tui_measurement_tools_page "Example 1"
         #  \n @ref swig_GetNonBlocks "Example 2"
         @ManageTransactions("BlocksOp")
-        def GetNonBlocks (self, theShape, theName=None):
+        def GetNonBlocks (self, theShape, theIsUseC1 = False,
+                          theAngTolerance = 1.e-12, theName=None):
             """
             Retrieve all non blocks solids and faces from theShape.
 
             Parameters:
                 theShape The shape to explore.
+                theIsUseC1 Flag to check if there are 4 bounds on a face
+                           taking into account C1 continuity.
+                theAngTolerance the angular tolerance to check if two neighbor
+                           edges are codirectional in the common vertex with this
+                           tolerance. This parameter is used only if
+                           theIsUseC1 is set to True.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -11489,13 +11531,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 A tuple of two GEOM_Objects. The first object is a group of all
                 non block solids (= not 6 faces, or with 6 faces, but with the
                 presence of non-quadrangular faces). The second object is a
-                group of all non quadrangular faces.
+                group of all non quadrangular faces (= faces with more then
+                1 wire or, if <VAR>theIsUseC1</VAR> is set to True, faces
+                with 1 wire with not 4 edges that do not form 4 bounds of
+                C1 continuity).
 
             Usage:
                 (res_sols, res_faces) = geompy.GetNonBlocks(myShape1)
             """
             # Example: see GEOM_Spanner.py
-            aTuple = self.BlocksOp.GetNonBlocks(theShape)
+            aTolerance = -1.0
+            if theIsUseC1:
+                aTolerance = theAngTolerance
+            aTuple = self.BlocksOp.GetNonBlocks(theShape, aTolerance)
             RaiseIfFailed("GetNonBlocks", self.BlocksOp)
             self._autoPublish(aTuple, theName, ("groupNonHexas", "groupNonQuads"))
             return aTuple

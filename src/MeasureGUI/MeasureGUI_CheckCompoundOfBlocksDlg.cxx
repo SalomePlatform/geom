@@ -26,7 +26,6 @@
 //
 #include "MeasureGUI.h"
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h"
-#include "MeasureGUI_Widgets.h"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -43,6 +42,8 @@
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
 
+#include <QListWidget>
+
 #define TEXTEDIT_FONT_FAMILY "Courier"
 #define TEXTEDIT_FONT_SIZE 11
 
@@ -54,7 +55,15 @@
 //            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( GeometryGUI* GUI, QWidget* parent )
-  : GEOMBase_Skeleton( GUI, parent, false )
+  : GEOMBase_Skeleton(GUI, parent, false),
+    myObjectName     (0),
+    mySelButton      (0),
+    myUseC1Check     (0),
+    myTolLbl         (0),
+    mySpinTol        (0),
+    myTextView       (0),
+    myListBox1       (0),
+    myListBox2       (0)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_CHECK_COMPOUND_OF_BLOCKS" ) ) );
@@ -70,29 +79,55 @@ MeasureGUI_CheckCompoundOfBlocksDlg::MeasureGUI_CheckCompoundOfBlocksDlg( Geomet
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  myGrp = new MeasureGUI_1Sel1TextView2ListBox( centralWidget() );
-  myGrp->GroupBox1->setTitle( tr( "GEOM_CHECK_INFOS" ) );
-  myGrp->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
+  QGroupBox   *aGrpParams    =
+    new QGroupBox(tr("GEOM_CHECK_INFOS"), centralWidget());
+  QGridLayout *aParamsLayout = new QGridLayout(aGrpParams);
+  QLabel      *anObjLbl      = new QLabel(tr("GEOM_OBJECT"), aGrpParams);
+  QLabel      *anErrorsLbl   =
+    new QLabel(tr("GEOM_CHECK_BLOCKS_COMPOUND_ERRORS"), aGrpParams);
+  QLabel      *aNonBlocksLbl =
+    new QLabel(tr("GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES"), aGrpParams);
 
-  myGrp->TextView1->setReadOnly( true );
-  QFont aFont( TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE );
-  aFont.setStyleHint( QFont::TypeWriter, QFont::PreferAntialias );
-  myGrp->TextView1->setFont( aFont );
+  myObjectName = new QLineEdit(aGrpParams);
+  mySelButton  = new QPushButton(aGrpParams);
+  myUseC1Check = new QCheckBox(tr("GEOM_USE_C1_CRITERION"), aGrpParams);
+  myTolLbl     = new QLabel(tr("GEOM_ANGULAR_TOLERANCE"), aGrpParams);
+  mySpinTol    = new SalomeApp_DoubleSpinBox(aGrpParams);
+  myTextView   = new QTextBrowser(aGrpParams);
+  myListBox1   = new QListWidget(aGrpParams);
+  myListBox2   = new QListWidget(aGrpParams);
 
-  myGrp->PushButton1->setIcon( image1 );
-  myGrp->LineEdit1->setReadOnly( true );
+  myObjectName->setReadOnly(true);
+  mySelButton->setIcon(image1);
+  mySelButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  myUseC1Check->setText(tr("GEOM_USE_C1_CRITERION"));
+  myUseC1Check->setChecked(true);
+  myTextView->setReadOnly(true);
+  myListBox2->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  myGrp->TextLabel2->setText( tr( "GEOM_CHECK_BLOCKS_COMPOUND_ERRORS" ) );
-  myGrp->TextLabel3->setText( tr( "GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES" ) );
+  // Set text view font.
+  QFont aFont(TEXTEDIT_FONT_FAMILY, TEXTEDIT_FONT_SIZE);
 
-  myGrp->ListBox2->setSelectionMode( QAbstractItemView::ExtendedSelection );
+  aFont.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
+  myTextView->setFont(aFont);
+
+  aParamsLayout->setMargin(9);
+  aParamsLayout->setSpacing(6);
+  aParamsLayout->addWidget(anObjLbl,      0, 0);
+  aParamsLayout->addWidget(mySelButton,   0, 1);
+  aParamsLayout->addWidget(myObjectName,  0, 2);
+  aParamsLayout->addWidget(myUseC1Check,  1, 0, 1, 3);
+  aParamsLayout->addWidget(myTolLbl,      2, 0);
+  aParamsLayout->addWidget(mySpinTol,     2, 1, 1, 2);
+  aParamsLayout->addWidget(myTextView,    3, 0, 1, 3);
+  aParamsLayout->addWidget(anErrorsLbl,   4, 0);
+  aParamsLayout->addWidget(myListBox1,    5, 0, 1, 2);
+  aParamsLayout->addWidget(aNonBlocksLbl, 4, 2);
+  aParamsLayout->addWidget(myListBox2,    5, 2);
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( myGrp );
-
-  connect( myGrp->ListBox1, SIGNAL( itemSelectionChanged() ), SLOT( onErrorsListSelectionChanged() ) );
-  connect( myGrp->ListBox2, SIGNAL( itemSelectionChanged() ), SLOT( onSubShapesListSelectionChanged() ) );
+  layout->addWidget( aGrpParams );
 
   /***************************************************************/
 
@@ -116,14 +151,24 @@ MeasureGUI_CheckCompoundOfBlocksDlg::~MeasureGUI_CheckCompoundOfBlocksDlg()
 //=================================================================================
 void MeasureGUI_CheckCompoundOfBlocksDlg::Init()
 {
-  myEditCurrentArgument = myGrp->LineEdit1;
+  /* init variables */
+  double SpecificStep = 0.0001;
+  double aDefaultTol  = Precision::Angular();
+
+  initSpinBox(mySpinTol, aDefaultTol, MAX_NUMBER, SpecificStep, "ang_tol_precision");
+  mySpinTol->setValue(aDefaultTol);
+  myEditCurrentArgument = myObjectName;
 
   // signals and slots connections
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect( myGrp->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( myGrp->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect(myObjectName, SIGNAL(returnPressed()),        this, SLOT(LineEditReturnPressed()));
+  connect(mySelButton,  SIGNAL(clicked()),              this, SLOT(SetEditCurrentArgument()));
+  connect(myListBox1,   SIGNAL(itemSelectionChanged()), this, SLOT(onErrorsListSelectionChanged()));
+  connect(myListBox2,   SIGNAL(itemSelectionChanged()), this, SLOT(onSubShapesListSelectionChanged()));
+  connect(myUseC1Check, SIGNAL(clicked()),              this, SLOT(SetUseC1Tolerance()));
+  connect(mySpinTol,    SIGNAL(valueChanged(double)),   this, SLOT(processObject()));
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
@@ -172,7 +217,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() != 1) {
-    myGrp->LineEdit1->setText( "" );
+    myObjectName->setText( "" );
     processObject();
     return;
   }
@@ -181,13 +226,13 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
     GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
   if ( aSelectedObject->_is_nil() ) {
-    myGrp->LineEdit1->setText( "" );
+    myObjectName->setText( "" );
     processObject();
     return;
   }
 
   myObj = aSelectedObject;
-  myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
+  myObjectName->setText( GEOMBase::GetName( myObj ) );
   processObject();
   DISPLAY_PREVIEW_MACRO;
 }
@@ -198,9 +243,20 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
 //=================================================================================
 void MeasureGUI_CheckCompoundOfBlocksDlg::SetEditCurrentArgument()
 {
-  myGrp->LineEdit1->setFocus();
-  myEditCurrentArgument = myGrp->LineEdit1;
+  myObjectName->setFocus();
+  myEditCurrentArgument = myObjectName;
   SelectionIntoArgument();
+}
+
+//=================================================================================
+// function : SetUseC1Tolerance()
+// purpose  :
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::SetUseC1Tolerance()
+{
+  myTolLbl->setEnabled(myUseC1Check->isChecked());
+  mySpinTol->setEnabled(myUseC1Check->isChecked());
+  processObject();
 }
 
 //=================================================================================
@@ -210,8 +266,8 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SetEditCurrentArgument()
 void MeasureGUI_CheckCompoundOfBlocksDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if ( send == myGrp->LineEdit1 ) {
-    myEditCurrentArgument = myGrp->LineEdit1;
+  if ( send == myObjectName ) {
+    myEditCurrentArgument = myObjectName;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
 }
@@ -245,7 +301,13 @@ bool MeasureGUI_CheckCompoundOfBlocksDlg::getBCErrors( bool& theIsCompoundOfBloc
     GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() );
     try {
       GEOM::GEOM_IBlocksOperations::BCErrors_var aErrs;
-      theIsCompoundOfBlocks = anOper->CheckCompoundOfBlocks( myObj, aErrs );
+      double aC1Tol = -1.;
+
+      if (myUseC1Check->isChecked()) {
+        aC1Tol = mySpinTol->value();
+      }
+
+      theIsCompoundOfBlocks = anOper->CheckCompoundOfBlocks( myObj, aC1Tol, aErrs );
       if (anOper->IsDone() && aErrs->length() > 0)
       //if (anOper->IsDone() && !aErrs._is_nil())
         theErrors = aErrs;
@@ -270,9 +332,9 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
   GEOM::GEOM_IBlocksOperations::BCErrors aErrs;
   if ( !getBCErrors( isCompoundOfBlocks, aErrs ) ) {
     aMsg += tr( "GEOM_CHECK_BLOCKS_COMPOUND_FAILED" );
-    myGrp->TextView1->setText( aMsg );
-    myGrp->ListBox1->clear();
-    myGrp->ListBox2->clear();
+    myTextView->setText( aMsg );
+    myListBox1->clear();
+    myListBox2->clear();
     erasePreview();
     return;
   }
@@ -287,7 +349,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
     buttonOk()->setEnabled( true );
     buttonApply()->setEnabled( true );
   }
-  myGrp->TextView1->setText( aMsg );
+  myTextView->setText( aMsg );
 
   QStringList aErrList;
   QString aErrStr( "" );
@@ -321,9 +383,9 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
       aErrList.append( aErrStr );
   }
 
-  myGrp->ListBox1->clear();
-  myGrp->ListBox2->clear();
-  myGrp->ListBox1->addItems( aErrList );
+  myListBox1->clear();
+  myListBox2->clear();
+  myListBox1->addItems( aErrList );
 }
 
 //=================================================================================
@@ -342,19 +404,19 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_CheckCompoundOfBlocksDlg::createOperation(
 void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
 {
   erasePreview();
-  int aCurItem = myGrp->ListBox1->currentRow();
+  int aCurItem = myListBox1->currentRow();
   if ( aCurItem < 0 )
     return;
   bool isCompoundOfBlocks;
   GEOM::GEOM_IBlocksOperations::BCErrors aErrs;
   if ( !getBCErrors( isCompoundOfBlocks, aErrs ) ) {
-    myGrp->TextView1->setText( "" );
-    myGrp->ListBox1->clear();
-    myGrp->ListBox2->clear();
+    myTextView->setText( "" );
+    myListBox1->clear();
+    myListBox2->clear();
     return;
   }
 
-  myGrp->ListBox2->clear();
+  myListBox2->clear();
 
   if (aCurItem < aErrs.length()) {
     GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aCurItem];
@@ -371,7 +433,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
           aSubShapeList.append( QString( "%1_%2" ).arg( aType ).arg( aObjLst[i] ) );
       }
     }
-    myGrp->ListBox2->addItems( aSubShapeList );
+    myListBox2->addItems( aSubShapeList );
   }
 }
 
@@ -382,12 +444,12 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
 void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
 {
   erasePreview();
-  int aErrCurItem = myGrp->ListBox1->currentRow();
+  int aErrCurItem = myListBox1->currentRow();
   if ( aErrCurItem < 0 )
     return;
   QList<int> aIds;
-  for ( int i = 0, n = myGrp->ListBox2->count(); i < n; i++ ) {
-    if ( myGrp->ListBox2->item( i )->isSelected() )
+  for ( int i = 0, n = myListBox2->count(); i < n; i++ ) {
+    if ( myListBox2->item( i )->isSelected() )
       aIds.append( i );
   }
   if ( aIds.count() < 1 )
@@ -395,9 +457,9 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
   bool isCompoundOfBlocks;
   GEOM::GEOM_IBlocksOperations::BCErrors aErrs;
   if ( !getBCErrors( isCompoundOfBlocks, aErrs ) ) {
-    myGrp->TextView1->setText( "" );
-    myGrp->ListBox1->clear();
-    myGrp->ListBox2->clear();
+    myTextView->setText( "" );
+    myListBox1->clear();
+    myListBox2->clear();
     return;
   }
 
@@ -434,6 +496,15 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
 }
 
 //=================================================================================
+// function : onDisplayPreview
+// purpose  : 
+//=================================================================================
+void MeasureGUI_CheckCompoundOfBlocksDlg::onDisplayPreview()
+{
+  DISPLAY_PREVIEW_MACRO;
+}
+
+//=================================================================================
 // function : activateSelection
 // purpose  : activate selection of faces, shells, and solids
 //=================================================================================
@@ -459,9 +530,9 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::enterEvent( QEvent* )
 // function : isValid
 // purpose  :
 //=================================================================================
-bool MeasureGUI_CheckCompoundOfBlocksDlg::isValid( QString& )
+bool MeasureGUI_CheckCompoundOfBlocksDlg::isValid( QString &msg)
 {
-  return !myObj->_is_nil();
+  return !myObj->_is_nil() && mySpinTol->isValid(msg, !IsPreview());
 }
 
 //=================================================================================

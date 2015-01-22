@@ -30,6 +30,7 @@
 #include <Standard_OStream.hxx>
 
 class TopoDS_Shape;
+class TopTools_ListOfShape;
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
@@ -38,14 +39,20 @@ class BlockFix_CheckTool {
 
 public:
   Standard_EXPORT BlockFix_CheckTool();
-  Standard_EXPORT void SetShape(const TopoDS_Shape& aShape) ;
+  Standard_EXPORT void SetShape(const TopoDS_Shape& aShape);
+  Standard_EXPORT void SetAngTolerance(const Standard_Real theTolerance);
   Standard_EXPORT void Perform() ;
   Standard_EXPORT Standard_Integer NbPossibleBlocks() const;
   Standard_EXPORT TopoDS_Shape PossibleBlock(const Standard_Integer num) const;
   Standard_EXPORT void DumpCheckResult(Standard_OStream& S) const;
 
 private:
-  TopoDS_Shape myShape;
+
+  Standard_Boolean isC1(const TopTools_ListOfShape &theEdges) const;
+
+private:
+  TopoDS_Shape     myShape;
+  Standard_Real    myAngTolerance;
   Standard_Boolean myHasCheck;
   Standard_Integer myNbSolids;
   Standard_Integer myNbBlocks;

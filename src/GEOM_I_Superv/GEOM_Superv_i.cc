@@ -2713,7 +2713,7 @@ CORBA::Boolean GEOM_Superv_i::CheckCompoundOfBlocks
   beginService( " GEOM_Superv_i::CheckCompoundOfBlocks" );
   MESSAGE("GEOM_Superv_i::CheckCompoundOfBlocks");
   getBlocksOp();
-  CORBA::Boolean aRes = myBlocksOp->CheckCompoundOfBlocks(theCompound, theErrors);
+  CORBA::Boolean aRes = myBlocksOp->CheckCompoundOfBlocks(theCompound, -1., theErrors);
   endService( " GEOM_Superv_i::CheckCompoundOfBlocks" );
   return aRes;
 }

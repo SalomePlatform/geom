@@ -1583,7 +1583,7 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
 
     // Last verification: result should be a block
     std::list<GEOMImpl_IBlocksOperations::BCError> errList;
-    if (!myBlocksOperations->CheckCompoundOfBlocks(Te3,errList)) {
+    if (!myBlocksOperations->CheckCompoundOfBlocks(Te3, -1, errList)) {
       SetErrorCode("TShape is not a compound of block");
       return false;
     }

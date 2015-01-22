@@ -25,7 +25,6 @@
 
 #include "MeasureGUI_GetNonBlocksDlg.h"
 
-#include <DlgRef.h>
 #include <GEOMBase.h>
 
 #include <GeometryGUI.h>
@@ -33,8 +32,17 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_DoubleSpinBox.h>
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Tools.h>
+
+#include <QCheckBox>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QVBoxLayout>
 
 //=================================================================================
 // class    : MeasureGUI_GetNonBlocksDlg()
@@ -44,7 +52,12 @@
 //            true to construct a modal dialog.
 //=================================================================================
 MeasureGUI_GetNonBlocksDlg::MeasureGUI_GetNonBlocksDlg (GeometryGUI* theGeometryGUI, QWidget* parent)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, false)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, false),
+    myObjectName     (0),
+    mySelButton      (0),
+    myUseC1Check     (0),
+    myTolLbl         (0),
+    mySpinTol        (0)
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_GETNONBLOCKS")));
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
@@ -58,16 +71,36 @@ MeasureGUI_GetNonBlocksDlg::MeasureGUI_GetNonBlocksDlg (GeometryGUI* theGeometry
   mainFrame()->RadioButton2->close();
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
+  
+  QGroupBox   *aGrpParams    =
+    new QGroupBox(tr("GEOM_GETNONBLOCKS"), centralWidget());
+  QGridLayout *aParamsLayout = new QGridLayout(aGrpParams);
+  QLabel      *anObjLbl      = new QLabel(tr("GEOM_OBJECT"), aGrpParams);
 
-  myGrp = new DlgRef_1Sel (centralWidget());
-  myGrp->GroupBox1->setTitle(tr("GEOM_GETNONBLOCKS"));
-  myGrp->TextLabel1->setText(tr("GEOM_OBJECT"));
-  myGrp->PushButton1->setIcon(image1);
-  myGrp->LineEdit1->setReadOnly(true);
+  myObjectName = new QLineEdit(aGrpParams);
+  mySelButton  = new QPushButton(aGrpParams);
+  myUseC1Check = new QCheckBox(tr("GEOM_USE_C1_CRITERION"), aGrpParams);
+  myTolLbl     = new QLabel(tr("GEOM_ANGULAR_TOLERANCE"), aGrpParams);
+  mySpinTol    = new SalomeApp_DoubleSpinBox(aGrpParams);
+
+  myObjectName->setReadOnly(true);
+  mySelButton->setIcon(image1);
+  mySelButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  myUseC1Check->setText(tr("GEOM_USE_C1_CRITERION"));
+  myUseC1Check->setChecked(true);
+
+  aParamsLayout->setMargin(9);
+  aParamsLayout->setSpacing(6);
+  aParamsLayout->addWidget(anObjLbl,     0, 0);
+  aParamsLayout->addWidget(mySelButton,  0, 1);
+  aParamsLayout->addWidget(myObjectName, 0, 2);
+  aParamsLayout->addWidget(myUseC1Check, 1, 0, 1, 3);
+  aParamsLayout->addWidget(myTolLbl,     2, 0);
+  aParamsLayout->addWidget(mySpinTol,    2, 1, 1, 2);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
-  layout->addWidget(myGrp);
+  layout->addWidget(aGrpParams);
 
   /***************************************************************/
 
@@ -94,14 +127,20 @@ void MeasureGUI_GetNonBlocksDlg::Init()
   showOnlyPreviewControl();
 
   /* init variables */
-  myEditCurrentArgument = myGrp->LineEdit1;
+  double SpecificStep = 0.0001;
+  double aDefaultTol  = Precision::Angular();
+
+  initSpinBox(mySpinTol, aDefaultTol, MAX_NUMBER, SpecificStep, "ang_tol_precision");
+  mySpinTol->setValue(aDefaultTol);
+  myEditCurrentArgument = myObjectName;
 
    /* signals and slots connections */
-  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-
-  connect(myGrp->LineEdit1,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(myGrp->PushButton1, SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
+  connect(buttonOk(),    SIGNAL(clicked()),            this, SLOT(ClickOnOk()));
+  connect(buttonApply(), SIGNAL(clicked()),            this, SLOT(ClickOnApply()));
+  connect(myUseC1Check,  SIGNAL(clicked()),            this, SLOT(SetUseC1Tolerance()));
+  connect(mySpinTol,     SIGNAL(valueChanged(double)), this, SLOT(processPreview()));
+  connect(myObjectName,  SIGNAL(returnPressed()),      this, SLOT(LineEditReturnPressed()));
+  connect(mySelButton,   SIGNAL(clicked()),            this, SLOT(SetEditCurrentArgument()));
 
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
            SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
@@ -171,9 +210,20 @@ void MeasureGUI_GetNonBlocksDlg::SelectionIntoArgument()
 //=================================================================================
 void MeasureGUI_GetNonBlocksDlg::SetEditCurrentArgument()
 {
-  myGrp->LineEdit1->setFocus();
-  myEditCurrentArgument = myGrp->LineEdit1;
+  myObjectName->setFocus();
+  myEditCurrentArgument = myObjectName;
   SelectionIntoArgument();
+}
+
+//=================================================================================
+// function : SetUseC1Tolerance()
+// purpose  :
+//=================================================================================
+void MeasureGUI_GetNonBlocksDlg::SetUseC1Tolerance()
+{
+  myTolLbl->setEnabled(myUseC1Check->isChecked());
+  mySpinTol->setEnabled(myUseC1Check->isChecked());
+  processPreview();
 }
 
 //=================================================================================
@@ -183,8 +233,8 @@ void MeasureGUI_GetNonBlocksDlg::SetEditCurrentArgument()
 void MeasureGUI_GetNonBlocksDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if (send == myGrp->LineEdit1) {
-    myEditCurrentArgument = myGrp->LineEdit1;
+  if (send == myObjectName) {
+    myEditCurrentArgument = myObjectName;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
 }
@@ -211,10 +261,11 @@ void MeasureGUI_GetNonBlocksDlg::ActivateThisDialog()
 void MeasureGUI_GetNonBlocksDlg::processObject()
 {
   if (myObj->_is_nil()) {
+    myObjectName->setText("");
     erasePreview();
   }
   else {
-    myGrp->LineEdit1->setText(GEOMBase::GetName(myObj));
+    myObjectName->setText(GEOMBase::GetName(myObj));
 
     processPreview();
   }
@@ -243,9 +294,9 @@ GEOM::GEOM_IOperations_ptr MeasureGUI_GetNonBlocksDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool MeasureGUI_GetNonBlocksDlg::isValid (QString&)
+bool MeasureGUI_GetNonBlocksDlg::isValid (QString &msg)
 {
-  return !myObj->_is_nil();
+  return !myObj->_is_nil() && mySpinTol->isValid(msg, !IsPreview());
 }
 
 //=================================================================================
@@ -256,7 +307,13 @@ bool MeasureGUI_GetNonBlocksDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
   GEOM::GEOM_Object_var aNonQuads;
-  GEOM::GEOM_Object_var anObj = anOper->GetNonBlocks(myObj, aNonQuads);
+  double aC1Tol = -1.;
+
+  if (myUseC1Check->isChecked()) {
+    aC1Tol = mySpinTol->value();
+  }
+
+  GEOM::GEOM_Object_var anObj = anOper->GetNonBlocks(myObj, aC1Tol, aNonQuads);
   //mainFrame()->ResultName->setText(tr("GEOM_NONBLOCKS"));
 
   if (!anObj->_is_nil())

@@ -408,6 +408,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>NonBlocksGroup</translation>
     </message>
     <message>
+        <source>GEOM_USE_C1_CRITERION</source>
+        <translation>Use C1 criterion</translation>
+    </message>
+    <message>
         <source>GEOM_CHECK_INFOS</source>
         <translation>Object And Its Topological Information</translation>
     </message>
