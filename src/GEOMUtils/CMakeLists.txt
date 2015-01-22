@@ -42,6 +42,7 @@ SET(_link_LIBRARIES
   ${CAS_TKG3d}
   ${CAS_TKV3d}
   ${CAS_TKGeomBase}
+  ${CAS_TKBO}
   ${LIBXML2_LIBRARIES}
   ${KERNEL_SALOMELocalTrace}
   )

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS>
-<context>
-  <name>DependencyTree_View</name>
+<TS version="2.0" language="ja" sourcelanguage="en">
+  <context>
+    <name>DependencyTree_View</name>
     <message>
       <source>DEPENDENCY_TREE</source>
       <translation type="unfinished">Dependency Tree</translation>
@@ -31,7 +31,7 @@
       <source>UPDATE</source>
       <translation type="unfinished">Update</translation>
     </message>
-  <name>DependencyTree_ViewModel</name>
+    <name>DependencyTree_ViewModel</name>
     <message>
       <source>MEN_REBUILD_THE_TREE</source>
       <translation type="unfinished">Rebuild the tree</translation>
@@ -40,5 +40,5 @@
       <source>MEN_REDUCE_STUDY</source>
       <translation type="unfinished">Reduce study</translation>
     </message>
-</context>
+  </context>
 </TS>

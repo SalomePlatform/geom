@@ -20,7 +20,7 @@
 #
 
 import os, sys, string
-from salome_utils import getTmpDir, generateFileName, uniteFiles
+from salome_utils import getLogDir, generateFileName, uniteFiles
 from setenv import add_path, get_lib_dir, salome_subdir
 
 # -----------------------------------------------------------------------------
@@ -29,8 +29,8 @@ def set_env( args ):
     """Add to the PATH-variables modules specific paths"""
     psep = os.pathsep
     python_version="python%d.%d" % sys.version_info[0:2]
-    
-    tmp_dir = getTmpDir()
+
+    tmp_dir = getLogDir()
     env_dir = generateFileName( tmp_dir, prefix="env", with_port=True )
     res_dir = os.path.join( os.getenv( "GEOM_ROOT_DIR" ), "share", salome_subdir, "resources", "geom" )
 

@@ -38,7 +38,7 @@
     <message>
         <source>DEP_OBJECT</source>
         <translation>L&apos;objet choisi a été utilisé pour créer un autre objet ou est référencé par un autre module.
-La suppression de cet objet peut entrainer un export python invalide. 
+La suppression de cet objet peut entrainer un export python invalide.
 
 Voulez-vous tout de même supprimer ces objets ?</translation>
     </message>
@@ -185,7 +185,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BEZIER</source>
-        <translation>Bezier</translation>
+        <translation>Bézier</translation>
     </message>
     <message>
         <source>GEOM_BINORMAL</source>
@@ -237,11 +237,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BNDBOX_TITLE</source>
-        <translation>Boîte englobante</translation>
+        <translation>Informations sur la Boîte englobante</translation>
     </message>
     <message>
         <source>GEOM_BOX</source>
-        <translation>Boite</translation>
+        <translation>Boîte</translation>
     </message>
     <message>
         <source>GEOM_BOX_OBJ</source>
@@ -253,7 +253,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BSplineRestriction</source>
-        <translation>Limitation BSpline</translation>
+        <translation>LimitationB-Spline</translation>
     </message>
     <message>
         <source>GEOM_BUT_APPLY</source>
@@ -341,7 +341,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_FACES</source>
-        <translation>Chanfrein sur des faces</translation>
+        <translation>Chanfrein sur les faces sélectionnées</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_TITLE</source>
@@ -405,11 +405,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_GETNONBLOCKS_TITLE</source>
-        <translation>Récupérer les solides non-hexahédres et les faces non-quadrangles</translation>
+        <translation>Récupérer les solides qui ne sontpas des hexahédres et les faces qui ne sont pas des quadrangles</translation>
     </message>
     <message>
         <source>GEOM_GETNONBLOCKS</source>
-        <translation>Récupérer les solides non blocs</translation>
+        <translation>Récupérer les solides qui ne sont pas des blocs</translation>
     </message>
     <message>
         <source>GEOM_NONBLOCKS</source>
@@ -417,7 +417,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INFOS</source>
-        <translation>Objet et son information topologique</translation>
+        <translation>Objet et ses informations topologiques</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SHAPE</source>
@@ -549,7 +549,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CYLINDER_ANGLE_ERR</source>
-        <translation>Les valeurs de l'angle 0 et 360 sont à éviter pour construire des volumes sains. Veuillez décocher la case "Angle" pour utiliser le constructeur de cylindre complet.</translation>
+        <translation>Les valeurs de l&apos;angle 0 et 360 sont à éviter pour construire des volumes sains. Veuillez décocher la case &quot;Angle&quot; pour utiliser le constructeur de cylindre complet.</translation>
     </message>
     <message>
         <source>GEOM_D1</source>
@@ -2894,7 +2894,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_VERTICES</source>
-        <translation type="unfinished">Show Vertices</translation>
+        <translation>Montrer les sommets</translation>
     </message>
     <message>
         <source>MEN_PREFERENCES</source>
@@ -3066,11 +3066,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_VERTICES_MODE_ON</source>
-        <translation type="unfinished">Show Vertices</translation>
+        <translation>Montrer les sommets</translation>
     </message>
     <message>
         <source>MEN_VERTICES_MODE_OFF</source>
-        <translation type="unfinished">Hide Vertices</translation>
+        <translation>Cacher les sommets</translation>
     </message>
     <message>
         <source>MEN_WIREFRAME</source>
@@ -3762,7 +3762,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_VERTICES</source>
-        <translation type="unfinished">Show Vertices</translation>
+        <translation>Montrer les sommets</translation>
     </message>
     <message>
         <source>STB_POP_SETTEXTURE</source>
@@ -4706,11 +4706,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
-        <translation type="unfinished">Show dependency tree</translation>
+        <translation>Montrer l&apos;arbre des dépendances</translation>
     </message>
     <message>
         <source>MEN_POP_SHOW_REDUCE_STUDY</source>
-        <translation type="unfinished">Reduce study</translation>
+        <translation>Etude réduite</translation>
     </message>
     <message>
         <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
@@ -4978,63 +4978,63 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_TAB_DEPENDENCY_VIEW</source>
-        <translation type="unfinished">Dependency Tree</translation>
+        <translation>Arbre des dépendances</translation>
     </message>
     <message>
         <source>PREF_HIERARCHY_TYPE</source>
-        <translation type="unfinished">Hierarchy type</translation>
+        <translation>Type de hiérarchie</translation>
     </message>
     <message>
         <source>MEN_ONLY_ASCENDANTS</source>
-        <translation type="unfinished">Display only ascendants tree</translation>
+        <translation>Montrer seulement les liens ascendants</translation>
     </message>
     <message>
         <source>MEN_ONLY_DESCENDANTS</source>
-        <translation type="unfinished">Display only descendants tree</translation>
+        <translation>Montrer seulement les liens descendants</translation>
     </message>
     <message>
         <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
-        <translation type="unfinished">Display both ascendants and descendants trees</translation>
+        <translation>Montrer les liens ascendants et descendants</translation>
     </message>
     <message>
         <source>GEOM_MOVE_POSSIBILITY</source>
-        <translation type="unfinished">Possibility to move nodes</translation>
+        <translation>Possibilité de déplacer des noeuds</translation>
     </message>
     <message>
         <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
-        <translation type="unfinished">Color</translation>
+        <translation>Couleur</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
-        <translation type="unfinished">Background color</translation>
+        <translation>Couleur du fond</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
-        <translation type="unfinished">Default node color</translation>
+        <translation>Couleur des noeuds par défaut</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
-        <translation type="unfinished">Main node color</translation>
+        <translation>Couleur des noeuds principaux</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
-        <translation type="unfinished">Unpublished node color</translation>
+        <translation>Couleur des noeuds non publiés</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
-        <translation type="unfinished">Selected node color</translation>
+        <translation>Couleurs des noeuds sélectionnés</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
-        <translation type="unfinished">Arrow color</translation>
+        <translation>Couleur des flèches par défaut</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
-        <translation type="unfinished">Highlighted arrow color</translation>
+        <translation>Couleur des flèches en surbrillance</translation>
     </message>
     <message>
         <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
-        <translation type="unfinished">Selected arrow color</translation>
+        <translation>Couleur des flèches sélectionnées</translation>
     </message>
     <message>
         <source>GEOM_ALL_IMPORT_FILES</source>
@@ -6835,55 +6835,55 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>GEOMToolsGUI_ReduceStudyDlg</name>
     <message>
         <source>GEOM_REDUCE_STUDY_TITLE</source>
-        <translation type="unfinished">Reduce study</translation>
+        <translation>Etude réduite</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
-        <translation type="unfinished">Objects to be kept</translation>
+        <translation>Objets à conserver</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
-        <translation type="unfinished">Objects to be removed</translation>
+        <translation>Objets à enlever</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_NAME</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_OPTIONS</source>
-        <translation type="unfinished">Options</translation>
+        <translation>Options</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
-        <translation type="unfinished">Intermediate objects</translation>
+        <translation>Objets intermédiaires</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
-        <translation type="unfinished">Sub-objects</translation>
+        <translation>Sous-objets</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_KEEP</source>
-        <translation type="unfinished">Keep</translation>
+        <translation>Conserver</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
-        <translation type="unfinished">Unpublish</translation>
+        <translation>Dépublier</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_REMOVE</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Enlever</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
-        <translation type="unfinished">Remove empty folders</translation>
+        <translation>Enlever les dossiers vide</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
-        <translation type="unfinished">Soft removal</translation>
+        <translation>Dépublication seulement</translation>
     </message>
     <message>
         <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
-        <translation type="unfinished">Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
+        <translation>Voulez-vous vraiment supprimer les objets intermédiaires ? Après la confirmation de cette opération, l&apos;étude sera cassée.</translation>
     </message>
 </context>
 <context>

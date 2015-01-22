@@ -20,8 +20,6 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <Standard_Stream.hxx>
-
 #include <GEOMImpl_HealingDriver.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_IHealing.hxx>
@@ -44,12 +42,8 @@
 
 #include <TNaming_CopyShape.hxx>
 
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <ShapeFix_Shape.hxx>
-
 #include <BRep_Builder.hxx>
 #include <BRepAdaptor_Curve.hxx>
-#include <BRepCheck_Analyzer.hxx>
 #include <BRepTools_WireExplorer.hxx>
 
 #include <TopExp.hxx>
@@ -541,6 +535,8 @@ void GEOMImpl_HealingDriver::LimitTolerance (GEOMImpl_IHealing* theHI,
                                              TopoDS_Shape& theOutShape) const
 {
   Standard_Real aTol = theHI->GetTolerance();
+  TopAbs_ShapeEnum aType = theHI->GetType();
+
   if (aTol < Precision::Confusion())
     aTol = Precision::Confusion();
 
@@ -550,17 +546,10 @@ void GEOMImpl_HealingDriver::LimitTolerance (GEOMImpl_IHealing* theHI,
   TNaming_CopyShape::CopyTool(theOriginalShape, aMapTShapes, aShapeCopy);
 
   // 2. Limit tolerance.
-  ShapeFix_ShapeTolerance aSFT;
-  aSFT.LimitTolerance(aShapeCopy, aTol, aTol, TopAbs_SHAPE);
-
-  // 3. Fix obtained shape.
-  Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape (aShapeCopy);
-  aSfs->Perform();
-  theOutShape = aSfs->Shape();
-
-  BRepCheck_Analyzer ana (theOutShape, Standard_True);
-  if (!ana.IsValid())
+  if (!GEOMUtils::FixShapeTolerance(aShapeCopy, aType, aTol))
     StdFail_NotDone::Raise("Non valid shape result");
+
+  theOutShape = aShapeCopy;
 }
 
 //=======================================================================
@@ -735,8 +724,7 @@ void GEOMImpl_HealingDriver::FuseCollinearEdges (const TopoDS_Shape& theOriginal
   }
   theOutShape = aFinalWire;
 
-  BRepCheck_Analyzer ana (theOutShape, Standard_True);
-  if (!ana.IsValid())
+  if (!GEOMUtils::CheckShape(theOutShape, true))
     StdFail_NotDone::Raise("Non valid shape result");
 }
 
@@ -902,6 +890,7 @@ GetCreationInformation(std::string&             theOperationName,
     theOperationName = "LIMIT_TOLERANCE";
     AddParam( theParams, "Selected shape", aCI.GetOriginal() );
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
+    AddParam( theParams, "Type", aCI.GetType() );
     break;
   case FUSE_COLLINEAR_EDGES:
     theOperationName = "FUSE_EDGES";

@@ -2259,7 +2259,7 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
                                   + ":TT " + QString::number( myX2, Format, DigNum) + " " + QString::number( myY1, Format, DigNum)
                                   + ":WW";
                           
-      theParameters = myX1Str + ":" + myY1Str + ":" + myX2Str + ":" + myY2Str ;
+      theParameters = myX1Str + ":" + myY1Str + ":" + myX1Str + ":" + myY2Str + ":" + myX2Str + ":" + myY2Str + ":" + myX2Str + ":" + myY1Str;
     }
   return myNewCommand;
 }

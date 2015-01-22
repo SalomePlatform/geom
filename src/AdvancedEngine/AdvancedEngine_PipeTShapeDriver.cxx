@@ -63,6 +63,11 @@
 
 #include <vector>
 
+// Undefine below macro to enable workaround about problem with wrong 
+// tolerances of intersection curves in MakePipeTShape and MakeQuarterPipeTShape
+// VSR 30/12/2014: macro enabled
+#define FIX_CURVES_TOLERANCES
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -299,7 +304,7 @@ void AdvancedEngine_PipeTShapeDriver::GetCommonShapesOnCylinders(const TopoDS_Sh
 //purpose  :
 //=======================================================================
 TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakePipeTShape (const double r1, const double w1, const double l1,
-                                                        const double r2, const double w2, const double l2) const
+                                                              const double r2, const double w2, const double l2) const
 {
   double r1Ext = r1 + w1;
   double r2Ext = r2 + w2;
@@ -341,7 +346,14 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakePipeTShape (const double r1, c
     StdFail_NotDone::Raise("Coudn't cut cylinders");
   }
 
-  return Te.Shape();
+  TopoDS_Shape aShape = Te.Shape();
+
+  // VSR: 30/12/2014: temporary workaround about intersection curves problem
+#ifdef FIX_CURVES_TOLERANCES
+  GEOMUtils::FixShapeCurves(aShape);
+#endif
+
+  return aShape;
 }
 
 //=======================================================================
@@ -349,7 +361,7 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakePipeTShape (const double r1, c
 //purpose  :
 //=======================================================================
 TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakeQuarterPipeTShape (const double r1, const double w1, const double l1,
-                                                               const double r2, const double w2, const double l2) const
+                                                                     const double r2, const double w2, const double l2) const
 {
   TopoDS_Shape Te = MakePipeTShape(r1, w1, l1, r2, w2, l2);
   if (Te.IsNull())
@@ -372,6 +384,13 @@ TopoDS_Shape AdvancedEngine_PipeTShapeDriver::MakeQuarterPipeTShape (const doubl
   if (!Te4.IsDone()) {
     StdFail_NotDone::Raise("Couldn't cut Pipe Tshape with box");
   }
+
+  TopoDS_Shape aShape = Te4.Shape();
+
+  // VSR: 30/12/2014: temporary workaround about intersection curves problem
+#ifdef FIX_CURVES_TOLERANCES
+  GEOMUtils::FixShapeCurves(aShape);
+#endif
 
   return Te4.Shape();
 }

@@ -1056,7 +1056,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Object) theObject,
-                                                                 double theTolerance)
+                                                                 double theTolerance,
+                                                                 TopAbs_ShapeEnum theType)
 {
   // Set error code, check parameters
   SetErrorCode(KO);
@@ -1084,6 +1085,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Obj
   GEOMImpl_IHealing HI (aFunction);
   HI.SetOriginal(aLastFunction);
   HI.SetTolerance(theTolerance);
+  HI.SetType(theType);
 
   // Compute
   try {
