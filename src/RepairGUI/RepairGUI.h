@@ -29,6 +29,9 @@
 
 #include <GEOMGUI.h>
 
+#include <SALOMEconfig.h>
+#include CORBA_CLIENT_HEADER(GEOM_Gen)
+
 //=================================================================================
 // class    : RepairGUI
 // purpose  :
@@ -40,6 +43,7 @@ public:
   ~RepairGUI();
 
   bool OnGUIEvent( int, SUIT_Desktop* );
-};
 
+  static void ShowStatistics( GEOM::GEOM_IHealingOperations_var anOper, QWidget* parent );
+};
 #endif // REPAIRGUI_H

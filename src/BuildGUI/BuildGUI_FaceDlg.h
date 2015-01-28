@@ -31,6 +31,10 @@
 #include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel1Check;
+class DlgRef_2Sel;
+class DlgRef_1SelExt;
+class QTreeWidget;
+class QTreeWidgetItem;
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg
@@ -39,6 +43,8 @@ class DlgRef_1Sel1Check;
 class BuildGUI_FaceDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
+
+  class TreeWidgetItem;
 
 public:
   BuildGUI_FaceDlg( GeometryGUI*, QWidget* = 0 );
@@ -49,23 +55,35 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );    
+  virtual void                       addSubshapesToStudy();
   
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-  void                               setGlobalSelection();
+  void                               updateConstraintsTree();
+  void                               findEmptyTreeItem();
+  bool                               isTreeFull();
   
 private:
   QList<GEOM::GeomObjPtr>            myWires;
+  GEOM::GeomObjPtr                   myFace;
+  GEOM::GeomObjPtr                   myWire;
   
-  DlgRef_1Sel1Check*                 GroupWire;
+  DlgRef_1Sel1Check*                 myGroupWire;
+  DlgRef_2Sel*                       myGroupSurf;
+  DlgRef_1SelExt*                    myGroupWireConstraints;
+
+  QTreeWidget*                       myTreeConstraints;
+  TreeWidgetItem*                    myCurrentItem;
 
 private slots:
+  void                               ConstructorsClicked( int );
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               onItemClicked( QTreeWidgetItem*, int );
 };
 
 #endif // BUILDGUI_FACEDLG_H

@@ -412,6 +412,10 @@
       <translation>自己交差の検出</translation>
     </message>
     <message>
+        <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
+        <translation type="unfinished">Fast intersection</translation>
+    </message>
+    <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
       <translation>自己交差の検出に失敗しました</translation>
     </message>
@@ -706,6 +710,22 @@
     <message>
       <source>GEOM_FACE_OPT</source>
       <translation>平らなフェースを作成</translation>
+    </message>
+    <message>
+        <source>GEOM_FACE_FFWC</source>
+        <translation type="unfinished">Face creation from wire and constraints</translation>
+    </message>
+    <message>
+        <source>GEOM_CONSTRAINTS</source>
+        <translation type="unfinished">Constraints</translation>
+    </message>
+    <message>
+        <source>GEOM_FACE_CONSTRAINT</source>
+        <translation type="unfinished">Constraint Face</translation>
+    </message>
+    <message>
+        <source>GEOM_SOLID_FROM_FACE_OPT</source>
+        <translation type="unfinished">Intersect/sew shapes</translation>
     </message>
     <message>
       <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
@@ -1928,6 +1948,14 @@
       <translation>ソリッドの構築</translation>
     </message>
     <message>
+      <source>GEOM_SOLID_SHELLS</source>
+      <translation type="unfinished">Make Solid From Shells</translation>
+    </message>
+    <message>
+      <source>GEOM_SOLID_FACES</source>
+      <translation type="unfinished">Make Solid From Connected Set Of Faces/Shells</translation>
+    </message>
+    <message>
       <source>GEOM_SPHERE</source>
       <translation>Sphere</translation>
     </message>
@@ -2434,6 +2462,10 @@
     <message>
       <source>MEN_CHECK_SELF_INTERSECTIONS</source>
       <translation>自己交差の確認</translation>
+    </message>
+    <message>
+        <source>MEN_FAST_CHECK_INTERSECTIONS</source>
+        <translation type="unfinished">Fast intersection</translation>
     </message>
     <message>
       <source>MEN_CHECK_FREE_BNDS</source>
@@ -2984,6 +3016,10 @@
       <translation>ソリッド</translation>
     </message>
     <message>
+        <source>MEN_SOLID_FROM_FACES</source>
+        <translation type="unfinished">Solid from connected faces</translation>
+    </message>
+    <message>
       <source>MEN_SOLID_SEL_ONLY</source>
       <translation>ソリッド</translation>
     </message>
@@ -3423,6 +3459,10 @@
       <source>STB_CHECK_SELF_INTERSECTIONS</source>
       <translation>自己交差の確認</translation>
     </message>
+    <message>
+        <source>STB_FAST_CHECK_INTERSECTIONS</source>
+        <translation type="unfinished">Fast intersection</translation>
+   </message>
     <message>
       <source>STB_CHECK_FREE_BNDS</source>
       <translation>自由境界をチェック</translation>
@@ -4030,6 +4070,10 @@
     <message>
       <source>TOP_CHECK_SELF_INTERSECTIONS</source>
       <translation>自己交差の確認</translation>
+    </message>
+    <message>
+        <source>TOP_FAST_CHECK_INTERSECTIONS</source>
+        <translation type="unfinished">Fast intersection</translation>
     </message>
     <message>
       <source>TOP_CHECK_FREE_BNDS</source>
@@ -4672,6 +4716,18 @@
       <translation>連合に直面しています。</translation>
     </message>
     <message>
+        <source>TOP_INSPECT_OBJECT</source>
+        <translation type="unfinished">Inspect Object</translation>
+    </message>
+    <message>
+        <source>MEN_INSPECT_OBJECT</source>
+        <translation type="unfinished">Inspect Object</translation>
+    </message>
+    <message>
+        <source>STB_INSPECT_OBJECT</source>
+        <translation type="unfinished">Inspect Object</translation>
+    </message>
+    <message>
       <source>TOP_NORMALE</source>
       <translation>フェースに垂直</translation>
     </message>
@@ -5098,6 +5154,34 @@
     <message>
       <source>CC_PNT_ITEM_X_Y_Z</source>
       <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+    <message>
+        <source>GEOM_FILTER</source>
+        <translation type="unfinished">Filter</translation>
+    </message>
+    <message>
+        <source>GEOM_LESS_THAN</source>
+        <translation type="unfinished">Less Than</translation>
+    </message>
+    <message>
+        <source>GEOM_LESSOREQUAL_THAN</source>
+        <translation type="unfinished">Equal or Less Than</translation>
+    </message>
+    <message>
+        <source>GEOM_GREAT_THAN</source>
+        <translation type="unfinished">Greater Than</translation>
+    </message>
+    <message>
+        <source>GEOM_GREATOREQUAL_THAN</source>
+        <translation type="unfinished">Equal or Greater Than</translation>
+    </message>
+    <message>
+        <source>GEOM_SOME_SHAPES_SELECTED</source>
+        <translation type="unfinished">%1 shape(s) has(have) been selected</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SHAPES_SELECTED</source>
+        <translation type="unfinished">There are no shapes that meet filtering parameters</translation>
     </message>
   </context>
   <context>
@@ -6562,6 +6646,22 @@
       <source>TIME_CONSUMING</source>
       <translation>このオプションを有効にすると、特定のオブジェクトを時間の無駄が可能性があります。続行しますか。</translation>
     </message>
+    <message>
+      <source>WIDTH_FACTOR_TOL</source>
+      <translation type="unfinished">Width factor tol.</translation>
+    </message>
+    <message>
+      <source>VOLUME_TOL</source>
+      <translation type="unfinished">Volume tol.</translation>
+    </message>
+    <message>
+      <source>TO_MERGE_SOLIDS</source>
+      <translation type="unfinished">To merge solids</translation>
+    </message>
+    <message>
+      <source>SELECT_ALL</source>
+      <translation>全選択</translation>
+    </message>
   </context>
   <context>
     <name>GEOMToolsGUI_DeleteDlg</name>
@@ -6748,6 +6848,10 @@
       <source>GEOM_SHARED_SHAPE</source>
       <translation>Shared_%1</translation>
     </message>
+    <message>
+        <source>GEOM_SHARED_SHAPES_MULTISHARE</source>
+        <translation type="unfinished">Shared by all</translation>
+    </message>
   </context>
   <context>
     <name>GEOMToolsGUI_PublishDlg</name>
@@ -6851,6 +6955,37 @@
     </message>
   </context>
   <context>
+    <name>RepairGUI_InspectObjectDlg</name>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_TITLE</source>
+        <translation type="unfinished">Inspect object</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_MAIN_SHAPE</source>
+        <translation type="unfinished">Main shape</translation>
+    </message>
+    <message>
+    <source>GEOM_INSPECT_OBJECT_SHOW</source>
+        <translation type="unfinished">Show Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_SHOW_ONLY</source>
+        <translation type="unfinished">Show Only Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_HIDE</source>
+        <translation type="unfinished">Hide Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_PUBLISH</source>
+        <translation type="unfinished">Publish Selected</translation>
+    </message>
+    <message>
+        <source>GEOM_INSPECT_OBJECT_NAME</source>
+        <translation type="unfinished">Name</translation>
+    </message>
+  </context>
+  <context>
     <name>GEOMGUI_CreationInfoWdg</name>
     <message>
       <source>CREATION_INFO_TITLE</source>
@@ -6892,4 +7027,160 @@
       <translation>V-Isoline</translation>
     </message>
   </context>
+<context>
+    <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
+    <message>
+        <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
+        <translation type="unfinished">Self-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_SUBSHAPES</source>
+        <translation type="unfinished">Sub-shapes</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_CHECK_LEVEL</source>
+        <translation type="unfinished">Level of check</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_SUMMARY</source>
+        <translation type="unfinished">Summary</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_COMPUTE</source>
+        <translation type="unfinished">Compute self-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTION_NAME</source>
+        <translation type="unfinished">Self_intersection</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SELF_INTERSECTIONS</source>
+        <translation type="unfinished">There are no self-intersections in the shape</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
+        <translation type="unfinished">Some self-intersections detected</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
+        <translation type="unfinished">Detection of self-intersections failed</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
+        <translation type="unfinished">Warning: there were errors during the operation, so the list may be incomplete.</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_V</source>
+        <translation type="unfinished">Vertex to Vertex</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_E</source>
+        <translation type="unfinished">Vertex to Edge + all above</translation>
+    </message>
+  <message>
+    <source>GEOM_CHECK_INTE_E_E</source>
+    <translation type="unfinished">Edge to Edge + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_V_F</source>
+    <translation type="unfinished">Vertex to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_E_F</source>
+    <translation type="unfinished">Edge to Face + all above</translation>
+  </message>
+  <message>
+    <source>GEOM_CHECK_INTE_ALL</source>
+    <translation type="unfinished">Face to Face + all above</translation>
+  </message>
+</context>
+<context>
+    <name>MeasureGUI_FastCheckIntersectionsDlg</name>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_DEFLECT</source>
+        <translation type="unfinished">Deflection coefficient</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_DETECT_GAPS</source>
+        <translation type="unfinished">Detect gaps with tolerance</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_SUBSHAPES</source>
+        <translation type="unfinished">Sub-shapes of Object %1:</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_INT_COMPUTE</source>
+        <translation type="unfinished">Compute intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_INTERSECTION_NAME</source>
+        <translation type="unfinished">Fast_intersection</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_INTERSECTION_FAILS</source>
+        <translation type="unfinished">No intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_FAST_CHECK_OBJ</source>
+        <translation type="unfinished">Objects And Results</translation>
+    </message>
+</context>
+<context>
+    <name>TransformationGUI_ExtensionDlg</name>
+    <message>
+        <source>GEOM_EXTENSION_TITLE</source>
+        <translation type="unfinished">Extension of Edge or Face</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION</source>
+        <translation type="unfinished">Extension</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN</source>
+        <translation type="unfinished">First Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX</source>
+        <translation type="unfinished">Last Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN_U</source>
+        <translation type="unfinished">First U-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX_U</source>
+        <translation type="unfinished">Last U-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MIN_V</source>
+        <translation type="unfinished">First V-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_MAX_V</source>
+        <translation type="unfinished">Last V-Parameter</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_EDGE_NAME</source>
+        <translation type="unfinished">ExtendedEdge</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTENSION_FACE_NAME</source>
+        <translation type="unfinished">ExtendedFace</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_SurfFromFaceDlg</name>
+    <message>
+        <source>GEOM_SURF_FROM_FACE_TITLE</source>
+        <translation type="unfinished">Surface From Face Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_SURF_FROM_FACE</source>
+        <translation type="unfinished">Surface From Face</translation>
+    </message>
+    <message>
+        <source>GEOM_SURF_FROM_FACE_NAME</source>
+        <translation type="unfinished">SurfaceFromFace</translation>
+    </message>
+</context>
 </TS>

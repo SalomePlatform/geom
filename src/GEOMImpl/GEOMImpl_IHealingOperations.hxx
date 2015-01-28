@@ -33,6 +33,8 @@
 
 #include <list>
 
+class ShHealOper_ModifStats;
+
 class GEOMImpl_IHealingOperations : public GEOM_IOperations {
  public:
   Standard_EXPORT GEOMImpl_IHealingOperations(GEOM_Engine* theEngine, int theDocID);
@@ -71,16 +73,20 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) FillHoles( Handle(GEOM_Object) theObject,
                                  const Handle(TColStd_HArray1OfInteger)& theWires);
 
-  Standard_EXPORT Handle(GEOM_Object) Sew( Handle(GEOM_Object) theObject,
-                           double theTolerance,
-                           bool isAllowNonManifold);
+  Standard_EXPORT Handle(GEOM_Object) Sew( std::list<Handle(GEOM_Object)> & theObject,
+                                           double                           theTolerance,
+                                           bool                             isAllowNonManifold);
 
-  Standard_EXPORT Handle(GEOM_Object) RemoveInternalFaces (Handle(GEOM_Object) theObject);
+  Standard_EXPORT Handle(GEOM_Object) RemoveInternalFaces (std::list< Handle(GEOM_Object)> & theSolids);
 
   Standard_EXPORT Handle(GEOM_Object) DivideEdge( Handle(GEOM_Object) theObject,
-                                                  int theIndex,
-                                                  double theValue,
-                                                  bool isByParameter );
+                                                  int                 theIndex,
+                                                  double              theValue,
+                                                  bool                isByParameter );
+
+  Standard_EXPORT Handle(GEOM_Object) DivideEdgeByPoint( Handle(GEOM_Object)             theObject,
+                                                         int                             theIndex,
+                                                         std::list<Handle(GEOM_Object)>& thePoint );
 
   Standard_EXPORT Handle(GEOM_Object) FuseCollinearEdgesWithinWire
                                      (Handle(GEOM_Object) theWire,
@@ -89,9 +95,9 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
   // this function does not use Function-Driver mechanism, it just computes the free
   // boundary edges and returns them in the sequence.  It is called just for information reasons
   // and it's not intended for history/undo/redo/etc..
-  Standard_EXPORT bool GetFreeBoundary ( Handle(GEOM_Object) theObject,
-                         Handle(TColStd_HSequenceOfTransient)& theOutClosedWires,
-                         Handle(TColStd_HSequenceOfTransient)& theOutOpenWires );
+  Standard_EXPORT bool GetFreeBoundary ( Handle(TColStd_HSequenceOfTransient)& theObjects,
+                                         Handle(TColStd_HSequenceOfTransient)& theOutClosedWires,
+                                         Handle(TColStd_HSequenceOfTransient)& theOutOpenWires );
 
   Standard_EXPORT Handle(GEOM_Object) ChangeOrientation( Handle(GEOM_Object) theObject);
   Standard_EXPORT Handle(GEOM_Object) ChangeOrientationCopy( Handle(GEOM_Object) theObject);
@@ -100,6 +106,11 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                                                       double theTolerance,
                                                       TopAbs_ShapeEnum theType = TopAbs_SHAPE );
 
+  const ShHealOper_ModifStats* GetStatistics() { return myModifStats; }
+
+private:
+
+  ShHealOper_ModifStats* myModifStats;
 };
 
 #endif

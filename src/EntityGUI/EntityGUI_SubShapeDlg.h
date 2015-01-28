@@ -31,6 +31,11 @@
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 
+class QCheckBox;
+class QComboBox;
+class QGroupBox;
+class QPushButton;
+class SalomeApp_DoubleSpinBox;
 class DlgRef_1Sel1List1Check3Btn;
 
 //=================================================================================
@@ -66,15 +71,14 @@ private slots:
   void                                ComboTextChanged();
 
   void                                showOnlySelected();
+  void                                ClickOnOkFilter();
+  void                                MeasureToggled();
 
 private:
   void                                Init();
   void                                enterEvent (QEvent*);
 
   void                                ResetStateOfDialog();
-
-  unsigned int                        NumberOfSubShapes (const TopoDS_Shape&,
-                                                         const int) const;
 
   void                                activateSelection();
   int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex);
@@ -87,11 +91,17 @@ private:
   GEOM::GEOM_Object_var               myObject;
   int                                 myDmMode;
 
-  bool                                myWithShape;
-
   bool                                myIsHiddenMain;
 
   DlgRef_1Sel1List1Check3Btn*         GroupPoints;
+  QCheckBox*                          myLessFilterCheck;
+  QCheckBox*                          myGreaterFilterCheck;
+  QComboBox*                          myLessFilterCombo;
+  QComboBox*                          myGreaterFilterCombo;
+  SalomeApp_DoubleSpinBox*            myLessFilterSpin;
+  SalomeApp_DoubleSpinBox*            myGreaterFilterSpin;
+  QPushButton*                        myApplyFilterButton;
+  QGroupBox*                          myFilterGrp;
 };
 
 #endif // ENTITYGUI_SUBSHAPEDLG_H

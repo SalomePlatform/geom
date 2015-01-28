@@ -25,6 +25,8 @@ into water.</li>
 special case of \b Explode operation. </li>
 <li>\subpage shared_shapes_page "Get shared shapes" operation, a
 special case of \b Explode operation. </li>
+<li>\subpage transfer_data_page "Transfer Data" operation, which copies
+non-topological data from one shape to another. </li>
 
 
 <li>\subpage restore_presentation_parameters_page "Restore presentation parameters". 

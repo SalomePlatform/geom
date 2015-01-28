@@ -59,4 +59,5 @@ void ShHealOper_Tool::Init(const TopoDS_Shape& theShape)
   myErrorStatus =ShHealOper_NotError;
   myInitShape = theShape;
   myContext->Apply(myInitShape);
+  myStatistics.Clear();
 }

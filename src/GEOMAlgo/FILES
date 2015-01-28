@@ -54,6 +54,8 @@ GEOMAlgo_GetInPlace.cxx
 GEOMAlgo_GetInPlace_1.cxx
 GEOMAlgo_GetInPlace_2.cxx
 GEOMAlgo_GetInPlace_3.cxx
+GEOMAlgo_GetInPlaceAPI.hxx
+GEOMAlgo_GetInPlaceAPI.cxx
 GEOMAlgo_Splitter.hxx
 GEOMAlgo_Splitter.cxx
 GEOMAlgo_ShapeInfoFiller.hxx

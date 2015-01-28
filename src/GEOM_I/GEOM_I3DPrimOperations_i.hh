@@ -166,7 +166,7 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 						      GEOM::GEOM_Object_ptr theAxis,
 						      CORBA::Double theAngle);
 
-  GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeFilling(const GEOM::ListOfGO& theContours,
                                     CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
                                     CORBA::Double theTol2D, CORBA::Double theTol3D,
                                     CORBA::Long theNbIter,

@@ -67,6 +67,8 @@ protected:
 
   Handle(TColStd_HSequenceOfTransient)
                GetListOfObjectsImpl(const GEOM::ListOfGO& theObjects);
+  bool GetListOfObjectsImpl(const GEOM::ListOfGO& theObjects,
+                            std::list< Handle(GEOM_Object) >& theList);
 
   Handle(TColStd_HArray1OfExtendedString)
                ConvertStringArray(const GEOM::string_array &theInArray);

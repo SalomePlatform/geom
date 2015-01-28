@@ -261,8 +261,11 @@ bool RepairGUI_FreeBoundDlg::execute (ObjectList& objects)
 {
   GEOM::ListOfGO_var aClosed, anOpen;
 
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length(1);
+  objList[0] = myObj;
   GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
-  bool result = anOper->GetFreeBoundary(myObj, aClosed, anOpen);
+  bool result = anOper->GetFreeBoundary(objList, aClosed, anOpen);
 
   if (result) {
     myNbClosed = aClosed->length();

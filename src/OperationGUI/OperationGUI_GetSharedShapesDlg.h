@@ -53,6 +53,7 @@ private:
   void                               Init();
   void                               enterEvent (QEvent*);
   int                                GetType() const;
+  void                               initTypes();
 
 private:
   GEOM::ListOfGO                     myListShapes;

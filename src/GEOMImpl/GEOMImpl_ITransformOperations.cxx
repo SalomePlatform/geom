@@ -1155,8 +1155,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
  *  ProjectShapeCopy
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ITransformOperations::ProjectShapeCopy
-       (Handle(GEOM_Object) theSource, Handle(GEOM_Object) theTarget)
+Handle(GEOM_Object)
+GEOMImpl_ITransformOperations::ProjectShapeCopy (Handle(GEOM_Object) theSource,
+                                                 Handle(GEOM_Object) theTarget)
 {
   SetErrorCode(KO);
 
@@ -1165,35 +1166,54 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ProjectShapeCopy
   Handle(GEOM_Function) aLastFunction = theSource->GetLastFunction();
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be projected
 
-  //Add a new Projection object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_PROJECTION);
+  Handle(GEOM_Object) aCopy;
 
-  //Add a Projection function
-  Handle(GEOM_Function) aFunction =
-    aCopy->AddFunction(GEOMImpl_ProjectionDriver::GetID(), PROJECTION_COPY);
+  TopoDS_Shape aTarget = theTarget->GetValue();
+  if ( aTarget.IsNull() ) return NULL;
+  if ( aTarget.ShapeType() == TopAbs_EDGE ||
+       aTarget.ShapeType() == TopAbs_WIRE )
+  {
+    // a TPythonDump prevents dumping ProjectPointOnWire(),
+    // dump of MakeProjection() is done at the end of this function
+    GEOM::TPythonDump preventDump(aLastFunction, /*append=*/true);
+    Standard_Integer dummy;
+    ProjectPointOnWire( theSource, theTarget, aCopy, dummy );
+    if ( aCopy.IsNull() || !IsDone() )
+      return NULL;
+  }
+  else
+  {
+    //Add a new Projection object
+    aCopy = GetEngine()->AddObject(GetDocID(), GEOM_PROJECTION);
 
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ProjectionDriver::GetID()) return NULL;
+    //Add a Projection function
+    Handle(GEOM_Function) aFunction =
+      aCopy->AddFunction(GEOMImpl_ProjectionDriver::GetID(), PROJECTION_COPY);
 
-  GEOMImpl_IMirror aTI (aFunction);
-  aTI.SetPlane(theTarget->GetLastFunction());
-  aTI.SetOriginal(aLastFunction);
+    //Check if the function is set correctly
+    if (aFunction->GetDriverGUID() != GEOMImpl_ProjectionDriver::GetID()) return NULL;
 
-  //Compute the Projection
-  try {
-    OCC_CATCH_SIGNALS;
-    if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Projection driver failed");
+    GEOMImpl_IMirror aTI (aFunction);
+    aTI.SetPlane(theTarget->GetLastFunction());
+    aTI.SetOriginal(aLastFunction);
+
+    //Compute the Projection
+    try {
+      OCC_CATCH_SIGNALS;
+      if (!GetSolver()->ComputeFunction(aFunction)) {
+        SetErrorCode("Projection driver failed");
+        return NULL;
+      }
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
       return NULL;
     }
   }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
-    return NULL;
-  }
 
   //Make a Python command
+  Handle(GEOM_Function) aFunction = aCopy->GetLastFunction();
   GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeProjection("
                                << theSource << ", " << theTarget << ")";
 

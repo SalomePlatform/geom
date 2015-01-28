@@ -186,7 +186,10 @@ Standard_Boolean ShHealOper_FillHoles::Fill(const TopTools_SequenceOfShape& theF
       myDone = (addFace(aSurf,aWire,aCurves2d,aOrders,aSenses) || myDone);
   }
   if(myDone)
+  {
     myResultShape = myContext->Apply(myResultShape);
+    myStatistics.AddModif( "Face created to fill hole" , aSeqWires->Length() );
+  }
   return myDone;
 }
 

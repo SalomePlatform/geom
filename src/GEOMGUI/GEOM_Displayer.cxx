@@ -1835,7 +1835,7 @@ void GEOM_Displayer::internalReset()
  *  of their sub-shapes (with opened local context for OCC viewer)
  */
 //=================================================================
-void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& theIO, const int theMode )
+void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& theIO, const std::list<int> modes )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -1852,9 +1852,23 @@ void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& the
     if (!theIO.IsNull() && !vf->isVisible(theIO))
       Display(theIO);
     SALOME_Prs* prs = vf->CreatePrs( theIO.IsNull() ? 0 : theIO->getEntry() );
-    vf->LocalSelection( prs, theMode );
+    vf->LocalSelection( prs, modes );
     delete prs;  // delete presentation because displayer is its owner
   }
+}
+
+//=================================================================
+/*!
+ *  GEOM_Displayer::LocalSelection
+ *  Activate selection of CAD shapes with activisation of selection
+ *  of their sub-shapes (with opened local context for OCC viewer)
+ */
+//=================================================================
+void GEOM_Displayer::LocalSelection( const Handle(SALOME_InteractiveObject)& theIO, const int theMode )
+{
+  std::list<int> modes;
+  modes.push_back( theMode );
+  LocalSelection( theIO, modes );
 }
 
 //=================================================================
@@ -1970,11 +1984,25 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
  *  of their sub-shapes (with opened local context for OCC viewer)
  */
 //=================================================================
-void GEOM_Displayer::LocalSelection( const SALOME_ListIO& theIOList, const int theMode )
+void GEOM_Displayer::LocalSelection( const SALOME_ListIO& theIOList, const std::list<int> modes )
 {
   SALOME_ListIteratorOfListIO Iter( theIOList );
   for ( ; Iter.More(); Iter.Next() )
-    LocalSelection( Iter.Value(), theMode );
+    LocalSelection( Iter.Value(), modes );
+}
+
+//=================================================================
+/*!
+ *  GEOM_Displayer::LocalSelection
+ *  Activate selection of CAD shapes with activisation of selection
+ *  of their sub-shapes (with opened local context for OCC viewer)
+ */
+//=================================================================
+void GEOM_Displayer::LocalSelection( const SALOME_ListIO& theIOList, const int theMode )
+{
+  std::list<int> modes;
+  modes.push_back( theMode );
+  LocalSelection( theIOList, modes );
 }
 
 //=================================================================

@@ -50,17 +50,17 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeDiskR (double theR, int theOrientation);
   Standard_EXPORT Handle(GEOM_Object) MakeCylinderRH       (double theR, double theH);
   Standard_EXPORT Handle(GEOM_Object) MakeCylinderPntVecRH (Handle(GEOM_Object) thePnt,
-							    Handle(GEOM_Object) theVec,
-							    double theR, double theH);
+                                                            Handle(GEOM_Object) theVec,
+                                                            double theR, double theH);
   Standard_EXPORT Handle(GEOM_Object) MakeCylinderRHA       (double theR, double theH, double theA);
   Standard_EXPORT Handle(GEOM_Object) MakeCylinderPntVecRHA (Handle(GEOM_Object) thePnt,
-							     Handle(GEOM_Object) theVec,
-							     double theR, double theH, double theA);					    
+                                                             Handle(GEOM_Object) theVec,
+                                                             double theR, double theH, double theA);                                        
 
   Standard_EXPORT Handle(GEOM_Object) MakeConeR1R2H       (double theR1, double theR2, double theH);
   Standard_EXPORT Handle(GEOM_Object) MakeConePntVecR1R2H (Handle(GEOM_Object) thePnt,
-							   Handle(GEOM_Object) theVec,
-							   double theR1, double theR2, double theH);
+                                                           Handle(GEOM_Object) theVec,
+                                                           double theR1, double theR2, double theH);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSphereR    (double theR);
   Standard_EXPORT Handle(GEOM_Object) MakeSpherePntR (Handle(GEOM_Object) thePnt, double theR);
@@ -68,8 +68,8 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeTorusRR (double theRMajor, double theRMinor);
 
   Standard_EXPORT Handle(GEOM_Object) MakeTorusPntVecRR (Handle(GEOM_Object) thePnt,
-							 Handle(GEOM_Object) theVec,
-							 double theRMajor, double theRMinor);
+                                                         Handle(GEOM_Object) theVec,
+                                                         double theRMajor, double theRMinor);
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismVecH (Handle(GEOM_Object) theBase,
                                                      Handle(GEOM_Object) theVec,
@@ -109,7 +109,7 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                                                     Handle(GEOM_Object) theAxis,
                                                                     double theAngle);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeFilling (Handle(GEOM_Object) theShape,
+  Standard_EXPORT Handle(GEOM_Object) MakeFilling (std::list< Handle(GEOM_Object)> & theContours,
                                                    int theMinDeg, int theMaxDeg,
                                                    double theTol2D, double theTol3D,
                                                    int theNbIter, int theMethod,

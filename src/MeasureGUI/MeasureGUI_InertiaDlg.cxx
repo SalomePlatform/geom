@@ -123,6 +123,19 @@ void MeasureGUI_InertiaDlg::Init()
 }
 
 //=================================================================================
+// function : activateSelection()
+// purpose  :
+//=================================================================================
+void MeasureGUI_InertiaDlg::activateSelection()
+{
+  MeasureGUI_Skeleton::activateSelection();
+  std::list<int> needTypes;
+  needTypes.push_back( TopAbs_VERTEX ), needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL ), needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPOUND );
+  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+}
+
+
+//=================================================================================
 // function : processObject
 // purpose  :
 //=================================================================================
@@ -176,13 +189,13 @@ void MeasureGUI_InertiaDlg::processObject()
 bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
                                            gp_XYZ& theIXYZ )
 {
-  if ( myObj->_is_nil() )
+  if ( !myObj )
     return false;
   else {
     GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
       double x, y, z;
-      anOper->GetInertia( myObj,
+      anOper->GetInertia( myObj.get(),
                           I( 1, 1 ), I( 1, 2 ), I( 1, 3 ),
                           I( 2, 1 ), I( 2, 2 ), I( 2, 3 ),
                           I( 3, 1 ), I( 3, 2 ), I( 3, 3 ),
@@ -197,4 +210,23 @@ bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
 
     return anOper->IsDone();
   }
+}
+
+void MeasureGUI_InertiaDlg::SelectionIntoArgument()
+{
+  myObj.nullify();
+  QList<TopAbs_ShapeEnum> aTypes;
+  aTypes << TopAbs_VERTEX << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE << TopAbs_SHELL << TopAbs_SOLID << TopAbs_COMPSOLID << TopAbs_COMPOUND << TopAbs_SHAPE;
+  myObj = getSelected( aTypes );
+ 
+  if (!myObj) {
+    mySelEdit->setText("");
+    processObject();
+    erasePreview();
+    return;
+  }
+
+  mySelEdit->setText(GEOMBase::GetName(myObj.get()));
+  processObject();
+  redisplayPreview();
 }

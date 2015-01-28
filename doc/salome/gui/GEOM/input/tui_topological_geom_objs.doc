@@ -22,6 +22,10 @@
 <br><h2>Creation of a Solid</h2>
 \tui_script{topological_geom_objs_ex05.py}
 
+\anchor tui_creation_solid_from_faces
+<br><h2>Creation of a Solid from the set of connected faces</h2>
+\tui_script{topological_geom_objs_ex07.py}
+
 \anchor tui_creation_compound
 <br><h2>Creation of a Compound</h2>
 \tui_script{topological_geom_objs_ex06.py}

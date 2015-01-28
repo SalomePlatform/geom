@@ -34,6 +34,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_BINARY_DIR}/idl
   ${PROJECT_BINARY_DIR}
   ${PROJECT_SOURCE_DIR}/src/OBJECT
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${PROJECT_SOURCE_DIR}/src/GEOMClient
   ${PROJECT_SOURCE_DIR}/src/GEOMImpl
   ${PROJECT_SOURCE_DIR}/src/GEOMGUI
@@ -54,6 +55,7 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   GEOMBase
+  GEOMUtils
   )
 
 # --- resources ---

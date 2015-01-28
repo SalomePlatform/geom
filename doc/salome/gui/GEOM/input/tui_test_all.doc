@@ -66,6 +66,12 @@
 \anchor swig_ChangeOrientation
 \until ChangeOrientation
 
+\anchor swig_ExtendFaceEdge
+\until ExtendFace
+
+\anchor swig_SurfaceFromFace
+\until MakeSurfaceFromFace
+
 \anchor swig_ExtractShapes
 \until prism_edges
 

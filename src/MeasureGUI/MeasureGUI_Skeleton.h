@@ -77,7 +77,7 @@ protected:
 protected:    
   QPushButton*                       mySelBtn;
   QLineEdit*                         mySelEdit;
-  GEOM::GEOM_Object_var              myObj;
+  GEOM::GeomObjPtr                   myObj;
   
   GeometryGUI*                       myGeomGUI;
   GEOM_Displayer*                    myDisplayer;

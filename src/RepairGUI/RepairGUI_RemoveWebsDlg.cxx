@@ -63,7 +63,7 @@ RepairGUI_RemoveWebsDlg::RepairGUI_RemoveWebsDlg (GeometryGUI* theGeometryGUI, Q
   GroupPoints = new DlgRef_1Sel( centralWidget() );
 
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_REMOVE_WEBS" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_SELECTED_SHAPE" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_SELECTED_SHAPES" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
 
@@ -141,7 +141,7 @@ bool RepairGUI_RemoveWebsDlg::ClickOnApply()
   initName();
 
   myEditCurrentArgument->setText("");
-  myObject = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
 
   myOkObject = false;
 
@@ -158,33 +158,16 @@ bool RepairGUI_RemoveWebsDlg::ClickOnApply()
 void RepairGUI_RemoveWebsDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-  QString aName;
+  myObjects.clear();
+  myOkObject = false;
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  myObjects = getSelected( TopAbs_SHAPE, -1 );
 
-  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    if (aSelList.Extent() != 1) {
-      if (myEditCurrentArgument == GroupPoints->LineEdit1)
-        myOkObject = false;
-      return;
-    }
-  }
-
-  // nbSel == 1
-  GEOM::GEOM_Object_ptr aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject(aSelList.First());
-
-  if (CORBA::is_nil(aSelectedObject))
-    return;
-
-  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myObject = aSelectedObject;
+  if ( !myObjects.isEmpty() ) {
+    QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
     myOkObject = true;
+    myEditCurrentArgument->setText( aName );
   }
-
-  myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
 }
 
 //=================================================================================
@@ -242,7 +225,7 @@ void RepairGUI_RemoveWebsDlg::enterEvent (QEvent* e)
 void RepairGUI_RemoveWebsDlg::activateSelection()
 {
   TColStd_MapOfInteger aTypes;
-  //aTypes.Add( GEOM_SOLID );
+  aTypes.Add( GEOM_SOLID );
   aTypes.Add( GEOM_COMPOUND );
   globalSelection( aTypes );
 }
@@ -271,8 +254,13 @@ bool RepairGUI_RemoveWebsDlg::isValid (QString& msg)
 //=================================================================================
 bool RepairGUI_RemoveWebsDlg::execute (ObjectList& objects)
 {
+  GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+  objList->length( myObjects.count() );
+  for ( int i = 0; i < myObjects.count(); ++i )
+    objList[i] = myObjects[i].copy();
+
   GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
-  GEOM::GEOM_Object_var anObj = anOper->RemoveInternalFaces(myObject);
+  GEOM::GEOM_Object_var anObj = anOper->RemoveInternalFaces(objList);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

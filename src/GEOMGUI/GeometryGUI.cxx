@@ -553,6 +553,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::Op3dSketcher:         // MENU ENTITY - 3D SKETCHER
   case GEOMOp::OpIsoline:            // MENU BASIC  - ISOLINE
   case GEOMOp::OpExplode:            // MENU ENTITY - EXPLODE
+  case GEOMOp::OpSurfaceFromFace:    // MENU ENTITY - SURFACE FROM FACE
 #ifdef WITH_OPENCV
   case GEOMOp::OpFeatureDetect:      // MENU ENTITY - FEATURE DETECTION
 #endif
@@ -587,6 +588,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpMultiTranslate:     // MENU TRANSFORMATION - MULTI-TRANSLATION
   case GEOMOp::OpMultiRotate:        // MENU TRANSFORMATION - MULTI-ROTATION
   case GEOMOp::OpReimport:           // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
+  case GEOMOp::OpExtension:          // MENU TRANSFORMATION - EXTENSION
     libName = "TransformationGUI";
     break;
   case GEOMOp::OpPartition:          // MENU OPERATION - PARTITION
@@ -600,6 +602,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpSharedShapes:       // MENU OPERATION - GET SHARED SHAPES
   case GEOMOp::OpExtrudedBoss:       // MENU OPERATION - EXTRUDED BOSS
   case GEOMOp::OpExtrudedCut:        // MENU OPERATION - EXTRUDED CUT
+  case GEOMOp::OpTransferData:       // MENU OPERATION - TRANSFER DATA
     libName = "OperationGUI";
     break;
   case GEOMOp::OpSewing:             // MENU REPAIR - SEWING
@@ -619,6 +622,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpRemoveExtraEdges:   // MENU REPAIR - REMOVE EXTRA EDGES
   case GEOMOp::OpFuseEdges:          // MENU REPAIR - FUSE COLLINEAR EDGES
   case GEOMOp::OpUnionFaces:         // MENU REPAIR - UNION FACES
+  case GEOMOp::OpInspectObj:         // MENU REPAIR - INSPECT OBJECT
     libName = "RepairGUI";
     break;
   case GEOMOp::OpProperties:         // MENU MEASURE - PROPERTIES
@@ -635,6 +639,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpGetNonBlocks:       // MENU MEASURE - Get NON BLOCKS
   case GEOMOp::OpPointCoordinates:   // MENU MEASURE - POINT COORDINATES
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
+  case GEOMOp::OpFastCheckInters:    // MENU MEASURE - FAST CHECK INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
   case GEOMOp::OpShowAllDimensions:  // POPUP MENU - SHOW ALL DIMENSIONS
   case GEOMOp::OpHideAllDimensions:  // POPUP MENU - HIDE ALL DIMENSIONS
@@ -900,6 +905,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPlane,      "PLANE" );
   createGeomAction( GEOMOp::OpLCS,        "LOCAL_CS" );
   createGeomAction( GEOMOp::OpOriginAndVectors, "ORIGIN_AND_VECTORS" );
+  createGeomAction( GEOMOp::OpSurfaceFromFace,  "SURFACE_FROM_FACE" );
 
   createGeomAction( GEOMOp::OpBox,        "BOX" );
   createGeomAction( GEOMOp::OpCylinder,   "CYLINDER" );
@@ -931,7 +937,6 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::Op2dSketcher,  "SKETCH" );
   createGeomAction( GEOMOp::Op3dSketcher,  "3DSKETCH" );
-  createGeomAction( GEOMOp::OpIsoline,     "ISOLINE" );
   createGeomAction( GEOMOp::OpExplode,     "EXPLODE" );
 #ifdef WITH_OPENCV
   createGeomAction( GEOMOp::OpFeatureDetect,"FEATURE_DETECTION" );
@@ -960,6 +965,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpProjection,     "PROJECTION" );
   createGeomAction( GEOMOp::OpMultiTranslate, "MUL_TRANSLATION" );
   createGeomAction( GEOMOp::OpMultiRotate,    "MUL_ROTATION" );
+  createGeomAction( GEOMOp::OpExtension,      "EXTENSION" );
 
   createGeomAction( GEOMOp::OpPartition,      "PARTITION" );
   createGeomAction( GEOMOp::OpArchimede,      "ARCHIMEDE" );
@@ -968,6 +974,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   //createGeomAction( GEOMOp::OpClipping,        "CLIPPING" );
   createGeomAction( GEOMOp::OpShapesOnShape,  "GET_SHAPES_ON_SHAPE" );
   createGeomAction( GEOMOp::OpSharedShapes,   "GET_SHARED_SHAPES" );
+  createGeomAction( GEOMOp::OpTransferData,   "TRANSFER_DATA" );
   createGeomAction( GEOMOp::OpExtrudedCut,    "EXTRUDED_CUT" );
   createGeomAction( GEOMOp::OpExtrudedBoss,   "EXTRUDED_BOSS" );
   createGeomAction( GEOMOp::OpFillet1d,       "FILLET_1D" );
@@ -994,6 +1001,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpRemoveExtraEdges, "REMOVE_EXTRA_EDGES" );
   createGeomAction( GEOMOp::OpFuseEdges,        "FUSE_EDGES" );
   createGeomAction( GEOMOp::OpUnionFaces,       "UNION_FACES" );
+  createGeomAction( GEOMOp::OpInspectObj,       "INSPECT_OBJECT" );
 
   createGeomAction( GEOMOp::OpPointCoordinates, "POINT_COORDS" );
   createGeomAction( GEOMOp::OpProperties,       "BASIC_PROPS" );
@@ -1011,6 +1019,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpCheckCompound,    "CHECK_COMPOUND" );
   createGeomAction( GEOMOp::OpGetNonBlocks,     "GET_NON_BLOCKS" );
   createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
+  createGeomAction( GEOMOp::OpFastCheckInters,  "FAST_CHECK_INTERSECTIONS" );
 
 #ifdef _DEBUG_ // PAL16821
   createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
@@ -1109,6 +1118,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::Op2dPolylineEditor, basicId, -1 );
   createMenu( GEOMOp::Op3dSketcher,       basicId, -1 );
   createMenu( GEOMOp::OpIsoline,          basicId, -1 );
+  createMenu( GEOMOp::OpSurfaceFromFace, basicId, -1 );
   createMenu( separator(),                basicId, -1 );
   createMenu( GEOMOp::OpVector,           basicId, -1 );
   createMenu( GEOMOp::OpPlane,            basicId, -1 );
@@ -1194,6 +1204,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpScale,          transId, -1 );
   createMenu( GEOMOp::OpOffset,         transId, -1 );
   createMenu( GEOMOp::OpProjection,     transId, -1 );
+  createMenu( GEOMOp::OpExtension,      transId, -1 );
   createMenu( separator(),              transId, -1 );
   createMenu( GEOMOp::OpMultiTranslate, transId, -1 );
   createMenu( GEOMOp::OpMultiRotate,    transId, -1 );
@@ -1209,6 +1220,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpArchimede,     operId, -1 );
   createMenu( GEOMOp::OpShapesOnShape, operId, -1 );
   createMenu( GEOMOp::OpSharedShapes,  operId, -1 );
+  createMenu( GEOMOp::OpTransferData,  operId, -1 );
 
   createMenu( separator(), operId, -1 );
 
@@ -1265,6 +1277,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpCheckCompound,   measurId, -1 );
   createMenu( GEOMOp::OpGetNonBlocks,    measurId, -1 );
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
+  createMenu( GEOMOp::OpFastCheckInters, measurId, -1 );
+  createMenu( GEOMOp::OpInspectObj,      measurId, -1 );
 
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
 #if defined(_DEBUG_) || defined(_DEBUG) // PAL16821
@@ -1319,6 +1333,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::Op2dPolylineEditor, basicTbId ); 
   createTool( GEOMOp::Op3dSketcher,       basicTbId ); //rnc
   createTool( GEOMOp::OpIsoline,          basicTbId );
+  createTool( GEOMOp::OpSurfaceFromFace,  basicTbId );
   createTool( GEOMOp::OpPlane,            basicTbId );
   createTool( GEOMOp::OpLCS,              basicTbId );
   createTool( GEOMOp::OpOriginAndVectors, basicTbId );
@@ -1362,6 +1377,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpScale,          transTbId );
   createTool( GEOMOp::OpOffset,         transTbId );
   createTool( GEOMOp::OpProjection,     transTbId );
+  createTool( GEOMOp::OpExtension,      transTbId );
   createTool( separator(),              transTbId );
   createTool( GEOMOp::OpMultiTranslate, transTbId );
   createTool( GEOMOp::OpMultiRotate,    transTbId );
@@ -1372,6 +1388,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpArchimede,       operTbId );
   createTool( GEOMOp::OpShapesOnShape,   operTbId );
   createTool( GEOMOp::OpSharedShapes,    operTbId );
+  createTool( GEOMOp::OpTransferData,    operTbId );
 
   int featTbId = createTool( tr( "TOOL_FEATURES" ), QString( "GEOMModification" ) );
   createTool( GEOMOp::OpFillet1d,        featTbId );
@@ -1409,6 +1426,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpCheckCompound,    measureTbId );
   createTool( GEOMOp::OpGetNonBlocks,     measureTbId );
   createTool( GEOMOp::OpCheckSelfInters,  measureTbId );
+  createTool( GEOMOp::OpFastCheckInters,  measureTbId );
 
   int picturesTbId = createTool( tr( "TOOL_PICTURES" ), QString( "GEOMPictures" ) );
   createTool( GEOMOp::OpPictureImport,    picturesTbId );

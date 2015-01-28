@@ -45,6 +45,7 @@
 #include <QRadioButton>
 #include <QMenu>
 #include <QTimer>
+#include <QList>
 
 #include <gp_Pnt.hxx>
 #include <TopoDS_Shape.hxx>
@@ -67,8 +68,6 @@
 
 #define SPACING 6
 #define MARGIN  9
-
-enum { SelectEdge, SelectWire };
 
 //=================================================================================
 // class    : BasicGUI_PointDlg()
@@ -150,20 +149,15 @@ BasicGUI_PointDlg::BasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   GroupRefPoint->TextLabel4->setText(tr("GEOM_DZ"));
 
   /* popup menu for line intersect buttons */
-  myBtnPopup = new QMenu(this);
   QIcon ico_line = QIcon(image6);
   QIcon ico_wire = QIcon(image7);
-  myActions[myBtnPopup->addAction(ico_line, tr("GEOM_EDGE"))] = SelectEdge;
-  myActions[myBtnPopup->addAction(ico_wire, tr("GEOM_WIRE"))] = SelectWire;
 
   GroupLineIntersection = new DlgRef_2Sel(centralWidget());
   GroupLineIntersection->GroupBox1->setTitle(tr("GEOM_LINE_INTERSECTION"));
   GroupLineIntersection->TextLabel1->setText(tr("GEOM_LINE1"));
   GroupLineIntersection->TextLabel2->setText(tr("GEOM_LINE2"));
   GroupLineIntersection->PushButton1->setIcon(image2);
-  GroupLineIntersection->PushButton1->setMenu(myBtnPopup);
   GroupLineIntersection->PushButton2->setIcon(image2);
-  GroupLineIntersection->PushButton2->setMenu(myBtnPopup);
   GroupLineIntersection->LineEdit2->setEnabled(false);
 
   myCoordGrp = new QGroupBox(tr("GEOM_COORDINATES_RES"), centralWidget());
@@ -286,9 +280,7 @@ void BasicGUI_PointDlg::Init()
   connect(GroupOnSurface->PushButton1,        SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupLineIntersection->PushButton1, SIGNAL(pressed()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupLineIntersection->PushButton2, SIGNAL(pressed()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(myBtnPopup, SIGNAL(triggered(QAction*)), this, SLOT(onBtnPopup(QAction*)));
-
+  
   connect(GroupOnCurve->SpinBox_DX,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupOnSurface->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupOnSurface->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
@@ -391,8 +383,9 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
   case GEOM_POINT_INTINT:
     {
       globalSelection(); // close local contexts, if any
-      myNeedType = TopAbs_EDGE;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      std::list<int> needTypes;
+      needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE );
+      localSelection(GEOM::GEOM_Object::_nil(), needTypes );
 
       myEditCurrentArgument = GroupLineIntersection->LineEdit1;
       GroupLineIntersection->LineEdit1->setText("");
@@ -500,7 +493,14 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
       myLine2.nullify();
   }
 
-  GEOM::GeomObjPtr aSelectedObject = getSelected(myNeedType);
+  GEOM::GeomObjPtr aSelectedObject;
+  if (id == GEOM_POINT_INTINT) {
+    QList<TopAbs_ShapeEnum> needTypes;
+    needTypes << TopAbs_EDGE, needTypes << TopAbs_WIRE;
+    aSelectedObject= getSelected(needTypes);
+  }
+  else 
+    aSelectedObject= getSelected(myNeedType);
   TopoDS_Shape aShape;
   if (aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull()) {
     QString aName = GEOMBase::GetName(aSelectedObject.get());
@@ -535,19 +535,13 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
       if (myEditCurrentArgument == GroupLineIntersection->LineEdit1) {
         myLine1 = aSelectedObject;
         if (myLine1 && !myLine2) {
-          GroupLineIntersection->PushButton2->setMenu(0);
           GroupLineIntersection->PushButton2->click();
-          GroupLineIntersection->PushButton2->setDown(true);
-          GroupLineIntersection->PushButton2->setMenu(myBtnPopup);
         }
       }
       else if (myEditCurrentArgument == GroupLineIntersection->LineEdit2) {
         myLine2 = aSelectedObject;
         if (myLine2 && !myLine1) {
-          GroupLineIntersection->PushButton1->setMenu(0);
           GroupLineIntersection->PushButton1->click();
-          GroupLineIntersection->PushButton1->setDown(true);
-          GroupLineIntersection->PushButton1->setMenu(myBtnPopup);
         }
       }
     }
@@ -990,17 +984,6 @@ void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
 
   if (theIsUpdate)
     QTimer::singleShot(50, this, SLOT(updateSize()));
-}
-
-//=================================================================================
-// function : onBtnPopup()
-// purpose  :
-//=================================================================================
-void BasicGUI_PointDlg::onBtnPopup(QAction* a)
-{
-  globalSelection(); // close local contexts, if any
-  myNeedType = myActions[a] == SelectEdge ? TopAbs_EDGE : TopAbs_WIRE;
-  localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
 }
 
 //=================================================================================

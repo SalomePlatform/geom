@@ -9,7 +9,15 @@ the selected geometrical object.
 
 Press \b Apply or <b>Apply and Close</b> button to publish the \b Point in the study. 
 
-\n <b>TUI Command:</b> <em> geompy.MakeCDG(Shape),</em> where \em Shape is
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
+<b>TUI Command:</b> <em> geompy.MakeCDG(Shape),</em> where \em Shape is
 the shape for which a center of gravity is computed.
 
 See also a \ref tui_center_of_mass_page "TUI example".

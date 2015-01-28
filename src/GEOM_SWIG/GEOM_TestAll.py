@@ -178,6 +178,13 @@ def TestAll (geompy, math):
   Face2    = geompy.MakeFace(Sketcher, WantPlanarFace)
   Face3    = geompy.MakeFaceHW (100., 200., 1)       #(2 Doubles, 1 Int)->GEOM_Object
   Face4    = geompy.MakeFaceObjHW (vz, 200., 100.)   #(1 GEOM_Object, 2 Doubles)->GEOM_Object
+  Face5    = geompy.MakeFaceFromSurface(Face, Sketcher) #(2 GEOM_Objects)->GEOM_Object
+  
+  Cut2 = geompy.MakeCutList(Sphere1, [Box1], True)
+  #(List of GEOM_Object)->GEOM_Object
+  Face6 = geompy.MakeFaceWithConstraints([geompy.GetSubShape(Cut2, [5]),  geompy.GetSubShape(Cut2, [3]), 
+                                          geompy.GetSubShape(Cut2, [11]), geompy.GetSubShape(Cut2, [3]),
+                                          geompy.GetSubShape(Cut2, [13]), geompy.GetSubShape(Cut2, [3])])
   Disk     = geompy.MakeDiskPntVecR (p0, vz, radius) #(2 GEOM_Object, 1 Double)->GEOM_Object
   Disk2    = geompy.MakeDiskThreePnt(p0, p200, pz)   #(3 GEOM_Object)->GEOM_Object
   Disk3    = geompy.MakeDiskR(100., 1)               #(1 Doubles, 1 Int)->GEOM_Object
@@ -189,7 +196,13 @@ def TestAll (geompy, math):
                                prism1_faces[3], prism1_faces[4],
                                prism1_faces[5], prism1_faces[2]])
   Solid    = geompy.MakeSolid([Shell1])              #(List of GEOM_Object)->GEOM_Object
-
+  
+  Box1_translation = geompy.MakeTranslation(Box1, 10, 0, 0)
+  Box1_shell = geompy.SubShapeAllSorted(Box1, geompy.ShapeType["SHELL"])[0]
+  Box1_translation_shell = geompy.SubShapeAllSorted(Box1_translation, geompy.ShapeType["SHELL"])[0]
+  
+  Solid_from_shells = geompy.MakeSolidFromConnectedFaces([Box1_shell, Box1_translation_shell], 1) #(List of GEOM_Object, Boolean)->GEOM_Object
+  
   # Create Isoline
   Isoline = geompy.MakeIsoline(Face1, True, 0.5)     #(1 GEOM_Object, Boolean, Double)->GEOM_Object
 
@@ -254,6 +267,9 @@ def TestAll (geompy, math):
   Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object, Double)->GEOM_Object
   ProjOnWire  = geompy.MakeProjectionOnWire(p0, Wire)
   Orientation = geompy.ChangeOrientation(Box)
+  ExtEdge     = geompy.ExtendEdge(Edge1, -0.3, 1.3)
+  ExtFace     = geompy.ExtendFace(Face5, -0.3, 1.3, -0.1, 1.1)
+  Surface     = geompy.MakeSurfaceFromFace(Face5)
 
   #IDList for Fillet/Chamfer
   prism_edges = geompy.ExtractShapes(Prism, geompy.ShapeType["EDGE"], True)
@@ -386,6 +402,7 @@ def TestAll (geompy, math):
 
   id_Common  = geompy.addToStudy(Common,  "Common")
   id_Cut     = geompy.addToStudy(Cut,     "Cut")
+  id_Cut2    = geompy.addToStudy(Cut2,    "Cut2")
   id_Fuse    = geompy.addToStudy(Fuse,    "Fuse")
   id_Section = geompy.addToStudy(Section, "Section")
 
@@ -397,6 +414,8 @@ def TestAll (geompy, math):
   id_Face2    = geompy.addToStudy(Face2,    "Face from Sketcher")
   id_Face3    = geompy.addToStudy(Face3,    "Face Height Width")
   id_Face4    = geompy.addToStudy(Face4,    "Face Plane_HW")
+  id_Face5    = geompy.addToStudy(Face5,    "Face from surface and wire")
+  id_Face6    = geompy.addToStudy(Face6,    "Face from edges with constraints")
   id_Disk     = geompy.addToStudy(Disk,     "Disk PntVecR")
   id_Disk2    = geompy.addToStudy(Disk2,    "Disk Three Points")
   id_Disk3    = geompy.addToStudy(Disk3,    "Disk OXY Radius")
@@ -411,6 +430,8 @@ def TestAll (geompy, math):
   id_Prism1   = geompy.addToStudy(Prism1,     "Prism by Two Pnt")
   id_Shell1   = geompy.addToStudy(Shell1,   "Shell from Prism1 faces")
   id_Solid    = geompy.addToStudy(Solid,    "Solid")
+  id_Solid1   = geompy.addToStudy(Solid_from_shells,   "Solid1")
+  
   id_Compound = geompy.addToStudy(Compound, "Compound")
 
   id_Plane2   = geompy.addToStudy(Plane2,   "Plane on Face")
@@ -467,6 +488,9 @@ def TestAll (geompy, math):
   id_Offset      = geompy.addToStudy(Offset,        "Offset")
   id_Orientation = geompy.addToStudy(Orientation,   "Orientation")
   id_ProjOnWire  = geompy.addToStudy(ProjOnWire[1], "ProjOnWire")
+  id_ExtEdge     = geompy.addToStudy(ExtEdge,       "ExtendedEdge")
+  id_ExtFace     = geompy.addToStudy(ExtFace,       "ExtendedFace")
+  id_Surface     = geompy.addToStudy(Surface,       "Surface From Face")
 
   id_Fillet   = geompy.addToStudy(Fillet,   "Fillet")
   id_Fillet2  = geompy.addToStudy(Fillet2,  "Fillet2")
@@ -489,7 +513,7 @@ def TestAll (geompy, math):
 
   id_Partition  = geompy.addToStudy(Partition, "Partition")
   id_Partition1 = geompy.addToStudy(Partition1, "Half Partition")
-
+  
   #Decompose objects
 
   # SubShape

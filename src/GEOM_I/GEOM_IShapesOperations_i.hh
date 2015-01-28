@@ -64,6 +64,11 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeFaceWires (const GEOM::ListOfGO& theWires,
                                        CORBA::Boolean  isPlanarWanted);
 
+  GEOM::GEOM_Object_ptr MakeFaceFromSurface(GEOM::GEOM_Object_ptr theFace,
+                                            GEOM::GEOM_Object_ptr theWire);
+
+  GEOM::GEOM_Object_ptr MakeFaceWithConstraints (const GEOM::ListOfGO& theConstraints);
+  
   GEOM::GEOM_Object_ptr MakeShell (const GEOM::ListOfGO& theFacesAndShells);
 
   GEOM::GEOM_Object_ptr MakeSolidShell (GEOM::GEOM_Object_ptr theShell);
@@ -72,26 +77,29 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   GEOM::GEOM_Object_ptr MakeCompound (const GEOM::ListOfGO& theShapes);
 
-  GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeSolidFromConnectedFaces (const GEOM::ListOfGO& theFacesOrShells,
+                                                     CORBA::Boolean isIntersect);
+
+  GEOM::GEOM_Object_ptr MakeGlueFaces (const GEOM::ListOfGO& theShape,
                                        CORBA::Double         theTolerance,
                                        CORBA::Boolean        doKeepNonSolids);
 
-  GEOM::ListOfGO* GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
+  GEOM::ListOfGO* GetGlueFaces (const GEOM::ListOfGO& theShape,
                                 CORBA::Double         theTolerance);
 
-  GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeGlueFacesByList (const GEOM::ListOfGO& theShape,
                                              CORBA::Double         theTolerance,
                                              const GEOM::ListOfGO& theFaces,
                                              CORBA::Boolean doKeepNonSolids,
                                              CORBA::Boolean doGlueAllEdges);
 
-  GEOM::GEOM_Object_ptr MakeGlueEdges (GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeGlueEdges (const GEOM::ListOfGO& theShape,
                                        CORBA::Double         theTolerance);
 
-  GEOM::ListOfGO* GetGlueEdges (GEOM::GEOM_Object_ptr theShape,
+  GEOM::ListOfGO* GetGlueEdges (const GEOM::ListOfGO& theShape,
                                 CORBA::Double         theTolerance);
 
-  GEOM::GEOM_Object_ptr MakeGlueEdgesByList (GEOM::GEOM_Object_ptr theShape,
+  GEOM::GEOM_Object_ptr MakeGlueEdgesByList (const GEOM::ListOfGO& theShape,
                                              CORBA::Double         theTolerance,
                                              const GEOM::ListOfGO& theEdges);
 
@@ -138,6 +146,11 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   char* GetShapeTypeString (GEOM::GEOM_Object_ptr theShape);
 
+  CORBA::Boolean IsSubShapeBelongsTo( GEOM::GEOM_Object_ptr theSubobject,
+                                      const CORBA::Long theSubObjectIndex,
+                                      GEOM::GEOM_Object_ptr theObject,
+                                      const CORBA::Long theObjectIndex );
+
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfSubShapes (GEOM::GEOM_Object_ptr theShape,
@@ -152,7 +165,8 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                    CORBA::Long           theShapeType);
 
   GEOM::ListOfGO* GetSharedShapesMulti (const GEOM::ListOfGO& theShapes,
-                                        CORBA::Long           theShapeType);
+                                        CORBA::Long           theShapeType,
+                                        CORBA::Boolean        theMultiShare);
 
   GEOM::ListOfGO* GetShapesOnPlane (GEOM::GEOM_Object_ptr theShape,
                                     CORBA::Long           theShapeType,
@@ -270,6 +284,18 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   GEOM::ListOfLong* GetSameIDs  (GEOM::GEOM_Object_ptr theShapeWhere,
                                  GEOM::GEOM_Object_ptr theShapeWhat);
+
+  GEOM::GEOM_Object_ptr ExtendEdge(GEOM::GEOM_Object_ptr theEdge,
+                                   CORBA::Double         theMin,
+                                   CORBA::Double         theMax);
+
+  GEOM::GEOM_Object_ptr ExtendFace(GEOM::GEOM_Object_ptr theFace,
+                                   CORBA::Double         theUMin,
+                                   CORBA::Double         theUMax,
+                                   CORBA::Double         theVMin,
+                                   CORBA::Double         theVMax);
+
+  GEOM::GEOM_Object_ptr MakeSurfaceFromFace(GEOM::GEOM_Object_ptr theFace);
 
   GEOM::ListOfGO* GetSubShapeEdgeSorted (GEOM::GEOM_Object_ptr theShape,
                                          GEOM::GEOM_Object_ptr theStartPoint);

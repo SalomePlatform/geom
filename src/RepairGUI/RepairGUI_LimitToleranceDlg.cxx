@@ -23,12 +23,12 @@
 
 #include "RepairGUI_LimitToleranceDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
-#include <SalomeApp_DoubleSpinBox.h>
-#include "utilities.h"
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "RepairGUI.h"
 
+#include <SalomeApp_DoubleSpinBox.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Study.h>
@@ -304,6 +304,8 @@ bool RepairGUI_LimitToleranceDlg::execute(ObjectList& objects)
     QStringList aParameters;
     aParameters << myTolEdt->text();
     anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    if ( !IsPreview() )
+      RepairGUI::ShowStatistics( anOper, this );
     objects.push_back(anObj._retn());
   }
 
@@ -325,7 +327,6 @@ bool RepairGUI_LimitToleranceDlg::onAcceptLocal()
 
   bool aLocked = aStudy->GetProperties()->IsLocked();
   if (aLocked) {
-    MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
     SUIT_MessageBox::warning(this, tr("WRN_WARNING"), tr("WRN_STUDY_LOCKED"), tr("BUT_OK"));
     return false;
   }

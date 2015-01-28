@@ -47,6 +47,7 @@ protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
   virtual bool                        isValid( QString& );
+  virtual void                        addSubshapesToStudy();
   virtual bool                        execute( ObjectList& );
 
 private slots:
@@ -61,10 +62,11 @@ private:
   void                                Init();
   void                                enterEvent( QEvent* );
   void                                processObject();
+  void                                activateSelection();
   bool                                getParameters( double&, double&, double& );
   
 private:
-  GEOM::GEOM_Object_var               myObj;
+  GEOM::GeomObjPtr                    myObj;
   MeasureGUI_1Sel3LineEdit*           myGrp;
 };
 

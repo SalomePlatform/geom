@@ -49,13 +49,15 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );    
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  void                               initSelection();
 
 private:
-  GEOM::GeomObjPtr                   myCompound; /* compound of curves */
+  QList<GEOM::GeomObjPtr>            myObjects;/* lit or compound of curves */
   DlgRef_1Sel5Spin1Check*            GroupPoints;
     
 private slots:

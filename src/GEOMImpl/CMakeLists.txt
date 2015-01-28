@@ -30,9 +30,11 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/BlockFix
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo 
   ${PROJECT_SOURCE_DIR}/src/GEOMUtils
+  ${PROJECT_SOURCE_DIR}/src/OCC2VTK
   ${PROJECT_SOURCE_DIR}/src/SKETCHER
   ${PROJECT_SOURCE_DIR}/src/ARCHIMEDE
   ${PROJECT_SOURCE_DIR}/src/XAO
+  ${PROJECT_SOURCE_DIR}/src/ShHealOper
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -47,7 +49,7 @@ SET(_link_LIBRARIES
   ${CAS_TKFeat}
   ${CAS_TKFillet}
   ${PYTHON_LIBRARIES}
-  ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede XAO
+  ShHealOper GEOMbasic BlockFix GEOMAlgo GEOMUtils GEOMSketcher GEOMArchimede XAO OCC2VTK
   ${KERNEL_SALOMELocalTrace}
   )
 
@@ -110,12 +112,14 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ICone.hxx
   GEOMImpl_ISphere.hxx
   GEOMImpl_ITorus.hxx
+  GEOMImpl_ITransferData.hxx
   GEOMImpl_IPrism.hxx
   GEOMImpl_IPipe.hxx
   GEOMImpl_IPipePath.hxx
   GEOMImpl_IRevolution.hxx
   GEOMImpl_IMeasure.hxx
   GEOMImpl_IShapes.hxx
+  GEOMImpl_IShapeExtend.hxx
   GEOMImpl_IFilling.hxx
   GEOMImpl_IThruSections.hxx
   GEOMImpl_IPartition.hxx
@@ -195,6 +199,7 @@ SET(GEOMImpl_SOURCES
   GEOMImpl_IFieldOperations.cxx
   GEOMImpl_IBaseIEOperations.cxx
   GEOMImpl_IPolyline2D.cxx
+  GEOMImpl_ITransferData.cxx
   GEOMImpl_Gen.cxx
   GEOMImpl_PointDriver.cxx
   GEOMImpl_VectorDriver.cxx

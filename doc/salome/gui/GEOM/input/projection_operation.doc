@@ -1,24 +1,44 @@
 /*!
 
-\page projection_operation_page Projection on a Face
+\page projection_operation_page Projection
 
-\n To produce a <b>Projection</b> in the <b>Main Menu</b> select
+To produce a <b>Projection</b> in the <b>Main Menu</b> select
 <b>Operations - > Transformation - > Projection</b>
 
-\n This operation makes normal projection of a <b>Source vertex, edge
-   or wire</b> on a given <b>Target face</b>.
-\ref restore_presentation_parameters_page "Advanced options".
+This operation makes normal projection of one shape to another.
+
+There are 3 types of projection different by types of operands.
+
+Firstly, you can project <b>Source vertex, edge or wire</b> on a given <b>Target face</b>.
 
 \image html projection_dlg.png
 
-\n <b>Example:</b>
+Secondly, you can project <b>Source vertex</b> on a given <b>Target wire</b>.
+
+\image html projection_dlg1.png
+
+Thirdly, you can project <b>Source vertex</b> on a given <b>Target edge</b>.
+
+\image html projection_dlg2.png
+
+\ref restore_presentation_parameters_page "Advanced options".
+
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
+<b>Example:</b>
 
 \image html projection_preview.png "The curve (in red) and its projection on the cylindric surface"
 
-\n <b>TUI Command:</b> <em>geompy.MakeProjection(Source, Target),</em>
-   where \em Source is a shape which has to be projected, \em Target
-   is a face, on which the \em Source shape will be projected. The \em
-   Result will be a \em GEOM_Object.
+<b>TUI Command:</b> <em>geompy.MakeProjection(Source, Target),</em>
+\n where \em Source is a shape which has to be projected, \em Target
+is a shape, on which the \em Source shape will be projected. The \em
+Result will be a \em GEOM_Object.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_projection "Transformation Operations".

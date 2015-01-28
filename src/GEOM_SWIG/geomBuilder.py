@@ -517,6 +517,14 @@ def EnumToLong(theItem):
     if hasattr(theItem, "_v"): ret = theItem._v
     return ret
 
+## Pack an argument into a list
+def ToList( arg ):
+    if isinstance( arg, list ):
+        return arg
+    if hasattr( arg, "__getitem__" ):
+        return list( arg )
+    return [ arg ]
+
 ## Information about closed/unclosed state of shell or wire
 #  @ingroup l1_geomBuilder_auxiliary
 class info:
@@ -551,7 +559,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Enumeration ShapeType as a dictionary. \n
         ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
         #  @ingroup l1_geomBuilder_auxiliary
-        ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8}
+        ShapeType = {"AUTO":-1, "COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE":5, "EDGE":6, "VERTEX":7, "SHAPE":8, "FLAT":9}
 
         ## Kinds of shape in terms of <VAR>GEOM.GEOM_IKindOfShape.shape_kind</VAR> enumeration
         #  and a list of parameters, describing the shape.
@@ -3717,14 +3725,15 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "revolution")
             return anObj
 
-        ## Create a filling from the given compound of contours.
-        #  @param theShape the compound of contours
-        #  @param theMinDeg a minimal degree of BSpline surface to create
-        #  @param theMaxDeg a maximal degree of BSpline surface to create
-        #  @param theTol2D a 2d tolerance to be reached
-        #  @param theTol3D a 3d tolerance to be reached
-        #  @param theNbIter a number of iteration of approximation algorithm
-        #  @param theMethod Kind of method to perform filling operation(see GEOM::filling_oper_method())
+        ## Create a face from a given set of contours.
+        #  @param theContours either a list or a compound of edges/wires.
+        #  @param theMinDeg a minimal degree of BSpline surface to create.
+        #  @param theMaxDeg a maximal degree of BSpline surface to create.
+        #  @param theTol2D a 2d tolerance to be reached.
+        #  @param theTol3D a 3d tolerance to be reached.
+        #  @param theNbIter a number of iteration of approximation algorithm.
+        #  @param theMethod Kind of method to perform filling operation
+        #         (see GEOM.filling_oper_method enum).
         #  @param isApprox if True, BSpline curves are generated in the process
         #                  of surface construction. By default it is False, that means
         #                  the surface is created using given curves. The usage of
@@ -3734,41 +3743,42 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created filling surface.
+        #  @return New GEOM.GEOM_Object (face), containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
         @ManageTransactions("PrimOp")
-        def MakeFilling(self, theShape, theMinDeg=2, theMaxDeg=5, theTol2D=0.0001,
+        def MakeFilling(self, theContours, theMinDeg=2, theMaxDeg=5, theTol2D=0.0001,
                         theTol3D=0.0001, theNbIter=0, theMethod=GEOM.FOM_Default, isApprox=0, theName=None):
             """
-            Create a filling from the given compound of contours.
+            Create a face from a given set of contours.
 
             Parameters:
-                theShape the compound of contours
-                theMinDeg a minimal degree of BSpline surface to create
-                theMaxDeg a maximal degree of BSpline surface to create
-                theTol2D a 2d tolerance to be reached
-                theTol3D a 3d tolerance to be reached
-                theNbIter a number of iteration of approximation algorithm
-                theMethod Kind of method to perform filling operation(see GEOM::filling_oper_method())
+                theContours either a list or a compound of edges/wires.
+                theMinDeg a minimal degree of BSpline surface to create.
+                theMaxDeg a maximal degree of BSpline surface to create.
+                theTol2D a 2d tolerance to be reached.
+                theTol3D a 3d tolerance to be reached.
+                theNbIter a number of iteration of approximation algorithm.
+                theMethod Kind of method to perform filling operation
+                          (see GEOM.filling_oper_method enum).
                 isApprox if True, BSpline curves are generated in the process
                          of surface construction. By default it is False, that means
                          the surface is created using given curves. The usage of
                          Approximation makes the algorithm work slower, but allows
-                         building the surface for rather complex cases
+                         building the surface for rather complex cases.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created filling surface.
+                New GEOM.GEOM_Object (face), containing the created filling surface.
 
             Example of usage:
                 filling = geompy.MakeFilling(compound, 2, 5, 0.0001, 0.0001, 5)
             """
             # Example: see GEOM_TestAll.py
             theMinDeg,theMaxDeg,theTol2D,theTol3D,theNbIter,Parameters = ParseParameters(theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter)
-            anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
+            anObj = self.PrimOp.MakeFilling(ToList(theContours), theMinDeg, theMaxDeg,
                                             theTol2D, theTol3D, theNbIter,
                                             theMethod, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
@@ -3777,43 +3787,43 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
 
-        ## Create a filling from the given compound of contours.
-        #  This method corresponds to MakeFilling with isApprox=True
-        #  @param theShape the compound of contours
-        #  @param theMinDeg a minimal degree of BSpline surface to create
-        #  @param theMaxDeg a maximal degree of BSpline surface to create
-        #  @param theTol3D a 3d tolerance to be reached
+        ## Create a face from a given set of contours.
+        #  This method corresponds to MakeFilling() with isApprox=True.
+        #  @param theContours either a list or a compound of edges/wires.
+        #  @param theMinDeg a minimal degree of BSpline surface to create.
+        #  @param theMaxDeg a maximal degree of BSpline surface to create.
+        #  @param theTol3D a 3d tolerance to be reached.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created filling surface.
+        #  @return New GEOM.GEOM_Object (face), containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
         @ManageTransactions("PrimOp")
-        def MakeFillingNew(self, theShape, theMinDeg=2, theMaxDeg=5, theTol3D=0.0001, theName=None):
+        def MakeFillingNew(self, theContours, theMinDeg=2, theMaxDeg=5, theTol3D=0.0001, theName=None):
             """
             Create a filling from the given compound of contours.
-            This method corresponds to MakeFilling with isApprox=True
+            This method corresponds to MakeFilling() with isApprox=True.
 
             Parameters:
-                theShape the compound of contours
-                theMinDeg a minimal degree of BSpline surface to create
-                theMaxDeg a maximal degree of BSpline surface to create
-                theTol3D a 3d tolerance to be reached
+                theContours either a list or a compound of edges/wires.
+                theMinDeg a minimal degree of BSpline surface to create.
+                theMaxDeg a maximal degree of BSpline surface to create.
+                theTol3D a 3d tolerance to be reached.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created filling surface.
+                New GEOM.GEOM_Object (face), containing the created filling surface.
 
             Example of usage:
                 filling = geompy.MakeFillingNew(compound, 2, 5, 0.0001)
             """
             # Example: see GEOM_TestAll.py
             theMinDeg,theMaxDeg,theTol3D,Parameters = ParseParameters(theMinDeg, theMaxDeg, theTol3D)
-            anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
+            anObj = self.PrimOp.MakeFilling(theContours, theMinDeg, theMaxDeg,
                                             0, theTol3D, 0, GEOM.FOM_Default, True)
             RaiseIfFailed("MakeFillingNew", self.PrimOp)
             anObj.SetParameters(Parameters)
@@ -4492,7 +4502,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created face.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.ShapesOp.MakeFaceWires(theWires, isPlanarWanted)
+            anObj = self.ShapesOp.MakeFaceWires(ToList(theWires), isPlanarWanted)
             if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
                 print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
@@ -4511,6 +4521,75 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestOthers.py
             # note: auto-publishing is done in self.MakeFaceWires()
             anObj = self.MakeFaceWires(theWires, isPlanarWanted, theName)
+            return anObj
+
+        ## Create a face based on a surface from given face bounded
+        #  by given wire.
+        #  @param theFace the face whose surface is used to create a new face.
+        #  @param theWire the wire that will bound a new face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created face.
+        #
+        #  @ref tui_creation_face "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeFaceFromSurface(self, theFace, theWire, theName=None):
+            """
+            Create a face based on a surface from given face bounded
+            by given wire.
+
+            Parameters:
+                theFace the face whose surface is used to create a new face.
+                theWire the wire that will bound a new face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.ShapesOp.MakeFaceFromSurface(theFace, theWire)
+            RaiseIfFailed("MakeFaceFromSurface", self.ShapesOp)
+            self._autoPublish(anObj, theName, "face")
+            return anObj
+          
+        ## Create a face from a set of edges with the given constraints.
+        #  @param theConstraints List of edges and constraint faces (as a sequence of a Edge + Face couples):
+        #         - edges should form a closed wire;
+        #         - for each edge, constraint face is optional: if a constraint face is missing
+        #           for some edge, this means that there no constraint associated with this edge.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        # 
+        # @return New GEOM.GEOM_Object, containing the created face.
+        # 
+        # @ref tui_creation_face "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeFaceWithConstraints(self, theConstraints, theName=None):
+            """
+            Create a face from a set of edges with the given constraints.
+
+            Parameters:
+                theConstraints List of edges and constraint faces (as a sequence of a Edge + Face couples):
+                        - edges should form a closed wire;
+                        - for each edge, constraint face is optional: if a constraint face is missing
+                          for some edge, this means that there no constraint associated with this edge.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.ShapesOp.MakeFaceWithConstraints(theConstraints)
+            if anObj is None:
+                RaiseIfFailed("MakeFaceWithConstraints", self.ShapesOp)
+            self._autoPublish(anObj, theName, "face")
             return anObj
 
         ## Create a shell from the set of faces and shells.
@@ -4537,7 +4616,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created shell.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.ShapesOp.MakeShell(theFacesAndShells)
+            anObj = self.ShapesOp.MakeShell( ToList( theFacesAndShells ))
             RaiseIfFailed("MakeShell", self.ShapesOp)
             self._autoPublish(anObj, theName, "shell")
             return anObj
@@ -4566,6 +4645,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created solid.
             """
             # Example: see GEOM_TestAll.py
+            theShells = ToList(theShells)
             if len(theShells) == 1:
                 descr = self._IsGoodForSolid(theShells[0])
                 #if len(descr) > 0:
@@ -4601,9 +4681,42 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created compound.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.ShapesOp.MakeCompound(theShapes)
+            anObj = self.ShapesOp.MakeCompound(ToList(theShapes))
             RaiseIfFailed("MakeCompound", self.ShapesOp)
             self._autoPublish(anObj, theName, "compound")
+            return anObj
+        
+        ## Create a solid (or solids) from the set of faces and/or shells.
+        #  @param theFacesOrShells List of faces and/or shells.
+        #  @param isIntersect If TRUE, forces performing intersections
+        #         between arguments; otherwise (default) intersection is not performed.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the created solid (or compound of solids).
+        #
+        #  @ref tui_creation_solid_from_faces "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeSolidFromConnectedFaces(self, theFacesOrShells, isIntersect = False, theName=None):
+            """
+            Create a solid (or solids) from the set of connected faces and/or shells.
+
+            Parameters:
+                theFacesOrShells List of faces and/or shells.
+                isIntersect If TRUE, forces performing intersections
+                        between arguments; otherwise (default) intersection is not performed
+                theName Object name; when specified, this parameter is used.
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created solid (or compound of solids).
+            """
+            # Example: see GEOM_TestAll.py
+            anObj = self.ShapesOp.MakeSolidFromConnectedFaces(theFacesOrShells, isIntersect)
+            RaiseIfFailed("MakeSolidFromConnectedFaces", self.ShapesOp)
+            self._autoPublish(anObj, theName, "solid")
             return anObj
 
         # end of l3_advanced
@@ -4756,7 +4869,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to find free faces in.
         #  @return List of IDs of all free faces, contained in theShape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_free_faces_page "Example"
         @ManageTransactions("ShapesOp")
         def GetFreeFacesIDs(self,theShape):
             """
@@ -4807,33 +4920,49 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(aList, theName, "shared")
             return aList
 
-        ## Get all sub-shapes, shared by all shapes in the list <VAR>theShapes</VAR>.
-        #  @param theShapes Shapes to find common sub-shapes of.
-        #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType())
+        ## Get sub-shapes, shared by input shapes.
+        #  @param theShapes Either a list or compound of shapes to find common sub-shapes of.
+        #  @param theShapeType Type of sub-shapes to be retrieved (see ShapeType()).
+        #  @param theMultiShare Specifies what type of shares should be checked:
+        #         - @c True (default): search sub-shapes from 1st input shape shared with all other input shapes;
+        #         - @c False: causes to search sub-shapes shared between couples of input shapes.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return List of objects, that are sub-shapes of all given shapes.
+        #  @note If @a theShapes contains single compound, the shares between all possible couples of 
+        #        its top-level shapes are returned; otherwise, only shares between 1st input shape
+        #        and all rest input shapes are returned.
         #
-        #  @ref swig_GetSharedShapes "Example"
+        #  @return List of all found sub-shapes.
+        #
+        #  Examples:
+        #  - @ref tui_shared_shapes "Example 1"
+        #  - @ref swig_GetSharedShapes "Example 2"
         @ManageTransactions("ShapesOp")
-        def GetSharedShapesMulti(self, theShapes, theShapeType, theName=None):
+        def GetSharedShapesMulti(self, theShapes, theShapeType, theMultiShare=True, theName=None):
             """
-            Get all sub-shapes, shared by all shapes in the list theShapes.
+            Get sub-shapes, shared by input shapes.
 
             Parameters:
-                theShapes Shapes to find common sub-shapes of.
-                theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType)
+                theShapes Either a list or compound of shapes to find common sub-shapes of.
+                theShapeType Type of sub-shapes to be retrieved (see geompy.ShapeType).
+                theMultiShare Specifies what type of shares should be checked:
+                  - True (default): search sub-shapes from 1st input shape shared with all other input shapes;
+                  - False: causes to search sub-shapes shared between couples of input shapes.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
+            Note: if theShapes contains single compound, the shares between all possible couples of 
+                  its top-level shapes are returned; otherwise, only shares between 1st input shape
+                  and all rest input shapes are returned.
+
             Returns:
-                List of GEOM.GEOM_Object, that are sub-shapes of all given shapes.
+                List of all found sub-shapes.
             """
             # Example: see GEOM_TestOthers.py
-            aList = self.ShapesOp.GetSharedShapesMulti(theShapes, theShapeType)
+            aList = self.ShapesOp.GetSharedShapesMulti(ToList(theShapes), theShapeType, theMultiShare)
             RaiseIfFailed("GetSharedShapesMulti", self.ShapesOp)
             self._autoPublish(aList, theName, "shared")
             return aList
@@ -5642,6 +5771,126 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetSameIDs", self.ShapesOp)
             return anObj
 
+        ## Resize the input edge with the new Min and Max parameters.
+        #  The input edge parameters range is [0, 1]. If theMin parameter is
+        #  negative, the input edge is extended, otherwise it is shrinked by
+        #  theMin parameter. If theMax is greater than 1, the edge is extended,
+        #  otherwise it is shrinked by theMax parameter.
+        #  @param theEdge the input edge to be resized.
+        #  @param theMin the minimal parameter value.
+        #  @param theMax the maximal parameter value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return New GEOM.GEOM_Object, containing the created edge.
+        #
+        #  @ref tui_extend "Example"
+        @ManageTransactions("ShapesOp")
+        def ExtendEdge(self, theEdge, theMin, theMax, theName=None):
+            """
+            Resize the input edge with the new Min and Max parameters.
+            The input edge parameters range is [0, 1]. If theMin parameter is
+            negative, the input edge is extended, otherwise it is shrinked by
+            theMin parameter. If theMax is greater than 1, the edge is extended,
+            otherwise it is shrinked by theMax parameter.
+
+            Parameters:
+                theEdge the input edge to be resized.
+                theMin the minimal parameter value.
+                theMax the maximal parameter value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created edge.
+            """
+            anObj = self.ShapesOp.ExtendEdge(theEdge, theMin, theMax)
+            RaiseIfFailed("ExtendEdge", self.ShapesOp)
+            self._autoPublish(anObj, theName, "edge")
+            return anObj
+
+        ## Resize the input face with the new UMin, UMax, VMin and VMax
+        #  parameters. The input face U and V parameters range is [0, 1]. If
+        #  theUMin parameter is negative, the input face is extended, otherwise
+        #  it is shrinked along U direction by theUMin parameter. If theUMax is
+        #  greater than 1, the face is extended, otherwise it is shrinked along
+        #  U direction by theUMax parameter. So as for theVMin, theVMax and
+        #  V direction of the input face.
+        #  @param theFace the input face to be resized.
+        #  @param theUMin the minimal U parameter value.
+        #  @param theUMax the maximal U parameter value.
+        #  @param theVMin the minimal V parameter value.
+        #  @param theVMax the maximal V parameter value.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return New GEOM.GEOM_Object, containing the created face.
+        #
+        #  @ref tui_extend "Example"
+        @ManageTransactions("ShapesOp")
+        def ExtendFace(self, theFace, theUMin, theUMax,
+                       theVMin, theVMax, theName=None):
+            """
+            Resize the input face with the new UMin, UMax, VMin and VMax
+            parameters. The input face U and V parameters range is [0, 1]. If
+            theUMin parameter is negative, the input face is extended, otherwise
+            it is shrinked along U direction by theUMin parameter. If theUMax is
+            greater than 1, the face is extended, otherwise it is shrinked along
+            U direction by theUMax parameter. So as for theVMin, theVMax and
+            V direction of the input face.
+
+            Parameters:
+                theFace the input face to be resized.
+                theUMin the minimal U parameter value.
+                theUMax the maximal U parameter value.
+                theVMin the minimal V parameter value.
+                theVMax the maximal V parameter value.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            anObj = self.ShapesOp.ExtendFace(theFace, theUMin, theUMax,
+                                             theVMin, theVMax)
+            RaiseIfFailed("ExtendFace", self.ShapesOp)
+            self._autoPublish(anObj, theName, "face")
+            return anObj
+
+        ## This function takes some face as input parameter and creates new
+        #  GEOM_Object, i.e. topological shape by extracting underlying surface
+        #  of the source face and limiting it by the Umin, Umax, Vmin, Vmax
+        #  parameters of the source face (in the parametrical space).
+        #  @param theFace the input face.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return New GEOM.GEOM_Object, containing the created face.
+        #
+        #  @ref tui_creation_surface "Example"
+        @ManageTransactions("ShapesOp")
+        def MakeSurfaceFromFace(self, theFace, theName=None):
+            """
+            This function takes some face as input parameter and creates new
+            GEOM_Object, i.e. topological shape by extracting underlying surface
+            of the source face and limiting it by the Umin, Umax, Vmin, Vmax
+            parameters of the source face (in the parametrical space).
+
+            Parameters:
+                theFace the input face.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the created face.
+            """
+            anObj = self.ShapesOp.MakeSurfaceFromFace(theFace)
+            RaiseIfFailed("MakeSurfaceFromFace", self.ShapesOp)
+            self._autoPublish(anObj, theName, "surface")
+            return anObj
 
         # end of l4_obtain
         ## @}
@@ -6079,6 +6328,38 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(ListObj, theName, "SortedEdges")
             return ListObj
 
+        ## Check if the object is a sub-object of another GEOM object.
+        #  @param aSubObject Checked sub-object (or its parent object, in case if
+        #         \a theSubObjectIndex is non-zero).
+        #  @param anObject An object that is checked for ownership (or its parent object,
+        #         in case if \a theObjectIndex is non-zero).
+        #  @param aSubObjectIndex When non-zero, specifies a sub-shape index that
+        #         identifies a sub-object within its parent specified via \a theSubObject.
+        #  @param anObjectIndex When non-zero, specifies a sub-shape index that
+        #         identifies an object within its parent specified via \a theObject.
+        #  @return TRUE, if the given object contains sub-object.
+        @ManageTransactions("ShapesOp")
+        def IsSubShapeBelongsTo(self, aSubObject, anObject, aSubObjectIndex = 0, anObjectIndex = 0):
+            """
+            Check if the object is a sub-object of another GEOM object.
+            
+            Parameters:
+                aSubObject Checked sub-object (or its parent object, in case if
+                    \a theSubObjectIndex is non-zero).
+                anObject An object that is checked for ownership (or its parent object,
+                    in case if \a theObjectIndex is non-zero).
+                aSubObjectIndex When non-zero, specifies a sub-shape index that
+                    identifies a sub-object within its parent specified via \a theSubObject.
+                anObjectIndex When non-zero, specifies a sub-shape index that
+                    identifies an object within its parent specified via \a theObject.
+
+            Returns
+                TRUE, if the given object contains sub-object.
+            """
+            IsOk = self.ShapesOp.IsSubShapeBelongsTo(aSubObject, aSubObjectIndex, anObject, anObjectIndex)
+            RaiseIfFailed("IsSubShapeBelongsTo", self.ShapesOp)
+            return IsOk
+
         # end of l4_decompose
         ## @}
 
@@ -6158,6 +6439,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  - \b FixFaceSize.Tolerance - defines minimum possible face size. \n
         #  - \b DropSmallEdges - removes edges, which merge with neighbouring edges. \n
         #  - \b DropSmallEdges.Tolerance3d - defines minimum possible distance between two parallel edges.\n
+        #  - \b DropSmallSolids - either removes small solids or merges them with neighboring ones. \n
+        #  - \b DropSmallSolids.WidthFactorThreshold - defines maximum value of <em>2V/S</em> of a solid which is considered small, where \a V is volume and \a S is surface area of the solid. \n
+        #  - \b DropSmallSolids.VolumeThreshold - defines maximum volume of a solid which is considered small. If the both tolerances are privided a solid is considered small if it meets the both criteria. \n
+        #  - \b DropSmallSolids.MergeSolids - if "1", small solids are removed; if "0" small solids are merged to adjacent non-small solids or left untouched if cannot be merged. \n
         #
         #  * \b SplitAngle - splits faces based on conical surfaces, surfaces of revolution and cylindrical
         #    surfaces in segments using a certain angle. \n
@@ -6227,9 +6512,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theShape Shape to be processed.
                 theValues List of values of parameters, in the same order
                           as parameters are listed in theParameters list.
-                theOperators List of names of operators ("FixShape", "SplitClosedFaces", etc.).
+                theOperators List of names of operators ('FixShape', 'SplitClosedFaces', etc.).
                 theParameters List of names of parameters
-                              ("FixShape.Tolerance3d", "SplitClosedFaces.NbSplitPoints", etc.).
+                              ('FixShape.Tolerance3d', 'SplitClosedFaces.NbSplitPoints', etc.).
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6241,8 +6526,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                      * FixShape.MaxTolerance3d - maximal possible tolerance of the shape after correction.
                  * FixFaceSize - removes small faces, such as spots and strips.
                      * FixFaceSize.Tolerance - defines minimum possible face size.
-                     * DropSmallEdges - removes edges, which merge with neighbouring edges.
+                 * DropSmallEdges - removes edges, which merge with neighbouring edges.
                      * DropSmallEdges.Tolerance3d - defines minimum possible distance between two parallel edges.
+                 * DropSmallSolids - either removes small solids or merges them with neighboring ones.
+                     * DropSmallSolids.WidthFactorThreshold - defines maximum value of 2V/S of a solid which is considered small, where V is volume and S is surface area of the solid.
+                     * DropSmallSolids.VolumeThreshold - defines maximum volume of a solid which is considered small. If the both tolerances are privided a solid is considered small if it meets the both criteria.
+                     * DropSmallSolids.MergeSolids - if '1', small solids are removed; if '0' small solids are merged to adjacent non-small solids or left untouched if cannot be merged.
+
                  * SplitAngle - splits faces based on conical surfaces, surfaces of revolution and cylindrical surfaces
                                 in segments using a certain angle.
                      * SplitAngle.Angle - the central angle of the resulting segments (i.e. we obtain two segments
@@ -6349,7 +6639,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "suppressFaces")
             return anObj
 
-        ## Sewing of some shapes into single shape.
+        ## Sewing of faces into a single shell.
         #  @param ListShape Shapes to be processed.
         #  @param theTolerance Required tolerance value.
         #  @param AllowNonManifold Flag that allows non-manifold sewing.
@@ -6357,12 +6647,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing processed shape.
+        #  @return New GEOM.GEOM_Object, containing a result shell.
         #
         #  @ref tui_sewing "Example"
         def MakeSewing(self, ListShape, theTolerance, AllowNonManifold=False, theName=None):
             """
-            Sewing of some shapes into single shape.
+            Sewing of faces into a single shell.
 
             Parameters:
                 ListShape Shapes to be processed.
@@ -6373,30 +6663,29 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing processed shape.
+                New GEOM.GEOM_Object, containing containing a result shell.
             """
             # Example: see GEOM_TestHealing.py
-            comp = self.MakeCompound(ListShape)
             # note: auto-publishing is done in self.Sew()
-            anObj = self.Sew(comp, theTolerance, AllowNonManifold, theName)
+            anObj = self.Sew(ListShape, theTolerance, AllowNonManifold, theName)
             return anObj
 
-        ## Sewing of the given object.
-        #  @param theObject Shape to be processed.
+        ## Sewing of faces into a single shell.
+        #  @param ListShape Shapes to be processed.
         #  @param theTolerance Required tolerance value.
         #  @param AllowNonManifold Flag that allows non-manifold sewing.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing processed shape.
+        #  @return New GEOM.GEOM_Object, containing a result shell.
         @ManageTransactions("HealOp")
-        def Sew(self, theObject, theTolerance, AllowNonManifold=False, theName=None):
+        def Sew(self, ListShape, theTolerance, AllowNonManifold=False, theName=None):
             """
-            Sewing of the given object.
+            Sewing of faces into a single shell.
 
             Parameters:
-                theObject Shape to be processed.
+                ListShape Shapes to be processed.
                 theTolerance Required tolerance value.
                 AllowNonManifold Flag that allows non-manifold sewing.
                 theName Object name; when specified, this parameter is used
@@ -6404,25 +6693,26 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing processed shape.
+                New GEOM.GEOM_Object, containing a result shell.
             """
             # Example: see MakeSewing() above
             theTolerance,Parameters = ParseParameters(theTolerance)
             if AllowNonManifold:
-                anObj = self.HealOp.SewAllowNonManifold(theObject, theTolerance)
+                anObj = self.HealOp.SewAllowNonManifold( ToList( ListShape ), theTolerance)
             else:
-                anObj = self.HealOp.Sew(theObject, theTolerance)
+                anObj = self.HealOp.Sew( ToList( ListShape ), theTolerance)
             # To avoid script failure in case of good argument shape
+            # (Fix of test cases geom/bugs11/L7,L8)
             if self.HealOp.GetErrorCode() == "ShHealOper_NotError_msg":
-                return theObject
+                return anObj
             RaiseIfFailed("Sew", self.HealOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "sewed")
             return anObj
 
-        ## Rebuild the topology of theCompound of solids by removing
-        #  of the faces that are shared by several solids.
-        #  @param theCompound Shape to be processed.
+        ## Rebuild the topology of theSolids by removing
+        #  the faces that are shared by several solids.
+        #  @param theSolids A compound or a list of solids to be processed.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -6431,13 +6721,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_remove_webs "Example"
         @ManageTransactions("HealOp")
-        def RemoveInternalFaces (self, theCompound, theName=None):
+        def RemoveInternalFaces (self, theSolids, theName=None):
             """
-            Rebuild the topology of theCompound of solids by removing
-            of the faces that are shared by several solids.
+            Rebuild the topology of theSolids by removing
+            the faces that are shared by several solids.
 
             Parameters:
-                theCompound Shape to be processed.
+                theSolids A compound or a list of solids to be processed.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -6446,7 +6736,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing processed shape.
             """
             # Example: see GEOM_TestHealing.py
-            anObj = self.HealOp.RemoveInternalFaces(theCompound)
+            anObj = self.HealOp.RemoveInternalFaces(ToList(theSolids))
             RaiseIfFailed("RemoveInternalFaces", self.HealOp)
             self._autoPublish(anObj, theName, "removeWebs")
             return anObj
@@ -6597,6 +6887,45 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "divideEdge")
             return anObj
 
+        ## Addition of points to a given edge of \a theObject by projecting
+        #  other points to the given edge.
+        #  @param theObject Shape to be processed.
+        #  @param theEdgeIndex Index of edge to be divided within theObject's shape,
+        #                      if -1, then theObject itself is the edge.
+        #  @param thePoints List of points to project to theEdgeIndex-th edge.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing processed shape.
+        #
+        #  @ref tui_add_point_on_edge "Example"
+        @ManageTransactions("HealOp")
+        def DivideEdgeByPoint(self, theObject, theEdgeIndex, thePoints, theName=None):
+            """
+            Addition of points to a given edge of \a theObject by projecting
+            other points to the given edge.
+
+            Parameters:
+                theObject Shape to be processed.
+                theEdgeIndex The edge or its index to be divided within theObject's shape,
+                             if -1, then theObject itself is the edge.
+                thePoints List of points to project to theEdgeIndex-th edge.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing processed shape.
+            """
+            # Example: see GEOM_TestHealing.py
+            if isinstance( theEdgeIndex, GEOM._objref_GEOM_Object ):
+                theEdgeIndex = self.GetSubShapeID( theObject, theEdgeIndex )
+            anObj = self.HealOp.DivideEdgeByPoint(theObject, theEdgeIndex, ToList( thePoints ))
+            RaiseIfFailed("DivideEdgeByPoint", self.HealOp)
+            self._autoPublish(anObj, theName, "divideEdge")
+            return anObj
+
         ## Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
         #  @param theWire Wire to minimize the number of C1 continuous edges in.
         #  @param theVertices A list of vertices to suppress. If the list
@@ -6719,7 +7048,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  \n \a theClosedWires: Closed wires on the free boundary of the given shape.
         #  \n \a theOpenWires: Open wires on the free boundary of the given shape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_free_boundaries_page "Example"
         @ManageTransactions("HealOp")
         def GetFreeBoundary(self, theObject, theName=None):
             """
@@ -6739,14 +7068,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                  theOpenWires: Open wires on the free boundary of the given shape.
             """
             # Example: see GEOM_TestHealing.py
-            anObj = self.HealOp.GetFreeBoundary(theObject)
+            anObj = self.HealOp.GetFreeBoundary( ToList( theObject ))
             RaiseIfFailed("GetFreeBoundary", self.HealOp)
             self._autoPublish(anObj[1], theName, "closedWire")
             self._autoPublish(anObj[2], theName, "openWire")
             return anObj
 
-        ## Replace coincident faces in theShape by one face.
-        #  @param theShape Initial shape.
+        ## Replace coincident faces in \a theShapes by one face.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between faces, which can be considered as coincident.
         #  @param doKeepNonSolids If FALSE, only solids will present in the result,
         #                         otherwise all initial shapes.
@@ -6754,16 +7083,16 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing a copy of theShape without coincident faces.
+        #  @return New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
         #
         #  @ref tui_glue_faces "Example"
         @ManageTransactions("ShapesOp")
-        def MakeGlueFaces(self, theShape, theTolerance, doKeepNonSolids=True, theName=None):
+        def MakeGlueFaces(self, theShapes, theTolerance, doKeepNonSolids=True, theName=None):
             """
-            Replace coincident faces in theShape by one face.
+            Replace coincident faces in theShapes by one face.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between faces, which can be considered as coincident.
                 doKeepNonSolids If FALSE, only solids will present in the result,
                                 otherwise all initial shapes.
@@ -6772,19 +7101,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing a copy of theShape without coincident faces.
+                New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
             """
             # Example: see GEOM_Spanner.py
             theTolerance,Parameters = ParseParameters(theTolerance)
-            anObj = self.ShapesOp.MakeGlueFaces(theShape, theTolerance, doKeepNonSolids)
+            anObj = self.ShapesOp.MakeGlueFaces(ToList(theShapes), theTolerance, doKeepNonSolids)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFaces : " + self.ShapesOp.GetErrorCode()
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "glueFaces")
             return anObj
 
-        ## Find coincident faces in theShape for possible gluing.
-        #  @param theShape Initial shape.
+        ## Find coincident faces in \a theShapes for possible gluing.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between faces,
         #                      which can be considered as coincident.
         #  @param theName Object name; when specified, this parameter is used
@@ -6795,12 +7124,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_glue_faces "Example"
         @ManageTransactions("ShapesOp")
-        def GetGlueFaces(self, theShape, theTolerance, theName=None):
+        def GetGlueFaces(self, theShapes, theTolerance, theName=None):
             """
-            Find coincident faces in theShape for possible gluing.
+            Find coincident faces in theShapes for possible gluing.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between faces,
                              which can be considered as coincident.
                 theName Object name; when specified, this parameter is used
@@ -6810,14 +7139,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 GEOM.ListOfGO
             """
-            anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
+            anObj = self.ShapesOp.GetGlueFaces(ToList(theShapes), theTolerance)
             RaiseIfFailed("GetGlueFaces", self.ShapesOp)
             self._autoPublish(anObj, theName, "facesToGlue")
             return anObj
 
-        ## Replace coincident faces in theShape by one face
+        ## Replace coincident faces in \a theShapes by one face
         #  in compliance with given list of faces
-        #  @param theShape Initial shape.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between faces,
         #                      which can be considered as coincident.
         #  @param theFaces List of faces for gluing.
@@ -6830,19 +7159,18 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing a copy of theShape
-        #          without some faces.
+        #  @return New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
         #
         #  @ref tui_glue_faces "Example"
         @ManageTransactions("ShapesOp")
-        def MakeGlueFacesByList(self, theShape, theTolerance, theFaces,
+        def MakeGlueFacesByList(self, theShapes, theTolerance, theFaces,
                                 doKeepNonSolids=True, doGlueAllEdges=True, theName=None):
             """
-            Replace coincident faces in theShape by one face
+            Replace coincident faces in theShapes by one face
             in compliance with given list of faces
 
             Parameters:
-                theShape Initial shape.
+                theShapes theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between faces,
                              which can be considered as coincident.
                 theFaces List of faces for gluing.
@@ -6856,51 +7184,50 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing a copy of theShape
-                    without some faces.
+                New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
             """
-            anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces,
+            anObj = self.ShapesOp.MakeGlueFacesByList(ToList(theShapes), theTolerance, theFaces,
                                                       doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
             self._autoPublish(anObj, theName, "glueFaces")
             return anObj
 
-        ## Replace coincident edges in theShape by one edge.
-        #  @param theShape Initial shape.
+        ## Replace coincident edges in \a theShapes by one edge.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between edges, which can be considered as coincident.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing a copy of theShape without coincident edges.
+        #  @return New GEOM.GEOM_Object, containing copies of theShapes without coincident edges.
         #
         #  @ref tui_glue_edges "Example"
         @ManageTransactions("ShapesOp")
-        def MakeGlueEdges(self, theShape, theTolerance, theName=None):
+        def MakeGlueEdges(self, theShapes, theTolerance, theName=None):
             """
-            Replace coincident edges in theShape by one edge.
+            Replace coincident edges in theShapes by one edge.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between edges, which can be considered as coincident.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing a copy of theShape without coincident edges.
+                New GEOM.GEOM_Object, containing copies of theShapes without coincident edges.
             """
             theTolerance,Parameters = ParseParameters(theTolerance)
-            anObj = self.ShapesOp.MakeGlueEdges(theShape, theTolerance)
+            anObj = self.ShapesOp.MakeGlueEdges(ToList(theShapes), theTolerance)
             if anObj is None:
                 raise RuntimeError, "MakeGlueEdges : " + self.ShapesOp.GetErrorCode()
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "glueEdges")
             return anObj
 
-        ## Find coincident edges in theShape for possible gluing.
-        #  @param theShape Initial shape.
+        ## Find coincident edges in \a theShapes for possible gluing.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between edges,
         #                      which can be considered as coincident.
         #  @param theName Object name; when specified, this parameter is used
@@ -6911,12 +7238,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_glue_edges "Example"
         @ManageTransactions("ShapesOp")
-        def GetGlueEdges(self, theShape, theTolerance, theName=None):
+        def GetGlueEdges(self, theShapes, theTolerance, theName=None):
             """
-            Find coincident edges in theShape for possible gluing.
+            Find coincident edges in theShapes for possible gluing.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between edges,
                              which can be considered as coincident.
                 theName Object name; when specified, this parameter is used
@@ -6926,14 +7253,14 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 GEOM.ListOfGO
             """
-            anObj = self.ShapesOp.GetGlueEdges(theShape, theTolerance)
+            anObj = self.ShapesOp.GetGlueEdges(ToList(theShapes), theTolerance)
             RaiseIfFailed("GetGlueEdges", self.ShapesOp)
             self._autoPublish(anObj, theName, "edgesToGlue")
             return anObj
 
-        ## Replace coincident edges in theShape by one edge
+        ## Replace coincident edges in theShapes by one edge
         #  in compliance with given list of edges.
-        #  @param theShape Initial shape.
+        #  @param theShapes Initial shapes, either a list or compound of shapes.
         #  @param theTolerance Maximum distance between edges,
         #                      which can be considered as coincident.
         #  @param theEdges List of edges for gluing.
@@ -6941,18 +7268,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing a copy of theShape
-        #          without some edges.
+        #  @return New GEOM.GEOM_Object, containing copies of theShapes without coincident edges.
         #
         #  @ref tui_glue_edges "Example"
         @ManageTransactions("ShapesOp")
-        def MakeGlueEdgesByList(self, theShape, theTolerance, theEdges, theName=None):
+        def MakeGlueEdgesByList(self, theShapes, theTolerance, theEdges, theName=None):
             """
-            Replace coincident edges in theShape by one edge
+            Replace coincident edges in theShapes by one edge
             in compliance with given list of edges.
 
             Parameters:
-                theShape Initial shape.
+                theShapes Initial shapes, either a list or compound of shapes.
                 theTolerance Maximum distance between edges,
                              which can be considered as coincident.
                 theEdges List of edges for gluing.
@@ -6961,10 +7287,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing a copy of theShape
-                without some edges.
+                New GEOM.GEOM_Object, containing copies of theShapes without coincident edges.
             """
-            anObj = self.ShapesOp.MakeGlueEdgesByList(theShape, theTolerance, theEdges)
+            anObj = self.ShapesOp.MakeGlueEdgesByList(ToList(theShapes), theTolerance, theEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueEdgesByList : " + self.ShapesOp.GetErrorCode()
             self._autoPublish(anObj, theName, "glueEdges")
@@ -7207,18 +7532,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape2 Second argument for boolean operation.
         #  @param checkSelfInte The flag that tells if the arguments should
         #         be checked for self-intersection prior to the operation.
+        #         If a self-intersection detected the operation fails.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
-        #
-        #  @note This algorithm doesn't find all types of self-intersections.
-        #        It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
-        #        vertex/face and edge/face intersections. Face/face
-        #        intersections detection is switched off as it is a
-        #        time-consuming operation that gives an impact on performance.
-        #        To find all self-intersections please use
-        #        CheckSelfIntersections() method.
-        #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_section "Example 1"
@@ -7231,21 +7548,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theShape1 First argument for boolean operation.
                 theShape2 Second argument for boolean operation.
                 checkSelfInte The flag that tells if the arguments should
-                              be checked for self-intersection prior to
-                              the operation.
+                              be checked for self-intersection prior to the operation.
+                              If a self-intersection detected the operation fails.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
-
-            Note:
-                    This algorithm doesn't find all types of self-intersections.
-                    It is tuned to detect vertex/vertex, vertex/edge, edge/edge,
-                    vertex/face and edge/face intersections. Face/face
-                    intersections detection is switched off as it is a
-                    time-consuming operation that gives an impact on performance.
-                    To find all self-intersections please use
-                    CheckSelfIntersections() method.
-
             Returns:
                 New GEOM.GEOM_Object, containing the result shape.
 
@@ -8603,9 +8910,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "offset")
             return anObj
 
-        ## Create new object as projection of the given one on a 2D surface.
+        ## Create new object as projection of the given one on another.
         #  @param theSource The source object for the projection. It can be a point, edge or wire.
-        #  @param theTarget The target object. It can be planar or cylindrical face.
+        #         Edge and wire are acceptable if @a theTarget is a face.
+        #  @param theTarget The target object. It can be planar or cylindrical face, edge or wire.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -8616,11 +8924,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         @ManageTransactions("TrsfOp")
         def MakeProjection(self, theSource, theTarget, theName=None):
             """
-            Create new object as projection of the given one on a 2D surface.
+            Create new object as projection of the given one on another.
 
             Parameters:
                 theSource The source object for the projection. It can be a point, edge or wire.
-                theTarget The target object. It can be planar or cylindrical face.
+                          Edge and wire are acceptable if theTarget is a face.
+                theTarget The target object. It can be planar or cylindrical face, edge or wire.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -9699,7 +10008,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Perform an Archimde operation on the given shape with given parameters.
         #  The object presenting the resulting face is returned.
         #  @param theShape Shape to be put in water.
-        #  @param theWeight Weight og the shape.
+        #  @param theWeight Weight of the shape.
         #  @param theWaterDensity Density of the water.
         #  @param theMeshDeflection Deflection of the mesh, using to compute the section.
         #  @param theName Object name; when specified, this parameter is used
@@ -9718,7 +10027,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theShape Shape to be put in water.
-                theWeight Weight og the shape.
+                theWeight Weight of the shape.
                 theWaterDensity Density of the water.
                 theMeshDeflection Deflection of the mesh, using to compute the section.
                 theName Object name; when specified, this parameter is used
@@ -9747,7 +10056,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Get point coordinates
         #  @return [x, y, z]
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_point_coordinates_page "Example"
         @ManageTransactions("MeasuOp")
         def PointCoordinates(self,Point):
             """
@@ -9823,7 +10132,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  theSurfArea: Area of surface of the given shape.\n
         #  theVolume:   Volume of the given shape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_basic_properties_page "Example"
         @ManageTransactions("MeasuOp")
         def BasicProperties(self,theShape):
             """
@@ -9852,7 +10161,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  Ymin,Ymax: Limits of shape along OY axis.
         #  Zmin,Zmax: Limits of shape along OZ axis.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_bounding_box_page "Example"
         @ManageTransactions("MeasuOp")
         def BoundingBox (self, theShape, precise=False):
             """
@@ -9882,7 +10191,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM.GEOM_Object, containing the created box.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_bounding_box_page "Example"
         @ManageTransactions("MeasuOp")
         def MakeBoundingBox (self, theShape, precise=False, theName=None):
             """
@@ -9910,7 +10219,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  I(1-3)(1-3): Components of the inertia matrix of the given shape.
         #  Ix,Iy,Iz:    Moments of inertia of the given shape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_inertia_page "Example"
         @ManageTransactions("MeasuOp")
         def Inertia(self,theShape):
             """
@@ -9953,7 +10262,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape1,theShape2 Shapes to find minimal distance between.
         #  @return Value of the minimal distance between the given shapes.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_min_distance_page "Example"
         @ManageTransactions("MeasuOp")
         def MinDistance(self, theShape1, theShape2):
             """
@@ -9975,7 +10284,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return Value of the minimal distance between the given shapes, in form of list
         #          [Distance, DX, DY, DZ].
         #
-        #  @ref swig_all_measure "Example"
+        #  @ref tui_min_distance_page "Example"
         @ManageTransactions("MeasuOp")
         def MinDistanceComponents(self, theShape1, theShape2):
             """
@@ -9999,7 +10308,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return The number of found solutions (-1 in case of infinite number of
         #          solutions) and a list of (X, Y, Z) coordinates for all couples of points.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_min_distance_page "Example"
         @ManageTransactions("MeasuOp")
         def ClosestPoints (self, theShape1, theShape2):
             """
@@ -10023,7 +10332,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #        with their orientations, otherwise the minimum angle is computed.
         #  @return Value of the angle between the given shapes in degrees.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_angle_page "Example"
         @ManageTransactions("MeasuOp")
         def GetAngle(self, theShape1, theShape2):
             """
@@ -10050,7 +10359,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #        with their orientations, otherwise the minimum angle is computed.
         #  @return Value of the angle between the given shapes in radians.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_angle_page "Example"
         @ManageTransactions("MeasuOp")
         def GetAngleRadians(self, theShape1, theShape2):
             """
@@ -10078,7 +10387,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                 if False, the opposite vector to the normal vector is used.
         #  @return Value of the angle between the given vectors in degrees.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_angle_page "Example"
         @ManageTransactions("MeasuOp")
         def GetAngleVectors(self, theShape1, theShape2, theFlag = True):
             """
@@ -10271,7 +10580,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  EdgeMin,EdgeMax: Min and max tolerances of the edges.\n
         #  VertMin,VertMax: Min and max tolerances of the vertices.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_tolerance_page "Example"
         @ManageTransactions("MeasuOp")
         def Tolerance(self,theShape):
             """
@@ -10295,7 +10604,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to be described.
         #  @return Description of the given shape.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_whatis_page "Example"
         @ManageTransactions("MeasuOp")
         def WhatIs(self,theShape):
             """
@@ -10382,7 +10691,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM.GEOM_Object, containing the created point.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_center_of_mass_page "Example"
         @ManageTransactions("MeasuOp")
         def MakeCDG(self, theShape, theName=None):
             """
@@ -10528,7 +10837,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return If theReturnStatus is equal to 1 the description is returned.
         #          Otherwise doesn't return anything.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_check_shape_page "Example"
         @ManageTransactions("MeasuOp")
         def PrintShapeErrors(self, theShape, theShapeErrors, theReturnStatus = 0):
             """
@@ -10568,7 +10877,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          If theReturnStatus is equal to 2 the list of error data is
         #          returned along with IsValid flag.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_check_shape_page "Example"
         @ManageTransactions("MeasuOp")
         def CheckShape(self,theShape, theIsCheckGeom = 0, theReturnStatus = 0):
             """
@@ -10613,24 +10922,77 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Detect self-intersections in the given shape.
         #  @param theShape Shape to check.
+        #  @param theCheckLevel is the level of self-intersection check.
+        #         Possible input values are:
+        #         - GEOM.SI_V_V(0) - only V/V interferences
+        #         - GEOM.SI_V_E(1) - V/V and V/E interferences
+        #         - GEOM.SI_E_E(2) - V/V, V/E and E/E interferences
+        #         - GEOM.SI_V_F(3) - V/V, V/E, E/E and V/F interferences
+        #         - GEOM.SI_E_F(4) - V/V, V/E, E/E, V/F and E/F interferences
+        #         - GEOM.SI_ALL(5) - all interferences.
         #  @return TRUE, if the shape contains no self-intersections.
         #
-        #  @ref tui_measurement_tools_page "Example"
+        #  @ref tui_check_self_intersections_page "Example"
         @ManageTransactions("MeasuOp")
-        def CheckSelfIntersections(self, theShape):
+        def CheckSelfIntersections(self, theShape, theCheckLevel = GEOM.SI_ALL):
             """
             Detect self-intersections in the given shape.
 
             Parameters:
                 theShape Shape to check.
-
+                theCheckLevel is the level of self-intersection check.
+                  Possible input values are:
+                   - GEOM.SI_V_V(0) - only V/V interferences
+                   - GEOM.SI_V_E(1) - V/V and V/E interferences
+                   - GEOM.SI_E_E(2) - V/V, V/E and E/E interferences
+                   - GEOM.SI_V_F(3) - V/V, V/E, E/E and V/F interferences
+                   - GEOM.SI_E_F(4) - V/V, V/E, E/E, V/F and E/F interferences
+                   - GEOM.SI_ALL(5) - all interferences.
+ 
             Returns:
                 TRUE, if the shape contains no self-intersections.
             """
             # Example: see GEOM_TestMeasures.py
-            (IsValid, Pairs) = self.MeasuOp.CheckSelfIntersections(theShape)
+            (IsValid, Pairs) = self.MeasuOp.CheckSelfIntersections(theShape, EnumToLong(theCheckLevel))
             RaiseIfFailed("CheckSelfIntersections", self.MeasuOp)
             return IsValid
+
+        ## Detect intersections of the given shapes with algorithm based on mesh intersections.
+        #  @param theShape1 First source object
+        #  @param theShape2 Second source object
+        #  @param theTolerance Specifies a distance between shapes used for detecting gaps:
+        #         - if \a theTolerance <= 0, algorithm detects intersections (default behavior)
+        #         - if \a theTolerance > 0, algorithm detects gaps
+        #  @param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+        #         - if \a theDeflection <= 0, default deflection 0.001 is used
+        #  @return TRUE, if there are intersections (gaps) between source shapes
+        #  @return List of sub-shapes IDs from 1st shape that localize intersection.
+        #  @return List of sub-shapes IDs from 2nd shape that localize intersection.
+        #
+        #  @ref tui_fast_intersection_page "Example"
+        @ManageTransactions("MeasuOp")
+        def FastIntersect(self, theShape1, theShape2, theTolerance = 0.0, theDeflection = 0.001):
+            """
+            Detect intersections of the given shapes with algorithm based on mesh intersections.
+
+            Parameters:
+                theShape1 First source object
+                theShape2 Second source object
+                theTolerance Specifies a distance between shapes used for detecting gaps:
+                    - if theTolerance <= 0, algorithm detects intersections (default behavior)
+                    - if theTolerance > 0, algorithm detects gaps
+                theDeflection Linear deflection coefficient that specifies quality of tesselation:
+                    - if theDeflection <= 0, default deflection 0.001 is used
+ 
+            Returns:
+                TRUE, if there are intersections (gaps) between source shapes
+                List of sub-shapes IDs from 1st shape that localize intersection.
+                List of sub-shapes IDs from 2nd shape that localize intersection.
+            """
+            # Example: see GEOM_TestMeasures.py
+            IsOk, Res1, Res2 = self.MeasuOp.FastIntersect(theShape1, theShape2, theTolerance, theDeflection)
+            RaiseIfFailed("FastIntersect", self.MeasuOp)
+            return IsOk, Res1, Res2
 
         ## Get position (LCS) of theShape.
         #
@@ -11444,7 +11806,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @return TRUE, if the given shape is a compound of blocks.
         #  If theCompound is not valid, prints all discovered errors.
         #
-        #  @ref tui_measurement_tools_page "Example 1"
+        #  @ref tui_check_compound_of_blocks_page "Example 1"
         #  \n @ref swig_CheckCompoundOfBlocks "Example 2"
         @ManageTransactions("BlocksOp")
         def CheckCompoundOfBlocks(self,theCompound, theIsUseC1 = False,
@@ -11507,7 +11869,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #          with 1 wire with not 4 edges that do not form 4 bounds of
         #          C1 continuity).
         #
-        #  @ref tui_measurement_tools_page "Example 1"
+        #  @ref tui_get_non_blocks_page "Example 1"
         #  \n @ref swig_GetNonBlocks "Example 2"
         @ManageTransactions("BlocksOp")
         def GetNonBlocks (self, theShape, theIsUseC1 = False,
@@ -12704,6 +13066,46 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             ID = self.InsertOp.AddTexture(Width, Height, Texture)
             RaiseIfFailed("AddTexture", self.InsertOp)
             return ID
+
+        ## Transfer not topological data from one GEOM object to another.
+        #
+        #  @param theObjectFrom the source object of non-topological data
+        #  @param theObjectTo the destination object of non-topological data
+        #  @param theFindMethod method to search sub-shapes of theObjectFrom
+        #         in shape theObjectTo. Possible values are: GEOM.FSM_GetInPlace,
+        #         GEOM.FSM_GetInPlaceByHistory and GEOM.FSM_GetInPlace_Old.
+        #         Other values of GEOM.find_shape_method are not supported.
+        #
+        #  @return True in case of success; False otherwise.
+        #
+        #  @ingroup l1_geomBuilder_auxiliary
+        #
+        #  @ref swig_TransferData "Example"
+        @ManageTransactions("InsertOp")
+        def TransferData(self, theObjectFrom, theObjectTo,
+                         theFindMethod=GEOM.FSM_GetInPlace):
+            """
+            Transfer not topological data from one GEOM object to another.
+
+            Parameters:
+                theObjectFrom the source object of non-topological data
+                theObjectTo the destination object of non-topological data
+                theFindMethod method to search sub-shapes of theObjectFrom
+                              in shape theObjectTo. Possible values are:
+                              GEOM.FSM_GetInPlace, GEOM.FSM_GetInPlaceByHistory
+                              and GEOM.FSM_GetInPlace_Old. Other values of
+                              GEOM.find_shape_method are not supported.
+
+            Returns:
+                True in case of success; False otherwise.
+
+            # Example: see GEOM_TestOthers.py
+            """
+            # Example: see GEOM_TestAll.py
+            isOk = self.InsertOp.TransferData(theObjectFrom,
+                                               theObjectTo, theFindMethod)
+            RaiseIfFailed("TransferData", self.InsertOp)
+            return isOk
 
         ## Creates a new folder object. It is a container for any GEOM objects.
         #  @param Name name of the container

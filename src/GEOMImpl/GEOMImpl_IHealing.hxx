@@ -26,6 +26,7 @@
 #include <TColStd_HArray1OfExtendedString.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TopAbs.hxx>
+#include <ShHealOper_ModifStats.hxx>
 
 class GEOMImpl_IHealing
 {
@@ -57,7 +58,7 @@ public:
   void SetValues( const Handle(TColStd_HArray1OfExtendedString)& arr ) {  if ( !arr.IsNull() ) _func->SetStringArray(ARG_SHAPE_PROCESS_VALUES, arr); }
   Handle(TColStd_HArray1OfExtendedString) GetValues() { return _func->GetStringArray(ARG_SHAPE_PROCESS_VALUES); }
 
-  void SetOriginal( Handle(GEOM_Function)& f ) { _func->SetReference(ARG_ORIGINAL, f); }
+  void SetOriginal( Handle(GEOM_Function) f ) { _func->SetReference(ARG_ORIGINAL, f); }
   Handle(GEOM_Function) GetOriginal() { return _func->GetReference(ARG_ORIGINAL); }
 
   void SetFaces( const Handle(TColStd_HArray1OfInteger)& arr ) { if ( !arr.IsNull() ) _func->SetIntegerArray(ARG_LIST_ARGUMENTS, arr); }
@@ -88,6 +89,24 @@ public:
   { _func->SetReferenceList(ARG_LIST_SHAPES, theShapes); }
   Handle(TColStd_HSequenceOfTransient) GetShapes()
   { return _func->GetReferenceList(ARG_LIST_SHAPES); }
+
+  Handle(TColStd_HSequenceOfTransient) GetOriginalAndShapes()
+  {
+    Handle(TColStd_HSequenceOfTransient) funs = GetShapes();
+    if ( funs.IsNull() ) funs = new TColStd_HSequenceOfTransient;
+    funs->Prepend( GetOriginal() );
+    return funs;
+  }
+
+  void SetStatistics( ShHealOper_ModifStats* ms )
+  {
+    if ( ms ) ms->Clear();
+    _func->SetCallBackData( (void*) ms );
+  }
+  ShHealOper_ModifStats* GetStatistics()
+  {
+    return (ShHealOper_ModifStats*) _func->GetCallBackData();
+  }
 
 private:
   Handle(GEOM_Function) _func;

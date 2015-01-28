@@ -20,6 +20,8 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <GEOMImpl_IMeasureOperations.hxx>
 #include <GEOMImpl_IMeasure.hxx>
 #include <GEOMImpl_MeasureDriver.hxx>
@@ -30,6 +32,7 @@
 #include <GEOMAlgo_AlgoTools.hxx>
 #include <GEOMAlgo_KindOfName.hxx>
 #include <GEOMAlgo_ShapeInfoFiller.hxx>
+#include <OCC2VTK_Tools.h>
 
 #include <GEOM_PythonDump.hxx>
 
@@ -48,6 +51,9 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#if OCC_VERSION_LARGE > 0x06080000
+#include <BRepExtrema_ShapeProximity.hxx>
+#endif
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
 #include <BRep_Tool.hxx>
@@ -1501,6 +1507,7 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::PrintShapeErrors
 //=============================================================================
 bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
                          (Handle(GEOM_Object)                 theShape,
+                          const SICheckLevel                  theCheckLevel,
                           Handle(TColStd_HSequenceOfInteger)& theIntersections)
 {
   SetErrorCode(KO);
@@ -1534,6 +1541,7 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   //
   BOPAlgo_CheckerSI aCSI; // checker of self-interferences
   aCSI.SetArguments(aLCS);
+  aCSI.SetLevelOfCheck(theCheckLevel);
 
   // 1. Launch the checker
   aCSI.Perform();
@@ -1569,6 +1577,93 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   if (!iErr) {
     SetErrorCode(OK);
   }
+
+  return isGood;
+}
+
+//=============================================================================
+/*!
+ *  FastIntersect
+ */
+//=============================================================================
+bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, Handle(GEOM_Object) theShape2,
+                                                 double theTolerance, float theDeflection,
+                                                 Handle(TColStd_HSequenceOfInteger)& theIntersections1,
+                                                 Handle(TColStd_HSequenceOfInteger)& theIntersections2)
+{
+  SetErrorCode(KO);
+  bool isGood = false;
+
+#if OCC_VERSION_LARGE > 0x06080000
+
+  if (theIntersections1.IsNull())
+    theIntersections1 = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections1->Clear();
+
+  if (theIntersections2.IsNull())
+    theIntersections2 = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections2->Clear();
+
+  if (theShape1.IsNull() || theShape2.IsNull()) {
+    SetErrorCode("Objects have NULL Shape");
+    return isGood;
+  }
+
+  if (theShape1 == theShape2) {
+    SetErrorCode("Objects are equal");
+    return isGood;
+  }
+  Handle(GEOM_Function) aRefShape1 = theShape1->GetLastFunction();
+  Handle(GEOM_Function) aRefShape2 = theShape2->GetLastFunction();
+  if (aRefShape1.IsNull() || aRefShape2.IsNull()) return isGood;
+
+  TopoDS_Shape aShape1 = aRefShape1->GetValue();
+  TopoDS_Shape aShape2 = aRefShape2->GetValue();
+  if (aShape1.IsNull() || aShape2.IsNull()) return isGood;
+
+  // 0. Prepare data
+  TopoDS_Shape aScopy1, aScopy2;
+  GEOMAlgo_AlgoTools::CopyShape(aShape1, aScopy1);
+  GEOMAlgo_AlgoTools::CopyShape(aShape2, aScopy2);
+
+  float aDeflection = (theDeflection <= 0.) ? 0.001 : theDeflection;
+  GEOM::MeshShape(aScopy1, aDeflection);
+  GEOM::MeshShape(aScopy2, aDeflection);
+  //
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices1, anIndices2;
+  TopExp::MapShapes(aScopy1, anIndices1);
+  TopExp::MapShapes(aScopy2, anIndices2);
+
+  BOPCol_ListOfShape aLCS1, aLCS2;
+  aLCS1.Append(aScopy1); aLCS2.Append(aScopy2);
+  //
+  BRepExtrema_ShapeProximity aBSP; // checker of fast interferences
+  aBSP.LoadShape1(aScopy1); aBSP.LoadShape2(aScopy2);
+  aBSP.SetTolerance((theTolerance <= 0.) ? 0.0 : theTolerance);
+
+  // 1. Launch the checker
+  aBSP.Perform();
+ 
+  // 2. Get sets of IDs of overlapped faces
+  for (BRepExtrema_OverlappedSubShapes::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next()) {
+    const TopoDS_Shape& aS1 = aBSP.GetSubShape1(anIt1.Key());
+    theIntersections1->Append(anIndices1.FindIndex(aS1));
+  }
+  
+  for (BRepExtrema_OverlappedSubShapes::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next()) {
+    const TopoDS_Shape& aS2 = aBSP.GetSubShape2(anIt2.Key());
+    theIntersections2->Append(anIndices2.FindIndex(aS2));
+  }
+
+  isGood = !theIntersections1->IsEmpty() && !theIntersections1->IsEmpty();
+
+  if (aBSP.IsDone())
+    SetErrorCode(OK);
+
+#endif // OCC_VERSION_LARGE > 0x06080000
 
   return isGood;
 }
@@ -1654,9 +1749,11 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
 
   try {
     OCC_CATCH_SIGNALS;
-    int iType, nbTypes [TopAbs_SHAPE];
-    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
+    int iType, nbTypes [TopAbs_SHAPE], nbFlatType [TopAbs_SHAPE];
+    for (iType = 0; iType < TopAbs_SHAPE; ++iType) {
       nbTypes[iType] = 0;
+      nbFlatType[iType] = 0;
+    }
     nbTypes[aShape.ShapeType()]++;
 
     TopTools_MapOfShape aMapOfShape;
@@ -1666,12 +1763,16 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
 
     TopTools_ListIteratorOfListOfShape itL (aListOfShape);
     for (; itL.More(); itL.Next()) {
-      TopoDS_Iterator it (itL.Value());
+      TopoDS_Shape sp = itL.Value();
+      TopoDS_Iterator it (sp);
       for (; it.More(); it.Next()) {
         TopoDS_Shape s = it.Value();
         if (aMapOfShape.Add(s)) {
           aListOfShape.Append(s);
           nbTypes[s.ShapeType()]++;
+          if ((sp.ShapeType() == TopAbs_COMPOUND) || (sp.ShapeType() == TopAbs_COMPSOLID)) {
+	    nbFlatType[s.ShapeType()]++;
+          }
         }
       }
     }
@@ -1684,7 +1785,23 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
     Astr = Astr + " SOLID : " + TCollection_AsciiString(nbTypes[TopAbs_SOLID]) + "\n";
     Astr = Astr + " COMPSOLID : " + TCollection_AsciiString(nbTypes[TopAbs_COMPSOLID]) + "\n";
     Astr = Astr + " COMPOUND : " + TCollection_AsciiString(nbTypes[TopAbs_COMPOUND]) + "\n";
-    Astr = Astr + " SHAPE : " + TCollection_AsciiString(aMapOfShape.Extent());
+    Astr = Astr + " SHAPE : " + TCollection_AsciiString(aMapOfShape.Extent()) + "\n";
+
+    if ((aShape.ShapeType() == TopAbs_COMPOUND) || (aShape.ShapeType() == TopAbs_COMPSOLID)){
+      Astr = Astr + " --------------------- \n Flat content : \n";
+      if (nbFlatType[TopAbs_VERTEX] > 0)
+	Astr = Astr + " VERTEX : " + TCollection_AsciiString(nbFlatType[TopAbs_VERTEX]) + "\n";
+      if (nbFlatType[TopAbs_EDGE] > 0)
+	Astr = Astr + " EDGE : " + TCollection_AsciiString(nbFlatType[TopAbs_EDGE]) + "\n";
+      if (nbFlatType[TopAbs_WIRE] > 0)
+	Astr = Astr + " WIRE : " + TCollection_AsciiString(nbFlatType[TopAbs_WIRE]) + "\n";
+      if (nbFlatType[TopAbs_FACE] > 0)
+	Astr = Astr + " FACE : " + TCollection_AsciiString(nbFlatType[TopAbs_FACE]) + "\n";
+      if (nbFlatType[TopAbs_SHELL] > 0)
+	Astr = Astr + " SHELL : " + TCollection_AsciiString(nbFlatType[TopAbs_SHELL]) + "\n";
+      if (nbFlatType[TopAbs_SOLID] > 0)
+	Astr = Astr + " SOLID : " + TCollection_AsciiString(nbFlatType[TopAbs_SOLID]) + "\n";
+    }
   }
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();

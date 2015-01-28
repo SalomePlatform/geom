@@ -79,7 +79,8 @@ protected:
                                 const bool   toRemoveFromEngine = true,
                                 const double lineWidth = -1,
                                 const int    displayMode = -1,
-                                const int    color  = -1 );
+                                const int    color  = -1,
+                                const bool   append = false );
   // This is the easiest way to show preview. It is based on execute() method.
   // It removes temporary GEOM::GEOM_Objects automatically.
 
@@ -95,7 +96,9 @@ protected:
                          const bool = true );
   void erasePreview    ( const bool = true );
 
+  void localSelection( const ObjectList&, const std::list<int> );
   void localSelection( const ObjectList&, const int );
+  void localSelection( GEOM::GEOM_Object_ptr, const std::list<int> );
   void localSelection( GEOM::GEOM_Object_ptr, const int );
   void activate( const int );
   void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );

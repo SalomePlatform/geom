@@ -97,6 +97,7 @@ SET(MeasureGUI_HEADERS
   MeasureGUI_CheckCompoundOfBlocksDlg.h
   MeasureGUI_GetNonBlocksDlg.h
   MeasureGUI_CheckSelfIntersectionsDlg.h
+  MeasureGUI_FastCheckIntersectionsDlg.h
   MeasureGUI_PointDlg.h
   MeasureGUI_ManageDimensionsDlg.h
   MeasureGUI_CreateDimensionDlg.h
@@ -123,6 +124,7 @@ SET(_moc_HEADERS
   MeasureGUI_CheckCompoundOfBlocksDlg.h
   MeasureGUI_GetNonBlocksDlg.h
   MeasureGUI_CheckSelfIntersectionsDlg.h
+  MeasureGUI_FastCheckIntersectionsDlg.h
   MeasureGUI_PointDlg.h
   MeasureGUI_ManageDimensionsDlg.h
   MeasureGUI_CreateDimensionDlg.h
@@ -154,6 +156,7 @@ SET(MeasureGUI_SOURCES
   MeasureGUI_CheckCompoundOfBlocksDlg.cxx
   MeasureGUI_GetNonBlocksDlg.cxx
   MeasureGUI_CheckSelfIntersectionsDlg.cxx
+  MeasureGUI_FastCheckIntersectionsDlg.cxx
   MeasureGUI_PointDlg.cxx
   MeasureGUI_ManageDimensionsDlg.cxx
   MeasureGUI_CreateDimensionDlg.cxx

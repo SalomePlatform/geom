@@ -42,7 +42,7 @@ class RepairGUI_SewingDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
-public:
+  public:
   RepairGUI_SewingDlg( GeometryGUI*, QWidget* = 0, bool = false );
   ~RepairGUI_SewingDlg();
 
@@ -51,33 +51,33 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  
+
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
   void                               initSelection();
 
 private:
-  GEOM::GEOM_Object_var              myObject;
+  QList<GEOM::GeomObjPtr>            myObjects;
 
   DlgRef_1SelExt*                    GroupPoints;
   QCheckBox*                         myAllowNonManifoldChk;
   SalomeApp_DoubleSpinBox*           myTolEdt;
   QPushButton*                       myFreeBoundBtn;
-  
+
   int                                myClosed; // Number of free closed boundaries detected. Calculated in execute(), used in onDetect().
   int                                myOpen;   // Number of free open   boundaries detected. Calculated in execute(), used in onDetect().
-  
+
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
-  
+
   void                               ActivateThisDialog();
-  
+
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
-  
+
   void                               onDetect();
 };
 

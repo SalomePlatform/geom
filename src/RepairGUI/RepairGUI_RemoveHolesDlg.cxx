@@ -26,9 +26,10 @@
 //
 #include "RepairGUI_RemoveHolesDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "RepairGUI.h"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -330,8 +331,11 @@ bool RepairGUI_RemoveHolesDlg::execute (ObjectList& objects)
     // highlight them (add to objects), display message dialog
     GEOM::ListOfGO_var aClosed, anOpen;
 
+    GEOM::ListOfGO_var objList = new GEOM::ListOfGO;
+    objList->length(1);
+    objList[0] = myObject;
     GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
-    aResult = anOper->GetFreeBoundary(myObject, aClosed, anOpen);
+    aResult = anOper->GetFreeBoundary(objList, aClosed, anOpen);
 
     if (aResult) {
       myClosed = aClosed->length();
@@ -350,7 +354,11 @@ bool RepairGUI_RemoveHolesDlg::execute (ObjectList& objects)
     GEOM::GEOM_Object_var anObj = anOper->FillHoles(myObject, myWiresInd);
     aResult = !anObj->_is_nil();
     if (aResult)
+    {
+      if ( !IsPreview() )
+        RepairGUI::ShowStatistics( anOper, this );
       objects.push_back(anObj._retn());
+    }
   }
 
   return aResult;

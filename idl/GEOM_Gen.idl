@@ -39,7 +39,7 @@ module GEOM
    */
   enum shape_type 
   { 
-    /*!  */
+    /*! A collection of arbitrary shapes */
     COMPOUND,
     /*! A collection of solids */ 
     COMPSOLID, 
@@ -47,16 +47,19 @@ module GEOM
     SOLID, 
     /*! A collection of faces connected by some edges of their wire boundaries */
     SHELL,
-    /*! Part of a plane (in 2D geometry) or a surface (in 3D geometry) bounded by a close wire */
+    /*! Part of a plane (in 2D geometry) or a surface (in 3D geometry) bounded by a closed wire */
     FACE, 
-    /*!  A sequence of edges connected by their vertices */
+    /*! A sequence of edges connected by their vertices */
     WIRE, 
     /*! Edge, a shape corresponding to a curve, and bound by a vertex at each extremity */
     EDGE, 
     /*! A zero-dimensional shape corresponding to a point in geometry */
     VERTEX,
-    /*!  */ 
-    SHAPE };
+    /*! Arbitrary shape in a Compound (used for processing of Compounds in some operations) */ 
+    SHAPE,
+    /*! Flat (top-level) contents of a Compound (used for processing of Compounds in some operations) */
+    FLAT
+    };
 
   /*!
    * \brief Marker type
@@ -112,7 +115,8 @@ module GEOM
    *  \brief Kind of method to find inside one main shape some sub-shapes,
    *  corresponding to other given shape (its argument)
    *
-   *  Is used in functions GEOM_Gen.RestoreSubShapesO(), GEOM_Gen.RestoreSubShapesSO()
+   *  Is used in functions GEOM_Gen.RestoreSubShapesO(), GEOM_Gen.RestoreSubShapesSO(),
+   *  TransferNames()
    */
   enum find_shape_method
   {
@@ -136,7 +140,10 @@ module GEOM
     /*! To be used only for multi-transformation result.
      *  Only this method can be used after multi-transformation.
      */
-    FSM_MultiTransformed
+    FSM_MultiTransformed,
+
+    /*! Use old GetInPlace functionality. */
+    FSM_GetInPlace_Old
   };
 
   /*!
@@ -188,6 +195,19 @@ module GEOM
     FDT_String
   };
 
+  /**
+   * This enumeration represents the level of checking shape on
+   * self-interference. It defines which interferferences will be checked.
+   */
+  enum si_check_level
+  {
+    SI_V_V,     // only V/V interferences
+    SI_V_E,     // V/V and V/E interferences
+    SI_E_E,     // V/V, V/E and E/E interferences
+    SI_V_F,     // V/V, V/E, E/E and V/F interferences
+    SI_E_F,     // V/V, V/E, E/E, V/F and E/F interferences
+    SI_ALL      // all interferences
+  };
 
  /*!
    * \brief Object creation parameters
@@ -197,7 +217,6 @@ module GEOM
   struct Parameter
   {
     string name;
-    //any value;
     string value;
   };
   typedef sequence<Parameter> Parameters;
@@ -207,6 +226,16 @@ module GEOM
     string     operationName;
     Parameters params;
   };
+
+  /*!
+   * \brief Reporting on shape healing
+   */
+  struct ModifInfo
+  {
+    string name;  // what changed
+    long   count; // how many times
+  };
+  typedef sequence<ModifInfo> ModifStatistics;
 
 
   typedef sequence<string>       string_array;
@@ -364,6 +393,18 @@ module GEOM
      *  \sa GetShapeType(), GetTopologyType(), GetMinShapeType()
      */
     shape_type GetMaxShapeType();
+
+    /*!
+     *  \brief Returns a name of a sub-shape if the sub-shape is published in the study
+     *  \param subID - sub-shape ID
+     *  \return string - the found name or an empty string if the sub-shape does not
+     *          exits or is not published in the study
+     *
+     * \note Only sub-shapes directly retrieved (using e.g. ExtractSubShapes() or
+     *       via group creation) can be found. Also, as sub-shape can be published in the study
+     *       many times, only the first found name is returned.
+     */
+    string GetSubShapeName(in long subID);
 
     /*!
      *  \brief Set color of the object.
@@ -1682,18 +1723,18 @@ module GEOM
                                               in double theAngle);
 
     /*!
-     *  \brief Create a filling from the given compound of contours.
-     *  \param theShape Initial shape on which to perform the feature.
-     *  \param theMinDeg a minimal degree of BSpline surface to create
-     *  \param theMaxDeg a maximal degree of BSpline surface to create
-     *  \param theTol2D a 2d tolerance to be reached
-     *  \param theTol3D a 3d tolerance to be reached
-     *  \param theNbIter a number of iteration of approximation algorithm
+     *  \brief Create a face from a given set of contours.
+     *  \param theContours either a list or a compound of edges/wires.
+     *  \param theMinDeg a minimal degree of BSpline surface to create.
+     *  \param theMaxDeg a maximal degree of BSpline surface to create.
+     *  \param theTol2D a 2d tolerance to be reached.
+     *  \param theTol3D a 3d tolerance to be reached.
+     *  \param theNbIter a number of iteration of approximation algorithm.
      *  \param theMethod Kind of method to perform filling operation.
-     *  \param theApprox Boolean indicating if result should be approximated
-     *  \return New GEOM_Object, containing the created filling surface.
+     *  \param theApprox Boolean indicating if result should be approximated.
+     *  \return New GEOM_Object (face), containing the created filling surface.
      */
-    GEOM_Object MakeFilling (in GEOM_Object theShape,
+    GEOM_Object MakeFilling (in ListOfGO theContours,
                              in long theMinDeg, in long theMaxDeg,
                              in double theTol2D, in double theTol3D,
                              in long theNbIter,
@@ -1912,6 +1953,25 @@ module GEOM
      */
     GEOM_Object MakeFaceWires (in ListOfGO theWires, in boolean isPlanarWanted);
 
+    /**
+     *  \brief Create a face based on surface of theFace limited by theWire.
+     *  \param theFace the face whose surface is used to create a new face.
+     *  \param theWire closed Wire build the face.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeFaceFromSurface(in GEOM_Object theFace,
+                                    in GEOM_Object theWire);
+
+    /*!
+     *  \brief Create a face from a set of edges with the given constraints.
+     *  \param theConstraints List of edges and constraint faces (as a sequence of a Edge + Face couples):
+     *         - edges should form a closed wire;
+     *         - for each edge, constraint face is optional: if a constraint face is missing
+     *           for some edge, this means that there no constraint associated with this edge.
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeFaceWithConstraints(in ListOfGO theConstraints);
+
     /*!
      *  \brief Create a shell from the set of faces and shells.
      *  \param theFacesAndShells List of faces and/or shells.
@@ -1941,64 +2001,73 @@ module GEOM
     GEOM_Object MakeCompound (in ListOfGO theShapes);
 
     /*!
-     *  \brief Replace coincident faces in theShape by one face.
-     *  \param theShape Initial shape.
+     *  \brief Make a solid (or solids) from connected set of faces and/or shells.
+     *  \param theFacesOrShells List of faces and/or shells.
+     *  \param isIntersect If TRUE, forces performing intersections between arguments.
+     *
+     *  \return New GEOM_Object, containing the created solid (or compound of solids).
+     */
+    GEOM_Object MakeSolidFromConnectedFaces (in ListOfGO theFacesOrShells, in boolean isIntersect);
+    
+    /*!
+     *  \brief Replace coincident faces in \a theShapes by one face.
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
      *  \param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
-     *  \return New GEOM_Object, containing a copy of theShape without coincident faces.
+     *  \return New GEOM_Object containing copies of theShapes without coincident faces.
      */
-    GEOM_Object MakeGlueFaces (in GEOM_Object theShape, in double theTolerance, in boolean doKeepNonSolids);
+    GEOM_Object MakeGlueFaces (in ListOfGO theShapes, in double theTolerance, in boolean doKeepNonSolids);
 
     /*!
-     *  Find coincident faces in theShape for possible gluing.
-     *  \param theShape Initial shape.
+     *  Find coincident faces in theShapes for possible gluing.
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
      *  \return ListOfGO
      */
-    ListOfGO GetGlueFaces (in GEOM_Object theShape, in double theTolerance);
+    ListOfGO GetGlueFaces (in ListOfGO theShapes, in double theTolerance);
 
     /*!
-     *  \brief Replace coincident faces in theShape by one face
-     *  in compliance with given list of faces
-     *  \param theShape Initial shape.
+     *  \brief Replace coincident faces in \a theShapes by one face
+     *         in compliance with given list of faces
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between faces, which can be considered as coincident.
      *  \param theFaces List of faces for gluing.
      *  \param doKeepNonSolids If FALSE, only solids will present in the result, otherwise all initial shapes.
      *  \param doGlueAllEdges If TRUE, all coincident edges of <VAR>theShape</VAR>
      *                        will be glued, otherwise only the edges,
      *                        belonging to <VAR>theFaces</VAR>.
-     *  \return New GEOM_Object, containing a copy of theShape without some faces.
+     *  \return New GEOM_Object containing copies of theShapes without coincident faces.
      */
-    GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, in double theTolerance,
-                                     in ListOfGO theFaces, in boolean doKeepNonSolids,
+    GEOM_Object MakeGlueFacesByList (in ListOfGO theShapes, in double theTolerance,
+                                     in ListOfGO theFaces,  in boolean doKeepNonSolids,
                                      in boolean doGlueAllEdges);
 
     /*!
-     *  \brief Replace coincident edges in theShape by one edge.
-     *  \param theShape Initial shape.
+     *  \brief Replace coincident edges in \a theShapes by one edge.
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between edges, which can be considered as coincident.
-     *  \return New GEOM_Object, containing a copy of theShape without coincident edges.
+     *  \return New GEOM_Object containing copies of theShapes without coincident edges.
      */
-    GEOM_Object MakeGlueEdges (in GEOM_Object theShape, in double theTolerance);
+    GEOM_Object MakeGlueEdges (in ListOfGO theShapes, in double theTolerance);
 
     /*!
-     *  Find coincident edges in theShape for possible gluing.
-     *  \param theShape Initial shape.
+     *  Find coincident edges in \a theShapes for possible gluing.
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between edges, which can be considered as coincident.
      *  \return ListOfGO
      */
-    ListOfGO GetGlueEdges (in GEOM_Object theShape, in double theTolerance);
+    ListOfGO GetGlueEdges (in ListOfGO theShapes, in double theTolerance);
 
     /*!
-     *  \brief Replace coincident edges in theShape by one edge
-     *  in compliance with given list of edges
-     *  \param theShape Initial shape.
+     *  \brief Replace coincident edges in \a theShapes by one edge
+     *         in compliance with given list of edges
+     *  \param theShapes Initial shapes.
      *  \param theTolerance Maximum distance between edges, which can be considered as coincident.
      *  \param theEdges List of edges for gluing.
-     *  \return New GEOM_Object, containing a copy of theShape without some edges.
+     *  \return New GEOM_Object containing copies of theShapes without some edges.
      */
-    GEOM_Object MakeGlueEdgesByList (in GEOM_Object theShape,
-                                     in double theTolerance,
+    GEOM_Object MakeGlueEdgesByList (in ListOfGO theShapes,
+                                     in double   theTolerance,
                                      in ListOfGO theEdges);
 
     /*!
@@ -2131,6 +2200,23 @@ module GEOM
     string GetShapeTypeString (in GEOM_Object theShape);
 
     /*!
+     *  \brief Check if the object is a sub-object of another GEOM object.
+     *
+     *  \param theSubObject Checked sub-object (or its parent object, in case if
+     *                      \a theSubObjectIndex is non-zero).
+     *  \param theSubObjectIndex When non-zero, specifies a sub-shape index that
+     *                           identifies a sub-object within its parent specified via \a theSubObject.
+     *  \param theObject An object that is checked for ownership (or its parent object,
+     *                   in case if \a theObjectIndex is non-zero).
+     *  \param theObjectIndex When non-zero, specifies a sub-shape index that
+     *                        identifies an object within its parent specified via \a theObject.
+     *  \return TRUE, if the given object contains sub-object.
+     */
+    boolean IsSubShapeBelongsTo( in GEOM_Object theSubObject,
+                                 in long        theSubObjectIndex,
+                                 in GEOM_Object theObject,
+                                 in long        theObjectIndex);
+    /*!
      *  \brief Count number of faces in the given shape.
      *  \param theShape Shape to count faces in.
      *  \return Number of faces in the given shape.
@@ -2181,13 +2267,21 @@ module GEOM
                               in long        theShapeType);
 
     /*!
-     *  \brief Get all sub-shapes, shared by all shapes in the list \a theShapes.
+     *  \brief Get sub-shapes, shared by input shapes.
      *  \param theShapes Shapes to find common sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
-     *  \return List of objects, that are sub-shapes of all given shapes.
+     *  \param theMultiShare Specifies what type of shares should be checked:
+     *         - \c TRUE: search sub-shapes from 1st input shape shared with all other input shapes;
+     *         - \c FALSE: causes to search sub-shapes shared between couples of input shapes.
+     *  \note If \a theShapes contains single compound, the shares between all possible couples of 
+     *        its top-level shapes are returned; otherwise, only shares between 1st input shape
+     *        and all rest input shapes are returned.
+     *              
+     *  \return List of all found sub-shapes.
      */
     ListOfGO GetSharedShapesMulti (in ListOfGO theShapes,
-                                   in long     theShapeType);
+                                   in long     theShapeType,
+				   in boolean  theMultiShare);
 
     /*!
      *  \brief Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
@@ -2515,6 +2609,53 @@ module GEOM
      */
     ListOfLong GetSameIDs (in GEOM_Object theShapeWhere,
                            in GEOM_Object theShapeWhat);
+
+    /*!
+     *  \brief Resize the input edge with the new Min and Max parameters.
+     *  The input edge parameters range is [0, 1]. If theMin parameter is
+     *  negative, the input edge is extended, otherwise it is shrinked by
+     *  theMin parameter. If theMax is greater than 1, the edge is extended,
+     *  otherwise it is shrinked by theMax parameter.
+     *  \param theEdge the input edge to be resized.
+     *  \param theMin the minimal parameter value.
+     *  \param theMax the maximal parameter value.
+     *  \return a newly created edge.
+     */
+    GEOM_Object ExtendEdge(in GEOM_Object theEdge,
+                           in double      theMin,
+                           in double      theMax);
+
+    /*!
+     *  \brief Resize the input face with the new UMin, UMax, VMin and VMax
+     *  parameters. The input face U and V parameters range is [0, 1]. If
+     *  theUMin parameter is negative, the input face is extended, otherwise
+     *  it is shrinked along U direction by theUMin parameter. If theUMax is
+     *  greater than 1, the face is extended, otherwise it is shrinked along
+     *  U direction by theUMax parameter. So as for theVMin, theVMax and
+     *  V direction of the input face.
+     *  \param theFace the input face to be resized.
+     *  \param theUMin the minimal U parameter value.
+     *  \param theUMax the maximal U parameter value.
+     *  \param theVMin the minimal V parameter value.
+     *  \param theVMax the maximal V parameter value.
+     *  \return a newly created face.
+     */
+    GEOM_Object ExtendFace(in GEOM_Object theFace,
+                           in double      theUMin,
+                           in double      theUMax,
+                           in double      theVMin,
+                           in double      theVMax);
+
+    /*!
+     *  \brief Make a surface from a face. This function takes some face as
+     *  input parameter and creates new GEOM_Object, i.e. topological shape
+     *  by extracting underlying surface of the source face and limiting it
+     *  by the Umin, Umax, Vmin, Vmax parameters of the source face (in the
+     *  parametrical space).
+     *  \param theFace the input face.
+     *  \return a newly created face.
+     */
+    GEOM_Object MakeSurfaceFromFace(in GEOM_Object theFace);
 
     /*!
      * \brief Explode a shape into edges sorted in a row from a starting point.
@@ -3694,30 +3835,30 @@ module GEOM
 
     /*!
      *  Sewing of the given object.
-     *  \param theObject Shape to be processed.
+     *  \param theObjects Shapes to be processed.
      *  \param theTolerance Required tolerance value.
      *  \return New GEOM_Object, containing processed shape.
      */
-    GEOM_Object Sew (in GEOM_Object theObject, in double theTolerance);
+    GEOM_Object Sew (in ListOfGO theObjects, in double theTolerance);
 
     /*!
      *  Sewing of the given object. Allows non-manifold sewing.
-     *  \param theObject Shape to be processed.
+     *  \param theObjects Shapes to be processed.
      *  \param theTolerance Required tolerance value.
      *  \return New GEOM_Object, containing processed shape.
      */
-    GEOM_Object SewAllowNonManifold(in GEOM_Object theObject, in double theTolerance);
+    GEOM_Object SewAllowNonManifold(in ListOfGO theObjects, in double theTolerance);
 
     /*!
-     *  Rebuild the topology of theCompound of solids by removing
-     *  of the faces that are shared by several solids.
-     *  \param theCompound Shape to be processed.
+     *  Rebuild the topology of theSolids by removing
+     *  the faces that are shared by several solids.
+     *  \param theSolids A list of shapes containing solids to be processed.
      *  \return New GEOM_Object, containing processed shape.
      */
-    GEOM_Object RemoveInternalFaces (in GEOM_Object theCompound);
+    GEOM_Object RemoveInternalFaces (in ListOfGO theSolids);
 
     /*!
-     *  \brief Addition of a point to a given edge object.
+     *  \brief Addition of a point to a given edge of \a theObject.
      *  \param theObject Shape to be processed.
      *  \param theEdgeIndex Index of edge to be divided within theObject's shape,
      *                      if -1, then theObject itself is the edge.
@@ -3725,10 +3866,23 @@ module GEOM
      *                  depending on \a isByParameter.
      *  \param isByParameter If TRUE : \a theValue is treated as a curve parameter [0..1],
      *                       if FALSE : \a theValue is treated as a length parameter [0..1]
-     *  \return New GEOM_Object, containing processed shape.
+     *  \return New GEOM_Object, containing the processed shape.
      */
     GEOM_Object DivideEdge (in GEOM_Object theObject, in short theEdgeIndex,
                             in double theValue, in boolean isByParameter);
+
+    /*!
+     *  \brief Addition of points to a given edge of \a theObject by projecting
+     *         other points to the given edge.
+     *  \param theObject Shape to be processed.
+     *  \param theEdgeIndex Index of edge to be divided within theObject's shape,
+     *                      if -1, then theObject itself is the edge.
+     *  \param thePoints Points to project to theEdgeIndex-th edge.
+     *  \return New GEOM_Object, containing the processed shape.
+     */
+    GEOM_Object DivideEdgeByPoint (in GEOM_Object theObject,
+                                   in short       theEdgeIndex,
+                                   in ListOfGO    thePoints);
 
     /*!
      *  \brief Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
@@ -3742,13 +3896,13 @@ module GEOM
 
     /*!
      *  \brief Get a list of wires (wrapped in GEOM_Object-s),
-     *  that constitute a free boundary of the given shape.
-     *  \param theObject Shape to get free boundary of.
+     *  that constitute a free boundary of the given shapes.
+     *  \param theObjects Shapes to get free boundary of.
      *  \param theClosedWires Output. Closed wires on the free boundary of the given shape.
      *  \param theOpenWires Output. Open wires on the free boundary of the given shape.
      *  \return FALSE, if an error(s) occured during the method execution.
      */
-    boolean GetFreeBoundary (in GEOM_Object theObject,
+    boolean GetFreeBoundary (in  ListOfGO theObjects,
                              out ListOfGO theClosedWires,
                              out ListOfGO theOpenWires);
 
@@ -3768,6 +3922,12 @@ module GEOM
      */
     GEOM_Object LimitTolerance (in GEOM_Object theObject, in double theTolerance);
 
+
+    /*!
+     *  \brief Return information on what has been done by the last called healing method.
+     *  \return ModifStatistics, information container.
+     */
+    ModifStatistics GetStatistics();
   };
 
  // # GEOM_IInsertOperations:
@@ -3783,8 +3943,8 @@ module GEOM
     GEOM_Object MakeCopy (in GEOM_Object theOriginal);
 
     /*!
-     *  \brief Deprecated method. Use Export<FormatName> (from the
-     *  corresponding plugin) instead; here <FormatName> is a name of format.
+     *  \brief Deprecated method. Use Export\<FormatName\> (from the
+     *  corresponding plugin) instead; here \<FormatName\> is a name of format.
      *
      *  \brief Export the given shape into a file with given name.
      *  \param theObject Shape to be stored in the file.
@@ -3794,8 +3954,8 @@ module GEOM
     void Export (in GEOM_Object theObject, in string theFileName, in string theFormatName);
 
     /*!
-     *  \brief Deprecated method. Use Import<FormatName> (from the
-     *  corresponding plugin) instead; here <FormatName> is a name of format.
+     *  \brief Deprecated method. Use Import\<FormatName\> (from the
+     *  corresponding plugin) instead; here \<FormatName\> is a name of format.
      *
      *  \brief Import a shape from the STL, BREP, IGES or STEP file
      *  (depends on given format) with given name.
@@ -3858,7 +4018,41 @@ module GEOM
      * \return list of all texture IDs avaiable for the current study
      */
     ListOfLong GetAllTextures();
-    
+
+    /*!
+     *  \brief Non-topological information transfer datum.
+     */
+    struct TransferDatum
+    {
+      string myName;
+      long   myNumber;
+      long   myMaxNumber;
+    };
+
+    /*!
+     *  \brief Sequence of non-topological information tranfer data.
+     */
+    typedef sequence<TransferDatum> ListOfTransferDatum;
+
+    /*!
+     *  \brief Transfer non-topological data from one object to another
+     *  \param theObjectFrom the source object of non-topological data
+     *  \param theObjectTo the destination object of non-topological data
+     *  \param theFindMethod method to search sub-shapes of theObjectFrom
+     *         in shape theObjectTo. Possible values are: GEOM::FSM_GetInPlace,
+     *         GEOM::FSM_GetInPlaceByHistory and GEOM::FSM_GetInPlace_Old.
+     *         Other values of GEOM::find_shape_method are not supported.
+     *  \param theResult statistics of the operation. Output parameter. It
+     *         represents a sequence of Transfer Datum. A datum has the type
+     *         (string code), the total number of items of this type and
+     *         the number of transfered items.
+     *  \return true in case of success; otherwise false.
+     */
+    boolean TransferData(in  GEOM_Object         theObjectFrom,
+                         in  GEOM_Object         theObjectTo,
+                         in  find_shape_method   theFindMethod,
+                         out ListOfTransferDatum theResult);
+
   };
 
  // # GEOM_IKindOfShape:
@@ -4166,11 +4360,33 @@ module GEOM
     /*!
      *  \brief Check a topology of the given shape on self-intersections presence.
      *  \param theShape Shape to check validity of.
+     *  \param theCheckLevel the level of self-interference check.
      *  \param theIntersections Output. List of intersected sub-shapes IDs, it contains pairs of IDs.
      *  \return TRUE, if the shape does not have any self-intersections.
      */
     boolean CheckSelfIntersections (in GEOM_Object theShape,
+                                    in long        theCheckLevel,
                                     out ListOfLong theIntersections);
+
+    /*!
+     *  \brief Detect intersections of the given shapes with algorithm based on mesh intersections.
+     *  \param theShape1 First source object
+     *  \param theShape2 Second source object
+     *  \param theTolerance Specifies a distance between shapes used for detecting gaps:
+     *                       - if \a theTolerance <= 0, algorithm detects intersections
+     *                       - if \a theTolerance > 0, algorithm detects gaps
+     *  \param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+     *                       - if \a theDeflection <= 0, default deflection 0.001 is used
+     *  \param theIntersections1 Output: contains list of sub-shapes IDs from 1st shape that localize intersection
+     *  \param theIntersections2 Output: contains list of sub-shapes IDs from 2nd shape that localize intersection
+     *  \return TRUE, if the are intersections (gaps) between source shapes
+     */
+    boolean FastIntersect (in GEOM_Object theShape1,
+			   in GEOM_Object theShape2,
+			   in double      theTolerance,
+			   in float       theDeflection,
+			   out ListOfLong theIntersections1,
+			   out ListOfLong theIntersections2);
 
     /*!
      *  \brief Check if the given shape can be an argument for MakeSolid operation

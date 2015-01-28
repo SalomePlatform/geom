@@ -39,6 +39,7 @@
 #include "OperationGUI_GetShapesOnShapeDlg.h"
 #include "OperationGUI_GetSharedShapesDlg.h"
 #include "OperationGUI_ExtrudedFeatureDlg.h" // Methods EXTRUDED BOSS / CUT
+#include "OperationGUI_TransferDataDlg.h"
 
 //=======================================================================
 // function : OperationGUI()
@@ -81,6 +82,7 @@ bool OperationGUI::OnGUIEvent (int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpExtrudedCut:   (new OperationGUI_ExtrudedFeatureDlg (CUT, getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpFillet1d:      (new OperationGUI_Fillet1d2dDlg      (getGeometryGUI(), parent, true))->show(); break;
   case GEOMOp::OpFillet2d:      (new OperationGUI_Fillet1d2dDlg      (getGeometryGUI(), parent, false))->show(); break;
+  case GEOMOp::OpTransferData:  (new OperationGUI_TransferDataDlg    (getGeometryGUI(), parent))->show(); break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
   }

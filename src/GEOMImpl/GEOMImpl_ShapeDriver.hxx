@@ -105,6 +105,16 @@ private:
                            const bool         IsUIso,
                            const double       theParameter) const;
 
+  TopoDS_Shape ExtendEdge(const TopoDS_Edge   &theEdge,
+                          const Standard_Real  theMin,
+                          const Standard_Real  theMax) const;
+
+  TopoDS_Shape ExtendFace(const TopoDS_Face   &theFace,
+                          const Standard_Real  theUMin,
+                          const Standard_Real  theUMax,
+                          const Standard_Real  theVMin,
+                          const Standard_Real  theVMax) const;
+
 };
 
 #endif

@@ -27,8 +27,11 @@
 
 #include <Aspect_TypeOfMarker.hxx>
 #include <Standard_GUID.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
 #include <TDF_Label.hxx>
 #include <TopoDS_Shape.hxx>
+
+#include <list>
 
 class GEOM_Object;
 class Handle(TFunction_Driver);
@@ -58,10 +61,10 @@ class GEOM_Object : public GEOM_BaseObject
   Standard_EXPORT ~GEOM_Object();
 
   //Finds a GEOM_Object on the label theLabel
-  Standard_EXPORT static Handle(GEOM_Object) GetObject(TDF_Label& theLabel);
+  Standard_EXPORT static Handle(GEOM_Object) GetObject(const TDF_Label& theLabel);
 
   //Finds a GEOM_Object by a reference, stored on the label theLabel
-  Standard_EXPORT static Handle(GEOM_Object) GetReferencedObject(TDF_Label& theLabel);
+  Standard_EXPORT static Handle(GEOM_Object) GetReferencedObject(const TDF_Label& theLabel);
 
   //###########################################################
   //Access to properties
@@ -106,6 +109,10 @@ class GEOM_Object : public GEOM_BaseObject
 
   //Returns false if the object is a sub-shape of another object
   Standard_EXPORT bool IsMainShape();
+
+  //Comfort method
+  Standard_EXPORT static Handle(TColStd_HSequenceOfTransient)
+    GetLastFunctions( const std::list< Handle(GEOM_Object) >& theObjects );
 
 public:
   DEFINE_STANDARD_RTTI( GEOM_Object );

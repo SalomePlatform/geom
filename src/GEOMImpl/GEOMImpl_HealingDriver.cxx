@@ -136,9 +136,10 @@ Standard_Integer GEOMImpl_HealingDriver::Execute(TFunction_Logbook& log) const
     Sew(&HI, anOriginalShape, aShape, true);
     break;
   case REMOVE_INTERNAL_FACES:
-    RemoveInternalFaces(anOriginalShape, aShape);
+    RemoveInternalFaces(&HI, anOriginalShape, aShape);
     break;
   case DIVIDE_EDGE:
+  case DIVIDE_EDGE_BY_POINT:
     AddPointOnEdge(&HI, anOriginalShape, aShape);
     break;
   case CHANGE_ORIENTATION:
@@ -209,6 +210,8 @@ Standard_Boolean GEOMImpl_HealingDriver::ShapeProcess (GEOMImpl_IHealing* theHI,
   if (!aHealer.isDone())
     raiseNotDoneExeption( ShHealOper_NotError );
 
+  SaveStatistics( aHealer );
+
   return Standard_True;
 }
 
@@ -216,9 +219,9 @@ Standard_Boolean GEOMImpl_HealingDriver::ShapeProcess (GEOMImpl_IHealing* theHI,
 //function :  SupressFaces
 //purpose  :
 //=======================================================================
-void SuppressFacesRec (const TopTools_SequenceOfShape& theShapesFaces,
-                       const TopoDS_Shape&             theOriginalShape,
-                       TopoDS_Shape&                   theOutShape)
+void GEOMImpl_HealingDriver::SuppressFacesRec (const TopTools_SequenceOfShape& theShapesFaces,
+                                               const TopoDS_Shape&             theOriginalShape,
+                                               TopoDS_Shape&                   theOutShape) const
 {
   if ((theOriginalShape.ShapeType() != TopAbs_COMPOUND &&
        theOriginalShape.ShapeType() != TopAbs_COMPSOLID))
@@ -300,6 +303,21 @@ Standard_Boolean GEOMImpl_HealingDriver::SuppressFaces (GEOMImpl_IHealing* theHI
       theOutShape = GEOMImpl_GlueDriver::GlueFaces(aSh, Precision::Confusion(), Standard_True);
     }
   }
+  // count removed faces
+  TopTools_IndexedMapOfShape faces;
+  TopExp::MapShapes(theOriginalShape, TopAbs_FACE, faces);
+  int nbBefore = faces.Extent();
+  faces.Clear();
+  TopExp::MapShapes(theOutShape, TopAbs_FACE, faces);
+  int nbAfter = faces.Extent();
+
+  if ( nbAfter < nbBefore )
+  {
+    ShHealOper_Tool tool;
+    ShHealOper_ModifStats& stats = tool.GetStatistics();
+    stats.AddModif( "Face removed", nbBefore - nbAfter );
+    SaveStatistics( tool );
+  }
 
   return Standard_True;
 }
@@ -340,6 +358,8 @@ Standard_Boolean GEOMImpl_HealingDriver::CloseContour (GEOMImpl_IHealing* theHI,
   else
     raiseNotDoneExeption( aHealer.GetErrorStatus() );
 
+  SaveStatistics( aHealer );
+
   return aResult;
 }
 
@@ -375,6 +395,8 @@ Standard_Boolean GEOMImpl_HealingDriver::RemoveIntWires (GEOMImpl_IHealing* theH
     theOutShape = aHealer.GetResultShape();
   else
     raiseNotDoneExeption( aHealer.GetErrorStatus() );
+
+  SaveStatistics( aHealer );
 
   return aResult;
 }
@@ -412,6 +434,8 @@ Standard_Boolean GEOMImpl_HealingDriver::RemoveHoles (GEOMImpl_IHealing* theHI,
   else
     raiseNotDoneExeption( aHealer.GetErrorStatus() );
 
+  SaveStatistics( aHealer );
+
   return aResult;
 }
 
@@ -419,14 +443,33 @@ Standard_Boolean GEOMImpl_HealingDriver::RemoveHoles (GEOMImpl_IHealing* theHI,
 //function :  Sew
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing* theHI,
+Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing*  theHI,
                                               const TopoDS_Shape& theOriginalShape,
-                                              TopoDS_Shape& theOutShape,
-                                              Standard_Boolean isAllowNonManifold) const
+                                              TopoDS_Shape&       theOutShape,
+                                              Standard_Boolean    isAllowNonManifold) const
 {
   Standard_Real aTol = theHI->GetTolerance();
 
-  ShHealOper_Sewing aHealer (theOriginalShape, aTol);
+  TopoDS_Compound faceCompound;
+  BRep_Builder builder;
+  builder.MakeCompound( faceCompound );
+
+  TopExp_Explorer faceExp( theOriginalShape, TopAbs_FACE );
+  for ( ; faceExp.More(); faceExp.Next() )
+    builder.Add( faceCompound, faceExp.Current() );
+  
+  Handle(TColStd_HSequenceOfTransient) otherObjs = theHI->GetShapes();
+  for ( int ind = 1; ind <= otherObjs->Length(); ind++)
+  {
+    Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(otherObjs->Value(ind));
+    TopoDS_Shape aShape = aRefShape->GetValue();
+    if (aShape.IsNull())
+      Standard_NullObject::Raise("Null object given");
+    for ( faceExp.Init( aShape, TopAbs_FACE ); faceExp.More(); faceExp.Next() )
+      builder.Add( faceCompound, faceExp.Current() );
+  }
+
+  ShHealOper_Sewing aHealer (faceCompound, aTol);
 
   // Set non-manifold mode.
   aHealer.SetNonManifoldMode(isAllowNonManifold);
@@ -438,6 +481,8 @@ Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing* theHI,
   else
     raiseNotDoneExeption( aHealer.GetErrorStatus() );
 
+  SaveStatistics( aHealer );
+
   return aResult;
 }
 
@@ -445,11 +490,44 @@ Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing* theHI,
 //function : RemoveInternalFaces
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMImpl_HealingDriver::RemoveInternalFaces (const TopoDS_Shape& theOriginalShape,
-                                                              TopoDS_Shape& theOutShape) const
+Standard_Boolean
+GEOMImpl_HealingDriver::RemoveInternalFaces (GEOMImpl_IHealing*  theHI,
+                                             const TopoDS_Shape& theOriginalShape,
+                                             TopoDS_Shape&       theOutShape) const
 {
+  // get all input shapes
+  TopTools_SequenceOfShape shapeSeq;
+  shapeSeq.Append( theOriginalShape );
+  Handle(TColStd_HSequenceOfTransient) otherObjs = theHI->GetShapes();
+  if ( !otherObjs.IsNull() )
+    for ( int ind = 1; ind <= otherObjs->Length(); ind++)
+    {
+      Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(otherObjs->Value(ind));
+      TopoDS_Shape aShape = aRefShape->GetValue();
+      if (aShape.IsNull())
+        Standard_NullObject::Raise("Null object given");
+      shapeSeq.Append( aShape );
+    }
+
+  // pass input shapes to the algorithm
   GEOMAlgo_RemoverWebs aTool;
-  aTool.SetShape(theOriginalShape);
+  if ( shapeSeq.Length() == 1 )
+  {
+    aTool.SetShape( shapeSeq.First() );
+  }
+  else
+  {
+    TopoDS_Compound solidCompound;
+    BRep_Builder builder;
+    builder.MakeCompound( solidCompound );
+    for ( int ind = 1; ind <= shapeSeq.Length(); ++ind )
+      for ( TopExp_Explorer so( shapeSeq( ind ), TopAbs_SOLID ); so.More(); so.Next() )
+        builder.Add( solidCompound, so.Current() );
+
+    aTool.SetShape( solidCompound );
+  }
+
+  // run the algorithm
   aTool.Perform();
 
   if (aTool.ErrorStatus() == 0) { // OK
@@ -475,32 +553,61 @@ Standard_Boolean GEOMImpl_HealingDriver::RemoveInternalFaces (const TopoDS_Shape
 //function :  AddPointOnEdge
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMImpl_HealingDriver::AddPointOnEdge (GEOMImpl_IHealing* theHI,
+Standard_Boolean GEOMImpl_HealingDriver::AddPointOnEdge (GEOMImpl_IHealing*  theHI,
                                                          const TopoDS_Shape& theOriginalShape,
-                                                         TopoDS_Shape& theOutShape) const
+                                                         TopoDS_Shape&       theOutShape) const
 {
   Standard_Boolean isByParameter = theHI->GetIsByParameter();
-  Standard_Integer anIndex = theHI->GetIndex();
-  Standard_Real aValue = theHI->GetDevideEdgeValue();
+  Standard_Integer       anIndex = theHI->GetIndex();
+  Standard_Real           aValue = theHI->GetDevideEdgeValue();
+
+  TopoDS_Shape pointToProject;
+  {
+    Handle(TColStd_HSequenceOfTransient) funs = theHI->GetShapes();
+    if ( !funs.IsNull() && funs->Length() > 0 ) {
+      TopoDS_Compound vCompound;
+      BRep_Builder builder;
+      builder.MakeCompound( vCompound );
+      pointToProject = vCompound;
+      for ( int ind = 1; ind <= funs->Length(); ind++)
+      {
+        Handle(GEOM_Function) vFun = Handle(GEOM_Function)::DownCast(funs->Value(ind));
+        TopoDS_Shape vertex = vFun->GetValue();
+        if ( vertex.IsNull() )
+          Standard_NullObject::Raise("Null vertex given");
+        builder.Add( vCompound, vertex );
+      }
+    }
+  }
 
   ShHealOper_EdgeDivide aHealer (theOriginalShape);
 
   Standard_Boolean aResult = Standard_False;
-  if (anIndex == -1) { // apply algorythm for the whole shape which is EDGE
-    if (theOriginalShape.ShapeType() == TopAbs_EDGE)
-      aResult = aHealer.Perform(TopoDS::Edge(theOriginalShape), aValue, isByParameter);
+  if (anIndex == -1) { // apply algorithm for the whole shape which is EDGE
+    if (theOriginalShape.ShapeType() == TopAbs_EDGE) {
+      if ( pointToProject.IsNull() )
+        aResult = aHealer.Perform(TopoDS::Edge(theOriginalShape), aValue, isByParameter);
+      else
+        aResult = aHealer.Perform(TopoDS::Edge(theOriginalShape), pointToProject);
+    }
   } else {
     TopTools_IndexedMapOfShape aShapes;
     TopExp::MapShapes(theOriginalShape, aShapes);
     TopoDS_Shape aEdgeShape = aShapes.FindKey(anIndex);
-    if (aEdgeShape.ShapeType() == TopAbs_EDGE)
-      aResult = aHealer.Perform(TopoDS::Edge(aEdgeShape), aValue, isByParameter);
+    if (aEdgeShape.ShapeType() == TopAbs_EDGE) {
+      if ( pointToProject.IsNull() )
+        aResult = aHealer.Perform(TopoDS::Edge(aEdgeShape), aValue, isByParameter);
+      else
+        aResult = aHealer.Perform(TopoDS::Edge(aEdgeShape), pointToProject);
+    }
   }
 
   if (aResult)
     theOutShape = aHealer.GetResultShape();
   else
     raiseNotDoneExeption( aHealer.GetErrorStatus() );
+
+  SaveStatistics( aHealer );
 
   return aResult;
 }
@@ -523,6 +630,8 @@ Standard_Boolean GEOMImpl_HealingDriver::ChangeOrientation (GEOMImpl_IHealing* t
   else
     raiseNotDoneExeption( aHealer.GetErrorStatus() );
 
+  SaveStatistics( aHealer );
+
   return aResult;
 }
 
@@ -542,14 +651,79 @@ void GEOMImpl_HealingDriver::LimitTolerance (GEOMImpl_IHealing* theHI,
 
   // 1. Make a copy to prevent the original shape changes.
   TopoDS_Shape aShapeCopy;
-  TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
-  TNaming_CopyShape::CopyTool(theOriginalShape, aMapTShapes, aShapeCopy);
+  {
+    TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+    TNaming_CopyShape::CopyTool(theOriginalShape, aMapTShapes, aShapeCopy);
+  }
 
   // 2. Limit tolerance.
   if (!GEOMUtils::FixShapeTolerance(aShapeCopy, aType, aTol))
     StdFail_NotDone::Raise("Non valid shape result");
 
+  // 3. Set the result
   theOutShape = aShapeCopy;
+
+  // 4. Collect statistics
+  {
+    ShHealOper_Tool tool;
+    ShHealOper_ModifStats& stats = tool.GetStatistics();
+
+    int nb[3] = { 0,0,0 };
+    TopTools_IndexedMapOfShape aShapes;
+    TopExp::MapShapes( theOutShape, TopAbs_VERTEX, aShapes);
+    for ( int i = 1; i <= aShapes.Extent(); ++i )
+    {
+      const TopoDS_Vertex& v = TopoDS::Vertex( aShapes( i ));
+      double tol = BRep_Tool::Tolerance( v );
+      if      ( tol < aTol ) nb[0]++;
+      else if ( tol > aTol ) nb[2]++;
+      else                   nb[1]++;
+    }
+    if ( nb[0] > 0 )
+      stats.AddModif( "Tolerance of vertex decreased for shape validity", nb[0] );
+    if ( nb[1] > 0 )
+      stats.AddModif( "Tolerance of vertex limited as requested", nb[1] );
+    if ( nb[2] > 0 )
+      stats.AddModif( "Tolerance of vertex increased for shape validity", nb[2] );
+
+    nb[0] = nb[1] = nb[2] = 0;
+    aShapes.Clear();
+    TopExp::MapShapes( theOutShape, TopAbs_EDGE, aShapes);
+    for ( int i = 1; i <= aShapes.Extent(); ++i )
+    {
+      const TopoDS_Edge& e = TopoDS::Edge( aShapes( i ));
+      double tol = BRep_Tool::Tolerance( e );
+      if      ( tol < aTol ) nb[0]++;
+      else if ( tol > aTol ) nb[2]++;
+      else                   nb[1]++;
+    }
+    if ( nb[0] > 0 )
+      stats.AddModif( "Tolerance of edge decreased for shape validity", nb[0] );
+    if ( nb[1] > 0 )
+      stats.AddModif( "Tolerance of edge limited as requested", nb[1] );
+    if ( nb[2] > 0 )
+      stats.AddModif( "Tolerance of edge increased for shape validity", nb[2] );
+
+    nb[0] = nb[1] = nb[2] = 0;
+    aShapes.Clear();
+    TopExp::MapShapes( theOutShape, TopAbs_FACE, aShapes);
+    for ( int i = 1; i <= aShapes.Extent(); ++i )
+    {
+      const TopoDS_Face& f = TopoDS::Face( aShapes( i ));
+      double tol = BRep_Tool::Tolerance( f );
+      if      ( tol < aTol ) nb[0]++;
+      else if ( tol > aTol ) nb[2]++;
+      else                   nb[1]++;
+    }
+    if ( nb[0] > 0 )
+      stats.AddModif( "Tolerance of face decreased for shape validity", nb[0] );
+    if ( nb[1] > 0 )
+      stats.AddModif( "Tolerance of face limited as requested", nb[1] );
+    if ( nb[2] > 0 )
+      stats.AddModif( "Tolerance of face increased for shape validity", nb[2] );
+
+    SaveStatistics( tool );
+  }
 }
 
 //=======================================================================
@@ -595,7 +769,7 @@ void GEOMImpl_HealingDriver::FuseCollinearEdges (const TopoDS_Shape& theOriginal
     removeAll = true;
 
   if (!removeAll) {
-    for (unsigned int ind = 1; ind <= aVerts->Length(); ind++) {
+    for ( int ind = 1; ind <= aVerts->Length(); ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aVerts->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
       if (aShape_i.IsNull())
@@ -869,7 +1043,7 @@ GetCreationInformation(std::string&             theOperationName,
   case SEWING:
   case SEWING_NON_MANIFOLD:
     theOperationName = "SEWING";
-    AddParam( theParams, "Selected shape", aCI.GetOriginal() );
+    AddParam( theParams, "Selected shapes", aCI.GetOriginalAndShapes() );
     AddParam( theParams, "Allow Non Manifold", ( aType == SEWING_NON_MANIFOLD ));
     AddParam( theParams, "Tolerance", aCI.GetTolerance() );
     break;
@@ -881,6 +1055,14 @@ GetCreationInformation(std::string&             theOperationName,
       AddParam( theParams, "Edge", aCI.GetOriginal() );
     AddParam( theParams, "By parameter", aCI.GetIsByParameter() );
     AddParam( theParams, "Value", aCI.GetDevideEdgeValue() );
+    break;
+  case DIVIDE_EDGE_BY_POINT:
+    theOperationName = "POINT_ON_EDGE";
+    if ( aCI.GetIndex() > 0 )
+      AddParam( theParams, "Edge", "#" ) << aCI.GetIndex() << " of " << aCI.GetOriginal();
+    else
+      AddParam( theParams, "Edge", aCI.GetOriginal() );
+    AddParam( theParams, "Points", aCI.GetShapes() );
     break;
   case CHANGE_ORIENTATION:
     theOperationName = "CHANGE_ORIENTATION";
@@ -899,7 +1081,7 @@ GetCreationInformation(std::string&             theOperationName,
     break;
   case REMOVE_INTERNAL_FACES:
     theOperationName = "REMOVE_WEBS";
-    AddParam( theParams, "Selected shape", aCI.GetOriginal() );
+    AddParam( theParams, "Selected shapes", aCI.GetOriginalAndShapes() );
     break;
   default:
     return false;
@@ -907,6 +1089,33 @@ GetCreationInformation(std::string&             theOperationName,
   
   return true;
 }
+
+//================================================================================
+/*!
+ * \brief Pass a record of what is done to the operation
+ */
+//================================================================================
+
+void GEOMImpl_HealingDriver::SaveStatistics( const ShHealOper_Tool& healer, bool add ) const
+{
+  if ( healer.GetStatistics().GetData().empty() )
+    return;
+
+  if (Label().IsNull()) return;
+
+  Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
+  if (aFunction.IsNull()) return;
+
+  GEOMImpl_IHealing HI (aFunction);
+  ShHealOper_ModifStats * stats = HI.GetStatistics();
+  if ( !stats ) return;
+
+  if ( add )
+    stats->Add( healer.GetStatistics() );
+  else
+    *stats = healer.GetStatistics();
+}
+
 IMPLEMENT_STANDARD_HANDLE (GEOMImpl_HealingDriver,GEOM_BaseDriver);
 
 IMPLEMENT_STANDARD_RTTIEXT (GEOMImpl_HealingDriver,GEOM_BaseDriver);

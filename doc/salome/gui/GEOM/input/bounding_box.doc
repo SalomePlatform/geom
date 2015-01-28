@@ -10,7 +10,15 @@ The coordinates of two corners of its bounding box are shown in the table.
 
 Press \b Apply or <b>Apply and Close</b> button to publish the bounding \b Box in the study. 
 
-\n <b>TUI Commands:</b> <em>[Xmin,Xmax, Ymin,Ymax, Zmin,Zmax] = geompy.BoundingBox(Shape, precise)</em>,
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
+<b>TUI Commands:</b> <em>[Xmin,Xmax, Ymin,Ymax, Zmin,Zmax] = geompy.BoundingBox(Shape, precise)</em>,
 <em>BBox = geompy.MakeBoundingBox(Shape, precise)</em>, where \em Shape
 is the shape for which the bounding box is computed. \em precise TRUE
  for precise computation; FALSE for fast one. Default value is False.

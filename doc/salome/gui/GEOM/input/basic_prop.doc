@@ -7,7 +7,15 @@ geometrical object.
 
 \image html neo-basicprop.png
 
-\n<b>TUI Command:</b> <em>geompy.BasicProperties(Shape),</em> where
+\note This dialog supports navigation through the selectable objects (in OCC 3D viewer only):
+- Scroll mouse wheel with pressed \em Ctrl key or press \em "S", \em "P" keys when input focus is
+in the viewer to navigate between selectable objects.
+- Press left mouse button to select an appropriate object to the dialog box.
+.
+For more details, please refer to the \em "Functionality common for OCC and VTK viewers" chapter
+of the GUI module's documentation.
+
+<b>TUI Command:</b> <em>geompy.BasicProperties(Shape),</em> where
 \em Shape is a shape whose properties are inquired.
 
 See also a \ref tui_basic_properties_page "TUI example".

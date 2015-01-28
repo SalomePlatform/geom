@@ -17,7 +17,7 @@ complex geometrical objects (2D & 3D elements):
 of a list of objects into an independent object.</li>
 <li>\subpage cut_operation_page "Cut" - cuts one shape with
 a list of others. </li>
-<li>\subpage section_opeartion_page "Section" - creates a section between two shapes.</li>
+<li>\subpage section_opeartion_page "Intersection" - performs an intersection between two shapes.</li>
 </ul>
 
 You can use advanced TUI commands performing these operations
@@ -34,7 +34,7 @@ theMainShape is the object of the operation and \em theShapesList is
 the list of tools for Cut operation;
 \par
 <em>geompy.MakeSection(Shape1, Shape2, checkSelfInte)</em>, where \em Shape1 is the first
-argument and \em Shape2 is the second argument of Section operation;
+argument and \em Shape2 is the second argument of Intersection operation;
 
 
 There are several TUI commands that can be used to perform boolean operations
@@ -45,7 +45,7 @@ operation.
 <em>geompy.MakeBoolean(Shape1, Shape2, Operation, checkSelfInte),</em> where \em
 Shape1 is the first argument and \em Shape2 is the second argument of
 a Boolean operation, \em Operation is the type of a Boolean operation (1
-&mdash; Common, 2 &mdash; Cut, 3 &mdash; Fuse, 4 &mdash; Section).
+&mdash; Common, 2 &mdash; Cut, 3 &mdash; Fuse, 4 &mdash; Intersection).
 
 
 Besides, you can use advanced TUI commands performing these operations

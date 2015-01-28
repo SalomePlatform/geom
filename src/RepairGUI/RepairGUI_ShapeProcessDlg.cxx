@@ -26,10 +26,11 @@
 
 #include "RepairGUI_ShapeProcessDlg.h"
 
-#include <DlgRef.h>
-#include <GeometryGUI.h>
-#include <GEOMBase.h>
-#include <GEOMImpl_Types.hxx>
+#include "DlgRef.h"
+#include "GeometryGUI.h"
+#include "GEOMBase.h"
+#include "GEOMImpl_Types.hxx"
+#include "RepairGUI.h"
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DoubleSpinBox.h>
@@ -83,33 +84,38 @@ void RepairGUI_ShapeProcessDlg::init()
   initParamsValues();
   initSelection();
         
-  setWindowTitle( tr( "GEOM_SHAPEPROCESS_TITLE" ) );
+  setWindowTitle( tr( "GEOM_SHAPEPROCESS_TITLE" ));
 
   mainFrame()->GroupConstructors->hide();
   
   // select widget on the top 
   mySelectWdgt = new DlgRef_1Sel( centralWidget() );
-  mySelectWdgt->GroupBox1->setTitle( tr( "GEOM_SHAPE" ) );
-  mySelectWdgt->TextLabel1->setText( tr( "GEOM_SELECTED_OBJECTS" ) );
-  mySelectWdgt->PushButton1->setIcon( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  mySelectWdgt->GroupBox1->setTitle( tr( "GEOM_SHAPE" ));
+  mySelectWdgt->TextLabel1->setText( tr( "GEOM_SELECTED_OBJECTS" ));
+  mySelectWdgt->PushButton1->setIcon( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" )));
   mySelectWdgt->LineEdit1->setReadOnly( true );
 
   // layout the two group boxes in the middle, add a list of operations
   QGroupBox* anOperGr = new QGroupBox( tr( "GEOM_OPERATIONS" ), centralWidget() );
 
+  // "select all" button
+  mySelectAll = new QCheckBox( tr( "SELECT_ALL" ), anOperGr );
+  mySelectAll->setTristate( true );
+  
   // operations list widget
   myOpList = new QListWidget( anOperGr );
   myOpList->setSortingEnabled( false );
-  myOpList->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Expanding ) );
+  myOpList->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Expanding ));
 
   QVBoxLayout* aOperLay = new QVBoxLayout( anOperGr );
   aOperLay->setMargin( 9 );
+  aOperLay->addWidget( mySelectAll );
   aOperLay->addWidget( myOpList );
 
   QGroupBox* aParamsGr = new QGroupBox( tr( "GEOM_PARAMETERS" ), centralWidget() );
 
   // add a widget stack to the parameters group box
-  QStackedLayout* aStack = new QStackedLayout( aParamsGr );
+  myStack = new QStackedLayout( aParamsGr );
 
   // continueties values..
   QStringList aContinueties = QString( "C0,G1,C1,G2,C2,C3,CN" ).split( "," );
@@ -150,6 +156,32 @@ void RepairGUI_ShapeProcessDlg::init()
       
       aLay->addWidget( new QLabel( tr( "GEOM_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myFixFaceSizeTol, 0, 1 );
+      aLay->setRowStretch( aLay->rowCount(), 5 );
+    }
+    else if ( myOpLst[i] == "DropSmallSolids" ) {
+      // DropSmallSolids
+      w = new QWidget( aParamsGr );
+      QGridLayout* aLay = new QGridLayout( w );
+      aLay->setMargin( 9 ); aLay->setSpacing( 6 );
+
+      myDropSmallSolidsWidChk = new QCheckBox( tr("WIDTH_FACTOR_TOL"), w );
+      myDropSmallSolidsVolChk = new QCheckBox( tr("VOLUME_TOL"), w );
+      myDropSmallSolidsWidTol = new SalomeApp_DoubleSpinBox( w );
+      myDropSmallSolidsVolTol = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myDropSmallSolidsWidTol, 0., 1e3, 1., "len_tol_precision" );
+      initSpinBox( myDropSmallSolidsVolTol, 0., 1e9, 1., "len_tol_precision" );
+      myDropSmallSolidsWidTol->setValue( 1 );
+      myDropSmallSolidsVolTol->setValue( 1e3 );
+      myDropSmallSolidsVolChk->setChecked( true );
+      myDropSmallSolidsWidTol->setEnabled( false );
+      myDropSmallSolidsMergeChk = new QCheckBox( tr("TO_MERGE_SOLIDS"), w );
+  
+      aLay->addWidget( myDropSmallSolidsWidChk, 0, 0 );
+      aLay->addWidget( myDropSmallSolidsWidTol, 0, 1 );
+      aLay->addWidget( myDropSmallSolidsVolChk, 1, 0 );
+      aLay->addWidget( myDropSmallSolidsVolTol, 1, 1 );
+      aLay->addWidget( myDropSmallSolidsMergeChk, 2, 0, 1, 2 );
+
       aLay->setRowStretch( aLay->rowCount(), 5 );
     }
     else if ( myOpLst[i] == "DropSmallEdges" ) {
@@ -233,6 +265,7 @@ void RepairGUI_ShapeProcessDlg::init()
 
       myBSplineDegree = new SalomeApp_IntSpinBox( w );
       myBSplineSegments = new SalomeApp_IntSpinBox( w );
+      initSpinBox( myBSplineSegments, 1, 1000, 1);      
       myBSpline2DCont = new QComboBox( w );
       myBSpline2DCont->addItems( aContinueties );
       myBSpline3DCont = new QComboBox( w );
@@ -295,7 +328,7 @@ void RepairGUI_ShapeProcessDlg::init()
     else {
       w = new QWidget( aParamsGr ); // dumb widget
     }
-    aStack->insertWidget( i, w );
+    myStack->insertWidget( i, w );
   }
 
   QGridLayout* layout = new QGridLayout( centralWidget() );
@@ -305,26 +338,33 @@ void RepairGUI_ShapeProcessDlg::init()
   layout->addWidget( aParamsGr,    1, 1 );
 
   // signals and slots connections
-  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( onOk() ) );
-  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( onApply() ) );
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( onOk() ));
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( onApply() ));
 
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-           SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ))->selectionMgr(),
+           SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ));
 
-  connect( mySelectWdgt->PushButton1, SIGNAL( clicked() ),       this, SLOT( selectClicked() ) );
-  connect( mySelectWdgt->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( lineEditReturnPressed() ) );
+  connect( mySelectWdgt->PushButton1, SIGNAL( clicked() ),       this, SLOT( selectClicked() ));
+  connect( mySelectWdgt->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( lineEditReturnPressed() ));
 
-  connect( myToBezierSurfModeChk,     SIGNAL( toggled( bool ) ), this, SLOT( advOptionToggled( bool ) ) );
+  connect( myToBezierSurfModeChk,     SIGNAL( toggled( bool )), this, SLOT( advOptionToggled( bool )));
+  connect( myDropSmallSolidsWidChk,   SIGNAL( toggled( bool )), this, SLOT( advOptionToggled( bool )));
+  connect( myDropSmallSolidsVolChk,   SIGNAL( toggled( bool )), this, SLOT( advOptionToggled( bool )));
 
-  connect( myOpList, SIGNAL( currentRowChanged( int ) ), aStack, SLOT( setCurrentIndex( int ) ) );
+  connect( myOpList, SIGNAL( currentRowChanged( int )),      myStack, SLOT( setCurrentIndex( int )));
+  connect( myOpList, SIGNAL( itemChanged( QListWidgetItem* )),  this, SLOT( operatorChecked( QListWidgetItem* )));
+  connect( mySelectAll, SIGNAL( stateChanged( int ) ), this, SLOT( onSelectAll( int )));
 
   adjustSize();
   loadDefaults(); // init dialog fields with values from resource file
   //myOpList->setCurrentRow( myOpList->findItem( 0 );
   reset();
 
-  initName( tr( "PROCESS_SHAPE_NEW_OBJ_NAME" ) );
+  myStack->setCurrentIndex( 0 );
+
+  initName( tr( "PROCESS_SHAPE_NEW_OBJ_NAME" ));
   selectionChanged();
+  updateSelectAll();
 }
 
 //=================================================================================
@@ -373,14 +413,14 @@ void RepairGUI_ShapeProcessDlg::selectionChanged()
   myObjects->length(aSelList.Extent());
   for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value() );
-    if ( !CORBA::is_nil( aSelectedObject ) )
+    if ( !CORBA::is_nil( aSelectedObject ))
       myObjects[i++] = aSelectedObject;
   }
   myObjects->length( i );
   if ( i == 1 )
-    mySelectWdgt->LineEdit1->setText( GEOMBase::GetName( myObjects[0] ) );
+    mySelectWdgt->LineEdit1->setText( GEOMBase::GetName( myObjects[0] ));
   else if ( i > 0 )
-    mySelectWdgt->LineEdit1->setText( QString::number( i ) + "_" + tr( "GEOM_OBJECTS" ) );
+    mySelectWdgt->LineEdit1->setText( QString::number( i ) + "_" + tr( "GEOM_OBJECTS" ));
 }
 
 
@@ -413,8 +453,8 @@ void RepairGUI_ShapeProcessDlg::lineEditReturnPressed()
 void RepairGUI_ShapeProcessDlg::activate()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication( ) ))->selectionMgr(),
-           SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication( )))->selectionMgr(),
+           SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ));
         
   reset();
   //myGeomGUI->SetState( 0 );
@@ -451,7 +491,7 @@ void RepairGUI_ShapeProcessDlg::reset()
 //=================================================================================
 const char* get_convert( const char* theParam, const QString& theValue )
 {
-  if ( !strcmp( theParam, "SplitAngle.Angle" ) ) {
+  if ( !strcmp( theParam, "SplitAngle.Angle" )) {
     double doubleValue = theValue.toDouble() * M_PI / 180.;
     return CORBA::string_dup( QString::number( doubleValue ).toLatin1().constData() );
   }
@@ -464,7 +504,7 @@ const char* get_convert( const char* theParam, const QString& theValue )
 //=================================================================================
 QString set_convert( const char* theParam, const char* theValue )
 {
-  if ( !strcmp( theParam, "SplitAngle.Angle" ) ) {
+  if ( !strcmp( theParam, "SplitAngle.Angle" )) {
     Kernel_Utils::Localizer loc;
     double doubleValue = atof( theValue ) * 180. / M_PI;
     return QString::number( doubleValue );
@@ -502,7 +542,7 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
 
     for ( int j = 0; j < aParams->length(); j++ ) {
       QWidget* aCtrl = getControl( (const char*)aParams[j] );
-      setValue( aCtrl, set_convert( (const char*)aParams[j], aValues[j] ) );
+      setValue( aCtrl, set_convert( (const char*)aParams[j], aValues[j] ));
     }
   }
 }
@@ -514,13 +554,13 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
 void RepairGUI_ShapeProcessDlg::setValue( QWidget* theControl, const QString& theValue )
 {
   if ( theControl && !theValue.isNull() ) {
-    if ( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl ) )
+    if ( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl ))
       qobject_cast<SalomeApp_DoubleSpinBox*>( theControl )->setValue( theValue.toDouble() );
-    else if ( qobject_cast<SalomeApp_IntSpinBox*>( theControl ) )
+    else if ( qobject_cast<SalomeApp_IntSpinBox*>( theControl ))
       qobject_cast<SalomeApp_IntSpinBox*>( theControl )->setValue( theValue.toInt() );
-    else if ( qobject_cast<QComboBox*>( theControl ) )
+    else if ( qobject_cast<QComboBox*>( theControl ))
       qobject_cast<QComboBox*>( theControl )->setEditText( theValue );
-    else if ( qobject_cast<QCheckBox*>( theControl ) )
+    else if ( qobject_cast<QCheckBox*>( theControl ))
       qobject_cast<QCheckBox*>( theControl )->setChecked( theValue.toInt() != 0 );
   }
 }
@@ -532,14 +572,23 @@ void RepairGUI_ShapeProcessDlg::setValue( QWidget* theControl, const QString& th
 QString RepairGUI_ShapeProcessDlg::getValue( QWidget* theControl ) const
 {
   if ( theControl ) {
-    if ( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl ) )
+    if ( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl )) {
+      if ( ( theControl == myDropSmallSolidsWidTol || theControl == myDropSmallSolidsVolTol ) && !theControl->isEnabled() ) {
+        // VSR: stupid workaround about ShapeProcessAPI:
+        // specific processing for optional parameters of DropSmallSolids operator
+        return QString::number( Precision::Infinite() );
+      }
       return QString::number( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl )->value() );
-    else if ( qobject_cast<SalomeApp_IntSpinBox*>( theControl ) )
+    }
+    else if ( qobject_cast<SalomeApp_IntSpinBox*>( theControl )) {
       return QString::number( qobject_cast<SalomeApp_IntSpinBox*>( theControl )->value() );
-    else if ( qobject_cast<QComboBox*>( theControl ) )
+    }
+    else if ( qobject_cast<QComboBox*>( theControl )) {
       return qobject_cast<QComboBox*>( theControl )->currentText();
-    else if ( qobject_cast<QCheckBox*>( theControl ) )
+    }
+    else if ( qobject_cast<QCheckBox*>( theControl )) {
       return qobject_cast<QCheckBox*>( theControl )->isChecked() ? "1" : "0";
+    }
   }   
   return 0;
 }
@@ -551,9 +600,9 @@ QString RepairGUI_ShapeProcessDlg::getValue( QWidget* theControl ) const
 QString RepairGUI_ShapeProcessDlg::getText( QWidget* theControl ) const
 {
   if ( theControl ) {
-    if ( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl ) )
+    if ( qobject_cast<SalomeApp_DoubleSpinBox*>( theControl ))
       return qobject_cast<SalomeApp_DoubleSpinBox*>( theControl )->text();
-    else if ( qobject_cast<SalomeApp_IntSpinBox*>( theControl ) )
+    else if ( qobject_cast<SalomeApp_IntSpinBox*>( theControl ))
       return qobject_cast<SalomeApp_IntSpinBox*>( theControl )->text();
   }   
   return QString::null;
@@ -583,9 +632,10 @@ bool RepairGUI_ShapeProcessDlg::isValid( QString& msg )
     while( aListIter.hasNext() ) {
       const QString& aParam = aListIter.next();
       QWidget* aControl = getControl( aParam );
-      if ( qobject_cast<SalomeApp_DoubleSpinBox*>( aControl ) )
+      if ( !aControl->isEnabled() ) continue;
+      if ( qobject_cast<SalomeApp_DoubleSpinBox*>( aControl ))
         ok = qobject_cast<SalomeApp_DoubleSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
-      else if ( qobject_cast<SalomeApp_IntSpinBox*>( aControl ) )
+      else if ( qobject_cast<SalomeApp_IntSpinBox*>( aControl ))
         ok = qobject_cast<SalomeApp_IntSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
     }
   }
@@ -653,6 +703,8 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
 
         aParameters << getTexts( aParams );
         anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+
+        RepairGUI::ShowStatistics( anOper, this );
       }
       objects.push_back( anObj._retn() );
     }
@@ -671,17 +723,14 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
 GEOM::string_array* RepairGUI_ShapeProcessDlg::getActiveOperators()
 {
   GEOM::string_array_var anOperators = new GEOM::string_array();
-  QStringList aCheckedList;
 
-  for ( int i = 0; i < myOpList->count(); i++ ) {
+  int j = 0, n = myOpList->count();
+  anOperators->length( n );
+  for ( int i = 0; i < n; i++ ) {
     if ( myOpList->item( i )->checkState() == Qt::Checked )
-      aCheckedList << myOpList->item( i )->text();
+      anOperators[j++] = myOpList->item( i )->text().toLatin1().constData();
   }
-
-  anOperators->length( aCheckedList.count() );
-
-  for ( int i = 0; i < aCheckedList.count(); i++ )
-    anOperators[i] = aCheckedList[i].toLatin1().constData();
+  anOperators->length( j );
 
   return anOperators._retn();
 }
@@ -697,6 +746,9 @@ QWidget* RepairGUI_ShapeProcessDlg::getControl( const QString& theParam )
   else if ( theParam == "SplitClosedFaces.NbSplitPoints" )        return mySplitClosedFacesNum;
   else if ( theParam == "FixFaceSize.Tolerance" )                 return myFixFaceSizeTol;
   else if ( theParam == "DropSmallEdges.Tolerance3d" )            return myDropSmallEdgesTol3D;
+  else if ( theParam == "DropSmallSolids.WidthFactorThreshold" )  return myDropSmallSolidsWidTol;
+  else if ( theParam == "DropSmallSolids.VolumeThreshold" )       return myDropSmallSolidsVolTol;
+  else if ( theParam == "DropSmallSolids.MergeSolids" )           return myDropSmallSolidsMergeChk;
   else if ( theParam == "BSplineRestriction.SurfaceMode" )        return myBSplineSurfModeChk;
   else if ( theParam == "BSplineRestriction.Curve3dMode" )        return myBSpline3DCurveChk;
   else if ( theParam == "BSplineRestriction.Curve2dMode" )        return myBSpline2DCurveChk;
@@ -737,6 +789,11 @@ void RepairGUI_ShapeProcessDlg::initParamsValues()
 
   myOpLst << "DropSmallEdges";
   myValMap["DropSmallEdges"] << "DropSmallEdges.Tolerance3d";
+
+  myOpLst << "DropSmallSolids";
+  myValMap["DropSmallSolids"] << "DropSmallSolids.WidthFactorThreshold";
+  myValMap["DropSmallSolids"] << "DropSmallSolids.VolumeThreshold";
+  myValMap["DropSmallSolids"] << "DropSmallSolids.MergeSolids";
 
   myOpLst << "SplitAngle";
   myValMap["SplitAngle"] << "SplitAngle.Angle";
@@ -782,17 +839,20 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getParameters( const GEOM::string
 
   // calculate the length of parameters
   for ( i = 0, j = 0; i < theOperators.length(); i++ )
-    j += myValMap[ QString( theOperators[i] ) ].size();
+    j += myValMap[ QString( theOperators[i].in() ) ].size();
   
   // set the new length of paremeters
   aParams->length( j );
 
   // fill the parameters
   for ( i = 0, j = 0; i < theOperators.length(); i++ ) {
-    QStringList aValLst = myValMap[ QString( theOperators[i] ) ];
-    for ( QStringList::Iterator it = aValLst.begin(); it != aValLst.end(); ++it )
-      aParams[j++] = CORBA::string_dup( (*it).toLatin1().constData() );
+    QStringList aParamLst = myValMap[ QString( theOperators[i].in() ) ];
+    foreach ( QString aParam, aParamLst ) {
+      aParams[j++] = CORBA::string_dup( aParam.toLatin1().constData() );
+    }
   }
+
+  aParams->length( j );
 
   return aParams._retn();
 }
@@ -806,13 +866,13 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getValues( const GEOM::string_arr
 {
   GEOM::string_array_var aValues = new GEOM::string_array();
   aValues->length( theParams.length() );
-    
+
   for ( int i = 0; i < theParams.length(); i++ ) {
     QWidget* aCtrl = getControl( (const char*)theParams[i] );
     if ( aCtrl )
-      aValues[i] = get_convert( (const char*)theParams[i], getValue( aCtrl ) );
+      aValues[i] = get_convert( (const char*)theParams[i], getValue( aCtrl ));
   }
-    
+
   return aValues._retn();
 }
 
@@ -861,9 +921,71 @@ void RepairGUI_ShapeProcessDlg::initSelection()
 void RepairGUI_ShapeProcessDlg::advOptionToggled( bool on )
 {
   QAbstractButton* btn = (QAbstractButton*)sender();
-  if ( on && btn->isCheckable() &&
-       SUIT_MessageBox::warning( this,
-                                 tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ),
-                                 SUIT_MessageBox::Yes | SUIT_MessageBox::No ) == SUIT_MessageBox::No )
-    btn->toggle();
+  if ( btn == myToBezierSurfModeChk )
+  {
+    if ( on && btn->isCheckable() &&
+         SUIT_MessageBox::warning( this,
+                                   tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ),
+                                   SUIT_MessageBox::Yes | SUIT_MessageBox::No ) == SUIT_MessageBox::No )
+      btn->toggle();
+  }
+
+  // either myDropSmallSolidsWidChk or myDropSmallSolidsVolChk must be checked
+  if ( btn == myDropSmallSolidsWidChk )
+  {
+    myDropSmallSolidsWidTol->setEnabled( on );
+    if ( !on ) {
+      myDropSmallSolidsVolChk->setChecked( true );
+      myDropSmallSolidsVolTol->setEnabled( true );
+    }
+  }
+  if ( btn == myDropSmallSolidsVolChk )
+  {
+    myDropSmallSolidsVolTol->setEnabled( on );
+    if ( !on ) {
+      myDropSmallSolidsWidChk->setChecked( true );
+      myDropSmallSolidsWidTol->setEnabled( true );
+    }
+  }
+}
+
+//=======================================================================
+//function : operatorChecked
+//purpose  : show parameters of a selected operator
+//=======================================================================
+
+void RepairGUI_ShapeProcessDlg::operatorChecked( QListWidgetItem * item )
+{
+  if ( item && item->checkState() == Qt::Checked )
+  {
+    myStack->setCurrentIndex( myOpList->row( item ));
+  }
+  updateSelectAll();
+}
+
+void RepairGUI_ShapeProcessDlg::updateSelectAll()
+{
+  Qt::CheckState state = myOpList->count() > 0 ? myOpList->item(0)->checkState() : Qt::Unchecked;
+  for ( int i = 1; i < myOpList->count(); i++ ) {
+    if ( myOpList->item(i)->checkState() != state ) {
+      state = Qt::PartiallyChecked;
+      break;
+    }
+  }
+  mySelectAll->blockSignals( true );
+  mySelectAll->setCheckState( state );
+  mySelectAll->blockSignals( false );
+}
+
+void RepairGUI_ShapeProcessDlg::onSelectAll( int state )
+{
+  if ( state == Qt::PartiallyChecked ) { 
+    mySelectAll->setCheckState( Qt::Checked );
+    return;
+  }
+  myOpList->blockSignals( true );
+  for ( int i = 0; i < myOpList->count(); i++ ) {
+    myOpList->item(i)->setCheckState( (Qt::CheckState)state  );
+  }
+  myOpList->blockSignals( false );
 }

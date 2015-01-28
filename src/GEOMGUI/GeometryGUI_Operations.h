@@ -94,6 +94,7 @@ namespace GEOMOp {
     OpLCS                 = 3008,   // MENU NEW ENTITY - BASIC - LOCAL COORDINATE SYSTEM
     OpOriginAndVectors    = 3009,   // MENU NEW ENTITY - BASIC - ORIGIN AND BASE VECTORS
     OpIsoline             = 3010,   // MENU NEW ENTITY - BASIC - ISOLINE
+    OpSurfaceFromFace     = 3011,   // MENU NEW ENTITY - BASIC - SURFACE FROM FACE
     // PrimitiveGUI ----------------//--------------------------------
     OpBox                 = 3100,   // MENU NEW ENTITY - PRIMITIVES - BOX
     OpCylinder            = 3101,   // MENU NEW ENTITY - PRIMITIVES - CYLINDER
@@ -143,6 +144,7 @@ namespace GEOMOp {
     OpMultiRotate         = 3607,   // MENU OPERATIONS - TRANSFORMATION - MULTI-ROTATION
     OpReimport            = 3608,   // POPUP MENU - RELOAD IMPORTED
     OpProjection          = 3609,   // MENU OPERATIONS - TRANSFORMATION - PROJECTION
+    OpExtension           = 3610,   // MENU OPERATIONS - TRANSFORMATION - EXTENSION
     // OperationGUI ----------------//--------------------------------
     OpPartition           = 3700,   // MENU OPERATION - PARTITION
     OpArchimede           = 3701,   // MENU OPERATION - ARCHIMEDE
@@ -155,6 +157,7 @@ namespace GEOMOp {
     OpSharedShapes        = 3708,   // MENU OPERATION - GET SHARED SHAPES
     OpExtrudedBoss        = 3709,   // MENU OPERATION - ETRUDED BOSS
     OpExtrudedCut         = 3710,   // MENU OPERATION - ETRUDED CUT
+    OpTransferData        = 3711,   // MENU OPERATION - TRANSFER DATA
     // RepairGUI -------------------//--------------------------------
     OpSewing              = 4000,   // MENU REPAIR - SEWING
     OpSuppressFaces       = 4001,   // MENU REPAIR - SUPPRESS FACES
@@ -191,6 +194,8 @@ namespace GEOMOp {
     OpManageDimensions    = 5014,   // MENU MEASURES - MANAGE DIMENSIONS
     OpShowAllDimensions   = 5015,   // POPUP MENU - SHOW ALL DIMENSIONS
     OpHideAllDimensions   = 5016,   // POPUP MENU - HIDE ALL DIMENSIONS
+    OpFastCheckInters     = 5017,   // MENU MEASURES - FAST CHECK INTERSECTIONS
+    OpInspectObj	  = 5018,   // MENU MEASURES - INSPECT OBJECT
     // GroupGUI --------------------//--------------------------------
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT

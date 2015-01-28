@@ -152,7 +152,7 @@ void GEOMImpl_PolylineDumper::init()
     }
   }
 
-  char *aSeparator = "\n\t";
+  const char *aSeparator = "\n\t";
   Standard_Integer i;
   std::list <std::list <double> >::const_iterator anIt = myCoords.begin();
 

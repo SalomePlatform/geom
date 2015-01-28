@@ -97,7 +97,15 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
               const GEOM::GEOM_IMeasureOperations::ShapeErrors &theErrors);
 
   CORBA::Boolean CheckSelfIntersections (GEOM::GEOM_Object_ptr theShape,
+                                         CORBA::Long           theCheckLevel,
                                          GEOM::ListOfLong_out  theIntersections);
+
+  CORBA::Boolean FastIntersect (GEOM::GEOM_Object_ptr theShape1,
+                                GEOM::GEOM_Object_ptr theShape2,
+                                CORBA::Double         theTolerance,
+                                CORBA::Float         theDeflection,
+                                GEOM::ListOfLong_out  theIntersections1,
+                                GEOM::ListOfLong_out  theIntersections2);
 
   char* IsGoodForSolid (GEOM::GEOM_Object_ptr theShape);
 

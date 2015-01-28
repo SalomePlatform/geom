@@ -2,24 +2,40 @@
 
 \page create_solid_page Solid
 
-\n To create a \b Solid in the <b>Main Menu</b> select <b>New Entity - > Build - >
+To create a \b Solid in the <b>Main Menu</b> select <b>New Entity - > Build - >
 Solid</b>.
 
-You can create a \b Solid from a list of shells.
+Firstly, you can create a \b Solid from a list of shells.
 
 The \b Result will be a  \b GEOM_Object (SOLID).
 
-\n <b>TUI Command:</b> <em>geompy.MakeSolid(ListOfShape),</em> where
-ListOfShape is a list of shells from which the solid is constructed.
-\n <b>Arguments:</b> Name + A closed shell or a list of closed shells.
+<b>TUI Command:</b> <em>geompy.MakeSolid(ListOfShape),</em> where
+\c ListOfShape is a list of shells from which the solid is constructed.
+
+<b>Arguments:</b> Name + A closed shell or a list of closed shells.
 
 \image html neo-obj6.png
 
-\n <b>Example:</b>
+<b>Example:</b>
 
 \image html solidsn.png "Solid"
 
+Secondly, it is possible to create a \b Solid (or a compound of solids) from a list of
+connected faces or shells.
+
+The \b Result will be a \b GEOM_Object (SOLID or COMPOUND).
+
+<b>TUI Command:</b> <em>geompy.MakeSolidFromConnectedFaces(ListOfShape, isIntersect),</em> where
+\c ListOfShape is a list of faces and/or shells from which the solid is constructed and 
+\c isIntersect is a boolean flag which, when set to \c True, forces performing intersection/sewing
+between arguments
+
+<b>Arguments:</b> Name + A set of connected faces and/or shells + Boolean flag.
+
+\image html neo-obj6_2.png
+
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
-\ref tui_creation_solid "Advanced Geometric Objects".
+\ref tui_creation_solid "Solid from shell" and
+\ref tui_creation_solid_from_faces "Solid from connected faces".
 
 */

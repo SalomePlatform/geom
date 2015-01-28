@@ -52,6 +52,7 @@ SET(ShHealOper_HEADERS
   ShHealOper_SplitCurve3d.hxx
   ShHealOper_ChangeOrientation.hxx
   ShHealOper_Tool.hxx
+  ShHealOper_ModifStats.hxx
   )
 # --- sources ---
 

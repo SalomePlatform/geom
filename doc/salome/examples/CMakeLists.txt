@@ -37,9 +37,11 @@ SET(GOOD_TESTS
   basic_geom_objs_ex07.py  
   basic_geom_objs_ex08.py  
   basic_geom_objs_ex09.py  
+  basic_geom_objs_ex10.py  
   basic_operations_ex01.py  
   basic_operations_ex02.py  
   basic_operations_ex03.py  
+  basic_operations_ex04.py  
   basic_properties.py  
   blocks_operations_ex01.py  
   blocks_operations_ex02.py  
@@ -64,7 +66,8 @@ SET(GOOD_TESTS
   complex_objs_ex07.py  
   complex_objs_ex08.py  
   complex_objs_ex09.py  
-  complex_objs_ex10.py  
+  complex_objs_ex10.py
+  fast_intersection.py
   free_boundaries.py  
   free_faces.py  
   GEOM_box.py  
@@ -115,6 +118,7 @@ SET(GOOD_TESTS
   transformation_operations_ex11.py  
   transformation_operations_ex12.py  
   transformation_operations_ex13.py  
+  transformation_operations_ex14.py  
   viewing_geom_objs_ex01.py  
   viewing_geom_objs_ex02.py  
   viewing_geom_objs_ex03.py  

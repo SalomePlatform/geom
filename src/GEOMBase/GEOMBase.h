@@ -127,7 +127,7 @@ public :
   static bool         IsShape( GEOM::GEOM_Object_ptr object );
 
   /* Get string representation of shape type */
-  static QString      TypeName( TopAbs_ShapeEnum type );
+  static QString      TypeName( TopAbs_ShapeEnum type, bool capitalize = false );
   
   /* Get study entry for the given object  */
   static QString      GetEntry( GEOM::GEOM_Object_ptr object );

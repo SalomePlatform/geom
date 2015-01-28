@@ -121,13 +121,9 @@ MeasureGUI_WhatisDlg::MeasureGUI_WhatisDlg( GeometryGUI* GUI, QWidget* parent )
   myGrp->LineEdit1->setReadOnly( true );
 
   myGrp->TextEdit1->setReadOnly( true );
-  // fix height to fit all text
-  myGrp->TextEdit1->setLineWrapMode( QTextEdit::NoWrap );
-  // myGrp->TextEdit1->setTextFormat( Qt::PlainText ); // VSR : TODO
-  QString allLines ("\n\n\n\n\n\n\n\n\n"); // 10 lines
-  myGrp->TextEdit1->setText( allLines );
-  int sbHeight = myGrp->TextEdit1->horizontalScrollBar()->height();
-  myGrp->TextEdit1->setFixedHeight( myGrp->TextEdit1->document()->size().height() + sbHeight );
+  myGrp->TextEdit1->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+  QFontMetrics fm( myGrp->TextEdit1->font() );
+  myGrp->TextEdit1->setMinimumHeight( fm.height()*20 );
 
   myGrp->TextLabel2->setText( tr( "GEOM_KIND_OF_SHAPE" ) );
   myGrp->LineEdit2->setReadOnly( true );
@@ -192,6 +188,18 @@ void MeasureGUI_WhatisDlg::processObject()
 }
 
 //=================================================================================
+// function : activateSelection()
+// purpose  :
+//=================================================================================
+void MeasureGUI_WhatisDlg::activateSelection()
+{
+  MeasureGUI_Skeleton::activateSelection();
+  std::list<int> needTypes;
+  needTypes.push_back( TopAbs_VERTEX ), needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE ), needTypes.push_back( TopAbs_FACE ), needTypes.push_back( TopAbs_SHELL ), needTypes.push_back( TopAbs_SOLID ), needTypes.push_back( TopAbs_COMPOUND );
+  localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+}
+
+//=================================================================================
 // function : ClickOnProperties()
 // purpose  :
 //=================================================================================
@@ -206,13 +214,13 @@ void MeasureGUI_WhatisDlg::ClickOnProperties()
 //=================================================================================
 bool MeasureGUI_WhatisDlg::getParameters( QString& theText )
 {
-  if ( myObj->_is_nil() )
+  if ( !myObj )
     return false;
 
   GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
   try
   {
-    theText = anOper->WhatIs( myObj );
+    theText = anOper->WhatIs( myObj.get() );
   }
   catch( const SALOME::SALOME_Exception& e )
   {
@@ -235,7 +243,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aLenPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
 
-  if ( myObj->_is_nil() )
+  if ( !myObj )
     return aKindStr;
 
   GEOM::GEOM_IKindOfShape::shape_kind aKind;
@@ -246,7 +254,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
 
   try
   {
-    aKind = anOper->KindOfShape( myObj, anInts, aDbls );
+    aKind = anOper->KindOfShape( myObj.get(), anInts, aDbls );
   }
   catch( const SALOME::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
@@ -604,4 +612,21 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   }
 
   return aKindStr;
+}
+
+void MeasureGUI_WhatisDlg::SelectionIntoArgument()
+{
+  myObj.nullify();
+  myObj = getSelected( TopAbs_SHAPE );
+ 
+  if (!myObj) {
+    mySelEdit->setText("");
+    processObject();
+    erasePreview();
+    return;
+  }
+
+  mySelEdit->setText(GEOMBase::GetName(myObj.get()));
+  processObject();
+  redisplayPreview();
 }

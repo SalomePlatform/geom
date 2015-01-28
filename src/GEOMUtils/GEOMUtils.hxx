@@ -61,6 +61,28 @@ namespace GEOMUtils
   typedef std::map<std::string,std::pair<LevelsList,LevelsList> > TreeModel;
 
   /*!
+   * \brief Compute numerical functor for the shape.
+   *
+   * Resulting value can be used to sort out shapes according to some parameter.
+   * 
+   * Returns a pair of two values (dist, functor) where
+   * - \a dist is a some value that is computed according to the center of mass of given shape;
+   * - \a functor is a numerical functor value
+   *
+   * The numerical functor is computed according to the shape's topological properties as follows:
+   * - orientation for vertices 
+   * - length for edges and wires
+   * - area for faces and shells
+   * - volume for solids, compounds, compsolids
+   *
+   * If \a isOldSorting parameter is set to \c true, for all cases linear properties of the shape
+   * are used (to support backward compatibility in some methods). By default, this parameter is
+   * set to \c false.
+   */
+  Standard_EXPORT std::pair<double, double> ShapeToDouble (const TopoDS_Shape& theShape,
+                                                           bool isOldSorting = false);
+
+  /*!
    * \brief Get Local Coordinate System, corresponding to the given shape.
    *
    * Origin of the LCS is situated at the shape's center of mass.
