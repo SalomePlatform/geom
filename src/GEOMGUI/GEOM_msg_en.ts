@@ -2062,7 +2062,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SUPRESSFACE</source>
-        <translation>Supress Face</translation>
+        <translation>Suppress Face</translation>
     </message>
     <message>
         <source>GEOM_SUPRESSFACE_SELECT</source>
@@ -3366,7 +3366,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>REMOVE_HOLES_NEW_OBJ_NAME</source>
-        <translation>SupressHoles</translation>
+        <translation>SuppressHoles</translation>
     </message>
     <message>
         <source>REMOVE_INT_WIRES_NEW_OBJ_NAME</source>
@@ -3942,7 +3942,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>SUPRESS_FACE_NEW_OBJ_NAME</source>
-        <translation>SupressFaces</translation>
+        <translation>SuppressFaces</translation>
     </message>
     <message>
         <source>ShHealOper_ErrorExecution_msg</source>
