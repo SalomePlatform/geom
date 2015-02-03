@@ -982,7 +982,13 @@ void* GEOM_Function::GetCallBackData()
   if(!aChild.FindAttribute(TDataStd_Comment::GetID(), aComment)) return NULL;
   TCollection_AsciiString string( aComment->Get() );
 
-  long long address = atoll( string.ToCString() );
+  long long address;
+#ifndef WIN32
+  address = atoll ( string.ToCString() );
+#else
+  address = _strtoi64 ( string.ToCString(), NULL, 10 );
+#endif
+
   return reinterpret_cast<void*> ( address );
 }
 
