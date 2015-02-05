@@ -450,26 +450,19 @@ Standard_Boolean GEOMImpl_HealingDriver::Sew (GEOMImpl_IHealing*  theHI,
 {
   Standard_Real aTol = theHI->GetTolerance();
 
-  TopoDS_Compound faceCompound;
+  TopoDS_Compound aCompound;
   BRep_Builder builder;
-  builder.MakeCompound( faceCompound );
+  builder.MakeCompound( aCompound );
 
-  TopExp_Explorer faceExp( theOriginalShape, TopAbs_FACE );
-  for ( ; faceExp.More(); faceExp.Next() )
-    builder.Add( faceCompound, faceExp.Current() );
-  
+  builder.Add( aCompound, theOriginalShape );
   Handle(TColStd_HSequenceOfTransient) otherObjs = theHI->GetShapes();
   for ( int ind = 1; ind <= otherObjs->Length(); ind++)
   {
     Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(otherObjs->Value(ind));
-    TopoDS_Shape aShape = aRefShape->GetValue();
-    if (aShape.IsNull())
-      Standard_NullObject::Raise("Null object given");
-    for ( faceExp.Init( aShape, TopAbs_FACE ); faceExp.More(); faceExp.Next() )
-      builder.Add( faceCompound, faceExp.Current() );
+    builder.Add( aCompound, aRefShape->GetValue() );
   }
 
-  ShHealOper_Sewing aHealer (faceCompound, aTol);
+  ShHealOper_Sewing aHealer (aCompound, aTol);
 
   // Set non-manifold mode.
   aHealer.SetNonManifoldMode(isAllowNonManifold);
