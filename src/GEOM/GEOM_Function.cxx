@@ -589,9 +589,10 @@ TCollection_AsciiString GEOM_Function::GetString(int thePosition)
   Handle(TDataStd_Comment) aString;
   TDF_Label anArgLabel = ARGUMENT(thePosition);
   if(!anArgLabel.FindAttribute(TDataStd_Comment::GetID(), aString)) return aRes;
-
+  char *str = new char[aString->Get().LengthOfCString()+1];
+  aString->Get().ToUTF8CString(str);
+  aRes = TCollection_AsciiString(str);
   _isDone = true;
-  aRes = TCollection_AsciiString(aString->Get());
   return aRes;
 }
 

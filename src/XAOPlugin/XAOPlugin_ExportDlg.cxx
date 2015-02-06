@@ -450,7 +450,7 @@ bool XAOPlugin_ExportDlg::execute()
   // call engine function
   GEOM::IXAOOperations_var aXAOOp = GEOM::IXAOOperations::_narrow( getOperation() );
   res = aXAOOp->ExportXAO(m_mainObj, groups, fields,
-                          author.toStdString().c_str(),
-                          fileName.toStdString().c_str());
+                          author.toUtf8().constData(),
+                          fileName.toUtf8().constData());
   return res;
 }
