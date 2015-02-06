@@ -785,6 +785,9 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self.myUseCaseBuilder = self.myStudy.GetUseCaseBuilder()
             self.myUseCaseBuilder.SetRootCurrent()
             self.myUseCaseBuilder.Append(self.father)
+
+            # load data from the study file, if necessary
+            self.myBuilder.LoadWith(self.father, self)
             pass
 
         def GetPluginOperations(self, studyID, libraryName):
