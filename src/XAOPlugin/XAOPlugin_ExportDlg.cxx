@@ -162,7 +162,7 @@ XAOPlugin_ExportDlg::XAOPlugin_ExportDlg(GeometryGUI* geometryGUI, QWidget* pare
   layout->addWidget(gbxFilter);
 
   // set help
-  setHelpFileName("xao_format_page.html");
+  setHelpFileName("import_export_geom_obj_page.html#io_xao");
 
   Init();
 }

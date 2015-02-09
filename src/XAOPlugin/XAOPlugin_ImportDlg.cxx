@@ -113,7 +113,7 @@ XAOPlugin_ImportDlg::XAOPlugin_ImportDlg(GeometryGUI* geometryGUI, QWidget* pare
     layout->addWidget(gbxExport);
 
     // set help
-    setHelpFileName("xao_format_page.html");
+    setHelpFileName("import_export_geom_obj_page.html#io_xao");
 
     Init();
 }
