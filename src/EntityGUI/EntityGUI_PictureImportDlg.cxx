@@ -34,6 +34,7 @@
 #include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include "utilities.h"
 
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>

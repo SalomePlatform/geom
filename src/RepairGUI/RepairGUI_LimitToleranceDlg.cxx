@@ -41,6 +41,7 @@
 #include <SUIT_ViewManager.h>
 #include <OCCViewer_ViewModel.h>
 #include <SALOME_ListIO.hxx>
+#include "utilities.h"
 
 #include <GEOMImpl_Types.hxx>
 

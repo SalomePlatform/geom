@@ -36,6 +36,7 @@
 #include <SalomeApp_Tools.h>
 
 #include <LightApp_SelectionMgr.h>
+#include "utilities.h"
 
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewManager.h>

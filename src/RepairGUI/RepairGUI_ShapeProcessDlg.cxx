@@ -39,6 +39,7 @@
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_MessageBox.h>
 #include <SALOME_ListIO.hxx>
+#include "utilities.h"
 
 #include <Basics_Utils.hxx>
 

@@ -33,6 +33,7 @@
 #include <SalomeApp_Application.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
+#include "utilities.h"
 
 #include <BRep_Tool.hxx>
 #include <Geom_Surface.hxx>

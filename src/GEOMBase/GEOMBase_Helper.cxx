@@ -46,6 +46,7 @@
 #include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
 #include <SALOME_ListIO.hxx>
+#include "utilities.h"
 
 #include <SALOME_Prs.h>
 

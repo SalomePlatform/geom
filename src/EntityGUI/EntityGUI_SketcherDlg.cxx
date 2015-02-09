@@ -47,6 +47,7 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include "utilities.h"
 
 #include <DlgRef.h>
 
