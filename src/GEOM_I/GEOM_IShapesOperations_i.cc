@@ -692,7 +692,7 @@ GEOM_IShapesOperations_i::GetExistingSubObjects (GEOM::GEOM_Object_ptr theShape,
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    GetOperations()->GetExistingSubObjects(aShape, theGroupsOnly);
+    GetOperations()->GetExistingSubObjects(aShape, (Standard_Boolean)theGroupsOnly);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 
