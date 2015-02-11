@@ -5347,22 +5347,6 @@ shells and solids on the other hand.</translation>
         <source>TOOL_IMPORTEXPORT</source>
         <translation>Import / Export XAO</translation>
     </message>
-    <message>
-        <source>TABLE_SECTION</source>
-        <translation>Section</translation>
-    </message>
-    <message>
-        <source>TABLE_INDEX</source>
-        <translation>Index</translation>
-    </message>
-    <message>
-        <source>TABLE_X</source>
-        <translation>X</translation>
-    </message>
-    <message>
-        <source>TABLE_Y</source>
-        <translation>Y</translation>
-    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -5657,6 +5641,25 @@ shells and solids on the other hand.</translation>
         <source>X=%1, Y=%2, Z=%3</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
     </message>
+</context>
+<context>
+  <name>CurveCreator_TableView</name>
+  <message>
+    <source>TABLE_SECTION</source>
+    <translation>Section</translation>
+  </message>
+  <message>
+    <source>TABLE_INDEX</source>
+    <translation>Index</translation>
+  </message>
+  <message>
+    <source>TABLE_X</source>
+    <translation>X</translation>
+  </message>
+  <message>
+    <source>TABLE_Y</source>
+    <translation>Y</translation>
+  </message>
 </context>
 <context>
     <name>CurveCreator_Widget</name>

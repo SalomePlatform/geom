@@ -41,6 +41,8 @@ public:
 
 class CurveCreator_TableView : public QTableWidget
 {
+  Q_OBJECT
+
 public:
   CurveCreator_TableView( CurveCreator_ICurve* theCurve, QWidget* theParent = 0,
                           const QStringList& theCoordTitles = QStringList() );
