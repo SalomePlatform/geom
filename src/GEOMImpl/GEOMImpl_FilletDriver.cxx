@@ -130,7 +130,7 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
   if (!fill.IsDone()) {
     StdFail_NotDone::Raise("Fillet can't be computed on the given shape with the given radius");
   }
-  aShape = fill.Shape();
+  aShape = GEOMUtils::ReduceCompound( fill.Shape() );
 
   if (aShape.IsNull()) return 0;
 

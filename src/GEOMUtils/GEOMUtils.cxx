@@ -1174,3 +1174,22 @@ bool GEOMUtils::Write( const TopoDS_Shape& shape, const char* fileName )
 {
   return BRepTools::Write( shape, fileName );
 }
+
+TopoDS_Shape GEOMUtils::ReduceCompound( const TopoDS_Shape& shape )
+{
+  TopoDS_Shape result = shape;
+
+  if ( shape.ShapeType() == TopAbs_COMPOUND ||
+       shape.ShapeType() == TopAbs_COMPSOLID ) {
+
+    TopTools_ListOfShape l;
+    
+    TopoDS_Iterator it ( shape );
+    for ( ; it.More(); it.Next() )
+      l.Append( it.Value() );
+    if ( l.Extent() == 1 && l.First() != shape )
+      result = ReduceCompound( l.First() );
+  }
+  
+  return result;
+}

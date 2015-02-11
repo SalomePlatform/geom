@@ -300,6 +300,18 @@ namespace GEOMUtils
    */
   Standard_EXPORT bool Write( const TopoDS_Shape& shape,
                               const char* fileName );
+  
+  /*!
+   * \brief Extract single SOLID from COMPSOLID or COMPOUND.
+   *
+   * If the argument shape is a COMPUND or COMPSOLID and there's
+   * only single simple-shape type inside, this sub-shape is returned as a result;
+   * otherwise, the shape is not changed.
+   *
+   * \param shape compound or compsolid being processed.
+   * \retval TopoDS_Shape resulting shape
+   */
+  Standard_EXPORT TopoDS_Shape ReduceCompound( const TopoDS_Shape& shape );
 };
 
 #endif
