@@ -64,6 +64,7 @@
 #include <LightApp_DataObject.h>
 #include <SalomeApp_TypeFilter.h>
 #include <SalomeApp_Tools.h>
+#include "utilities.h"
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_Prs.h>
