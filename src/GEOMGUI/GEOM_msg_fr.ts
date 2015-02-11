@@ -4,14 +4,6 @@
 <context>
     <name>@default</name>
     <message>
-        <source>MEN_TEXTURE</source>
-        <translation>Texture</translation>
-    </message>
-    <message>
-        <source>GEOM_WRN_FACES_NOT_SHELL</source>
-        <translation>Impossible de créer une coque. Le résultat est un assemblage de faces.</translation>
-    </message>
-    <message>
         <source>BRep_API: command not done</source>
         <translation>Erreur: impossible de construire l&apos;objet</translation>
     </message>
@@ -45,6 +37,14 @@ Voulez-vous tout de même supprimer ces objets ?</translation>
     <message>
         <source>DEVIDE_EDGE_NEW_OBJECT_NAME</source>
         <translation>Nouvel objet</translation>
+    </message>
+    <message>
+        <source>DEVIDE_EDGE_BAD_PROJ_MSG</source>
+        <translation>Projection en dehors de l&apos;arête</translation>
+    </message>
+    <message>
+        <source>DEVIDE_EDGE_BY_PROJ_POINT</source>
+        <translation>Points à projeter</translation>
     </message>
     <message>
         <source>ERROR_SHAPE_TYPE</source>
@@ -416,16 +416,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>GroupeSolidesNonBlocs</translation>
     </message>
     <message>
+        <source>GEOM_USE_C1_CRITERION</source>
+        <translation>Utiliser un critère C1</translation>
+    </message>
+    <message>
         <source>GEOM_CHECK_INFOS</source>
         <translation>Objet et ses informations topologiques</translation>
-    </message>
-    <message>
-        <source>GEOM_CHECK_SHAPE</source>
-        <translation>Contrôler un objet</translation>
-    </message>
-    <message>
-        <source>GEOM_CHECK_TITLE</source>
-        <translation>Contrôler la validité de l&apos;objet</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
@@ -433,19 +429,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
-        <translation type="unfinished">Fast intersection</translation>
-    </message>
-    <message>
-        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
-        <translation>La détection d&apos;auto-intersections a échoué</translation>
-    </message>
-    <message>
-        <source>GEOM_NO_SELF_INTERSECTIONS</source>
-        <translation>Il n&apos;y a pas d&apos;auto-intersection dans la géométrie</translation>
-    </message>
-    <message>
-        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
-        <translation>Des auto-intersections ont été détectées</translation>
+        <translation>Intersection rapide</translation>
     </message>
     <message>
         <source>GEOM_CIRCLE</source>
@@ -724,24 +708,28 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Création d&apos;une face à partir des contours et/ou arêtes</translation>
     </message>
     <message>
+        <source>GEOM_FACE_FROM_SURFACE</source>
+        <translation>Création de face depuis une surface bornée par un contour</translation>
+    </message>
+    <message>
         <source>GEOM_FACE_OPT</source>
         <translation>Privilégier la création d&apos;une face plane</translation>
     </message>
     <message>
         <source>GEOM_FACE_FFWC</source>
-        <translation type="unfinished">Face creation from wire and constraints</translation>
+        <translation>Création d&apos;une face depuis un contour et des contraintes</translation>
     </message>
     <message>
         <source>GEOM_CONSTRAINTS</source>
-        <translation type="unfinished">Constraints</translation>
+        <translation>Contraintes</translation>
     </message>
     <message>
         <source>GEOM_FACE_CONSTRAINT</source>
-        <translation type="unfinished">Constraint Face</translation>
+        <translation>Face de contrainte</translation>
     </message>
     <message>
         <source>GEOM_SOLID_FROM_FACE_OPT</source>
-        <translation type="unfinished">Intersect/sew shapes</translation>
+        <translation>Intersecter/coller les formes</translation>
     </message>
     <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
@@ -869,6 +857,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Faces libres</translation>
     </message>
     <message>
+        <source>GEOM_FREE_FACES_NAME</source>
+        <translation>Face_libre</translation>
+    </message>
+    <message>
         <source>GEOM_FREE_FACES_TITLE</source>
         <translation>Faces libres</translation>
     </message>
@@ -899,6 +891,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_GLUE_EDGES_TITLE</source>
         <translation>Recoller les arêtes</translation>
+    </message>
+    <message>
+        <source>GEOM_GLUE_EDGES_DETECT_TITLE</source>
+        <translation>Détection des arêtes coïncidentes</translation>
+    </message>
+    <message>
+        <source>GEOM_GLUE_FACES_DETECT_TITLE</source>
+        <translation>Détection des faces coïncidentes</translation>
     </message>
     <message>
         <source>GLUE_ERROR_STICKED_SHAPES</source>
@@ -1233,16 +1233,44 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Schema de découpe</translation>
     </message>
     <message>
-        <source>GEOM_PROJECTION</source>
-        <translation>Projection</translation>
+        <source>GEOM_PROJECTION_ON_FACE</source>
+        <translation>Projection sur une face</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_ON_WIRE</source>
+        <translation>Projection sur un contour</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_ON_EDGE</source>
+        <translation>Projection sur une arête</translation>
     </message>
     <message>
         <source>GEOM_PROJECTION_TITLE</source>
         <translation>Projection sur une face</translation>
     </message>
     <message>
-        <source>GEOM_SOURCE_OBJECT</source>
-        <translation>Point, arête ou contour de source</translation>
+        <source>GEOM_PROJ_ON_FACE_SOURCE</source>
+        <translation>Point, arête ou contour source</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_FACE_TARGET</source>
+        <translation>Face cible</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_WIRE_SOURCE</source>
+        <translation>Point source</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_WIRE_TARGET</source>
+        <translation>Contour cible</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_EDGE_SOURCE</source>
+        <translation>Point source</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_EDGE_TARGET</source>
+        <translation>Arête cible</translation>
     </message>
     <message>
         <source>GEOM_SOLUTION</source>
@@ -1251,10 +1279,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_SOLUTION_I</source>
         <translation>Solution %1</translation>
-    </message>
-    <message>
-        <source>GEOM_TARGET_OBJECT</source>
-        <translation>Face d&apos;objectif</translation>
     </message>
     <message>
         <source>GEOM_WITH_CONTACT</source>
@@ -1686,7 +1710,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SELECTED_SHAPE</source>
-        <translation>Forme sélectionnée </translation>
+        <translation>Forme sélectionnée</translation>
+    </message>
+    <message>
+        <source>GEOM_SELECTED_SHAPES</source>
+        <translation>Formes sélectionnées</translation>
     </message>
     <message>
         <source>GEOM_SELECTION</source>
@@ -1966,11 +1994,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SOLID_SHELLS</source>
-        <translation type="unfinished">Make Solid From Shells</translation>
+        <translation>Construire un solide depuis des coques</translation>
     </message>
     <message>
         <source>GEOM_SOLID_FACES</source>
-        <translation type="unfinished">Make Solid From Connected Set Of Faces/Shells</translation>
+        <translation>Construire un solide depuis des coques/faces connectées</translation>
     </message>
     <message>
         <source>GEOM_SPHERE</source>
@@ -2361,6 +2389,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Attention</translation>
     </message>
     <message>
+        <source>GEOM_WRN_FACES_NOT_SHELL</source>
+        <translation>Impossible de créer une coque. Le résultat est un assemblage de faces.</translation>
+    </message>
+    <message>
         <source>WRN_SHAPE_UNCLOSED</source>
         <translation>Impossible de créer un solide à partir d&apos;une forme non-fermée %1</translation>
     </message>
@@ -2395,6 +2427,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_CURVE_CREATOR</source>
         <translation>Créateur de courbe</translation>
+    </message>
+    <message>
+      <source>TOP_CURVE_CREATOR</source>
+      <translation>Créer une courbe</translation>
+    </message>
+    <message>
+      <source>STB_CURVE_CREATOR</source>
+      <translation>Créer une courbe</translation>
     </message>
     <message>
         <source>MEN_ALL_SEL_ONLY</source>
@@ -2470,7 +2510,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_FAST_CHECK_INTERSECTIONS</source>
-        <translation type="unfinished">Fast intersection</translation>
+        <translation>Intersection rapide</translation>
     </message>
     <message>
         <source>MEN_CHECK_FREE_BNDS</source>
@@ -3017,12 +3057,16 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Isoligne</translation>
     </message>
     <message>
+        <source>MEN_SURFACE_FROM_FACE</source>
+        <translation>Surface depuis une face</translation>
+    </message>
+    <message>
         <source>MEN_SOLID</source>
         <translation>Solide</translation>
     </message>
     <message>
         <source>MEN_SOLID_FROM_FACES</source>
-        <translation type="unfinished">Solid from connected faces</translation>
+        <translation>Solide depuis des faces connectées</translation>
     </message>
     <message>
         <source>MEN_SOLID_SEL_ONLY</source>
@@ -3059,6 +3103,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_MATERIALS_LIBRARY</source>
         <translation>Librairie de materiaux</translation>
+    </message>
+    <message>
+        <source>MEN_TEXTURE</source>
+        <translation>Texture</translation>
     </message>
     <message>
         <source>MEN_TORUS</source>
@@ -3131,6 +3179,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_POP_PREDEF_MATER_CUSTOM</source>
         <translation>Personnalisé...</translation>
+    </message>
+    <message>
+        <source>MEN_EDGE_EXTEND</source>
+        <translation>Arête étendue</translation>
+    </message>
+    <message>
+        <source>MEN_FACE_EXTEND</source>
+        <translation>Face étendue</translation>
     </message>
     <message>
         <source>NAME_LBL</source>
@@ -3462,7 +3518,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_FAST_CHECK_INTERSECTIONS</source>
-        <translation type="unfinished">Fast intersection</translation>
+        <translation>Intersection rapide</translation>
    </message>
     <message>
         <source>STB_CHECK_FREE_BNDS</source>
@@ -3897,6 +3953,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer une U ou V isoligne</translation>
     </message>
     <message>
+        <source>STB_SURFACE_FROM_FACE</source>
+        <translation>Créer une surface depuis une face</translation>
+    </message>
+    <message>
         <source>STB_SOLID</source>
         <translation>Construire un solide</translation>
     </message>
@@ -4074,7 +4134,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_FAST_CHECK_INTERSECTIONS</source>
-        <translation type="unfinished">Fast intersection</translation>
+        <translation>Intersection rapide</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -4465,6 +4525,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Isoligne</translation>
     </message>
     <message>
+        <source>TOP_SURFACE_FROM_FACE</source>
+        <translation>Surface depuis une face</translation>
+    </message>
+    <message>
         <source>TOP_SOLID</source>
         <translation>Créer un solide</translation>
     </message>
@@ -4653,6 +4717,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Supprimer les arêtes inutiles</translation>
     </message>
     <message>
+        <source>GEOM_BOOL_REMOVE_EXTRA_EDGES</source>
+        <translation>Supprimer les arêtes inutiles</translation>
+    </message>
+    <message>
         <source>GEOM_REMOVE_EXTRA_EDGES</source>
         <translation>Objet dont on supprime les arêtes inutiles</translation>
     </message>
@@ -4714,15 +4782,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_INSPECT_OBJECT</source>
-        <translation type="unfinished">Inspect Object</translation>
+        <translation>Inspecter un objet</translation>
     </message>
     <message>
         <source>MEN_INSPECT_OBJECT</source>
-        <translation type="unfinished">Inspect Object</translation>
+        <translation>Inspecter un objet</translation>
     </message>
     <message>
         <source>STB_INSPECT_OBJECT</source>
-        <translation type="unfinished">Inspect Object</translation>
+        <translation>Inspecter un objet</translation>
     </message>
     <message>
         <source>TOP_NORMALE</source>
@@ -4765,7 +4833,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Montrer l&apos;arbre des dépendances</translation>
     </message>
     <message>
-        <source>MEN_POP_SHOW_REDUCE_STUDY</source>
+        <source>MEN_POP_REDUCE_STUDY</source>
         <translation>Etude réduite</translation>
     </message>
     <message>
@@ -5017,6 +5085,30 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Trouve les éléments partagés</translation>
     </message>
     <message>
+        <source>TOP_TRANSFER_DATA</source>
+        <translation>Transfert de données</translation>
+    </message>
+    <message>
+        <source>MEN_TRANSFER_DATA</source>
+        <translation>Transfert de données</translation>
+    </message>
+    <message>
+        <source>STB_TRANSFER_DATA</source>
+        <translation>Transfert de données</translation>
+    </message>
+    <message>
+        <source>TOP_EXTENSION</source>
+        <translation>Extend Edge or Face</translation>
+    </message>
+    <message>
+        <source>MEN_EXTENSION</source>
+        <translation>Extension</translation>
+    </message>
+    <message>
+        <source>STB_EXTENSION</source>
+        <translation>Extend Edge or Face</translation>
+    </message>
+    <message>
         <source>GEOM_PUBLISH_RESULT_GRP</source>
         <translation>Options avancées</translation>
     </message>
@@ -5158,31 +5250,43 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>GEOM_FILTER</source>
-        <translation type="unfinished">Filter</translation>
+        <translation>Filtre</translation>
     </message>
     <message>
         <source>GEOM_LESS_THAN</source>
-        <translation type="unfinished">Less Than</translation>
+        <translation>Moins que</translation>
     </message>
     <message>
         <source>GEOM_LESSOREQUAL_THAN</source>
-        <translation type="unfinished">Equal or Less Than</translation>
+        <translation>Egal ou moins que</translation>
     </message>
     <message>
         <source>GEOM_GREAT_THAN</source>
-        <translation type="unfinished">Greater Than</translation>
+        <translation>Plus que</translation>
     </message>
     <message>
         <source>GEOM_GREATOREQUAL_THAN</source>
-        <translation type="unfinished">Equal or Greater Than</translation>
+        <translation>Egal ou plus que</translation>
     </message>
     <message>
         <source>GEOM_SOME_SHAPES_SELECTED</source>
-        <translation type="unfinished">%1 shape(s) has(have) been selected</translation>
+        <translation>%1 forme(s) a(ont) été sélectionnée(s)</translation>
     </message>
     <message>
         <source>GEOM_NO_SHAPES_SELECTED</source>
-        <translation type="unfinished">There are no shapes that meet filtering parameters</translation>
+        <translation>Aucune forme ne correspond aux paramètres de filtrage</translation>
+    </message>
+    <message>
+        <source>GEOM_HEALING_STATS_TITLE</source>
+        <translation>Modifications réalisées</translation>
+    </message>
+    <message>
+        <source>GEOM_HEALING_STATS_COL_1</source>
+        <translation>Décompte</translation>
+    </message>
+    <message>
+        <source>GEOM_HEALING_STATS_COL_2</source>
+        <translation>Modification</translation>
     </message>
 </context>
 <context>
@@ -5238,6 +5342,22 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>TOOL_IMPORTEXPORT</source>
         <translation>Import / Export XAO</translation>
+    </message>
+    <message>
+        <source>TABLE_SECTION</source>
+        <translation>Section</translation>
+    </message>
+    <message>
+        <source>TABLE_INDEX</source>
+        <translation>Indice</translation>
+    </message>
+    <message>
+        <source>TABLE_X</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <source>TABLE_Y</source>
+        <translation>Y</translation>
     </message>
 </context>
 <context>
@@ -5481,73 +5601,38 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
 </context>
 <context>
-    <name>CurveCreator_NewPointDlg</name>
-    <message>
-        <source>ADD_NEW_POINT</source>
-        <translation>Add new points</translation>
-    </message>
-    <message>
-        <source>X_COORD</source>
-        <translation>X</translation>
-    </message>
-    <message>
-        <source>Y_COORD</source>
-        <translation>Y</translation>
-    </message>
-    <message>
-        <source>Z_COORD</source>
-        <translation>Z</translation>
-    </message>
-    <message>
-        <source>ADD_BTN</source>
-        <translation>Add</translation>
-    </message>
-    <message>
-        <source>ADD_CONTINUE_BTN</source>
-        <translation>Add and continue</translation>
-    </message>
-    <message>
-        <source>ADD_NEW_POINT_TO_%1</source>
-        <translation>Add new point to %1</translation>
-    </message>
-    <message>
-        <source>SET_POINT_COORDINATES</source>
-        <translation>Set point coordinates</translation>
-    </message>
-</context>
-<context>
     <name>CurveCreator_NewSectionDlg</name>
     <message>
-        <source>NAME</source>
-        <translation>Name</translation>
+        <source>SECTION_NAME</source>
+        <translation>Nom</translation>
     </message>
     <message>
-        <source>LINE_TYPE</source>
+        <source>SECTION_LINE_TYPE</source>
         <translation>Type</translation>
     </message>
     <message>
-        <source>POLYLINE_TYPE</source>
-        <translation>Polyline</translation>
+        <source>SECTION_POLYLINE_TYPE</source>
+        <translation>Polyligne</translation>
     </message>
     <message>
-        <source>SPLINE_TYPE</source>
+        <source>SECTION_SPLINE_TYPE</source>
         <translation>Spline</translation>
     </message>
     <message>
-        <source>LINE_CLOSED</source>
-        <translation>Closed</translation>
+        <source>SECTION_LINE_CLOSED</source>
+        <translation>Fermée</translation>
     </message>
     <message>
-        <source>OK</source>
+        <source>SECTION_ADD_BTN</source>
+        <translation>Ajouter</translation>
+    </message>
+    <message>
+        <source>SECTION_OK_BTN</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <source>ADD_BTN</source>
-        <translation>Add</translation>
-    </message>
-    <message>
-        <source>ADD_CONTINUE_BTN</source>
-        <translation>Add and continue</translation>
+        <source>SECTION_CANCEL_BTN</source>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>ADD_NEW_SECTION</source>
@@ -5572,11 +5657,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
 <context>
     <name>CurveCreator_Widget</name>
     <message>
-        <source>CURVE_NAME_TLT</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>SECTION_GROUP_TLT</source>
+        <source>SECTION_GROUP_TITLE</source>
         <translation>Sections</translation>
     </message>
     <message>
@@ -5604,22 +5685,6 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <translation>Insérer une nouvelle section</translation>
     </message>
     <message>
-        <source>INSERT_SECTION_BEFORE</source>
-        <translation>Insérer une section avant</translation>
-    </message>
-    <message>
-        <source>INSERT_SECTION_BEFORE_TLT</source>
-        <translation>Insérer section avant</translation>
-    </message>
-    <message>
-        <source>INSERT_SECTION_AFTER</source>
-        <translation>Insérer une section après</translation>
-    </message>
-    <message>
-        <source>INSERT_SECTION_AFTER_TLT</source>
-        <translation>Insérer section après</translation>
-    </message>
-    <message>
         <source>ADDITION_MODE</source>
         <translation>Mode Ajout</translation>
     </message>
@@ -5642,18 +5707,6 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>DETECTION_MODE_TLT</source>
         <translation>Mode Détection</translation>
-    </message>
-    <message>
-        <source>INSERT_POINT_BEFORE</source>
-        <translation>Insérer point avant</translation>
-    </message>
-    <message>
-        <source>INSERT_POINT_BEFORE_TLT</source>
-        <translation>Insérer un point avant</translation>
-    </message>
-    <message>
-        <source>INSERT_POINT_AFTER</source>
-        <translation>Insérer point après</translation>
     </message>
     <message>
         <source>CLOSE_SECTIONS</source>
@@ -5704,22 +5757,6 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <translation>Joindre les sections sélectionnées</translation>
     </message>
     <message>
-        <source>STEP_UP</source>
-        <translation>Monter</translation>
-    </message>
-    <message>
-        <source>STEP_UP_TLT</source>
-        <translation>Monter les objets sélectionnés</translation>
-    </message>
-    <message>
-        <source>STEP_DOWN</source>
-        <translation>Descendre</translation>
-    </message>
-    <message>
-        <source>STEP_DOWN_TLT</source>
-        <translation>Descendre les objets sélectionnés</translation>
-    </message>
-    <message>
         <source>CLEAR_ALL</source>
         <translation>Effacer tout</translation>
     </message>
@@ -5734,6 +5771,33 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>JOIN_ALL_TLT</source>
         <translation>Joindre toutes les sections</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_PolylineDlg</name>
+    <message>
+        <source>POLYLINE_DLG_TITLE</source>
+        <translation>Construction de polyligne</translation>
+    </message>
+    <message>
+        <source>POLYLINE_TITLE</source>
+        <translation>Polyligne</translation>
+    </message>
+    <message>
+        <source>POLYLINE_NAME</source>
+        <translation>Polyligne</translation>
+    </message>
+    <message>
+        <source>POLYLINE_IMPORT</source>
+        <translation>Importer une polyligne</translation>
+    </message>
+    <message>
+        <source>POLYLINE_ADD_SECTION</source>
+        <translation>Ajouter une section</translation>
+    </message>
+    <message>
+        <source>POLYLINE_EDIT_SECTION</source>
+        <translation>Modifier une section</translation>
     </message>
 </context>
 <context>
@@ -6698,15 +6762,15 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>WIDTH_FACTOR_TOL</source>
-        <translation type="unfinished">Width factor tol.</translation>
+        <translation>Tol. du facteur d&apos;épaisseur</translation>
     </message>
     <message>
         <source>VOLUME_TOL</source>
-        <translation type="unfinished">Volume tol.</translation>
+        <translation>Tol. de volume</translation>
     </message>
     <message>
         <source>TO_MERGE_SOLIDS</source>
-        <translation type="unfinished">To merge solids</translation>
+        <translation>Réunir les solides</translation>
     </message>
     <message>
         <source>SELECT_ALL</source>
@@ -6901,7 +6965,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_SHARED_SHAPES_MULTISHARE</source>
-        <translation type="unfinished">Shared by all</translation>
+        <translation>Partagé par tous</translation>
     </message>
 </context>
 <context>
@@ -7009,31 +7073,31 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>RepairGUI_InspectObjectDlg</name>
     <message>
         <source>GEOM_INSPECT_OBJECT_TITLE</source>
-        <translation type="unfinished">Inspect object</translation>
+        <translation>Inspecter un objet</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_MAIN_SHAPE</source>
-        <translation type="unfinished">Main shape</translation>
+        <translation>Forme principale</translation>
     </message>
     <message>
     <source>GEOM_INSPECT_OBJECT_SHOW</source>
-        <translation type="unfinished">Show Selected</translation>
+        <translation>Afficher la sélection</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_SHOW_ONLY</source>
-        <translation type="unfinished">Show Only Selected</translation>
+        <translation>Afficher la sélection seulement</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_HIDE</source>
-        <translation type="unfinished">Hide Selected</translation>
+        <translation>Cacher la sélection</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_PUBLISH</source>
-        <translation type="unfinished">Publish Selected</translation>
+        <translation>Publier la sélection</translation>
     </message>
     <message>
         <source>GEOM_INSPECT_OBJECT_NAME</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Nom</translation>
     </message>
 </context>
 <context>
@@ -7082,156 +7146,211 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
     <message>
         <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
-        <translation type="unfinished">Self-intersections</translation>
+        <translation>Auto-intersections</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_SUBSHAPES</source>
-        <translation type="unfinished">Sub-shapes</translation>
+        <translation>Sous-formes</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_CHECK_LEVEL</source>
-        <translation type="unfinished">Level of check</translation>
+        <translation>Niveau de vérification</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_SUMMARY</source>
-        <translation type="unfinished">Summary</translation>
+        <translation>Résumé</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_COMPUTE</source>
-        <translation type="unfinished">Compute self-intersections</translation>
+        <translation>Calculer les auto-intersections</translation>
     </message>
     <message>
         <source>GEOM_SELF_INTERSECTION_NAME</source>
-        <translation type="unfinished">Self_intersection</translation>
+        <translation>Auto_intersection</translation>
     </message>
     <message>
         <source>GEOM_NO_SELF_INTERSECTIONS</source>
-        <translation type="unfinished">There are no self-intersections in the shape</translation>
+        <translation>Il n&apos;y a pas d&apos;auto-intersection dans la géométrie</translation>
     </message>
     <message>
         <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
-        <translation type="unfinished">Some self-intersections detected</translation>
+        <translation>Des auto-intersections ont été détectées</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
-        <translation type="unfinished">Detection of self-intersections failed</translation>
+        <translation>La détection d&apos;auto-intersections a échoué</translation>
     </message>
     <message>
         <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
-        <translation type="unfinished">Warning: there were errors during the operation, so the list may be incomplete.</translation>
+        <translation>Avertissement: il y a eu des erreurs pendant l&apos;opération, la liste peut donc être incomplète.</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_V_V</source>
-        <translation type="unfinished">Vertex to Vertex</translation>
+        <translation>Point à point</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_V_E</source>
-        <translation type="unfinished">Vertex to Edge + all above</translation>
+        <translation>Point à arête + tout au-delà</translation>
     </message>
   <message>
     <source>GEOM_CHECK_INTE_E_E</source>
-    <translation type="unfinished">Edge to Edge + all above</translation>
+    <translation>Arête à arête + tout au-delà</translation>
   </message>
   <message>
     <source>GEOM_CHECK_INTE_V_F</source>
-    <translation type="unfinished">Vertex to Face + all above</translation>
+    <translation>Point à face + tout au-delà</translation>
   </message>
   <message>
     <source>GEOM_CHECK_INTE_E_F</source>
-    <translation type="unfinished">Edge to Face + all above</translation>
+    <translation>Arête à Face + tout au-delà</translation>
   </message>
   <message>
     <source>GEOM_CHECK_INTE_ALL</source>
-    <translation type="unfinished">Face to Face + all above</translation>
+    <translation>Face à Face + tout au-delà</translation>
   </message>
 </context>
 <context>
     <name>MeasureGUI_FastCheckIntersectionsDlg</name>
     <message>
         <source>GEOM_FAST_CHECK_INT_DEFLECT</source>
-        <translation type="unfinished">Deflection coefficient</translation>
+        <translation>Coefficient de déflection</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_INT_DETECT_GAPS</source>
-        <translation type="unfinished">Detect gaps with tolerance</translation>
+        <translation>Détecter les écarts avec la tolérance</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_INT_SUBSHAPES</source>
-        <translation type="unfinished">Sub-shapes of Object %1:</translation>
+        <translation>Sous-formes de l&apos;objet %1:</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_INT_COMPUTE</source>
-        <translation type="unfinished">Compute intersections</translation>
+        <translation>Calculer les intersections</translation>
     </message>
     <message>
         <source>GEOM_FAST_INTERSECTION_NAME</source>
-        <translation type="unfinished">Fast_intersection</translation>
+        <translation>Intersection_rapide</translation>
     </message>
     <message>
         <source>GEOM_FAST_INTERSECTION_FAILS</source>
-        <translation type="unfinished">No intersections</translation>
+        <translation>Pas d&apos;intersection</translation>
     </message>
     <message>
         <source>GEOM_FAST_CHECK_OBJ</source>
-        <translation type="unfinished">Objects And Results</translation>
+        <translation>Objets et résultats</translation>
     </message>
 </context>
 <context>
     <name>TransformationGUI_ExtensionDlg</name>
     <message>
         <source>GEOM_EXTENSION_TITLE</source>
-        <translation type="unfinished">Extension of Edge or Face</translation>
+        <translation>Extension d&apos;arête ou de face</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION</source>
-        <translation type="unfinished">Extension</translation>
+        <translation>Extension</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MIN</source>
-        <translation type="unfinished">First Parameter</translation>
+        <translation>Premier paramètre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MAX</source>
-        <translation type="unfinished">Last Parameter</translation>
+        <translation>Dernier paramètre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MIN_U</source>
-        <translation type="unfinished">First U-Parameter</translation>
+        <translation>Premier U-paramètre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MAX_U</source>
-        <translation type="unfinished">Last U-Parameter</translation>
+        <translation>Dernier U-paramètre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MIN_V</source>
-        <translation type="unfinished">First V-Parameter</translation>
+        <translation>Premier V-paramètre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_MAX_V</source>
-        <translation type="unfinished">Last V-Parameter</translation>
+        <translation>Dernier V-paramètre</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_EDGE_NAME</source>
-        <translation type="unfinished">ExtendedEdge</translation>
+        <translation>AreteEtendue</translation>
     </message>
     <message>
         <source>GEOM_EXTENSION_FACE_NAME</source>
-        <translation type="unfinished">ExtendedFace</translation>
+        <translation>FaceEtendue</translation>
     </message>
 </context>
 <context>
     <name>EntityGUI_SurfFromFaceDlg</name>
     <message>
         <source>GEOM_SURF_FROM_FACE_TITLE</source>
-        <translation type="unfinished">Surface From Face Construction</translation>
+        <translation>Construction de surface depuis une face</translation>
     </message>
     <message>
         <source>GEOM_SURF_FROM_FACE</source>
-        <translation type="unfinished">Surface From Face</translation>
+        <translation>Surface depuis une face</translation>
     </message>
     <message>
         <source>GEOM_SURF_FROM_FACE_NAME</source>
-        <translation type="unfinished">SurfaceFromFace</translation>
+        <translation>SurfaceDepuisFace</translation>
+    </message>
+</context>
+<context>
+    <name>OperationGUI_TransferDataDlg</name>
+    <message>
+        <source>GEOM_TRANSFER_DATA_TITLE</source>
+        <translation>Transfert de données</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA</source>
+        <translation>Transfert de données</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_FROM</source>
+        <translation>Forme source</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_TO</source>
+        <translation>Forme de destination</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_METHOD</source>
+        <translation>Type d&apos;opération de détection</translation>
+    </message>
+    <message>
+        <source>GEOM_TD_METHOD_GETINPLACE</source>
+        <translation>Get In Place</translation>
+    </message>
+    <message>
+        <source>GEOM_TD_METHOD_GETINPLACE_OLD</source>
+        <translation>Get In Place (old)</translation>
+    </message>
+    <message>
+        <source>GEOM_TD_METHOD_GETINPLACE_HISTORY</source>
+        <translation>Get In Place By History</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_INFO</source>
+        <translation>Transfert de données: Information</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_NOT_COPIED</source>
+        <translation>Il n&apos;y a rien à copier.</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_COPIED</source>
+        <translation>Les données suivantes ont été copiées:</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_NAMES</source>
+        <translation>Noms: %1 de %2</translation>
+    </message>
+    <message>
+        <source>GEOM_TRANSFER_DATA_MATERIALS</source>
+        <translation>Matériaux: %1 de %2</translation>
     </message>
 </context>
 </TS>

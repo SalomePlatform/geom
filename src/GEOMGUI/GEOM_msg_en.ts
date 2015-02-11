@@ -5286,7 +5286,7 @@ shells and solids on the other hand.</translation>
     </message>
     <message>
         <source>GEOM_HEALING_STATS_COL_2</source>
-        <translation>Modication</translation>
+        <translation>Modification</translation>
     </message>
 </context>
 <context>
