@@ -258,7 +258,7 @@ void XAOPlugin_IOperations::exportFields( std::list<Handle(GEOM_Field)> fieldLis
 
 void XAOPlugin_IOperations::exportSubshapes( const Handle(GEOM_Object)& shape, XAO::BrepGeometry* geometry )
 {
-  Handle(TColStd_HSequenceOfTransient) subObjects = myShapesOperations->GetExistingSubObjects( shape, false );
+  Handle(TColStd_HSequenceOfTransient) subObjects = myShapesOperations->GetExistingSubObjects( shape, GEOMImpl_IShapesOperations::SubShapes );
   int nbSubObjects = subObjects->Length();
   // set the names of the sub shapes
   for (int i = 1; i <= nbSubObjects; i++)
