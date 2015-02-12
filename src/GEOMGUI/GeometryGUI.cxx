@@ -587,6 +587,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpScale:              // MENU TRANSFORMATION - SCALE
   case GEOMOp::OpOffset:             // MENU TRANSFORMATION - OFFSET
   case GEOMOp::OpProjection:         // MENU TRANSFORMATION - PROJECTION
+  case GEOMOp::OpProjOnCyl:          // MENU TRANSFORMATION - PROJECTION ON CYLINDER
   case GEOMOp::OpMultiTranslate:     // MENU TRANSFORMATION - MULTI-TRANSLATION
   case GEOMOp::OpMultiRotate:        // MENU TRANSFORMATION - MULTI-ROTATION
   case GEOMOp::OpReimport:           // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
@@ -966,6 +967,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpScale,          "SCALE" );
   createGeomAction( GEOMOp::OpOffset,         "OFFSET" );
   createGeomAction( GEOMOp::OpProjection,     "PROJECTION" );
+  createGeomAction( GEOMOp::OpProjOnCyl,      "PROJ_ON_CYL" );
   createGeomAction( GEOMOp::OpMultiTranslate, "MUL_TRANSLATION" );
   createGeomAction( GEOMOp::OpMultiRotate,    "MUL_ROTATION" );
   createGeomAction( GEOMOp::OpExtension,      "EXTENSION" );
@@ -1211,6 +1213,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpOffset,         transId, -1 );
   createMenu( GEOMOp::OpProjection,     transId, -1 );
   createMenu( GEOMOp::OpExtension,      transId, -1 );
+  createMenu( GEOMOp::OpProjOnCyl,      transId, -1 );
   createMenu( separator(),              transId, -1 );
   createMenu( GEOMOp::OpMultiTranslate, transId, -1 );
   createMenu( GEOMOp::OpMultiRotate,    transId, -1 );
@@ -1386,6 +1389,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpOffset,         transTbId );
   createTool( GEOMOp::OpProjection,     transTbId );
   createTool( GEOMOp::OpExtension,      transTbId );
+  createTool( GEOMOp::OpProjOnCyl,      transTbId );
   createTool( separator(),              transTbId );
   createTool( GEOMOp::OpMultiTranslate, transTbId );
   createTool( GEOMOp::OpMultiRotate,    transTbId );

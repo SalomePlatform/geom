@@ -464,6 +464,10 @@
             <translation>faceextension.png</translation>
         </message>
         <message>
+            <source>ICO_DLG_PROJ_ON_CYL</source>
+            <translation>proj_on_cyl.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_PARTITION</source>
             <translation>partition.png</translation>
         </message>
@@ -1154,6 +1158,10 @@
         <message>
             <source>ICO_EXTENSION</source>
             <translation>edgeextension.png</translation>
+        </message>
+        <message>
+            <source>ICO_PROJ_ON_CYL</source>
+            <translation>proj_on_cyl.png</translation>
         </message>
         <message>
             <source>ICO_ORIGIN_AND_VECTORS</source>

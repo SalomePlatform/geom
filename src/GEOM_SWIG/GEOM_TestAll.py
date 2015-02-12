@@ -272,6 +272,7 @@ def TestAll (geompy, math):
   Position2   = geompy.PositionAlongPath(Box, Arc, 0.5, 1, 0)  #(2 GEOM_Object, 1 Double, 2 Bool)->GEOM_Object
   Offset      = geompy.MakeOffset(Box, 10.)          #(GEOM_Object, Double)->GEOM_Object
   ProjOnWire  = geompy.MakeProjectionOnWire(p0, Wire)
+  ProjOnCyl   = geompy.MakeProjectionOnCylinder(Wire, 100)
   Orientation = geompy.ChangeOrientation(Box)
   ExtEdge     = geompy.ExtendEdge(Edge1, -0.3, 1.3)
   ExtFace     = geompy.ExtendFace(Face5, -0.3, 1.3, -0.1, 1.1)
@@ -497,6 +498,7 @@ def TestAll (geompy, math):
   id_Offset      = geompy.addToStudy(Offset,        "Offset")
   id_Orientation = geompy.addToStudy(Orientation,   "Orientation")
   id_ProjOnWire  = geompy.addToStudy(ProjOnWire[1], "ProjOnWire")
+  id_ProjOnCyl   = geompy.addToStudy(ProjOnCyl,     "ProjOnCyl")
   id_ExtEdge     = geompy.addToStudy(ExtEdge,       "ExtendedEdge")
   id_ExtFace     = geompy.addToStudy(ExtFace,       "ExtendedFace")
   id_Surface     = geompy.addToStudy(Surface,       "Surface From Face")

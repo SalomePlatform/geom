@@ -58,6 +58,7 @@
 #endif
 
 class TColStd_SequenceOfExtendedString;
+class TopoDS_Shape;
 
 
 #include "GEOM_BaseDriver.hxx"
@@ -80,6 +81,15 @@ Standard_EXPORT ~GEOMImpl_ProjectionDriver() {};
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
+
+private:
+
+  TopoDS_Shape projectOnCylinder(const TopoDS_Shape  &theShape,
+                                 const Standard_Real  theRadius,
+                                 const Standard_Real  theStartAngle,
+                                 const Standard_Real  theAngleLength) const;
+
+public:
 
 DEFINE_STANDARD_RTTI( GEOMImpl_ProjectionDriver )
 };

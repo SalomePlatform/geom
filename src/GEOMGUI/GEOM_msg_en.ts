@@ -1261,6 +1261,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Projection</translation>
     </message>
     <message>
+        <source>GEOM_PROJECTION_NAME</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
         <source>GEOM_PROJ_ON_FACE_SOURCE</source>
         <translation>Source vertex, edge or wire</translation>
     </message>
@@ -2845,6 +2849,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Projection</translation>
     </message>
     <message>
+        <source>MEN_PROJ_ON_CYL</source>
+        <translation>Projection on Cylinder</translation>
+    </message>
+    <message>
         <source>MEN_OPERATIONS</source>
         <translation>Operations</translation>
     </message>
@@ -3805,6 +3813,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Project a point, an edge or a wire on a face</translation>
     </message>
     <message>
+        <source>STB_PROJ_ON_CYL</source>
+        <translation>Project a wire or a face on a cylinder</translation>
+    </message>
+    <message>
         <source>STB_ORIGIN_AND_VECTORS</source>
         <translation>Create an origin and base Vectors</translation>
     </message>
@@ -4423,6 +4435,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_PROJECTION</source>
         <translation>Projection</translation>
+    </message>
+    <message>
+        <source>TOP_PROJ_ON_CYL</source>
+        <translation>Projection on Cylinder</translation>
     </message>
     <message>
         <source>TOP_ORIGIN_AND_VECTORS</source>
@@ -7402,6 +7418,21 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_TRANSFER_DATA_MATERIALS</source>
         <translation>Materials: %1 of %2</translation>
+    </message>
+</context>
+<context>
+    <name>TransformationGUI_ProjectionOnCylDlg</name>
+    <message>
+      <source>GEOM_PROJ_ON_CYL_TITLE</source>
+      <translation>Projection On A Cylinder</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_CYL_START_ANGLE</source>
+      <translation>Starting angle</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
+      <translation>Length angle</translation>
     </message>
 </context>
 </TS>

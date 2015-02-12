@@ -1420,6 +1420,31 @@ module GEOM
      *  \return theObject.
      */
     GEOM_Object RecomputeObject (in GEOM_Object theObject);
+
+    /*!
+     *  \brief Compute the projection of a wire or a face on a cylinder.
+     *
+     *  This method computes a wire or a face or a compound of faces
+     *  that represents a projection of the source shape onto cylinder.
+     *  The cylinder's coordinate system is the same as the global coordinate
+     *  system.
+     *
+     *  \param theObject The object to be projected. It can be either
+     *         a planar wire or a face.
+     *  \param theRadius The radius of the cylinder.
+     *  \param theStartAngle The starting angle from the cylinder's X axis
+     *         around Z axis. The angle from which the projection is started.
+     *  \param theAngleLength The projection length angle. The angle in which
+     *         to project the total length of the wire. If it is negative the
+     *         projection is not scaled and natural wire length is kept for
+     *         the projection.
+     *  \return A wire or a face or a compound of faces that represents a
+     *         projection of the source shape onto a cylinder.
+     */
+    GEOM_Object MakeProjectionOnCylinder (in GEOM_Object theObject,
+                                          in double      theRadius,
+                                          in double      theStartAngle,
+                                          in double      theAngleLength);
   };
   
   /*!

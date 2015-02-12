@@ -197,6 +197,11 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 
   GEOM::GEOM_Object_ptr RecomputeObject (GEOM::GEOM_Object_ptr theObject);
 
+  GEOM::GEOM_Object_ptr MakeProjectionOnCylinder
+                                   (GEOM::GEOM_Object_ptr theObject,
+                                    CORBA::Double         theRadius,
+                                    CORBA::Double         theStartAngle,
+                                    CORBA::Double         theAngleLength);
 
   ::GEOMImpl_ITransformOperations* GetOperations() { return (::GEOMImpl_ITransformOperations*)GetImpl(); }
 };

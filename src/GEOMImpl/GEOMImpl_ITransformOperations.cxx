@@ -35,6 +35,7 @@
 #include <GEOMImpl_ITranslate.hxx>
 #include <GEOMImpl_IMirror.hxx>
 #include <GEOMImpl_IProjection.hxx>
+#include <GEOMImpl_IProjOnCyl.hxx>
 #include <GEOMImpl_IOffset.hxx>
 #include <GEOMImpl_IScale.hxx>
 #include <GEOMImpl_IRotate.hxx>
@@ -2266,4 +2267,79 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TransformLikeOtherCopy
 
   SetErrorCode(OK);
   return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  MakeProjectionOnCylinder
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::MakeProjectionOnCylinder
+                             (const Handle(GEOM_Object) &theObject,
+                              const Standard_Real        theRadius,
+                              const Standard_Real        theStartAngle,
+                              const Standard_Real        theAngleLength)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) {
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
+
+  if (aLastFunction.IsNull()) {
+    //There is no function which creates an object to be projected
+    return NULL;
+  }
+
+  //Add a new Projection object
+  Handle(GEOM_Object) aResult =
+    GetEngine()->AddObject(GetDocID(), GEOM_PROJECTION);
+
+  //Add a Projection function
+  Handle(GEOM_Function) aFunction = aResult->AddFunction
+    (GEOMImpl_ProjectionDriver::GetID(), PROJECTION_ON_CYLINDER);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ProjectionDriver::GetID()) {
+    return aResult;
+  }
+
+  GEOMImpl_IProjOnCyl aProj (aFunction);
+
+  aProj.SetShape(aLastFunction);
+  aProj.SetRadius(theRadius);
+  aProj.SetStartAngle(theStartAngle);
+  aProj.SetAngleLength(theAngleLength);
+
+  //Compute the Projection
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Projection driver failed");
+      return aResult;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aResult;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd(aFunction);
+
+  pd << aResult << " = geompy.MakeProjectionOnCylinder("
+     << theObject << ", " << theRadius << ", " << theStartAngle;
+
+  if (theAngleLength >= 0.) {
+    pd << ", " << theAngleLength;
+  }
+
+   pd << ")";
+
+  SetErrorCode(OK);
+
+  return aResult;
 }

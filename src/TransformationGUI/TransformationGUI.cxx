@@ -49,6 +49,7 @@
 #include "TransformationGUI_OffsetDlg.h"             // Method OFFSET
 #include "TransformationGUI_ProjectionDlg.h"         // Method PROJECTION
 #include "TransformationGUI_PositionDlg.h"           // Method POSITION
+#include "TransformationGUI_ProjectionOnCylDlg.h"    // Method PROJECTION ON CYLINDER
 
 //=======================================================================
 // function : TransformationGUI()
@@ -101,6 +102,9 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     break;
   case GEOMOp::OpProjection:     // PROJECTION
     aDlg = new TransformationGUI_ProjectionDlg( getGeometryGUI(), parent );
+    break;
+  case GEOMOp::OpProjOnCyl:      // PROJECTION ON CYLINDER
+    aDlg = new TransformationGUI_ProjectionOnCylDlg( getGeometryGUI(), parent );
     break;
   case GEOMOp::OpMultiTranslate: // MULTI TRANSLATION
     aDlg = new TransformationGUI_MultiTranslationDlg( getGeometryGUI(), parent );

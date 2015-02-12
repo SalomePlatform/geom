@@ -191,6 +191,12 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) TransformLikeOtherCopy (Handle(GEOM_Object) theObject,
                                                               Handle(GEOM_Object) theSample);
 
+  Standard_EXPORT Handle(GEOM_Object) MakeProjectionOnCylinder
+                             (const Handle(GEOM_Object) &theObject,
+                              const Standard_Real        theRadius,
+                              const Standard_Real        theStartAngle,
+                              const Standard_Real        theAngleLength);
+
 };
 
 #endif

@@ -97,6 +97,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ITranslate.hxx
   GEOMImpl_IMirror.hxx
   GEOMImpl_IProjection.hxx
+  GEOMImpl_IProjOnCyl.hxx
   GEOMImpl_IOffset.hxx
   GEOMImpl_IScale.hxx
   GEOMImpl_IRotate.hxx

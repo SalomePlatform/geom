@@ -26,16 +26,26 @@
 
 #include <GEOMImpl_IMirror.hxx>
 #include <GEOMImpl_IProjection.hxx>
+#include <GEOMImpl_IProjOnCyl.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
+#include <GEOMUtils.hxx>
+#include <GEOMUtils_HTrsfCurve2d.hxx>
 
+#include <Approx_Curve2d.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepAdaptor_Curve2d.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepLib.hxx>
 #include <BRepOffsetAPI_NormalProjection.hxx>
 #include <BRepTools.hxx>
+#include <BRepTools_WireExplorer.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -44,11 +54,14 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopoDS_Wire.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 
 #include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <Geom_Curve.hxx>
+#include <Geom_CylindricalSurface.hxx>
 #include <Geom_Plane.hxx>
+#include <Geom2d_TrimmedCurve.hxx>
 
 #include <gp_Trsf.hxx>
 #include <gp_Pnt.hxx>
@@ -400,6 +413,42 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
     if (!hasValidSolution) {
       Standard_ConstructionError::Raise("Projection aborted : no projection");
     }
+  } else if (aType == PROJECTION_ON_CYLINDER) {
+    GEOMImpl_IProjOnCyl   aProj (aFunction);
+    Handle(GEOM_Function) aShapeFunction = aProj.GetShape();
+      
+    if (aShapeFunction.IsNull()) {
+      return 0;
+    }
+
+    TopoDS_Shape aShape = aShapeFunction->GetValue();
+
+    if (aShape.IsNull()) {
+      return 0;
+    }
+
+    // Get the face.
+    const TopAbs_ShapeEnum aType        = aShape.ShapeType();
+    const Standard_Real    aRadius      = aProj.GetRadius();
+    const Standard_Real    aStartAngle  = aProj.GetStartAngle();
+    const Standard_Real    aLengthAngle = aProj.GetAngleLength();
+
+    if (aType != TopAbs_WIRE && aType != TopAbs_FACE) {
+      return 0;
+    }
+
+    if (aRadius <= Precision::Confusion()) {
+      return 0;
+    }
+
+    TopoDS_Shape aProjShape =
+      projectOnCylinder(aShape, aRadius, aStartAngle, aLengthAngle);
+
+    if (aProjShape.IsNull()) {
+      return 0;
+    }
+
+    aFunction->SetValue(aProjShape);
   }
 
   return 1;
@@ -440,11 +489,263 @@ GetCreationInformation(std::string&             theOperationName,
 
       break;
     }
+  case PROJECTION_ON_CYLINDER:
+    {
+      GEOMImpl_IProjOnCyl aProj (function);
+      const Standard_Real aLengthAngle = aProj.GetAngleLength();
+
+      AddParam(theParams, "Shape",        aProj.GetShape());
+      AddParam(theParams, "Radius",       aProj.GetRadius());
+      AddParam(theParams, "Start angle",  aProj.GetStartAngle());
+
+      if (aLengthAngle >= 0.) {
+        AddParam(theParams, "Length angle", aLengthAngle);
+      }
+
+      break;
+    }
   default:
     return false;
   }
   
   return true;
+}
+
+//================================================================================
+/*!
+ * \brief Performs projection of a planar wire or a face on a cylinder.
+ */
+//================================================================================
+
+TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
+                                (const TopoDS_Shape  &theShape,
+                                 const Standard_Real  theRadius,
+                                 const Standard_Real  theStartAngle,
+                                 const Standard_Real  theAngleLength) const
+{
+  TopoDS_Shape aResult;
+
+  // Get the face.
+  const TopAbs_ShapeEnum aType = theShape.ShapeType();
+  TopoDS_Face            aFace;
+
+  if (aType == TopAbs_WIRE) {
+    // Try to create a planar face.
+    TopoDS_Wire             aWire = TopoDS::Wire(theShape);
+    BRepBuilderAPI_MakeFace aMkFace(aWire, Standard_True);
+
+    if (aMkFace.IsDone()) {
+      aFace = aMkFace.Face();
+    } else {
+      // Check if the wire is a straight line.
+      TopExp_Explorer anEExp(aWire, TopAbs_EDGE);
+      TopoDS_Edge     anEdge;
+
+      for (; anEExp.More(); anEExp.Next()) {
+        anEdge = TopoDS::Edge(anEExp.Current());
+
+        if (!BRep_Tool::Degenerated(anEdge)) {
+          break;
+        }
+      }
+
+      if (anEExp.More()) {
+        // Not degenerated edge found. Try to create a plane.
+        Standard_Real      aPar[2];
+        Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, aPar[0], aPar[1]);
+        gp_Pnt             aP0    = aCurve->Value(aPar[0]);
+        gp_Pnt             aP1    = aCurve->Value(0.5*(aPar[1] + aPar[0]));
+        gp_Vec             aX(aP1.XYZ().Subtracted(aP0.XYZ()));
+        Standard_Real      aTolConf = Precision::Confusion();
+
+        if (aX.Magnitude() > aTolConf) {
+          aX.Normalize();
+
+          // Get the plane normal ortogonal to Z axis.
+          gp_Vec aZ(0., 0., 1.);
+          gp_Vec aN = aX.Crossed(aZ);
+
+          if (aN.Magnitude() <= aTolConf) {
+            // aX is parallel to aZ. Get the plane normal ortogonal to Y axis.
+            gp_Vec aY(0., 1., 0.);
+
+            aN = aX.Crossed(aY);
+          }
+
+          if (aN.Magnitude() >      aTolConf) {
+            gp_Ax3                  anAxis(aP0, gp_Dir(aN), gp_Dir(aX));
+            Handle(Geom_Plane)      aPlane = new Geom_Plane(anAxis);
+            BRepBuilderAPI_MakeFace aMkFace(aPlane, aWire);
+
+            if (aMkFace.IsDone()) {
+              aFace = aMkFace.Face();
+            }
+          }
+        }
+      }
+    }
+  } else if (aType == TopAbs_FACE) {
+    aFace = TopoDS::Face(theShape);
+  }
+
+  if (aFace.IsNull()) {
+    return aResult;
+  }
+
+  // Compute 2d translation transformation.
+  TopoDS_Wire            anOuterWire = BRepTools::OuterWire(aFace);
+  Standard_Real          aU[2];
+  Standard_Real          aV[2];
+  BRepTools_WireExplorer aOWExp(anOuterWire, aFace);
+
+  if (!aOWExp.More()) {
+    // NEVERREACHED
+    return aResult;
+  }
+
+  // Compute anisotropic transformation from a face's 2d space
+  // to cylinder's 2d space.
+  BRepTools::UVBounds(aFace, anOuterWire, aU[0], aU[1], aV[0], aV[1]);
+
+  TopoDS_Vertex       aFirstVertex = aOWExp.CurrentVertex();
+  TopoDS_Edge         aFirstEdge   = aOWExp.Current();
+  gp_Pnt              aPnt         = BRep_Tool::Pnt(aFirstVertex);
+  BRepAdaptor_Curve2d anAdaptorCurve(aFirstEdge, aFace);
+  Standard_Real       aParam       =
+    BRep_Tool::Parameter(aFirstVertex, aFirstEdge, aFace);
+  gp_Pnt2d            aPntUV       = anAdaptorCurve.Value(aParam);
+
+  GEOMUtils::Trsf2d aTrsf2d
+            (1./theRadius, 0., theStartAngle - aU[0]/theRadius,
+             0.,           1., aPnt.Z() - 0.5*(aV[1] - aV[0]) - aPntUV.Y());
+
+  // Compute scaling trsf.
+  const Standard_Boolean isToScale = theAngleLength >= Precision::Angular();
+  gp_Trsf2d aScaleTrsf;
+
+  if (isToScale) {
+    // Perform 2d scaling.
+    gp_Pnt2d            aMidPnt(0.5*(aU[1] + aU[0]), 0.5*(aV[1] + aV[0]));
+    const Standard_Real aScaleFactor = theAngleLength*theRadius/(aU[1] - aU[0]);
+
+    aTrsf2d.TransformD0(aMidPnt);
+
+    aScaleTrsf.SetScale(aMidPnt, aScaleFactor);
+  }
+
+  // Get 2d presentation of a face.
+  Handle(Geom_Surface) aCylinder =
+    new Geom_CylindricalSurface(gp_Ax3(), theRadius);
+  GeomAdaptor_Surface  aGACyl(aCylinder);
+  TopExp_Explorer      anExp(aFace, TopAbs_WIRE);
+  Standard_Real        aPar[2];
+  TopTools_ListOfShape aWires;
+  Standard_Real        aUResol = aGACyl.UResolution(Precision::Confusion());
+  Standard_Real        aVResol = aGACyl.VResolution(Precision::Confusion());
+
+  for (; anExp.More(); anExp.Next()) {
+    TopoDS_Wire             aWire = TopoDS::Wire(anExp.Current());
+    BRepTools_WireExplorer  aWExp(aWire, aFace);
+    BRepBuilderAPI_MakeWire aMkWire;
+
+    for (; aWExp.More(); aWExp.Next()) {
+      TopoDS_Edge                 anEdge   = aWExp.Current();
+      Handle(Geom2d_Curve)        aCurve   =
+        BRep_Tool::CurveOnSurface(anEdge, aFace, aPar[0], aPar[1]);
+
+      if (aCurve.IsNull()) {
+        continue;
+      }
+
+      // Transform the curve to cylinder's parametric space.
+      GEOMUtils::Handle(HTrsfCurve2d) aTrsfCurve =
+        new GEOMUtils::HTrsfCurve2d(aCurve, aPar[0], aPar[1], aTrsf2d);
+      Approx_Curve2d                  aConv (aTrsfCurve, aPar[0], aPar[1],
+			                                 aUResol, aVResol, GeomAbs_C1,
+                                             9, 1000);
+
+      if (!aConv.IsDone() && !aConv.HasResult()) {
+        return aResult;
+      }
+
+      Handle(Geom2d_Curve) aCylCurve = aConv.Curve();
+
+      if (isToScale) {
+        aCylCurve->Transform(aScaleTrsf);
+      }
+
+      // Create edge and add it to the wire.
+      BRepBuilderAPI_MakeEdge aMkEdge(aCylCurve, aCylinder);
+
+      if (!aMkEdge.IsDone()) {
+        return aResult;
+      }
+
+      aMkWire.Add(aMkEdge.Edge());
+
+      if (!aMkWire.IsDone()) {
+        return aResult;
+      }
+    }
+
+    if (aWire.IsSame(anOuterWire)) {
+      // Make the outer wire first.
+      aWires.Prepend(aMkWire.Wire());
+    } else {
+      aWires.Append(aMkWire.Wire());
+    }
+  }
+
+  // Create a face.
+  if (aWires.IsEmpty()) {
+    return aResult;
+  }
+
+  TopTools_ListIteratorOfListOfShape aWIter(aWires);
+  TopoDS_Wire                        aWire = TopoDS::Wire(aWIter.Value());
+  BRepBuilderAPI_MakeFace aMkFace(aCylinder, aWire);
+
+  if (!aMkFace.IsDone()) {
+    return aResult;
+  }
+
+  for (aWIter.Next(); aWIter.More(); aWIter.Next()) {
+    aWire = TopoDS::Wire(aWIter.Value());
+    aMkFace.Add(aWire);
+
+    if (!aMkFace.IsDone()) {
+      return aResult;
+    }
+  }
+
+  // Build 3D curves.
+  TopoDS_Face  aCylFace = aMkFace.Face();
+  TopoDS_Shape aResShape;
+
+  BRepLib::BuildCurves3d(aCylFace);
+
+  // Check shape.
+  if (aType == TopAbs_WIRE) {
+    TopExp_Explorer aResExp(aCylFace, TopAbs_WIRE);
+
+    if (aResExp.More()) {
+      aResShape = aResExp.Current();
+    }
+  } else {
+    aResShape = aCylFace;
+  }
+
+  if (aResShape.IsNull() == Standard_False) {
+    if (!GEOMUtils::CheckShape(aResShape, true)) {
+      if (!GEOMUtils::FixShapeTolerance(aResShape)) {
+        return aResult;
+      }
+    }
+
+    aResult = aResShape;
+  }
+
+  return aResult;
 }
 
 IMPLEMENT_STANDARD_HANDLE (GEOMImpl_ProjectionDriver,GEOM_BaseDriver);

@@ -148,6 +148,7 @@ namespace GEOMOp {
     OpReimport            = 3608,   // POPUP MENU - RELOAD IMPORTED
     OpProjection          = 3609,   // MENU OPERATIONS - TRANSFORMATION - PROJECTION
     OpExtension           = 3610,   // MENU OPERATIONS - TRANSFORMATION - EXTENSION
+    OpProjOnCyl           = 3611,   // MENU OPERATIONS - TRANSFORMATION - PROJECTION ON CYLINDER
     // OperationGUI ----------------//--------------------------------
     OpPartition           = 3700,   // MENU OPERATION - PARTITION
     OpArchimede           = 3701,   // MENU OPERATION - ARCHIMEDE

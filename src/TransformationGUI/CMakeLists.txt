@@ -75,6 +75,7 @@ SET(TransformationGUI_HEADERS
   TransformationGUI_ScaleDlg.h
   TransformationGUI_OffsetDlg.h
   TransformationGUI_ProjectionDlg.h
+  TransformationGUI_ProjectionOnCylDlg.h
   TransformationGUI_PositionDlg.h
   )
 
@@ -89,6 +90,7 @@ SET(_moc_HEADERS
   TransformationGUI_ScaleDlg.h
   TransformationGUI_OffsetDlg.h
   TransformationGUI_ProjectionDlg.h
+  TransformationGUI_ProjectionOnCylDlg.h
   TransformationGUI_PositionDlg.h
   )
 
@@ -111,6 +113,7 @@ SET(TransformationGUI_SOURCES
   TransformationGUI_ScaleDlg.cxx
   TransformationGUI_OffsetDlg.cxx
   TransformationGUI_ProjectionDlg.cxx
+  TransformationGUI_ProjectionOnCylDlg.cxx
   TransformationGUI_PositionDlg.cxx
   ${_moc_SOURCES}
   ${_uic_files}

@@ -9403,6 +9403,67 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             anObj = self.MultiRotate2DByStep(aShape, aVec, anAngle, nbtimes1, aStep, nbtimes2, theName)
             return anObj
 
+        ##
+        #  Compute a wire or a face that represents a projection of the source
+        #  shape onto cylinder. The cylinder's coordinate system is the same
+        #  as the global coordinate system.
+        #
+        #  @param theObject The object to be projected. It can be either
+        #         a planar wire or a face.
+        #  @param theRadius The radius of the cylinder.
+        #  @param theStartAngle The starting angle in radians from
+        #         the cylinder's X axis around Z axis. The angle from which
+        #         the projection is started.
+        #  @param theAngleLength The projection length angle in radians.
+        #         The angle in which to project the total length of the wire.
+        #         If it is negative the projection is not scaled and natural
+        #         wire length is kept for the projection.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #
+        #  @return New GEOM.GEOM_Object, containing the result shape. The result
+        #         represents a wire or a face that represents a projection of
+        #         the source shape onto a cylinder.
+        #
+        #  @ref tui_projection "Example"
+        def MakeProjectionOnCylinder (self, theObject, theRadius,
+                                      theStartAngle=0.0, theAngleLength=-1.0,
+                                      theName=None):
+            """
+            Compute a wire or a face that represents a projection of the source
+            shape onto cylinder. The cylinder's coordinate system is the same
+            as the global coordinate system.
+
+            Parameters:
+                theObject The object to be projected. It can be either
+                        a planar wire or a face.
+                theRadius The radius of the cylinder.
+                theStartAngle The starting angle in radians from the cylinder's X axis
+                        around Z axis. The angle from which the projection is started.
+                theAngleLength The projection length angle in radians. The angle in which
+                        to project the total length of the wire. If it is negative the
+                        projection is not scaled and natural wire length is kept for
+                        the projection.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                New GEOM.GEOM_Object, containing the result shape. The result
+                represents a wire or a face that represents a projection of
+                the source shape onto a cylinder.
+            """
+            # Example: see GEOM_TestAll.py
+            theRadius, theStartAngle, theAngleLength, Parameters = ParseParameters(
+              theRadius, theStartAngle, theAngleLength)
+            anObj = self.TrsfOp.MakeProjectionOnCylinder(theObject, theRadius,
+                theStartAngle, theAngleLength)
+            RaiseIfFailed("MakeProjectionOnCylinder", self.TrsfOp)
+            anObj.SetParameters(Parameters)
+            self._autoPublish(anObj, theName, "projection")
+            return anObj
+
         # end of l3_transform
         ## @}
 

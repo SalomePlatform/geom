@@ -17,6 +17,7 @@ which allow to:
 <li>Create an \subpage offset_operation_page "Offset" of an object.</li>
 <li>Create a \subpage projection_operation_page "Projection" of an object on a face.</li>
 <li>Create an \subpage extension_operation_page "Extension" of an edge or a face.</li>
+<li>Create a \subpage projection_on_cylinder_operation_page "Projection on cylinder".</li>
 <li>Create a simultaneous \subpage multi_translation_operation_page "Translation in several directions".</li>
 <li>Create a simultaneous \subpage multi_rotation_operation_page</li> "Rotation in several directions".</li>
 </ul>

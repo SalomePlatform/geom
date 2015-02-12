@@ -134,6 +134,7 @@ SET( _res_files
   projection.png
   projection_on_edge.png
   projection_on_wire.png
+  proj_on_cyl.png
   origin_and_vectors.png
   partition.png
   partitionkeep.png
