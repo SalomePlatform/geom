@@ -31,7 +31,6 @@
 #include <Basics_OCCTVersion.hxx>
 
 // Open CASCADE Includes
-#include <AIS_Drawer.hxx>
 #include <AIS_InteractiveContext.hxx>
 #include <BRep_Tool.hxx>
 #include <GCPnts_AbscissaPoint.hxx>

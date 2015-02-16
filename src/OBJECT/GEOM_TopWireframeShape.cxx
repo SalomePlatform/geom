@@ -39,7 +39,6 @@
 #include <SALOME_InteractiveObject.hxx>
 
 //Open CASCADE includes
-#include <AIS_Drawer.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Prs3d_IsoAspect.hxx>
 

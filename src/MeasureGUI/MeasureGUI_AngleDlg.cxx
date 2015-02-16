@@ -55,7 +55,6 @@
 #include <gce_MakePln.hxx>
 #include <Precision.hxx>
 #include <AIS.hxx>
-#include <AIS_Drawer.hxx>
 #include <Prs3d_LineAspect.hxx> 
 #include <IntTools_EdgeEdge.hxx>
 #include <IntTools_SequenceOfCommonPrts.hxx>

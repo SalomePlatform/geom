@@ -47,7 +47,6 @@
 // OCCT Includes
 #include <Geom_Plane.hxx>
 #include <AIS_LengthDimension.hxx>
-#include <AIS_Drawer.hxx>
 #include <Prs3d_LineAspect.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>

@@ -60,7 +60,6 @@
 #include <AIS_Trihedron.hxx>
 #include <AIS_AngleDimension.hxx>
 #include <AIS_LengthDimension.hxx>
-#include <AIS_Drawer.hxx>
 #include <Geom_Axis2Placement.hxx>
 #include <Geom_Plane.hxx>
 #include <SelectMgr_Selection.hxx>

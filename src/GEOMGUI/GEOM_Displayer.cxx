@@ -81,7 +81,6 @@
 #include <OCCViewer_Utilities.h>
 
 // OCCT Includes
-#include <AIS_Drawer.hxx>
 #include <AIS_Dimension.hxx>
 #include <AIS_LengthDimension.hxx>
 #include <AIS_DiameterDimension.hxx>

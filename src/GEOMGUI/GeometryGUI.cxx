@@ -98,7 +98,6 @@
 #include <QPainter>
 #include <QSignalMapper>
 
-#include <AIS_Drawer.hxx>
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Prs3d_Drawer.hxx>

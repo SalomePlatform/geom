@@ -90,7 +90,6 @@
 #include "utilities.h"
 
 // OCCT Includes
-#include <AIS_Drawer.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>

@@ -65,7 +65,6 @@
 #include <AIS_InteractiveObject.hxx>
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_GraphicTool.hxx>
-#include <AIS_Drawer.hxx>
 #include <Aspect_TypeOfFacingModel.hxx>
 #include <Prs3d_ShadingAspect.hxx>
 #include<Graphic3d_MaterialAspect.hxx>
