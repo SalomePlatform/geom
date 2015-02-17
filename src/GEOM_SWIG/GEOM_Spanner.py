@@ -36,10 +36,6 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
 
   th = 4.0
 
-  ### BlocksOp ###
-
-  BlocksOp = geompy.BlocksOp
-
   ### Basic points and directions ###
 
   p0  = geompy.MakeVertex(0., 0., 0.)
@@ -279,17 +275,21 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
   Face22h = geompy.GetOppositeFace(Block2h, Face21h)
   id_face22h = geompy.addToStudyInFather(Block2h, Face22h, "Face 2")
 
-  Block3h = BlocksOp.GetBlockByParts(Handle, [Face11h, Face21h])
-  if BlocksOp.IsDone() == 0:
-    Block3h = BlocksOp.GetBlockByParts(Handle, [Face11h, Face22h])
-    if BlocksOp.IsDone() == 0:
-        Block3h = BlocksOp.GetBlockByParts(Handle, [Face12h, Face21h])
-        if BlocksOp.IsDone() == 0:
-            Block3h = BlocksOp.GetBlockByParts(Handle, [Face12h, Face22h])
-  if BlocksOp.IsDone() == 0:
-    print "ERROR: BlocksOp.GetBlockByParts() failed : ", BlocksOp.GetErrorCode()
-  else:
-    id_block3h = geompy.addToStudyInFather(Handle, Block3h, "Block 3 of Handle")
+  try:
+    Block3h = geompy.GetBlockByParts(Handle, [Face11h, Face21h])
+  except RuntimeError:
+    try:
+      Block3h = geompy.GetBlockByParts(Handle, [Face11h, Face22h])
+    except RuntimeError:
+      try:
+        Block3h = geompy.GetBlockByParts(Handle, [Face12h, Face21h])
+      except RuntimeError:
+        try:
+          Block3h = geompy.GetBlockByParts(Handle, [Face12h, Face22h])
+        except RuntimeError:
+          print "ERROR: BlocksOp.GetBlockByParts() failed : ", geompy.BlocksOp.GetErrorCode()
+        else:
+          id_block3h = geompy.addToStudyInFather(Handle, Block3h, "Block 3 of Handle")
 
   ### The whole shape ###
 
@@ -299,7 +299,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
 
   ### Check the Spanner ###
 
-  isCompOfBlocks6 = BlocksOp.CheckCompoundOfBlocks(Spanner)
+  isCompOfBlocks6 = geompy.CheckCompoundOfBlocks(Spanner)
   if isCompOfBlocks6 == 0:
     print "Spanner is not a compound of hexahedral solids"
     (NonBlocks, NonQuads) = geompy.GetNonBlocks(Spanner)
