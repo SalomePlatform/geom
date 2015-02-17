@@ -175,7 +175,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise
           ("Shape for face construction is not closed");
     }
-    else if (aShapeBase.ShapeType() == TopAbs_EDGE && aShapeBase.Closed()) {
+    else if (aShapeBase.ShapeType() == TopAbs_EDGE && BRep_Tool::IsClosed(aShapeBase)) {
       BRepBuilderAPI_MakeWire MW;
       MW.Add(TopoDS::Edge(aShapeBase));
       if (!MW.IsDone()) {
