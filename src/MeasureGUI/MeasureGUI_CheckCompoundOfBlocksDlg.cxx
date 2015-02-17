@@ -479,7 +479,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
     for ( it = aIds.begin(); it != aIds.end(); ++it ) {
       aSubShape = anIndices.FindKey(aObjLst[(*it)]);
       SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-      int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
+      int w = resMgr->integerValue("Geometry", "preview_edge_width", 1);
       try {
         getDisplayer()->SetColor( Quantity_NOC_RED );
         getDisplayer()->SetWidth( w );
