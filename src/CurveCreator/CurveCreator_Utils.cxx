@@ -841,7 +841,8 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
 
   anExp.Next();
 
-  if (IsBSpline) {
+  if (IsBSpline)
+  {
     // There should be a single BSpline curve in the wire.
     if (anExp.More()) {
       return aResult;
@@ -869,16 +870,20 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
 
     IsClosed = aV[0].IsSame(aV[1]) ? true : false;
     
-    const Standard_Integer aNbPoints = aBSplCurve->NbKnots();
-    TColStd_Array1OfReal   aKnots(1, aNbPoints);
-
+    Standard_Integer aNbPoints = aBSplCurve->NbKnots();
+    TColStd_Array1OfReal aKnots(1, aNbPoints);
     aBSplCurve->Knots(aKnots);
-    aResult = new TColgp_HArray1OfPnt(1, aBSplCurve->NbKnots());
 
-    for (i = aKnots.Lower(); i <= aKnots.Upper(); ++i) {
-      aResult->SetValue(i, aBSplCurve->Value(aKnots.Value(i)));
-    }
-  } else {
+    // Don't consider the last point as it coincides with the first
+    if (IsClosed)
+      --aNbPoints;
+
+    aResult = new TColgp_HArray1OfPnt(1, aNbPoints);
+    for (i = 1; i <= aNbPoints; ++i)
+      aResult->SetValue(i, aBSplCurve->Value( aKnots.Value(i) ));
+  }
+  else
+  {
     // This is a polyline.
     TopTools_ListOfShape aVertices;
     Standard_Integer     aNbVtx = 1;
@@ -909,6 +914,13 @@ Handle(TColgp_HArray1OfPnt) CurveCreator_Utils::getPoints
     TopoDS_Vertex aLastVtx = TopExp::LastVertex(anEdge, Standard_True);
 
     IsClosed = aFirstVtx.IsSame(aLastVtx) ? true : false;
+
+    // Store a last vertex
+    if (!IsClosed)
+    {
+      aVertices.Append(aLastVtx);
+      aNbVtx++;
+    }
 
     // Fill the array of points.
     aResult = new TColgp_HArray1OfPnt(1, aNbVtx);
