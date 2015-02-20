@@ -412,8 +412,9 @@ bool GEOM_Object_i::IsSame(GEOM::GEOM_BaseObject_ptr other)
 
   GEOM::GEOM_Object_var shapePtr = GEOM::GEOM_Object::_narrow( other );
   if ( !CORBA::is_nil( shapePtr ) ) {
+    CORBA::String_var entry = shapePtr->GetEntry();
     Handle(GEOM_Object) otherObject = Handle(GEOM_Object)::DownCast
-      ( GEOM_Engine::GetEngine()->GetObject( shapePtr->GetStudyID(), shapePtr->GetEntry(), false ));
+      ( GEOM_Engine::GetEngine()->GetObject( shapePtr->GetStudyID(), entry, false ));
     if ( !otherObject.IsNull() ) {
       TopoDS_Shape thisShape  = _impl->GetValue();
       TopoDS_Shape otherShape = otherObject->GetValue();
