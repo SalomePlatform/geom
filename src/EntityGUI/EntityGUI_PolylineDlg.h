@@ -23,14 +23,13 @@
 #ifndef ENTITYGUI_POLYLINEDLG_H
 #define ENTITYGUI_POLYLINEDLG_H
 
-
 #include <GEOMBase_Skeleton.h>
 
 class CurveCreator_Curve;
 class CurveCreator_Widget;
+class OCCViewer_ViewManager;
 class QGroupBox;
 class QComboBox;
-
 
 //=================================================================================
 // class    : EntityGUI_PolylineDlg
@@ -50,6 +49,9 @@ public:
   void  deleteSelected();
   bool  deleteEnabled();
 
+  void  setPreviewZLayer( int theLayer );
+  int   getPreviewZLayer() const;
+
 protected:
 
   // redefined from GEOMBase_Helper
@@ -57,6 +59,20 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
+
+  /**
+   * This method sets/gets the view manager to control the temporary
+   * displayed objects on Z layer. 
+   * \param theManager the view manager.
+   */
+  void                   setPreviewManager( OCCViewer_ViewManager* theManager );
+  OCCViewer_ViewManager* getPreviewManager();
+
+  /**
+   * This method defines a state of selection button.
+   * \return true if selection button is checked, otherwise false.
+   */
+  bool isCheckToSelect();
 
 private:
 
@@ -103,7 +119,7 @@ private:
    * This method add a local coordinate system of the selected object.
    *
    * \param theSelectedObject the selected object. It can be a planar face
-   *        or an inported polyline.
+   *        or an imported polyline.
    * \param IsPlane true for planar face; false for imported polyline.
    * \param theLCS the local coordinate system.
    */
@@ -120,6 +136,18 @@ private:
    */
   gp_Ax3 WPlaneToLCS(GEOM::GeomObjPtr theGeomObj);
 
+  /**
+   * This method displays the AIS_InteractiveObject(s) to preview
+   * on the Z layer and sets VIOLET color.
+   */
+  void displayPreview();
+
+  /**
+   * This method erases AIS_InteractiveObject(s) from
+   * AIS_InteractiveContext and release memory.
+   */
+  void erasePreview();
+
 protected slots:
 
   void ClickOnOk();
@@ -127,10 +155,9 @@ protected slots:
   void ClickOnCancel();
   void processStartedSubOperation( QWidget*, bool );
   void processFinishedSubOperation( QWidget* );
-  void SetEditCurrentArgument();
-  void SelectionIntoArgument();
+  void SetEditCurrentArgument( bool );
+  void SelectionIntoArgument( bool isForced = false );
   void ActivateThisDialog();
-  void onUpdatePreview();
   void ActivateLocalCS();
 
 private:
@@ -147,6 +174,8 @@ private:
   QLineEdit                    *myEditCurrentArgument;   /* Current LineEdit */
   QList<gp_Ax3>                 myLCSList;
   QList<GEOM::GeomObjPtr>       myWPlaneList;
+  OCCViewer_ViewManager*        myPreviewManager;
+  int                           myPreviewZLayer;
 
 };
 

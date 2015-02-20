@@ -318,6 +318,7 @@ int CurveCreator_Widget::changeInteractionStyle( int theStyle )
 //=======================================================================
 void CurveCreator_Widget::reset()
 {
+  stopActionMode();
 }
 
 void CurveCreator_Widget::setCurve( CurveCreator_ICurve* theCurve )
@@ -618,8 +619,6 @@ void CurveCreator_Widget::onModifySection()
   mySectionView->sectionChanged(mySection);
   updateUndoRedo();
   onCancelSection();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::onJoin()
@@ -653,8 +652,6 @@ void CurveCreator_Widget::onJoin()
   if( aNewSectSize != aMainSectSize )
     mySectionView->pointsAdded( aMainSect, aMainSectSize, aNewSectSize-aMainSectSize );*/
   updateUndoRedo();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::onRemove()
@@ -683,8 +680,6 @@ void CurveCreator_Widget::onClearAll()
   mySectionView->reset();
   updateActionsStates();
   updateUndoRedo();
-  
-  emit curveModified();
 }
 
 void CurveCreator_Widget::onJoinAll()
@@ -702,8 +697,6 @@ void CurveCreator_Widget::onJoinAll()
   mySectionView->reset();
   updateActionsStates();
   updateUndoRedo();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::onUndoSettings()
@@ -722,8 +715,6 @@ void CurveCreator_Widget::onSetSpline()
     mySectionView->sectionChanged(aSelSections[i]);
   }
   updateUndoRedo();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::onSetPolyline()
@@ -737,8 +728,6 @@ void CurveCreator_Widget::onSetPolyline()
     mySectionView->sectionChanged( aSelSections[i] );
   }
   updateUndoRedo();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::onCloseSections()
@@ -752,8 +741,6 @@ void CurveCreator_Widget::onCloseSections()
     mySectionView->sectionChanged(aSelSections[i]);
   }
   updateUndoRedo();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::onUncloseSections()
@@ -767,8 +754,6 @@ void CurveCreator_Widget::onUncloseSections()
     mySectionView->sectionChanged(aSelSections[i]);
   }
   updateUndoRedo();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::onUndo()
@@ -781,8 +766,6 @@ void CurveCreator_Widget::onUndo()
   myCurve->undo();
   finishCurveModification();
   mySectionView->reset();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::onRedo()
@@ -794,8 +777,6 @@ void CurveCreator_Widget::onRedo()
   myCurve->redo();
   finishCurveModification();
   mySectionView->reset();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::updateUndoRedo()
@@ -1005,8 +986,9 @@ void CurveCreator_Widget::onMousePress( SUIT_ViewWindow*, QMouseEvent* theEvent 
   if ( theEvent->button() != Qt::LeftButton )
     return;
 
-  myPressedX = theEvent->x();
-  myPressedY = theEvent->y();
+  // Initialize the starting point
+  myStartPoint.setX( theEvent->x() );
+  myStartPoint.setY( theEvent->y() );
 
   switch( getActionMode() ) {
     case ModificationMode: {
@@ -1028,10 +1010,60 @@ void CurveCreator_Widget::onMousePress( SUIT_ViewWindow*, QMouseEvent* theEvent 
  * \param theWindow an owner of the signal
  * \param theEvent a mouse event
  */
-void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow*, QMouseEvent* theEvent )
+void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEvent* theEvent )
 {
+  
+  if (theEvent->button() != Qt::LeftButton) return;
+  if (!theWindow->inherits("OCCViewer_ViewWindow")) return;
+
+  // Initialize the ending point
+  myEndPoint.setX( theEvent->x() );
+  myEndPoint.setY( theEvent->y() );
+
+  bool aHasShift = ( theEvent->modifiers() & Qt::ShiftModifier );
+
+  // Highlight detected objects
+  Handle(AIS_InteractiveContext) aCtx = getAISContext();
+  if ( !aCtx.IsNull() )
+  {
+    OCCViewer_ViewWindow* aView = (OCCViewer_ViewWindow*) theWindow;
+    if (!aView)
+      return;
+
+    if (!aHasShift)
+      aCtx->ClearCurrents( false );
+
+    Handle(V3d_View) aView3d = aView->getViewPort()->getView();
+    if ( !aView3d.IsNull() )
+    {
+      // Initialize the single selection if start and end points are equal,
+      // otherwise a rectangular selection.
+      if ( myStartPoint == myEndPoint )
+      {
+        aCtx->MoveTo( myEndPoint.x(), myEndPoint.y(), aView3d );
+        if ( aHasShift )
+          aCtx->ShiftSelect();
+        else
+          aCtx->Select();
+      }
+      else
+      {
+        if ( aHasShift )
+          aCtx->ShiftSelect( myStartPoint.x(), myStartPoint.y(), myEndPoint.x(), myEndPoint.y(),
+                             aView3d, Standard_False );
+        else
+          aCtx->Select( myStartPoint.x(), myStartPoint.y(), myEndPoint.x(), myEndPoint.y(),
+                        aView3d, Standard_False );
+      }
+    }
+  }
+
   if ( getActionMode() != ModificationMode )
+  {
+    // Emit selectionChanged() signal
+    getOCCViewer()->performSelectionChanged();
     return;
+  }
 
   if ( myDragStarted ) {
     bool isDragged = myDragged;
@@ -1104,17 +1136,13 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow*, QMouseEvent* theEven
   }
   else // check whether the segment is clicked an a new point should be added to the segment
   {
-    int aReleasedX = theEvent->x();
-    int aReleasedY = theEvent->y();
-    if ( myPressedX == aReleasedX && myPressedY == aReleasedY )
-      insertPointToSelectedSegment( aReleasedX, aReleasedY );
+    if ( myStartPoint.x() == myEndPoint.x() && myStartPoint.y() == myEndPoint.y() )
+      insertPointToSelectedSegment( myEndPoint.x(), myStartPoint.y() );
   }
 
   // updates the input panel table to show the selected point coordinates
   updateLocalPointView();
   updateUndoRedo();
-
-  emit curveModified();
 }
 
 /**
@@ -1182,8 +1210,6 @@ void CurveCreator_Widget::onCellChanged( int theRow, int theColumn )
   myCurve->setPoint( aCurrSect, aPntIndex, aChangedPos );
 
   finishCurveModification( aSelPoints );
-
-  emit curveModified();
 }
 
 /**
@@ -1201,8 +1227,6 @@ void CurveCreator_Widget::removeSection()
   }
   mySectionView->clearSelection();
   updateUndoRedo();
-
-  emit curveModified();
 }
 
 /**
@@ -1221,8 +1245,6 @@ void CurveCreator_Widget::removePoint()
   myCurve->removeSeveralPoints( aPoints );
   finishCurveModification( CurveCreator_ICurve::SectionToPointList() );
   mySectionView->reset();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::addNewPoint(const CurveCreator::Coordinates& theCoords)
@@ -1238,8 +1260,6 @@ void CurveCreator_Widget::addNewPoint(const CurveCreator::Coordinates& theCoords
   mySectionView->pointsAdded( aSection, myCurve->getNbPoints( aSection ) );
   updateActionsStates();
   updateUndoRedo();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::insertPointToSelectedSegment( const int theX,
@@ -1306,8 +1326,6 @@ void CurveCreator_Widget::insertPointToSelectedSegment( const int theX,
   finishCurveModification( aSelPoints );
 
   setSelectedPoints();
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::moveSelectedPoints( const int theXPosition,
@@ -1355,8 +1373,6 @@ void CurveCreator_Widget::moveSelectedPoints( const int theXPosition,
 
   myDragged = true;
   finishCurveModification( myDragPoints );
-
-  emit curveModified();
 }
 
 void CurveCreator_Widget::updateLocalPointView()

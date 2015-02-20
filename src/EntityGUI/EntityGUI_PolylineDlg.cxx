@@ -22,6 +22,7 @@
 
 #include "EntityGUI_PolylineDlg.h"
 #include <CurveCreator_Curve.hxx>
+#include <CurveCreator_Displayer.hxx>
 #include <CurveCreator_Utils.hxx>
 #include <CurveCreator_Widget.h>
 #include <DlgRef.h>
@@ -40,6 +41,7 @@
 #include <BRep_Tool.hxx>
 #include <Geom_Surface.hxx>
 #include <GeomLib_IsPlanarSurface.hxx>
+#include <Prs3d_LineAspect.hxx>
 #include <TopoDS.hxx>
 
 #include <QGroupBox>
@@ -63,7 +65,9 @@ EntityGUI_PolylineDlg::EntityGUI_PolylineDlg
     myWPlaneLineEdit      (0),
     myPolylineSelButton   (0),
     myPolylineEdit        (0),
-    myEditCurrentArgument (0)
+    myEditCurrentArgument (0),
+    myPreviewManager(0),
+    myPreviewZLayer(-1)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_CC_POLYLINE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
@@ -91,6 +95,13 @@ EntityGUI_PolylineDlg::EntityGUI_PolylineDlg
   myPlnButton->setText( tr( "GEOM_SKETCHER_RESTORE" ) );
   aPlaneLayout->addWidget(myPlnButton, 0, 3);
 
+  bool isCS = false;
+#ifdef SET_PLANE
+  isCS = true;
+#endif
+  myPlnComboBox->setVisible( isCS );
+  myPlnButton->setVisible( isCS );
+
 #ifdef SET_PLANE
   QLabel *aPlaneLbl = new QLabel(tr("GEOM_PLANE"), aGroupBox1);
 
@@ -104,6 +115,7 @@ EntityGUI_PolylineDlg::EntityGUI_PolylineDlg
 
   myPolylineSelButton = new QPushButton (aGroupBox1);
   myPolylineSelButton->setIcon(image1);
+  myPolylineSelButton->setCheckable(true);
   myPolylineEdit = new QLineEdit (aGroupBox1);
   myPolylineEdit->setReadOnly(true);
 
@@ -139,7 +151,7 @@ EntityGUI_PolylineDlg::EntityGUI_PolylineDlg
 
   setHelpFileName( "create_polyline_page.html" );
 
-  /* Initialisations */
+  /* Initializations */
   Init();
 }
 
@@ -149,7 +161,7 @@ EntityGUI_PolylineDlg::EntityGUI_PolylineDlg
 //=================================================================================
 EntityGUI_PolylineDlg::~EntityGUI_PolylineDlg()
 {
-  delete myCurve;
+  erasePreview();
 }
 
 //=================================================================================
@@ -166,6 +178,7 @@ void EntityGUI_PolylineDlg::Init()
   LightApp_SelectionMgr *aSelMgr = myGeomGUI->getApp()->selectionMgr();
 
   myEditorWidget->setOCCViewer(aViewManager ? aViewManager->getOCCViewer() : 0);
+  setPreviewManager( aViewManager );
 
   // Init the list of local coordinate system
   gp_Pnt aPnt(0., 0., 0.);
@@ -178,35 +191,32 @@ void EntityGUI_PolylineDlg::Init()
   myWPlaneList.push_back(GEOM::GeomObjPtr());
   myLCSList.push_back(aLCS);
 
-  connect(myGeomGUI,      SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeomGUI,      SIGNAL(SignalCloseAllDialogs()),        this, SLOT(ClickOnCancel()));
-
 #ifdef SET_PLANE
-  connect(myPlnSelButton, SIGNAL(clicked()),
-          this,           SLOT(SetEditCurrentArgument()));
+  connect( myPlnSelButton, SIGNAL(toggled(bool)),
+           this,           SLOT(SetEditCurrentArgument(bool)) );
 #endif
-  connect(myPolylineSelButton, SIGNAL(clicked()),
-          this,                SLOT(SetEditCurrentArgument()));
-  connect(aSelMgr,        SIGNAL(currentSelectionChanged()),
-          this,           SLOT(SelectionIntoArgument()));
-  connect(myEditorWidget, SIGNAL(subOperationStarted(QWidget*, bool)),
-          this,           SLOT(processStartedSubOperation(QWidget*, bool)));
-  connect(myEditorWidget, SIGNAL(subOperationFinished(QWidget*)),
-          this,           SLOT(processFinishedSubOperation(QWidget*)));
-  connect(myEditorWidget, SIGNAL(curveModified()),
-          this,           SLOT(onUpdatePreview()));
+  connect( myPolylineSelButton, SIGNAL(toggled(bool)),
+           this,                SLOT(SetEditCurrentArgument(bool)) );
+  connect( aSelMgr, SIGNAL(currentSelectionChanged()),
+           this,    SLOT(SelectionIntoArgument()) );
+  connect( myEditorWidget, SIGNAL(subOperationStarted(QWidget*, bool)),
+           this,           SLOT(processStartedSubOperation(QWidget*, bool)) );
+  connect( myEditorWidget, SIGNAL(subOperationFinished(QWidget*)),
+           this,           SLOT(processFinishedSubOperation(QWidget*)) );
 #ifdef SET_PLANE
-  connect(myPlnComboBox,  SIGNAL(activated(int)),
-          this,           SLOT(ActivateLocalCS()));
-  connect(myPlnButton,    SIGNAL(clicked()),
-          this,           SLOT(ActivateLocalCS()));
+  connect( myPlnComboBox,  SIGNAL(activated(int)),
+           this,           SLOT(ActivateLocalCS()) );
+  connect( myPlnButton,    SIGNAL(clicked()),
+           this,           SLOT(ActivateLocalCS()) );
 #endif
-  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()) );
+  connect( buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()) );
 
   myAddElementBox->hide();
-  myPolylineSelButton->click();
-  SelectionIntoArgument();
+
+  // Processing of the selected object
+  myPolylineSelButton->setChecked( true );
+  SelectionIntoArgument( true );
 }
 
 //=================================================================================
@@ -365,6 +375,9 @@ bool EntityGUI_PolylineDlg::ClickOnApply()
 
   initName();
 
+  // Reset actions
+  myEditorWidget->reset();
+
   return true;
 }
 
@@ -432,17 +445,19 @@ bool EntityGUI_PolylineDlg::deleteEnabled()
 // function : SelectionIntoArgument
 // purpose  : Called when selection is changed
 //=================================================================================
-void EntityGUI_PolylineDlg::SelectionIntoArgument()
+void EntityGUI_PolylineDlg::SelectionIntoArgument( bool isForced )
 {
-  bool             isModified      = false;
+  bool             isModified      = isForced;
   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_SHAPE);
   TopoDS_Shape     aShape;
 
   if (aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) &&
-      !aShape.IsNull()) {
+      !aShape.IsNull())
+  {
     QString aName = GEOMBase::GetName(aSelectedObject.get()); 
 
-    if (myEditCurrentArgument == myPolylineEdit) {
+    if ( myEditCurrentArgument == myPolylineEdit && isCheckToSelect() )
+    {
       // Import a curve
       CurveCreator_Curve *aNewCurve = 
         new CurveCreator_Curve(CurveCreator::Dim2d);
@@ -458,15 +473,22 @@ void EntityGUI_PolylineDlg::SelectionIntoArgument()
 #ifdef SET_PLANE
         AddLocalCS(aSelectedObject.get(), false, aLocalCS);
         myWPlaneLineEdit->clear();
-        myPlnSelButton->setDown(false);
+        myPlnSelButton->setChecked(false);
 #endif
-        myPolylineSelButton->setDown(true);
+        myPolylineSelButton->setChecked(false);
+
+        disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+        myGeomGUI->getApp()->selectionMgr()->clearSelected();
+        connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+                this, SLOT(SelectionIntoArgument()));
       } else {
         // Does nothing, just clears selection.
         delete aNewCurve;
       }
+    }
 #ifdef SET_PLANE
-    } else if (myEditCurrentArgument == myWPlaneLineEdit) {
+    else if ( myEditCurrentArgument == myWPlaneLineEdit && isCheckToSelect() )
+    {
       // Import planar face.
       if (aShape.ShapeType() == TopAbs_FACE) {
         // Check if the face is planar
@@ -479,47 +501,65 @@ void EntityGUI_PolylineDlg::SelectionIntoArgument()
           AddLocalCS(aSelectedObject.get(), true, 
                      WPlaneToLCS(aSelectedObject.get()));
           isModified = true;
-          myPlnSelButton->setDown(true);
-          myPolylineSelButton->setDown(false);
+          myPlnSelButton->setChecked(false);
+          myPolylineSelButton->setChecked(false);
         }
       }
       
       if (!isModified) {
         myEditCurrentArgument->setText(tr("GEOM_SKETCHER_WPLANE"));
       }
+    }
 #endif
+  }
+  else
+  {
+    if (isForced)
+    {
+#ifdef SET_PLANE
+      myPlnSelButton->setChecked(false);
+#endif
+      myPolylineSelButton->setChecked(false);
     }
   }
 
-  if (!isModified) {
+  if (!isModified)
+  {
     // Does nothing, just clears selection.
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     myGeomGUI->getApp()->selectionMgr()->clearSelected();
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
             this, SLOT(SelectionIntoArgument()));
   }
+  else
+    displayPreview();
 }
 
 //=================================================================================
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
-void EntityGUI_PolylineDlg::SetEditCurrentArgument()
+void EntityGUI_PolylineDlg::SetEditCurrentArgument( bool isChecked )
 {
-  if (sender() == myPlnSelButton) {
+  if (sender() == myPlnSelButton)
+  {
 #ifdef SET_PLANE
     myEditCurrentArgument = myWPlaneLineEdit;
     myEditCurrentArgument->setFocus();
-    myPlnSelButton->setDown(true);
-    myPolylineSelButton->setDown(false);
+    myPolylineSelButton->blockSignals(true);
+    myPolylineSelButton->setChecked(false);
+    myPolylineSelButton->blockSignals(false);
 #endif
-  } else if (sender() == myPolylineSelButton) {
+  }
+  else if (sender() == myPolylineSelButton)
+  {
     myEditCurrentArgument = myPolylineEdit;
     myEditCurrentArgument->setFocus();
 #ifdef SET_PLANE
-    myPlnSelButton->setDown(false);
+    myPlnSelButton->blockSignals(true);
+    myPlnSelButton->setChecked(false);
+    myPlnSelButton->blockSignals(false);
 #endif
-    myPolylineSelButton->setDown(true);
   }
 }
 
@@ -543,15 +583,6 @@ void EntityGUI_PolylineDlg::enterEvent (QEvent*)
 {
   if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
-}
-
-//=================================================================================
-// function : onUpdatePreview
-// purpose  : 
-//=================================================================================
-void EntityGUI_PolylineDlg::onUpdatePreview()
-{
-  displayPreview(true);
 }
 
 //=================================================================================
@@ -679,4 +710,127 @@ gp_Ax3 EntityGUI_PolylineDlg::WPlaneToLCS(GEOM::GeomObjPtr theGeomObj)
 QList<GEOM::GeomObjPtr> EntityGUI_PolylineDlg::getSourceObjects()
 {
   return myWPlaneList;
+}
+
+//=================================================================================
+// function : setPreviewManager ( OCCViewer_ViewManager )
+// purpose  : Sets view manager to control the displayed objects.
+//=================================================================================
+void EntityGUI_PolylineDlg::setPreviewManager( OCCViewer_ViewManager* theManager )
+{
+  myPreviewManager = theManager;
+
+  if ( getPreviewManager() )
+  {
+    if( OCCViewer_Viewer* aViewer = getPreviewManager()->getOCCViewer() )
+    {
+      Handle(AIS_InteractiveContext) aCtx = aViewer->getAISContext();
+      if( !aCtx.IsNull() )
+      {
+        // Add Z layer to show temporary objects
+        int aZLayer = -1;
+        aViewer->getViewer3d()->AddZLayer( aZLayer );
+        setPreviewZLayer( aZLayer );
+      }
+    }
+  }
+}
+
+//=================================================================================
+// function : getPreviewManager()
+// purpose  : 
+//=================================================================================
+OCCViewer_ViewManager* EntityGUI_PolylineDlg::getPreviewManager()
+{
+  return myPreviewManager;
+}
+
+//=================================================================================
+// function : setPreviewZLayer( theZLayer )
+// purpose  : Sets Z layer to show temporary objects.
+//=================================================================================
+void EntityGUI_PolylineDlg::setPreviewZLayer( int theZLayer )
+{
+  if ( theZLayer != myPreviewZLayer )
+    myPreviewZLayer = theZLayer;
+}
+
+//=================================================================================
+// function : getPreviewZLayer()
+// purpose  : 
+//=================================================================================
+int EntityGUI_PolylineDlg::getPreviewZLayer() const
+{
+  return myPreviewZLayer;
+}
+
+//=================================================================================
+// function : displayPreview()
+// purpose  : 
+//=================================================================================
+void EntityGUI_PolylineDlg::displayPreview()
+{
+  if ( getPreviewManager() )
+  {
+    if ( OCCViewer_Viewer* aViewer = getPreviewManager()->getOCCViewer() )
+    {
+      // Disable changing of OCCViewer's selection to use vertex of curve selection
+      disconnect(getPreviewManager(), SIGNAL(mouseRelease(SUIT_ViewWindow*, QMouseEvent*)),
+                 aViewer,             SLOT(onMouseRelease(SUIT_ViewWindow*, QMouseEvent*)));
+
+      Handle(AIS_InteractiveContext) aCtx = aViewer->getAISContext();
+      if ( !aCtx.IsNull() )
+      {
+        CurveCreator_Displayer* aDisplayer = new CurveCreator_Displayer( aCtx, getPreviewZLayer() );
+        myCurve->setDisplayer( aDisplayer );
+
+        Handle(AIS_InteractiveObject) anAISObj = myCurve->getAISObject( true );
+        aDisplayer->display( anAISObj, true );
+
+        // Set color for temporary AIS_InteractiveObject
+        anAISObj->Attributes()->WireAspect()->SetColor( Quantity_NOC_VIOLET );
+      }
+    }
+  }
+}
+
+//=================================================================================
+// function : erasePreview()
+// purpose  : 
+//=================================================================================
+void EntityGUI_PolylineDlg::erasePreview()
+{
+  CurveCreator_Displayer* aDisplayer = myCurve ? myCurve->getDisplayer() : 0;
+  if( getPreviewManager() )
+  {
+    if( OCCViewer_Viewer* aViewer = getPreviewManager()->getOCCViewer() )
+    {
+      Handle(AIS_InteractiveContext) aCtx = aViewer->getAISContext();
+      if( !aCtx.IsNull() && aDisplayer )
+        aDisplayer->eraseAll( true );
+
+      // Enable changing of OCCViewer's selection
+      connect(getPreviewManager(), SIGNAL(mouseRelease(SUIT_ViewWindow*, QMouseEvent*)),
+              aViewer,             SLOT(onMouseRelease(SUIT_ViewWindow*, QMouseEvent*)));
+    }
+  }
+
+  setPreviewManager( NULL );
+  if ( myCurve )
+  {
+    delete myCurve;
+    myCurve = NULL;
+  }
+}
+
+//=================================================================================
+// function : isCheckToSelect()
+// purpose  : 
+//=================================================================================
+bool EntityGUI_PolylineDlg::isCheckToSelect()
+{
+#ifdef SET_PLANE
+  return myPlnSelButton->isChecked();
+#endif
+  return myPolylineSelButton->isChecked();
 }

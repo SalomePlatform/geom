@@ -100,7 +100,6 @@ signals:
   void selectionChanged();
   void subOperationStarted( QWidget*, bool );
   void subOperationFinished( QWidget* );
-  void curveModified();
 
 public slots:
 
@@ -205,6 +204,11 @@ private:
   bool contains( const CurveCreator_ICurve::SectionToPointList& theList,
                  const CurveCreator_ICurve::SectionToPoint& theValue ) const;
 
+protected:
+  // Boundary points of mouse to select the points
+  QPoint myStartPoint;
+  QPoint myEndPoint;
+
 private:
   QMap<ActionId, QAction*>    myActionMap;
   CurveCreator_ICurve*        myCurve;
@@ -223,8 +227,6 @@ private:
   QMap<CurveCreator_ICurve::SectionToPoint, CurveCreator::Coordinates> myInitialDragPointsCoords;
   bool                        myDragged;
   QByteArray                  myGuiState;
-  int                         myPressedX;
-  int                         myPressedY;
   OCCViewer_ViewWindow::Mode2dType myOld2DMode;
 };
 
