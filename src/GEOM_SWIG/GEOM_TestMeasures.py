@@ -21,6 +21,8 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
+import salome_version
+
 def TestMeasureOperations (geompy, math):
 
   p0   = geompy.MakeVertex(0 ,  0,  0)
@@ -58,9 +60,10 @@ def TestMeasureOperations (geompy, math):
 
   ####### Detect Fast intersection #######
 
-  cylinder = geompy.MakeCylinderRH(100, 300)
-  if geompy.FastIntersect(box, cylinder) == False:
-    raise RuntimeError, "Existing intersection is not detected"
+  if salome_version.getXVersion() > "0x70501":
+    cylinder = geompy.MakeCylinderRH(100, 300)
+    if geompy.FastIntersect(box, cylinder)[0] == False:
+      raise RuntimeError, "Existing intersection is not detected"
 
   ####### WhatIs #######
 

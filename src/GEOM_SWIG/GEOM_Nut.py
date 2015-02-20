@@ -75,10 +75,10 @@ Fillet_1 = geompy.MakeFillet(Common_1, 10, geompy.ShapeType["EDGE"], [5])
 geompy.addToStudy(Fillet_1, "Fillet_1")
 
 #Chamfer applying
-Chamfer_1 = geompy.MakeChamferEdge(Fillet_1, 10, 10, 16, 50 )
+Chamfer_1 = geompy.MakeChamferEdge(Fillet_1, 10, 10, 15, 49 )
 geompy.addToStudy(Chamfer_1, "Chamfer_1")
 
-Chamfer_2 = geompy.MakeChamferEdge(Chamfer_1, 10, 10, 21, 31 )
+Chamfer_2 = geompy.MakeChamferEdge(Chamfer_1, 10, 10, 20, 30 )
 geompy.addToStudy(Chamfer_2, "Chamfer_2")
 
 #Import of the shape from "slots.brep"
