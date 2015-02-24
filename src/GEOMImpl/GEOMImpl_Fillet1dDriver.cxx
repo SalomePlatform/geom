@@ -251,6 +251,11 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
     MakeFillet(aWireNew, aVertexListNew, rad, isFinalPass, aResult);
   }
 
+  if (!GEOMUtils::CheckShape(aResult, true) &&
+      !GEOMUtils::FixShapeTolerance(aResult)) {
+    Standard_ConstructionError::Raise("Non valid shape result");
+  }
+
   aFunction->SetValue(aResult);
   log.SetTouched(Label());
 
