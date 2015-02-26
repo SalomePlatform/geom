@@ -3826,7 +3826,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             # Example: see GEOM_TestAll.py
             theMinDeg,theMaxDeg,theTol3D,Parameters = ParseParameters(theMinDeg, theMaxDeg, theTol3D)
-            anObj = self.PrimOp.MakeFilling(theContours, theMinDeg, theMaxDeg,
+            anObj = self.PrimOp.MakeFilling(ToList(theContours), theMinDeg, theMaxDeg,
                                             0, theTol3D, 0, GEOM.FOM_Default, True)
             RaiseIfFailed("MakeFillingNew", self.PrimOp)
             anObj.SetParameters(Parameters)
