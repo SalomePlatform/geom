@@ -143,6 +143,9 @@ GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
 GEOM_Gen_i::~GEOM_Gen_i() {
   delete name_service;
   delete _impl;
+  std::map<std::string, GEOM_GenericOperationsCreator*>::const_iterator it;
+  for ( it = myOpCreatorMap.begin(); it != myOpCreatorMap.end(); ++it)
+    delete (*it).second;
 }
 
 
