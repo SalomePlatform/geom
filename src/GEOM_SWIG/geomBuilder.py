@@ -7925,6 +7925,23 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
+        #  @note This operation is a shortcut to the more general @ref MakePartition
+        #  operation, where @a theShape specifies single "object" (shape being partitioned)
+        #  and @a thePlane specifies single "tool" (intersector shape). Other parameters of
+        #  @ref MakePartition operation have default values:
+        #  - @a Limit: GEOM::SHAPE (shape limit corresponds to the type of @a theShape)
+        #  - @a KeepNonlimitShapes: 0
+        #  - @a KeepInside, @a RemoveInside, @a RemoveWebs,
+        #    @a Materials (obsolete parameters): empty
+        #
+        #  @note I.e. the following two operations are equivalent:
+        #  @code
+        #  Result = geompy.MakeHalfPartition(Object, Plane)
+        #  Result = geompy.MakePartition([Object], [Plane])
+        #  @endcode
+        #
+        #  @sa MakePartition, MakePartitionNonSelfIntersectedShape
+        #
         #  @ref tui_partition "Example"
         @ManageTransactions("BoolOp")
         def MakeHalfPartition(self, theShape, thePlane, theName=None):
@@ -7940,6 +7957,18 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
             Returns:
                 New GEOM.GEOM_Object, containing the result shape.
+         
+            Note: This operation is a shortcut to the more general MakePartition
+            operation, where theShape specifies single "object" (shape being partitioned)
+            and thePlane specifies single "tool" (intersector shape). Other parameters of
+            MakePartition operation have default values:
+            - Limit: GEOM::SHAPE (shape limit corresponds to the type of theShape)
+            - KeepNonlimitShapes: 0
+            - KeepInside, RemoveInside, RemoveWebs, Materials (obsolete parameters): empty
+         
+            I.e. the following two operations are equivalent:
+              Result = geompy.MakeHalfPartition(Object, Plane)
+              Result = geompy.MakePartition([Object], [Plane])
             """
             # Example: see GEOM_TestAll.py
             anObj = self.BoolOp.MakeHalfPartition(theShape, thePlane)

@@ -3208,6 +3208,17 @@ module GEOM
      *  \param theShape Shape to be intersected.
      *  \param thePlane Tool shape, to intersect theShape.
      *  \return New GEOM_Object, containing the result shape.
+     * 
+     *  \note This operation is a shortcut to the more general \ref MakePartition
+     *  operation, where \a theShape specifies single "object" (shape being partitioned)
+     *  and \a thePlane specifies single "tool" (intersector shape). Other parameters of
+     *  \ref MakePartition operation have default values:
+     *  - \a theLimit: GEOM::SHAPE (shape limit corresponds to the type of \a theShape)
+     *  - \a theKeepNonlimitShapes: 0
+     *  - \a theKeepInside, \a theRemoveInside, \a theRemoveWebs,
+     *    \a theMaterials (obsolete parameters): empty
+     *
+     * \sa MakePartition, MakePartitionNonSelfIntersectedShape
      */
     GEOM_Object MakeHalfPartition (in GEOM_Object theShape,
                                    in GEOM_Object thePlane);

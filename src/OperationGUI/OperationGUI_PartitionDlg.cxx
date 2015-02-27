@@ -67,6 +67,8 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_PARTITION" ) );
   mainFrame()->RadioButton1->setIcon( image0 );
   mainFrame()->RadioButton2->setIcon( image1 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
