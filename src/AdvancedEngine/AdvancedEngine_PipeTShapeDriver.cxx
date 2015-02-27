@@ -26,9 +26,9 @@
 #include "GEOM_Function.hxx"
 #include "GEOM_IOperations.hxx"
 #include "GEOMUtils.hxx"
-#include "GEOMAlgo_FinderShapeOn1.hxx"
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_ClsfBox.hxx"
+#include "GEOMAlgo_ClsfSurf.hxx"
 #include "GEOMAlgo_Splitter.hxx"
 
 #include "Geom_CylindricalSurface.hxx"
@@ -127,7 +127,7 @@ AdvancedEngine_PipeTShapeDriver::GetShapesOnBoxIDs(const TopoDS_Shape& aBox,
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
     TCollection_AsciiString aMsg (" iErr : ");
     aMsg += TCollection_AsciiString(iErr);
@@ -185,12 +185,14 @@ Handle(TColStd_HSequenceOfInteger)
   }
 
   // Call algo
-  GEOMAlgo_FinderShapeOn1 aFinder;
-  Standard_Real aTol = 1e-6;
+  GEOMAlgo_FinderShapeOn2   aFinder;
+  Handle(GEOMAlgo_ClsfSurf) aClsfSurf = new GEOMAlgo_ClsfSurf;
+  Standard_Real             aTol      = 1e-6;
 
+  aClsfSurf->SetSurface(theSurface);
   aFinder.SetShape(theShape);
   aFinder.SetTolerance(aTol);
-  aFinder.SetSurface(theSurface);
+  aFinder.SetClsf(aClsfSurf);
   aFinder.SetShapeType(theShapeType);
   aFinder.SetState(theState);
 
@@ -208,7 +210,7 @@ Handle(TColStd_HSequenceOfInteger)
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
 //    MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -217,7 +219,7 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
 //  Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn2.cxx
 //  if (iWrn) {
 //    MESSAGE(" *** iWrn : " << iWrn);
 //  }

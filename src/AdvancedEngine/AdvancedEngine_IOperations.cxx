@@ -36,8 +36,9 @@
 #include "GEOM_Function.hxx"
 #include "GEOM_PythonDump.hxx"
 #include "GEOMUtils.hxx"
+#include "GEOMAlgo_ClsfSurf.hxx"
+#include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_Splitter.hxx"
-#include "GEOMAlgo_FinderShapeOn1.hxx"
 
 #include "GEOMImpl_Gen.hxx"
 #include "GEOMImpl_Types.hxx"
@@ -815,11 +816,13 @@ bool AdvancedEngine_IOperations::GetFacesOnSurf
                       const Standard_Real theTolerance,
                       TopTools_ListOfShape &theFaces)
 {
-  GEOMAlgo_FinderShapeOn1 aFinder;
+  GEOMAlgo_FinderShapeOn2   aFinder;
+  Handle(GEOMAlgo_ClsfSurf) aClsfSurf = new GEOMAlgo_ClsfSurf;
 
+  aClsfSurf->SetSurface(theSurface);
   aFinder.SetShape(theShape);
   aFinder.SetTolerance(theTolerance);
-  aFinder.SetSurface(theSurface);
+  aFinder.SetClsf(aClsfSurf);
   aFinder.SetShapeType(TopAbs_FACE);
   aFinder.SetState(GEOMAlgo_ST_ON);
 
@@ -836,7 +839,7 @@ bool AdvancedEngine_IOperations::GetFacesOnSurf
 
   // Interprete results
   Standard_Integer iErr = aFinder.ErrorStatus();
-  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of error codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iErr) {
     MESSAGE(" iErr : " << iErr);
     TCollection_AsciiString aMsg (" iErr : ");
@@ -845,7 +848,7 @@ bool AdvancedEngine_IOperations::GetFacesOnSurf
     return false;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
-  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn1.cxx
+  // the detailed description of warning codes is in GEOMAlgo_FinderShapeOn2.cxx
   if (iWrn) {
     MESSAGE(" *** iWrn : " << iWrn);
   }

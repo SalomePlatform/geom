@@ -126,6 +126,9 @@ protected:
                      const Standard_Integer aNbPnts,
                      GEOMAlgo_ListOfPnt& aLP) ;
 
+  Standard_EXPORT
+    Standard_Boolean BuildTriangulation(const TopoDS_Shape& aS) ;
+
 
   TopAbs_ShapeEnum myShapeType;
   GEOMAlgo_State myState;

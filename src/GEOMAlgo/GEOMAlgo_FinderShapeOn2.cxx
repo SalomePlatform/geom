@@ -26,75 +26,54 @@
 //              <pkv@irinox>
 //
 #include <GEOMAlgo_FinderShapeOn2.hxx>
-#include <math.h>
+#include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
+#include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
+#include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
+#include <GEOMAlgo_PassKey.hxx>
+#include <GEOMAlgo_StateCollector.hxx>
+#include <GEOMAlgo_SurfaceTools.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
-#include <Precision.hxx>
-#include <TColStd_Array1OfInteger.hxx>
-#include <TColStd_MapOfInteger.hxx>
-
-#include <gp_Trsf.hxx>
-#include <gp_Cylinder.hxx>
-#include <gp_Pnt.hxx>
-
-#include <TColgp_Array1OfPnt.hxx>
-
-#include <Poly_Array1OfTriangle.hxx>
-#include <Poly_Triangle.hxx>
-#include <Poly_PolygonOnTriangulation.hxx>
-#include <Poly_Triangulation.hxx>
-#include <Poly_Polygon3D.hxx>
-
+#include <Bnd_Box.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepBndLib.hxx>
+#include <BRepMesh_IncrementalMesh.hxx>
+#include <BRepTools.hxx>
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
-#include <GeomAdaptor_Surface.hxx>
-#include <GeomAbs_SurfaceType.hxx>
-#include <GeomAdaptor_Curve.hxx>
-#include <GeomAbs_CurveType.hxx>
-
-#include <TopAbs_State.hxx>
-
-#include <TopLoc_Location.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Face.hxx>
-#include <TopoDS_Edge.hxx>
-
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
-
-#include <TopTools_IndexedMapOfShape.hxx>
-
-#include <BRep_Tool.hxx>
-#include <BRepLib_MakeEdge.hxx>
-
-#include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
-#include <GEOMAlgo_SurfaceTools.hxx>
-#include <GEOMAlgo_StateCollector.hxx>
-#include <GEOMAlgo_FinderShapeOn.hxx>
-
-#include <GEOMAlgo_PassKey.hxx>
-#include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
-#include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
-//
-#include <gp_Dir2d.hxx>
-#include <gp_Pnt2d.hxx>
 #include <Geom2d_Line.hxx>
 #include <Geom2dAdaptor_Curve.hxx>
 #include <Geom2dHatch_Hatcher.hxx>
-#include <TColStd_ListOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <gp_Dir2d.hxx>
+#include <gp_Pnt2d.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Trsf.hxx>
 #include <HatchGen_Domain.hxx>
-#include <Geom2dHatch_Hatcher.hxx>
+#include <IntTools_Tools.hxx>
+#include <Poly_Array1OfTriangle.hxx>
+#include <Poly_Polygon3D.hxx>
+#include <Poly_PolygonOnTriangulation.hxx>
+#include <Poly_Triangle.hxx>
+#include <Poly_Triangulation.hxx>
+#include <Precision.hxx>
+#include <TColgp_Array1OfPnt.hxx>
+#include <TColStd_Array1OfInteger.hxx>
+#include <TColStd_MapOfInteger.hxx>
+#include <TopAbs_State.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopLoc_Location.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
 #if OCC_VERSION_LARGE > 0x06070100
 #include <IntTools_Context.hxx>
 #else
 #include <BOPInt_Context.hxx>
 #endif
-#include <BRepTools.hxx>
-#include <IntTools_Tools.hxx>
 
 //=======================================================================
 //function : 
@@ -626,7 +605,7 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Face& aF,
   //
   aTRF=BRep_Tool::Triangulation(aF, aLoc);
   if (aTRF.IsNull()) {
-    if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aF)) {
+    if (!BuildTriangulation(aF)) {
       myWarningStatus=20; // no triangulation found
       return;
     }
@@ -770,7 +749,7 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Edge& aE,
   if (aTRE.IsNull() || aPTE.IsNull()) {
     Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(aE, aLoc);
     if (aPE.IsNull()) {
-      if (!GEOMAlgo_FinderShapeOn::BuildTriangulation(aE)) {
+      if (!BuildTriangulation(aE)) {
         myErrorStatus=20; // no triangulation found
         return;
       }
@@ -841,6 +820,59 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Edge& aE,
   }
 }
 
+//=======================================================================
+//function : BuildTriangulation
+//purpose  :
+//=======================================================================
+Standard_Boolean
+  GEOMAlgo_FinderShapeOn2::BuildTriangulation (const TopoDS_Shape& theShape)
+{
+  // calculate deflection
+  Standard_Real aDeviationCoefficient = 0.001;
+
+  Bnd_Box B;
+  BRepBndLib::Add(theShape, B);
+  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+  B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+
+  Standard_Real dx = aXmax - aXmin, dy = aYmax - aYmin, dz = aZmax - aZmin;
+  Standard_Real aDeflection = Max(Max(dx, dy), dz) * aDeviationCoefficient * 4;
+  Standard_Real aHLRAngle = 0.349066;
+
+  // build triangulation
+  BRepMesh_IncrementalMesh Inc (theShape, aDeflection, Standard_False, aHLRAngle);
+
+  // check triangulation
+  bool isTriangulation = true;
+
+  TopExp_Explorer exp (theShape, TopAbs_FACE);
+  if (exp.More())
+  {
+    TopLoc_Location aTopLoc;
+    Handle(Poly_Triangulation) aTRF;
+    aTRF = BRep_Tool::Triangulation(TopoDS::Face(exp.Current()), aTopLoc);
+    if (aTRF.IsNull()) {
+      isTriangulation = false;
+    }
+  }
+  else // no faces, try edges
+  {
+    TopExp_Explorer expe (theShape, TopAbs_EDGE);
+    if (!expe.More()) {
+      isTriangulation = false;
+    }
+    else {
+      TopLoc_Location aLoc;
+      Handle(Poly_Polygon3D) aPE = BRep_Tool::Polygon3D(TopoDS::Edge(expe.Current()), aLoc);
+      if (aPE.IsNull()) {
+        isTriangulation = false;
+      }
+    }
+  }
+
+  return isTriangulation;
+}
+
 //
 // myErrorStatus :
 //
@@ -854,60 +886,3 @@ void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Edge& aE,
 // 40- point can not be classified
 // 41- invalid data for classifier
 // 42- can not compute hatching 
-
-/*
-// A
-if (!aNb && myNbPntsMin) {
-    // try to fill it yourself
-    Standard_Boolean bIsDone;
-    Standard_Integer aN1, aN2;
-    Handle(Geom_Surface) aS;
-    GeomAdaptor_Surface aGAS;
-    GeomAbs_SurfaceType aType;
-    //
-    aS=BRep_Tool::Surface(aF);
-    aGAS.Load(aS);
-    aType=aGAS.GetType();
-    if (aType==GeomAbs_Plane || aType==GeomAbs_Cylinder) {
-      // inner links
-      aNbLinks=aMPKI.Extent();
-      aIt.Initialize(aMPKI);
-      for (; aIt.More(); aIt.Next()) {
-        iCnt=aIt.Value();
-        if (iCnt>1) {
-          // take the first having occured inner link
-          // and discretize it
-          const GEOMAlgo_PassKey& aPK=aIt.Key();
-          //
-          aN1=(Standard_Integer)aPK.Id(1);
-          aN2=(Standard_Integer)aPK.Id(2);
-          //
-          aP1=aNodes(aN1).Transformed(aTrsf);
-          aP2=aNodes(aN2).Transformed(aTrsf);
-          //
-          if (aType==GeomAbs_Cylinder) {
-            gp_Cylinder aCyl;
-            //
-            aCyl=aGAS.Cylinder();
-            if (!GEOMAlgo_SurfaceTools::IsCoaxial(aP1, aP2, aCyl, myTolerance)) {
-              continue;
-            }
-          }
-          //
-          BRepLib_MakeEdge aBME(aP1, aP2);
-          bIsDone=aBME.IsDone();
-          if (!bIsDone) {
-            myErrorStatus=30; //can not obtain the line fron the link
-            return;
-          }
-          //
-          const TopoDS_Shape& aSx=aBME.Shape();
-          const TopoDS_Edge& aE=TopoDS::Edge(aSx);
-          //
-          InnerPoints(aE, myNbPntsMin, aLP);
-          break;
-        }// if (iCnt>1)
-      }// for (; aIt.More(); aIt.Next())
-    }// if (aType==GeomAbs_Plane || aType==GeomAbs_Cylinder)
-  }// if (!aNb && myNbPntsMin) {
-*/

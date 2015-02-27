@@ -51,6 +51,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_BuilderShape.hxx
   GEOMAlgo_Clsf.hxx
   GEOMAlgo_ClsfBox.hxx
+  GEOMAlgo_ClsfQuad.hxx
   GEOMAlgo_ClsfSolid.hxx
   GEOMAlgo_ClsfSurf.hxx
   GEOMAlgo_CoupleOfShapes.hxx
@@ -58,10 +59,7 @@ SET(GEOMAlgo_HEADERS
   GEOMAlgo_DataMapOfPassKeyInteger.hxx
   GEOMAlgo_DataMapOfShapeMapOfShape.hxx
   GEOMAlgo_DataMapOfShapePnt.hxx
-  GEOMAlgo_FinderShapeOn.hxx
-  GEOMAlgo_FinderShapeOn1.hxx
   GEOMAlgo_FinderShapeOn2.hxx
-  GEOMAlgo_FinderShapeOnQuad.hxx
   GEOMAlgo_GetInPlace.hxx
   GEOMAlgo_GetInPlaceAPI.hxx
   GEOMAlgo_GlueAnalyser.hxx
@@ -116,13 +114,11 @@ SET(GEOMAlgo_SOURCES
   GEOMAlgo_BuilderShape.cxx
   GEOMAlgo_Clsf.cxx
   GEOMAlgo_ClsfBox.cxx
+  GEOMAlgo_ClsfQuad.cxx
   GEOMAlgo_ClsfSolid.cxx
   GEOMAlgo_ClsfSurf.cxx
   GEOMAlgo_CoupleOfShapes.cxx
-  GEOMAlgo_FinderShapeOn.cxx
-  GEOMAlgo_FinderShapeOn1.cxx
   GEOMAlgo_FinderShapeOn2.cxx
-  GEOMAlgo_FinderShapeOnQuad.cxx
   GEOMAlgo_GetInPlace.cxx
   GEOMAlgo_GetInPlace_1.cxx
   GEOMAlgo_GetInPlace_2.cxx
