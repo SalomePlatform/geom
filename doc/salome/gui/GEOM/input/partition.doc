@@ -6,9 +6,9 @@ For a detailed description of the Partition operation please refer to <a href="S
 It provides a general review of the Partition and Boolean operations algorithms, describes the usage methodology and highlights
 major limitations of these operations.
 
-Perhaps you also ask yourself : \ref partition_explanation "What's the difference between partition, compounds and fuse operation ?"
+Perhaps you also ask yourself : \ref partition_explanation "What's the difference between partition, compounds and fuse operation?"
 
-To produce a \b Partition in the <b>Main Menu</b> select <b>Operations - > Partition</b>
+To produce a \b Partition in the <b>Main Menu</b> select <b>Operations -> Partition</b>
 
 This operation builds a compound by intersection of several shapes
 with a set of tool objects or with a plane.
@@ -95,20 +95,6 @@ shapes of low dimension (than \em Limit) in the result.
 be checked for self-intersection prior to the operation.
 - Other parameters are obsolete and kept only for compatibility with
 previous versions of SALOME.
-
-<br><h2>Intersection of a Shape and a Plane.</h2>
-
-\image html partition2.png
-
-<b>Arguments:</b> Name + 1 shape to be intersected + 1 cutting plane.
-
-Activate \ref restore_presentation_parameters_page "Advanced options" if required.
-
-<b>TUI Command:</b>
-
-<em>geompy.MakeHalfPartition(Shape, Plane)</em>, where:
-- \em Shape is a source shape to be intersected by the \em Plane
-- \em Plane is a tool shape, to intersect the \em Shape.
 
 <b>Examples:</b>
 
