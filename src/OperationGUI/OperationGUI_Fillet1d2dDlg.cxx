@@ -425,3 +425,15 @@ double OperationGUI_Fillet1d2dDlg::getRadius() const
 {
   return GroupVertexes->SpinBox_DX->value();
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_Fillet1d2dDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myShape);
+  res << aGeomObjPtr;
+  return res;
+}

@@ -513,3 +513,15 @@ QString BlocksGUI_ExplodeDlg::getNewObjectName (int) const
 {
   return QString::null;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BlocksGUI_ExplodeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
+}

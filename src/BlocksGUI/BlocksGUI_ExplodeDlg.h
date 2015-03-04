@@ -49,6 +49,7 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   virtual GEOM::GEOM_Object_ptr      getFather( GEOM::GEOM_Object_ptr );
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
 
   virtual QString                    getNewObjectName (int CurrObj = -1) const; 
 

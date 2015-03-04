@@ -52,6 +52,7 @@ protected:
   void                               redisplayPreview();
   virtual void                       processObject();
   virtual SALOME_Prs*                buildPrs();
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
 
 private:
   void                               Init();

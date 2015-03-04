@@ -360,3 +360,15 @@ bool MeasureGUI_NormaleDlg::execute (ObjectList& objects)
 
   return true;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_NormaleDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr1(myFace), aGeomObjPtr2(myPoint);
+  res << aGeomObjPtr1 << aGeomObjPtr2;
+  return res;
+}

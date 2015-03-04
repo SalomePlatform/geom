@@ -404,3 +404,12 @@ void GenerationGUI_FillingDlg::addSubshapesToStudy()
   foreach( GEOM::GeomObjPtr o, myObjects )
     GEOMBase::PublishSubObject( o.get() );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_FillingDlg::getSourceObjects()
+{
+  return myObjects;
+}

@@ -50,6 +50,7 @@ protected:
   virtual bool                        isValid(QString &);
   virtual bool                        execute(ObjectList &);
   virtual bool                        extractPrefix() const;
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
 
 private slots:
 

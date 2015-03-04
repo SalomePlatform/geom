@@ -443,3 +443,15 @@ void RepairGUI_LimitToleranceDlg::restoreSubShapes(SALOMEDS::Study_ptr   theStud
                                         mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_LimitToleranceDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
+}

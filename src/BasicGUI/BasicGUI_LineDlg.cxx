@@ -432,3 +432,14 @@ void BasicGUI_LineDlg::addSubshapesToStudy()
     break;
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_LineDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint1 << myPoint2 << myFace1 << myFace2;
+  return res;
+}

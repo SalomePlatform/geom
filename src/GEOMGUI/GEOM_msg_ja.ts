@@ -3344,6 +3344,10 @@
       <translation>測定単位の表示</translation>
     </message>
     <message>
+        <source>PREF_HIDE_INPUT_OBJECT</source>
+        <translation type="unfinished">Hide input objects from the viewer</translation>
+    </message>
+    <message>
       <source>PREF_ISOS</source>
       <translation>輪郭の数</translation>
     </message>

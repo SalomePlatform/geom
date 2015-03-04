@@ -671,3 +671,12 @@ gp_Ax3 EntityGUI_PolylineDlg::WPlaneToLCS(GEOM::GeomObjPtr theGeomObj)
 
   return aLCS;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> EntityGUI_PolylineDlg::getSourceObjects()
+{
+  return myWPlaneList;
+}

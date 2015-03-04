@@ -306,3 +306,15 @@ void OperationGUI_ArchimedeDlg::ValueChangedInSpinBox(double newValue)
 {
   processPreview();
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_ArchimedeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myShape);
+  res << aGeomObjPtr;
+  return res;
+}

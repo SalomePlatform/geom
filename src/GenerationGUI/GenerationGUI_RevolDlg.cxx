@@ -375,3 +375,14 @@ bool GenerationGUI_RevolDlg::extractPrefix() const
 {
   return myBaseObjects.count() > 1;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_RevolDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myBaseObjects);
+  res << myAxis;
+  return res;
+}

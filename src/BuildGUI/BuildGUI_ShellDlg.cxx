@@ -276,3 +276,12 @@ bool BuildGUI_ShellDlg::execute( ObjectList& objects )
   return true;
 }
 
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BuildGUI_ShellDlg::getSourceObjects()
+{
+  return myFacesAndShells;
+}
+

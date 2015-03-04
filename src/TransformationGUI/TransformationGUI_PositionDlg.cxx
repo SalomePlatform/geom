@@ -608,3 +608,14 @@ void TransformationGUI_PositionDlg::addSubshapesToStudy()
   if ( getConstructorId() == 2 )
     GEOMBase::PublishSubObject( myPath.get() );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_PositionDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  res << myStartLCS << myEndLCS << myPath;
+  return res;
+}

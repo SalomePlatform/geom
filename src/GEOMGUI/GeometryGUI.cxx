@@ -2539,6 +2539,9 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "GEOM_PREVIEW" ), operationsGroup,
                  LightApp_Preferences::Bool, "Geometry", "geom_preview" );
 
+  addPreference( tr( "PREF_HIDE_INPUT_OBJECT" ), operationsGroup,
+                 LightApp_Preferences::Bool, "Geometry", "hide_input_object" );
+
   int DependencyViewId = addPreference( tr( "PREF_TAB_DEPENDENCY_VIEW" ) );
 
   int treeGeneralGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), DependencyViewId );

@@ -377,3 +377,15 @@ GEOM::GEOM_Object_ptr RepairGUI_FreeFacesDlg::getFather (GEOM::GEOM_Object_ptr)
 {
   return myObj;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_FreeFacesDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObj);
+  res << aGeomObjPtr;
+  return res;
+}

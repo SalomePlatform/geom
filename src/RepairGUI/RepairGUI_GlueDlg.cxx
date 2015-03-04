@@ -843,3 +843,15 @@ void RepairGUI_GlueDlg::ClickOnCancel()
   clearTemporary();
   GEOMBase_Skeleton::ClickOnCancel();
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_GlueDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  for (int i = 0; i < myTmpObjs.count(); i++)
+    res << myTmpObjs[i];
+  return res;
+}

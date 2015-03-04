@@ -501,3 +501,15 @@ void BlocksGUI_BlockDlg::addSubshapesToStudy()
     break;
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BlocksGUI_BlockDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myFace1 << myFace2 << myFace3
+      << myFace4 << myFace5 << myFace6;
+  return res;
+}

@@ -454,3 +454,14 @@ void TransformationGUI_MirrorDlg::addSubshapesToStudy()
     }
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_MirrorDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  res << myArgument;
+  return res;
+}

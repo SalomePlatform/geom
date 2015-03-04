@@ -307,3 +307,15 @@ GEOM::GEOM_Object_ptr RepairGUI_FreeBoundDlg::getFather (GEOM::GEOM_Object_ptr)
 {
   return myObj;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_FreeBoundDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObj);
+  res << aGeomObjPtr;
+  return res;
+}

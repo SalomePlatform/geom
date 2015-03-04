@@ -948,3 +948,14 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   
   return res;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> EntityGUI_FeatureDetectorDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myFace;
+  return res;
+}

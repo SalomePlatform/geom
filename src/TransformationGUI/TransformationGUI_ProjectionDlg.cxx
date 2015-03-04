@@ -372,3 +372,14 @@ void TransformationGUI_ProjectionDlg::addSubshapesToStudy()
   GEOMBase::PublishSubObject( myObject1.get() );
   GEOMBase::PublishSubObject( myObject2.get() );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_ProjectionDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myObject1 << myObject2;
+  return res;
+}

@@ -698,3 +698,14 @@ void BuildGUI_FaceDlg::addSubshapesToStudy()
     break;
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BuildGUI_FaceDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myWires);
+  res << myFace << myWire;
+  return res;
+}

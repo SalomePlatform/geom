@@ -467,3 +467,14 @@ void PrimitiveGUI_TorusDlg::addSubshapesToStudy()
     GEOMBase::PublishSubObject( myDir.get() );
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> PrimitiveGUI_TorusDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir;
+  return res;
+}

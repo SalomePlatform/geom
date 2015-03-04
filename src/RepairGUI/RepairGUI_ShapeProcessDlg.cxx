@@ -990,3 +990,18 @@ void RepairGUI_ShapeProcessDlg::onSelectAll( int state )
   }
   myOpList->blockSignals( false );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_ShapeProcessDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::ListOfGO aListPtr(myObjects);
+  for (int i = 0; i < aListPtr.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(aListPtr[i]);
+    res << aGeomObjPtr;
+  }
+  return res;
+}

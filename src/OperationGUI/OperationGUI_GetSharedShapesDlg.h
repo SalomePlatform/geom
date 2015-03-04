@@ -48,6 +48,7 @@ protected:
   virtual bool                       execute (ObjectList&);
   virtual GEOM::GEOM_Object_ptr      getFather (GEOM::GEOM_Object_ptr);
   QString                            getPrefixByType() const;
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
 
 private:
   void                               Init();

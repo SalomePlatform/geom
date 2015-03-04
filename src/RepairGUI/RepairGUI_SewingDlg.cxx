@@ -358,3 +358,12 @@ void RepairGUI_SewingDlg::onDetect()
     msg = tr( "GEOM_FREE_BOUNDS_ERROR" );
   SUIT_MessageBox::information( this, tr( "GEOM_FREE_BOUNDS_TLT" ), msg );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_SewingDlg::getSourceObjects()
+{
+  return myObjects;
+}

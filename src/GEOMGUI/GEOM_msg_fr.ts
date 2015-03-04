@@ -3401,6 +3401,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Afficher les unités</translation>
     </message>
     <message>
+        <source>PREF_HIDE_INPUT_OBJECT</source>
+        <translation type="unfinished">Hide input objects from the viewer</translation>
+    </message>
+    <message>
         <source>PREF_ISOS</source>
         <translation>Nombre d&apos;isolignes</translation>
     </message>

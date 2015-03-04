@@ -966,3 +966,15 @@ void OperationGUI_ChamferDlg::RadioButtonPressed()
 
   processPreview();
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_ChamferDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myShape);
+  res << aGeomObjPtr;
+  return res;
+}

@@ -319,3 +319,21 @@ GEOM::GEOM_Object_ptr GroupGUI_BooleanDlg::getFather(GEOM::GEOM_Object_ptr theOb
   }
   return aFatherObj._retn();
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GroupGUI_BooleanDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  for (int i = 0; i < myListShapes.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListShapes[i]);
+    res << aGeomObjPtr;
+  }
+  for (int i = 0; i < myListTools.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListTools[i]);
+    res << aGeomObjPtr;
+  }
+  return res;
+}

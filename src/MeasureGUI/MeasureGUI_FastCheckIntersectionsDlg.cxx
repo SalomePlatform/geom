@@ -677,3 +677,14 @@ double MeasureGUI_FastCheckIntersectionsDlg::getTolerance()
     return 0.0;
   return aVal;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_FastCheckIntersectionsDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myObj1 << myObj2;
+  return res;
+}

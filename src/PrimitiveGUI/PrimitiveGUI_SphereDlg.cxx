@@ -415,3 +415,14 @@ void PrimitiveGUI_SphereDlg::addSubshapesToStudy()
     GEOMBase::PublishSubObject( myPoint.get() );
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> PrimitiveGUI_SphereDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint;
+  return res;
+}

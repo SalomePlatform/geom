@@ -329,3 +329,14 @@ bool OperationGUI_TransferDataDlg::execute (ObjectList& objects)
 
   return isOK;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_TransferDataDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myObject1 << myObject2;
+  return res;
+}

@@ -787,3 +787,15 @@ void BasicGUI_PlaneDlg::addSubshapesToStudy()
    break;
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_PlaneDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir << myPoint1 << myPoint2 << myPoint3
+      << myFace << myVec1 << myVec2 << myLCS;
+  return res;
+}

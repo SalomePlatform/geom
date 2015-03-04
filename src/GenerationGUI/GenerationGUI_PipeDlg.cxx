@@ -544,3 +544,16 @@ bool GenerationGUI_PipeDlg::extractPrefix() const
 {
   return myBaseObjects.count() > 1;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_PipeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myBaseObjects);
+  res << myPath << myVec;
+  for (int i = 0; i < myLocations.count(); i++)
+    res << myLocations[i];
+  return res;
+}

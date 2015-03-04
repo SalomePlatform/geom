@@ -101,6 +101,7 @@ protected:
   virtual bool                        execute (ObjectList&);
   virtual void                        addSubshapesToStudy();
   virtual QString                     getNewObjectName (int CurrObj = -1) const; 
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
 
   void                                redisplayPreview();
   virtual void                        processObject();

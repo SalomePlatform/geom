@@ -616,3 +616,14 @@ void TransformationGUI_RotationDlg::addSubshapesToStudy()
     }
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_RotationDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  res << myAxis << myCentPoint << myPoint1 << myPoint2;
+  return res;
+}

@@ -759,3 +759,14 @@ bool GenerationGUI_PrismDlg::extractPrefix() const
 {
   return myBaseObjects.count() > 1;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_PrismDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myBaseObjects);
+  res << myVec << myPoint1 << myPoint2 ;
+  return res;
+}

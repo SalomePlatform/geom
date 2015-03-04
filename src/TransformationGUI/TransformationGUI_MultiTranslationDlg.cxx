@@ -714,6 +714,17 @@ void TransformationGUI_MultiTranslationDlg::addSubshapesToStudy()
 }
 
 //=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_MultiTranslationDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myBase << myVectorU << myVectorV;
+  return res;
+}
+
+//=================================================================================
 // function : restoreSubShapes
 // purpose  :
 //=================================================================================

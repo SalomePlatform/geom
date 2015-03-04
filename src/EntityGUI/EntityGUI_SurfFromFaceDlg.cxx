@@ -223,3 +223,14 @@ bool EntityGUI_SurfFromFaceDlg::ClickOnApply()
 
   return true;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> EntityGUI_SurfFromFaceDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myFace;
+  return res;
+}

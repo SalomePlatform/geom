@@ -67,6 +67,7 @@
     <parameter name="base_vectors_length" value="1"  />
     <parameter name="marker_scale"        value="3"  />
     <parameter name="geom_preview"        value="true"  />
+    <parameter name="hide_input_object"   value="true"  />
     <parameter name="material"            value="[ Default ]" />
     <parameter name="predef_materials"    value="true" />
     <parameter name="edge_width"          value="1" />

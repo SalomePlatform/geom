@@ -609,7 +609,17 @@ void BasicGUI_MarkerDlg::addSubshapesToStudy()
   default:
     break;
   }
+}
 
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_MarkerDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myShape << myPoint << myVectorX << myVectorY;
+  return res;
 }
 
 //=================================================================================

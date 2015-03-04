@@ -333,3 +333,15 @@ GEOM::GEOM_Object_ptr MeasureGUI_GetNonBlocksDlg::getFather (GEOM::GEOM_Object_p
 {
   return myObj;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_GetNonBlocksDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObj);
+  res << aGeomObjPtr;
+  return res;
+}

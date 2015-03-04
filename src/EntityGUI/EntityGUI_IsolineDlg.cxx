@@ -281,3 +281,14 @@ void EntityGUI_IsolineDlg::ValueChangedInSpinBox(double newValue)
 {
   displayPreview(true);
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> EntityGUI_IsolineDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myFace;
+  return res;
+}

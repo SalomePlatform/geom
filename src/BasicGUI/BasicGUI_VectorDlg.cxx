@@ -472,3 +472,14 @@ void BasicGUI_VectorDlg::addSubshapesToStudy()
     GEOMBase::PublishSubObject( myPoint2.get() );
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_VectorDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint1 << myPoint2;
+  return res;
+}

@@ -533,3 +533,14 @@ void TransformationGUI_ScaleDlg::addSubshapesToStudy()
     GEOMBase::PublishSubObject( myPoint.get() );
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_ScaleDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  res << myPoint;
+  return res;
+}

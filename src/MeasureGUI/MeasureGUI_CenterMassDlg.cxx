@@ -349,3 +349,14 @@ void MeasureGUI_CenterMassDlg::addSubshapesToStudy()
 {
   GEOMBase::PublishSubObject( myObj.get() );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_CenterMassDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myObj;
+  return res;
+}

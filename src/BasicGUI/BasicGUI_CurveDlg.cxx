@@ -542,6 +542,14 @@ void BasicGUI_CurveDlg::addSubshapesToStudy()
 }
 
 //=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_CurveDlg::getSourceObjects()
+{
+  return myPoints;
+}
+//=================================================================================
 // function : CreationModeChanged
 // purpose  :
 //=================================================================================

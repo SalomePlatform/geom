@@ -458,3 +458,14 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
 
   return res;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> AdvancedGUI_DividedDiskDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir;
+  return res;
+}

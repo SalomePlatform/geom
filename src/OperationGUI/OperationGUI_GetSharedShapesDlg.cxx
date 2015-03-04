@@ -403,3 +403,18 @@ QString OperationGUI_GetSharedShapesDlg::getPrefixByType () const
 
   return aPref;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_GetSharedShapesDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::ListOfGO aListPtr(myListShapes);
+  for (int i = 0; i < aListPtr.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(aListPtr[i]);
+    res << aGeomObjPtr;
+  }
+  return res;
+}

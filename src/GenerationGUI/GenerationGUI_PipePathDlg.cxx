@@ -391,3 +391,16 @@ void GenerationGUI_PipePathDlg::addSubshapesToStudy()
   for (i = 0; i < myBase2Objects.count(); i++)
     GEOMBase::PublishSubObject(myBase2Objects[i].get());
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_PipePathDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myBase1Objects);
+  res << myShape ;
+  for (int i = 0; i < myBase2Objects.count(); i++)
+    res << myBase2Objects[i];
+  return res;
+}

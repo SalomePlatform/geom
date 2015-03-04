@@ -328,3 +328,12 @@ void TransformationGUI_OffsetDlg::CreateCopyModeChanged()
 {
   mainFrame()->GroupBoxName->setEnabled( GroupPoints->CheckButton1->isChecked() );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_OffsetDlg::getSourceObjects()
+{
+  return myObjects;
+}

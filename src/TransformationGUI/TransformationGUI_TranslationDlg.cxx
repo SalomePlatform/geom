@@ -687,3 +687,14 @@ void TransformationGUI_TranslationDlg::createPathPreview ( GEOM::GEOM_Object_ptr
     GEOMBase_Helper::displayPreview( aPrs, false, true );
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_TranslationDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  res << myVector << myPoint1 << myPoint2;
+  return res;
+}

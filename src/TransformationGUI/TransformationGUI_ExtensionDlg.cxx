@@ -409,3 +409,14 @@ bool TransformationGUI_ExtensionDlg::execute(ObjectList& objects)
 
   return res;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> TransformationGUI_ExtensionDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myBase;
+  return res;
+}

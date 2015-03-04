@@ -553,3 +553,29 @@ int OperationGUI_PartitionDlg::GetLimit() const
 
   return aLimit;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> OperationGUI_PartitionDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  for (int i = 0; i < myListShapes.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListShapes[i]);
+    res << aGeomObjPtr;
+  }
+  for (int i = 0; i < myListTools.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListTools[i]);
+    res << aGeomObjPtr;
+  }
+  for (int i = 0; i < myListRemoveInside.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListRemoveInside[i]);
+    res << aGeomObjPtr;
+  }
+  for (int i = 0; i < myListKeepInside.length(); i++) {
+    GEOM::GeomObjPtr aGeomObjPtr(myListKeepInside[i]);
+    res << aGeomObjPtr;
+  }
+  return res;
+}

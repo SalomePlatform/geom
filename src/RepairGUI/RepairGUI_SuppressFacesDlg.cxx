@@ -425,3 +425,15 @@ void RepairGUI_SuppressFacesDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStud
                                         mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_SuppressFacesDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
+}

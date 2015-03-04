@@ -264,6 +264,16 @@ void AdvancedGUI_SmoothingSurfaceDlg::addSubshapesToStudy()
     GEOMBase::PublishSubObject( myPoints[i].get() );
 }
 
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> AdvancedGUI_SmoothingSurfaceDlg::getSourceObjects()
+{
+  return myPoints;
+}
+
 //=================================================================================
 // function : getNbPoints()
 // purpose  : Returns the number of points in myPoints list.

@@ -171,6 +171,7 @@ protected:
   virtual QString getObjectName(GEOM::GEOM_Object_ptr object) const;
   virtual bool extractPrefix() const;
   virtual void addSubshapesToStudy();
+  virtual QList<GEOM::GeomObjPtr> getSourceObjects();
 
   GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const QString& theName );
   GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, int theIndex );
@@ -181,6 +182,7 @@ protected:
   QList<GEOM::GeomObjPtr> getSelected( TopAbs_ShapeEnum type, int count, bool strict = true );
   QList<GEOM::GeomObjPtr> getSelected( const QList<TopAbs_ShapeEnum>& types, int count, bool strict = true );
 
+  void hideSourceObjects( QList<GEOM::GeomObjPtr> theObjectList );
   void SetIsPreview(const bool thePreview) {isPreview = thePreview;}
   bool IsPreview() {return isPreview;}
 

@@ -299,3 +299,15 @@ void RepairGUI_ChangeOrientationDlg::CreateCopyModeChanged( bool isCreateCopy )
 {
   mainFrame()->GroupBoxName->setEnabled( isCreateCopy );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_ChangeOrientationDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
+}

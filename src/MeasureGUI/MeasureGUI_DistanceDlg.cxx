@@ -547,6 +547,17 @@ void MeasureGUI_DistanceDlg::addSubshapesToStudy()
 }
 
 //=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_DistanceDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myObj1 << myObj2;
+  return res;
+}
+
+//=================================================================================
 // function : MeasureGUI_DistanceGroup
 // purpose  :
 //=================================================================================

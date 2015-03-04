@@ -485,3 +485,14 @@ void BooleanGUI_Dialog::addSubshapesToStudy()
   for ( int i = 0; i < myObjects.count(); i++ )
     GEOMBase::PublishSubObject( myObjects[i].get() );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BooleanGUI_Dialog::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myObjects);
+  res << myObject1;
+  return res;
+}

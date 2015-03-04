@@ -3401,6 +3401,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show units of measurement</translation>
     </message>
     <message>
+        <source>PREF_HIDE_INPUT_OBJECT</source>
+        <translation>Hide input objects from the viewer</translation>
+    </message>
+    <message>
         <source>PREF_ISOS</source>
         <translation>Number of isolines</translation>
     </message>

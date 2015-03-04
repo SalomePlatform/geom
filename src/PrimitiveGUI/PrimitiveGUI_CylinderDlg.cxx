@@ -551,6 +551,17 @@ void PrimitiveGUI_CylinderDlg::addSubshapesToStudy()
 }
 
 //=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> PrimitiveGUI_CylinderDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir;
+  return res;
+}
+
+//=================================================================================
 // function :  ActivateAngle()
 // purpose  : enable the 
 //=================================================================================

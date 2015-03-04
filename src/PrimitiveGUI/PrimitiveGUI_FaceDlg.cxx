@@ -490,3 +490,14 @@ void PrimitiveGUI_FaceDlg::addSubshapesToStudy()
      GEOMBase::PublishSubObject( myFace.get() );
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> PrimitiveGUI_FaceDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myEdge << myFace;
+  return res;
+}

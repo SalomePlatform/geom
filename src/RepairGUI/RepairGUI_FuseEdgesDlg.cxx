@@ -346,3 +346,15 @@ void RepairGUI_FuseEdgesDlg::addSubshapesToStudy()
   for (int i = 0; i < myPoints.count(); i++)
     GEOMBase::PublishSubObject(myPoints[i].get());
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_FuseEdgesDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myPoints);
+  GEOM::GeomObjPtr aGeomObjPtr(myShape);
+  res << aGeomObjPtr;
+  return res;
+}

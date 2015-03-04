@@ -1253,6 +1253,18 @@ void AdvancedGUI_PipeTShapeDlg::processPreview()
 }
 
 //=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> AdvancedGUI_PipeTShapeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr1(myPoint1), aGeomObjPtr2(myPoint2), aGeomObjPtr3(myPoint3);
+  res << aGeomObjPtr1 << aGeomObjPtr2 << aGeomObjPtr3;
+  return res;
+}
+
+//=================================================================================
 // function : AdvancedGUI_4Spin
 // purpose  :
 //=================================================================================

@@ -934,6 +934,17 @@ void BasicGUI_PointDlg::addSubshapesToStudy()
 }
 
 //=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_PointDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myRefPoint << myEdge << myLine1 << myLine2 << myFace;
+  return res;
+}
+
+//=================================================================================
 // function : ClickParamCoord()
 // purpose  :
 //=================================================================================

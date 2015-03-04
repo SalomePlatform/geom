@@ -57,6 +57,7 @@ protected:
   virtual bool                       isValid (QString&);
   virtual bool                       execute (ObjectList&);
   virtual void                       addSubshapesToStudy();
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
 
 private:
   void                               Init();

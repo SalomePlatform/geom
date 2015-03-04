@@ -498,3 +498,14 @@ void PrimitiveGUI_ConeDlg::addSubshapesToStudy()
     GEOMBase::PublishSubObject( myDir.get() );
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> PrimitiveGUI_ConeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir;
+  return res;
+}

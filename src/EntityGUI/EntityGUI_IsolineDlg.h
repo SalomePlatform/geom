@@ -56,6 +56,8 @@ protected:
 
   virtual void                       addSubshapesToStudy();
 
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
+
 private:
 
   void                               Init();

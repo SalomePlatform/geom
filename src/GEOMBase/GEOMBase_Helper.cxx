@@ -860,6 +860,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
         showError();
       }
       else {
+        QList<GEOM::GeomObjPtr> anObjectList = getSourceObjects( );
         addSubshapesToStudy(); // add Sub-shapes if local selection
         const int nbObjs = objects.size();
         QStringList anEntryList;
@@ -921,6 +922,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, b
             }
             anApp->putInfo( QObject::tr("GEOM_PRP_DONE") );
           }
+          if ( anObjectList.count() > 0 )
+            hideSourceObjects( anObjectList );
           result = true;
         }
         else
@@ -1187,6 +1190,17 @@ void GEOMBase_Helper::addSubshapesToStudy()
 }
 
 //================================================================
+// Function : getSourceObjects
+// Purpose  : Virtual method to get source objects
+//================================================================
+QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSourceObjects()
+{
+  //Impemented in Dialogs, called from Accept method
+  QList<GEOM::GeomObjPtr> res;
+  return res;
+}
+
+//================================================================
 // Function : getSelected
 // Purpose  : Get selected object by specified type
 //
@@ -1355,6 +1369,19 @@ QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEn
     }
   }
   return result;
+}
+//================================================================
+// Function : hideSourceObject
+// Purpose  :
+//================================================================
+void GEOMBase_Helper::hideSourceObjects( QList<GEOM::GeomObjPtr> theObject )
+{
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  if ( resMgr->booleanValue( "Geometry", "hide_input_object", true) ) {
+    GEOM_Displayer* aDisplayer = getDisplayer();
+    for ( int i = 0; i < theObject.count(); i++ )
+      aDisplayer->Erase( theObject[i].get() );
+  }
 }
 
 //================================================================

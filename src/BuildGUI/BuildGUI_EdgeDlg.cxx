@@ -521,3 +521,14 @@ void BuildGUI_EdgeDlg::addSubshapesToStudy()
     break;
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BuildGUI_EdgeDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint1 << myPoint2 << myWire << myCurve << myStartPoint;
+  return res;
+}

@@ -282,3 +282,15 @@ GEOM::GEOM_Object_ptr BlocksGUI_PropagateDlg::getFather( GEOM::GEOM_Object_ptr )
 {
   return myObject;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BlocksGUI_PropagateDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
+}

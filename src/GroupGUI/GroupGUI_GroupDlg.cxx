@@ -224,10 +224,12 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
 GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
 {
   GEOM_Displayer* aDisplayer = getDisplayer();
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  bool isHideObjects = resMgr->booleanValue( "Geometry", "hide_input_object", true);
   if (myWasHiddenMain) {
-    aDisplayer->Erase(myMainObj);
     myIsHiddenMain = true;
-  } else {
+  }
+  else if (!isHideObjects) {
     aDisplayer->Display(myMainObj);
     myIsHiddenMain = false;
   }
@@ -1428,4 +1430,16 @@ void GroupGUI_GroupDlg::MeasureToggled()
   myGreaterFilterSpin->setEnabled(myGreaterFilterCheck->isChecked());
   myGreaterFilterCombo->setEnabled(myGreaterFilterCheck->isChecked());
   myApplyFilterButton->setEnabled(myLessFilterCheck->isChecked() || myGreaterFilterCheck->isChecked());
+}
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GroupGUI_GroupDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr1(myMainObj), aGeomObjPtr2(myInPlaceObj);
+  res << aGeomObjPtr1 << aGeomObjPtr2;
+  return res;
 }

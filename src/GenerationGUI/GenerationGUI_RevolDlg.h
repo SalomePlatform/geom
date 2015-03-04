@@ -51,6 +51,7 @@ protected:
   virtual bool                       execute( ObjectList& );    
   virtual void                       addSubshapesToStudy();
   virtual bool                       extractPrefix() const;
+  virtual QList<GEOM::GeomObjPtr>    getSourceObjects();
 
 private:
   void                               Init();

@@ -314,3 +314,15 @@ void RepairGUI_RemoveExtraEdgesDlg::restoreSubShapes( SALOMEDS::Study_ptr   theS
                                          mainFrame()->CheckBoxAddPrefix->isChecked() );
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_RemoveExtraEdgesDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
+}

@@ -305,3 +305,12 @@ void BuildGUI_WireDlg::addSubshapesToStudy()
   for ( int i = 0; i < myEdgesAndWires.count(); i++ )
     GEOMBase::PublishSubObject( myEdgesAndWires[i].get() );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BuildGUI_WireDlg::getSourceObjects()
+{
+  return myEdgesAndWires;
+}

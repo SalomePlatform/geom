@@ -430,3 +430,14 @@ void BasicGUI_EllipseDlg::addSubshapesToStudy()
   GEOMBase::PublishSubObject( myDir.get() );
   GEOMBase::PublishSubObject( myMajor.get() );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BasicGUI_EllipseDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myPoint << myDir << myMajor;
+  return res;
+}

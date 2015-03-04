@@ -49,6 +49,7 @@ protected:
   virtual bool                        isValid( QString& );
   virtual void                        addSubshapesToStudy();
   virtual bool                        execute( ObjectList& );
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
 
 private slots:
   void                                ClickOnOk();

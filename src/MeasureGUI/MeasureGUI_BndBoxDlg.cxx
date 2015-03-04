@@ -352,3 +352,14 @@ void MeasureGUI_BndBoxDlg::addSubshapesToStudy()
 {
   GEOMBase::PublishSubObject( myObj.get() );
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> MeasureGUI_BndBoxDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myObj;
+  return res;
+}

@@ -570,3 +570,14 @@ void BlocksGUI_QuadFaceDlg::addSubshapesToStudy()
     break;
   }
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> BlocksGUI_QuadFaceDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  res << myShape1 << myShape2 << myShape3 << myShape4;
+  return res;
+}

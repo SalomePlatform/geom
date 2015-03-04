@@ -422,3 +422,15 @@ void RepairGUI_RemoveHolesDlg::onDetect()
     msg = tr("GEOM_FREE_BOUNDS_ERROR");
   SUIT_MessageBox::information(this, tr("GEOM_FREE_BOUNDS_TLT"), msg);
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> RepairGUI_RemoveHolesDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res;
+  GEOM::GeomObjPtr aGeomObjPtr(myObject);
+  res << aGeomObjPtr;
+  return res;
+}
