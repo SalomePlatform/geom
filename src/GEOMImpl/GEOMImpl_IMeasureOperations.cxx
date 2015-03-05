@@ -32,7 +32,6 @@
 #include <GEOMAlgo_AlgoTools.hxx>
 #include <GEOMAlgo_KindOfName.hxx>
 #include <GEOMAlgo_ShapeInfoFiller.hxx>
-#include <OCC2VTK_Tools.h>
 
 #include <GEOM_PythonDump.hxx>
 
@@ -1628,9 +1627,8 @@ bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, 
   GEOMAlgo_AlgoTools::CopyShape(aShape1, aScopy1);
   GEOMAlgo_AlgoTools::CopyShape(aShape2, aScopy2);
 
-  float aDeflection = (theDeflection <= 0.) ? 0.001 : theDeflection;
-  GEOM::MeshShape(aScopy1, aDeflection);
-  GEOM::MeshShape(aScopy2, aDeflection);
+  GEOMUtils::MeshShape(aScopy1, theDeflection);
+  GEOMUtils::MeshShape(aScopy2, theDeflection);
   //
   // Map sub-shapes and their indices
   TopTools_IndexedMapOfShape anIndices1, anIndices2;

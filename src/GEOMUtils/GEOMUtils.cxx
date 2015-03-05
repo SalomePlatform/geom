@@ -99,6 +99,9 @@
 #include <Standard_NullObject.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+#define MAX2(X, Y)    (Abs(X) > Abs(Y) ? Abs(X) : Abs(Y))
+#define MAX3(X, Y, Z) (MAX2(MAX2(X,Y), Z))
+
 #define STD_SORT_ALGO 1
 
 // When the following macro is defined, ShapeFix_ShapeTolerance function is used to set max tolerance of curve
@@ -1192,4 +1195,44 @@ TopoDS_Shape GEOMUtils::ReduceCompound( const TopoDS_Shape& shape )
   }
   
   return result;
+}
+
+void GEOMUtils::MeshShape( const TopoDS_Shape shape,
+                           double deflection, bool theForced )
+{
+  Standard_Real aDeflection = ( deflection <= 0 ) ? DefaultDeflection() : deflection;
+  
+  // Is shape triangulated?
+  Standard_Boolean alreadyMeshed = true;
+  TopExp_Explorer ex;
+  TopLoc_Location aLoc;
+  for ( ex.Init( shape, TopAbs_FACE ); ex.More() && alreadyMeshed; ex.Next() ) {
+    const TopoDS_Face& aFace = TopoDS::Face( ex.Current() );
+    Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation( aFace, aLoc );
+    alreadyMeshed = !aPoly.IsNull(); 
+  }
+  
+  if ( !alreadyMeshed || theForced ) {
+    // Compute bounding box
+    Bnd_Box B;
+    BRepBndLib::Add( shape, B );
+    if ( B.IsVoid() )
+      return; // NPAL15983 (Bug when displaying empty groups) 
+    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+    B.Get( aXmin, aYmin, aZmin, aXmax, aYmax, aZmax );
+    
+    // This magic line comes from Prs3d_ShadedShape.gxx in OCCT
+    aDeflection = MAX3(aXmax-aXmin, aYmax-aYmin, aZmax-aZmin) * aDeflection * 4;
+    
+    // Clean triangulation before compute incremental mesh
+    BRepTools::Clean( shape );
+    
+    // Compute triangulation
+    BRepMesh_IncrementalMesh mesh( shape, aDeflection ); 
+  }
+}
+
+double GEOMUtils::DefaultDeflection()
+{
+  return 0.001;
 }

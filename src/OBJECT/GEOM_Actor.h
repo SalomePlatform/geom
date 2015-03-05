@@ -62,11 +62,11 @@ public:
   static GEOM_Actor* New();
 
   void SetShape(const TopoDS_Shape& theShape,
-                float theDeflection,
+                double theDeflection,
                 bool theIsVector = false);
 
-  void SetDeflection(float theDeflection);
-  float GetDeflection() const{ return myDeflection;}
+  void SetDeflection(double theDeflection);
+  double GetDeflection() const{ return myDeflection;}
 
   void AddToRender(vtkRenderer* theRenderer);
   void RemoveFromRender(vtkRenderer* theRenderer);
@@ -93,7 +93,6 @@ public:
   vtkProperty* GetSharedEdgeProperty();
   vtkProperty* GetFaceEdgeProperty();
 
-  void setDeflection(double adef);
   virtual void setDisplayMode(int thenewmode);
 
   // Description:
@@ -108,7 +107,6 @@ public:
   const TopoDS_Shape& getTopo();
   void setInputShape(const TopoDS_Shape& ashape, double adef1,
                      int imode, bool isVector = false);
-  double getDeflection();
   double isVector();
 
   // SubShape
@@ -224,7 +222,7 @@ private:
   TopoDS_Shape myShape;
   bool isOnlyVertex;
 
-  float myDeflection;
+  double myDeflection;
   bool myIsForced;
 
   //  EDisplayMode myDisplayMode;

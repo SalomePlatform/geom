@@ -312,6 +312,22 @@ namespace GEOMUtils
    * \retval TopoDS_Shape resulting shape
    */
   Standard_EXPORT TopoDS_Shape ReduceCompound( const TopoDS_Shape& shape );
+
+  /*!
+   * \brief Generate triangulation for the shape.
+   *
+   * \param shape shape being meshed
+   * \param deflection deflection coefficient to be used
+   * \param forced if \c true, causes generation of mesh regardless it is already present in the shape
+   */
+  Standard_EXPORT void MeshShape( const TopoDS_Shape shape,
+                                  double deflection, bool forced = true );
+
+  /*!
+   * \brief Get default deflection coefficient used for triangulation
+   * \return default deflection value
+   */
+  Standard_EXPORT double DefaultDeflection();
 };
 
 #endif

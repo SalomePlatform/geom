@@ -37,6 +37,7 @@
 #include "GEOM_WireframeFace.h" 
 #include "GEOM_ShadingFace.h"
 #include "GEOM_PainterPolyDataMapper.h"
+#include "GEOMUtils.hxx" 
 #include "SVTK_Actor.h"
 
 #include <OCC2VTK_Tools.h>
@@ -430,20 +431,19 @@ GEOM_Actor
 
 void  
 GEOM_Actor:: 
-SetDeflection(float theDeflection) 
+SetDeflection(double theDeflection) 
 { 
-  if( myDeflection == theDeflection ) 
-    return;
-    
-  myDeflection = theDeflection; 
- 
-  GEOM::MeshShape(myShape,myDeflection);
-  
-  SetModified(); 
+  double aDeflection = ( theDeflection <= 0 ) ? GEOMUtils::DefaultDeflection() : theDeflection;
+
+  if ( myDeflection != aDeflection ) {
+    myDeflection = aDeflection; 
+    GEOMUtils::MeshShape( myShape, myDeflection );
+    SetModified(); 
+  }
 }
 
 void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
-                           float theDeflection,
+                           double theDeflection,
                            bool theIsVector)
 {
   myShape = theShape;
@@ -469,13 +469,13 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
   TopExp::MapShapesAndAncestors(theShape,TopAbs_EDGE,TopAbs_FACE,anEdgeMap);
   
-  GEOM::SetShape(theShape,anEdgeMap,theIsVector,
-                 myStandaloneVertexSource.Get(),
-                 myIsolatedEdgeSource.Get(),
-                 myOneFaceEdgeSource.Get(),
-                 mySharedEdgeSource.Get(),
-                 myWireframeFaceSource.Get(),
-                 myShadingFaceSource.Get());
+  GEOM::ShapeToVTK(theShape,anEdgeMap,theIsVector,
+                   myStandaloneVertexSource.Get(),
+                   myIsolatedEdgeSource.Get(),
+                   myOneFaceEdgeSource.Get(),
+                   mySharedEdgeSource.Get(),
+                   myWireframeFaceSource.Get(),
+                   myShadingFaceSource.Get());
   isOnlyVertex =  
     myIsolatedEdgeSource->IsEmpty() &&
     myOneFaceEdgeSource->IsEmpty() &&
@@ -493,15 +493,6 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   // 0051777: TC7.2.0: Element could not be selected in Hypothesis Construction
   myAppendFilter->Update();
 }
-
-// OLD METHODS
-void GEOM_Actor::setDeflection(double adef) {
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::setDeflection" );
-#endif
-  SetDeflection((float)adef);
-}
-
 
 // warning! must be checked!
 // SetHighlightProperty
@@ -688,15 +679,6 @@ void GEOM_Actor::setInputShape(const TopoDS_Shape& ashape, double adef1,
   MESSAGE ( "GEOM_Actor::setInputShape" );
 #endif
 }
-
-double GEOM_Actor::getDeflection()
-{
-#ifdef MYDEBUG
-  MESSAGE ( "GEOM_Actor::getDeflection" );
-#endif
-  return (double) GetDeflection();
-}
-
 
 double GEOM_Actor::isVector()
 {

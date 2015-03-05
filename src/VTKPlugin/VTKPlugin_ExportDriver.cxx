@@ -94,7 +94,7 @@ Standard_Integer VTKPlugin_ExportDriver::Execute( TFunction_Logbook& log ) const
     // Set "C" numeric locale to save numbers correctly
     Kernel_Utils::Localizer loc;
 
-    vtkPolyData* pd = GEOM::GetData( aShape, aDeflection );
+    vtkPolyData* pd = GEOM::GetVTKData( aShape, aDeflection );
     vtkPolyDataWriter* aWriter = vtkPolyDataWriter::New();    
     aWriter->SetInputData( pd );
     aWriter->SetFileName( aFileName.ToCString() );
