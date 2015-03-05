@@ -195,7 +195,7 @@ void MeasureGUI::ChangeDimensionsVisibility( const bool theIsVisible )
     return;
   }
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   GEOMGUI_DimensionProperty aDimensions( anActiveStudy, anIObject->getEntry() );
 

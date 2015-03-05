@@ -228,6 +228,8 @@ void MeasureGUI_FastCheckIntersectionsDlg::clear()
 //=================================================================================
 void MeasureGUI_FastCheckIntersectionsDlg::onCompute()
 {
+  SUIT_OverrideCursor wc;
+
   myShapeList1->clear();
   myShapeList2->clear();
 

@@ -410,6 +410,8 @@ bool MeasureGUI_CheckSelfIntersectionsDlg::findSelfIntersections
   int  nbPairs  = 0;
   int aLevel = myLevelBox->currentIndex();
 
+  SUIT_OverrideCursor wc;
+
   try {
     HasSelfInte = !anOper->CheckSelfIntersections(myObj, aLevel, myInters);
     nbPairs = myInters->length()/2;

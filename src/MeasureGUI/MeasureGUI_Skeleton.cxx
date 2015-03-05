@@ -324,7 +324,7 @@ void MeasureGUI_Skeleton::redisplayPreview()
   erasePreview( false );
 
   try {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
 
     getDisplayer()->SetColor( Quantity_NOC_VIOLET );
     getDisplayer()->SetToActivate( false );

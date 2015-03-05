@@ -286,7 +286,7 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
       return false;
     }
     
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
 
     TopExp::MapShapes( aSelShape, anIndices);
     SALOME_Prs* aPrs = 0;

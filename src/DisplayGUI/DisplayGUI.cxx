@@ -189,7 +189,7 @@ void DisplayGUI::DisplayAll()
   _PTR(ChildIterator) anIter ( aStudy->NewChildIterator( SC ) );
   anIter->InitEx( true );
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   while( anIter->More() ) {
     _PTR(SObject) valSO ( anIter->Value() );
@@ -210,7 +210,7 @@ void DisplayGUI::DisplayAll()
 //=====================================================================================
 void DisplayGUI::EraseAll()
 {
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SUIT_Application* app = getGeometryGUI()->getApp();
   if ( app ) {
@@ -261,7 +261,7 @@ void DisplayGUI::DisplayOnlyChildren()
   aSelMgr->selectedObjects(aList, "ObjectBrowser", false);
   SALOME_ListIteratorOfListIO It (aList);
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   for (; It.More(); It.Next()) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
@@ -314,7 +314,7 @@ void DisplayGUI::Display()
   aSelMgr->selectedObjects( aList );
   SALOME_ListIteratorOfListIO It( aList );
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   for( ;It.More();It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
@@ -372,7 +372,7 @@ void DisplayGUI::Erase()
   aSelMgr->selectedObjects( aList );
   SALOME_ListIteratorOfListIO It( aList );
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   for( ; It.More(); It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
@@ -420,7 +420,7 @@ void DisplayGUI::Erase()
 //=====================================================================================
 void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 {
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
@@ -453,7 +453,7 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 //=====================================================================================
 void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
 {
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
@@ -499,7 +499,7 @@ int DisplayGUI::GetVectorMode( SUIT_ViewWindow* viewWindow )
 //=====================================================================================
 void DisplayGUI::SetVerticesMode( const bool mode, SUIT_ViewWindow* viewWindow )
 {
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
@@ -558,7 +558,7 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
   if ( !aStudy ) return;
 
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
 
   SALOME_ListIO selected;
   aSelMgr->selectedObjects( selected );

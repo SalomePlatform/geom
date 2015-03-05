@@ -191,7 +191,7 @@ void GEOMToolsGUI::OnAutoColor()
   
     QColor c( (int)( aColor.R * 255.0 ), (int)( aColor.G * 255.0 ), (int)( aColor.B * 255.0 ) );
 
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     
     appStudy->setObjectProperty( aMgrId, aChildObject->GetStudyEntry(), GEOM::propertyName( GEOM::Color ), c );
     Handle( SALOME_InteractiveObject ) io = new SALOME_InteractiveObject( aChildObject->GetStudyEntry(), "GEOM", "" );
@@ -272,7 +272,7 @@ void GEOMToolsGUI::OnColor()
   aSColor.B = (double)color.blue() / 255.0;
 
   // iterate through list of objects and assign new color
-  SUIT_OverrideCursor();
+  SUIT_OverrideCursor wc;
   for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
     GEOM::GEOM_Object_var aObject = GEOMBase::ConvertIOinGEOMObject( io );
@@ -417,7 +417,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
     NbIsosDlg->setV( VIso );
 
     if ( NbIsosDlg->exec() ) {
-      SUIT_OverrideCursor();     
+      SUIT_OverrideCursor wc;     
       newNbUIso = NbIsosDlg->getU();
       newNbVIso = NbIsosDlg->getV();
     } else //Cancel case
@@ -473,7 +473,7 @@ void GEOMToolsGUI::OnDeflection()
     ( SUIT_Session::session()->activeApplication()->desktop() );
   DeflectionDlg->setTheDC( aDC );
   if ( DeflectionDlg->exec() ) {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     aDC = DeflectionDlg->getTheDC();
 
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
@@ -674,7 +674,7 @@ void GEOMToolsGUI::OnEdgeWidth()
 
   Dlg->setTheLW( aWidth );
   if ( Dlg->exec() ) {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     aWidth = Dlg->getTheLW();
   } else
     return; //Cancel case
@@ -717,7 +717,7 @@ void GEOMToolsGUI::OnIsosWidth() {
 
   Dlg->setTheLW( aWidth );
   if ( Dlg->exec() ) {
-    SUIT_OverrideCursor();
+    SUIT_OverrideCursor wc;
     aWidth = Dlg->getTheLW();
   } else
     return; //Cancel case
