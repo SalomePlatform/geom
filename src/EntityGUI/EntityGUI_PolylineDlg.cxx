@@ -82,7 +82,7 @@ EntityGUI_PolylineDlg::EntityGUI_PolylineDlg
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  QGroupBox   *aGroupBox1 = new QGroupBox(tr("GEOM_CS"), this);
+  QGroupBox   *aGroupBox1 = new QGroupBox(this);
   QGridLayout *aPlaneLayout = new QGridLayout(aGroupBox1);
 
   aPlaneLayout->setSpacing(6);
