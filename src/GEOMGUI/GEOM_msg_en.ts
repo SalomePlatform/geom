@@ -2969,6 +2969,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show Vertices</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_NAME</source>
+        <translation>Show Name</translation>
+    </message>
+    <message>
         <source>MEN_PREFERENCES</source>
         <translation>Preferences</translation>
     </message>
@@ -3155,6 +3159,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_VERTICES_MODE_OFF</source>
         <translation>Hide Vertices</translation>
+    </message>
+    <message>
+        <source>MEN_NAME_MODE_ON</source>
+        <translation>Show Name</translation>
+    </message>
+    <message>
+        <source>MEN_NAME_MODE_OFF</source>
+        <translation>Hide Name</translation>
     </message>
     <message>
         <source>MEN_WIREFRAME</source>
@@ -3865,6 +3877,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show Vertices</translation>
     </message>
     <message>
+        <source>STB_POP_SHOW_NAME</source>
+        <translation>Show Name</translation>
+    </message>
+    <message>
         <source>STB_POP_SETTEXTURE</source>
         <translation>Add a texture</translation>
     </message>
@@ -3927,6 +3943,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_VECTOR_MODE</source>
         <translation>Change Edge Presentation Mode</translation>
+    </message>
+    <message>
+        <source>STB_NAME_MODE</source>
+        <translation>Show/Hide names of visible shapes</translation>
     </message>
     <message>
         <source>STB_SHADING_COLOR</source>

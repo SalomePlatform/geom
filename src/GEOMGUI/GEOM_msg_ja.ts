@@ -2924,6 +2924,10 @@
       <translation type="unfinished">Show Vertices</translation>
     </message>
     <message>
+      <source>MEN_POP_SHOW_NAME</source>
+      <translation type="unfinished">Show Name</translation>
+    </message>    
+    <message>
       <source>MEN_PREFERENCES</source>
       <translation>設定</translation>
     </message>
@@ -3106,6 +3110,14 @@
     <message>
       <source>MEN_VERTICES_MODE_OFF</source>
       <translation type="unfinished">Hide Vertices</translation>
+    </message>
+    <message>
+      <source>MEN_NAME_MODE_ON</source>
+      <translation type="unfinished">Show Name</translation>
+    </message>
+    <message>
+      <source>MEN_NAME_MODE_OFF</source>
+      <translation type="unfinished">Hide Name</translation>
     </message>
     <message>
       <source>MEN_WIREFRAME</source>
@@ -3808,6 +3820,10 @@
       <translation type="unfinished">Show Vertices</translation>
     </message>
     <message>
+      <source>STB_POP_SHOW_NAME</source>
+      <translation type="unfinished">Show Name</translation>
+    </message>
+    <message>
       <source>STB_POP_SETTEXTURE</source>
       <translation>テクスチャを追加します。</translation>
     </message>
@@ -3870,6 +3886,10 @@
     <message>
       <source>STB_VECTOR_MODE</source>
       <translation>エッジの表示モードを変更</translation>
+    </message>
+    <message>
+        <source>STB_NAME_MODE</source>
+        <translation type="unfinished">Show/Hide names of visible shapes</translation>
     </message>
     <message>
       <source>STB_SHADING_COLOR</source>

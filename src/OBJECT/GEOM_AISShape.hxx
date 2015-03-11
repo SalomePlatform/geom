@@ -81,6 +81,7 @@ public:
   Standard_EXPORT void SetEdgesInShadingColor(const Quantity_Color &aCol);
   Standard_EXPORT void SetDisplayVectors(bool isShow);
   Standard_EXPORT void SetDisplayVertices(bool isShow);
+  Standard_EXPORT void SetDisplayName(bool isShow);
 
   Standard_EXPORT virtual void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
 				       const Handle(Prs3d_Presentation)& aPresentation,
@@ -88,6 +89,7 @@ public:
   
   Standard_EXPORT virtual bool isShowVectors() { return myDisplayVectors; }
   Standard_EXPORT virtual bool isShowVertices() { return myDisplayVertices; }
+  Standard_EXPORT virtual bool isShowName() { return myDisplayName; }
 
   Standard_EXPORT virtual Standard_Boolean switchTopLevel();
   Standard_EXPORT virtual Standard_Boolean toActivate();
@@ -125,6 +127,9 @@ protected:
 				  const bool theIsText = false,
 				  const bool theIsHighlight = false );
   
+  // Displaying the name of shape
+  Standard_EXPORT void drawName( const Handle(Prs3d_Presentation)& thePrs );
+
   // Auxiliary method to compute a center of mass for the specified shape
   Standard_EXPORT static Standard_Boolean computeMassCenter( const TopoDS_Shape& theShape,
 							     gp_Pnt& theCenter );
@@ -136,6 +141,7 @@ private:
   TCollection_AsciiString  myName;
   bool                     myDisplayVectors;
   bool                     myDisplayVertices;
+  bool                     myDisplayName;
   Standard_Boolean         myTopLevel;
   Standard_Integer         myPrevDisplayMode;
 

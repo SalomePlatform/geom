@@ -2969,6 +2969,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Montrer les sommets</translation>
     </message>
     <message>
+        <source>MEN_POP_SHOW_NAME</source>
+        <translation>Montrer le nom</translation>
+    </message>
+    <message>
         <source>MEN_PREFERENCES</source>
         <translation>Préférences</translation>
     </message>
@@ -3155,6 +3159,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_VERTICES_MODE_OFF</source>
         <translation>Cacher les sommets</translation>
+    </message>
+    <message>
+        <source>MEN_NAME_MODE_ON</source>
+        <translation>Montrer le nom</translation>
+    </message>
+    <message>
+        <source>MEN_NAME_MODE_OFF</source>
+        <translation>Cacher le nom</translation>
     </message>
     <message>
         <source>MEN_WIREFRAME</source>
@@ -3865,6 +3877,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Montrer les sommets</translation>
     </message>
     <message>
+        <source>STB_POP_SHOW_NAME</source>
+        <translation>Montrer le nom</translation>
+    </message>
+    <message>
         <source>STB_POP_SETTEXTURE</source>
         <translation>Ajoute une texture</translation>
     </message>
@@ -3927,6 +3943,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_VECTOR_MODE</source>
         <translation>Changer le mode de représentation des arêtes</translation>
+    </message>
+    <message>
+        <source>STB_NAME_MODE</source>
+        <translation type="unfinished">Show/Hide names of visible shapes</translation>
     </message>
     <message>
         <source>STB_SHADING_COLOR</source>

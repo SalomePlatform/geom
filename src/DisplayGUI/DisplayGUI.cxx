@@ -141,6 +141,12 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
       ( GetVerticesMode() ? tr("MEN_VERTICES_MODE_ON") : tr( "MEN_VERTICES_MODE_OFF" ) );
     getGeometryGUI()->menuMgr()->update();
     break;
+  case GEOMOp::OpSwitchName:  // MENU VIEW - DISPLAY MODE - SHOW/HIDE NAME
+    SetNameMode(!GetNameMode());
+    getGeometryGUI()->action( GEOMOp::OpSwitchName )->setText
+      ( GetNameMode() ? tr("MEN_NAME_MODE_ON") : tr( "MEN_NAME_MODE_OFF" ) );
+    getGeometryGUI()->menuMgr()->update();
+    break;
   case GEOMOp::OpWireframe:      // POPUP MENU - DISPLAY MODE - WIREFRAME
     ChangeDisplayMode( 0 );
     break;
@@ -158,6 +164,8 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     break;
     case GEOMOp::OpVertices:       // POPUP MENU - DISPLAY MODE - SHOW VERTICES
     ChangeDisplayMode( 5 );
+  case GEOMOp::OpShowName:       // POPUP MENU - DISPLAY MODE - SHOW NAME
+    ChangeDisplayMode( 6 );
     break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
@@ -540,6 +548,52 @@ int DisplayGUI::GetVerticesMode( SUIT_ViewWindow* viewWindow )
 }
 
 //=====================================================================================
+// function : DisplayGUI::SetNameMode()
+// purpose  : Set name mode for the viewer
+//=====================================================================================
+void DisplayGUI::SetNameMode( const bool mode, SUIT_ViewWindow* viewWindow )
+{
+  SUIT_OverrideCursor();
+
+  SalomeApp_Application* app = getGeometryGUI()->getApp();
+  if ( !app ) return;
+
+  SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  if ( !aStudy ) return;
+
+  if ( !viewWindow )
+    viewWindow = app->desktop()->activeWindow();
+
+  viewWindow->setProperty( "NameMode", mode );
+
+  GEOM_Displayer displayer( aStudy );
+
+  int aMgrId = viewWindow->getViewManager()->getGlobalId();
+
+  SALOME_ListIO anIOlst;
+  displayer.GetActiveView()->GetVisible( anIOlst );
+
+  for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    aStudy->setObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::ShowName ), mode );
+    displayer.Redisplay( io, false );
+  }
+  displayer.UpdateViewer();
+  GeometryGUI::Modified();
+}
+
+//=====================================================================================
+// function : DisplayGUI::GetNameMode()
+// purpose  : Get the "show name" mode of the viewer
+//=====================================================================================
+int DisplayGUI::GetNameMode( SUIT_ViewWindow* viewWindow )
+{
+  if ( !viewWindow )
+    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
+  return viewWindow->property( "NameMode" ).toBool();
+}
+
+//=====================================================================================
 // function : DisplayGUI::ChangeDisplayMode()
 // purpose  : Set display mode for selected objects in the viewer given
 //            (current viewer if <viewWindow> = 0 )
@@ -572,6 +626,8 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   bool vectorMode =  v.isValid() ? !v.toBool() : false;
   v = aStudy->getObjectProperty( mgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::Vertices ), QVariant() );
   bool verticesMode =  v.isValid() ? !v.toBool() : false;
+  v = aStudy->getObjectProperty( mgrId, selected.First()->getEntry(), GEOM::propertyName( GEOM::ShowName ), QVariant() );
+  bool nameMode =  v.isValid() ? !v.toBool() : false;
 
   for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
@@ -583,6 +639,9 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
     }
     else if ( mode == 5 ) {
       aStudy->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::Vertices ), verticesMode );
+    }
+    else if ( mode == 6 ) {
+      aStudy->setObjectProperty( mgrId, io->getEntry(), GEOM::propertyName( GEOM::ShowName ), nameMode );
     }
     displayer.Redisplay( io, false );
   }

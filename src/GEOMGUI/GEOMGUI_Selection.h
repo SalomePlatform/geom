@@ -68,6 +68,7 @@ private:
   QString               selectionMode() const;
   bool                  isVectorsMode( const int ) const;
   bool                  isVerticesMode( const int ) const;
+  bool                  isNameMode( const int ) const;
   bool                  hasChildren( const int ) const;
   int                   nbChildren( const int ) const;
   bool                  hasConcealedChildren( const int ) const;

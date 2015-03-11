@@ -916,6 +916,7 @@ void EntityGUI_SubShapeDlg::ClickOnOkFilter()
          ( myGreaterFilterCheck->isChecked() && !myLessFilterCheck->isChecked() && isGreater ) ) {
       Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject();
       io->setEntry( anEntry.toLatin1().constData() );
+      io->setName( myObject->GetName() );
       toSelect.Append(io);
     }
   }

@@ -28,6 +28,8 @@
 #include "GEOM_AISShape.hxx"
 #include "GEOM_AISVector.hxx"
 
+#include <GEOMUtils.hxx>
+
 #include <Basics_OCCTVersion.hxx>
 
 // Open CASCADE Includes
@@ -330,6 +332,9 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   if( anIsTextField )
     drawField( aPrs, true );
 
+  if( isShowName() )
+    drawName( aPrs );
+
   //  aPrs->ReCompute(); // for hidden line recomputation if necessary...
 }
 
@@ -382,6 +387,11 @@ void GEOM_AISShape::SetDisplayVectors(bool isDisplayed)
 void GEOM_AISShape::SetDisplayVertices(bool isDisplayed)
 {
   myDisplayVertices = isDisplayed;
+}
+
+void GEOM_AISShape::SetDisplayName(bool isDisplayed)
+{
+  myDisplayName = isDisplayed;
 }
 
 void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
@@ -609,6 +619,23 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
       }
     }
   }
+}
+
+void GEOM_AISShape::drawName( const Handle(Prs3d_Presentation)& thePrs )
+{
+  Handle(Graphic3d_Group) aGroup = Prs3d_Root::NewGroup( thePrs );
+
+  gp_Ax3 anAx3 = GEOMUtils::GetPosition(myshape);
+  gp_Pnt aCenter = anAx3.Location();
+
+  Graphic3d_Vertex aVertex( aCenter.X(), aCenter.Y(), aCenter.Z() );
+
+  Handle(Graphic3d_AspectText3d) anAspectText3d = new Graphic3d_AspectText3d();
+  anAspectText3d->SetStyle( Aspect_TOST_ANNOTATION );
+  aGroup->SetPrimitivesAspect( anAspectText3d );
+
+  const char* aName = getIO()->getName();
+  aGroup->Text( TCollection_ExtendedString( aName ), aVertex, 16 );
 }
 
 Standard_Boolean GEOM_AISShape::computeMassCenter( const TopoDS_Shape& theShape,

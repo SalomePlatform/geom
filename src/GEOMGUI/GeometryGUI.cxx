@@ -513,12 +513,14 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpShow:               // MENU VIEW - DISPLAY
   case GEOMOp::OpSwitchVectors:      // MENU VIEW - VECTOR MODE
   case GEOMOp::OpSwitchVertices:     // MENU VIEW - VERTICES MODE
+  case GEOMOp::OpSwitchName:         // MENU VIEW - VERTICES MODE
   case GEOMOp::OpWireframe:          // POPUP MENU - WIREFRAME
   case GEOMOp::OpShading:            // POPUP MENU - SHADING
   case GEOMOp::OpShadingWithEdges:   // POPUP MENU - SHADING WITH EDGES
   case GEOMOp::OpTexture:            // POPUP MENU - TEXTURE
   case GEOMOp::OpVectors:            // POPUP MENU - VECTORS
   case GEOMOp::OpVertices:           // POPUP MENU - VERTICES
+  case GEOMOp::OpShowName:           // POPUP MENU - SHOW NAME
     libName = "DisplayGUI";
     break;
   case GEOMOp::OpPoint:              // MENU BASIC - POINT
@@ -1034,6 +1036,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpShow,             "DISPLAY" );
   createGeomAction( GEOMOp::OpSwitchVectors,    "VECTOR_MODE");
   createGeomAction( GEOMOp::OpSwitchVertices,   "VERTICES_MODE");
+  createGeomAction( GEOMOp::OpSwitchName,       "NAME_MODE");
   createGeomAction( GEOMOp::OpSelectVertex,     "VERTEX_SEL_ONLY" ,"", 0, true );
   createGeomAction( GEOMOp::OpSelectEdge,       "EDGE_SEL_ONLY", "", 0, true );
   createGeomAction( GEOMOp::OpSelectWire,       "WIRE_SEL_ONLY", "",  0, true );
@@ -1056,6 +1059,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpIsosWidth,        "ISOS_WIDTH");
   createGeomAction( GEOMOp::OpVectors,          "POP_VECTORS", "", 0, true );
   createGeomAction( GEOMOp::OpVertices,         "POP_VERTICES", "", 0, true );
+  createGeomAction( GEOMOp::OpShowName,         "POP_SHOW_NAME", "", 0, true );
   createGeomAction( GEOMOp::OpDeflection,       "POP_DEFLECTION" );
   createGeomAction( GEOMOp::OpColor,            "POP_COLOR" );
   createGeomAction( GEOMOp::OpSetTexture,       "POP_SETTEXTURE" );
@@ -1300,6 +1304,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(),                  dispmodeId, -1 );
   createMenu( GEOMOp::OpSwitchVectors,      dispmodeId, -1 );
   createMenu( GEOMOp::OpSwitchVertices,     dispmodeId, -1 );
+  createMenu( GEOMOp::OpSwitchName,         dispmodeId, -1 );
 
   createMenu( separator(),       viewId, -1 );
   createMenu( GEOMOp::OpShowAll, viewId, -1 );
@@ -1497,6 +1502,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpVertices ), dispmodeId, -1 ); // vertices
   mgr->setRule( action( GEOMOp::OpVertices ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpVertices ), clientOCCorVTK + " and isVerticesMode", QtxPopupMgr::ToggleRule );
+  mgr->insert( action(  GEOMOp::OpShowName ), dispmodeId, -1 ); // show name
+  mgr->setRule( action( GEOMOp::OpShowName ), clientOCCorVTK_AndSomeVisible  + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpShowName ), clientOCCorVTK + " and isNameMode", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
 
   mgr->insert( action(  GEOMOp::OpColor ), -1, -1 ); // color
@@ -2809,6 +2817,11 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Vertices )).toString().toStdString());
         }
 
+        if (aProps.contains(GEOM::propertyName( GEOM::ShowName ))) {
+          param = occParam + GEOM::propertyName( GEOM::ShowName );
+          ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::ShowName )).toString().toStdString());
+        }
+
         if (aProps.contains(GEOM::propertyName( GEOM::Deflection ))) {
           param = occParam + GEOM::propertyName( GEOM::Deflection );
           ip->setParameter(entry, param.toStdString(), aProps.value(GEOM::propertyName( GEOM::Deflection )).toString().toStdString());
@@ -2981,6 +2994,8 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::EdgesDirection ), val == "true" || val == "1");
       } else if (paramNameStr == GEOM::propertyName( GEOM::Vertices )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Vertices ), val == "true" || val == "1");
+      } else if (paramNameStr == GEOM::propertyName( GEOM::ShowName )) {
+        aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::ShowName ), val == "true" || val == "1");
       } else if (paramNameStr == GEOM::propertyName( GEOM::Deflection )) {
         aListOfMap[viewIndex].insert( GEOM::propertyName( GEOM::Deflection ), val.toDouble());
       } else if (paramNameStr == GEOM::propertyName( GEOM::PointMarker )) {
@@ -3029,11 +3044,34 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
   }
 }
 
+// Compute current name mode of the viewer
+void UpdateNameMode( SalomeApp_Application* app )
+{
+  bool isMode = false;
+  SalomeApp_Study* aStudy = dynamic_cast< SalomeApp_Study* >( app->activeStudy() );
+  SUIT_ViewWindow* viewWindow = app->desktop()->activeWindow();
+  GEOM_Displayer displayer( aStudy );
+  int aMgrId = viewWindow->getViewManager()->getGlobalId();
+
+  SALOME_ListIO anIOlst;
+  displayer.GetActiveView()->GetVisible( anIOlst );
+
+  for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
+    Handle( SALOME_InteractiveObject ) io = It.Value();
+    QVariant v = aStudy->getObjectProperty( aMgrId, io->getEntry(), GEOM::propertyName( GEOM::ShowName ), QVariant() );
+    bool isIONameMode =  v.isValid() ? v.toBool() : false;
+    if( isIONameMode )
+      isMode = true;
+  }
+  viewWindow->setProperty( "NameMode", isMode );
+}
+
 void GeometryGUI::onViewAboutToShow()
 {
   SUIT_ViewWindow* window = application()->desktop()->activeWindow();
   QAction* a = action( GEOMOp::OpSwitchVectors );
   QAction* aVerticesAction = action( GEOMOp::OpSwitchVertices );
+  QAction* aNameAction = action( GEOMOp::OpSwitchName );
   if ( window ) {
     a->setEnabled(true);
     bool vmode = window->property("VectorsMode").toBool();
@@ -3041,11 +3079,17 @@ void GeometryGUI::onViewAboutToShow()
     aVerticesAction->setEnabled(true);
     vmode = window->property("VerticesMode").toBool();
     aVerticesAction->setText ( vmode == 1 ? tr( "MEN_VERTICES_MODE_OFF" ) : tr("MEN_VERTICES_MODE_ON") );
+    UpdateNameMode( getApp() );
+    aNameAction->setEnabled(true);
+    vmode = window->property("NameMode").toBool();
+    aNameAction->setText ( vmode == 1 ? tr( "MEN_NAME_MODE_OFF" ) : tr("MEN_NAME_MODE_ON") );
   } else {
     a->setText ( tr("MEN_VECTOR_MODE_ON") );
     a->setEnabled(false);
     aVerticesAction->setText ( tr("MEN_VERTICES_MODE_ON") );
     aVerticesAction->setEnabled(false);
+    aNameAction->setText ( tr("MEN_NAME_MODE_ON") );
+    aNameAction->setEnabled(false);
   }
 }
 

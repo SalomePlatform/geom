@@ -404,6 +404,18 @@ void GEOM_Swig::setVerticesMode( const char* theEntry, bool theOn, bool theUpdat
 }
 
 /*!
+  \brief Show / hide name of shape for the presentation
+  \param theEntry geometry object's entry
+  \param theOn \c true to show name or \c false otherwise
+  \param theUpdateViewer \c true to update active view's contents
+*/
+void GEOM_Swig::setNameMode( const char* theEntry, bool theOn, bool theUpdateViewer )
+{
+  ProcessVoidEvent( new TSetPropertyEvent( theEntry, GEOM::propertyName( GEOM::ShowName ),
+                                           theOn, theUpdateViewer ) );
+}
+
+/*!
   \brief Change color of the presentation
   \param theEntry geometry object's entry
   \param theRed red component of the component (0-255)

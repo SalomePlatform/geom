@@ -41,9 +41,12 @@
 #include "SVTK_Actor.h"
 
 #include <OCC2VTK_Tools.h>
+#include <GEOMUtils.hxx>
 
 #include <vtkObjectFactory.h> 
 #include <vtkRenderer.h> 
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 #include <vtkProperty.h> 
 #include <vtkPointPicker.h>
 #include <vtkCellPicker.h>
@@ -84,6 +87,7 @@ GEOM_Actor::GEOM_Actor():
   myIsSelected(false), 
   myVectorMode(false),
   myVerticesMode(false),
+  myNameMode(false),
 
   myVertexActor(GEOM_DeviceActor::New(),true), 
   myVertexSource(GEOM_VertexSource::New(),true), 
@@ -114,6 +118,8 @@ GEOM_Actor::GEOM_Actor():
   // !!! Presentation of GEOM_Actor is drawing only with help of actors
   // defined in this class !!!
   myPolyDataMapper(GEOM_PainterPolyDataMapper::New(),true),
+
+  myTextActor( vtkTextActor::New() ),
 
   myHighlightProp(vtkProperty::New()),
   myPreHighlightProp(vtkProperty::New()),
@@ -202,6 +208,7 @@ GEOM_Actor::GEOM_Actor():
   setDisplayMode(0); // WIRE FRAME
   SetVectorMode(0);  //
   SetVerticesMode(0);  //
+  SetNameMode(0); 
 } 
  
  
@@ -246,6 +253,7 @@ SetModified()
   this->mySharedEdgeSource->Modified(); 
   this->myWireframeFaceSource->Modified(); 
   this->myShadingFaceSource->Modified(); 
+  this->myTextActor->Modified();
 } 
 
 void  
@@ -275,6 +283,8 @@ AddToRender(vtkRenderer* theRenderer)
  
   myVertexActor->AddToRender(theRenderer); 
   myStandaloneVertexActor->AddToRender(theRenderer); 
+
+  theRenderer->AddActor( myTextActor );
 }
  
 void 
@@ -297,6 +307,7 @@ RemoveFromRender(vtkRenderer* theRenderer)
   myVertexActor->RemoveFromRender(theRenderer);
   myStandaloneVertexActor->RemoveFromRender(theRenderer);
 
+  theRenderer->RemoveActor( myTextActor );
   
   SetSelected(false);
   SetVisibility(false);
@@ -374,6 +385,8 @@ SetVisibility(int theVisibility)
   myVertexActor->SetVisibility(theVisibility && (isOnlyVertex || (myVerticesMode && (!myIsSelected && !myIsPreselected))));// must be added new mode points
 
   myStandaloneVertexActor->SetVisibility(theVisibility);
+
+  myTextActor->SetVisibility( theVisibility && myNameMode );
 }
  
 
@@ -427,6 +440,38 @@ GEOM_Actor
 ::GetVerticesMode()
 {
   return myVerticesMode;
+}
+
+void
+GEOM_Actor
+::SetShapeName(const TopoDS_Shape& theShape)
+{
+  gp_Ax3 anAx3 = GEOMUtils::GetPosition(theShape);
+  double center[3] = { anAx3.Location().X(),
+                       anAx3.Location().Y(),
+                       anAx3.Location().Z() };
+  double* pos = center;
+  myTextActor->GetTextProperty()->SetFontSize( 16 );
+  myTextActor->GetTextProperty()->ShadowOn();
+  myTextActor->GetPositionCoordinate()->SetCoordinateSystemToWorld();
+  myTextActor->GetPositionCoordinate()->SetValue(pos);
+  myTextActor->SetInput( getIO()->getName() );
+}
+
+void
+GEOM_Actor
+::SetNameMode(bool theMode)
+{
+  myNameMode = theMode;
+  myTextActor->SetVisibility(theMode);
+  SetModified();
+}
+
+bool
+GEOM_Actor
+::GetNameMode()
+{
+  return myNameMode;
 }
 
 void  
@@ -489,6 +534,8 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
     myStandaloneVertexActor->GetDeviceActor()->SetInfinitive(true);
     myHighlightActor->GetDeviceActor()->SetInfinitive(true);
   }
+
+  SetShapeName( theShape );
 
   // 0051777: TC7.2.0: Element could not be selected in Hypothesis Construction
   myAppendFilter->Update();

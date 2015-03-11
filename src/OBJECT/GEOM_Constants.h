@@ -40,6 +40,7 @@ namespace GEOM
     Color,
     EdgesDirection,
     Vertices,
+    ShowName,
     Deflection,
     PointMarker,
     Material,

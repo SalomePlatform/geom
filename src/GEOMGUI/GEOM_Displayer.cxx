@@ -853,6 +853,10 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   bool isVerticesMode = propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool();
   AISShape->SetDisplayVertices( isVerticesMode );
 
+  // set display name flag
+  bool isNameMode = propMap.value( GEOM::propertyName( GEOM::ShowName ) ).toBool();
+  AISShape->SetDisplayName( isNameMode );
+
   // set transparency
   if( HasTransparency() ) {
     AISShape->SetTransparency( GetTransparency() );
@@ -1140,6 +1144,9 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
 
   // set display vertices flag
   actor->SetVerticesMode( propMap.value( GEOM::propertyName( GEOM::Vertices ) ).toBool() );
+
+  // set display name flag
+  actor->SetNameMode( propMap.value( GEOM::propertyName( GEOM::ShowName ) ).toBool() );
 
   // set display mode
   int displayMode = HasDisplayMode() ? 
@@ -1755,6 +1762,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
 
                   if ( !GeomObject->_is_nil() )
                   {
+                    theIO->setName( GeomObject->GetName() );
                     // finally set shape
                     setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
                   }
@@ -2549,6 +2557,9 @@ PropMap GEOM_Displayer::getDefaultPropertyMap()
 
   // - show vertices flag (false by default)
   propMap.insert( GEOM::propertyName( GEOM::Vertices ), false );
+
+  // - show name flag (false by default)
+  propMap.insert( GEOM::propertyName( GEOM::ShowName ), false );
 
   // - shading color (take default value from preferences)
   propMap.insert( GEOM::propertyName( GEOM::ShadingColor ),

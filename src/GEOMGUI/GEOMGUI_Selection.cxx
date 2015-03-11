@@ -172,6 +172,8 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = isVectorsMode( idx );
   else if ( p == "isVerticesMode" )
     v = isVerticesMode( idx );
+  else if ( p == "isNameMode" )
+    v = isNameMode( idx );
   else if ( p == "topLevel" )
     v = topLevel( idx );
   else if ( p == "autoBringToFront" )
@@ -467,6 +469,53 @@ bool GEOMGUI_Selection::isVerticesMode( const int index ) const
             GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(actor);
             if ( aGeomActor )
               res = aGeomActor->GetVerticesMode();
+            }
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+bool GEOMGUI_Selection::isNameMode( const int index ) const
+{
+#ifdef USE_VISUAL_PROP_MAP
+  QVariant v = visibleProperty( entry( index ), GEOM::propertyName( GEOM::ShowName ) );
+  if ( v.canConvert( QVariant::Bool ) )
+    return v.toBool();
+#endif
+
+  bool res = false;
+
+  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  QString viewType = activeViewType();
+  if ( view && ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    if ( prs ) {
+      if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
+        SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+        AIS_ListOfInteractive lst;
+        occPrs->GetObjects( lst );
+        if ( lst.Extent() ) {
+          Handle(AIS_InteractiveObject) io = lst.First();
+          if ( !io.IsNull() ) {
+            Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+            if ( !aSh.IsNull() )
+              res = aSh->isShowName();
+          }
+        }
+      }
+      else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
+        SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+        vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
+        if ( lst ) {
+          lst->InitTraversal();
+          vtkActor* actor = lst->GetNextActor();
+          if ( actor ) {
+            GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(actor);
+            if ( aGeomActor )
+              res = aGeomActor->GetNameMode();
             }
         }
       }

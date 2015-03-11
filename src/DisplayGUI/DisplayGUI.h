@@ -75,6 +75,12 @@ public:
   // Get vertices mode of the viewer
   int  GetVerticesMode( SUIT_ViewWindow* = 0 );
   
+  // NAME MODE methods
+  // Set name mode for the viewer
+  void SetNameMode( const bool, SUIT_ViewWindow* = 0 );
+  // Get name mode of the viewer
+  int  GetNameMode( SUIT_ViewWindow* = 0 );
+  
   // Set display mode for selected objects in the viewer given
   // (current viewer if <viewWindow> = 0 )
   void ChangeDisplayMode( const int, SUIT_ViewWindow* = 0 );

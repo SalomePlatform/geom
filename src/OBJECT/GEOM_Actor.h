@@ -51,6 +51,7 @@ class GEOM_ShadingFace;
 typedef GEOM_SmartPtr<GEOM_ShadingFace> PSFaceSource;
 
 class vtkRenderer;
+class vtkTextActor;
 
 class vtkAppendPolyData;
 typedef GEOM_SmartPtr<vtkAppendPolyData> PAppendFilter;
@@ -210,10 +211,20 @@ public:
   bool
   GetVerticesMode();
 
+  //! Name mode management
+  virtual
+  void
+  SetNameMode(const bool theMode);
+
+  virtual
+  bool
+  GetNameMode();
+
 protected:
   void SetModified();
 
   void GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result);
+  void SetShapeName(const TopoDS_Shape& theShape);
 
   GEOM_Actor();
   ~GEOM_Actor();
@@ -229,6 +240,7 @@ private:
   bool myIsSelected;
   bool myVectorMode;
   bool myVerticesMode;
+  bool myNameMode;
 
   PDeviceActor myVertexActor;
   PVertexSource myVertexSource;
@@ -252,6 +264,9 @@ private:
   PSFaceSource myShadingFaceSource;
 
   PDeviceActor myHighlightActor;
+
+  vtkTextActor* myTextActor;
+
   vtkSmartPointer<vtkProperty>  myHighlightProp;
   vtkSmartPointer<vtkProperty>  myPreHighlightProp;
   vtkSmartPointer<vtkProperty>  myShadingFaceProp;

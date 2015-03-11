@@ -71,6 +71,8 @@ namespace GEOM
       "VectorMode",      // VECTOR_MODE_PROP
       // "show vertices" flag
       "VerticesMode",    // VERTICES_MODE_PROP
+      // "show name" flag
+      "NameMode",        // NAME_MODE_PROP
       // deflection coefficient
       "DeflectionCoeff", // DEFLECTION_COEFF_PROP
       // point marker data
