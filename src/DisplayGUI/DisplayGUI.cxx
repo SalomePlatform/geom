@@ -159,11 +159,12 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpTexture:        // POPUP MENU - DISPLAY MODE - TEXTURE
     ChangeDisplayMode( 3 );
     break;
-    case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
+  case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
     ChangeDisplayMode( 4 );
     break;
-    case GEOMOp::OpVertices:       // POPUP MENU - DISPLAY MODE - SHOW VERTICES
+  case GEOMOp::OpVertices:       // POPUP MENU - DISPLAY MODE - SHOW VERTICES
     ChangeDisplayMode( 5 );
+    break;
   case GEOMOp::OpShowName:       // POPUP MENU - DISPLAY MODE - SHOW NAME
     ChangeDisplayMode( 6 );
     break;
