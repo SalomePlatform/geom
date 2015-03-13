@@ -257,12 +257,8 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       shadingMode(aPresentationManager, aPrs, Shading);
       if( anIsColorField && myFieldDimension == 1 )
         drawField( aPrs );
-      else {
+      else
         myDrawer->SetFaceBoundaryDraw( Standard_True );
-        Handle(Prs3d_LineAspect) aBoundaryAspect =
-          new Prs3d_LineAspect ( myEdgesInShadingColor, Aspect_TOL_SOLID, myOwnWidth );
-        myDrawer->SetFaceBoundaryAspect (aBoundaryAspect);
-      }
       break;
     }
     case TexturedShape:
