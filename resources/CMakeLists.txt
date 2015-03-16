@@ -180,6 +180,8 @@ SET( _res_files
   supressHolesOnFaceShell.png
   supressface.png
   supresshole.png
+  thickness.png
+  thickness2.png
   tolerance.png
   torus.png
   torusdxyz.png

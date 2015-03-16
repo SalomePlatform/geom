@@ -198,9 +198,10 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 						     GEOM::GEOM_Object_ptr thePath,
 						     GEOM::GEOM_Object_ptr theVec);
   
-  GEOM::GEOM_Object_ptr MakeThickening (GEOM::GEOM_Object_ptr theObject,
-                                        CORBA::Double theOffset,
-                                        CORBA::Boolean isCopy);
+  GEOM::GEOM_Object_ptr MakeThickening (GEOM::GEOM_Object_ptr   theObject,
+                                        const GEOM::ListOfLong &theFacesIDs,
+                                        CORBA::Double           theOffset,
+                                        CORBA::Boolean          isCopy);
 
   GEOM::GEOM_Object_ptr RestorePath (GEOM::GEOM_Object_ptr theShape,
                                      GEOM::GEOM_Object_ptr theBase1,

@@ -721,8 +721,11 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
       {
         aThickness = -aThickness;  
       }
-      
-      anObj = anotherOper->MakeThickening(anObj, aThickness, /*copy=*/false);    
+
+      GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
+
+      anObj = anotherOper->MakeThickening
+        (anObj, anArray, aThickness, /*copy=*/false);    
     }
     
     if (!anObj->_is_nil())

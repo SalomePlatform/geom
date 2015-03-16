@@ -548,6 +548,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpFilling:            // MENU GENERATION - FILLING
   case GEOMOp::OpPipe:               // MENU GENERATION - PIPE
   case GEOMOp::OpPipePath:           // MENU GENERATION - RESTORE PATH
+  case GEOMOp::OpThickness:          // MENU GENERATION - THICKNESS
     libName = "GenerationGUI";
     break;
   case GEOMOp::Op2dSketcher:         // MENU ENTITY - SKETCHER
@@ -921,6 +922,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpFilling,     "FILLING" );
   createGeomAction( GEOMOp::OpPipe,        "PIPE" );
   createGeomAction( GEOMOp::OpPipePath,    "PIPE_PATH" );
+  createGeomAction( GEOMOp::OpThickness,   "THICKNESS" );
 
   createGeomAction( GEOMOp::OpGroupCreate, "GROUP_CREATE" );
   createGeomAction( GEOMOp::OpGroupEdit,   "GROUP_EDIT" );
@@ -1144,6 +1146,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpFilling,    genId, -1 );
   createMenu( GEOMOp::OpPipe,       genId, -1 );
   createMenu( GEOMOp::OpPipePath,   genId, -1 );
+  createMenu( GEOMOp::OpThickness,  genId, -1 );
 
   //int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
   //createMenu( GEOMOp::OpSmoothingSurface, advId, -1 );
@@ -1372,6 +1375,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpFilling,    genTbId );
   createTool( GEOMOp::OpPipe,       genTbId );
   createTool( GEOMOp::OpPipePath,   genTbId );
+  createTool( GEOMOp::OpThickness,  genTbId );
 
   int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ), QString( "GEOMTransformation" ) );
   createTool( GEOMOp::OpTranslate,      transTbId );

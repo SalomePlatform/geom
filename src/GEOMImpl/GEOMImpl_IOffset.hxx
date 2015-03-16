@@ -23,9 +23,11 @@
 //NOTE: This is an intreface to a function for the Offset creation.
 //
 #include "GEOM_Function.hxx"
+#include <TColStd_HArray1OfInteger.hxx>
 
 #define OFF_ARG_SHAPE 1
 #define OFF_ARG_VALUE 2
+#define OFF_ARG_IDS   3
 
 class GEOMImpl_IOffset
 {
@@ -40,6 +42,12 @@ class GEOMImpl_IOffset
   void SetValue(double theValue) { _func->SetReal(OFF_ARG_VALUE, theValue); }
 
   double GetValue() { return _func->GetReal(OFF_ARG_VALUE); }
+
+  void SetFaceIDs(const Handle(TColStd_HArray1OfInteger)& theFaceIDs)
+    { _func->SetIntegerArray(OFF_ARG_IDS, theFaceIDs); }
+
+  Handle(TColStd_HArray1OfInteger) GetFaceIDs()
+    { return _func->GetIntegerArray(OFF_ARG_IDS); }
 
  private:
 

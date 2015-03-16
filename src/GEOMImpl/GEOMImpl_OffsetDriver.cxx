@@ -29,8 +29,10 @@
 #include <GEOMUtils.hxx>
 
 #include <BRepOffsetAPI_MakeOffsetShape.hxx>
+#include <BRepOffsetAPI_MakeThickSolid.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <Precision.hxx>
 #include <Standard_ConstructionError.hxx>
@@ -95,31 +97,78 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(TFunction_Logbook& log) const
   }
   else if (aType == OFFSET_THICKENING || aType == OFFSET_THICKENING_COPY)
   {
-    BRepClass3d_SolidClassifier aClassifier = BRepClass3d_SolidClassifier(aShapeBase);
-    aClassifier.PerformInfinitePoint(Precision::Confusion());
-    if (aClassifier.State()==TopAbs_IN)
-    {
-      // If the generated pipe faces normals are oriented towards the inside, the offset is negative
-      // so that the thickening is still towards outside
-      anOffset=-anOffset;
-    }
+    const TopAbs_ShapeEnum aType = aShapeBase.ShapeType();
 
-    BRepOffset_MakeOffset myOffsetShape(aShapeBase, anOffset, aTol, BRepOffset_Skin,
-                                        Standard_False, Standard_False, GeomAbs_Intersection, Standard_True);
+    if (aType == TopAbs_FACE || aType == TopAbs_SHELL) {
+      // Create a thick solid.
+      BRepClass3d_SolidClassifier aClassifier = BRepClass3d_SolidClassifier(aShapeBase);
+      aClassifier.PerformInfinitePoint(Precision::Confusion());
+      if (aClassifier.State()==TopAbs_IN)
+      {
+        // If the generated pipe faces normals are oriented towards the inside, the offset is negative
+        // so that the thickening is still towards outside
+        anOffset=-anOffset;
+      }
 
-    if (!myOffsetShape.IsDone())
-    {
-      StdFail_NotDone::Raise("Thickening construction failed");
-    }
-    aShape = myOffsetShape.Shape();
+      BRepOffset_MakeOffset myOffsetShape(aShapeBase, anOffset, aTol, BRepOffset_Skin,
+                                          Standard_False, Standard_False, GeomAbs_Intersection, Standard_True);
 
-    // Control the solid orientation. This is mostly done to fix a bug in case of extrusion
-    // of a circle. The built solid is then badly oriented
-    BRepClass3d_SolidClassifier anotherClassifier = BRepClass3d_SolidClassifier(aShape);
-    anotherClassifier.PerformInfinitePoint(Precision::Confusion());
-    if (anotherClassifier.State()==TopAbs_IN)
-    {
-      aShape.Reverse();
+      if (!myOffsetShape.IsDone())
+      {
+        StdFail_NotDone::Raise("Thickening construction failed");
+      }
+      aShape = myOffsetShape.Shape();
+
+      // Control the solid orientation. This is mostly done to fix a bug in case of extrusion
+      // of a circle. The built solid is then badly oriented
+      BRepClass3d_SolidClassifier anotherClassifier = BRepClass3d_SolidClassifier(aShape);
+      anotherClassifier.PerformInfinitePoint(Precision::Confusion());
+      if (anotherClassifier.State()==TopAbs_IN)
+      {
+        aShape.Reverse();
+      }
+    } else if (aType == TopAbs_SOLID) {
+      // Create a hollowed solid.
+      Handle(TColStd_HArray1OfInteger) aFacesIDs = aCI.GetFaceIDs();
+      TopTools_ListOfShape aFacesToRm;
+
+      if (aFacesIDs.IsNull()) {
+        return 0;
+      }
+
+      TopTools_IndexedMapOfShape anIndices;
+
+      TopExp::MapShapes(aShapeBase, anIndices);
+
+      Standard_Integer aNbShapes = anIndices.Extent();
+      Standard_Integer i;
+
+      for (i = aFacesIDs->Lower(); i <= aFacesIDs->Upper(); ++i) {
+        const Standard_Integer anIndex = aFacesIDs->Value(i);
+
+        if (anIndex < 1 || anIndex > aNbShapes) {
+          // Invalid index.
+          return 0;
+        }
+
+        const TopoDS_Shape &aFace = anIndices.FindKey(anIndex);
+
+        if (aFace.ShapeType() != TopAbs_FACE) {
+          // Shape by index is not a face.
+          return 0;
+        }
+
+        aFacesToRm.Append(aFace);
+      }
+
+      // Create a hollowed solid.
+      BRepOffsetAPI_MakeThickSolid aMkSolid
+                  (aShapeBase, aFacesToRm, anOffset, aTol, BRepOffset_Skin,
+                   Standard_False, Standard_False, GeomAbs_Intersection);
+
+      if (aMkSolid.IsDone()) {
+        aShape = aMkSolid.Shape();
+      }
     }
   }
 
@@ -160,6 +209,13 @@ GetCreationInformation(std::string&             theOperationName,
     theOperationName = "MakeThickening";
     AddParam( theParams, "Object", aCI.GetShape() );
     AddParam( theParams, "Offset", aCI.GetValue() );
+    {
+      Handle(TColStd_HArray1OfInteger) aFacesIDs = aCI.GetFaceIDs();
+
+      if (aFacesIDs.IsNull() == Standard_False) {
+        AddParam(theParams, "Faces IDs", aFacesIDs);
+      }
+    }
     break;
   default:
     return false;

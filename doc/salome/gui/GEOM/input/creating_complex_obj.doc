@@ -15,6 +15,7 @@ axis, creating a body of revolution.</li>
 <li>\subpage create_extrusion_alongpath_page "Extrude an object along a path", 
 creating a more complex trajectory object.</li>
 <li>\subpage create_pipe_path_page "Restore Path" of a pipe-like shape.</li>
+<li>\subpage create_thickness_page "Thickness" operation that allows to add a thickness to objects.</li>
 </ul>
 
 <b> New entity -> Advanced </b> sub-menu allows creating new geometric

@@ -1829,16 +1829,24 @@ module GEOM
 
 
      /*!
-     *  \brief Make a thick solid from a surface shape (face or shell)
-     *  \param theObject Surface from which the thick solid is made
+     *  \brief Make a thick solid from a shape.
+     *
+     *  If the input is a surface shape (face or shell) the result is
+     *  a thick solid. If an input shape is a solid the result is a hollowed
+     *  solid with removed faces.
+     *  \param theObject face or shell to get thick solid or solid to get
+     *         hollowed solid.
+     *  \param theFacesIDs the list of face IDs to be removed from the result.
+     *          It can be empty.
      *  \param theThickness Value of the thickness
-     *  \param isCopy To make a copy of \a theObject ot to modify \a theObject.
+     *  \param isCopy To make a copy of \a theObject or to modify \a theObject
      *  \return New GEOM_Object, containing the created pipe if isCopy = true
      *          or the modified object if isCopy = false
      */
     GEOM_Object MakeThickening (in GEOM_Object theObject,
-                                in double theThickness,
-                                in boolean isCopy);
+                                in ListOfLong  theFacesIDs,
+                                in double      theThickness,
+                                in boolean     isCopy);
 
     
     /*!

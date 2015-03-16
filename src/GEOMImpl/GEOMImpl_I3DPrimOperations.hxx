@@ -144,9 +144,11 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                                                    Handle(GEOM_Object) thePath,
                                                                    Handle(GEOM_Object) theVec);
   
-  Standard_EXPORT Handle(GEOM_Object) MakeThickening (Handle(GEOM_Object) theObject, 
-                                                      double theOffset,
-                                                      bool isCopy);
+  Standard_EXPORT Handle(GEOM_Object) MakeThickening
+                (Handle(GEOM_Object)                     theObject,
+                 const Handle(TColStd_HArray1OfInteger) &theFacesIDs,
+                 double                                  theOffset,
+                 bool                                    isCopy);
 
   Standard_EXPORT Handle(GEOM_Object) RestorePath (Handle(GEOM_Object) theShape,
                                                    Handle(GEOM_Object) theBase1,

@@ -68,6 +68,7 @@ SET(GenerationGUI_HEADERS
   GenerationGUI_FillingDlg.h
   GenerationGUI_PipeDlg.h
   GenerationGUI_PipePathDlg.h
+  GenerationGUI_ThicknessDlg.h
   )
 
 # header files / to be processed by moc
@@ -77,6 +78,7 @@ SET(_moc_HEADERS
   GenerationGUI_FillingDlg.h
   GenerationGUI_PipeDlg.h
   GenerationGUI_PipePathDlg.h
+  GenerationGUI_ThicknessDlg.h
   )
 
 # --- sources ---
@@ -91,6 +93,7 @@ SET(GenerationGUI_SOURCES
   GenerationGUI_FillingDlg.cxx
   GenerationGUI_PipeDlg.cxx
   GenerationGUI_PipePathDlg.cxx
+  GenerationGUI_ThicknessDlg.cxx
   ${_moc_SOURCES}
   )
 

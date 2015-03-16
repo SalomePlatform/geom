@@ -67,6 +67,7 @@ SET(GOOD_TESTS
   complex_objs_ex08.py  
   complex_objs_ex09.py  
   complex_objs_ex10.py
+  complex_objs_ex11.py
   free_boundaries.py  
   free_faces.py  
   GEOM_box.py  

@@ -42,4 +42,8 @@
 <br><h2>Creation of Tangent Plane On Face</h2>
 \tui_script{complex_objs_ex10.py}
 
+\anchor tui_creation_thickness
+<br><h2>Applying a Thickness to Face, Shell or Solid</h2>
+\tui_script{complex_objs_ex11.py}
+
 */

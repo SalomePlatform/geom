@@ -1184,9 +1184,10 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThickening
-                 (GEOM::GEOM_Object_ptr theObject,
-                  CORBA::Double theOffset,
-                  CORBA::Boolean doCopy)
+                 (GEOM::GEOM_Object_ptr   theObject,
+                  const GEOM::ListOfLong &theFacesIDs,
+                  CORBA::Double           theOffset,
+                  CORBA::Boolean          doCopy)
 {
   GEOM::GEOM_Object_var aGEOMObject;
   //Set a not done flag
@@ -1206,12 +1207,25 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThickening
   //Get the basic object
   Handle(GEOM_Object) aBasicObject = GetObjectImpl(theObject);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
-  
+
+  // Get faces IDs.
+  Handle(TColStd_HArray1OfInteger) aFaceIDs;
+  Standard_Integer                 aNbIDs = theFacesIDs.length();
+  Standard_Integer                 i;
+
+  if (aNbIDs > 0) {
+    aFaceIDs = new TColStd_HArray1OfInteger (1, aNbIDs);
+
+    for (i = 0; i < aNbIDs; i++) {
+      aFaceIDs->SetValue(i + 1, theFacesIDs[i]);
+    }
+  }
+
   //Create the thickened shape
   if (doCopy)
   {
     Handle(GEOM_Object) anObject = GetOperations()->MakeThickening(
-      aBasicObject, theOffset, doCopy);
+      aBasicObject, aFaceIDs, theOffset, doCopy);
     if (!GetOperations()->IsDone() || anObject.IsNull())
       return aGEOMObject._retn();
     
@@ -1219,7 +1233,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThickening
   }
   else
   {
-    GetOperations()->MakeThickening(aBasicObject, theOffset, doCopy);
+    GetOperations()->MakeThickening(aBasicObject, aFaceIDs, theOffset, doCopy);
     
     // Update GUI.
     UpdateGUIForObject(theObject);

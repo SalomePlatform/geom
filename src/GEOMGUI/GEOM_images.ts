@@ -556,6 +556,14 @@
             <translation>prism3.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_THICKNESS</source>
+            <translation>thickness.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_THICKNESS_HOLLOWED</source>
+            <translation>thickness2.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_PROPAGATE</source>
             <translation>propagate.png</translation>
         </message>
@@ -1010,6 +1018,10 @@
         <message>
             <source>ICO_EXTRUSION</source>
             <translation>prism.png</translation>
+        </message>
+        <message>
+            <source>ICO_THICKNESS</source>
+            <translation>thickness.png</translation>
         </message>
         <message>
             <source>ICO_FACE</source>

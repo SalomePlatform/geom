@@ -37,6 +37,7 @@
 #include "GenerationGUI_FillingDlg.h"   // Method FILLING
 #include "GenerationGUI_PipeDlg.h"      // Method PIPE
 #include "GenerationGUI_PipePathDlg.h"  // Method RESTORE PATH
+#include "GenerationGUI_ThicknessDlg.h" // Method THICKNESS
 
 //=======================================================================
 // function : GenerationGUI()
@@ -70,11 +71,12 @@ bool GenerationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
-  case GEOMOp::OpPrism:      aDlg = new GenerationGUI_PrismDlg   ( getGeometryGUI(), parent ); break;
-  case GEOMOp::OpRevolution: aDlg = new GenerationGUI_RevolDlg   ( getGeometryGUI(), parent ); break;
-  case GEOMOp::OpFilling:    aDlg = new GenerationGUI_FillingDlg ( getGeometryGUI(), parent ); break;
-  case GEOMOp::OpPipe:       aDlg = new GenerationGUI_PipeDlg    ( getGeometryGUI(), parent ); break;
-  case GEOMOp::OpPipePath:   aDlg = new GenerationGUI_PipePathDlg( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPrism:      aDlg = new GenerationGUI_PrismDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpRevolution: aDlg = new GenerationGUI_RevolDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpFilling:    aDlg = new GenerationGUI_FillingDlg  ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPipe:       aDlg = new GenerationGUI_PipeDlg     ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPipePath:   aDlg = new GenerationGUI_PipePathDlg ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpThickness:  aDlg = new GenerationGUI_ThicknessDlg( getGeometryGUI(), parent ); break;
     
   default: app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
   }

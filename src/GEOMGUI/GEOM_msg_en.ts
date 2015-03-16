@@ -676,6 +676,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Construction by Extrusion</translation>
     </message>
     <message>
+        <source>GEOM_THICKNESS_TITLE</source>
+        <translation>Thickness Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_THICKNESS_NAME</source>
+        <translation>Thickness</translation>
+    </message>
+    <message>
+        <source>GEOM_TOWARDS_INSIDE</source>
+        <translation>Thicken towards the inside</translation>
+    </message>
+    <message>
         <source>GEOM_SCALE_PRISM</source>
         <translation>Scale the face opposite to the base</translation>
     </message>
@@ -2853,6 +2865,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Restore Path</translation>
     </message>
     <message>
+        <source>MEN_THICKNESS</source>
+        <translation>Thickness</translation>
+    </message>
+    <message>
         <source>MEN_PLANE</source>
         <translation>Plane</translation>
     </message>
@@ -3801,6 +3817,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Restore path from a pipe-like shape</translation>
     </message>
     <message>
+        <source>STB_THICKNESS</source>
+        <translation>Make a thick solid</translation>
+    </message>
+    <message>
         <source>STB_PLANE</source>
         <translation>Create a plane</translation>
     </message>
@@ -4415,6 +4435,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_PIPE_PATH</source>
         <translation>Restore path</translation>
+    </message>
+    <message>
+        <source>TOP_THICKNESS</source>
+        <translation>Thickness</translation>
     </message>
     <message>
         <source>TOP_PLANE</source>
@@ -6038,10 +6062,6 @@ Number of sketch points too small</translation>
     <message>
         <source>GEOM_ADD_THICKNESS</source>
         <translation>Add thickness (edges or wires only)</translation>
-    </message>
-    <message>
-        <source>GEOM_TOWARDS_INSIDE</source>
-        <translation>Thicken towards the inside</translation>
     </message>
 </context>
 <context>

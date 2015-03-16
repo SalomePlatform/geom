@@ -2287,9 +2287,11 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeBiNormalAlongVector (Han
  *  MakeThickening
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening(Handle(GEOM_Object) theObject,
-                                                              double theOffset,
-                                                              bool copy = true)
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening
+                (Handle(GEOM_Object)                     theObject,
+                 const Handle(TColStd_HArray1OfInteger) &theFacesIDs,
+                 double                                  theOffset,
+                 bool                                    isCopy)
 {
   SetErrorCode(KO);
 
@@ -2301,7 +2303,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening(Handle(GEOM_Objec
   //Add a new Offset function
   Handle(GEOM_Function) aFunction;
   Handle(GEOM_Object) aCopy; 
-  if (copy)
+  if (isCopy)
   { 
     //Add a new Copy object
     aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
@@ -2319,6 +2321,10 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening(Handle(GEOM_Objec
   aTI.SetShape(anOriginal);
   aTI.SetValue(theOffset);
 
+  if (theFacesIDs.IsNull() == Standard_False) {
+    aTI.SetFaceIDs(theFacesIDs);
+  }
+
   //Compute the offset
   try {
     OCC_CATCH_SIGNALS;
@@ -2334,20 +2340,36 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening(Handle(GEOM_Objec
   }
 
   //Make a Python command
-  if(copy)
-  {
-    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeThickSolid("
-                               << theObject << ", " << theOffset << ")";
-    SetErrorCode(OK);
-    return aCopy;
+  GEOM::TPythonDump   pd (aFunction);
+  Handle(GEOM_Object) aResult; 
+
+  if (isCopy) {
+    pd << aCopy << " = geompy.MakeThickSolid("
+       << theObject << ", " << theOffset;
+    aResult = aCopy;
+  } else {
+    pd << "geompy.Thicken(" << theObject << ", " << theOffset;
+    aResult = theObject;
   }
-  else
-  {
-    GEOM::TPythonDump(aFunction) << "geompy.Thicken("
-                               << theObject << ", " << theOffset << ")";
-    SetErrorCode(OK);
-    return theObject;
+
+  if (theFacesIDs.IsNull() == Standard_False) {
+    // Dump faces IDs.
+    Standard_Integer i;
+
+    pd << ", [";
+
+    for (i = theFacesIDs->Lower(); i < theFacesIDs->Upper(); ++i) {
+      pd << theFacesIDs->Value(i) << ", ";
+    }
+
+    // Dump the last value.
+    pd << theFacesIDs->Value(i) << "]";
   }
+
+  pd << ")";
+  SetErrorCode(OK);
+
+  return aResult;
 }
 
 //=============================================================================
