@@ -446,6 +446,9 @@ void
 GEOM_Actor
 ::SetShapeName(const TopoDS_Shape& theShape)
 {
+  if( !getIO() )
+    return;
+
   gp_Ax3 anAx3 = GEOMUtils::GetPosition(theShape);
   double center[3] = { anAx3.Location().X(),
                        anAx3.Location().Y(),
