@@ -138,6 +138,7 @@ void GEOMAlgo_ClsfQuad::GetCorners(gp_Pnt &theTopLeftPoint,
 //=======================================================================
 void GEOMAlgo_ClsfQuad::CheckData()
 {
+  myErrorStatus = 0;
 
   if (myQuadNormal.SquareMagnitude() <= DBL_MIN) {
     myErrorStatus = 10; // undefined quadrangle normal.
