@@ -4482,7 +4482,6 @@ static bool isSameEdge(const TopoDS_Edge& theEdge1, const TopoDS_Edge& theEdge2)
   double U11, U12, U21, U22;
   Handle(Geom_Curve) C1 = BRep_Tool::Curve(theEdge1, U11, U12);
   Handle(Geom_Curve) C2 = BRep_Tool::Curve(theEdge2, U21, U22);
-  if(C1->DynamicType() == C2->DynamicType()) return true;
 
   //Check that both edges has the same geometry
   double range = U12-U11;
