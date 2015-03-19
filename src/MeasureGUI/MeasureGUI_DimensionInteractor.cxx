@@ -697,14 +697,22 @@ bool MeasureGUI_DimensionInteractor::eventFilter( QObject* theObject, QEvent* th
         return false;
       }
 
+      // commented by mpa 18.03.2015: since OCCT version 6.8.0 it's impossible
+      // to change position of the dimensions presentations (flyout, text),
+      // because anAISContext has 2 detected objects.
+
       // check that there is only one detected entity
-      anAISContext->InitDetected();
-      if ( anAISContext->MoreDetected() )
+      //anAISContext->InitDetected();
+      //if ( anAISContext->MoreDetected() )
+      //{
+      //  return false;
+      //}
+
+      Handle(SelectMgr_EntityOwner) aDetectedOwner = anAISContext->DetectedOwner();
+      if( aDetectedOwner.IsNull() )
       {
         return false;
       }
-
-      Handle(SelectMgr_EntityOwner) aDetectedOwner = anAISContext->DetectedOwner();
 
       myInteractedIO = Handle(AIS_Dimension)::DownCast( aDetectedOwner->Selectable() );
 
