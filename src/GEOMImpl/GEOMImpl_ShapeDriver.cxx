@@ -426,9 +426,18 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       }
       if (aShapeShell.ShapeType() == TopAbs_COMPOUND) {
         TopoDS_Iterator It (aShapeShell, Standard_True, Standard_True);
-        if (It.More()) aShapeShell = It.Value();
+        for (; It.More(); It.Next()) {
+          TopoDS_Shape aSubShape = It.Value();
+          if (aSubShape.ShapeType() == TopAbs_SHELL) {
+            aMkSolid.Add(TopoDS::Shell(aSubShape));
+            ish++;
+          }
+          else
+            Standard_TypeMismatch::Raise
+              ("Shape for solid construction is neither a shell nor a compound of shells");
+        }
       }
-      if (aShapeShell.ShapeType() == TopAbs_SHELL) {
+      else if (aShapeShell.ShapeType() == TopAbs_SHELL) {
         aMkSolid.Add(TopoDS::Shell(aShapeShell));
         ish++;
       }
