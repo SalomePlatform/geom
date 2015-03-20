@@ -500,6 +500,18 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       if (aShape_i.IsNull()) {
         Standard_NullObject::Raise("Shape for solid construction is null");
       }
+      if (aShape_i.ShapeType() == TopAbs_COMPOUND) {
+        TopoDS_Iterator It (aShape_i, Standard_True, Standard_True);
+        for (; It.More(); It.Next()) {
+          TopoDS_Shape aSubShape = It.Value();
+          if (aSubShape.ShapeType() == TopAbs_FACE || aSubShape.ShapeType() == TopAbs_SHELL)
+            aLS.Append(aSubShape);
+          else
+            Standard_TypeMismatch::Raise
+              ("Shape for solid construction is neither a list of faces and/or shells "
+               "nor a compound of faces and/or shells");
+        }
+      }
       aLS.Append(aShape_i);
     }
 
