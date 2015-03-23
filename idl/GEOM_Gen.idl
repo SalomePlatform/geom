@@ -1726,9 +1726,16 @@ module GEOM
      *  the path shape. The path shape can be a wire or an edge.
      *  \param theBase Base shape to be extruded.
      *  \param thePath Path shape to extrude the base shape along it.
-     *  \return New GEOM_Object, containing the created pipe.
+     *  \param IsGenerateGroups flag that tells if it is necessary to
+     *         return groups (true) or not (false).
+     *  \return The list of objects. The first one is a result pipe,
+     *          the other ones are the created groups. If \a IsGenerateGroups
+     *          is not set the returned list contains a single object, which
+     *          is the operation result.
      */
-    GEOM_Object MakePipe (in GEOM_Object theBase, in GEOM_Object thePath);
+    ListOfGO MakePipe (in GEOM_Object theBase,
+                       in GEOM_Object thePath,
+                       in boolean     IsGenerateGroups);
 
     /*!
      *  \brief Create a shape by revolution of the base shape around the axis
@@ -1796,13 +1803,19 @@ module GEOM
      *                          contact with the spine.
      *  \param theWithCorrection - defining that the section is rotated to be
      *                                 orthogonal to the spine tangent in the correspondent point
-     *  \return New GEOM_Object, containing the created pipe.
+     *  \param IsGenerateGroups flag that tells if it is necessary to
+     *         return groups (true) or not (false).
+     *  \return The list of objects. The first one is a result pipe,
+     *          the other ones are the created groups. If \a IsGenerateGroups
+     *          is not set the returned list contains a single object, which
+     *          is the operation result.
      */
-    GEOM_Object MakePipeWithDifferentSections (in ListOfGO theSeqBases,
-                                               in ListOfGO theLocations,
-                                               in GEOM_Object thePath,
-                                               in boolean theWithContact ,
-                                               in boolean theWithCorrection );
+    ListOfGO MakePipeWithDifferentSections (in ListOfGO theSeqBases,
+                                            in ListOfGO theLocations,
+                                            in GEOM_Object thePath,
+                                            in boolean theWithContact ,
+                                            in boolean theWithCorrection,
+                                            in boolean IsGenerateGroups);
 
     /*!
      *  \brief Create a shape by extrusion of the profile shape along
@@ -1820,23 +1833,35 @@ module GEOM
      *                          contact with the spine.
      *  \param theWithCorrection - defining that the section is rotated to be
      *                                 orthogonal to the spine tangent in the correspondent point
-     *  \return New GEOM_Object, containing the created pipe.
+     *  \param IsGenerateGroups flag that tells if it is necessary to
+     *         return groups (true) or not (false).
+     *  \return The list of objects. The first one is a result pipe,
+     *          the other ones are the created groups. If \a IsGenerateGroups
+     *          is not set the returned list contains a single object, which
+     *          is the operation result.
      */
-    GEOM_Object MakePipeWithShellSections (in ListOfGO theSeqBases,
-                                           in ListOfGO theSeqSubBases,
-                                           in ListOfGO theLocations,
-                                           in GEOM_Object thePath,
-                                           in boolean theWithContact ,
-                                           in boolean theWithCorrection );
+    ListOfGO MakePipeWithShellSections (in ListOfGO theSeqBases,
+                                        in ListOfGO theSeqSubBases,
+                                        in ListOfGO theLocations,
+                                        in GEOM_Object thePath,
+                                        in boolean theWithContact,
+                                        in boolean theWithCorrection,
+                                        in boolean IsGenerateGroups);
 
     /*!
      *  \brief Create solids between given sections
      *  \param theSeqBases - list of sections (shell or face).
      *  \param theLocations - list of corresponding vertexes
-     *  \return New GEOM_Object, containing the created solids.
+     *  \param IsGenerateGroups flag that tells if it is necessary to
+     *         return groups (true) or not (false).
+     *  \return The list of objects. The first one is a result pipe,
+     *          the other ones are the created groups. If \a IsGenerateGroups
+     *          is not set the returned list contains a single object, which
+     *          is the operation result.
      */
-    GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
-                                           in ListOfGO theLocations);
+    ListOfGO MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
+                                        in ListOfGO theLocations,
+                                        in boolean  IsGenerateGroups);
 
     /*!
      *  \brief Create a shape by extrusion of the base shape along
@@ -1848,11 +1873,17 @@ module GEOM
      *  \param theVec Vector defines a constant binormal direction to keep the
      *                same angle beetween the Direction and the sections
      *                along the sweep surface.
-     *  \return New GEOM_Object, containing the created pipe.
+     *  \param IsGenerateGroups flag that tells if it is necessary to
+     *         return groups (true) or not (false).
+     *  \return The list of objects. The first one is a result pipe,
+     *          the other ones are the created groups. If \a IsGenerateGroups
+     *          is not set the returned list contains a single object, which
+     *          is the operation result.
      */
-    GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase,
-                                             in GEOM_Object thePath,
-                                             in GEOM_Object theVec);
+    ListOfGO MakePipeBiNormalAlongVector (in GEOM_Object theBase,
+                                          in GEOM_Object thePath,
+                                          in GEOM_Object theVec,
+                                          in boolean     IsGenerateGroups);
 
 
      /*!

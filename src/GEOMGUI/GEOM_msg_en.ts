@@ -1413,6 +1413,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Select unpublished edges</translation>
     </message>
     <message>
+        <source>GEOM_GENERATE_GROUPS</source>
+        <translation>Generate Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_GROUP_NAME_PREFIX</source>
+        <translation>Group Names Prefix</translation>
+    </message>
+    <message>
         <source>GEOM_PLANE</source>
         <translation>Plane</translation>
     </message>
@@ -2419,6 +2427,26 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>WRN_NULL_OBJECT_OR_SHAPE</source>
         <translation>Shape %1 for solid creation is null</translation>
+    </message>
+    <message>
+        <source>GROUP_DOWN</source>
+        <translation>Down</translation>
+    </message>
+    <message>
+        <source>GROUP_UP</source>
+        <translation>Up</translation>
+    </message>
+    <message>
+        <source>GROUP_SIDE1</source>
+        <translation>Side1</translation>
+    </message>
+    <message>
+        <source>GROUP_SIDE2</source>
+        <translation>Side2</translation>
+    </message>
+    <message>
+        <source>GROUP_OTHER</source>
+        <translation>Other</translation>
     </message>
     <message>
         <source>GEOM_X</source>

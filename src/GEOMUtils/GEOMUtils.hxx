@@ -328,6 +328,19 @@ namespace GEOMUtils
    * \return default deflection value
    */
   Standard_EXPORT double DefaultDeflection();
+
+  /**
+   * \brief Check if the shape is not a closed wire or edge.
+   *
+   * This function is used for pipe creation algorithm to test if
+   * the pipe path is not closed. It returns false if theShape is a wire or
+   * an edge with coincident end vertices. Otherwise it returns true.
+   *
+   * \param theShape the shape to be tested.
+   * \return true if theShape is not a closed wire or edge.
+   */
+  Standard_EXPORT bool IsOpenPath(const TopoDS_Shape &theShape);
+
 };
 
 #endif

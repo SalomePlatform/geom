@@ -1403,9 +1403,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipe (GEOM::GEOM_Object_ptr theBase,
   beginService( " GEOM_Superv_i::MakePipe" );
   MESSAGE("GEOM_Superv_i::MakePipe");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePipe(theBase, thePath);
+  GEOM::ListOfGO_var aList = my3DPrimOp->MakePipe(theBase, thePath, false);
   endService( " GEOM_Superv_i::MakePipe" );
-  return anObj;
+  return aList[0];
 }
 
 //=============================================================================
@@ -1512,9 +1512,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections
   beginService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
   MESSAGE("GEOM_Superv_i::MakePipeWithDifferentSections");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePipeWithDifferentSections(theBases,theLocations, thePath,theWithContact,theWithCorrections);
+  GEOM::ListOfGO_var aList = my3DPrimOp->MakePipeWithDifferentSections(theBases,theLocations, thePath,theWithContact,theWithCorrections, false);
   endService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
-  return anObj;
+  return aList[0];
 }
 
 
@@ -1532,12 +1532,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithShellSections
   beginService( " GEOM_Superv_i::MakePipeWithShellSections" );
   MESSAGE("GEOM_Superv_i::MakePipeWithShellSections");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj =
+  GEOM::ListOfGO_var aList =
     my3DPrimOp->MakePipeWithShellSections(theBases, theSubBases,
                                           theLocations, thePath,
-                                          theWithContact, theWithCorrections);
+                                          theWithContact, theWithCorrections,
+                                          false);
   endService( " GEOM_Superv_i::MakePipeWithShellSections" );
-  return anObj;
+  return aList[0];
 }
 
 
@@ -1551,10 +1552,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeShellsWithoutPath
   beginService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
   MESSAGE("GEOM_Superv_i::MakePipeShellsWithoutPath");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj =
-    my3DPrimOp->MakePipeShellsWithoutPath(theBases,theLocations);
+  GEOM::ListOfGO_var aList =
+    my3DPrimOp->MakePipeShellsWithoutPath(theBases,theLocations, false);
   endService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
-  return anObj;
+  return aList[0];
 }
 
 
@@ -1569,10 +1570,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeBiNormalAlongVector
   beginService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
   MESSAGE("GEOM_Superv_i::MakePipeBiNormalAlongVector");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj =
-    my3DPrimOp->MakePipeBiNormalAlongVector(theBase, thePath, theVec);
+  GEOM::ListOfGO_var aList =
+    my3DPrimOp->MakePipeBiNormalAlongVector(theBase, thePath, theVec, false);
   endService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
-  return anObj;
+  return aList[0];
 }
 
 

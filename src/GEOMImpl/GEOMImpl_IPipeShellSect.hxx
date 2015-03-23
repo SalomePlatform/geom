@@ -22,16 +22,12 @@
 #ifndef _GEOMImpl_IPIPESHELLSECT_HXX_
 #define _GEOMImpl_IPIPESHELLSECT_HXX_
 
-#include "GEOM_Function.hxx"
 
-#ifndef _GEOMImpl_IPIPEDIFFSECT_HXX_
 #include "GEOMImpl_IPipeDiffSect.hxx"
-#endif
-
+#include "GEOM_Function.hxx"
 #include <TColStd_HSequenceOfTransient.hxx>
 
-#define PIPEDS_LIST_SUBBASES 6
-
+// Position definitions are declared in the base class GEOMImpl_IPipe.
 
 class GEOMImpl_IPipeShellSect : public GEOMImpl_IPipeDiffSect
 {

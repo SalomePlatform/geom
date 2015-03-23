@@ -30,6 +30,11 @@
 #include <TDocStd_Document.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 
+class GEOMImpl_IGroupOperations;
+class GEOMImpl_IPipe;
+class TopTools_IndexedMapOfShape;
+
+
 class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
  public:
   Standard_EXPORT GEOMImpl_I3DPrimOperations(GEOM_Engine* theEngine, int theDocID);
@@ -98,8 +103,10 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeDraftPrism  (Handle(GEOM_Object) theInitShape, Handle(GEOM_Object) theBase,
                                                        double theHeight, double theAngle, bool theFuse, bool theInvert = false );
   
-  Standard_EXPORT Handle(GEOM_Object) MakePipe (Handle(GEOM_Object) theBase,
-                                                Handle(GEOM_Object) thePath);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakePipe
+                            (const Handle(GEOM_Object) &theBase,
+                             const Handle(GEOM_Object) &thePath,
+                             const bool                 IsGenerateGroups);
 
   Standard_EXPORT Handle(GEOM_Object) MakeRevolutionAxisAngle (Handle(GEOM_Object) theBase,
                                                                Handle(GEOM_Object) theAxis,
@@ -121,28 +128,34 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                        double thePreci,
                                        bool theRuled);
 
-  Standard_EXPORT Handle(GEOM_Object) MakePipeWithDifferentSections(
-                const Handle(TColStd_HSequenceOfTransient)& theBases,
-                const Handle(TColStd_HSequenceOfTransient)& theLocations,
-                const Handle(GEOM_Object)& thePath,
-                bool theWithContact,
-                bool theWithCorrections);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
+      MakePipeWithDifferentSections
+              (const Handle(TColStd_HSequenceOfTransient) &theBases,
+               const Handle(TColStd_HSequenceOfTransient) &theLocations,
+               const Handle(GEOM_Object)                  &thePath,
+               const bool                                  theWithContact,
+               const bool                                  theWithCorrections,
+               const bool                                  IsGenerateGroups);
 
-  Standard_EXPORT Handle(GEOM_Object) MakePipeWithShellSections(
-                const Handle(TColStd_HSequenceOfTransient)& theBases,
-                const Handle(TColStd_HSequenceOfTransient)& theSubBases,
-                const Handle(TColStd_HSequenceOfTransient)& theLocations,
-                const Handle(GEOM_Object)& thePath,
-                bool theWithContact,
-                bool theWithCorrections);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakePipeWithShellSections
+              (const Handle(TColStd_HSequenceOfTransient) &theBases,
+               const Handle(TColStd_HSequenceOfTransient) &theSubBases,
+               const Handle(TColStd_HSequenceOfTransient) &theLocations,
+               const Handle(GEOM_Object)                  &thePath,
+               const bool                                  theWithContact,
+               const bool                                  theWithCorrections,
+               const bool                                  IsGenerateGroups);
 
-  Standard_EXPORT Handle(GEOM_Object) MakePipeShellsWithoutPath
-                (const Handle(TColStd_HSequenceOfTransient)& theBases,
-                 const Handle(TColStd_HSequenceOfTransient)& theLocations);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakePipeShellsWithoutPath
+              (const Handle(TColStd_HSequenceOfTransient) &theBases,
+               const Handle(TColStd_HSequenceOfTransient) &theLocations,
+               const bool                                  IsGenerateGroups);
 
-  Standard_EXPORT Handle(GEOM_Object) MakePipeBiNormalAlongVector (Handle(GEOM_Object) theBase,
-                                                                   Handle(GEOM_Object) thePath,
-                                                                   Handle(GEOM_Object) theVec);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakePipeBiNormalAlongVector
+                (const Handle(GEOM_Object) &theBase,
+                 const Handle(GEOM_Object) &thePath,
+                 const Handle(GEOM_Object) &theVec,
+                 const bool                 IsGenerateGroups);
   
   Standard_EXPORT Handle(GEOM_Object) MakeThickening
                 (Handle(GEOM_Object)                     theObject,
@@ -158,6 +171,23 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) RestorePath (Handle(GEOM_Object) theShape,
                                                    const Handle(TColStd_HSequenceOfTransient)& theBase1,
                                                    const Handle(TColStd_HSequenceOfTransient)& theBase2);
+
+private:
+
+  Handle(GEOM_Object) createGroup
+                  (const Handle(GEOM_Object)              &theBaseObject,
+                   const Handle(TColStd_HArray1OfInteger) &theGroupIDs,
+                   const TCollection_AsciiString          &theName,
+                   const TopTools_IndexedMapOfShape       &theIndices);
+
+  void createGroups(const Handle(GEOM_Object)                  &theBaseObject,
+                          GEOMImpl_IPipe                       *thePipe,
+                          Handle(TColStd_HSequenceOfTransient) &theSequence);
+
+private:
+
+  GEOMImpl_IGroupOperations *myGroupOperations;
+
 };
 
 #endif

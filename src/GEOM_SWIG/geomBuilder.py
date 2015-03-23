@@ -3869,41 +3869,97 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return anObj
 
         ## Create a shape by extrusion of the base shape along
-        #  the path shape. The path shape can be a wire or an edge.
+        #  the path shape. The path shape can be a wire or an edge. It is
+        #  possible to generate groups along with the result by means of
+        #  setting the flag \a IsGenerateGroups.<BR>
+        #  If \a thePath is a closed edge or wire and \a IsGenerateGroups is
+        #  set, an error is occured. If \a thePath is not closed edge/wire,
+        #  the following groups are returned:
+        #  - If \a theBase is unclosed edge or wire: "Down", "Up", "Side1",
+        #    "Side2";
+        #  - If \a theBase is closed edge or wire, face or shell: "Down", "Up",
+        #    "Other".
+        #  .
+        #  "Down" and "Up" groups contain:
+        #  - Edges if \a theBase is edge or wire;
+        #  - Faces if \a theBase is face or shell.<BR>
+        #  .
+        #  "Side1" and "Side2" groups contain edges generated from the first
+        #  and last vertices of \a theBase. The first and last vertices are
+        #  determined taking into account edge/wire orientation.<BR>
+        #  "Other" group represents faces generated from the bounding edges of
+        #  \a theBase.
+        #
         #  @param theBase Base shape to be extruded.
         #  @param thePath Path shape to extrude the base shape along it.
+        #  @param IsGenerateGroups flag that tells if it is necessary to
+        #         create groups. It is equal to False by default.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created pipe.
+        #  @return New GEOM.GEOM_Object, containing the created pipe if 
+        #          \a IsGenerateGroups is not set. Otherwise it returns new
+        #          GEOM.ListOfGO. Its first element is the created pipe, the
+        #          remaining ones are created groups.
         #
         #  @ref tui_creation_pipe "Example"
         @ManageTransactions("PrimOp")
-        def MakePipe(self, theBase, thePath, theName=None):
+        def MakePipe(self, theBase, thePath,
+                     IsGenerateGroups=False, theName=None):
             """
             Create a shape by extrusion of the base shape along
-            the path shape. The path shape can be a wire or an edge.
+            the path shape. The path shape can be a wire or an edge. It is
+            possible to generate groups along with the result by means of
+            setting the flag IsGenerateGroups.
+            If thePath is a closed edge or wire and IsGenerateGroups is
+            set, an error is occured. If thePath is not closed edge/wire,
+            the following groups are returned:
+            - If theBase is unclosed edge or wire: "Down", "Up", "Side1",
+              "Side2";
+            - If theBase is closed edge or wire, face or shell: "Down", "Up",
+              "Other".
+            "Down" and "Up" groups contain:
+            - Edges if theBase is edge or wire;
+            - Faces if theBase is face or shell.
+            "Side1" and "Side2" groups contain edges generated from the first
+            and last vertices of theBase. The first and last vertices are
+            determined taking into account edge/wire orientation.
+            "Other" group represents faces generated from the bounding edges of
+            theBase.
 
             Parameters:
                 theBase Base shape to be extruded.
                 thePath Path shape to extrude the base shape along it.
+                IsGenerateGroups flag that tells if it is necessary to
+                        create groups. It is equal to False by default.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created pipe.
+                New GEOM.GEOM_Object, containing the created pipe if 
+                IsGenerateGroups is not set. Otherwise it returns new
+                GEOM.ListOfGO. Its first element is the created pipe, the
+                remaining ones are created groups.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.PrimOp.MakePipe(theBase, thePath)
+            aList = self.PrimOp.MakePipe(theBase, thePath, IsGenerateGroups)
             RaiseIfFailed("MakePipe", self.PrimOp)
-            self._autoPublish(anObj, theName, "pipe")
-            return anObj
+
+            if IsGenerateGroups:
+              self._autoPublish(aList, theName, "pipe")
+              return aList
+
+            self._autoPublish(aList[0], theName, "pipe")
+            return aList[0]
 
         ## Create a shape by extrusion of the profile shape along
         #  the path shape. The path shape can be a wire or an edge.
         #  the several profiles can be specified in the several locations of path.
+        #  It is possible to generate groups along with the result by means of
+        #  setting the flag \a IsGenerateGroups. For detailed information on
+        #  groups that can be created please see the method MakePipe().
         #  @param theSeqBases - list of  Bases shape to be extruded.
         #  @param theLocations - list of locations on the path corresponding
         #                        specified list of the Bases shapes. Number of locations
@@ -3913,21 +3969,30 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                          contact with the spine.
         #  @param theWithCorrection - defining that the section is rotated to be
         #                             orthogonal to the spine tangent in the correspondent point
+        #  @param IsGenerateGroups - flag that tells if it is necessary to
+        #                          create groups. It is equal to False by default.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created pipe.
+        #  @return New GEOM.GEOM_Object, containing the created pipe if 
+        #          \a IsGenerateGroups is not set. Otherwise it returns new
+        #          GEOM.ListOfGO. Its first element is the created pipe, the
+        #          remaining ones are created groups.
         #
         #  @ref tui_creation_pipe_with_diff_sec "Example"
         @ManageTransactions("PrimOp")
         def MakePipeWithDifferentSections(self, theSeqBases,
                                           theLocations, thePath,
-                                          theWithContact, theWithCorrection, theName=None):
+                                          theWithContact, theWithCorrection,
+                                          IsGenerateGroups=False, theName=None):
             """
             Create a shape by extrusion of the profile shape along
             the path shape. The path shape can be a wire or an edge.
             the several profiles can be specified in the several locations of path.
+            It is possible to generate groups along with the result by means of
+            setting the flag IsGenerateGroups. For detailed information on
+            groups that can be created please see the method geompy.MakePipe().
 
             Parameters:
                 theSeqBases - list of  Bases shape to be extruded.
@@ -3939,23 +4004,37 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                  contact with the spine(0/1)
                 theWithCorrection - defining that the section is rotated to be
                                     orthogonal to the spine tangent in the correspondent point (0/1)
+                IsGenerateGroups - flag that tells if it is necessary to
+                                 create groups. It is equal to False by default.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created pipe.
+                New GEOM.GEOM_Object, containing the created pipe if 
+                IsGenerateGroups is not set. Otherwise it returns new
+                GEOM.ListOfGO. Its first element is the created pipe, the
+                remaining ones are created groups.
             """
-            anObj = self.PrimOp.MakePipeWithDifferentSections(theSeqBases,
+            aList = self.PrimOp.MakePipeWithDifferentSections(theSeqBases,
                                                               theLocations, thePath,
-                                                              theWithContact, theWithCorrection)
+                                                              theWithContact, theWithCorrection,
+                                                              IsGenerateGroups)
             RaiseIfFailed("MakePipeWithDifferentSections", self.PrimOp)
-            self._autoPublish(anObj, theName, "pipe")
-            return anObj
+
+            if IsGenerateGroups:
+              self._autoPublish(aList, theName, "pipe")
+              return aList
+
+            self._autoPublish(aList[0], theName, "pipe")
+            return aList[0]
 
         ## Create a shape by extrusion of the profile shape along
-        #  the path shape. The path shape can be a wire or a edge.
+        #  the path shape. The path shape can be a wire or an edge.
         #  the several profiles can be specified in the several locations of path.
+        #  It is possible to generate groups along with the result by means of
+        #  setting the flag \a IsGenerateGroups. For detailed information on
+        #  groups that can be created please see the method MakePipe().
         #  @param theSeqBases - list of  Bases shape to be extruded. Base shape must be
         #                       shell or face. If number of faces in neighbour sections
         #                       aren't coincided result solid between such sections will
@@ -3974,21 +4053,30 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #                          contact with the spine.
         #  @param theWithCorrection - defining that the section is rotated to be
         #                             orthogonal to the spine tangent in the correspondent point
+        #  @param IsGenerateGroups - flag that tells if it is necessary to
+        #                          create groups. It is equal to False by default.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created solids.
+        #  @return New GEOM.GEOM_Object, containing the created solids if 
+        #          \a IsGenerateGroups is not set. Otherwise it returns new
+        #          GEOM.ListOfGO. Its first element is the created solids, the
+        #          remaining ones are created groups.
         #
         #  @ref tui_creation_pipe_with_shell_sec "Example"
         @ManageTransactions("PrimOp")
         def MakePipeWithShellSections(self, theSeqBases, theSeqSubBases,
                                       theLocations, thePath,
-                                      theWithContact, theWithCorrection, theName=None):
+                                      theWithContact, theWithCorrection,
+                                      IsGenerateGroups=False, theName=None):
             """
             Create a shape by extrusion of the profile shape along
-            the path shape. The path shape can be a wire or a edge.
+            the path shape. The path shape can be a wire or an edge.
             the several profiles can be specified in the several locations of path.
+            It is possible to generate groups along with the result by means of
+            setting the flag IsGenerateGroups. For detailed information on
+            groups that can be created please see the method geompy.MakePipe().
 
             Parameters:
                 theSeqBases - list of  Bases shape to be extruded. Base shape must be
@@ -4009,19 +4097,30 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                                  contact with the spine (0/1)
                 theWithCorrection - defining that the section is rotated to be
                                     orthogonal to the spine tangent in the correspondent point (0/1)
+                IsGenerateGroups - flag that tells if it is necessary to
+                                 create groups. It is equal to False by default.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created solids.
+                New GEOM.GEOM_Object, containing the created solids if 
+                IsGenerateGroups is not set. Otherwise it returns new
+                GEOM.ListOfGO. Its first element is the created solids, the
+                remaining ones are created groups.
             """
-            anObj = self.PrimOp.MakePipeWithShellSections(theSeqBases, theSeqSubBases,
+            aList = self.PrimOp.MakePipeWithShellSections(theSeqBases, theSeqSubBases,
                                                           theLocations, thePath,
-                                                          theWithContact, theWithCorrection)
+                                                          theWithContact, theWithCorrection,
+                                                          IsGenerateGroups)
             RaiseIfFailed("MakePipeWithShellSections", self.PrimOp)
-            self._autoPublish(anObj, theName, "pipe")
-            return anObj
+
+            if IsGenerateGroups:
+              self._autoPublish(aList, theName, "pipe")
+              return aList
+
+            self._autoPublish(aList[0], theName, "pipe")
+            return aList[0]
 
         ## Create a shape by extrusion of the profile shape along
         #  the path shape. This function is used only for debug pipe
@@ -4031,7 +4130,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         @ManageTransactions("PrimOp")
         def MakePipeWithShellSectionsBySteps(self, theSeqBases, theSeqSubBases,
                                              theLocations, thePath,
-                                             theWithContact, theWithCorrection, theName=None):
+                                             theWithContact, theWithCorrection,
+                                             IsGenerateGroups=False, theName=None):
             """
             Create a shape by extrusion of the profile shape along
             the path shape. This function is used only for debug pipe
@@ -4050,16 +4150,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 tmpLocations = [ theLocations[i-1], theLocations[i] ]
                 tmpSeqSubBases = []
                 if nbsubsect>0: tmpSeqSubBases = [ theSeqSubBases[i-1], theSeqSubBases[i] ]
-                anObj = self.PrimOp.MakePipeWithShellSections(tmpSeqBases, tmpSeqSubBases,
+                aList = self.PrimOp.MakePipeWithShellSections(tmpSeqBases, tmpSeqSubBases,
                                                               tmpLocations, thePath,
-                                                              theWithContact, theWithCorrection)
+                                                              theWithContact, theWithCorrection,
+                                                              IsGenerateGroups)
                 if self.PrimOp.IsDone() == 0:
                     print "Problems with pipe creation between ",i," and ",i+1," sections"
                     RaiseIfFailed("MakePipeWithShellSections", self.PrimOp)
                     break
                 else:
                     print "Pipe between ",i," and ",i+1," sections is OK"
-                    res.append(anObj)
+                    res.append(aList[0])
                     pass
                 pass
 
@@ -4069,57 +4170,92 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(resc, theName, "pipe")
             return resc
 
-        ## Create solids between given sections
+        ## Create solids between given sections.
+        #  It is possible to generate groups along with the result by means of
+        #  setting the flag \a IsGenerateGroups. For detailed information on
+        #  groups that can be created please see the method MakePipe().
         #  @param theSeqBases - list of sections (shell or face).
         #  @param theLocations - list of corresponding vertexes
+        #  @param IsGenerateGroups - flag that tells if it is necessary to
+        #         create groups. It is equal to False by default.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created solids.
+        #  @return New GEOM.GEOM_Object, containing the created solids if 
+        #          \a IsGenerateGroups is not set. Otherwise it returns new
+        #          GEOM.ListOfGO. Its first element is the created solids, the
+        #          remaining ones are created groups.
         #
         #  @ref tui_creation_pipe_without_path "Example"
         @ManageTransactions("PrimOp")
-        def MakePipeShellsWithoutPath(self, theSeqBases, theLocations, theName=None):
+        def MakePipeShellsWithoutPath(self, theSeqBases, theLocations,
+                                      IsGenerateGroups=False, theName=None):
             """
-            Create solids between given sections
+            Create solids between given sections.
+            It is possible to generate groups along with the result by means of
+            setting the flag IsGenerateGroups. For detailed information on
+            groups that can be created please see the method geompy.MakePipe().
 
             Parameters:
                 theSeqBases - list of sections (shell or face).
                 theLocations - list of corresponding vertexes
+                IsGenerateGroups - flag that tells if it is necessary to
+                                 create groups. It is equal to False by default.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created solids.
+                New GEOM.GEOM_Object, containing the created solids if 
+                IsGenerateGroups is not set. Otherwise it returns new
+                GEOM.ListOfGO. Its first element is the created solids, the
+                remaining ones are created groups.
             """
-            anObj = self.PrimOp.MakePipeShellsWithoutPath(theSeqBases, theLocations)
+            aList = self.PrimOp.MakePipeShellsWithoutPath(theSeqBases, theLocations,
+                                                          IsGenerateGroups)
             RaiseIfFailed("MakePipeShellsWithoutPath", self.PrimOp)
-            self._autoPublish(anObj, theName, "pipe")
-            return anObj
+
+            if IsGenerateGroups:
+              self._autoPublish(aList, theName, "pipe")
+              return aList
+
+            self._autoPublish(aList[0], theName, "pipe")
+            return aList[0]
 
         ## Create a shape by extrusion of the base shape along
         #  the path shape with constant bi-normal direction along the given vector.
         #  The path shape can be a wire or an edge.
+        #  It is possible to generate groups along with the result by means of
+        #  setting the flag \a IsGenerateGroups. For detailed information on
+        #  groups that can be created please see the method MakePipe().
         #  @param theBase Base shape to be extruded.
         #  @param thePath Path shape to extrude the base shape along it.
         #  @param theVec Vector defines a constant binormal direction to keep the
         #                same angle beetween the direction and the sections
         #                along the sweep surface.
+        #  @param IsGenerateGroups flag that tells if it is necessary to
+        #         create groups. It is equal to False by default.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created pipe.
+        #  @return New GEOM.GEOM_Object, containing the created pipe if 
+        #          \a IsGenerateGroups is not set. Otherwise it returns new
+        #          GEOM.ListOfGO. Its first element is the created pipe, the
+        #          remaining ones are created groups.
         #
         #  @ref tui_creation_pipe "Example"
         @ManageTransactions("PrimOp")
-        def MakePipeBiNormalAlongVector(self, theBase, thePath, theVec, theName=None):
+        def MakePipeBiNormalAlongVector(self, theBase, thePath, theVec,
+                                        IsGenerateGroups=False, theName=None):
             """
             Create a shape by extrusion of the base shape along
             the path shape with constant bi-normal direction along the given vector.
             The path shape can be a wire or an edge.
+            It is possible to generate groups along with the result by means of
+            setting the flag IsGenerateGroups. For detailed information on
+            groups that can be created please see the method geompy.MakePipe().
 
             Parameters:
                 theBase Base shape to be extruded.
@@ -4127,18 +4263,29 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theVec Vector defines a constant binormal direction to keep the
                        same angle beetween the direction and the sections
                        along the sweep surface.
+                IsGenerateGroups flag that tells if it is necessary to
+                                 create groups. It is equal to False by default.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created pipe.
+                New GEOM.GEOM_Object, containing the created pipe if 
+                IsGenerateGroups is not set. Otherwise it returns new
+                GEOM.ListOfGO. Its first element is the created pipe, the
+                remaining ones are created groups.
             """
             # Example: see GEOM_TestAll.py
-            anObj = self.PrimOp.MakePipeBiNormalAlongVector(theBase, thePath, theVec)
+            aList = self.PrimOp.MakePipeBiNormalAlongVector(theBase, thePath,
+                          theVec, IsGenerateGroups)
             RaiseIfFailed("MakePipeBiNormalAlongVector", self.PrimOp)
-            self._autoPublish(anObj, theName, "pipe")
-            return anObj
+
+            if IsGenerateGroups:
+              self._autoPublish(aList, theName, "pipe")
+              return aList
+
+            self._autoPublish(aList[0], theName, "pipe")
+            return aList[0]
 
         ## Makes a thick solid from a shape. If the input is a surface shape
         #  (face or shell) the result is a thick solid. If an input shape is

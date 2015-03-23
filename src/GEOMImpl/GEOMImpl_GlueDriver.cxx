@@ -323,9 +323,11 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesByList (const TopoDS_Shape& theShape,
 //function : GlueFaces
 //purpose  :
 //=======================================================================
-TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
-                                             const Standard_Real theTolerance,
-                                             const Standard_Boolean doKeepNonSolids)
+TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces
+          (const TopoDS_Shape                       &theShape,
+           const Standard_Real                       theTolerance,
+           const Standard_Boolean                    doKeepNonSolids,
+                 TopTools_DataMapOfShapeListOfShape *pMapModif)
 {
   TopoDS_Shape aRes;
 
@@ -408,6 +410,26 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
 
   // 5. Result
   aRes = aGA.Shape();
+
+  if (pMapModif) {
+    // Fill the map of modified shapes.
+    TopTools_IndexedMapOfShape aMapSubShapes;
+
+    TopExp::MapShapes(theShape, aMapSubShapes);
+    pMapModif->Clear();
+
+    const Standard_Integer aNbShapes = aMapSubShapes.Extent();
+    Standard_Integer       i;
+
+    for (i = 1; i <= aNbShapes; ++i) {
+      const TopoDS_Shape         &aSubShape = aMapSubShapes.FindKey(i);
+      const TopTools_ListOfShape &aModif    = aGA.Modified(aSubShape);
+
+      if (!aModif.IsEmpty()) {
+        pMapModif->Bind(aSubShape, aModif);
+      }
+    }
+  }
 
   return aRes;
 }

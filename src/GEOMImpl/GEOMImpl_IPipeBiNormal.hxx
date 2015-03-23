@@ -22,15 +22,10 @@
 #ifndef _GEOMImpl_IPIPEBINORMAL_HXX_
 #define _GEOMImpl_IPIPEBINORMAL_HXX_
 
-#include "GEOM_Function.hxx"
 
-#ifndef _GEOMImpl_IPIPE_HXX_
 #include "GEOMImpl_IPipe.hxx"
-#endif
 
-#define PIPE_ARG_BASE 1
-#define PIPE_ARG_PATH 2
-#define PIPE_ARG_VEC  3
+// Position definitions are declared in the base class.
 
 class GEOMImpl_IPipeBiNormal : public GEOMImpl_IPipe
 {

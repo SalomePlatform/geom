@@ -63,6 +63,7 @@
 #include <TCollection_AsciiString.hxx>
 
 class TColStd_SequenceOfExtendedString;
+class TopTools_DataMapOfShapeListOfShape;
 
 
 #include "GEOM_BaseDriver.hxx"
@@ -86,9 +87,11 @@ Standard_EXPORT ~GEOMImpl_GlueDriver() {};
   bool GetCreationInformation(std::string&             theOperationName,
                               std::vector<GEOM_Param>& params);
 
-Standard_EXPORT static TopoDS_Shape GlueFaces (const TopoDS_Shape& theShape,
-                                               const Standard_Real theTolerance,
-                                               const Standard_Boolean doKeepNonSolids = Standard_True);
+Standard_EXPORT static TopoDS_Shape GlueFaces
+   (const TopoDS_Shape                       &theShape,
+    const Standard_Real                       theTolerance,
+    const Standard_Boolean                    doKeepNonSolids = Standard_True,
+          TopTools_DataMapOfShapeListOfShape *pMapModif       = NULL);
   /*
 Standard_EXPORT TopoDS_Shape GlueFacesWithWarnings (const TopoDS_Shape& theShape,
                                                     const Standard_Real theTolerance,

@@ -27,20 +27,69 @@
 
 #include "GEOM_Function.hxx"
 
-#define PIPE_ARG_BASE 1
-#define PIPE_ARG_PATH 2
+#include <TColStd_HArray1OfInteger.hxx>
+
+// ---- GEOMImpl_IPipe
+#define PIPE_ARG_BASE          1
+#define PIPE_ARG_PATH          2
+
+// ---- GEOMImpl_IPipeBiNormal
+#define PIPE_ARG_VEC           3
+
+// ---- GEOMImpl_IPipeDiffSect
+#define PIPEDS_LIST_BASES      1
+//#define PIPEDS_ARG_PATH      2
+#define PIPEDS_LIST_LOCATIONS  3
+#define PIPEDS_ARG_WITHCONTACT 4
+#define PIPEDS_ARG_WITHCORRECT 5
+
+// ---- GEOMImpl_IPipeShellSect
+#define PIPEDS_LIST_SUBBASES   6
+
+// ---- Generate groups block (common)
+#define PIPE_GENERATE_GROUPS   7
+#define PIPE_GROUP_DOWN        8
+#define PIPE_GROUP_UP          9
+#define PIPE_GROUP_SIDE1       10
+#define PIPE_GROUP_SIDE2       11
+#define PIPE_GROUP_OTHER       12
+
 
 class GEOMImpl_IPipe
 {
  public:
 
   GEOMImpl_IPipe(Handle(GEOM_Function) theFunction): _func(theFunction) {}
+  virtual ~GEOMImpl_IPipe() {}
 
   void SetBase (Handle(GEOM_Function) theBase) { _func->SetReference(PIPE_ARG_BASE, theBase); }
   void SetPath (Handle(GEOM_Function) thePath) { _func->SetReference(PIPE_ARG_PATH, thePath); }
+  void SetGenerateGroups (int theGenerateGroups)
+  { _func->SetInteger(PIPE_GENERATE_GROUPS, theGenerateGroups); }
+  void SetGroupDown (const Handle(TColStd_HArray1OfInteger) &theGroup)
+  { _func->SetIntegerArray(PIPE_GROUP_DOWN, theGroup); }
+  void SetGroupUp (const Handle(TColStd_HArray1OfInteger) &theGroup)
+  { _func->SetIntegerArray(PIPE_GROUP_UP, theGroup); }
+  void SetGroupSide1 (const Handle(TColStd_HArray1OfInteger) &theGroup)
+  { _func->SetIntegerArray(PIPE_GROUP_SIDE1, theGroup); }
+  void SetGroupSide2 (const Handle(TColStd_HArray1OfInteger) &theGroup)
+  { _func->SetIntegerArray(PIPE_GROUP_SIDE2, theGroup); }
+  void SetGroupOther (const Handle(TColStd_HArray1OfInteger) &theGroup)
+  { _func->SetIntegerArray(PIPE_GROUP_OTHER, theGroup); }
 
   Handle(GEOM_Function) GetBase() { return _func->GetReference(PIPE_ARG_BASE); }
   Handle(GEOM_Function) GetPath() { return _func->GetReference(PIPE_ARG_PATH); }
+  int GetGenerateGroups () { return _func->GetInteger(PIPE_GENERATE_GROUPS); }
+  Handle(TColStd_HArray1OfInteger) GetGroupDown ()
+  { return _func->GetIntegerArray(PIPE_GROUP_DOWN); }
+  Handle(TColStd_HArray1OfInteger) GetGroupUp ()
+  { return _func->GetIntegerArray(PIPE_GROUP_UP); }
+  Handle(TColStd_HArray1OfInteger) GetGroupSide1 ()
+  { return _func->GetIntegerArray(PIPE_GROUP_SIDE1); }
+  Handle(TColStd_HArray1OfInteger) GetGroupSide2 ()
+  { return _func->GetIntegerArray(PIPE_GROUP_SIDE2); }
+  Handle(TColStd_HArray1OfInteger) GetGroupOther ()
+  { return _func->GetIntegerArray(PIPE_GROUP_OTHER); }
 
  protected:
 

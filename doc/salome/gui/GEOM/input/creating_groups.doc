@@ -1,0 +1,76 @@
+/*!
+
+\page create_groups_page Generation of Groups
+
+This option is available in some dialogs. To activate it please check
+<b>Generate Groups</b> check box. When it is checked, it is possible to define
+the prefix for generated groups names using <b>Group Names Prefix</b> input
+field.
+
+\image html gen_group_dlg.png "Generate groups option in a dialog"
+
+The groups are created along with the result of the operation when
+\b Apply or <b>Apply and Close</b> button is clicked. Each generated group
+represents a set of sub-shapes of the result that satisfies certain conditions.
+The groups of the following types can be generated:
+ - \b Down - sub-shapes starting the result, e.g. bottom lid
+for the pipe creation operation.
+ - \b Up - sub-shapes ending the result, e.g. top lid
+for the pipe creation operation.
+ - \b Side1, \b Side2 - sub-shapes corresponding to each side
+of the result.
+ - \b Other - faces generated from the bounding edges of
+\b Down group.
+
+The groups are named according to the following naming rule:
+If <b>Group Names Prefix</b> is set <b><Prefix>_<Type></b>, otherwise
+the name is \b <Type>. The following figure shows group names created with
+the prefix \b Group:
+
+\image html gen_group_tree.png "Group_Down, Group_Up, Group_Side1 and Group_Side2 are generated"
+
+
+The general behavior of this functionality is the following:
+<ul>
+<li>If <b>Generate Groups</b> option is not set, the groups are not generated.</li>
+<li>If starting and ending sub-shapes of the result are the same, e.g. if there is
+a closed path for pipe construction, <b>Generate Groups</b> option is disabled
+in the dialog box:</li>
+
+\image html gen_group_disabled.png "Disabled option in the Pipe Construction dialog if the path is closed"
+\n
+<li>Otherwise If the path is not closed edge/wire, the groups are created depending
+on the profile:</li>
+<ul>
+<li>Profile is unclosed edge or wire: \b Down, \b Up, \b Side1, \b Side2:</li>
+
+\image html gen_group_sides.png "Pipe with created groups Down(Red), Up(Green), Side1(Blue) and Side2(Yellow)"
+\n
+<li>Profile is closed edge or wire, face or shell: \b Down, \b Up, \b Other:</li>
+
+\image html gen_group_other.png "Created groups Down(Red), Up(Green) and Other(Yellow)"
+</ul>
+</ul>
+
+\b Down and \b Up groups contain:
+- Edges if the profile is edge or wire;
+- Faces if the profile is face or shell.
+
+\b Side1 and \b Side2 groups contain edges generated from the first and
+last vertices of the profile edge or wire correspondingly. The first and
+last vertices are determined taking into account edge/wire orientation.
+
+\b Other group represents faces generated from the bounding edges of profile.
+
+The behavior in TUI is the following:
+- Each Python function that supports groups generation has a flag
+\b IsGenerateGroups which is equal to \b False by default.
+- If \b IsGenerateGroups is not set the groups are not created; the returned
+value is GEOM_Object that represents a result of the operation.
+- If \b IsGenerateGroups is set the operation returns a list of GEOM_Object.
+Its first element is a result, the remaining ones are the groups in the order:
+\b Down, \b Up, \b Side1, \b Side2 for opened profile or \b Down, \b Up,
+\b Other for closed profile.
+- If \b IsGenerateGroups is set and the path is closed an error occurs.
+
+*/

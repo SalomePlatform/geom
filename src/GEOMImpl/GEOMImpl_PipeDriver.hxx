@@ -83,11 +83,12 @@ public:
   Standard_EXPORT ~GEOMImpl_PipeDriver() {};
 
   Standard_EXPORT static TopoDS_Shape CreatePipeWithDifferentSections
-                                     (const TopoDS_Wire& theWirePath,
-                                      const Handle(TopTools_HSequenceOfShape) theBases,
-                                      const Handle(TopTools_HSequenceOfShape) theLocs,
-                                      const Standard_Boolean theWithContact,
-                                      const Standard_Boolean theWithCorrect);
+                  (const TopoDS_Wire                       &theWirePath,
+                   const Handle(TopTools_HSequenceOfShape)  theBases,
+                   const Handle(TopTools_HSequenceOfShape)  theLocs,
+                   const Standard_Boolean                   theWithContact,
+                   const Standard_Boolean                   theWithCorrect,
+                         Handle(TColStd_HArray1OfInteger)  *theGroups = NULL);
 
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,

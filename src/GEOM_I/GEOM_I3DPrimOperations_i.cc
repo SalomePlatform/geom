@@ -794,10 +794,12 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDraftPrism
  *  MakePipe
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipe
-                 (GEOM::GEOM_Object_ptr theBase, GEOM::GEOM_Object_ptr thePath)
+GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipe
+                           (GEOM::GEOM_Object_ptr theBase,
+                            GEOM::GEOM_Object_ptr thePath,
+                            CORBA::Boolean        IsGenerateGroups)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -806,15 +808,20 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipe
   Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
   Handle(GEOM_Object) aPath = GetObjectImpl(thePath);
 
-  if (aBase.IsNull() || aPath.IsNull()) return aGEOMObject._retn();
+  if (aBase.IsNull() || aPath.IsNull()) return aSeq._retn();
 
   //Create the Pipe
-  Handle(GEOM_Object) anObject =
-    GetOperations()->MakePipe(aBase, aPath);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipe(aBase, aPath, IsGenerateGroups);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
 
-  return GetObject(anObject);
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
 }
 
 //=============================================================================
@@ -974,14 +981,15 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThruSections(const GEOM::Lis
  *  MakePipeWithDifferentSections
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections
-                      (const GEOM::ListOfGO& theBases,
-                       const GEOM::ListOfGO& theLocations,
-                       GEOM::GEOM_Object_ptr thePath,
-                       CORBA::Boolean theWithContact,
-                       CORBA::Boolean theWithCorrections)
+GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections
+                           (const GEOM::ListOfGO        &theBases,
+                            const GEOM::ListOfGO        &theLocations,
+                                  GEOM::GEOM_Object_ptr  thePath,
+                                  CORBA::Boolean         theWithContact,
+                                  CORBA::Boolean         theWithCorrections,
+                                  CORBA::Boolean         IsGenerateGroups)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -994,11 +1002,11 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections
   aNbLocs = theLocations.length();
 
   if (aNbLocs && aNbBases != aNbLocs)
-    return aGEOMObject._retn();
+    return aSeq._retn();
 
   Handle(GEOM_Object) aPath = GetObjectImpl(thePath);
   if (aPath.IsNull())
-    return aGEOMObject._retn();
+    return aSeq._retn();
 
   for (ind = 0; ind < aNbBases; ind++) {
     Handle(GEOM_Object) aBase = GetObjectImpl(theBases[ind]);
@@ -1014,16 +1022,23 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections
     aSeqBases->Append(aBase);
   }
   if (!aSeqBases->Length())
-    return aGEOMObject._retn();
+    return aSeq._retn();
 
   // Make pipe
-  Handle(GEOM_Object) anObject =
-    GetOperations()->MakePipeWithDifferentSections(aSeqBases,aSeqLocations ,aPath,
-                                                   theWithContact,theWithCorrections);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeWithDifferentSections
+              (aSeqBases, aSeqLocations,
+               aPath, theWithContact,
+               theWithCorrections, IsGenerateGroups);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
 
-  return GetObject(anObject);
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
 }
 
 
@@ -1032,15 +1047,16 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections
  *  MakePipeWithShellSections
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithShellSections
-                 (const GEOM::ListOfGO& theBases,
-                  const GEOM::ListOfGO& theSubBases,
-                  const GEOM::ListOfGO& theLocations,
-                  GEOM::GEOM_Object_ptr thePath,
-                  CORBA::Boolean theWithContact,
-                  CORBA::Boolean theWithCorrections)
+GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeWithShellSections
+                           (const GEOM::ListOfGO        &theBases,
+                            const GEOM::ListOfGO        &theSubBases,
+                            const GEOM::ListOfGO        &theLocations,
+                                  GEOM::GEOM_Object_ptr  thePath,
+                                  CORBA::Boolean         theWithContact,
+                                  CORBA::Boolean         theWithCorrections,
+                                  CORBA::Boolean         IsGenerateGroups)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -1055,11 +1071,11 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithShellSections
   aNbLocs = theLocations.length();
 
   if (aNbLocs && aNbBases != aNbLocs)
-    return aGEOMObject._retn();
+    return aSeq._retn();
 
   Handle(GEOM_Object) aPath = GetObjectImpl(thePath);
   if (aPath.IsNull())
-    return aGEOMObject._retn();
+    return aSeq._retn();
 
   for (ind = 0; ind < aNbBases; ind++) {
     Handle(GEOM_Object) aBase = GetObjectImpl(theBases[ind]);
@@ -1084,17 +1100,23 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithShellSections
     }
   }
   if (!aSeqBases->Length())
-    return aGEOMObject._retn();
+    return aSeq._retn();
 
   // Make pipe
-  Handle(GEOM_Object) anObject =
-    GetOperations()->MakePipeWithShellSections(aSeqBases, aSeqSubBases,
-                                               aSeqLocations, aPath,
-                                               theWithContact, theWithCorrections);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeWithShellSections
+                  (aSeqBases, aSeqSubBases,
+                   aSeqLocations, aPath,
+                   theWithContact, theWithCorrections, IsGenerateGroups);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
 
-  return GetObject(anObject);
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
 }
 
 
@@ -1103,11 +1125,12 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeWithShellSections
  *  MakePipeShellsWithoutPath
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
-                 (const GEOM::ListOfGO& theBases,
-                  const GEOM::ListOfGO& theLocations)
+GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
+                           (const GEOM::ListOfGO &theBases,
+                            const GEOM::ListOfGO &theLocations,
+                                  CORBA::Boolean  IsGenerateGroups)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -1120,7 +1143,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
   aNbLocs = theLocations.length();
 
   if (aNbLocs && aNbBases != aNbLocs)
-    return aGEOMObject._retn();
+    return aSeq._retn();
 
   for (ind = 0; ind < aNbBases; ind++) {
     Handle(GEOM_Object) aBase = GetObjectImpl(theBases[ind]);
@@ -1136,16 +1159,22 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
   }
 
   if (!aSeqBases->Length())
-    return aGEOMObject._retn();
+    return aSeq._retn();
 
   // Make pipe
-  Handle(GEOM_Object) anObject =
-    GetOperations()->MakePipeShellsWithoutPath(aSeqBases,aSeqLocations);
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeShellsWithoutPath
+          (aSeqBases, aSeqLocations, IsGenerateGroups);
 
-  if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
 
-  return GetObject(anObject);
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
 }
 
 //=============================================================================
@@ -1153,12 +1182,13 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
  *  MakePipeBiNormalAlongVector
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
-                 (GEOM::GEOM_Object_ptr theBase,
-                  GEOM::GEOM_Object_ptr thePath,
-                  GEOM::GEOM_Object_ptr theVec)
+GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
+                           (GEOM::GEOM_Object_ptr theBase,
+                            GEOM::GEOM_Object_ptr thePath,
+                            GEOM::GEOM_Object_ptr theVec,
+                            CORBA::Boolean        IsGenerateGroups)
 {
-  GEOM::GEOM_Object_var aGEOMObject;
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -1168,15 +1198,21 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
   Handle(GEOM_Object) aPath = GetObjectImpl(thePath);
   Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
 
-  if (aBase.IsNull() || aPath.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+  if (aBase.IsNull() || aPath.IsNull() || aVec.IsNull()) return aSeq._retn();
 
   //Create the Pipe
-  Handle(GEOM_Object) anObject =
-    GetOperations()->MakePipeBiNormalAlongVector(aBase, aPath, aVec);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakePipeBiNormalAlongVector
+          (aBase, aPath, aVec, IsGenerateGroups);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
 
-  return GetObject(anObject);
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
 }
 
 //=============================================================================
