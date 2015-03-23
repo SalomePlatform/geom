@@ -32,6 +32,8 @@ default color for edges, vectors and wires (isolated lines).</li>
 vertices.</li>
 <li><b>Color of isolines</b> - allows to select default color for
 isolines.</li>
+<li><b>Color of labels</b> - allows to select default color for
+labels (textual fields, shape name).</li>
 <li><b>Top level color</b> - allows to select default color for objects which 
 were brought to the viewer foreground.</li>
 <li><b>Top level display mode</b> - allows to select default top level display mode between:</li>

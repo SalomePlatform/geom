@@ -832,6 +832,9 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
   // - color for edges in shading+edges mode
   AISShape->SetEdgesInShadingColor( SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>() ) );
 
+  // - color of labels (textual fields and shape name)
+  AISShape->SetLabelColor( qColorFromResources( "label_color", QColor( 255, 255, 255 ) ) );
+
   // set display mode
   AISShape->SetDisplayMode( HasDisplayMode() ? 
                             // predefined display mode, manually set to displayer via GEOM_Displayer::SetDisplayMode() function 
@@ -1125,6 +1128,10 @@ void GEOM_Displayer::updateActorProperties( GEOM_Actor* actor, bool create )
   // - color for edges in shading+edges mode
   c = propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>();
   actor->SetEdgesInShadingColor( c.redF(), c.greenF(), c.blueF() );
+
+  // - color of labels (shape name)
+  c = colorFromResources( "label_color", QColor( 255, 255, 255 ) );
+  actor->SetLabelColor( c.redF(), c.greenF(), c.blueF() );
 
   // set opacity
   if( HasTransparency() ) {

@@ -79,6 +79,7 @@ public:
   
   Standard_EXPORT void SetShadingColor(const Quantity_Color &aCol);
   Standard_EXPORT void SetEdgesInShadingColor(const Quantity_Color &aCol);
+  Standard_EXPORT void SetLabelColor(const Quantity_Color &aCol);
   Standard_EXPORT void SetDisplayVectors(bool isShow);
   Standard_EXPORT void SetDisplayVertices(bool isShow);
   Standard_EXPORT void SetDisplayName(bool isShow);
@@ -137,6 +138,7 @@ protected:
 private: 
   Quantity_Color           myShadingColor;
   Quantity_Color           myEdgesInShadingColor;
+  Quantity_Color           myLabelColor;
 
   TCollection_AsciiString  myName;
   bool                     myDisplayVectors;

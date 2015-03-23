@@ -2260,6 +2260,11 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_ISOS_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "isos_color" );
 
+  addPreference( tr( "PREF_LABEL_COLOR" ), genGroup,
+                 LightApp_Preferences::Color, "Geometry", "label_color" );
+
+  addPreference( "", genGroup, LightApp_Preferences::Space );
+
   addPreference( tr( "PREF_TOPLEVEL_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "toplevel_color" );
 
@@ -2637,7 +2642,8 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
               param == QString("dimensions_arrow_length") ||
               param == QString("dimensions_show_units")   ||
               param == QString("dimensions_length_units") ||
-              param == QString("dimensions_angle_units") )
+              param == QString("dimensions_angle_units")  ||
+              param == QString("label_color") )
     {
       SalomeApp_Application* anApp = getApp();
       if ( !anApp )
@@ -2668,7 +2674,22 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
         aViewer->GetVisible( aVisible );
         aDisplayer.Redisplay( aVisible, false, aViewer );
       }
-
+      if ( param == QString( "label_color" ) ) {
+        ViewManagerList aVMsVTK;
+        anApp->viewManagers( SVTK_Viewer::Type(), aVMsVTK );
+        ViewManagerList::Iterator anIt = aVMsVTK.begin();
+        for ( ; anIt != aVMsVTK.end(); ++anIt )
+        {
+            SVTK_Viewer* aViewer = dynamic_cast<SVTK_Viewer*>( (*anIt)->getViewModel() );
+            if ( !aViewer )
+            {
+              continue;
+            }
+            SALOME_ListIO aVisible;
+            aViewer->GetVisible( aVisible );
+            aDisplayer.Redisplay( aVisible, false, aViewer );
+          }
+      }
       aDisplayer.UpdateViewer();
     }
     else if ( param.startsWith( "dependency_tree") )

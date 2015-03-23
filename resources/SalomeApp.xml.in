@@ -58,6 +58,7 @@
     <parameter name="line_color"          value="255, 0, 0" />
     <parameter name="point_color"         value="#ff7700" />
     <parameter name="isos_color"          value="200, 200, 200" />
+    <parameter name="label_color"         value="255, 255, 255" />
     <parameter name="toplevel_color"      value="170, 85, 0" />
     <parameter name="toplevel_dm"         value="0" />
     <parameter name="editgroup_color"     value="170, 85, 0" />

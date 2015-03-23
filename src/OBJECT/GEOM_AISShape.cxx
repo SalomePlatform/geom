@@ -344,6 +344,10 @@ void GEOM_AISShape::SetEdgesInShadingColor(const Quantity_Color &aCol)
   myEdgesInShadingColor = aCol;
 }
 
+void GEOM_AISShape::SetLabelColor(const Quantity_Color &aCol) {
+  myLabelColor = aCol;
+}
+
 void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, 
                                        const Standard_Boolean aHighlight )
 {
@@ -569,6 +573,7 @@ void GEOM_AISShape::drawField( const Handle(Prs3d_Presentation)& thePrs,
 
           Handle(Graphic3d_AspectText3d) anAspectText3d = new Graphic3d_AspectText3d();
           anAspectText3d->SetStyle( Aspect_TOST_ANNOTATION );
+          anAspectText3d->SetColor( myLabelColor );
           aGroup->SetPrimitivesAspect( anAspectText3d );
 
           aGroup->Text( aString.toLatin1().constData(), aVertex, 14 );
@@ -628,6 +633,7 @@ void GEOM_AISShape::drawName( const Handle(Prs3d_Presentation)& thePrs )
 
   Handle(Graphic3d_AspectText3d) anAspectText3d = new Graphic3d_AspectText3d();
   anAspectText3d->SetStyle( Aspect_TOST_ANNOTATION );
+  anAspectText3d->SetColor( myLabelColor );
   aGroup->SetPrimitivesAspect( anAspectText3d );
 
   const char* aName = getIO()->getName();

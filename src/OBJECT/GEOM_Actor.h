@@ -139,6 +139,8 @@ public:
   void SetEdgesInShadingColor(double r, double g, double b);
   // Color of iso-lines
   void SetIsosColor(double r, double g, double b);
+  // Color of labels
+  void SetLabelColor(double r, double g, double b);
 
 
   // Material
@@ -224,7 +226,7 @@ protected:
   void SetModified();
 
   void GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result);
-  void SetShapeName(const TopoDS_Shape& theShape);
+  void SetShapeName();
 
   GEOM_Actor();
   ~GEOM_Actor();

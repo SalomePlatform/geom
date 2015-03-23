@@ -3305,6 +3305,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Color of isolines</translation>
     </message>
     <message>
+        <source>PREF_LABEL_COLOR</source>
+        <translation>Color of labels</translation>
+    </message>
+    <message>
         <source>PREF_TOPLEVEL_COLOR</source>
         <translation>Top level color</translation>
     </message>

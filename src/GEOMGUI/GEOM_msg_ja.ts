@@ -3232,6 +3232,10 @@
       <translation>輪郭の色</translation>
     </message>
     <message>
+        <source>PREF_LABEL_COLOR</source>
+        <translation type="unfinished">Color of labels</translation>
+    </message>
+    <message>
       <source>PREF_TOPLEVEL_COLOR</source>
       <translation>前景オブジェクトの色</translation>
     </message>

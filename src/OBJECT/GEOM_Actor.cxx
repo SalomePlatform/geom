@@ -444,12 +444,12 @@ GEOM_Actor
 
 void
 GEOM_Actor
-::SetShapeName(const TopoDS_Shape& theShape)
+::SetShapeName()
 {
-  if( !getIO() )
+  if( !getIO() || myShape.IsNull() )
     return;
 
-  gp_Ax3 anAx3 = GEOMUtils::GetPosition(theShape);
+  gp_Ax3 anAx3 = GEOMUtils::GetPosition(myShape);
   double center[3] = { anAx3.Location().X(),
                        anAx3.Location().Y(),
                        anAx3.Location().Z() };
@@ -538,7 +538,7 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
     myHighlightActor->GetDeviceActor()->SetInfinitive(true);
   }
 
-  SetShapeName( theShape );
+  SetShapeName();
 
   // 0051777: TC7.2.0: Element could not be selected in Hypothesis Construction
   myAppendFilter->Update();
@@ -854,6 +854,15 @@ void GEOM_Actor::SetFreeEdgeColor(double r, double g, double b)
 void GEOM_Actor::SetIsosColor(double r, double g, double b)
 {
   myWireframeFaceActor->GetProperty()->SetColor(r, g, b);
+}
+
+/*!
+  \brief Set color of labels
+  This actor is shown only if 'Show name' is switched-on, see SetVisibility()
+*/
+void GEOM_Actor::SetLabelColor(double r, double g, double b)
+{
+  myTextActor->GetTextProperty()->SetColor(r, g, b);
 }
 
 void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)

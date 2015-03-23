@@ -3289,6 +3289,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Couleur des isolignes</translation>
     </message>
     <message>
+        <source>PREF_LABEL_COLOR</source>
+        <translation type="unfinished">Color of labels</translation>
+    </message>
+    <message>
         <source>PREF_TOPLEVEL_COLOR</source>
         <translation>Couleur des objets mis au premier plan</translation>
     </message>
