@@ -242,6 +242,7 @@ gp_Vec2d GEOMUtils::TrsfCurve2d::DN(const Standard_Real    U,
   gp_Vec2d aVec = myCurve.DN(U, N);
 
   myTrsf.TransformD1(aPnt, aVec);
+  return aVec;
 }
 
 //=======================================================================
