@@ -843,8 +843,6 @@ void GEOM_Displayer::updateShapeProperties( const Handle(GEOM_AISShape)& AISShap
                             propMap.value( GEOM::propertyName( GEOM::DisplayMode ) ).toInt() );
 
   // - face boundaries color and line width
-  if( AISShape->DisplayMode() == GEOM_AISShape::ShadingWithEdges )
-    AISShape->Attributes()->SetFaceBoundaryDraw( Standard_True );
   anAspect = AISShape->Attributes()->FaceBoundaryAspect();
   anAspect->SetColor( SalomeApp_Tools::color( propMap.value( GEOM::propertyName( GEOM::OutlineColor ) ).value<QColor>() ) );
   anAspect->SetWidth( propMap.value( GEOM::propertyName( GEOM::LineWidth ) ).toInt() );

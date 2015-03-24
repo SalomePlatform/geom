@@ -254,24 +254,21 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     }
     case ShadingWithEdges:
     {
+      myDrawer->SetFaceBoundaryDraw( Standard_True );
       shadingMode(aPresentationManager, aPrs, Shading);
-      if( anIsColorField && myFieldDimension == 1 )
+      if( anIsColorField && myFieldDimension == 1 ) {
+        myDrawer->SetFaceBoundaryDraw( Standard_False );
         drawField( aPrs );
-      else
-        myDrawer->SetFaceBoundaryDraw( Standard_True );
+      }
       break;
     }
     case TexturedShape:
     {
-      if(!isTopLev)
 #ifdef USE_TEXTURED_SHAPE
 	AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
 #else
 	AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
 #endif
-      else 
-	shadingMode(aPresentationManager, aPrs, Shading);
-      break;
     }
   }
   if (isShowVectors())
@@ -443,10 +440,10 @@ void GEOM_AISShape::setTopLevel(Standard_Boolean f) {
       myPrevDisplayMode = DisplayMode();
     Standard_Integer dm;
     switch(topLevelDisplayMode()) {
-      case TopKeepCurrent :      dm = myPrevDisplayMode; break;
-      case TopWireFrame :        dm = Wireframe;         break;     
+      case TopWireFrame :        dm = Wireframe;         break;
+      case TopShading :          dm = Shading;           break;
       case TopShadingWithEdges : dm = ShadingWithEdges;  break;
-      default :                  dm = Shading;           break;
+      default :                  dm = myPrevDisplayMode; break;
     }
     SetDisplayMode(dm);
   } else {
