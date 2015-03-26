@@ -411,8 +411,14 @@ bool OperationGUI_Fillet1d2dDlg::execute (ObjectList& objects)
     anOper->MakeFillet1D(myShape, getRadius(), aListOfIndexes, GroupVertexes->CheckButton1->isChecked()) : 
     anOper->MakeFillet2D(myShape, getRadius(), aListOfIndexes);
 
-  if (!anObj->_is_nil())
+  if (!anObj->_is_nil()) {
+    if (!IsPreview()) {
+      QStringList aParameters;
+      aParameters << GroupVertexes->SpinBox_DX->text();
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
+    }
     objects.push_back(anObj._retn());
+  }
 
   return true;
 }

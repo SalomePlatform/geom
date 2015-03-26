@@ -9455,8 +9455,18 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 the source shape onto a cylinder.
             """
             # Example: see GEOM_TestAll.py
+            flagStartAngle = False
+            if isinstance(theStartAngle,str):
+                flagStartAngle = True
+            flagAngleLength = False
+            if isinstance(theAngleLength,str):
+                flagAngleLength = True
             theRadius, theStartAngle, theAngleLength, Parameters = ParseParameters(
               theRadius, theStartAngle, theAngleLength)
+            if flagStartAngle:
+                theStartAngle = theStartAngle*math.pi/180.
+            if flagAngleLength:
+                theAngleLength = theAngleLength*math.pi/180.
             anObj = self.TrsfOp.MakeProjectionOnCylinder(theObject, theRadius,
                 theStartAngle, theAngleLength)
             RaiseIfFailed("MakeProjectionOnCylinder", self.TrsfOp)

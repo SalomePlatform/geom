@@ -353,6 +353,14 @@ bool TransformationGUI_ProjectionOnCylDlg::execute (ObjectList& objects)
     (myObj, aRadius, aStartAngle, aLengthAngle);
 
   if (!anObj->_is_nil()) {
+    if (!IsPreview()) {
+      QStringList aParameters;
+      aParameters << myRadiusSpin->text();
+      aParameters << myStartAngleSpin->text();
+      if (myUseAngleLen->isChecked())
+        aParameters << myAngleLenSpin->text();
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
+    }
     objects.push_back(anObj._retn());
   }
 
