@@ -717,15 +717,15 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
     if(GroupThickening->checkButton1->isChecked())
     { 
       double aThickness = GroupThickening->SpinBox_DX->value();
-      if (GroupThickening->checkButton2->isChecked())
-      {
-        aThickness = -aThickness;  
-      }
+      bool isInside = GroupThickening->checkButton2->isChecked();
 
       GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
 
       anObj = anotherOper->MakeThickening
-        (anObj, anArray, aThickness, /*copy=*/false);    
+        (anObj, anArray, aThickness, /*copy=*/false, isInside);
+
+      if (!anObj->_is_nil() && !IsPreview())
+        anObj->SetParameters(GroupThickening->SpinBox_DX->text().toUtf8().constData());
     }
     
     if (!anObj->_is_nil())

@@ -1711,13 +1711,15 @@ module GEOM
      *  \param theHeight Prism dimension along the normal of the face.
      *  \param theAngle Draft angel in degrees
      *  \param theFuse If true material is added else material is removed
+     *  \param theInvert If true material changes the direction 
      *  \return New GEOM_Object, containing the modified shape
      */
     GEOM_Object MakeDraftPrism (in GEOM_Object theInitShape,
                                 in GEOM_Object theBase,
                                 in double theHeight, 
                                 in double theAngle,
-                                in boolean theFuse);
+                                in boolean theFuse,
+                                in boolean theInvert);
 
     /*!
      *  \brief Create a shape by extrusion of the base shape along
@@ -1865,13 +1867,15 @@ module GEOM
      *          It can be empty.
      *  \param theThickness Value of the thickness
      *  \param isCopy To make a copy of \a theObject or to modify \a theObject
+     *  \param isInside If true the thickness is applied towards inside
      *  \return New GEOM_Object, containing the created pipe if isCopy = true
      *          or the modified object if isCopy = false
      */
     GEOM_Object MakeThickening (in GEOM_Object theObject,
                                 in ListOfLong  theFacesIDs,
                                 in double      theThickness,
-                                in boolean     isCopy);
+                                in boolean     isCopy,
+                                in boolean     isInside);
 
     
     /*!

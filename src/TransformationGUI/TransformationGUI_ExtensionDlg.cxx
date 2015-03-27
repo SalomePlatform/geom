@@ -390,6 +390,13 @@ bool TransformationGUI_ExtensionDlg::execute(ObjectList& objects)
   case 0:
     anObj = anOper->ExtendEdge(myBase.get(), myUMinSpinBox->value(),
                                myUMaxSpinBox->value());
+    if (!anObj->_is_nil() && !IsPreview())
+    {
+	  QStringList aParameters;
+	  aParameters << myUMinSpinBox->text();
+	  aParameters << myUMaxSpinBox->text();
+	  anObj->SetParameters(aParameters.join(":").toUtf8().constData());
+    }
     res   = true;
     break;
   case 1:
@@ -397,6 +404,15 @@ bool TransformationGUI_ExtensionDlg::execute(ObjectList& objects)
                                myUMaxSpinBox->value(),
                                myVMinSpinBox->value(),
                                myVMaxSpinBox->value());
+    if (!anObj->_is_nil() && !IsPreview())
+    {
+	  QStringList aParameters;
+	  aParameters << myUMinSpinBox->text();
+	  aParameters << myUMaxSpinBox->text();
+	  aParameters << myVMinSpinBox->text();
+	  aParameters << myVMaxSpinBox->text();
+	  anObj->SetParameters(aParameters.join(":").toUtf8().constData());
+    }
     res   = true;
     break;
   default:

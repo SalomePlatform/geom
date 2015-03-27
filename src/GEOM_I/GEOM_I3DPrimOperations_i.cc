@@ -766,7 +766,8 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDraftPrism
                       (GEOM::GEOM_Object_ptr theInitShape, GEOM::GEOM_Object_ptr theBase, 
                        CORBA::Double  theHeight,
                        CORBA::Double  theAngle,
-                       CORBA::Boolean theFuse)
+                       CORBA::Boolean theFuse,
+                       CORBA::Boolean theInvert)
 {
   GEOM::GEOM_Object_var aGEOMObject;
   
@@ -780,7 +781,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDraftPrism
   if (aBase.IsNull() || aInit.IsNull()) return aGEOMObject._retn();
 
   //Create the Prism
-  Handle(GEOM_Object) anObject = GetOperations()->MakeDraftPrism(aInit, aBase, theHeight, theAngle, theFuse);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeDraftPrism(aInit, aBase, theHeight, theAngle, theFuse, theInvert);
  
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
@@ -1187,7 +1188,8 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThickening
                  (GEOM::GEOM_Object_ptr   theObject,
                   const GEOM::ListOfLong &theFacesIDs,
                   CORBA::Double           theOffset,
-                  CORBA::Boolean          doCopy)
+                  CORBA::Boolean          doCopy,
+                  CORBA::Boolean          theInside)
 {
   GEOM::GEOM_Object_var aGEOMObject;
   //Set a not done flag
@@ -1225,7 +1227,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThickening
   if (doCopy)
   {
     Handle(GEOM_Object) anObject = GetOperations()->MakeThickening(
-      aBasicObject, aFaceIDs, theOffset, doCopy);
+      aBasicObject, aFaceIDs, theOffset, doCopy, theInside);
     if (!GetOperations()->IsDone() || anObject.IsNull())
       return aGEOMObject._retn();
     
@@ -1233,7 +1235,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeThickening
   }
   else
   {
-    GetOperations()->MakeThickening(aBasicObject, aFaceIDs, theOffset, doCopy);
+    GetOperations()->MakeThickening(aBasicObject, aFaceIDs, theOffset, doCopy, theInside);
     
     // Update GUI.
     UpdateGUIForObject(theObject);

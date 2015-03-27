@@ -4149,6 +4149,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theFacesIDs the list of face IDs to be removed from the
         #         result. It is ignored if \a theShape is a face or a shell.
         #         It is empty by default. 
+        #  @param theInside If true the thickness is applied towards inside
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -4158,7 +4159,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_thickness "Example"
         @ManageTransactions("PrimOp")
         def MakeThickSolid(self, theShape, theThickness,
-                           theFacesIDs=[], theName=None):
+                           theFacesIDs=[], theInside=False, theName=None):
             """
             Make a thick solid from a shape. If the input is a surface shape
             (face or shell) the result is a thick solid. If an input shape is
@@ -4171,6 +4172,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                  theFacesIDs the list of face IDs to be removed from the
                           result. It is ignored if theShape is a face or a
                           shell. It is empty by default. 
+                 theInside If true the thickness is applied towards inside
                  theName Object name; when specified, this parameter is used
                          for result publication in the study. Otherwise, if automatic
                          publication is switched on, default value is used for result name.
@@ -4179,9 +4181,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created solid
             """
             # Example: see GEOM_TestAll.py
+            theThickness,Parameters = ParseParameters(theThickness)
             anObj = self.PrimOp.MakeThickening(theShape, theFacesIDs,
-                                               theThickness, True)
+                                               theThickness, True, theInside)
             RaiseIfFailed("MakeThickSolid", self.PrimOp)
+            anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "thickSolid")
             return anObj
 
@@ -4195,12 +4199,13 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theFacesIDs the list of face IDs to be removed from the
         #         result. It is ignored if \a theShape is a face or a shell.
         #         It is empty by default. 
+        #  @param theInside If true the thickness is applied towards inside
         #
         #  @return The modified shape
         #
         #  @ref tui_creation_thickness "Example"
         @ManageTransactions("PrimOp")
-        def Thicken(self, theShape, theThickness, theFacesIDs=[]):
+        def Thicken(self, theShape, theThickness, theFacesIDs=[], theInside=False):
             """
             Modifies a shape to make it a thick solid. If the input is a
             surface shape (face or shell) the result is a thick solid. If
@@ -4214,14 +4219,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theFacesIDs the list of face IDs to be removed from the
                          result. It is ignored if \a theShape is a face or
                          a shell. It is empty by default. 
+                theInside If true the thickness is applied towards inside
 
             Returns:
                 The modified shape
             """
             # Example: see GEOM_TestAll.py
+            theThickness,Parameters = ParseParameters(theThickness)
             anObj = self.PrimOp.MakeThickening(theShape, theFacesIDs,
-                                               theThickness, False)
+                                               theThickness, False, theInside)
             RaiseIfFailed("Thicken", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Build a middle path of a pipe-like shape.
@@ -5835,8 +5843,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 New GEOM.GEOM_Object, containing the created edge.
             """
+            theMin, theMax, Parameters = ParseParameters(theMin, theMax)
             anObj = self.ShapesOp.ExtendEdge(theEdge, theMin, theMax)
             RaiseIfFailed("ExtendEdge", self.ShapesOp)
+            anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "edge")
             return anObj
 
@@ -5883,9 +5893,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 New GEOM.GEOM_Object, containing the created face.
             """
+            theUMin, theUMax, theVMin, theVMax, Parameters = ParseParameters(theUMin, theUMax, theVMin, theVMax)
             anObj = self.ShapesOp.ExtendFace(theFace, theUMin, theUMax,
                                              theVMin, theVMax)
             RaiseIfFailed("ExtendFace", self.ShapesOp)
+            anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "face")
             return anObj
 
@@ -10059,6 +10071,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theBase Closed edge or wire defining the base shape to be extruded.
         #  @param theH Prism dimension along the normal to theBase
         #  @param theAngle Draft angle in degrees.
+        #  @param theInvert If true material changes the direction
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -10067,7 +10080,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_creation_prism "Example"
         @ManageTransactions("PrimOp")
-        def MakeExtrudedCut(self, theInit, theBase, theH, theAngle, theName=None):
+        def MakeExtrudedCut(self, theInit, theBase, theH, theAngle, theInvert=False, theName=None):
             """
             Add material to a solid by extrusion of the base shape on the given distance.
 
@@ -10076,6 +10089,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theBase Closed edge or wire defining the base shape to be extruded.
                 theH Prism dimension along the normal  to theBase
                 theAngle Draft angle in degrees.
+                theInvert If true material changes the direction.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -10084,10 +10098,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object,  containing the initial shape with removed material.
             """
             # Example: see GEOM_TestAll.py
-            #theH,Parameters = ParseParameters(theH)
-            anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, False)
+            theH,theAngle,Parameters = ParseParameters(theH,theAngle)
+            anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, False, theInvert)
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
-            #anObj.SetParameters(Parameters)
+            anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "extrudedCut")
             return anObj
 
@@ -10097,6 +10111,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @param theBase Closed edge or wire defining the base shape to be extruded.
         #  @param theH Prism dimension along the normal to theBase
         #  @param theAngle Draft angle in degrees.
+        #  @param theInvert If true material changes the direction
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -10105,7 +10120,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_creation_prism "Example"
         @ManageTransactions("PrimOp")
-        def MakeExtrudedBoss(self, theInit, theBase, theH, theAngle, theName=None):
+        def MakeExtrudedBoss(self, theInit, theBase, theH, theAngle, theInvert=False, theName=None):
             """
             Add material to a solid by extrusion of the base shape on the given distance.
 
@@ -10114,6 +10129,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 theBase Closed edge or wire defining the base shape to be extruded.
                 theH Prism dimension along the normal  to theBase
                 theAngle Draft angle in degrees.
+                theInvert If true material changes the direction.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -10122,10 +10138,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object,  containing the initial shape with added material.
             """
             # Example: see GEOM_TestAll.py
-            #theH,Parameters = ParseParameters(theH)
-            anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, True)
+            theH,theAngle,Parameters = ParseParameters(theH,theAngle)
+            anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, True, theInvert)
             RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
-            #anObj.SetParameters(Parameters)
+            anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "extrudedBoss")
             return anObj
 

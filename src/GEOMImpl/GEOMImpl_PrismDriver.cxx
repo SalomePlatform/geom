@@ -196,6 +196,7 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
     Standard_Real aHeight    = aCI.GetH();                  // Height of the extrusion
     Standard_Real anAngle    = aCI.GetDraftAngle();         // Draft angle
     Standard_Boolean isProtrusion = (aCI.GetFuseFlag()==1); 
+    Standard_Boolean isInvert = aCI.GetInvertFlag();
     // Flag to know wether the feature is a protrusion (fuse) or a depression (cut)
     
     // history of the Base wire (RefBase)
@@ -217,7 +218,7 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
     if(!aSuppObj.IsNull())      // If the wire has a support
       aSupport = aSuppObj->GetValue();
     
-    aShape = MakeDraftPrism(anInitShape, aSketch, aHeight, anAngle, isProtrusion, aSupport); 
+    aShape = MakeDraftPrism(anInitShape, aSketch, aHeight, anAngle, isProtrusion, aSupport, isInvert);
   }
 
   if (aShape.IsNull()) return 0;
@@ -411,7 +412,8 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeDraftPrism ( const TopoDS_Shape& theInitS
                                                     const Standard_Real theHeight,
                                                     const Standard_Real theAngle,
                                                     bool                isProtrusion,
-                                                    const TopoDS_Shape& theSupport)
+                                                    const TopoDS_Shape& theSupport,
+                                                    bool                isInvert)
 {
   TopoDS_Shape aShape;
   
@@ -470,11 +472,11 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeDraftPrism ( const TopoDS_Shape& theInitS
     } 
     
     // Invert height and angle if the operation is an extruded cut
-    bool invert = !isProtrusion; 
+    bool invert = isInvert? isProtrusion : !isProtrusion;
     
     // If the face has a reversed orientation invert for extruded boss operations
     if(aFaceBase.Orientation() == TopAbs_REVERSED)
-      invert = isProtrusion;
+      invert = !invert;
 
     Standard_Real anAngle = theAngle;
     Standard_Real aHeight = theHeight;

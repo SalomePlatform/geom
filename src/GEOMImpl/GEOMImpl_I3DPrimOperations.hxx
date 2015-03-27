@@ -96,7 +96,7 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                                             double theDX, double theDY, double theDZ);
   
   Standard_EXPORT Handle(GEOM_Object) MakeDraftPrism  (Handle(GEOM_Object) theInitShape, Handle(GEOM_Object) theBase,
-                                                       double theHeight, double theAngle, bool theFuse);
+                                                       double theHeight, double theAngle, bool theFuse, bool theInvert = false );
   
   Standard_EXPORT Handle(GEOM_Object) MakePipe (Handle(GEOM_Object) theBase,
                                                 Handle(GEOM_Object) thePath);
@@ -148,7 +148,8 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                 (Handle(GEOM_Object)                     theObject,
                  const Handle(TColStd_HArray1OfInteger) &theFacesIDs,
                  double                                  theOffset,
-                 bool                                    isCopy);
+                 bool                                    isCopy,
+                 bool                                    theInside = false);
 
   Standard_EXPORT Handle(GEOM_Object) RestorePath (Handle(GEOM_Object) theShape,
                                                    Handle(GEOM_Object) theBase1,

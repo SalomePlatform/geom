@@ -1367,7 +1367,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ2Ways
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDraftPrism
-       (Handle(GEOM_Object) theInitShape ,Handle(GEOM_Object) theBase, double theHeight, double theAngle, bool theFuse)
+       (Handle(GEOM_Object) theInitShape ,Handle(GEOM_Object) theBase, double theHeight, double theAngle, bool theFuse, bool theInvert)
 {
   SetErrorCode(KO);
 
@@ -1410,6 +1410,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDraftPrism
     aCI.SetFuseFlag(1);
   else
     aCI.SetFuseFlag(0);
+  aCI.SetInvertFlag(theInvert);
   
   //Compute the Draft Prism Feature value
   try {
@@ -1426,16 +1427,20 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDraftPrism
   }
   
   //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
   if(theFuse)
   {
-    GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakeExtrudedBoss("
-      << theInitShape << ", " << theBase << ", " << theHeight << ", " << theAngle << ")";
+    pd << aPrism << " = geompy.MakeExtrudedBoss(" << theInitShape << ", " << theBase << ", "
+      << theHeight << ", " << theAngle;
   }
   else
   {   
-    GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakeExtrudedCut("
-      << theInitShape << ", " << theBase << ", " << theHeight << ", " << theAngle << ")";
+    pd << aPrism << " = geompy.MakeExtrudedCut(" << theInitShape << ", " << theBase << ", "
+      << theHeight << ", " << theAngle;
   }
+  if (theInvert)
+    pd << ", " << theInvert;
+  pd << ")";
 
   SetErrorCode(OK);
   return aPrism;
@@ -2291,7 +2296,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening
                 (Handle(GEOM_Object)                     theObject,
                  const Handle(TColStd_HArray1OfInteger) &theFacesIDs,
                  double                                  theOffset,
-                 bool                                    isCopy)
+                 bool                                    isCopy,
+                 bool                                    theInside)
 {
   SetErrorCode(KO);
 
@@ -2320,6 +2326,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening
   GEOMImpl_IOffset aTI (aFunction);
   aTI.SetShape(anOriginal);
   aTI.SetValue(theOffset);
+  aTI.SetParam(theInside);
 
   if (theFacesIDs.IsNull() == Standard_False) {
     aTI.SetFaceIDs(theFacesIDs);
@@ -2352,19 +2359,21 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThickening
     aResult = theObject;
   }
 
+  pd << ", [";
   if (theFacesIDs.IsNull() == Standard_False) {
     // Dump faces IDs.
     Standard_Integer i;
 
-    pd << ", [";
-
     for (i = theFacesIDs->Lower(); i < theFacesIDs->Upper(); ++i) {
       pd << theFacesIDs->Value(i) << ", ";
     }
-
     // Dump the last value.
-    pd << theFacesIDs->Value(i) << "]";
+    pd << theFacesIDs->Value(i);
   }
+  pd << "]";
+
+  if (theInside)
+    pd << ", " << theInside;
 
   pd << ")";
   SetErrorCode(OK);

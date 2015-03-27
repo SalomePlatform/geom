@@ -28,6 +28,7 @@
 #define OFF_ARG_SHAPE 1
 #define OFF_ARG_VALUE 2
 #define OFF_ARG_IDS   3
+#define OFF_ARG_PARAM 4
 
 class GEOMImpl_IOffset
 {
@@ -42,6 +43,10 @@ class GEOMImpl_IOffset
   void SetValue(double theValue) { _func->SetReal(OFF_ARG_VALUE, theValue); }
 
   double GetValue() { return _func->GetReal(OFF_ARG_VALUE); }
+
+  void SetParam(Standard_Boolean theParam) { _func->SetInteger(OFF_ARG_PARAM, theParam ? 1 : 0); }
+
+  Standard_Boolean GetParam() { return _func->GetInteger(OFF_ARG_PARAM); }
 
   void SetFaceIDs(const Handle(TColStd_HArray1OfInteger)& theFaceIDs)
     { _func->SetIntegerArray(OFF_ARG_IDS, theFaceIDs); }

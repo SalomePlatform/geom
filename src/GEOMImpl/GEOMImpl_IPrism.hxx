@@ -38,6 +38,7 @@
 #define PRISM_ARG_FUSE     11
 #define PRISM_ARG_INIT     12
 #define PRISM_ARG_MODE     13
+#define PRISM_ARG_INVERT   14
 
 class GEOMImpl_IPrism
 {
@@ -75,9 +76,11 @@ class GEOMImpl_IPrism
   
   void SetFuseFlag(int theFlag) { _func->SetInteger(PRISM_ARG_FUSE, theFlag); }
 //   void SetMode(GEOMImpl_Mode theMode) { _func->SetInteger(PRISM_ARG_MODE, theMode); }  //TEST
+  void SetInvertFlag(Standard_Boolean theInvert) { _func->SetInteger(PRISM_ARG_INVERT, theInvert ? 1 : 0);}
 
   int  GetFuseFlag()      { return _func->GetInteger(PRISM_ARG_FUSE); }
 //   GEOMImpl_Mode GetMode() { return _func->GetInteger(PRISM_ARG_MODE); }   //TEST
+  Standard_Boolean GetInvertFlag() { return _func->GetInteger(PRISM_ARG_INVERT); }
 
  private:
 

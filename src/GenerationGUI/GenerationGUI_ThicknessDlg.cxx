@@ -421,6 +421,7 @@ bool GenerationGUI_ThicknessDlg::execute (ObjectList& objects)
   GEOM::GEOM_I3DPrimOperations_var anOper       =
     GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
   double                           aThickness   = myThicknessSpin->value();
+  bool                             anInside = myInsideCheck->isChecked();
   GEOM::ListOfLong_var             anObjIDsList = new GEOM::ListOfLong();
   TopoDS_Shape                     aShape;
 
@@ -452,14 +453,15 @@ bool GenerationGUI_ThicknessDlg::execute (ObjectList& objects)
     }
   }
 
-  if (myInsideCheck->isChecked()) {
-    aThickness = -aThickness;  
-  }
-
   anObj = anOper->MakeThickening
-    (myObject.get(), anObjIDsList.in(), aThickness, true);
+    (myObject.get(), anObjIDsList.in(), aThickness, true, anInside);
     
   if (!anObj->_is_nil()) {
+    if (!IsPreview()) {
+      QStringList aParameters;
+      aParameters << myThicknessSpin->text();
+      anObj->SetParameters(aParameters.join(":").toUtf8().constData());
+    }
     objects.push_back(anObj._retn());
   }
 

@@ -93,7 +93,8 @@ public:
                                                       const Standard_Real theHeight,
                                                       const Standard_Real theAngle,
                                                       bool                isProtrusion,
-                                                      const TopoDS_Shape& theSupport);
+                                                      const TopoDS_Shape& theSupport,
+                                                      bool                isInvert = false);
 
   Standard_EXPORT virtual
   bool GetCreationInformation(std::string&             theOperationName,

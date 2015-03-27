@@ -73,7 +73,11 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(TFunction_Logbook& log) const
   Handle(GEOM_Function) aRefShape = aCI.GetShape();
   TopoDS_Shape aShapeBase = aRefShape->GetValue();
   Standard_Real anOffset = aCI.GetValue();
+  Standard_Boolean isInside = aCI.GetParam();
   Standard_Real aTol = Precision::Confusion();
+
+  if (isInside)
+    anOffset = -anOffset;
 
   if (Abs(anOffset) < aTol) {
     TCollection_AsciiString aMsg ("Absolute value of offset can not be less than the tolerance value (");
@@ -208,7 +212,7 @@ GetCreationInformation(std::string&             theOperationName,
   case OFFSET_THICKENING_COPY:
     theOperationName = "MakeThickening";
     AddParam( theParams, "Object", aCI.GetShape() );
-    AddParam( theParams, "Offset", aCI.GetValue() );
+    AddParam( theParams, "Offset", aCI.GetParam() ? -aCI.GetValue() : aCI.GetValue() );
     {
       Handle(TColStd_HArray1OfInteger) aFacesIDs = aCI.GetFaceIDs();
 

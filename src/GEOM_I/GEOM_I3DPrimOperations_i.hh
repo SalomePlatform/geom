@@ -153,7 +153,8 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
                                         GEOM::GEOM_Object_ptr theBase,
                                         CORBA::Double         theHeight,
                                         CORBA::Double         theAngle,
-                                        CORBA::Boolean        theFuse);
+                                        CORBA::Boolean        theFuse,
+                                        CORBA::Boolean        theInvert);
                             
   GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase,
 				  GEOM::GEOM_Object_ptr thePath);
@@ -201,7 +202,8 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
   GEOM::GEOM_Object_ptr MakeThickening (GEOM::GEOM_Object_ptr   theObject,
                                         const GEOM::ListOfLong &theFacesIDs,
                                         CORBA::Double           theOffset,
-                                        CORBA::Boolean          isCopy);
+                                        CORBA::Boolean          isCopy,
+                                        CORBA::Boolean          theInside);
 
   GEOM::GEOM_Object_ptr RestorePath (GEOM::GEOM_Object_ptr theShape,
                                      GEOM::GEOM_Object_ptr theBase1,

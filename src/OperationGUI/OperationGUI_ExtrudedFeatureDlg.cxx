@@ -365,14 +365,9 @@ bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
   
   if (myGroup->PushButton3->isChecked())
     angle=myGroup->SpinBox_DY->value();
-  
-  if (myGroup->PushButton4->isChecked())
-  {
-    aHeight = -aHeight;
-    angle   = -angle;
-  }
     
-  bool isProtrusion = (myOperation == OperationGUI::BOSS);  
+  bool isProtrusion = (myOperation == OperationGUI::BOSS);
+  bool isInvert = myGroup->PushButton4->isChecked();
   
   // Hide the initial shape in order to see the modifications on the preview
   erase(myObject1.get(),false); 
@@ -380,9 +375,18 @@ bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj = anOper->MakeDraftPrism(myObject1.get(), myObject2.get(), 
                                                        aHeight,
                                                        angle,
-                                                       isProtrusion);
-  if (!anObj->_is_nil())
+                                                       isProtrusion,
+                                                       isInvert);
+  if (!anObj->_is_nil()) {
+    if (!IsPreview()) {
+      QStringList aParameters;
+      aParameters << myGroup->SpinBox_DX->text();
+      if (myGroup->PushButton3->isChecked())
+        aParameters << myGroup->SpinBox_DY->text();
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    }
     objects.push_back(anObj._retn());
+  }
 
   return true;
 }
