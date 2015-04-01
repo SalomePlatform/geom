@@ -954,17 +954,10 @@ void CurveCreator_Widget::addCoordsByClick( QMouseEvent* pe )
       return;
 
     gp_Pnt aPnt;    
+    OCCViewer_ViewPort3d* vp = getViewPort();
 
-    ic->InitSelected();
-    if ( pe->modifiers() == Qt::ShiftModifier )
-      ic->ShiftSelect();  // Append selection
-    else
-      ic->Select();       // New selection
+    aPnt = CurveCreator_Utils::ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
 
-    {
-      OCCViewer_ViewPort3d* vp = getViewPort();
-      aPnt = CurveCreator_Utils::ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
-    }
     // set the coordinates into dialog
     CurveCreator::Coordinates aCoords;
     aCoords.push_back( aPnt.X() );
@@ -1012,7 +1005,12 @@ void CurveCreator_Widget::onMousePress( SUIT_ViewWindow*, QMouseEvent* theEvent 
  */
 void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEvent* theEvent )
 {
-  
+  if ( getActionMode() != ModificationMode )
+  {
+    // Emit selectionChanged() signal
+    getOCCViewer()->performSelectionChanged();
+    return;
+  } 
   if (theEvent->button() != Qt::LeftButton) return;
   if (!theWindow->inherits("OCCViewer_ViewWindow")) return;
 
@@ -1056,13 +1054,6 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
                         aView3d, Standard_False );
       }
     }
-  }
-
-  if ( getActionMode() != ModificationMode )
-  {
-    // Emit selectionChanged() signal
-    getOCCViewer()->performSelectionChanged();
-    return;
   }
 
   if ( myDragStarted ) {
