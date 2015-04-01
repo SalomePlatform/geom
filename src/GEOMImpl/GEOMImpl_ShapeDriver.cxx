@@ -31,6 +31,7 @@
 
 #include <GEOM_Function.hxx>
 #include <GEOMUtils_Hatcher.hxx>
+#include <GEOMAlgo_State.hxx>
 
 // OCCT Includes
 #include <ShapeFix_Wire.hxx>
@@ -1599,7 +1600,13 @@ GetCreationInformation(std::string&             theOperationName,
     if ( !shapes.IsNull() && shapes->Length() > 1 )
       AddParam( theParams, "Shape", shapes->Value(2) );
     AddParam( theParams, "Shape type", TopAbs_ShapeEnum( aCI.GetSubShapeType() ));
-    AddParam( theParams, "State", TopAbs_State((int) aCI.GetTolerance() ));
+    AddParam( theParams, "State" );
+    GEOMAlgo_State st = GEOMAlgo_State( (int) aCI.GetTolerance()+0.1 );
+    const char* stName[] = { "UNKNOWN","IN","OUT","ON","ONIN","ONOUT","INOUT" };
+    if ( 0 <= st && st <= GEOMAlgo_ST_INOUT )
+      theParams.back() << stName[ st ];
+    else
+      theParams.back() << (int) st;
     break;
   }
   case SHAPE_ISOLINE:
