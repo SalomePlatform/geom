@@ -444,8 +444,11 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 
   int mgrId = viewWindow->getViewManager()->getGlobalId();
 
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
   SALOME_ListIO anIOlst;
-  displayer.GetActiveView()->GetVisible( anIOlst );
+  window->GetVisible( anIOlst );
 
   for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
@@ -479,8 +482,11 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
 
   int aMgrId = viewWindow->getViewManager()->getGlobalId();
 
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
   SALOME_ListIO anIOlst;
-  displayer.GetActiveView()->GetVisible( anIOlst );
+  window->GetVisible( anIOlst );
 
   for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
@@ -525,8 +531,11 @@ void DisplayGUI::SetVerticesMode( const bool mode, SUIT_ViewWindow* viewWindow )
 
   int aMgrId = viewWindow->getViewManager()->getGlobalId();
 
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
   SALOME_ListIO anIOlst;
-  displayer.GetActiveView()->GetVisible( anIOlst );
+  window->GetVisible( anIOlst );
 
   for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
@@ -571,8 +580,11 @@ void DisplayGUI::SetNameMode( const bool mode, SUIT_ViewWindow* viewWindow )
 
   int aMgrId = viewWindow->getViewManager()->getGlobalId();
 
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
   SALOME_ListIO anIOlst;
-  displayer.GetActiveView()->GetVisible( anIOlst );
+  window->GetVisible( anIOlst );
 
   for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();

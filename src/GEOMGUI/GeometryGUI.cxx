@@ -3082,8 +3082,11 @@ void UpdateNameMode( SalomeApp_Application* app )
   GEOM_Displayer displayer( aStudy );
   int aMgrId = viewWindow->getViewManager()->getGlobalId();
 
+  SALOME_View* window = displayer.GetActiveView();
+  if ( !window ) return;
+
   SALOME_ListIO anIOlst;
-  displayer.GetActiveView()->GetVisible( anIOlst );
+  window->GetVisible( anIOlst );
 
   for ( SALOME_ListIteratorOfListIO It( anIOlst ); It.More(); It.Next() ) {
     Handle( SALOME_InteractiveObject ) io = It.Value();
