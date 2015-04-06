@@ -694,7 +694,10 @@ void TransformationGUI_TranslationDlg::createPathPreview ( GEOM::GEOM_Object_ptr
 //=================================================================================
 QList<GEOM::GeomObjPtr> TransformationGUI_TranslationDlg::getSourceObjects()
 {
-  QList<GEOM::GeomObjPtr> res(myObjects);
-  res << myVector << myPoint1 << myPoint2;
+  QList<GEOM::GeomObjPtr> res;
+  if ( GroupPoints->CheckBox2->isChecked() ) {
+    res.append(myObjects);
+    res << myVector << myPoint1 << myPoint2;
+  }
   return res;
 }

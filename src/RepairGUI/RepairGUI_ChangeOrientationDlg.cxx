@@ -307,7 +307,9 @@ void RepairGUI_ChangeOrientationDlg::CreateCopyModeChanged( bool isCreateCopy )
 QList<GEOM::GeomObjPtr> RepairGUI_ChangeOrientationDlg::getSourceObjects()
 {
   QList<GEOM::GeomObjPtr> res;
-  GEOM::GeomObjPtr aGeomObjPtr(myObject);
-  res << aGeomObjPtr;
+  if ( GroupPoints->CheckButton1->isChecked() ) {
+    GEOM::GeomObjPtr aGeomObjPtr(myObject);
+    res << aGeomObjPtr;
+  }
   return res;
 }

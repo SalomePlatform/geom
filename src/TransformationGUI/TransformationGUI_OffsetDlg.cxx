@@ -335,5 +335,8 @@ void TransformationGUI_OffsetDlg::CreateCopyModeChanged()
 //=================================================================================
 QList<GEOM::GeomObjPtr> TransformationGUI_OffsetDlg::getSourceObjects()
 {
-  return myObjects;
+  QList<GEOM::GeomObjPtr> res;
+  if ( GroupPoints->CheckButton1->isChecked() )
+    res.append( myObjects );
+  return res;
 }

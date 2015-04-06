@@ -623,7 +623,10 @@ void TransformationGUI_RotationDlg::addSubshapesToStudy()
 //=================================================================================
 QList<GEOM::GeomObjPtr> TransformationGUI_RotationDlg::getSourceObjects()
 {
-  QList<GEOM::GeomObjPtr> res(myObjects);
-  res << myAxis << myCentPoint << myPoint1 << myPoint2;
+  QList<GEOM::GeomObjPtr> res;
+  if ( GroupPoints->CheckButton1->isChecked() ) {
+    res.append(myObjects);
+    res << myAxis << myCentPoint << myPoint1 << myPoint2;
+  }
   return res;
 }

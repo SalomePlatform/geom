@@ -461,7 +461,10 @@ void TransformationGUI_MirrorDlg::addSubshapesToStudy()
 //=================================================================================
 QList<GEOM::GeomObjPtr> TransformationGUI_MirrorDlg::getSourceObjects()
 {
-  QList<GEOM::GeomObjPtr> res(myObjects);
-  res << myArgument;
+  QList<GEOM::GeomObjPtr> res;
+  if ( GroupPoints->CheckButton1->isChecked() ) {
+    res.append(myObjects);
+    res << myArgument;
+  }
   return res;
 }

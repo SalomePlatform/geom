@@ -615,7 +615,10 @@ void TransformationGUI_PositionDlg::addSubshapesToStudy()
 //=================================================================================
 QList<GEOM::GeomObjPtr> TransformationGUI_PositionDlg::getSourceObjects()
 {
-  QList<GEOM::GeomObjPtr> res(myObjects);
-  res << myStartLCS << myEndLCS << myPath;
+  QList<GEOM::GeomObjPtr> res;
+  if ( Group1->CheckButton1->isChecked() ) {
+    res.append(myObjects);
+    res << myStartLCS << myEndLCS << myPath;
+  }
   return res;
 }

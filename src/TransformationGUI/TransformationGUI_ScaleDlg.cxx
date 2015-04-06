@@ -541,6 +541,7 @@ void TransformationGUI_ScaleDlg::addSubshapesToStudy()
 QList<GEOM::GeomObjPtr> TransformationGUI_ScaleDlg::getSourceObjects()
 {
   QList<GEOM::GeomObjPtr> res(myObjects);
-  res << myPoint;
+  if ( CheckBoxCopy->isChecked() )
+    res << myPoint;
   return res;
 }
