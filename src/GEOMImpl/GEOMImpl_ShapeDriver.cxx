@@ -1601,7 +1601,7 @@ GetCreationInformation(std::string&             theOperationName,
       AddParam( theParams, "Shape", shapes->Value(2) );
     AddParam( theParams, "Shape type", TopAbs_ShapeEnum( aCI.GetSubShapeType() ));
     AddParam( theParams, "State" );
-    GEOMAlgo_State st = GEOMAlgo_State( (int) aCI.GetTolerance()+0.1 );
+    GEOMAlgo_State st = GEOMAlgo_State( (int) ( aCI.GetTolerance()+0.1 ) );
     const char* stName[] = { "UNKNOWN","IN","OUT","ON","ONIN","ONOUT","INOUT" };
     if ( 0 <= st && st <= GEOMAlgo_ST_INOUT )
       theParams.back() << stName[ st ];
