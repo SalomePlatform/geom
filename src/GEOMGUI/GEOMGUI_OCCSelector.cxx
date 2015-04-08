@@ -25,6 +25,8 @@
 //
 #include "GEOMGUI_OCCSelector.h"
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <LightApp_DataSubOwner.h>
 
 #include <OCCViewer_ViewModel.h>
@@ -176,7 +178,15 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
     Handle(SelectMgr_Selection) sel = theObj->Selection( m );
 
     for ( sel->Init(); sel->More(); sel->Next() ) {
+#if OCC_VERSION_LARGE > 0x06080100
+      const SelectMgr_HSensitiveEntity aHSenEntity = sel->Sensitive();
+      if( aHSenEntity.IsNull() )
+        continue;
+
+      Handle(SelectBasics_SensitiveEntity) entity = aHSenEntity->BaseSensitive();
+#else
       Handle(SelectBasics_SensitiveEntity) entity = sel->Sensitive();
+#endif
       if ( entity.IsNull() )
         continue;
 

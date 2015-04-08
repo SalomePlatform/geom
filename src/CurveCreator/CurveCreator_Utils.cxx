@@ -22,6 +22,8 @@
 #include "CurveCreator_Curve.hxx"
 #include "CurveCreator_UtilsICurve.hxx"
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <GEOMUtils.hxx>
 
 #include <gp_Pln.hxx>
@@ -578,8 +580,16 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
 
   Handle_SelectMgr_Selection aSelection = anAISShape->Selection( AIS_Shape::SelectionMode( TopAbs_VERTEX ) );
   for( aSelection->Init(); aSelection->More(); aSelection->Next() )
-  {
+  {    
+#if OCC_VERSION_LARGE > 0x06080100
+    const SelectMgr_HSensitiveEntity aHSenEntity = aSelection->Sensitive();
+    if( aHSenEntity.IsNull() )
+      continue;
+    Handle_SelectBasics_SensitiveEntity aSenEntity = aHSenEntity->BaseSensitive();
+#else
     Handle_SelectBasics_SensitiveEntity aSenEntity = aSelection->Sensitive();
+#endif
+
     Handle_Select3D_SensitivePoint aSenPnt = Handle_Select3D_SensitivePoint::DownCast( aSenEntity );
 
     gp_Pnt anOwnerPnt = aSenPnt->Point();
