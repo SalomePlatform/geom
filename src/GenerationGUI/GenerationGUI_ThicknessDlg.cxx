@@ -467,3 +467,14 @@ bool GenerationGUI_ThicknessDlg::execute (ObjectList& objects)
 
   return true;
 }
+
+//=================================================================================
+// function : getSourceObjects
+// purpose  : virtual method to get source objects
+//=================================================================================
+QList<GEOM::GeomObjPtr> GenerationGUI_ThicknessDlg::getSourceObjects()
+{
+  QList<GEOM::GeomObjPtr> res(myFaces);
+  res << myObject;
+  return res;
+}

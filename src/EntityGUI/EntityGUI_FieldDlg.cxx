@@ -1990,7 +1990,7 @@ bool EntityGUI_FieldDlg::execute()
 QList<GEOM::GeomObjPtr> EntityGUI_FieldDlg::getSourceObjects()
 {
   QList<GEOM::GeomObjPtr> res;
-  GEOM::GeomObjPtr aGeomObjPtr(myShape);
+  GEOM::GeomObjPtr aGeomObjPtr(myField->GetShape());
   res << aGeomObjPtr;
   return res;
 }

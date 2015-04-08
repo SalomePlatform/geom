@@ -337,6 +337,6 @@ bool OperationGUI_TransferDataDlg::execute (ObjectList& objects)
 QList<GEOM::GeomObjPtr> OperationGUI_TransferDataDlg::getSourceObjects()
 {
   QList<GEOM::GeomObjPtr> res;
-  res << myObject1 << myObject2;
+  res << myObject1;
   return res;
 }
