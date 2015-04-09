@@ -282,7 +282,10 @@ GEOMToolsGUI_TreeWidgetItem* GEOMToolsGUI_ReduceStudyDlg::addSubObject( QTreeWid
 {
   GEOMToolsGUI_TreeWidgetItem* item;
   if( !theObject->IsMainShape() ) {
-    GEOMToolsGUI_TreeWidgetItem* parentItem = addSubObject( theWidget, theObjects, theObject->GetMainShape() );
+    GEOM::GEOM_Object_var aMainShape = theObject->GetMainShape();
+    if ( CORBA::is_nil( aMainShape ) )
+      return NULL;
+    GEOMToolsGUI_TreeWidgetItem* parentItem = addSubObject( theWidget, theObjects, aMainShape );
     item = findObjectInTree( theWidget, theObject );
     if( !item )
       item = new GEOMToolsGUI_TreeWidgetItem( parentItem, QStringList() << theObject->GetName(), theObject->GetStudyEntry() );
