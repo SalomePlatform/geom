@@ -2944,7 +2944,8 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
     }
   }
 
-  TopoDS_Shape aShape;
+  TopoDS_Shape           aShape;
+  const Standard_Boolean isGenerateGroups = aCI->GetGenerateGroups();
 
   if (aType == PIPE_BASE_PATH) {
     Handle(GEOM_Function) aRefBase = aCI->GetBase();
@@ -3031,7 +3032,6 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
     Handle(TColStd_HSequenceOfTransient) aLocObjs = aCIDS->GetLocations ();
     Standard_Boolean aWithContact = (aCIDS->GetWithContactMode());
     Standard_Boolean aWithCorrect = (aCIDS->GetWithCorrectionMode());
-    Standard_Boolean isGenerateGroups = aCIDS->GetGenerateGroups();
 
     if (aCI) {
       delete aCI;
@@ -3103,8 +3103,6 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
   else if (aType == PIPE_BI_NORMAL_ALONG_VECTOR) {
     aShape = CreatePipeBiNormalAlongVector(aWirePath, aCI);
   }
-
-  const Standard_Boolean isGenerateGroups = aCI->GetGenerateGroups();
 
   if (aCI) {
     delete aCI;
