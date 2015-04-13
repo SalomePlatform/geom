@@ -790,13 +790,10 @@ class StructuralElementPart2D(StructuralElementPart):
                                           self.geom.ShapeType["FACE"])
             for face in faces:
                 offsetFace = self._makeFaceOffset(face, offset)
-                # get tangent plane on surface by parameters
+                # get the center of the face and the normal at the center
                 center = self.geom.MakeVertexOnSurface(offsetFace,
                                                        uParam, vParam)
-                tangPlane = self.geom.MakeTangentPlaneOnFace(offsetFace,
-                                                             uParam, vParam,
-                                                             1.0)
-                normal = self.geom.GetNormal(tangPlane)
+                normal = self.geom.GetNormal(offsetFace, center)
                 marker = self._orientation.buildMarker(self.geom,
                                                        center, normal)
                 listMarkers.append(marker)
