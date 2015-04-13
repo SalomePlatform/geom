@@ -338,9 +338,9 @@ setDisplayMode(int theMode)
     myIsolatedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
                                                  myIsolatedEdgeColor[1],
                                                  myIsolatedEdgeColor[2]);
-    mySharedEdgeActor->GetProperty()->SetColor(myIsolatedEdgeColor[0],
-                                               myIsolatedEdgeColor[1],
-                                               myIsolatedEdgeColor[2]);
+    mySharedEdgeActor->GetProperty()->SetColor(mySharedEdgeColor[0],
+                                               mySharedEdgeColor[1],
+                                               mySharedEdgeColor[2]);
     myOneFaceEdgeActor->GetProperty()->SetColor(myOneFaceEdgeColor[0],
                                                myOneFaceEdgeColor[1],
                                                myOneFaceEdgeColor[2]);
