@@ -4472,7 +4472,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         # end of l3_complex
         ## @}
 
-        ## @addtogroup l3_advanced
+        ## @addtogroup l3_basic_go
         ## @{
 
         ## Create a linear edge with specified ends.
@@ -4904,7 +4904,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "solid")
             return anObj
 
-        # end of l3_advanced
+        # end of l3_basic_go
         ## @}
 
         ## @addtogroup l2_measure
