@@ -50,6 +50,10 @@ ADD_DEFINITIONS(
   ${QT_DEFINITIONS}
   )
 
+IF(WIN32)
+  ADD_DEFINITIONS(-DNOGDI)
+ENDIF(WIN32)
+
 # libraries to link to
 SET(_link_LIBRARIES
   GEOMObject
