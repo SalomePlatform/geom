@@ -3153,7 +3153,7 @@
     </message>
     <message>
       <source>PREF_DEFLECTION</source>
-      <translation>変形倍率</translation>
+      <translation>既定の変形倍率</translation>
     </message>
     <message>
       <source>GEOM_PREF_def_precision</source>
@@ -3201,7 +3201,7 @@
     </message>
     <message>
       <source>PREF_TRANSPARENCY</source>
-      <translation>透明度</translation>
+      <translation>既定の透明度</translation>
     </message>
     <message>
       <source>PREF_FREE_BOUND_COLOR</source>
@@ -3225,7 +3225,7 @@
     </message>
     <message>
       <source>PREF_GROUP_VERTEX</source>
-      <translation>ポイントのマーカー</translation>
+      <translation>既定のポイントのマーカー</translation>
     </message>
     <message>
       <source>PREF_ISOS_COLOR</source>
@@ -3305,11 +3305,11 @@
     </message>
     <message>
       <source>PREF_EDGE_WIDTH</source>
-      <translation>エッジの厚さ</translation>
+      <translation>既定のエッジの厚さ</translation>
     </message>
     <message>
       <source>PREF_ISOLINES_WIDTH</source>
-      <translation>輪郭の太さ</translation>
+      <translation>既定の輪郭の太さ</translation>
     </message>
     <message>
       <source>PREF_PREVIEW_EDGE_WIDTH</source>
@@ -3365,7 +3365,7 @@
     </message>
     <message>
       <source>PREF_ISOS</source>
-      <translation>輪郭の数</translation>
+      <translation>既定の輪郭の数</translation>
     </message>
     <message>
       <source>PREF_ISOS_U</source>

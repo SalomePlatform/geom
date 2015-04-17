@@ -3210,7 +3210,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_DEFLECTION</source>
-        <translation>Coefficient de déformation</translation>
+        <translation>Coefficient de déformation par défaut</translation>
     </message>
     <message>
         <source>GEOM_PREF_def_precision</source>
@@ -3258,7 +3258,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_TRANSPARENCY</source>
-        <translation>Transparence</translation>
+        <translation>Transparence par défaut</translation>
     </message>
     <message>
         <source>PREF_FREE_BOUND_COLOR</source>
@@ -3282,7 +3282,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_GROUP_VERTEX</source>
-        <translation>Marqueurs de points</translation>
+        <translation>Marqueurs de points par défaut</translation>
     </message>
     <message>
         <source>PREF_ISOS_COLOR</source>
@@ -3362,11 +3362,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_EDGE_WIDTH</source>
-        <translation>Epaisseur des arêtes</translation>
+        <translation>Epaisseur des arêtes par défaut</translation>
     </message>
     <message>
         <source>PREF_ISOLINES_WIDTH</source>
-        <translation>Epaisseur des isolignes</translation>
+        <translation>Epaisseur des isolignes par défaut</translation>
     </message>
     <message>
         <source>PREF_PREVIEW_EDGE_WIDTH</source>
@@ -3422,7 +3422,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_ISOS</source>
-        <translation>Nombre d&apos;isolignes</translation>
+        <translation>Nombre d&apos;isolignes par défaut</translation>
     </message>
     <message>
         <source>PREF_ISOS_U</source>

@@ -3262,7 +3262,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>PREF_DEFLECTION</source>
-        <translation>Deflection coefficient</translation>
+        <translation>Default deflection coefficient</translation>
     </message>
     <message>
         <source>GEOM_PREF_def_precision</source>
@@ -3310,7 +3310,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>PREF_TRANSPARENCY</source>
-        <translation>Transparency</translation>
+        <translation>Default transparency</translation>
     </message>
     <message>
         <source>PREF_FREE_BOUND_COLOR</source>
@@ -3334,7 +3334,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>PREF_GROUP_VERTEX</source>
-        <translation>Marker of Points</translation>
+        <translation>Default marker of points</translation>
     </message>
     <message>
         <source>PREF_ISOS_COLOR</source>
@@ -3414,11 +3414,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>PREF_EDGE_WIDTH</source>
-        <translation>Edges width</translation>
+        <translation>Default edges width</translation>
     </message>
     <message>
         <source>PREF_ISOLINES_WIDTH</source>
-        <translation>Iso lines width</translation>
+        <translation>Default isolines width</translation>
     </message>
     <message>
         <source>PREF_PREVIEW_EDGE_WIDTH</source>
@@ -3474,7 +3474,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>PREF_ISOS</source>
-        <translation>Number of isolines</translation>
+        <translation>Default number of isolines</translation>
     </message>
     <message>
         <source>PREF_ISOS_U</source>
