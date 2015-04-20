@@ -416,19 +416,18 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
       aPx[i]=aInfoEx.Location();
     }
     //
+    Standard_Boolean isRectangle = Standard_True;
     for (i=0; i<4; ++i) {
       j=(i==3) ? 0 : i+1;
       aDot=aDx[i]*aDx[j];
       if (fabs (aDot) > myTolerance) {
-        aInfo.SetKindOfName(GEOMAlgo_KN_QUADRANGLE);
-        return;
+        isRectangle = Standard_False;
+        break;
       }
     }
     //
     // rectangle
-    aInfo.SetKindOfName(GEOMAlgo_KN_RECTANGLE);
-    //
-    // shift location to the center and calc. sizes
+    // shift location to the center
     aXYZc.SetCoord(0.,0.,0.);
     TopExp::MapShapes(aF, TopAbs_VERTEX, aMV);
     for (i=1; i<=aNbV; ++i) {
@@ -440,32 +439,40 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
     //
     // Location : aPc in center of rectangle
     // Position : 0z is plane normal
-    //            0x is along length
+    //            0x is along the first edge (quadrangle) or
+    //            along length (rectangle)
     //
     aXYZc.Divide(4.);
     aPc.SetXYZ(aXYZc);
-    //
-    gp_Lin aL0(aPx[0], aDx[0]);
-    gp_Lin aL1(aPx[1], aDx[1]);
-    //
-    aD0=aL0.Distance(aPc);
-    aD1=aL1.Distance(aPc);
-    //
-    aLength=aD0;
-    aWidth =aD1;
-    aDX=aL1.Direction();
-    if (aD0<aD1) {
+    aDX=aDx[0];
+    aInfo.SetLocation(aPc);
+
+    if (isRectangle) {
+      // Calculate sizes
+      gp_Lin aL0(aPx[0], aDx[0]);
+      gp_Lin aL1(aPx[1], aDx[1]);
+      //
+      aD0=aL0.Distance(aPc);
+      aD1=aL1.Distance(aPc);
+      //
       aLength=aD1;
       aWidth =aD0;
-      aDX=aL0.Direction();
+
+      if (aD0>aD1) {
+        aLength=aD0;
+        aWidth =aD1;
+        aDX=aDx[1];
+      }
+      //
+      aLength=2.*aLength;
+      aWidth =2.*aWidth;
+      //
+      aInfo.SetLength(aLength);
+      aInfo.SetWidth(aWidth);
+      aInfo.SetKindOfName(GEOMAlgo_KN_RECTANGLE);
+    } else {
+      aInfo.SetKindOfName(GEOMAlgo_KN_QUADRANGLE);
     }
-    //
-    aLength=2.*aLength;
-    aWidth =2.*aWidth;
-    //
-    aInfo.SetLocation(aPc);
-    aInfo.SetLength(aLength);
-    aInfo.SetWidth(aWidth);
     //
     const gp_Dir& aDZ=aPln.Axis().Direction();
     gp_Ax2 aAx2(aPc, aDZ, aDX);
