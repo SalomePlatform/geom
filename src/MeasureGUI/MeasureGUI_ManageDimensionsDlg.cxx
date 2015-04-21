@@ -134,7 +134,7 @@ MeasureGUI_ManageDimensionsDlg::MeasureGUI_ManageDimensionsDlg( GeometryGUI* the
   {
     myObjectSelector->PushButton1->click();
   }
-
+  isNeedRedisplay = false;
   setHelpFileName("managing_dimensions_page.html");
 }
 
@@ -805,6 +805,9 @@ void MeasureGUI_ManageDimensionsDlg::OnFinish()
                              myEditObject->GetStudyEntry(),
                              GEOM::propertyName( GEOM::Dimensions ),
                              QVariant() );
+  if ( isNeedRedisplay ) {
+    redisplay( myEditObject.get());
+  }
 }
 
 //=================================================================================
@@ -1103,8 +1106,8 @@ bool MeasureGUI_ManageDimensionsDlg::AllowedToCancelChanges()
                                             tr( "WRN_MSG_CHANGES_LOST" ),
                                             QMessageBox::Ok,
                                             QMessageBox::Cancel );
-
-  return aResponse == QMessageBox::Ok;
+  isNeedRedisplay = ( aResponse == QMessageBox::Ok );
+  return isNeedRedisplay;
 }
 
 //=================================================================================
