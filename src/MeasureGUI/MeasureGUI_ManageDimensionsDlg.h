@@ -114,7 +114,7 @@ private:
 
 private:
   GEOM::GeomObjPtr                myEditObject;
-  bool                            isNeedRedisplay;
+  bool                            myIsNeedRedisplay;
 private:
   DlgRef_1Sel*                    myObjectSelector;
   MeasureGUI_1TreeWidget_4Button* myDimensionView;
