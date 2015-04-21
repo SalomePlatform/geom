@@ -805,8 +805,6 @@ void MeasureGUI_ManageDimensionsDlg::OnFinish()
                              myEditObject->GetStudyEntry(),
                              GEOM::propertyName( GEOM::Dimensions ),
                              QVariant() );
-
-  redisplay( myEditObject.get() );
 }
 
 //=================================================================================
@@ -889,8 +887,8 @@ void MeasureGUI_ManageDimensionsDlg::SetEditObject( const GEOM::GeomObjPtr& theO
 
   if ( myEditObject.isNull() )
   {
+    myDimensionView->TreeWidget->clear();
     myDimensionView->setEnabled( false );
-
     return;
   }
 
@@ -955,8 +953,6 @@ void MeasureGUI_ManageDimensionsDlg::RestoreState()
                              myEditObject->GetStudyEntry(),
                              GEOM::propertyName( GEOM::Dimensions ),
                              QVariant() );
-
-  RedisplayObject();
 }
 
 //=================================================================================
