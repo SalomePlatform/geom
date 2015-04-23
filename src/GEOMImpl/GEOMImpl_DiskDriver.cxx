@@ -41,6 +41,7 @@
 
 #include <Standard_ConstructionError.hxx>
 #include <Precision.hxx>
+#include <gp_Pln.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
 #include <gp_Circ.hxx>
@@ -91,12 +92,14 @@ Standard_Integer GEOMImpl_DiskDriver::Execute(TFunction_Logbook& log) const
       TopExp::Vertices(anE, V1, V2, Standard_True);
       if (!V1.IsNull() && !V2.IsNull()) {
         gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-        gp_Ax2 anAxes (aP, -aV);
+        gp_Ax2 anAxes (aP, aV);
+        gp_Ax3 anAxes3(anAxes);
+        gp_Pln aPln(anAxes3);
         gp_Circ aCirc (anAxes, aCI.GetRadius());
         TopoDS_Shape aCircle = BRepBuilderAPI_MakeEdge(aCirc).Edge();
         BRepBuilderAPI_MakeWire MW;
         MW.Add(TopoDS::Edge(aCircle));
-        BRepBuilderAPI_MakeFace MF (MW, Standard_False);
+        BRepBuilderAPI_MakeFace MF (aPln, MW);
         aShape = MF.Shape();
       }
     }
@@ -120,11 +123,14 @@ Standard_Integer GEOMImpl_DiskDriver::Execute(TFunction_Logbook& log) const
         Standard_ConstructionError::Raise("Disk creation aborted: coincident points given");
       if (gp_Vec(aP1, aP2).IsParallel(gp_Vec(aP1, aP3), Precision::Angular()))
         Standard_ConstructionError::Raise("Disk creation aborted: points lay on one line");
-      Handle(Geom_Circle) aCirc = GC_MakeCircle(aP3, aP2, aP1).Value();
+      Handle(Geom_Circle) aCirc = GC_MakeCircle(aP1, aP2, aP3).Value();
+      gp_Circ aGpCirc = aCirc->Circ();
+      gp_Ax3 anAxes3(aGpCirc.Position());
+      gp_Pln aPln(anAxes3);
       TopoDS_Shape aCircle = BRepBuilderAPI_MakeEdge(aCirc).Edge();
       BRepBuilderAPI_MakeWire MW;
       MW.Add(TopoDS::Edge(aCircle));
-      BRepBuilderAPI_MakeFace MF (MW, Standard_False);
+      BRepBuilderAPI_MakeFace MF (aPln, MW);
       aShape = MF.Shape();
     }  
   }
@@ -139,12 +145,14 @@ Standard_Integer GEOMImpl_DiskDriver::Execute(TFunction_Logbook& log) const
     else if (anOrient == 3)
       aV = gp::DY();
 
-    gp_Ax2 anAxes (aP, -aV);
+    gp_Ax2 anAxes (aP, aV);
+    gp_Ax3 anAxes3(anAxes);
+    gp_Pln aPln(anAxes3);
     gp_Circ aCirc (anAxes, aCI.GetRadius());
     TopoDS_Shape aCircle = BRepBuilderAPI_MakeEdge(aCirc).Edge();
     BRepBuilderAPI_MakeWire MW;
     MW.Add(TopoDS::Edge(aCircle));
-    BRepBuilderAPI_MakeFace MF (MW, Standard_False);
+    BRepBuilderAPI_MakeFace MF (aPln, MW);
     aShape = MF.Shape();
   }
    else {
