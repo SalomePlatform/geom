@@ -1,0 +1,28 @@
+/*!
+
+\page shape_statistics_operation_page Shape Statistics
+
+This operation allows plotting a distribution histogram for the numerical parameters and creating the corresponding geometrical groups of the given shape.
+
+To call <b>Shape Statistics</b> dialog box, in the <b>Main Menu</b> select <b>Inspection - > Shape Statistics</b>.
+
+\image html shape_statistics.png
+
+In this dialog:
+- "Selected objects" standard selection box allows selecting one or more geometrical objects.
+
+- "Type" combo-box with the following items: "Edges length", "Faces area", "Solids volume".
+\note "Type" combo-box includes only parameters applied to the currently selected shape (e.g. "Solids volume" will not be available for face or shell being selected); multiple selection is processed correspondingly (i.e. only types applicable for all selected shapes will be available).
+
+- "Number of intervals" spin box is used to specify number of distribution histogram ranges.
+
+- "Scalar range" checkable group box that, when switched ON, allows specifying custom values range used for plotting and creating groups.
+\note By default, "Scalar range" controls is empty; pressing "Compute" button allows automatic computing initial range of the chosen parameter. This is needed as computation of the parameters range can be time-consuming for large or complex models. In case of multiple selection, scalar range is computed as common from all selected shapes.
+
+- "Plot" button opens or uses an opened Plot2d viewer and plots the distribution histogram for the selected shape(s).
+
+- "Create groups" button allows creating a groups according to the currently specified parameters. The groups names will include numerical values of the range, e.g. "Edges_length_0-20", "Edges_length_20-40", etc. Empty groups are not created.
+
+- Close dialog box, by pressing <b>Close</b> button.
+
+*/

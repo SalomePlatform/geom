@@ -432,6 +432,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Fast intersection</translation>
     </message>
     <message>
+        <source>GEOM_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
+    </message>
+    <message>
         <source>GEOM_CIRCLE</source>
         <translation>Circle</translation>
     </message>
@@ -2557,6 +2561,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Fast intersection</translation>
     </message>
     <message>
+        <source>MEN_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
+    </message>
+    <message>
         <source>MEN_CHECK_FREE_BNDS</source>
         <translation>Check Free Boundaries</translation>
     </message>
@@ -2838,7 +2846,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_MEASURES</source>
-        <translation>Measures</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>MEN_MIN_DIST</source>
@@ -3592,6 +3600,10 @@ Please, select face, shell or solid and try again</translation>
         <source>STB_FAST_CHECK_INTERSECTIONS</source>
         <translation>Fast intersection</translation>
    </message>
+    <message>
+        <source>STB_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
+   </message>
    <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Check free boundaries</translation>
@@ -4223,6 +4235,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_FAST_CHECK_INTERSECTIONS</source>
         <translation>Fast intersection</translation>
+    </message>
+    <message>
+        <source>TOP_SHAPE_STATISTICS</source>
+        <translation>Shape Statistics</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -5384,6 +5400,10 @@ shells and solids on the other hand.</translation>
         <source>GEOM_HEALING_STATS_COL_2</source>
         <translation>Modification</translation>
     </message>
+    <message>
+        <source>GEOM_PLOT_DISTRIBUTION</source>
+        <translation>Plot</translation>
+    </message>
 </context>
 <context>
     <name>GeometryGUI</name>
@@ -5433,7 +5453,7 @@ shells and solids on the other hand.</translation>
     </message>
     <message>
         <source>TOOL_MEASURES</source>
-        <translation>Measures</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>TOOL_IMPORTEXPORT</source>
@@ -7333,6 +7353,69 @@ Do you want to create new material?</translation>
     <message>
         <source>GEOM_FAST_CHECK_OBJ</source>
         <translation>Objects And Results</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_ShapeStatisticsDlg</name>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_TYPE</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_LENGTH</source>
+        <translation>Edges length</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_AREA</source>
+        <translation>Faces area</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_VOLUME</source>
+        <translation>Solids volume</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_NB_INTERVALS</source>
+        <translation>Number of intervals</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_SCALAR_RANGE</source>
+        <translation>Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_COMPUTE</source>
+        <translation>Compute</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN</source>
+        <translation>Min</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX</source>
+        <translation>Max</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_CREATE_GROUPS</source>
+        <translation>Create Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_DISTRIBUTION_NB_ENT</source>
+        <translation>Number of entities</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_ERROR</source>
+        <translation>Set minimal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX_ERROR</source>
+        <translation>Set maximal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR</source>
+        <translation>Minimal range value can not be more than maximal</translation>
+    </message>
+    <message>
+        <source>GEOM_MSG_GROUPS_CREATED</source>
+        <translation>%1 groups created</translation>
     </message>
 </context>
 <context>

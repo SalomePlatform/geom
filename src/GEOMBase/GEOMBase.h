@@ -133,7 +133,7 @@ public :
   static QString      GetEntry( GEOM::GEOM_Object_ptr object );
 
   /* Publish sub-shape under the main object */
-  static void         PublishSubObject( GEOM::GEOM_Object_ptr object );
+  static void         PublishSubObject( GEOM::GEOM_Object_ptr object, const QString& name = QString() );
 
   static void         Synchronize( QList<GEOM::GeomObjPtr>& left, QList<GEOM::GeomObjPtr>& right );
 };

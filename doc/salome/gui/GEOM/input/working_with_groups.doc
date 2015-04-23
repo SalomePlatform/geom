@@ -24,7 +24,7 @@ This functionality is available in OCC viewer only.
 
 To create a group of sub-shapes of a geometrical object in the main
 menu select <b>New entity > Group > Create</b>
-\n The following menu will appear:
+\n The following dialog box will appear:
 
 \image html geomcreategroup.png
 
@@ -100,6 +100,11 @@ In order to filter out some entities:
 
 The entities which satisfy entered filtering parameters will be automatically highlighted
 in the 3D viewer.
+
+\b Plot button into "Filter" group box provides an access 
+to the \ref shape_statistics_operation_page "Shape Statistics" functionality with simplified look-n-feel:
+
+\image html shape_statistics_simple.png
 
 \n <b>TUI Command:</b> <em>geompy.CreateGroup(MainShape,
 ShapeType),</em> where MainShape is a shape for which the group is

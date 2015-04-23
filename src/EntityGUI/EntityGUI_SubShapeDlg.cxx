@@ -30,6 +30,7 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 #include <GEOMUtils.hxx>
+#include <MeasureGUI_ShapeStatisticsDlg.h>
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
@@ -165,6 +166,7 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidge
   myLessFilterSpin = new SalomeApp_DoubleSpinBox(myFilterGrp);
   myGreaterFilterSpin = new SalomeApp_DoubleSpinBox(myFilterGrp);
   myApplyFilterButton = new QPushButton(tr("GEOM_BUT_APPLY"), myFilterGrp);
+  myPlotDistributionButton = new QPushButton(tr("GEOM_PLOT_DISTRIBUTION"), myFilterGrp);
 
   QGridLayout* filterLayout = new QGridLayout(myFilterGrp);
   filterLayout->addWidget(myLessFilterCheck,    0, 0);
@@ -174,6 +176,7 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidge
   filterLayout->addWidget(myGreaterFilterCombo, 1, 1);
   filterLayout->addWidget(myGreaterFilterSpin,  1, 2);
   filterLayout->addWidget(myApplyFilterButton,  0, 3);
+  filterLayout->addWidget(myPlotDistributionButton,  1, 3);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -250,6 +253,7 @@ void EntityGUI_SubShapeDlg::Init()
   connect(GroupPoints->PushButton4, SIGNAL(clicked()), this, SLOT(showOnlySelected()));
 
   connect(myApplyFilterButton, SIGNAL(clicked()),         this, SLOT(ClickOnOkFilter()));
+  connect(myPlotDistributionButton, SIGNAL(clicked()),    this, SLOT(ClickOnPlot()));
   connect(myLessFilterCheck,   SIGNAL(stateChanged(int)), this, SLOT(MeasureToggled()));
   connect(myGreaterFilterCheck,   SIGNAL(stateChanged(int)), this, SLOT(MeasureToggled()));
 
@@ -490,6 +494,11 @@ void EntityGUI_SubShapeDlg::SubShapeToggled()
   myFilterGrp->setEnabled(GroupPoints->CheckButton1->isEnabled() &&
                           GroupPoints->CheckButton1->isChecked() &&
                           shapeType() < GEOM::VERTEX);
+
+  myPlotDistributionButton->setEnabled( myFilterGrp->isEnabled() &&
+					( shapeType() == TopAbs_EDGE || 
+					  shapeType() == TopAbs_FACE ||
+					  shapeType() == TopAbs_SOLID ) );
 
   activateSelection();
 }
@@ -934,6 +943,18 @@ void EntityGUI_SubShapeDlg::ClickOnOkFilter()
                                   tr( "BUT_OK" ) );
   }
   updateButtonState();
+}
+
+//=================================================================================
+// function : ClickOnPlot()
+// purpose  : opens "Shape Statistics" dialog box in order to plot sub-shapes distribution.
+//=================================================================================
+void EntityGUI_SubShapeDlg::ClickOnPlot()
+{
+  QDialog* dlg = new MeasureGUI_ShapeStatisticsDlg( this, myShape, (TopAbs_ShapeEnum)shapeType() );
+  if ( dlg ) {
+    dlg->show();
+  }
 }
 
 //=================================================================================

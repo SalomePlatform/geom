@@ -83,6 +83,7 @@ private slots:
   void                                showOnlySelected();
   void                                selectionChanged();
   void                                ClickOnOkFilter();
+  void                                ClickOnPlot();
   void                                MeasureToggled();
 
 private:
@@ -133,6 +134,7 @@ private:
   SalomeApp_DoubleSpinBox*            myLessFilterSpin;
   SalomeApp_DoubleSpinBox*            myGreaterFilterSpin;
   QPushButton*                        myApplyFilterButton;
+  QPushButton*                        myPlotDistributionButton;
   QGroupBox*                          myFilterGrp;
 };
 

@@ -644,6 +644,7 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
   case GEOMOp::OpFastCheckInters:    // MENU MEASURE - FAST CHECK INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
+  case GEOMOp::OpShapeStatistics:    // MENU MEASURE - SHAPE STATISTICS
   case GEOMOp::OpShowAllDimensions:  // POPUP MENU - SHOW ALL DIMENSIONS
   case GEOMOp::OpHideAllDimensions:  // POPUP MENU - HIDE ALL DIMENSIONS
     libName = "MeasureGUI";
@@ -1025,6 +1026,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpGetNonBlocks,     "GET_NON_BLOCKS" );
   createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
   createGeomAction( GEOMOp::OpFastCheckInters,  "FAST_CHECK_INTERSECTIONS" );
+  createGeomAction( GEOMOp::OpShapeStatistics,  "SHAPE_STATISTICS" );
 
 #ifdef _DEBUG_ // PAL16821
   createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
@@ -1288,6 +1290,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
   createMenu( GEOMOp::OpFastCheckInters, measurId, -1 );
   createMenu( GEOMOp::OpInspectObj,      measurId, -1 );
+  createMenu( GEOMOp::OpShapeStatistics, measurId, -1 );
 
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
 #if defined(_DEBUG_) || defined(_DEBUG) // PAL16821

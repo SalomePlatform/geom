@@ -200,6 +200,7 @@ namespace GEOMOp {
     OpHideAllDimensions   = 5016,   // POPUP MENU - HIDE ALL DIMENSIONS
     OpFastCheckInters     = 5017,   // MENU MEASURES - FAST CHECK INTERSECTIONS
     OpInspectObj	  = 5018,   // MENU MEASURES - INSPECT OBJECT
+    OpShapeStatistics	  = 5019,   // MENU MEASURES - SHAPE STATISTICS
     // GroupGUI --------------------//--------------------------------
     OpGroupCreate         = 6000,   // MENU GROUP - CREATE
     OpGroupEdit           = 6001,   // MENU GROUP - EDIT

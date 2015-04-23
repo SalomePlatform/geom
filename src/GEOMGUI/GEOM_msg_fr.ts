@@ -432,6 +432,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Intersection rapide</translation>
     </message>
     <message>
+        <source>GEOM_SHAPE_STATISTICS</source>
+        <translation type="unfinished">Shape Statistics</translation>
+    </message>
+    <message>
         <source>GEOM_CIRCLE</source>
         <translation>Cercle</translation>
     </message>
@@ -2513,6 +2517,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Intersection rapide</translation>
     </message>
     <message>
+        <source>MEN_SHAPE_STATISTICS</source>
+        <translation type="unfinished">Shape Statistics</translation>
+    </message>
+    <message>
         <source>MEN_CHECK_FREE_BNDS</source>
         <translation>Contrôler les contours libres</translation>
     </message>
@@ -2794,7 +2802,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_MEASURES</source>
-        <translation>Mesures</translation>
+        <translation type="unfinished">Inspection</translation>
     </message>
     <message>
         <source>MEN_MIN_DIST</source>
@@ -3539,7 +3547,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_FAST_CHECK_INTERSECTIONS</source>
         <translation>Intersection rapide</translation>
-   </message>
+    </message>
+    <message>
+        <source>STB_SHAPE_STATISTICS</source>
+        <translation type="unfinished">Shape Statistics</translation>
+    </message>
     <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Vérifier les contours libres</translation>
@@ -4163,6 +4175,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_FAST_CHECK_INTERSECTIONS</source>
         <translation>Intersection rapide</translation>
+    </message>
+    <message>
+        <source>TOP_SHAPE_STATISTICS</source>
+        <translation type="unfinished">Shape Statistics</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -5316,6 +5332,10 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>GEOM_HEALING_STATS_COL_2</source>
         <translation>Modification</translation>
     </message>
+    <message>
+        <source>GEOM_PLOT_DISTRIBUTION</source>
+        <translation type="unfinished">Plot</translation>
+    </message>
 </context>
 <context>
     <name>GeometryGUI</name>
@@ -5365,7 +5385,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOOL_MEASURES</source>
-        <translation>Informations</translation>
+        <translation type="unfinished">Inspection</translation>
     </message>
     <message>
         <source>TOOL_IMPORTEXPORT</source>
@@ -7266,6 +7286,69 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_FAST_CHECK_OBJ</source>
         <translation>Objets et résultats</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_ShapeStatisticsDlg</name>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_TYPE</source>
+        <translation type="unfinished">Type</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_LENGTH</source>
+        <translation type="unfinished">Edges length</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_AREA</source>
+        <translation type="unfinished">Faces area</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_VOLUME</source>
+        <translation type="unfinished">Solids volume</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_NB_INTERVALS</source>
+        <translation type="unfinished">Number of intervals</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_SCALAR_RANGE</source>
+        <translation type="unfinished">Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_COMPUTE</source>
+        <translation type="unfinished">Compute</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN</source>
+        <translation type="unfinished">Min</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX</source>
+        <translation type="unfinished">Max</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_CREATE_GROUPS</source>
+        <translation type="unfinished">Create Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_DISTRIBUTION_NB_ENT</source>
+        <translation type="unfinished">Number of entities</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_ERROR</source>
+        <translation type="unfinished">Set minimal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX_ERROR</source>
+        <translation type="unfinished">Set maximal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR</source>
+        <translation type="unfinished">Minimal range value can not be more than maximal</translation>
+    </message>
+    <message>
+        <source>GEOM_MSG_GROUPS_CREATED</source>
+        <translation type="unfinished">%1 groups created</translation>
     </message>
 </context>
 <context>

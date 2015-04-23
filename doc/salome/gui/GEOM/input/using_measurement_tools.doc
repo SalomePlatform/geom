@@ -19,6 +19,7 @@
 <li>\subpage managing_dimensions_page "Dimensions"</li>
 <li>\subpage whatis_page "WhatIs"</li>
 <li>\subpage inspect_object_operation_page "Inspect Object"</li>
+<li>\subpage shape_statistics_operation_page "Shape Statistics"</li>
 </ul>
 
 \n To check their integrity:

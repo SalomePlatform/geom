@@ -416,6 +416,10 @@
         <translation type="unfinished">Fast intersection</translation>
     </message>
     <message>
+        <source>GEOM_SHAPE_STATISTICS</source>
+        <translation type="unfinished">Shape Statistics</translation>
+    </message>
+    <message>
       <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
       <translation>自己交差の検出に失敗しました</translation>
     </message>
@@ -2468,6 +2472,10 @@
         <translation type="unfinished">Fast intersection</translation>
     </message>
     <message>
+        <source>MEN_SHAPE_STATISTICS</source>
+        <translation type="unfinished">Shape Statistics</translation>
+    </message>
+    <message>
       <source>MEN_CHECK_FREE_BNDS</source>
       <translation>自由境界の確認</translation>
     </message>
@@ -2749,7 +2757,7 @@
     </message>
     <message>
       <source>MEN_MEASURES</source>
-      <translation>計測</translation>
+      <translation type="unfinished">Inspection</translation>
     </message>
     <message>
       <source>MEN_MIN_DIST</source>
@@ -3482,7 +3490,11 @@
     <message>
         <source>STB_FAST_CHECK_INTERSECTIONS</source>
         <translation type="unfinished">Fast intersection</translation>
-   </message>
+    </message>
+    <message>
+        <source>STB_SHAPE_STATISTICS</source>
+        <translation type="unfinished">Shape Statistics</translation>
+    </message>
     <message>
       <source>STB_CHECK_FREE_BNDS</source>
       <translation>自由境界をチェック</translation>
@@ -4100,8 +4112,12 @@
       <translation>自己交差の確認</translation>
     </message>
     <message>
-        <source>TOP_FAST_CHECK_INTERSECTIONS</source>
-        <translation type="unfinished">Fast intersection</translation>
+      <source>TOP_FAST_CHECK_INTERSECTIONS</source>
+      <translation type="unfinished">Fast intersection</translation>
+    </message>
+    <message>
+      <source>TOP_SHAPE_STATISTICS</source>
+      <translation type="unfinished">Shape Statistics</translation>
     </message>
     <message>
       <source>TOP_CHECK_FREE_BNDS</source>
@@ -5211,6 +5227,10 @@
         <source>GEOM_NO_SHAPES_SELECTED</source>
         <translation type="unfinished">There are no shapes that meet filtering parameters</translation>
     </message>
+    <message>
+        <source>GEOM_PLOT_DISTRIBUTION</source>
+        <translation type="unfinished">Plot</translation>
+    </message>
   </context>
   <context>
     <name>GeometryGUI</name>
@@ -5260,7 +5280,7 @@
     </message>
     <message>
       <source>TOOL_MEASURES</source>
-      <translation type="unfinished">Measures</translation>
+      <translation type="unfinished">Inspection</translation>
     </message>
     <message>
       <source>TOOL_IMPORTEXPORT</source>
@@ -7151,6 +7171,69 @@
     <message>
         <source>GEOM_FAST_CHECK_OBJ</source>
         <translation type="unfinished">Objects And Results</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureGUI_ShapeStatisticsDlg</name>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_TYPE</source>
+        <translation type="unfinished">Type</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_LENGTH</source>
+        <translation type="unfinished">Edges length</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_AREA</source>
+        <translation type="unfinished">Faces area</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_VOLUME</source>
+        <translation type="unfinished">Solids volume</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_NB_INTERVALS</source>
+        <translation type="unfinished">Number of intervals</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_SCALAR_RANGE</source>
+        <translation type="unfinished">Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_COMPUTE</source>
+        <translation type="unfinished">Compute</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN</source>
+        <translation type="unfinished">Min</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX</source>
+        <translation type="unfinished">Max</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_CREATE_GROUPS</source>
+        <translation type="unfinished">Create Groups</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_DISTRIBUTION_NB_ENT</source>
+        <translation type="unfinished">Number of entities</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_ERROR</source>
+        <translation type="unfinished">Set minimal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MAX_ERROR</source>
+        <translation type="unfinished">Set maximal range value or switch-off Scalar range</translation>
+    </message>
+    <message>
+        <source>GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR</source>
+        <translation type="unfinished">Minimal range value can not be more than maximal</translation>
+    </message>
+    <message>
+        <source>GEOM_MSG_GROUPS_CREATED</source>
+        <translation type="unfinished">%1 groups created</translation>
     </message>
 </context>
 <context>

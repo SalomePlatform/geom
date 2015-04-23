@@ -43,8 +43,8 @@ IF(SALOME_BUILD_GUI)
   SET(SUBDIRS_GUI
     OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI
     GEOMBase DependencyTree GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
-    CurveCreator EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
-    RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI
+    CurveCreator MeasureGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
+    RepairGUI GroupGUI BlocksGUI AdvancedGUI
     GEOM_SWIG_WITHIHM
     )
 ENDIF()
