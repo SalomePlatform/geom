@@ -226,6 +226,7 @@ module GEOM
     string     operationName;
     Parameters params;
   };
+  typedef sequence<CreationInformation> CreationInformationSeq;
 
   /*!
    * \brief Reporting on shape healing
@@ -348,7 +349,7 @@ module GEOM
     /*!
      * \brief Return name of operation and values of parameters used for object creation
      */
-    CreationInformation GetCreationInformation();
+    CreationInformationSeq GetCreationInformation();
   };
 
   //# GEOM_Object

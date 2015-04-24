@@ -9161,7 +9161,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "projection")
             return anObj
 
-        ## Create a projection projection of the given point on a wire or an edge.
+        ## Create a projection of the given point on a wire or an edge.
         #  If there are no solutions or there are 2 or more solutions It throws an
         #  exception.
         #  @param thePoint the point to be projected.
@@ -9179,7 +9179,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         @ManageTransactions("TrsfOp")
         def MakeProjectionOnWire(self, thePoint, theWire, theName=None):
             """
-            Create a projection projection of the given point on a wire or an edge.
+            Create a projection of the given point on a wire or an edge.
             If there are no solutions or there are 2 or more solutions It throws an
             exception.
 

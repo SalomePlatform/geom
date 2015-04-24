@@ -1674,7 +1674,7 @@ void GeometryGUI::addPluginActions()
       // icon
       QPixmap icon;
       if ( !adata.icon.empty() )
-	icon = resMgr->loadPixmap( pdata.name.c_str(), adata.icon.c_str() );
+        icon = resMgr->loadPixmap( pdata.name.c_str(), adata.icon.c_str() );
       // menu text (path)
       QStringList smenus = QString( adata.menuText.c_str() ).split( "/" );
       QString actionName = smenus.last();
@@ -1691,30 +1691,30 @@ void GeometryGUI::addPluginActions()
       actionStat = actionStat.toUpper().prepend( "STB_" );
 
       createAction( id, // ~ adata.label
-		    tr( actionTool.toLatin1().constData() ),
-		    icon,
-		    tr( actionName.toLatin1().constData() ),
-		    tr( actionStat.toLatin1().constData() ),
-		    QKeySequence( tr( adata.accel.c_str() ) ),
-		    application()->desktop(),
-		    false /*toggle*/,
-		    this, SLOT( OnGUIEvent() ),
-		    QString() /*shortcutAction*/ );
+                    tr( actionTool.toLatin1().constData() ),
+                    icon,
+                    tr( actionName.toLatin1().constData() ),
+                    tr( actionStat.toLatin1().constData() ),
+                    QKeySequence( tr( adata.accel.c_str() ) ),
+                    application()->desktop(),
+                    false /*toggle*/,
+                    this, SLOT( OnGUIEvent() ),
+                    QString() /*shortcutAction*/ );
       
       int menuId = -1;
       foreach ( QString subMenu, smenus ) {
-	QStringList subMenuList = subMenu.split( ":" );
-	QString subMenuName = subMenuList[0].toUpper().prepend( "MEN_" );
-	int subMenuGroup = subMenuList.size() > 1 ? subMenuList[1].toInt() : -1;
-	menuId = createMenu( tr( subMenuName.toLatin1().constData() ), menuId, -1, subMenuGroup );
+        QStringList subMenuList = subMenu.split( ":" );
+        QString subMenuName = subMenuList[0].toUpper().prepend( "MEN_" );
+        int subMenuGroup = subMenuList.size() > 1 ? subMenuList[1].toInt() : -1;
+        menuId = createMenu( tr( subMenuName.toLatin1().constData() ), menuId, -1, subMenuGroup );
       }
       createMenu( id, menuId, -1 );
       
       if ( !stools.isEmpty() ) {
-	QString subTool = stools[0];
-	subTool = subTool.toUpper().prepend( "TOOL_" );
-	int toolId = createTool( tr( subTool.toLatin1().constData() ) );
-	createTool(id, toolId);
+        QString subTool = stools[0];
+        subTool = subTool.toUpper().prepend( "TOOL_" );
+        int toolId = createTool( tr( subTool.toLatin1().constData() ) );
+        createTool(id, toolId);
       }
 
       // add action id to map
@@ -2015,38 +2015,15 @@ void GeometryGUI::updateCreationInfo()
   // pass creation info of geomObj to myCreationInfoWdg
 
   if ( myCreationInfoWdg ) {
-    QPixmap icon;
-    QString operationName;
-    myCreationInfoWdg->setOperation( icon, operationName );
 
+    GEOM::CreationInformationSeq_var info;
     try {
       OCC_CATCH_SIGNALS;
-      GEOM::CreationInformation_var info = geomObj->GetCreationInformation();
-      if ( &info.in() ) {
-        SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-        QString name = info->operationName.in();
-        if ( !name.isEmpty() ) {
-	  
-	  QString plugin_name;
-          for ( size_t i = 0; i < info->params.length(); ++i ) {
-            myCreationInfoWdg->addParam( info->params[i].name.in(),
-                                         info->params[i].value.in() );
-            QString value = info->params[i].name.in();
-	    if( value == PLUGIN_NAME ) {
-	      plugin_name = info->params[i].value.in();
-	    }
-	  }
-	  QString prefix = plugin_name.isEmpty() ? "GEOM" : plugin_name;
-          icon = resMgr->loadPixmap( prefix, tr( ("ICO_"+name).toLatin1().constData() ), false );
-          operationName = tr( ("MEN_"+name).toLatin1().constData() );
-          if ( operationName.startsWith( "MEN_" ))
-            operationName = name; // no translation
-          myCreationInfoWdg->setOperation( icon, operationName );
-        }
-      }
+      info = geomObj->GetCreationInformation();
     }
     catch (...) {
     }
+    myCreationInfoWdg->setInfo( info );
   }
 }
 
@@ -2276,7 +2253,7 @@ void GeometryGUI::createPreferences()
                       LightApp_Preferences::Selector, "Geometry", "toplevel_dm" );
 
   int transparency = addPreference( tr( "PREF_TRANSPARENCY" ), genGroup,
-				    LightApp_Preferences::IntSpin, "Geometry", "transparency" );
+                                    LightApp_Preferences::IntSpin, "Geometry", "transparency" );
 
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );

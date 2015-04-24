@@ -31,6 +31,8 @@
 #include <TDF_Label.hxx>
 #include <TDataStd_TreeNode.hxx>
 
+#include <vector>
+
 class GEOM_BaseObject;
 class Handle(TFunction_Driver);
 class GEOM_Engine;
@@ -146,8 +148,8 @@ public:
   //Returns the dependencies of the last function
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetLastDependency();
 
-  //Returns a driver creator of this object
-  Standard_EXPORT Handle(TFunction_Driver) GetCreationDriver();
+  //Returns drivers creators of this object
+  Standard_EXPORT std::vector< Handle(TFunction_Driver)> GetCreationDrivers();
 
   //###########################################################
   // Internal methods

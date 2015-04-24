@@ -493,18 +493,24 @@ Handle(TColStd_HSequenceOfTransient) GEOM_BaseObject::GetLastDependency()
  */
 //================================================================================
 
-Handle(TFunction_Driver) GEOM_BaseObject::GetCreationDriver()
+std::vector< Handle(TFunction_Driver)> GEOM_BaseObject::GetCreationDrivers()
 {
-  Handle(TFunction_Driver) aDriver;
+  std::vector< Handle(TFunction_Driver)> aDriverVec;
 
-  Handle(GEOM_Function) function = GetFunction(1);
-  if ( !function.IsNull() )
+  for ( int i = 1, nb = GetNbFunctions(); i <= nb; ++i )
   {
-    Standard_GUID aGUID = function->GetDriverGUID();
-    if ( TFunction_DriverTable::Get()->FindDriver(aGUID, aDriver))
-      aDriver->Init( function->GetEntry() );
+    Handle(GEOM_Function) function = GetFunction(i);
+    if ( !function.IsNull() )
+    {
+      Standard_GUID aGUID = function->GetDriverGUID();
+      aDriverVec.push_back( Handle(TFunction_Driver )() );
+      if ( TFunction_DriverTable::Get()->FindDriver(aGUID, aDriverVec.back() ))
+        aDriverVec.back()->Init( function->GetEntry() );
+      else
+        aDriverVec.pop_back();
+    }
   }
-  return aDriver;
+  return aDriverVec;
 }
 
 //=============================================================================
