@@ -10966,14 +10966,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return aDict
 
         def GetCreationInformation(self, theShape):
-            info = theShape.GetCreationInformation()
-            # operationName
-            opName = info.operationName
-            if not opName: opName = "no info available"
-            res = "Operation: " + opName
-            # parameters
-            for parVal in info.params:
-                res += " \n %s = %s" % ( parVal.name, parVal.value )
+            res = ''
+            infos = theShape.GetCreationInformation()
+            for info in infos:
+                # operationName
+                opName = info.operationName
+                if not opName: opName = "no info available"
+                if res: res += "\n"
+                res += "Operation: " + opName
+                # parameters
+                for parVal in info.params:
+                    res += "\n \t%s = %s" % ( parVal.name, parVal.value )
             return res
 
         ## Get a point, situated at the centre of mass of theShape.
