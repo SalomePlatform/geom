@@ -7375,7 +7375,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
             """
-            anObj = self.ShapesOp.MakeGlueFacesByList(ToList(theShapes), theTolerance, theFaces,
+            anObj = self.ShapesOp.MakeGlueFacesByList(ToList(theShapes), theTolerance, ToList(theFaces),
                                                       doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
