@@ -19,23 +19,15 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+//GEOMAlgo_KindOfDef
+#ifndef _GEOMAlgo_KindOfDef_HeaderFile
+#define _GEOMAlgo_KindOfDef_HeaderFile
 
-#ifndef _GEOMAlgo_KindOfShape_HeaderFile
-#define _GEOMAlgo_KindOfShape_HeaderFile
 
-enum GEOMAlgo_KindOfShape {
-GEOMAlgo_KS_UNKNOWN,
-GEOMAlgo_KS_SPHERE,
-GEOMAlgo_KS_CYLINDER,
-GEOMAlgo_KS_BOX,
-GEOMAlgo_KS_TORUS,
-GEOMAlgo_KS_CONE,
-GEOMAlgo_KS_ELLIPSE,
-GEOMAlgo_KS_PLANE,
-GEOMAlgo_KS_CIRCLE,
-GEOMAlgo_KS_LINE,
-GEOMAlgo_KS_DEGENERATED,
-GEOMAlgo_KS_BSPLINE
+enum GEOMAlgo_KindOfDef {
+GEOMAlgo_KD_UNKNOWN,
+GEOMAlgo_KD_SPECIFIED,
+GEOMAlgo_KD_ARBITRARY
 };
 
 #ifndef _Standard_PrimitiveTypes_HeaderFile

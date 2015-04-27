@@ -362,6 +362,8 @@ void GEOMAlgo_FinderShapeOn2::ProcessEdges()
     //
     const TopoDS_Edge& aE=TopoDS::Edge(aM(i));
     //
+    bIsConformState=Standard_False;
+    //
     aExp.Init(aE, TopAbs_VERTEX);
     for (; aExp.More(); aExp.Next()) {
       const TopoDS_Shape& aV=aExp.Current();
@@ -475,6 +477,9 @@ void GEOMAlgo_FinderShapeOn2::ProcessFaces()
       }
     }
     //
+    //
+    bIsConformState=Standard_False;
+    //
     aExp.Init(aF, TopAbs_EDGE);
     for (; aExp.More(); aExp.Next()) {
       const TopoDS_Shape& aE=aExp.Current();
@@ -558,6 +563,9 @@ void GEOMAlgo_FinderShapeOn2::ProcessSolids()
     const TopoDS_Shape& aSd=aM(i);
     aMF.Clear();
     TopExp::MapShapes(aSd, TopAbs_FACE, aMF);
+    //
+    bIsConformState=Standard_False;
+    //
     aNbF=aMF.Extent();
     for (j=1; j<=aNbF; ++j) {
       const TopoDS_Shape& aF=aMF(j);

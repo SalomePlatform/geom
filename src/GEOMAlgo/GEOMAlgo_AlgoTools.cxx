@@ -93,15 +93,15 @@ static
                 Standard_Integer& iCnt);
 static
   void CopySource(const TopoDS_Shape& aS,
-		  TopTools_IndexedDataMapOfShapeShape& aMapSS,
-		  TopoDS_Shape& aSC);
+    TopTools_IndexedDataMapOfShapeShape& aMapSS,
+    TopoDS_Shape& aSC);
 
 //=======================================================================
 //function : CopyShape
 //purpose  :
 //=======================================================================
 void GEOMAlgo_AlgoTools::CopyShape(const TopoDS_Shape& aS,
-				   TopoDS_Shape& aSC)
+       TopoDS_Shape& aSC)
 {
   TopTools_IndexedDataMapOfShapeShape aMapSS;
   //
@@ -112,8 +112,8 @@ void GEOMAlgo_AlgoTools::CopyShape(const TopoDS_Shape& aS,
 //purpose  :
 //=======================================================================
 void GEOMAlgo_AlgoTools::CopyShape(const TopoDS_Shape& aS,
-				   TopoDS_Shape& aSC,
-				   TopTools_IndexedDataMapOfShapeShape& aMapSS)
+       TopoDS_Shape& aSC,
+       TopTools_IndexedDataMapOfShapeShape& aMapSS)
 {
   CopySource(aS, aMapSS, aSC);
 }
@@ -172,9 +172,9 @@ void CopySource(const TopoDS_Shape& aS,
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_AlgoTools::FaceNormal (const TopoDS_Face& aF,
-				     const Standard_Real U,
-				     const Standard_Real V,
-				     gp_Vec& aN)
+         const Standard_Real U,
+         const Standard_Real V,
+         gp_Vec& aN)
 {
   gp_Pnt aPnt ;
   gp_Vec aD1U, aD1V;
@@ -330,7 +330,7 @@ Standard_Integer GEOMAlgo_AlgoTools::BuildPCurveForEdgeOnFace
 // purpose:
 //=======================================================================
 void GEOMAlgo_AlgoTools::MakeContainer(const TopAbs_ShapeEnum theType,
-				       TopoDS_Shape& theC)
+           TopoDS_Shape& theC)
 {
   BRep_Builder aBB;
   //
@@ -399,9 +399,9 @@ Standard_Boolean GEOMAlgo_AlgoTools::IsUPeriodic(const  Handle(Geom_Surface) &aS
 //purpose  :
 //=======================================================================
 void GEOMAlgo_AlgoTools::RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
-						   const TopoDS_Face& aF,
-						   const Standard_Real aUMin,
-						   const Standard_Real aUMax)
+         const TopoDS_Face& aF,
+         const Standard_Real aUMin,
+         const Standard_Real aUMax)
 {
   Standard_Real aT1, aT2, aTx, aUx, aTol;
   gp_Pnt2d aP2D;
@@ -546,7 +546,7 @@ Standard_Boolean GEOMAlgo_AlgoTools::ProjectPointOnShape
 //purpose  :
 //=======================================================================
 void GEOMAlgo_AlgoTools::PointOnEdge(const TopoDS_Edge& aE,
-				     gp_Pnt& aP3D)
+         gp_Pnt& aP3D)
 {
   Standard_Real aTx, aT1, aT2;
   //
@@ -559,8 +559,8 @@ void GEOMAlgo_AlgoTools::PointOnEdge(const TopoDS_Edge& aE,
 //purpose  :
 //=======================================================================
 void GEOMAlgo_AlgoTools::PointOnEdge(const TopoDS_Edge& aE,
-				     const Standard_Real aT,
-				     gp_Pnt& aP3D)
+         const Standard_Real aT,
+         gp_Pnt& aP3D)
 {
   Standard_Real aT1, aT2;
   Handle(Geom_Curve) aC3D;
@@ -573,9 +573,9 @@ void GEOMAlgo_AlgoTools::PointOnEdge(const TopoDS_Edge& aE,
 //purpose  :
 //=======================================================================
 void GEOMAlgo_AlgoTools::PointOnFace(const TopoDS_Face& aF,
-				     const Standard_Real aU,
-				     const Standard_Real aV,
-				     gp_Pnt& aP3D)
+         const Standard_Real aU,
+         const Standard_Real aV,
+         gp_Pnt& aP3D)
 {
   Handle(Geom_Surface) aS;
   //
@@ -587,7 +587,7 @@ void GEOMAlgo_AlgoTools::PointOnFace(const TopoDS_Face& aF,
 //purpose  :
 //=======================================================================
 void GEOMAlgo_AlgoTools::PointOnFace(const TopoDS_Face& aF,
-				     gp_Pnt& aP3D)
+         gp_Pnt& aP3D)
 {
   Standard_Real aU, aV, aUMin, aUMax, aVMin, aVMax;
   //
@@ -603,7 +603,7 @@ void GEOMAlgo_AlgoTools::PointOnFace(const TopoDS_Face& aF,
 //purpose  :
 //=======================================================================
 void GEOMAlgo_AlgoTools::PointOnShape(const TopoDS_Shape& aS,
-				      gp_Pnt& aP3D)
+          gp_Pnt& aP3D)
 {
   TopAbs_ShapeEnum aType;
   //
@@ -700,7 +700,7 @@ Standard_Integer GEOMAlgo_AlgoTools::FindSDShapes
     return 0; // Nothing to do
   }
   //
-  while(1) {
+  for(;;) {
     aNbEProcessed=aMProcessed.Extent();
     if (aNbEProcessed==aNbE) {
       break;
@@ -909,8 +909,8 @@ void GetCount(const TopoDS_Shape& aS,
 //purpose  :
 //=======================================================================
 Standard_Integer GEOMAlgo_AlgoTools::PntInFace(const TopoDS_Face& aF,
-					       gp_Pnt& theP,
-					       gp_Pnt2d& theP2D)
+                                               gp_Pnt& theP,
+                                               gp_Pnt2d& theP2D)
 {
   Standard_Boolean bIsDone, bHasFirstPoint, bHasSecondPoint;
   Standard_Integer iErr, aIx, aNbDomains, i;
@@ -935,8 +935,8 @@ Standard_Integer GEOMAlgo_AlgoTools::PntInFace(const TopoDS_Face& aF,
   //
   Geom2dHatch_Intersector aIntr(aTotArcIntr, aTolTangfIntr);
   Geom2dHatch_Hatcher aHatcher(aIntr,
-			       aTolHatch2D, aTolHatch3D,
-			       Standard_True, Standard_False);
+          aTolHatch2D, aTolHatch3D,
+          Standard_True, Standard_False);
   //
   iErr=0;
   aEpsT=1.e-12;
@@ -991,29 +991,32 @@ Standard_Integer GEOMAlgo_AlgoTools::PntInFace(const TopoDS_Face& aF,
   }
   //
   // 4.
+  aVx=aVMin;
   aNbDomains=aHatcher.NbDomains(aIx);
-  for (i=1; i<=aNbDomains; ++i) {
-    const HatchGen_Domain& aDomain=aHatcher.Domain (aIx, i) ;
-    bHasFirstPoint=aDomain.HasFirstPoint();
-    if (!bHasFirstPoint) {
-      iErr=5;
-      return iErr;
-    }
-    //
-    aV1=aDomain.FirstPoint().Parameter();
-    //
-    bHasSecondPoint=aDomain.HasSecondPoint();
-    if (!bHasSecondPoint) {
-      iErr=6;
-      return iErr;
-    }
-    //
-    aV2=aDomain.SecondPoint().Parameter();
-    //
-    aVx=IntTools_Tools::IntermediatePoint(aV1, aV2);
-    //
-    break;
+  if (!aNbDomains) {
+    iErr=5;
+    return iErr;
   }
+  //
+  i=1;
+  const HatchGen_Domain& aDomain=aHatcher.Domain (aIx, i) ;
+  bHasFirstPoint=aDomain.HasFirstPoint();
+  if (!bHasFirstPoint) {
+    iErr=5;
+    return iErr;
+  }
+  //
+  aV1=aDomain.FirstPoint().Parameter();
+  //
+  bHasSecondPoint=aDomain.HasSecondPoint();
+  if (!bHasSecondPoint) {
+    iErr=6;
+    return iErr;
+  }
+  //
+  aV2=aDomain.SecondPoint().Parameter();
+  //
+  aVx=IntTools_Tools::IntermediatePoint(aV1, aV2);
   //
   aS->D0(aUx, aVx, aPx);
   //
