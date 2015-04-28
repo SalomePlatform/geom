@@ -54,6 +54,7 @@ protected:
   virtual bool                        execute(ObjectList &);
   virtual bool                        extractPrefix() const;
   virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
+  virtual QList<GEOM::GeomObjPtr>     getSourceObjects();
 
 private slots:
 
@@ -67,6 +68,9 @@ private slots:
   void                                DeactivateActiveDialog();
   void                                SelectionIntoArgument();
   void                                SetEditCurrentArgument();
+  void                                ConstructorsClicked (int);
+  void                                OnGaps(bool);
+
 
 private:
 
@@ -76,18 +80,46 @@ private:
   bool                                findSelfIntersections
                                                     (bool    &HasSelfInte,
                                                      QString &theErrMsg);
+  float                               getDeflection();
+  double                              getTolerance();
+  
+// Getters
+  QTextBrowser*                       getTextView();
+  QListWidget*                        getInteList();
+  QListWidget*                        getShapeList();
+  QPushButton*                        getComputeButton();
+  QLineEdit*                          getEditObjName();
+  GEOM::GeomObjPtr                    getObj();
+  GEOM::ListOfLong_var                getInters();
+
 
 private:
-
-  QTextBrowser                       *myTextView;
-  QPushButton                        *mySelButton;
-  QLineEdit                          *myEditObjName;
+  int                                 myCurrConstrId;
+  // simple
+  QPushButton                        *myComputeButton1;
+  QGroupBox                          *mySimpleGrp;
+  QTextBrowser                       *myTextView1;
+  QPushButton                        *mySelButton1;
+  QLineEdit                          *myEditObjName1;
   QComboBox                          *myLevelBox;
-  QPushButton                        *myComputeButton;
-  QListWidget                        *myInteList;
-  QListWidget                        *myShapeList;
-  GEOM::GEOM_Object_var               myObj;
-  GEOM::ListOfLong_var                myInters;
+  QListWidget                        *myInteList1;
+  QListWidget                        *myShapeList1;
+  GEOM::GeomObjPtr                    myObj1;
+  GEOM::ListOfLong_var                myInters1;
+  // fast
+  QPushButton                        *myComputeButton2;
+  QGroupBox                          *myFastGrp;
+  QTextBrowser                       *myTextView2;
+  QPushButton                        *mySelButton2;
+  QLineEdit                          *myEditObjName2;
+  QCheckBox                          *myDetGaps;
+  SalomeApp_DoubleSpinBox            *myTolerance;
+  SalomeApp_DoubleSpinBox            *myDeflection;
+  QListWidget                        *myInteList2;
+  QListWidget                        *myShapeList2;
+  GEOM::GeomObjPtr                    myObj2;
+  GEOM::ListOfLong_var                myInters2;
+  GEOM::GEOM_IShapesOperations_var    myShapesOper;
 };
 
 #endif // MEASUREGUI_CHECKSELFINTERDLG_H

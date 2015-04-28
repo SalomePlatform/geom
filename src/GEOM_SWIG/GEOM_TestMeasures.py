@@ -33,7 +33,11 @@ def TestMeasureOperations (geompy, math):
   p678 = geompy.MakeVertex(60, 70, 80)
   p789 = geompy.MakeVertex(70, 80, 90)
 
+  vz = geompy.MakeVectorDXDYDZ(0, 0, 1)
+
   cube = geompy.MakeBoxTwoPnt(p678, p789)
+
+  cylinder = geompy.MakeCylinder(p0, vz, 5, 70)
 
   ####### PointCoordinates #######
 
@@ -52,18 +56,20 @@ def TestMeasureOperations (geompy, math):
 
   ####### Detect Self-intersections #######
 
-  [Face_1,Face_2] = geompy.SubShapes(box, [33, 23])
-  Translation_1 = geompy.MakeTranslation(Face_1, 5, -15, -40)
-  Compound_1 = geompy.MakeCompound([Face_2, Translation_1])
-  if geompy.CheckSelfIntersections(Compound_1) == True:
+  selfIntersected = geompy.MakeCompound([box, cylinder])
+  if geompy.CheckSelfIntersections(selfIntersected):
     raise RuntimeError, "Existing self-intersection is not detected"
 
-  ####### Detect Fast intersection #######
+  ####### Detect Self-intersections fast #######
 
-  if salome_version.getXVersion() > "0x70501":
-    cylinder = geompy.MakeCylinderRH(100, 300)
-    if geompy.FastIntersect(box, cylinder)[0] == False:
-      raise RuntimeError, "Existing intersection is not detected"
+  if salome_version.getXVersion() > "0x70600":
+    if geompy.CheckSelfIntersectionsFast(selfIntersected):
+      raise RuntimeError, "Existing self-intersection is not detected"
+
+  ####### Fast intersection #######
+
+  if not geompy.FastIntersect(box, cylinder)[0]:
+    raise RuntimeError, "Existing intersection is not detected"
 
   ####### WhatIs #######
 

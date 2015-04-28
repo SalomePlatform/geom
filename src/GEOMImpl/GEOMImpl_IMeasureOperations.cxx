@@ -50,8 +50,9 @@
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
-#if OCC_VERSION_LARGE > 0x06080000
 #include <BRepExtrema_ShapeProximity.hxx>
+#if OCC_VERSION_LARGE > 0x06090000
+#include <BRepExtrema_SelfIntersection.hxx>
 #endif
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
@@ -71,9 +72,12 @@
 #include <TopoDS_Edge.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfIntegerListOfShape.hxx>
+#include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
+#include <set>
 
 //=============================================================================
 /*!
@@ -1510,7 +1514,6 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
                           Handle(TColStd_HSequenceOfInteger)& theIntersections)
 {
   SetErrorCode(KO);
-  bool isGood = false;
 
   if (theIntersections.IsNull())
     theIntersections = new TColStd_HSequenceOfInteger;
@@ -1518,13 +1521,13 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
     theIntersections->Clear();
 
   if (theShape.IsNull())
-    return isGood;
+    return false;
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) return isGood;
+  if (aRefShape.IsNull()) return false;
 
   TopoDS_Shape aShape = aRefShape->GetValue();
-  if (aShape.IsNull()) return isGood;
+  if (aShape.IsNull()) return false;
 
   // 0. Prepare data
   TopoDS_Shape aScopy;
@@ -1546,7 +1549,6 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
   aCSI.Perform();
   Standard_Integer iErr = aCSI.ErrorStatus();
 
-  isGood = true;
   //
   Standard_Integer aNbS, n1, n2;
   BOPDS_MapIteratorMapOfPassKey aItMPK;
@@ -1570,14 +1572,82 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 
     theIntersections->Append(anIndices.FindIndex(aS1));
     theIntersections->Append(anIndices.FindIndex(aS2));
-    isGood = false;
   }
 
   if (!iErr) {
     SetErrorCode(OK);
   }
 
-  return isGood;
+  return theIntersections->IsEmpty();
+}
+
+//=============================================================================
+/*!
+ *  CheckSelfIntersectionsFast
+ */
+//=============================================================================
+bool GEOMImpl_IMeasureOperations::CheckSelfIntersectionsFast
+                         (Handle(GEOM_Object) theShape,
+			  float theDeflection, double theTolerance,
+                          Handle(TColStd_HSequenceOfInteger)& theIntersections)
+{
+  SetErrorCode(KO);
+
+  if (theIntersections.IsNull())
+    theIntersections = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections->Clear();
+
+  if (theShape.IsNull())
+    return false;
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return false;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull()) return false;
+
+  // Prepare data
+  TopoDS_Shape aScopy;
+
+  GEOMAlgo_AlgoTools::CopyShape(aShape, aScopy);
+  GEOMUtils::MeshShape(aScopy, theDeflection);
+
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aScopy, anIndices);
+
+#if OCC_VERSION_LARGE > 0x06090000
+  // Checker of fast interferences
+  BRepExtrema_SelfIntersection aTool(aScopy, (theTolerance <= 0.) ? 0.0 : theTolerance);
+
+  // Launch the checker
+  aTool.Perform();
+  
+  const BRepExtrema_OverlapTool::OverlapSubShapes& intersections = aTool.OverlapElements();
+  
+  std::set<Standard_Integer> processed;
+  
+  for (BRepExtrema_OverlapTool::OverlapSubShapes::Iterator it(intersections); it.More(); it.Next()) {
+    Standard_Integer idxLeft = it.Key();
+    if (processed.count(idxLeft) > 0) continue; // already added
+    processed.insert(idxLeft);
+    const TColStd_PackedMapOfInteger& overlaps = it.Value();
+    for (TColStd_MapIteratorOfPackedMapOfInteger subit(overlaps); subit.More(); subit.Next()) {
+      Standard_Integer idxRight = subit.Key();
+      if (processed.count(idxRight) > 0) continue; // already added
+      const TopoDS_Shape& aS1 = aTool.GetSubShape(idxLeft);
+      const TopoDS_Shape& aS2 = aTool.GetSubShape(idxRight);
+      theIntersections->Append(anIndices.FindIndex(aS1));
+      theIntersections->Append(anIndices.FindIndex(aS2));
+    }
+  }
+
+  if (aTool.IsDone())
+    SetErrorCode(OK);
+#endif
+
+  return theIntersections->IsEmpty();
 }
 
 //=============================================================================
@@ -1592,8 +1662,6 @@ bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, 
 {
   SetErrorCode(KO);
   bool isGood = false;
-
-#if OCC_VERSION_LARGE > 0x06080000
 
   if (theIntersections1.IsNull())
     theIntersections1 = new TColStd_HSequenceOfInteger;
@@ -1646,12 +1714,22 @@ bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, 
   aBSP.Perform();
  
   // 2. Get sets of IDs of overlapped faces
-  for (BRepExtrema_OverlappedSubShapes::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next()) {
+#if OCC_VERSION_LARGE > 0x06090000
+  for (BRepExtrema_OverlapTool::OverlapSubShapes::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
+#else
+  for (BRepExtrema_OverlappedSubShapes::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
+#endif
+  {
     const TopoDS_Shape& aS1 = aBSP.GetSubShape1(anIt1.Key());
     theIntersections1->Append(anIndices1.FindIndex(aS1));
   }
   
-  for (BRepExtrema_OverlappedSubShapes::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next()) {
+#if OCC_VERSION_LARGE > 0x06090000
+  for (BRepExtrema_OverlapTool::OverlapSubShapes::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
+#else
+  for (BRepExtrema_OverlappedSubShapes::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
+#endif
+  {
     const TopoDS_Shape& aS2 = aBSP.GetSubShape2(anIt2.Key());
     theIntersections2->Append(anIndices2.FindIndex(aS2));
   }
@@ -1660,8 +1738,6 @@ bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, 
 
   if (aBSP.IsDone())
     SetErrorCode(OK);
-
-#endif // OCC_VERSION_LARGE > 0x06080000
 
   return isGood;
 }

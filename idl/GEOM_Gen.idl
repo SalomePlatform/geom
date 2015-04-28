@@ -4449,6 +4449,21 @@ module GEOM
                                     out ListOfLong theIntersections);
 
     /*!
+     *  \brief Detect self-intersections of the given shape with algorithm based on mesh intersections.
+     *  \param theShape Shape to check validity of.
+     *  \param theDeflection Linear deflection coefficient that specifies quality of tesselation.
+     *  \param theTolerance Specifies a distance between sub-shapes used for detecting gaps:
+     *                       - if \a theTolerance <= 0, algorithm detects intersections
+     *                       - if \a theTolerance > 0, algorithm detects gaps
+     *  \param theIntersections Output. List of intersected sub-shapes IDs, it contains pairs of IDs.
+     *  \return TRUE, if the shape does not have any self-intersections.
+     */
+    boolean CheckSelfIntersectionsFast (in GEOM_Object theShape,
+					in float       theDeflection,
+					in double      theTolerance,
+					out ListOfLong theIntersections);
+
+    /*!
      *  \brief Detect intersections of the given shapes with algorithm based on mesh intersections.
      *  \param theShape1 First source object
      *  \param theShape2 Second source object

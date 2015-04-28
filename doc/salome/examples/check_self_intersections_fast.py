@@ -1,4 +1,4 @@
-# Detect Self-intersections
+# Detect Self-intersections fast
 
 import salome
 salome.salome_init()
@@ -14,7 +14,7 @@ cylinder = geompy.MakeCylinderRH(100, 300)
 compound = geompy.MakeCompound([box, cylinder])
 
 # check self-intersection
-IsValid = geompy.CheckSelfIntersections(compound)
+IsValid = geompy.CheckSelfIntersectionsFast(compound)
 if not IsValid:
     print "Shape is self-intersected!"
 else:

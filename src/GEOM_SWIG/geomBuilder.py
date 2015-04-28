@@ -11257,6 +11257,37 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             RaiseIfFailed("CheckSelfIntersections", self.MeasuOp)
             return IsValid
 
+        ## Detect self-intersections of the given shape with algorithm based on mesh intersections.
+        #  @param theShape Shape to check.
+        #  @param theDeflection Linear deflection coefficient that specifies quality of tesselation:
+        #         - if \a theDeflection <= 0, default deflection 0.001 is used
+        #  @param theTolerance Specifies a distance between sub-shapes used for detecting gaps:
+        #         - if \a theTolerance <= 0, algorithm detects intersections (default behavior)
+        #         - if \a theTolerance > 0, algorithm detects gaps
+        #  @return TRUE, if the shape contains no self-intersections.
+        #
+        #  @ref tui_check_self_intersections_fast_page "Example"
+        @ManageTransactions("MeasuOp")
+        def CheckSelfIntersectionsFast(self, theShape, theDeflection = 0.001, theTolerance = 0.0):
+            """
+            Detect self-intersections of the given shape with algorithm based on mesh intersections.
+
+            Parameters:
+                theShape Shape to check.
+                theDeflection Linear deflection coefficient that specifies quality of tesselation:
+                    - if theDeflection <= 0, default deflection 0.001 is used
+                theTolerance Specifies a distance between shapes used for detecting gaps:
+                    - if theTolerance <= 0, algorithm detects intersections (default behavior)
+                    - if theTolerance > 0, algorithm detects gaps
+ 
+            Returns:
+                TRUE, if the shape contains no self-intersections.
+            """
+            # Example: see GEOM_TestMeasures.py
+            (IsValid, Pairs) = self.MeasuOp.CheckSelfIntersectionsFast(theShape, theDeflection, theTolerance)
+            RaiseIfFailed("CheckSelfIntersectionsFast", self.MeasuOp)
+            return IsValid
+
         ## Detect intersections of the given shapes with algorithm based on mesh intersections.
         #  @param theShape1 First source object
         #  @param theShape2 Second source object

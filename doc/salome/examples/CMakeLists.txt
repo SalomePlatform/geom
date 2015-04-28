@@ -56,6 +56,7 @@ SET(GOOD_TESTS
   center_of_mass.py
   check_compound_of_blocks.py
   check_self_intersections.py
+  check_self_intersections_fast.py
   check_shape.py
   complex_objs_ex01.py
   complex_objs_ex02.py

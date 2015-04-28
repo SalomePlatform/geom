@@ -7275,6 +7275,10 @@ Voulez-vous en créer un nouveau ?</translation>
 <context>
     <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
     <message>
+        <source>GEOM_CHECK_INTERSECT_TYPE</source>
+        <translation type="unfinished">Self-intersection Detection Type</translation>
+    </message>
+    <message>
         <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
         <translation>Auto-intersections</translation>
     </message>
@@ -7337,6 +7341,14 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_CHECK_INTE_ALL</source>
         <translation>Face à Face + tout au-delà</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INT_DEFLECT</source>
+        <translation type="unfinished">Deflection coefficient</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INT_DETECT_GAPS</source>
+        <translation type="unfinished">Detect gaps with tolerance</translation>
     </message>
 </context>
 <context>
