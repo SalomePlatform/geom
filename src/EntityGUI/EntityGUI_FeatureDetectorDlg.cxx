@@ -26,7 +26,8 @@
 
 // SALOME includes
 #include "EntityGUI_FeatureDetectorDlg.h"
-#include <ShapeRec_FeatureDetector.hxx>
+#include "ShapeRec_FeatureDetector.hxx"
+#include "GEOM_Constants.h"
 
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewManager.h>
@@ -444,13 +445,20 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
       }
       else
         return ;
-      
-      std::string theImgFileName = myAISShape->TextureFile();      
-      if ( theImgFileName == "" )
+
+      SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+      if ( !study ) return;
+      LightApp_Application* app = ::qobject_cast<LightApp_Application*>( study->application() );
+      if ( !app ) return;
+      SUIT_ViewManager* vm = app->activeViewManager();
+      if ( !vm ) return;
+      PropMap propMap = study->getObjectProperties( vm->getGlobalId(), myFaceEntry );
+      QString theImgFileName = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
+      if ( theImgFileName.isEmpty() )
         return ;
 
       // Setting the image caracteristics
-      myDetector->SetPath( theImgFileName );
+      myDetector->SetPath( theImgFileName.toStdString() );
       height            =  myDetector->GetImgHeight();
       width             =  myDetector->GetImgWidth();
       pictureLeft       = -0.5 * width;              // X coordinate of the top left  corner of the background image in the view
