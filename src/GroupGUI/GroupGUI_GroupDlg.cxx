@@ -439,11 +439,17 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
   if (send == mySelBtn) {
     myEditCurrentArgument = myMainName;
     myShape2Name->setText("");
+    mySelBtn->setDown(true);
+    mySelBtn2->setDown(false);
   }
   else if (send == mySelBtn2 || sender() == myRestrictGroup) {
     setInPlaceObj(GEOM::GEOM_Object::_nil());
     myShape2Name->setText("");
-    if (subSelectionWay() != ALL_SUBSHAPES) {
+    if ( send == mySelBtn2 ) {
+      mySelBtn2->setDown(true);
+      mySelBtn->setDown(false);
+    }
+  if (subSelectionWay() != ALL_SUBSHAPES) {
       myEditCurrentArgument = myShape2Name;
     }
     else {
@@ -451,7 +457,11 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
     }
   }
 
-  activateSelection();
+  //  activateSelection();
+  if(myEditCurrentArgument) {
+    myEditCurrentArgument->setFocus();
+    send->setDown(true);
+  }
 
   updateState();
 }
@@ -558,6 +568,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 {
   if (subSelectionWay() != ALL_SUBSHAPES && myEditCurrentArgument == myShape2Name) {
     onGetInPlace();
+    if( !myInPlaceObj->_is_nil() ) {
+      mySelBtn2->setDown(false);
+    }
     return;
   }
 
@@ -582,6 +595,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
         }
         myMainObj = anObj;
         if (!CORBA::is_nil(myMainObj)) {
+	  mySelBtn->setDown(false);
           SALOME_View* view = GEOM_Displayer::GetActiveView();
           if (view) {
             CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();

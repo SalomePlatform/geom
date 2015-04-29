@@ -613,9 +613,9 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
   }
   send->setDown(true);
 
-  if ((send == GroupLineIntersection->PushButton1 ||
-         send == GroupLineIntersection->PushButton2) && !myBusy)
-    SelectionIntoArgument();
+  //  if ((send == GroupLineIntersection->PushButton1 ||
+  //         send == GroupLineIntersection->PushButton2) && !myBusy)
+  //    SelectionIntoArgument();
 }
 
 
