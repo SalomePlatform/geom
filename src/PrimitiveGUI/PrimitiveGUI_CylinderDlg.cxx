@@ -411,7 +411,7 @@ bool PrimitiveGUI_CylinderDlg::isValid (QString& msg)
   {
     ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) &&
          GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) &&
-         ( GroupDimensions->checkBox->isChecked() || GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) );
+         ( !GroupDimensions->checkBox->isChecked() || GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) );
     if ( GroupDimensions->checkBox->isChecked() &&
 	 ( GroupDimensions->SpinBox_DZ->value() <= 0. || GroupDimensions->SpinBox_DZ->value() >= 360. ) ) {
       msg += tr("GEOM_CYLINDER_ANGLE_ERR") + "\n";

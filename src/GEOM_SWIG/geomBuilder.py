@@ -3055,10 +3055,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             theR,theH,theA,Parameters = ParseParameters(theR, theH, theA)
 	    if flag:
                 theA = theA*math.pi/180.
-            anObj = self.PrimOp.MakeCylinderPntVecRHA(thePnt, theAxis, theR, theH, theA)
-            RaiseIfFailed("MakeCylinderPntVecRHA", self.PrimOp)
-            anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "cylinder")
+	    if theA<=0. or theA>=2*math.pi:
+	      raise ValueError("The angle parameter should be strictly between 0 and 2*pi.")
+	    anObj = self.PrimOp.MakeCylinderPntVecRHA(thePnt, theAxis, theR, theH, theA)
+	    RaiseIfFailed("MakeCylinderPntVecRHA", self.PrimOp)
+	    anObj.SetParameters(Parameters)
+	    self._autoPublish(anObj, theName, "cylinder")
             return anObj
 
         ## Create a cylinder with given radius and height at
@@ -3136,6 +3138,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             theR,theH,theA,Parameters = ParseParameters(theR, theH, theA)
             if flag:
                 theA = theA*math.pi/180.
+            if theA<=0. or theA>=2*math.pi:
+	      raise ValueError("The angle parameter should be strictly between 0 and 2*pi.")
             anObj = self.PrimOp.MakeCylinderRHA(theR, theH, theA)
             RaiseIfFailed("MakeCylinderRHA", self.PrimOp)
             anObj.SetParameters(Parameters)
