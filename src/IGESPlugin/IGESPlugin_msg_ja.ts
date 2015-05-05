@@ -32,7 +32,7 @@
     <name>IGESPlugin_GUI</name>
     <message>
       <source>IGES_FILES</source>
-      <translation>IGESファイル</translation>
+      <translation>IGES ファイル ( *.iges *.igs )</translation>
     </message>
     <message>
       <source>EXPORT_TITLE</source>

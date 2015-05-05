@@ -537,7 +537,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CYLINDER_ANGLE_ERR</source>
-        <translation>Angle values 0 and 360 are unsafe to build proper volumes. Please uncheck the "Angle" box to use the regular cylinder constructor.</translation>
+        <translation>Angle values 0 and 360 are unsafe to build proper volumes. Please uncheck the &quot;Angle&quot; box to use the regular cylinder constructor.</translation>
     </message>
     <message>
         <source>GEOM_D1</source>
@@ -2473,12 +2473,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>2D Polyline</translation>
     </message>
     <message>
-      <source>TOP_CURVE_CREATOR</source>
-      <translation>Create 2D polyline</translation>
+        <source>TOP_CURVE_CREATOR</source>
+        <translation>Create 2D polyline</translation>
     </message>
     <message>
-      <source>STB_CURVE_CREATOR</source>
-      <translation>Create 2D polyline</translation>
+        <source>STB_CURVE_CREATOR</source>
+        <translation>Create 2D polyline</translation>
     </message>
     <message>
         <source>MEN_ALL_SEL_ONLY</source>
@@ -3591,8 +3591,8 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_FAST_CHECK_INTERSECTIONS</source>
         <translation>Fast intersection</translation>
-   </message>
-   <message>
+    </message>
+    <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Check free boundaries</translation>
     </message>
@@ -5735,23 +5735,23 @@ shells and solids on the other hand.</translation>
     </message>
 </context>
 <context>
-  <name>CurveCreator_TableView</name>
-  <message>
-    <source>TABLE_SECTION</source>
-    <translation>Section</translation>
-  </message>
-  <message>
-    <source>TABLE_INDEX</source>
-    <translation>Index</translation>
-  </message>
-  <message>
-    <source>TABLE_X</source>
-    <translation>X</translation>
-  </message>
-  <message>
-    <source>TABLE_Y</source>
-    <translation>Y</translation>
-  </message>
+    <name>CurveCreator_TableView</name>
+    <message>
+        <source>TABLE_SECTION</source>
+        <translation>Section</translation>
+    </message>
+    <message>
+        <source>TABLE_INDEX</source>
+        <translation>Index</translation>
+    </message>
+    <message>
+        <source>TABLE_X</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <source>TABLE_Y</source>
+        <translation>Y</translation>
+    </message>
 </context>
 <context>
     <name>CurveCreator_Widget</name>
@@ -7175,7 +7175,7 @@ Do you want to create new material?</translation>
         <translation>Main shape</translation>
     </message>
     <message>
-    <source>GEOM_INSPECT_OBJECT_SHOW</source>
+        <source>GEOM_INSPECT_OBJECT_SHOW</source>
         <translation>Show Selected</translation>
     </message>
     <message>
@@ -7287,22 +7287,22 @@ Do you want to create new material?</translation>
         <source>GEOM_CHECK_INTE_V_E</source>
         <translation>Vertex to Edge + all above</translation>
     </message>
-  <message>
-    <source>GEOM_CHECK_INTE_E_E</source>
-    <translation>Edge to Edge + all above</translation>
-  </message>
-  <message>
-    <source>GEOM_CHECK_INTE_V_F</source>
-    <translation>Vertex to Face + all above</translation>
-  </message>
-  <message>
-    <source>GEOM_CHECK_INTE_E_F</source>
-    <translation>Edge to Face + all above</translation>
-  </message>
-  <message>
-    <source>GEOM_CHECK_INTE_ALL</source>
-    <translation>Face to Face + all above</translation>
-  </message>
+    <message>
+        <source>GEOM_CHECK_INTE_E_E</source>
+        <translation>Edge to Edge + all above</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_F</source>
+        <translation>Vertex to Face + all above</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_E_F</source>
+        <translation>Edge to Face + all above</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_ALL</source>
+        <translation>Face to Face + all above</translation>
+    </message>
 </context>
 <context>
     <name>MeasureGUI_FastCheckIntersectionsDlg</name>
@@ -7451,16 +7451,16 @@ Do you want to create new material?</translation>
 <context>
     <name>TransformationGUI_ProjectionOnCylDlg</name>
     <message>
-      <source>GEOM_PROJ_ON_CYL_TITLE</source>
-      <translation>Projection On A Cylinder</translation>
+        <source>GEOM_PROJ_ON_CYL_TITLE</source>
+        <translation>Projection On A Cylinder</translation>
     </message>
     <message>
-      <source>GEOM_PROJ_ON_CYL_START_ANGLE</source>
-      <translation>Starting angle</translation>
+        <source>GEOM_PROJ_ON_CYL_START_ANGLE</source>
+        <translation>Starting angle</translation>
     </message>
     <message>
-      <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
-      <translation>Length angle</translation>
+        <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
+        <translation>Length angle</translation>
     </message>
 </context>
 </TS>

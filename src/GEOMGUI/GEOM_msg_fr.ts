@@ -676,6 +676,18 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construction par extrusion</translation>
     </message>
     <message>
+        <source>GEOM_THICKNESS_TITLE</source>
+        <translation>Epaississement</translation>
+    </message>
+    <message>
+        <source>GEOM_THICKNESS_NAME</source>
+        <translation>Epaississement</translation>
+    </message>
+    <message>
+        <source>GEOM_TOWARDS_INSIDE</source>
+        <translation>Epaissit vers l'intérieur</translation>
+    </message>
+    <message>
         <source>GEOM_SCALE_PRISM</source>
         <translation>Appliquer le facteur d&apos;échelle</translation>
     </message>
@@ -1249,6 +1261,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Projection sur une face</translation>
     </message>
     <message>
+        <source>GEOM_PROJECTION_NAME</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
         <source>GEOM_PROJ_ON_FACE_SOURCE</source>
         <translation>Point, arête ou contour source</translation>
     </message>
@@ -1395,6 +1411,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_SELECT_UNPUBLISHED_EDGES</source>
         <translation>Choisir les arêtes non-publiées</translation>
+    </message>
+    <message>
+        <source>GEOM_GENERATE_GROUPS</source>
+        <translation>Générer les groupes</translation>
+    </message>
+    <message>
+        <source>GEOM_GROUP_NAME_PREFIX</source>
+        <translation>Préfixe des groupes</translation>
     </message>
     <message>
         <source>GEOM_PLANE</source>
@@ -2405,6 +2429,26 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>La forme %1 pour la création d&apos;un solide est invalide</translation>
     </message>
     <message>
+        <source>GROUP_DOWN</source>
+        <translation>Bas</translation>
+    </message>
+    <message>
+        <source>GROUP_UP</source>
+        <translation>Haut</translation>
+    </message>
+    <message>
+        <source>GROUP_SIDE1</source>
+        <translation>Gauche</translation>
+    </message>
+    <message>
+        <source>GROUP_SIDE2</source>
+        <translation>Droite</translation>
+    </message>
+    <message>
+        <source>GROUP_OTHER</source>
+        <translation>Autre</translation>
+    </message>
+    <message>
         <source>GEOM_X</source>
         <translation>X :</translation>
     </message>
@@ -2429,12 +2473,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créateur de courbe</translation>
     </message>
     <message>
-      <source>TOP_CURVE_CREATOR</source>
-      <translation>Créer une courbe</translation>
+        <source>TOP_CURVE_CREATOR</source>
+        <translation>Créer une courbe</translation>
     </message>
     <message>
-      <source>STB_CURVE_CREATOR</source>
-      <translation>Créer une courbe</translation>
+        <source>STB_CURVE_CREATOR</source>
+        <translation>Créer une courbe</translation>
     </message>
     <message>
         <source>MEN_ALL_SEL_ONLY</source>
@@ -2833,6 +2877,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Projection</translation>
     </message>
     <message>
+        <source>MEN_PROJ_ON_CYL</source>
+        <translation>Projection sur un cylindre</translation>
+    </message>
+    <message>
         <source>MEN_OPERATIONS</source>
         <translation>Opérations</translation>
     </message>
@@ -2851,6 +2899,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_PIPE_PATH</source>
         <translation>Retrouver le chemin</translation>
+    </message>
+    <message>
+        <source>MEN_THICKNESS</source>
+        <translation>Epaisseur</translation>
     </message>
     <message>
         <source>MEN_PLANE</source>
@@ -3290,7 +3342,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_LABEL_COLOR</source>
-        <translation type="unfinished">Color of labels</translation>
+        <translation>Couleur des étiquettes</translation>
     </message>
     <message>
         <source>PREF_TOPLEVEL_COLOR</source>
@@ -3418,7 +3470,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
-        <translation type="unfinished">Hide input objects from the viewer</translation>
+        <translation>Cacher dans la vue les objets en entrée</translation>
     </message>
     <message>
         <source>PREF_ISOS</source>
@@ -3539,7 +3591,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_FAST_CHECK_INTERSECTIONS</source>
         <translation>Intersection rapide</translation>
-   </message>
+    </message>
     <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Vérifier les contours libres</translation>
@@ -3789,6 +3841,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Projeter un point, une arête ou un contour sur une face</translation>
     </message>
     <message>
+        <source>STB_PROJ_ON_CYL</source>
+        <translation>Projète un contour ou une face sur un cylindre</translation>
+    </message>
+    <message>
         <source>STB_ORIGIN_AND_VECTORS</source>
         <translation>Créer les vecteurs de base et l&apos;origine</translation>
     </message>
@@ -3803,6 +3859,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_PIPE_PATH</source>
         <translation>Retrouver le chemin à partir d&apos;un objet de type tuyau</translation>
+    </message>
+    <message>
+        <source>STB_THICKNESS</source>
+        <translation>Crée un solide par ajout d'épaisseur</translation>
     </message>
     <message>
         <source>STB_PLANE</source>
@@ -3950,7 +4010,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_NAME_MODE</source>
-        <translation type="unfinished">Show/Hide names of visible shapes</translation>
+        <translation>Montrer/cacher le nom des objets visibles</translation>
     </message>
     <message>
         <source>STB_SHADING_COLOR</source>
@@ -4405,6 +4465,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Projection</translation>
     </message>
     <message>
+        <source>TOP_PROJ_ON_CYL</source>
+        <translation>Projection sur un cylindre</translation>
+    </message>
+    <message>
         <source>TOP_ORIGIN_AND_VECTORS</source>
         <translation>Créer l&apos;origine et les vecteurs de base</translation>
     </message>
@@ -4419,6 +4483,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_PIPE_PATH</source>
         <translation>Retrouver le chemin</translation>
+    </message>
+    <message>
+        <source>TOP_THICKNESS</source>
+        <translation>Epaississement</translation>
     </message>
     <message>
         <source>TOP_PLANE</source>
@@ -5371,22 +5439,6 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>TOOL_IMPORTEXPORT</source>
         <translation>Import / Export XAO</translation>
     </message>
-    <message>
-        <source>TABLE_SECTION</source>
-        <translation>Section</translation>
-    </message>
-    <message>
-        <source>TABLE_INDEX</source>
-        <translation>Indice</translation>
-    </message>
-    <message>
-        <source>TABLE_X</source>
-        <translation>X</translation>
-    </message>
-    <message>
-        <source>TABLE_Y</source>
-        <translation>Y</translation>
-    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -5680,6 +5732,25 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>X=%1, Y=%2, Z=%3</source>
         <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+</context>
+<context>
+    <name>CurveCreator_TableView</name>
+    <message>
+        <source>TABLE_SECTION</source>
+        <translation>Section</translation>
+    </message>
+    <message>
+        <source>TABLE_INDEX</source>
+        <translation>Indice</translation>
+    </message>
+    <message>
+        <source>TABLE_X</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <source>TABLE_Y</source>
+        <translation>Y</translation>
     </message>
 </context>
 <context>
@@ -6039,10 +6110,6 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>GEOM_ADD_THICKNESS</source>
         <translation>Epaissir (arêtes ou contours uniquement)</translation>
-    </message>
-    <message>
-        <source>GEOM_TOWARDS_INSIDE</source>
-        <translation>Epaissir vers l&apos;intérieur</translation>
     </message>
 </context>
 <context>
@@ -7108,7 +7175,7 @@ Voulez-vous en créer un nouveau ?</translation>
         <translation>Forme principale</translation>
     </message>
     <message>
-    <source>GEOM_INSPECT_OBJECT_SHOW</source>
+        <source>GEOM_INSPECT_OBJECT_SHOW</source>
         <translation>Afficher la sélection</translation>
     </message>
     <message>
@@ -7220,22 +7287,22 @@ Voulez-vous en créer un nouveau ?</translation>
         <source>GEOM_CHECK_INTE_V_E</source>
         <translation>Point à arête + tout au-delà</translation>
     </message>
-  <message>
-    <source>GEOM_CHECK_INTE_E_E</source>
-    <translation>Arête à arête + tout au-delà</translation>
-  </message>
-  <message>
-    <source>GEOM_CHECK_INTE_V_F</source>
-    <translation>Point à face + tout au-delà</translation>
-  </message>
-  <message>
-    <source>GEOM_CHECK_INTE_E_F</source>
-    <translation>Arête à Face + tout au-delà</translation>
-  </message>
-  <message>
-    <source>GEOM_CHECK_INTE_ALL</source>
-    <translation>Face à Face + tout au-delà</translation>
-  </message>
+    <message>
+        <source>GEOM_CHECK_INTE_E_E</source>
+        <translation>Arête à arête + tout au-delà</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_V_F</source>
+        <translation>Point à face + tout au-delà</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_E_F</source>
+        <translation>Arête à Face + tout au-delà</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_INTE_ALL</source>
+        <translation>Face à Face + tout au-delà</translation>
+    </message>
 </context>
 <context>
     <name>MeasureGUI_FastCheckIntersectionsDlg</name>
@@ -7379,6 +7446,21 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>GEOM_TRANSFER_DATA_MATERIALS</source>
         <translation>Matériaux: %1 de %2</translation>
+    </message>
+</context>
+<context>
+    <name>TransformationGUI_ProjectionOnCylDlg</name>
+    <message>
+        <source>GEOM_PROJ_ON_CYL_TITLE</source>
+        <translation>Projection sur un cylindre</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_CYL_START_ANGLE</source>
+        <translation>Angle de départ</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
+        <translation>Longueur de l'angle</translation>
     </message>
 </context>
 </TS>

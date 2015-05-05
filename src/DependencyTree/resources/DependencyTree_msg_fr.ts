@@ -31,16 +31,14 @@
         <source>UPDATE</source>
         <translation>Mise à jour</translation>
     </message>
-</context>
-<context>
     <name>DependencyTree_ViewModel</name>
     <message>
         <source>MEN_REBUILD_THE_TREE</source>
-        <translation type="unfinished">Rebuild the tree</translation>
+        <translation>Reconstruire l'arbre</translation>
     </message>
     <message>
         <source>MEN_REDUCE_STUDY</source>
-        <translation type="unfinished">Reduce study</translation>
+        <translation>Réduire l'étude</translation>
     </message>
 </context>
 </TS>

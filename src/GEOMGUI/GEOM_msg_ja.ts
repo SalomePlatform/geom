@@ -36,6 +36,14 @@
       <translation>NewObject</translation>
     </message>
     <message>
+      <source>DEVIDE_EDGE_BAD_PROJ_MSG</source>
+      <translation>エッジ外側の投影</translation>
+    </message>
+    <message>
+      <source>DEVIDE_EDGE_BY_PROJ_POINT</source>
+      <translation>投影点</translation>
+    </message>
+    <message>
       <source>ERROR_SHAPE_TYPE</source>
       <translation>選択したオブジェクトの種類が正しくありません！\nフェース、シェルまたはソリッドを選択し、もう一度やり直してください。</translation>
     </message>
@@ -404,6 +412,10 @@
       <translation>GroupeSolidesNonBlocs</translation>
     </message>
     <message>
+      <source>GEOM_USE_C1_CRITERION</source>
+      <translation>C1 criterion の使用</translation>
+    </message>
+    <message>
       <source>GEOM_CHECK_INFOS</source>
       <translation>オブジェクトとその位相情報</translation>
     </message>
@@ -412,24 +424,8 @@
       <translation>自己交差の検出</translation>
     </message>
     <message>
-        <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
-        <translation type="unfinished">Fast intersection</translation>
-    </message>
-    <message>
-      <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
-      <translation>自己交差の検出に失敗しました</translation>
-    </message>
-    <message>
-      <source>GEOM_NO_SELF_INTERSECTIONS</source>
-      <translation>自己交差は検出されませんでした。</translation>
-    </message>
-    <message>
-      <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
-      <translation>自己交差が検出されました。</translation>
-    </message>
-    <message>
-      <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
-      <translation>警告: 操作中にエラーがあったので、リストが不完全かもしれない</translation>
+      <source>GEOM_FAST_CHECK_INTERSECTIONS</source>
+      <translation>クイック交点</translation>
     </message>
     <message>
       <source>GEOM_CIRCLE</source>
@@ -537,7 +533,7 @@
     </message>
     <message>
       <source>GEOM_CYLINDER_ANGLE_ERR</source>
-      <translation type="unfinished">Angle values 0 and 360 are unsafe to build proper volumes. Please uncheck the "Angle" box to use the regular cylinder constructor.</translation>
+      <translation>角度値0°と360°はボリューム構築には不適切です。標準の円筒構築機能を使用するために角度ボックスのチェックを外してください。</translation>
     </message>
     <message>
       <source>GEOM_D1</source>
@@ -676,6 +672,18 @@
       <translation>面の押出し</translation>
     </message>
     <message>
+      <source>GEOM_THICKNESS_TITLE</source>
+      <translation>厚みの構築</translation>
+    </message>
+    <message>
+      <source>GEOM_THICKNESS_NAME</source>
+      <translation>Thickness</translation>
+    </message>
+    <message>
+      <source>GEOM_TOWARDS_INSIDE</source>
+      <translation>内側への厚み</translation>
+    </message>
+    <message>
       <source>GEOM_SCALE_PRISM</source>
       <translation>面のサイズを変えながら押し出す</translation>
     </message>
@@ -708,24 +716,28 @@
       <translation>顔輪郭またはエッジからの作成</translation>
     </message>
     <message>
+      <source>GEOM_FACE_FROM_SURFACE</source>
+      <translation>ワイヤによる境界面からの面作成</translation>
+    </message>
+    <message>
       <source>GEOM_FACE_OPT</source>
       <translation>平らなフェースを作成</translation>
     </message>
     <message>
-        <source>GEOM_FACE_FFWC</source>
-        <translation type="unfinished">Face creation from wire and constraints</translation>
+      <source>GEOM_FACE_FFWC</source>
+      <translation>ワイヤと拘束点からの面作成</translation>
     </message>
     <message>
-        <source>GEOM_CONSTRAINTS</source>
-        <translation type="unfinished">Constraints</translation>
+      <source>GEOM_CONSTRAINTS</source>
+      <translation>拘束</translation>
     </message>
     <message>
-        <source>GEOM_FACE_CONSTRAINT</source>
-        <translation type="unfinished">Constraint Face</translation>
+      <source>GEOM_FACE_CONSTRAINT</source>
+      <translation>拘束面</translation>
     </message>
     <message>
-        <source>GEOM_SOLID_FROM_FACE_OPT</source>
-        <translation type="unfinished">Intersect/sew shapes</translation>
+      <source>GEOM_SOLID_FROM_FACE_OPT</source>
+      <translation>形状の交差・縫合</translation>
     </message>
     <message>
       <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
@@ -852,6 +864,10 @@
       <translation>フリーフェース</translation>
     </message>
     <message>
+      <source>GEOM_FREE_FACES_NAME</source>
+      <translation>Free_face</translation>
+    </message>
+    <message>
       <source>GEOM_FREE_FACES_TITLE</source>
       <translation>フリーフェース</translation>
     </message>
@@ -882,6 +898,14 @@
     <message>
       <source>GEOM_GLUE_EDGES_TITLE</source>
       <translation>エッジ固着</translation>
+    </message>
+    <message>
+      <source>GEOM_GLUE_EDGES_DETECT_TITLE</source>
+      <translation>一致エッジ検出</translation>
+    </message>
+    <message>
+      <source>GEOM_GLUE_FACES_DETECT_TITLE</source>
+      <translation>一致面検出</translation>
     </message>
     <message>
       <source>GLUE_ERROR_STICKED_SHAPES</source>
@@ -1216,16 +1240,48 @@
       <translation>加工図</translation>
     </message>
     <message>
-      <source>GEOM_PROJECTION</source>
-      <translation>Projection</translation>
+      <source>GEOM_PROJECTION_ON_FACE</source>
+      <translation>面上の投影</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJECTION_ON_WIRE</source>
+      <translation>ワイヤ上の投影</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJECTION_ON_EDGE</source>
+      <translation>エッジ上の投影</translation>
     </message>
     <message>
       <source>GEOM_PROJECTION_TITLE</source>
       <translation>フェース上に投影</translation>
     </message>
     <message>
-      <source>GEOM_SOURCE_OBJECT</source>
-      <translation>基になるポイント、エッジ、またはワイヤー</translation>
+      <source>GEOM_PROJECTION_NAME</source>
+      <translation>Projection</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_FACE_SOURCE</source>
+      <translation>ソース頂点、エッジまたはワイヤ</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_FACE_TARGET</source>
+      <translation>ターゲット面</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_WIRE_SOURCE</source>
+      <translation>ソース頂点</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_WIRE_TARGET</source>
+      <translation>ターゲットワイヤ</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_EDGE_SOURCE</source>
+      <translation>ソース頂点</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_EDGE_TARGET</source>
+      <translation>ターゲットエッジ</translation>
     </message>
     <message>
       <source>GEOM_SOLUTION</source>
@@ -1234,10 +1290,6 @@
     <message>
       <source>GEOM_SOLUTION_I</source>
       <translation>%1 のソリューション</translation>
-    </message>
-    <message>
-      <source>GEOM_TARGET_OBJECT</source>
-      <translation>目的面</translation>
     </message>
     <message>
       <source>GEOM_WITH_CONTACT</source>
@@ -1354,6 +1406,14 @@
     <message>
       <source>GEOM_SELECT_UNPUBLISHED_EDGES</source>
       <translation>非公開のエッジを選択</translation>
+    </message>
+    <message>
+      <source>GEOM_GENERATE_GROUPS</source>
+      <translation>グループの作成</translation>
+    </message>
+    <message>
+      <source>GEOM_GROUP_NAME_PREFIX</source>
+      <translation>グループ名Prefix</translation>
     </message>
     <message>
       <source>GEOM_PLANE</source>
@@ -1672,6 +1732,10 @@
       <translation>選択した形状</translation>
     </message>
     <message>
+      <source>GEOM_SELECTED_SHAPES</source>
+      <translation>選択済み形状</translation>
+    </message>
+    <message>
       <source>GEOM_SELECTION</source>
       <translation>選択</translation>
     </message>
@@ -1949,11 +2013,11 @@
     </message>
     <message>
       <source>GEOM_SOLID_SHELLS</source>
-      <translation type="unfinished">Make Solid From Shells</translation>
+      <translation>シェルからソリッドの作成</translation>
     </message>
     <message>
       <source>GEOM_SOLID_FACES</source>
-      <translation type="unfinished">Make Solid From Connected Set Of Faces/Shells</translation>
+      <translation>接続された面、シェルからソリッド作成</translation>
     </message>
     <message>
       <source>GEOM_SPHERE</source>
@@ -2360,6 +2424,26 @@
       <translation>ソリッド作成のオブジェクト %1 が無効</translation>
     </message>
     <message>
+      <source>GROUP_DOWN</source>
+      <translation>下</translation>
+    </message>
+    <message>
+      <source>GROUP_UP</source>
+      <translation>上</translation>
+    </message>
+    <message>
+      <source>GROUP_SIDE1</source>
+      <translation>横1</translation>
+    </message>
+    <message>
+      <source>GROUP_SIDE2</source>
+      <translation>横2</translation>
+    </message>
+    <message>
+      <source>GROUP_OTHER</source>
+      <translation>その他</translation>
+    </message>
+    <message>
       <source>GEOM_X</source>
       <translation>X :</translation>
     </message>
@@ -2385,11 +2469,11 @@
     </message>
     <message>
       <source>TOP_CURVE_CREATOR</source>
-      <translation type="unfinished">Create 2D polyline</translation>
+      <translation>2Dポリラインの作成</translation>
     </message>
     <message>
       <source>STB_CURVE_CREATOR</source>
-      <translation type="unfinished">Create 2D polyline</translation>
+      <translation>2Dポリラインの作成</translation>
     </message>
     <message>
       <source>MEN_ALL_SEL_ONLY</source>
@@ -2464,8 +2548,8 @@
       <translation>自己交差の確認</translation>
     </message>
     <message>
-        <source>MEN_FAST_CHECK_INTERSECTIONS</source>
-        <translation type="unfinished">Fast intersection</translation>
+      <source>MEN_FAST_CHECK_INTERSECTIONS</source>
+      <translation>クイック交点</translation>
     </message>
     <message>
       <source>MEN_CHECK_FREE_BNDS</source>
@@ -2788,6 +2872,10 @@
       <translation>投影</translation>
     </message>
     <message>
+      <source>MEN_PROJ_ON_CYL</source>
+      <translation>円筒の投影</translation>
+    </message>
+    <message>
       <source>MEN_OPERATIONS</source>
       <translation>操作</translation>
     </message>
@@ -2806,6 +2894,10 @@
     <message>
       <source>MEN_PIPE_PATH</source>
       <translation>経路の復元</translation>
+    </message>
+    <message>
+      <source>MEN_THICKNESS</source>
+      <translation>厚み</translation>
     </message>
     <message>
       <source>MEN_PLANE</source>
@@ -2921,12 +3013,12 @@
     </message>
     <message>
       <source>MEN_POP_VERTICES</source>
-      <translation type="unfinished">Show Vertices</translation>
+      <translation>頂点の表示</translation>
     </message>
     <message>
       <source>MEN_POP_SHOW_NAME</source>
-      <translation type="unfinished">Show Name</translation>
-    </message>    
+      <translation>名前の表示</translation>
+    </message>
     <message>
       <source>MEN_PREFERENCES</source>
       <translation>設定</translation>
@@ -3016,12 +3108,16 @@
       <translation>等高線</translation>
     </message>
     <message>
+      <source>MEN_SURFACE_FROM_FACE</source>
+      <translation>面から表面</translation>
+    </message>
+    <message>
       <source>MEN_SOLID</source>
       <translation>ソリッド</translation>
     </message>
     <message>
-        <source>MEN_SOLID_FROM_FACES</source>
-        <translation type="unfinished">Solid from connected faces</translation>
+      <source>MEN_SOLID_FROM_FACES</source>
+      <translation>接続された面からソリッド</translation>
     </message>
     <message>
       <source>MEN_SOLID_SEL_ONLY</source>
@@ -3057,7 +3153,7 @@
     </message>
     <message>
       <source>MEN_MATERIALS_LIBRARY</source>
-      <translation>材料の特性</translation>
+      <translation>材料ライブラリ</translation>
     </message>
     <message>
       <source>MEN_TEXTURE</source>
@@ -3105,19 +3201,19 @@
     </message>
     <message>
       <source>MEN_VERTICES_MODE_ON</source>
-      <translation type="unfinished">Show Vertices</translation>
+      <translation>頂点の表示</translation>
     </message>
     <message>
       <source>MEN_VERTICES_MODE_OFF</source>
-      <translation type="unfinished">Hide Vertices</translation>
+      <translation>頂点の非表示</translation>
     </message>
     <message>
       <source>MEN_NAME_MODE_ON</source>
-      <translation type="unfinished">Show Name</translation>
+      <translation>名前の表示</translation>
     </message>
     <message>
       <source>MEN_NAME_MODE_OFF</source>
-      <translation type="unfinished">Hide Name</translation>
+      <translation>名前の非表示</translation>
     </message>
     <message>
       <source>MEN_WIREFRAME</source>
@@ -3144,6 +3240,14 @@
       <translation>カスタム...</translation>
     </message>
     <message>
+      <source>MEN_EDGE_EXTEND</source>
+      <translation>拡張エッジ</translation>
+    </message>
+    <message>
+      <source>MEN_FACE_EXTEND</source>
+      <translation>拡張面</translation>
+    </message>
+    <message>
       <source>NAME_LBL</source>
       <translation>名前:</translation>
     </message>
@@ -3153,7 +3257,7 @@
     </message>
     <message>
       <source>PREF_DEFLECTION</source>
-      <translation>既定の変形倍率</translation>
+      <translation>変形倍率</translation>
     </message>
     <message>
       <source>GEOM_PREF_def_precision</source>
@@ -3201,7 +3305,7 @@
     </message>
     <message>
       <source>PREF_TRANSPARENCY</source>
-      <translation>既定の透明度</translation>
+      <translation>透明度</translation>
     </message>
     <message>
       <source>PREF_FREE_BOUND_COLOR</source>
@@ -3225,15 +3329,15 @@
     </message>
     <message>
       <source>PREF_GROUP_VERTEX</source>
-      <translation>既定のポイントのマーカー</translation>
+      <translation>ポイントのマーカー</translation>
     </message>
     <message>
       <source>PREF_ISOS_COLOR</source>
       <translation>輪郭の色</translation>
     </message>
     <message>
-        <source>PREF_LABEL_COLOR</source>
-        <translation type="unfinished">Color of labels</translation>
+      <source>PREF_LABEL_COLOR</source>
+      <translation>ラベルの色</translation>
     </message>
     <message>
       <source>PREF_TOPLEVEL_COLOR</source>
@@ -3305,11 +3409,11 @@
     </message>
     <message>
       <source>PREF_EDGE_WIDTH</source>
-      <translation>既定のエッジの厚さ</translation>
+      <translation>エッジの厚さ</translation>
     </message>
     <message>
       <source>PREF_ISOLINES_WIDTH</source>
-      <translation>既定の輪郭の太さ</translation>
+      <translation>輪郭の太さ</translation>
     </message>
     <message>
       <source>PREF_PREVIEW_EDGE_WIDTH</source>
@@ -3360,12 +3464,12 @@
       <translation>測定単位の表示</translation>
     </message>
     <message>
-        <source>PREF_HIDE_INPUT_OBJECT</source>
-        <translation type="unfinished">Hide input objects from the viewer</translation>
+      <source>PREF_HIDE_INPUT_OBJECT</source>
+      <translation>ビューワから入力したオブジェクトの非表示</translation>
     </message>
     <message>
       <source>PREF_ISOS</source>
-      <translation>既定の輪郭の数</translation>
+      <translation>輪郭の数</translation>
     </message>
     <message>
       <source>PREF_ISOS_U</source>
@@ -3409,11 +3513,11 @@
     </message>
     <message>
       <source>MATERIAL_LIBRARY_TLT</source>
-      <translation>図書館資料</translation>
+      <translation>材料ライブラリ</translation>
     </message>
     <message>
       <source>REMOVE_HOLES_NEW_OBJ_NAME</source>
-      <translation>SuppressHoles</translation>
+      <translation>SupressHoles</translation>
     </message>
     <message>
       <source>REMOVE_INT_WIRES_NEW_OBJ_NAME</source>
@@ -3480,9 +3584,9 @@
       <translation>自己交差の確認</translation>
     </message>
     <message>
-        <source>STB_FAST_CHECK_INTERSECTIONS</source>
-        <translation type="unfinished">Fast intersection</translation>
-   </message>
+      <source>STB_FAST_CHECK_INTERSECTIONS</source>
+      <translation>クイック交点</translation>
+    </message>
     <message>
       <source>STB_CHECK_FREE_BNDS</source>
       <translation>自由境界をチェック</translation>
@@ -3732,6 +3836,10 @@
       <translation>ポイント、エッジ、または輪郭上の 1 つの側面を投影</translation>
     </message>
     <message>
+      <source>STB_PROJ_ON_CYL</source>
+      <translation>円筒上のワイヤまたは面を投影</translation>
+    </message>
+    <message>
       <source>STB_ORIGIN_AND_VECTORS</source>
       <translation>起源と基底ベクトルを作成します。</translation>
     </message>
@@ -3746,6 +3854,10 @@
     <message>
       <source>STB_PIPE_PATH</source>
       <translation>経路の復元</translation>
+    </message>
+    <message>
+      <source>STB_THICKNESS</source>
+      <translation>厚みのあるソリッドの作成</translation>
     </message>
     <message>
       <source>STB_PLANE</source>
@@ -3821,11 +3933,11 @@
     </message>
     <message>
       <source>STB_POP_VERTICES</source>
-      <translation type="unfinished">Show Vertices</translation>
+      <translation>頂点の表示</translation>
     </message>
     <message>
       <source>STB_POP_SHOW_NAME</source>
-      <translation type="unfinished">Show Name</translation>
+      <translation>名前の表示</translation>
     </message>
     <message>
       <source>STB_POP_SETTEXTURE</source>
@@ -3892,8 +4004,8 @@
       <translation>エッジの表示モードを変更</translation>
     </message>
     <message>
-        <source>STB_NAME_MODE</source>
-        <translation type="unfinished">Show/Hide names of visible shapes</translation>
+      <source>STB_NAME_MODE</source>
+      <translation>表示中の形状の名前を表示/非表示</translation>
     </message>
     <message>
       <source>STB_SHADING_COLOR</source>
@@ -3922,6 +4034,10 @@
     <message>
       <source>STB_ISOLINE</source>
       <translation>UまたはV方向等高線の作成</translation>
+    </message>
+    <message>
+      <source>STB_SURFACE_FROM_FACE</source>
+      <translation>面から表面の作成</translation>
     </message>
     <message>
       <source>STB_SOLID</source>
@@ -4001,7 +4117,7 @@
     </message>
     <message>
       <source>SUPRESS_FACE_NEW_OBJ_NAME</source>
-      <translation>SuppressFaces</translation>
+      <translation>SupressFaces</translation>
     </message>
     <message>
       <source>ShHealOper_ErrorExecution_msg</source>
@@ -4100,8 +4216,8 @@
       <translation>自己交差の確認</translation>
     </message>
     <message>
-        <source>TOP_FAST_CHECK_INTERSECTIONS</source>
-        <translation type="unfinished">Fast intersection</translation>
+      <source>TOP_FAST_CHECK_INTERSECTIONS</source>
+      <translation>クイック交点</translation>
     </message>
     <message>
       <source>TOP_CHECK_FREE_BNDS</source>
@@ -4344,6 +4460,10 @@
       <translation>投影</translation>
     </message>
     <message>
+      <source>TOP_PROJ_ON_CYL</source>
+      <translation>円筒上に投影</translation>
+    </message>
+    <message>
       <source>TOP_ORIGIN_AND_VECTORS</source>
       <translation>起源と根拠のベクトルを作成します。</translation>
     </message>
@@ -4358,6 +4478,10 @@
     <message>
       <source>TOP_PIPE_PATH</source>
       <translation>経路の復元</translation>
+    </message>
+    <message>
+      <source>TOP_THICKNESS</source>
+      <translation>厚み</translation>
     </message>
     <message>
       <source>TOP_PLANE</source>
@@ -4490,6 +4614,10 @@
     <message>
       <source>TOP_ISOLINE</source>
       <translation>等高線</translation>
+    </message>
+    <message>
+      <source>TOP_SURFACE_FROM_FACE</source>
+      <translation>面から表面</translation>
     </message>
     <message>
       <source>TOP_SOLID</source>
@@ -4737,23 +4865,23 @@
     </message>
     <message>
       <source>MEN_UNION_FACES</source>
-      <translation>連合に直面しています。</translation>
+      <translation>面の共有</translation>
     </message>
     <message>
       <source>STB_UNION_FACES</source>
       <translation>連合に直面しています。</translation>
     </message>
     <message>
-        <source>TOP_INSPECT_OBJECT</source>
-        <translation type="unfinished">Inspect Object</translation>
+      <source>TOP_INSPECT_OBJECT</source>
+      <translation>オブジェクトの点検</translation>
     </message>
     <message>
-        <source>MEN_INSPECT_OBJECT</source>
-        <translation type="unfinished">Inspect Object</translation>
+      <source>MEN_INSPECT_OBJECT</source>
+      <translation>オブジェクトの点検</translation>
     </message>
     <message>
-        <source>STB_INSPECT_OBJECT</source>
-        <translation type="unfinished">Inspect Object</translation>
+      <source>STB_INSPECT_OBJECT</source>
+      <translation>オブジェクトの点検</translation>
     </message>
     <message>
       <source>TOP_NORMALE</source>
@@ -4793,11 +4921,11 @@
     </message>
     <message>
       <source>MEN_POP_SHOW_DEPENDENCY_TREE</source>
-      <translation type="unfinished">Show dependency tree</translation>
+      <translation>依存ツリーの表示</translation>
     </message>
     <message>
       <source>MEN_POP_REDUCE_STUDY</source>
-      <translation type="unfinished">Reduce study</translation>
+      <translation>スタディの削減</translation>
     </message>
     <message>
       <source>MEN_POP_SHOW_ALL_DIMENSIONS</source>
@@ -5048,6 +5176,30 @@
       <translation>共有アイテムを取得</translation>
     </message>
     <message>
+      <source>TOP_TRANSFER_DATA</source>
+      <translation>データ転送</translation>
+    </message>
+    <message>
+      <source>MEN_TRANSFER_DATA</source>
+      <translation>データ転送</translation>
+    </message>
+    <message>
+      <source>STB_TRANSFER_DATA</source>
+      <translation>データ転送</translation>
+    </message>
+    <message>
+      <source>TOP_EXTENSION</source>
+      <translation>エッジまたは面の拡張</translation>
+    </message>
+    <message>
+      <source>MEN_EXTENSION</source>
+      <translation>拡張</translation>
+    </message>
+    <message>
+      <source>STB_EXTENSION</source>
+      <translation>エッジまたは面の拡張</translation>
+    </message>
+    <message>
       <source>GEOM_PUBLISH_RESULT_GRP</source>
       <translation>高度なオプション</translation>
     </message>
@@ -5065,63 +5217,63 @@
     </message>
     <message>
       <source>PREF_TAB_DEPENDENCY_VIEW</source>
-      <translation type="unfinished">Dependency Tree</translation>
+      <translation>依存ツリー</translation>
     </message>
     <message>
       <source>PREF_HIERARCHY_TYPE</source>
-      <translation type="unfinished">Hierarchy type</translation>
+      <translation>階層タイプ</translation>
     </message>
     <message>
       <source>MEN_ONLY_ASCENDANTS</source>
-      <translation type="unfinished">Display only ascendants tree</translation>
+      <translation>ツリー上位のみ表示</translation>
     </message>
     <message>
       <source>MEN_ONLY_DESCENDANTS</source>
-      <translation type="unfinished">Display only descendants tree</translation>
+      <translation>ツリー下位のみ表示</translation>
     </message>
     <message>
       <source>MEN_BOTH_ASCENDANTS_DESCENDANTS</source>
-      <translation type="unfinished">Display both ascendants and descendants trees</translation>
+      <translation>ツリー上位と下位の両方表示</translation>
     </message>
     <message>
       <source>GEOM_MOVE_POSSIBILITY</source>
-      <translation type="unfinished">Possibility to move nodes</translation>
+      <translation>ノード移動可能性</translation>
     </message>
     <message>
       <source>PREF_GROUP_DEPENDENCY_VIEW_COLOR</source>
-      <translation type="unfinished">Color</translation>
+      <translation>色</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_BACKGROUND_COLOR</source>
-      <translation type="unfinished">Background color</translation>
+      <translation>背景色</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_NODE_COLOR</source>
-      <translation type="unfinished">Default node color</translation>
+      <translation>デフォルトノード色</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_MAIN_NODE_COLOR</source>
-      <translation type="unfinished">Main node color</translation>
+      <translation>主ノード色</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_UNPUBLISH_NODE_COLOR</source>
-      <translation type="unfinished">Unpublished node color</translation>
+      <translation>非公開ノード色</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_SELECT_NODE_COLOR</source>
-      <translation type="unfinished">Selected node color</translation>
+      <translation>選択ノード色</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_ARROW_COLOR</source>
-      <translation type="unfinished">Default arrow color</translation>
+      <translation>デフォルト矢印色</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_HIGHLIGHT_ARROW_COLOR</source>
-      <translation type="unfinished">Highlighted arrow color</translation>
+      <translation>ハイライト矢印色</translation>
     </message>
     <message>
       <source>PREF_DEPENDENCY_VIEW_SELECT_ARROW_COLOR</source>
-      <translation type="unfinished">Selected arrow color</translation>
+      <translation>選択矢印色</translation>
     </message>
     <message>
       <source>GEOM_ALL_IMPORT_FILES</source>
@@ -5177,110 +5329,106 @@
     </message>
     <message>
       <source>CC_PNT_ITEM_X_Y</source>
-      <translation>X=%1, Y=%2</translation>
+      <translation type="unfinished">X=%1, Y=%2</translation>
     </message>
     <message>
       <source>CC_PNT_ITEM_X_Y_Z</source>
-      <translation>X=%1, Y=%2, Z=%3</translation>
+      <translation type="unfinished">X=%1, Y=%2, Z=%3</translation>
     </message>
     <message>
-        <source>GEOM_FILTER</source>
-        <translation type="unfinished">Filter</translation>
+      <source>GEOM_FILTER</source>
+      <translation>フィルタ</translation>
     </message>
     <message>
-        <source>GEOM_LESS_THAN</source>
-        <translation type="unfinished">Less Than</translation>
+      <source>GEOM_LESS_THAN</source>
+      <translation>未満</translation>
     </message>
     <message>
-        <source>GEOM_LESSOREQUAL_THAN</source>
-        <translation type="unfinished">Equal or Less Than</translation>
+      <source>GEOM_LESSOREQUAL_THAN</source>
+      <translation>以下</translation>
     </message>
     <message>
-        <source>GEOM_GREAT_THAN</source>
-        <translation type="unfinished">Greater Than</translation>
+      <source>GEOM_GREAT_THAN</source>
+      <translation>超える</translation>
     </message>
     <message>
-        <source>GEOM_GREATOREQUAL_THAN</source>
-        <translation type="unfinished">Equal or Greater Than</translation>
+      <source>GEOM_GREATOREQUAL_THAN</source>
+      <translation>以上</translation>
     </message>
     <message>
-        <source>GEOM_SOME_SHAPES_SELECTED</source>
-        <translation type="unfinished">%1 shape(s) has(have) been selected</translation>
+      <source>GEOM_SOME_SHAPES_SELECTED</source>
+      <translation>%1 個選択済み</translation>
     </message>
     <message>
-        <source>GEOM_NO_SHAPES_SELECTED</source>
-        <translation type="unfinished">There are no shapes that meet filtering parameters</translation>
+      <source>GEOM_NO_SHAPES_SELECTED</source>
+      <translation>フィルタリングパラメータに適合する形状はありません</translation>
+    </message>
+    <message>
+      <source>GEOM_HEALING_STATS_TITLE</source>
+      <translation>行われた変更</translation>
+    </message>
+    <message>
+      <source>GEOM_HEALING_STATS_COL_1</source>
+      <translation>カウント</translation>
+    </message>
+    <message>
+      <source>GEOM_HEALING_STATS_COL_2</source>
+      <translation>修正</translation>
     </message>
   </context>
   <context>
     <name>GeometryGUI</name>
     <message>
       <source>TOOL_BASIC</source>
-      <translation type="unfinished">Basic</translation>
+      <translation>基本</translation>
     </message>
     <message>
       <source>TOOL_BLOCKS</source>
-      <translation type="unfinished">Blocks</translation>
+      <translation>ブロック</translation>
     </message>
     <message>
       <source>TOOL_BOOLEAN</source>
-      <translation type="unfinished">Boolean operations</translation>
+      <translation>ブーリアン演算</translation>
     </message>
     <message>
       <source>TOOL_FEATURES</source>
-      <translation type="unfinished">Modification</translation>
+      <translation>修正</translation>
     </message>
     <message>
       <source>TOOL_GENERATION</source>
-      <translation type="unfinished">Generation</translation>
+      <translation>作成</translation>
     </message>
     <message>
       <source>TOOL_PRIMITIVES</source>
-      <translation type="unfinished">Primitives</translation>
+      <translation>プリミティブ</translation>
     </message>
     <message>
       <source>TOOL_TRANSFORMATION</source>
-      <translation type="unfinished">Transformation</translation>
+      <translation>変形</translation>
     </message>
     <message>
       <source>TOOL_BUILD</source>
-      <translation type="unfinished">Build</translation>
+      <translation>構築</translation>
     </message>
     <message>
       <source>TOOL_OPERATIONS</source>
-      <translation type="unfinished">Operations</translation>
+      <translation>操作</translation>
     </message>
     <message>
       <source>TOOL_PICTURES</source>
-      <translation type="unfinished">Pictures</translation>
+      <translation>画像</translation>
     </message>
     <message>
       <source>TOOL_ADVANCED</source>
-      <translation type="unfinished">Advanced</translation>
+      <translation>上級</translation>
     </message>
     <message>
       <source>TOOL_MEASURES</source>
-      <translation type="unfinished">Measures</translation>
+      <translation>測定</translation>
     </message>
     <message>
       <source>TOOL_IMPORTEXPORT</source>
-      <translation type="unfinished">Import / Export XAO</translation>
-    </message>
-    <message>
-      <source>TABLE_SECTION</source>
-      <translation type="unfinished">Section</translation>
-    </message>
-    <message>
-      <source>TABLE_INDEX</source>
-      <translation type="unfinished">Index</translation>
-    </message>
-    <message>
-      <source>TABLE_X</source>
-      <translation type="unfinished">X</translation>
-    </message>
-    <message>
-      <source>TABLE_Y</source>
-      <translation type="unfinished">Y</translation>
+      <translation>インポート / エクスポート XAO</translation>
     </message>
   </context>
   <context>
@@ -5527,35 +5675,35 @@
     <name>CurveCreator_NewSectionDlg</name>
     <message>
       <source>SECTION_NAME</source>
-      <translation type="unfinished">Name</translation>
+      <translation>名前</translation>
     </message>
     <message>
       <source>SECTION_LINE_TYPE</source>
-      <translation type="unfinished">Type</translation>
+      <translation>タイプ</translation>
     </message>
     <message>
       <source>SECTION_POLYLINE_TYPE</source>
-      <translation type="unfinished">Polyline</translation>
+      <translation>ポリライン</translation>
     </message>
     <message>
       <source>SECTION_SPLINE_TYPE</source>
-      <translation type="unfinished">Spline</translation>
+      <translation>スプライン</translation>
     </message>
     <message>
       <source>SECTION_LINE_CLOSED</source>
-      <translation type="unfinished">Closed</translation>
+      <translation>閉じたライン</translation>
     </message>
     <message>
       <source>SECTION_ADD_BTN</source>
-      <translation type="unfinished">Add</translation>
+      <translation>追加</translation>
     </message>
     <message>
       <source>SECTION_OK_BTN</source>
-      <translation type="unfinished">Ok</translation>
+      <translation>Ok</translation>
     </message>
     <message>
       <source>SECTION_CANCEL_BTN</source>
-      <translation type="unfinished">Cancel</translation>
+      <translation>キャンセル</translation>
     </message>
     <message>
       <source>ADD_NEW_SECTION</source>
@@ -5570,18 +5718,37 @@
     <name>CurveCreator_TreeViewModel</name>
     <message>
       <source>X=%1, Y=%2</source>
-      <translation type="unfinished">X=%1, Y=%2</translation>
+      <translation>X=%1, Y=%2</translation>
     </message>
     <message>
       <source>X=%1, Y=%2, Z=%3</source>
-      <translation type="unfinished">X=%1, Y=%2, Z=%3</translation>
+      <translation>X=%1, Y=%2, Z=%3</translation>
+    </message>
+  </context>
+  <context>
+    <name>CurveCreator_TableView</name>
+    <message>
+      <source>TABLE_SECTION</source>
+      <translation>Section</translation>
+    </message>
+    <message>
+      <source>TABLE_INDEX</source>
+      <translation>Index</translation>
+    </message>
+    <message>
+      <source>TABLE_X</source>
+      <translation type="unfinished">X</translation>
+    </message>
+    <message>
+      <source>TABLE_Y</source>
+      <translation type="unfinished">Y</translation>
     </message>
   </context>
   <context>
     <name>CurveCreator_Widget</name>
     <message>
       <source>SECTION_GROUP_TITLE</source>
-      <translation type="unfinished">Sections</translation>
+      <translation>断面</translation>
     </message>
     <message>
       <source>UNDO</source>
@@ -5700,27 +5867,27 @@
     <name>EntityGUI_PolylineDlg</name>
     <message>
       <source>POLYLINE_DLG_TITLE</source>
-      <translation type="unfinished">Polyline Construction</translation>
+      <translation>ポリラインの構築</translation>
     </message>
     <message>
       <source>POLYLINE_TITLE</source>
-      <translation type="unfinished">Polyline</translation>
+      <translation>ポリライン</translation>
     </message>
     <message>
       <source>POLYLINE_NAME</source>
-      <translation type="unfinished">Polyline</translation>
+      <translation>Polyline</translation>
     </message>
     <message>
       <source>POLYLINE_IMPORT</source>
-      <translation type="unfinished">Import polyline</translation>
+      <translation>ポリラインのインポート</translation>
     </message>
     <message>
       <source>POLYLINE_ADD_SECTION</source>
-      <translation type="unfinished">Add section</translation>
+      <translation>断面の追加</translation>
     </message>
     <message>
       <source>POLYLINE_EDIT_SECTION</source>
-      <translation type="unfinished">Edit section</translation>
+      <translation>断面の編集</translation>
     </message>
   </context>
   <context>
@@ -5932,10 +6099,6 @@
     <message>
       <source>GEOM_ADD_THICKNESS</source>
       <translation>厚み追加（エッジまたはワイヤーのみ）</translation>
-    </message>
-    <message>
-      <source>GEOM_TOWARDS_INSIDE</source>
-      <translation>内側に向かって厚く</translation>
     </message>
   </context>
   <context>
@@ -6244,11 +6407,11 @@
     </message>
     <message>
       <source>X</source>
-      <translation type="unfinished">X</translation>
+      <translation>X</translation>
     </message>
     <message>
       <source>Y</source>
-      <translation type="unfinished">Y</translation>
+      <translation>Y</translation>
     </message>
     <message>
       <source>Z</source>
@@ -6676,19 +6839,19 @@
     </message>
     <message>
       <source>WIDTH_FACTOR_TOL</source>
-      <translation type="unfinished">Width factor tol.</translation>
+      <translation>Width factor tol.</translation>
     </message>
     <message>
       <source>VOLUME_TOL</source>
-      <translation type="unfinished">Volume tol.</translation>
+      <translation>Volume tol.</translation>
     </message>
     <message>
       <source>TO_MERGE_SOLIDS</source>
-      <translation type="unfinished">To merge solids</translation>
+      <translation>ソリッドのマージ 用</translation>
     </message>
     <message>
       <source>SELECT_ALL</source>
-      <translation>全選択</translation>
+      <translation>すべて選択</translation>
     </message>
   </context>
   <context>
@@ -6877,8 +7040,8 @@
       <translation>Shared_%1</translation>
     </message>
     <message>
-        <source>GEOM_SHARED_SHAPES_MULTISHARE</source>
-        <translation type="unfinished">Shared by all</translation>
+      <source>GEOM_SHARED_SHAPES_MULTISHARE</source>
+      <translation>すべてが共有する</translation>
     </message>
   </context>
   <context>
@@ -6916,55 +7079,55 @@
     <name>GEOMToolsGUI_ReduceStudyDlg</name>
     <message>
       <source>GEOM_REDUCE_STUDY_TITLE</source>
-      <translation type="unfinished">Reduce study</translation>
+      <translation>スタディの削減</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_KEPT_OBJECTS</source>
-      <translation type="unfinished">Objects to be kept</translation>
+      <translation>保持されたオブジェクト</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_REMOVE_OBJECTS</source>
-      <translation type="unfinished">Objects to be removed</translation>
+      <translation>削除されたオブジェクト</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_NAME</source>
-      <translation type="unfinished">Name</translation>
+      <translation>Name</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_OPTIONS</source>
-      <translation type="unfinished">Options</translation>
+      <translation>オプション</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_INTERMEDIATES</source>
-      <translation type="unfinished">Intermediate objects</translation>
+      <translation>中間オブジェクト</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_SUB_OBJECTS</source>
-      <translation type="unfinished">Sub-objects</translation>
+      <translation>サブオブジェクト</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_KEEP</source>
-      <translation type="unfinished">Keep</translation>
+      <translation>保持</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_UNPUBLISH</source>
-      <translation type="unfinished">Unpublish</translation>
+      <translation>非公開</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_REMOVE</source>
-      <translation type="unfinished">Remove</translation>
+      <translation>削除</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_REMOVE_EMPTY_FOLDER</source>
-      <translation type="unfinished">Remove empty folders</translation>
+      <translation>空フォルダの削除</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_SOFT_REMOVAL</source>
-      <translation type="unfinished">Soft removal</translation>
+      <translation>ソフト除去</translation>
     </message>
     <message>
       <source>GEOM_REDUCE_STUDY_WARNING_DELETE</source>
-      <translation type="unfinished">Do you really want to delete intermediate objects? After applying this operation study will be broken.</translation>
+      <translation>本当に中間オブジェクトを削除しますか？ この操作の適用後、スタディは無くなります。</translation>
     </message>
   </context>
   <context>
@@ -6985,32 +7148,32 @@
   <context>
     <name>RepairGUI_InspectObjectDlg</name>
     <message>
-        <source>GEOM_INSPECT_OBJECT_TITLE</source>
-        <translation type="unfinished">Inspect object</translation>
+      <source>GEOM_INSPECT_OBJECT_TITLE</source>
+      <translation>オブジェクト点検</translation>
     </message>
     <message>
-        <source>GEOM_INSPECT_OBJECT_MAIN_SHAPE</source>
-        <translation type="unfinished">Main shape</translation>
+      <source>GEOM_INSPECT_OBJECT_MAIN_SHAPE</source>
+      <translation>主形状</translation>
     </message>
     <message>
-    <source>GEOM_INSPECT_OBJECT_SHOW</source>
-        <translation type="unfinished">Show Selected</translation>
+      <source>GEOM_INSPECT_OBJECT_SHOW</source>
+      <translation>選択を表示</translation>
     </message>
     <message>
-        <source>GEOM_INSPECT_OBJECT_SHOW_ONLY</source>
-        <translation type="unfinished">Show Only Selected</translation>
+      <source>GEOM_INSPECT_OBJECT_SHOW_ONLY</source>
+      <translation>選択のみを表示</translation>
     </message>
     <message>
-        <source>GEOM_INSPECT_OBJECT_HIDE</source>
-        <translation type="unfinished">Hide Selected</translation>
+      <source>GEOM_INSPECT_OBJECT_HIDE</source>
+      <translation>選択を非表示</translation>
     </message>
     <message>
-        <source>GEOM_INSPECT_OBJECT_PUBLISH</source>
-        <translation type="unfinished">Publish Selected</translation>
+      <source>GEOM_INSPECT_OBJECT_PUBLISH</source>
+      <translation>選択を公開</translation>
     </message>
     <message>
-        <source>GEOM_INSPECT_OBJECT_NAME</source>
-        <translation type="unfinished">Name</translation>
+      <source>GEOM_INSPECT_OBJECT_NAME</source>
+      <translation>名前</translation>
     </message>
   </context>
   <context>
@@ -7055,160 +7218,230 @@
       <translation>V-Isoline</translation>
     </message>
   </context>
-<context>
+  <context>
     <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
     <message>
-        <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
-        <translation type="unfinished">Self-intersections</translation>
+      <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
+      <translation>自己交差</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_INTE_SUBSHAPES</source>
-        <translation type="unfinished">Sub-shapes</translation>
+      <source>GEOM_CHECK_INTE_SUBSHAPES</source>
+      <translation>サブ形状</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_INTE_CHECK_LEVEL</source>
-        <translation type="unfinished">Level of check</translation>
+      <source>GEOM_CHECK_INTE_CHECK_LEVEL</source>
+      <translation>チェックのレベル</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_INTE_SUMMARY</source>
-        <translation type="unfinished">Summary</translation>
+      <source>GEOM_CHECK_INTE_SUMMARY</source>
+      <translation>サマリ</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_INTE_COMPUTE</source>
-        <translation type="unfinished">Compute self-intersections</translation>
+      <source>GEOM_CHECK_INTE_COMPUTE</source>
+      <translation>自己交差の計算</translation>
     </message>
     <message>
-        <source>GEOM_SELF_INTERSECTION_NAME</source>
-        <translation type="unfinished">Self_intersection</translation>
+      <source>GEOM_SELF_INTERSECTION_NAME</source>
+      <translation>自己交差</translation>
     </message>
     <message>
-        <source>GEOM_NO_SELF_INTERSECTIONS</source>
-        <translation type="unfinished">There are no self-intersections in the shape</translation>
+      <source>GEOM_NO_SELF_INTERSECTIONS</source>
+      <translation>形状内に自己交差はありません。</translation>
     </message>
     <message>
-        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
-        <translation type="unfinished">Some self-intersections detected</translation>
+      <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
+      <translation>いくつかの自己交差が検出されました</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
-        <translation type="unfinished">Detection of self-intersections failed</translation>
+      <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
+      <translation>自己交差の検出に失敗しました</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
-        <translation type="unfinished">Warning: there were errors during the operation, so the list may be incomplete.</translation>
+      <source>GEOM_CHECK_SELF_INTERSECTIONS_ERRORS</source>
+      <translation>警告: 操作中にエラーが発生したため、リストは完成されません。</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_INTE_V_V</source>
-        <translation type="unfinished">Vertex to Vertex</translation>
+      <source>GEOM_CHECK_INTE_V_V</source>
+      <translation>頂点から頂点</translation>
     </message>
     <message>
-        <source>GEOM_CHECK_INTE_V_E</source>
-        <translation type="unfinished">Vertex to Edge + all above</translation>
+      <source>GEOM_CHECK_INTE_V_E</source>
+      <translation>頂点からエッジ と上記すべて</translation>
     </message>
-  <message>
-    <source>GEOM_CHECK_INTE_E_E</source>
-    <translation type="unfinished">Edge to Edge + all above</translation>
-  </message>
-  <message>
-    <source>GEOM_CHECK_INTE_V_F</source>
-    <translation type="unfinished">Vertex to Face + all above</translation>
-  </message>
-  <message>
-    <source>GEOM_CHECK_INTE_E_F</source>
-    <translation type="unfinished">Edge to Face + all above</translation>
-  </message>
-  <message>
-    <source>GEOM_CHECK_INTE_ALL</source>
-    <translation type="unfinished">Face to Face + all above</translation>
-  </message>
-</context>
-<context>
+    <message>
+      <source>GEOM_CHECK_INTE_E_E</source>
+      <translation>エッジからエッジと上記すべて</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_INTE_V_F</source>
+      <translation>頂点から面と上記すべて</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_INTE_E_F</source>
+      <translation>エッジから面と上記すべて</translation>
+    </message>
+    <message>
+      <source>GEOM_CHECK_INTE_ALL</source>
+      <translation>面から面と上記すべて</translation>
+    </message>
+  </context>
+  <context>
     <name>MeasureGUI_FastCheckIntersectionsDlg</name>
     <message>
-        <source>GEOM_FAST_CHECK_INT_DEFLECT</source>
-        <translation type="unfinished">Deflection coefficient</translation>
+      <source>GEOM_FAST_CHECK_INT_DEFLECT</source>
+      <translation>たわみ係数</translation>
     </message>
     <message>
-        <source>GEOM_FAST_CHECK_INT_DETECT_GAPS</source>
-        <translation type="unfinished">Detect gaps with tolerance</translation>
+      <source>GEOM_FAST_CHECK_INT_DETECT_GAPS</source>
+      <translation>トレランスによるギャップ検出</translation>
     </message>
     <message>
-        <source>GEOM_FAST_CHECK_INT_SUBSHAPES</source>
-        <translation type="unfinished">Sub-shapes of Object %1:</translation>
+      <source>GEOM_FAST_CHECK_INT_SUBSHAPES</source>
+      <translation>オブジェクト %1 のサブ形状:</translation>
     </message>
     <message>
-        <source>GEOM_FAST_CHECK_INT_COMPUTE</source>
-        <translation type="unfinished">Compute intersections</translation>
+      <source>GEOM_FAST_CHECK_INT_COMPUTE</source>
+      <translation>交点の計算</translation>
     </message>
     <message>
-        <source>GEOM_FAST_INTERSECTION_NAME</source>
-        <translation type="unfinished">Fast_intersection</translation>
+      <source>GEOM_FAST_INTERSECTION_NAME</source>
+      <translation>クイック交点</translation>
     </message>
     <message>
-        <source>GEOM_FAST_INTERSECTION_FAILS</source>
-        <translation type="unfinished">No intersections</translation>
+      <source>GEOM_FAST_INTERSECTION_FAILS</source>
+      <translation>交点はない</translation>
     </message>
     <message>
-        <source>GEOM_FAST_CHECK_OBJ</source>
-        <translation type="unfinished">Objects And Results</translation>
+      <source>GEOM_FAST_CHECK_OBJ</source>
+      <translation>オブジェクトと結果</translation>
     </message>
-</context>
-<context>
+  </context>
+  <context>
     <name>TransformationGUI_ExtensionDlg</name>
     <message>
-        <source>GEOM_EXTENSION_TITLE</source>
-        <translation type="unfinished">Extension of Edge or Face</translation>
+      <source>GEOM_EXTENSION_TITLE</source>
+      <translation>エッジまたは面の拡張</translation>
     </message>
     <message>
-        <source>GEOM_EXTENSION</source>
-        <translation type="unfinished">Extension</translation>
+      <source>GEOM_EXTENSION</source>
+      <translation>拡張</translation>
     </message>
     <message>
-        <source>GEOM_EXTENSION_MIN</source>
-        <translation type="unfinished">First Parameter</translation>
+      <source>GEOM_EXTENSION_MIN</source>
+      <translation>第1パラメータ</translation>
     </message>
     <message>
-        <source>GEOM_EXTENSION_MAX</source>
-        <translation type="unfinished">Last Parameter</translation>
+      <source>GEOM_EXTENSION_MAX</source>
+      <translation>最後のパラメータ</translation>
     </message>
     <message>
-        <source>GEOM_EXTENSION_MIN_U</source>
-        <translation type="unfinished">First U-Parameter</translation>
+      <source>GEOM_EXTENSION_MIN_U</source>
+      <translation>第1U-パラメータ</translation>
     </message>
     <message>
-        <source>GEOM_EXTENSION_MAX_U</source>
-        <translation type="unfinished">Last U-Parameter</translation>
+      <source>GEOM_EXTENSION_MAX_U</source>
+      <translation>最後のU-パラメータ</translation>
     </message>
     <message>
-        <source>GEOM_EXTENSION_MIN_V</source>
-        <translation type="unfinished">First V-Parameter</translation>
+      <source>GEOM_EXTENSION_MIN_V</source>
+      <translation>第1V-パラメータ</translation>
     </message>
     <message>
-        <source>GEOM_EXTENSION_MAX_V</source>
-        <translation type="unfinished">Last V-Parameter</translation>
+      <source>GEOM_EXTENSION_MAX_V</source>
+      <translation>最後のV-パラメータ</translation>
     </message>
     <message>
-        <source>GEOM_EXTENSION_EDGE_NAME</source>
-        <translation type="unfinished">ExtendedEdge</translation>
+      <source>GEOM_EXTENSION_EDGE_NAME</source>
+      <translation>ExtendedEdge</translation>
     </message>
     <message>
-        <source>GEOM_EXTENSION_FACE_NAME</source>
-        <translation type="unfinished">ExtendedFace</translation>
+      <source>GEOM_EXTENSION_FACE_NAME</source>
+      <translation>拡張面</translation>
     </message>
-</context>
-<context>
+  </context>
+  <context>
     <name>EntityGUI_SurfFromFaceDlg</name>
     <message>
-        <source>GEOM_SURF_FROM_FACE_TITLE</source>
-        <translation type="unfinished">Surface From Face Construction</translation>
+      <source>GEOM_SURF_FROM_FACE_TITLE</source>
+      <translation>面から表面の作成</translation>
     </message>
     <message>
-        <source>GEOM_SURF_FROM_FACE</source>
-        <translation type="unfinished">Surface From Face</translation>
+      <source>GEOM_SURF_FROM_FACE</source>
+      <translation>面から表面</translation>
     </message>
     <message>
-        <source>GEOM_SURF_FROM_FACE_NAME</source>
-        <translation type="unfinished">SurfaceFromFace</translation>
+      <source>GEOM_SURF_FROM_FACE_NAME</source>
+      <translation>SurfaceFromFace</translation>
     </message>
-</context>
+  </context>
+  <context>
+    <name>OperationGUI_TransferDataDlg</name>
+    <message>
+      <source>GEOM_TRANSFER_DATA_TITLE</source>
+      <translation>データ転送</translation>
+    </message>
+    <message>
+      <source>GEOM_TRANSFER_DATA</source>
+      <translation>データ転送</translation>
+    </message>
+    <message>
+      <source>GEOM_TRANSFER_DATA_FROM</source>
+      <translation>ソース形状</translation>
+    </message>
+    <message>
+      <source>GEOM_TRANSFER_DATA_TO</source>
+      <translation>行き先形状</translation>
+    </message>
+    <message>
+      <source>GEOM_TRANSFER_DATA_METHOD</source>
+      <translation>検出操作のタイプ</translation>
+    </message>
+    <message>
+      <source>GEOM_TD_METHOD_GETINPLACE</source>
+      <translation>場所の中で取得</translation>
+    </message>
+    <message>
+      <source>GEOM_TD_METHOD_GETINPLACE_OLD</source>
+      <translation>場所（旧）の中で取得</translation>
+    </message>
+    <message>
+      <source>GEOM_TD_METHOD_GETINPLACE_HISTORY</source>
+      <translation>履歴より場所の中で取得</translation>
+    </message>
+    <message>
+      <source>GEOM_TRANSFER_DATA_INFO</source>
+      <translation>データ転送: 情報</translation>
+    </message>
+    <message>
+      <source>GEOM_TRANSFER_DATA_NOT_COPIED</source>
+      <translation>コピーされたものはありません。</translation>
+    </message>
+    <message>
+      <source>GEOM_TRANSFER_DATA_COPIED</source>
+      <translation>以下のデータがコピーされます:</translation>
+    </message>
+    <message>
+      <source>GEOM_TRANSFER_DATA_NAMES</source>
+      <translation>名前: %2 の %1</translation>
+    </message>
+    <message>
+      <source>GEOM_TRANSFER_DATA_MATERIALS</source>
+      <translation>材料: %2 の %1</translation>
+    </message>
+  </context>
+  <context>
+    <name>TransformationGUI_ProjectionOnCylDlg</name>
+    <message>
+      <source>GEOM_PROJ_ON_CYL_TITLE</source>
+      <translation>円筒上に投影</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_CYL_START_ANGLE</source>
+      <translation>Starting angle</translation>
+    </message>
+    <message>
+      <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
+      <translation>Length angle</translation>
+    </message>
+  </context>
 </TS>

@@ -32,7 +32,7 @@
     <name>STLPlugin_GUI</name>
     <message>
       <source>STL_FILES</source>
-      <translation>STLファイル</translation>
+      <translation>STL ファイル( *.stl )</translation>
     </message>
     <message>
       <source>EXPORT_TITLE</source>
@@ -51,11 +51,11 @@
     </message>
     <message>
       <source>RELATIVE</source>
-      <translation type="unfinished">Relative</translation>
+      <translation>相対</translation>
     </message>
     <message>
       <source>DEFLECTION</source>
-      <translation type="unfinished">Deflection</translation>
+      <translation>たわみ</translation>
     </message>
   </context>
 </TS>
