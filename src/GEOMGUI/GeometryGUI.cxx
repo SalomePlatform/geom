@@ -1751,8 +1751,8 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   else {
     PyObjWrapper result =
       PyObject_CallMethod(pluginsmanager, (char*)"initialize", (char*)"isss", 1, "geom",
-                          tr("MEN_NEW_ENTITY").toStdString().c_str(),
-                          tr("GEOM_PLUGINS_OTHER").toStdString().c_str());
+                          tr("MEN_NEW_ENTITY").toUtf8().data(),
+                          tr("GEOM_PLUGINS_OTHER").toUtf8().data());
     if ( !result )
       PyErr_Print();
   }
