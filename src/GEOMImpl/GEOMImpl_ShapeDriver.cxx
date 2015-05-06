@@ -59,6 +59,8 @@
 #include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
 
+#include <TNaming_CopyShape.hxx>
+
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -86,6 +88,7 @@
 #include <GeomConvert.hxx>
 #include <GeomLProp.hxx>
 
+#include <TColStd_IndexedDataMapOfTransientTransient.hxx>
 #include <TColStd_SequenceOfReal.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_Array1OfReal.hxx>
@@ -208,6 +211,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     // 1. Extract all edges from the given arguments
     TopTools_MapOfShape aMapEdges;
     Handle(TopTools_HSequenceOfShape) aSeqEdgesIn = new TopTools_HSequenceOfShape;
+    TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
 
     for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefSh_i = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
@@ -216,7 +220,12 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       TopExp_Explorer anExpE_i (aSh_i, TopAbs_EDGE);
       for (; anExpE_i.More(); anExpE_i.Next()) {
         if (aMapEdges.Add(anExpE_i.Current())) {
-          aSeqEdgesIn->Append(anExpE_i.Current());
+          // Copy the original shape.
+          TopoDS_Shape aShapeCopy;
+
+          TNaming_CopyShape::CopyTool
+            (anExpE_i.Current(), aMapTShapes, aShapeCopy);
+          aSeqEdgesIn->Append(aShapeCopy);
         }
       }
     }
