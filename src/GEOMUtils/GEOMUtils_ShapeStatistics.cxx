@@ -83,7 +83,7 @@ namespace GEOMUtils
       // keep measures to distribute it
       measures[shift+index] = aMeasure;
     }
-    shift += aNbS;
+    shift += aSubShapesMap.Extent();
   }
   return measures;
 }
