@@ -45,6 +45,7 @@ namespace GEOMUtils
   std::map<int, double> measures;
     
   std::list<TopoDS_Shape>::const_iterator it;
+  int shift = 0;
   for ( it = shapes.begin(); it != shapes.end(); ++it ) {
     double aMeasure;
     TopTools_IndexedMapOfShape aSubShapesMap;
@@ -80,8 +81,9 @@ namespace GEOMUtils
       // get global index of sub-shape
       index = aSubShapesMap.FindIndex( aSubShape );
       // keep measures to distribute it
-      measures[index] = aMeasure;
+      measures[shift+index] = aMeasure;
     }
+    shift += aNbS;
   }
   return measures;
 }
