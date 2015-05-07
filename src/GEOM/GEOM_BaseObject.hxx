@@ -149,7 +149,7 @@ public:
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetLastDependency();
 
   //Returns drivers creators of this object
-  Standard_EXPORT std::vector< Handle(TFunction_Driver)> GetCreationDrivers();
+  Standard_EXPORT Handle(TFunction_Driver) GetCreationDriver(int funNb);
 
   //###########################################################
   // Internal methods

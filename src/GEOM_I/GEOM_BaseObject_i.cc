@@ -272,12 +272,13 @@ GEOM::CreationInformationSeq* GEOM_BaseObject_i::GetCreationInformation()
 {
   GEOM::CreationInformationSeq_var info = new GEOM::CreationInformationSeq();
 
-  std::vector< Handle(TFunction_Driver)> drivers = _impl->GetCreationDrivers();
-  info->length( drivers.size() );
+  int nbFun = _impl->GetNbFunctions();
+  info->length( nbFun );
   int nbI = 0;
-  for ( size_t i = 0; i < drivers.size(); ++i )
+  for ( int i = 1; i <= nbFun; ++i )
   {
-    Handle(GEOM_BaseDriver) driver = Handle(GEOM_BaseDriver)::DownCast( drivers[i] );
+    Handle(GEOM_BaseDriver) driver =
+      Handle(GEOM_BaseDriver)::DownCast( _impl->GetCreationDriver( i ));
     if ( !driver.IsNull() )
     {
       std::vector<GEOM_Param> params;
