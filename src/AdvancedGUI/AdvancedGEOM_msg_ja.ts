@@ -129,7 +129,7 @@
     </message>
     <message>
       <source>INTERNAL_FACES</source>
-      <translation>内部の顔</translation>
+      <translation>内部の面</translation>
     </message>
   </context>
   <context>
