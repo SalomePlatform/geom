@@ -222,6 +222,19 @@ Standard_Integer GEOMAlgo_AlgoTools::BuildPCurveForEdgeOnFace
     return iRet;
   }
   //
+#if OCC_VERSION_LARGE > 0x06070100
+  // Try to copy PCurve from old edge to the new one.
+  iRet = BOPTools_AlgoTools2D::AttachExistingPCurve(aEold, aEnew, aF, aCtx);
+
+  if (iRet) {
+    // Do PCurve using projection algorithm.
+    iRet = 0;
+  } else {
+    // The PCurve is attached successfully.
+    return iRet;
+  }
+#endif
+  //
   BOPTools_AlgoTools2D::BuildPCurveForEdgeOnFace(aEnew, aF);
   aC2D=BRep_Tool::CurveOnSurface(aEnew, aF, aT1, aT2);
   if (aC2D.IsNull()){
