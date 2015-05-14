@@ -222,7 +222,7 @@ Standard_Integer GEOMAlgo_AlgoTools::BuildPCurveForEdgeOnFace
     return iRet;
   }
   //
-#if OCC_VERSION_LARGE > 0x06070100
+#if OCC_VERSION_LARGE > 0x06080000
   // Try to copy PCurve from old edge to the new one.
   iRet = BOPTools_AlgoTools2D::AttachExistingPCurve(aEold, aEnew, aF, aCtx);
 
