@@ -64,6 +64,7 @@ class LightApp_Selection;
 class SUIT_ViewManager;
 class SalomeApp_Study;
 class GEOMGUI_CreationInfoWdg;
+class GEOMGUI_TextTreeWdg;
 
 //=================================================================================
 // class    : GeometryGUI
@@ -148,6 +149,8 @@ public:
                                            SUIT_DataObject* where,
                                            const int row, Qt::DropAction action );
 
+  void                        emitDimensionsUpdated( QString entry );
+
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
   virtual bool                activateModule( SUIT_Study* );
@@ -176,6 +179,7 @@ signals :
   void                        SignalDefaultStepValueChanged( double newVal );
   void                        SignalDependencyTreeParamChanged( const QString&, const QString& );
   void                        SignalDependencyTreeRenameObject( const QString& );
+  void                        DimensionsUpdated( const QString& );
 
 protected:
   virtual LightApp_Selection* createSelection() const;
@@ -223,6 +227,8 @@ private:
   int                         myLocalSelectionMode; //Select Only
 
   GEOMGUI_CreationInfoWdg*    myCreationInfoWdg;
+  
+  GEOMGUI_TextTreeWdg*       myTextTreeWdg;
   
   SALOME_ListIO               myTopLevelIOList;               
 

@@ -3344,8 +3344,8 @@
       <translation>線幅</translation>
     </message>
     <message>
-      <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-      <translation>フォント高さ</translation>
+        <source>PREF_DIMENSIONS_FONT</source>
+        <translation type="unfinished">Font</translation>
     </message>
     <message>
       <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
@@ -3368,8 +3368,12 @@
       <translation>測定単位の表示</translation>
     </message>
     <message>
-        <source>PREF_HIDE_INPUT_OBJECT</source>
-        <translation type="unfinished">Hide input objects from the viewer</translation>
+      <source>PREF_DIMENSIONS_USE_TEXT3D</source>
+      <translation type="unfinished">Use 3D text</translation>
+    </message>
+    <message>
+      <source>PREF_HIDE_INPUT_OBJECT</source>
+      <translation type="unfinished">Hide input objects from the viewer</translation>
     </message>
     <message>
       <source>PREF_ISOS</source>
@@ -7054,6 +7058,17 @@
     <message>
       <source>NO_INFO</source>
       <translation>(有効情報なし)</translation>
+    </message>
+  </context>
+  <context>
+    <name>GEOMGUI_TextTreeWdg</name>
+    <message>
+        <source>TEXT_TREE_VIEW_TITLE</source>
+        <translation type="unfinished">Text</translation>
+    </message>
+    <message>
+        <source>TEXT_TREE_VIEW_NAME</source>
+        <translation type="unfinished">Name</translation>
     </message>
   </context>
   <context>

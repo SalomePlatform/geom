@@ -33,6 +33,7 @@
 #include "GEOMGUI_OCCSelector.h"
 #include "GEOMGUI_Selection.h"
 #include "GEOMGUI_CreationInfoWdg.h"
+#include "GEOMGUI_TextTreeWdg.h"
 #include "GEOMGUI_DimensionProperty.h"
 #include "GEOM_Constants.h"
 #include "GEOM_Displayer.h"
@@ -86,6 +87,7 @@
 #include <SALOMEDS_SObject.hxx>
 
 #include <Basics_OCCTVersion.hxx>
+#include <QtxFontEdit.h>
 
 // External includes
 #include <QDir>
@@ -97,6 +99,7 @@
 #include <QString>
 #include <QPainter>
 #include <QSignalMapper>
+#include <QFontDatabase>
 
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
@@ -107,6 +110,7 @@
 #include <NCollection_DataMap.hxx>
 
 #include <TColStd_HArray1OfByte.hxx>
+#include <TColStd_SequenceOfHAsciiString.hxx>
 
 #include <utilities.h>
 
@@ -115,6 +119,10 @@
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx>
+
+#include <Font_SystemFont.hxx>
+#include <Font_FontMgr.hxx>
+#include <TCollection_HAsciiString.hxx>
 
 #include "GEOM_version.h"
 #include "GEOMImpl_Types.hxx" // dangerous hxx (defines short-name macros) - include after all
@@ -218,6 +226,7 @@ GeometryGUI::GeometryGUI() :
   myLocalSelectionMode = GEOM_ALLOBJECTS;
 
   myCreationInfoWdg = 0;
+  myTextTreeWdg = 0;
 
   connect( Material_ResourceMgr::resourceMgr(), SIGNAL( changed() ), this, SLOT( updateMaterials() ) );
 
@@ -1783,6 +1792,11 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   getApp()->insertDockWindow( myCreationInfoWdg->getWinID(), myCreationInfoWdg );
   getApp()->placeDockWindow( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
 
+  if ( !myTextTreeWdg )
+    myTextTreeWdg = new GEOMGUI_TextTreeWdg( getApp() );
+  getApp()->insertDockWindow( myTextTreeWdg->getWinID(), myTextTreeWdg );
+  getApp()->placeDockWindow( myTextTreeWdg->getWinID(), Qt::LeftDockWidgetArea );
+
   //NPAL 19674
   SALOME_ListIO selected;
   sm->selectedObjects( selected );
@@ -1844,8 +1858,15 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
 
   disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateCreationInfo() ));
   disconnect( selMrg, SIGNAL( currentSelectionChanged() ), this, SLOT( updateFieldColorScale() ));
-  getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
-  myCreationInfoWdg = 0;
+  if ( myCreationInfoWdg ) {
+    getApp()->removeDockWindow( myCreationInfoWdg->getWinID() );
+    myCreationInfoWdg = 0;
+  }
+  if ( myTextTreeWdg ) {
+    getApp()->removeDockWindow( myTextTreeWdg->getWinID() );
+    disconnect( application(), 0, myTextTreeWdg, 0 );
+    myTextTreeWdg = 0;
+  }
 
   EmitSignalCloseAllDialogs();
 
@@ -1903,6 +1924,8 @@ void GeometryGUI::windows( QMap<int, int>& mappa ) const
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::BottomDockWidgetArea );
   if ( myCreationInfoWdg )
     mappa.insert( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
+  if ( myTextTreeWdg )
+    mappa.insert( myTextTreeWdg->getWinID(), Qt::LeftDockWidgetArea );
 }
 
 void GeometryGUI::viewManagers( QStringList& lst ) const
@@ -2237,6 +2260,8 @@ void GeometryGUI::OnSetMaterial(const QString& theName)
 
 void GeometryGUI::createPreferences()
 {
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+
   int tabId = addPreference( tr( "PREF_TAB_SETTINGS" ) );
 
   int genGroup = addPreference( tr( "PREF_GROUP_GENERAL" ), tabId );
@@ -2333,12 +2358,36 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( aDimLineWidthId, "min", 1 );
   setPreferenceProperty( aDimLineWidthId, "max", 5 );
 
-  int aDimFontHeightId = addPreference( tr( "PREF_DIMENSIONS_FONT_HEIGHT" ), aDimGroupId,
-                                        LightApp_Preferences::DblSpin, "Geometry", "dimensions_font_height" );
+  int aDimFontId = addPreference( tr( "PREF_DIMENSIONS_FONT" ), aDimGroupId, LightApp_Preferences::Font, "Geometry", "dimensions_font" );
 
-  setPreferenceProperty( aDimFontHeightId, "min", 1e-9 );
-  setPreferenceProperty( aDimFontHeightId, "max", 1e+9 );
-  setPreferenceProperty( aDimFontHeightId, "precision", 9 );
+  int f = QtxFontEdit::Family | QtxFontEdit::Size;
+  setPreferenceProperty( aDimFontId, "features", f );
+  setPreferenceProperty( aDimFontId, "mode", QtxFontEdit::Custom );
+
+  Handle(Font_FontMgr) fmgr = Font_FontMgr::GetInstance();
+  QString aFontFile = "";
+  resMgr->value("resources", "GEOM", aFontFile);
+  aFontFile = aFontFile + QDir::separator() + "Y14.5M-2009.ttf";
+  // add enginier font into combobox
+  int fontID = QFontDatabase::addApplicationFont( aFontFile );
+  Handle(Font_SystemFont) sf = new Font_SystemFont( 
+    new TCollection_HAsciiString("Y14.5M-2009"), 
+    Font_FA_Regular, 
+    new TCollection_HAsciiString(aFontFile.toLatin1().data()) );
+  // register font in OCC font manager
+  fmgr->RegisterFont( sf, Standard_False );
+
+  // get list of supported fonts by OCC
+  QStringList anOCCFonts;
+  TColStd_SequenceOfHAsciiString theFontsNames;
+  fmgr->GetAvailableFontsNames( theFontsNames );
+  for(Standard_Integer i=1; i<=theFontsNames.Length(); i++) {
+    Handle(TCollection_HAsciiString) str = theFontsNames(i);
+    anOCCFonts << str->ToCString();
+  }
+  anOCCFonts.removeDuplicates();
+  // set the supported fonts into combobox to use its only
+  setPreferenceProperty( aDimFontId, "fonts", anOCCFonts );
 
   int aDimArrLengthId = addPreference( tr( "PREF_DIMENSIONS_ARROW_LENGTH" ), aDimGroupId,
                                        LightApp_Preferences::DblSpin, "Geometry", "dimensions_arrow_length" );
@@ -2352,9 +2401,6 @@ void GeometryGUI::createPreferences()
 
   int anAngUnitsId = addPreference( tr( "PREF_DIMENSIONS_ANGLE_UNITS" ), aDimGroupId,
                                    LightApp_Preferences::Selector, "Geometry", "dimensions_angle_units" );
-
-  addPreference( tr( "PREF_DIMENSIONS_SHOW_UNITS" ), aDimGroupId,
-                 LightApp_Preferences::Bool, "Geometry", "dimensions_show_units" );
 
   QStringList aListOfLengthUnits;
   aListOfLengthUnits << "m";
@@ -2370,12 +2416,18 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( aLengthUnitsId, "strings", aListOfLengthUnits );
   setPreferenceProperty( anAngUnitsId,   "strings", aListOfAngUnits );
 
+  addPreference( tr( "PREF_DIMENSIONS_SHOW_UNITS" ), aDimGroupId,
+                 LightApp_Preferences::Bool, "Geometry", "dimensions_show_units" );
+
   int aDimDefFlyout = addPreference( tr( "PREF_DIMENSIONS_DEFAULT_FLYOUT" ), aDimGroupId,
                                      LightApp_Preferences::DblSpin, "Geometry", "dimensions_default_flyout" );
 
   setPreferenceProperty( aDimDefFlyout, "min", 1e-9 );
   setPreferenceProperty( aDimDefFlyout, "max", 1e+9 );
   setPreferenceProperty( aDimDefFlyout, "precision", 9 );
+
+  addPreference( tr( "PREF_DIMENSIONS_USE_TEXT3D" ), aDimGroupId,
+                 LightApp_Preferences::Bool, "Geometry", "dimensions_use_text3d" );
 
   int isoGroup = addPreference( tr( "PREF_ISOS" ), tabId );
   setPreferenceProperty( isoGroup, "columns", 2 );
@@ -2483,7 +2535,6 @@ void GeometryGUI::createPreferences()
   QList<QVariant> aMarkerTypeIndicesList;
   QList<QVariant> aMarkerTypeIconsList;
 
-  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   for ( int i = GEOM::MT_POINT; i < GEOM::MT_USER; i++ ) {
     QString icoFile = QString( "ICON_VERTEX_MARKER_%1" ).arg( i );
     QPixmap pixmap = resMgr->loadPixmap( "GEOM", tr( qPrintable( icoFile ) ) );
@@ -2645,11 +2696,12 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
     }
     else if ( param == QString("dimensions_color")        ||
               param == QString("dimensions_line_width")   ||
-              param == QString("dimensions_font_height")  ||
+              param == QString("dimensions_font")         ||
               param == QString("dimensions_arrow_length") ||
               param == QString("dimensions_show_units")   ||
               param == QString("dimensions_length_units") ||
               param == QString("dimensions_angle_units")  ||
+              param == QString("dimensions_use_text3d")  ||
               param == QString("label_color") )
     {
       SalomeApp_Application* anApp = getApp();
@@ -3467,4 +3519,9 @@ void GeometryGUI::dropObjects( const DataObjectList& what, SUIT_DataObject* wher
 
   // update Object browser
   getApp()->updateObjectBrowser( false );
+}
+
+void GeometryGUI::emitDimensionsUpdated( QString entry )
+{
+  emit DimensionsUpdated( entry );
 }

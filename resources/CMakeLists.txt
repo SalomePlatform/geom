@@ -35,6 +35,7 @@ SET( _res_files
   GEOM.config
   GEOMDS_Resources
   ShHealing
+  Y14.5M-2009.ttf
   3dsketch.png
   isoline.png
   isoline_v.png

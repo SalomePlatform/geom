@@ -3453,8 +3453,8 @@ Please, select face, shell or solid and try again</translation>
         <translation>Line width</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-        <translation>Font height</translation>
+        <source>PREF_DIMENSIONS_FONT</source>
+        <translation>Font</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
@@ -3475,6 +3475,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>PREF_DIMENSIONS_SHOW_UNITS</source>
         <translation>Show units of measurement</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_USE_TEXT3D</source>
+        <translation>Use 3D text</translation>
     </message>
     <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
@@ -7236,6 +7240,17 @@ Do you want to create new material?</translation>
     <message>
         <source>NO_INFO</source>
         <translation>(No info available)</translation>
+    </message>
+</context>
+<context>
+    <name>GEOMGUI_TextTreeWdg</name>
+    <message>
+        <source>TEXT_TREE_VIEW_TITLE</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <source>TEXT_TREE_VIEW_NAME</source>
+        <translation>Name</translation>
     </message>
 </context>
 <context>

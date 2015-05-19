@@ -3401,8 +3401,8 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Epaisseur de la ligne</translation>
     </message>
     <message>
-        <source>PREF_DIMENSIONS_FONT_HEIGHT</source>
-        <translation>Taille de police</translation>
+        <source>PREF_DIMENSIONS_FONT</source>
+        <translation type="unfinished">Font</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
@@ -3423,6 +3423,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>PREF_DIMENSIONS_SHOW_UNITS</source>
         <translation>Afficher les unités</translation>
+    </message>
+    <message>
+        <source>PREF_DIMENSIONS_USE_TEXT3D</source>
+        <translation type="unfinished">Use 3D text</translation>
     </message>
     <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
@@ -7169,6 +7173,17 @@ Voulez-vous en créer un nouveau ?</translation>
     <message>
         <source>NO_INFO</source>
         <translation>(aucune information disponible)</translation>
+    </message>
+</context>
+<context>
+    <name>GEOMGUI_TextTreeWdg</name>
+    <message>
+        <source>TEXT_TREE_VIEW_TITLE</source>
+        <translation type="unfinished">Text</translation>
+    </message>
+    <message>
+        <source>TEXT_TREE_VIEW_NAME</source>
+        <translation type="unfinished">Name</translation>
     </message>
 </context>
 <context>

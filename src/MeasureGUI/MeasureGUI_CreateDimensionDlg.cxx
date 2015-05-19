@@ -495,12 +495,13 @@ Handle(AIS_Dimension) MeasureGUI_CreateDimensionDlg::CreateDimension()
 
   QColor  aQColor       = aResMgr->colorValue  ( "Geometry", "dimensions_color", QColor( 0, 255, 0 ) );
   int     aLineWidth    = aResMgr->integerValue( "Geometry", "dimensions_line_width", 1 );
-  double  aFontHeight   = aResMgr->doubleValue ( "Geometry", "dimensions_font_height", 10 );
+  QFont   aFont         = aResMgr->fontValue   ( "Geometry", "dimensions_font", QFont("Y14.5M-2009", 14) );
   double  anArrowLength = aResMgr->doubleValue ( "Geometry", "dimensions_arrow_length", 5 );
   double  aDefFlyout    = aResMgr->doubleValue ( "Geometry", "dimensions_default_flyout", 20 );
   bool    isUnitsShown  = aResMgr->booleanValue( "Geometry", "dimensions_show_units", false );
   QString aUnitsLength  = aResMgr->stringValue ( "Geometry", "dimensions_length_units", "m" );
   QString aUnitsAngle   = aResMgr->stringValue ( "Geometry", "dimensions_angle_units", "deg" );
+  bool    aUseText3d    = aResMgr->booleanValue( "Geometry", "dimensions_use_text3d", false );
 
   OCCViewer_ViewWindow* anActiveView = NULL;
 
@@ -610,10 +611,12 @@ Handle(AIS_Dimension) MeasureGUI_CreateDimensionDlg::CreateDimension()
 
   aStyle->SetCommonColor( aColor );
   aStyle->MakeUnitsDisplayed( (Standard_Boolean) isUnitsShown );
-  aStyle->MakeText3d( Standard_True );
+  aStyle->MakeText3d( aUseText3d );
   aStyle->MakeTextShaded( Standard_True );
-  aStyle->SetExtensionSize( aFontHeight * 0.5 );
-  aStyle->TextAspect()->SetHeight( aFontHeight );
+  int fsize = aFont.pixelSize() != -1 ? aFont.pixelSize() : aFont.pointSize();
+  aStyle->SetExtensionSize( fsize * 0.5 );
+  aStyle->TextAspect()->SetFont( aFont.family().toLatin1().data() );
+  aStyle->TextAspect()->SetHeight( fsize );
   aStyle->ArrowAspect()->SetLength( anArrowLength );
   aStyle->LineAspect()->SetWidth( aLineWidth );
 
