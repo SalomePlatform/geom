@@ -152,7 +152,6 @@ protected slots:
 
   void ClickOnOk();
   bool ClickOnApply();
-  void ClickOnCancel();
   void processStartedSubOperation( QWidget*, bool );
   void processFinishedSubOperation( QWidget* );
   void SetEditCurrentArgument( bool );

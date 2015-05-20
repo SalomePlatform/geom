@@ -162,6 +162,7 @@ EntityGUI_PolylineDlg::EntityGUI_PolylineDlg
 EntityGUI_PolylineDlg::~EntityGUI_PolylineDlg()
 {
   erasePreview();
+  myEditorWidget->SetViewer2DMode(false);
 }
 
 //=================================================================================
@@ -379,16 +380,6 @@ bool EntityGUI_PolylineDlg::ClickOnApply()
   myEditorWidget->reset();
 
   return true;
-}
-
-//=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void EntityGUI_PolylineDlg::ClickOnCancel()
-{
-  myEditorWidget->SetViewer2DMode(false);
-  GEOMBase_Skeleton::ClickOnCancel();
 }
 
 //=================================================================================
