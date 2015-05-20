@@ -6,6 +6,7 @@ Here you can find the answers to some frequently asked questions:
 
 <ul>
 <li>\subpage partition_explanation "What is the difference between partition, compounds and fuse operation ?" </li>
+<li>\subpage size_models_range "What are the valid sizes of models ?" </li>
 </ul>
 
 
