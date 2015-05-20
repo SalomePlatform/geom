@@ -218,7 +218,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateTwoPointsCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a translate function
   Handle(GEOM_Function) aFunction =
@@ -271,7 +271,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a translate function
   Handle(GEOM_Function) aFunction =
@@ -376,7 +376,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a translate function
   Handle(GEOM_Function) aFunction =
@@ -807,7 +807,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPlaneCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be mirrored
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a mirror function
   Handle(GEOM_Function) aFunction =
@@ -910,7 +910,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorPointCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be mirrored
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a mirror function
   Handle(GEOM_Function) aFunction =
@@ -1013,7 +1013,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MirrorAxisCopy
   if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be mirrored
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a mirror function
   Handle(GEOM_Function) aFunction =
@@ -1114,7 +1114,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be offset
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a new Offset function
   Handle(GEOM_Function) aFunction =
@@ -1364,7 +1364,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be scaled
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a scale function
   Handle(GEOM_Function) aFunction =
@@ -1555,7 +1555,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be set in position
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a position function
   Standard_Integer aType = POSITION_SHAPE_COPY;
@@ -1734,7 +1734,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Objec
   if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a rotate function
   aFunction = aCopy->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_COPY);
@@ -2088,7 +2088,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePointsCopy (Handle
   if (aLastFunction.IsNull()) return NULL;  //There is no function which creates an object to be rotated
 
   //Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add a rotate function
   aFunction = aCopy->AddFunction(GEOMImpl_RotateDriver::GetID(), ROTATE_THREE_POINTS_COPY);
@@ -2145,7 +2145,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TransformLikeOtherCopy
   if (aSampleFunc.IsNull()) return NULL; // There is no function which creates a sample object
 
   // Add a new Copy object
-  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   // Add a transform function (depends on theSample function)
   Handle(GEOM_Function) aFunction =
