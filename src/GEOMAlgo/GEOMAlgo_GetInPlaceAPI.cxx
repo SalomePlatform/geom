@@ -126,93 +126,75 @@ Standard_Integer GEOMAlgo_GetInPlaceAPI::GetInPlaceOld
     return 1;
   }
 
-  TopoDS_Shape     aPntShape;
-  TopoDS_Vertex    aVertex;
-  bool             isFound = false;
-  TopAbs_ShapeEnum iType   = TopAbs_SOLID;
-  //Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
-  Standard_Real    tab_aWhat[4],    tab_aWhere[4];
-  Standard_Real    dl_l = 1e-3;
-  Standard_Real    min_l, Tol_0D, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
-  Standard_Real    aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-  Bnd_Box          BoundingBox;
-  gp_Pnt           aPnt, aPnt_aWhat, tab_Pnt[2];
-  GProp_GProps     aProps;
+  // Check shape type.
+  TopAbs_ShapeEnum iType = GEOMUtils::GetTypeOfSimplePart(theWhat);
 
-  iType = GEOMUtils::GetTypeOfSimplePart(theWhat);
   if (iType == TopAbs_SHAPE) {
     // Error: An attempt to extract a shape of not supported type.
     return 2;
   }
 
-  TopExp_Explorer Exp_aWhat  ( theWhat,  iType );
-  TopExp_Explorer Exp_aWhere ( theWhere, iType );
-  TopExp_Explorer Exp_Edge   ( theWhere, TopAbs_EDGE );
+  // Compute confusion tolerance.
+  Standard_Real    aTolConf = Precision::Confusion();
+  Standard_Integer i;
 
-  // Find the shortest edge in theShapeWhere shape
-  BRepBndLib::Add(theWhere, BoundingBox);
-  BoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-  min_l = fabs(aXmax - aXmin);
-  if( min_l < fabs(aYmax - aYmin) ) min_l = fabs(aYmax - aYmin);
-  if( min_l < fabs(aZmax - aZmin) ) min_l = fabs(aZmax - aZmin);
-  min_l /= dl_l;
-  // Mantis issue 0020908 BEGIN
-  if (!Exp_Edge.More()) {
-    min_l = Precision::Confusion();
-  }
-  // Mantis issue 0020908 END
-  for ( Standard_Integer nbEdge = 0; Exp_Edge.More(); Exp_Edge.Next(), nbEdge++ ) {
-    TopExp_Explorer Exp_Vertex( Exp_Edge.Current(), TopAbs_VERTEX);
-    for ( Standard_Integer nbVertex = 0; Exp_Vertex.More(); Exp_Vertex.Next(), nbVertex++ ) {
-      aPnt = BRep_Tool::Pnt( TopoDS::Vertex( Exp_Vertex.Current() ) );
-      tab_Pnt[nbVertex] = aPnt;
-    }
-    if ( ! tab_Pnt[0].IsEqual(tab_Pnt[1], dl_l) ) {
-      BRepGProp::LinearProperties(Exp_Edge.Current(), aProps);
-      if ( aProps.Mass() < min_l ) min_l = aProps.Mass();
+  for (i = 0; i < 2; ++i) {
+    TopExp_Explorer anExp(i == 0 ? theWhere : theWhat, TopAbs_VERTEX);
+
+    for (; anExp.More(); anExp.Next()) {
+      const TopoDS_Vertex aVtx = TopoDS::Vertex(anExp.Current());
+      const Standard_Real aTolVtx = BRep_Tool::Tolerance(aVtx);
+
+      if (aTolVtx > aTolConf) {
+        aTolConf = aTolVtx;
+      }
     }
   }
 
-  // Compute tolerances
-  Tol_0D = dl_l;
-  Tol_1D = dl_l * min_l;
-  Tol_2D = dl_l * ( min_l * min_l) * ( 2. + dl_l);
-  Tol_3D = dl_l * ( min_l * min_l * min_l ) * ( 3. + (3 * dl_l) + (dl_l * dl_l) );
+  // Compute mass tolerance.
+  Bnd_Box       aBoundingBox;
+  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+  Standard_Real aMassTol;
 
-  if (Tol_0D < Precision::Confusion()) Tol_0D = Precision::Confusion();
-  if (Tol_1D < Precision::Confusion()) Tol_1D = Precision::Confusion();
-  if (Tol_2D < Precision::Confusion()) Tol_2D = Precision::Confusion();
-  if (Tol_3D < Precision::Confusion()) Tol_3D = Precision::Confusion();
+  BRepBndLib::Add(theWhere, aBoundingBox);
+  BRepBndLib::Add(theWhat,  aBoundingBox);
+  aBoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+  aMassTol = Max(aXmax - aXmin, aYmax - aYmin);
+  aMassTol = Max(aMassTol, aZmax - aZmin);
+  aMassTol *= aTolConf;
 
-  Tol_Mass = Tol_3D;
-  if ( iType == TopAbs_VERTEX )    Tol_Mass = Tol_0D;
-  else if ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
-  else if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
-
-  // Searching for the sub-shapes inside the ShapeWhere shape
+  // Compute the result.
+  TopExp_Explorer     Exp_aWhat  (theWhat,  iType);
+  TopExp_Explorer     Exp_aWhere (theWhere, iType);
+  Standard_Real       tab_aWhat[4], tab_aWhere[4];
+  gp_Pnt              aPnt, aPnt_aWhat;
+  TopoDS_Shape        aPntShape;
+  TopoDS_Vertex       aVertex;
+  bool                isFound = false;
   TopTools_MapOfShape map_aWhere;
-  for ( Exp_aWhere.ReInit(); Exp_aWhere.More(); Exp_aWhere.Next() ) {
+
+  for (; Exp_aWhere.More(); Exp_aWhere.Next()) {
     if (!map_aWhere.Add(Exp_aWhere.Current()))
       continue; // skip repeated shape to avoid mass addition
     GetShapeProperties( Exp_aWhere.Current(), tab_aWhere, aPnt );
     for ( Exp_aWhat.ReInit(); Exp_aWhat.More(); Exp_aWhat.Next() ) {
       GetShapeProperties( Exp_aWhat.Current(), tab_aWhat, aPnt_aWhat );
-      if ( fabs(tab_aWhat[3] - tab_aWhere[3]) <= Tol_Mass && aPnt_aWhat.Distance(aPnt) <= Tol_1D )
+      if (fabs(tab_aWhat[3] - tab_aWhere[3]) <= aMassTol && aPnt_aWhat.Distance(aPnt) <= aTolConf)
         isFound = true;
       else {
-        if ( (tab_aWhat[3] - tab_aWhere[3]) > Tol_Mass ) {
+        if ((tab_aWhat[3] - tab_aWhere[3]) > aMassTol) {
           aPntShape = BRepBuilderAPI_MakeVertex( aPnt ).Shape();
           aVertex   = TopoDS::Vertex( aPntShape );
           BRepExtrema_DistShapeShape aWhereDistance ( aVertex, Exp_aWhere.Current() );
           BRepExtrema_DistShapeShape aWhatDistance  ( aVertex, Exp_aWhat.Current() );
-          if ( aWhereDistance.IsDone() && aWhatDistance.IsDone() &&
-               fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= Tol_1D )
+          if (aWhereDistance.IsDone() && aWhatDistance.IsDone() &&
+              fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= aTolConf)
           {
             // 0020162: "EDF 961 GEOM : Getinplace is getting additionnal orthogonal faces"
             // aVertex must be projected to the same point on Where and on What
             gp_Pnt pOnWhat  = aWhatDistance.PointOnShape2(1);
             gp_Pnt pOnWhere = aWhereDistance.PointOnShape2(1);
-            isFound = ( pOnWhat.Distance(pOnWhere) <= Tol_1D );
+            isFound = (pOnWhat.Distance(pOnWhere) <= aTolConf);
             if ( isFound && iType == TopAbs_FACE )
             {
               // check normals at pOnWhat and pOnWhere
