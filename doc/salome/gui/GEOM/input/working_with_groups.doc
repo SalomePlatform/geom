@@ -81,24 +81,24 @@ creation of other groups), or skip it by clicking \b Close button.
 
 \n The Result of the operation will be a \b GEOM_Object.
 
-The \b Filter controls allow to automatically pick up entites which satisfy specified 
+The \b Filter controls allow to automatically pick up entities, which satisfy specified 
 threshold value(s). The numerical functor for each sub-shape that is compared with
 threshold value(s) is computed according to the shape's topological properties:
-- length for edges and wires
-- area for faces and shells
-- volume for solids, compounds, compsolids
+- length for edges and wires;
+- area for faces and shells;
+- volume for solids, compounds, compsolids.
 
 Filtering capabilities are not available for vertices.
 
 In order to filter out some entities:
-- Activate one or two filtering controls by switching on corresponding check boxes;
-- Select required threshold comparator type; the following choices are available:
+- Activate one or two filtering controls by switching on the corresponding check boxes;
+- Select the required threshold comparator type; the following choices are available:
   - <b>Less Than</b> or <b>Equal or Less Than</b> for the first comparator;
   - <b>Greater Than</b> or <b>Equal or Greater Than</b> for the second comparator;
-- Enter required threshold value (values);
+- Enter the required threshold value (values);
 - Press \b Apply button in the \b Filter group.
 
-The entities which satisfy entered filtering parameters will be automatically highlighted
+The entities, which satisfy the entered filtering parameters, will be automatically highlighted
 in the 3D viewer.
 
 \n <b>TUI Command:</b> <em>geompy.CreateGroup(MainShape,

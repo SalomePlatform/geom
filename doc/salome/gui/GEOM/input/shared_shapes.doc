@@ -15,22 +15,22 @@ Shared Shapes.</b> The following dialog box will appear.
 
 In this dialog:
 - <b>Name</b> is the base name of the resulting shapes.
-- <b>Shapes</b> are the shapes to fing shared sub-shapes of.
+- <b>Shapes</b> are the shapes whose shared sub-shapes should be found.
 - <b>Sub-shapes Type</b> is the type of required sub-shapes.
 - <b>Shared by all</b> option specifies what type of shared sub-shapes should be checked:
-  - \b On: causes to search sub-shapes from the first input shape shared with all other input shapes;
-  - \b Off: causes to search sub-shapes shared between couples of input shapes.
+  - \b On: searches for sub-shapes from the first input shape shared with all other input shapes;
+  - \b Off: searches for sub-shapes shared between couples of input shapes.
 
 \note For the case when "Shared by all" option is switched off - if an input list of shapes
-contains single compound, the sub-shapes shared between all possible couples of its top-level shapes
-are searched; otherwise, only sub-shapes that are shared between first input shape and all rest input
-shapes are searched.
+contains a single compound, the sub-shapes shared between all possible couples of its top-level shapes
+are searched for; otherwise, only sub-shapes that are shared between the first input shape and 
+all other input shapes are searched.
 
 <b>Advanced options:</b> \ref preview_anchor "Preview"
 
 <b>TUI Command:</b> <em> geompy.GetSharedShapesMulti( Shapes, Type ),</em> 
-<br> where \em Shapes is a list or compound of shapes to fing shared sub-
-shapes of and \em Type is the type of required sub-shapes.
+<br> where \em Shapes is a list or compound of shapes, whose shared sub-
+shapes should be found and \em Type is the type of required sub-shapes.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 Get Shared Shapes functionality:

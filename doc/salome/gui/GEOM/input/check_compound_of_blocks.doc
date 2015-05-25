@@ -8,10 +8,10 @@ This operation checks whether a shape is a compound of glued blocks.
 
 To be considered as a compound of blocks, the given shape must satisfy the
 following conditions:
-- Each element of the compound should be a Block (6 quadrangle faces);
-- Each quadrangle face is a face that has 1 wire with 4 edges. If there are
-more than 4 edges in a single wire and C1 continuity mode is switched on,
-a face is quadrangular if it has 4 bounds of C1 continuity.
+- Each element of the compound should be a Block, i.e. have 6 quadrangle faces;
+- Each quadrangle face should have one wire with four edges. If there are
+more than four edges in a single wire and C1 continuity mode is switched on,
+a face is quadrangular if it has four bounds with C1 continuity.
 - Blocks can be connected only via an entire quadrangle face or an entire edge;
 - The compound should be connected;
 - Each couple of connecting quadrangle faces should be glued.
@@ -20,7 +20,7 @@ a face is quadrangular if it has 4 bounds of C1 continuity.
 In this dialog:
 
 - \b Object - the checked object. \b Selection button allows picking it in the viewer or in the object browser.
-- <b>Use C1 criterion</b> - option that shitches on/off the C1 continuity mode.
+- <b>Use C1 criterion</b> - option switches on/off the C1 continuity mode.
 - <b>Angular Tolerance</b> - angular tolerance to check C1 continuity between neighbor edges in a wire.
 - \b Errors list informs of possible errors, for example:
 	- Not a block;
