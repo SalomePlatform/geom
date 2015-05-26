@@ -400,7 +400,6 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
   
   // TODO supprimer les lignes qui ne servent à rien le cas échéant
   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
-  std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
   SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
 
   if (!myEditCurrentArgument->isEnabled())
@@ -434,17 +433,6 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
     
     if ( myEditCurrentArgument == mySelectionGroup->LineEdit1 ) {
       myFace = aSelectedObject;
-      AISit = soccViewer->entry2aisobjects.find(myFaceEntry.toStdString());
-      if (AISit == soccViewer->entry2aisobjects.end())
-        return;
-      
-      Handle(AIS_InteractiveObject) myAIS = (*AISit).second[0];
-      Handle(GEOM_AISShape) myAISShape;
-      if( myAIS->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-        myAISShape = Handle(GEOM_AISShape)::DownCast( myAIS );
-      }
-      else
-        return ;
 
       SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
       if ( !study ) return;
@@ -455,7 +443,7 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
       PropMap propMap = study->getObjectProperties( vm->getGlobalId(), myFaceEntry );
       QString theImgFileName = propMap.value( GEOM::propertyName( GEOM::Texture ) ).toString();
       if ( theImgFileName.isEmpty() )
-        return ;
+        return;
 
       // Setting the image caracteristics
       myDetector->SetPath( theImgFileName.toStdString() );
