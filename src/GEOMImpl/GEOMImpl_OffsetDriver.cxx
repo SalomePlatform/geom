@@ -210,7 +210,7 @@ GetCreationInformation(std::string&             theOperationName,
     break;
   case OFFSET_THICKENING:
   case OFFSET_THICKENING_COPY:
-    theOperationName = "MakeThickening";
+    theOperationName = "THICKNESS";
     AddParam( theParams, "Object", aCI.GetShape() );
     AddParam( theParams, "Offset", aCI.GetParam() ? -aCI.GetValue() : aCI.GetValue() );
     {

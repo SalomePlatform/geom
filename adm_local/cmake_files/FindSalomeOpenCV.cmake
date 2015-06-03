@@ -23,7 +23,14 @@
 #
 #  !! Please read the generic detection procedure in SalomeMacros.cmake !!
 #
-SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS(OpenCV OpenCV_DIR 2)
+SET(UpCount 2)
+
+IF (WIN32)
+  SET(UpCount 0)
+ENDIF (WIN32)
+
+SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS(OpenCV OpenCV_DIR ${UpCount})
+
 #MARK_AS_ADVANCED()
 
 IF(OpenCV_FOUND) 

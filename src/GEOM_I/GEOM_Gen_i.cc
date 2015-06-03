@@ -320,24 +320,25 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr   theStudy,
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_LCS");
     aNamePrefix = "LocalCS_";
   }  else if ( mytype >= USER_TYPE_EX ) {
-      char buf[20];
-      sprintf( buf, "%d", aBaseObj->GetType() );
-      GEOM::CreationInformation_var info = aBaseObj->GetCreationInformation();
-      std::string plgId;
-      for ( size_t i = 0; i < info->params.length(); ++i ) {
-	std::string param_name = info->params[i].name.in();
-	std::string param_value = info->params[i].value.in();	
-	if( param_name == PLUGIN_NAME) {
-	  plgId = param_value;
-	  break;
-	}
+    char buf[20];
+    sprintf( buf, "%d", aBaseObj->GetType() );
+    GEOM::CreationInformationSeq_var infoSeq = aBaseObj->GetCreationInformation();
+    std::string plgId;
+    for ( size_t j = 0; j < infoSeq->length(); ++j )
+      for ( size_t i = 0; i < infoSeq[j].params.length(); ++i ) {
+	std::string param_name  = infoSeq[j].params[i].name.in();
+	std::string param_value = infoSeq[j].params[i].value.in();
+        if( param_name == PLUGIN_NAME) {
+          plgId = param_value;
+          break;
+        }
       }
-      if(plgId.length() > 0 ) {
-	plgId += "::";
-      }
-      plgId +="ICON_OBJBROWSER_"; 
-      plgId += buf;
-      aResultSO->SetAttrString("AttributePixMap",plgId.c_str());
+    if(plgId.length() > 0 ) {
+      plgId += "::";
+    }
+    plgId +="ICON_OBJBROWSER_";
+    plgId += buf;
+    aResultSO->SetAttrString("AttributePixMap",plgId.c_str());
   } else if ( mytype > USER_TYPE ) {
     char buf[20];
     sprintf( buf, "%d", aBaseObj->GetType() );

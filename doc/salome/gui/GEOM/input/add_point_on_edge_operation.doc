@@ -10,25 +10,24 @@ This operation is available in <b>OCC Viewer</b> only.
 
 The \b Result will be a \b GEOM_Object.
 
-\n Location of a new vertex on a selected edge can be defined two ways:
+\n The location of a new vertex on the selected edge can be defined in two ways:
 <ol>
-  <li> We can specify a position (ranging from 0.0 to 1.0) of the
-    vertex on the selected edge either by length or by parameter.
+  <li> By specifying the position (ranging from 0.0 to 1.0) by length or by parameter.
     <p>
     <b>TUI Command:</b> <em>geompy.DivideEdge(Shape, EdgeID, Value,
       IsByParameter)</em>
     <ul>
-      <li> \em Shape is a shape which contains an edge to be divided</li>
+      <li> \em Shape is a shape, which contains an edge to be divided;</li>
       <li>\em EdgeID is the ID of the edge to be divided, if it is = -1,
-        then \em Shape should be an edge itself.</li>
+        then \em Shape should be an edge itself;</li>
       <li> \em Value is a value of parameter on edge or length parameter,
-        depending on \em IsByParameter. </li>
-      <li> \em IsByParameter is a boolean flag, specifying operation mode:
-        - \c True: \em Value is treated as a curve parameter [0..1]
-        - \c False: \em Value is treated as a length parameter [0..1] </li>
+        depending on \em IsByParameter;</li>
+      <li> \em IsByParameter is a boolean flag, specifying the operation mode:
+        - \c True: \em Value is treated as a curve parameter; [0..1]
+        - \c False: \em Value is treated as a length parameter. [0..1] </li>
     </ul>
     \b Arguments: Name + 1 Edge + 1 Value setting the position of
-    the point according to one of the selected modes.
+    the point according to the selected mode.
 
     The difference between "by parameter" and "by length" modes becomes
     apparent on the edges with irregular parametrization (for example,
@@ -41,15 +40,15 @@ The \b Result will be a \b GEOM_Object.
     \image html repair8.png
     \n\n
   </li>
-  <li>We can select several points that will be projected to the selected
+  <li> By selecting several points that will be projected to the selected
     edge to find the location of new vertices.
     <p>
-    <b>TUI Command:</b> <em>geompy.DivideEdgeByPoint(Shape, Edge, Points)</em>
+    <b>TUI Command:</b> <em>geompy.DivideEdgeByPoint(Shape, Edge, Points):</em>
     <ul>
-      <li> \em Shape is a shape which contains an edge to be divided</li>
-      <li>\em Edge is an edge to be divided (or it's ID, if it is = -1,
-        then \em Shape should be an edge itself).</li>
-      <li> \em Points is a list of points to project to \a Edge. </li>
+      <li> \em Shape is a shape, which contains an edge to be divided;</li>
+      <li>\em Edge is an edge to be divided (or its ID, if it is = -1,
+        then \em Shape should be an edge itself);</li>
+      <li> \em Points is a list of points to be projected to the \a Edge.</li>
     </ul>
     \b Arguments: Name + 1 Edge + 1 or more Points.
 

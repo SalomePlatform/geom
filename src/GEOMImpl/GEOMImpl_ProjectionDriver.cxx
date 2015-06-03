@@ -473,41 +473,43 @@ GetCreationInformation(std::string&             theOperationName,
 
   switch ( aType ) {
   case PROJECTION_COPY:
-    {
-      GEOMImpl_IMirror aCI( function );
+  {
+    GEOMImpl_IMirror aCI( function );
 
-      AddParam( theParams, "Source object", aCI.GetOriginal() );
-      AddParam( theParams, "Target face", aCI.GetPlane() );
-      break;
-    }
+    AddParam( theParams, "Source object", aCI.GetOriginal() );
+    AddParam( theParams, "Target face", aCI.GetPlane() );
+    break;
+  }
   case PROJECTION_ON_WIRE:
-    {
-      GEOMImpl_IProjection aProj (function);
+  {
+    GEOMImpl_IProjection aProj (function);
 
-      AddParam(theParams, "Point", aProj.GetPoint());
-      AddParam(theParams, "Shape", aProj.GetShape());
+    AddParam(theParams, "Point", aProj.GetPoint());
+    AddParam(theParams, "Shape", aProj.GetShape());
 
-      break;
-    }
+    break;
+  }
   case PROJECTION_ON_CYLINDER:
-    {
-      GEOMImpl_IProjOnCyl aProj (function);
-      const Standard_Real aLengthAngle = aProj.GetAngleLength();
+  {
+    theOperationName = "PROJ_ON_CYL";
 
-      AddParam(theParams, "Shape",        aProj.GetShape());
-      AddParam(theParams, "Radius",       aProj.GetRadius());
-      AddParam(theParams, "Start angle",  aProj.GetStartAngle());
+    GEOMImpl_IProjOnCyl aProj (function);
+    const Standard_Real aLengthAngle = aProj.GetAngleLength();
 
-      if (aLengthAngle >= 0.) {
-        AddParam(theParams, "Length angle", aLengthAngle);
-      }
+    AddParam(theParams, "Shape",        aProj.GetShape());
+    AddParam(theParams, "Radius",       aProj.GetRadius());
+    AddParam(theParams, "Start angle",  aProj.GetStartAngle());
 
-      break;
+    if (aLengthAngle >= 0.) {
+      AddParam(theParams, "Length angle", aLengthAngle);
     }
+
+    break;
+  }
   default:
     return false;
   }
-  
+
   return true;
 }
 
@@ -661,7 +663,7 @@ TopoDS_Shape GEOMImpl_ProjectionDriver::projectOnCylinder
       GEOMUtils::Handle(HTrsfCurve2d) aTrsfCurve =
         new GEOMUtils::HTrsfCurve2d(aCurve, aPar[0], aPar[1], aTrsf2d);
       Approx_Curve2d                  aConv (aTrsfCurve, aPar[0], aPar[1],
-			                                 aUResol, aVResol, GeomAbs_C1,
+                                                         aUResol, aVResol, GeomAbs_C1,
                                              9, 1000);
 
       if (!aConv.IsDone() && !aConv.HasResult()) {

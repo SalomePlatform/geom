@@ -21,24 +21,23 @@ In this dialog:
 <ul>
 <li> <b>Source Shape</b> is an object that is a source of non-topological data.</li>
 <li> <b>Destination Shape</b> is a data destination object. </li>
-<li> <b>Type of detection operation</b> is the method to search sub-shapes of
-     <b>Source Shape</b> in <b>Destination Shape</b>. Data are transferred
-     from these corresponding sub-shapes. This is a combo-box with the following
-     possible values:
+<li> <b>Type of detection operation</b> allows choosing how to search sub-shapes of the 
+     <b>Source Shape</b> in the <b>Destination Shape</b>. The data are transferred
+     from these corresponding sub-shapes. The following methods are possible:
     <ul>
-    <li><b>Get In Place</b> - current implementation of Get In Place algorithm
+    <li><b>Get In Place</b> - the current implementation of Get In Place algorithm
         (default value).</li>
-    <li><b>Get In Place (old)</b> - old implementation of Get In Place
+    <li><b>Get In Place (old)</b> - the old implementation of Get In Place
         algorithm.</li>
     <li><b>Get In Place By History</b> - Get In Place By History algorithm.</li>
     </ul>
 </li>
 </ul>
 
-To copy data click on \b Apply or <b>Apply and Close</b> button. As the result
-it is possible to see how many names and materials are copied as well as
-maximum number of names and materials available for copying. This information is
-provided on the following message box:
+To copy the data click on \b Apply or <b>Apply and Close</b> button. 
+It is possible to see how many names and materials are copied as well as
+the maximum number of names and materials available for copying. This information is
+provided in the following message box:
 
 \image html transfer_data2.png "Transfer Data Information"
 

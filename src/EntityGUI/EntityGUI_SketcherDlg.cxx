@@ -632,15 +632,14 @@ void EntityGUI_SketcherDlg::RectClicked()
        SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
   GroupRect->show();
-  
+ 
   myX1=0;
-  myX2=10;
-  myY1=0;
-  myY2=10;
-
   GroupRect->SpinBox_DX1->setValue(myX1); 
+  myY1=0;
   GroupRect->SpinBox_DY1->setValue(myY1);
+  myX2=10;
   GroupRect->SpinBox_DX2->setValue(myX2);
+  myY2=10;
   GroupRect->SpinBox_DY2->setValue(myY2);
   
   resize( minimumSizeHint() );

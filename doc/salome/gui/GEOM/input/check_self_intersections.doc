@@ -9,17 +9,14 @@ This operation checks the topology of the selected shape to detect self-intersec
 In this dialog:
 
 - \b Object - the checked object. \b Selection button allows picking it in the viewer or in the object browser.
-- <b>Level of check</b> - The combo box that allows to set the level of checking shape on self-interference.
-  It defines which interferferences will be checked. Default value is "All interferences".
-- <b>Compute self-intersections</b> button computes self-interferences.
-- \b Summary section contains the general report if the object has self-intersections and/or if errors are occured during computation.
-- \b Self-intersections list contains the list of self-intersections detected.
-Select the intersection(s) to show <b>Sub-shapes</b> in the field to the right. 
-- \b Apply and <b>Apply and Close</b> buttons are used to store interferences selected in the "Self-intersections" list box in the study for further analysis.
-If no any interference is selected, all interferences are published in the study. Each interference is published as a child
-compound of the source shape and contains a couple of intersecting sub-shapes.
+- <b>Level of check</b> - combo box allows setting the level of self-interference checking. It defines, which interferences will be checked. The default value is "All interferences".
+- <b>Compute self-intersections</b> button performs the computation.
+- \b Summary section contains the general report about self-intersections of the object and/or errors that occurred during the computation.
+- \b Self-intersections list contains the list of detected self-intersections. Select the intersection to show <b>Sub-shapes</b> in the field to the right. 
+- \b Apply and <b>Apply and Close</b> buttons store the interferences selected in the <b>Self-intersections</b> list box in the study for further analysis. 
+If no interferences are selected, all of them are published in the study. Each interference is published as a child compound of the source shape and contains a couple of intersecting sub-shapes.
 
-\note This tool is useful for detection of shapes, not suitable for
+\note This tool is useful for detection of shapes that are not suitable as
 arguments of Boolean operations and Partition algorithm.
 For more information about Partition and Boolean Operations Algorithms
 and their limitations refer to <a href="SALOME_BOA_PA.pdf">this document</a>.

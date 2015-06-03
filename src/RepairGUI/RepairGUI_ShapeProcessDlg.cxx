@@ -959,6 +959,7 @@ void RepairGUI_ShapeProcessDlg::operatorChecked( QListWidgetItem * item )
 {
   if ( item && item->checkState() == Qt::Checked )
   {
+    item->setSelected(true);
     myStack->setCurrentIndex( myOpList->row( item ));
   }
   updateSelectAll();

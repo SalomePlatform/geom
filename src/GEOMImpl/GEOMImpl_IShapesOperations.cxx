@@ -2787,9 +2787,31 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
 
+  // Compute classification tolerance.
+  TopTools_IndexedMapOfShape aMapVtx;
+  Standard_Real              aTol = Precision::Confusion();
+
+  TopExp::MapShapes(aShape, TopAbs_VERTEX, aMapVtx);
+
+  Standard_Integer i;
+  Standard_Integer aNbVtx = aMapVtx.Extent();
+
+  for (i = 1; i <= aNbVtx; ++i) {
+    const TopoDS_Vertex aVtx    = TopoDS::Vertex(aMapVtx.FindKey(i));
+    const Standard_Real aVtxTol = BRep_Tool::Tolerance(aVtx);
+
+    if (aTol < aVtxTol) {
+      aTol = aVtxTol;
+    }
+  }
+
+  // Bound the tolerance value.
+  if (aTol > 0.0001) {
+    aTol = 0.0001;
+  }
+
   // Call algo
   GEOMAlgo_FinderShapeOn2 aFinder;
-  Standard_Real aTol = 0.0001; // default value
 
   Handle(GEOMAlgo_ClsfSolid) aClsfSolid = new GEOMAlgo_ClsfSolid;
   aClsfSolid->SetShape(aCheckShape);

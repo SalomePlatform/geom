@@ -66,7 +66,7 @@ class GEOM_I_EXPORT GEOM_BaseObject_i : public virtual POA_GEOM::GEOM_BaseObject
 
   virtual char* GetParameters();
 
-  virtual GEOM::CreationInformation* GetCreationInformation();
+  virtual GEOM::CreationInformationSeq* GetCreationInformation();
 
   Handle(GEOM_BaseObject) GetImpl() { return _impl; }
 

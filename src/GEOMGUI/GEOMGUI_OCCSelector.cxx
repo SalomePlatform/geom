@@ -179,7 +179,7 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
 
     for ( sel->Init(); sel->More(); sel->Next() ) {
 #if OCC_VERSION_LARGE > 0x06080100
-      const SelectMgr_HSensitiveEntity aHSenEntity = sel->Sensitive();
+      const Handle(SelectMgr_SensitiveEntity) aHSenEntity = sel->Sensitive();
       if( aHSenEntity.IsNull() )
         continue;
 

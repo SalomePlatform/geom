@@ -55,7 +55,7 @@
 // Below macro specifies how the closed point set is processed (issue 0022885).
 // See below for more information.
 // Currently solution 4 is chosen!
-#define BSPLINE_PROCESS_CLOSED_PNTSET 4
+#define BSPLINE_PROCESS_CLOSED_PNTSET 2
 
 namespace
 {
@@ -152,6 +152,8 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
 
     // reorder points if required (bspline only)
     if ((aType == SPLINE_INTERPOLATION || aType == SPLINE_INTERPOL_TANGENTS) && aCI.GetDoReordering()) {
+      int nbDup = 0;
+      gp_Pnt pPrev = points->Value(1);
       for (int i = 1; i < length - 1; i++) {
         gp_Pnt pi = points->Value(i);
         int nearest = 0;
@@ -175,6 +177,22 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
             points->SetValue(j, points->Value(j-1));
           points->SetValue(i+1, p);
         }
+        if ( pPrev.Distance(points->Value(i+1)) <= Precision::Confusion() )
+          nbDup++;
+        else
+          pPrev = points->Value(i+1);
+      }
+      if ( nbDup > 0 ) {
+        Handle(TColgp_HArray1OfPnt) tmpPoints = new TColgp_HArray1OfPnt(1, length-nbDup);
+        int j = 1;
+        for (int i = 1; i <= length; i++) {
+          if (i == 1 || pPrev.Distance(points->Value(i)) > Precision::Confusion() ) {
+            tmpPoints->SetValue(j++, points->Value(i));
+            pPrev = points->Value(i);
+          }
+        }
+        points = tmpPoints;
+        length = points->Length();
       }
     } // end of reordering
 

@@ -14,12 +14,11 @@ To make a projection it is necessary to define:
 - \b Object to be projected. It can be either a planar wire or a face;
 - \b Radius of the cylinder;
 - <b>Starting angle</b> from the cylinder's X axis around Z axis. This is
-the angle of the projection starting.
-- <b>Length angle</b> in which to project the total length of
-the wire. If it is unchecked the projection is not scaled and natural
+the angle of the projection start.
+- <b>Length angle</b> where the total length of
+the wire should be projected. If it is unchecked the projection is not scaled and the natural
 wire length is kept for the projection.
-
-\ref restore_presentation_parameters_page "Advanced options".
+- \ref restore_presentation_parameters_page "Advanced options".
 
 \image html proj_on_cyl_dlg.png
 
@@ -29,8 +28,8 @@ wire length is kept for the projection.
 
 \n <b>TUI Command:</b> <em>geompy.MakeProjectionOnCylinder(theObject, theRadius,
 theStartAngle=0.0, theAngleLength=-1.0),</em>
-where \em theObject is a shape which has to be projected, \em theRadius
-is a cylinder radius, \em theStartAngle the starting angle of projection in
+where \em theObject is a shape to be projected, \em theRadius
+is a cylinder radius, \em theStartAngle is the starting angle of projection in
 radians, \em theAngleLength the projection length angle in radians.
 The \em Result will be a \em GEOM_Object.
 

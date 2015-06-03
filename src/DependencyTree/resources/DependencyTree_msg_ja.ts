@@ -5,40 +5,40 @@
     <name>DependencyTree_View</name>
     <message>
       <source>DEPENDENCY_TREE</source>
-      <translation type="unfinished">Dependency Tree</translation>
+      <translation>依存関係ツリー</translation>
     </message>
     <message>
       <source>MOVE_NODES</source>
-      <translation type="unfinished">Move nodes</translation>
+      <translation>ノードの移動</translation>
     </message>
     <message>
       <source>HIERARCHY_DEPTH</source>
-      <translation type="unfinished">Hierarchy depth  </translation>
+      <translation>階層の深さ</translation>
     </message>
     <message>
       <source>DISPLAY_ASCENDANTS</source>
-      <translation type="unfinished">Display ascendants</translation>
+      <translation>上位の表示</translation>
     </message>
     <message>
       <source>DISPLAY_DESCENDANTS</source>
-      <translation type="unfinished">Display descendants</translation>
+      <translation>下位の表示</translation>
     </message>
     <message>
       <source>SHOW_ALL</source>
-      <translation type="unfinished">Show all</translation>
+      <translation>すべてを表示</translation>
     </message>
     <message>
       <source>UPDATE</source>
-      <translation type="unfinished">Update</translation>
+      <translation>更新</translation>
     </message>
     <name>DependencyTree_ViewModel</name>
     <message>
       <source>MEN_REBUILD_THE_TREE</source>
-      <translation type="unfinished">Rebuild the tree</translation>
+      <translation>ツリーの再構築</translation>
     </message>
     <message>
       <source>MEN_REDUCE_STUDY</source>
-      <translation type="unfinished">Reduce study</translation>
+      <translation>スタディの削減</translation>
     </message>
   </context>
 </TS>

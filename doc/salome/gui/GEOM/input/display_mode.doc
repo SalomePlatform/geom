@@ -29,7 +29,7 @@ functionality for all objects in the current view via the main menu
 
 \n <b>TUI Command:</b> <em>gg.setVectorsMode(ID, Bool)</em>
 
-\n Also it is possible to show the vertices of the selected
+\n It is possible to show the vertices of the selected
 shape. For this, choose in the context menu of the shape
 <b>Display mode -> Show Vertices</b>, or apply this
 functionality for all objects in the current view via the main menu
@@ -40,10 +40,9 @@ functionality for all objects in the current view via the main menu
 
 \n <b>TUI Command:</b> <em>gg.setVerticesMode(ID, Bool)</em>
 
-\n Moreover user can show the name of the selected
-shape. For this, choose in the context menu of the shape
+\n To show the name of the selected shape, choose in its context menu
 <b>Display mode -> Show Name</b>, or apply this
-functionality for all objects in the current view via the main menu
+functionality for all objects in the current view via the main menu option
 <b> View -> Display Mode -> Show/Hide Name.</b>
 
 \image html name_mode.png

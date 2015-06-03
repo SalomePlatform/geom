@@ -83,6 +83,20 @@ GetCreationInformation(std::string&             theOperationName,
     AddParam( theParams, "Step", data.GetStepID() );
     AddParam( theParams, "Stamp", data.GetStepStamp() );
   }
+  else if ( funType == GEOM_Field::FUN_CHANGE_COMP_NAMES )
+  {
+    theOperationName = "Change component names";
+  }
+  else if ( funType == GEOM_Field::FUN_CHANGE_STEP_STAMP )
+  {
+    theOperationName = "Change stamp";
+    AddParam( theParams, "Stamp", data.GetStepStamp() );
+  }
+  else if ( funType == GEOM_Field::FUN_CHANGE_VALUE )
+  {
+    theOperationName = "FIELD_EDIT";//"Change values";
+    AddParam( theParams, "Values", "..." );
+  }
   else
   {
     return false;

@@ -32,7 +32,7 @@
     <name>STEPPlugin_GUI</name>
     <message>
       <source>STEP_FILES</source>
-      <translation>STEPファイル</translation>
+      <translation>STEP ファイル ( *.step *.stp )</translation>
     </message>
     <message>
       <source>EXPORT_TITLE</source>

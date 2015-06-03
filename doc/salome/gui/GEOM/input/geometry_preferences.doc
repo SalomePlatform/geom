@@ -5,7 +5,8 @@
 \anchor pref_settings <h2>Settings</h2>
 
 In the \b Geometry module you can set preferences for visualization of
-geometrical figures, which can be used in later sessions with this module.
+geometrical figures, which can be used right now or in later sessions 
+with this module according to the preferences.
 
 
 \image html pref15.png
@@ -48,16 +49,16 @@ place (in the back) and add the additional wireframe actor in the viewer foregro
 <li><b>Shading With Edges</b> - allows to switch display mode to shading with edges mode after 
 "top-level" operation.</li>
 </ul>
-<li><b>Transparency</b> - allows to define default transparency value.</li>
-<li><b>Deflection coefficient</b> - allows to define default deflection
+<li><b>Default transparency</b> - allows to define default transparency value.</li>
+<li><b>Default deflection coefficient</b> - allows to define default deflection
 coefficient for lines and surfaces. A smaller coefficient provides
 better quality of a shape in the viewer.</li>
 <li><b>Show predefined materials in popup menu</b> - allows to customize the displaying of popup menu with list of 
 predefined materials.</li>
 <li><b>Default material</b> - allows to define default material.</li>
 <li><b>Subshapes color for editing a group</b> - allows to select default color for subshapes in a group.</li>
-<li><b>Edges width</b> - allows to define default width of the edges.</li>
-<li><b>Isolines width</b> - allows to define default width of the isolines.</li>
+<li><b>Default edges width</b> - allows to define default width of the edges.</li>
+<li><b>Default isolines width</b> - allows to define default width of the isolines.</li>
 <li><b>Preview edges width</b> - allows to define width of the edges for preview.</li>
 <li><b>Measures line width</b> - allows to define lines width of measurements tools.</li>
 <li><b>Step value for spin boxes</b> - allows to define the increment
@@ -82,7 +83,7 @@ of values set in spin boxes.</li>
 </ul>
 
 <ul>
-<li><b>Number of isolines</b> - allows to specify the number of isolines along <b>Along U</b> and <b>Along V</b> coordinate axes. They are shown on each selected face. For example:
+<li><b>Default number of isolines</b> - allows to specify the default number of isolines along <b>Along U</b> and <b>Along V</b> coordinate axes. They are shown on each selected face. For example:
 
 \image html isos.png
 
@@ -107,23 +108,12 @@ precision for floating-point data.</li>
 </ul>
 
 <ul>
-<li><b>Marker of Points</b></li>
+<li><b>Default marker of points</b></li>
 <ul>
-<li><b>Type</b> - allows to select the symbol for representation of
+<li><b>Type</b> - allows to select the default symbol for representation of
 points (cross, asterisk, etc.).</li>
-<li><b>Size</b> - allows to define the size of the marker from 1
+<li><b>Size</b> - allows to define the default size of the marker from 1
 (smallest) to 7 (largest).</li>
-</ul>
-</ul>
-
-<ul>
-<li><b>Origin and base vectors</b></li>
-<ul>
-<li><b>Length of base vectors</b> - allows to define the length
-of base vectors.</li>
-<li><b>Auto create</b> - allows to automatically create a point
-of origin and three base vectors of the rectangular coordinate
-system immediately after the module activation.</li>
 </ul>
 </ul>
 
@@ -139,11 +129,23 @@ system immediately after the module activation.</li>
 </ul>
 </ul>
 
+<ul>
+<li><b>Origin and base vectors</b></li>
+<ul>
+<li><b>Length of base vectors</b> - allows to define the length
+of base vectors.</li>
+<li><b>Auto create</b> - allows to automatically create a point
+of origin and three base vectors of the rectangular coordinate
+system immediately after the module activation.</li>
+</ul>
+</ul>
 
 <ul>
 <li><b>Operations</b></li>
 <ul>
 <li><b>Preview</b> - allows to customize the displaying preview by default.</li>
+<li><b>Hide input objects from the viewer</b> - allows automatic hiding of input 
+shapes from the 3D viewer (OCC and VTK) in all operations of Geometry module.</li>
 </ul>
 </ul>
 

@@ -1474,70 +1474,16 @@ bool AdvancedEngine_IOperations::MakePipeTShapePartition(Handle(GEOM_Object) the
       face_t->GetLastFunction()->SetDescription("");
       theShapes.push_back(face_t);
 
-      gp_Pnt aP2 = BRep_Tool::Pnt(TopoDS::Vertex(P2->GetValue()));
-      gp_Pnt aP5 = BRep_Tool::Pnt(TopoDS::Vertex(vi1->GetValue()));
-      double deltaZ = aP2.Z() - aP5.Z();
-      //         std::cerr << "Creating new point from vi1 with deltaZ = " << deltaZ << std::endl;
-      Handle(GEOM_Object) P5bis = myTransformOperations->TranslateDXDYDZCopy(vi1, 0, 0, deltaZ);
-      if (P5bis.IsNull()) {
-        SetErrorCode("Impossible to translate vertex");
+      // Create a prism from edge_chan_inc
+      Handle(GEOM_Object) aPrismDir = myBasicOperations->MakeVectorDXDYDZ(1., 1., 0.);
+
+      if (aPrismDir.IsNull()) {
+        SetErrorCode("Impossible to build Prism direction");
         return false;
       }
-      P5bis->GetLastFunction()->SetDescription("");
+      aPrismDir->GetLastFunction()->SetDescription("");
+      face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, aPrismDir, theR2 + theW2);
 
-      gp_Pnt aP4 = BRep_Tool::Pnt(TopoDS::Vertex(P4->GetValue()));
-      gp_Pnt aP6 = BRep_Tool::Pnt(TopoDS::Vertex(vi2->GetValue()));
-      deltaZ = aP4.Z() - aP6.Z();
-      //         std::cerr << "Creating new point from vi2 with deltaZ = " << deltaZ << std::endl;
-      Handle(GEOM_Object) P6bis = myTransformOperations->TranslateDXDYDZCopy(vi2, 0, 0, deltaZ);
-      if (P6bis.IsNull()) {
-        SetErrorCode("Impossible to translate vertex");
-        return false;
-      }
-      P6bis->GetLastFunction()->SetDescription("");
-
-      //         std::cerr << "Creating new line 1 from 2 previous points" << std::endl;
-      Handle(GEOM_Object) Cote_3 = myBasicOperations->MakeLineTwoPnt(P5bis, P2);
-      if (Cote_3.IsNull()) {
-        SetErrorCode("Impossible to build edge in thickness");
-        return false;
-      }
-      Cote_3->GetLastFunction()->SetDescription("");
-
-      //         std::cerr << "Creating new line 2 from 2 previous points" << std::endl;
-      Handle(GEOM_Object) Cote_4 = myBasicOperations->MakeLineTwoPnt(P6bis, P4);
-      if (Cote_4.IsNull()) {
-        SetErrorCode("Impossible to build edge in thickness");
-        return false;
-      }
-      Cote_4->GetLastFunction()->SetDescription("");
-
-      //         std::cerr << "Creating new line 3 from 2 previous points" << std::endl;
-      Handle(GEOM_Object) Cote_5 = myBasicOperations->MakeLineTwoPnt(P5bis, P6bis);
-      if (Cote_4.IsNull()) {
-        SetErrorCode("Impossible to build edge in thickness");
-        return false;
-      }
-      Cote_5->GetLastFunction()->SetDescription("");
-
-      //std::list<Handle(GEOM_Object)> edgeList2;
-      //edgeList2.push_back(edge_chan_inc);
-      //edgeList2.push_back(Cote_3);
-      //edgeList2.push_back(Cote_5);
-      //edgeList2.push_back(Cote_4);
-      //         std::cerr << "Creating wire 2" << std::endl;
-      //wire_t2 = myShapesOperations->MakeWire(edgeList2, 1e-7);
-      //if (wire_t2.IsNull()) {
-      //  SetErrorCode("Impossible to build wire");
-      //  return false;
-      //}
-      //wire_t2->GetLastFunction()->SetDescription("");
-      //         std::cerr << "Creating face 2" << std::endl;
-      //face_t2 = myShapesOperations->MakeFace(wire_t2, false);
-
-      // Mantis issue 0021682
-      face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, Cote_4, - (theR2 + theW2));
-      //face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, Cote_4, - 2.0*theR2);
       if (face_t2.IsNull()) {
         SetErrorCode("Impossible to build face");
         return false;

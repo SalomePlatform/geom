@@ -135,7 +135,7 @@ MeasureGUI_ManageDimensionsDlg::MeasureGUI_ManageDimensionsDlg( GeometryGUI* the
   {
     myObjectSelector->PushButton1->click();
   }
-
+  myIsNeedRedisplay = false;
   setHelpFileName("managing_dimensions_page.html");
 }
 
@@ -809,7 +809,9 @@ void MeasureGUI_ManageDimensionsDlg::OnFinish()
                              GEOM::propertyName( GEOM::Dimensions ),
                              QVariant() );
 
-  redisplay( myEditObject.get() );
+  if ( myIsNeedRedisplay ) {
+    redisplay( myEditObject.get() );
+  }
   
   myGeomGUI->emitDimensionsUpdated( QString( myEditObject->GetStudyEntry() ) );
 }
@@ -894,8 +896,8 @@ void MeasureGUI_ManageDimensionsDlg::SetEditObject( const GEOM::GeomObjPtr& theO
 
   if ( myEditObject.isNull() )
   {
+    myDimensionView->TreeWidget->clear();
     myDimensionView->setEnabled( false );
-
     return;
   }
 
@@ -960,8 +962,6 @@ void MeasureGUI_ManageDimensionsDlg::RestoreState()
                              myEditObject->GetStudyEntry(),
                              GEOM::propertyName( GEOM::Dimensions ),
                              QVariant() );
-
-  RedisplayObject();
 }
 
 //=================================================================================
@@ -1112,8 +1112,8 @@ bool MeasureGUI_ManageDimensionsDlg::AllowedToCancelChanges()
                                             tr( "WRN_MSG_CHANGES_LOST" ),
                                             QMessageBox::Ok,
                                             QMessageBox::Cancel );
-
-  return aResponse == QMessageBox::Ok;
+  myIsNeedRedisplay = ( aResponse == QMessageBox::Ok );
+  return myIsNeedRedisplay;
 }
 
 //=================================================================================

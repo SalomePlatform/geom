@@ -1,0 +1,83 @@
+/*!
+
+\page size_models_range Sizes of Models in Salome
+
+\tableofcontents
+
+In Salome and Open CASCADE Technology (OCCT), which is a modeling core
+of Salome %GEOM module, any model has its location in the 3D-space and size.
+ 
+This document defines the range of values (tolerances, locations
+and sizes) that should be taken into account for any 3D model design.
+
+It is not obligatory to create models within this range,
+however, algorithms can fail or return unexpected results if the 
+recommendations are not followed.
+
+\section sec1 Maximal Size of the Model
+
+The Maximal Size of the model corresponds to the maximal diameter of
+enclosed sphere built for the model. In OCCT any model has a location defined
+relatively to the absolute origin. Thus the maximal diameter should be built
+taking into account the model itself and its location.
+
+In OCCT there are two tolerances: Tolerance Confusion (TolC)
+and Tolerance Angular (TolA) (see OCCT Precision package for more details).
+These values are used for geometric comparisons. However, they are not used inside
+low-level algorithms (e.g. intersection), where more precise values are
+used instead. The value TolC guarantees that the error associated with
+the computations for a given geometric entity is not greater than TolC.
+
+- TolC - precision value used to check the coincidence of two points
+  [by default 1.e-7];
+- TolA - precision value used to check the equality of two angles
+  [by default 1.e-12].
+
+For more information on tolerance definition please see
+<a href="SALOME_BOA_PA.pdf">Chapter 4 of this document</a>. To see limitations
+that are due to modeling errors or inaccuracies of tolerance usage please
+refer to <a href="SALOME_BOA_PA.pdf">Chapter 9.2.2 of the same document</a>.
+
+To provide robust geometric modeling the computations should be consistent,
+i.e. the one tolerance value should be used for all computations. Thus, the
+TolC and TolA values should be consistent:
+
+<CENTER><B><PRE>Smax = TolC / TolA             (1)</PRE></B></CENTER>
+
+\image html tolerances.png "TolC, TolA and Maximal Size Consistency"
+
+In accordance with <B>(1)</B> the Maximal Size for the Model is [by default]:
+
+<CENTER><B><PRE>Smax = 1.e-7 / 1.e-12 = 1.e+5  (2)</PRE></B></CENTER>
+
+\section sec2 Minimal Size of the Model
+
+The Minimal Size of the Model is defined as the maximal diameter of enclosed
+sphere built for the smallest BRep entity of the Model.
+
+All models in OCCT are represented using double precision
+floating point numbers. This representation contains approximately 14-16
+significant digits.
+
+From the experience, it is considered that the last four significant
+digits contain rounding-off errors occurring during the computation. So
+(taking into account the worst cases), there are ten reliable significant digits
+for double precision floating point numbers. Having the estimation it is
+possible to compute the value of the Minimal size of the model:
+
+<CENTER><B><PRE>Smin=Smax / 1.e+10             (3)</PRE></B></CENTER>
+
+In accordance with <B>(2)</B> for the default value it will be [by default]:
+
+<CENTER><B><PRE>Smin=1.e-5.                    (4)</PRE></B></CENTER>
+
+\section sec3 Full Range of Sizes
+
+The values <B>Smax (2)</B>, <B>Smin (4)</B> are theoretical. Taking into
+account the practical purposes of improving the reliability, the lower limit
+should be restricted by one order. Thus, the full Range of Sizes of the Models
+is:
+
+<CENTER><B><PRE>[Smin, Smax] = [1.e-4, 1.e+5]  (5)</PRE></B></CENTER>
+
+*/

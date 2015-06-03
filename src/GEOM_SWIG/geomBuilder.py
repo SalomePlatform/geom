@@ -3055,10 +3055,12 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             theR,theH,theA,Parameters = ParseParameters(theR, theH, theA)
 	    if flag:
                 theA = theA*math.pi/180.
-            anObj = self.PrimOp.MakeCylinderPntVecRHA(thePnt, theAxis, theR, theH, theA)
-            RaiseIfFailed("MakeCylinderPntVecRHA", self.PrimOp)
-            anObj.SetParameters(Parameters)
-            self._autoPublish(anObj, theName, "cylinder")
+	    if theA<=0. or theA>=2*math.pi:
+	      raise ValueError("The angle parameter should be strictly between 0 and 2*pi.")
+	    anObj = self.PrimOp.MakeCylinderPntVecRHA(thePnt, theAxis, theR, theH, theA)
+	    RaiseIfFailed("MakeCylinderPntVecRHA", self.PrimOp)
+	    anObj.SetParameters(Parameters)
+	    self._autoPublish(anObj, theName, "cylinder")
             return anObj
 
         ## Create a cylinder with given radius and height at
@@ -3136,6 +3138,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             theR,theH,theA,Parameters = ParseParameters(theR, theH, theA)
             if flag:
                 theA = theA*math.pi/180.
+            if theA<=0. or theA>=2*math.pi:
+	      raise ValueError("The angle parameter should be strictly between 0 and 2*pi.")
             anObj = self.PrimOp.MakeCylinderRHA(theR, theH, theA)
             RaiseIfFailed("MakeCylinderRHA", self.PrimOp)
             anObj.SetParameters(Parameters)
@@ -4472,7 +4476,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         # end of l3_complex
         ## @}
 
-        ## @addtogroup l3_advanced
+        ## @addtogroup l3_basic_go
         ## @{
 
         ## Create a linear edge with specified ends.
@@ -4904,7 +4908,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "solid")
             return anObj
 
-        # end of l3_advanced
+        # end of l3_basic_go
         ## @}
 
         ## @addtogroup l2_measure
@@ -7375,7 +7379,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             Returns:
                 New GEOM.GEOM_Object, containing copies of theShapes without coincident faces.
             """
-            anObj = self.ShapesOp.MakeGlueFacesByList(ToList(theShapes), theTolerance, theFaces,
+            anObj = self.ShapesOp.MakeGlueFacesByList(ToList(theShapes), theTolerance, ToList(theFaces),
                                                       doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
@@ -9161,7 +9165,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(anObj, theName, "projection")
             return anObj
 
-        ## Create a projection projection of the given point on a wire or an edge.
+        ## Create a projection of the given point on a wire or an edge.
         #  If there are no solutions or there are 2 or more solutions It throws an
         #  exception.
         #  @param thePoint the point to be projected.
@@ -9179,7 +9183,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         @ManageTransactions("TrsfOp")
         def MakeProjectionOnWire(self, thePoint, theWire, theName=None):
             """
-            Create a projection projection of the given point on a wire or an edge.
+            Create a projection of the given point on a wire or an edge.
             If there are no solutions or there are 2 or more solutions It throws an
             exception.
 
@@ -10966,14 +10970,17 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             return aDict
 
         def GetCreationInformation(self, theShape):
-            info = theShape.GetCreationInformation()
-            # operationName
-            opName = info.operationName
-            if not opName: opName = "no info available"
-            res = "Operation: " + opName
-            # parameters
-            for parVal in info.params:
-                res += " \n %s = %s" % ( parVal.name, parVal.value )
+            res = ''
+            infos = theShape.GetCreationInformation()
+            for info in infos:
+                # operationName
+                opName = info.operationName
+                if not opName: opName = "no info available"
+                if res: res += "\n"
+                res += "Operation: " + opName
+                # parameters
+                for parVal in info.params:
+                    res += "\n \t%s = %s" % ( parVal.name, parVal.value )
             return res
 
         ## Get a point, situated at the centre of mass of theShape.

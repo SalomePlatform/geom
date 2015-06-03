@@ -32,7 +32,7 @@
     <name>VTKPlugin_GUI</name>
     <message>
       <source>VTK_FILES</source>
-      <translation>VTKファイル</translation>
+      <translation>VTKファイル( *.vtk )</translation>
     </message>
     <message>
       <source>EXPORT_TITLE</source>
@@ -43,7 +43,7 @@
     <name>VTKPlugin_ExportDlg</name>
     <message>
       <source>DEFLECTION</source>
-      <translation type="unfinished">Deflection</translation>
+      <translation>たわみ</translation>
     </message>
   </context>
 </TS>

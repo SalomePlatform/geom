@@ -17,7 +17,7 @@ given tolerance value.
 
 \n <b>TUI Command:</b>
 <p><em>geompy.MakeGlueEdges( theShapes, theTolerance )</em>,
-\n where \em theShapes is either a list or compound of shapes to be
+\n where \em theShapes is a list or compound of shapes to be
 glued, and \em theTolerance is a maximum distance between two
 edges, which can be considered as coincident.
 
@@ -41,12 +41,12 @@ The selected edges will be marked in white.
  theTolerance is a maximum distance between two edges, which can
  be considered as coincident. The \b Result will be a list of \b
  GEOM_Objects (edges), containing one sub-shape per each detected set of
- coincident sub-shapes. For example if there are two coincident edges
-in selected shapes, the result list contains one of the two coincident edges.
+ coincident sub-shapes. For example, if there are two coincident edges
+in the selected shapes, the result list contains one of the two coincident edges.
 
 <em>geompy.MakeGlueEdgesByList( theShapes, theTolerance, theEdges )</em>,
-\n where \em theShape is either a list or compound of shapes to be glued, \em
- theTolerance is a maximum distance between two edges, which can
+\n where \em theShape is a list or compound of shapes to be glued, 
+\em theTolerance is a maximum distance between two edges, which can
  be considered as coincident, \em theEdges is a list of
  edges to be glued. 
 

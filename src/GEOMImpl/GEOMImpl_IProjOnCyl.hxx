@@ -24,10 +24,10 @@
 
 #include "GEOM_Function.hxx"
 
-#define PROJECTION_ARG_SHAPE            1
-#define PROJECTION_ARG_RADIUS           2
-#define PROJECTION_ARG_START_ANGLE      3
-#define PROJECTION_ARG_ANGLE_LENGTH     4
+#define PROJCYL_ARG_SHAPE            1
+#define PROJCYL_ARG_RADIUS           2
+#define PROJCYL_ARG_START_ANGLE      3
+#define PROJCYL_ARG_ANGLE_LENGTH     4
 
 class GEOMImpl_IProjOnCyl
 {
@@ -37,22 +37,22 @@ public:
   GEOMImpl_IProjOnCyl(Handle(GEOM_Function) theFunction): _func(theFunction) {}
 
   void SetShape       (const Handle(GEOM_Function) &theShape)
-          { _func->SetReference(PROJECTION_ARG_SHAPE,   theShape); }
+          { _func->SetReference(PROJCYL_ARG_SHAPE,   theShape); }
   void SetRadius      (const Standard_Real          theRadius)
-          { _func->SetReal(PROJECTION_ARG_RADIUS,       theRadius); }
+          { _func->SetReal(PROJCYL_ARG_RADIUS,       theRadius); }
   void SetStartAngle  (const Standard_Real          theStartAngle)
-          { _func->SetReal(PROJECTION_ARG_START_ANGLE,  theStartAngle); }
+          { _func->SetReal(PROJCYL_ARG_START_ANGLE,  theStartAngle); }
   void SetAngleLength (const Standard_Real          theAngleLength)
-          { _func->SetReal(PROJECTION_ARG_ANGLE_LENGTH, theAngleLength); }
+          { _func->SetReal(PROJCYL_ARG_ANGLE_LENGTH, theAngleLength); }
 
   Handle(GEOM_Function) GetShape()
-          { return _func->GetReference(PROJECTION_ARG_SHAPE); }
+          { return _func->GetReference(PROJCYL_ARG_SHAPE); }
   Standard_Real         GetRadius()
-          { return _func->GetReal(PROJECTION_ARG_RADIUS ); }
+          { return _func->GetReal(PROJCYL_ARG_RADIUS ); }
   Standard_Real         GetStartAngle()
-          { return _func->GetReal(PROJECTION_ARG_START_ANGLE ); }
+          { return _func->GetReal(PROJCYL_ARG_START_ANGLE ); }
   Standard_Real         GetAngleLength()
-          { return _func->GetReal(PROJECTION_ARG_ANGLE_LENGTH ); }
+          { return _func->GetReal(PROJCYL_ARG_ANGLE_LENGTH ); }
 
  private:
 

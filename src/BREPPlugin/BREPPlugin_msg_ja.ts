@@ -32,7 +32,7 @@
     <name>BREPPlugin_GUI</name>
     <message>
       <source>BREP_FILES</source>
-      <translation>BREPファイル</translation>
+      <translation>BREP ファイル ( *.brep )</translation>
     </message>
     <message>
       <source>EXPORT_TITLE</source>

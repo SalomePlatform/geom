@@ -95,9 +95,11 @@
 //           be merged. The edges can be merged if:
 //             1. They belong to same faces.
 //             2. They either both seam or both not seam on each face.
-//             3. They are based on coincident lines, or:
-//             4. They are based on coincident circles, or:
-//             5. They are based on either Bezier of BSplines.
+//             3. There are no another edges (e.g. seam) on each common face
+//                that are connected to the common vertex of two edges.
+//             4. They are based on coincident lines, or:
+//             5. They are based on coincident circles, or:
+//             6. They are based on either Bezier of BSplines.
 //=======================================================================
 static Standard_Boolean IsToMerge
     (const TopoDS_Edge                               &theEdge1,
@@ -108,7 +110,6 @@ static Standard_Boolean IsToMerge
   Standard_Boolean aResult  = Standard_False;
   Standard_Boolean isDegen1 = BRep_Tool::Degenerated(theEdge1);
   Standard_Boolean isDegen2 = BRep_Tool::Degenerated(theEdge2);
-  Standard_Boolean isCompareGeom = Standard_False;
 
   if (isDegen1 && isDegen2) {
     // Both of edges are degenerated.
@@ -141,6 +142,44 @@ static Standard_Boolean IsToMerge
               Standard_Boolean isSeam2 = BRep_Tool::IsClosed(theEdge2, aFace1);
 
               isSame = (isSeam1 && isSeam2) || (isSeam1 == isSeam2);
+
+              if (isSame) {
+                // Check if there are no other edges (e.g. seam) on this face
+                // that are connected to the common vertex.
+                TopoDS_Vertex aVCommon;
+
+                if (TopExp::CommonVertex(theEdge1, theEdge2, aVCommon)) {
+                  TopTools_IndexedDataMapOfShapeListOfShape aMapVE;
+
+                  TopExp::MapShapesAndAncestors
+                    (aFace1, TopAbs_VERTEX, TopAbs_EDGE, aMapVE);
+
+                  if (aMapVE.Contains(aVCommon)) {
+                    TopTools_ListIteratorOfListOfShape 
+                      anItE(aMapVE.FindFromKey(aVCommon));
+
+                    for (; anItE.More(); anItE.Next()) {
+                      const TopoDS_Shape &anEdge = anItE.Value();
+
+                      if (!theEdge1.IsSame(anEdge) &&
+                          !theEdge2.IsSame(anEdge)) {
+                        // There is another edge that shares the common vertex.
+                        // Nothing to merge.
+                        isSame = Standard_False;
+                        break;
+                      }
+                    }
+                  } else {
+                    // Common vertex doesn't belong to the face.
+                    // Nothing to merge. NEVERREACHED.
+                    isSame = Standard_False;
+                  }
+                } else {
+                  // No common vertex. Nothing to merge. NEVERREACHED.
+                  isSame = Standard_False;
+                }
+              }
+
               break;
             }
           }

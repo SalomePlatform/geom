@@ -582,7 +582,7 @@ void CurveCreator_Utils::setSelectedPoints( Handle(AIS_InteractiveContext) theCo
   for( aSelection->Init(); aSelection->More(); aSelection->Next() )
   {    
 #if OCC_VERSION_LARGE > 0x06080100
-    const SelectMgr_HSensitiveEntity aHSenEntity = aSelection->Sensitive();
+    const Handle(SelectMgr_SensitiveEntity) aHSenEntity = aSelection->Sensitive();
     if( aHSenEntity.IsNull() )
       continue;
     Handle_SelectBasics_SensitiveEntity aSenEntity = aHSenEntity->BaseSensitive();
