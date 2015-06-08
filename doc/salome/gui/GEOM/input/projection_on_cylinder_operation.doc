@@ -18,19 +18,27 @@ the angle of the projection start.
 - <b>Length angle</b> where the total length of
 the wire should be projected. If it is unchecked the projection is not scaled and the natural
 wire length is kept for the projection.
+- <b>Rotation angle</b> the desired angle between the tangent vector to
+the first curve at the first point of the theObject's projection in 2D space
+and U-direction of cylinder's 2D space.
 - \ref restore_presentation_parameters_page "Advanced options".
 
 \image html proj_on_cyl_dlg.png
+
+\n The following figure explains meaning of each input angle:
+
+\image html proj_on_cyl_angles.png "Input angles of projection on the cylinder"
 
 \n <b>Example:</b>
 
 \image html proj_on_cyl_preview.png "The curve (in red) and its projection on the cylinder"
 
 \n <b>TUI Command:</b> <em>geompy.MakeProjectionOnCylinder(theObject, theRadius,
-theStartAngle=0.0, theAngleLength=-1.0),</em>
+theStartAngle=0.0, theAngleLength=-1.0, theAngleRotation=0.0),</em>
 where \em theObject is a shape to be projected, \em theRadius
 is a cylinder radius, \em theStartAngle is the starting angle of projection in
-radians, \em theAngleLength the projection length angle in radians.
+radians, \em theAngleLength the projection length angle in radians,
+\em theAngleRotation projection rotation angle in radians.
 The \em Result will be a \em GEOM_Object.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of

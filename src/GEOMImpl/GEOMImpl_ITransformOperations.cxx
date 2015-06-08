@@ -2278,7 +2278,8 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MakeProjectionOnCylinder
                              (const Handle(GEOM_Object) &theObject,
                               const Standard_Real        theRadius,
                               const Standard_Real        theStartAngle,
-                              const Standard_Real        theAngleLength)
+                              const Standard_Real        theAngleLength,
+                              const Standard_Real        theAngleRotation)
 {
   SetErrorCode(KO);
 
@@ -2312,6 +2313,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MakeProjectionOnCylinder
   aProj.SetRadius(theRadius);
   aProj.SetStartAngle(theStartAngle);
   aProj.SetAngleLength(theAngleLength);
+  aProj.SetAngleRotation(theAngleRotation);
 
   //Compute the Projection
   try {
@@ -2328,16 +2330,10 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::MakeProjectionOnCylinder
   }
 
   //Make a Python command
-  GEOM::TPythonDump pd(aFunction);
-
-  pd << aResult << " = geompy.MakeProjectionOnCylinder("
-     << theObject << ", " << theRadius << ", " << theStartAngle;
-
-  if (theAngleLength >= 0.) {
-    pd << ", " << theAngleLength;
-  }
-
-   pd << ")";
+  GEOM::TPythonDump(aFunction)
+    << aResult << " = geompy.MakeProjectionOnCylinder("
+    << theObject << ", " << theRadius << ", " << theStartAngle
+    << ", " << theAngleLength << ", " << theAngleRotation << ")";
 
   SetErrorCode(OK);
 

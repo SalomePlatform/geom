@@ -7572,5 +7572,9 @@ Do you want to create new material?</translation>
         <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
         <translation>Length angle</translation>
     </message>
+    <message>
+        <source>GEOM_PROJ_ON_CYL_ROTATION_ANGLE</source>
+        <translation>Rotation angle</translation>
+    </message>
 </context>
 </TS>

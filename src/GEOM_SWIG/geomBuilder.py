@@ -9581,6 +9581,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         The angle in which to project the total length of the wire.
         #         If it is negative the projection is not scaled and natural
         #         wire length is kept for the projection.
+        #  @param theAngleRotation The desired angle in radians between
+        #         the tangent vector to the first curve at the first point of
+        #         the theObject's projection in 2D space and U-direction of
+        #         cylinder's 2D space.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -9592,6 +9596,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  @ref tui_projection "Example"
         def MakeProjectionOnCylinder (self, theObject, theRadius,
                                       theStartAngle=0.0, theAngleLength=-1.0,
+                                      theAngleRotation=0.0,
                                       theName=None):
             """
             Compute a wire or a face that represents a projection of the source
@@ -9608,6 +9613,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         to project the total length of the wire. If it is negative the
                         projection is not scaled and natural wire length is kept for
                         the projection.
+                theAngleRotation The desired angle in radians between
+                        the tangent vector to the first curve at the first
+                        point of the theObject's projection in 2D space and
+                        U-direction of cylinder's 2D space.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -9624,14 +9633,19 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             flagAngleLength = False
             if isinstance(theAngleLength,str):
                 flagAngleLength = True
-            theRadius, theStartAngle, theAngleLength, Parameters = ParseParameters(
-              theRadius, theStartAngle, theAngleLength)
+            flagAngleRotation = False
+            if isinstance(theAngleRotation,str):
+                flagAngleRotation = True
+            theRadius, theStartAngle, theAngleLength, theAngleRotation, Parameters = ParseParameters(
+              theRadius, theStartAngle, theAngleLength, theAngleRotation)
             if flagStartAngle:
                 theStartAngle = theStartAngle*math.pi/180.
             if flagAngleLength:
                 theAngleLength = theAngleLength*math.pi/180.
+            if flagAngleRotation:
+                theAngleRotation = theAngleRotation*math.pi/180.
             anObj = self.TrsfOp.MakeProjectionOnCylinder(theObject, theRadius,
-                theStartAngle, theAngleLength)
+                theStartAngle, theAngleLength, theAngleRotation)
             RaiseIfFailed("MakeProjectionOnCylinder", self.TrsfOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "projection")

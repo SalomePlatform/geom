@@ -1439,13 +1439,17 @@ module GEOM
      *         to project the total length of the wire. If it is negative the
      *         projection is not scaled and natural wire length is kept for
      *         the projection.
+     *  \param theAngleRotation the desired angle between the tangent vector
+     *         to the first curve at the first point of the theObject's
+     *         projection in 2D space and U-direction of cylinder's 2D space.
      *  \return A wire or a face or a compound of faces that represents a
      *         projection of the source shape onto a cylinder.
      */
     GEOM_Object MakeProjectionOnCylinder (in GEOM_Object theObject,
                                           in double      theRadius,
                                           in double      theStartAngle,
-                                          in double      theAngleLength);
+                                          in double      theAngleLength,
+                                          in double      theAngleRotation);
   };
   
   /*!
