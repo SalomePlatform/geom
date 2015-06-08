@@ -4223,16 +4223,28 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   const TopoDS_Shape         &aShapeResult = aGIP.Result();
   TopTools_MapOfShape         aMFence;
   TopTools_IndexedMapOfShape  aWhereIndices;
+  Standard_Integer            aShapeType = -1;
 
   TopExp::MapShapes(aWhere, aWhereIndices);
 
   if (aShapeResult.IsNull() == Standard_False) {
-    TopoDS_Iterator anIt(aShapeResult);
+    TopoDS_Iterator  anIt(aShapeResult);
+    Standard_Boolean isFirst = Standard_True;
 
     for (; anIt.More(); anIt.Next()) {
       const TopoDS_Shape &aPart = anIt.Value();
 
       if(aWhereIndices.Contains(aPart) && aMFence.Add(aPart)) {
+        const TopAbs_ShapeEnum aType = aPart.ShapeType();
+
+        if (aShapeType == -1) {
+          // Initialization.
+          aShapeType = aType;
+        } else if (aShapeType != TopAbs_SHAPE && aShapeType != aType) {
+          // Different types.
+          aShapeType = TopAbs_SHAPE;
+        }
+
         aLSA.Append(aPart);
       }
     }
@@ -4246,13 +4258,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   Handle(TColStd_HArray1OfInteger) aModifiedArray = new TColStd_HArray1OfInteger (1, aLSA.Extent());
   TopTools_ListIteratorOfListOfShape anIterModif (aLSA);
   for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
-    if (aWhereIndices.Contains(anIterModif.Value())) {
-      aModifiedArray->SetValue(imod, aWhereIndices.FindIndex(anIterModif.Value()));
-    }
-    else {
-      SetErrorCode("Error: wrong sub-shape returned");
-      return NULL;
-    }
+    aModifiedArray->SetValue(imod, aWhereIndices.FindIndex(anIterModif.Value()));
   }
 
   //Add a new object
@@ -4262,7 +4268,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     return NULL;
   }
 
-  if (aModifiedArray->Length() > 1 || theShapeWhat->GetType() == GEOM_GROUP) {
+  const Standard_Boolean isSameType = (aShapeType != TopAbs_SHAPE);
+
+  if ((aModifiedArray->Length() > 1 && isSameType) ||
+      theShapeWhat->GetType() == GEOM_GROUP) {
     //Set a GROUP type
     aResult->SetType(GEOM_GROUP);
 
@@ -4331,10 +4340,20 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceOld
     new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
   TopTools_ListIteratorOfListOfShape anIterModif (aModifiedList);
   Standard_Integer                   imod;
+  Standard_Integer                   aShapeType = -1;
 
   for (imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
     const Standard_Integer anIndex =
       aWhereIndices.FindIndex(anIterModif.Value());
+    const TopAbs_ShapeEnum aType   = anIterModif.Value().ShapeType();
+
+    if (aShapeType == -1) {
+      // Initialization.
+      aShapeType = aType;
+    } else if (aShapeType != TopAbs_SHAPE && aShapeType != aType) {
+      // Different types.
+      aShapeType = TopAbs_SHAPE;
+    }
 
     aModifiedArray->SetValue(imod, anIndex);
   }
@@ -4348,7 +4367,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceOld
     return NULL;
   }
 
-  if (aModifiedArray->Length() > 1 || theShapeWhat->GetType() == GEOM_GROUP) {
+  const Standard_Boolean isSameType = (aShapeType != TopAbs_SHAPE);
+
+  if ((aModifiedArray->Length() > 1 && isSameType) ||
+      theShapeWhat->GetType() == GEOM_GROUP) {
     //Set a GROUP type
     aResult->SetType(GEOM_GROUP);
 
@@ -4406,40 +4428,27 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
     return NULL;
   }
 
-  Standard_Integer nbFound = aModifiedList.Extent();
+  Handle(TColStd_HArray1OfInteger)   aModifiedArray =
+    new TColStd_HArray1OfInteger (1, aModifiedList.Extent());
   TopTools_ListIteratorOfListOfShape anIterModif (aModifiedList);
-  if ( nbFound > 1 )
-  {
-    // remove sub-shapes inappropriate for group creation
-    TopAbs_ShapeEnum subType = TopAbs_SHAPE;
-    while ( anIterModif.More() ) {
-      TopAbs_ShapeEnum type = anIterModif.Value().ShapeType();
-      bool okForGroup = ( type == TopAbs_VERTEX || type == TopAbs_EDGE ||
-                          type == TopAbs_FACE   || type == TopAbs_SOLID );
-      if ( okForGroup ) {
-        if ( subType == TopAbs_SHAPE )
-          subType = type;
-        else
-          okForGroup = ( subType == type );
-      }
-      if ( okForGroup )
-        anIterModif.Next();
-      else
-        aModifiedList.Remove( anIterModif );
-      nbFound -= ( !okForGroup );
-    }
-    if ( nbFound == 0 ) {
-      SetErrorCode("Error: result found but it's type is inappropriate for group creation.");
-      return NULL;
-    }
-  }
+  Standard_Integer                   imod;
+  Standard_Integer                   aShapeType = -1;
 
-  Handle(TColStd_HArray1OfInteger) aModifiedArray =
-    new TColStd_HArray1OfInteger( 1, nbFound );
-  anIterModif.Initialize(aModifiedList);
-  for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++)
-    aModifiedArray->SetValue
-        (imod, aWhereIndices.FindIndex(anIterModif.Value()));
+  for (imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
+    const Standard_Integer anIndex =
+      aWhereIndices.FindIndex(anIterModif.Value());
+    const TopAbs_ShapeEnum aType   = anIterModif.Value().ShapeType();
+
+    if (aShapeType == -1) {
+      // Initialization.
+      aShapeType = aType;
+    } else if (aShapeType != TopAbs_SHAPE && aShapeType != aType) {
+      // Different types.
+      aShapeType = TopAbs_SHAPE;
+    }
+
+    aModifiedArray->SetValue(imod, anIndex);
+  }
 
   //Add a new object
   Handle(GEOM_Object) aResult = GetEngine()->AddSubShape(theShapeWhere, aModifiedArray);
@@ -4448,7 +4457,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
     return NULL;
   }
 
-  if (aModifiedArray->Length() > 1) {
+  const Standard_Boolean isSameType = (aShapeType != TopAbs_SHAPE);
+
+  if ((aModifiedArray->Length() > 1 && isSameType) ||
+      theShapeWhat->GetType() == GEOM_GROUP) {
     //Set a GROUP type
     aResult->SetType(GEOM_GROUP);
 
