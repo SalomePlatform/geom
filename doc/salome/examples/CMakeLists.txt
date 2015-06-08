@@ -56,7 +56,6 @@ SET(GOOD_TESTS
   center_of_mass.py
   check_compound_of_blocks.py
   check_self_intersections.py
-  check_self_intersections_fast.py
   check_shape.py
   complex_objs_ex01.py
   complex_objs_ex02.py
@@ -69,6 +68,7 @@ SET(GOOD_TESTS
   complex_objs_ex09.py
   complex_objs_ex10.py
   complex_objs_ex11.py
+  fast_intersection.py
   free_boundaries.py
   free_faces.py
   GEOM_box.py
@@ -132,9 +132,9 @@ SET(GOOD_TESTS
   working_with_groups_ex05.py
   working_with_groups_ex06.py
 )
-IF(CAS_VERSION_STR VERSION_GREATER "6.8.0")
+IF(CAS_VERSION_STR VERSION_GREATER "6.9.0")
   LIST(APPEND GOOD_TESTS
-    fast_intersection.py
+    check_self_intersections_fast.py
   )
 ENDIF()
 
