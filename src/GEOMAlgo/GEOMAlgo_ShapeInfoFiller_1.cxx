@@ -85,6 +85,17 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
     return;
   }
   //
+  //modified by NIZNHY-PKV Tue Jun 09 08:35:23 2015f
+  if (aNbF==2) {
+    // case requested by the customer
+    // specific solid that should be treated as a sphere
+    bIsStepSphere=TreatStepSphere(aSd);
+    if (bIsStepSphere) {
+      return;
+    }
+  }
+  //modified by NIZNHY-PKV Tue Jun 09 08:35:28 2015t
+  //
   aKD=GEOMAlgo_KD_SPECIFIED;
   for (i=1; i<=aNbF && aKD==GEOMAlgo_KD_SPECIFIED; ++i) {
     const TopoDS_Shape& aF=aMF(i);
@@ -120,6 +131,8 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
       return;
     }
   }
+  //modified by NIZNHY-PKV Tue Jun 09 08:36:08 2015f
+  /*
   else if (aNbF==2) {
     // specific solid that should be treated as a sphere
     bIsStepSphere=TreatStepSphere(aSd);
@@ -127,6 +140,8 @@ void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
       return;
     }
   }
+  */
+  //modified by NIZNHY-PKV Tue Jun 09 08:36:12 2015t
   //
   aNbCyl=0;
   aNbCon=0;
@@ -780,7 +795,7 @@ Standard_Boolean  GEOMAlgo_ShapeInfoFiller::TreatStepSphere
 {
   Standard_Boolean bRet, bIsAllowedType, bOnlyClosed, bIsEqual;
   Standard_Integer j;
-  Standard_Real aTolAng, aTolLin;
+  Standard_Real aTolAng, aTol;
   Standard_Real aVolume, aVolumeS, dV, aArea, aAreaS, dA;
   gp_Sphere aSphere[2];
   GeomAbs_SurfaceType aST;
@@ -789,7 +804,7 @@ Standard_Boolean  GEOMAlgo_ShapeInfoFiller::TreatStepSphere
   TopExp_Explorer aExp;
   //
   bRet=Standard_False;
-  aTolLin=Precision::Confusion();
+  aTol=Precision::Confusion();
   aTolAng=Precision::Angular();
   //
   aExp.Init(aSd, TopAbs_FACE);
@@ -810,7 +825,7 @@ Standard_Boolean  GEOMAlgo_ShapeInfoFiller::TreatStepSphere
     aSphere[j]=aGAS.Sphere();
   }
   //
-  bIsEqual=IsEqual(aSphere[0], aSphere[1], aTolLin);
+  bIsEqual=IsEqual(aSphere[0], aSphere[1], aTol);
   if (!bIsEqual) {
     return bRet;
   }
@@ -822,24 +837,30 @@ Standard_Boolean  GEOMAlgo_ShapeInfoFiller::TreatStepSphere
   //
   aVolume=aSphere[0].Volume();
   //
-  BRepGProp::VolumeProperties(aSd, aGProps,  bOnlyClosed);
+  //modified by NIZNHY-PKV Tue Jun 09 08:39:47 2015f
+  BRepGProp::VolumeProperties(aSd, aGProps, aTol,  bOnlyClosed);
+  //BRepGProp::VolumeProperties(aSd, aGProps,  bOnlyClosed);
+  //modified by NIZNHY-PKV Tue Jun 09 08:39:50 2015t
   aVolumeS=aGProps.Mass();
   if (aVolumeS<0.) {
     aVolumeS=-aVolumeS;
   }
   //
   dV=fabs(aVolumeS-aVolume);
-  if (dV>aTolLin) {
+  if (dV>aTol) {
     return bRet;
   }
   //--------------------------------
   aArea=aSphere[0].Area();
   //
-  BRepGProp::SurfaceProperties(aSd, aGProps);
+  //modified by NIZNHY-PKV Tue Jun 09 08:23:54 2015f
+  BRepGProp::SurfaceProperties(aSd, aGProps, aTol);
+  //BRepGProp::SurfaceProperties(aSd, aGProps);
+  //modified by NIZNHY-PKV Tue Jun 09 08:23:56 2015t
   aAreaS=aGProps.Mass();
   //
   dA=fabs(aAreaS-aArea);
-  if (dA>aTolLin) {
+  if (dA>aTol) {
     return bRet;
   }
   //
