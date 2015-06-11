@@ -129,8 +129,13 @@ SET(_moc_HEADERS
   MeasureGUI_ManageDimensionsDlg.h
   MeasureGUI_CreateDimensionDlg.h
   MeasureGUI_DimensionInteractor.h
-  MeasureGUI_ShapeStatisticsDlg.h
   )
+  
+IF(SALOME_USE_PLOT2DVIEWER)
+  LIST(APPEND _moc_HEADERS
+    MeasureGUI_ShapeStatisticsDlg.h
+    )
+ENDIF()
 
 # header files / uic wrappings
 QT4_WRAP_UI(_uic_HEADERS ${_uic_files})
@@ -164,10 +169,15 @@ SET(MeasureGUI_SOURCES
   MeasureGUI_DimensionCreateTool.cxx
   MeasureGUI_DimensionInteractor.cxx
   MeasureGUI_DimensionFilter.cxx
-  MeasureGUI_ShapeStatisticsDlg.cxx
   ${_moc_SOURCES}
   ${_uic_files}
   )
+
+IF(SALOME_USE_PLOT2DVIEWER)
+  LIST(APPEND MeasureGUI_SOURCES
+    MeasureGUI_ShapeStatisticsDlg.cxx
+    )
+ENDIF()
 
 # --- rules ---
 

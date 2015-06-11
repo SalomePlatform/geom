@@ -53,7 +53,9 @@
 #include "MeasureGUI_FastCheckIntersectionsDlg.h" // Method FAST CHECK INTERSCTIONS
 #include "MeasureGUI_PointDlg.h"                  // Method POINTCOORDINATES
 #include "MeasureGUI_ManageDimensionsDlg.h"       // Method MANAGEDIMENSIONS
+#ifndef DISABLE_PLOT2DVIEWER
 #include "MeasureGUI_ShapeStatisticsDlg.h"        // Method SHAPE STATISTICS
+#endif
 
 #include <QApplication>
 
@@ -130,9 +132,11 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpFastCheckInters:
     dlg = new MeasureGUI_FastCheckIntersectionsDlg( getGeometryGUI(), parent );
     break; // FAST CHECK INTERSCTIONS
+#ifndef DISABLE_PLOT2DVIEWER
   case GEOMOp::OpShapeStatistics:
     dlg = new MeasureGUI_ShapeStatisticsDlg( parent );
-    break; // FAST CHECK INTERSCTIONS
+    break; // SHAPE STATISTICS
+#endif
   case GEOMOp::OpPointCoordinates:
     dlg = new MeasureGUI_PointDlg( getGeometryGUI(), parent );
     break; // POINT COORDINATES

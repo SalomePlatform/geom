@@ -87,7 +87,9 @@ private:
   void         OnClsBringToFront();
   void         OnCreateFolder();
   void         OnSortChildren();
+#ifndef DISABLE_GRAPHICSVIEW
   void         OnShowDependencyTree();
+#endif
   void         OnReduceStudy();
 
   // Shortcut commands

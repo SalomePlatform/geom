@@ -51,8 +51,6 @@
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
 
-#include <PyInterp_Interp.h>
-
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewModel.h>
@@ -66,7 +64,9 @@
 #include <SVTK_InteractorStyle.h>
 #include <SVTK_ViewModel.h>
 
+#ifndef DISABLE_GRAPHICSVIEW
 #include <GraphicsView_Viewer.h>
+#endif
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DataObject.h>
@@ -438,7 +438,11 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   SUIT_ViewWindow* window = desk->activeWindow();
   bool ViewOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+#ifndef DISABLE_GRAPHICSVIEW
   bool ViewDep = ( window && window->getViewManager()->getType() == GraphicsView_Viewer::Type() );
+#else
+  bool ViewDep = 0;
+#endif
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
   QList<int> NotViewerDependentCommands;
@@ -479,7 +483,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpSelectCompound:     // POPUP MENU - SELECT ONLY - COMPOUND
   case GEOMOp::OpSelectAll:          // POPUP MENU - SELECT ONLY - SELECT ALL
   case GEOMOp::OpDelete:             // MENU EDIT - DELETE
+#ifndef DISABLE_PYCONSOLE
   case GEOMOp::OpCheckGeom:          // MENU TOOLS - CHECK GEOMETRY
+#endif
   case GEOMOp::OpMaterialsLibrary:   // MENU TOOLS - MATERIALS LIBRARY
   case GEOMOp::OpDeflection:         // POPUP MENU - DEFLECTION COEFFICIENT
   case GEOMOp::OpColor:              // POPUP MENU - COLOR
@@ -506,7 +512,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpClsBringToFront:    //
   case GEOMOp::OpCreateFolder:       // POPUP MENU - CREATE FOLDER
   case GEOMOp::OpSortChildren:       // POPUP MENU - SORT CHILD ITEMS
+#ifndef DISABLE_GRAPHICSVIEW
   case GEOMOp::OpShowDependencyTree: // POPUP MENU - SHOW DEPENDENCY TREE
+#endif
   case GEOMOp::OpReduceStudy:        // POPUP MENU - REDUCE STUDY
     libName = "GEOMToolsGUI";
     break;
@@ -653,7 +661,9 @@ void GeometryGUI::OnGUIEvent( int id, const QVariant& theParam )
   case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
   case GEOMOp::OpFastCheckInters:    // MENU MEASURE - FAST CHECK INTERSECTIONS
   case GEOMOp::OpManageDimensions:   // MENU MEASURE - MANAGE DIMENSIONS
+#ifndef DISABLE_PLOT2DVIEWER
   case GEOMOp::OpShapeStatistics:    // MENU MEASURE - SHAPE STATISTICS
+#endif
   case GEOMOp::OpShowAllDimensions:  // POPUP MENU - SHOW ALL DIMENSIONS
   case GEOMOp::OpHideAllDimensions:  // POPUP MENU - HIDE ALL DIMENSIONS
     libName = "MeasureGUI";
@@ -1035,10 +1045,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpGetNonBlocks,     "GET_NON_BLOCKS" );
   createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
   createGeomAction( GEOMOp::OpFastCheckInters,  "FAST_CHECK_INTERSECTIONS" );
+#ifndef DISABLE_PLOT2DVIEWER
   createGeomAction( GEOMOp::OpShapeStatistics,  "SHAPE_STATISTICS" );
+#endif
 
+#ifndef DISABLE_PYCONSOLE
 #ifdef _DEBUG_ // PAL16821
   createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
+#endif
 #endif
 
   createGeomAction( GEOMOp::OpMaterialsLibrary,   "MATERIALS_LIBRARY" );
@@ -1093,7 +1107,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPredefMaterCustom,    "POP_PREDEF_MATER_CUSTOM" );
   createGeomAction( GEOMOp::OpCreateFolder, "POP_CREATE_FOLDER" );
   createGeomAction( GEOMOp::OpSortChildren, "POP_SORT_CHILD_ITEMS" );
+#ifndef DISABLE_GRAPHICSVIEW
   createGeomAction( GEOMOp::OpShowDependencyTree, "POP_SHOW_DEPENDENCY_TREE" );
+#endif
   createGeomAction( GEOMOp::OpReduceStudy,       "POP_REDUCE_STUDY" );
   createGeomAction( GEOMOp::OpShowAllDimensions, "POP_SHOW_ALL_DIMENSIONS" );
   createGeomAction( GEOMOp::OpHideAllDimensions, "POP_HIDE_ALL_DIMENSIONS" );
@@ -1299,12 +1315,16 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
   createMenu( GEOMOp::OpFastCheckInters, measurId, -1 );
   createMenu( GEOMOp::OpInspectObj,      measurId, -1 );
+#ifndef DISABLE_PLOT2DVIEWER
   createMenu( GEOMOp::OpShapeStatistics, measurId, -1 );
+#endif
 
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
+#ifndef DISABLE_PYCONSOLE
 #if defined(_DEBUG_) || defined(_DEBUG) // PAL16821
   createMenu( separator(),         toolsId, -1 );
   createMenu( GEOMOp::OpCheckGeom, toolsId, -1 );
+#endif
 #endif
 
   createMenu( separator(),         toolsId, -1 );
@@ -1633,9 +1653,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpSortChildren ), -1, -1 ); // Sort child items
   mgr->setRule( action( GEOMOp::OpSortChildren ), QString("client='ObjectBrowser' and $component={'GEOM'} and nbChildren>1"), QtxPopupMgr::VisibleRule );
 
+#ifndef DISABLE_GRAPHICSVIEW
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpShowDependencyTree ), -1, -1 ); // Show dependency tree
   mgr->setRule( action( GEOMOp::OpShowDependencyTree ), clientOCCorVTKorOB + " and selcount>0 and ($component={'GEOM'}) and type='Shape'", QtxPopupMgr::VisibleRule );
+#endif
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpReduceStudy ), -1, -1 ); // Reduce Study
@@ -1756,17 +1778,18 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
   PyGILState_STATE gstate = PyGILState_Ensure();
-  PyObjWrapper pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
+  PyObject* pluginsmanager = PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
   if ( !pluginsmanager ) {
     PyErr_Print();
   }
   else {
-    PyObjWrapper result =
+    PyObject* result =
       PyObject_CallMethod(pluginsmanager, (char*)"initialize", (char*)"isss", 1, "geom",
                           tr("MEN_NEW_ENTITY").toUtf8().data(),
                           tr("GEOM_PLUGINS_OTHER").toUtf8().data());
     if ( !result )
       PyErr_Print();
+    Py_XDECREF(result);
   }
   PyGILState_Release(gstate);
   // end of GEOM plugins loading
@@ -1835,6 +1858,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     }
   }
 
+  Py_XDECREF(pluginsmanager);
   return true;
 }
 
@@ -1921,7 +1945,9 @@ void GeometryGUI::windows( QMap<int, int>& mappa ) const
 {
   mappa.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
   mappa.insert( SalomeApp_Application::WT_NoteBook, Qt::LeftDockWidgetArea );
+#ifndef DISABLE_PYCONSOLE
   mappa.insert( SalomeApp_Application::WT_PyConsole, Qt::BottomDockWidgetArea );
+#endif
   if ( myCreationInfoWdg )
     mappa.insert( myCreationInfoWdg->getWinID(), Qt::LeftDockWidgetArea );
   if ( myTextTreeWdg )

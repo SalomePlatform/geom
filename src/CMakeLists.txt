@@ -42,11 +42,14 @@ ENDIF()
 IF(SALOME_BUILD_GUI)
   SET(SUBDIRS_GUI
     OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI
-    GEOMBase DependencyTree GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
+    GEOMBase GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI
     CurveCreator MeasureGUI EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI
     RepairGUI GroupGUI BlocksGUI AdvancedGUI
     GEOM_SWIG_WITHIHM
     )
+  IF(SALOME_USE_GRAPHICSVIEW)
+    LIST(APPEND SUBDIRS_GUI DependencyTree)
+  ENDIF()
 ENDIF()
 
 SET(SUBDIRS

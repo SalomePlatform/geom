@@ -83,7 +83,9 @@ private slots:
   void                                showOnlySelected();
   void                                selectionChanged();
   void                                ClickOnOkFilter();
+#ifndef DISABLE_PLOT2DVIEWER
   void                                ClickOnPlot();
+#endif
   void                                MeasureToggled();
 
 private:
