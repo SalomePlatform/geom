@@ -31,7 +31,7 @@
 #include "GEOM_GenericObjPtr.h"
 #include <QMap>
 
-class DlgRef_2Sel1Spin;
+class DlgRef_2Sel1Spin2Check;
 class DlgRef_3Spin;
 class DlgRef_2Sel;
 class DlgRef_1Sel3Spin;
@@ -88,7 +88,7 @@ private:
 
   DlgRef_3Spin*                      GroupXYZ;
   DlgRef_1Sel3Spin*                  GroupRefPoint;
-  DlgRef_2Sel1Spin*                  GroupOnCurve;
+  DlgRef_2Sel1Spin2Check*            GroupOnCurve;
   DlgRef_2Sel*                       GroupLineIntersection;
   DlgRef_1Sel2Spin*                  GroupOnSurface;
   
@@ -115,7 +115,7 @@ private slots:
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
   void                               ClickParamCoord( int );
-  void                               CheckBoxClicked( int );
+  void                               CheckBoxClicked();
   void                               updateSize();
 };
 

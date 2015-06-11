@@ -1148,6 +1148,11 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         ## Create a point, corresponding to the given parameter on the given curve.
         #  @param theRefCurve The referenced curve.
         #  @param theParameter Value of parameter on the referenced curve.
+        #  @param takeOrientationIntoAccount flag that tells if it is necessary
+        #         to take the curve's orientation into account for the
+        #         operation. I.e. if this flag is set, the results for the same
+        #         parameters (except the value 0.5) is different for forward
+        #         and reversed curves. If it is not set the result is the same.
         #  @param theName Object name; when specified, this parameter is used
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
@@ -1156,13 +1161,20 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_creation_point "Example"
         @ManageTransactions("BasicOp")
-        def MakeVertexOnCurve(self, theRefCurve, theParameter, theName=None):
+        def MakeVertexOnCurve(self, theRefCurve, theParameter,
+                              takeOrientationIntoAccount=False, theName=None):
             """
             Create a point, corresponding to the given parameter on the given curve.
 
             Parameters:
                 theRefCurve The referenced curve.
                 theParameter Value of parameter on the referenced curve.
+                takeOrientationIntoAccount flag that tells if it is necessary
+                        to take the curve's orientation into account for the
+                        operation. I.e. if this flag is set, the results for
+                        the same parameters (except the value 0.5) is different
+                        for forward and reversed curves. If it is not set
+                        the result is the same.
                 theName Object name; when specified, this parameter is used
                         for result publication in the study. Otherwise, if automatic
                         publication is switched on, default value is used for result name.
@@ -1174,8 +1186,10 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                 p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25)
             """
             # Example: see GEOM_TestAll.py
-            theParameter, Parameters = ParseParameters(theParameter)
-            anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter)
+            theParameter, takeOrientationIntoAccount, Parameters = ParseParameters(
+                theParameter, takeOrientationIntoAccount)
+            anObj = self.BasicOp.MakePointOnCurve(theRefCurve, theParameter,
+                                                  takeOrientationIntoAccount)
             RaiseIfFailed("MakePointOnCurve", self.BasicOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "vertex")

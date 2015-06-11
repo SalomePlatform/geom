@@ -1353,6 +1353,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>By length</translation>
     </message>
     <message>
+        <source>GEOM_TAKE_ORIENTATION_INTO_ACCOUNT</source>
+        <translation>Take edge orientation into account</translation>
+    </message>
+    <message>
         <source>GEOM_PARTITION</source>
         <translation>Partition</translation>
     </message>

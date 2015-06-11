@@ -28,9 +28,10 @@ the position of this point regarding the reference one.
 \n Thirdly, we can define a point by an \b Edge and a \b Parameter
 indicating its position on the Edge, ranging from 0.0 to 1.0. For example, 0.5 means that the
 point is located in the middle of the edge.
-\n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurve(Edge,Parameter).</em>
+\n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurve(Edge,Parameter,takeOrientationIntoAccount).</em>
 \n <b>Arguments:</b> Name + 1 edge  + 1 Parameter defining the
-position of the point on the given edge.
+position of the point on the given edge + flag that tells if it is necessary
+to take the edge orientation into account.
 \image html point3.png
 
 Alternatively, it is possible to define a point by an \b Edge and a \b Length.
