@@ -53,6 +53,7 @@
 #include <BRepExtrema_ShapeProximity.hxx>
 #if OCC_VERSION_LARGE > 0x06090000
 #include <BRepExtrema_SelfIntersection.hxx>
+#include <BRepExtrema_MapOfIntegerPackedMapOfInteger.hxx>
 #endif
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
@@ -1624,11 +1625,11 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersectionsFast
   // Launch the checker
   aTool.Perform();
   
-  const BRepExtrema_OverlapTool::OverlapSubShapes& intersections = aTool.OverlapElements();
+  const BRepExtrema_MapOfIntegerPackedMapOfInteger& intersections = aTool.OverlapElements();
   
   std::set<Standard_Integer> processed;
   
-  for (BRepExtrema_OverlapTool::OverlapSubShapes::Iterator it(intersections); it.More(); it.Next()) {
+  for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator it(intersections); it.More(); it.Next()) {
     Standard_Integer idxLeft = it.Key();
     if (processed.count(idxLeft) > 0) continue; // already added
     processed.insert(idxLeft);
@@ -1715,7 +1716,7 @@ bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, 
  
   // 2. Get sets of IDs of overlapped faces
 #if OCC_VERSION_LARGE > 0x06090000
-  for (BRepExtrema_OverlapTool::OverlapSubShapes::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
+  for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
 #else
   for (BRepExtrema_OverlappedSubShapes::Iterator anIt1 (aBSP.OverlapSubShapes1()); anIt1.More(); anIt1.Next())
 #endif
@@ -1725,7 +1726,7 @@ bool GEOMImpl_IMeasureOperations::FastIntersect (Handle(GEOM_Object) theShape1, 
   }
   
 #if OCC_VERSION_LARGE > 0x06090000
-  for (BRepExtrema_OverlapTool::OverlapSubShapes::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
+  for (BRepExtrema_MapOfIntegerPackedMapOfInteger::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
 #else
   for (BRepExtrema_OverlappedSubShapes::Iterator anIt2 (aBSP.OverlapSubShapes2()); anIt2.More(); anIt2.Next())
 #endif
