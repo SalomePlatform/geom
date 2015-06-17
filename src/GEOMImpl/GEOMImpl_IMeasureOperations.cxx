@@ -528,35 +528,34 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
           theDoubles->Append(aD.X());
           theDoubles->Append(aD.Y());
           theDoubles->Append(aD.Z());
+
+          if (anInfo.KindOfBounds() != GEOMAlgo_KB_INFINITE)
+          {
+            // (+) geompy.kind.PLANAR  xo yo zo  dx dy dz  nb_edges nb_vertices
+
+            aKind = SK_PLANAR;
+            
+            gp_Pnt aC = anInfo.Location();
+            theDoubles->Append(aC.X());
+            theDoubles->Append(aC.Y());
+            theDoubles->Append(aC.Z());
+            
+            gp_Ax3 anAx3 = anInfo.Position();
+            gp_Dir aD = anAx3.Direction();
+            theDoubles->Append(aD.X());
+            theDoubles->Append(aD.Y());
+            theDoubles->Append(aD.Z());
+            
+            theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+            theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
+          }
         }
         break;
       default:
-        if (anInfo.KindOfShape() == GEOMAlgo_KS_PLANE) {
-          // (+) geompy.kind.PLANAR  xo yo zo  dx dy dz  nb_edges nb_vertices
-
-          aKind = SK_PLANAR;
-
-          gp_Pnt aC = anInfo.Location();
-          theDoubles->Append(aC.X());
-          theDoubles->Append(aC.Y());
-          theDoubles->Append(aC.Z());
-
-          gp_Ax3 anAx3 = anInfo.Position();
-          gp_Dir aD = anAx3.Direction();
-          theDoubles->Append(aD.X());
-          theDoubles->Append(aD.Y());
-          theDoubles->Append(aD.Z());
-
-          theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
-          theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
-        }
-        else {
-          // ??? geompy.kind.FACE  nb_edges nb_vertices _surface_type_id_
-          // (+) geompy.kind.FACE  nb_edges nb_vertices
-
-          theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
-          theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
-        }
+        // ??? geompy.kind.FACE  nb_edges nb_vertices _surface_type_id_
+        // (+) geompy.kind.FACE  nb_edges nb_vertices
+        theIntegers->Append(anInfo.NbSubShapes(TopAbs_EDGE));
+        theIntegers->Append(anInfo.NbSubShapes(TopAbs_VERTEX));
       }
     }
     break;
