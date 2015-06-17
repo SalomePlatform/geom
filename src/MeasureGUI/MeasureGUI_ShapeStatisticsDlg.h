@@ -27,6 +27,7 @@
 // GEOM includes
 #include <GEOMBase_Helper.h>
 #include "GEOM_GenericObjPtr.h"
+#include "MeasureGUI_definitions.h"
 
 // Qt includes
 #include <QDialog>
@@ -45,7 +46,7 @@ class Plot2d_Histogram;
 // purpose  :
 //==========================================================================
 
-class MeasureGUI_ShapeStatisticsDlg : public QDialog, public GEOMBase_Helper
+class MEASUREGUI_EXPORT MeasureGUI_ShapeStatisticsDlg : public QDialog, public GEOMBase_Helper
 {
   Q_OBJECT
 

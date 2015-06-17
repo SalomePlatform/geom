@@ -104,6 +104,7 @@ SET(MeasureGUI_HEADERS
   MeasureGUI_DimensionCreateTool.h
   MeasureGUI_DimensionInteractor.h
   MeasureGUI_DimensionFilter.h
+  MeasureGUI_definitions.h
   )
 
 # header files / to be processed by moc
