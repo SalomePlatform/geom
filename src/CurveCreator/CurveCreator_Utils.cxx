@@ -195,7 +195,7 @@ gp_Pnt CurveCreator_Utils::ConvertClickToPoint( int x, int y, Handle(V3d_View) a
 //  if point P is followed by a point B but is not preceded by any point then
 //  the tangent vector is equal to B - P.
 //=======================================================================
-static bool constructBSpline(
+bool CurveCreator_Utils::constructBSpline(
   const Handle(TColgp_HArray1OfPnt)& thePoints,
   const Standard_Boolean theIsClosed,
   Handle(Geom_BSplineCurve)& theBSpline)

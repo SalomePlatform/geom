@@ -30,6 +30,7 @@
 #include <Geom_Curve.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TColgp_HArray1OfPnt.hxx>
+#include <Geom_BSplineCurve.hxx>
 
 #include <list>
 #include <vector> // TODO: remove
@@ -131,6 +132,10 @@ public:
                                                  const int theX, const int theY,
                                                  gp_Pnt& thePoint, gp_Pnt& thePoint1,
                                                  gp_Pnt& thePoint2 );
+
+  CURVECREATOR_EXPORT static bool constructBSpline( const Handle(TColgp_HArray1OfPnt)& thePoints,
+                                                    const Standard_Boolean theIsClosed,
+                                                    Handle(Geom_BSplineCurve)& theBSpline );
 
 protected:
   /*
