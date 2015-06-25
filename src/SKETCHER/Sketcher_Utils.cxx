@@ -185,7 +185,7 @@ TopoDS_Shape Sketcher_Utils::MakeInterpolation(
   gp_Pnt aFirstPoint = aTmpPoints.front();
   gp_Pnt aPoint = aFirstPoint;
   std::list<gp_Pnt>::iterator aPIt = aTmpPoints.begin();
-  for (++aPIt; aPIt != aTmpPoints.cend();)
+  for (++aPIt; aPIt != aTmpPoints.end();)
   {
     const gp_Pnt aPoint2 = *aPIt;
     if (!aPoint.IsEqual(aPoint2, POINT_CONFUSION_TOLERANCE))
@@ -200,7 +200,7 @@ TopoDS_Shape Sketcher_Utils::MakeInterpolation(
   }
   if (theIsClosed)
   {
-    while (--aPIt != aTmpPoints.cbegin() &&
+    while (--aPIt != aTmpPoints.begin() &&
       aFirstPoint.IsEqual(*aPIt, POINT_CONFUSION_TOLERANCE))
     {
       aTmpPoints.erase(aPIt);
@@ -218,7 +218,7 @@ TopoDS_Shape Sketcher_Utils::MakeInterpolation(
   Handle(TColgp_HArray1OfPnt) aPoints =
     new TColgp_HArray1OfPnt(1, aPointCount);
   aPIt = aTmpPoints.begin();
-  for (Standard_Integer aPN = 1; aPIt != aTmpPoints.cend(); ++aPIt, ++aPN)
+  for (Standard_Integer aPN = 1; aPIt != aTmpPoints.end(); ++aPIt, ++aPN)
   {
     aPoints->SetValue(aPN, *aPIt);
   }
