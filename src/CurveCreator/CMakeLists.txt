@@ -94,6 +94,7 @@ SET(_other_SOURCES
   CurveCreator_Diff.cxx
   CurveCreator_Displayer.cxx
   CurveCreator_Operation.cxx
+  CurveCreator_Section.cxx
   CurveCreator_Utils.cxx
   CurveCreator_UtilsICurve.cxx
 )

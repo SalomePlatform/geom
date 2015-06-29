@@ -24,11 +24,13 @@
 #define _CurveCreator_Section_HeaderFile
 
 #include "CurveCreator.hxx"
+#include "CurveCreator_ICurve.hxx"
 
 #include <string>
 
 //! Structure to store sections representing the CurveCreator_Curve object
-struct CurveCreator_Section
+struct CURVECREATOR_EXPORT CurveCreator_Section :
+  public CurveCreator_ISection
 {
   //! Constructor. Initializes object with default values.
   CurveCreator_Section() : myName("Section"),myType(CurveCreator::Polyline), myIsClosed(false)
@@ -39,6 +41,8 @@ struct CurveCreator_Section
   CurveCreator::SectionType myType;     //!< type of the section
   bool                      myIsClosed; //!< closed or not
 
+  //! A virtual method.
+  void GetDifferentPoints(const int theDimension, Handle(TColgp_HArray1OfPnt)& thePoints) const;
 };
 
 #endif
