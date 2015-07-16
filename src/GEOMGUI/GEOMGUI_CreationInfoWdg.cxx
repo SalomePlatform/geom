@@ -124,7 +124,10 @@ void GEOMGUI_CreationInfoWdg::setInfo( GEOM::CreationInformationSeq& info )
           }
           // get icon
           QString prefix = plugin_name.isEmpty() ? "GEOM" : plugin_name;
-          icon = resMgr->loadPixmap( prefix, tr( ("ICO_"+name).toLatin1().constData() ), false );
+          if ( name.startsWith( "Import"))
+            icon = resMgr->loadPixmap( "GEOM", tr("ICO_IMPORT_SHAPE"), true );
+          else
+            icon = resMgr->loadPixmap( prefix, tr( ("ICO_"+name).toLatin1().constData() ), false );
 
           // translate operation name
           operationName = tr( ("MEN_"+name).toLatin1().constData() );

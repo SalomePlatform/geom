@@ -100,6 +100,23 @@ Standard_Integer XAOPlugin_Driver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
-IMPLEMENT_STANDARD_HANDLE (XAOPlugin_Driver, TFunction_Driver);
-IMPLEMENT_STANDARD_RTTIEXT(XAOPlugin_Driver, TFunction_Driver);
+//=======================================================================
+//function : GetCreationInformation
+//purpose  : Returns a name of creation operation and names and values of
+//           creation parameters
+//=======================================================================
+
+bool XAOPlugin_Driver::GetCreationInformation(std::string&             theOperationName,
+                                              std::vector<GEOM_Param>& theParams)
+{
+  if (Label().IsNull()) return false;
+  Handle(GEOM_Function) function = GEOM_Function::GetFunction(Label());
+
+  theOperationName = "ImportXAO";
+  AddParam( theParams, "File name", function->GetString( GetFileNameTag() ));
+  return true;
+}
+
+IMPLEMENT_STANDARD_HANDLE (XAOPlugin_Driver, GEOM_BaseDriver);
+IMPLEMENT_STANDARD_RTTIEXT(XAOPlugin_Driver, GEOM_BaseDriver);
  

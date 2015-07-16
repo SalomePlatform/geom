@@ -114,6 +114,7 @@ SET( _res_files
   fuse_collinear_edges.png
   geometry.png
   import_picture.png
+  import.png
   limit_tolerance.png
   line.png
   line2points.png
