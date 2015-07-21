@@ -88,6 +88,7 @@ public:
                    const Handle(TopTools_HSequenceOfShape)  theLocs,
                    const Standard_Boolean                   theWithContact,
                    const Standard_Boolean                   theWithCorrect,
+                   const Standard_Boolean                   IsBySteps,
                          Handle(TColStd_HArray1OfInteger)  *theGroups = NULL);
 
   Standard_EXPORT virtual

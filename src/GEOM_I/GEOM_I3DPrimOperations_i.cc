@@ -987,6 +987,7 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections
                                   GEOM::GEOM_Object_ptr  thePath,
                                   CORBA::Boolean         theWithContact,
                                   CORBA::Boolean         theWithCorrections,
+                                  CORBA::Boolean         IsBySteps,
                                   CORBA::Boolean         IsGenerateGroups)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
@@ -1029,7 +1030,7 @@ GEOM::ListOfGO *GEOM_I3DPrimOperations_i::MakePipeWithDifferentSections
     GetOperations()->MakePipeWithDifferentSections
               (aSeqBases, aSeqLocations,
                aPath, theWithContact,
-               theWithCorrections, IsGenerateGroups);
+               theWithCorrections, IsBySteps, IsGenerateGroups);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 

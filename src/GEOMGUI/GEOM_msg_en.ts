@@ -1429,6 +1429,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Group Names Prefix</translation>
     </message>
     <message>
+        <source>GEOM_STEP_BY_STEP</source>
+        <translation>Step-by-step generation</translation>
+    </message>
+    <message>
         <source>GEOM_PLANE</source>
         <translation>Plane</translation>
     </message>

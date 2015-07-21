@@ -73,6 +73,12 @@ class GEOMImpl_IPipeDiffSect : public GEOMImpl_IPipe
   int GetWithCorrectionMode()
   { return _func->GetInteger(PIPEDS_ARG_WITHCORRECT); }
 
+  void SetIsBySteps (int IsBySteps)
+  { _func->SetInteger(PIPEDS_ARG_BY_STEPS, IsBySteps); }
+
+  int GetIsBySteps()
+  { return _func->GetInteger(PIPEDS_ARG_BY_STEPS); }
+
 };
 
 #endif

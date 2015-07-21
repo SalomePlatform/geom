@@ -4037,8 +4037,45 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             aList = self.PrimOp.MakePipeWithDifferentSections(theSeqBases,
                                                               theLocations, thePath,
                                                               theWithContact, theWithCorrection,
-                                                              IsGenerateGroups)
+                                                              False, IsGenerateGroups)
             RaiseIfFailed("MakePipeWithDifferentSections", self.PrimOp)
+
+            if IsGenerateGroups:
+              self._autoPublish(aList, theName, "pipe")
+              return aList
+
+            self._autoPublish(aList[0], theName, "pipe")
+            return aList[0]
+
+        ## Create a shape by extrusion of the profile shape along
+        #  the path shape. This function is a version of
+        #  MakePipeWithShellSections() with the same parameters, except
+        #  eliminated theWithContact and theWithCorrection. So it is
+        #  possible to find the description of all parameters is in this
+        #  method. The difference is that this method performs the operation
+        #  step by step, i.e. it creates pipes between each pair of neighbor
+        #  sections and fuses them into a single shape.
+        #
+        #  @ref tui_creation_pipe_with_diff_sec "Example"
+        @ManageTransactions("PrimOp")
+        def MakePipeWithDifferentSectionsBySteps(self, theSeqBases,
+                                                 theLocations, thePath,
+                                                 IsGenerateGroups=False, theName=None):
+            """
+            Create a shape by extrusion of the profile shape along
+            the path shape. This function is a version of
+            MakePipeWithShellSections() with the same parameters, except
+            eliminated theWithContact and theWithCorrection. So it is
+            possible to find the description of all parameters is in this
+            method. The difference is that this method performs the operation
+            step by step, i.e. it creates pipes between each pair of neighbor
+            sections and fuses them into a single shape.
+            """
+            aList = self.PrimOp.MakePipeWithDifferentSections(theSeqBases,
+                                                              theLocations, thePath,
+                                                              False, False,
+                                                              True, IsGenerateGroups)
+            RaiseIfFailed("MakePipeWithDifferentSectionsBySteps", self.PrimOp)
 
             if IsGenerateGroups:
               self._autoPublish(aList, theName, "pipe")

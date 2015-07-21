@@ -1512,7 +1512,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections
   beginService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
   MESSAGE("GEOM_Superv_i::MakePipeWithDifferentSections");
   get3DPrimOp();
-  GEOM::ListOfGO_var aList = my3DPrimOp->MakePipeWithDifferentSections(theBases,theLocations, thePath,theWithContact,theWithCorrections, false);
+  GEOM::ListOfGO_var aList = my3DPrimOp->MakePipeWithDifferentSections(theBases,theLocations, thePath,theWithContact,theWithCorrections, false, false);
   endService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
   return aList[0];
 }
