@@ -4049,7 +4049,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
 
         ## Create a shape by extrusion of the profile shape along
         #  the path shape. This function is a version of
-        #  MakePipeWithShellSections() with the same parameters, except
+        #  MakePipeWithDifferentSections() with the same parameters, except
         #  eliminated theWithContact and theWithCorrection. So it is
         #  possible to find the description of all parameters is in this
         #  method. The difference is that this method performs the operation
@@ -4064,7 +4064,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             """
             Create a shape by extrusion of the profile shape along
             the path shape. This function is a version of
-            MakePipeWithShellSections() with the same parameters, except
+            MakePipeWithDifferentSections() with the same parameters, except
             eliminated theWithContact and theWithCorrection. So it is
             possible to find the description of all parameters is in this
             method. The difference is that this method performs the operation
