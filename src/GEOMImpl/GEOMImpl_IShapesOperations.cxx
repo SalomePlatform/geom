@@ -690,8 +690,12 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWithConstraints
       if ( aFace->GetValue().ShapeType() != TopAbs_FACE )
         // constraint face can be omitted - it is a valid case
         continue;
+      // Keep the old error code as IsSubShapeBelongsTo changes it.
+      TCollection_AsciiString anOldCode = GetErrorCode();
+
       if ( IsSubShapeBelongsTo( anObject, 0, aFace, 0 ) ) {
         // valid constraint
+        SetErrorCode(anOldCode);
         aRefSh = aFace->GetLastFunction();
         aConstraints->Append(aRefSh);
         it++;
@@ -2019,6 +2023,8 @@ Standard_Boolean GEOMImpl_IShapesOperations::IsSubShapeBelongsTo( Handle(GEOM_Ob
                                                                   Handle(GEOM_Object) theObject,
                                                                   const Standard_Integer theObjectIndex)
 {
+  SetErrorCode(KO);
+
   if ( theObject.IsNull() || theSubObject.IsNull() )
     return false;
 
@@ -2039,7 +2045,12 @@ Standard_Boolean GEOMImpl_IShapesOperations::IsSubShapeBelongsTo( Handle(GEOM_Ob
   }
 
   TopExp::MapShapes( shape, anIndices );
-  return anIndices.Contains( subShape );
+
+  const Standard_Boolean isBelongTo = anIndices.Contains(subShape);
+
+  SetErrorCode(OK);
+
+  return isBelongTo;
 }
 
 //=============================================================================
