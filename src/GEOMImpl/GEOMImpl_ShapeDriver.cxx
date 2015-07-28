@@ -861,11 +861,13 @@ TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
       {
         Standard_Boolean Done = Standard_False;
         Standard_Real NewFpar, NewLpar;
-        GeomAdaptor_Curve GAprevcurve(CurveSeq.Last());
+        Handle(Geom_Geometry) aTrsfGeom = CurveSeq.Last()->Transformed
+                      (LocSeq.Last().Location().Transformation());
+        GeomAdaptor_Curve GAprevcurve(Handle(Geom_Curve)::DownCast(aTrsfGeom));
         TopoDS_Vertex CurVertex = wexp.CurrentVertex();
         TopoDS_Vertex CurFirstVer = TopExp::FirstVertex(anEdge);
         TopAbs_Orientation ConnectByOrigin = (CurVertex.IsSame(CurFirstVer))? TopAbs_FORWARD : TopAbs_REVERSED;
-        if (aCurve == CurveSeq.Last())
+        if (aCurve == CurveSeq.Last() && aLoc.IsEqual(LocSeq.Last().Location()))
         {
           NewFpar = fpar;
           NewLpar = lpar;
