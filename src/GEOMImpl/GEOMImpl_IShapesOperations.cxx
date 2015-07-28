@@ -2626,7 +2626,7 @@ Handle(TColStd_HSequenceOfInteger)
   TopoDS_Shape aShape = theShape->GetValue();
 
   // Check presence of triangulation, build if need
-  if (!GEOMUtils::CheckTriangulation(aShape)) {
+  if (theShapeType != TopAbs_VERTEX && !GEOMUtils::CheckTriangulation(aShape)) {
     SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }
@@ -2793,7 +2793,7 @@ Handle(TColStd_HSequenceOfInteger)
   TopTools_ListOfShape res;
 
   // Check presence of triangulation, build if need
-  if (!GEOMUtils::CheckTriangulation(aShape)) {
+  if (theShapeType != TopAbs_VERTEX && !GEOMUtils::CheckTriangulation(aShape)) {
     SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }
@@ -3082,7 +3082,8 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!GEOMUtils::CheckTriangulation(theShape)) {
+  if (theShapeType != TopAbs_VERTEX &&
+      !GEOMUtils::CheckTriangulation(theShape)) {
     SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }
@@ -4008,7 +4009,7 @@ Handle(TColStd_HSequenceOfInteger)
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs;
 
   // Check presence of triangulation, build if need
-  if (!GEOMUtils::CheckTriangulation(aShape)) {
+  if (theShapeType != TopAbs_VERTEX && !GEOMUtils::CheckTriangulation(aShape)) {
     SetErrorCode("Cannot build triangulation on the shape");
     return aSeqOfIDs;
   }
