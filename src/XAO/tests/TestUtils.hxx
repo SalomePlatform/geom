@@ -40,7 +40,7 @@ namespace XAO
         {
             std::ifstream rstr;
             int length;
-            rstr.open(filePath.c_str());
+            rstr.open(filePath.c_str(), std::ios_base::binary);
             rstr.seekg(0, rstr.end);        // go to the end
             length = rstr.tellg();          // report location (this is the length)
             rstr.seekg(0, rstr.beg);        // go back to the beginning
