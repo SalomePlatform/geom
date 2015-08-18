@@ -5148,6 +5148,10 @@
       <translation>Z%1 :</translation>
     </message>
     <message>
+        <source>GEOM_A_I</source>
+        <translation>A%1 :</translation>
+    </message>
+    <message>
       <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
       <translation>オブジェクトの要素を見つける</translation>
     </message>
@@ -5414,6 +5418,22 @@
     <message>
         <source>GEOM_PLOT_DISTRIBUTION</source>
         <translation type="unfinished">Plot</translation>
+    </message>
+    <message>
+        <source>GEOM_X_AXIS</source>
+        <translation type="unfinished">Axe X</translation>
+    </message>
+    <message>
+        <source>GEOM_Y_AXIS</source>
+        <translation type="unfinished">Axe Y</translation>
+    </message>
+    <message>
+        <source>GEOM_Z_AXIS</source>
+        <translation type="unfinished">Axe Z</translation>
+    </message>
+    <message>
+        <source>GEOM_DIM_AXES</source>
+        <translation type="unfinished">Dimensions along local axes</translation>
     </message>
   </context>
   <context>

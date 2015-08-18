@@ -80,8 +80,10 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
     SK_SEGMENT,      // segment
     SK_EDGE,         // other edge
     // VERTEX
-    SK_VERTEX,
+    SK_VERTEX,       // vertex
     // ADVANCED shapes
+    SK_LCS,          // local coordinate system
+    // (other advanced shapes)
     SK_ADVANCED,     // all advanced shapes (temporary implementation)
   };
 

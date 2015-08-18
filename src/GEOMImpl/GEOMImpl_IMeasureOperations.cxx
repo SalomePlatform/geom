@@ -63,6 +63,7 @@
 #include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <GeomLProp_CLProps.hxx>
 #include <GeomLProp_SLProps.hxx>
+#include <Geom_Plane.hxx>
 #include <GProp_GProps.hxx>
 #include <GProp_PrincipalProps.hxx>
 #include <ShapeAnalysis.hxx>
@@ -146,6 +147,38 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
     return SK_NO_SHAPE;
   }
   const GEOMAlgo_ShapeInfo& anInfo = aSF.Info();
+
+  // specific processing for some "advandced" objects
+  switch ( geom_type ) {
+  case GEOM_MARKER:
+    // local coordinate systen
+    // (+) geompy.kind.LCS  xc yc zc xx xy xz yx yy yz zx zy zz
+
+    TopoDS_Face aFace = TopoDS::Face( aShape );
+    Handle(Geom_Plane) aPlane = Handle(Geom_Plane)::DownCast( BRep_Tool::Surface( aFace ) );
+    gp_Pnt aC = aPlane->Pln().Location();
+    gp_Ax3 anAx3 = aPlane->Pln().Position();
+
+    theDoubles->Append(aC.X());
+    theDoubles->Append(aC.Y());
+    theDoubles->Append(aC.Z());
+    
+    gp_Dir aD = anAx3.XDirection();
+    theDoubles->Append(aD.X());
+    theDoubles->Append(aD.Y());
+    theDoubles->Append(aD.Z());
+    aD = anAx3.YDirection();
+    theDoubles->Append(aD.X());
+    theDoubles->Append(aD.Y());
+    theDoubles->Append(aD.Z());
+    aD = anAx3.Direction();
+    theDoubles->Append(aD.X());
+    theDoubles->Append(aD.Y());
+    theDoubles->Append(aD.Z());
+
+    SetErrorCode(OK);
+    return SK_LCS;
+  }
 
   // Interprete results
   TopAbs_ShapeEnum aType = anInfo.Type();

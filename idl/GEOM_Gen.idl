@@ -4216,6 +4216,7 @@ module GEOM
       // VERTEX
       VERTEX,
       // ADVANCED shapes
+      LCS,
       /*! all advanced shapes (temporary implementation) */
       ADVANCED    
     };

@@ -5145,6 +5145,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Z%1 :</translation>
     </message>
     <message>
+        <source>GEOM_A_I</source>
+        <translation>A%1 :</translation>
+    </message>
+    <message>
         <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
         <translation>Get shapes on shape</translation>
     </message>
@@ -5415,6 +5419,22 @@ shells and solids on the other hand.</translation>
     <message>
         <source>GEOM_PLOT_DISTRIBUTION</source>
         <translation>Plot</translation>
+    </message>
+    <message>
+        <source>GEOM_X_AXIS</source>
+        <translation>X Axis</translation>
+    </message>
+    <message>
+        <source>GEOM_Y_AXIS</source>
+        <translation>Y Axis</translation>
+    </message>
+    <message>
+        <source>GEOM_Z_AXIS</source>
+        <translation>Z Axis</translation>
+    </message>
+    <message>
+        <source>GEOM_DIM_AXES</source>
+        <translation>Dimensions along local axes</translation>
     </message>
 </context>
 <context>

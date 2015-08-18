@@ -600,6 +600,8 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #  - EDGE:                                                 [nb_vertices]
         #
         #  - VERTEX:       [x  y  z]
+        #
+        #  - LCS:          [x y z  xx xy xz  yx yy yz  zx zy zz]
         #  @ingroup l1_geomBuilder_auxiliary
         kind = GEOM.GEOM_IKindOfShape
 

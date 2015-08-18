@@ -5137,6 +5137,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Z%1 :</translation>
     </message>
     <message>
+        <source>GEOM_A_I</source>
+        <translation>A%1 :</translation>
+    </message>
+    <message>
         <source>GEOM_SHAPES_ON_SHAPE_TITLE</source>
         <translation>Trouver les éléments d&apos;un objet</translation>
     </message>
@@ -5407,6 +5411,22 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     <message>
         <source>GEOM_PLOT_DISTRIBUTION</source>
         <translation type="unfinished">Plot</translation>
+    </message>
+    <message>
+        <source>GEOM_X_AXIS</source>
+        <translation>Axe X</translation>
+    </message>
+    <message>
+        <source>GEOM_Y_AXIS</source>
+        <translation>Axe Y</translation>
+    </message>
+    <message>
+        <source>GEOM_Z_AXIS</source>
+        <translation>Axe Z</translation>
+    </message>
+    <message>
+        <source>GEOM_DIM_AXES</source>
+        <translation type="unfinished">Dimensions along local axes</translation>
     </message>
 </context>
 <context>
