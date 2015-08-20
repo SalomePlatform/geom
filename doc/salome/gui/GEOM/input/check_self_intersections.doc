@@ -8,7 +8,7 @@
 There are two ways to check self-intersections.
 
 \anchor check_self_intersections_topological
-<br><h3>Check topological intersections</h2>
+<br><h3>Check topological intersections</h3>
 
 This operation checks the topology of the selected shape to detect self-intersections.
 
@@ -38,7 +38,7 @@ where: \n
 See also a \ref tui_check_self_intersections_page "TUI example".
 
 \anchor check_self_intersections_fast
-<br><h3>Fast intersection</h2>
+<br><h3>Fast intersection</h3>
 
 This operations allows to quickly detect self-interferences of the given shape by means of algorithm based on mesh intersections.
 
