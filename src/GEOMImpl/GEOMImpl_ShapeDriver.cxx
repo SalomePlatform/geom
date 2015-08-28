@@ -706,7 +706,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   if (aShape.IsNull()) return 0;
 
   // Check shape validity
-  BRepCheck_Analyzer ana (aShape, false);
+  BRepCheck_Analyzer ana (aShape, true);
   if (!ana.IsValid()) {
     //Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
     // For Mantis issue 0021772: EDF 2336 GEOM: Non valid face created from two circles
