@@ -182,7 +182,7 @@ Standard_Integer GEOMAlgo_GetInPlaceAPI::GetInPlaceOld
       if (fabs(tab_aWhat[3] - tab_aWhere[3]) <= aMassTol && aPnt_aWhat.Distance(aPnt) <= aTolConf)
         isFound = true;
       else {
-        if ((tab_aWhat[3] - tab_aWhere[3]) > aMassTol) {
+        if (tab_aWhat[3] > tab_aWhere[3]) {
           aPntShape = BRepBuilderAPI_MakeVertex( aPnt ).Shape();
           aVertex   = TopoDS::Vertex( aPntShape );
           BRepExtrema_DistShapeShape aWhereDistance ( aVertex, Exp_aWhere.Current() );
