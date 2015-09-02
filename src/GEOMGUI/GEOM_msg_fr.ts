@@ -2418,7 +2418,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WRN_FACES_NOT_SHELL</source>
-        <translation>Impossible de créer une coque. Le résultat est un assemblage de faces.</translation>
+        <translation>Impossible de créer une coque. Le résultat est un assemblage de coques.</translation>
+    </message>
+    <message>
+        <source>GEOM_WRN_FACES_NOT_FACE</source>
+        <translation>Impossible de créer une face. Le résultat est un assemblage de faces.</translation>
     </message>
     <message>
         <source>WRN_SHAPE_UNCLOSED</source>

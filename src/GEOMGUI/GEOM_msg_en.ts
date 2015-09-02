@@ -2426,7 +2426,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_WRN_FACES_NOT_SHELL</source>
-        <translation>Unable to create a shell. Result is a compound of faces.</translation>
+        <translation>Unable to create single shell. Result is a compound of shells.</translation>
+    </message>
+    <message>
+        <source>GEOM_WRN_FACES_NOT_FACE</source>
+        <translation>Unable to create single face. Result is a compound of faces.</translation>
     </message>
     <message>
         <source>WRN_SHAPE_UNCLOSED</source>

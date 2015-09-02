@@ -2432,6 +2432,10 @@
       <translation>シェルを作成できません。面の結合です。</translation>
     </message>
     <message>
+      <source>GEOM_WRN_FACES_NOT_FACE</source>
+      <translation type="unfinished">Impossible de créer une face. Le résultat est un assemblage de faces.</translation>
+    </message>
+    <message>
       <source>WRN_SHAPE_UNCLOSED</source>
       <translation>閉じていないオブジェクト %1 からソリッドを作成できません</translation>
     </message>

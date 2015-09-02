@@ -3,7 +3,9 @@
 \page create_isoline_page Isoline
 
 \b Isoline is a 3D curve built on a bounded face limited by <em> [Umin, Umax] </em> and <em> [Vmin, Vmax] </em>
-values of U and V parameters. For all points of the isoline U or V parameter value is constant. 
+values of U and V parameters. For all points of the isoline U or V parameter value is constant.
+
+Result of this operation is either a single edge or a compound of edges.
 
 To create an \b Isoline of a face in the <b>Main Menu</b> select <b>New Entity - > Basic - > Isoline</b>.
 

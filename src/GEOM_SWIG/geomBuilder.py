@@ -4679,7 +4679,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created face.
+        #  @return New GEOM.GEOM_Object, containing the created face (compound of faces).
         #
         #  @ref tui_creation_face "Example"
         @ManageTransactions("ShapesOp")
@@ -4699,7 +4699,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created face.
+                New GEOM.GEOM_Object, containing the created face (compound of faces).
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
@@ -4721,7 +4721,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created face.
+        #  @return New GEOM.GEOM_Object, containing the created face (compound of faces).
         #
         #  @ref tui_creation_face "Example"
         @ManageTransactions("ShapesOp")
@@ -4741,7 +4741,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created face.
+                New GEOM.GEOM_Object, containing the created face (compound of faces).
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFaceWires(ToList(theWires), isPlanarWanted)
@@ -4840,7 +4840,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
         #         for result publication in the study. Otherwise, if automatic
         #         publication is switched on, default value is used for result name.
         #
-        #  @return New GEOM.GEOM_Object, containing the created shell.
+        #  @return New GEOM.GEOM_Object, containing the created shell (compound of shells).
         #
         #  @ref tui_creation_shell "Example"
         @ManageTransactions("ShapesOp")
@@ -4855,7 +4855,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
                         publication is switched on, default value is used for result name.
 
             Returns:
-                New GEOM.GEOM_Object, containing the created shell.
+                New GEOM.GEOM_Object, containing the created shell (compound of shells).
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeShell( ToList( theFacesAndShells ))

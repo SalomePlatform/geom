@@ -659,8 +659,6 @@ bool BuildGUI_FaceDlg::execute( ObjectList& objects )
   }
 
   if (!anObj->_is_nil()) {
-    objects.push_back(anObj._retn());
-
     if ( !anOper->IsDone() && QString(anOper->GetErrorCode()) == "MAKE_FACE_TOLERANCE_TOO_BIG") {
       if ( !IsPreview() ) {
         SUIT_OverrideCursor wc;
@@ -670,6 +668,14 @@ bool BuildGUI_FaceDlg::execute( ObjectList& objects )
       }
       anOper->SetErrorCode("PAL_NO_ERROR");
     }
+    else if ( anObj->GetShapeType() == GEOM::COMPOUND ) {
+      if ( !IsPreview() ) {
+        SUIT_MessageBox::warning(this,
+                                 QObject::tr("GEOM_WRN_WARNING"),
+                                 QObject::tr("GEOM_WRN_FACES_NOT_FACE"));
+      }
+    }
+    objects.push_back(anObj._retn());
   }
 
   return res;
