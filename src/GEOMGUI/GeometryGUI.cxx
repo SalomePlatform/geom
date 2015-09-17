@@ -898,6 +898,11 @@ void GeometryGUI::createOriginAndBaseVectors()
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOX, "OX" );
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOY, "OY" );
         GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOZ, "OZ" );
+        anOrigin->UnRegister();
+        anOX->UnRegister();
+        anOY->UnRegister();
+        anOZ->UnRegister();
+        aBasicOperations->UnRegister();
 
         getApp()->updateObjectBrowser( true );
       }
