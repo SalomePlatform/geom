@@ -36,9 +36,12 @@
 #include "GEOM_Operation.h"
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
+#include "GEOM_GenericObjPtr.h"
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(STEPPlugin)
+
+typedef GEOM::GenericObjPtr<GEOM::ISTEPOperations> STEPOpPtr;
 
 //=======================================================================
 // function : STEPPlugin_GUI()
@@ -111,8 +114,8 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
 
   SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "STEPPluginEngine" );
-  GEOM::ISTEPOperations_var stepOp = GEOM::ISTEPOperations::_narrow( op );
-  if ( CORBA::is_nil( stepOp ) ) return false;
+  STEPOpPtr stepOp = GEOM::ISTEPOperations::_narrow( op );
+  if ( stepOp.isNull() ) return false;
 
   QStringList fileNames = app->getOpenFileNames( SUIT_FileDlg::getLastVisitedPath().isEmpty() ? QDir::currentPath() : QString(""),
 						 tr( "STEP_FILES" ),
@@ -128,7 +131,7 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
     {
       QString fileName = fileNames.at( i );
       SUIT_OverrideCursor wc;
-      GEOM_Operation transaction( app, stepOp.in() );
+      GEOM_Operation transaction( app, stepOp.get() );
       bool ignoreUnits = false;
       
       try
@@ -189,6 +192,7 @@ bool STEPPlugin_GUI::importSTEP( SUIT_Desktop* parent )
 	  }
 	  transaction.commit();
 	  GEOM_Displayer( study ).Display( main.in() );
+          main->UnRegister();
 	}
 	else
 	{
@@ -228,8 +232,8 @@ bool STEPPlugin_GUI::exportSTEP( SUIT_Desktop* parent )
 
   SALOMEDS::Study_var dsStudy = GeometryGUI::ClientStudyToStudy( study->studyDS() );
   GEOM::GEOM_IOperations_var op = GeometryGUI::GetGeomGen()->GetPluginOperations( dsStudy->StudyId(), "STEPPluginEngine" );
-  GEOM::ISTEPOperations_var stepOp = GEOM::ISTEPOperations::_narrow( op );
-  if ( CORBA::is_nil( stepOp ) ) return false;
+  STEPOpPtr stepOp = GEOM::ISTEPOperations::_narrow( op );
+  if ( stepOp.isNull() ) return false;
 
   LightApp_SelectionMgr* sm = app->selectionMgr();
   if ( !sm ) return false;
@@ -257,7 +261,7 @@ bool STEPPlugin_GUI::exportSTEP( SUIT_Desktop* parent )
     
     SUIT_OverrideCursor wc;
     
-    GEOM_Operation transaction( app, stepOp.in() );
+    GEOM_Operation transaction( app, stepOp.get() );
     
     try
     {
