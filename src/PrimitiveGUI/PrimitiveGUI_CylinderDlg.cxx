@@ -317,7 +317,7 @@ void PrimitiveGUI_CylinderDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit2->setEnabled(false);
 
     globalSelection(GEOM_POINT); // to break previous local selection
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
@@ -326,7 +326,7 @@ void PrimitiveGUI_CylinderDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit1->setEnabled(false);
 
     globalSelection(GEOM_LINE);  // to break previous local selection
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));

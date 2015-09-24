@@ -280,15 +280,15 @@ void BasicGUI_CurveDlg::SetEditCurrentArgument()
 
   if (sender() == myGroupPoints->PushButton1) {
     myEditCurrentArgument = myGroupPoints->LineEdit1;
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else if (sender() == myPushBtnV1) {
     myEditCurrentArgument = myLineEditV1;
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
   else if (sender() == myPushBtnV2) {
     myEditCurrentArgument = myLineEditV2;
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
 
   myEditCurrentArgument->setFocus();

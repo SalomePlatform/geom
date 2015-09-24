@@ -100,6 +100,8 @@ protected:
   void localSelection( const ObjectList&, const int );
   void localSelection( GEOM::GEOM_Object_ptr, const std::list<int> );
   void localSelection( GEOM::GEOM_Object_ptr, const int );
+  void localSelection( const std::list<int> );
+  void localSelection( const int );
   void activate( const int );
   void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
   void globalSelection( const TColStd_MapOfInteger&, const bool = false );

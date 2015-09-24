@@ -642,7 +642,7 @@ void AdvancedGUI_PipeTShapeDlg::SetEditCurrentArgument()
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   //globalSelection(GEOM_POINT);
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 }

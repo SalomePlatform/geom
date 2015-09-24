@@ -550,12 +550,10 @@ bool RepairGUI_DivideEdgeDlg::getIsByParameter() const
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::initSelection()
 {
-  TopAbs_ShapeEnum type = TopAbs_EDGE;
-  if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
-    type = TopAbs_VERTEX;
-
-  globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), type ); // load local selection on ALL objects
+  // close local contexts
+  globalSelection();
+  // load local selection on ALL objects
+  localSelection( myEditCurrentArgument == GroupPoints->LineEdit2 ? TopAbs_VERTEX : TopAbs_EDGE );
 }
 
 //=================================================================================

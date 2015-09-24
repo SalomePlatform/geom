@@ -266,14 +266,14 @@ void TransformationGUI_MirrorDlg::SetEditCurrentArgument()
 
     switch (getConstructorId()) {
     case 0:
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+      localSelection(TopAbs_VERTEX);
       break;
     case 1:
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
       break;
     case 2:
       globalSelection(GEOM_PLANE);
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
+      localSelection(TopAbs_FACE);
       break;
     }
 

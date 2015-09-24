@@ -387,7 +387,7 @@ void BlocksGUI_BlockDlg::SetEditCurrentArgument()
   aSender->setDown(true);
 
   globalSelection(); // close local contexts, if any
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
+  localSelection(TopAbs_FACE); //Select Faces on All Shapes
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
 }
@@ -400,7 +400,7 @@ void BlocksGUI_BlockDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection(); // close local contexts, if any
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
+  localSelection(TopAbs_FACE); //Select Faces on All Shapes
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
   displayPreview(true);

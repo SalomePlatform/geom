@@ -204,7 +204,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
       GroupPoints->LineEdit2->setEnabled( false );
 
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection( TopAbs_VERTEX );
       connect( myGeomGUI->getApp()->selectionMgr(),
                SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       break;
@@ -325,7 +325,7 @@ void BasicGUI_VectorDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
   send->setDown(true);
   displayPreview(true);
 }

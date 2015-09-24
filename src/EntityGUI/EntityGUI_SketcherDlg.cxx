@@ -541,7 +541,7 @@ void EntityGUI_SketcherDlg::InitClick()
   Group4Spin->hide();
   GroupRect->hide();
   globalSelection(); // close local selection to clear it
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
 }
 
 
@@ -1571,7 +1571,7 @@ void EntityGUI_SketcherDlg::SetEditCurrentArgument()
     selButton->setDown(true);
   }
   globalSelection(); // close local selection to clear it
-  localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+  localSelection( myNeedType );
 }
 
 

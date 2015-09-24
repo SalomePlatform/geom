@@ -283,7 +283,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
 
   myEditCurrentArgument->setFocus();
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
@@ -471,7 +471,7 @@ void BasicGUI_CircleDlg::SetEditCurrentArgument()
   TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) ?
     TopAbs_EDGE : TopAbs_VERTEX;
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+  localSelection( aNeedType );
 
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();

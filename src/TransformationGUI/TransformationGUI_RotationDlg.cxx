@@ -361,9 +361,9 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit5->setEnabled(false);
 
     if (getConstructorId() == 0)
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+      localSelection(TopAbs_EDGE);
     else
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+      localSelection(TopAbs_VERTEX);
   }
   else if (send == GroupPoints->PushButton4) {
     myEditCurrentArgument = GroupPoints->LineEdit4;
@@ -375,7 +375,7 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit2->setEnabled(false);
     GroupPoints->LineEdit5->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else if (send == GroupPoints->PushButton5) {
     myEditCurrentArgument = GroupPoints->LineEdit5;
@@ -387,7 +387,7 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit2->setEnabled(false);
     GroupPoints->LineEdit4->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));

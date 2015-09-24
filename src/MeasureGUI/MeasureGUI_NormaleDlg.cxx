@@ -267,7 +267,7 @@ void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
     GroupArgs->PushButton2->setDown(false);
     GroupArgs->LineEdit2->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
+    localSelection(TopAbs_FACE);
   }
   else if (send == GroupArgs->PushButton2) {
     myEditCurrentArgument = GroupArgs->LineEdit2;
@@ -275,7 +275,7 @@ void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
     GroupArgs->PushButton1->setDown(false);
     GroupArgs->LineEdit1->setEnabled(false);
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));

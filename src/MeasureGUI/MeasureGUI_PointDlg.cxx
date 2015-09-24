@@ -112,7 +112,7 @@ void MeasureGUI_PointDlg::Init()
 //=================================================================================
 void MeasureGUI_PointDlg::activateSelection()
 {
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
 }
 
 //=================================================================================

@@ -335,7 +335,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
       globalSelection(); // close local contexts, if any
       myNeedType = TopAbs_VERTEX;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(myNeedType);
 
       GroupRefPoint->hide();
       GroupOnCurve->hide();
@@ -350,7 +350,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
       globalSelection(); // close local contexts, if any
       myNeedType = TopAbs_VERTEX;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(myNeedType);
 
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
       myEditCurrentArgument->setText("");
@@ -369,7 +369,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
       globalSelection(); // close local contexts, if any
       myNeedType = TopAbs_EDGE;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(myNeedType);
 
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
       myEditCurrentArgument->setText("");
@@ -392,7 +392,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       globalSelection(); // close local contexts, if any
       std::list<int> needTypes;
       needTypes.push_back( TopAbs_EDGE ), needTypes.push_back( TopAbs_WIRE );
-      localSelection(GEOM::GEOM_Object::_nil(), needTypes );
+      localSelection(needTypes );
 
       myEditCurrentArgument = GroupLineIntersection->LineEdit1;
       GroupLineIntersection->LineEdit1->setText("");
@@ -416,7 +416,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     {
       globalSelection(); // close local contexts, if any
       myNeedType = TopAbs_FACE;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(myNeedType);
 
       myEditCurrentArgument = GroupOnSurface->LineEdit1;
       myEditCurrentArgument->setText("");
@@ -575,14 +575,14 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     GroupRefPoint->LineEdit1->setFocus();
     myEditCurrentArgument = GroupRefPoint->LineEdit1;
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
   }
   else if (send == GroupOnCurve->PushButton1) {
     GroupOnCurve->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnCurve->LineEdit1;
     globalSelection(); // close local contexts, if any
     myNeedType = TopAbs_EDGE;
-    localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+    localSelection(myNeedType);
     GroupOnCurve->PushButton2->setDown(false);
     GroupOnCurve->LineEdit1->setEnabled(true);
     GroupOnCurve->LineEdit2->setEnabled(false);
@@ -592,7 +592,7 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupOnCurve->LineEdit2;
     globalSelection(); // close local contexts, if any
     myNeedType = TopAbs_VERTEX;
-    localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+    localSelection(myNeedType);
     GroupOnCurve->PushButton1->setDown(false);
     GroupOnCurve->LineEdit2->setEnabled(true);
     GroupOnCurve->LineEdit1->setEnabled(false);
@@ -602,7 +602,7 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     GroupOnSurface->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnSurface->LineEdit1;
     globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
+    localSelection(TopAbs_FACE);
   }
   else if (send == GroupLineIntersection->PushButton1) {
     GroupLineIntersection->LineEdit1->setFocus();

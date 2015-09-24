@@ -259,7 +259,7 @@ void TransformationGUI_PositionDlg::ConstructorsClicked (int constructorId)
 void TransformationGUI_PositionDlg::SelectionTypeButtonClicked()
 {
   if ( Group1->CheckButton2->isChecked() ) {
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( TopAbs_EDGE );
   } else {
     TColStd_MapOfInteger aMap;
     aMap.Add(GEOM_WIRE);
@@ -433,7 +433,7 @@ void TransformationGUI_PositionDlg::SetEditCurrentArgument()
     Group1->CheckButton2->setEnabled(true);
 
     if ( Group1->CheckButton2->isChecked() ) {
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+      localSelection( TopAbs_EDGE );
     } else {
       TColStd_MapOfInteger aMap;
       aMap.Add(GEOM_WIRE);

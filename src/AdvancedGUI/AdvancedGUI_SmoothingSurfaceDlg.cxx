@@ -120,7 +120,7 @@ void AdvancedGUI_SmoothingSurfaceDlg::Init()
   showOnlyPreviewControl();
 
   globalSelection();
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
   //@@ initialize dialog box widgets here @@//
 
   // Signal/slot connections
@@ -163,7 +163,7 @@ bool AdvancedGUI_SmoothingSurfaceDlg::ClickOnApply()
 
   initName();
   globalSelection();
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
   return true;
 }
 
@@ -175,7 +175,7 @@ void AdvancedGUI_SmoothingSurfaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection();
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
   //displayPreview();
 }
 
@@ -363,6 +363,6 @@ void AdvancedGUI_SmoothingSurfaceDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
   globalSelection();
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection( TopAbs_VERTEX );
   SelectionIntoArgument();
 }

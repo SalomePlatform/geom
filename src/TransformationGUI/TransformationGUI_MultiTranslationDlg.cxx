@@ -429,7 +429,7 @@ void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
   else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
 
     GroupPoints->PushButton1->setDown(false);
     GroupPoints->LineEdit1->setEnabled(false);
@@ -445,7 +445,7 @@ void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
   else if (send == GroupDimensions->PushButton2) {
     myEditCurrentArgument = GroupDimensions->LineEdit2;
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
 
     GroupDimensions->PushButton1->setDown(false);
     GroupDimensions->PushButton3->setDown(false);
@@ -455,7 +455,7 @@ void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
   else if (send == GroupDimensions->PushButton3) {
     myEditCurrentArgument = GroupDimensions->LineEdit3;
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
 
     GroupDimensions->PushButton1->setDown(false);
     GroupDimensions->PushButton2->setDown(false);

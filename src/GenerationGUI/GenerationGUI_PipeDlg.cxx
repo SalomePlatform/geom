@@ -280,7 +280,7 @@ void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
 {
   globalSelection();
   if ( GroupPoints->CheckButton1->isChecked() ) {
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( TopAbs_EDGE );
   } else {
     TColStd_MapOfInteger aMap;
     aMap.Add(GEOM_COMPOUND);
@@ -382,7 +382,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     }
   }
   else if ( myEditCurrentArgument == GroupMakePoints->LineEdit2 ) {
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    localSelection( TopAbs_VERTEX );
     QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_VERTEX, -1 );
     GEOMBase::Synchronize( myLocations, objects );
     if ( !myLocations.isEmpty() ) {
@@ -428,7 +428,7 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit2;
 
     if ( GroupPoints->CheckButton1->isChecked() ) {
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+      localSelection( TopAbs_EDGE );
     } else {
       TColStd_MapOfInteger aMap;
       aMap.Add(GEOM_COMPOUND);
@@ -441,7 +441,7 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
   else if(send == GroupPoints->PushButton3) {
     myEditCurrentArgument = GroupPoints->LineEdit3;
     GroupPoints->CheckButton1->setEnabled(false);
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    localSelection(TopAbs_EDGE);
   }
 
   GroupMakePoints->PushButton1->setDown(false);

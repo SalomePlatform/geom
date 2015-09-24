@@ -165,7 +165,7 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
   case 0:
     {
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection( TopAbs_VERTEX );
 
       GroupDimensions->hide();
       GroupPoints->show();
@@ -268,7 +268,7 @@ void PrimitiveGUI_SphereDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit1->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit1;
     globalSelection(); // close local contexts, if any
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+    localSelection( TopAbs_VERTEX );
     SelectionIntoArgument();
   }
 }

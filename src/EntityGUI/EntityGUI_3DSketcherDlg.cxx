@@ -327,7 +327,7 @@ void EntityGUI_3DSketcherDlg::Init()
   myLengthPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
   myTextPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
 
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  localSelection(TopAbs_VERTEX);
 
   /* Get setting of step value from file configuration */
   double step = SUIT_Session::session()->resourceMgr()->doubleValue("Geometry", "SettingsGeomStep", 100.0);
@@ -823,7 +823,7 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
   connect(myGeomGUI->getApp()->selectionMgr(),
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  localSelection(TopAbs_VERTEX);
   GEOMBase_Helper::displayPreview(true, false, true, true, myLineWidth);
 }
 

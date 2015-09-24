@@ -325,7 +325,7 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
   else if (send == PushButton2) {
     myEditCurrentArgument = LineEdit2;
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    localSelection(TopAbs_VERTEX);
 
     PushButton1->setDown(false);
     LineEdit1->setEnabled(false);

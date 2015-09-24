@@ -263,7 +263,7 @@ void BuildGUI_FaceDlg::ConstructorsClicked(int constructorId)
   case 1:
     {
       globalSelection(GEOM_FACE); // For the first element.
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+      localSelection( TopAbs_FACE );
 
       myEditCurrentArgument = myGroupSurf->LineEdit1;
       myGroupSurf->LineEdit1->setText("");
@@ -277,7 +277,7 @@ void BuildGUI_FaceDlg::ConstructorsClicked(int constructorId)
   case 2:
     {
       globalSelection();
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_WIRE );
+      localSelection( TopAbs_WIRE );
     
       myTreeConstraints->clear();
       myCurrentItem = 0;
@@ -323,7 +323,7 @@ void BuildGUI_FaceDlg::updateConstraintsTree()
 
   myEditCurrentArgument->setEnabled(false);
   globalSelection();
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+  localSelection( TopAbs_FACE );
   
   myTreeConstraints->resizeColumnToContents(0);
   QTreeWidgetItem* firstItem = myTreeConstraints->topLevelItem(0);
@@ -509,21 +509,21 @@ void BuildGUI_FaceDlg::SetEditCurrentArgument()
   }
   else if (send == myGroupSurf->PushButton1) {
     globalSelection(GEOM_FACE);
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+    localSelection( TopAbs_FACE );
     myEditCurrentArgument = myGroupSurf->LineEdit1;
     myGroupSurf->PushButton2->setDown(false);
     myGroupSurf->LineEdit2->setEnabled(false);
   }
   else if (send == myGroupSurf->PushButton2) {
     globalSelection(GEOM_WIRE);
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_WIRE );
+    localSelection( TopAbs_WIRE );
     myEditCurrentArgument = myGroupSurf->LineEdit2;
     myGroupSurf->PushButton1->setDown(false);
     myGroupSurf->LineEdit1->setEnabled(false);
   }
   else if (send == myGroupWireConstraints->PushButton1) {
     globalSelection();
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_WIRE );
+    localSelection( TopAbs_WIRE );
     myEditCurrentArgument = myGroupWireConstraints->LineEdit1;
     myCurrentItem = 0;
   }

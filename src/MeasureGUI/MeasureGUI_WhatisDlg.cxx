@@ -194,7 +194,7 @@ void MeasureGUI_WhatisDlg::processObject()
 void MeasureGUI_WhatisDlg::activateSelection()
 {
   globalSelection(); // all types of objects
-  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_SHAPE); // all types of sub-shapes
+  localSelection(TopAbs_SHAPE); // all types of sub-shapes
 }
 
 //=================================================================================
