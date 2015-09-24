@@ -198,7 +198,7 @@ void BooleanGUI_Dialog::Init()
   mainFrame()->RadioButton1->setFocus();
 
   globalSelection(GEOM_ALLSHAPES);
-  localSelection(TopAbs_SHAPE);
+  //localSelection(TopAbs_SHAPE); // VSR 24/09/2015: dectivate local selection in BOP (CoTech decision)
   
   myGroup->PushButton1->click();
   resize(100,100);
@@ -338,7 +338,7 @@ void BooleanGUI_Dialog::SetEditCurrentArgument()
   }
 
   globalSelection(GEOM_ALLSHAPES);
-  localSelection(TopAbs_SHAPE);
+  //localSelection(TopAbs_SHAPE); // VSR 24/09/2015: dectivate local selection in BOP (CoTech decision)
 
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
