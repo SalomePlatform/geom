@@ -334,7 +334,7 @@ void EntityGUI_SubShapeDlg::ClickOnOk()
   }
 
   if (isOk)
-    isOk = onAccept();
+    isOk = onAccept( true, true, false );
 
   if (isOk)
     ClickOnCancel();
