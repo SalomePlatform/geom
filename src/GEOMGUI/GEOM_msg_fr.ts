@@ -433,7 +433,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS</source>
-        <translation type="unfinished">Shape Statistics</translation>
+        <translation>Statistiques sur l&apos;objet</translation>
     </message>
     <message>
         <source>GEOM_CIRCLE</source>
@@ -689,7 +689,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_TOWARDS_INSIDE</source>
-        <translation>Epaissit vers l'intérieur</translation>
+        <translation>Epaissit vers l&apos;intérieur</translation>
     </message>
     <message>
         <source>GEOM_SCALE_PRISM</source>
@@ -2566,7 +2566,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_SHAPE_STATISTICS</source>
-        <translation type="unfinished">Shape Statistics</translation>
+        <translation>Statistiques sur l&apos;objet</translation>
     </message>
     <message>
         <source>MEN_CHECK_FREE_BNDS</source>
@@ -2850,7 +2850,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_MEASURES</source>
-        <translation type="unfinished">Inspection</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>MEN_MIN_DIST</source>
@@ -3458,7 +3458,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_FONT</source>
-        <translation type="unfinished">Font</translation>
+        <translation>Police</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_ARROW_LENGTH</source>
@@ -3482,7 +3482,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_DIMENSIONS_USE_TEXT3D</source>
-        <translation type="unfinished">Use 3D text</translation>
+        <translation>Utiliser du texte 3D</translation>
     </message>
     <message>
         <source>PREF_HIDE_INPUT_OBJECT</source>
@@ -3610,7 +3610,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_SHAPE_STATISTICS</source>
-        <translation type="unfinished">Shape Statistics</translation>
+        <translation>Statistique de l&apos;objet</translation>
     </message>
     <message>
         <source>STB_CHECK_FREE_BNDS</source>
@@ -3882,7 +3882,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_THICKNESS</source>
-        <translation>Crée un solide par ajout d'épaisseur</translation>
+        <translation>Crée un solide par ajout d&apos;épaisseur</translation>
     </message>
     <message>
         <source>STB_PLANE</source>
@@ -4246,7 +4246,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_SHAPE_STATISTICS</source>
-        <translation type="unfinished">Shape Statistics</translation>
+        <translation>Statistique de l&apos;objet</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -5414,7 +5414,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>GEOM_PLOT_DISTRIBUTION</source>
-        <translation type="unfinished">Plot</translation>
+        <translation>Graphe</translation>
     </message>
     <message>
         <source>GEOM_X_AXIS</source>
@@ -5430,7 +5430,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>GEOM_DIM_AXES</source>
-        <translation type="unfinished">Dimensions along local axes</translation>
+        <translation>Dimensions sur les axes locaux</translation>
     </message>
 </context>
 <context>
@@ -5481,7 +5481,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>TOOL_MEASURES</source>
-        <translation type="unfinished">Inspection</translation>
+        <translation>Inspection</translation>
     </message>
     <message>
         <source>TOOL_IMPORTEXPORT</source>
@@ -7270,11 +7270,11 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>GEOMGUI_TextTreeWdg</name>
     <message>
         <source>TEXT_TREE_VIEW_TITLE</source>
-        <translation type="unfinished">Text</translation>
+        <translation>Texte</translation>
     </message>
     <message>
         <source>TEXT_TREE_VIEW_NAME</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Nom</translation>
     </message>
 </context>
 <context>
@@ -7300,7 +7300,7 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>MeasureGUI_CheckSelfIntersectionsDlg</name>
     <message>
         <source>GEOM_CHECK_INTERSECT_TYPE</source>
-        <translation type="unfinished">Self-intersection Detection Type</translation>
+        <translation>Détection du type d&apos;auto-intersection</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INTE_INTERSECTIONS</source>
@@ -7368,11 +7368,11 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INT_DEFLECT</source>
-        <translation type="unfinished">Deflection coefficient</translation>
+        <translation>Coefficient de déflexion</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INT_DETECT_GAPS</source>
-        <translation type="unfinished">Detect gaps with tolerance</translation>
+        <translation>Détection des écarts avec tolérance</translation>
     </message>
 </context>
 <context>
@@ -7410,63 +7410,63 @@ Voulez-vous en créer un nouveau ?</translation>
     <name>MeasureGUI_ShapeStatisticsDlg</name>
     <message>
         <source>GEOM_SHAPE_STATISTICS_TYPE</source>
-        <translation type="unfinished">Type</translation>
+        <translation>Type</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_LENGTH</source>
-        <translation type="unfinished">Edges length</translation>
+        <translation>Longueur des arêtes</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_AREA</source>
-        <translation type="unfinished">Faces area</translation>
+        <translation>Aire des faces</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_VOLUME</source>
-        <translation type="unfinished">Solids volume</translation>
+        <translation>Volume des solides</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_NB_INTERVALS</source>
-        <translation type="unfinished">Number of intervals</translation>
+        <translation>Nombre d&apos;intervalles</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_SCALAR_RANGE</source>
-        <translation type="unfinished">Scalar range</translation>
+        <translation>Echelle de dimension</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_COMPUTE</source>
-        <translation type="unfinished">Compute</translation>
+        <translation>Calculer</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_MIN</source>
-        <translation type="unfinished">Min</translation>
+        <translation>Min</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_MAX</source>
-        <translation type="unfinished">Max</translation>
+        <translation>Max</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_CREATE_GROUPS</source>
-        <translation type="unfinished">Create Groups</translation>
+        <translation>Créer des groupes</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_DISTRIBUTION_NB_ENT</source>
-        <translation type="unfinished">Number of entities</translation>
+        <translation>Nombre d&apos;entités</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_MIN_ERROR</source>
-        <translation type="unfinished">Set minimal range value or switch-off Scalar range</translation>
+        <translation>Spécifier une valeur minimale ou ignorer l&apos;échelle de dimension</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_MAX_ERROR</source>
-        <translation type="unfinished">Set maximal range value or switch-off Scalar range</translation>
+        <translation>Spécifier une valeur maximale ou ignorer l&apos;échelle de dimension</translation>
     </message>
     <message>
         <source>GEOM_SHAPE_STATISTICS_MIN_MAX_ERROR</source>
-        <translation type="unfinished">Minimal range value can not be more than maximal</translation>
+        <translation>La valeur minimal ne peut pas être plus grande que la maximale</translation>
     </message>
     <message>
         <source>GEOM_MSG_GROUPS_CREATED</source>
-        <translation type="unfinished">%1 groups created</translation>
+        <translation>%1 groupes créés</translation>
     </message>
 </context>
 <context>
@@ -7594,7 +7594,7 @@ Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>GEOM_PROJ_ON_CYL_LENGTH_ANGLE</source>
-        <translation>Longueur de l'angle</translation>
+        <translation>Longueur de l&apos;angle</translation>
     </message>
 </context>
 </TS>
