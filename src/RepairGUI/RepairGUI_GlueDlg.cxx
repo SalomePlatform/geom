@@ -615,8 +615,6 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
     return false;
   }
 
-  erasePreview(false);
-
   try {
     if (openCommand()) {
       SUIT_OverrideCursor wc;
@@ -671,6 +669,8 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
     SalomeApp_Tools::QtCatchCorbaException(e);
     abortCommand();
   }
+
+  erasePreview(false);
 
   updateViewer();
   activateSelection();
