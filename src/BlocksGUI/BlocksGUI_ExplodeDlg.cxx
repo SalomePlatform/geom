@@ -46,7 +46,7 @@
 // purpose  : Constructs a BlocksGUI_ExplodeDlg which is a child of 'parent'.
 //=================================================================================
 BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
-  : GEOMBase_Skeleton( theGeometryGUI, parent )
+  : GEOMBase_Skeleton( theGeometryGUI, parent ), myNbBlocks( 0 )
 {
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BLOCK_EXPLODE" ) ) );
   QPixmap imageS( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
@@ -189,7 +189,7 @@ bool BlocksGUI_ExplodeDlg::ClickOnApply()
     }
   }
 
-  if ( !onAccept() )
+  if ( !onAccept( true, true, false ) )
     return false;
 
   activateSelection();
@@ -351,7 +351,7 @@ void BlocksGUI_ExplodeDlg::updateButtonState()
 //=================================================================================
 bool BlocksGUI_ExplodeDlg::isAllSubShapes() const
 {
-  return !myGrp1->CheckBox1->isChecked() || !myGrp1->CheckBox1->isEnabled();
+  return !(myGrp1->CheckBox1->isEnabled() && myGrp1->CheckBox1->isChecked());
 }
 
 //=================================================================================
