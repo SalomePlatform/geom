@@ -446,7 +446,7 @@ void GroupGUI_GroupDlg::ActivateThisDialog()
 //=================================================================================
 void GroupGUI_GroupDlg::SetEditCurrentArgument()
 {
-  QPushButton* send = (QPushButton*)sender();
+  QPushButton* send = qobject_cast<QPushButton*>( sender() );
 
   if (send == mySelBtn) {
     myEditCurrentArgument = myMainName;
@@ -472,7 +472,8 @@ void GroupGUI_GroupDlg::SetEditCurrentArgument()
   //  activateSelection();
   if(myEditCurrentArgument) {
     myEditCurrentArgument->setFocus();
-    send->setDown(true);
+    if ( send )
+      send->setDown(true);
   }
 
   updateState();
