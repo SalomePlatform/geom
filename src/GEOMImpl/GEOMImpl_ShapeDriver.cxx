@@ -114,14 +114,15 @@ namespace
   {
     TopoDS_Iterator it( c, Standard_True, Standard_True );
 
-    // check that compound is not empty
-    bool result = it.More();
+    // empty compound is OK only if we explicitly create a compound of shapes
+    bool result = true;
 
     // => if expected type is TopAbs_SHAPE, we allow compound consisting of any shapes, this above check is enough
     // => otherwise we have to check compound's content
     // => compound sometimes can contain enclosed compound(s), we process them recursively and rebuild initial compound
 
     if ( t != TopAbs_SHAPE ) {
+      result = it.More();
       std::list<TopoDS_Shape> compounds, shapes;
       compounds.push_back( c );
       while ( !compounds.empty() && result ) {
