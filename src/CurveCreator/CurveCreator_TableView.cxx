@@ -24,6 +24,7 @@
 
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QHeaderView>
 
 #include <QtxDoubleSpinBox.h>
 
@@ -109,6 +110,8 @@ CurveCreator_TableView::CurveCreator_TableView( CurveCreator_ICurve* theCurve,
   //aLabels << tr( "SECTION_LABEL" ) << tr( "IDENTIFIER_LABEL" ) << aCoord1 << aCoord2;
   aLabels << tr( "TABLE_SECTION" ) << tr("TABLE_INDEX") << aCoord1 << aCoord2;
   setHorizontalHeaderLabels( aLabels );
+
+  connect( horizontalHeader(), SIGNAL( sectionClicked( int ) ), this, SLOT( OnHeaderClick( int ) ) );
 }
 
 void CurveCreator_TableView::setCurve( CurveCreator_ICurve* theCurve )
@@ -131,7 +134,7 @@ void CurveCreator_TableView::setLocalPointsToTable(
 
     QTableWidgetItem* anItem;
     anItem = new QTableWidgetItem( myCurve->getSectionName( anISection ).c_str() );
-    anItem->setFlags( anItem->flags() & ~Qt::ItemIsEnabled );
+    anItem->setFlags( anItem->flags() & ~Qt::ItemIsEditable );
     anItem->setData( Qt::UserRole, anISection );
     setItem( aRowId, 0, anItem );
 
@@ -175,4 +178,9 @@ int CurveCreator_TableView::getSectionId( const int theRowId ) const
 int CurveCreator_TableView::getPointId( const int theRowId ) const
 {
   return item( theRowId, 1 )->data( Qt::UserRole ).toInt();
+}
+
+void CurveCreator_TableView::OnHeaderClick( int theLogicalId )
+{
+  sortByColumn( theLogicalId, Qt::AscendingOrder );
 }

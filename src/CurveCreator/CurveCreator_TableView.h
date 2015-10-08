@@ -63,6 +63,9 @@ public:
    */
   int getPointId( const int theRowId ) const;
 
+private slots:
+  void OnHeaderClick( int );
+
 private:
   CurveCreator_ICurve* myCurve;
 
