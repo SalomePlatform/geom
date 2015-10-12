@@ -82,7 +82,7 @@ static TopoDS_Shape RemoveExtraEdges(const TopoDS_Shape &theShape)
     else {
       TopoDS_Shape aFixed;
       ShHealOper_ShapeProcess aHealer;
-      aHealer.Perform(aResult, aFixed);
+      aHealer.Perform(aShape, aFixed);
       if (aHealer.isDone() && GEOMUtils::CheckShape(aFixed))
         aResult = aFixed;
     }
