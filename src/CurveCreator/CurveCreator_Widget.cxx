@@ -1059,7 +1059,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
   if ( myDragStarted ) {
     bool isDragged = myDragged;
     CurveCreator_ICurve::SectionToPointList aDraggedPoints;
-    QMap<CurveCreator_ICurve::SectionToPoint, std::deque< float > > anInitialDragPointsCoords;
+    QMap<CurveCreator_ICurve::SectionToPoint, CurveCreator::Coordinates > anInitialDragPointsCoords;
     if ( myDragged ) {
       aDraggedPoints = myDragPoints;
       anInitialDragPointsCoords = myInitialDragPointsCoords;
@@ -1105,7 +1105,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
         for ( ; anIt != aLast; anIt++ ) {
           int aSectionId = anIt->first;
           int aPointId = anIt->second;
-          std::deque<float> aPos = myCurve->getPoint( aSectionId, aPointId );
+          CurveCreator::Coordinates aPos = myCurve->getPoint( aSectionId, aPointId );
 
           aCoordList.push_back(
             std::make_pair( std::make_pair( aSectionId, aPointId ), aPos ) );
@@ -1195,7 +1195,7 @@ void CurveCreator_Widget::onCellChanged( int theRow, int theColumn )
 
   double aX  = myLocalPointView->item( theRow, 2 )->data( Qt::UserRole ).toDouble();
   double anY = myLocalPointView->item( theRow, 3 )->data( Qt::UserRole ).toDouble();
-  std::deque<float> aChangedPos;
+  CurveCreator::Coordinates aChangedPos;
   aChangedPos.push_back( aX );
   aChangedPos.push_back( anY );
   myCurve->setPoint( aCurrSect, aPntIndex, aChangedPos );
@@ -1338,7 +1338,7 @@ void CurveCreator_Widget::moveSelectedPoints( const int theXPosition,
   double anYDelta = aStartPnt.Y() - anEndPnt.Y();
 
   CurveCreator_ICurve::SectionToPointCoordsList aCoordList;
-  std::deque<float> aChangedPos;
+  CurveCreator::Coordinates aChangedPos;
   CurveCreator_ICurve::SectionToPointList::const_iterator anIt = myDragPoints.begin(),
                                                           aLast = myDragPoints.end();
   for ( ; anIt != aLast; anIt++ ) {

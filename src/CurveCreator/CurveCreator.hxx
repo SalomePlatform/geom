@@ -33,7 +33,7 @@ struct CurveCreator_PosPoint;
 namespace CurveCreator
 {
   //! Points coordinates
-  typedef float TypeCoord;
+  typedef double TypeCoord;
 
   /** List of coordinates in format depends on section dimension:
    *  2D: [x1, y1,     x2, y2,     x3, y3,     ..]
