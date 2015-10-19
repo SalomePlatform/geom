@@ -18,14 +18,14 @@ the angle of the projection start.
 - <b>Length angle</b> where the total length of
 the wire should be projected. If it is unchecked the projection is not scaled and the natural
 wire length is kept for the projection.
-- <b>Rotation angle</b> the desired angle between the tangent vector to
-the first curve at the first point of the theObject's projection in 2D space
-and U-direction of cylinder's 2D space.
+- <b>Rotation angle</b> the angle between the tangent vector to
+the first curve at the first point of the object projection in 2D space
+and U-direction of the cylinder in 2D space.
 - \ref restore_presentation_parameters_page "Advanced options".
 
 \image html proj_on_cyl_dlg.png
 
-\n The following figure explains meaning of each input angle:
+\n The following figure explains the meaning of each input angle:
 
 \image html proj_on_cyl_angles.png "Input angles of projection on the cylinder"
 

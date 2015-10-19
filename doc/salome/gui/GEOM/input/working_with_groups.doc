@@ -101,8 +101,8 @@ In order to filter out some entities:
 The entities, which satisfy the entered filtering parameters, will be automatically highlighted
 in the 3D viewer.
 
-\b Plot button into "Filter" group box provides an access 
-to the \ref shape_statistics_operation_page "Shape Statistics" functionality with simplified look-n-feel:
+\b Plot button gives access 
+to the \ref shape_statistics_operation_page "Shape Statistics" functionality with a simplified look-and-feel:
 
 \image html shape_statistics_simple.png
 

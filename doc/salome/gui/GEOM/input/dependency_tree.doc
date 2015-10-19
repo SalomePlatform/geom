@@ -28,7 +28,7 @@ It is also possible to select an object(s) directly in the "Dependency Tree" vie
 
 All necessary parameters of Dependency Tree Viewer can be edited in the \ref pref_dependency_tree "Preferences".
 
-\note This functionality is available only if GUI module is builded with Graphics view (set option SALOME_USE_GRAPHICSVIEW to ON when building GUI module).
+\note This functionality is available only if the GUI module is built with Graphics view (option SALOME_USE_GRAPHICSVIEW is ON when building GUI module).
 
 <hr>
 \anchor dependency_tree_nodes_anchor <h2>Nodes</h2>

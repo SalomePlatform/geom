@@ -2,7 +2,7 @@
 
 \page check_self_intersections_page Detect Self-intersections
 
-\n To <b>Detect Self-intersections</b> in the <b>Main Menu</b> select
+\n To <b>Detect Self-intersections,</b> select in the <b>Main Menu</b> 
 <b>Inspection - > Detect Self-intersections</b>.
 
 There are two ways to check self-intersections.
@@ -40,24 +40,35 @@ See also a \ref tui_check_self_intersections_page "TUI example".
 \anchor check_self_intersections_fast
 <br><h3>Fast intersection</h3>
 
-This operations allows to quickly detect self-interferences of the given shape by means of algorithm based on mesh intersections.
+This operation allows quickly detecting self-interferences of the given shape using the algorithm based on mesh intersections.
+
+The algorithm works on the face level, i.e. it computes only face-to-face intersections. No additional intersection types are computed.
+
+This can be useful to detect all intersections between subshapes of type "surface" in an assembly.
+The result quality will depend on the tesselation quality. However, small deflection values can significantly decrease the performance of the algorithm.
+Nevertheless, the performance of Fast Intersect algorithm is much higher than that of the topological intersection.
 
 \image html measures13.png
 
-This algorithm works on the faces level, i.e. it computes only face-to-face intersections. No additional types of intersections is computed.
-This case can be useful in order to detect all the intersections between the subshapes of type "surface" inside assembly.
-Quality of result will depend on the quality of tesselation (managed via the deflection parameter). However, small values of deflection can
-significantly decrease performance of the algorithm.
-Nevertheless, performance of Fast Intersect algorithm is much higher than topological intersection.
+In this dialog:
+
+- \b Object - the checked object. \b Selection button allows picking it in the viewer or in the object browser.
+- <b>Deflection coefficient</b> -  a linear deflection coefficient that defines the tesselation quality. If theDeflection <= 0, default deflection 0.001 is used.
+- <b>Detect gaps with tolerance</b> specifies the distance between shapes used for detecting gaps:
+     - if theTolerance <= 0, the algorithm detects intersections;
+     - if theTolerance > 0, the algorithm detects gapss. 
+- <b>Compute self-intersections</b> button performs the computation.
+- \b Summary section contains the general report about self-intersections of the object and/or errors that occurred during the computation.
+- \b Self-intersections list contains the list of detected self-intersections. Select the intersection to show <b>Sub-shapes</b> in the field to the right. 
+- \b Apply and <b>Apply and Close</b> buttons store the interferences selected in the <b>Self-intersections</b> list box in the study for further analysis. 
+If no interferences are selected, all of them are published in the study. Each interference is published as a child compound of the source shape and contains a couple of intersecting sub-shapes.
 
 \n <b>Result:</b> Boolean.
 \n <b>TUI Command:</b> <em>geompy.CheckSelfIntersectionsFast(theShape, theDeflection, theTolerance),</em> \n
 where: \n
 \em theShape is the shape checked for validity. \n
-\em theDeflection is a linear deflection coefficient that specifies quality of tesselation. If theDeflection <= 0, default deflection 0.001 is used.
-\em theTolerance Specifies a distance between shapes used for detecting gaps:
-     - if theTolerance <= 0, algorithm detects intersections;
-     - if theTolerance > 0, algorithm detects gaps.
+\em theDeflection that specifies the quality of tesselation. 
+\em theTolerance Specifies the distance between shapes used for detecting gaps.
 
 See also a \ref tui_check_self_intersections_fast_page "TUI example".
 

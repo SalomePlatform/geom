@@ -3,7 +3,7 @@
 \page check_compound_of_blocks_page Check Compound of Blocks
 
 This operation checks whether a shape is a compound of glued blocks
-and tries to improve the shape to make it include only valid blocks.
+and improves the shape to include only valid blocks.
 
 \image html measures10.png
 
@@ -29,14 +29,13 @@ In this dialog:
 	- Not connected;
 	- Extra or degenerated edge.
 - <b>Incriminated Sub-shapes</b> field outputs the list of sub-shapes that cause problem.
-- \b Apply and <b>Apply and Close</b> buttons launch an improving process
-and publish a result shape which includes valid blocks only. The
-improving process tries to
-   - remove seam edges and degenerated edges of surfaces of revolution;
+- \b Apply and <b>Apply and Close</b> buttons launch the improvement process
+and publish the result shape, which includes valid blocks only. The
+algorithm tries to:
+   - remove seam and degenerated edges from surfaces of revolution;
    - re-approximate surfaces to exclude singularities on boundaries;
    - unite edges and faces;
    - glue faces.
-
 
 
 \n <b>TUI Command:</b>
