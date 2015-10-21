@@ -126,11 +126,11 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
         pt2.Transform(edgeTransf);
       }
 
-      float aCoord1[3] = {pt1.X(), pt1.Y(), pt1.Z()};
+      float aCoord1[3] = {(float)pt1.X(), (float)pt1.Y(), (float)pt1.Z()};
       vtkIdType anIds[2];
       anIds[0] = thePts->InsertNextPoint(aCoord1);
 
-      float aCoord2[3] = {pt2.X(), pt2.Y(), pt2.Z()};
+      float aCoord2[3] = {(float)pt2.X(), (float)pt2.Y(), (float)pt2.Z()};
       anIds[1] = thePts->InsertNextPoint(aCoord2);
 
       thePolyData->InsertNextCell(VTK_LINE,2,anIds);
@@ -156,11 +156,11 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
         pt2.Transform(edgeTransf);
       }
       
-      float aCoord1[3] = {pt1.X(), pt1.Y(), pt1.Z()};
+      float aCoord1[3] = {(float)pt1.X(), (float)pt1.Y(), (float)pt1.Z()};
       vtkIdType anIds[2];
       anIds[0] = thePts->InsertNextPoint(aCoord1);
 
-      float aCoord2[3] = {pt2.X(), pt2.Y(), pt2.Z()};
+      float aCoord2[3] = {(float)pt2.X(), (float)pt2.Y(), (float)pt2.Z()};
       anIds[1] = thePts->InsertNextPoint(aCoord2);
 
       thePolyData->InsertNextCell(VTK_LINE,2,anIds);
@@ -226,7 +226,7 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
     // Add points and segments, composing the arrow
     Standard_Real cosinus, sinus, Tg = tan(anAngle);
 
-    float coord[3] = {xo, yo, zo};
+    float coord[3] = {(float)xo, (float)yo, (float)zo};
 
     vtkIdType ptLoc = thePts->InsertNextPoint(coord);
     vtkIdType ptFirst = 0;
