@@ -1490,7 +1490,7 @@ void CurveCreator_Widget::finishCurveModification(
  * \param theX the X coordinate of the point
  * \param theY the Y coordinate of the point
  */
-int CurveCreator_Widget::findLocalPointIndex( int theSectionId, float theX, float theY )
+int CurveCreator_Widget::findLocalPointIndex( int theSectionId, double theX, double theY )
 {
   return CurveCreator_UtilsICurve::findLocalPointIndex( myCurve, theSectionId, theX, theY );
 }

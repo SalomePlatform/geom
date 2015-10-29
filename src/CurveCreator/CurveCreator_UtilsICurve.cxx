@@ -25,7 +25,7 @@
 const double LOCAL_SELECTION_TOLERANCE = 0.0001;
 
 int CurveCreator_UtilsICurve::findLocalPointIndex( const CurveCreator_ICurve* theCurve,
-                                             int theSectionId, float theX, float theY )
+                                             int theSectionId, double theX, double theY )
 {
   int aPntIndex = -1;
   if ( !theCurve )

@@ -556,7 +556,7 @@ void CurveCreator_Utils::getSelectedPoints( Handle(AIS_InteractiveContext) theCo
 {
   thePoints.clear();
 
-  std::list<float> aSelectedPoints;
+  std::list<double> aSelectedPoints;
   gp_Pnt aPnt;
   std::map<CompareSectionToPoint, int> aPointsMap;
 
