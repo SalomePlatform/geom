@@ -6574,6 +6574,57 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
             self._autoPublish(ListObj, theName, "SortedEdges")
             return ListObj
 
+        ##
+        # Return the list of subshapes that satisfies a certain tolerance
+        # criterion. The user defines the type of shapes to be returned, the
+        # condition and the tolerance value. The operation is defined for
+        # faces, edges and vertices only. E.g. for theShapeType FACE,
+        # theCondition GEOM::CC_GT and theTolerance 1.e-7 this method returns
+        # all faces of theShape that have tolerances greater then 1.e7.
+        #
+        #  @param theShape the shape to be exploded
+        #  @param theShapeType the type of sub-shapes to be returned (see
+        #         ShapeType()). Can have the values FACE, EDGE and VERTEX only.
+        #  @param theCondition the condition type (see GEOM::comparison_condition).
+        #  @param theTolerance the tolerance filter.
+        #  @param theName Object name; when specified, this parameter is used
+        #         for result publication in the study. Otherwise, if automatic
+        #         publication is switched on, default value is used for result name.
+        #  @return the list of shapes that satisfy the conditions.
+        #
+        #  @ref swig_GetSubShapesWithTolerance "Example"
+        @ManageTransactions("ShapesOp")
+        def GetSubShapesWithTolerance(self, theShape, theShapeType,
+                                      theCondition, theTolerance, theName=None):
+            """
+            Return the list of subshapes that satisfies a certain tolerance
+            criterion. The user defines the type of shapes to be returned, the
+            condition and the tolerance value. The operation is defined for
+            faces, edges and vertices only. E.g. for theShapeType FACE,
+            theCondition GEOM::CC_GT and theTolerance 1.e-7 this method returns
+            all faces of theShape that have tolerances greater then 1.e7.
+            
+            Parameters:
+                theShape the shape to be exploded
+                theShapeType the type of sub-shapes to be returned (see
+                             ShapeType()). Can have the values FACE,
+                             EDGE and VERTEX only.
+                theCondition the condition type (see GEOM::comparison_condition).
+                theTolerance the tolerance filter.
+                theName Object name; when specified, this parameter is used
+                        for result publication in the study. Otherwise, if automatic
+                        publication is switched on, default value is used for result name.
+
+            Returns:
+                The list of shapes that satisfy the conditions.
+            """
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.GetSubShapesWithTolerance(theShape, EnumToLong(theShapeType),
+                                                              theCondition, theTolerance)
+            RaiseIfFailed("GetSubShapesWithTolerance", self.ShapesOp)
+            self._autoPublish(ListObj, theName, "SubShapeWithTolerance")
+            return ListObj
+
         ## Check if the object is a sub-object of another GEOM object.
         #  @param aSubObject Checked sub-object (or its parent object, in case if
         #         \a theSubObjectIndex is non-zero).

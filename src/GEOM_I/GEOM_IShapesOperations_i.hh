@@ -300,6 +300,12 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::ListOfGO* GetSubShapeEdgeSorted (GEOM::GEOM_Object_ptr theShape,
                                          GEOM::GEOM_Object_ptr theStartPoint);
 
+  GEOM::ListOfGO* GetSubShapesWithTolerance
+                     (GEOM::GEOM_Object_ptr      theShape,
+                      CORBA::Short               theShapeType,
+                      GEOM::comparison_condition theCondition,
+                      CORBA::Double              theTolerance);
+
   ::GEOMImpl_IShapesOperations* GetOperations()
   { return (::GEOMImpl_IShapesOperations*)GetImpl(); }
 };

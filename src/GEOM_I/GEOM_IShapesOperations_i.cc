@@ -35,6 +35,35 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 
+/**
+ * This function converts GEOM::comparison_condition type into
+ * GEOMUtils::ComparisonCondition type.
+ *
+ * \param theCondition the condition of GEOM::comparison_condition type
+ * \return the condition of GEOMUtils::ComparisonCondition type.
+ */
+static GEOMUtils::ComparisonCondition ComparisonCondition
+                    (const GEOM::comparison_condition theCondition)
+{
+  GEOMUtils::ComparisonCondition aResult = GEOMUtils::CC_GT;
+
+  switch (theCondition) {
+  case GEOM::CC_GE:
+    aResult = GEOMUtils::CC_GE;
+    break;
+  case GEOM::CC_LT:
+    aResult = GEOMUtils::CC_LT;
+    break;
+  case GEOM::CC_LE:
+    aResult = GEOMUtils::CC_LE;
+    break;
+  default:
+    break;
+  }
+
+  return aResult;
+}
+
 //=============================================================================
 /*!
  *   constructor:
@@ -2141,6 +2170,51 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSubShapeEdgeSorted
   //Get Shapes On Shape
   Handle(TColStd_HSequenceOfTransient) aHSeq =
       GetOperations()->GetSubShapeEdgeSorted(aShape, aStartPoint);
+
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  const Standard_Integer aLength = aHSeq->Length();
+  Standard_Integer       i;
+
+  aSeq->length(aLength);
+
+  for (i = 1; i <= aLength; i++) {
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+  }
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetSubShapesWithTolerance
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSubShapesWithTolerance
+                     (GEOM::GEOM_Object_ptr      theShape,
+                      CORBA::Short               theShapeType,
+                      GEOM::comparison_condition theCondition,
+                      CORBA::Double              theTolerance)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+
+  if (aShape.IsNull()) {
+    return aSeq._retn();
+  }
+
+  //Get Shapes On Shape
+  const GEOMUtils::ComparisonCondition aCondition =
+                ComparisonCondition(theCondition);
+  Handle(TColStd_HSequenceOfTransient) aHSeq      =
+      GetOperations()->GetSubShapesWithTolerance
+                (aShape, theShapeType, aCondition, theTolerance);
 
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();

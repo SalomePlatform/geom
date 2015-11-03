@@ -584,5 +584,11 @@ def TestAll (geompy, math):
   geompy.GetSubShapeEdgeSorted(Sketcher3d_1, p2, "OrderedEdges")
   geompy.GetSubShapeEdgeSorted(Sketcher3d_2, p3, "OrderedEdges")
 
+  # GetSubShapesWithTolerance
+  geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_GT, 1.e-8, "gt")
+  geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_GE, 1.e-7, "ge")
+  geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_LT, 2.e-7, "lt")
+  geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_LE, 1.e-7, "le")
+
 
   print "DONE"

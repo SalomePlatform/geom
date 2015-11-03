@@ -3062,6 +3062,106 @@ Handle(TColStd_HSequenceOfTransient)
   return aSeq;
 }
 
+//=============================================================================
+/*!
+ *  GetSubShapesWithTolerance
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient)
+    GEOMImpl_IShapesOperations::GetSubShapesWithTolerance
+                     (const Handle(GEOM_Object)            &theShape,
+                      const Standard_Integer                theShapeType,
+                      const GEOMUtils::ComparisonCondition  theCondition,
+                      const Standard_Real                   theTolerance)
+{
+  if (theShape.IsNull()) {
+    SetErrorCode("NULL GEOM object");
+    return NULL;
+  }
+
+  TopoDS_Shape aShape = theShape->GetValue();
+
+  if (aShape.IsNull()) {
+    SetErrorCode("NULL Shape");
+    return NULL;
+  }
+
+  if (theShapeType != TopAbs_FACE && theShapeType != TopAbs_EDGE &&
+      theShapeType != TopAbs_VERTEX && aShape.ShapeType() >= theShapeType) {
+    SetErrorCode("Invalid shape type");
+    return NULL;
+  }
+
+  TopTools_IndexedMapOfShape         anIndices;
+  TopTools_MapOfShape                aMapFence;
+  TopExp_Explorer                    anExp(aShape,
+                                           (TopAbs_ShapeEnum) theShapeType);
+  Handle(TColStd_HSequenceOfInteger) anIDs = new TColStd_HSequenceOfInteger;
+
+  TopExp::MapShapes(aShape, anIndices);
+
+  for (; anExp.More(); anExp.Next()) {
+    const TopoDS_Shape &aSubShape = anExp.Current();
+
+    if (aMapFence.Add(aSubShape)) {
+      // Compute tolerance
+      Standard_Real aTolerance = -1.;
+
+      switch (aSubShape.ShapeType()) {
+        case TopAbs_FACE:
+          aTolerance = BRep_Tool::Tolerance(TopoDS::Face(aSubShape));
+          break;
+        case TopAbs_EDGE:
+          aTolerance = BRep_Tool::Tolerance(TopoDS::Edge(aSubShape));
+          break;
+        case TopAbs_VERTEX:
+          aTolerance = BRep_Tool::Tolerance(TopoDS::Vertex(aSubShape));
+          break;
+        default:
+          break;
+      }
+
+      if (aTolerance < 0.) {
+        continue;
+      }
+
+      // Compare the tolerance with reference value.
+      if (GEOMUtils::IsFitCondition (theCondition, aTolerance, theTolerance)) {
+        anIDs->Append(anIndices.FindIndex(aSubShape));
+      }
+    }
+  }
+
+  if (anIDs->IsEmpty()) {
+    SetErrorCode("Empty sequence of sub-shapes");
+    return NULL;
+  }
+
+  // Get objects by indices.
+  TCollection_AsciiString              anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq =
+    getObjectsShapesOn(theShape, anIDs, anAsciiList);
+
+  if (aSeq.IsNull() || aSeq->IsEmpty()) {
+    SetErrorCode("Empty sequence of edges");
+    return NULL;
+  }
+
+  // Make a Python command
+  Handle(GEOM_Object)   anObj     =
+    Handle(GEOM_Object)::DownCast(aSeq->Value(1));
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction)
+    << "[" << anAsciiList.ToCString() << "] = geompy.GetSubShapesWithTolerance("
+    << theShape << ", " << theShapeType << ", " << theCondition << ", "
+    << theTolerance << ")";
+
+  SetErrorCode(OK);
+
+  return aSeq;
+}
+
 //=======================================================================
 //function : getShapesOnSurfaceIDs
   /*!

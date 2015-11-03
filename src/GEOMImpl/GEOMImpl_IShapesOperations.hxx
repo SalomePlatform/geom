@@ -33,6 +33,7 @@
 #include "GEOM_IOperations.hxx"
 
 #include "GEOMAlgo_State.hxx"
+#include "GEOMUtils.hxx"
 
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
@@ -447,6 +448,27 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
     GetSubShapeEdgeSorted (const Handle(GEOM_Object) &theShape,
                            const Handle(GEOM_Object) &theStartPoint);
+
+  /*!
+   * \brief Return the list of subshapes that satisfies a certain tolerance
+   * criterion. The user defines the type of shapes to be returned, the
+   * condition and the tolerance value. The operation is defined for
+   * faces, edges and vertices only. E.g. for theShapeType FACE, theCondition
+   * CC_GT and theTolerance 1.e-7 this method returns all faces of theShape
+   * that have tolerances greater then 1.e7.
+   *
+   * \param theShape the shape to be exploded
+   * \param theShapeType the type of shapes to be returned. Can have the
+   *        values FACE, EDGE and VERTEX only.
+   * \param theCondition the condition type.
+   * \param theTolerance the tolerance filter.
+   * \return the list of shapes that satisfy the conditions.
+   */
+  Handle(TColStd_HSequenceOfTransient) GetSubShapesWithTolerance
+                     (const Handle(GEOM_Object)            &theShape,
+                      const Standard_Integer                theShapeType,
+                      const GEOMUtils::ComparisonCondition  theCondition,
+                      const Standard_Real                   theTolerance);
 
  private:
   Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,

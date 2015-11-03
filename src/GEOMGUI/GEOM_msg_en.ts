@@ -5440,6 +5440,14 @@ shells and solids on the other hand.</translation>
         <source>GEOM_DIM_AXES</source>
         <translation>Dimensions along local axes</translation>
     </message>
+    <message>
+        <source>SHOW_ALL_BTN</source>
+        <translation>Show all</translation>
+    </message>
+    <message>
+        <source>HIDE_ALL_BTN</source>
+        <translation>Hide all</translation>
+    </message>
 </context>
 <context>
     <name>GeometryGUI</name>
@@ -6508,14 +6516,6 @@ Number of sketch points too small</translation>
         <translation>Remove</translation>
     </message>
     <message>
-        <source>SHOW_ALL_BTN</source>
-        <translation>Show all</translation>
-    </message>
-    <message>
-        <source>HIDE_ALL_BTN</source>
-        <translation>Hide all</translation>
-    </message>
-    <message>
         <source>DISTANCE_ITEM</source>
         <translation>Distance</translation>
     </message>
@@ -7231,7 +7231,19 @@ Do you want to create new material?</translation>
         <translation>Main shape</translation>
     </message>
     <message>
-        <source>GEOM_INSPECT_OBJECT_SHOW</source>
+      <source>GEOM_INSPECT_TOLERANCE_FILTER</source>
+      <translation>Tolerance filter</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MIN</source>
+      <translation>Min value</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_RESET_MAX</source>
+      <translation>Max value</translation>
+    </message>
+    <message>
+      <source>GEOM_INSPECT_OBJECT_SHOW</source>
         <translation>Show Selected</translation>
     </message>
     <message>

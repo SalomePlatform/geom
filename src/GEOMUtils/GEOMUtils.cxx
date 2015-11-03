@@ -104,6 +104,9 @@
 
 #define STD_SORT_ALGO 1
 
+#define DEFAULT_TOLERANCE_TOLERANCE     1.e-02
+#define DEFAULT_MAX_TOLERANCE_TOLERANCE 1.e-06
+
 // When the following macro is defined, ShapeFix_ShapeTolerance function is used to set max tolerance of curve
 // in GEOMUtils::FixShapeCurves function; otherwise less restrictive BRep_Builder::UpdateEdge/UpdateVertex
 // approach is used
@@ -1286,4 +1289,56 @@ bool GEOMUtils::IsOpenPath(const TopoDS_Shape &theShape)
   }
 
   return isOpen;
+}
+
+//=======================================================================
+//function : CompareToleranceValues
+//purpose  : 
+//=======================================================================
+int GEOMUtils::CompareToleranceValues(const double theTolShape,
+                                      const double theTolRef)
+{
+  const double aTolTol = Min(DEFAULT_MAX_TOLERANCE_TOLERANCE,
+                             theTolRef*DEFAULT_TOLERANCE_TOLERANCE);
+
+  int aResult = 0;
+
+  if (theTolShape < theTolRef - aTolTol) {
+    aResult = -1;
+  } else if (theTolShape > theTolRef + aTolTol) {
+    aResult = 1;
+  }
+
+  return aResult;
+}
+
+//=======================================================================
+//function : IsFitCondition
+//purpose  : 
+//=======================================================================
+bool GEOMUtils::IsFitCondition(const ComparisonCondition theCondition,
+                               const double              theTolShape,
+                               const double              theTolRef)
+{
+  const int aCompValue = CompareToleranceValues(theTolShape, theTolRef);
+  bool      isFit      = false;
+
+  switch (theCondition) {
+    case CC_GT:
+      isFit = aCompValue == 1;
+      break;
+    case GEOMUtils::CC_GE:
+      isFit = aCompValue != -1;
+      break;
+    case GEOMUtils::CC_LT:
+      isFit = aCompValue == -1;
+      break;
+    case GEOMUtils::CC_LE:
+      isFit = aCompValue != 1;
+      break;
+    default:
+      break;
+  }
+
+  return isFit;
 }

@@ -25,10 +25,23 @@
 
 // Qt includes
 #include <QDialog>
-#include <QTreeWidget>
-#include <QLabel>
-#include <QLineEdit>
 #include <QPointer>
+#include <QIcon>
+
+class GeometryGUI;
+class SalomeApp_DoubleSpinBox;
+
+class QButtonGroup;
+class QComboBox;
+class QGroupBox;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QStackedLayout;
+class QTreeWidget;
+class QTreeWidgetItem;
+
+class TopTools_IndexedMapOfShape;
 
 class RepairGUI_InspectObjectDlg : public QDialog, public GEOMBase_Helper
 { 
@@ -38,7 +51,7 @@ class RepairGUI_InspectObjectDlg : public QDialog, public GEOMBase_Helper
   class Delegate;
 
 public:
-  RepairGUI_InspectObjectDlg( SUIT_Desktop* );
+  RepairGUI_InspectObjectDlg(GeometryGUI*, SUIT_Desktop* );
   ~RepairGUI_InspectObjectDlg();
 
 private slots:
@@ -60,25 +73,54 @@ private slots:
   void                    clickOnHide();
   void                    clickOnPublish();
   void                    clickOnHelp();
+  void                    clickOnResetToMin();
+  void                    clickOnResetToMax();
+  void                    clickOnShowAll();
+  void                    clickOnHideAll();
+  void                    DeactivateActiveDialog();
+  void                    ActivateThisDialog();
+  void                    onFilterToggled(bool);
+  void                    onInitFilteredData();
+  void                    onFilterData();
 
 private:
+  void                    createTreeWidget(QTreeWidget *&theTreeObjects);
   void                    init();
+  void                    initSpinBox(SalomeApp_DoubleSpinBox* spinBox, 
+                                      double min,  double max, 
+                                      double step, const char* quantity);
+  void                    initTreeWidget(QTreeWidget *theTopLevelItem);
+  void                    enterEvent( QEvent* );
   void                    checkVisibleIcon();
-  void                    addSubObjects( TreeWidgetItem* );
+  void                    addSubObjects( TreeWidgetItem*, const TopTools_IndexedMapOfShape &);
+
   void                    displayItem( TreeWidgetItem* );
   void                    setItemDisplayStatus( TreeWidgetItem* theItem, bool theIsVisible );
   void                    setMainObjectTransparency( double );
   void                    restoreParam();
+  void                    updateViewer(const bool theIsHideOtherTree);
 
-  SalomeApp_Application*     myApp;
   QPointer<SUIT_ViewWindow>  myViewWindow;
+  GeometryGUI*               myGeomGUI;
 
   QIcon                      myVisible;
   QIcon                      myInvisible;
 
-  QTreeWidget*               myTreeObjects;
-  QLineEdit*                 myEditMainShape;
-
+  QTreeWidget               *myTreeObjects;
+  QTreeWidget               *myFilteredTreeObjects;
+  QTreeWidget               *myCurrentTreeObjects;
+  QLineEdit                 *myEditMainShape;
+  QGroupBox                 *myTolFilterGrp;
+  QButtonGroup              *myShapeTypeBtnGrp;
+  QComboBox                 *myComparisonCompo;
+  SalomeApp_DoubleSpinBox   *myTolEdit;
+  QLabel                    *myMinTolValLabel;
+  QLabel                    *myMaxTolValLabel;
+  QStackedLayout            *myTreesLayout;
+  QPushButton               *myMinTolResetBtn;
+  QPushButton               *myMaxTolResetBtn;
+  double                     myMaxTol;
+  double                     myMinTol;
   bool                       myIsSelectAll;
   double                     myTransparency;
 

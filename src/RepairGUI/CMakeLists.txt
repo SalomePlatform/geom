@@ -41,6 +41,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/src/DlgRef
   ${PROJECT_BINARY_DIR}/src/DlgRef
   ${PROJECT_SOURCE_DIR}/src/GEOMAlgo
+  ${PROJECT_SOURCE_DIR}/src/GEOMUtils
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -55,6 +56,7 @@ ADD_DEFINITIONS(
 # libraries to link to
 SET(_link_LIBRARIES
   GEOMBase
+  GEOMUtils
   )
 
 # --- resources ---
