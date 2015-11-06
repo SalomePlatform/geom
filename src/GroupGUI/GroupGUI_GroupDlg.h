@@ -115,6 +115,7 @@ private:
   TColStd_DataMapOfIntegerInteger     myMain2InPlaceIndices;
   QList<int>                          myGroupIdList;
   int                                 myDmMode;
+  bool                                myIsAccept;
 
   QPushButton*                        mySelBtn;
   QLineEdit*                          myMainName;

@@ -88,7 +88,8 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
     myBusy(false),
     myIsShapeType(false),
     myIsHiddenMain(false),
-    myWasHiddenMain(true)
+    myWasHiddenMain(true),
+    myIsAccept(false)
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
@@ -235,10 +236,10 @@ GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
   GEOM_Displayer* aDisplayer = getDisplayer();
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   bool isHideObjects = resMgr->booleanValue( "Geometry", "hide_input_object", true);
-  if (myWasHiddenMain) {
+  if (myWasHiddenMain || ( isHideObjects && myIsAccept ) ) {
     myIsHiddenMain = true;
   }
-  else if (!isHideObjects) {
+  else {
     aDisplayer->Display(myMainObj);
     myIsHiddenMain = false;
   }
@@ -395,7 +396,8 @@ bool GroupGUI_GroupDlg::ClickOnApply()
     setIsDisplayResult( false );
   }
     
-  if (!onAccept(myMode == CreateGroup, true, isApplyAndClose()))
+  myIsAccept = onAccept(myMode == CreateGroup, true, isApplyAndClose());
+  if (!myIsAccept)
     return false;
 
   if(!isApplyAndClose()) {
