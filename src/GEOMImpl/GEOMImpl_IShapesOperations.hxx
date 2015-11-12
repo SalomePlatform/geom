@@ -464,7 +464,7 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    * \param theTolerance the tolerance filter.
    * \return the list of shapes that satisfy the conditions.
    */
-  Handle(TColStd_HSequenceOfTransient) GetSubShapesWithTolerance
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetSubShapesWithTolerance
                      (const Handle(GEOM_Object)            &theShape,
                       const Standard_Integer                theShapeType,
                       const GEOMUtils::ComparisonCondition  theCondition,
