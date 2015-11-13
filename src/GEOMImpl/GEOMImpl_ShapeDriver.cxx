@@ -22,6 +22,7 @@
 
 #include <GEOMImpl_ShapeDriver.hxx>
 
+#include <GEOMImpl_IExtract.hxx>
 #include <GEOMImpl_IIsoline.hxx>
 #include <GEOMImpl_IShapes.hxx>
 #include <GEOMImpl_IShapeExtend.hxx>
@@ -32,6 +33,7 @@
 #include <GEOM_Function.hxx>
 #include <GEOMUtils_Hatcher.hxx>
 #include <GEOMAlgo_State.hxx>
+#include <GEOMAlgo_Extractor.hxx>
 
 // OCCT Includes
 #include <ShapeFix_Wire.hxx>
@@ -108,6 +110,39 @@
 #include <BOPAlgo_MakerVolume.hxx>
 
 #include <list>
+
+/**
+ * \brief This static function converts the list of shapes into an array
+ *  of their IDs. If the input list is empty, null handle will be returned.
+ *  this method doesn't check if a shape presents in theIndices map.
+ *
+ * \param theListOfShapes the list of shapes.
+ * \param theIndices the indexed map of shapes.
+ * \return the array of shape IDs.
+ */
+static Handle(TColStd_HArray1OfInteger) GetShapeIDs
+                  (const TopTools_ListOfShape       &theListOfShapes,
+                   const TopTools_IndexedMapOfShape &theIndices)
+{
+  Handle(TColStd_HArray1OfInteger) aResult;
+
+  if (!theListOfShapes.IsEmpty()) {
+    const Standard_Integer             aNbShapes = theListOfShapes.Extent();
+    TopTools_ListIteratorOfListOfShape anIter(theListOfShapes);
+    Standard_Integer                   i;
+
+    aResult = new TColStd_HArray1OfInteger(1, aNbShapes);
+
+    for (i = 1; anIter.More(); anIter.Next(), ++i) {
+      const TopoDS_Shape     &aShape  = anIter.Value();
+      const Standard_Integer  anIndex = theIndices.FindIndex(aShape);
+
+      aResult->SetValue(i, anIndex);
+    }
+  }
+
+  return aResult;
+}
 
 namespace
 {
@@ -917,6 +952,97 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
           aShape = aMF.Shape();
         }
       }
+    }
+  } else if (aType == EXTRACTION) {
+    allowCompound = true;
+
+    GEOMImpl_IExtract     aCI(aFunction);
+    Handle(GEOM_Function) aRefShape  = aCI.GetShape();
+    TopoDS_Shape          aShapeBase = aRefShape->GetValue();
+
+    if (aShapeBase.IsNull()) {
+      Standard_NullObject::Raise("Argument Shape is null");
+      return 0;
+    }
+
+    Handle(TColStd_HArray1OfInteger) anIDs = aCI.GetSubShapeIDs();
+    TopTools_ListOfShape             aListSubShapes;
+    TopTools_IndexedMapOfShape       anIndices;
+    int                              i;
+
+    TopExp::MapShapes(aShapeBase, anIndices);
+
+    if (!anIDs.IsNull()) {
+      const int anUpperID = anIDs->Upper();
+      const int aNbShapes = anIndices.Extent();
+
+      for (i = anIDs->Lower(); i <= anUpperID; ++i) {
+        const Standard_Integer anIndex = anIDs->Value(i);
+
+        if (anIndex < 1 || anIndex > aNbShapes) {
+          TCollection_AsciiString aMsg(" Invalid index: ");
+
+          aMsg += TCollection_AsciiString(anIndex);
+          StdFail_NotDone::Raise(aMsg.ToCString());
+          return 0;
+        }
+
+        const TopoDS_Shape &aSubShape = anIndices.FindKey(anIndex);
+
+        aListSubShapes.Append(aSubShape);
+      }
+    }
+
+    // Compute extraction.
+    GEOMAlgo_Extractor anExtractor;
+
+    anExtractor.SetShape(aShapeBase);
+    anExtractor.SetShapesToRemove(aListSubShapes);
+
+    anExtractor.Perform();
+
+    // Interprete results
+    Standard_Integer iErr = anExtractor.ErrorStatus();
+
+    // The detailed description of error codes is in GEOMAlgo_Extractor.cxx
+    if (iErr) {
+      TCollection_AsciiString aMsg(" iErr : ");
+
+      aMsg += TCollection_AsciiString(iErr);
+      StdFail_NotDone::Raise(aMsg.ToCString());
+      return 0;
+    }
+
+    aShape = anExtractor.GetResult();
+
+    // Get statistics.
+    const TopTools_ListOfShape       &aRemoved    = anExtractor.GetRemoved();
+    const TopTools_ListOfShape       &aModified   = anExtractor.GetModified();
+    const TopTools_ListOfShape       &aNew        = anExtractor.GetNew();
+    Handle(TColStd_HArray1OfInteger) aRemovedIDs  =
+                          GetShapeIDs(aRemoved, anIndices);
+    Handle(TColStd_HArray1OfInteger) aModifiedIDs =
+                          GetShapeIDs(aModified, anIndices);
+    Handle(TColStd_HArray1OfInteger) aNewIDs;
+
+    if (!aShape.IsNull()) {
+      // Get newly created sub-shapes
+      TopTools_IndexedMapOfShape aNewIndices;
+
+      TopExp::MapShapes(aShape, aNewIndices);
+      aNewIDs = GetShapeIDs(aNew, aNewIndices);
+    }
+
+    if (!aRemovedIDs.IsNull()) {
+      aCI.SetRemovedIDs(aRemovedIDs);
+    }
+
+    if (!aModifiedIDs.IsNull()) {
+      aCI.SetModifiedIDs(aModifiedIDs);
+    }
+
+    if (!aNewIDs.IsNull()) {
+      aCI.SetAddedIDs(aNewIDs);
     }
   }
   else {
@@ -1878,6 +2004,15 @@ GetCreationInformation(std::string&             theOperationName,
 
     theOperationName = "SURFACE_FROM_FACE";
     AddParam(theParams, "Face", aSE.GetShape());
+    break;
+  }
+  case EXTRACTION:
+  {
+    GEOMImpl_IExtract aCI (function);
+
+    theOperationName = "EXTRACTION";
+    AddParam(theParams, "Main Shape", aCI.GetShape());
+    AddParam(theParams, "Sub-shape IDs", aCI.GetSubShapeIDs());
     break;
   }
   default:

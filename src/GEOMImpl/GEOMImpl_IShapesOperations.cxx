@@ -36,6 +36,7 @@
 #include "GEOMImpl_GlueDriver.hxx"
 #include "GEOMImpl_FillingDriver.hxx"
 
+#include "GEOMImpl_IExtract.hxx"
 #include "GEOMImpl_IVector.hxx"
 #include "GEOMImpl_IShapes.hxx"
 #include "GEOMImpl_IShapeExtend.hxx"
@@ -3161,6 +3162,107 @@ Handle(TColStd_HSequenceOfTransient)
   SetErrorCode(OK);
 
   return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  MakeExtraction
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeExtraction
+                     (const Handle(GEOM_Object)              &theShape,
+                      const Handle(TColStd_HArray1OfInteger) &theSubShapeIDs,
+                      std::list<ExtractionStat>              &theStats)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) {
+    return NULL;
+  }
+
+  //Add a new Result object
+  Handle(GEOM_Object) aResult =
+              GetEngine()->AddObject(GetDocID(), GEOM_EXTRACTION);
+
+  //Add a new Extraction function
+  Handle(GEOM_Function) aFunction =
+    aResult->AddFunction(GEOMImpl_ShapeDriver::GetID(), EXTRACTION);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) {
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aShape = theShape->GetLastFunction();
+
+  if (aShape.IsNull()) {
+    return NULL;
+  }
+
+  GEOMImpl_IExtract aCI (aFunction);
+
+  aCI.SetShape(aShape);
+  aCI.SetSubShapeIDs(theSubShapeIDs);
+
+  //Compute the Edge value
+  try {
+    OCC_CATCH_SIGNALS;
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+
+    return NULL;
+  }
+
+  // Fill in statistics.
+  theStats.clear();
+
+  Handle(TColStd_HArray1OfInteger) aStatIDsArray[3] = 
+    { aCI.GetRemovedIDs(), aCI.GetModifiedIDs(), aCI.GetAddedIDs() };
+  int                              i;
+  int                              j;
+
+  for (j = 0; j < 3; ++j) {
+    if (!aStatIDsArray[j].IsNull()) {
+      const int      anUpperID = aStatIDsArray[j]->Upper();
+      ExtractionStat aStat;
+
+      for (i = aStatIDsArray[j]->Lower(); i <= anUpperID; ++i) {
+        aStat.indices.push_back(aStatIDsArray[j]->Value(i));
+      }
+
+      aStat.type = (ExtractionStatType) j;
+      theStats.push_back(aStat);
+    }
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd(aFunction);
+
+  pd << aResult  << " = geompy.MakeExtraction(" << theShape << ", [";
+
+  if (!theSubShapeIDs.IsNull()) {
+    const int aNbIDs = theSubShapeIDs->Upper();
+
+    for (i = theSubShapeIDs->Lower(); i < aNbIDs; ++i) {
+      pd << theSubShapeIDs->Value(i) << ", ";
+    }
+
+    // Dump the last value without a comma.
+    pd << theSubShapeIDs->Value(i);
+  }
+
+  pd << "])";
+
+  SetErrorCode(OK);
+
+  return aResult;
 }
 
 //=======================================================================

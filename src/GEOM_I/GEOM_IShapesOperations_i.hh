@@ -306,6 +306,11 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                       GEOM::comparison_condition theCondition,
                       CORBA::Double              theTolerance);
 
+  GEOM::GEOM_Object_ptr MakeExtraction
+         (GEOM::GEOM_Object_ptr                              theShape,
+          const GEOM::ListOfLong                            &theSubShapeIDs,
+          GEOM::GEOM_IShapesOperations::ExtractionStats_out  theStats);
+
   ::GEOMImpl_IShapesOperations* GetOperations()
   { return (::GEOMImpl_IShapesOperations*)GetImpl(); }
 };

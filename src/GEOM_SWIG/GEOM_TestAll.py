@@ -590,5 +590,10 @@ def TestAll (geompy, math):
   geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_LT, 2.e-7, "lt")
   geompy.GetSubShapesWithTolerance(Box, GEOM.FACE, GEOM.CC_LE, 1.e-7, "le")
 
+  # MakeExtraction
+  geompy.MakeExtraction(Box, [13], "Ext_no_face")
+  geompy.MakeExtraction(Box, [18], "Ext_no_edge")
+  geompy.MakeExtraction(Box, [16], "Ext_no_vertex")
+
 
   print "DONE"

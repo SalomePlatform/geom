@@ -27,6 +27,8 @@ special case of \b Explode operation. </li>
 special case of \b Explode operation. </li>
 <li>\subpage transfer_data_page "Transfer Data" operation, which copies
 non-topological data from one shape to another. </li>
+<li>\subpage extract_and_rebuild_page "Extract and Rebuild" operation, which
+extracts sub-shapes from the main shape. </li>
 
 
 <li>\subpage restore_presentation_parameters_page "Restore presentation parameters". 

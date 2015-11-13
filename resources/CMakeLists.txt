@@ -94,6 +94,7 @@ SET( _res_files
   edgeextension.png
   erase.png
   eraseall.png
+  extract.png
   extruded_boss.png
   extruded_cut.png
   facetosurface.png

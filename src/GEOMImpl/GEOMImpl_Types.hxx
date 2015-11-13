@@ -119,6 +119,8 @@
 
 #define GEOM_TRANSFER_DATA 57
 
+#define GEOM_EXTRACTION 58
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -316,6 +318,7 @@
 #define FACE_UV             17
 #define SURFACE_FROM_FACE   18
 #define SOLID_FACES         19
+#define EXTRACTION          20
 
 #define ARCHIMEDE_TYPE 1
 

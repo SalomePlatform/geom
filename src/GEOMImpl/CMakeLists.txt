@@ -79,6 +79,7 @@ SET(GEOMImpl_HEADERS
   GEOMImpl_ICircle.hxx
   GEOMImpl_ISpline.hxx
   GEOMImpl_IEllipse.hxx
+  GEOMImpl_IExtract.hxx
   GEOMImpl_IFillet.hxx
   GEOMImpl_IFillet1d.hxx
   GEOMImpl_IFillet2d.hxx
