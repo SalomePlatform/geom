@@ -997,7 +997,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
   PyObject* obj = PyRun_String(aPyScript.ToCString(), Py_file_input, main_dict, NULL);
 
-  if (obj == NULL) {
+  if (obj == NULL || obj == Py_None ) {
     SetErrorCode("Error during executing of python script !!!");
     PyErr_Print();
     PyGILState_Release(gstate);
