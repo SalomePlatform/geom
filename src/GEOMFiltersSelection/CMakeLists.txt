@@ -17,13 +17,10 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-INCLUDE(${QT_USE_FILE})
-
 # --- options ---
 
 # additional include directories
 INCLUDE_DIRECTORIES(
-  ${QT_INCLUDE_DIRS}
   ${OMNIORB_INCLUDE_DIR}
   ${PTHREAD_INCLUDE_DIR}
   ${CAS_INCLUDE_DIRS}

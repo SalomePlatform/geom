@@ -54,7 +54,7 @@ GEOMToolsGUI_LineWidthDlg::GEOMToolsGUI_LineWidthDlg (QWidget* parent, const QSt
   setModal(true);
 
   setWindowTitle(tr(title.toLatin1().constData()));
-  setSizeGripEnabled(TRUE);
+  setSizeGripEnabled(true);
   QGridLayout* MyDialogLayout = new QGridLayout(this);
   MyDialogLayout->setSpacing(6);
   MyDialogLayout->setMargin(11);
@@ -95,8 +95,8 @@ GEOMToolsGUI_LineWidthDlg::GEOMToolsGUI_LineWidthDlg (QWidget* parent, const QSt
   QPushButton* buttonOk = new QPushButton (GroupButtons);
   buttonOk->setObjectName("buttonOk");
   buttonOk->setText(tr("GEOM_BUT_OK"));
-  buttonOk->setAutoDefault(TRUE);
-  buttonOk->setDefault(TRUE);
+  buttonOk->setAutoDefault(true);
+  buttonOk->setDefault(true);
   GroupButtonsLayout->addWidget(buttonOk, 0, 0);
 
   GroupButtonsLayout->addItem(new QSpacerItem (20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 1);
@@ -104,13 +104,13 @@ GEOMToolsGUI_LineWidthDlg::GEOMToolsGUI_LineWidthDlg (QWidget* parent, const QSt
   QPushButton* buttonCancel = new QPushButton (GroupButtons);
   buttonCancel->setObjectName("buttonCancel");
   buttonCancel->setText(tr("GEOM_BUT_CANCEL"));
-  buttonCancel->setAutoDefault(TRUE);
+  buttonCancel->setAutoDefault(true);
   GroupButtonsLayout->addWidget(buttonCancel, 0, 1);
 
   QPushButton* buttonHelp = new QPushButton (GroupButtons);
   buttonHelp->setObjectName("buttonHelp");
   buttonHelp->setText(tr("GEOM_BUT_HELP"));
-  buttonHelp->setAutoDefault(TRUE);
+  buttonHelp->setAutoDefault(true);
   GroupButtonsLayout->addWidget(buttonHelp, 0, 2);
   /***************************************************************/
 

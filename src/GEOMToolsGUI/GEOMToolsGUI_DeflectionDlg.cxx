@@ -52,7 +52,7 @@ GEOMToolsGUI_DeflectionDlg::GEOMToolsGUI_DeflectionDlg (QWidget* parent)
   setModal(true);
 
   setWindowTitle(tr("GEOM_DEFLECTION_TLT"));
-  setSizeGripEnabled(TRUE);
+  setSizeGripEnabled(true);
   QGridLayout* MyDialogLayout = new QGridLayout(this);
   MyDialogLayout->setSpacing(6);
   MyDialogLayout->setMargin(11);
@@ -101,8 +101,8 @@ GEOMToolsGUI_DeflectionDlg::GEOMToolsGUI_DeflectionDlg (QWidget* parent)
   QPushButton* buttonOk = new QPushButton (GroupButtons);
   buttonOk->setObjectName("buttonOk");
   buttonOk->setText(tr("GEOM_BUT_OK"));
-  buttonOk->setAutoDefault(TRUE);
-  buttonOk->setDefault(TRUE);
+  buttonOk->setAutoDefault(true);
+  buttonOk->setDefault(true);
   GroupButtonsLayout->addWidget(buttonOk, 0, 0);
 
   GroupButtonsLayout->addItem(new QSpacerItem (20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 1);
@@ -110,13 +110,13 @@ GEOMToolsGUI_DeflectionDlg::GEOMToolsGUI_DeflectionDlg (QWidget* parent)
   QPushButton* buttonCancel = new QPushButton (GroupButtons);
   buttonCancel->setObjectName("buttonCancel");
   buttonCancel->setText(tr("GEOM_BUT_CANCEL"));
-  buttonCancel->setAutoDefault(TRUE);
+  buttonCancel->setAutoDefault(true);
   GroupButtonsLayout->addWidget(buttonCancel, 0, 1);
 
   QPushButton* buttonHelp = new QPushButton (GroupButtons);
   buttonHelp->setObjectName("buttonHelp");
   buttonHelp->setText(tr("GEOM_BUT_HELP"));
-  buttonHelp->setAutoDefault(TRUE);
+  buttonHelp->setAutoDefault(true);
   GroupButtonsLayout->addWidget(buttonHelp, 0, 2);
   /***************************************************************/
 

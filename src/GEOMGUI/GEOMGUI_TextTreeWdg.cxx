@@ -73,8 +73,11 @@ GEOMGUI_TextTreeWdg::GEOMGUI_TextTreeWdg( SalomeApp_Application* app )
   headerItem->setIcon( 1, myVisibleIcon );
   setHeaderItem ( headerItem ); 
   header()->moveSection( 1, 0 );
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   header()->setResizeMode( 1, QHeaderView::ResizeToContents );
-
+#else
+  header()->setSectionResizeMode( 1, QHeaderView::ResizeToContents );
+#endif
   QStringList rootNames;
   rootNames << tr("GEOM_DIMENSIONS") << "";
   myDimensionsItem = new QTreeWidgetItem( this, rootNames );

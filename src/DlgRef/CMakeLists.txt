@@ -17,7 +17,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-INCLUDE(UseQt4Ext)
+INCLUDE(UseQtExt)
 
 # --- options ---
 
@@ -109,12 +109,12 @@ SET(_uic_files
 SET(_moc_HEADERS DlgRef.h)
 
 # header files / uic wrappings
-QT4_WRAP_UI(_uic_HEADERS ${_uic_files})
+QT_WRAP_UIC(_uic_HEADERS ${_uic_files})
 
 # --- sources ---
 
 # sources / moc wrappings
-QT4_WRAP_CPP(_moc_SOURCES ${_moc_HEADERS})
+QT_WRAP_MOC(_moc_SOURCES ${_moc_HEADERS})
 
 # sources / to compile
 SET(DlgRef_SOURCES DlgRef.cxx ${_moc_SOURCES} ${_uic_HEADERS})

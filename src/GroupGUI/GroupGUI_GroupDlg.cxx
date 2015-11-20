@@ -1092,7 +1092,7 @@ void GroupGUI_GroupDlg::activateSelection()
           int index = aSubShapesMap.FindIndex(aSubShape);
           QString anEntry = QString( "TEMP_" ) + anEntryBase + QString("_%1").arg(index);
           Handle(SALOME_InteractiveObject) io =
-            new SALOME_InteractiveObject(anEntry.toAscii(), "GEOM", "TEMP_IO");
+            new SALOME_InteractiveObject(anEntry.toLatin1(), "GEOM", "TEMP_IO");
           if ( myGroupIdList.contains( index ) ) {
             aDisplayer->SetColor( aCol );
           }

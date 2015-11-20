@@ -54,7 +54,7 @@ GEOMGUI::~GEOMGUI()
 //=================================================================================
 bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, SUIT_Desktop* /*parent*/, const QVariant& /*theParam*/  )
 {
-  return TRUE;
+  return true;
 }
 
 //=================================================================================
@@ -63,7 +63,7 @@ bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, SUIT_Desktop* /*parent*/, const 
 //=================================================================================
 bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, SUIT_Desktop* /*parent*/ )
 {
-  return TRUE;
+  return true;
 }
 
 //=================================================================================
@@ -73,7 +73,7 @@ bool GEOMGUI::OnGUIEvent( int /*theCommandID*/, SUIT_Desktop* /*parent*/ )
 //=================================================================================
 bool GEOMGUI::OnMousePress( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* /*studyFrame*/ )
 {
-  return FALSE;
+  return false;
 }
 
 //=================================================================================
@@ -82,7 +82,7 @@ bool GEOMGUI::OnMousePress( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_
 //=================================================================================
 bool GEOMGUI::OnMouseMove( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* /*studyFrame*/ )
 {
-  return TRUE;
+  return true;
 }
 
 //=================================================================================
@@ -91,7 +91,7 @@ bool GEOMGUI::OnMouseMove( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_V
 //=================================================================================
 bool GEOMGUI::OnMouseRelease( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* /*studyFrame*/ )
 {
-  return TRUE;
+  return true;
 }
 
 //=================================================================================
@@ -100,7 +100,7 @@ bool GEOMGUI::OnMouseRelease( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUI
 //=================================================================================
 bool GEOMGUI::OnKeyPress( QKeyEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* /*studyFrame*/ )
 {
-  return TRUE;
+  return true;
 }
 
 //=================================================================================

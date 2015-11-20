@@ -17,7 +17,6 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-INCLUDE( ${QT_USE_FILE} )
 
 # --- options ---
 
@@ -62,5 +61,3 @@ TARGET_LINK_LIBRARIES(GEOMShapeRec ${_link_LIBRARIES})
 INSTALL(TARGETS GEOMShapeRec EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
 
 #INSTALL(FILES ${ShapeRecognition_HEADERS} DESTINATION ${SALOME_INSTALL_HEADERS})
-
-
