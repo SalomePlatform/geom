@@ -141,6 +141,7 @@ void CurveCreator_TableView::setLocalPointsToTable(
     anItem = new QTableWidgetItem( QString::number( anIPoint + 1 ) );
     anItem->setFlags( anItem->flags() & ~Qt::ItemIsEnabled );
     anItem->setData( Qt::UserRole, anIPoint );
+    anItem->setData( Qt::DisplayRole, anIPoint );
     setItem( aRowId, 1, anItem );
 
     gp_Pnt aPoint;
@@ -152,7 +153,7 @@ void CurveCreator_TableView::setLocalPointsToTable(
       setItem( aRowId, 2, anItem );
     }
     anItem->setData( Qt::UserRole, aPoint.X() );
-    anItem->setData( Qt::DisplayRole, QString::number( aPoint.X(), 'f', 2 ) );
+    anItem->setData( Qt::DisplayRole, QString::number( aPoint.X(), 'f', 2 ).toDouble() );
 
     anItem = item( aRowId, 3 );
     if ( !anItem ) {
@@ -160,7 +161,7 @@ void CurveCreator_TableView::setLocalPointsToTable(
       setItem( aRowId, 3, anItem );
     }
     anItem->setData( Qt::UserRole, aPoint.Y() );
-    anItem->setData( Qt::DisplayRole, QString::number( aPoint.Y(), 'f', 2 ) );
+    anItem->setData( Qt::DisplayRole, QString::number( aPoint.Y(), 'f', 2 ).toDouble() );
 
     aRowId++;
   }
