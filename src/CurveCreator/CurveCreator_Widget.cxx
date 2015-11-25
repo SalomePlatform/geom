@@ -1005,10 +1005,18 @@ void CurveCreator_Widget::onMousePress( SUIT_ViewWindow*, QMouseEvent* theEvent 
  */
 void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEvent* theEvent )
 {
-  if ( getActionMode() != ModificationMode )
+  ActionMode aMode = getActionMode();
+  if ( aMode != ModificationMode )
   {
     // Emit selectionChanged() signal
     getOCCViewer()->performSelectionChanged();
+
+    if ( aMode == AdditionMode )
+    {
+      Handle(AIS_InteractiveContext) aCtx = getAISContext();
+      if ( !aCtx.IsNull() )
+        aCtx->ClearSelected();
+    }
     return;
   } 
   if (theEvent->button() != Qt::LeftButton) return;
