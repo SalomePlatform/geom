@@ -341,7 +341,7 @@ void CurveCreator_Operation::apply(CurveCreator_Curve *theCurve)
 
           int nbPoints = pInt[0];
           int nbCoords = pInt[1];
-          int nbParams = 3+nbCoords;
+          int nbParams = 3+nbCoords*sizeof(double)/sizeof(int);
           for (int i = 0; i < nbPoints*nbParams; i=i+nbParams) {
             aCoords.clear();
             aPoints.clear();
