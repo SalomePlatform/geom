@@ -996,8 +996,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
   PyObject* main_dict = PyModule_GetDict(main_mod);
 
   PyObject* obj = PyRun_String(aPyScript.ToCString(), Py_file_input, main_dict, NULL);
+  printf("%s\n", aPyScript.ToCString());
 
-  if (obj == NULL || obj == Py_None ) {
+  if (obj == NULL) {
     SetErrorCode("Error during executing of python script !!!");
     PyErr_Print();
     PyGILState_Release(gstate);
@@ -1008,7 +1009,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
   PyObject * func = NULL;
   func = PyObject_GetAttrString(main_mod, "coordCalculator");
-
+ 
   if (func == NULL){
     SetErrorCode("Can't get function from python module !!!");
     PyGILState_Release(gstate);
