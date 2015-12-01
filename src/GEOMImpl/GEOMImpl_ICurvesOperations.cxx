@@ -1026,6 +1026,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
     std::string err_description="";
     PyObject* new_stderr = newPyStdOut(err_description);
     PyObject* old_stderr = PySys_GetObject((char*)"stderr");
+    Py_INCREF(old_stderr);
     PySys_SetObject((char*)"stderr", new_stderr);
     PyErr_Print();
     PySys_SetObject((char*)"stderr", old_stderr);
