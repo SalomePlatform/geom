@@ -295,7 +295,7 @@ def ManageTransactions(theOpeName):
 ## Raise an Error, containing the Method_name, if Operation is Failed
 ## @ingroup l1_geomBuilder_auxiliary
 def RaiseIfFailed (Method_name, Operation):
-    if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
+    if not Operation.IsDone() and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
 
 ## Return list of variables value from salome notebook
@@ -2414,7 +2414,7 @@ class geomBuilder(object, GEOM._objref_GEOM_Gen):
               anObj = self.CurvesOp.MakeCurveParametricNew(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
             else:
               anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
-            RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
+            RaiseIfFailed("MakeCurveParametric", self.CurvesOp)
             anObj.SetParameters(Parameters)
             self._autoPublish(anObj, theName, "curve")
             return anObj
