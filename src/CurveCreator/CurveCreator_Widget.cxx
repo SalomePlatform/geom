@@ -1005,10 +1005,18 @@ void CurveCreator_Widget::onMousePress( SUIT_ViewWindow*, QMouseEvent* theEvent 
  */
 void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEvent* theEvent )
 {
-  if ( getActionMode() != ModificationMode )
+  ActionMode aMode = getActionMode();
+  if ( aMode != ModificationMode )
   {
     // Emit selectionChanged() signal
     getOCCViewer()->performSelectionChanged();
+
+    if ( aMode == AdditionMode )
+    {
+      Handle(AIS_InteractiveContext) aCtx = getAISContext();
+      if ( !aCtx.IsNull() )
+        aCtx->ClearSelected();
+    }
     return;
   } 
   if (theEvent->button() != Qt::LeftButton) return;
@@ -1059,7 +1067,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
   if ( myDragStarted ) {
     bool isDragged = myDragged;
     CurveCreator_ICurve::SectionToPointList aDraggedPoints;
-    QMap<CurveCreator_ICurve::SectionToPoint, std::deque< float > > anInitialDragPointsCoords;
+    QMap<CurveCreator_ICurve::SectionToPoint, CurveCreator::Coordinates > anInitialDragPointsCoords;
     if ( myDragged ) {
       aDraggedPoints = myDragPoints;
       anInitialDragPointsCoords = myInitialDragPointsCoords;
@@ -1105,7 +1113,7 @@ void CurveCreator_Widget::onMouseRelease( SUIT_ViewWindow* theWindow, QMouseEven
         for ( ; anIt != aLast; anIt++ ) {
           int aSectionId = anIt->first;
           int aPointId = anIt->second;
-          std::deque<float> aPos = myCurve->getPoint( aSectionId, aPointId );
+          CurveCreator::Coordinates aPos = myCurve->getPoint( aSectionId, aPointId );
 
           aCoordList.push_back(
             std::make_pair( std::make_pair( aSectionId, aPointId ), aPos ) );
@@ -1195,7 +1203,7 @@ void CurveCreator_Widget::onCellChanged( int theRow, int theColumn )
 
   double aX  = myLocalPointView->item( theRow, 2 )->data( Qt::UserRole ).toDouble();
   double anY = myLocalPointView->item( theRow, 3 )->data( Qt::UserRole ).toDouble();
-  std::deque<float> aChangedPos;
+  CurveCreator::Coordinates aChangedPos;
   aChangedPos.push_back( aX );
   aChangedPos.push_back( anY );
   myCurve->setPoint( aCurrSect, aPntIndex, aChangedPos );
@@ -1338,7 +1346,7 @@ void CurveCreator_Widget::moveSelectedPoints( const int theXPosition,
   double anYDelta = aStartPnt.Y() - anEndPnt.Y();
 
   CurveCreator_ICurve::SectionToPointCoordsList aCoordList;
-  std::deque<float> aChangedPos;
+  CurveCreator::Coordinates aChangedPos;
   CurveCreator_ICurve::SectionToPointList::const_iterator anIt = myDragPoints.begin(),
                                                           aLast = myDragPoints.end();
   for ( ; anIt != aLast; anIt++ ) {
@@ -1490,7 +1498,7 @@ void CurveCreator_Widget::finishCurveModification(
  * \param theX the X coordinate of the point
  * \param theY the Y coordinate of the point
  */
-int CurveCreator_Widget::findLocalPointIndex( int theSectionId, float theX, float theY )
+int CurveCreator_Widget::findLocalPointIndex( int theSectionId, double theX, double theY )
 {
   return CurveCreator_UtilsICurve::findLocalPointIndex( myCurve, theSectionId, theX, theY );
 }

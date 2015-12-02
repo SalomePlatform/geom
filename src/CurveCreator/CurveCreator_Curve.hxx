@@ -205,6 +205,21 @@ public:
   virtual bool setSectionType( const int theISection, 
                                const CurveCreator::SectionType theType );
 
+  //! A virtual method.
+  const CurveCreator_ISection* getSection(const int theSectionIndex) const
+  {
+    if (theSectionIndex >= 0 && theSectionIndex < mySections.size())
+    {
+      return (CurveCreator_ISection*)mySections[theSectionIndex];
+    }
+    return NULL;
+  }
+
+  //! A virtual method.
+  CurveCreator_ISection* getSection(const int theSectionIndex)
+  {
+    return (CurveCreator_ISection*)mySections[theSectionIndex];
+  }
 
   /***********************************************/
   /***           Point methods                 ***/
@@ -298,12 +313,6 @@ protected:
 
 protected:
   virtual void constructAISObject();
-  /**
-   * Returns the section by the section index or NULL if the index is out of the section
-   * list range
-   * \param theSectionId the section index
-   */
-  CurveCreator_Section* getSection( const int theSectionId ) const;
 
 protected:
   bool                            mySkipSorting;

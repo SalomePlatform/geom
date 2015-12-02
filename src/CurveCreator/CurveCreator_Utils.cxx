@@ -20,6 +20,7 @@
 #include "CurveCreator_Utils.hxx"
 #include "CurveCreator.hxx"
 #include "CurveCreator_Curve.hxx"
+#include "CurveCreator_Section.hxx"
 #include "CurveCreator_UtilsICurve.hxx"
 
 #include <Basics_OCCTVersion.hxx>
@@ -183,116 +184,155 @@ gp_Pnt CurveCreator_Utils::ConvertClickToPoint( int x, int y, Handle(V3d_View) a
   return ResultPoint;
 }
 
-void CurveCreator_Utils::constructShape( const CurveCreator_ICurve* theCurve,
-                                         TopoDS_Shape& theShape )
+//=======================================================================
+// function : constructBSpline
+// purpose  :
+//=======================================================================
+bool CurveCreator_Utils::constructBSpline(
+  const Handle(TColgp_HArray1OfPnt)& thePoints,
+  const Standard_Boolean theIsClosed,
+  Handle(Geom_BSplineCurve)& theBSpline)
 {
-  BRep_Builder aBuilder;
-  TopoDS_Compound aComp;
-  aBuilder.MakeCompound( aComp );
-  for( int iSection = 0 ; iSection < theCurve->getNbSections() ; iSection++ )
+  const int aPointCount = thePoints->Length();
+  if (aPointCount <= 1)
   {
-    int theISection = iSection;
+    return false;
+  }
 
-    CurveCreator::SectionType aSectType = theCurve->getSectionType( theISection );
-    int aPointSize = theCurve->getNbPoints( theISection );
-    if ( aPointSize == 0 )
-      continue;
-
-    bool aSectIsClosed = theCurve->isClosed( theISection );
-    bool isPolyline = aSectType == CurveCreator::Polyline;
-
-    int iPoint = 0;
-    gp_Pnt aPrevPoint, aPoint;
-    // filters the curve points to skip equal points
-    std::vector<gp_Pnt> aPoints;
-    CurveCreator_UtilsICurve::getPoint( theCurve, theISection, iPoint, aPoint );
-    aPoints.push_back( aPoint );
-    aPrevPoint = aPoint;
-    iPoint++;
-    for( ; iPoint < aPointSize; iPoint++ ) {
-      CurveCreator_UtilsICurve::getPoint( theCurve, theISection, iPoint, aPoint );
-      if ( !isEqualPoints( aPrevPoint, aPoint ) )
-        aPoints.push_back( aPoint );
-      aPrevPoint = aPoint;
-    }
-    int aNbPoints = aPoints.size();
-
-    if ( aNbPoints == 1 ) {
-      aPoint = aPoints.front();
-      TopoDS_Vertex aVertex = BRepBuilderAPI_MakeVertex( aPoint ).Vertex();
-      aBuilder.Add( aComp, aVertex );
-    }
-    else if ( aNbPoints > 1 ) {
-      Handle(TColgp_HArray1OfPnt) aHCurvePoints = new TColgp_HArray1OfPnt(1, aNbPoints);
-      TColgp_Array1OfVec aTangents(1, aNbPoints);
-      Handle(TColStd_HArray1OfBoolean) aTangentFlags = new TColStd_HArray1OfBoolean(1, aNbPoints);
-      gp_Vec aNullVec(0, 0, 0);
-
-      TopoDS_Edge aPointEdge;
-      TopoDS_Vertex aVertex;
-
-      std::vector<gp_Pnt>::const_iterator aPointIt = aPoints.begin(), aPointLast = aPoints.end();
-      aPoint = *aPointIt;
-
-      int aHIndex = 1;
-      aVertex = BRepBuilderAPI_MakeVertex( aPoint ).Vertex();
-      aBuilder.Add( aComp, aVertex );
-      if ( !isPolyline ) {
-        aHCurvePoints->SetValue( aHIndex, aPoint );
-        aTangents.SetValue( aHIndex, aNullVec );
-        aTangentFlags->SetValue( aHIndex, Standard_False );
-        aHIndex++;
+  // Calculate the tangents.
+  TColgp_Array1OfVec aTangents(1, aPointCount);
+  Handle(TColStd_HArray1OfBoolean) aTangentFlags =
+    new TColStd_HArray1OfBoolean(1, aPointCount);
+  GeomAPI_Interpolate aInterpolator(thePoints, theIsClosed, 0);
+  if (aPointCount == 2)
+  {
+    aTangentFlags->SetValue(1, Standard_False);
+    aTangentFlags->SetValue(2, Standard_False);
+  }
+  else
+  {
+    for (Standard_Integer aPN = 1; aPN <= aPointCount; ++aPN)
+    {
+      gp_Vec aTangent;
+      if (aPN != 1 || theIsClosed)
+      {
+        const Standard_Integer aPN1 = (aPN != 1) ? (aPN - 1) : aPointCount;
+        aTangent = gp_Vec(thePoints->Value(aPN1),
+          thePoints->Value(aPN)).Normalized();
       }
-
-      aPrevPoint = aPoint;
-      aPointIt++;
-      for( ; aPointIt != aPointLast; aPointIt++ ) {
-        aPoint = *aPointIt;
-        aVertex = BRepBuilderAPI_MakeVertex( aPoint ).Vertex();
-        aBuilder.Add( aComp, aVertex );
-        if ( isPolyline ) {
-          TopoDS_Edge aPointEdge = BRepBuilderAPI_MakeEdge( aPrevPoint, aPoint ).Edge();
-          aBuilder.Add( aComp, aPointEdge );
+      if (aPN < aPointCount || theIsClosed)
+      {
+        const Standard_Integer aPN2 = (aPN != aPointCount) ? (aPN + 1) : 1;
+        const gp_Vec aTangent2 = aTangent +
+          gp_Vec(thePoints->Value(aPN), thePoints->Value(aPN2)).Normalized();
+        if (aTangent2.SquareMagnitude() >= Precision::SquareConfusion())
+        {
+          aTangent = aTangent2.Normalized();
         }
-        else {
-          aHCurvePoints->SetValue( aHIndex, aPoint );
-          aTangents.SetValue( aHIndex, aNullVec );
-          aTangentFlags->SetValue( aHIndex, Standard_False );
-          aHIndex++;
-        }
-        aPrevPoint = aPoint;
-      }
-      if( aSectIsClosed && ( aNbPoints > 2 ) ) {
-        aPoint = aPoints.front();
-        aVertex = BRepBuilderAPI_MakeVertex( aPoint ).Vertex();
-        aBuilder.Add( aComp, aVertex );
-        if ( isPolyline ) {
-          aPointEdge = BRepBuilderAPI_MakeEdge( aPrevPoint, aPoint ).Edge();
-          aBuilder.Add( aComp, aPointEdge );
+        else
+        {
+          aTangent = -aTangent;
         }
       }
-      if( !isPolyline ) {
-        // compute BSpline
-        Handle(Geom_BSplineCurve) aBSplineCurve;
-        GeomAPI_Interpolate aGBC(aHCurvePoints, aSectIsClosed, gp::Resolution());
-        // correct the spline degree to be as 3 for non-periodic spline if number of points
-        // less than 3. It is need to have a knot in each spline point. This knots are used
-        // to found a neighbour points when a new point is inserted between two existing.
-        if (!aSectIsClosed ) {
-          if (aHCurvePoints->Length() == 3)
-            aGBC.Load(aTangents, aTangentFlags);
-        }
-
-        aGBC.Perform();
-        if ( aGBC.IsDone() )
-          aBSplineCurve = aGBC.Curve();
-        TopoDS_Edge anEdge = BRepBuilderAPI_MakeEdge( aBSplineCurve ).Edge();
-        TopoDS_Wire aWire = BRepBuilderAPI_MakeWire( anEdge ).Wire();
-        aBuilder.Add( aComp, aWire );
-      }
+      aTangents.SetValue(aPN, aTangent);
+      aTangentFlags->SetValue(aPN, Standard_True);
     }
   }
-  theShape = aComp;
+
+  // Interpolate.
+  aInterpolator.Load(aTangents, aTangentFlags, Standard_False);
+  aInterpolator.Perform();
+  const bool aResult = (aInterpolator.IsDone() == Standard_True);
+  if (aResult)
+  {
+    theBSpline = aInterpolator.Curve();
+  }
+  return aResult;
+}
+
+//=======================================================================
+// function : constructWire
+// purpose  :
+//=======================================================================
+TopoDS_Wire CurveCreator_Utils::ConstructWire(
+  Handle(TColgp_HArray1OfPnt) thePoints,
+  const bool theIsPolyline,
+  const bool theIsClosed)
+{
+  TopoDS_Wire aWire;
+  BRep_Builder aBuilder;
+  aBuilder.MakeWire(aWire);
+  const int aPointCount = thePoints->Length();
+  if (theIsPolyline)
+  {
+    const TopoDS_Vertex aFirstVertex =
+      BRepBuilderAPI_MakeVertex(thePoints->Value(1));
+    TopoDS_Vertex aVertex = aFirstVertex;
+    for (Standard_Integer aPN = 1; aPN < aPointCount; ++aPN)
+    {
+      const TopoDS_Vertex aVertex2 =
+        BRepBuilderAPI_MakeVertex(thePoints->Value(aPN + 1));
+      aBuilder.Add(aWire, BRepBuilderAPI_MakeEdge(aVertex, aVertex2));
+      aVertex = aVertex2;
+    }
+    if (theIsClosed && aPointCount > 1)
+    {
+      aBuilder.Add(aWire, BRepBuilderAPI_MakeEdge(aVertex, aFirstVertex));
+    }
+  }
+  else
+  {
+    Handle(Geom_BSplineCurve) aBSpline;
+    if (constructBSpline(thePoints, theIsClosed, aBSpline))
+    {
+      aBuilder.Add(aWire, BRepBuilderAPI_MakeEdge(aBSpline));
+    }
+  }
+  return aWire;
+}
+
+//=======================================================================
+// function : constructShape
+// purpose  :
+//=======================================================================
+void CurveCreator_Utils::constructShape(
+  const CurveCreator_ICurve* theCurve, TopoDS_Shape& theShape)
+{
+  BRep_Builder aBuilder;
+  TopoDS_Compound aShape;
+  aBuilder.MakeCompound(aShape);
+  const int aSectionCount = theCurve->getNbSections();
+  for (int aSectionI = 0; aSectionI < aSectionCount; ++aSectionI)
+  {
+    const int aTmpPointCount = theCurve->getNbPoints(aSectionI);
+    if (aTmpPointCount == 0)
+    {
+      continue;
+    }
+
+    // Get the different points.
+    const CurveCreator_ISection* aSection = theCurve->getSection(aSectionI);
+    Handle(TColgp_HArray1OfPnt) aPoints;
+    aSection->GetDifferentPoints(theCurve->getDimension(), aPoints);
+    const int aPointCount = aPoints->Length();
+    const bool isClosed = theCurve->isClosed(aSectionI);
+
+    // Add the vertices to the shape.
+    for (Standard_Integer aPN = 1; aPN <= aPointCount; ++aPN)
+    {
+      aBuilder.Add(aShape, BRepBuilderAPI_MakeVertex(aPoints->Value(aPN)));
+    }
+
+    // Add the wire to the shape.
+    const bool isPolyline =
+      (theCurve->getSectionType(aSectionI) == CurveCreator::Polyline);
+    const TopoDS_Wire aWire = ConstructWire(aPoints, isPolyline, isClosed);
+    if (!aWire.IsNull())
+    {
+      aBuilder.Add(aShape, aWire);
+    }
+  }
+  theShape = aShape;
 }
 
 /**
@@ -516,7 +556,7 @@ void CurveCreator_Utils::getSelectedPoints( Handle(AIS_InteractiveContext) theCo
 {
   thePoints.clear();
 
-  std::list<float> aSelectedPoints;
+  std::list<double> aSelectedPoints;
   gp_Pnt aPnt;
   std::map<CompareSectionToPoint, int> aPointsMap;
 

@@ -23,7 +23,11 @@
 #ifndef _CurveCreator_ICurve_HeaderFile
 #define _CurveCreator_ICurve_HeaderFile
 
+#include "CurveCreator.hxx"
 #include "CurveCreator_Macro.hxx"
+
+#include <TColgp_HArray1OfPnt.hxx>
+
 #include <deque>
 #include <vector>
 #include <string>
@@ -49,6 +53,17 @@ namespace CurveCreator
 
 };
 
+//! The type represents the interface to the curve section.
+struct CURVECREATOR_EXPORT CurveCreator_ISection
+{
+  //! The destructor.
+  virtual ~CurveCreator_ISection() {}
+
+  //! Calculates the different points of the section.
+  virtual void GetDifferentPoints(
+    const int theDimension, Handle(TColgp_HArray1OfPnt)& thePoints) const = 0;
+};
+
 /**
  *  The CurveCreator_ICurve object is represented as one or more sets of
  *  connected points; thus CurveCreator_ICurve object can contain several
@@ -62,12 +77,15 @@ public:
   typedef std::pair<int,int> SectionToPoint;
   typedef std::deque<SectionToPoint> SectionToPointList;
 
-  typedef std::deque< std::pair< SectionToPoint,std::deque< float > > > SectionToPointCoordsList;
+  typedef std::deque< std::pair< SectionToPoint, CurveCreator::Coordinates > > SectionToPointCoordsList;
 
 public:
   /***********************************************/
   /***          Undo/Redo methods              ***/
   /***********************************************/
+
+  //! The destructor.
+  virtual ~CurveCreator_ICurve() {}
 
   //! Get number of available undo operations
   virtual int getNbUndo() const = 0;
@@ -131,6 +149,13 @@ public:
   virtual bool setSectionType( const int theISection, 
                                const CurveCreator::SectionType theType ) = 0;
 
+  //! Returns the curve section with the index.
+  virtual const CurveCreator_ISection* getSection(
+    const int theSectionIndex) const = 0;
+
+  //! Returns the curve section with the index.
+  virtual CurveCreator_ISection* getSection(const int theSectionIndex) = 0;
+
 
   /***********************************************/
   /***           Point methods                 ***/
@@ -143,14 +168,14 @@ public:
    *  Insert one or several points to the specified section starting from the given theIPnt index
    *  (or add these at the end of section points if \a theIPnt is -1).
    */
-  virtual bool addPoints( const std::deque<float>& theCoords,
+  virtual bool addPoints( const CurveCreator::Coordinates& theCoords,
                           const int theISection,
                           const int theIPnt = -1 ) = 0;
 
   //! Set coordinates of specified point
   virtual bool setPoint( const int theISection,
                          const int theIPnt,
-                         const std::deque<float>& theNewCoords ) = 0;
+                         const CurveCreator::Coordinates& theNewCoords ) = 0;
   
   //! Set coordinates of specified points from different sections
   virtual bool setSeveralPoints( const SectionToPointCoordsList &theSectionToPntCoords,
@@ -162,13 +187,13 @@ public:
   virtual bool removeSeveralPoints( const SectionToPointList &theSectionToPntIDs) = 0;
 
   //! Get coordinates of specified point
-  virtual std::deque<float> getPoint( const int theISection, 
+  virtual CurveCreator::Coordinates getPoint( const int theISection, 
                                       const int theIPnt ) const = 0;
 
   /**
    * Get points of a section (the total points in Curve if theISection is equal to -1)..
    */
-  virtual std::deque<float> getPoints( const int theISection = -1 ) const = 0;
+  virtual CurveCreator::Coordinates getPoints( const int theISection = -1 ) const = 0;
 
   /**
    *  Get number of points in specified section or (the total number of points

@@ -195,7 +195,7 @@ private:
                                       CurveCreator_ICurve::SectionToPointList() );
 
   // curve algorithm
-  int  findLocalPointIndex( int theSectionId, float theX, float theY );
+  int  findLocalPointIndex( int theSectionId, double theX, double theY );
   void findSectionsToPoints( const double theX, const double theY,
                              CurveCreator_ICurve::SectionToPointList& thePoints );
   void convert( const CurveCreator_ICurve::SectionToPointList& thePoints,

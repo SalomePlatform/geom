@@ -39,7 +39,7 @@ public:
    * \param theY the Y coordinate of the point
    */
   CURVECREATOR_EXPORT static int  findLocalPointIndex( const CurveCreator_ICurve* theCurve,
-                                          int theSectionId, float theX, float theY );
+                                          int theSectionId, double theX, double theY );
 
   CURVECREATOR_EXPORT static void findSectionsToPoints( const CurveCreator_ICurve* theCurve,
                                           const double theX, const double theY,

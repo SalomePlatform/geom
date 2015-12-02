@@ -32,7 +32,9 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <ElSLib.hxx>
 #include <GeomAPI_Interpolate.hxx>
+#include <TColgp_Array1OfVec.hxx>
 #include <TColgp_HArray1OfPnt.hxx>
+#include <TColStd_HArray1OfBoolean.hxx>
 #include <TopoDS_Wire.hxx>
 
 const double POINT_CONFUSION_TOLERANCE = 0.0001;
@@ -98,57 +100,134 @@ TopoDS_Shape Sketcher_Utils::MakePolyline
 }
 
 //=======================================================================
+// function : constructBSpline
+// purpose  : See function 'constructBSpline' in file 'CurveCreator_Utils.cxx'.
+//=======================================================================
+static bool constructBSpline(
+  const Handle(TColgp_HArray1OfPnt)& thePoints,
+  const Standard_Boolean theIsClosed,
+  Handle(Geom_BSplineCurve)& theBSpline)
+{
+  const int aPointCount = thePoints->Length();
+  if (aPointCount <= 1)
+  {
+    return false;
+  }
+
+  // Calculate the tangents.
+  TColgp_Array1OfVec aTangents(1, aPointCount);
+  Handle(TColStd_HArray1OfBoolean) aTangentFlags =
+    new TColStd_HArray1OfBoolean(1, aPointCount);
+  GeomAPI_Interpolate aInterpolator(thePoints, theIsClosed, 0);
+  if (aPointCount == 2)
+  {
+    aTangentFlags->SetValue(1, Standard_False);
+    aTangentFlags->SetValue(2, Standard_False);
+  }
+  else
+  {
+    for (Standard_Integer aPN = 1; aPN <= aPointCount; ++aPN)
+    {
+      gp_Vec aTangent;
+      if (aPN != 1 || theIsClosed)
+      {
+        const Standard_Integer aPN1 = (aPN != 1) ? (aPN - 1) : aPointCount;
+        aTangent = gp_Vec(thePoints->Value(aPN1),
+          thePoints->Value(aPN)).Normalized();
+      }
+      if (aPN < aPointCount || theIsClosed)
+      {
+        const Standard_Integer aPN2 = (aPN != aPointCount) ? (aPN + 1) : 1;
+        const gp_Vec aTangent2 = aTangent +
+          gp_Vec(thePoints->Value(aPN), thePoints->Value(aPN2)).Normalized();
+        if (aTangent2.SquareMagnitude() >= Precision::SquareConfusion())
+        {
+          aTangent = aTangent2.Normalized();
+        }
+        else
+        {
+          aTangent = -aTangent;
+        }
+      }
+      aTangents.SetValue(aPN, aTangent);
+      aTangentFlags->SetValue(aPN, Standard_True);
+    }
+  }
+
+  // Interpolate.
+  aInterpolator.Load(aTangents, aTangentFlags, Standard_False);
+  aInterpolator.Perform();
+  const bool aResult = (aInterpolator.IsDone() == Standard_True);
+  if (aResult)
+  {
+    theBSpline = aInterpolator.Curve();
+  }
+  return aResult;
+}
+
+//=======================================================================
 // function : MakeInterpolation
 // purpose  : 
 //=======================================================================
-TopoDS_Shape Sketcher_Utils::MakeInterpolation
-                              (const std::list <double> &theCoords2D,
-                               const Standard_Boolean    IsClosed,
-                               const gp_Ax3             &thePlane)
+TopoDS_Shape Sketcher_Utils::MakeInterpolation(
+  const std::list<double>& theCoords2D,
+  const Standard_Boolean theIsClosed,
+  const gp_Ax3& thePlane)
 {
-  std::list <gp_Pnt> aPoints;
-  TopoDS_Shape       aResult;
+  if (theCoords2D.size() == 0)
+  {
+    return TopoDS_Shape();
+  }
 
-  To3D(theCoords2D, thePlane, aPoints);
-
-  Standard_Integer aNbPnts = aPoints.size();
-
-  if (aNbPnts > 1) {
-    if (IsClosed &&
-        aPoints.front().IsEqual(aPoints.back(), POINT_CONFUSION_TOLERANCE)) {
-      // The polyline should be closed, first and last points are confused.
-      // Remove the last point.
-      aPoints.pop_back();
-      --aNbPnts;
+  // Get the different points.
+  std::list<gp_Pnt> aTmpPoints;
+  To3D(theCoords2D, thePlane, aTmpPoints);
+  gp_Pnt aFirstPoint = aTmpPoints.front();
+  gp_Pnt aPoint = aFirstPoint;
+  std::list<gp_Pnt>::iterator aPIt = aTmpPoints.begin();
+  for (++aPIt; aPIt != aTmpPoints.end();)
+  {
+    const gp_Pnt aPoint2 = *aPIt;
+    if (!aPoint.IsEqual(aPoint2, POINT_CONFUSION_TOLERANCE))
+    {
+      aPoint = aPoint2;
+      ++aPIt;
+    }
+    else
+    {
+      aTmpPoints.erase(aPIt);
+    }
+  }
+  if (theIsClosed)
+  {
+    while (--aPIt != aTmpPoints.begin() &&
+      aFirstPoint.IsEqual(*aPIt, POINT_CONFUSION_TOLERANCE))
+    {
+      aTmpPoints.erase(aPIt);
     }
   }
 
-  if (aNbPnts == 1) {
-    // The result is vertex.
-    aResult = BRepBuilderAPI_MakeVertex(aPoints.front()).Vertex();
-  } else if (aNbPnts > 1) {
-    std::list <gp_Pnt>::const_iterator anIter        = aPoints.begin();
-    Handle(TColgp_HArray1OfPnt)        aHCurvePoints =
-      new TColgp_HArray1OfPnt(1, aNbPnts);
-    Standard_Integer                   i;
-
-    for (i = 1; anIter != aPoints.end(); ++anIter, ++i) {
-      aHCurvePoints->SetValue(i, *anIter);
-    }
-
-    // Compute BSpline
-    Standard_Real       aTol = Precision::Confusion();
-    GeomAPI_Interpolate aGBC(aHCurvePoints, IsClosed, aTol);
-
-    aGBC.Perform();
-
-    if (aGBC.IsDone()) {
-      TopoDS_Edge anEdge = BRepBuilderAPI_MakeEdge(aGBC.Curve()).Edge();
-      aResult = BRepBuilderAPI_MakeWire(anEdge).Wire();
-    }
+  // Process the single point case.
+  const int aPointCount = aTmpPoints.size();
+  if (aPointCount == 1)
+  {
+    return BRepBuilderAPI_MakeVertex(aTmpPoints.front());
   }
 
-  return aResult;
+  // Process the other cases.
+  Handle(TColgp_HArray1OfPnt) aPoints =
+    new TColgp_HArray1OfPnt(1, aPointCount);
+  aPIt = aTmpPoints.begin();
+  for (Standard_Integer aPN = 1; aPIt != aTmpPoints.end(); ++aPIt, ++aPN)
+  {
+    aPoints->SetValue(aPN, *aPIt);
+  }
+  Handle(Geom_BSplineCurve) aBSpline;
+  if (constructBSpline(aPoints, theIsClosed, aBSpline))
+  {
+    return BRepBuilderAPI_MakeWire(BRepBuilderAPI_MakeEdge(aBSpline));
+  }
+  return TopoDS_Shape();
 }
 
 //=======================================================================

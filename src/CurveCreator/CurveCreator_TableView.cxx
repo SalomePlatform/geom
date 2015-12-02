@@ -24,6 +24,7 @@
 
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QHeaderView>
 
 #include <QtxDoubleSpinBox.h>
 
@@ -109,6 +110,8 @@ CurveCreator_TableView::CurveCreator_TableView( CurveCreator_ICurve* theCurve,
   //aLabels << tr( "SECTION_LABEL" ) << tr( "IDENTIFIER_LABEL" ) << aCoord1 << aCoord2;
   aLabels << tr( "TABLE_SECTION" ) << tr("TABLE_INDEX") << aCoord1 << aCoord2;
   setHorizontalHeaderLabels( aLabels );
+
+  connect( horizontalHeader(), SIGNAL( sectionClicked( int ) ), this, SLOT( OnHeaderClick( int ) ) );
 }
 
 void CurveCreator_TableView::setCurve( CurveCreator_ICurve* theCurve )
@@ -131,13 +134,14 @@ void CurveCreator_TableView::setLocalPointsToTable(
 
     QTableWidgetItem* anItem;
     anItem = new QTableWidgetItem( myCurve->getSectionName( anISection ).c_str() );
-    anItem->setFlags( anItem->flags() & ~Qt::ItemIsEnabled );
+    anItem->setFlags( anItem->flags() & ~Qt::ItemIsEditable );
     anItem->setData( Qt::UserRole, anISection );
     setItem( aRowId, 0, anItem );
 
     anItem = new QTableWidgetItem( QString::number( anIPoint + 1 ) );
     anItem->setFlags( anItem->flags() & ~Qt::ItemIsEnabled );
     anItem->setData( Qt::UserRole, anIPoint );
+    anItem->setData( Qt::DisplayRole, anIPoint );
     setItem( aRowId, 1, anItem );
 
     gp_Pnt aPoint;
@@ -149,7 +153,7 @@ void CurveCreator_TableView::setLocalPointsToTable(
       setItem( aRowId, 2, anItem );
     }
     anItem->setData( Qt::UserRole, aPoint.X() );
-    anItem->setData( Qt::DisplayRole, QString::number( aPoint.X(), 'f', 2 ) );
+    anItem->setData( Qt::DisplayRole, QString::number( aPoint.X(), 'f', 2 ).toDouble() );
 
     anItem = item( aRowId, 3 );
     if ( !anItem ) {
@@ -157,7 +161,7 @@ void CurveCreator_TableView::setLocalPointsToTable(
       setItem( aRowId, 3, anItem );
     }
     anItem->setData( Qt::UserRole, aPoint.Y() );
-    anItem->setData( Qt::DisplayRole, QString::number( aPoint.Y(), 'f', 2 ) );
+    anItem->setData( Qt::DisplayRole, QString::number( aPoint.Y(), 'f', 2 ).toDouble() );
 
     aRowId++;
   }
@@ -175,4 +179,9 @@ int CurveCreator_TableView::getSectionId( const int theRowId ) const
 int CurveCreator_TableView::getPointId( const int theRowId ) const
 {
   return item( theRowId, 1 )->data( Qt::UserRole ).toInt();
+}
+
+void CurveCreator_TableView::OnHeaderClick( int theLogicalId )
+{
+  sortByColumn( theLogicalId, Qt::AscendingOrder );
 }
