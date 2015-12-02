@@ -161,7 +161,7 @@ static Standard_Boolean IsToMerge
 
         isSame = Standard_True;
 
-        for (; anIter1.More(); anIter1.Next()) {
+        for (; anIter1.More() && isSame; anIter1.Next()) {
           TopoDS_Face aFace1 = TopoDS::Face(anIter1.Value());
           TopTools_ListIteratorOfListOfShape  anIter2(aLst2);
 
@@ -581,16 +581,24 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       if (C.IsNull()) {
         // jfa for Mantis issue 0020228
         if (PV1.Distance(PV2) > Precision::Confusion()) continue;
-        // closed chain
-        if (edge1.Orientation() == TopAbs_FORWARD) {
-          C = C1;
-        } else {
-          C = Handle(Geom_Circle)::DownCast(C1->Reversed());
+        // closed chain. Make a closed circular edge starting from V1.
+        gp_Ax1 anAxis = C1->Axis();
+
+        if (edge1.Orientation() == TopAbs_REVERSED) {
+          anAxis.Reverse();
         }
+
+        const gp_Pnt &aP0 = anAxis.Location();
+        gp_Dir        aDX(PV1.XYZ().Subtracted(aP0.XYZ()));
+        gp_Ax2        aNewAxis(aP0, anAxis.Direction(), aDX);
+
+        C = new Geom_Circle(aNewAxis, C1->Radius());
 
         B.MakeEdge (E,C,Precision::Confusion());
         B.Add(E,V1);
         B.Add(E,V2);
+        B.UpdateVertex(V1, 0., E, 0.);
+        B.UpdateVertex(V2, 2.*M_PI, E, 0.);
       }
       else {
         gp_Pnt P0 = C->Location();
