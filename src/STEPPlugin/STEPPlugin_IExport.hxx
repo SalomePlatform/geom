@@ -24,6 +24,7 @@
 
 #define EXPORTSTEP_ARG_ORIGINAL   1
 #define EXPORTSTEP_ARG_FILENAME   2
+#define EXPORTSTEP_ARG_UNIT       3
 
 class STEPPlugin_IExport
 {
@@ -40,6 +41,11 @@ public:
     { _func->SetString( EXPORTSTEP_ARG_FILENAME, theFileName ); }
   TCollection_AsciiString GetFileName()
     { return _func->GetString( EXPORTSTEP_ARG_FILENAME ); }
+
+  void SetUnit(const Standard_Integer theUnit)
+  { _func->SetInteger(EXPORTSTEP_ARG_UNIT, theUnit); }
+  Standard_Integer GetUnit()
+  { return _func->GetInteger(EXPORTSTEP_ARG_UNIT); }
   
 private:
   Handle(GEOM_Function) _func;

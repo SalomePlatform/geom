@@ -3563,7 +3563,10 @@ void GEOM_Superv_i::ExportSTEP( GEOM::GEOM_Object_ptr theObject,
   beginService( " GEOM_Superv_i::ExportSTEP" );
   MESSAGE("GEOM_Superv_i::ExportSTEP");
   getSTEPPluginOp();
-  mySTEPOp->ExportSTEP( theObject, theFileName );
+
+  const GEOM::length_unit aUnit = GEOM::LU_METER;
+
+  mySTEPOp->ExportSTEP( theObject, theFileName, aUnit );
   endService( " GEOM_Superv_i::ExportSTEP" );
 }
 

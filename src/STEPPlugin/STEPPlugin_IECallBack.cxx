@@ -52,7 +52,9 @@ STEPPlugin_IECallBack::Export( int                            theDocId,
 			       const TCollection_AsciiString& theFormatName )
 {
   STEPPlugin_IOperations* aPluginOperations = STEPPlugin_OperationsCreator::get( GetEngine(), theDocId );
-  aPluginOperations->ExportSTEP( theOriginal, theFileName );
+  const STEPPlugin_IOperations::LengthUnit aUnit = STEPPlugin_IOperations::LengthUnit_Meter;
+
+  aPluginOperations->ExportSTEP( theOriginal, theFileName, aUnit );
   return true;
 }
 

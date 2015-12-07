@@ -95,6 +95,7 @@ SET(STEPPluginEngine_HEADERS
   STEPPlugin_IExport.hxx 
   STEPPlugin_IImport.hxx
   STEPPlugin_ImportDriver.hxx 
+  STEPPlugin_ExportDlg.h
   STEPPlugin_ExportDriver.hxx
   STEPPlugin_IECallBack.hxx
   )
@@ -103,6 +104,7 @@ IF(SALOME_BUILD_GUI)
   # header files / to be processed by moc
   SET(_moc_HEADERS
     STEPPlugin_GUI.h
+    STEPPlugin_ExportDlg.h
     )
 ENDIF()
 
@@ -114,6 +116,7 @@ IF(SALOME_BUILD_GUI)
 
   SET(STEPPluginGUI_SOURCES
     STEPPlugin_GUI.cxx
+    STEPPlugin_ExportDlg.cxx
     ${_moc_SOURCES}
     )
 ENDIF()

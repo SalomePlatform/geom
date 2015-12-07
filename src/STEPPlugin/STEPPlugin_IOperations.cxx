@@ -56,16 +56,64 @@ STEPPlugin_IOperations::~STEPPlugin_IOperations()
 
 //=============================================================================
 /*!
+ *
+ */
+//=============================================================================
+static GEOM::TPythonDump& operator<<
+          (GEOM::TPythonDump                        &theDump,
+           const STEPPlugin_IOperations::LengthUnit  theState)
+{
+  switch (theState) {
+  case STEPPlugin_IOperations::LengthUnit_Inch:
+    theDump << "GEOM.LU_INCH";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Millimeter:
+    theDump << "GEOM.LU_MILLIMETER";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Foot:
+    theDump << "GEOM.LU_FOOT";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Mile:
+    theDump << "GEOM.LU_MILE";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Meter:
+    theDump << "GEOM.LU_METER";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Kilometer:
+    theDump << "GEOM.LU_KILOMETER";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Milliinch:
+    theDump << "GEOM.LU_MILLIINCH";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Micrometer:
+    theDump << "GEOM.LU_MICROMETER";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Centimeter:
+    theDump << "GEOM.LU_CENTIMETER";
+    break;
+  case STEPPlugin_IOperations::LengthUnit_Microinch:
+    theDump << "GEOM.LU_MICROINCH";
+    break;
+  default:
+    break;
+  }
+
+  return theDump;
+}
+
+//=============================================================================
+/*!
  *  ExportSTEP
  *  Export a shape to STEP format
  *  \param theOriginal The shape to export
  *  \param theFileName The name of the file to exported
- *  \param theIsASCII The format of the exported file (ASCII or Binary)
- *  \param theDeflection The deflection of the shape to exported
+ *  \param theUnit the length unit
  */
 //=============================================================================
-void STEPPlugin_IOperations::ExportSTEP( const Handle(GEOM_Object)      theOriginal,
-					 const TCollection_AsciiString& theFileName )
+void STEPPlugin_IOperations::ExportSTEP
+                    (const Handle(GEOM_Object)      theOriginal,
+                     const TCollection_AsciiString &theFileName,
+                     const LengthUnit               theUnit)
 {
   SetErrorCode(KO);
   if( theOriginal.IsNull() ) return;
@@ -87,6 +135,7 @@ void STEPPlugin_IOperations::ExportSTEP( const Handle(GEOM_Object)      theOrigi
   STEPPlugin_IExport aCI( aFunction );
   aCI.SetOriginal( aRefFunction );
   aCI.SetFileName( theFileName );
+  aCI.SetUnit( theUnit );
 
   //Perform the Export
   try {
@@ -104,7 +153,7 @@ void STEPPlugin_IOperations::ExportSTEP( const Handle(GEOM_Object)      theOrigi
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << "geompy.ExportSTEP(" << theOriginal << ", \""
-    << theFileName.ToCString() << "\" )";
+    << theFileName.ToCString() << "\", " << theUnit << " )";
 
   SetErrorCode(OK);
 }

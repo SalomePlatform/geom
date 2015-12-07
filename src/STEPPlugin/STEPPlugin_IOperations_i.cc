@@ -53,10 +53,12 @@ STEPPlugin_IOperations_i::~STEPPlugin_IOperations_i()
  *  Export a shape to STEP format
  *  \param theOriginal The shape to export
  *  \param theFileName The name of the exported file
+ *  \param theUnit the length unit.
  */
 //=============================================================================
-void STEPPlugin_IOperations_i::ExportSTEP( GEOM::GEOM_Object_ptr theOriginal,
-					   const char*           theFileName )
+void STEPPlugin_IOperations_i::ExportSTEP(GEOM::GEOM_Object_ptr theOriginal,
+                                          const char*           theFileName,
+                                          GEOM::length_unit     theUnit)
 {
   // duplicate the original shape
   GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_duplicate( theOriginal );
@@ -68,8 +70,45 @@ void STEPPlugin_IOperations_i::ExportSTEP( GEOM::GEOM_Object_ptr theOriginal,
   Handle(GEOM_Object) anOriginal = GetObjectImpl( theOriginal );
   if (anOriginal.IsNull()) return;
 
+  STEPPlugin_IOperations::LengthUnit aUnit;
+
+  switch (theUnit) {
+  case GEOM::LU_INCH:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Inch;
+    break;
+  case GEOM::LU_MILLIMETER:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Millimeter;
+    break;
+  case GEOM::LU_FOOT:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Foot;
+    break;
+  case GEOM::LU_MILE:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Mile;
+    break;
+  case GEOM::LU_METER:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Meter;
+    break;
+  case GEOM::LU_KILOMETER:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Kilometer;
+    break;
+  case GEOM::LU_MILLIINCH:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Milliinch;
+    break;
+  case GEOM::LU_MICROMETER:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Micrometer;
+    break;
+  case GEOM::LU_CENTIMETER:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Centimeter;
+    break;
+  case GEOM::LU_MICROINCH:
+    aUnit = STEPPlugin_IOperations::LengthUnit_Microinch;
+    break;
+  default:
+    return;
+  }
+
   //Export the shape to the file
-  GetOperations()->ExportSTEP( anOriginal, theFileName );
+  GetOperations()->ExportSTEP( anOriginal, theFileName, aUnit );
 }
 
 //=============================================================================

@@ -37,6 +37,7 @@
 #include "GEOMBase.h"
 #include "GEOM_Displayer.h"
 #include "GEOM_GenericObjPtr.h"
+#include "STEPPlugin_ExportDlg.h"
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(STEPPlugin)
@@ -250,11 +251,12 @@ bool STEPPlugin_GUI::exportSTEP( SUIT_Desktop* parent )
     
     if ( CORBA::is_nil( obj ) ) continue;
     
-    QString fileName = app->getFileName( false,
-					 QString( io->getName() ),
+    GEOM::length_unit anUnit;
+    QString fileName = STEPPlugin_ExportDlg::getFileName
+					(QString( io->getName() ),
 					 tr( "STEP_FILES" ),
 					 tr( "EXPORT_TITLE" ),
-					 parent );
+					 parent, anUnit);
     
     if ( fileName.isEmpty() )
       return false;
@@ -268,7 +270,7 @@ bool STEPPlugin_GUI::exportSTEP( SUIT_Desktop* parent )
       app->putInfo( tr( "GEOM_PRP_EXPORT" ).arg( fileName ) );
       transaction.start();
       
-      stepOp->ExportSTEP( obj, fileName.toUtf8().constData() );
+      stepOp->ExportSTEP( obj, fileName.toUtf8().constData(), anUnit);
       
       if ( stepOp->IsDone() )
       {

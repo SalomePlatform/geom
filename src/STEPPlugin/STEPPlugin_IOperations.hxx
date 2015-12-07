@@ -29,12 +29,33 @@
 
 class STEPPLUGINENGINE_EXPORT STEPPlugin_IOperations: public GEOMImpl_IBaseIEOperations
 {
+
+public:
+
+  /*!
+   *  \brief Units of length
+   */
+  enum LengthUnit
+  {
+    LengthUnit_Inch,
+    LengthUnit_Millimeter,
+    LengthUnit_Foot,
+    LengthUnit_Mile,
+    LengthUnit_Meter,
+    LengthUnit_Kilometer,
+    LengthUnit_Milliinch,
+    LengthUnit_Micrometer,
+    LengthUnit_Centimeter,
+    LengthUnit_Microinch
+  };
+
+
 public:
   STEPPlugin_IOperations( GEOM_Engine*, int );
   ~STEPPlugin_IOperations();
 
   void ExportSTEP( const Handle(GEOM_Object),
-		   const TCollection_AsciiString& );
+		   const TCollection_AsciiString&, const LengthUnit );
   
   Handle(TColStd_HSequenceOfTransient) ImportSTEP( const TCollection_AsciiString&,
 						   const bool );

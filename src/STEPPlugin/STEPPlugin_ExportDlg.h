@@ -17,38 +17,36 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef _STEPPlugin_IOperations_i_HeaderFile
-#define _STEPPlugin_IOperations_i_HeaderFile
+#ifndef STEPPlugin_ExportDlg_H
+#define STEPPlugin_ExportDlg_H
 
-// idl includes
+#include <SUIT_FileDlg.h>
 #include <SALOMEconfig.h>
-#include CORBA_SERVER_HEADER( GEOM_Gen )
-#include CORBA_SERVER_HEADER( STEPPlugin )
+#include CORBA_CLIENT_HEADER(STEPPlugin)
 
-// internal includes
-#include "STEPPlugin_Engine.hxx"
+class QComboBox;
 
-// GEOM includes
-#include "GEOM_IOperations_i.hh"
-
-class STEPPlugin_IOperations;
-
-class STEPPLUGINENGINE_EXPORT STEPPlugin_IOperations_i :
-      public virtual POA_GEOM::ISTEPOperations,
-      public virtual GEOM_IOperations_i
+class STEPPlugin_ExportDlg: public SUIT_FileDlg
 {
+  Q_OBJECT
+
 public:
-  STEPPlugin_IOperations_i( PortableServer::POA_ptr thePOA,
-			    GEOM::GEOM_Gen_ptr theEngine,
-			    STEPPlugin_IOperations* theImpl );
-  ~STEPPlugin_IOperations_i();
 
-  void            ExportSTEP( GEOM::GEOM_Object_ptr, const char*,
-                              GEOM::length_unit );
-  GEOM::ListOfGO* ImportSTEP( const char*, const bool );
-  char*           ReadValue( const char*, const char* );
+  STEPPlugin_ExportDlg(QWidget *parent);
+  ~STEPPlugin_ExportDlg();
 
-  STEPPlugin_IOperations* GetOperations();
+  GEOM::length_unit getUnits() const;
+
+  static QString getFileName(const QString           &theInitial,
+                             const QString           &theFilters,
+			                 const QString           &theCaption,
+                                   QWidget           *theParent,
+                                   GEOM::length_unit &theUnits);
+
+private:
+
+  QComboBox *myUnitCB;
+
 };
 
-#endif
+#endif // STEPPlugin_ExportDlg_H
