@@ -108,6 +108,8 @@
 #define GROUP_SIDE2 3
 #define GROUP_OTHER 4
 
+static const Standard_Real TolPipeSurf = 5.e-4;
+
 static bool FillGroups(const TopTools_SequenceOfShape         *theGroups,
                        const TopTools_IndexedMapOfShape       &theIndices,
                              Handle(TColStd_HArray1OfInteger) *theGroupIds);
@@ -182,7 +184,8 @@ static Standard_Boolean BuildPipeShell(BRepOffsetAPI_MakePipeShell &theBuilder)
 
   Standard_Boolean isDone = theBuilder.IsDone();
 
-  if (!isDone) {
+  if (!isDone ||
+      theBuilder.ErrorOnSurface() > TolPipeSurf) {
     // Try to use Descrete Trihedron mode.
     theBuilder.SetDiscreteMode();
     theBuilder.Build();
@@ -3124,7 +3127,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute (TFunction_Logbook& log) const
       GeomFill_Trihedron theBestMode = EvaluateBestSweepMode(aWirePath);
       BRepOffsetAPI_MakePipe aMkPipe(aWirePath, aShapeBase, theBestMode);
 
-      if (aMkPipe.IsDone()) {
+      if (aMkPipe.IsDone() && aMkPipe.ErrorOnSurface() <= TolPipeSurf) {
         aShape = aMkPipe.Shape();
 
         if (!CreateGroups(aShapeBase, aWirePath, aMkPipe, aCI)) {
