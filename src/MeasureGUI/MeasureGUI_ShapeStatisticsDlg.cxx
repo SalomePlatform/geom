@@ -311,9 +311,9 @@ void MeasureGUI_ShapeStatisticsDlg::updateTypes( QList<GEOM::GeomObjPtr> theShap
     if ( hasEdges != 0 )
       hasEdges = aShOp->NumberOfSubShapes( aShapePtr.get(), TopAbs_EDGE ) > 0;
     if ( hasFaces != 0 )
-      hasEdges = aShOp->NumberOfSubShapes( aShapePtr.get(), TopAbs_FACE ) > 0;
+      hasFaces = aShOp->NumberOfSubShapes( aShapePtr.get(), TopAbs_FACE ) > 0;
     if ( hasSolids != 0 )
-      hasEdges = aShOp->NumberOfSubShapes( aShapePtr.get(), TopAbs_SOLID ) > 0;
+      hasSolids = aShOp->NumberOfSubShapes( aShapePtr.get(), TopAbs_SOLID ) > 0;
   }
   fillTypes( hasEdges, hasFaces, hasSolids );
 }
