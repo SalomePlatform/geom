@@ -74,6 +74,7 @@
 #include <Geom_Plane.hxx>
 #include <Geom_SphericalSurface.hxx>
 #include <Geom_Surface.hxx>
+#include <Geom_TrimmedCurve.hxx>
 #include <Precision.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TDF_Tool.hxx>
@@ -4635,6 +4636,8 @@ static bool isSameEdge(const TopoDS_Edge& theEdge1, const TopoDS_Edge& theEdge2)
   gp_Pnt P1 = C1->Value(U);     //Compute a point on one third of the edge's length
   U = U11+range*2.0/3.0;
   gp_Pnt P2 = C1->Value(U);     //Compute a point on two thirds of the edge's length
+
+  C2 = new Geom_TrimmedCurve(C2, U21, U22);
 
   if(!GeomLib_Tool::Parameter(C2, P1, MAX_TOLERANCE, U) ||  U < U21 || U > U22)
     return false;
