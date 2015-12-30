@@ -881,6 +881,12 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
         TopoDS_Shape aShape;
         if (GEOMBase::GetShape(aGeomObj, aShape)) {
           if (aGeomObj->GetType() == GEOM_GROUP || aShape.ShapeType() == getShapeType()) {
+            if (subSelectionWay() != ALL_SUBSHAPES &&
+                GEOMBase::GetName(aGeomObj) == myShape2Name->text()) {
+              // Skip selected in place object.
+              continue;
+            }
+
             TopTools_IndexedMapOfShape aMainMap;
             TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
             TopExp::MapShapes(aMainShape, aMainMap);
